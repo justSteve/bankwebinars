@@ -1,0 +1,47 @@
+@using TTSDataLayer.Models
+@model CUWebinars.Web.ViewModel.WebinarDetailsViewModel
+@{
+    if (Model.Webinar.Status == WebinarStatus.Scheduled)
+    {
+        //var option = Model.Options.OfType<AdditionalLocationsOption>().SingleOrDefault();
+        var option = Model.Options.SingleOrDefault(o => o.Type == "additional_location");
+
+        <div id="AdditionalLocationContainer" class="well" style="margin-right: 50px;margin-left: 50px;">
+            <h5>Additional Locations</h5>
+
+            @if (Model.Webinar.Title.Contains("Compliance Perspectives"))
+            {
+                <div style="display: none" id="trial">
+                    <p>Additional locations are not included in the trial subscription.</p>
+                </div>
+                <div id="first3" style="padding-left: 50px;">
+                    Subscribers to the <b>Compliance Perspectives Series</b> receive the first three locations
+                    <br />
+                    at no additional charge ($150 per connection after those first three):
+                    <br />
+                    <div style="padding-left: 50px;">
+                        <input type="text" name="Email_0" id="Email_0" value="Email for Additional Location" class="{email: true}" /><br />
+                        <input type="text" name="Email_1" id="Email_1" value="2nd Location" disabled="disabled" class="{email: true}" /><br />
+                        <input type="text" name="Email_2" id="Email_2" value="3rd Location" disabled="disabled" class="{email: true}" /><br />
+                    </div>
+
+                </div>
+                <div style="display: none" id="addLoc4Cost">
+                    <input type="hidden" name="connectionsCount" value="0" id="connectionsCount" />
+                </div>
+            }
+            else
+            {
+                <blockquote style="margin-bottom: 0px;">
+                    @option.OptionExplain
+                </blockquote>
+                <div style="padding-left: 50px;">
+                    <b>Each additional location adds $@option.PriceToAdd.ToString() to your registration:</b>
+                    <input type="text" name="connectionsCount" style="width: 30px; text-align: right" value="0" size="2" maxlength="2" id="connectionsCount" />
+                    <div id="collectAdditionalLocations">
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}

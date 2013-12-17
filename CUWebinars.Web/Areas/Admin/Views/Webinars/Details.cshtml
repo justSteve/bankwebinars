@@ -1,0 +1,141 @@
+﻿@model TTSDataLayer.Models.Webinar
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>Webinar</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.HasConnectionInformation)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.HasConnectionInformation)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Description)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Description)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.DescriptionLong)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.DescriptionLong)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.ImageUrl)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.ImageUrl)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.SmallImageUrl)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.SmallImageUrl)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Title)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Title)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Date)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Date)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.LearnCaption)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.LearnCaption)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.LearnBody)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.LearnBody)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.WhoAttend)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.WhoAttend)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Duration)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Duration)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.RecordingUrl)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.RecordingUrl)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Presenter.Biography)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Presenter.Biography)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.additionalNotifications)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.additionalNotifications)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.ceu)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.ceu)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.DateCreated)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.DateCreated)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.DateChanged)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.DateChanged)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Notes)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Notes)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

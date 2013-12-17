@@ -1,0 +1,15 @@
+﻿
+<script language="javascript" type="text/javascript">
+    function openJWindow() {
+        window.open('http://form.jotform.us/form/32764012877155?yourEmail21='+$("#getEmail").val(), 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');
+    }
+</script>
+<section>
+    <p style="font-size: small;">Learn about upcoming events. (We <i>won't</i> share your email address.)</p>
+    @*<form action="/account/addtomailing" method="post">*@
+        <div class="input-append">
+            <input type="email" id="getEmail" placeholder="Email Address" class="span6" name="email" />
+            <button onclick="javascript: openJWindow();" class="btn btn-primary">Sign Up</button>
+        </div>
+    @*</form>*@
+</section>

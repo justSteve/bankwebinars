@@ -1,0 +1,1898 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Experience.CloudFx.Extensions</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Configuration.BlobConfigurationSourceExtension">
+            <summary>
+            Implements the extension that serves the application configuration from a blob residing in the Windows Azure blob storage.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Configuration.IConfigurationSourceExtension">
+            <summary>
+            Defines a contract that must be supported by an extension responsible for abstracting access to the application configuration source.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.IConfigurationSourceExtension.GetSection(System.String)">
+            <summary>
+            Retrieves a <see cref="T:System.Configuration.ConfigurationSection"/> by the specified name.
+            </summary>
+            <param name="sectionName">The name of the section to be retrieved.</param>
+            <returns>The specified <see cref="T:System.Configuration.ConfigurationSection"/>, or <see langword="null"/> (<b>Nothing</b> in Visual Basic)
+            if a section by that name is not found.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.BlobConfigurationSourceExtension.#ctor">
+            <summary>
+            Initializes a new instance of a <see cref="T:Microsoft.Experience.CloudFx.Extensions.Configuration.BlobConfigurationSourceExtension"/> object using the default name of the local configuration setting which provides
+            a connection string to the Windows Azure blob storage account containing the configuration files. Uses the default name of the blob container where the
+            configuration files are stored.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.BlobConfigurationSourceExtension.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of a <see cref="T:Microsoft.Experience.CloudFx.Extensions.Configuration.BlobConfigurationSourceExtension"/> object using the default name of the local configuration setting which provides
+            a connection string to the Windows Azure blob storage account containing the configuration files. Uses the specified name of the blob container where the
+            configuration files are stored. 
+            </summary>
+            <param name="containerName">The name of the blob container where the configuration files are stored.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.BlobConfigurationSourceExtension.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of a <see cref="T:Microsoft.Experience.CloudFx.Extensions.Configuration.BlobConfigurationSourceExtension"/> object using the specified name of the local configuration setting which provides
+            a connection string to the Windows Azure blob storage account containing the configuration files. Uses the specified name of the blob container where the
+            configuration files are stored. 
+            </summary>
+            <param name="settingName">The name of the local configuration setting which provides a connection string to the Windows Azure blob storage account containing the configuration files.</param>
+            <param name="containerName">The name of the blob container where the configuration files are stored.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.BlobConfigurationSourceExtension.#ctor(Microsoft.WindowsAzure.Storage.CloudStorageAccount)">
+            <summary>
+            Initializes a new instance of a <see cref="T:Microsoft.Experience.CloudFx.Extensions.Configuration.BlobConfigurationSourceExtension"/> object using the specified Windows Azure blob storage account containing 
+            the configuration files. Uses the default name of the blob container where the configuration files are stored.
+            </summary>
+            <param name="storageAccount">The Windows Azure blob storage account containing the configuration files.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.BlobConfigurationSourceExtension.#ctor(Microsoft.WindowsAzure.Storage.CloudStorageAccount,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="storageAccount"></param>
+            <param name="containerName"></param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.BlobConfigurationSourceExtension.#ctor(Microsoft.Experience.CloudFx.Framework.Configuration.StorageAccountInfo)">
+            <summary>
+            
+            </summary>
+            <param name="storageAccountInfo"></param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.BlobConfigurationSourceExtension.#ctor(Microsoft.Experience.CloudFx.Framework.Configuration.StorageAccountInfo,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="storageAccountInfo"></param>
+            <param name="containerName"></param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.BlobConfigurationSourceExtension.GetSection(System.String)">
+            <summary>
+            Retrieves a <see cref="T:System.Configuration.ConfigurationSection"/> by the specified name.
+            </summary>
+            <param name="sectionName">The name of the section to be retrieved.</param>
+            <returns>The specified <see cref="T:System.Configuration.ConfigurationSection"/>, or <see langword="null"/> (<b>Nothing</b> in Visual Basic)
+            if a section by that name is not found.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.BlobConfigurationSourceExtension.Attach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been registered in the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.BlobConfigurationSourceExtension.Detach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been unregistered from the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.BlobConfigurationSourceExtension.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting managed and unmanaged resources.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.BlobConfigurationSourceExtension.Dispose(System.Boolean)">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting managed and unmanaged resources.
+            </summary>
+            <param name="disposing">A flag indicating that managed resources must be released.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Configuration.CloudQueueListenerConfigurationElement">
+            <summary>
+            Implements a configuration element holding storage queue information for <see cref="T:Microsoft.Experience.CloudFx.Extensions.Configuration.CloudQueueListenerConfigurationSection"/> class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Configuration.CloudQueueListenerConfigurationElement.DequeueTaskCount">
+            <summary>
+            Gets or sets the number of dequeue threads (tasks) receiving and processing messages from a given queue.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Configuration.CloudQueueListenerConfigurationElement.DequeueBatchSize">
+            <summary>
+            Gets or sets the batch size when performing dequeue operation against a Windows Azure queue.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Configuration.CloudQueueListenerConfigurationElement.DequeueInterval">
+            <summary>
+            Gets or sets the time interval that defines how long the queue listener will be idle for between polling a Windows Azure queue.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Configuration.CloudQueueListenerConfigurationElement.VisibilityTimeout">
+            <summary>
+            Gets or sets the visibility timeout indicating when messages should become visible in the queue 
+            again if they not consumed and deleted from the queue.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Configuration.CloudQueueListenerConfigurationSection">
+            <summary>
+            Implements a configuration section containing Windows Azure storage queue listener configuration settings.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Experience.CloudFx.Extensions.Configuration.CloudQueueListenerConfigurationSection.SectionName">
+            <summary>
+            The name of the configuration section represented by this type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Configuration.CloudQueueListenerConfigurationSection.StorageAccount">
+            <summary>
+            Gets or sets the name of the Windows Azure storage account used by the queue listener.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Configuration.CloudQueueListenerConfigurationSection.DefaultDequeueBatchSize">
+            <summary>
+            Gets or sets the default batch size when performing dequeue operation against a Windows Azure queue.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Configuration.CloudQueueListenerConfigurationSection.DefaultDequeueTaskCount">
+            <summary>
+            Gets or sets the default number of dequeue threads (tasks) receiving and processing messages from a given queue.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Configuration.CloudQueueListenerConfigurationSection.DefaultDequeueInterval">
+            <summary>
+            Gets or sets the default time interval that defines how long the queue listener will be idle for between polling a Windows Azure queue.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Configuration.CloudQueueListenerConfigurationSection.DefaultVisibilityTimeout">
+            <summary>
+            Gets or sets the default visibility timeout indicating when messages should become visible in the queue 
+            again if they not consumed and deleted from the queue.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Configuration.CloudQueueListenerConfigurationSection.Queues">
+            <summary>
+            Returns a collection of Windows Azure storage queues configured for the queue listener. 
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Configuration.IConfigurationProviderExtension">
+            <summary>
+            Defines a contract that must be supported by an extension responsible for abstracting access to the application configuration.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.IConfigurationProviderExtension.GetSetting(System.String)">
+            <summary>
+            Returns a configuration setting with the given <paramref name="name"/> from the application configuration.
+            </summary>
+            <param name="name">The name of the setting to return.</param>
+            <returns>The setting value, or null if the configuration setting is not found.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.IConfigurationProviderExtension.GetSection(System.String)">
+            <summary>
+            Retrieves the specified configuration section by its name.
+            </summary>
+            <param name="sectionName">The name of the section to be retrieved.</param>
+            <returns>An instance of the specified configuration section, or null reference if a section by that name is not found.</returns>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Configuration.ConfigurationProviderExtension">
+            <summary>
+            Implements the extension responsible for abstracting access to the application configuration from role instances.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.ConfigurationProviderExtension.GetSetting(System.String)">
+            <summary>
+            Returns a configuration setting with the given name from the application configuration.
+            </summary>
+            <param name="name">The name of the setting to return.</param>
+            <returns>The setting value, or null if the configuration setting is not found.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.ConfigurationProviderExtension.GetSection(System.String)">
+            <summary>
+            Retrieves the specified configuration section by its name.
+            </summary>
+            <param name="sectionName">The name of the section to be retrieved.</param>
+            <returns>An instance of the specified configuration section, or null reference if a section by that name is not found.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.ConfigurationProviderExtension.Attach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been registered in the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.ConfigurationProviderExtension.Detach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been unregistered from the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Configuration.IConfigurationUpdateObserverExtension">
+            <summary>
+            Defines a contract that must be supported by an extension responsible for notifying other extensions about updates in the configuration sections.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.IConfigurationUpdateObserverExtension.Subscribe(System.String,System.IObserver{System.Configuration.ConfigurationSection})">
+            <summary>
+            Subscribes to updates in a specific configuration section identified by its name.
+            </summary>
+            <param name="sectionName">The name of the configuration section.</param>
+            <param name="observer">The object that will be receiving notifications.</param>
+            <returns>A disposable subscription object that allows the subscriber to indicate whenever it wants to stop receiving notifications.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.IConfigurationUpdateObserverExtension.Subscribe(System.Type,System.IObserver{System.Configuration.ConfigurationSection})">
+            <summary>
+            Subscribes to updates in a specific configuration section identified by its type.
+            </summary>
+            <param name="sectionType">The type of the configuration section.</param>
+            <param name="observer">The object that will be receiving notifications.</param>
+            <returns>A disposable subscription object that allows the subscriber to indicate whenever it wants to stop receiving notifications.</returns>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Configuration.ConfigurationUpdateObserverExtension">
+            <summary>
+            Implements the extension that enables receiving notifications about the changes in the configuration sections.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.ConfigurationUpdateObserverExtension.Subscribe(System.IObserver{System.Configuration.ConfigurationSection})">
+            <summary>
+            Subscribes to updates in all configuration sections.
+            </summary>
+            <param name="observer">The object that will be receiving notifications.</param>
+            <returns>A disposable subscription object that allows the subscriber to indicate whenever it wants to stop receiving notifications.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.ConfigurationUpdateObserverExtension.Subscribe(System.String,System.IObserver{System.Configuration.ConfigurationSection})">
+            <summary>
+            Subscribes to updates in a specific configuration section identified by its name.
+            </summary>
+            <param name="sectionName">The name of the configuration section.</param>
+            <param name="observer">The object that will be receiving notifications.</param>
+            <returns>A disposable subscription object that allows the subscriber to indicate whenever it wants to stop receiving notifications.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.ConfigurationUpdateObserverExtension.Subscribe(System.Type,System.IObserver{System.Configuration.ConfigurationSection})">
+            <summary>
+            Subscribes to updates in a specific configuration section identified by its type.
+            </summary>
+            <param name="sectionType">The type of the configuration section.</param>
+            <param name="observer">The object that will be receiving notifications.</param>
+            <returns>A disposable subscription object that allows the subscriber to indicate whenever it wants to stop receiving notifications.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.ConfigurationUpdateObserverExtension.OnNext(Microsoft.Experience.CloudFx.Framework.Configuration.ConfigurationChangedEventArgs)">
+            <summary>
+            Receives a notification when an update in the configuration section has occurred.
+            </summary>
+            <param name="eventArgs">The event arguments of type <see cref="T:Microsoft.Experience.CloudFx.Framework.Configuration.ConfigurationChangedEventArgs"/> received from the underlying configuration source.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.ConfigurationUpdateObserverExtension.OnCompleted">
+            <summary>
+            Gets notified that the observer will not be receiving any further events.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.ConfigurationUpdateObserverExtension.OnError(System.Exception)">
+            <summary>
+            Gets notified whenever the observer has experienced an error condition.
+            </summary>
+            <param name="error">The original exception that has resulted in the error condition.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.ConfigurationUpdateObserverExtension.Attach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been registered in the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.ConfigurationUpdateObserverExtension.Detach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been unregistered from the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Configuration.LocalConfigurationSourceExtension">
+            <summary>
+            Implements the extension that serves the application configuration from a local source such as an app.config file or cloud service configuration.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.LocalConfigurationSourceExtension.GetSection(System.String)">
+            <summary>
+            Retrieves the specified <see cref="T:System.Configuration.ConfigurationSection"/>.
+            </summary>
+            <param name="sectionName">The name of the section to be retrieved.</param>
+            <returns>The specified <see cref="T:System.Configuration.ConfigurationSection"/>, or <see langword="null"/> (<b>Nothing</b> in Visual Basic)
+            if a section by that name is not found.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.LocalConfigurationSourceExtension.Attach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been registered in the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.LocalConfigurationSourceExtension.Detach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been unregistered from the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.LocalConfigurationSourceExtension.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting managed and unmanaged resources.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.LocalConfigurationSourceExtension.Dispose(System.Boolean)">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting managed and unmanaged resources.
+            </summary>
+            <param name="disposing">A flag indicating that managed resources must be released.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Configuration.ExtensionMethods">
+            <summary>
+            Provides value-add extension methods for various components in the <see cref="N:Microsoft.Experience.CloudFx.Extensions.Configuration"/> namespace.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.ExtensionMethods.GetSection``1(Microsoft.Experience.CloudFx.Extensions.Configuration.IConfigurationProviderExtension,System.String)">
+            <summary>
+            Retrieves a strongly typed configuration section by the given name from the application configuration. 
+            </summary>
+            <param name="configProvider">The instance of the <see cref="T:Microsoft.Experience.CloudFx.Extensions.Configuration.IConfigurationProviderExtension"/> for which the extension method will be invoked.</param>
+            <param name="sectionName">The name of the section to be retrieved.</param>
+            <typeparam name="T">The type representing the configuration section in the configuration object model.</typeparam>
+            <returns>An instance of the specified configuration section, or null reference if a section by that name is not found.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.ExtensionMethods.GetSetting``1(Microsoft.Experience.CloudFx.Extensions.Configuration.IConfigurationProviderExtension,System.String)">
+            <summary>
+            Returns a strongly typed configuration setting with the given name from the application configuration.
+            </summary>
+            <param name="configProvider">The instance of the <see cref="T:Microsoft.Experience.CloudFx.Extensions.Configuration.IConfigurationProviderExtension"/> for which the extension method will be invoked.</param>
+            <typeparam name="T">The type of the setting.</typeparam>
+            <param name="name">The name of the setting to return.</param>
+            <returns>The setting value of type <typeparamref name="T"/>, or the default value of <typeparamref name="T"/> if the configuration setting is not found.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.ExtensionMethods.GetSetting``1(Microsoft.Experience.CloudFx.Extensions.Configuration.IConfigurationProviderExtension,System.String,``0)">
+            <summary>
+            Returns a strongly typed configuration setting with the given <paramref name="name"/> from the application configuration, 
+            or the specified <paramref name="defaultValue"/> if the configuration setting is not found.
+            </summary>
+            <typeparam name="T">The type of the setting.</typeparam>
+            <param name="configProvider">The instance of the <see cref="T:Microsoft.Experience.CloudFx.Extensions.Configuration.IConfigurationProviderExtension"/> for which the extension method will be invoked.</param>
+            <param name="name">The name of the setting to return.</param>
+            <param name="defaultValue">The default value that will be returned if the specified setting is not found.</param>
+            <returns>The setting value of type <typeparamref name="T"/>, or <paramref name="defaultValue"/> if the configuration setting is not found.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Configuration.ExtensionMethods.GetSetting``1(Microsoft.Experience.CloudFx.Extensions.Configuration.IConfigurationProviderExtension,System.String,System.Func{``0})">
+            <summary>
+            Returns a strongly typed configuration setting with the given <paramref name="name"/> from the application configuration, 
+            or a value obtained from the specified provider function <see cref="T:System.Func`1"/> if the configuration setting is not found.
+            </summary>
+            <typeparam name="T">The type of the setting.</typeparam>
+            <param name="configProvider">The instance of the <see cref="T:Microsoft.Experience.CloudFx.Extensions.Configuration.IConfigurationProviderExtension"/> for which the extension method will be invoked.</param>
+            <param name="name">The name of the setting to return.</param>
+            <param name="defaultValue">The provider function that will be invoked if the specified setting is not found.</param>
+            <returns>The setting value of type <typeparamref name="T"/>, or the result returned from the provider function <see cref="T:System.Func`1"/> if the configuration setting is not found.</returns>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Diagnostics.IRemoteLoggingClientExtension">
+            <summary>
+            Defines a contract that must be implemented by an extension responsible for capturing and logging trace events via a remote logging service.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RemoteLoggingClientExtension">
+            <summary>
+            Implements the extension responsible for capturing and logging trace events via a remote logging service.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RemoteLoggingClientExtension.#ctor(Microsoft.Experience.CloudFx.Framework.Configuration.ServiceBusEndpointInfo,System.Int32,System.Int32,System.TimeSpan)">
+            <summary>
+            Initializes a new instance of a <see cref="T:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RemoteLoggingClientExtension"/> object using the specified Service Bus relay endpoint 
+            that will be used for communication with the remote logging service. The specified <paramref name="eventTypeMask"/> defines a binary mask with
+            the type of events that will be subject to remote logging. This parameter might be useful when sending only specific types of events events to the remote service.
+            In order to submit specific events to the remote logging service, use the desired combination of the <see cref="T:System.Diagnostics.TraceEventType"/> enumeration members
+            converted to <see cref="T:System.Int32"/> and combined using the logical OR ("|") operation.
+            </summary>
+            <param name="relayEndpoint">The Service Bus relay endpoint which will be used to connect to the remote logging service.</param>
+            <param name="eventTypeMask">The binary mask combining one or more <see cref="T:System.Diagnostics.TraceEventType"/> values specifying the type of event that will be sent to the remote service.</param>
+            <param name="bufferSize">The optional parameter defining the maximum size of the buffer accumulating trace events before they are sent to the remote service.</param>
+            <param name="bufferWindow">The optional parameter defining the maximum time length of the buffering window during which trace events are accumulated before delivery to the remote service. If omitted, the default window of 10 seconds will be used.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RemoteLoggingClientExtension.#ctor(System.String,System.Int32,System.Int32,System.TimeSpan)">
+            <summary>
+            Initializes a new instance of a <see cref="T:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RemoteLoggingClientExtension"/> object using the specified Service Bus relay endpoint 
+            that will be used for communication with the remote logging service. The specified <paramref name="eventTypeMask"/> defines a binary mask with
+            the type of events that will be subject to remote logging. This parameter might be useful when sending only specific types of events to the remote service.
+            In order to submit specific events to the remote logging service, use the desired combination of the <see cref="T:System.Diagnostics.TraceEventType"/> enumeration members
+            converted to <see cref="T:System.Int32"/> and combined using the logical OR ("|") operation.
+            </summary>
+            <param name="endpointName">The name of the Service Bus relay endpoint which will be used to connect to the remote logging service.</param>
+            <param name="eventTypeMask">The binary mask combining one or more <see cref="T:System.Diagnostics.TraceEventType"/> values specifying the type of event that will be sent to the remote service.</param>
+            <param name="bufferSize">The optional parameter defining the maximum size of the buffer accumulating trace events before they are sent to the remote service.</param>
+            <param name="bufferWindow">The optional parameter defining the maximum time length of the buffering window during which trace events are accumulated before delivery to the remote service. If omitted, the default window of 10 seconds will be used.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RemoteLoggingClientExtension.#ctor(System.String,System.Diagnostics.TraceEventType,System.Int32,System.TimeSpan)">
+            <summary>
+            Initializes a new instance of a <see cref="T:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RemoteLoggingClientExtension"/> object using the specified Service Bus relay endpoint 
+            that will be used for communication with the remote logging service. The specified <paramref name="eventType"/> defines
+            the type of events that will be subject to remote logging. This parameter might be useful when sending only specific type of events to the remote service.
+            In order to submit specific events to the remote logging service, use the desired <see cref="T:System.Diagnostics.TraceEventType"/> enumeration member.
+            </summary>
+            <param name="endpointName">The name of the Service Bus relay endpoint which will be used to connect to the remote logging service.</param>
+            <param name="eventType">One of the <see cref="T:System.Diagnostics.TraceEventType"/> values specifying the type of event that will be sent to the remote service.</param>
+            <param name="bufferSize">The optional parameter defining the maximum size of the buffer accumulating trace events before they are sent to the remote service.</param>
+            <param name="bufferWindow">The optional parameter defining the maximum time length of the buffering window during which trace events are accumulated before delivery to the remote service. If omitted, the default window of 10 seconds will be used.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RemoteLoggingClientExtension.#ctor(Microsoft.Experience.CloudFx.Framework.Configuration.ServiceBusEndpointInfo,System.Diagnostics.TraceEventType,System.Int32,System.TimeSpan)">
+            <summary>
+            Initializes a new instance of a <see cref="T:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RemoteLoggingClientExtension"/> object using the specified Service Bus relay endpoint 
+            that will be used for communication with the remote logging service. The specified <paramref name="eventType"/> defines
+            the type of events that will be subject to remote logging. This parameter might be useful when sending only specific type of events to the remote service.
+            In order to submit specific events to the remote logging service, use the desired <see cref="T:System.Diagnostics.TraceEventType"/> enumeration member.
+            </summary>
+            <param name="relayEndpoint">The Service Bus relay endpoint which will be used to connect to the remote logging service.</param>
+            <param name="eventType">One of the <see cref="T:System.Diagnostics.TraceEventType"/> values specifying the type of event that will be sent to the remote service.</param>
+            <param name="bufferSize">The optional parameter defining the maximum size of the buffer accumulating trace events before they are sent to the remote service.</param>
+            <param name="bufferWindow">The optional parameter defining the maximum time length of the buffering window during which trace events are accumulated before delivery to the remote service. If omitted, the default window of 10 seconds will be used.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RemoteLoggingClientExtension.Attach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been registered in the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RemoteLoggingClientExtension.Detach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been unregistered from the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Diagnostics.IRoleDiagnosticMonitorExtension">
+            <summary>
+            Defines a contract that must be implemented by an extension responsible for abstracting access to the Windows Azure diagnostic infrastructure.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RoleDiagnosticMonitorExtension">
+            <summary>
+            Implements the extension responsible for abstracting access to the Windows Azure diagnostic infrastructure.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RoleDiagnosticMonitorExtension.Attach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been registered in the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RoleDiagnosticMonitorExtension.Detach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been unregistered from the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Diagnostics.ICloudTraceEventProviderExtension">
+            <summary>
+            Defines a contract that must be supported by an extension that is responsible for abstracting how tracing components are made visible to the user code.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.ICloudTraceEventProviderExtension.GetTraceEventProvider(System.Type)">
+            <summary>
+            Returns an instance of a trace provider for the specified type. This requires that the type supplies its GUID which will be used
+            for registering it with the ETW infrastructure.
+            </summary>
+            <param name="componentType">The type which must be decorated with a <see cref="T:System.Runtime.InteropServices.GuidAttribute"/>.</param>
+            <returns>An instance of the tracing component implementing the <see cref="T:Microsoft.Experience.CloudFx.Framework.Diagnostics.ITraceEventProvider"/> interface.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.ICloudTraceEventProviderExtension.GetDefaultTraceEventProvider">
+            <summary>
+            Returns an instance of the default trace provider.
+            </summary>
+            <returns>An instance of the tracing component implementing the <see cref="T:Microsoft.Experience.CloudFx.Framework.Diagnostics.ITraceEventProvider"/> interface.</returns>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Diagnostics.CloudTraceEventProviderExtension">
+            <summary>
+            Implements the extension that is responsible for abstracting how tracing components are made visible to the user code.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.CloudTraceEventProviderExtension.GetTraceEventProvider(System.Type)">
+            <summary>
+            Returns an instance of a trace provider for the specified type. This requires that the type supplies its GUID which will be used
+            for registering it with the ETW infrastructure.
+            </summary>
+            <param name="componentType">The type which must be decorated with a <see cref="T:System.Runtime.InteropServices.GuidAttribute"/>.</param>
+            <returns>An instance of the tracing component implementing the <see cref="T:Microsoft.Experience.CloudFx.Framework.Diagnostics.ITraceEventProvider"/> interface.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.CloudTraceEventProviderExtension.GetDefaultTraceEventProvider">
+            <summary>
+            Returns an instance of the default trace provider.
+            </summary>
+            <returns>An instance of the tracing component implementing the <see cref="T:Microsoft.Experience.CloudFx.Framework.Diagnostics.ITraceEventProvider"/> interface.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.CloudTraceEventProviderExtension.Attach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been registered in the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.CloudTraceEventProviderExtension.Detach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been unregistered from the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Diagnostics.IRoleErrorLoggingExtension">
+            <summary>
+            Defines a contract that must be implemented by an extension responsible for capturing and logging error events from all instances of a given role.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RoleErrorLoggingExtension">
+            <summary>
+            Implements the extension responsible for capturing and logging error events from all instances of a given role into a dedicated, role-specific table in the underlying table storage.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RoleErrorLoggingExtension.#ctor">
+            <summary>
+            Initializes a new instance of a <see cref="T:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RoleErrorLoggingExtension"/> object using default settings.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RoleErrorLoggingExtension.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of a <see cref="T:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RoleErrorLoggingExtension"/> object using the specified table name which will be used for error logging.
+            </summary>
+            <param name="tableName">The table name which this component will use for error logging.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RoleErrorLoggingExtension.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of a <see cref="T:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RoleErrorLoggingExtension"/> object using the specified storage account and table name which will be used for error logging.
+            </summary>
+            <param name="accountName">The storage account name in which this component will be accessing to the error log table.</param>
+            <param name="tableName">The table name which this component will use for error logging.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RoleErrorLoggingExtension.Attach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been registered in the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.RoleErrorLoggingExtension.Detach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been unregistered from the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Diagnostics.ITransientErrorLoggingExtension">
+            <summary>
+            Defines a contract that must be implemented by an extension responsible for capturing and logging transient errors from all instances of a given role.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Diagnostics.TransientErrorLoggingExtension">
+            <summary>
+            Implements the extension responsible for capturing and logging transient errors from all instances of a given role into a dedicated, role-specific table in the underlying table storage.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.TransientErrorLoggingExtension.#ctor">
+            <summary>
+            Initializes a new instance of a <see cref="T:Microsoft.Experience.CloudFx.Extensions.Diagnostics.TransientErrorLoggingExtension"/> object using default settings.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.TransientErrorLoggingExtension.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of a <see cref="T:Microsoft.Experience.CloudFx.Extensions.Diagnostics.TransientErrorLoggingExtension"/> object using the specified table name which will be used for error logging.
+            </summary>
+            <param name="tableName">The table name which this component will use for error logging.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.TransientErrorLoggingExtension.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of a <see cref="T:Microsoft.Experience.CloudFx.Extensions.Diagnostics.TransientErrorLoggingExtension"/> object using the specified storage account and table name which will be used for error logging.
+            </summary>
+            <param name="accountName">The storage account name in which this component will be accessing to the error log table.</param>
+            <param name="tableName">The table name which this component will use for error logging.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.TransientErrorLoggingExtension.Attach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been registered in the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Diagnostics.TransientErrorLoggingExtension.Detach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been unregistered from the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Messaging.IServiceEndpointDiscoveryExtension">
+            <summary>
+            Defines a contract that must be implemented by an extension responsible for interfacing with the service endpoint configuration.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.IServiceEndpointDiscoveryExtension.RegisterDiscoveryAction(Microsoft.Experience.CloudFx.Framework.Messaging.DiscoveryCondition,System.Action{System.ServiceModel.Description.ServiceEndpoint})">
+            <summary>
+            Registers an user-defined action that is triggered whenever a service endpoint matches the specified discovery condition.
+            </summary>
+            <param name="condition">The condition that will be used during evaluation.</param>
+            <param name="action">The user-defined action that will be invoked upon satisfying the discovery condition.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.IServiceEndpointDiscoveryExtension.RegisterDiscoveryAction(System.Collections.Generic.IEnumerable{Microsoft.Experience.CloudFx.Framework.Messaging.DiscoveryCondition},System.Action{System.ServiceModel.Description.ServiceEndpoint})">
+            <summary>
+            Registers an user-defined action that is triggered whenever a service endpoint matches all discovery conditions specified.
+            </summary>
+            <param name="conditions">One or more conditions that will be used during evaluation.</param>
+            <param name="action">The user-defined action that will be invoked upon satisfying the discovery condition.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceEndpointDiscoveryExtension">
+            <summary>
+            Implements the extension responsible for interfacing with the service endpoint configuration.
+            This extension enables the user code to observe the events when WCF service configuration is applied.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceEndpointDiscoveryExtension.#ctor">
+            <summary>
+            Initializes a new instance of the extension.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceEndpointDiscoveryExtension.Attach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been registered in the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceEndpointDiscoveryExtension.Detach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been unregistered from the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceEndpointDiscoveryExtension.OnNext(System.ServiceModel.Description.ServiceEndpoint)">
+            <summary>
+            Gets called by the provider to notify the observer about a new service endpoint being configured.
+            </summary>
+            <param name="endpoint">The instance of a WCF service endpoint that is being configured.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceEndpointDiscoveryExtension.OnCompleted">
+            <summary>
+            Gets called by the provider to indicate that it has finished sending notifications to observers.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceEndpointDiscoveryExtension.OnError(System.Exception)">
+            <summary>
+            Gets called by the provider to indicate that data is unavailable, inaccessible, or corrupted, 
+            or that the provider has experienced some other error condition.
+            </summary>
+            <param name="error">The exception that resulted in an error condition.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceEndpointDiscoveryExtension.RegisterDiscoveryAction(Microsoft.Experience.CloudFx.Framework.Messaging.DiscoveryCondition,System.Action{System.ServiceModel.Description.ServiceEndpoint})">
+            <summary>
+            Registers an user-defined action that is triggered whenever a service endpoint matches the specified discovery condition.
+            </summary>
+            <param name="condition">The condition that will be used during evaluation.</param>
+            <param name="action">The user-defined action that will be invoked upon satisfying the discovery condition.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceEndpointDiscoveryExtension.RegisterDiscoveryAction(System.Collections.Generic.IEnumerable{Microsoft.Experience.CloudFx.Framework.Messaging.DiscoveryCondition},System.Action{System.ServiceModel.Description.ServiceEndpoint})">
+            <summary>
+            Registers an user-defined action that is triggered whenever a service endpoint matches all discovery conditions specified.
+            </summary>
+            <param name="conditions">One or more conditions that will be used during evaluation.</param>
+            <param name="action">The user-defined action that will be invoked upon satisfying the discovery condition.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Messaging.IInterRoleCommunicationComponent">
+            <summary>
+            Defines a generic contract for inter-role communication mechanism using publish/subscribe messaging infrastructure.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.IInterRoleCommunicationComponent.Publish(Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEvent)">
+            <summary>
+            Publishes the specified inter-role communication event to one or more subscribers.
+            </summary>
+            <param name="e">The inter-role communication event to be delivered to the subscribers.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Messaging.IInterRoleCommunicationExtension">
+            <summary>
+            Defines a contract supported by a role extension which provides an interface to the inter-role communication service.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Messaging.IInterRoleCommunicationServiceContract">
+            <summary>
+            Defines a contract for inter-role communication using push-based notifications.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.IInterRoleCommunicationServiceContract.Publish(Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEvent)">
+            <summary>
+            Multicasts the specified inter-role communication event to one or more subscribers.
+            </summary>
+            <param name="e">The inter-role communication event to be delivered to the subscribers.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Messaging.IInterRoleCommunicationServiceChannel">
+            <summary>
+            Defines a client channel contract to communicate with the inter-role communication service.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEvent">
+            <summary>
+            Represents a generic event for inter-role communication.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEvent.#ctor(System.Object)">
+            <summary>
+            Creates a new instance of the multicast inter-role communication event with the specified payload.
+            </summary>
+            <param name="payload">The event payload.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEvent.#ctor(System.Object,System.String,System.String,System.String)">
+            <summary>
+            Creates a new instance of the inter-role communication event with the specified payload and deployment ID, role name and role instance ID that identify the recipient.
+            </summary>
+            <param name="payload">The event payload.</param>
+            <param name="deploymentID">The deployment ID identifying a hosted service in which the recipients for the inter-role communication event are deployed.</param>
+            <param name="roleName">The name identifying a role to which inter-role communication event recipient belong.</param>
+            <param name="roleInstanceID">The role instance ID uniquely identifying a particular recipient of the inter-role communication event.</param>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEvent.Payload">
+            <summary>
+            Returns the event payload which is a DataContract-serializable object that carries the event's body.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEvent.From">
+            <summary>
+            Returns the ID of the event sender.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEvent.To">
+            <summary>
+            Gets or sets the ID of the event receiver.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEvent.Properties">
+            <summary>
+            Returns a collection of custom properties associated with the event.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEventObserverBase`1">
+            <summary>
+            Provides a generic subscriber for inter-role communication (IRC) events of the specified type <typeparamref name="T"/>.
+            </summary>
+            <typeparam name="T">The type of the inter-role communication event which this subscriber intends to handle.</typeparam>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEventObserverBase`1.System#IObserver{Microsoft#Experience#CloudFx#Extensions#Messaging#InterRoleCommunicationEvent}#OnNext(Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEvent)">
+            <summary>
+            Receives a notification when a new inter-role communication event occurs.
+            </summary>
+            <param name="e">The instance of the inter-role communication event received from the underlying messaging system.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEventObserverBase`1.System#IObserver{Microsoft#Experience#CloudFx#Extensions#Messaging#InterRoleCommunicationEvent}#OnCompleted">
+            <summary>
+            Gets notified that the IRC messaging component has successfully finished notifying all subscribers.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEventObserverBase`1.System#IObserver{Microsoft#Experience#CloudFx#Extensions#Messaging#InterRoleCommunicationEvent}#OnError(System.Exception)">
+            <summary>
+            Gets notified that the IRC messaging component has experienced an error condition.
+            </summary>
+            <param name="error">The original exception that has resulted in the error condition.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEventObserverBase`1.OnNext(`0)">
+            <summary>
+            Receives a notification when a new inter-role communication event of type <typeparamref name="T"/> occurs.
+            </summary>
+            <param name="e">The instance of the inter-role communication event received from the underlying messaging system.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEventObserverBase`1.OnCompleted">
+            <summary>
+            Gets notified that the IRC component has successfully finished notifying all observers.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEventObserverBase`1.OnError(System.Exception)">
+            <summary>
+            Gets notified that the IRC component has experienced an error condition.
+            </summary>
+            <param name="error">The original exception that has resulted in the error condition.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEventObserver`1">
+            <summary>
+            Implements a generic subscriber for inter-role communication (IRC) events of type <typeparamref name="T"/> with customizable subscribe, completion and fault handling actions.
+            </summary>
+            <typeparam name="T">The type of the inter-role communication event which this subscriber intends to handle.</typeparam>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEventObserver`1.#ctor(System.Action{`0},System.Action,System.Action{System.Exception})">
+            <summary>
+            Initializes a new instance of a <see cref="T:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEventObserver`1"/> object with the specified Subscribe action along with optional Complete action and fault handling action.
+            </summary>
+            <param name="subscribeAction">The Subscribe action which will be invoked for every incoming inter-role communication events of type <typeparamref name="T"/>.</param>
+            <param name="completeAction">The optional Complete action which will be invoked upon successful completion of the Subscribe action.</param>
+            <param name="faultAction">The optional fault handling action which will be invoked upon unsuccessful completion of the Subscribe action.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEventObserver`1.OnNext(`0)">
+            <summary>
+            Receives a notification when a new inter-role communication event of type <typeparamref name="T"/> occurs.
+            </summary>
+            <param name="e">The instance of the inter-role communication event received from the underlying messaging system.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEventObserver`1.OnCompleted">
+            <summary>
+            Gets notified that the IRC messaging component has successfully finished notifying all subscribers.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEventObserver`1.OnError(System.Exception)">
+            <summary>
+            Gets notified that the IRC messaging component has experienced an error condition.
+            </summary>
+            <param name="error">The original exception that has resulted in the error condition.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationExtension">
+            <summary>
+            Implements a component which provides access to the publish/subscribe messaging infrastructure for exchanging messages between participants.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationExtension.#ctor(Microsoft.Experience.CloudFx.Framework.Configuration.ServiceBusEndpointInfo)">
+            <summary>
+            Initializes a new instance of a <see cref="T:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationExtension"/> object with the specified Service Bus topic endpoint and default settings.
+            </summary>
+            <param name="serviceBusEndpoint">The Service Bus topic endpoint using which the IRC component will be providing inter-role communication.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationExtension.#ctor(Microsoft.Experience.CloudFx.Framework.Configuration.ServiceBusEndpointInfo,Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationSettings)">
+            <summary>
+            Initializes a new instance of a <see cref="T:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationExtension"/> object with the specified Service Bus topic endpoint and custom settings.
+            </summary>
+            <param name="serviceBusEndpoint">The Service Bus topic endpoint using which this component will be providing inter-role communication.</param>
+            <param name="settings">The <see cref="T:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationSettings"/> object containing behavioral and runtime settings for the inter-role communication component.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationExtension.Publish(Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEvent)">
+            <summary>
+            Publishes the specified inter-role communication event into publish/subscribe messaging infrastructure.
+            </summary>
+            <param name="e">The inter-role communication event to be published.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationExtension.Subscribe(System.IObserver{Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEvent})">
+            <summary>
+            Registers the specified subscriber to receive inter-role communication events.
+            </summary>
+            <param name="observer">The object that is to receive notifications.</param>
+            <returns>The instance of an object that enables a subscription to be cancelled by the subscriber.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationExtension.Subscribe(System.IObserver{System.Tuple{System.Exception,Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationEvent}})">
+            <summary>
+            Registers the specified subscriber to receive notifications when inter-role communication events fail to have been processed asynchronously.
+            </summary>
+            <param name="observer">The object that is to receive notifications.</param>
+            <returns>The instance of an object that enables a subscription to be cancelled by the subscriber.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationExtension.Attach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been registered in the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationExtension.Detach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been unregistered from the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationExtension.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting managed and unmanaged resources.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationExtension.Dispose(System.Boolean)">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting managed and unmanaged resources.
+            </summary>
+            <param name="disposing">A flag indicating that managed resources must be released.</param>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationExtension.Settings">
+            <summary>
+            Returns runtime settings for the <see cref="T:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationExtension"/> component.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationSettings">
+            <summary>
+            Defines runtime settings for the <see cref="T:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationExtension"/> component.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationSettings.MaximumLockDuration">
+            <summary>
+            Defines the maximum lock duration allowed by messaging service.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationSettings.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationSettings"/> object using default settings.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationSettings.EventWaitTimeout">
+            <summary>
+            Allows specifying a custom time value indicating how long Service Bus messaging API will keep a communication channel open while waiting for a new event.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationSettings.EventTimeToLive">
+            <summary>
+            Allows specifying a custom time-to-live (TTL) value for inter-role communication events. Events older than their TTL will be removed before they can reach the subscribers.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationSettings.EventLockDuration">
+            <summary>
+            Allows specifying a custom duration in which the inter-role communication events that are being processed remain marked as “in-flight” and invisible to other competing consumers (if any).
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationSettings.EnableCarbonCopy">
+            <summary>
+            Enables the publishing role instances to receive their own events as carbon copies.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationSettings.EnableAsyncPublish">
+            <summary>
+            Enables publishing the inter-role communication events in an asynchronous, non-blocking fashion without having to wait until events are put into a topic.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationSettings.EnableAsyncDispatch">
+            <summary>
+            Enables dispatching the inter-role communication events to their subscribers immediately as soon as a new event arrives and without waiting until the previous event is processed.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationSettings.EnableParallelDispatch">
+            <summary>
+            Enables dispatching the inter-role communication events to multiple subscribers in parallel without serializing execution of subscribers.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationSettings.UseCompetingConsumers">
+            <summary>
+            Enables multiple role instances to receive the inter-role communication events from the same subscription with the guarantee that each event is consumed only by one of the role instances.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationSettings.RetryPolicy">
+            <summary>
+            Returns a retry policy that will be used for ensuring reliable access to the underlying messaging infrastructure.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationSettings.Default">
+            <summary>
+            Returns default runtime settings for the <see cref="T:Microsoft.Experience.CloudFx.Extensions.Messaging.InterRoleCommunicationExtension"/> component.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceBusHostWorkerRoleExtension">
+            <summary>
+            Implements the extension responsible for supporting declarative bindings between Windows Azure Service Bus hosts and worker roles.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Messaging.IServiceHostResolverExtension">
+            <summary>
+            Defines a contract that must be implemented by an extension responsible for resolving the service hosts based off supplied conditions.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.IServiceHostResolverExtension.Resolve(Microsoft.Experience.CloudFx.Framework.Messaging.ServiceHostWorkerRoleAttribute)">
+            <summary>
+            Resolves a service host using the specified metadata supplied by the <see cref="T:Microsoft.Experience.CloudFx.Framework.Messaging.ServiceHostWorkerRoleAttribute"/> object.
+            </summary>
+            <param name="metadata">The instance of the <see cref="T:Microsoft.Experience.CloudFx.Framework.Messaging.ServiceHostWorkerRoleAttribute"/> object supplying the metadata for resolution.</param>
+            <returns>An instance of the <see cref="T:System.ServiceModel.ServiceHost"/> object resolved based off the supplied metadata, or a null reference if resolution was unsuccessful.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceBusHostWorkerRoleExtension.Resolve(Microsoft.Experience.CloudFx.Framework.Messaging.ServiceHostWorkerRoleAttribute)">
+            <summary>
+            Resolves a service host using the specified metadata supplied by the <see cref="T:Microsoft.Experience.CloudFx.Framework.Messaging.ServiceHostWorkerRoleAttribute"/> object.
+            </summary>
+            <param name="metadata">The instance of the <see cref="T:Microsoft.Experience.CloudFx.Framework.Messaging.ServiceHostWorkerRoleAttribute"/> object supplying the metadata for resolution.</param>
+            <returns>An instance of the <see cref="T:System.ServiceModel.ServiceHost"/> object resolved based off the supplied metadata, or a null reference if resolution was unsuccessful.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceBusHostWorkerRoleExtension.Attach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been registered in the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceBusHostWorkerRoleExtension.Detach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been unregistered from the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceBusPublishSubscribeExtension">
+            <summary>
+            Implements an extension which provides access to the publish/subscribe infrastructure provided by Windows Azure Service Bus brokered messaging.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceBusPublishSubscribeExtension.#ctor">
+            <summary>
+            Initializes a new instance of a <see cref="T:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceBusPublishSubscribeExtension"/> object using the default settings.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceBusPublishSubscribeExtension.#ctor(Microsoft.Experience.CloudFx.Framework.Configuration.ServiceBusPublishSubscribeChannelSettings)">
+            <summary>
+            Initializes a new instance of a <see cref="T:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceBusPublishSubscribeExtension"/> object using the default settings.
+            </summary>
+            <param name="settings">The optional <see cref="T:Microsoft.Experience.CloudFx.Framework.Configuration.ServiceBusPublishSubscribeChannelSettings"/> object containing behavioral and runtime settings for the messaging component.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceBusPublishSubscribeExtension.#ctor(Microsoft.Experience.CloudFx.Framework.Configuration.ServiceBusEndpointInfo,Microsoft.Experience.CloudFx.Framework.Configuration.ServiceBusPublishSubscribeChannelSettings)">
+            <summary>
+            Initializes a new instance of a <see cref="T:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceBusPublishSubscribeExtension"/> object using the specified Service Bus topic endpoint and settings.
+            </summary>
+            <param name="endpoint">The Service Bus endpoint using which this extension component will leverage to provide publish-subscribe capability.</param>
+            <param name="settings">The optional <see cref="T:Microsoft.Experience.CloudFx.Framework.Configuration.ServiceBusPublishSubscribeChannelSettings"/> object containing behavioral and runtime settings for the messaging component.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceBusPublishSubscribeExtension.#ctor(System.Collections.Generic.IEnumerable{Microsoft.Experience.CloudFx.Framework.Configuration.ServiceBusEndpointInfo},Microsoft.Experience.CloudFx.Framework.Configuration.ServiceBusPublishSubscribeChannelSettings)">
+            <summary>
+            Initializes a new instance of a <see cref="T:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceBusPublishSubscribeExtension"/> object using the specified collection of Service Bus topic endpoints and defaults settings.
+            </summary>
+            <param name="endpoints">The collection of Service Bus endpoints using which the extension component will leverage to provide publish-subscribe capability.</param>
+            <param name="settings">The optional <see cref="T:Microsoft.Experience.CloudFx.Framework.Configuration.ServiceBusPublishSubscribeChannelSettings"/> object containing behavioral and runtime settings for the messaging component.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceBusPublishSubscribeExtension.Attach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been registered in the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceBusPublishSubscribeExtension.Detach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been unregistered from the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceBusPublishSubscribeExtension.Publish``1(System.IObservable{``0})">
+            <summary>
+            Publishes one or more messages returned by the specified provider into the underlying publish-subscribe messaging infrastructure.
+            </summary>
+            <typeparam name="T">The type of the message to be published.</typeparam>
+            <param name="provider">The provider supplying messages for publication.</param>
+            <returns>The object which enables the consumer to track the progress of the publishing operation, and be notified when an error occurs or when the operation finishes.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceBusPublishSubscribeExtension.Subscribe``1(System.String,System.String,System.Boolean)">
+            <summary>
+            Creates a subscription to receive messages of the specified type <typeparamref name="T"/> that match the optionally specified filter.
+            </summary>
+            <typeparam name="T">The type of messages that the observers will be able to subscribed to.</typeparam>
+            <param name="name">The name of the subscription.</param>
+            <param name="filter">The filter expression defined in the specific syntax that can be understood by the underlying publish-subscribe messaging infrastructure.</param>
+            <param name="persistent">The flag indicating whether or not the created subscription will be retained in the underlying publish-subscribe messaging infrastructure even it does not have active subscribers.</param>
+            <returns>The observable sequence that can be used by subscribers to express an intent in receiving messages of the given type <typeparamref name="T"/>.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceBusPublishSubscribeExtension.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting managed and unmanaged resources.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceBusPublishSubscribeExtension.Dispose(System.Boolean)">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting managed and unmanaged resources.
+            </summary>
+            <param name="disposing">A flag indicating that managed resources must be released.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceHostAndMetadata`1">
+            <summary>
+            A container class for a ServiceHost along with its metadata.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceHostAndMetadata`1.#ctor(System.ServiceModel.ServiceHost,`0)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceHostAndMetadata`1"/> class.
+            </summary>
+            <param name="serviceHost">The service host.</param>
+            <param name="metadata">The service host metadata.</param>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceHostAndMetadata`1.ServiceHost">
+            <summary>
+            Gets the service host.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceHostAndMetadata`1.Metadata">
+            <summary>
+            Gets the service host metadata.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Messaging.IServiceHostExternalConfiguratorExtension">
+            <summary>
+            Defines a contract that must be supported by an extension responsible for notifying other extensions about new service host(s) created.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceHostExternalConfiguratorExtension">
+            <summary>
+            A mediator class notifying its clients of a new service host that was created (allowing them to perform any additional configuration, such as adding new behaviors).
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceHostExternalConfiguratorExtension.Subscribe(System.IObserver{Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceHostAndMetadata{Microsoft.Experience.CloudFx.Framework.Messaging.ServiceHostWorkerRoleAttribute}})">
+            <summary>
+            Subscribes to notifications regarding new service host that was created.
+            </summary>
+            <param name="observer">The object that will be receiving notifications.</param>
+            <returns>A disposable subscription object that allows the subscriber to indicate whenever it wants to stop receiving notifications.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceHostExternalConfiguratorExtension.OnCompleted">
+            <summary>
+            Gets notified that the observer will not be receiving any further events.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceHostExternalConfiguratorExtension.OnError(System.Exception)">
+            <summary>
+            Gets notified whenever the observer has experienced an error condition.
+            </summary>
+            <param name="error">The original exception that has resulted in the error condition.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceHostExternalConfiguratorExtension.OnNext(Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceHostAndMetadata{Microsoft.Experience.CloudFx.Framework.Messaging.ServiceHostWorkerRoleAttribute})">
+            <summary>
+            Receives a notification when a new service host was created, and notify its clients about it.
+            </summary>
+            <param name="newHost">The reference to the newly created host.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceHostExternalConfiguratorExtension.Attach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been registered in the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceHostExternalConfiguratorExtension.Detach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been unregistered from the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Messaging.IServiceHostWorkerRoleExtension">
+            <summary>
+            Defines a contract that must be implemented by an extension responsible for supporting declarative bindings between WCF service hosts and worker roles.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.IServiceHostWorkerRoleExtension.StartAll(System.Boolean)">
+            <summary>
+            Starts the service hosts that are declaratively attached to the hosting worker role and the AutoStart attribute of which matches the specified value.
+            </summary>
+            <param name="autoStartOnly">The optional flag indicating whether to start only those service hosts that are marked with the AutoStart attribute.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.IServiceHostWorkerRoleExtension.StopAll">
+            <summary>
+            Stops the service hosts that are declaratively attached to the hosting worker role.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceHostWorkerRoleExtension">
+            <summary>
+            Implements the extension responsible for supporting declarative bindings between WCF service hosts and worker roles.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceHostWorkerRoleExtension.StartAll(System.Boolean)">
+            <summary>
+            Starts the service hosts that are declaratively attached to the hosting worker role and the AutoStart attribute of which matches the specified value.
+            </summary>
+            <param name="autoStartOnly">A flag indicating whether to start only those service hosts that are marked with the AutoStart attribute.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceHostWorkerRoleExtension.StopAll">
+            <summary>
+            Stops the service hosts that are declaratively attached to the hosting worker role.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceHostWorkerRoleExtension.Attach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been registered in the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.ServiceHostWorkerRoleExtension.Detach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been unregistered from the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Messaging.WebServiceHostWorkerRoleExtension">
+            <summary>
+            Implements the extension responsible for supporting declarative bindings between WCF REST service hosts and worker roles.
+            When using this extension for SSL endpoint a configuration value must be applied to cscfg file with the following format:
+            key="WebServiceHostWorkerRole.Certificate.[EndpointName]" value="StoreLocation=[storeLocation];StoreName=[storeName];Thumbprint=[thumbprint]"
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.WebServiceHostWorkerRoleExtension.Resolve(Microsoft.Experience.CloudFx.Framework.Messaging.ServiceHostWorkerRoleAttribute)">
+            <summary>
+            Resolves a service host using the specified metadata supplied by the <see cref="T:Microsoft.Experience.CloudFx.Framework.Messaging.ServiceHostWorkerRoleAttribute"/> object.
+            </summary>
+            <param name="metadata">The instance of the <see cref="T:Microsoft.Experience.CloudFx.Framework.Messaging.ServiceHostWorkerRoleAttribute"/> object supplying the metadata for resolution.</param>
+            <returns>An instance of the <see cref="T:System.ServiceModel.ServiceHost"/> object resolved based off the supplied metadata, or a null reference if resolution was unsuccessful.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.WebServiceHostWorkerRoleExtension.Attach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been registered in the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.WebServiceHostWorkerRoleExtension.Detach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been unregistered from the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Messaging.WebServiceHostWorkerRoleExtension.EndpointCertificateConfigurationParser">
+            <summary>
+            Parses certificate configuration string.
+            Expected format: "StoreLocation=LocalMachine;StoreName=My;Thumbprint=E59EE81CD9B6129FF37EB2A0EC88391E2F2E2C2C"
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Messaging.WebServiceHostWorkerRoleExtension.EndpointCertificateConfigurationParser.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Experience.CloudFx.Extensions.Messaging.WebServiceHostWorkerRoleExtension.EndpointCertificateConfigurationParser"/> class.
+            </summary>
+            <param name="configurationNodeName">Name of the configuration node.</param>
+            <param name="configurationSettingValue">The configuration setting value.</param>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Messaging.WebServiceHostWorkerRoleExtension.EndpointCertificateConfigurationParser.StoreLocation">
+            <summary>
+            Gets the certificates store location.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Messaging.WebServiceHostWorkerRoleExtension.EndpointCertificateConfigurationParser.StoreName">
+            <summary>
+            Gets the name of the certificates store.
+            </summary>
+            <value>
+            The name of the certificates store.
+            </value>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Messaging.WebServiceHostWorkerRoleExtension.EndpointCertificateConfigurationParser.Thumbprint">
+            <summary>
+            Gets the thumbprint.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Properties.ExceptionMessages">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.ExceptionMessages.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.ExceptionMessages.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.ExceptionMessages.AppDomainUnhandledException">
+            <summary>
+              Looks up a localized string similar to An unhandled exception has been detected in the current application domain {0}. See below for details..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.ExceptionMessages.AppDomainUnhandledExceptionNoDetails">
+            <summary>
+              Looks up a localized string similar to An unhandled exception has been detected in the current application domain {0}. There was no exception object available for detailed information..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.ExceptionMessages.CloudQueueNotDiscoverable">
+            <summary>
+              Looks up a localized string similar to One of the location properties of the {0} queue indicate that the queue cannot be discovered. None of the registered queue location resolvers were able to determine the location of this queue..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.ExceptionMessages.CloudRoleExtensionNotAttached">
+            <summary>
+              Looks up a localized string similar to The extension component {0} has not been correctly enlisted into the collection of managed extensions. Please ensure that this extension is added into the extension collection managed by the extensible host component such as a web/worker role..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.ExceptionMessages.ConfigSectionNotFoundInConfigSource">
+            <summary>
+              Looks up a localized string similar to The application&apos;s current configuration source doesn&apos;t contain a section {0}. This section is compulsory for the application in order to function properly. Please add this section into the configuration source..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.ExceptionMessages.ServiceBusEndpointCollectionIsEmpty">
+            <summary>
+              Looks up a localized string similar to The specified collection of Service Bus endpoint definitions doesn&apos;t not contain any items. The collection must not be empty..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.ExceptionMessages.SpecifiedRoleInstanceEndpointNotFound">
+            <summary>
+              Looks up a localized string similar to The definition for a role endpoint {0} has not been found in the role configuration. Please ensure that the endpoint with the above name defined correctly for role {1}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.ExceptionMessages.SpecifiedServiceBusEndpointNotFound">
+            <summary>
+              Looks up a localized string similar to The definition for a Windows Azure Service Bus endpoint {0} has not been found in the {1} section in the configuration file or source. Please ensure that the definition with the above name exists..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.ExceptionMessages.StorageAccountCollectionIsEmpty">
+            <summary>
+              Looks up a localized string similar to The specified collection of storage account definitions doesn&apos;t not contain any items. The collection must not be empty..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.ExceptionMessages.StorageAccountNotFoundInConfigSource">
+            <summary>
+              Looks up a localized string similar to The application&apos;s current configuration source doesn&apos;t contain a definition for storage account {0}. This storage account is compulsory for the application in order to function properly. Please add the storage account definition into the configuration source..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.ExceptionMessages.SubscribersNotFound">
+            <summary>
+              Looks up a localized string similar to The message from the {0} queue in storage account {1} could not be processed because no subscribers were found to handle it..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.ExceptionMessages.SubscriptionCannotBeCreatedOrFound">
+            <summary>
+              Looks up a localized string similar to The specified subscription name {0} cannot be found or cannot be created. Please check if the name is valid. The maximum supported length of the subscription name is 290 characters. The name should only contain alphanumeric characters..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.ExceptionMessages.UnsupportedRoleInstanceEndpointProtocol">
+            <summary>
+              Looks up a localized string similar to The specified endpoint {0} is defined with the protocol &quot;{1}&quot; that is not as yet supported by the {2} component..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.ExceptionMessages.WrongConfigurationFormat">
+            <summary>
+              Looks up a localized string similar to Unable to parse the content of the configuration setting&apos;s value &quot;{0}&quot;. The value appears to be in the wrong format. Please refer to the documentation for details..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.ExceptionMessages.WrongConfigurationParameterValue">
+            <summary>
+              Looks up a localized string similar to Wrong parameter value &quot;{0}&quot; at configuration: &quot;{1}&quot;. Please refer to the documentation for details..
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.Resources.BlobSourceConnectionStringSettingName">
+            <summary>
+              Looks up a localized string similar to CloudFx.Configuration.BlobSource.ConnectionString.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.Resources.BlobSourceDefaultContainerName">
+            <summary>
+              Looks up a localized string similar to cloudfx-config-container.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.Resources.CloudQueueListenerTerminatedWithNoMoreWork">
+            <summary>
+              Looks up a localized string similar to The queue listener is terminating as no more work items are available on the {0} queue in storage account {1} or queue listener has been requested to stop..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.Resources.DiagnosticsConnectionStringSettingName">
+            <summary>
+              Looks up a localized string similar to DiagnosticsConnectionString.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.Resources.LoadBalancedContainerNamePrefix">
+            <summary>
+              Looks up a localized string similar to slb-.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.Resources.ScopeCloseServiceHosts">
+            <summary>
+              Looks up a localized string similar to Closing Service Hosts.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.Resources.ScopeCloudQueueListenerExtensionStopDequeueTask">
+            <summary>
+              Looks up a localized string similar to CloudQueueListenerExtension -&gt; Detach -&gt; Stop Dequeue Task (ID: {0}, Status: {1}).
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.Resources.ScopeCreateServiceHosts">
+            <summary>
+              Looks up a localized string similar to Configuring Service Hosts.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.Resources.ScopeOpenServiceHosts">
+            <summary>
+              Looks up a localized string similar to Opening All Service Hosts.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.Resources.TraceLogMsgAboutToCreateServiceHost">
+            <summary>
+              Looks up a localized string similar to Creating a service host for {0} exposed via {1} endpoint on Service Bus namespace {2}, path {3}, relay mode {4}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.Resources.TraceLogMsgCouldNotSendTraceEvent">
+            <summary>
+              Looks up a localized string similar to An error has occurred while sending trace events to the remote logging service. The exception details are as follows: {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.Resources.TraceLogMsgCouldNotWriteTraceEvent">
+            <summary>
+              Looks up a localized string similar to An error has occurred while persisting a trace event record into the underlying table storage. The exception details are as follows: {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Properties.Resources.TraceLogMsgTransientConditionDetected">
+            <summary>
+              Looks up a localized string similar to A transient condition of type {0} was detected, and an attempt will be made to retry the failed operation. Retry attempt #: {1}. Details: {2}.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudQueueServiceWorkerRoleExtension">
+            <summary>
+            Defines a contract that must be implemented by an extension responsible for listening on a Windows Azure queue.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudQueueServiceWorkerRoleExtension.StartListener(System.Int32)">
+            <summary>
+            Starts a multi-threaded queue listener that uses the specified number of dequeue threads.
+            </summary>
+            <param name="threadCount">The number of dequeue threads.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudQueueServiceWorkerRoleExtension.Stop">
+            <summary>
+            Terminates all dequeue threads gracefully.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudQueueServiceWorkerRoleExtension.QueryState">
+            <summary>
+            Returns the current state of the queue listener to determine point-in-time load characteristics.
+            </summary>
+            <returns>An instance of the data object containing the point-in-time load characteristics.</returns>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudQueueServiceWorkerRoleExtension.DequeueBatchSize">
+            <summary>
+            Gets or sets the batch size when performing dequeue operation against a Windows Azure queue.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudQueueServiceWorkerRoleExtension.DequeueInterval">
+            <summary>
+            Gets or sets the time interval that defines how long the queue listener will be idle for between polling a Windows Azure queue.
+            </summary>
+        </member>
+        <member name="E:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudQueueServiceWorkerRoleExtension.QueueEmpty">
+            <summary>
+            Defines a callback delegate which will be invoked whenever the queue is empty.
+            </summary>
+        </member>
+        <member name="E:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudQueueServiceWorkerRoleExtension.QueueWorkDetected">
+            <summary>
+            Defines a callback delegate which will be invoked whenever a new work has arrived to a queue while the queue listener was idle.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudQueueListenerExtension`1">
+            <summary>
+            Defines a contract that must be supported by an extension that implements a generics-aware queue listener.
+            </summary>
+            <typeparam name="T">The type of queue item data that will be handled by the queue listener.</typeparam>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudQueueListenerExtension`1.QueueDescription">
+            <summary>
+            Returns the metadata object describing location of the queue in the Windows Azure storage infrastructure.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerInfo">
+            <summary>
+            Implements a structure containing point-in-time load characteristics for a given queue listener.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerInfo.CurrentQueueDepth">
+            <summary>
+            Returns the approximate number of items in the Windows Azure queue.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerInfo.ActiveDequeueTasks">
+            <summary>
+            Returns the number of dequeue tasks that are actively performing work or waiting for work.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerInfo.TotalDequeueTasks">
+            <summary>
+            Returns the maximum number of dequeue tasks that were active at a time.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Storage.WorkCompletedDelegate">
+            <summary>
+            Defines a callback delegate which will be invoked whenever an unit of work has been completed and the worker is requesting further
+            instructions as to next steps.
+            </summary>
+            <param name="sender">The source of the event.</param>
+            <param name="idleCount">The value indicating how many times the worker has been idle.</param>
+            <param name="delay">The time interval during which the worker will be instructed to sleep before performing next unit of work.</param>
+            <returns>A boolean flag indicating that the worker should stop processing any further units of work and must terminate.</returns>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Storage.WorkDetectedDelegate">
+            <summary>
+            Defines a callback delegate which will be invoked whenever a new work has arrived to a queue while the queue listener was idle.
+            This delegate helps track state transitions from an empty to a non-empty queue for the purposes of triggering relevant actions such as auto-scaling.
+            </summary>
+            <param name="sender">The source of the event.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerExtension`1">
+            <summary>
+            Implements a generics-aware listener for a Windows Azure queue.
+            </summary>
+            <typeparam name="T">The type of queue item data that will be handled by the queue listener.</typeparam>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerExtension`1.#ctor(Microsoft.Experience.CloudFx.Framework.Storage.CloudQueueDescription,Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Initializes a new instance of a queue listener that will be listening to messages arriving to the specified queue.
+            Automatically attaches the new instance to the specified optional extensible component.
+            </summary>
+            <param name="queueDescription">The <see cref="T:Microsoft.Experience.CloudFx.Framework.Storage.CloudQueueDescription"/> object holding the location of a queue in the Windows Azure storage infrastructure.</param>
+            <param name="owner">The optional extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerExtension`1.Attach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been registered in the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerExtension`1.Detach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been unregistered from the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerExtension`1.Subscribe(System.IObserver{`0})">
+            <summary>
+            Notifies the provider that an observer is ready to receive notifications.
+            </summary>
+            <param name="subscriber">The object that is to receive notifications.</param>
+            <returns>The observer's interface that enables resources to be disposed.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerExtension`1.OnNext(Microsoft.Experience.CloudFx.Framework.Storage.CloudQueueWorkDetectedEvent)">
+            <summary>
+            Gets called by the provider to notify this queue listener about a new trigger event.
+            </summary>
+            <param name="e">The trigger event indicating that a new payload was put in a queue.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerExtension`1.OnCompleted">
+            <summary>
+            Gets called by the provider to indicate that it has finished sending notifications to observers.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerExtension`1.OnError(System.Exception)">
+            <summary>
+            Gets called by the provider to indicate that data is unavailable, inaccessible, or corrupted, 
+            or that the provider has experienced some other error condition.
+            </summary>
+            <param name="error">The exception that resulted in an error condition.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerExtension`1.StartListener(System.Int32)">
+            <summary>
+            Starts a queue listener that uses the specified number of dequeue threads.
+            </summary>
+            <param name="threadCount">The optional number of dequeue threads.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerExtension`1.QueryState">
+            <summary>
+            Returns the current state of the queue listener to determine point-in-time load characteristics.
+            </summary>
+            <returns>An instance of the data object containing the point-in-time load characteristics.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerExtension`1.Stop">
+            <summary>
+            Terminates all dequeue threads gracefully.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerExtension`1.DequeueTaskMain(System.Object)">
+            <summary>
+            Implements a task performing dequeue operations against a given Windows Azure queue.
+            </summary>
+            <param name="state">An object containing data to be used by the task.</param>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerExtension`1.DequeueBatchSize">
+            <summary>
+            Gets or sets the batch size when performing dequeue operation against a Windows Azure queue.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerExtension`1.DequeueInterval">
+            <summary>
+            Gets or sets the time interval that defines how long the queue listener will be idle for between polling a Windows Azure queue.
+            </summary>
+        </member>
+        <member name="E:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerExtension`1.QueueEmpty">
+            <summary>
+            An instance of a callback delegate which will be invoked whenever the queue is empty upon completing the dequeue operation.
+            </summary>
+        </member>
+        <member name="E:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerExtension`1.QueueWorkDetected">
+            <summary>
+            An instance of a callback delegate which will be invoked whenever a new work has arrived to a queue while the queue listener was idle.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerExtension`1.QueueDescription">
+            <summary>
+            Returns the metadata object describing location of the queue in the Windows Azure storage infrastructure.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerExtension`1.CloudQueueListenerDequeueTaskState`1.OnCompleted">
+            <summary>
+            Gets called by the provider to indicate that it has finished sending notifications to observers.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueListenerExtension`1.CloudQueueListenerDequeueTaskState`1.OnError(System.Exception)">
+            <summary>
+            Gets called by the provider to indicate that data is unavailable, inaccessible, or corrupted, 
+            or that the provider has experienced some other error condition.
+            </summary>
+            <param name="error">The exception that resulted in an error condition.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudQueueLocationResolverExtension">
+            <summary>
+            Defines a contract that must be implemented by an extension responsible for dynamically resolving the location of a given queue at runtime.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudQueueLocationResolverExtension.GetQueueLocation(System.String)">
+            <summary>
+            Resolves the exact location of a given queue by its name.
+            </summary>
+            <param name="queueName">The name of the Windows Azure queue.</param>
+            <returns>The location of the queue in the Windows Azure storage infrastructure.</returns>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueLocationResolverExtension">
+            <summary>
+            Implements the extension responsible for for dynamically resolving the location of a given queue at runtime.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueLocationResolverExtension.GetQueueLocation(System.String)">
+            <summary>
+            Resolves the exact location of a given queue by its name.
+            </summary>
+            <param name="queueName">The name of the Windows Azure queue.</param>
+            <returns>The location of the queue in the Windows Azure storage infrastructure.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueLocationResolverExtension.Attach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been registered in the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudQueueLocationResolverExtension.Detach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been unregistered from the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudStorageLoadBalancingExtension">
+            <summary>
+            Defines a contract that must be implemented by an extension responsible for facilitating storage operations across multiple storage accounts, queues and containers.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudStorageLoadBalancingExtension.FindQueueLocation">
+            <summary>
+            Suggests the best location for a queue taking into account the load balancing criteria.
+            </summary>
+            <returns>The location of a queue in the Azure storage infrastructure.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudStorageLoadBalancingExtension.FindBlobLocation">
+            <summary>
+            Suggests the best location for a blob taking into account the load balancing criteria.
+            </summary>
+            <returns>The location of a blob in the Azure storage infrastructure.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudStorageLoadBalancingExtension.GetQueueStorage">
+            <summary>
+            Returns the implementation of the <see cref="T:Microsoft.Experience.CloudFx.Framework.Storage.ICloudQueueStorage"/> that corresponds to the Azure storage selected on the basis of a load balancing criteria.
+            </summary>
+            <returns>The object that provides access to the Windows Azure queue storage.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudStorageLoadBalancingExtension.GetQueueStorage(Microsoft.Experience.CloudFx.Framework.Storage.CloudQueueDescription)">
+            <summary>
+            Returns the implementation of the <see cref="T:Microsoft.Experience.CloudFx.Framework.Storage.ICloudQueueStorage"/> that corresponds to the Azure storage as defined in the specified location object.
+            </summary>
+            <param name="queueDescription">The specified location of a queue in the Azure storage infrastructure.</param>
+            <returns>The object that provides access to the Windows Azure queue storage.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudStorageLoadBalancingExtension.GetBlobStorage">
+            <summary>
+            Returns the implementation of the <see cref="T:Microsoft.Experience.CloudFx.Framework.Storage.ICloudBlobStorage"/> that corresponds to the Azure storage selected on the basis of a load balancing criteria.
+            </summary>
+            <returns>The object that provides access to the Windows Azure blob storage.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudStorageLoadBalancingExtension.GetBlobStorage(Microsoft.Experience.CloudFx.Framework.Storage.CloudBlobLocation)">
+            <summary>
+            Returns the implementation of the <see cref="T:Microsoft.Experience.CloudFx.Framework.Storage.ICloudBlobStorage"/> that corresponds to the Azure storage as defined in the specified location object.
+            </summary>
+            <param name="location">The specified location of a blob in the Azure storage infrastructure.</param>
+            <returns>The object that provides access to the Windows Azure blob storage.</returns>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageLoadBalancingExtension">
+            <summary>
+            Implements the extension responsible for facilitating storage operations across multiple storage accounts, queues and containers.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageLoadBalancingExtension.#ctor(System.Collections.Generic.IEnumerable{Microsoft.Experience.CloudFx.Framework.Configuration.StorageAccountInfo})">
+            <summary>
+            Initializes a new instance of the extension using a collection of storage accounts enabled for load-balancing operations.
+            </summary>
+            <param name="storageAccounts">The list of storage accounts enabled for load-balancing operations.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageLoadBalancingExtension.FindQueueLocation">
+            <summary>
+            Suggests the best location for a queue taking into account the load balancing criteria.
+            </summary>
+            <returns>The location of a queue in the Azure storage infrastructure.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageLoadBalancingExtension.FindBlobLocation">
+            <summary>
+            Suggests the best location for a blob taking into account the load balancing criteria.
+            </summary>
+            <returns>The location of a blob in the Azure storage infrastructure.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageLoadBalancingExtension.GetQueueStorage(Microsoft.Experience.CloudFx.Framework.Storage.CloudQueueDescription)">
+            <summary>
+            Returns the implementation of the <see cref="T:Microsoft.Experience.CloudFx.Framework.Storage.ICloudQueueStorage"/> that corresponds to the Azure storage as defined in the specified location object.
+            </summary>
+            <param name="queueDescription">The specified location of a queue in the Azure storage infrastructure.</param>
+            <returns>The object that provides access to the Windows Azure queue storage.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageLoadBalancingExtension.GetQueueStorage">
+            <summary>
+            Returns the implementation of the <see cref="T:Microsoft.Experience.CloudFx.Framework.Storage.ICloudQueueStorage"/> that corresponds to the Azure storage selected on the basis of a load balancing criteria.
+            </summary>
+            <returns>The object that provides access to the Windows Azure queue storage.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageLoadBalancingExtension.GetBlobStorage(Microsoft.Experience.CloudFx.Framework.Storage.CloudBlobLocation)">
+            <summary>
+            Returns the implementation of the <see cref="T:Microsoft.Experience.CloudFx.Framework.Storage.ICloudBlobStorage"/> that corresponds to the Azure storage as defined in the specified location object.
+            </summary>
+            <param name="location">The specified location of a blob in the Azure storage infrastructure.</param>
+            <returns>The object that provides access to the Windows Azure blob storage.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageLoadBalancingExtension.GetBlobStorage">
+            <summary>
+            Returns the implementation of the <see cref="T:Microsoft.Experience.CloudFx.Framework.Storage.ICloudBlobStorage"/> that corresponds to the Azure storage selected on the basis of a load balancing criteria.
+            </summary>
+            <returns>The object that provides access to the Azure blob storage.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageLoadBalancingExtension.Attach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been registered in the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageLoadBalancingExtension.Detach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been unregistered from the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageLoadBalancingExtension.ContainerNamePrefix">
+            <summary>
+            Gets or sets a prefix that identifies the blob container names used by this extension for load-balancing operations.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudStorageProviderExtension">
+            <summary>
+            Defines a contract that must be supported by an extension acting as a factory for specific Windows Azure storage service implementations.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudStorageProviderExtension.GetBlobStorage(System.String)">
+            <summary>
+            Returns the Windows Azure blob storage from the specified storage account.
+            </summary>
+            <param name="accountName">The storage account name.</param>
+            <returns>An instance of the object supporting storage operations against Windows Azure blobs.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudStorageProviderExtension.GetQueueStorage(System.String)">
+            <summary>
+            Returns the Windows Azure queue storage from the specified storage account.
+            </summary>
+            <param name="accountName">The storage account name.</param>
+            <returns>An instance of the object supporting storage operations against Windows Azure queues.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudStorageProviderExtension.GetTableStorage(System.String)">
+            <summary>
+            Returns the Windows Azure table storage from the specified storage account.
+            </summary>
+            <param name="accountName">The storage account name.</param>
+            <returns>An instance of the object supporting storage operations against Windows Azure tables.</returns>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudStorageProviderExtension.DefaultBlobStorage">
+            <summary>
+            Returns the Windows Azure blob storage specified in the application configuration as default.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudStorageProviderExtension.DefaultQueueStorage">
+            <summary>
+            Returns the Windows Azure queue storage specified in the application configuration as default.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Storage.ICloudStorageProviderExtension.DefaultTableStorage">
+            <summary>
+            Returns the Windows Azure queue storage specified in the application configuration as default.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension">
+            <summary>
+            Implements a factory extension responsible for creating instances of the Windows Azure storage service abstractions. The instances created by this extension get enrolled 
+            into receiving notifications when the underlying storage account configuration changes. This enables the storage service abstraction components factored by this extension
+            to automatically participate in storage key rotation.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension"/> using the default extension that provides access to the application configuration.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension.#ctor(Microsoft.Experience.CloudFx.Extensions.Configuration.IConfigurationProviderExtension)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension"/> using the specified extension that provides access to the application configuration.
+            </summary>
+            <param name="configProvider">The instance of the <see cref="T:Microsoft.Experience.CloudFx.Extensions.Configuration.IConfigurationProviderExtension"/> extension providing access to the application configuration.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension.#ctor(Microsoft.Experience.CloudFx.Framework.Configuration.StorageAccountConfigurationSection)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension"/> using the specified storage account configuration. Supplying your own configuration object
+            will override the default behavior by which the <see cref="T:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension"/> objects get notified about configuration changes. If this particular constructor is
+            used, any changes in the application configuration will not be picked up by <see cref="T:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension"/>.
+            </summary>
+            <param name="storageConfig">The configuration section supplying the storage account configuration.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension.Attach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been registered in the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension.Detach(Microsoft.Experience.CloudFx.Framework.Extensibility.IExtensibleComponent)">
+            <summary>
+            Notifies this extension component that it has been unregistered from the owner's collection of extensions.
+            </summary>
+            <param name="owner">The extensible owner object that aggregates this extension.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension.GetBlobStorage(System.String)">
+            <summary>
+            Returns the Windows Azure blob storage from the specified storage account.
+            </summary>
+            <param name="accountName">The storage account name.</param>
+            <returns>An instance of the object supporting storage operations against Windows Azure blobs.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension.GetQueueStorage(System.String)">
+            <summary>
+            Returns the Windows Azure queue storage from the specified storage account.
+            </summary>
+            <param name="accountName">The storage account name.</param>
+            <returns>An instance of the object supporting storage operations against Windows Azure queues.</returns>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension.GetTableStorage(System.String)">
+            <summary>
+            Returns the Windows Azure table storage from the specified storage account.
+            </summary>
+            <param name="accountName">The storage account name.</param>
+            <returns>An instance of the object supporting storage operations against Windows Azure tables.</returns>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension.DefaultBlobStorage">
+            <summary>
+            Returns the Windows Azure blob storage specified in the application configuration as default.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension.DefaultQueueStorage">
+            <summary>
+            Returns the Windows Azure queue storage specified in the application configuration as default.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension.DefaultTableStorage">
+            <summary>
+            Returns the Windows Azure queue storage specified in the application configuration as default.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension.ReliableCloudBlobStorageProxy.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting managed and unmanaged resources.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension.ReliableCloudBlobStorageProxy.Dispose(System.Boolean)">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting managed and unmanaged resources.
+            </summary>
+            <param name="disposing">A flag indicating that managed resources must be released.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension.ReliableCloudQueueStorageProxy.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting managed and unmanaged resources.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension.ReliableCloudQueueStorageProxy.Dispose(System.Boolean)">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting managed and unmanaged resources.
+            </summary>
+            <param name="disposing">A flag indicating that managed resources must be released.</param>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension.ReliableCloudTableStorageProxy.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting managed and unmanaged resources.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Experience.CloudFx.Extensions.Storage.CloudStorageProviderExtension.ReliableCloudTableStorageProxy.Dispose(System.Boolean)">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting managed and unmanaged resources.
+            </summary>
+            <param name="disposing">A flag indicating that managed resources must be released.</param>
+        </member>
+    </members>
+</doc>

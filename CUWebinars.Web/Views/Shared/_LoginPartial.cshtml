@@ -1,0 +1,15 @@
+﻿@if (Request.IsAuthenticated)
+{
+    <nav class="user clearfix">
+        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ActionLink(User.Identity.Name, "Manage", "Account", routeValues: null, htmlAttributes: new { title = "Manage" })
+            <a href="javascript:document.getElementById('logoutForm').submit()">&nbsp;&nbsp;[Log Off]</a>
+        }
+    </nav>
+}
+else
+{
+    <nav class="user clearfix"> <a href="@Url.Action("Login", "Account")"><i class="icon-user"></i> Login</a> </nav>
+}

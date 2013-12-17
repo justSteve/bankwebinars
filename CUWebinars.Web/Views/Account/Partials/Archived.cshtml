@@ -1,0 +1,23 @@
+﻿@model = CUWebinars.Web.Core.MyWebinarsDTO
+@using TTSTrain.Webinars.WebEntry
+@using TTSTrain.Webinars.Business.Facade
+@using TTSTrain.Webinars.Business.Entity
+@{
+    
+    if (Model.Archived.Count > 0)
+    { 
+    <div id="archivedOrders" class="orderHistoryGroup">
+        <h2>
+            Events Older Than Six Months<span style="font-weight: normal; font-size: small; color: Green;">
+                (found @Model.Archived.Count.ToString())</span></h2>
+        @foreach (OrderRow archived in Model.Archived)
+        {<p>
+              <b>@archived.Webinar.Title</b>
+              <br />
+              @Html.DisplayDate(archived.Webinar.Date)
+              <br />
+          </p>
+
+        }
+    </div>}
+}

@@ -1,0 +1,193 @@
+﻿@using CUWebinars.Web.Utils
+@{
+    var currentAffiliate = CurrentSession.Instance.CurrentAffiliate;
+    //    var currentUser = UserFacade.Instance.GetCurrentUser();
+    var currentUserID = 0;
+    var currentUserAffiliateFullName = "na";
+    ////    var currentUser = UserFacade.Instance.GetCurrentUser();
+    //var currentUserID = 0;
+    //var currentUserAffiliateFullName = "na";
+    ////var currentUser = CurrentSession.Instance.CurrentUser;
+
+    ////if (currentUser != null)
+    ////{
+    ////    currentUserID = currentUser.ID;
+    ////    currentUserAffiliateFullName = currentUser.Affiliate.FullName;
+    ////}
+
+    var sessionRecorded = "";
+
+    var sessionUpcoming = "";
+    if (Session["upcoming"] != null)
+    {
+        sessionRecorded = Session["rec"].ToString();
+        sessionUpcoming = Session["upcoming"].ToString();
+    }
+    else
+    {
+        Response.Redirect("/");
+    }
+
+    if (Session["IncludeUpcoming"] == null)
+    {
+        Session["IncludeUpcoming"] = "true";
+    }
+
+    if (Session["IncludeRecorded"] == null)
+    {
+        Session["IncludeRecorded"] = "false";
+    }
+    if (Session["IncludeArchived"] == null)
+    {
+        Session["IncludeArchived"] = "false";
+    }
+}
+
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+
+<html class="not-ie" lang="en">
+
+<!--<![endif]-->
+
+<!--[if IE 7]>
+            <link href="/Content/css/font-awesome-ie7.min.css" rel="stylesheet">
+        <![endif]-->
+
+
+<!--[if lt IE 9]>
+            <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title Webinars for the Credit Union</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width" />
+    
+    <script id="scriptInit" type="text/javascript">
+        function OpenSearch() {
+            $("#searchBox").modal("show");
+        }
+
+        var CheckoutInProcess = false;
+        $(document).ready(function () {
+            $("#Login")
+                .button()
+                .click(function () {
+                    $("#showLoginBox").modal("show");
+                });
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <div class="content-wrapper" style="padding-top: 0px; margin-bottom: 0; margin-top: 0;">
+
+            <div class="container" style="padding-top: 0px; margin-bottom: 0; margin-top: 0;">
+                <table cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td style="height: 77px; width: 550px; background-image: url(/Content/images/CUBannerLeft.jpg);"></td>
+                        <td style="height: 77px; width: 620px; background-image: url(/Content/images/BannerGradientBack.jpg);">
+                            <div class="bannerRight aligncenter">
+                                <p align="center" style="font-size: larger; color: #1F5B93;">
+                                    <b><i>Providing premier web-based seminars featuring<br />
+                                        the best speakers in the financial industry since 2002. </i></b>
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            @*<div class="row">
+                <div class="span3">
+                    @CurrentSession.Instance.SubdomainBranding<br />
+                    InitialQueryString  = @CurrentSession.Instance.InitialQueryString<br />
+
+                </div>
+                <div class="span3">
+                    User's Affiliate  = @currentUserAffiliateFullName<br />
+                    User's ID  = @currentUserID<br />
+
+                </div>
+                <div class="span3">
+                    Session Affiliate  = @currentUserAffiliateFullName<br />
+
+
+                </div>
+                <div class="span3">
+                    SessionID  = @CurrentSession.Instance.SessionID<br />
+                    AffiliateSessionSource  = @CurrentSession.Instance.AffiliateSessionSource<br />
+                </div>
+            </div>*@
+            <div class="container">
+                <div class="navbar" role="navigation" style="margin-bottom: 0; margin-top: 0; background: none;">
+                    <div class="navbar-inner" id="menu" style="font-size: 20px; font-weight: bold; margin-top: 0; height: 32px; background-repeat: repeat-x; background-image: url(/Content/images/bannerBottom.png);">
+                        <ul class="nav" role="navigation" style="padding-top: 5px; padding-left: 23px;">
+                            <li class="active"><a href="/Home/">Home</a></li>
+                            <li class="dropdown">
+                            <li class="dropdown dropdown-toggle"><a role="button" data-toggle="dropdown" href="#">Topics&nbsp;<b class="caret"></b></a>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/15">Compliance</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/26">Risk Management</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/16">IRA</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/17">Customer Service</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/19">Operations</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/18">Security</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/20">Auditing</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/21">Sales</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/22">Lending</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/23">Human Resources</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/27">Teller</a></li>
+                                </ul>
+                            </li>
+
+                            <li class="dropdown dropdown-toggle"><a role="button" data-toggle="dropdown" href="#">Upcoming&nbsp;<b class="caret"></b></a>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="drop2">@Html.Raw(sessionUpcoming)</ul>
+                            </li>
+                            <li class="dropdown dropdown-toggle"><a role="button" data-toggle="dropdown" href="#">OnDemand&nbsp;<b class="caret"></b></a>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="drop3">@Html.Raw(sessionRecorded)</ul>
+                            </li>
+
+                            <li class="dropdown dropdown-toggle"><a role="button" data-toggle="dropdown" href="#">About Us&nbsp;<b class="caret"></b></a>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="drop4">
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/WhatIsAWebinar">What is a Webinar?</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/CommonQuestions">Common Questions</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/DetailedConnectionInstructions">Registration & Attendance Process</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/ContactUs">Contact Us</a> </li>
+                                </ul>
+                            </li>
+                            @*@{ Html.RenderAction(actionName: "ShowUserMenu", controllerName: "Account"); }
+                            <li><a href="javascript: OpenSearch();"><i class="icon-search icon-large">&nbsp;</i>Search</a></li>*@
+                        </ul>
+                        @*@{Html.RenderPartial("showLoginStatusBootstrap");}*@
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </header>
+    <div id="body">
+        <section class="content-wrapper main-content clear-fix">
+            @RenderBody()
+        </section>
+    </div>
+    <footer>
+        <div class="content-wrapper">
+            <div class="float-left">
+                <p>&copy; @DateTime.Now.Year - CUWebinars is powered by ttsTrain.com</p>
+            </div>
+        </div>
+    </footer>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/myApp")
+    @Scripts.Render("~/bundles/jqueryui")
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

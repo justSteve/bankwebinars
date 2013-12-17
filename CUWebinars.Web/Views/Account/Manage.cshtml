@@ -1,0 +1,45 @@
+﻿@model  ManageModel
+@{
+    ViewBag.Title = "Manage Account";
+}
+
+
+<div id="LogInContainer" class="container">
+    <div class="flat-form">
+
+        <div id="myTabContent" class="tab-content">
+            <p class="message-success">@Model.StatusMessage</p>
+
+            <p>You're logged in as <strong>@User.Identity.Name</strong>.</p>
+
+            @using (Html.BeginForm("Manage", "Account", "Post"))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.EditorFor(m => m.RegisterFields)                
+
+                <div class="form-inline">
+                    <div class="btn-group" style="width:160px">&nbsp;</div>
+                    <div class="btn-group">
+                        <input type="submit" value="Update" class="btn btn-default" />
+                    </div>
+                </div>
+            }
+                        
+        </div>
+    </div>
+</div>
+
+<div id="ConfirmDeleteShippingAddressdialog" title="Delete Shipping Address" style="display:none">
+    <p>Are you sure you want to delete your Shipping Address?</p> 
+    <p>If you proceed, your Shipping Address will be the same as your Billing Address.</p>
+</div>
+
+@section Scripts {
+    @Styles.Render("~/Content/themes/base/css")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/app-processing-manage")
+}
+
+        

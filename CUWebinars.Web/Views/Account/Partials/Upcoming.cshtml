@@ -1,0 +1,147 @@
+﻿@model CUWebinars.Web.Core.MyWebinarsDTO
+@using System.Data
+@using System.Data.SqlClient
+@using CUWebinars.Web.Helpers
+@using TTSDataLayer.Models
+@{
+    WebUser currentUser = Model.WebUser;
+
+    USTimeZone timeZ = currentUser.timeZone;
+    string email = Model.WebUser.email;
+}
+<div class="container clearfix" id="main-content">
+    <!--begin main content-->
+    <div class="row-fluid sidebar-right">
+        <!--begin row-fluid-->
+        <div class="span9 primary-column">
+            <h3>
+                Upcoming Events <span style="font-weight: normal; font-size: small; color: Green;">
+                    (found
+                    @Model.Scheduled.Count.ToString())
+                </span>
+            </h3>
+            <ul class="s-accordion faq fancy">
+                @if (Model.Scheduled.Count > 0)
+                {
+                    foreach (var scheduled in Model.Scheduled)
+                    {
+                        <li class="s-wrap">
+                            @{
+                        var row = scheduled.Value.OrderRow.Single();
+
+                            }
+                            <h4 class="trigger" id="upcoming-@row.idWebinar"><a href="#">@row.Webinar.Title<i class="icon-plus-sign"></i></a></h4>
+                            <div class="s-content">
+                                <div style="text-align: right;" class="pull-right alignright">
+                                    Order#: @row.idOrder<br />
+                                    Cost: @row.Order.Total.ToString()<br />
+                                </div>
+                                <p style="font-weight: normal; padding-left: 25px; padding-top: 0; margin-top: 0;">
+                                    Presented by @row.Webinar.Presenter.WebUser.FullName<br />
+                                    <i>@Html.DisplayDate(row.Webinar.Date)</i> @Html.DisplayTime(row.Webinar.Date, timeZ, false) - @Html.DisplayTime(row.Webinar.Date, row.Webinar.Duration, timeZ)<br />
+                                    <span id="showRegType_@(row.idWebinar)" class="regType">
+                                        Registration Type: @scheduled.Key.OptionLabel.Replace(" Only", " ") &nbsp;&nbsp;
+
+                                    </span>
+                                </p>
+                                @if (row.Webinar.HasConnectionInformation)
+                                {
+
+                                    var eventID = row.Webinar.HostPropertyValues.ElementAt(0).value;
+                                    var eventPass = row.Webinar.HostPropertyValues.ElementAt(1).value;
+                                    var teleconf = row.Webinar.HostPropertyValues.ElementAt(2).value;
+                                    var accessCode = row.Webinar.HostPropertyValues.ElementAt(3).value;
+
+                                    if (scheduled.Key.ShowLiveNotifications == "Yes")
+                                    {
+                                        <div class="ReverseHead">&nbsp;&nbsp;Connection Summary</div>
+                                        <div id="showConnectionInfo">
+                                            <div id="showConnectionInfo">
+                                                <table width="400px">
+                                                    <tr>
+                                                        <td class="propLabel top_td1">URL:</td>
+                                                        <td class="propValue top_td2"><a href="http://www.JoinWebinar.com" target="_JoinWebinar">http://www.JoinWebinar.com</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="side_td1 propLabel">Webinar ID:</td>
+                                                        <td class="propValue side_td2">@eventID</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="propLabel side_td1">Password:</td>
+                                                        <td class="propValue side_td2">@eventPass</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="audio" colspan="2"><font size="-2">Audio is delivered directly to your workstation (sound-card and speakers required). Or use the information below to connect via your telephone.</font></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="propLabel side_td1">Teleconference:</td>
+                                                        <td class="propValue side_td2">@teleconf</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="propLabel bottom_td1">Access Code:</td>
+                                                        <td class="propValue bottom_td2">@accessCode</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            <br />
+                                            <div class="FrontPageSubHead">
+                                                <div class="ReverseHead">
+                                                    &nbsp;&nbsp;Event Materials
+                                                </div>
+                                            </div>
+                                            @{ Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar); }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="myWebinarscaption">
+                                            The CD and handouts are typically shipped within 3-5 days following the event. Shipping
+                                            status will be displayed here. Check back here for links to the OnDemand recording
+                                            - typically posted within 1-2 days following the event.
+                                        </div>
+                                        <div>Change order to Live?</div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="myWebinarscaption">
+                                        <p>
+                                            The Webinar ID and password have not yet been generated for this event. Watch your
+                                            email or check back here ('<b>My Webinars</b>') to review the current status of
+                                            this event. You may wish to review this general guide to connecting to our events
+                                            <a href="/Home/DetailedConnectionInstructions" target="_blank">http://www.BankWebinars.com/Home/DetailedConnectionInstructions</a>.
+                                        </p>
+                                    </div>
+                                }
+                            </div>
+                        </li>
+                    }
+                }
+            </ul>
+
+        </div>
+    </div>
+</div>
+
+@*<div id="AddLocation_@(scheduled.ID)" class="modal hide fade">
+        @{
+    Html.RenderPartial("~/Views/Shared/AddLocationsView.cshtml", scheduled);
+        }
+    </div>
+
+    <div id="ResendConnectionInfo_@(scheduled.ID)" class="modal hide fade">
+        @{
+    Html.RenderPartial("~/Views/Shared/ResendConnectionInfoView.cshtml", scheduled);
+        }
+    </div>
+
+    <div id="ResendConfirmation_@(scheduled.ID)" class="modal hide fade">
+        @{
+    Html.RenderPartial("~/Views/Shared/ResendConfirmationView.cshtml", scheduled);
+        }
+    </div>
+    <div id="EditRegistrationType_@(scheduled.ID)" class="modal hide fade">
+        @{
+    Html.RenderPartial("~/Views/Shared/EditRegistrationTypeView.cshtml", scheduled);
+        }
+    </div>*@

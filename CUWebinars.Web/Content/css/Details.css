@@ -1,0 +1,154 @@
+﻿/*
+Supports Listing Details of individual Webinars
+
+*/
+
+/* static START */
+*
+{
+    margin: 0;
+    padding: 0;
+}
+.ceu
+{
+    font-size:smaller;
+    text-align: center;
+    margin-top:10px;
+    width: 400px;
+    padding: 0px 12px 12px 12px;
+    background-color: #111111;
+    color: White;
+    margin-left: auto;
+    margin-right: auto;
+}
+.content
+{
+    /*width: 900px;*/
+    margin-left: 40px;
+    margin-right: 80px;
+    margin-top: 20px;
+}
+.holdRight
+{
+    width: 106px;
+    float: left;
+    margin-left: 10px;
+}
+
+.preRegister
+{
+}
+
+dd
+{
+    margin: 10px 20px 20px 30px;
+}
+
+dt
+{
+    font-weight: bold;
+    font-size: larger;
+}
+
+.webinarDetails
+{
+    margin: 10px 20px 20px 30px;
+}
+.date
+{
+    width: 300px;
+    background-color: #BAD6F0;
+    color: Black;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: solid 1px;
+    border-color: #aaaaaa;
+}
+.content ul
+{
+    margin-left: 40px;
+}
+.description
+{
+    font-size: 18px;
+    padding: 12px 12px 12px 12px;
+}
+.presenter
+{
+    float: right;
+    border: solid 1px #aaaaaa;
+    margin-left: 15px;
+    width: 300px;
+    padding: 12px 12px 12px 12px;
+    background-color: #BAD6F0;
+    color: Black;
+    top: -300px;
+}
+.presenter_wide
+{
+    float: right;
+    border: solid 1px #000;
+    margin-left: 15px;
+    width: 600px;
+    padding: 12px 12px 12px 12px;
+    background-color: #BAD6F0;
+    color: Black;
+}
+#SignUpForm
+{
+    margin-left: 75px;
+    margin-right: 75px;
+    border-top: dashed 1px black;
+    background-color: #BAD6F0;
+    padding: 40px;
+    padding-top: 10px;
+}
+
+.presenterImg
+{
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    border: solid 1px #000;
+}
+.cost
+{
+}
+/* tooltip styling. by default the element to be styled is .tooltip  */
+    .alignright {
+        text-align: right;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    .tooltip {
+        display: none;
+        background: transparent;
+        font-size: 12px;
+        height: 70px;
+        width: 160px;
+        color: #fff;
+        padding: 8px;
+        margin: 8px;
+    }
+
+    .propValue {
+        background-color: darkblue;
+        color: White;
+        padding: 2px 5px;
+    }
+    /* style the trigger elements */
+    #ceu a {
+        border: 0;
+        cursor: pointer;
+    }
+
+    .accordion {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    .accordion-body {
+        margin: 0px;
+        padding: 0px;
+    }

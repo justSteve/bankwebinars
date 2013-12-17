@@ -1,0 +1,28 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+@using TTSDataLayer.Models
+@model IEnumerable<Webinar>
+
+@{
+
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+
+    //Html.RenderPartial("Partials/ResultsGrid");
+}
+<div class="hero-unit">
+    <div class="container">
+        <h1>@ViewBag.Title</h1>
+    </div>
+    <!--close container-->
+</div>
+
+<div class="container ">
+    @{
+        foreach (var webinar in webinars)
+        {
+Html.RenderPartial("partials/_WebinarsLister");
+        }
+
+    }
+</div>

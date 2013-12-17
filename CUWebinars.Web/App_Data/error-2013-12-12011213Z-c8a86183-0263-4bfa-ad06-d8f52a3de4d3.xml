@@ -1,0 +1,174 @@
+﻿<error errorId="c8a86183-0263-4bfa-ad06-d8f52a3de4d3" application="/LM/W3SVC/74/ROOT" host="PLAGUIS" type="System.InvalidOperationException" message="Sequence contains no elements" source="System.Core" detail="System.InvalidOperationException: Sequence contains no elements&#xD;&#xA;   at System.Linq.Enumerable.First[TSource](IEnumerable`1 source)&#xD;&#xA;   at CUWebinars.Web.Controllers.AccountController.Manage(Nullable`1 message) in e:\Documents\Dave\TFS\CUWebinars\CUWebinars.Web\Controllers\AccountController.cs:line 170&#xD;&#xA;   at lambda_method(Closure , ControllerBase , Object[] )&#xD;&#xA;   at System.Web.Mvc.ActionMethodDispatcher.Execute(ControllerBase controller, Object[] parameters)&#xD;&#xA;   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)&#xD;&#xA;   at System.Web.Mvc.ControllerActionInvoker.InvokeActionMethod(ControllerContext controllerContext, ActionDescriptor actionDescriptor, IDictionary`2 parameters)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncControllerActionInvoker.ActionInvocation.InvokeSynchronousActionMethod()&#xD;&#xA;   at System.Web.Mvc.Async.AsyncControllerActionInvoker.&lt;BeginInvokeSynchronousActionMethod&gt;b__36(IAsyncResult asyncResult, ActionInvocation innerInvokeState)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`2.CallEndDelegate(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResultBase`1.End()&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.End[TResult](IAsyncResult asyncResult, Object tag)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)&#xD;&#xA;   at Castle.Proxies.AsyncControllerActionInvokerProxy.EndInvokeActionMethod_callback(IAsyncResult asyncResult)&#xD;&#xA;   at Castle.Proxies.Invocations.AsyncControllerActionInvoker_EndInvokeActionMethod.InvokeMethodOnTarget()&#xD;&#xA;   at Castle.DynamicProxy.AbstractInvocation.Proceed()&#xD;&#xA;   at Glimpse.Core.Extensibility.CastleInvocationToAlternateMethodContextAdapter.Proceed()&#xD;&#xA;   at Glimpse.Mvc.AlternateType.AsyncActionInvoker.EndInvokeActionMethod.NewImplementation(IAlternateMethodContext context)&#xD;&#xA;   at Glimpse.Core.Extensibility.AlternateTypeToCastleInterceptorAdapter.Intercept(IInvocation invocation)&#xD;&#xA;   at Castle.DynamicProxy.AbstractInvocation.Proceed()&#xD;&#xA;   at Castle.Proxies.AsyncControllerActionInvokerProxy.EndInvokeActionMethod(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.&lt;InvokeActionMethodFilterAsynchronouslyRecursive&gt;b__3c()&#xD;&#xA;   at System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.&lt;&gt;c__DisplayClass45.&lt;InvokeActionMethodFilterAsynchronouslyRecursive&gt;b__3e()&#xD;&#xA;   at System.Web.Mvc.Async.AsyncControllerActionInvoker.&lt;&gt;c__DisplayClass30.&lt;BeginInvokeActionMethodWithFilters&gt;b__2f(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`1.CallEndDelegate(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResultBase`1.End()&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.End[TResult](IAsyncResult asyncResult, Object tag)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncControllerActionInvoker.&lt;&gt;c__DisplayClass1e.&lt;&gt;c__DisplayClass28.&lt;BeginInvokeAction&gt;b__19()&#xD;&#xA;   at System.Web.Mvc.Async.AsyncControllerActionInvoker.&lt;&gt;c__DisplayClass1e.&lt;BeginInvokeAction&gt;b__1b(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResult`1.CallEndDelegate(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResultBase`1.End()&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.End[TResult](IAsyncResult asyncResult, Object tag)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeAction(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Controller.&lt;BeginExecuteCore&gt;b__1d(IAsyncResult asyncResult, ExecuteCoreState innerState)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncVoid`1.CallEndDelegate(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResultBase`1.End()&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.End[TResult](IAsyncResult asyncResult, Object tag)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.End(IAsyncResult asyncResult, Object tag)&#xD;&#xA;   at System.Web.Mvc.Controller.EndExecuteCore(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Controller.&lt;BeginExecute&gt;b__15(IAsyncResult asyncResult, Controller controller)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncVoid`1.CallEndDelegate(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResultBase`1.End()&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.End[TResult](IAsyncResult asyncResult, Object tag)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.End(IAsyncResult asyncResult, Object tag)&#xD;&#xA;   at System.Web.Mvc.Controller.EndExecute(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Controller.System.Web.Mvc.Async.IAsyncController.EndExecute(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.MvcHandler.&lt;BeginProcessRequest&gt;b__4(IAsyncResult asyncResult, ProcessRequestState innerState)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncVoid`1.CallEndDelegate(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.WrappedAsyncResultBase`1.End()&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.End[TResult](IAsyncResult asyncResult, Object tag)&#xD;&#xA;   at System.Web.Mvc.Async.AsyncResultWrapper.End(IAsyncResult asyncResult, Object tag)&#xD;&#xA;   at System.Web.Mvc.MvcHandler.EndProcessRequest(IAsyncResult asyncResult)&#xD;&#xA;   at System.Web.Mvc.MvcHandler.System.Web.IHttpAsyncHandler.EndProcessRequest(IAsyncResult result)&#xD;&#xA;   at System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()&#xD;&#xA;   at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean&amp; completedSynchronously)" user="Dave Rogers" time="2013-12-12T01:12:13.0137717Z">
+  <serverVariables>
+    <item name="ALL_HTTP">
+      <value string="HTTP_CONNECTION:keep-alive&#xD;&#xA;HTTP_ACCEPT:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8&#xD;&#xA;HTTP_ACCEPT_ENCODING:gzip,deflate,sdch&#xD;&#xA;HTTP_ACCEPT_LANGUAGE:en-GB,en-US;q=0.8,en;q=0.6&#xD;&#xA;HTTP_COOKIE:glimpsePolicy=On; ASP.NET_SessionId=j1ri50odc45soi0ujfhbxje3; glimpseId=Chrome 31.0; __RequestVerificationToken=HPRzehKyliNJu4rtf1fCi2M2MQ4WXyGRhUBAwxH9OnDJ9D6SSbmAYRGBDF2cs_FXsJhP3HxWwE9xEZ2C8YXdUF2ZpYVPoEwPU6H8GfEXjjk1; FedAuth=77u/PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48U2VjdXJpdHlDb250ZXh0VG9rZW4gcDE6SWQ9Il9lMmVjNWU5ZC1iMWVmLTQzMTktODQyYi1jNDdlZTNiMDNkYTktRDY2QkYzMDhCRDY3M0NDRDRDOTI1NjBEMURGRjZDMUYiIHhtbG5zOnAxPSJodHRwOi8vZG9jcy5vYXNpcy1vcGVuLm9yZy93c3MvMjAwNC8wMS9vYXNpcy0yMDA0MDEtd3NzLXdzc2VjdXJpdHktdXRpbGl0eS0xLjAueHNkIiB4bWxucz0iaHR0cDovL2RvY3Mub2FzaXMtb3Blbi5vcmcvd3Mtc3gvd3Mtc2VjdXJlY29udmVyc2F0aW9uLzIwMDUxMiI+PElkZW50aWZpZXI+dXJuOnV1aWQ6MzgyNzY3MjUtNjg1YS00ZmQyLWJhNTUtMDgyZjQzNmRlMGY2PC9JZGVudGlmaWVyPjxDb29raWUgeG1sbnM9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwNi8wNS9zZWN1cml0eSI+L25LVE1xVjBwMm9xZTFvUG5OQUU4aElBK3BTMitBMUFaNXd0THpXYzdWblRzR081Yithc094Ymd0WThYdGVPZkpYZmRwVllGTG8rL1RiQStOK2YzM0I3aFhRdGJ1TU9qQjk3cE9JYzJ5T1JWMnJ1bDdzWUhiREltTDU1SVV5Y04yR3VLeUthZVpQQXljck1uVGZ5cmJ1b0tKTHBDZDJYTWFVamcrTzBUYzNsUkdlOHV0cEpKcXJXZGRhYlRSTTR3VEczUEpaZ05OOEdNL3Fzd0NvVU5uVzdEbGZCTUhKMk9TcmRMd2VDTmhzNVB2U1hOeTdDWHlVMTVaZ0wzR0tES0tOek1FWDlqcEcvNVc3alZ3N3ZLNlhEYjhVZnEzTHN4OE04UU9wYktJaFR5T1R5ZmNEMEJwOWw1SmZFU0sxUk9kRWFQeENmUjJRQ1dXampOLzdEMCsvQlcxWndJNDhLMnJDODFjeGxBRE5DQ1AvcVo2OTRIcXFXem9NRW1ScmdaYVdNd0p3SHlVUHJnQW55WVNQSmhFRzloQTJDV0lNczRCRmNYNW1FUS9INUw0YUxvRVRLUjV2b0NsR0x6anFRZjdYazl1bVpnRkhzN0JmclEvQmNXU0xBQ0dTU2VBczZGUHJnT2NRWTB6UXV2OWdZcmtHSDNQU09Ya2JMUy9UQVg3YU1jcDVZdXJiUHFyREo1UlhDVUZZQXgwZE9ITjhPUk1DWmlRd2VPc1NWemNrdVVlVmNSUSswQklISTZ6akNYNTcxK2EzRWVmY1gwNFhmazdSaEZOblhjTUlhU1E3WUF3dmRJdSswRXpmU2RYT0RIZ1R6TUxsZko4WGlRcGZUcFlLaklQK0ZIb3BDa0xtdjhtdEhHRktZd1BSR1lGK1EwS2Uwd1VKTnFWVWpiWFpBckprdjdmbG96ZVlHUFJZVkJxSG5hT0JDazZQaDRJWk1WQXpEcDZSRlBmc1BMTFpkLzI2MXUzMVVEeEpVZUl0RllRREp3dGwzTnJ0eFhUa05kbEpwYUZJWmVaMHJpS1h6MDNja0RNdHNQNHlrRTk2R05EMElHSWh5ZW44UjhLdzFsb2w4VzVJOHNZeHU0MUFiMldqcE8vSUxZTzNLMkQ5bkptRFpuWEJFbU9ZSmVvd3ZqSXBRTkduOHlISGxkOFZYeUU4czZNWStCQlptUW5JYkNIbFpYZVlPK1laZXp4eGk3M0FhSWpYdDNLTnVoRHZSNlgzay9vL3F0YWY0cHFiT05mS1g5L1JRRVdmZTVDTVBYQ2Q0YmRxLzNBSWNlQW9leXZobWdTM1BTeTNSc0hqOWpJdEhqTEFuMjRIWmRsOEh3TFA3ai9kSVVqVEN6enN2TTwvQ29va2llPjwvU2VjdXJpdHlDb250ZXh0VG9rZW4+&#xD;&#xA;HTTP_HOST:localhost:4444&#xD;&#xA;HTTP_REFERER:http://localhost:4444/&#xD;&#xA;HTTP_USER_AGENT:Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36&#xD;&#xA;" />
+    </item>
+    <item name="ALL_RAW">
+      <value string="Connection: keep-alive&#xD;&#xA;Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8&#xD;&#xA;Accept-Encoding: gzip,deflate,sdch&#xD;&#xA;Accept-Language: en-GB,en-US;q=0.8,en;q=0.6&#xD;&#xA;Cookie: glimpsePolicy=On; ASP.NET_SessionId=j1ri50odc45soi0ujfhbxje3; glimpseId=Chrome 31.0; __RequestVerificationToken=HPRzehKyliNJu4rtf1fCi2M2MQ4WXyGRhUBAwxH9OnDJ9D6SSbmAYRGBDF2cs_FXsJhP3HxWwE9xEZ2C8YXdUF2ZpYVPoEwPU6H8GfEXjjk1; FedAuth=77u/PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48U2VjdXJpdHlDb250ZXh0VG9rZW4gcDE6SWQ9Il9lMmVjNWU5ZC1iMWVmLTQzMTktODQyYi1jNDdlZTNiMDNkYTktRDY2QkYzMDhCRDY3M0NDRDRDOTI1NjBEMURGRjZDMUYiIHhtbG5zOnAxPSJodHRwOi8vZG9jcy5vYXNpcy1vcGVuLm9yZy93c3MvMjAwNC8wMS9vYXNpcy0yMDA0MDEtd3NzLXdzc2VjdXJpdHktdXRpbGl0eS0xLjAueHNkIiB4bWxucz0iaHR0cDovL2RvY3Mub2FzaXMtb3Blbi5vcmcvd3Mtc3gvd3Mtc2VjdXJlY29udmVyc2F0aW9uLzIwMDUxMiI+PElkZW50aWZpZXI+dXJuOnV1aWQ6MzgyNzY3MjUtNjg1YS00ZmQyLWJhNTUtMDgyZjQzNmRlMGY2PC9JZGVudGlmaWVyPjxDb29raWUgeG1sbnM9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwNi8wNS9zZWN1cml0eSI+L25LVE1xVjBwMm9xZTFvUG5OQUU4aElBK3BTMitBMUFaNXd0THpXYzdWblRzR081Yithc094Ymd0WThYdGVPZkpYZmRwVllGTG8rL1RiQStOK2YzM0I3aFhRdGJ1TU9qQjk3cE9JYzJ5T1JWMnJ1bDdzWUhiREltTDU1SVV5Y04yR3VLeUthZVpQQXljck1uVGZ5cmJ1b0tKTHBDZDJYTWFVamcrTzBUYzNsUkdlOHV0cEpKcXJXZGRhYlRSTTR3VEczUEpaZ05OOEdNL3Fzd0NvVU5uVzdEbGZCTUhKMk9TcmRMd2VDTmhzNVB2U1hOeTdDWHlVMTVaZ0wzR0tES0tOek1FWDlqcEcvNVc3alZ3N3ZLNlhEYjhVZnEzTHN4OE04UU9wYktJaFR5T1R5ZmNEMEJwOWw1SmZFU0sxUk9kRWFQeENmUjJRQ1dXampOLzdEMCsvQlcxWndJNDhLMnJDODFjeGxBRE5DQ1AvcVo2OTRIcXFXem9NRW1ScmdaYVdNd0p3SHlVUHJnQW55WVNQSmhFRzloQTJDV0lNczRCRmNYNW1FUS9INUw0YUxvRVRLUjV2b0NsR0x6anFRZjdYazl1bVpnRkhzN0JmclEvQmNXU0xBQ0dTU2VBczZGUHJnT2NRWTB6UXV2OWdZcmtHSDNQU09Ya2JMUy9UQVg3YU1jcDVZdXJiUHFyREo1UlhDVUZZQXgwZE9ITjhPUk1DWmlRd2VPc1NWemNrdVVlVmNSUSswQklISTZ6akNYNTcxK2EzRWVmY1gwNFhmazdSaEZOblhjTUlhU1E3WUF3dmRJdSswRXpmU2RYT0RIZ1R6TUxsZko4WGlRcGZUcFlLaklQK0ZIb3BDa0xtdjhtdEhHRktZd1BSR1lGK1EwS2Uwd1VKTnFWVWpiWFpBckprdjdmbG96ZVlHUFJZVkJxSG5hT0JDazZQaDRJWk1WQXpEcDZSRlBmc1BMTFpkLzI2MXUzMVVEeEpVZUl0RllRREp3dGwzTnJ0eFhUa05kbEpwYUZJWmVaMHJpS1h6MDNja0RNdHNQNHlrRTk2R05EMElHSWh5ZW44UjhLdzFsb2w4VzVJOHNZeHU0MUFiMldqcE8vSUxZTzNLMkQ5bkptRFpuWEJFbU9ZSmVvd3ZqSXBRTkduOHlISGxkOFZYeUU4czZNWStCQlptUW5JYkNIbFpYZVlPK1laZXp4eGk3M0FhSWpYdDNLTnVoRHZSNlgzay9vL3F0YWY0cHFiT05mS1g5L1JRRVdmZTVDTVBYQ2Q0YmRxLzNBSWNlQW9leXZobWdTM1BTeTNSc0hqOWpJdEhqTEFuMjRIWmRsOEh3TFA3ai9kSVVqVEN6enN2TTwvQ29va2llPjwvU2VjdXJpdHlDb250ZXh0VG9rZW4+&#xD;&#xA;Host: localhost:4444&#xD;&#xA;Referer: http://localhost:4444/&#xD;&#xA;User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36&#xD;&#xA;" />
+    </item>
+    <item name="APPL_MD_PATH">
+      <value string="/LM/W3SVC/74/ROOT" />
+    </item>
+    <item name="APPL_PHYSICAL_PATH">
+      <value string="E:\Documents\Dave\TFS\CUWebinars\CUWebinars.Web\" />
+    </item>
+    <item name="AUTH_TYPE">
+      <value string="http://schemas.microsoft.com/ws/2008/06/identity/authenticationmethod/password" />
+    </item>
+    <item name="AUTH_USER">
+      <value string="Dave Rogers" />
+    </item>
+    <item name="AUTH_PASSWORD">
+      <value string="*****" />
+    </item>
+    <item name="LOGON_USER">
+      <value string="" />
+    </item>
+    <item name="REMOTE_USER">
+      <value string="Dave Rogers" />
+    </item>
+    <item name="CERT_COOKIE">
+      <value string="" />
+    </item>
+    <item name="CERT_FLAGS">
+      <value string="" />
+    </item>
+    <item name="CERT_ISSUER">
+      <value string="" />
+    </item>
+    <item name="CERT_KEYSIZE">
+      <value string="" />
+    </item>
+    <item name="CERT_SECRETKEYSIZE">
+      <value string="" />
+    </item>
+    <item name="CERT_SERIALNUMBER">
+      <value string="" />
+    </item>
+    <item name="CERT_SERVER_ISSUER">
+      <value string="" />
+    </item>
+    <item name="CERT_SERVER_SUBJECT">
+      <value string="" />
+    </item>
+    <item name="CERT_SUBJECT">
+      <value string="" />
+    </item>
+    <item name="CONTENT_LENGTH">
+      <value string="0" />
+    </item>
+    <item name="CONTENT_TYPE">
+      <value string="" />
+    </item>
+    <item name="GATEWAY_INTERFACE">
+      <value string="CGI/1.1" />
+    </item>
+    <item name="HTTPS">
+      <value string="off" />
+    </item>
+    <item name="HTTPS_KEYSIZE">
+      <value string="" />
+    </item>
+    <item name="HTTPS_SECRETKEYSIZE">
+      <value string="" />
+    </item>
+    <item name="HTTPS_SERVER_ISSUER">
+      <value string="" />
+    </item>
+    <item name="HTTPS_SERVER_SUBJECT">
+      <value string="" />
+    </item>
+    <item name="INSTANCE_ID">
+      <value string="74" />
+    </item>
+    <item name="INSTANCE_META_PATH">
+      <value string="/LM/W3SVC/74" />
+    </item>
+    <item name="LOCAL_ADDR">
+      <value string="::1" />
+    </item>
+    <item name="PATH_INFO">
+      <value string="/Account/Manage" />
+    </item>
+    <item name="PATH_TRANSLATED">
+      <value string="E:\Documents\Dave\TFS\CUWebinars\CUWebinars.Web\Account\Manage" />
+    </item>
+    <item name="QUERY_STRING">
+      <value string="" />
+    </item>
+    <item name="REMOTE_ADDR">
+      <value string="::1" />
+    </item>
+    <item name="REMOTE_HOST">
+      <value string="::1" />
+    </item>
+    <item name="REMOTE_PORT">
+      <value string="4366" />
+    </item>
+    <item name="REQUEST_METHOD">
+      <value string="GET" />
+    </item>
+    <item name="SCRIPT_NAME">
+      <value string="/Account/Manage" />
+    </item>
+    <item name="SERVER_NAME">
+      <value string="localhost" />
+    </item>
+    <item name="SERVER_PORT">
+      <value string="4444" />
+    </item>
+    <item name="SERVER_PORT_SECURE">
+      <value string="0" />
+    </item>
+    <item name="SERVER_PROTOCOL">
+      <value string="HTTP/1.1" />
+    </item>
+    <item name="SERVER_SOFTWARE">
+      <value string="Microsoft-IIS/8.0" />
+    </item>
+    <item name="URL">
+      <value string="/Account/Manage" />
+    </item>
+    <item name="HTTP_CONNECTION">
+      <value string="keep-alive" />
+    </item>
+    <item name="HTTP_ACCEPT">
+      <value string="text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" />
+    </item>
+    <item name="HTTP_ACCEPT_ENCODING">
+      <value string="gzip,deflate,sdch" />
+    </item>
+    <item name="HTTP_ACCEPT_LANGUAGE">
+      <value string="en-GB,en-US;q=0.8,en;q=0.6" />
+    </item>
+    <item name="HTTP_COOKIE">
+      <value string="glimpsePolicy=On; ASP.NET_SessionId=j1ri50odc45soi0ujfhbxje3; glimpseId=Chrome 31.0; __RequestVerificationToken=HPRzehKyliNJu4rtf1fCi2M2MQ4WXyGRhUBAwxH9OnDJ9D6SSbmAYRGBDF2cs_FXsJhP3HxWwE9xEZ2C8YXdUF2ZpYVPoEwPU6H8GfEXjjk1; FedAuth=77u/PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48U2VjdXJpdHlDb250ZXh0VG9rZW4gcDE6SWQ9Il9lMmVjNWU5ZC1iMWVmLTQzMTktODQyYi1jNDdlZTNiMDNkYTktRDY2QkYzMDhCRDY3M0NDRDRDOTI1NjBEMURGRjZDMUYiIHhtbG5zOnAxPSJodHRwOi8vZG9jcy5vYXNpcy1vcGVuLm9yZy93c3MvMjAwNC8wMS9vYXNpcy0yMDA0MDEtd3NzLXdzc2VjdXJpdHktdXRpbGl0eS0xLjAueHNkIiB4bWxucz0iaHR0cDovL2RvY3Mub2FzaXMtb3Blbi5vcmcvd3Mtc3gvd3Mtc2VjdXJlY29udmVyc2F0aW9uLzIwMDUxMiI+PElkZW50aWZpZXI+dXJuOnV1aWQ6MzgyNzY3MjUtNjg1YS00ZmQyLWJhNTUtMDgyZjQzNmRlMGY2PC9JZGVudGlmaWVyPjxDb29raWUgeG1sbnM9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwNi8wNS9zZWN1cml0eSI+L25LVE1xVjBwMm9xZTFvUG5OQUU4aElBK3BTMitBMUFaNXd0THpXYzdWblRzR081Yithc094Ymd0WThYdGVPZkpYZmRwVllGTG8rL1RiQStOK2YzM0I3aFhRdGJ1TU9qQjk3cE9JYzJ5T1JWMnJ1bDdzWUhiREltTDU1SVV5Y04yR3VLeUthZVpQQXljck1uVGZ5cmJ1b0tKTHBDZDJYTWFVamcrTzBUYzNsUkdlOHV0cEpKcXJXZGRhYlRSTTR3VEczUEpaZ05OOEdNL3Fzd0NvVU5uVzdEbGZCTUhKMk9TcmRMd2VDTmhzNVB2U1hOeTdDWHlVMTVaZ0wzR0tES0tOek1FWDlqcEcvNVc3alZ3N3ZLNlhEYjhVZnEzTHN4OE04UU9wYktJaFR5T1R5ZmNEMEJwOWw1SmZFU0sxUk9kRWFQeENmUjJRQ1dXampOLzdEMCsvQlcxWndJNDhLMnJDODFjeGxBRE5DQ1AvcVo2OTRIcXFXem9NRW1ScmdaYVdNd0p3SHlVUHJnQW55WVNQSmhFRzloQTJDV0lNczRCRmNYNW1FUS9INUw0YUxvRVRLUjV2b0NsR0x6anFRZjdYazl1bVpnRkhzN0JmclEvQmNXU0xBQ0dTU2VBczZGUHJnT2NRWTB6UXV2OWdZcmtHSDNQU09Ya2JMUy9UQVg3YU1jcDVZdXJiUHFyREo1UlhDVUZZQXgwZE9ITjhPUk1DWmlRd2VPc1NWemNrdVVlVmNSUSswQklISTZ6akNYNTcxK2EzRWVmY1gwNFhmazdSaEZOblhjTUlhU1E3WUF3dmRJdSswRXpmU2RYT0RIZ1R6TUxsZko4WGlRcGZUcFlLaklQK0ZIb3BDa0xtdjhtdEhHRktZd1BSR1lGK1EwS2Uwd1VKTnFWVWpiWFpBckprdjdmbG96ZVlHUFJZVkJxSG5hT0JDazZQaDRJWk1WQXpEcDZSRlBmc1BMTFpkLzI2MXUzMVVEeEpVZUl0RllRREp3dGwzTnJ0eFhUa05kbEpwYUZJWmVaMHJpS1h6MDNja0RNdHNQNHlrRTk2R05EMElHSWh5ZW44UjhLdzFsb2w4VzVJOHNZeHU0MUFiMldqcE8vSUxZTzNLMkQ5bkptRFpuWEJFbU9ZSmVvd3ZqSXBRTkduOHlISGxkOFZYeUU4czZNWStCQlptUW5JYkNIbFpYZVlPK1laZXp4eGk3M0FhSWpYdDNLTnVoRHZSNlgzay9vL3F0YWY0cHFiT05mS1g5L1JRRVdmZTVDTVBYQ2Q0YmRxLzNBSWNlQW9leXZobWdTM1BTeTNSc0hqOWpJdEhqTEFuMjRIWmRsOEh3TFA3ai9kSVVqVEN6enN2TTwvQ29va2llPjwvU2VjdXJpdHlDb250ZXh0VG9rZW4+" />
+    </item>
+    <item name="HTTP_HOST">
+      <value string="localhost:4444" />
+    </item>
+    <item name="HTTP_REFERER">
+      <value string="http://localhost:4444/" />
+    </item>
+    <item name="HTTP_USER_AGENT">
+      <value string="Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36" />
+    </item>
+  </serverVariables>
+  <cookies>
+    <item name="glimpsePolicy">
+      <value string="On" />
+    </item>
+    <item name="ASP.NET_SessionId">
+      <value string="j1ri50odc45soi0ujfhbxje3" />
+    </item>
+    <item name="glimpseId">
+      <value string="Chrome 31.0" />
+    </item>
+    <item name="__RequestVerificationToken">
+      <value string="HPRzehKyliNJu4rtf1fCi2M2MQ4WXyGRhUBAwxH9OnDJ9D6SSbmAYRGBDF2cs_FXsJhP3HxWwE9xEZ2C8YXdUF2ZpYVPoEwPU6H8GfEXjjk1" />
+    </item>
+    <item name="FedAuth">
+      <value string="77u/PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48U2VjdXJpdHlDb250ZXh0VG9rZW4gcDE6SWQ9Il9lMmVjNWU5ZC1iMWVmLTQzMTktODQyYi1jNDdlZTNiMDNkYTktRDY2QkYzMDhCRDY3M0NDRDRDOTI1NjBEMURGRjZDMUYiIHhtbG5zOnAxPSJodHRwOi8vZG9jcy5vYXNpcy1vcGVuLm9yZy93c3MvMjAwNC8wMS9vYXNpcy0yMDA0MDEtd3NzLXdzc2VjdXJpdHktdXRpbGl0eS0xLjAueHNkIiB4bWxucz0iaHR0cDovL2RvY3Mub2FzaXMtb3Blbi5vcmcvd3Mtc3gvd3Mtc2VjdXJlY29udmVyc2F0aW9uLzIwMDUxMiI+PElkZW50aWZpZXI+dXJuOnV1aWQ6MzgyNzY3MjUtNjg1YS00ZmQyLWJhNTUtMDgyZjQzNmRlMGY2PC9JZGVudGlmaWVyPjxDb29raWUgeG1sbnM9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwNi8wNS9zZWN1cml0eSI+L25LVE1xVjBwMm9xZTFvUG5OQUU4aElBK3BTMitBMUFaNXd0THpXYzdWblRzR081Yithc094Ymd0WThYdGVPZkpYZmRwVllGTG8rL1RiQStOK2YzM0I3aFhRdGJ1TU9qQjk3cE9JYzJ5T1JWMnJ1bDdzWUhiREltTDU1SVV5Y04yR3VLeUthZVpQQXljck1uVGZ5cmJ1b0tKTHBDZDJYTWFVamcrTzBUYzNsUkdlOHV0cEpKcXJXZGRhYlRSTTR3VEczUEpaZ05OOEdNL3Fzd0NvVU5uVzdEbGZCTUhKMk9TcmRMd2VDTmhzNVB2U1hOeTdDWHlVMTVaZ0wzR0tES0tOek1FWDlqcEcvNVc3alZ3N3ZLNlhEYjhVZnEzTHN4OE04UU9wYktJaFR5T1R5ZmNEMEJwOWw1SmZFU0sxUk9kRWFQeENmUjJRQ1dXampOLzdEMCsvQlcxWndJNDhLMnJDODFjeGxBRE5DQ1AvcVo2OTRIcXFXem9NRW1ScmdaYVdNd0p3SHlVUHJnQW55WVNQSmhFRzloQTJDV0lNczRCRmNYNW1FUS9INUw0YUxvRVRLUjV2b0NsR0x6anFRZjdYazl1bVpnRkhzN0JmclEvQmNXU0xBQ0dTU2VBczZGUHJnT2NRWTB6UXV2OWdZcmtHSDNQU09Ya2JMUy9UQVg3YU1jcDVZdXJiUHFyREo1UlhDVUZZQXgwZE9ITjhPUk1DWmlRd2VPc1NWemNrdVVlVmNSUSswQklISTZ6akNYNTcxK2EzRWVmY1gwNFhmazdSaEZOblhjTUlhU1E3WUF3dmRJdSswRXpmU2RYT0RIZ1R6TUxsZko4WGlRcGZUcFlLaklQK0ZIb3BDa0xtdjhtdEhHRktZd1BSR1lGK1EwS2Uwd1VKTnFWVWpiWFpBckprdjdmbG96ZVlHUFJZVkJxSG5hT0JDazZQaDRJWk1WQXpEcDZSRlBmc1BMTFpkLzI2MXUzMVVEeEpVZUl0RllRREp3dGwzTnJ0eFhUa05kbEpwYUZJWmVaMHJpS1h6MDNja0RNdHNQNHlrRTk2R05EMElHSWh5ZW44UjhLdzFsb2w4VzVJOHNZeHU0MUFiMldqcE8vSUxZTzNLMkQ5bkptRFpuWEJFbU9ZSmVvd3ZqSXBRTkduOHlISGxkOFZYeUU4czZNWStCQlptUW5JYkNIbFpYZVlPK1laZXp4eGk3M0FhSWpYdDNLTnVoRHZSNlgzay9vL3F0YWY0cHFiT05mS1g5L1JRRVdmZTVDTVBYQ2Q0YmRxLzNBSWNlQW9leXZobWdTM1BTeTNSc0hqOWpJdEhqTEFuMjRIWmRsOEh3TFA3ai9kSVVqVEN6enN2TTwvQ29va2llPjwvU2VjdXJpdHlDb250ZXh0VG9rZW4+" />
+    </item>
+  </cookies>
+</error>

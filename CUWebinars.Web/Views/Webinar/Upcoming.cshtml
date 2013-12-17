@@ -1,0 +1,144 @@
+﻿<div style="width: 90%; margin-left: auto; margin-right: auto;">
+    @{
+        ViewBag.Title = "Recorded";
+        Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+
+        var searchCaption = "Searching Upcoming for ";
+        var searchTerm = Session["searchTerm"].ToString();
+
+                <div class="btn-group pull-right" id="IncludeButtons" data-toggle="buttons-checkbox">
+            <button type="button" id="includeUpcoming" class="btn btn-primary active">Upcoming</button>
+            <button type="button" id="includeRecorded" class="btn btn-primary">Recorded</button>
+            @*<button type="button" id="includeArchived" class="btn btn-primary statusFilter">Archived</button>*@
+        </div>        
+        <h3 id="PageTitle"></h3>
+        Html.RenderPartial("Partials/ResultsGrid");
+    }
+</div>
+<style>
+    td {
+        vertical-align: top;
+    }
+
+    .DateColumn {
+        padding-top: 12px;
+    }
+
+    td .presenterColumn {
+        text-align: right;
+    }
+</style>
+<script language="javascript" type="text/javascript">
+
+    var bIncludeUpcoming = true;
+    var bIncludeRecorded = true;
+    var bIncludeArchived = false;
+    var searchExtent = "";
+    var searchTerm = "@searchTerm";
+
+    $(document).ready(function () {
+
+        bIncludeUpcoming ? $("#includeUpcoming").addClass('active') : $("#includeUpcoming").removeClass('active');
+        bIncludeRecorded ? $("#includeRecorded").addClass('active') : $("#includeRecorded").removeClass('active');
+        //bIncludeArchived == "True" ? $("#includeArchived").addClass('active') : $("#includeArchived").removeClass('active');
+
+        $("#webinarsTable_filter :input").text("@searchTerm");
+        //alert(searchTerm);
+
+        if (searchTerm != null) $("#SearchTerm").html("Searched for: " + searchTerm);
+
+        $('body').on('click', '[id^=include]', function (event) {
+
+            event.stopPropagation(); // prevent default bootstrap behavior
+            if ($(this).attr('data-toggle') != 'button') { // don't toggle if data-toggle="button"
+                $(this).toggleClass('active');
+            }
+            bIncludeUpcoming = $("#includeUpcoming").hasClass('active');
+            bIncludeRecorded = $("#includeRecorded").hasClass('active');
+            //bIncludeArchived = $("#includeArchived").hasClass('active');
+
+            browserTable.fnDraw();
+        });
+
+        var browserTable = initWebinarsBrowser("webinarsTable", {
+            "sAjaxSource": "/webinar/showupcoming",
+            "fnServerData": function (sSource, aoData, fnCallback) {
+                aoData.push({ name: "bIncludeUpcoming", value: bIncludeUpcoming });
+                aoData.push({ name: "bIncludeRecorded", value: bIncludeRecorded });
+                //aoData.push({ name: "bIncludeArchived", value: bIncludeArchived });
+                aoData.push({ name: "bIncludeArchived", value: false });
+                $.ajax({
+                    "dataType": "json",
+                    "type": "POST",
+                    "url": sSource,
+                    "data": aoData,
+                    "success": fnCallback
+                });
+            }
+        });
+        //$(".statusFilter").change(function () {
+        //    browserTable.fnDraw();
+        //});
+    });
+
+    var webinarsBrowserTable;
+
+    function initWebinarsBrowser(tableId, options) {
+        // default settings, will be overriden by values from options
+        var settings = {
+            "bProcessing": true,
+            "bServerSide": true,
+            "bStateSave": false,
+            "aaSorting": [[2, " asc "]],
+            "aoColumns": [
+                { "bVisible": false },
+                { "bVisible": false },
+                {
+                    "sWidth": "5%", "sType": "datetime-us-pre",
+                    "fnRender": function (obj) {
+                        //console.dir(obj);
+
+                        return "<div class='DateColumn'>" + obj.aData[2] + "</div>";
+
+                    }
+                },
+                { "sWidth": "70%", "bSortable": true },
+                { "sWidth": "25%" }
+            ],
+            "fnServerData": function (sSource, aoData, fnCallback) {
+                $.ajax({
+                    "dataType": "json",
+                    "type": "POST",
+                    "url": sSource,
+                    "data": aoData,
+                    "success": fnCallback
+                });
+            },
+            "fnDrawCallback": function () {
+                $("#webinarsTable_filter :input").text("@searchTerm");
+
+                if (bIncludeUpcoming) {
+                    searchExtent = "Searching Upcoming Events for: @searchTerm";
+                }
+                if (bIncludeRecorded) searchExtent = "Searching Upcoming Events for: @searchTerm";
+                if (bIncludeRecorded && bIncludeUpcoming) searchExtent = "Searching Upcoming Events for: @searchTerm";
+
+                $("#PageTitle").html(searchExtent);
+            }
+        };
+
+        jQuery.extend(settings, options);
+        webinarsBrowserTable = $("#" + tableId).dataTable(settings).fnSetFilteringDelay(2000);
+
+        return webinarsBrowserTable;
+    }
+
+    function initWebinarsBrowserRegistrations() {
+        //
+    }
+
+    jQuery.fn.outerHTML = function () {
+        return $('<div>').append(this.eq(0).clone()).html();
+    };
+
+</script>

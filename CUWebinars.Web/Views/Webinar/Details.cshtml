@@ -1,0 +1,268 @@
+﻿@using System.Linq
+@using CUWebinars.Web.Helpers
+@using TTSDataLayer.Models
+
+@model CUWebinars.Web.ViewModel.WebinarDetailsViewModel
+
+@{
+    ViewBag.Title = Model.Webinar.Title + " - Presented by: " + Model.Webinar.Presenter.WebUser.FullName;
+    Layout = "/Views/Shared/_LayoutPublic.cshtml";
+
+    var CheckoutInProcess = "false";
+    if (ViewData.ContainsKey("CheckoutInProcess"))
+    {
+        if (!String.IsNullOrEmpty(ViewData["CheckoutInProcess"].ToString()))
+        {
+            CheckoutInProcess = ViewData["CheckoutInProcess"].ToString();
+        }
+    }
+    //var topics = Model.Webinar.WebinarTopicXrefs
+    //    .Select(webinarTopic => webinarTopic.Topic.topicDesc)
+    //    .Aggregate((s1, s2) => "<li>" + s1 + "</li><li>" + s2+"</li>");
+
+    var whichStep = "Step0";
+    if (ViewData.ContainsKey("WhichStep"))
+    {
+        if (!String.IsNullOrEmpty(ViewData["WhichStep"].ToString()))
+        {
+            whichStep = ViewData["WhichStep"].ToString();
+        }
+    }
+
+    string ceuShort = String.Empty;
+    string ceuStmt = String.Empty;
+    if (String.IsNullOrEmpty(Model.Webinar.ceu) == false)
+    {
+        string[] ceu = Model.Webinar.ceu.Split('|');
+        ceuShort = ceu[0];
+        ceuStmt = ceu[1];
+    }
+
+    var isUserLogged = "false";
+    var timeZ = USTimeZone.Central;
+    if (Model.WebUser != null)
+    {
+        isUserLogged = "true";
+        timeZ = Model.WebUser.timeZone;
+    }
+    var showUsersTimeFormat = "<i>" + Html.DisplayTime(Model.Webinar.Date, timeZ, false) + " - " + Html.DisplayTime(Model.Webinar.Date, Model.Webinar.Duration, timeZ) + "<br /></i>";
+    var msgOrderStatus = "";
+    var rowID = 0;
+    var orderID = 0;
+    var signUpCaption = "Sign Up!";
+    var ConfirmationCaption = "Confirmation";
+
+
+    if (Model.OrderRow != null && Model.OrderRow.idOrderRow > 0)
+    {
+        rowID = Model.OrderRow.idOrderRow;
+        orderID = Model.OrderRow.Order.idOrder;
+        if (Model.OrderRow.Status == OrderRowStatus.InProcess)
+        {
+            CheckoutInProcess = "true";
+            msgOrderStatus = "<div align=\"center\" class=\"label-warning label\">Your order is InProcess and needs to be confirmed.</div>";
+        }
+        if (Model.OrderRow.Status == OrderRowStatus.Billed ||
+            Model.OrderRow.Status == OrderRowStatus.Paid ||
+            Model.OrderRow.Status == OrderRowStatus.Submitted)
+        {
+            signUpCaption = "Connection Info";
+            ConfirmationCaption = "Order Summary";
+            whichStep = "Registered";
+            CheckoutInProcess = "false";
+            msgOrderStatus = "<div align=\"center\" class=\"label-success label\">Your details are posted below.</div>";
+            //msgOrderStatus = "<div align=\"center\" class=\"label-success label\">Your " + OptionsFacade.Instance.Load((int)Model.OrderRow.RegistrationType).Label.Replace(" Only", " ") + " details are posted below.</div>";
+
+        }
+    }
+
+}
+
+<script type="text/javascript">
+
+    CheckoutInProcess = "@(CheckoutInProcess)";
+    whichStep = "@(whichStep)";
+    orderRowID = @rowID;
+    isUserLogged = @isUserLogged;
+
+    $(document).ready(function() {
+
+    });
+
+</script>
+
+<style>
+    .icon-question-sign {
+        background-position: 14px 14px;
+    }
+    blockquote {
+        background: url("") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+        font-style: normal;
+        line-height: 110%;
+        font-size: small;
+        font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    }
+    .well-large {
+        padding: 0;
+    }
+        .well-large p {
+            padding: 0;
+            line-height: 100%;
+            font-size: small;
+        }
+</style>
+@{
+    if (Model.WebUser != null)
+    {
+        if (Model.WebUser.UserType == UserType.Affiliate || Model.WebUser.UserType == UserType.Admin)
+        {
+            <div id="AdminBox">
+                @{
+                    <span>
+                        <a href="javascript:showHtmlPopup('/Admin/Webinars/ViewFiles/@(Model.Webinar.idWebinar)');">Summary of Links & Special Instructions</a>
+                        <br />
+                    </span>
+                }
+                @if (Model.Webinar.Status == WebinarStatus.Scheduled)
+                {
+                    if (Model.WebUser.idUser == 24033)
+                    {
+                        <a href="javascript:showHtmlPopup('/Home/CBATemplate/@Model.Webinar.idWebinar');">Generate Promotional HTML code for this event!</a>
+                    }
+                    else
+                    {
+                        <a href="javascript:showHtmlPopup('/Home/PromoDailySend/@Model.Webinar.idWebinar');">Generate Promotional HTML code for this event!</a>
+                    }
+                }
+            </div>
+        }
+    }
+}
+
+<div class="hero-unit">
+    <div class="container">
+        <h1>@Model.Webinar.Title</h1>
+    </div>
+    <!--close container-->
+</div>
+<!--close hero-unit-->
+<div class="container clearfix" id="main-content">
+    <!--begin main content-->
+
+    <div class="row-fluid holy-grail">
+        <!--begin row-fluid-->
+        <section class="span3 sidebar">
+            <aside class="widget well-large">
+                <h5 class="short_headline"><span>@Model.Webinar.Presenter.WebUser.FullName</span></h5>
+                @Html.Raw(Model.Webinar.Presenter.BiographyLong)
+                @Html.Partial("Partials/_OtherEventsBySpeaker")
+            </aside>
+            <!--close aside widget-->
+        </section>
+        <!--*** add class "holy-grail" to row-fluid class to make a three column skinny, fat, skinny layout ***-->
+        <div class="span6">
+
+            <div class="description">
+                @Html.Raw(Model.Webinar.DescriptionLong)
+            </div>
+            <div class="description">
+                <h2 class="short_headline">
+                    <span>
+                        @Html.Raw(Model.Webinar.LearnCaption)
+                    </span>
+                </h2>
+                @Html.Raw(Model.Webinar.LearnBody)
+            </div>
+            <div class="description">
+                <h2 class="short_headline">
+                    <span>
+                        Who Should Attend?
+                    </span>
+                </h2>
+                @Html.Raw(Model.Webinar.WhoAttend)
+            </div>
+
+            <hr />
+        </div>
+
+        <section class="span3">
+            <aside class="widget">
+                <h5 class="short_headline"><span>Date/Time</span></h5>
+
+                <b>@Html.DisplayDate(Model.Webinar.Date)</b><br />
+                <span>@Html.Raw(showUsersTimeFormat)</span>
+                <div id="ceu">
+                    <a href="#" title="@ceuStmt ">
+                        @Html.Raw(ceuShort)
+                    </a>
+                </div>
+                @Html.Raw(msgOrderStatus)
+
+            </aside>
+            <!-- close .widget -->
+            <aside class="widget">
+                <h5 class="short_headline"><span>Topics</span></h5>
+                <ul>
+                    @foreach (var webinarTopic in Model.Webinar.WebinarTopicXrefs)
+                    {
+                        <li>
+                            @webinarTopic.Topic.topicDesc
+                        </li>
+                    }
+                </ul>
+            </aside>
+            <!--close aside .widget -->
+            <aside class="widget">
+                <h5 class="short_headline"><span>Stay Updated</span></h5>
+                @{Html.RenderPartial("Partials/_AddToMailingBox");}
+            </aside>
+            <!--close aside .widget -->
+
+            <aside class="widget">
+                <h5 class="short_headline"><span>Search</span></h5>
+                <form class="searchform" method="get">
+                    <input type="search" class="span12" value="type and hit enter" onfocus="this.value=''" onblur="this.value='type and hit enter'" />
+                </form>
+            </aside>
+            <!--close aside widget-->
+        </section>
+        <!--close section tertiary-column sidebar span3-->
+    </div>
+    <div class="row-fluid">
+        <div class="content offset2 span8 well">
+
+            <div id="SignUpFormContainer">
+                <ul class="nav nav-tabs" id="regTabs">
+                    <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@signUpCaption</a></li>
+                    @*<li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
+                        <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@ConfirmationCaption</a></li>*@
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane active" id="signUp">
+                        <input type="button" onclick="signUp();" class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
+
+                        @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model)
+
+                    </div>
+                    @*<div class="tab-pane" id="contactInfo">
+                            @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutContact.cshtml", model: Model)
+
+                        </div>
+                        <div class="tab-pane" id="confirmation">
+                            @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutConfirm.cshtml", model: Model)
+                        </div>*@
+                </div>
+            </div>
+            <form action="/cart/signup2" id="frmSignup2" method="post">
+                <input type="hidden" name="stage_of_checkout" id="stage_of_checkout" value="step0" />
+                <input type="hidden" name="webinar.idWebinar" value="@Model.Webinar.idWebinar" />
+                <input type="hidden" name="orderrow.Id" value="@rowID" />
+                <input type="hidden" name="mode" />
+
+                <input type="hidden" id="addEmails" name="addEmails" value="" />
+            </form>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,71 @@
+﻿@model  RegisterModel
+
+
+<fieldset>
+    <legend>@Model.AccountDetailsTitle</legend>
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true)
+
+        <div class="control-group">
+            @Html.LabelFor(model => model.FirstName, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FirstName)
+                @Html.ValidationMessageFor(model => model.FirstName)
+            </div>
+        </div>
+
+        <div class="control-group">
+            @Html.LabelFor(model => model.LastName, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.LastName)
+                @Html.ValidationMessageFor(model => model.LastName)
+            </div>
+        </div>
+
+        <div class="control-group">
+            @Html.LabelFor(model => model.Institution, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Institution)
+                @Html.ValidationMessageFor(model => model.Institution)
+            </div>
+        </div>
+
+        @Html.EditorFor(b => b.BillingAddress)
+
+        <div class="control-group">
+            <span class="control-label col-md-2">&nbsp;</span>
+            <div class="col-md-10">
+                <a href="" class="label label-info" id="AddShippingAddressLink">Add Shipping Address if different from Billing Address</a>  <a href="" class="label label-info" id="HideAddShippingAddressLink">Remove Shipping Address fields</a>
+            </div>
+        </div>
+            
+            <div id="ShippingAddressContainer">
+                @Html.EditorFor(b => b.ShippingAddress)
+            </div>
+            <div class="control-group">
+                @Html.LabelFor(model => model.Email, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Email)
+                    @Html.ValidationMessageFor(model => model.Email)
+                </div>
+            </div>
+
+            <div class="control-group">
+                @Html.LabelFor(model => model.Password, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Password)
+                    @Html.ValidationMessageFor(model => model.Password)
+                </div>
+            </div>
+
+            <div class="control-group">
+                @Html.LabelFor(model => model.ConfirmPassword, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.ConfirmPassword)
+                    @Html.ValidationMessageFor(model => model.ConfirmPassword)
+                </div>
+            </div>
+            @Html.HiddenFor(m => m.AccountDetailsTitle)
+        </div>
+</fieldset>

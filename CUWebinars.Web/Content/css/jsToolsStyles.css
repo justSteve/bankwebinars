@@ -1,0 +1,75 @@
+﻿#custom { 
+    background-image:url(/Content/images/loginFormBackground.png); 
+    width:512px; 
+    height:531px; 
+    padding:0px; 
+} 
+ 
+#custom div.close { 
+    right:-15px; 
+    top:-10px; 
+} 
+
+/* the modal element */
+div.showInProcess {
+	
+	/* growing background image */
+	background-image:url(/Content/images/inProcess.png);
+	
+	/* dimensions after the growing animation finishes  */
+	width:320px;
+	height:200px;		
+	
+	/* initially overlay is hidden */
+	display:none;
+	
+	/* some padding to layout nested elements nicely  */
+	padding:55px;
+}
+
+/* the overlayed element */
+div.showLoginBox {
+	
+	/* growing background image */
+	background-image:url(/Content/images/loginFormBackground.png);
+	
+	/* dimensions after the growing animation finishes  */
+	width:320px;
+	height:200px;		
+	
+	/* initially overlay is hidden */
+	display:none;
+	
+	/* some padding to layout nested elements nicely  */
+	padding:55px;
+}
+
+
+
+/* the overlayed element */
+div.supportBox {
+	
+	/* growing background image */
+	background-image:url(/Content/images/supportFormBackground.png);
+	
+	/* dimensions after the growing animation finishes  */
+	width:320px;
+	height:400px;		
+	
+	/* initially overlay is hidden */
+	display:none;
+	
+	/* some padding to layout nested elements nicely  */
+	padding:55px;
+}
+
+/* default close button positioned on upper right corner */
+div.supportBox div.close {
+	/*background-image:url(../img/overlay/close.png);*/
+	position:absolute;
+	right:5px;
+	top:5px;
+	cursor:pointer;
+	height:35px;
+	width:35px;
+}

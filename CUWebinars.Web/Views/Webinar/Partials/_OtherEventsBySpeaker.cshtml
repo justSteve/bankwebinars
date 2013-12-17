@@ -1,0 +1,44 @@
+﻿@using System.Collections
+@using TTSDataLayer.Models
+@model CUWebinars.Web.ViewModel.WebinarDetailsViewModel
+@{
+    IList<Webinar> upList = Model.Webinar.Presenter.Webinars.Where(w => w.Status == WebinarStatus.Scheduled).ToList();
+    IList<Webinar> recList = Model.Webinar.Presenter.Webinars.Where(w => w.Status == WebinarStatus.Recorded).ToList();
+}
+<aside class="widget clearfix">
+    <h5 class="short_headline"><span>@Model.Webinar.Presenter.WebUser.FirstName's Other Events</span></h5>
+    <div>
+        @if (upList.Count > 0)
+        {
+            <h4>Upcoming</h4>
+            <ul class="navigation small">
+
+
+                @foreach (var title in upList)
+                {
+                    if (title.idWebinar != Model.Webinar.idWebinar)
+                    {
+                        <li>@Html.ActionLink(@title.Title, "Details", "Webinar", new { target = "_new" })</li>
+                    }
+                    else
+                    {
+                        <span>This Event</span>}
+                }
+            </ul>}
+        @if (recList.Count > 0)
+        {
+            <h4>OnDemand</h4><ul class="navigation small">
+
+                @foreach (var title in recList)
+                {
+                    if (title.idWebinar != Model.Webinar.idWebinar)
+                    {
+                        <li>@Html.ActionLink(@title.Title, "Details", "Webinar", new { target = "_new" })</li>
+                    }
+                    else
+                    {
+                        <span>This Event</span>}
+                }
+            </ul>}
+    </div>
+</aside>

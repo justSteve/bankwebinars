@@ -1,0 +1,46 @@
+﻿@using TTSDataLayer.Models
+@model TTSDataLayer.Models.Webinar
+
+           @{           var webinar = Model;
+               var numDaysLeft = (webinar.Date.AddMonths(6) - DateTime.Now).Days;
+
+               var showDateValue = DateTimeHelper.FormatDate(webinar.Date) + " - " +
+                                   DateTimeHelper.FormatTime(webinar.Date) + " Central Time Zone";
+
+               if (webinar.Status == WebinarStatus.Recorded)
+               {
+                   showDateValue = "This OnDemand Webinar has " + numDaysLeft + " days of access remaining.";
+                   //if (numDaysLeft > 45)
+                   //{
+                   //    showDateValue = "About " + Convert.ToInt32(numDaysLeft / (365.25 / 12)) + " months of access remain.";
+                   //}
+               }
+
+               //var allTopics = webinar.WebinarTopicXrefs.Contains()
+               //.Select(x => x.Description);
+               var allTopics = webinar.WebinarTopicXrefs
+                   .Select(webinarTopic => webinarTopic.Topic.TopicDesc)
+                   .Aggregate((s1, s2) => s1 + ", " + s2);
+
+               string title = "<h3>< a href = '/Webinar/Details/" + webinar.idWebinar + "' target='_blank'>" + webinar.Title + "</a>
+               </h3 > ";
+               var desc = webinar.Description.Length > 200
+                   ? webinar.Description.Substring(0, 200) + "... <a class=\"btn btn-primary btn-small\" href='/Webinar/Details/" + webinar.idWebinar + "'>More →</a></p>"
+                   : webinar.Description;
+
+               var relatedTopics = "Related Topics: <b><i>" + string.Join(", ", allTopics) + "</i></b></blockquote>";
+           }
+
+
+<div class="wTitle clearfix">
+    <h2>@Html.Raw(title)</h2>
+    <div id="eventBody" style="width: 90%; margin-left: auto; margin-right: auto;">
+        <p>
+            Presented By:<img class="alignleft" src="@webinar.Presenter.photoThumb" alt="Photo of @webinar.Presenter.WebUser.FullName"> @webinar.Presenter.WebUser.FullName <br />
+            <i>@Html.Raw(showDateValue)</i>
+        </p>
+        <div style="margin-right: 20%;">@Html.Raw(desc)</div>
+        <p>@Html.Raw(relatedTopics)</p>
+    </div>
+
+</div>

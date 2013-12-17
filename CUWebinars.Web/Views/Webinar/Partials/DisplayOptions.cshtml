@@ -1,0 +1,140 @@
+﻿@using TTSDataLayer.Models
+@model CUWebinars.Web.ViewModel.WebinarDetailsViewModel
+
+<script type="text/javascript">
+
+    function signUp() {
+
+        @{
+            if (Model.Webinar.Duration > 1)
+            {
+                if (Model.Webinar.Status == WebinarStatus.Scheduled)
+                {
+                    <text>window.open('http://form.jotform.us/form/32525417714149?webinarid=@Model.Webinar.idWebinar&webinarTitle=@Model.Webinar.Title', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
+                }
+                else
+                {
+                    <text>window.open('http://form.jotform.us/form/32525008495151?webinarid=@Model.Webinar.idWebinar&webinarTitle=@Model.Webinar.Title', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
+                }
+            }
+            if (Model.Webinar.Duration < 2)
+            {
+                if (Model.Webinar.Status == WebinarStatus.Scheduled)
+                {
+                    <text>window.open('http://form.jotform.us/form/32525511772148?webinarid=@Model.Webinar.idWebinar&webinarTitle=@Model.Webinar.Title', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
+                }
+                else
+                {
+                    <text>window.open('http://form.jotform.us/form/32525522499156?webinarid=@Model.Webinar.idWebinar&webinarTitle=@Model.Webinar.Title', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
+                }
+            }
+        }
+    }
+
+    ;
+        $(document).ready(function () {
+            $("[id^='mode_']").on("click", function(oEvent) {
+
+                signUp();
+                //$("#stage_of_checkout").val("preReg");
+                //BuildPreRegPrice(oEvent);
+                //CheckIfAddLocShouldHide(oEvent.currentTarget.value);
+
+        });
+
+        function CheckIfAddLocShouldHide(optionID) {
+            //permits a 'preReg' pricing scheme to handle
+            //computation of discounts and addl locations prior
+            //to stepping to confirmation.
+
+            //var $form = $("#frmSignup2");
+
+            $.ajax({
+                url: "/cart/CheckIfAddLocShouldHide?optionID=" + optionID,
+                type: "GET",
+                //data: optionID,
+                success: function (data) {
+                    //$("#mode_" + data.orderRowID).prop('checked', true);
+                    if (data.shouldShow == "true") {
+
+                        $("#displayAddLoc").show(1000);
+                    } else {
+                        $("#displayAddLoc").hide(1000);
+                    }
+                }
+            });
+        }
+    });
+
+    //function BuildPreRegPrice(oEvent) {
+    ////permits a 'preReg' pricing scheme to handle
+    ////computation of discounts and addl locations prior
+    ////to stepping to confirmation.
+
+    //    var $form = $("#frmSignup2");
+
+    //    oEvent.preventDefault();
+    //    $("#ProgressDialogBS").modal('show');
+    //    $.ajax({
+    //        url: $form.attr("action"),
+    //        type: "POST",
+    //        data: $form.serialize(),
+    //        success: function (data) {
+    //            $("#mode_" + data.orderRowID).prop('checked', true);
+
+    //        },
+    //        error: function () {
+
+    //        },
+    //        complete: function () {
+    //            $("#ProgressDialogBS").modal('hide');
+    //        }
+    //    });
+    //}
+</script>
+@{
+    <span>Choose the attendance option that's right for you! <a href="#AttendOptions" data-toggle="modal">(learn more)</a> </span>
+
+    <div class="pull-right">
+        @*@Html.Partial("_DisplayRowPrice", new ViewDataDictionary(Model.OrderRow))
+            @Html.Raw(TTSTrain.Webinars.WebEntry.Support.DisplayRowPrice.BuildRowPrice(workingRow))*@
+    </div>
+    <div id="ModeOptions">
+        <dl>
+            @foreach (var myOption in Model.Options)
+            {
+                if (myOption.Type == "Text")
+                {
+                    if ((Model.OrderRow == null ||
+                        Model.OrderRow.idOrderRow < 1 ||
+                        Model.OrderRow.Status == OrderRowStatus.InProcess)
+                        && !myOption.SKU.Contains("Upgrade"))
+                    {
+                        <dt>
+                            <input type="radio" class="checkbox" id='mode_@(myOption.idOption)' name="mode" value="@myOption.idOption" />
+                            &nbsp;&nbsp;@myOption.OptionLabel - $@myOption.PriceToAdd&nbsp;&nbsp;<a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.OptionExplain) "><i class="icon-question-sign"></i></a>
+
+                            <br />
+                        </dt>
+                    }
+                    else
+                    {
+                        if (Model.OrderRow != null && Model.OrderRow.idOrderRow > 0 && myOption.SKU.Contains("Upgrade"))
+                        {
+                            <dt>
+                                <input type="radio" class="checkbox" id='mode_@(myOption.idOption)' name="mode" value="@myOption.idOption" />
+                                &nbsp;&nbsp;@myOption.OptionLabel - $@myOption.PriceToAdd
+                                <br />
+                            </dt>
+                            <dd>@Html.Raw(myOption.OptionExplain) </dd>
+                        }
+                    }
+                }
+            }
+        </dl>
+        <div id="displayAddLoc">
+            @Html.Partial(partialViewName: "~/Views/Webinar/Partials/AdditionalLocationsOptionView.cshtml", model: Model)
+        </div>
+    </div>
+}
+

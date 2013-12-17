@@ -1,0 +1,92 @@
+﻿@model LoginModel
+
+<div id="LogInContainer" class="container">
+    <div class="flat-form">
+        <ul class="nav nav-tabs">
+            <li>
+                @if(Model.ActiveTab.Equals("login", StringComparison.Ordinal))
+                {
+                    <a href="#login" data-toggle="tab" class="active">Login</a>
+                    
+                    ViewBag.Title = CUWebinars.Web.Helpers.WebUiConstants.Login;
+                }
+                else
+                {
+                    <a href="#login" data-toggle="tab">Login</a>
+                }
+            </li>
+            <li>
+                @if (Model.ActiveTab.Equals("register", StringComparison.Ordinal))
+                {
+                    <a href="#register" data-toggle="tab" class="active">Register</a>
+                    ViewBag.Title = CUWebinars.Web.Helpers.WebUiConstants.Register;
+                }
+                else
+                {
+                    <a href="#register" data-toggle="tab">Register</a>
+                }
+            </li>
+            <li>
+                @if (Model.ActiveTab.Equals("reset", StringComparison.Ordinal))
+                {
+                    <a href="#reset" data-toggle="tab" class="active">Reset Password</a>
+                    ViewBag.Title = CUWebinars.Web.Helpers.WebUiConstants.PasswordReset;
+                }
+                else
+                {
+                    <a href="#reset" data-toggle="tab">Reset Password</a>
+                }
+            </li>
+        </ul>
+
+        <div id="myTabContent" class="tab-content">
+
+            @if (Model.ActiveTab.Equals("login", StringComparison.Ordinal))
+            {
+                <div id="login" class="tab-pane active">
+                    @Html.Partial("_SignInPartial", Model.SignIn)
+                </div>
+            }
+            else
+            {
+                <div id="login" class="tab-pane">
+                    @Html.Partial("_SignInPartial", Model.SignIn)
+                </div>
+            }
+
+
+            @if (Model.ActiveTab.Equals("register", StringComparison.Ordinal)){
+                <div id="register" class="tab-pane active">
+                    @Html.Partial("_RegisterPartial", Model.Register)
+                </div>
+            }
+            else
+            {
+                <div id="register" class="tab-pane">
+                    @Html.Partial("_RegisterPartial", Model.Register)
+                </div>
+            }
+
+            @if (Model.ActiveTab.Equals("reset", StringComparison.Ordinal))
+            {
+                <div id="reset" class="tab-pane active">
+                    @Html.Partial("_ResetPasswordPartial", Model.ResetPassword)
+                </div>
+            }
+            else
+            {
+                <div id="reset" class="tab-pane">
+                    @Html.Partial("_ResetPasswordPartial", Model.ResetPassword)
+                </div>
+            }
+
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/app-processing-register")
+    
+}

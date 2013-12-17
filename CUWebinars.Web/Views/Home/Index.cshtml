@@ -1,0 +1,216 @@
+﻿@using TTSDataLayer.Models
+@model List<Webinar>
+@{
+    ViewBag.Title = "Home Page";
+    var timeZ = USTimeZone.Central;
+    //if (Model.WebUser != null)
+    //{
+    //    isUserLogged = "true";
+    //    timeZ = Model.WebUser.timeZone;
+    //}
+
+}
+
+<!-- Begin Slider
+    https://github.com/woothemes/FlexSlider/issues/104?source=cc -->
+
+<div class="content-slider-wrapper clearfix dark">
+    <!--add "dark" class for light colored backgrounds -->
+    <div class="flexslider loading content-slider">
+        <ul class="slides">
+
+            <!--begin slide content inside each li tag-->
+            <li>
+                <div class="img">
+                    <div><img alt="" src="~/Content/images/menu/L/Compliance.jpg"></div>
+
+                </div>
+                <div class="caption">
+                    <h2 align="center">Our Topics Have You Covered!</h2>
+                    <div style="margin-left: 50px;">
+                        
+                            <table width="100%">
+                                <tr><td>Compliance</td><td>Risk Management</td></tr>
+                                <tr><td>IRA</td><td>Customer Service</td></tr>
+                                <tr><td>Operations</td><td>Security</td></tr>
+                                <tr><td>Sales</td><td>Auditing</td></tr>
+                                <tr><td>Lending</td><td>Human Resources</td></tr>
+                                <tr><td>Teller</td><td></td></tr>
+                            </table>
+                        
+                    </div>
+
+                    @*<p class="more"><a class="btn btn-primary" href="~/Content/template/portfolio-single.html">Details &rarr;</a></p>*@
+                </div>
+            </li>
+            <!--add the "full" class for an image or video only slide w/o text-->
+            @*<li>
+                    <div class="img full">
+
+                        <div><img alt="" src="~/Content/images/menu/L/Compliance.jpg"></div>
+                    </div>
+                </li>*@
+            <li>
+                <div class="img">
+                    <div><img alt="" src="~/Content/images/menu/L/Security.jpg"></div>
+                </div>
+                <div class="caption">
+                    <div class="FrontPageSubHead">
+                        <h2 class="ReverseHead">On-Demand Webinars</h2>
+                    </div>
+                    <p style="margin-left: 20px;">
+                        In addition to our live webinars, CUWebinars.com also offers a wide-selection
+                        of recorded webinars to fit your schedule.
+                        <br />
+                    </p>
+                    <p style="font-size: 11pt; color: #D89304;"><b>BENEFITS</b></p>
+                    <blockquote>
+                        <ul>
+                            <li>The same great information as our live webinars</li>
+                            <li>Unlimited playback for 6-months after the live date</li>
+                            <li>An accompanying CD and handouts for offline viewing </li>
+                        </ul>
+                    </blockquote>
+                </div>
+            </li>
+
+            <li>
+                <div class="img">
+                    <div><img alt="" src="~/Content/images/menu/L/HumanResources.jpg"></div>
+                </div>
+                <div class="caption">
+                    <div class="FrontPageSubHead">
+                        <h2 class="ReverseHead">Compliance Perspectives: Monthly Update</h2>
+                    </div>
+                    <p style="margin-left: 20px; margin-right: 20px;">
+                        We are pleased to offer a monthly webinar
+                        series to help you keep up with changes and deadlines in the compliance area.
+                    </p>
+                    <p class="more"><a class="btn btn-primary" target="_blank" href="http://www.CompliancePerspectives.com">Details &rarr;</a></p>
+                </div>
+
+            </li>
+            <li>
+                <div class="img">
+                    <div><img alt="" src="~/Content/images/menu/L/Auditing.jpg"></div>
+                </div>
+                <div class="caption">
+                    <div class="FrontPageSubHead">
+                        <h2 class="ReverseHead">Subscriptions & Packages</h2>
+                    </div>
+                    <p style="margin-left: 20px;">
+                        Save when you join our subscription service! We have annual, <i>all you can eat</i> plans plus 5- 10- and 20-pack, <i>pick your own</i> plans. Something right for every institution and budget. <a href="/Home/ContactUs">Contact Us</a>
+                        to learn more.
+                    </p>
+                </div>
+            </li>            @*<li>
+                    <div class="video-wrapper">
+                        <iframe height="300" src="http://bankwebinars.com/recordings/OnDemandContentDemo.mp4"></iframe>
+                        <noscript>
+                            Turn javascript on to see this video.
+                        </noscript>
+
+                    </div>
+                    <div class="caption">
+                        <h2>A Demo</h2>
+                        <p>This 3 minute video shows more or less how to use an OnDemand registration.</p>
+                        <p class="more"><a class="btn btn-primary" href="~/Content/template/portfolio-single.html">Details &rarr;</a></p>
+                    </div>
+                </li>*@
+
+            @*<li>
+                    <div class="img">
+                        <div><img alt="" src="~/Content/images/menu/L/CustomerService.jpg"></div>
+                        <span class="credit"><a href="http://www.flickr.com/photos/fontfont/4830134044/in/photostream/" target="_blank" title="CC BY 2.0 FontFont" data-placement="top">CC BY 2.0 FontFont</a></span>
+                    </div>
+                    <div class="caption">
+                        <h2>I wish it would rain</h2>
+                        <p>
+                            Nam et tellus erat. Nunc imperdiet neque ut lorem placerat quis porttitor orci euismod. Sed lacinia risus at tortor accumsan eget semper
+                            nisl congue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pulvinar condimentum eleifend.
+                            Quisque imperdiet lacus nec lectus fringilla sit amet pellentesque felis viverra. Sed quis orci ac libero facilisis...
+                        </p>
+                        <p class="more"><a class="btn btn-primary" href="~/Content/template/portfolio-single.html">Details &rarr;</a></p>
+                    </div>
+                </li>
+                <li>
+                    <div class="video-wrapper">
+                        <iframe height="300" src="http://www.youtube.com/embed/ybI34Z_ZHbo?wmode=transparent" width="500"></iframe>
+                        <noscript>
+                            Turn javascript on to see this video.
+                        </noscript>
+                        <span class="credit"><a href="https://www.youtube.com/user/ChannelFrederator" data-placement="top" target="_blank" title="Dan Meth">Dan Meth</a></span>
+                    </div>
+                    <div class="caption">
+                        <h2>The Meth Minute 39</h2>
+                        <p>
+                            Featuring Dan Meth's Channel Frederator cartoons. Channel Frederator features the best cartoons on the Internet combined with commentary
+                            from our subscribers! We're the studio behind successful cartoons like Adventure Time and The Fairly OddParents and we're always on the
+                            lookout for what's next!
+                        </p>
+                        <p class="more"><a class="btn btn-primary" href="~/Content/template/portfolio-single.html">Details &rarr;</a></p>
+                    </div>
+                </li>
+                <li>
+                    <div class="img">
+                        <div><img alt="" src="~/Content/images/menu/L/Sales.jpg"></div>
+                        <span class="credit"><a href="http://www.flickr.com/photos/fontfont/4839972619/" data-placement="top" target="_blank" title="CC BY 2.0 FontFont">CC BY 2.0 FontFont</a></span>
+                    </div>
+                    <div class="caption">
+                        <h2>Font Love</h2>
+                        <p>
+                            Maecenas dignissim dui in turpis eleifend vel porta arcu aliquam. Quisque eu ante eros. Maecenas suscipit interdum lectus, quis suscipit
+                            lectus blandit et. Proin dictum, est ac suscipit malesuada, nunc est ultrices lacus, iaculis commodo felis nisl ac felis. Pellentesque
+                            lectus odio, mattis sit amet molestie vel, varius vitae velit. Nam mollis vehicula molestie. Vivamus tempus rutrum mauris
+                            ut...
+                        </p>
+                        <p class="more">
+                            <a class="btn btn-primary" href="~/Content/template/portfolio-single.html">Details &rarr;</a>
+                        </p>
+                    </div>
+                </li>*@
+        </ul>
+    </div> <!-- end  .flexslider.content-slider -->
+</div>
+<!-- end  .content-slider-wrapper dark -->
+@*http://www.slidorion.com/*@
+<div class="content-wrapper">
+    <hgroup class="title">
+        <h2>@ViewBag.Message</h2>
+    </hgroup>
+
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+    });
+</script>
+@*@foreach (var w in Model)
+    {
+        var showUsersTimeFormat = "<i>" + Html.DisplayTime(w.Date, timeZ, false) + " - " + Html.DisplayTime(w.Date, w.Duration, timeZ) + "<br /></i>";
+
+        <div>
+            <h2>@w.Title </h2>
+            <p>Presented By: @w.Presenter.WebUser.FullName</p>
+        </div>
+        <b>@Html.DisplayDate(w.Date)</b><br />
+        <span>@Html.Raw(showUsersTimeFormat)</span>
+    }*@
+
+<script language="javascript" type="text/javascript">
+    $(window).load(function () {
+
+        $('.flexslider.content-slider').flexslider({
+            controlNav: false,
+            slideshowSpeed: 5500,
+            animation: "slide",
+            pauseOnAction: true,
+            pauseOnHover: true,
+            useCSS: false,
+
+            start: function (slider) {
+                slider.removeClass('loading');
+            }
+        });
+    });</script>
+

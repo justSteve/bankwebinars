@@ -1,0 +1,60 @@
+﻿@model AddressModel
+
+<div class="control-group">
+    @Html.LabelFor(model => model.StreetAddress, new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @Html.EditorFor(model => model.StreetAddress)
+        @Html.ValidationMessageFor(model => model.StreetAddress)
+    </div>
+</div>
+
+<div class="control-group">
+    @Html.LabelFor(model => model.StreetAddress2, new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @Html.EditorFor(model => model.StreetAddress2)
+        @Html.ValidationMessageFor(model => model.StreetAddress2)
+    </div>
+</div>
+
+<div class="control-group">
+    @Html.LabelFor(model => model.City, new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @Html.EditorFor(model => model.City)
+        @Html.ValidationMessageFor(model => model.City)
+    </div>
+</div>
+
+<div class="control-group">
+    @Html.LabelFor(model => model.State, new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @Html.EditorFor(model => model.State)
+        @Html.ValidationMessageFor(model => model.State)
+    </div>
+</div>
+
+<div class="control-group">
+    @Html.LabelFor(model => model.Zip, new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @Html.EditorFor(model => model.Zip)
+        @Html.ValidationMessageFor(model => model.Zip)
+    </div>
+</div>
+
+<div class="control-group">
+    @Html.LabelFor(model => model.Country, new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @Html.EditorFor(model => model.Country)
+        @Html.ValidationMessageFor(model => model.Country)
+    </div>
+</div>
+
+<div class="control-group">
+    @Html.LabelFor(model => model.Phone, new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @Html.EditorFor(model => model.Phone)
+        @Html.ValidationMessageFor(model => model.Phone)
+    </div>
+</div>
+<div class="control-group">
+    @Html.HiddenFor(model => model.TypeOfAddress)
+</div>

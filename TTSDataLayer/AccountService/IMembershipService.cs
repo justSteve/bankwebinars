@@ -1,0 +1,48 @@
+﻿using System.Collections.Generic;
+using System.Web.UI.WebControls;
+using CUWebinars.Business.Models;
+
+namespace CUWebinars.Business.AccountService
+{
+    public interface IMembershipService
+    {
+        bool ChangePasswordFromResetKey(string key, string newPassword);
+        WebUser CreateUser(string firstName, 
+            string lastName, 
+            string userName, 
+            string password, 
+            string email, 
+            USTimeZone timeZone, 
+            UserType userType, 
+            int institutionId, 
+            IList<Address> addresses, 
+            string title, 
+            int? idUserImported, 
+            string accountStatus = null);
+
+        IEnumerable<Address> GetAddressesForUser(int id);
+        WebUser GetDetailsOfUser(string email);
+        WebUser GetUserByUserName(string userName);
+        WebUser GetUserByEmail(string email);
+        bool HasPassword(string emailAddress);
+        bool LogInUser(string emailAddress, string password);
+        bool LogOutUser();
+        Institution ProcessInstitutionForUser(string institutionName,
+            string city,
+            string state,
+            string regIdentifier,
+            string institutionType,
+            string zip);
+        void ResetPassword(string email);
+
+        void UpdateUserDetails(string firstName,
+            string lastName,
+            string password,
+            string email,
+            string institutionName,
+            Address billingAddress,
+            Address shippingAddress,
+            string title
+            );
+    }
+}

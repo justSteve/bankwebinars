@@ -1,0 +1,334 @@
+﻿
+@model CUWebinars.Web.ViewModel.WebinarDetailsViewModel
+
+<div class="tab-pane" id="confirmation">
+    @{        var orderRowID = 0;
+              var orderID = 0;
+              }
+    @*@{
+
+
+
+        if (Model.OrderRow != null && Model.OrderRow.Id > 0)
+        {
+
+            orderRowID = Model.OrderRow.Id;
+
+            orderID = Model.OrderRow.Order.Id;
+            var UserDetails = Model.OrderRow.Order.User.FirstName + " " + Model.OrderRow.Order.User.LastName + " - "
+                              + Model.OrderRow.Order.CustomerInstitution + "<br>" + Model.OrderRow.Order.User.Email;
+
+            var CCUserDetails = "None <a href=\"#AddCCModal\" role=\"button\" class=\"btn btn-mini\" data-toggle=\"modal\"> Add?</a> ";
+
+            if (!string.IsNullOrEmpty(Model.OrderRow.AlternateEmail))
+            {
+                CCUserDetails = Model.OrderRow.AlternateEmail;
+            }
+
+
+            var optionCost = "";
+            int connCount = 0;
+            var options = WebinarFacade.Instance.GetOptions(Model.Webinar);
+            if (options != null)
+            {
+                var additionalLocationsOption = options.OfType<AdditionalLocationsOption>().SingleOrDefault();
+                if (additionalLocationsOption != null)
+                {
+                    optionCost = String.Format("{0:C0}", additionalLocationsOption.PriceToAdd.ToString());
+                }
+            }
+            var addLocCaption = "No Additional Locations have been recorded. ($" + optionCost + " per) <a href=\"#AddLocation_" + Model.OrderRow.Id + "\" role=\"button\" class=\"btn btn-mini\" data-toggle=\"modal\"> Add?</a> ";
+
+            AdditionalLocationsOrderRowOption additionalLocations = Model.OrderRow.Options.OfType<AdditionalLocationsOrderRowOption>().SingleOrDefault();
+            if (additionalLocations == null)
+            {
+
+                additionalLocations = new AdditionalLocationsOrderRowOption
+                {
+                    AdditionalLocationsCount = 0,
+
+                };
+            }
+            else
+            {
+                connCount = additionalLocations.AdditionalLocationsCount;
+                if (connCount == 1)
+                {
+                    addLocCaption = "One Additional Location (" + additionalLocations.Emails[0] + "has been found. ($" + optionCost + ") <a href=\"#AddLocation_" + Model.OrderRow.Id + "\" role=\"button\" class=\"btn btn-mini\" data-toggle=\"modal\"> Add?</a> ";
+                }
+                if (connCount > 1)
+                {
+                    var emailList = additionalLocations.Emails.Aggregate("", (current, email) => current + (email + "<br>"));
+                    addLocCaption = connCount + " Additional Locations (at $" + optionCost + " per)  have been recorded. <a href=\"#AddLocation_" + Model.OrderRow.Id + "\" role=\"button\" class=\"btn btn-mini\" data-toggle=\"modal\"> Edit?</a> <br>" + emailList;
+                }
+            }
+
+
+            var discountCode = string.Empty;
+            if (!string.IsNullOrEmpty(Model.OrderRow.DiscountCode))
+            {
+                if (Model.OrderRow.Discount != null)
+                {
+                    discountCode = "Subscription Expires: " +
+                                   Model.OrderRow.Discount.DateValidTo.ToShortDateString();
+                }
+            }
+            else
+            {
+                discountCode = "";
+            }
+            var genComments = "";
+            if (Model.OrderRow.Order.GeneralComments != null)
+            {
+                genComments = Model.OrderRow.Order.GeneralComments.ToString().Replace("_", " ");
+            }
+
+
+            if (Model.OrderRow.Status == OrderRowStatus.InProcess)
+            {
+        <div id="inProcCart" class="well pull-right">
+            <div id="showCartPrice">@{Html.RenderPartial("_DisplayRowPrice", Model.OrderRow);}</div>
+
+            <div style="font-size: x-small; text-align: center;">
+                <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe" onclick="PlaceOrder();">Bill Me!</button>
+                <button class="btn btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button><br />
+                <a href="#CancelModal" data-toggle="modal" class="btn" id="Canceller">Cancel Registration</a><br />
+                Sales tax may be added to orders in Wisconsin or Illinois.
+            </div>
+        </div>                
+        <div><b>Please review this order summary and and choose billing method.</b></div>
+        <div class="row">
+            <div class="span2 offset1 alignright">
+                Primary Contact:<br />
+                <br />
+                CC Notifications:<br />
+                Type:<br />
+                Additional Locations:
+            </div>
+            <div class="span5">@Html.Raw(@UserDetails)<br />@Html.Raw(@CCUserDetails)<br />
+                @{Html.RenderPartial("_OrderRow_DisplayOptions", Model.OrderRow);}
+                <br />
+                @Html.Raw(addLocCaption)
+            </div>
+        </div>         
+
+        <div class="row">
+            <div class="span5">
+                <input size="350" type="text" placeholder="How did you hear about this webinar?" name="referred" id="tbReferred" value="" />
+                            @Html.Raw(storeComments)
+            @if (Model.CurrentUser.UserType == UserType.Admin)
+            {
+                <br />
+                @Html.Raw(privateComments)
+                <br />@Html.Raw(origin)
+            }
+            </div>
+            <div class="span2">&nbsp;</div>
+        </div> <div class="row">
+            <div class="span2 offset1 alignright">
+                Have a comment or question for our staff?<br />
+            </div>
+            <div class="span7">@Html.Raw(genComments)
+                            @Html.Raw(storeComments)
+            @if (Model.CurrentUser.UserType == UserType.Admin)
+            {
+                <br />
+                @Html.Raw(privateComments)
+                <br />@Html.Raw(origin)
+            }
+
+            </div>
+        </div>
+            }
+
+
+
+            if (Model.OrderRow.Status != OrderRowStatus.InProcess)
+            {
+                UserDetails += " - <a role=\"button\" class=\"btn btn-mini\" target=\"new\" href='/account/edit/" + Model.OrderRow.Order.User.Id + "' > Edit?</a> ";
+
+        <div id="postCheckout" class="well pull-right">
+            <div id="showCartPrice">@{Html.RenderPartial("_DisplayRowPrice", Model.OrderRow);}</div>
+            @if (Model.OrderRow.Status != OrderRowStatus.Paid)
+            {<span style="font-size: small; text-align: center;">Invoice mailed following the event.<br />
+                Optionally you can </span>
+                <button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button><br />
+            }
+        </div>                
+        <div class="row">
+            <div class="span2 offset1 alignright">
+                Primary Contact:<br />
+                <br />
+                CC Notifications:<br />
+                Type:<br />
+
+            </div>
+            <div class="span4">@Html.Raw(@UserDetails)<br />
+                @Html.Raw(@CCUserDetails)<br />
+                @OptionsFacade.Instance.Load((int)Model.OrderRow.RegistrationType).Label.ToString()<br />
+                Additional Locations:<br />@Html.Raw(addLocCaption)
+            </div>
+        </div>
+        <div class="row">
+            <div class="pull-right">
+                <a class="btn btn-mini btn-success" href="#ResendConfirmationModal" data-toggle="modal"  id="ConfirmationResender">Resend/Forward Order Summary</a>
+            </div>
+        </div>
+            }
+        }
+        
+    }*@
+
+    <div id="ConfirmModal" class="modal hide fade">
+        <form action="/cart/confirmOrder/@orderRowID" method="post" id="confirmOrder">
+            <input type="hidden" name="id" value="@orderRowID" />
+            <input type="hidden" id="Step2_BillMeFormReferred" name="referred" value="" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 id="confirmCaption"></h3>
+            </div>
+            <div id="confirmResult" class="modal-body">
+                <p>Registration is Confirmed</p>
+            </div>
+            <div class="modal-footer">
+                <a href="#" id="confirmRegistration" role="button" class="btn btn-success">Continue</a>
+            </div>
+
+        </form>
+
+    </div>
+
+    <div id="CancelModal" class="modal hide fade">
+        <form action="/cart/cancelOrder/@orderRowID" method="post" id="cancelOrder">
+
+            <input type="hidden" name="id" value="@orderRowID" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 id="cancelCaption">Cancel This Order?</h3>
+            </div>
+            <div id="cancelResult" class="modal-body">
+                <p>Please confirm that you wish to delete this registration.</p>
+            </div>
+            <div class="modal-footer">
+                <a href="#" id="rtn" class="close btn btn-inverse" data-dismiss="modal">Return to checkout</a>&nbsp;&nbsp;
+                <a href="/" id="continueReg" class="btn btn-success hide">Continue</a>&nbsp;&nbsp;
+                <input type="submit" id="cancelRegistration" value="Delete This Registration" class="btn btn-danger" />
+            </div>
+        </form>
+    </div>
+
+
+    <div id="AddCCModal" class="modal hide fade">
+        <form action="/cart/AddCC" method="post" id="AddCC">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 id="AddCCCaption">Carbon Copy Notifications?</h3>
+            </div>
+            <div id="CCBody" class="modal-body">
+                <p>
+                    <input type="text" name="CC" />
+                    <br />
+                    Need to forward the connection info to a co-worker?
+                    Insert the email address(s) (if multiple, just seperate the addresses by a comma) to be included in all future notifications related to this order.
+                    <br />
+                    <input type="text" name="CC" />
+
+                </p>
+                <p>Please note that this form is only used to forward the connection information to alternate attendees. If you would like to add Additional Locations (multiple connections by other branches, for example) we offer that optional feature on for an additional charge.  </p>
+                <input type="text" name="CC" />
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="close btn" data-dismiss="modal">Cancel</a>&nbsp;&nbsp;
+                <a href="#" id="SubmitCC" class="btn btn-success">Submit</a>
+            </div>
+        </form>
+    </div>
+
+@*
+    @{
+        if (orderRowID > 0)
+        {
+            <div id="AddLocation_@(orderRowID)" class="modal hide fade">
+                @Html.Partial("~/Views/Shared/AddLocationsView.cshtml", Model.OrderRow)
+            </div>
+            if (Model.OrderRow.Status != OrderRowStatus.InProcess)
+            {
+                <div id="ResendConfirmationModal" class="modal hide fade">
+                    @Html.Partial("~/Views/Shared/ResendConfirmationView.cshtml", Model.OrderRow)
+                </div>
+            }
+        }
+    }*@
+</div>
+
+
+
+<script type="text/javascript" language="javascript">
+    var confirmOrderForm = $("#confirmOrder");
+    var cancelOrderForm = $("#cancelOrder");
+    
+    function PlaceOrder() {
+        $("#Step2_BillMeFormReferred").val($("#tbReferred").val());
+        confirmOrderForm.submit();
+    }
+
+    $(document).ready(function () {
+        formID = @(orderRowID);
+        
+        
+        //$("#cancelRegistration").bind("click", cancelOrderForm.submit());
+        
+        confirmOrderForm.submit(function (e) {
+            console.log("submitting ConfirmOrder");
+            e.preventDefault();
+            $("#ProgressDialogBS").modal('show');
+            var data = confirmOrderForm.serialize();
+            $.post(confirmOrderForm.attr("action"), data, function (result, status) {
+                if (result.success) {
+                    orderRowID = result.orderRowID;
+                    
+                    $("#confirmResult").html(result.msg);
+                    $("#confirmRegistration").attr("href", "javascript:location.reload();");
+                    //$.get("/cart/checkoutConfirm/" + orderRowID, function (dataConfirm) {
+                    //    $('#confirmation').replaceWith(dataConfirm);
+                    //});
+                    //$("#signUpTab").show();
+                    //$("#contactInfoTab").show();
+
+                    CheckoutInProcess = false;
+                    
+                    $("#ProgressDialogBS").modal('hide');
+                    $('#ConfirmModal').modal('show');
+                } else {
+                    $('.signupErrors').html("Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! ");
+                }
+            }, "json");
+            return false;
+
+        });
+
+        cancelOrderForm.submit(function (e){
+            console.log("Submitting Cancel Order");
+            e.preventDefault();
+            var data = cancelOrderForm.serialize();
+            $.post(cancelOrderForm.attr("action"), data, function (result, status) {
+                if (result.success) {
+                    
+                    $('#cancelCaption').text("Order is canceled");
+                    $("#cancelRegistration").unbind("click");
+                    $("#rtn").hide();
+                    $("#continueReg").show();
+                    $("#cancelResult").hide();
+                    $("#cancelRegistration").hide();
+                    //$("#continueReg").attr("href", "/");
+                    
+                } else {
+                    alert("else");
+                    $('.signupErrors').html("Invalid Data. Try again?");
+                }
+            }, "json");
+            return false;
+        });
+    });
+    
+</script>

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.Experience.CloudFx</id>
+    <version>2.1.3</version>
+    <title>Cloud Application Framework &amp; Extensions (CloudFx)</title>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <licenseUrl>http://azurecatcommunity.blob.core.windows.net/cloudfx/License.rtf</licenseUrl>
+    <projectUrl>http://code.msdn.microsoft.com/CloudFx-Samples-60c3a852</projectUrl>
+    <iconUrl>http://i.imm.io/1eN8J.png</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>The Cloud Application Framework &amp; Extensions (CloudFx) is a Swiss Army knife for Windows Azure developers which offers a set of production quality components and building blocks intended to jump-start the implementation of feature-rich, reliable and extensible Windows Azure-based solutions and services.</description>
+    <summary>CloudFx is a Swiss Army knife for Windows Azure developers which offers a set of production quality components and building blocks intended to jump-start the implementation of feature-rich, reliable and extensible Windows Azure-based solutions</summary>
+    <copyright>© 2011-2013 Microsoft Corporation</copyright>
+    <tags>WindowsAzure Azure ServiceBus Messaging PubSub Publish Subscribe Topic Relay Storage Table Blob Queue Rx Reactive Observable Configuration Diagnostics Extensibility Best Practices Web Worker Role</tags>
+    <dependencies>
+      <dependency id="Rx-Main" version="2.1.30214.0" />
+      <dependency id="Microsoft.WindowsAzure.Caching" version="2.1.0.0" />
+      <dependency id="WindowsAzure.ServiceBus" version="2.1.3.0" />
+      <dependency id="WindowsAzure.Storage" version="2.1.0.0" />
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Configuration" targetFramework="" />
+      <frameworkAssembly assemblyName="System.ServiceModel" targetFramework="" />
+    </frameworkAssemblies>
+  </metadata>
+</package>

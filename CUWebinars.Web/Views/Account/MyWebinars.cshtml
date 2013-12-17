@@ -1,0 +1,120 @@
+﻿@model  MyWebinarsDTO
+@using CUWebinars.Web.Core;
+@using TTSDataLayer.Models
+
+
+@{
+    ViewBag.Title = "My Webinars";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+
+    WebUser currentUser = Model.WebUser;
+    var EditResult = "<span>&nbsp;</span>";
+
+    if (TempData["EditResult"] != null && (string)TempData["EditResult"] != "")
+    {
+        EditResult = TempData["EditResult"].ToString();
+    }
+    string genComments = "";
+    string storeComments = "";
+    string privateComments = "";
+    string origin = "";
+
+    if (@Html.ValidationMessage("GeneralError") != null)
+    {
+        EditResult = "ERROR: " + @Html.ValidationMessage("GeneralError").ToHtmlString();
+    }
+}
+<script src="/Scripts/app/EditOrder.js"></script>
+<style>
+    .ReverseHead {
+        font-family: Verdana, BitStream vera Sans, Helvetica,Sans-serif;
+        text-align: left;
+        margin-bottom: 10px;
+    }
+
+    .dropdown li {
+        font-family: Verdana, BitStream vera Sans,Helvetica,Sans-serif;
+    }
+
+    .dropdown-menu > li > a {
+        text-align: left;
+        font-size: medium;
+    }
+
+    .propValue {
+        color: black;
+    }
+
+        .propValue a {
+            color: black;
+        }
+
+    .cCon {
+    }
+</style>
+
+<link href="/Content/css/home_index.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+    function resendConfirmation(form) {
+        form.parent.submit();
+    }
+</script>
+
+<div style="width: 90%; margin-left: auto; margin-right: auto;">
+    <h2>My Webinars</h2>
+    @{
+    //var thisDiscount = PageData["thisUser"].SubscriptionDiscount;
+
+    }
+    <a href="/account/manage/@currentUser.idUser?returnUrl=/Account/MyWebinars/@currentUser.idUser">
+        <span style="color: black;" class="pull-right btn btn-success">
+            @*<button class="btn btn-success">*@
+            Edit My Account Profile
+            @*</button>*@
+        </span>
+    </a>
+
+    @*@if (thisDiscount != null)
+        {
+            <span>Discount found with @thisDiscount.UsesNumber credits remaining.</span>
+        }*@
+    <div class="row-fluid">
+        @{Html.RenderPartial("Partials/Upcoming");}
+    </div>
+    @{Html.RenderPartial("Partials/Recorded");}
+    <br />
+    <div class="clear" />
+    @*@{Html.RenderPartial("Partials/Archived");}*@
+    @*<div class="modalOverlay" id="modalOverlay2">
+            <p align="center">
+                Simply list the required names in this box - one name per line. Type the names directly
+                or prepare the list elsewhere and paste it here. When you click the 'Generate' button
+                return a list of links that you can distribute to each attendee.</p>
+            <form action="/Admin/registrations/CertificateOfCompletionList" id="frmCOCList" method="post">
+            <input type="hidden" name="id" id="txtWebinarIDList" />
+            <textarea cols="30" rows="8" name="displayNames">One name per line please.</textarea><p
+                align="center">
+                <input type="submit" value="Generate Certificates" /></p>
+            </form>
+        </div>
+        <div class="modalOverlay" id="modalOverlay">
+            <p align="center">
+                <form action="/Admin/registrations/CertificateOfCompletion" id="frmCOC" method="post">
+                <input type="hidden" name="id" id="txtWebinarID" />
+                Name to Be Displayed:
+                <input type="text" name="displayName" value="@PageData["thisUser"].FirstName  @PageData["thisUser"].LastName "  /><br />
+                <br />
+                <input type="submit" value="Generate Certificate" />
+                </form>
+            </p>
+            <p align="center">
+                <br />
+                <br />
+                Need to produce certificates for other attendees? <a href="javascript:ListOfNames();">
+                    Click here.</a></p>
+        </div>*@
+</div>
+<div id="FeedBack" class="modal hide fade">
+
+    @*    <script type="text/javascript" src="http://form.jotform.us/jsform/31023099145145"></script>*@
+</div>
