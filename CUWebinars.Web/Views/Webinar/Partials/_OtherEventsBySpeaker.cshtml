@@ -1,5 +1,5 @@
 ﻿@using System.Collections
-@using TTSDataLayer.Models
+@using CUWebinars.Business.Models
 @model CUWebinars.Web.ViewModel.WebinarDetailsViewModel
 @{
     IList<Webinar> upList = Model.Webinar.Presenter.Webinars.Where(w => w.Status == WebinarStatus.Scheduled).ToList();

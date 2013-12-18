@@ -1,5 +1,5 @@
 ﻿@model CUWebinars.Web.Models.AdditionalLocationsOrderRowOption
-@using TTSDataLayer.Models
+@using CUWebinars.Business.Models
 @{
     var webinar = ViewData["Webinar"] as Webinar;
     if (webinar != null && webinar.Status == WebinarStatus.Scheduled && 

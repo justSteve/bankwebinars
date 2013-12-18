@@ -16,7 +16,7 @@ namespace CUWebinars.Web.Data.Repositories
         }
         public IQueryable<OrderRow> GetOrdersByUser(int userId)
         {
-            return _ctx.OrderRow.Where(w => w.idWebinar == 801);
+            return _ctx.OrderRows.Where(w => w.idWebinar == 801);
 
         }
     }

@@ -37,10 +37,10 @@ namespace CUWebinars.Web.Data.Repositories
 
         public IQueryable<Order> GetOrdersByWebinar(int webinarId)
         {
-            return _ctx.Orders.Where(o => o.OrderRow.Single().Webinar.idWebinar == webinarId
-                    && (o.OrderRow.Single().Status == OrderRowStatus.Billed
-                        || o.OrderRow.Single().Status == OrderRowStatus.Paid
-                        || o.OrderRow.Single().Status == OrderRowStatus.Submitted));
+            return _ctx.Orders.Where(o => o.OrderRows.Single().Webinar.idWebinar == webinarId
+                    && (o.OrderRows.Single().Status == OrderRowStatus.Billed
+                        || o.OrderRows.Single().Status == OrderRowStatus.Paid
+                        || o.OrderRows.Single().Status == OrderRowStatus.Submitted));
         }
 
         public IQueryable<Webinar> GetByTopic(int topicId)
@@ -74,7 +74,7 @@ namespace CUWebinars.Web.Data.Repositories
             IList<Order> orders2Send = new List<Order>();
             foreach (var order in orders)
             {
-                var row = order.OrderRow.SingleOrDefault();
+                var row = order.OrderRows.SingleOrDefault();
                 if (row == null)
                 {
                     //TODO: log this exception condition

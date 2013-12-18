@@ -121,89 +121,91 @@ namespace CUWebinars.Web.Controllers
             return "error";
         }
 
-
+        //  TODO: fix 
         public ActionResult MyWebinars()
         {
-            var currentUser = membershipService.GetUserByUserName(User.Identity.Name);
-            var model = new MyWebinarsDTO {WebUser = currentUser};
+            //var currentUser = membershipService.GetUserByUserName(User.Identity.Name);
+            //var model = new MyWebinarsDTO {WebUser = currentUser};
 
-            //IList<Discount> discountsList = DiscountFacade.Instance.LoadList();
-            //IList<OrderRow> rowsWithDiscount = OrderFacade.Instance.SelectOrderRowsWithDiscountByUser(currentUser);
-            //IList<DiscountDTO> discountDto = new DiscountDTOAssembler().Entities2DTOs(
-            //    discountsList, rowsWithDiscount);
+            ////IList<Discount> discountsList = DiscountFacade.Instance.LoadList();
+            ////IList<OrderRow> rowsWithDiscount = OrderFacade.Instance.SelectOrderRowsWithDiscountByUser(currentUser);
+            ////IList<DiscountDTO> discountDto = new DiscountDTOAssembler().Entities2DTOs(
+            ////    discountsList, rowsWithDiscount);
 
-            ViewData["DiscountMsg"] = "";
-            var repo = new OrderRepository(db);
-            model.Scheduled = repo.SelectOrdersWithScheduledWebinars(currentUser.idUser);
-            model.Recorded = repo.SelectOrdersWithRecordedWebinars(currentUser.idUser);
-            model.Archived = repo.SelectOrdersWithArchivedWebinars(currentUser.idUser);
+            //ViewData["DiscountMsg"] = "";
+            //var repo = new OrderRepository(db);
+            //model.Scheduled = repo.SelectOrdersWithScheduledWebinars(currentUser.idUser);
+            //model.Recorded = repo.SelectOrdersWithRecordedWebinars(currentUser.idUser);
+            //model.Archived = repo.SelectOrdersWithArchivedWebinars(currentUser.idUser);
 
-            var optionAndOrderdictionary = model.Scheduled;
-            var optionAndOrderdictionarySortedByWebinarDate = optionAndOrderdictionary.OrderBy(f => f.Value.OrderRow.SingleOrDefault().Webinar.Date);
+            //var optionAndOrderdictionary = model.Scheduled;
+            //var optionAndOrderdictionarySortedByWebinarDate = optionAndOrderdictionary.OrderBy(f => f.Value.OrderRows.SingleOrDefault().Webinar.Date);
             
-            model.Scheduled = optionAndOrderdictionarySortedByWebinarDate
-                .ToDictionary<KeyValuePair<Option, Order>, Option, Order>(p => p.Key, p => p.Value);
+            //model.Scheduled = optionAndOrderdictionarySortedByWebinarDate
+            //    .ToDictionary<KeyValuePair<Option, Order>, Option, Order>(p => p.Key, p => p.Value);
 
-            var list = model.Recorded;
-            var sortedEnum = list.OrderBy(f => f.OrderRow.SingleOrDefault().Webinar.Date);
-            model.Recorded = sortedEnum.ToList();
+            //var list = model.Recorded;
+            //var sortedEnum = list.OrderBy(f => f.OrderRows.SingleOrDefault().Webinar.Date);
+            //model.Recorded = sortedEnum.ToList();
 
-            list = model.Archived;
-            sortedEnum = list.OrderBy(f => f.OrderRow.SingleOrDefault().Webinar.Date);
-            model.Archived = sortedEnum.ToList();
+            //list = model.Archived;
+            //sortedEnum = list.OrderBy(f => f.OrderRows.SingleOrDefault().Webinar.Date);
+            //model.Archived = sortedEnum.ToList();
             
-            return View("MyWebinars", model);
+            //return View("MyWebinars", model);
+            return null;
         }
 
         public ActionResult Manage(ManageMessageId? message)
         {
-            ManageModel manageModel = new ManageModel
-            {
-                StatusMessage = string.Empty
-            };
+            //ManageModel manageModel = new ManageModel
+            //{
+            //    StatusMessage = string.Empty
+            //};
 
             
 
-            ViewBag.ReturnUrl = Url.Action("Manage");
-            ViewBag.Title = WebUiConstants.ManageUser;
+            //ViewBag.ReturnUrl = Url.Action("Manage");
+            //ViewBag.Title = WebUiConstants.ManageUser;
 
-            var user = membershipService.GetUserByUserName(User.Identity.Name);
-            var addresses = user.Addresses.ToArray();
-            var billingAddress = addresses.Where(a => a.AddressType == WebUiConstants.BillingAddress).First();
-            var shippingAddress = addresses.Where(a => a.AddressType == WebUiConstants.ShippingAddress).First();
+            //var user = membershipService.GetUserByUserName(User.Identity.Name);
+            //var addresses = user.Addresses.ToArray();
+            //var billingAddress = addresses.Where(a => a.AddressType == WebUiConstants.BillingAddress).First();
+            //var shippingAddress = addresses.Where(a => a.AddressType == WebUiConstants.ShippingAddress).First();
 
-            manageModel.RegisterFields = new RegisterModel
-                    {
-                        BillingAddress = new AddressModel
-                        {
-                            City = billingAddress.City,
-                            Country = billingAddress.Country,
-                            StreetAddress = billingAddress.StreetAddress,
-                            StreetAddress2 = billingAddress.StreetAddress2,
-                            State = billingAddress.State,
-                            Zip = billingAddress.Zip,
-                            Phone = billingAddress.Phone,
-                            TypeOfAddress = AddressType.Billing
-                        },
-                        ShippingAddress = new AddressModel
-                        {
-                            City = shippingAddress.City,
-                            Country = shippingAddress.Country,
-                            StreetAddress = shippingAddress.StreetAddress,
-                            StreetAddress2 = shippingAddress.StreetAddress2,
-                            State = shippingAddress.State,
-                            Zip = shippingAddress.Zip,
-                            Phone = shippingAddress.Phone,
-                            TypeOfAddress = AddressType.Shipping
-                        },
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Institution = user.Institution.InstitutionName,
-                        Email = user.email,
-                        AccountDetailsTitle = WebUiConstants.ManageUser
-                    };
+            //manageModel.RegisterFields = new RegisterModel
+            //        {
+            //            BillingAddress = new AddressModel
+            //            {
+            //                City = billingAddress.City,
+            //                Country = billingAddress.Country,
+            //                StreetAddress = billingAddress.StreetAddress,
+            //                StreetAddress2 = billingAddress.StreetAddress2,
+            //                State = billingAddress.State,
+            //                Zip = billingAddress.Zip,
+            //                Phone = billingAddress.Phone,
+            //                TypeOfAddress = AddressType.Billing
+            //            },
+            //            ShippingAddress = new AddressModel
+            //            {
+            //                City = shippingAddress.City,
+            //                Country = shippingAddress.Country,
+            //                StreetAddress = shippingAddress.StreetAddress,
+            //                StreetAddress2 = shippingAddress.StreetAddress2,
+            //                State = shippingAddress.State,
+            //                Zip = shippingAddress.Zip,
+            //                Phone = shippingAddress.Phone,
+            //                TypeOfAddress = AddressType.Shipping
+            //            },
+            //            FirstName = user.FirstName,
+            //            LastName = user.LastName,
+            //            Institution = user.Institution.InstitutionName,
+            //            Email = user.email,
+            //            AccountDetailsTitle = WebUiConstants.ManageUser
+            //        };
 
-            return View(manageModel);
+            //return View(manageModel);
+            return null;
         }
 
 
