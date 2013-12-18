@@ -107,7 +107,7 @@
       <Project>{9aaa6bf1-dc7a-4900-ac20-acd6adddf54c}</Project>
       <Name>CUWebinars.Web</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TTSDataLayer\TTSDataLayer.csproj">
+    <ProjectReference Include="..\TTSDataLayer\CUWebinars.Business.csproj">
       <Project>{8a2efa43-7138-4a85-8167-78b8b1cbed1c}</Project>
       <Name>TTSDataLayer</Name>
     </ProjectReference>
