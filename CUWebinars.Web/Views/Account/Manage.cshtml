@@ -1,6 +1,11 @@
 ﻿@model  ManageModel
 @{
     ViewBag.Title = "Manage Account";
+
+    var identity = ((System.Security.Claims.ClaimsIdentity)User.Identity)
+        .Claims
+        .Where(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName)
+        .FirstOrDefault();    
 }
 
 
@@ -10,7 +15,18 @@
         <div id="myTabContent" class="tab-content">
             <p class="message-success">@Model.StatusMessage</p>
 
-            <p>You're logged in as <strong>@User.Identity.Name</strong>.</p>
+            <p>You're logged in as 
+                @{
+                    if(@identity == null)
+                    {
+                        <strong>@User.Identity.Name</strong>
+                    }
+                    else
+                    {
+                        <strong>@identity.Value</strong>
+                    }   
+                }                                  
+            </p>
 
             @using (Html.BeginForm("Manage", "Account", "Post"))
             {

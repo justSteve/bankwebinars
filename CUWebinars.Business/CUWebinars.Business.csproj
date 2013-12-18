@@ -67,6 +67,8 @@
     <Compile Include="AccountService\IUserAccountService.cs" />
     <Compile Include="AccountService\MembershipService.cs" />
     <Compile Include="AccountService\OrderService.cs" />
+    <Compile Include="AccountService\TTSUserAccountService.cs" />
+    <Compile Include="Constants\ClaimTypes.cs" />
     <Compile Include="Constants\DomainConstants.cs" />
     <Compile Include="Core\AccountHelpers.cs" />
     <Compile Include="Core\AppConst.cs" />

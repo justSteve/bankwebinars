@@ -386,10 +386,12 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\ClaimsExtensions.cs" />
     <Compile Include="Helpers\WebUiConstants.cs" />
     <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="Helpers\EnumHelpers.cs" />
     <Compile Include="Helpers\HtmlHelpers.cs" />
+    <Compile Include="Infrastructure\TenantAuthenticationManager.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\AddressModel.cs" />
     <Compile Include="Models\ChangePasswordFromResetKeyInputModel.cs" />
@@ -1595,7 +1597,6 @@
     <Folder Include="Content\images\aff\wvba\" />
     <Folder Include="Content\images\aff\wyba\" />
     <Folder Include="Images\" />
-    <Folder Include="Infrastructure\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

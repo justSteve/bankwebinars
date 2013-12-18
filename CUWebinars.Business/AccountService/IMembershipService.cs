@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using CUWebinars.Business.Models;
+using BrockAllen.MembershipReboot;
+using System;
 
 namespace CUWebinars.Business.AccountService
 {
@@ -22,6 +24,7 @@ namespace CUWebinars.Business.AccountService
         IEnumerable<Address> GetAddressesForUser(int id);
         WebUser GetDetailsOfUser(string email);
         //WebUser GetUserByUserName(string userName);
+        UserAccount GetUserAccountByUserId(Guid userId);
         WebUser GetUserByEmail(string email);
         bool HasPassword(string emailAddress);
         bool LogInUser(string emailAddress, string password);

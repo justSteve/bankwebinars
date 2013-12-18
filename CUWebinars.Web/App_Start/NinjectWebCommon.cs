@@ -1,6 +1,9 @@
 using BrockAllen.MembershipReboot;
 using BrockAllen.MembershipReboot.Ef;
 using BrockAllen.MembershipReboot.WebHost;
+using CUWebinars.Business.AccountService;
+using CUWebinars.Business.Models;
+using CUWebinars.Business.Repository;
 using CUWebinars.Web.App_Start;
 using CUWebinars.Web.Data.Repositories;
 using CUWebinars.Web.Data.Repositories.Interfaces;
@@ -10,9 +13,6 @@ using Ninject;
 using Ninject.Web.Common;
 using System;
 using System.Web;
-using CUWebinars.Business.AccountService;
-using CUWebinars.Business.Models;
-using CUWebinars.Business.Repository;
 
 [assembly: WebActivator.PreApplicationStartMethod(typeof(NinjectWebCommon), "Start")]
 [assembly: WebActivator.ApplicationShutdownMethodAttribute(typeof(NinjectWebCommon), "Stop")]

@@ -3,9 +3,22 @@
     <nav class="user clearfix">
         @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
         {
-            @Html.AntiForgeryToken()
-            @Html.ActionLink(User.Identity.Name, "Manage", "Account", routeValues: null, htmlAttributes: new { title = "Manage" })
-            <a href="javascript:document.getElementById('logoutForm').submit()">&nbsp;&nbsp;[Log Off]</a>
+            var identity = ((System.Security.Claims.ClaimsIdentity)User.Identity)
+                .Claims
+                .Where(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName)
+                .FirstOrDefault();
+            
+            if(!ReferenceEquals(null, identity))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ActionLink(identity.Value, "Manage", "Account", routeValues: null, htmlAttributes: new { title = "Manage" })
+                <a href="javascript:document.getElementById('logoutForm').submit()">&nbsp;&nbsp;[Log Off]</a>
+            }
+            else
+            {
+                <a href="@Url.Action("Login", "Account")"><i class="icon-user"></i> Login</a>
+            }
+            
         }
     </nav>
 }

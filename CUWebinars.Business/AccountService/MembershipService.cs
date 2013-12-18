@@ -4,7 +4,6 @@ using System.Linq;
 using System.Security.Claims;
 using BrockAllen.MembershipReboot;
 using BrockAllen.MembershipReboot.Ef;
-using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Constants;
@@ -16,14 +15,14 @@ namespace CUWebinars.Business.AccountService
         private readonly IInstitutionRepository institutionRepository;
         private readonly IRefDataRepository refDataRepository;
         private readonly AuthenticationService samAuthenticationService;
-        private readonly IUserAccountService userAccountService;
+        private readonly UserAccountService userAccountService;
         private readonly IWebUserRepository webUserRepository;
 
 
         public MembershipService(IInstitutionRepository institutionRepository,
             IRefDataRepository refDataRepository,
             AuthenticationService samAuthenticationService,
-            IUserAccountService userAccountService,
+            UserAccountService userAccountService,
             IWebUserRepository webUserRepository)
         {
 
@@ -84,6 +83,8 @@ namespace CUWebinars.Business.AccountService
             )
         {
             var account = userAccountService.CreateAccount(userName, password, email);
+            userAccountService.AddClaim(account.ID, CUWebinars.Business.Constants.ClaimTypes.FullName, string.Format("{0} {1}", firstName, lastName));
+
             //var webUserId = m
             //.GetAll().Where(c => c.InstitutionName == institutionName && c.Zip == zip).ToList();
 
@@ -233,6 +234,12 @@ namespace CUWebinars.Business.AccountService
         public IEnumerable<Address> GetAddressesForUser(int id)
         {
             return refDataRepository.GetAddressesForUser(id);
+        }
+
+
+        public UserAccount GetUserAccountByUserId(Guid userId)
+        {
+            return userAccountService.GetByID(userId);            
         }
     }
 }

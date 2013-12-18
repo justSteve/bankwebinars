@@ -17,6 +17,7 @@ using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using OrderRepository = CUWebinars.Web.Data.Repositories.OrderRepository;
 using CUWebinars.Web.ViewModel;
+using System.Security.Claims;
 
 
 namespace CUWebinars.Web.Controllers
@@ -158,54 +159,59 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Manage(ManageMessageId? message)
         {
-            //ManageModel manageModel = new ManageModel
-            //{
-            //    StatusMessage = string.Empty
-            //};
+            ManageModel manageModel = new ManageModel
+            {
+                StatusMessage = string.Empty
+            };
 
-            
 
-            //ViewBag.ReturnUrl = Url.Action("Manage");
-            //ViewBag.Title = WebUiConstants.ManageUser;
 
-            //var user = membershipService.GetUserByUserName(User.Identity.Name);
-            //var addresses = user.Addresses.ToArray();
-            //var billingAddress = addresses.Where(a => a.AddressType == WebUiConstants.BillingAddress).First();
-            //var shippingAddress = addresses.Where(a => a.AddressType == WebUiConstants.ShippingAddress).First();
+            ViewBag.ReturnUrl = Url.Action("Manage");
+            ViewBag.Title = WebUiConstants.ManageUser;
 
-            //manageModel.RegisterFields = new RegisterModel
-            //        {
-            //            BillingAddress = new AddressModel
-            //            {
-            //                City = billingAddress.City,
-            //                Country = billingAddress.Country,
-            //                StreetAddress = billingAddress.StreetAddress,
-            //                StreetAddress2 = billingAddress.StreetAddress2,
-            //                State = billingAddress.State,
-            //                Zip = billingAddress.Zip,
-            //                Phone = billingAddress.Phone,
-            //                TypeOfAddress = AddressType.Billing
-            //            },
-            //            ShippingAddress = new AddressModel
-            //            {
-            //                City = shippingAddress.City,
-            //                Country = shippingAddress.Country,
-            //                StreetAddress = shippingAddress.StreetAddress,
-            //                StreetAddress2 = shippingAddress.StreetAddress2,
-            //                State = shippingAddress.State,
-            //                Zip = shippingAddress.Zip,
-            //                Phone = shippingAddress.Phone,
-            //                TypeOfAddress = AddressType.Shipping
-            //            },
-            //            FirstName = user.FirstName,
-            //            LastName = user.LastName,
-            //            Institution = user.Institution.InstitutionName,
-            //            Email = user.email,
-            //            AccountDetailsTitle = WebUiConstants.ManageUser
-            //        };
+            var identity = ClaimsPrincipal.Current;
 
-            //return View(manageModel);
-            return null;
+            var userAccount = membershipService.GetUserAccountByUserId(identity.GetUserID());
+
+            var user = membershipService.GetUserByEmail(userAccount.Email);
+
+            var addresses = user.Addresses.ToArray();
+            var billingAddress = addresses.Where(a => a.AddressType == WebUiConstants.BillingAddress).First();
+            var shippingAddress = addresses.Where(a => a.AddressType == WebUiConstants.ShippingAddress).First();
+
+            manageModel.RegisterFields = new RegisterModel
+                    {
+                        BillingAddress = new AddressModel
+                        {
+                            City = billingAddress.City,
+                            Country = billingAddress.Country,
+                            StreetAddress = billingAddress.StreetAddress,
+                            StreetAddress2 = billingAddress.StreetAddress2,
+                            State = billingAddress.State,
+                            Zip = billingAddress.Zip,
+                            Phone = billingAddress.Phone,
+                            TypeOfAddress = AddressType.Billing
+                        },
+                        ShippingAddress = new AddressModel
+                        {
+                            City = shippingAddress.City,
+                            Country = shippingAddress.Country,
+                            StreetAddress = shippingAddress.StreetAddress,
+                            StreetAddress2 = shippingAddress.StreetAddress2,
+                            State = shippingAddress.State,
+                            Zip = shippingAddress.Zip,
+                            Phone = shippingAddress.Phone,
+                            TypeOfAddress = AddressType.Shipping
+                        },
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Institution = user.Institution.InstitutionName,
+                        Email = user.email,
+                        AccountDetailsTitle = WebUiConstants.ManageUser
+                    };
+
+            return View(manageModel);
+            //return null;
         }
 
 
@@ -475,7 +481,7 @@ namespace CUWebinars.Web.Controllers
 
                     var result = membershipService.CreateUser(model.RegisterFields.FirstName.Trim()
                         , model.RegisterFields.LastName.Trim()
-                        , model.RegisterFields.FirstName.Trim() + ' ' + model.RegisterFields.LastName.Trim()
+                        , model.RegisterFields.FirstName.Trim() + model.RegisterFields.LastName.Trim()
                         , model.RegisterFields.Password
                         , model.RegisterFields.Email.Trim()
                         , USTimeZone.Central
