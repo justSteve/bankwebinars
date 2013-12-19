@@ -34,16 +34,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BrockAllen.MembershipReboot">
-      <HintPath>..\..\..\TFS\CUWebinars\assemblies\BrockAllen.MembershipReboot.dll</HintPath>
+      <HintPath>..\assemblies\BrockAllen.MembershipReboot.dll</HintPath>
     </Reference>
     <Reference Include="BrockAllen.MembershipReboot.Ef">
-      <HintPath>..\..\..\TFS\CUWebinars\assemblies\BrockAllen.MembershipReboot.Ef.dll</HintPath>
+      <HintPath>..\assemblies\BrockAllen.MembershipReboot.Ef.dll</HintPath>
     </Reference>
     <Reference Include="BrockAllen.MembershipReboot.Owin">
-      <HintPath>..\..\..\TFS\CUWebinars\assemblies\BrockAllen.MembershipReboot.Owin.dll</HintPath>
+      <HintPath>..\assemblies\BrockAllen.MembershipReboot.Owin.dll</HintPath>
     </Reference>
     <Reference Include="BrockAllen.MembershipReboot.WebHost">
-      <HintPath>..\..\..\TFS\CUWebinars\assemblies\BrockAllen.MembershipReboot.WebHost.dll</HintPath>
+      <HintPath>..\assemblies\BrockAllen.MembershipReboot.WebHost.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -123,10 +123,10 @@
     <Compile Include="Models\OrderRowOption.cs" />
     <Compile Include="Models\OrderRowStatus.cs" />
     <Compile Include="Models\Presenter.cs" />
+    <Compile Include="Models\TimeZone.cs" />
     <Compile Include="Models\Topic.cs" />
     <Compile Include="Models\TTSWebinarsContext.cs" />
     <Compile Include="Models\UserType.cs" />
-    <Compile Include="Models\USTimeZones.cs" />
     <Compile Include="Models\Webinar.cs" />
     <Compile Include="Models\WebinarFile.cs" />
     <Compile Include="Models\WebinarStatus.cs" />
