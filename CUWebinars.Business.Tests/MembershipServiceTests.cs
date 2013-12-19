@@ -1,22 +1,20 @@
-﻿using System;
+﻿using BrockAllen.MembershipReboot;
+using BrockAllen.MembershipReboot.Ef;
+using CUWebinars.Business.AccountService;
+using CUWebinars.Business.Repository;
+using CUWebinars.Web.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TTSDataLayer.Account;
-using TTSDataLayer.Repository;
 using Moq;
-using TTSDataLayer.AccountService;
-using TTSDataLayer.WebHost;
-//using TTSDataLayer.Ef;
 
-namespace TTSDataLayer.Tests
+namespace CUWebinars.Business.Tests
 {
     [TestClass]
     public class MembershipServiceTests
     {
         Mock<IRefDataRepository> refDataRepositoryMock;
         Mock<IInstitutionRepository> institutionRepositoryMock;
-        Mock<IWebUserRepository> webUserRepositoryMock;
-        Mock<IUserAccountService> userAccountServiceMock;
-        Mock<UserAccountService> userAccountServiceMock2;
+        Mock<IWebUserRepository> webUserRepositoryMock;        
+        UserAccountServiceFake userAccountServiceFake;
         SamAuthenticationServiceFake samAuthenticationServiceMock;
         MembershipService membershipService;
 
@@ -26,17 +24,14 @@ namespace TTSDataLayer.Tests
             refDataRepositoryMock = new Mock<IRefDataRepository>();
             institutionRepositoryMock = new Mock<IInstitutionRepository>();
             webUserRepositoryMock = new Mock<IWebUserRepository>();
-            userAccountServiceMock = new Mock<IUserAccountService>();
-            userAccountServiceMock2 = new Mock<UserAccountService>();
-            samAuthenticationServiceMock = new SamAuthenticationServiceFake(
-                new UserAccountService(new DefaultUserAccountRepository())
-                );
+            userAccountServiceFake = new UserAccountServiceFake(new DefaultUserAccountRepository());
+            samAuthenticationServiceMock = new SamAuthenticationServiceFake(userAccountServiceFake);
 
             membershipService = new MembershipService(
                 institutionRepositoryMock.Object,
                 refDataRepositoryMock.Object,
                 samAuthenticationServiceMock,
-                userAccountServiceMock.Object,
+                userAccountServiceFake,
                 webUserRepositoryMock.Object                                
                 );
         }
@@ -49,9 +44,6 @@ namespace TTSDataLayer.Tests
             string password = "openSesame";
 
             UserAccount userAccount = new UserAccount();
-
-            userAccountServiceMock.Setup(u => u.AuthenticateWithEmail(email, password)).Returns(true);
-            userAccountServiceMock.Setup(u => u.GetByEmail(email)).Returns(userAccount);
 
             var result = membershipService.LogInUser(email, password);
 

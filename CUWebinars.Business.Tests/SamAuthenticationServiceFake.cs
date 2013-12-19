@@ -1,9 +1,8 @@
 ﻿
-using TTSDataLayer.Account;
-using TTSDataLayer.AccountService;
-using TTSDataLayer.Authentication;
+using BrockAllen.MembershipReboot;
+using CUWebinars.Business.AccountService;
 
-namespace TTSDataLayer.Tests
+namespace CUWebinars.Business.Tests
 {
     public class SamAuthenticationServiceFake : AuthenticationService
     {
@@ -12,7 +11,7 @@ namespace TTSDataLayer.Tests
 
         }
 
-        public override void SignIn(UserAccount account)
+        public override void SignIn(UserAccount account, bool persistant = false)
         {
             //  do nothing.
         }
