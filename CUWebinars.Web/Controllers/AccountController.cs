@@ -125,36 +125,35 @@ namespace CUWebinars.Web.Controllers
         //  TODO: fix 
         public ActionResult MyWebinars()
         {
-            //var currentUser = membershipService.GetUserByUserName(User.Identity.Name);
-            //var model = new MyWebinarsDTO {WebUser = currentUser};
+            var currentUser = GetWebUserFromIPrincipal();
+            var model = new MyWebinarsDTO { WebUser = currentUser };
 
-            ////IList<Discount> discountsList = DiscountFacade.Instance.LoadList();
-            ////IList<OrderRow> rowsWithDiscount = OrderFacade.Instance.SelectOrderRowsWithDiscountByUser(currentUser);
-            ////IList<DiscountDTO> discountDto = new DiscountDTOAssembler().Entities2DTOs(
-            ////    discountsList, rowsWithDiscount);
+            //IList<Discount> discountsList = DiscountFacade.Instance.LoadList();
+            //IList<OrderRow> rowsWithDiscount = OrderFacade.Instance.SelectOrderRowsWithDiscountByUser(currentUser);
+            //IList<DiscountDTO> discountDto = new DiscountDTOAssembler().Entities2DTOs(
+            //    discountsList, rowsWithDiscount);
 
-            //ViewData["DiscountMsg"] = "";
-            //var repo = new OrderRepository(db);
-            //model.Scheduled = repo.SelectOrdersWithScheduledWebinars(currentUser.idUser);
-            //model.Recorded = repo.SelectOrdersWithRecordedWebinars(currentUser.idUser);
-            //model.Archived = repo.SelectOrdersWithArchivedWebinars(currentUser.idUser);
+            ViewData["DiscountMsg"] = "";
+            var repo = new OrderRepository(db);
+            model.Scheduled = repo.SelectOrdersWithScheduledWebinars(currentUser.idUser);
+            model.Recorded = repo.SelectOrdersWithRecordedWebinars(currentUser.idUser);
+            model.Archived = repo.SelectOrdersWithArchivedWebinars(currentUser.idUser);
 
-            //var optionAndOrderdictionary = model.Scheduled;
-            //var optionAndOrderdictionarySortedByWebinarDate = optionAndOrderdictionary.OrderBy(f => f.Value.OrderRows.SingleOrDefault().Webinar.Date);
-            
-            //model.Scheduled = optionAndOrderdictionarySortedByWebinarDate
-            //    .ToDictionary<KeyValuePair<Option, Order>, Option, Order>(p => p.Key, p => p.Value);
+            var optionAndOrderdictionary = model.Scheduled;
+            var optionAndOrderdictionarySortedByWebinarDate = optionAndOrderdictionary.OrderBy(f => f.Value.OrderRows.SingleOrDefault().Webinar.Date);
 
-            //var list = model.Recorded;
-            //var sortedEnum = list.OrderBy(f => f.OrderRows.SingleOrDefault().Webinar.Date);
-            //model.Recorded = sortedEnum.ToList();
+            model.Scheduled = optionAndOrderdictionarySortedByWebinarDate
+                .ToDictionary<KeyValuePair<Option, Order>, Option, Order>(p => p.Key, p => p.Value);
 
-            //list = model.Archived;
-            //sortedEnum = list.OrderBy(f => f.OrderRows.SingleOrDefault().Webinar.Date);
-            //model.Archived = sortedEnum.ToList();
-            
-            //return View("MyWebinars", model);
-            return null;
+            var list = model.Recorded;
+            var sortedEnum = list.OrderBy(f => f.OrderRows.SingleOrDefault().Webinar.Date);
+            model.Recorded = sortedEnum.ToList();
+
+            list = model.Archived;
+            sortedEnum = list.OrderBy(f => f.OrderRows.SingleOrDefault().Webinar.Date);
+            model.Archived = sortedEnum.ToList();
+
+            return View("MyWebinars", model);
         }
 
         public ActionResult Manage(ManageMessageId? message)
@@ -169,11 +168,7 @@ namespace CUWebinars.Web.Controllers
             ViewBag.ReturnUrl = Url.Action("Manage");
             ViewBag.Title = WebUiConstants.ManageUser;
 
-            var identity = ClaimsPrincipal.Current;
-
-            var userAccount = membershipService.GetUserAccountByUserId(identity.GetUserID());
-
-            var user = membershipService.GetUserByEmail(userAccount.Email);
+            var user = GetWebUserFromIPrincipal();
 
             var addresses = user.Addresses.ToArray();
             var billingAddress = addresses.Where(a => a.AddressType == WebUiConstants.BillingAddress).First();
@@ -213,7 +208,6 @@ namespace CUWebinars.Web.Controllers
             return View(manageModel);
             //return null;
         }
-
 
         [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
@@ -348,7 +342,10 @@ namespace CUWebinars.Web.Controllers
 
                     return View("Login", new LoginModel
                     {
-                        Register = new RegisterViewModel(),
+                        Register = new RegisterViewModel
+                        {
+                            RegisterFields = new RegisterModel()
+                        },
                         ResetPassword = model,
                         SignIn = new SignInModel(),
                         ActiveTab = "reset"
@@ -361,7 +358,10 @@ namespace CUWebinars.Web.Controllers
             }
             return View("Login", new LoginModel
                     {
-                        Register = new RegisterViewModel(),
+                        Register = new RegisterViewModel
+                        {
+                            RegisterFields = new RegisterModel()
+                        },
                         ResetPassword = model,
                         SignIn = new SignInModel(),
                         ActiveTab = "reset"
@@ -751,6 +751,18 @@ namespace CUWebinars.Web.Controllers
                     return "An unknown error occurred. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
             }
         }
+
+
+        private WebUser GetWebUserFromIPrincipal()
+        {
+            var identity = ClaimsPrincipal.Current;
+
+            var userAccount = membershipService.GetUserAccountByUserId(identity.GetUserID());
+
+            var user = membershipService.GetUserByEmail(userAccount.Email);
+            return user;
+        }
+
         #endregion
     }
 }

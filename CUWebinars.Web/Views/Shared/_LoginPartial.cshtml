@@ -3,10 +3,19 @@
     <nav class="user clearfix">
         @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
         {
-            var identity = ((System.Security.Claims.ClaimsIdentity)User.Identity)
-                .Claims
-                .Where(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName)
-                .FirstOrDefault();
+            Claim identity = null;
+            
+            if(ReferenceEquals(null, ViewBag.LoggedInUserIdentity))
+            {
+                identity = ((ClaimsIdentity)User.Identity)
+                    .Claims
+                    .Where(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName)
+                    .FirstOrDefault();                
+            }
+            else
+            {
+                identity = ViewBag.LoggedInUserIdentity as Claim;
+            }
             
             if(!ReferenceEquals(null, identity))
             {

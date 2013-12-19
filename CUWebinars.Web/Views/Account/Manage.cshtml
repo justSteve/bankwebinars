@@ -2,10 +2,15 @@
 @{
     ViewBag.Title = "Manage Account";
 
-    var identity = ((System.Security.Claims.ClaimsIdentity)User.Identity)
+    var identity = ((ClaimsIdentity)User.Identity)
         .Claims
         .Where(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName)
-        .FirstOrDefault();    
+        .FirstOrDefault();
+
+    if (!ReferenceEquals(null, identity))
+    {
+        ViewBag.LoggedInUserIdentity = identity;
+    }
 }
 
 

@@ -8,7 +8,7 @@
                 {
                     <a href="#login" data-toggle="tab" class="active">Login</a>
                     
-                    ViewBag.Title = CUWebinars.Web.Helpers.WebUiConstants.Login;
+                    ViewBag.Title = WebUiConstants.Login;
                 }
                 else
                 {
@@ -19,7 +19,7 @@
                 @if (Model.ActiveTab.Equals("register", StringComparison.Ordinal))
                 {
                     <a href="#register" data-toggle="tab" class="active">Register</a>
-                    ViewBag.Title = CUWebinars.Web.Helpers.WebUiConstants.Register;
+                    ViewBag.Title = WebUiConstants.Register;
                 }
                 else
                 {
@@ -30,7 +30,7 @@
                 @if (Model.ActiveTab.Equals("reset", StringComparison.Ordinal))
                 {
                     <a href="#reset" data-toggle="tab" class="active">Reset Password</a>
-                    ViewBag.Title = CUWebinars.Web.Helpers.WebUiConstants.PasswordReset;
+                    ViewBag.Title = WebUiConstants.PasswordReset;
                 }
                 else
                 {
