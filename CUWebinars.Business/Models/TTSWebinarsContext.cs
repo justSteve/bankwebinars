@@ -20,13 +20,15 @@ namespace CUWebinars.Business.Models
         public TTSWebinarsContext(string name)
             : base(string.Format("Name={0}", name))
         {
+            //this.Configuration.ProxyCreationEnabled = false;
+            //this.Configuration.LazyLoadingEnabled = false;
         }
 
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Affiliate> Affiliates { get; set; }
         public DbSet<Discount> Discounts { get; set; }
-        public DbSet<HostProperty> HostProperties { get; set; }
-        public DbSet<HostPropertyValue> HostPropertyValues { get; set; }
+        //public DbSet<HostProperty> HostProperties { get; set; }
+        //public DbSet<HostPropertyValue> HostPropertyValues { get; set; }
         public DbSet<Institution> Institutions { get; set; }
         public DbSet<Option> Options { get; set; }
         public DbSet<OptionsGroup> OptionsGroups { get; set; }
@@ -47,8 +49,8 @@ namespace CUWebinars.Business.Models
             modelBuilder.Configurations.Add(new AddressMap());
             modelBuilder.Configurations.Add(new AffiliateMap());
             modelBuilder.Configurations.Add(new DiscountMap());
-            modelBuilder.Configurations.Add(new HostPropertyMap());
-            modelBuilder.Configurations.Add(new HostPropertyValueMap());
+            //modelBuilder.Configurations.Add(new HostPropertyMap());
+            //modelBuilder.Configurations.Add(new HostPropertyValueMap());
             modelBuilder.Configurations.Add(new InstitutionMap());
             modelBuilder.Configurations.Add(new OptionMap());
             modelBuilder.Configurations.Add(new OptionsGroupMap());

@@ -137,14 +137,18 @@ namespace CUWebinars.Web
                 var up = new StringBuilder();
                 up.Append(
                     "<li role='presentation'><a role=\"menuitem\" tabindex=\"-1\" href='/Webinar/Upcoming/'><b>View All Upcoming</b></a></li>");
-                for (int i = 0; i < uWebinars.Count; i++)
+                if (uWebinars.Count > 0)
                 {
-                    string shortTitle =
-                        uWebinars[i].Title.Length > 35
-                            ? uWebinars[i].Title.Substring(0, 35) + "..."
-                            : uWebinars[i].Title;
-                    up.Append("<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href='/Webinar/Details/" +
-                              uWebinars[i].idWebinar + "'>" + shortTitle + "</a></li>");
+                    for (int i = 0; i < uWebinars.Count; i++)
+                    {
+                        string shortTitle =
+                            uWebinars[i].Title.Length > 35
+                                ? uWebinars[i].Title.Substring(0, 35) + "..."
+                                : uWebinars[i].Title;
+                        up.Append(
+                            "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href='/Webinar/Details/" +
+                            uWebinars[i].idWebinar + "'>" + shortTitle + "</a></li>");
+                    }
                 }
                 Session["upcoming"] = up;
 
@@ -152,15 +156,19 @@ namespace CUWebinars.Web
                 StringBuilder rec = new StringBuilder();
                 rec.Append(
                     "<li role='presentation'><a role=\"menuitem\" tabindex=\"-1\"  href='/Webinar/recorded/'><b>View All Recordings</b></a></li>");
-                for (int i = 0; i < 8; i++)
+                if (rWebinars.Count > 0)
                 {
-                    string ShortTitle =
-                        rWebinars[i].Title.Length > 45
-                            ? rWebinars[i].Title.Substring(0, 45) + "..."
-                            : rWebinars[i].Title;
+                    for (int i = 0; i < 8; i++)
+                    {
+                        string ShortTitle =
+                            rWebinars[i].Title.Length > 45
+                                ? rWebinars[i].Title.Substring(0, 45) + "..."
+                                : rWebinars[i].Title;
 
-                    rec.Append("<li role='presentation'><a role=\"menuitem\" tabindex=\"-1\" href='/Webinar/Details/" +
-                               rWebinars[i].idWebinar + "'>" + Server.HtmlEncode(ShortTitle) + "</a></li>");
+                        rec.Append(
+                            "<li role='presentation'><a role=\"menuitem\" tabindex=\"-1\" href='/Webinar/Details/" +
+                            rWebinars[i].idWebinar + "'>" + Server.HtmlEncode(ShortTitle) + "</a></li>");
+                    }
                 }
                 Session["rec"] = rec;
 

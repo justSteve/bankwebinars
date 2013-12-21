@@ -92,14 +92,10 @@
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\Affiliate.cs" />
     <Compile Include="Models\Discount.cs" />
-    <Compile Include="Models\HostProperty.cs" />
-    <Compile Include="Models\HostPropertyValue.cs" />
     <Compile Include="Models\Institution.cs" />
     <Compile Include="Models\Mapping\AddressMap.cs" />
     <Compile Include="Models\Mapping\AffiliateMap.cs" />
     <Compile Include="Models\Mapping\DiscountMap.cs" />
-    <Compile Include="Models\Mapping\HostPropertyMap.cs" />
-    <Compile Include="Models\Mapping\HostPropertyValueMap.cs" />
     <Compile Include="Models\Mapping\InstitutionMap.cs" />
     <Compile Include="Models\Mapping\OptionMap.cs" />
     <Compile Include="Models\Mapping\OptionsGroupMap.cs" />
@@ -147,11 +143,27 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="SQLSeeding\BACPACs\MembershipReboot.bacpac" />
+    <None Include="SQLSeeding\BACPACs\TTSWebinars.bacpac" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201312180449592_EnumsAdded.resx">
       <DependentUpon>201312180449592_EnumsAdded.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="SQLSeeding\BuildTTSWebinarsSeeder.sql" />
+    <Content Include="SQLSeeding\seeder1_ini.sql" />
+    <Content Include="SQLSeeding\seeder2_ImportPresenters.sql" />
+    <Content Include="SQLSeeding\seeder3_ImportAffiliates.sql" />
+    <Content Include="SQLSeeding\seeder4_CreateOptions.sql" />
+    <Content Include="SQLSeeding\seeder5_ImportWebinars.sql" />
+    <Content Include="SQLSeeding\seeder5_ImportWebinars__CU.sql" />
+    <Content Include="SQLSeeding\seeder6_post.sql" />
+    <Content Include="SQLSeeding\VBA\CUWebinarImporter.bas" />
+    <Content Include="SQLSeeding\VBA\SetOrdersToShipped.bas" />
+    <Content Include="SQLSeeding\_buildSprocsAndErrorLog.sql" />
+    <Content Include="SQLSeeding\_scriptRunner.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

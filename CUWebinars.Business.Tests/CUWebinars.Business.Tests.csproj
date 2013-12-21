@@ -79,7 +79,6 @@
     <Compile Include="MembershipServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SamAuthenticationServiceFake.cs" />
-    <Compile Include="UserAccountServiceFake.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -89,6 +88,10 @@
     <ProjectReference Include="..\CUWebinars.Business\CUWebinars.Business.csproj">
       <Project>{d4250c01-6ee8-4d3c-ae39-9cd038422210}</Project>
       <Name>CUWebinars.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CUWebinars.Web.Tests\CUWebinars.Web.Tests.csproj">
+      <Project>{507b2709-e583-459d-ac56-215a2b09a69c}</Project>
+      <Name>CUWebinars.Web.Tests</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
