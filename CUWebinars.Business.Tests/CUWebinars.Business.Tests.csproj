@@ -6,8 +6,8 @@
     <ProjectGuid>{67ADE7C7-0AE7-410B-8B18-58598EE41C01}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TTSDataLayer.Tests</RootNamespace>
-    <AssemblyName>TTSDataLayer.Tests</AssemblyName>
+    <RootNamespace>CUWebinars.Business.Tests</RootNamespace>
+    <AssemblyName>CUWebinars.Business.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -38,6 +38,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BrockAllen.MembershipReboot">
+      <HintPath>..\assemblies\BrockAllen.MembershipReboot.dll</HintPath>
+    </Reference>
+    <Reference Include="BrockAllen.MembershipReboot.Ef">
+      <HintPath>..\assemblies\BrockAllen.MembershipReboot.Ef.dll</HintPath>
+    </Reference>
+    <Reference Include="BrockAllen.MembershipReboot.Owin">
+      <HintPath>..\assemblies\BrockAllen.MembershipReboot.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="BrockAllen.MembershipReboot.WebHost">
+      <HintPath>..\assemblies\BrockAllen.MembershipReboot.WebHost.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EntityFramework.6.0.1\lib\net45\EntityFramework.dll</HintPath>
@@ -69,14 +81,18 @@
     <Compile Include="SamAuthenticationServiceFake.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TTSDataLayer\CUWebinars.Business.csproj">
-      <Project>{8a2efa43-7138-4a85-8167-78b8b1cbed1c}</Project>
-      <Name>TTSDataLayer</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CUWebinars.Business\CUWebinars.Business.csproj">
+      <Project>{d4250c01-6ee8-4d3c-ae39-9cd038422210}</Project>
+      <Name>CUWebinars.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CUWebinars.Web.Tests\CUWebinars.Web.Tests.csproj">
+      <Project>{507b2709-e583-459d-ac56-215a2b09a69c}</Project>
+      <Name>CUWebinars.Web.Tests</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

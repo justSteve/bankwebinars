@@ -82,6 +82,7 @@ namespace CUWebinars.Business.AccountService
             string accountStatus = null
             )
         {
+            userName = userName.Replace(" ", "").Replace(".", "");
             var account = userAccountService.CreateAccount(userName, password, email);
             userAccountService.AddClaim(account.ID, CUWebinars.Business.Constants.ClaimTypes.FullName, string.Format("{0} {1}", firstName, lastName));
 

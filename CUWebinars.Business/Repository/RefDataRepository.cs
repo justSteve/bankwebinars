@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CUWebinars.Business.Models;
 
@@ -30,9 +31,16 @@ namespace CUWebinars.Business.Repository
 
         public int GetMaxWebUserId()
         {
-            using (var context = new TTSWebinarsContext())
+            try
             {
-                return context.WebUsers.Max(u => u.idUser);
+                using (var context = new TTSWebinarsContext())
+                {
+                    return context.WebUsers.Max(u => u.idUser);
+                }
+            }
+            catch (Exception)
+            {
+                return 1000;
             }
         }
 

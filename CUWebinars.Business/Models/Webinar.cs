@@ -7,7 +7,7 @@ namespace CUWebinars.Business.Models
     {
         public Webinar()
         {
-            this.HostPropertyValues = new List<HostPropertyValue>();
+            //this.HostPropertyValues = new List<HostPropertyValue>();
             this.OptionsGroupsXrefs = new List<OptionsGroupsXref>();
             this.OrderRows = new List<OrderRow>();
             this.WebinarFiles = new List<WebinarFile>();
@@ -30,9 +30,10 @@ namespace CUWebinars.Business.Models
         public int idPresenter { get; set; }
         public string AdditionalNotifications { get; set; }
         public string ceu { get; set; }
+        public string ConnectionInfo { get; set; }
         public System.DateTime DateCreated { get; set; }
         public System.DateTime DateChanged { get; set; }
-        public virtual ICollection<HostPropertyValue> HostPropertyValues { get; set; }
+        //public virtual ICollection<HostPropertyValue> HostPropertyValues { get; set; }
         public virtual ICollection<OptionsGroupsXref> OptionsGroupsXrefs { get; set; }
         public virtual ICollection<OrderRow> OrderRows { get; set; }
         public virtual Presenter Presenter { get; set; }

@@ -14,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{45BEE1
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUWebinars.Web.Tests", "CUWebinars.Web.Tests\CUWebinars.Web.Tests.csproj", "{507B2709-E583-459D-AC56-215A2B09A69C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTSDataLayer.Tests", "TTSDataLayer.Tests\TTSDataLayer.Tests.csproj", "{67ADE7C7-0AE7-410B-8B18-58598EE41C01}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUWebinars.Business.Tests", "CUWebinars.Business.Tests\CUWebinars.Business.Tests.csproj", "{67ADE7C7-0AE7-410B-8B18-58598EE41C01}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assemblies", "assemblies", "{34DC5C9B-FA62-4B78-8305-38D93BFA7D0A}"
 	ProjectSection(SolutionItems) = preProject

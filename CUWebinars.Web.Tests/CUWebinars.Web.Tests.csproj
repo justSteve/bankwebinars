@@ -103,13 +103,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CUWebinars.Business\CUWebinars.Business.csproj">
+      <Project>{d4250c01-6ee8-4d3c-ae39-9cd038422210}</Project>
+      <Name>CUWebinars.Business</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CUWebinars.Web\CUWebinars.Web.csproj">
       <Project>{9aaa6bf1-dc7a-4900-ac20-acd6adddf54c}</Project>
       <Name>CUWebinars.Web</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TTSDataLayer\CUWebinars.Business.csproj">
-      <Project>{8a2efa43-7138-4a85-8167-78b8b1cbed1c}</Project>
-      <Name>TTSDataLayer</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

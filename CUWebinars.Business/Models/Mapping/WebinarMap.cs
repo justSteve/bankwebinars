@@ -59,6 +59,7 @@ namespace CUWebinars.Business.Models.Mapping
             this.Property(t => t.WhoAttend).HasColumnName("WhoAttend");
             this.Property(t => t.Duration).HasColumnName("Duration");
             this.Property(t => t.RecordingUrl).HasColumnName("RecordingUrl");
+            this.Property(t => t.ConnectionInfo).HasColumnName("ConnectionInfo");
             this.Property(t => t.idPresenter).HasColumnName("idPresenter");
             this.Property(t => t.AdditionalNotifications).HasColumnName("AdditionalNotifications");
             this.Property(t => t.ceu).HasColumnName("ceu");
