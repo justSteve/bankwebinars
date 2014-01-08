@@ -145,6 +145,7 @@
     <None Include="App.config" />
     <None Include="packages.config" />
     <None Include="SQLSeeding\BACPACs\MembershipReboot.bacpac" />
+    <None Include="SQLSeeding\BACPACs\MembershipReboot20140108.bacpac" />
     <None Include="SQLSeeding\BACPACs\TTSWebinars.bacpac" />
   </ItemGroup>
   <ItemGroup>
