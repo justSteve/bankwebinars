@@ -14,7 +14,7 @@ namespace CUWebinars.Web.App_Start
             var appinfo = new AspNetApplicationInformation("CUWebinars",
                 "Test Email Signature",
                 "Account/Login",
-                "Account/Register/Confirm/",
+                "Account/PasswordResetConfirm/",
                 "Account/Register/Cancel/",
                 "Account/PasswordResetConfirm/");
  
