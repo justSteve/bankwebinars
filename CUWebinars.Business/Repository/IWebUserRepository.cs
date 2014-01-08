@@ -4,8 +4,11 @@ using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.Repository
 {
-    public interface IWebUserRepository : IRepository<WebUser>
+    public interface IWebUserRepository 
     {
+        void Add(WebUser webUser);
+        IEnumerable<WebUser> GetAll();
         void UpdateAddresses(Address address);
+        void Update(WebUser webUser);
     }
 }

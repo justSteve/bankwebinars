@@ -33,17 +33,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BrockAllen.MembershipReboot">
-      <HintPath>..\assemblies\BrockAllen.MembershipReboot.dll</HintPath>
+    <Reference Include="BrockAllen.MembershipReboot, Version=5.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\BrockAllen.MembershipReboot.5.0.1\lib\net45\BrockAllen.MembershipReboot.dll</HintPath>
     </Reference>
-    <Reference Include="BrockAllen.MembershipReboot.Ef">
-      <HintPath>..\assemblies\BrockAllen.MembershipReboot.Ef.dll</HintPath>
+    <Reference Include="BrockAllen.MembershipReboot.Ef, Version=5.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\BrockAllen.MembershipReboot.Ef.5.0.2\lib\net45\BrockAllen.MembershipReboot.Ef.dll</HintPath>
     </Reference>
-    <Reference Include="BrockAllen.MembershipReboot.Owin">
-      <HintPath>..\assemblies\BrockAllen.MembershipReboot.Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="BrockAllen.MembershipReboot.WebHost">
-      <HintPath>..\assemblies\BrockAllen.MembershipReboot.WebHost.dll</HintPath>
+    <Reference Include="BrockAllen.MembershipReboot.WebHost, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\BrockAllen.MembershipReboot.WebHost.5.0.0\lib\net45\BrockAllen.MembershipReboot.WebHost.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -55,6 +55,8 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.IdentityModel.Services" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -82,6 +84,7 @@
     <Compile Include="Core\Exceptions\RuleViolationInfo.cs" />
     <Compile Include="Core\Exceptions\SecurityException.cs" />
     <Compile Include="Core\Exceptions\TTSException.cs" />
+    <Compile Include="Core\Extensions\DisposableExtensions.cs" />
     <Compile Include="Core\TTSException.cs" />
     <Compile Include="Core\URLValidator.cs" />
     <Compile Include="Migrations\201312180449592_EnumsAdded.cs" />
@@ -129,15 +132,13 @@
     <Compile Include="Models\WebinarTopicXref.cs" />
     <Compile Include="Models\WebUser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repository\DbContextInstitutionRepository.cs" />
-    <Compile Include="Repository\DbContextOrderRepository.cs" />
     <Compile Include="Repository\DbContextWebUserRepository.cs" />
     <Compile Include="Repository\IInstitutionRepository.cs" />
     <Compile Include="Repository\InstitutionRepository.cs" />
-    <Compile Include="Repository\IOrderRepository.cs" />
     <Compile Include="Repository\IRefDataRepository.cs" />
     <Compile Include="Repository\IWebUserRepository.cs" />
     <Compile Include="Repository\RefDataRepository.cs" />
+    <Compile Include="Repository\TTSWebinarsRepository.cs" />
     <Compile Include="Repository\WebUserRepository.cs" />
   </ItemGroup>
   <ItemGroup>

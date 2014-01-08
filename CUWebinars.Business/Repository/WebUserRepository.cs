@@ -1,21 +1,16 @@
 ﻿using System.Linq;
 using CUWebinars.Business.Models;
+using System.Data.Entity;
 
 namespace CUWebinars.Business.Repository
 {
-    public class WebUserRepository : DbContextWebUserRepository<TTSWebinarsContext>
+    public class WebUserRepository : TTSWebinarsRepository<TTSWebinarsContext, WebUser>, IWebUserRepository
     {
         public RefDataRepository RefContext { get; set; }
 
         public WebUserRepository()
         {
             RefContext = new RefDataRepository();
-        }
-
-        public WebUserRepository(string name)
-            : base(new TTSWebinarsContext(name))
-        {
-
         }
 
         /// <summary>
@@ -42,6 +37,32 @@ namespace CUWebinars.Business.Repository
                 .SingleOrDefault();
 
             return myInst;
+        }
+
+        public void UpdateAddresses(Address address)
+        {
+            var entry = db.Entry(address);
+
+            if (entry.State == EntityState.Detached)
+            {
+                ((TTSWebinarsContext)db).Addresses.Attach(address);
+                entry.State = EntityState.Modified;
+            }
+
+            db.SaveChanges();
+        }
+
+        public void Update(WebUser webUser)
+        {
+            CheckDisposed();
+
+            var entry = db.Entry(webUser);
+            if (entry.State == EntityState.Detached)
+            {
+                items.Attach(webUser);
+                entry.State = EntityState.Modified;
+            }
+            db.SaveChanges();
         }
     }
 }

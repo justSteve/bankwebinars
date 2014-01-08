@@ -54,17 +54,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="BrockAllen.MembershipReboot">
-      <HintPath>..\assemblies\BrockAllen.MembershipReboot.dll</HintPath>
+    <Reference Include="BrockAllen.MembershipReboot, Version=5.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\BrockAllen.MembershipReboot.5.0.1\lib\net45\BrockAllen.MembershipReboot.dll</HintPath>
     </Reference>
-    <Reference Include="BrockAllen.MembershipReboot.Ef">
-      <HintPath>..\assemblies\BrockAllen.MembershipReboot.Ef.dll</HintPath>
+    <Reference Include="BrockAllen.MembershipReboot.Ef, Version=5.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\BrockAllen.MembershipReboot.Ef.5.0.2\lib\net45\BrockAllen.MembershipReboot.Ef.dll</HintPath>
     </Reference>
-    <Reference Include="BrockAllen.MembershipReboot.Owin">
-      <HintPath>..\assemblies\BrockAllen.MembershipReboot.Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="BrockAllen.MembershipReboot.WebHost">
-      <HintPath>..\assemblies\BrockAllen.MembershipReboot.WebHost.dll</HintPath>
+    <Reference Include="BrockAllen.MembershipReboot.WebHost, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\BrockAllen.MembershipReboot.WebHost.5.0.0\lib\net45\BrockAllen.MembershipReboot.WebHost.dll</HintPath>
     </Reference>
     <Reference Include="DotNetOpenAuth.AspNet">
       <HintPath>..\packages\DotNetOpenAuth.AspNet.4.3.1.13153\lib\net45-full\DotNetOpenAuth.AspNet.dll</HintPath>
