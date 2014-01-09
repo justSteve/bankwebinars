@@ -1,7 +1,7 @@
-﻿using System;
+﻿using CUWebinars.Business.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.Repository
 {
@@ -65,25 +65,5 @@ namespace CUWebinars.Business.Repository
                     .Addresses;
             }
         }
-
-        //public WebUser GetWebUserByUserName(string userName)
-        //{
-        //    using (var context = new TTSWebinarsContext())
-        //    {
-        //        var userAccount = context.WebUsers.Users.Where(u => u.Username == userName).SingleOrDefault();
-
-        //        if(userAccount != null)
-        //        {
-        //            return context.WebUsers
-        //                .Include("Institution")
-        //                .Include("Addresses")
-        //                .Include("UserAccount")
-        //                .Where(w => w.email == userAccount.Email)
-        //                .SingleOrDefault();
-        //        }
-        //    }
-
-        //    return null;
-        //}
     }
 }

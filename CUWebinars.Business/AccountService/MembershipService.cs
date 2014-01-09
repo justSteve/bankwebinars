@@ -1,12 +1,10 @@
-﻿using System;
+﻿using BrockAllen.MembershipReboot;
+using CUWebinars.Business.Constants;
+using CUWebinars.Business.Models;
+using CUWebinars.Business.Repository;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
-using BrockAllen.MembershipReboot;
-using BrockAllen.MembershipReboot.Ef;
-using CUWebinars.Business.Repository;
-using CUWebinars.Business.Models;
-using CUWebinars.Business.Constants;
 
 namespace CUWebinars.Business.AccountService
 {
@@ -38,12 +36,6 @@ namespace CUWebinars.Business.AccountService
             var webUser = refDataRepository.GetWebUserByEmail(email);
             return webUser;
         }
-
-        //public WebUser GetUserByUserName(string userName)
-        //{
-        //    var webUser = refDataRepository.GetWebUserByUserName(userName);
-        //    return webUser;
-        //}
 
         /// <summary>
         /// serves to check if email exists before attempting to create account.

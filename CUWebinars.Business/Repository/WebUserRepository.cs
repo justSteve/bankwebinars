@@ -1,6 +1,6 @@
-﻿using System.Linq;
-using CUWebinars.Business.Models;
+﻿using CUWebinars.Business.Models;
 using System.Data.Entity;
+using System.Linq;
 
 namespace CUWebinars.Business.Repository
 {
