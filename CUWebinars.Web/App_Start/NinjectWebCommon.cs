@@ -62,7 +62,8 @@ namespace CUWebinars.Web.App_Start
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
-            var config = MembershipRebootConfig.Create();
+            var config = MembershipRebootConfig.Create(HttpRuntime.AppDomainAppPath);
+            
             kernel.Bind<MembershipRebootConfiguration>().ToConstant(config);
             kernel.Bind<IAffiliateRepository>().To<AffiliateRepository>();
             kernel.Bind<IWebinarRepository>().To<WebinarRepository>();

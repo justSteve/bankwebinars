@@ -54,6 +54,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.IdentityModel.Services" />
@@ -131,6 +132,8 @@
     <Compile Include="Models\WebinarStatus.cs" />
     <Compile Include="Models\WebinarTopicXref.cs" />
     <Compile Include="Models\WebUser.cs" />
+    <Compile Include="Notification\Email\TTSSmtpMessageDelivery.cs" />
+    <Compile Include="Notification\TTSEmailFormatter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\IInstitutionRepository.cs" />
     <Compile Include="Repository\InstitutionRepository.cs" />
@@ -153,6 +156,38 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Notification\Email\EmailTemplates\AccountClosedEvent_Body.txt" />
+    <Content Include="Notification\Email\EmailTemplates\AccountClosedEvent_Subject.txt" />
+    <Content Include="Notification\Email\EmailTemplates\AccountCreatedEvent_Body.txt" />
+    <Content Include="Notification\Email\EmailTemplates\AccountCreatedEvent_Subject.txt" />
+    <Content Include="Notification\Email\EmailTemplates\AccountReopenedEvent_Body.txt" />
+    <Content Include="Notification\Email\EmailTemplates\AccountReopenedEvent_Subject.txt" />
+    <Content Include="Notification\Email\EmailTemplates\CertificateAddedEvent_Body.txt" />
+    <Content Include="Notification\Email\EmailTemplates\CertificateAddedEvent_Subject.txt" />
+    <Content Include="Notification\Email\EmailTemplates\CertificateRemovedEvent_Body.txt" />
+    <Content Include="Notification\Email\EmailTemplates\CertificateRemovedEvent_Subject.txt" />
+    <Content Include="Notification\Email\EmailTemplates\EmailChangedEvent_Body.txt" />
+    <Content Include="Notification\Email\EmailTemplates\EmailChangedEvent_Subject.txt" />
+    <Content Include="Notification\Email\EmailTemplates\EmailChangeRequestedEvent_Body.txt" />
+    <Content Include="Notification\Email\EmailTemplates\EmailChangeRequestedEvent_Subject.txt" />
+    <Content Include="Notification\Email\EmailTemplates\EmailVerifiedEvent_Body.txt" />
+    <Content Include="Notification\Email\EmailTemplates\EmailVerifiedEvent_Subject.txt" />
+    <Content Include="Notification\Email\EmailTemplates\LinkedAccountAddedEvent_Body.txt" />
+    <Content Include="Notification\Email\EmailTemplates\LinkedAccountAddedEvent_Subject.txt" />
+    <Content Include="Notification\Email\EmailTemplates\LinkedAccountRemovedEvent_Body.txt" />
+    <Content Include="Notification\Email\EmailTemplates\LinkedAccountRemovedEvent_Subject.txt" />
+    <Content Include="Notification\Email\EmailTemplates\MobilePhoneChangedEvent_Body.txt" />
+    <Content Include="Notification\Email\EmailTemplates\MobilePhoneChangedEvent_Subject.txt" />
+    <Content Include="Notification\Email\EmailTemplates\MobilePhoneRemovedEvent_Body.txt" />
+    <Content Include="Notification\Email\EmailTemplates\MobilePhoneRemovedEvent_Subject.txt" />
+    <Content Include="Notification\Email\EmailTemplates\PasswordChangedEvent_Body.txt" />
+    <Content Include="Notification\Email\EmailTemplates\PasswordChangedEvent_Subject.txt" />
+    <Content Include="Notification\Email\EmailTemplates\PasswordResetRequestedEvent_Body.txt" />
+    <Content Include="Notification\Email\EmailTemplates\PasswordResetRequestedEvent_Subject.txt" />
+    <Content Include="Notification\Email\EmailTemplates\UsernameChangedEvent_Body.txt" />
+    <Content Include="Notification\Email\EmailTemplates\UsernameChangedEvent_Subject.txt" />
+    <Content Include="Notification\Email\EmailTemplates\UsernameReminderRequestedEvent_Body.txt" />
+    <Content Include="Notification\Email\EmailTemplates\UsernameReminderRequestedEvent_Subject.txt" />
     <Content Include="SQLSeeding\BuildTTSWebinarsSeeder.sql" />
     <Content Include="SQLSeeding\seeder1_ini.sql" />
     <Content Include="SQLSeeding\seeder2_ImportPresenters.sql" />
