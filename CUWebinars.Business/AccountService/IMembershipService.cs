@@ -23,11 +23,10 @@ namespace CUWebinars.Business.AccountService
 
         IEnumerable<Address> GetAddressesForUser(int id);
         WebUser GetDetailsOfUser(string email);
-        //WebUser GetUserByUserName(string userName);
         UserAccount GetUserAccountByUserId(Guid userId);
         WebUser GetUserByEmail(string email);
         bool HasPassword(string emailAddress);
-        bool LogInUser(string emailAddress, string password, bool persistent = false);
+        bool LogInUser(string emailAddress, string password, bool persistent);
         bool LogOutUser();
         Institution ProcessInstitutionForUser(string institutionName,
             string city,

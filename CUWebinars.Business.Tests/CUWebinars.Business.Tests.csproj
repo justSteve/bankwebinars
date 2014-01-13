@@ -78,6 +78,7 @@
     <Compile Include="MembershipServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SamAuthenticationServiceFake.cs" />
+    <Compile Include="UserAccountServiceFake.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

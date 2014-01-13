@@ -86,7 +86,7 @@ namespace CUWebinars.Web.Tests
             string email = "ever@hopefultoauthenticate.com";
             string password = "tyu567&U";
 
-            membershipServiceMock.Setup(m => m.LogInUser(email, password)).Returns(() => true);
+            membershipServiceMock.Setup(m => m.LogInUser(email, password, false)).Returns(() => true);
 
             var signInModel = new SignInModel
             {
@@ -107,7 +107,7 @@ namespace CUWebinars.Web.Tests
             string email = "ever@hopefultoauthenticate.com";
             string password = "tyu567&U";
 
-            membershipServiceMock.Setup(m => m.LogInUser(email, password)).Returns(() => true);
+            membershipServiceMock.Setup(m => m.LogInUser(email, password, false)).Returns(() => true);
 
             var signInModel = new SignInModel
             {
@@ -130,7 +130,7 @@ namespace CUWebinars.Web.Tests
             string email = "authentication@ishopeless.com";
             string password = "tyu567&U";
 
-            membershipServiceMock.Setup(m => m.LogInUser(email, password)).Returns(() => false);
+            membershipServiceMock.Setup(m => m.LogInUser(email, password, true)).Returns(() => false);
 
             var signInModel = new SignInModel
             {
@@ -151,7 +151,7 @@ namespace CUWebinars.Web.Tests
             string email = "authentication@ishopeless.com";
             string password = "tyu567&U";
 
-            membershipServiceMock.Setup(m => m.LogInUser(email, password)).Returns(() => false);
+            membershipServiceMock.Setup(m => m.LogInUser(email, password, true)).Returns(() => false);
 
             var signInModel = new SignInModel
             {

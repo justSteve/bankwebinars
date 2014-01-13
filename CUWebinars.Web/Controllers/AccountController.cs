@@ -492,7 +492,7 @@ namespace CUWebinars.Web.Controllers
                         , null
                         , "A");
 
-                    membershipService.LogInUser(model.RegisterFields.Email, model.RegisterFields.Password); // log the user in.
+                    membershipService.LogInUser(model.RegisterFields.Email, model.RegisterFields.Password, true); // log the user in.
 
                     return RedirectToAction("Index", "Home");
                 }

@@ -101,7 +101,7 @@ namespace CUWebinars.Business.AccountService
             return webUser;
         }
 
-        public bool LogInUser(string emailAddress, string password, bool persistent = false)
+        public bool LogInUser(string emailAddress, string password, bool persistent)
         {
             UserAccount userAccount = null;
 
