@@ -306,7 +306,7 @@ namespace CUWebinars.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SignIn(SignInModel model)
         {
-            if (ModelState.IsValid && membershipService.LogInUser(model.Email, model.Password))
+            if (ModelState.IsValid && membershipService.LogInUser(model.Email, model.Password, model.RememberMe))
             {
                 return RedirectToLocal(model.ReturnUrl);
             }

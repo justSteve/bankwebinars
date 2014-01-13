@@ -101,12 +101,13 @@ namespace CUWebinars.Business.AccountService
             return webUser;
         }
 
-        public bool LogInUser(string emailAddress, string password)
+        public bool LogInUser(string emailAddress, string password, bool persistent = false)
         {
-            if (userAccountService.AuthenticateWithEmail(emailAddress, password))
+            UserAccount userAccount = null;
+
+            if (userAccountService.AuthenticateWithEmail(emailAddress, password, out userAccount))
             {
-                var userAccount = userAccountService.GetByEmail(emailAddress);
-                samAuthenticationService.SignIn(userAccount);
+                samAuthenticationService.SignIn(userAccount, persistent);
                 return true;
             }
             else

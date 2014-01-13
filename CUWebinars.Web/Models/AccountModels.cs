@@ -75,6 +75,9 @@ namespace CUWebinars.Web.Models
 
         [HiddenInput]
         public string ReturnUrl { get; set; }
+        
+        [Display(Name="Remember Me")]
+        public bool RememberMe { get; set; }
     }
 
     public class ExternalLogin
