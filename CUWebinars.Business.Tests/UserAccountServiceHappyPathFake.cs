@@ -1,17 +1,11 @@
 ﻿using BrockAllen.MembershipReboot;
-using BrockAllen.MembershipReboot.Ef;
 using BrockAllen.MembershipReboot.Relational;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CUWebinars.Business.Tests
 {
-   public class UserAccountServiceFake : UserAccountService
+   public class UserAccountServiceHappyPathFake : UserAccountService
     {
-       public UserAccountServiceFake(IUserAccountRepository userAccountRepository)
+       public UserAccountServiceHappyPathFake(IUserAccountRepository userAccountRepository)
            : base(userAccountRepository)
        {
 
