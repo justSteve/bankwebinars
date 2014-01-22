@@ -2,7 +2,7 @@ USE TTSWebinars
 GO
 
 
-:setvar path "C:\Users\Steve\Source\Repos\CUWebinars\TTSDataLayer\SQLSeeding"
+:setvar path "C:\Users\Steve\Source\Repos\BankWebinars\CUWebinars.Business\SQLSeeding"
 go
 :r $(path)\seeder1_ini.SQL
 go

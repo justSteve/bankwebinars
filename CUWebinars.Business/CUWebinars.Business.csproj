@@ -189,6 +189,7 @@
     <Content Include="Notification\Email\EmailTemplates\UsernameReminderRequestedEvent_Body.txt" />
     <Content Include="Notification\Email\EmailTemplates\UsernameReminderRequestedEvent_Subject.txt" />
     <Content Include="SQLSeeding\BuildTTSWebinarsSeeder.sql" />
+    <Content Include="SQLSeeding\MigrationNotes.txt" />
     <Content Include="SQLSeeding\seeder1_ini.sql" />
     <Content Include="SQLSeeding\seeder2_ImportPresenters.sql" />
     <Content Include="SQLSeeding\seeder3_ImportAffiliates.sql" />
