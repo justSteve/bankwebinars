@@ -105,10 +105,12 @@
             {
                 if (myOption.Type == "Text")
                 {
-                    if ((Model.OrderRow == null ||
-                        Model.OrderRow.idOrderRow < 1 ||
-                        Model.OrderRow.Status == OrderRowStatus.InProcess)
-                        && !myOption.SKU.Contains("Upgrade"))
+                    if (Model.OrderRow == null)
+                        //||
+                        //Model.OrderRow.idOrderRow < 1 ||
+                        //Model.OrderRow.Status == OrderRowStatus.InProcess)
+                        //&& !myOption.SKU.Contains("Upgrade")
+                        
                     {
                         <dt>
                             <input type="radio" class="checkbox" id='mode_@(myOption.idOption)' name="mode" value="@myOption.idOption" />
@@ -132,9 +134,10 @@
                 }
             }
         </dl>
-        <div id="displayAddLoc">
+
+        @*<div id="displayAddLoc">
             @Html.Partial(partialViewName: "~/Views/Webinar/Partials/AdditionalLocationsOptionView.cshtml", model: Model)
-        </div>
+        </div>*@
     </div>
 }
 

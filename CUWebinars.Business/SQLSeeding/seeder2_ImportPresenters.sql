@@ -1,5 +1,11 @@
---USE TTSWebinars
+--USE BankWebinars
 --go
+
+DELETE BankWebinars.dbo.WebUser
+DELETE BankWebinars.dbo.Affiliate
+DELETE BankWebinars.dbo.Institution
+DELETE BankWebinars.dbo.Addresses
+DELETE BankWebinars.dbo.Presenter
 
 SET NOCOUNT ON
 
@@ -85,14 +91,16 @@ WHERE   email LIKE 'holder@ttstrain.com'
 UPDATE  TTSWebinarsSeeder.dbo.users
 SET     email = 'David_McGuinn@ttstrain.com'
 WHERE   idUser = 10567
-SELECT * FROM  TTSWebinarsSeeder.dbo.users WHERE idUser = 10567
+SELECT  *
+FROM    TTSWebinarsSeeder.dbo.users
+WHERE   idUser = 10567
 --DELETE FROM users WHERE idUser = 
 
 DECLARE @ErrorLogID INT
-DECLARE @institutionExists INT = 0
-DECLARE @institutionId INT
+--DECLARE @institutionExists INT = 0
+--DECLARE @institutionId INT
 DECLARE @UserID INT
-DECLARE @emailExists INT = 0
+--DECLARE @emailExists INT = 0
 SET NOCOUNT ON;
 DECLARE @id2Insert INT
 DECLARE @QueryString VARCHAR(MAX)
@@ -102,15 +110,15 @@ FOR
 SELECT  idUser
 FROM    TTSWebinarsSeeder.dbo.Users
 WHERE   userType = 3
-        AND idUser IN (
-        SELECT  idUser
-        FROM    TTSWebinarsSeeder.dbo.Presenter
-        WHERE   idUser IN (
-                SELECT  idPresenter
-                FROM    TTSWebinarsSeeder.dbo.webinar
-                WHERE   idWebinar IN ( 1472, 1471, 1412, 1435, 1470, 1268, 1437, 1285, 1438, 1432, 1433, 1426, 1422, 1416, 1410, 1430, 1358, 1326, 1411, 1415,
-                                       1420, 1436 ) ) )
---SKU is null
+        --AND idUser IN (
+        --SELECT  idUser
+        --FROM    TTSWebinarsSeeder.dbo.Presenter
+        --WHERE   idUser IN (
+        --        SELECT  idPresenter
+        --        FROM    TTSWebinarsSeeder.dbo.webinar
+        --        WHERE   idWebinar IN ( 1472, 1471, 1412, 1435, 1470, 1268, 1437, 1285, 1438, 1432, 1433, 1426, 1422, 1416, 1410, 1430, 1358, 1326, 1411, 1415,
+        --                               1420, 1436 ) 
+								--	   ) )
 
 OPEN my_Cursor
 
@@ -172,7 +180,8 @@ WHILE @@FETCH_STATUS = 0
             SET @queryString = @queryString + '&idWebUser=' + CAST(@id2Insert AS VARCHAR)
 
             PRINT @QueryString
-            EXEC Migrator.dbo.[CallCreateUser] @qString = @queryString
+            --EXEC Migrator.dbo.[CallCreateUser] @qString = @queryString
+            EXEC TTSWebinarsSeeder.dbo.[CallCreateUser] @qString = @queryString
         END TRY
         BEGIN CATCH
 
@@ -205,7 +214,7 @@ WHILE @@FETCH_STATUS = 0
   --                        )
 
         BEGIN TRY
-            INSERT  INTO TTSWebinars.[dbo].[Presenter]
+            INSERT  INTO BankWebinars.[dbo].[Presenter]
                     ( [Biography] ,
                       [BiographyLong] ,
                       [photoFull] ,

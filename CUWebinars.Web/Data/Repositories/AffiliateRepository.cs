@@ -19,7 +19,7 @@ namespace CUWebinars.Web.Data.Repositories
         }        
         public Affiliate GetCurrentAffiliate()
         {
-            return _ctx.Affiliates.Single(a => a.WebUser.email == "affiliate@ttstrain.com");
+            return _ctx.Affiliates.Single(a => a.WebUser.email == "Mark_Bennett@ttstrain.com");
         }   
 
         public IQueryable<Order> GetOrdersByUser(int affiliateId, int userId)

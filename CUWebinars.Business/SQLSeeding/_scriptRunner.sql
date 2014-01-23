@@ -1,4 +1,4 @@
-USE TTSWebinars
+USE BankWebinars
 GO
 
 
@@ -6,21 +6,21 @@ GO
 go
 :r $(path)\seeder1_ini.SQL
 go
-PRINT '_________________________________________________________________________________________begin presenters'
-go
-:r $(path)\seeder2_ImportPresenters.SQL
-GO
-PRINT '_________________________________________________________________________________________begin affiliates'
-go
-:r $(path)\seeder3_ImportAffiliates.SQL
-go
+--PRINT '_________________________________________________________________________________________begin presenters'
+--go
+--:r $(path)\seeder2_ImportPresenters.SQL
+--GO
+--PRINT '_________________________________________________________________________________________begin affiliates'
+--go
+--:r $(path)\seeder3_ImportAffiliates.SQL
+--go
 PRINT '_________________________________________________________________________________________begin options'
 go
 :r $(path)\seeder4_CreateOptions.SQL
 print '_________________________________________________________________________________________begin webinars'
 --go
---:r $(path)\seeder5_ImportWebinars.SQL
---go
+:r $(path)\seeder5_ImportWebinars.SQL
+go
 --print '_________________________________________________________________________________________begin CUWebinars'
 --:r $(path)\seeder5_ImportWebinars__CU.SQL
 --go
@@ -28,7 +28,7 @@ print '_________________________________________________________________________
 :r $(path)\seeder6_post.sql
 GO
 SET NOCOUNT OFF
-USE TTSWebinars
+USE BankWebinars
 go
 SELECT * FROM dbo.Affiliate
 SELECT * FROM dbo.WebUser ORDER BY idUser desc
@@ -62,7 +62,7 @@ WHERE w.idWebinar = 803
 --BEGIN
 --    SET NOCOUNT ON
 
---    INSERT  TTSWebinars.dbo.ErrorLog
+--    INSERT  BankWebinars.dbo.ErrorLog
 --            ( ErrorTime ,
 --              UserName ,
 --              ErrorNumber ,

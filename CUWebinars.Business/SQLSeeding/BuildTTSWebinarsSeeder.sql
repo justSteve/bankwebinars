@@ -26,9 +26,9 @@ GO
 --    END
 
 --GO
-
 USE TTSWebinarsSeeder
 go
+
 ALTER DATABASE [TTSWebinarsSeeder] SET COMPATIBILITY_LEVEL = 110
 GO
 IF ( 1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled') )
@@ -95,8 +95,56 @@ ALTER DATABASE [TTSWebinarsSeeder] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF
 GO
 
 EXEC sys.sp_db_vardecimal_storage_format N'TTSWebinarsSeeder', N'ON'
+
+GO
+/****** Object:  StoredProcedure [dbo].[CallCreateUser]    Script Date: 1/21/2014 7:20:31 PM ******/
+
+DROP PROCEDURE [dbo].[CallCreateUser] 
 GO
 
+-- =============================================
+-- Author:		sjh
+-- Create date: 12/13
+-- Description:	Seeds CUWebinarsDev
+-- =============================================
+CREATE PROCEDURE [dbo].[CallCreateUser] 
+	-- Add the parameters for the stored procedure here
+	@qString VARCHAR(max)
+AS
+BEGIN
+DECLARE	@url VARCHAR(3000),
+	@win INT,
+	@hr INT,
+	@Text VARCHAR(3000)
+	-- SET NOINTNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+
+		SET	@url = 'http://localhost:5555/account/get/?' + @qString
+		SET	@url = @url + '&nocache=' + CAST(GETDATE() AS VARCHAR)
+
+	
+		EXEC @hr = sp_OACreate 'WinHttp.WinHttpRequest.5.1', @win OUT
+		IF @hr <> 0 EXEC sp_OAGetErrorInfo @win
+
+		EXEC @hr = sp_OAMethod @win, 'Open', NULL, 'GET', @url, 'false'
+		IF @hr <> 0 EXEC sp_OAGetErrorInfo @win
+
+		EXEC @hr = sp_OAMethod @win, 'Send'
+		IF @hr <> 0 EXEC sp_OAGetErrorInfo @win
+
+		EXEC @hr = sp_OAGetProperty @win, 'ResponseText', @Text OUT
+		IF @hr <> 0 EXEC sp_OAGetErrorInfo @win
+
+		EXEC @hr = sp_OADestroy @win 
+		IF @hr <> 0 EXEC sp_OAGetErrorInfo @win 
+
+    -- Insert statements for procedure here
+	SELECT @qString
+END
+
+GO
 
 
 
@@ -354,6 +402,42 @@ IF NOT EXISTS ( SELECT  *
         [PRIMARY] 
     END
 GO
+
+
+/****** Object:  Table [dbo].[OptionsGroups]    Script Date: 1/23/2014 2:11:16 PM ******/
+
+CREATE TABLE [dbo].[OptionsGroups](
+	[idOptionGroup] [int] IDENTITY(1,1) NOT NULL,
+	[optionGroupDesc] [nvarchar](50) NULL,
+	[optionReq] [nvarchar](1) NULL,
+	[optionType] [nvarchar](1) NULL,
+	[sortOrder] [int] NULL,
+ CONSTRAINT [PK_OptionsGroups] PRIMARY KEY CLUSTERED 
+(
+	[idOptionGroup] ASC
+)) ON [PRIMARY]
+
+SET IDENTITY_INSERT dbo.OptionsGroups on
+GO
+INSERT dbo.OptionsGroups
+        (  [idOptionGroup]
+      ,[optionGroupDesc]
+      ,[optionReq]
+      ,[optionType]
+      ,[sortOrder])
+
+SELECT [idOptionGroup]
+      ,[optionGroupDesc]
+      ,[optionReq]
+      ,[optionType]
+      ,[sortOrder]
+  FROM [dbo].[OptionsGroups]
+GO
+
+SET IDENTITY_INSERT dbo.OptionsGroups off
+
+
+
 /****** Object:  Table [dbo].[OptionsGroupsXref]    Script Date: 11/23/2013 1:57:49 PM ******/
 SET ANSI_NULLS ON
 GO

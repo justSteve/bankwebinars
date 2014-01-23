@@ -1,18 +1,27 @@
-USE TTSWebinars
+USE BankWebinars
 go
 
-SET NOCOUNT ON
-DECLARE @id2Insert INT
+DELETE  BankWebinars.dbo.Topic
+DELETE  BankWebinars.dbo.Options
+DELETE  BankWebinars.dbo.OptionsGroups
+DELETE  BankWebinars.dbo.OptionsXref
 
+
+SET NOCOUNT ON
+PRINT '--==========--'
+PRINT 'INSERT TOPICS'
+PRINT '--==========--'
 
 SET IDENTITY_INSERT dbo.Topic ON
 
 INSERT  INTO [dbo].[Topic]
-        (idTopic, [topicDesc] ,
+        ( idTopic ,
+          [topicDesc] ,
           [TopicHTML] ,
           [SortOrder]
         )
-        SELECT id, [TopicDescription],
+        SELECT  id ,
+                [TopicDescription] ,
                 topicHTML ,
                 sortOrder
         FROM    TTSWebinarsSeeder.dbo.Topic
@@ -24,106 +33,139 @@ PRINT 'BEGINS OPTIONS HANDLING'
 PRINT '--==========--'
 
 SET IDENTITY_INSERT dbo.OptionsGroups ON
-INSERT  INTO [dbo].[OptionsGroups]
-        ( idOptionGroup ,
-          [optionGroupDesc] ,
-          [optionType] ,
-          [sortOrder]
+--INSERT  INTO [dbo].[OptionsGroups]
+--        ( idOptionGroup ,
+--          [optionGroupDesc] ,
+--          [optionType] ,
+--          [sortOrder]
+--        )
+--VALUES  ( 32 ,
+--          'BW_13_PreEvent_2hr' ,
+--          'T' ,
+--          1
+--        )
+--INSERT  INTO [dbo].[OptionsGroups]
+--        ( idOptionGroup ,
+--          [optionGroupDesc] ,
+--          [optionType] ,
+--          [sortOrder]
+--        )
+--VALUES  ( 33 ,
+--          'BW_13_PostEvent_2hr' ,
+--          'T' ,
+--          2
+--        )
+--INSERT  INTO [dbo].[OptionsGroups]
+--        ( idOptionGroup ,
+--          [optionGroupDesc] ,
+--          [optionType] ,
+--          [sortOrder]
+--        )
+--VALUES  ( 34 ,
+--          'BW_13_PreEvent_1hr' ,
+--          'T' ,
+--          3
+--        )
+--INSERT  INTO [dbo].[OptionsGroups]
+--        ( idOptionGroup ,
+--          [optionGroupDesc] ,
+--          [optionType] ,
+--          [sortOrder]
+--        )
+--VALUES  ( 35 ,
+--          'BW_13_PostEvent_1hr' ,
+--          'T' ,
+--          4
+--        )
+--INSERT  INTO [dbo].[OptionsGroups]
+--        ( idOptionGroup ,
+--          [optionGroupDesc] ,
+--          [optionType] ,
+--          [sortOrder]
+--        )
+--VALUES  ( 36 ,
+--          'BW_13_Subscription' ,
+--          'T' ,
+--          5
+--        )
+--INSERT  INTO [dbo].[OptionsGroups]
+--        ( idOptionGroup ,
+--          [optionGroupDesc] ,
+--          [optionType] ,
+--          [sortOrder]
+--        )
+--VALUES  ( 37 ,
+--          'BW_13_PreEvent_Series3' ,
+--          'T' ,
+--          6
+--        )
+--INSERT  INTO [dbo].[OptionsGroups]
+--        ( idOptionGroup ,
+--          [optionGroupDesc] ,
+--          [optionType] ,
+--          [sortOrder]
+--        )
+--VALUES  ( 38 ,
+--          'BW_13_PostEvent_Series3' ,
+--          'T' ,
+--          7
+--        )
+--INSERT  INTO [dbo].[OptionsGroups]
+--        ( idOptionGroup ,
+--          [optionGroupDesc] ,
+--          [optionType] ,
+--          [sortOrder]
+--        )
+--VALUES  ( 39 ,
+--          'BW_13_PreEvent_Series4' ,
+--          'T' ,
+--          7
+--        )
+--INSERT  INTO [dbo].[OptionsGroups]
+--        ( idOptionGroup ,
+--          [optionGroupDesc] ,
+--          [optionType] ,
+--          [sortOrder]
+--        )
+--VALUES  ( 40 ,
+--          'BW_13_PostEvent_Series4' ,
+--          'T' ,
+--          7
+--        )
+--INSERT  INTO [dbo].[OptionsGroups]
+--        ( idOptionGroup ,
+--          [optionGroupDesc] ,
+--          [optionType] ,
+--          [sortOrder]
+--        )
+--VALUES  ( 41 ,
+--          'BW_13_PreEvent_Series5' ,
+--          'T' ,
+--          7
+--        )
+--INSERT  INTO [dbo].[OptionsGroups]
+--        ( idOptionGroup ,
+--          [optionGroupDesc] ,
+--          [optionType] ,
+--          [sortOrder]
+--        )
+--VALUES  ( 42 ,
+--          'BW_13_PostEvent_Series5' ,
+--          'T' ,
+--          7
+--        )
+INSERT  INTO dbo.OptionsGroups
+        ( [idOptionGroup] ,
+          [OptionGroupDesc] ,
+          [OptionType] ,
+          [SortOrder]
         )
-VALUES  ( 32 ,
-          'BW_13_PreEvent_2hr' ,
-          'T' ,
-          1
-        )
-INSERT  INTO [dbo].[OptionsGroups]
-        ( idOptionGroup ,
-          [optionGroupDesc] ,
-          [optionType] ,
-          [sortOrder]
-        )
-VALUES  ( 33 ,
-          'BW_13_PostEvent_2hr' ,
-          'T' ,
-          2
-        )
-INSERT  INTO [dbo].[OptionsGroups]
-        ( idOptionGroup ,
-          [optionGroupDesc] ,
-          [optionType] ,
-          [sortOrder]
-        )
-VALUES  ( 34 ,
-          'BW_13_PreEvent_1hr' ,
-          'T' ,
-          3
-        )
-INSERT  INTO [dbo].[OptionsGroups]
-        ( idOptionGroup ,
-          [optionGroupDesc] ,
-          [optionType] ,
-          [sortOrder]
-        )
-VALUES  ( 35 ,
-          'BW_13_PostEvent_1hr' ,
-          'T' ,
-          4
-        )
-INSERT  INTO [dbo].[OptionsGroups]
-        ( idOptionGroup ,
-          [optionGroupDesc] ,
-          [optionType] ,
-          [sortOrder]
-        )
-VALUES  ( 36 ,
-          'BW_13_Subscription' ,
-          'T' ,
-          5
-        )
-INSERT  INTO [dbo].[OptionsGroups]
-        ( idOptionGroup ,
-          [optionGroupDesc] ,
-          [optionType] ,
-          [sortOrder]
-        )
-VALUES  ( 37 ,
-          'BW_13_PreEvent_Series3' ,
-          'T' ,
-          6
-        )
-INSERT  INTO [dbo].[OptionsGroups]
-        ( idOptionGroup ,
-          [optionGroupDesc] ,
-          [optionType] ,
-          [sortOrder]
-        )
-VALUES  ( 38 ,
-          'BW_13_PostEvent_Series3' ,
-          'T' ,
-          7
-        )
-INSERT  INTO [dbo].[OptionsGroups]
-        ( idOptionGroup ,
-          [optionGroupDesc] ,
-          [optionType] ,
-          [sortOrder]
-        )
-VALUES  ( 39 ,
-          'BW_13_PreEvent_Series4' ,
-          'T' ,
-          7
-        )
-INSERT  INTO [dbo].[OptionsGroups]
-        ( idOptionGroup ,
-          [optionGroupDesc] ,
-          [optionType] ,
-          [sortOrder]
-        )
-VALUES  ( 40 ,
-          'BW_13_PostEvent_Series4' ,
-          'T' ,
-          7
-        )
-
+        SELECT  [idOptionGroup] ,
+                [OptionGroupDesc] ,
+                [OptionType] ,
+                [SortOrder]
+        FROM    TTSWebinarsSeeder.[dbo].[OptionsGroups]
+  
 SET IDENTITY_INSERT dbo.OptionsGroups OFF
 
 
@@ -133,14 +175,14 @@ PRINT '--==========--'
 
 DECLARE my_Cursor CURSOR
 FOR
-    SELECT  idOption
-    FROM    TTSWebinarsSeeder.dbo.Options
-    WHERE   idOption > 78
---SKU is null
+SELECT  idOption
+FROM    TTSWebinarsSeeder.dbo.Options
+WHERE   idOption > 78
+
 
 OPEN my_Cursor
---DECLARE @id2Insert INT
-SET @id2Insert = 1
+DECLARE @id2InsertOption INT
+--SET @id2InsertOption = 1
 DECLARE @sku NVARCHAR(MAX)
 DECLARE @Stage2EmailConfirmationMsg NVARCHAR(MAX)
 DECLARE @Stage1EmailConfirmationMsg NVARCHAR(MAX)
@@ -150,42 +192,42 @@ DECLARE @ShowShippedNotifications NVARCHAR(MAX)
 DECLARE @ShowRecordingNotifications NVARCHAR(MAX)
 DECLARE @ShowLiveNotifications NVARCHAR(MAX)
 
-FETCH NEXT FROM my_Cursor INTO @id2Insert
-WHILE @@FETCH_STATUS = 0 
+FETCH NEXT FROM my_Cursor INTO @id2InsertOption
+WHILE @@FETCH_STATUS = 0
     BEGIN
         SET IDENTITY_INSERT [Options] ON
 
         SET @sku = ( SELECT SKU
                      FROM   TTSWebinarsSeeder.dbo.Options
-                     WHERE  idoption = @id2Insert
+                     WHERE  idoption = @id2InsertOption
                    )
         SET @ShowLiveNotifications = ( SELECT   ShowLiveNotifications
                                        FROM     TTSWebinarsSeeder.dbo.Options
-                                       WHERE    idoption = @id2Insert
+                                       WHERE    idoption = @id2InsertOption
                                      )
         SET @ShowRecordingNotifications = ( SELECT  ShowRecordingNotifications
                                             FROM    TTSWebinarsSeeder.dbo.Options
-                                            WHERE   idoption = @id2Insert
+                                            WHERE   idoption = @id2InsertOption
                                           )
         SET @ShowShippedNotifications = ( SELECT    ShowShippedNotifications
                                           FROM      TTSWebinarsSeeder.dbo.Options
-                                          WHERE     idoption = @id2Insert
+                                          WHERE     idoption = @id2InsertOption
                                         )
         SET @Stage1CheckoutConfirmationMsg = ( SELECT   Stage1CheckoutConfirmationMsg
                                                FROM     TTSWebinarsSeeder.dbo.Options
-                                               WHERE    idoption = @id2Insert
+                                               WHERE    idoption = @id2InsertOption
                                              )
         SET @Stage2CheckoutConfirmationMsg = ( SELECT   Stage2CheckoutConfirmationMsg
                                                FROM     TTSWebinarsSeeder.dbo.Options
-                                               WHERE    idoption = @id2Insert
+                                               WHERE    idoption = @id2InsertOption
                                              )
         SET @Stage1EmailConfirmationMsg = ( SELECT  Stage1EmailConfirmationMsg
                                             FROM    TTSWebinarsSeeder.dbo.Options
-                                            WHERE   idoption = @id2Insert
+                                            WHERE   idoption = @id2InsertOption
                                           )
         SET @Stage2EmailConfirmationMsg = ( SELECT  Stage2EmailConfirmationMsg
                                             FROM    TTSWebinarsSeeder.dbo.Options
-                                            WHERE   idoption = @id2Insert
+                                            WHERE   idoption = @id2InsertOption
                                           )
 
 
@@ -209,34 +251,34 @@ WHILE @@FETCH_STATUS = 0
                   [taxExempt] ,
                   [msgConfirm]
 		        )
-        VALUES  ( @id2Insert ,
+        VALUES  ( @id2InsertOption ,
                   ( SELECT  [optionExplain]
                     FROM    TTSWebinarsSeeder.dbo.Options
-                    WHERE   idoption = @id2Insert
+                    WHERE   idoption = @id2InsertOption
                   ) ,
                   ( SELECT  [optionLabel]
                     FROM    TTSWebinarsSeeder.dbo.Options
-                    WHERE   idoption = @id2Insert
+                    WHERE   idoption = @id2InsertOption
                   ) ,
                   ( SELECT  [priceToAdd]
                     FROM    TTSWebinarsSeeder.dbo.Options
-                    WHERE   idoption = @id2Insert
+                    WHERE   idoption = @id2InsertOption
                   ) ,
                   ( SELECT  [SKU]
                     FROM    TTSWebinarsSeeder.dbo.Options
-                    WHERE   idoption = @id2Insert
+                    WHERE   idoption = @id2InsertOption
                   ) ,
                   ( SELECT  [percToAdd]
                     FROM    TTSWebinarsSeeder.dbo.Options
-                    WHERE   idoption = @id2Insert
+                    WHERE   idoption = @id2InsertOption
                   ) ,
                   ( SELECT  [sortOrder]
                     FROM    TTSWebinarsSeeder.dbo.Options
-                    WHERE   idoption = @id2Insert
+                    WHERE   idoption = @id2InsertOption
                   ) ,
                   ( SELECT  [type]
                     FROM    TTSWebinarsSeeder.dbo.Options
-                    WHERE   idoption = @id2Insert
+                    WHERE   idoption = @id2InsertOption
                   ) ,
                   @ShowLiveNotifications ,
                   @ShowRecordingNotifications ,
@@ -249,18 +291,16 @@ WHILE @@FETCH_STATUS = 0
                   ''
                 )
 
-        --PRINT 'inserted: ' + CAST(@id2Insert AS VARCHAR)
-        --    + '[@Stage1CheckoutConfirmationMsg] = '
-        --    + @Stage1CheckoutConfirmationMsg
+        PRINT 'inserted: ' + CAST(@id2InsertOption AS VARCHAR) + ': [@Stage1CheckoutConfirmationMsg] = ' + @Stage1CheckoutConfirmationMsg
 
-        FETCH NEXT FROM my_Cursor INTO @id2Insert
+        FETCH NEXT FROM my_Cursor INTO @id2InsertOption
         SET IDENTITY_INSERT [Options]  OFF
     END
 CLOSE my_Cursor
 DEALLOCATE my_Cursor
 
 
-INSERT  INTO [dbo].[OptionsXref]
+INSERT  INTO BankWebinars.[dbo].[OptionsXref]
         ( idOptionGroup ,
           idOption                
         )
@@ -270,3 +310,10 @@ INSERT  INTO [dbo].[OptionsXref]
 
 --PRINT 'inserted OptionsXref'
 
+INSERT  INTO dbo.OptionsGroupsXref
+        ( idWebinar ,
+          idOptionGroup
+        )
+        SELECT  idWebinar ,
+                idOptionGroup
+        FROM    TTSWebinarsSeeder.dbo.OptionsGroupsXref

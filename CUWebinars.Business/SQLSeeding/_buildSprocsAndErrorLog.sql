@@ -1,4 +1,4 @@
-USE TTSWebinars
+USE BankWebinars
 GO
 
 /****** Object:  StoredProcedure [dbo].[GetRegistrationType]    Script Date: 12/10/2013 11:31:31 AM ******/
@@ -77,7 +77,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-USE TTSWebinars
+USE BankWebinars
 GO
 
 

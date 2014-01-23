@@ -93,6 +93,8 @@
       <DependentUpon>201312180449592_EnumsAdded.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\AdditionalLocationsOption.cs" />
+    <Compile Include="Models\AdditionalLocationsOrderRowOption.cs" />
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\Affiliate.cs" />
     <Compile Include="Models\Discount.cs" />
@@ -146,9 +148,8 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="SQLSeeding\BACPACs\BankWebinars.bacpac" />
     <None Include="SQLSeeding\BACPACs\MembershipReboot.bacpac" />
-    <None Include="SQLSeeding\BACPACs\MembershipReboot20140108.bacpac" />
-    <None Include="SQLSeeding\BACPACs\TTSWebinars.bacpac" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201312180449592_EnumsAdded.resx">
