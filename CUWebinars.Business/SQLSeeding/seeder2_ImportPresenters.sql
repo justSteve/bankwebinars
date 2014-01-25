@@ -1,5 +1,6 @@
---USE BankWebinars
---go
+USE BankWebinars
+go
+--SELECT 'UPDATE dbo.Presenter SET Biography = BiographyLong, BiographyLong = |<p><img class="alignleft" src="https://ttseast.blob.core.windows.net/images'+(select REPLACE(PhotoFull, 'content/images/','') from Presenter where idUser = p.idUser)+' alt="Photo of '+(SELECT FirstName + ' '+ LastName FROM dbo.WebUser WHERE idUser = p.idUser)+'" />$'+(SELECT BiographyLong FROM dbo.Presenter WHERE idUser = p.idUser)+'| where idUser = '+ CAST(idUser AS VARCHAR)
 
 DELETE BankWebinars.dbo.WebUser
 DELETE BankWebinars.dbo.Affiliate
@@ -8,7 +9,10 @@ DELETE BankWebinars.dbo.Addresses
 DELETE BankWebinars.dbo.Presenter
 
 SET NOCOUNT ON
+ALTER TABLE presenter
 
+    ALTER COLUMN Biography
+     varchar(max)
 PRINT '--==========--'
 PRINT '_________________________________________________________________________BEGINS PRESENTER IMPORTATION'
 PRINT '--==========--'
@@ -107,7 +111,7 @@ DECLARE @QueryString VARCHAR(MAX)
 
 DECLARE my_Cursor CURSOR
 FOR
-SELECT  idUser
+SELECT idUser 
 FROM    TTSWebinarsSeeder.dbo.Users
 WHERE   userType = 3
         --AND idUser IN (
@@ -221,7 +225,7 @@ WHILE @@FETCH_STATUS = 0
                       [photoThumb] ,
                       idUser
                     )
-            VALUES  ( ( SELECT  biography
+            VALUES  ( ( SELECT  biographyLong
                         FROM    TTSWebinarsSeeder.dbo.Presenter
                         WHERE   idUser = @id2Insert
                       ) ,

@@ -21,7 +21,8 @@
     position: relative;
     clear: both;
     background: url(/Content/images/70p.png) fixed;
-    margin: 30px 0 3% 0;
+   
+   
     padding: 2% 60px 0 60px;
 }
 .content-slider.flexslider .video-wrapper { margin: 0 0 10px 0 }

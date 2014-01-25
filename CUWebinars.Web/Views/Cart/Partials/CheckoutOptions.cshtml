@@ -8,39 +8,35 @@
         {
             var breakDownRegType = Model.OrderRow.RegistrationType.ToString().Split('_');
 
-            var RegCost = Model.OrderRow.OrderRowOptions.Where(o => o.idOption == (int) Model.OrderRow.RegistrationType).First().OptionPrice;
-            var RegLabel = Model.OrderRow.OrderRowOptions.Where(o => o.idOption == (int) Model.OrderRow.RegistrationType).First().Option.OptionLabel;
-                
+            var RegCost = Model.OrderRow.OrderRowOptions.Where(o => o.idOption == (int)Model.OrderRow.RegistrationType).First().OptionPrice;
+            var RegLabel = Model.OrderRow.OrderRowOptions.Where(o => o.idOption == (int)Model.OrderRow.RegistrationType).First().Option.OptionLabel;
+
 
             if (
                 Model.OrderRow.Status == OrderRowStatus.Submitted ||
                 Model.OrderRow.Status == OrderRowStatus.Paid ||
                 Model.OrderRow.Status == OrderRowStatus.Billed)
             {
-        @*<span><i>Order# @Model.OrderRow.Order.ID<br>@RegLabel - $@RegCost<br></i></span>*@
+                @*<span><i>Order# @Model.OrderRow.Order.ID<br>@RegLabel - $@RegCost<br></i></span>*@
                 if (Model.ConnectionInfo != null)
                 {
-        @*<blockquote style="margin-left: 150px; margin-right: 150px;" class="btn-success well">@Model.OrderRow.OrderRowOptions.First(o => o.idOption == Model.OrderRow.RegistrationType).Option.Stage2CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>*@ 
-        <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn-success well">@Model.OrderRow.OrderRowOptions.Where(o => o.idOption == (int)Model.OrderRow.RegistrationType).First().Option.Stage2CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote> 
+                    @*<blockquote style="margin-left: 150px; margin-right: 150px;" class="btn-success well">@Model.OrderRow.OrderRowOptions.First(o => o.idOption == Model.OrderRow.RegistrationType).Option.Stage2CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>*@
+                    <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn-success well">@Model.OrderRow.OrderRowOptions.Where(o => o.idOption == (int)Model.OrderRow.RegistrationType).First().Option.Stage2CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
                 }
                 else
                 {
-        <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn-success well">@Model.OrderRow.OrderRowOptions.Where(o => o.idOption == (int)Model.OrderRow.RegistrationType).First().Option.Stage1CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
+                    <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn-success well">@Model.OrderRow.OrderRowOptions.Where(o => o.idOption == (int)Model.OrderRow.RegistrationType).First().Option.Stage1CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
                 }
             }
             else
             {
-        <span>There is a pending order for this event that requires your confirmation.</span>
-        @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model)
-
+                <span>There is a pending order for this event that requires your confirmation.</span>
+                @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model)
             }
         }
         else
         {
-
-        @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model)
-
-
+            @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model)
         }
     }
 </div>

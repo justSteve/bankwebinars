@@ -43,7 +43,7 @@ namespace CUWebinars.Web
 
             AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.Email;
         }
-        
+
         //protected void Application_Error(object sender, EventArgs e)
         //{
         //    var ex = Server.GetLastError().GetBaseException();
@@ -86,11 +86,18 @@ namespace CUWebinars.Web
                 Session["IncludeUpcoming"] = true;
                 Session["searchExtent"] = "Upcoming";
 
-
+                // determine the current affiliate
                 CurrentSession.Instance.CurrentAffiliate = _repos.GetCurrentAffiliate();
+
+                //This session var lets us understand the origin of the Affiliate session - 
+                //...answers the question - How was the Session Affiliate determined?
+                //Here we the initial value to 'default' ... later code will
+                // override if conditions dictate.
                 CurrentSession.Instance.AffiliateSessionSource = "default|" + AppConst.DEFAULT_AFFILIATE;
                 CurrentSession.Instance.SubdomainBranding =
                     @System.Configuration.ConfigurationManager.AppSettings[AppConst.TESTING_URL];
+
+                //following are values to be stored for audit purposes.
                 if (System.Web.HttpContext.Current.Request.UrlReferrer != null)
                     CurrentSession.Instance.FirstReferrer =
                         System.Web.HttpContext.Current.Request.UrlReferrer.ToString();
@@ -98,6 +105,87 @@ namespace CUWebinars.Web
                 CurrentSession.Instance.InitialQueryString = Request.QueryString;
                 CurrentSession.Instance.SessionID = System.Web.HttpContext.Current.Session.SessionID;
 
+
+                if (!String.IsNullOrEmpty(Request.QueryString["idAff"]))
+                {
+                    //DETERMINE CURRENT AFFILIATE
+                    //MEHTOD 1: VIA QUERY STRING -- idAff=[idUserAff]                    
+                    int loadAff;
+                    bool myValue = int.TryParse(Request.QueryString["idAff"], out loadAff);
+                    if (myValue)
+                    {
+                        try
+                        {
+                            HttpContext.Current.Session["AffiliateSessionSource"] = "idAff|" + loadAff;
+                            //TODO ... need updated method of loading affiliate by id
+                            //CurrentSession.Instance.CurrentAffiliate = AffiliateFacade.Instance.Load(Convert.ToInt32(loadAff));
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Fatal(ex);
+                            logger.Info("ERROR: --SESSION START-- failed to load idAff code: " +
+                                                       HttpContext.Current.Request.Url.ToString());
+                            throw;
+                        }
+                    }
+                    else
+                    {
+                        logger.Error("ERROR:  --SESSION START-- Non-numberic idAff: " +
+                                                   HttpContext.Current.Request.QueryString.ToString());
+                    }
+                }
+
+                if ((string)CurrentSession.Instance.SubdomainBranding.Split('.')[0] == "webinars")
+                {
+                    //METHOD 2: VIA THE DOMAIN NAME BEING RUN
+                    //e.g. http://webinars.cftws.org - means CurrentAffiliate should be 'cftws'
+
+                    string affDomain = @System.Configuration.ConfigurationManager.AppSettings[AppConst.TESTING_URL].Split('.')[1];
+                    try
+                    {
+                        CurrentSession.Instance.AffiliateSessionSource = "Sub|" + affDomain;
+                        //todo: devise method to load Affiliate based on match to Affiliate.ttsDomain
+                        //   the name of the property 'ttsDomain' is the abbreviated name chosen
+                        //   for use (as a shortcut or nicname) by us to refer to a given affiliate. It may or may not
+                        //   be literally the Domain Name used by the given affiliate.
+                        //CurrentSession.Instance.CurrentAffiliate = AffiliateFacade.Instance.LoadByTTSDomain(affDomain);
+                        //HttpContext.Current.Session["CurrentAffiliate"] = AffiliateFacade.Instance.LoadByTTSDomain(affDomain);
+
+                        //if (AffiliateFacade.Instance.LoadByTTSDomain(affDomain) == null)
+                        //{
+                        //    CurrentSession.Instance.CurrentAffiliate = AffiliateFacade.Instance.LoadByTTSDomain("bennett");
+                        //    //HttpContext.Current.Session["CurrentAffiliate"] = AffiliateFacade.Instance.LoadByTTSDomain("bennett");
+                        //}
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Fatal(ex);
+                        throw;
+                    }
+                }
+
+                //METHOD 3: VIA THE SUBDOMAIN
+                //  when passed 'cftws.bankwebinars.com' this method
+                //  set the Session Affiliate to 380
+                //    public static int GetAffilliateByTTSDomain(string currentHost)
+                //    {
+                //        if (currentHost.ToLower() == "www" || currentHost.ToLower() == "testing" || currentHost.ToLower() == "bankwebinars" || currentHost == "localhost")
+                //        {
+                //            return 0;
+                //        }
+                //        try
+                //        {
+                //            return AffiliateFacade.Instance.LoadByTTSDomain(currentHost).ID;
+                //        }
+                //        catch (Exception ex)
+                //        {
+                //            Logger.Instance.LogException(ex);
+                //            Logger.Instance.LogMessage("ERROR: GetAffilliateByTTSDomain: was passed: " + currentHost);
+                //            return 0;
+                //        }
+                //    }
+                //}
+                
                 logger.Info("Start Session: " + CurrentSession.Instance.SessionID);
 
                 var allCookies = new StringBuilder();

@@ -6,14 +6,14 @@ GO
 go
 :r $(path)\seeder1_ini.SQL
 go
---PRINT '_________________________________________________________________________________________begin presenters'
---go
---:r $(path)\seeder2_ImportPresenters.SQL
---GO
---PRINT '_________________________________________________________________________________________begin affiliates'
---go
---:r $(path)\seeder3_ImportAffiliates.SQL
---go
+PRINT '_________________________________________________________________________________________begin presenters'
+go
+:r $(path)\seeder2_ImportPresenters.SQL
+GO
+PRINT '_________________________________________________________________________________________begin affiliates'
+go
+:r $(path)\seeder3_ImportAffiliates.SQL
+go
 PRINT '_________________________________________________________________________________________begin options'
 go
 :r $(path)\seeder4_CreateOptions.SQL

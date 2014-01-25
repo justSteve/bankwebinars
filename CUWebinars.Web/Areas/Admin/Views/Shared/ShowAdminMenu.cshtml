@@ -1,0 +1,40 @@
+﻿@using CUWebinars.Business.Models
+@using CUWebinars.Web.Utils
+
+@{
+    if (Request.IsAuthenticated)
+    {
+        string userMenu = "";
+        var user = CurrentSession.Instance.CurrentUser;
+
+        if (user != null)
+        {
+
+
+            switch (user.UserType)
+            {
+                case UserType.Affiliate:
+                    userMenu = "<li><a href='" + Url.Content("~/Admin") + "'>Home</a></li>";
+                    userMenu = userMenu + "<li><a href='" + Url.Content("~/Admin/Webinars") + "'>Webinars</a></li>";
+                    userMenu = userMenu + "<li><a href='" + Url.Content("~/Admin/Users") + "'>Users</a></li>";
+                    userMenu = userMenu + "<li><a href='" + Url.Content("~/Admin/Reports") + "'>Reports</a></li>";
+
+
+                    break;
+                case UserType.Admin:
+                    userMenu = "<li><a href='" + Url.Content("~/Admin") + "'>Home</a></li>";
+                    userMenu = userMenu + "<li><a href='" + Url.Content("~/Admin/Webinars") + "'>Webinars</a></li>";
+                    userMenu = userMenu + "<li><a href='" + Url.Content("~/Admin/Users") + "'>Users</a></li>";
+                    userMenu = userMenu + "<li><a href='" + Url.Content("~/Admin/Affiliates") + "'>Affiliates</a></li>";
+                    userMenu = userMenu + "<li><a href='" + Url.Content("~/Admin/Reports") + "'>Reports</a></li>";
+                    userMenu = userMenu + "<li><a href='" + Url.Content("~/Admin/Webinars/EditRecordings") + "'>Recordings</a></li>";
+                    userMenu = userMenu + "<li><a href='" + Url.Content("~/Admin/Webinars/HostProperties") + "'>Connection Info</a></li>";
+                    break;
+
+                default:
+                    throw new Exception("Invalid user type");
+            }
+        }
+        @Html.Raw(userMenu)
+    }
+}
