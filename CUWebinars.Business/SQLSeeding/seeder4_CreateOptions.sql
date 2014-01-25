@@ -4,6 +4,7 @@ go
 DELETE  BankWebinars.dbo.Topic
 DELETE  BankWebinars.dbo.Options
 DELETE  BankWebinars.dbo.OptionsGroups
+DELETE  BankWebinars.dbo.OptionsGroupsXref
 DELETE  BankWebinars.dbo.OptionsXref
 
 

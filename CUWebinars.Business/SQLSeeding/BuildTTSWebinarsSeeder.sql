@@ -417,9 +417,9 @@ CREATE TABLE [dbo].[OptionsGroups](
 	[idOptionGroup] ASC
 )) ON [PRIMARY]
 
-SET IDENTITY_INSERT dbo.OptionsGroups on
-GO
-INSERT dbo.OptionsGroups
+SET IDENTITY_INSERT TTSWebinarsSeeder.dbo.OptionsGroups on
+
+INSERT TTSWebinarsSeeder.dbo.OptionsGroups
         (  [idOptionGroup]
       ,[optionGroupDesc]
       ,[optionReq]
@@ -431,10 +431,10 @@ SELECT [idOptionGroup]
       ,[optionReq]
       ,[optionType]
       ,[sortOrder]
-  FROM [dbo].[OptionsGroups]
-GO
+  FROM TTSWebinars2_testing.[dbo].[OptionsGroups]
 
-SET IDENTITY_INSERT dbo.OptionsGroups off
+
+SET IDENTITY_INSERT TTSWebinarsSeeder.dbo.OptionsGroups off
 
 
 

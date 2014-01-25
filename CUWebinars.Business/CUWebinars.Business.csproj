@@ -193,7 +193,9 @@
     <Content Include="SQLSeeding\MigrationNotes.txt" />
     <Content Include="SQLSeeding\seeder1_ini.sql" />
     <Content Include="SQLSeeding\seeder2_ImportPresenters.sql" />
+    <Content Include="SQLSeeding\seeder2_RestorePresenters.sql" />
     <Content Include="SQLSeeding\seeder3_ImportAffiliates.sql" />
+    <Content Include="SQLSeeding\seeder3_RestoreAffiliates.sql" />
     <Content Include="SQLSeeding\seeder4_CreateOptions.sql" />
     <Content Include="SQLSeeding\seeder5_ImportWebinars.sql" />
     <Content Include="SQLSeeding\seeder5_ImportWebinars__CU.sql" />

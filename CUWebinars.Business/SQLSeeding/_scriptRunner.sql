@@ -5,18 +5,46 @@ GO
 :setvar path "C:\Users\Steve\Source\Repos\BankWebinars\CUWebinars.Business\SQLSeeding"
 go
 :r $(path)\seeder1_ini.SQL
-go
-PRINT '_________________________________________________________________________________________begin presenters'
-go
-:r $(path)\seeder2_ImportPresenters.SQL
 GO
-PRINT '_________________________________________________________________________________________begin affiliates'
-go
-:r $(path)\seeder3_ImportAffiliates.SQL
-go
+--PRINT '_________________________________________________________________________________________begin presenters'
+--go
+--:r $(path)\seeder2_ImportPresenters.SQL
+--GO
+--PRINT '_________________________________________________________________________________________restore presenters'
+--go
+--:r $(path)\seeder2_RestorePresenters.SQL
+
+--PRINT '_________________________________________________________________________________________restore presenters'
+--go
+--:r $(path)\seeder3_RestoreAffiliates.SQL
+--GO
+--PRINT '_________________________________________________________________________________________begin affiliates'
+--go
+--:r $(path)\seeder3_ImportAffiliates.SQL
+--go
 PRINT '_________________________________________________________________________________________begin options'
 go
 :r $(path)\seeder4_CreateOptions.SQL
+UPDATE [dbo].[Options]
+   SET [OptionExplain] = (select OptionExplain FROM TTSWebinars2.dbo.Options WHERE idOption = 1)
+      ,[OptionLabel] = (select OptionLabel FROM TTSWebinars2.dbo.Options WHERE idOption = 1)
+      ,[PriceToAdd] = (select PriceToAdd FROM TTSWebinars2.dbo.Options WHERE idOption = 1)
+      ,[TaxExempt] = (select TaxExempt FROM TTSWebinars2.dbo.Options WHERE idOption = 1)
+      ,[PercToAdd] = (select PercToAdd FROM TTSWebinars2.dbo.Options WHERE idOption = 1)
+      ,[SortOrder] = (select SortOrder FROM TTSWebinars2.dbo.Options WHERE idOption = 1)
+      ,[Type] = (select Type FROM TTSWebinars2.dbo.Options WHERE idOption = 1)
+      ,[MsgConfirm] = (select MsgConfirm FROM TTSWebinars2.dbo.Options WHERE idOption = 1)
+      ,[SKU] = (select SKU FROM TTSWebinars2.dbo.Options WHERE idOption = 1)
+      ,[ShowLiveNotifications] = 'Yes'
+      ,[ShowRecordingNotifications] = 'No'
+      ,[ShowShippedNotifications] = 'No'
+      ,[Stage1CheckoutConfirmationMsg] = 'This order is for the live session only. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) we''ll notify you by email.'
+      ,[Stage2CheckoutConfirmationMsg] = 'This order is for the live session only. The information required to connect to the event is summarized below. Detailed information has been sent to your email and is also available at http://www.BankWebinars.com/MyWebinars.'
+      ,[Stage1EmailConfirmationMsg] = 'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) you''ll receive another email with complete connection instructions.'
+      ,[Stage2EmailConfirmationMsg] = 'Connection information is summerized below and is also available at http://www.BankWebinars.com.'
+ WHERE dbo.Options.idOption = 84
+GO
+
 print '_________________________________________________________________________________________begin webinars'
 --go
 :r $(path)\seeder5_ImportWebinars.SQL

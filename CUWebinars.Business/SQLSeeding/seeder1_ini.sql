@@ -11,7 +11,7 @@ USE MembershipReboot
 
 EXEC sp_MSforeachtable @command1 = "ALTER TABLE ? NOCHECK CONSTRAINT ALL"
 
-EXEC sp_MSforeachtable @command1 = "DELETE  ? "
+--EXEC sp_MSforeachtable @command1 = "DELETE  ? "
 go
 
 --USE MembershipReboot

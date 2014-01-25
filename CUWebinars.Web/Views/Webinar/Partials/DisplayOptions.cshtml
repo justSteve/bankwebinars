@@ -93,6 +93,8 @@
     //}
 </script>
 @{
+
+
     <span>Choose the attendance option that's right for you! <a href="#AttendOptions" data-toggle="modal">(learn more)</a> </span>
 
     <div class="pull-right">
@@ -135,8 +137,8 @@
         </dl>
 
         <div id="displayAddLoc">
-                @Html.Partial(partialViewName: "~/Views/Webinar/Partials/AdditionalLocationsOptionView.cshtml", model: Model)
-            </div>
+            @Html.Partial(partialViewName: "~/Views/Webinar/Partials/AdditionalLocationsOptionView.cshtml", model: Model)
+        </div>
     </div>
 }
 

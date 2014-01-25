@@ -95,6 +95,7 @@
     .icon-question-sign {
         background-position: 14px 14px;
     }
+
     blockquote {
         background: url("") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
         font-style: normal;
@@ -102,9 +103,11 @@
         font-size: small;
         font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     }
+
     .well-large {
         padding: 0;
     }
+
         .well-large p {
             padding: 0;
             line-height: 100%;
@@ -227,42 +230,47 @@
             <!--close aside widget-->
         </section>
         <!--close section tertiary-column sidebar span3-->
-    </div>
-    <div class="row-fluid">
-        <div class="content offset2 span8 well">
+    </div>@{
+        if ((int)Model.Webinar.Status < 4)
+        {
+            <div class="row-fluid">
+                <div class="content offset2 span8 well">
 
-            <div id="SignUpFormContainer">
-                <ul class="nav nav-tabs" id="regTabs">
-                    <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@signUpCaption</a></li>
-                    @*<li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
-                        <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@ConfirmationCaption</a></li>*@
-                </ul>
+                    <div id="SignUpFormContainer">
+                        <ul class="nav nav-tabs" id="regTabs">
+                            <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@signUpCaption</a></li>
+                            @*<li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
+                                <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@ConfirmationCaption</a></li>*@
+                        </ul>
 
-                <div class="tab-content">
-                    <div class="tab-pane active" id="signUp">
-                        <input type="button" onclick="signUp();" class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
+                        <div class="tab-content">
 
-                        @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model)
+                            <div class="tab-pane active" id="signUp">
+                                <input type="button" onclick=" signUp(); " class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
+                                @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model)
+                            </div>
+                            @*<div class="tab-pane" id="contactInfo">
+                                    @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutContact.cshtml", model: Model)
 
-                    </div>
-                    @*<div class="tab-pane" id="contactInfo">
-                            @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutContact.cshtml", model: Model)
+                                </div>
+                                <div class="tab-pane" id="confirmation">
+                                    @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutConfirm.cshtml", model: Model)
+                                </div>*@
+
 
                         </div>
-                        <div class="tab-pane" id="confirmation">
-                            @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutConfirm.cshtml", model: Model)
-                        </div>*@
+                    </div>
+                    <form action="/cart/signup2" id="frmSignup2" method="post">
+                        <input type="hidden" name="stage_of_checkout" id="stage_of_checkout" value="step0" />
+                        <input type="hidden" name="webinar.idWebinar" value="@Model.Webinar.idWebinar" />
+                        <input type="hidden" name="orderrow.Id" value="@rowID" />
+                        <input type="hidden" name="mode" />
+
+                        <input type="hidden" id="addEmails" name="addEmails" value="" />
+                    </form>
                 </div>
+
             </div>
-            <form action="/cart/signup2" id="frmSignup2" method="post">
-                <input type="hidden" name="stage_of_checkout" id="stage_of_checkout" value="step0" />
-                <input type="hidden" name="webinar.idWebinar" value="@Model.Webinar.idWebinar" />
-                <input type="hidden" name="orderrow.Id" value="@rowID" />
-                <input type="hidden" name="mode" />
-
-                <input type="hidden" id="addEmails" name="addEmails" value="" />
-            </form>
-        </div>
-
-    </div>
+        }
+    }
 </div>

@@ -1,6 +1,6 @@
 USE BankWebinars
 go
---SELECT 'UPDATE dbo.Presenter SET Biography = BiographyLong, BiographyLong = |<p><img class="alignleft" src="https://ttseast.blob.core.windows.net/images'+(select REPLACE(PhotoFull, 'content/images/','') from Presenter where idUser = p.idUser)+' alt="Photo of '+(SELECT FirstName + ' '+ LastName FROM dbo.WebUser WHERE idUser = p.idUser)+'" />$'+(SELECT BiographyLong FROM dbo.Presenter WHERE idUser = p.idUser)+'| where idUser = '+ CAST(idUser AS VARCHAR)
+--SELECT 'UPDATE dbo.Presenter SET Biography = BiographyLong, BiographyLong = |<p><img class="alignleft" src="https://ttseast.blob.core.windows.net/images'+(select REPLACE(PhotoFull, 'content/images/','') from Presenter where idUser = p.idUser)+'" alt="Photo of '+(SELECT FirstName + ' '+ LastName FROM dbo.WebUser WHERE idUser = p.idUser)+'" />$'+(SELECT BiographyLong FROM dbo.Presenter WHERE idUser = p.idUser)+'| where idUser = '+ CAST(idUser AS VARCHAR)
 
 DELETE BankWebinars.dbo.WebUser
 DELETE BankWebinars.dbo.Affiliate
