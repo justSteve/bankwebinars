@@ -49,12 +49,6 @@ namespace CUWebinars.Web.Controllers
             
             if (ModelState.IsValid)
             {
-                //first check if email exists
-                var checkIfUsed = membershipService.GetUserByEmail(model.Email);
-                if (checkIfUsed != null)
-                {
-                    return checkIfUsed.idUser.ToString();
-                }
 
                 // Attempt to register the user
                 WebUserRepository repo = new WebUserRepository();
@@ -444,6 +438,15 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                //first check if email exists
+                var checkIfUsed = membershipService.GetUserByEmail(model.RegisterFields.Email);
+                if (checkIfUsed != null)
+                {
+                    Logger.Error("dupe email attempt: " + model.RegisterFields.Email);
+                    ModelState.AddModelError("Email", "That email already exists. Would you like to reset the password?");
+                    return View(" ", model);
+                }
+                
                 var myInstitution = membershipService.ProcessInstitutionForUser(model.RegisterFields.Institution.Trim(),
                     model.RegisterFields.BillingAddress.City.Trim(),
                     model.RegisterFields.BillingAddress.State.Trim(),

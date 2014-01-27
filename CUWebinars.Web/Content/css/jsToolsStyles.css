@@ -1,5 +1,5 @@
 ﻿#custom { 
-    background-image:url(/Content/images/loginFormBackground.png); 
+    background-image:url(https://ttseast.blob.core.windows.net/images/BankWebinars/loginFormBackground.png); 
     width:512px; 
     height:531px; 
     padding:0px; 
@@ -14,7 +14,7 @@
 div.showInProcess {
 	
 	/* growing background image */
-	background-image:url(/Content/images/inProcess.png);
+	background-image:url(https://ttseast.blob.core.windows.net/images/BankWebinars/inProcess.png);
 	
 	/* dimensions after the growing animation finishes  */
 	width:320px;
@@ -31,7 +31,7 @@ div.showInProcess {
 div.showLoginBox {
 	
 	/* growing background image */
-	background-image:url(/Content/images/loginFormBackground.png);
+	background-image:url(https://ttseast.blob.core.windows.net/images/BankWebinars/loginFormBackground.png);
 	
 	/* dimensions after the growing animation finishes  */
 	width:320px;
@@ -50,7 +50,7 @@ div.showLoginBox {
 div.supportBox {
 	
 	/* growing background image */
-	background-image:url(/Content/images/supportFormBackground.png);
+	background-image:url(https://ttseast.blob.core.windows.net/images/BankWebinars/supportFormBackground.png);
 	
 	/* dimensions after the growing animation finishes  */
 	width:320px;

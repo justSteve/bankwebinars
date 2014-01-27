@@ -20,7 +20,7 @@
 .content-slider-wrapper {
     position: relative;
     clear: both;
-    background: url(/Content/images/70p.png) fixed;
+    background: url(https://ttseast.blob.core.windows.net/images/BankWebinars/70p.png) fixed;
    
    
     padding: 2% 60px 0 60px;
@@ -92,7 +92,7 @@
     top: 40%;
     width: 40px;
     height: 80px;
-    background:url(/Content/images/sliderarrows.png) 0 50% no-repeat;
+    background:url(https://ttseast.blob.core.windows.net/images/BankWebinars/sliderarrows.png) 0 50% no-repeat;
 }
 .content-slider.flexslider .flex-direction-nav a.flex-prev {
     left: 8px;
@@ -131,15 +131,15 @@
     cursor: default;
 }
 /* image credit (used in demo) this is the span inside these two divs
-================================================== */
+================================================== 
 .content-slider.flexslider .img span,
 .content-slider.flexslider .video-wrapper span {
     font-size: 11px;
     margin-top: 5px;
     position: relative;
     padding: 10px 0;
-    overflow:visibile;
-}
+    overflow: visible;
+}*/
 .content-slider.flexslider span.credit a {
     text-decoration: none;
 }
@@ -147,17 +147,16 @@
 
 
 /** Light Styles **/
-================================================== */
 .content-slider-wrapper.light .caption p, .content-slider.flexslider.light .caption p a { color: #333 }
 .content-slider-wrapper.light .caption .btn {color: #fff;}
 .content-slider-wrapper.light .caption h2 {color: #2ba4c2;}
 .content-slider-wrapper.light span.credit a {color:#444;}
 .content-slider-wrapper.light {
-    background: url(/Content/images/7p.png);
+    background: url(https://ttseast.blob.core.windows.net/images/BankWebinars/7p.png);
 }
 .content-slider-wrapper.light .flex-direction-nav a.flex-next,
 .content-slider-wrapper.light .flex-direction-nav a.flex-prev {
-    background:url(/Content/images/sliderarrows.png) -140px 50% no-repeat;
+    background:url(https://ttseast.blob.core.windows.net/images/BankWebinars/sliderarrows.png) -140px 50% no-repeat;
 }
 .content-slider-wrapper.light .flex-direction-nav a.flex-prev {
     background-position: -180px 50%;
@@ -199,7 +198,7 @@
     }
 	.content-slider.flexslider .img img {
 		width:auto;
-		max-width 100%;
+		max-width: 100%;
 		margin:0 auto;
 	}
     .content-slider.flexslider .caption h2 {
@@ -249,7 +248,7 @@
 	/*light style arrows */
 	.content-slider-wrapper.light .flex-direction-nav a.flex-next,
 	.content-slider-wrapper.light .flex-direction-nav a.flex-prev {
-    background:url(/Content/images/sliderarrows.png) -220px 50% no-repeat;
+    background:url(https://ttseast.blob.core.windows.net/images/BankWebinars/sliderarrows.png) -220px 50% no-repeat;
 	}
 	.content-slider-wrapper.light .flex-direction-nav a.flex-prev {
     background-position: -250px 50%;
@@ -273,7 +272,7 @@
 
 .content-slider.flexslider .flex-direction-nav a.flex-next,
 .content-slider.flexslider .flex-direction-nav a.flex-prev {
-    background-image:url(/Content/images/retina/sliderarrows_@2x.png);
+    background-image:url(https://ttseast.blob.core.windows.net/images/BankWebinars/retina/sliderarrows_@2x.png);
 			-moz-background-size:360px 100px; 
              -ie-background-size:360px 100px;
               -o-background-size:360px 100px;

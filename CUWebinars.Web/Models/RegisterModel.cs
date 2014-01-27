@@ -7,11 +7,11 @@ namespace CUWebinars.Web.Models
     public class RegisterModel
     {
         [Required]
-        [Display(Name = "First Name")]
+        [Display(Name = "First")]
         public string FirstName { get; set; }
 
         [Required]
-        [Display(Name = "Last Name")]
+        [Display(Name = "Last")]
         public string LastName { get; set; }
         
         [Required]

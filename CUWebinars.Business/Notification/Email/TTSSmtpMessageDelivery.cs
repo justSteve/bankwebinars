@@ -23,7 +23,8 @@ namespace CUWebinars.Business.Notification.Email
                 smtp.Timeout = 5000;
 
                 mailMessage.From = new MailAddress(msg.From);
-                mailMessage.To.Add(new MailAddress(msg.To));
+                //mailMessage.To.Add(new MailAddress(msg.To));
+                mailMessage.To.Add(new MailAddress("steve@ttstrain.com"));
                 mailMessage.Subject = msg.Subject;
                 mailMessage.Body = msg.Body;
                 mailMessage.IsBodyHtml = true;

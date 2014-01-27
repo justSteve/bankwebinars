@@ -75,8 +75,13 @@ namespace CUWebinars.Business.AccountService
             )
         {
             userName = userName.Replace(" ", "").Replace(".", "").Replace("-","").Replace("'","");
+
+            //TODO: Trap for existent UserNames and Emails - doesn't Brock have something in place on his side already?
+            // we need to return an appropriate error message and redisplay the reg form as well as link to password reset.
+
             var account = userAccountService.CreateAccount(userName, password, email);
             userAccountService.AddClaim(account.ID, CUWebinars.Business.Constants.ClaimTypes.FullName, string.Format("{0} {1}", firstName, lastName));
+            userAccountService.AddClaim(account.ID, CUWebinars.Business.Constants.ClaimTypes.Role, "WebUser");
 
             //var webUserId = m
             //.GetAll().Where(c => c.InstitutionName == institutionName && c.Zip == zip).ToList();

@@ -56,7 +56,7 @@
 }
 
 #main_navigation li a:hover
-{	background: transparent url(/Content/images/greenactive.gif) center center repeat-x;
+{	background: transparent url(https://ttseast.blob.core.windows.net/images/BankWebinars/greenactive.gif) center center repeat-x;
  	/*font-weight: bold;
 	font-variant: small-caps;*/
 }

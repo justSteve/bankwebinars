@@ -57,13 +57,15 @@
 
             @if (Model.ActiveTab.Equals("register", StringComparison.Ordinal)){
                 <div id="register" class="tab-pane active">
-                    @Html.Partial("_RegisterPartial", Model.Register)
+                    @Html.Partial("_CreateUserForm", Model.Register)
+                    @*@Html.Partial("_RegisterPartial", Model.Register)*@
                 </div>
             }
             else
             {
                 <div id="register" class="tab-pane">
-                    @Html.Partial("_RegisterPartial", Model.Register)
+                    @Html.Partial("_CreateUserForm", Model.Register)
+                    @*@Html.Partial("_RegisterPartial", Model.Register)*@
                 </div>
             }
 
