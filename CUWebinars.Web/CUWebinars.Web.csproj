@@ -214,6 +214,9 @@
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.IdentityModel.Selectors" />
     <Reference Include="System.identitymodel.services" />
+    <Reference Include="System.IdentityModel.Tokens.Jwt">
+      <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.1.0.0\lib\net45\System.IdentityModel.Tokens.Jwt.dll</HintPath>
+    </Reference>
     <Reference Include="System.Net.Http.Extensions, Version=2.2.18.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.Net.Http.2.2.18\lib\net45\System.Net.Http.Extensions.dll</HintPath>
@@ -295,6 +298,9 @@
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.0.0\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="Thinktecture.IdentityModel">
+      <HintPath>..\packages\Thinktecture.IdentityModel.3.6.1\lib\net45\Thinktecture.IdentityModel.dll</HintPath>
+    </Reference>
     <Reference Include="WebActivator">
       <HintPath>..\packages\WebActivator.1.5.3\lib\net40\WebActivator.dll</HintPath>
     </Reference>
@@ -387,11 +393,13 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\ClaimsExtensions.cs" />
+    <Compile Include="Helpers\IdentityConstants.cs" />
     <Compile Include="Helpers\WebUiConstants.cs" />
     <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="Helpers\EnumHelpers.cs" />
     <Compile Include="Helpers\HtmlHelpers.cs" />
     <Compile Include="Infrastructure\TenantAuthenticationManager.cs" />
+    <Compile Include="Infrastructure\TTSAuthorizationManager.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\AddressModel.cs" />
     <Compile Include="Models\ChangePasswordFromResetKeyInputModel.cs" />
@@ -399,8 +407,10 @@
     <Compile Include="Models\RegisterModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IMailService.cs" />
+    <Compile Include="Services\IStateService.cs" />
     <Compile Include="Services\MailService.cs" />
     <Compile Include="Services\MailServiceMock.cs" />
+    <Compile Include="Services\StateService.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utils\AzureTableAppender.cs" />
     <Compile Include="Utils\CurrentSession.cs" />
@@ -846,6 +856,12 @@
     <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
     <Content Include="EmailTemplates\AccountCreatedEvent_Body.txt" />
     <Content Include="EmailTemplates\AccountCreatedEvent_Subject.txt" />
+    <Content Include="EmailTemplates\EmailChangedEvent_Body.txt" />
+    <Content Include="EmailTemplates\EmailChangedEvent_Subject.txt" />
+    <Content Include="EmailTemplates\EmailChangeRequestedEvent_Body.txt" />
+    <Content Include="EmailTemplates\EmailChangeRequestedEvent_Subject.txt" />
+    <Content Include="EmailTemplates\PasswordChangedEvent_Body.txt" />
+    <Content Include="EmailTemplates\PasswordChangedEvent_Subject.txt" />
     <Content Include="EmailTemplates\PasswordResetRequestedEvent_Body.txt" />
     <Content Include="EmailTemplates\PasswordResetRequestedEvent_Subject.txt" />
     <Content Include="favicon.ico" />

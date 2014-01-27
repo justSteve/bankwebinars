@@ -3,6 +3,7 @@ using CUWebinars.Business.Models;
 using CUWebinars.Web.App_Start;
 using CUWebinars.Web.Data.Repositories;
 using CUWebinars.Web.Data.Repositories.Interfaces;
+using CUWebinars.Web.Services;
 using CUWebinars.Web.Utils;
 using log4net;
 using System;
@@ -27,6 +28,10 @@ namespace CUWebinars.Web
         private static TTSWebinarsContext ctx = new TTSWebinarsContext();
         private static IAffiliateRepository _repos = new AffiliateRepository(ctx);
         private static IWebinarRepository _reposWebinars = new WebinarRepository(ctx);
+        private static IStateService stateService = new StateService();
+
+        const string AffiliateId = "idAff";
+        const char Pipe = '|';
 
         protected void Application_Start()
         {
@@ -93,7 +98,7 @@ namespace CUWebinars.Web
                 //...answers the question - How was the Session Affiliate determined?
                 //Here we the initial value to 'default' ... later code will
                 // override if conditions dictate.
-                CurrentSession.Instance.AffiliateSessionSource = "default|" + AppConst.DEFAULT_AFFILIATE;
+                CurrentSession.Instance.AffiliateSessionSource = "default" + Pipe + AppConst.DEFAULT_AFFILIATE;
                 CurrentSession.Instance.SubdomainBranding =
                     @System.Configuration.ConfigurationManager.AppSettings[AppConst.TESTING_URL];
 
@@ -106,17 +111,17 @@ namespace CUWebinars.Web
                 CurrentSession.Instance.SessionID = System.Web.HttpContext.Current.Session.SessionID;
 
 
-                if (!String.IsNullOrEmpty(Request.QueryString["idAff"]))
+                if (!String.IsNullOrEmpty(Request.QueryString[AffiliateId]))
                 {
                     //DETERMINE CURRENT AFFILIATE
                     //MEHTOD 1: VIA QUERY STRING -- idAff=[idUserAff]                    
                     int loadAff;
-                    bool myValue = int.TryParse(Request.QueryString["idAff"], out loadAff);
-                    if (myValue)
+
+                    if (int.TryParse(Request.QueryString[AffiliateId], out loadAff))
                     {
                         try
                         {
-                            HttpContext.Current.Session["AffiliateSessionSource"] = "idAff|" + loadAff;
+                            stateService.SetValue("AffiliateSessionSource", AffiliateId + Pipe + loadAff);
                             //TODO ... need updated method of loading affiliate by id
                             //CurrentSession.Instance.CurrentAffiliate = AffiliateFacade.Instance.Load(Convert.ToInt32(loadAff));
                         }
@@ -130,7 +135,7 @@ namespace CUWebinars.Web
                     }
                     else
                     {
-                        logger.Error("ERROR:  --SESSION START-- Non-numberic idAff: " +
+                        logger.Error("ERROR:  --SESSION START-- Non-numeric idAff: " +
                                                    HttpContext.Current.Request.QueryString.ToString());
                     }
                 }
@@ -143,7 +148,7 @@ namespace CUWebinars.Web
                     string affDomain = @System.Configuration.ConfigurationManager.AppSettings[AppConst.TESTING_URL].Split('.')[1];
                     try
                     {
-                        CurrentSession.Instance.AffiliateSessionSource = "Sub|" + affDomain;
+                        CurrentSession.Instance.AffiliateSessionSource = "Sub" + Pipe + affDomain;
                         //todo: devise method to load Affiliate based on match to Affiliate.ttsDomain
                         //   the name of the property 'ttsDomain' is the abbreviated name chosen
                         //   for use (as a shortcut or nicname) by us to refer to a given affiliate. It may or may not

@@ -15,6 +15,7 @@ namespace CUWebinars.Business.Tests
            account = new RelationalUserAccount();
 
            return true;
-       } 
+       }
+ 
     }
 }
