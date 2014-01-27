@@ -18,6 +18,7 @@ using CUWebinars.Business.Repository;
 using OrderRepository = CUWebinars.Web.Data.Repositories.OrderRepository;
 using CUWebinars.Web.ViewModel;
 using System.Security.Claims;
+using Thinktecture.IdentityModel.Authorization.Mvc;
 
 
 namespace CUWebinars.Web.Controllers
@@ -156,6 +157,7 @@ namespace CUWebinars.Web.Controllers
             return View("MyWebinars", model);
         }
 
+        [ClaimsAuthorize(Roles="Admin")]
         public ActionResult Manage(ManageMessageId? message)
         {
             ManageModel manageModel = new ManageModel
