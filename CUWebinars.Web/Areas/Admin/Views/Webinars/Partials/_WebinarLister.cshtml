@@ -1,5 +1,6 @@
 ﻿@using CUWebinars.Business.Models
-@model TTSDataLayer.Models.Webinar
+
+@model Webinar
 
            @{           var webinar = Model;
                var numDaysLeft = (webinar.Date.AddMonths(6) - DateTime.Now).Days;
@@ -22,8 +23,7 @@
                    .Select(webinarTopic => webinarTopic.Topic.TopicDesc)
                    .Aggregate((s1, s2) => s1 + ", " + s2);
 
-               string title = "<h3>< a href = '/Webinar/Details/" + webinar.idWebinar + "' target='_blank'>" + webinar.Title + "</a>
-               </h3 > ";
+               string title = "<h3>< a href = '/Webinar/Details/" + webinar.idWebinar + "' target='_blank'>" + webinar.Title + "</a></h3 > ";
                var desc = webinar.Description.Length > 200
                    ? webinar.Description.Substring(0, 200) + "... <a class=\"btn btn-primary btn-small\" href='/Webinar/Details/" + webinar.idWebinar + "'>More →</a></p>"
                    : webinar.Description;

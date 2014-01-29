@@ -266,6 +266,9 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
+            var repo = new OrderRepository(db);
+            var bla = repo.Test(19);
+
             var loginModel = new LoginModel
                 {
                     SignIn = new SignInModel(),

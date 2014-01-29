@@ -416,6 +416,7 @@
     <Compile Include="Utils\CurrentSession.cs" />
     <Compile Include="Utils\LogItem.cs" />
     <Compile Include="Utils\MySession.cs" />
+    <Compile Include="Utils\UserSession.cs" />
     <Compile Include="ViewModel\ConnectionInfoViewModel.cs" />
     <Compile Include="ViewModel\RegisterViewModel.cs" />
     <Compile Include="ViewModel\WebinarDetailsViewModel.cs" />
@@ -919,7 +920,9 @@
     <None Include="Properties\PublishProfiles\CUWebinars - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\cuwebinarsstage - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\cuwebinarsstage - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\cuwebinarsstage - Web Deploy.pubxml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />

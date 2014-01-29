@@ -40,6 +40,17 @@ namespace CUWebinars.Web.Data.Repositories
             return optionAndOrder;
         }
 
+        public virtual IList<Order> Test(int idUser)
+        {
+            var optionAndOrder = new Dictionary<Option, Order>();
+
+            var list = _ctx.Orders.Include("OrderRows")
+                        .Where(o => o.idUser == idUser)
+                        .ToList();
+
+            return list;
+        }
+
         public virtual IList<Order> SelectOrdersWithRecordedWebinars(int idUser)
         {
             return _ctx.Orders.Where(o => o.idUser == idUser
