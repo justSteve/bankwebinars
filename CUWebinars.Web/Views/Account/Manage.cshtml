@@ -1,6 +1,15 @@
 ﻿@model  ManageModel
 @{
     ViewBag.Title = "Manage Account";
+    var identity = ((ClaimsIdentity)User.Identity)
+        .Claims
+        .Where(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName)
+        .FirstOrDefault();
+
+    if (!ReferenceEquals(null, identity))
+    {
+        ViewBag.LoggedInUserIdentity = identity;
+    }
 }
 
 
@@ -10,7 +19,19 @@
         <div id="myTabContent" class="tab-content">
             <p class="message-success">@Model.StatusMessage</p>
 
-            <p>You're logged in as <strong>@User.Identity.Name</strong>.</p>                                
+            <p>
+                You're logged in as
+                @{
+                    if (identity == null)
+                    {
+                        <strong>@User.Identity.Name</strong><text>.</text>
+                    }
+                    else
+                    {
+                    <strong>@identity.Value</strong><text>.</text>
+                    }
+                }
+                </p>
 
             @using (Html.BeginForm("Manage", "Account", "Post"))
             {
@@ -32,7 +53,7 @@
 
 <div id="ConfirmDeleteShippingAddressdialog" title="Delete Shipping Address" style="display:none">
     <p>Are you sure you want to delete your Shipping Address?</p> 
-    <p>If you proceed, your Shipping Address will be the same as your Billing Address.</p>
+    <p>If you proceed and click the Update button, your Shipping Address will be the same as your Billing Address.</p>
 </div>
 
 @section Scripts {

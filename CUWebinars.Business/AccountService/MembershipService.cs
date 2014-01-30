@@ -77,7 +77,8 @@ namespace CUWebinars.Business.AccountService
             )
         {
             var account = userAccountService.CreateAccount(tenant, userName, password, email);
-
+            userAccountService.AddClaim(account.ID, CUWebinars.Business.Constants.ClaimTypes.FullName, string.Format("{0} {1}", firstName, lastName));
+            
             WebUser webUser = new WebUser
             {
                 idUser = idUserImported.HasValue ? idUserImported.Value : refDataRepository.GetMaxWebUserId() + 1,

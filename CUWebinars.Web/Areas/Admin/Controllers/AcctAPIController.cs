@@ -67,7 +67,7 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
 
                     IList<Address> addresses = new List<Address> { address };
 
-                    var result = membershipService.CreateUser(globalConfig.AppTenant,
+                    var result = membershipService.CreateUser(globalConfig.Tenant,
                         model.FirstName
                         , model.LastName
                         , model.FirstName + ' ' + model.LastName

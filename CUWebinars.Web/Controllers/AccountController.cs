@@ -97,7 +97,7 @@ namespace CUWebinars.Web.Controllers
 
                     IList<Address> addresses = new List<Address> { billingAddress, shippingAddress };
 
-                    var result = membershipService.CreateUser(globalConfig.AppTenant,
+                    var result = membershipService.CreateUser(globalConfig.Tenant,
                         model.FirstName
                         , model.LastName
                         , model.FirstName + ' ' + model.LastName
@@ -244,7 +244,7 @@ namespace CUWebinars.Web.Controllers
                 AddressType = Enum.GetName(typeof(AddressType), shippingAddressFields.TypeOfAddress)
             };
 
-            membershipService.UpdateUserDetails(globalConfig.AppTenant,
+            membershipService.UpdateUserDetails(globalConfig.Tenant,
                 updateFields.FirstName.Trim(), 
                 updateFields.LastName.Trim(),
                 updateFields.Password,
@@ -312,7 +312,7 @@ namespace CUWebinars.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SignIn(SignInModel model)
         {
-            if (ModelState.IsValid && membershipService.LogInUser(globalConfig.AppTenant, model.Email, model.Password, model.RememberMe))
+            if (ModelState.IsValid && membershipService.LogInUser(globalConfig.Tenant, model.Email, model.Password, model.RememberMe))
             {
                 return RedirectToLocal(model.ReturnUrl);
             }
@@ -343,7 +343,7 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
-                    membershipService.ResetPassword(globalConfig.AppTenant, model.Email);
+                    membershipService.ResetPassword(globalConfig.Tenant, model.Email);
                     model.EmailSent = true;
 
                     return View("Login", new LoginModel
@@ -485,10 +485,10 @@ namespace CUWebinars.Web.Controllers
 
 
 
-                    var result = membershipService.CreateUser(globalConfig.AppTenant,
+                    var result = membershipService.CreateUser(globalConfig.Tenant,
                         model.RegisterFields.FirstName.Trim()
                         , model.RegisterFields.LastName.Trim()
-                        , model.RegisterFields.FirstName.Trim() + model.RegisterFields.LastName.Trim()
+                        , string.Empty //  Pass empty string for username because MembershipReboot assigns the email to the username field where emailIsUsername is true
                         , model.RegisterFields.Password
                         , model.RegisterFields.Email.Trim()
                         , USTimeZone.Central
@@ -499,7 +499,7 @@ namespace CUWebinars.Web.Controllers
                         , null
                         , "A");
 
-                    membershipService.LogInUser(globalConfig.AppTenant, model.RegisterFields.Email, model.RegisterFields.Password, true); // log the user in.
+                    membershipService.LogInUser(globalConfig.Tenant, model.RegisterFields.Email, model.RegisterFields.Password, true); // log the user in.
 
                     return RedirectToAction("Index", "Home");
                 }

@@ -51,9 +51,6 @@ namespace CUWebinars.Web
             log4net.Config.XmlConfigurator.Configure();
 
             AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.Email;
-            GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
-
-            var bla = globalConfig.AppTenant;
         }
 
         //protected void Application_Error(object sender, EventArgs e)

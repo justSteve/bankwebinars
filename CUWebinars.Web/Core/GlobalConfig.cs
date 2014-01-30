@@ -6,7 +6,10 @@ namespace CUWebinars.Web.Core
 {
     public class GlobalConfig
     {
-        public string AppTenant { get; private set; }
+        public string Tenant { get; private set; }
+        public string WMVRepository { get; private set; }
+        public string HandoutRepository { get; private set; }
+        public string ImgRepository { get; private set; }
 
         private GlobalConfig()
         {
@@ -24,7 +27,10 @@ namespace CUWebinars.Web.Core
                     throw new ArgumentNullException("AppSettings not found in config file as expected.");
                 }
 
-                uniqueInstance.AppTenant = ApplicationSettingsSection["Tenant"];
+                uniqueInstance.Tenant = ApplicationSettingsSection["Tenant"];
+                uniqueInstance.WMVRepository = ApplicationSettingsSection["WMVRepository"];
+                uniqueInstance.HandoutRepository = ApplicationSettingsSection["HandoutRepository"];
+                uniqueInstance.ImgRepository = ApplicationSettingsSection["ImgRepository"];
             }
 
             // Private object instantiated with private constructor
