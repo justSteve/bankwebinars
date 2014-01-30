@@ -91,8 +91,6 @@ namespace CUWebinars.Web
                 Session["IncludeUpcoming"] = true;
                 Session["searchExtent"] = "Upcoming";
 
-                // determine the current affiliate
-                CurrentSession.Instance.CurrentAffiliate = _repos.GetCurrentAffiliate();
 
                 //This session var lets us understand the origin of the Affiliate session - 
                 //...answers the question - How was the Session Affiliate determined?
@@ -110,6 +108,8 @@ namespace CUWebinars.Web
                 CurrentSession.Instance.InitialQueryString = Request.QueryString;
                 CurrentSession.Instance.SessionID = System.Web.HttpContext.Current.Session.SessionID;
 
+                // determine the current affiliate
+                CurrentSession.Instance.CurrentAffiliate = _repos.GetCurrentAffiliate();
 
                 if (!String.IsNullOrEmpty(Request.QueryString[AffiliateId]))
                 {
@@ -123,7 +123,9 @@ namespace CUWebinars.Web
                         {
                             stateService.SetValue("AffiliateSessionSource", AffiliateId + Pipe + loadAff);
                             //TODO ... need updated method of loading affiliate by id
-                            //CurrentSession.Instance.CurrentAffiliate = AffiliateFacade.Instance.Load(Convert.ToInt32(loadAff));
+                            // determine the current affiliate
+                            CurrentSession.Instance.CurrentAffiliate = _repos.SetCurrentAffiliate(Convert.ToInt32(loadAff));
+
                         }
                         catch (Exception ex)
                         {

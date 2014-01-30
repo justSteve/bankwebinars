@@ -1019,6 +1019,7 @@
     <Content Include="Views\Shared\DisplayTemplates\HandoutsListing.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Address.cshtml" />
     <Content Include="Views\Account\_CreateUserForm.cshtml" />
+    <Content Include="Views\Account\test.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

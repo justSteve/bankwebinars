@@ -1,0 +1,71 @@
+﻿@{
+
+
+}
+@* ReSharper disable JSLint *@
+<script language="javascript" type="text/javascript">
+
+    function getZip() {
+        $("#getZip").show();
+        $(".loginContainer").hide();
+    }
+    var ds = "";
+    $(document).ready(function () {
+        $.support.cors = true;
+
+        //$.getJSON("http://localhost:2524/account/GetSageIDsAreNull?callback=?",
+        //    function (data) {
+        //        var mydata = $.parseJSON(data);
+        //        alert(mydata);
+
+        //        //for(i in data[1]) {
+        //        //    alert(i);
+        //        //}
+        //});
+        $.ajax({
+            contentType: 'application/jsonp',
+            url: "http://localhost:2524/account/GetSageIDsAreNull?callback=?",
+            type: 'get',
+            dataType: 'jsonp',
+            //jsonp: "callback",
+            cache: false,
+            //complete: function (xhr, textStatus) {
+            //    var message = "\r\ntextStatus: " + textStatus +
+            //        "\r\nContentType: " + xhr.getResponseHeader("Content-Type") +
+            //        "\r\nStatus: " + xhr.status +
+            //        "\r\nResponseText:\r\n" + xhr.data;
+            //    alert(message);
+            //},
+
+            success: function (data, status) {
+                //$.each($.parseJSON(data.d), function (key, value) {
+                //    $("#txt_speciality").tokenInput("add", {
+                //        name: value.name,
+                //        id: value.id
+                //    });
+                //});
+                //$.each(data, function (dt) {
+                    var mydata = data.d;
+
+                    alert(mydata); // returns [{"id":"67","name":"TestString"}]
+
+                //    $("#txt_speciality").tokenInput("add", mydata.id);
+                //});
+            }
+        });
+    });
+
+</script>
+@* ReSharper restore JSLint *@
+<style>
+    .fieldContainer {
+        /*width: 380px;*/
+        line-height: 25px;
+    }
+
+    .span2 {
+        text-align: right;
+    }
+</style>
+<h4 id="txt_speciality">test</h4>
+<div></div>

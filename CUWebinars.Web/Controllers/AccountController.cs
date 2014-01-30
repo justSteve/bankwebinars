@@ -430,6 +430,15 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
+
+        [System.Web.Mvc.HttpGet]
+        [System.Web.Mvc.AllowAnonymous]
+        public ActionResult test()
+        {
+            return View();
+        }
+
+
         //
         // POST: /Account/Register
 

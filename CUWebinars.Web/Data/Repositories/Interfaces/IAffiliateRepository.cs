@@ -7,6 +7,7 @@ namespace CUWebinars.Web.Data.Repositories.Interfaces
     {
         IQueryable<Affiliate> GetAffiliates();
         Affiliate GetCurrentAffiliate();
+        Affiliate SetCurrentAffiliate(int ID);
         IQueryable<Order> GetOrdersByUser(int affiliateId, int userId);
         IQueryable<Order> GetOrders(int affiliateId);
 
