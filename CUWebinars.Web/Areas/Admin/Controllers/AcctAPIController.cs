@@ -4,13 +4,13 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Security;
-//using CUWebinars.Data.Repositories;
 using CUWebinars.Business.Repository;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using Ninject.Extensions.Logging;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
+using CUWebinars.Web.Core;
 
 
 namespace CUWebinars.Web.Areas.Admin.Controllers
@@ -18,7 +18,7 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
 
     public class AcctAPIController : ApiController
     {
-        private TTSWebinarsContext db = new TTSWebinarsContext();
+        private readonly GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
         private IMailService _mail;
         //private readonly IAccountRepository  _repos;
         public ILogger Logger { get; set; }
@@ -38,10 +38,7 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 // Attempt to register the user
-
                 WebUserRepository repo = new WebUserRepository();
-                
-            
 
                 var myInstitution = membershipService.ProcessInstitutionForUser(model.Institution,
                     model.BillingAddress.City,
@@ -70,7 +67,8 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
 
                     IList<Address> addresses = new List<Address> { address };
 
-                    var result = membershipService.CreateUser(model.FirstName
+                    var result = membershipService.CreateUser(globalConfig.AppTenant,
+                        model.FirstName
                         , model.LastName
                         , model.FirstName + ' ' + model.LastName
                         , model.LastName.ToLower()

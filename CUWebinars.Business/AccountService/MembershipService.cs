@@ -48,18 +48,20 @@ namespace CUWebinars.Business.AccountService
             return webUser;
         }
 
-        public bool HasPassword(string emailAddress)
+        public bool HasPassword(string tenant, string emailAddress)
         {
-            var userAccount = userAccountService.GetByEmail(emailAddress);
+            var userAccount = userAccountService.GetByEmail(tenant, emailAddress);
 
             if (ReferenceEquals(null, userAccount))
             {
                 return !string.IsNullOrEmpty(userAccount.HashedPassword);
             }
+
             return false;
         }
 
         public WebUser CreateUser(
+            string tenant,
             string firstName,
             string lastName,
             string userName,
@@ -74,12 +76,7 @@ namespace CUWebinars.Business.AccountService
             string accountStatus = null
             )
         {
-            userName = userName.Replace(" ", "").Replace(".", "").Replace("-","").Replace("'","");
-            var account = userAccountService.CreateAccount(userName, password, email);
-            userAccountService.AddClaim(account.ID, CUWebinars.Business.Constants.ClaimTypes.FullName, string.Format("{0} {1}", firstName, lastName));
-
-            //var webUserId = m
-            //.GetAll().Where(c => c.InstitutionName == institutionName && c.Zip == zip).ToList();
+            var account = userAccountService.CreateAccount(tenant, userName, password, email);
 
             WebUser webUser = new WebUser
             {
@@ -98,22 +95,20 @@ namespace CUWebinars.Business.AccountService
             };
 
             webUserRepository.Add(webUser);
+
             return webUser;
         }
 
-        public bool LogInUser(string emailAddress, string password, bool persistent)
+        public bool LogInUser(string tenant, string emailAddress, string password, bool persistent)
         {
             UserAccount userAccount = null;
 
-            if (userAccountService.AuthenticateWithEmail(emailAddress, password, out userAccount))
+            if (userAccountService.AuthenticateWithEmail(tenant, emailAddress, password, out userAccount))
             {
                 samAuthenticationService.SignIn(userAccount, persistent);
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         public bool LogOutUser()
@@ -152,9 +147,9 @@ namespace CUWebinars.Business.AccountService
             return newInstitution;
         }
 
-        public void ResetPassword(string email)
+        public void ResetPassword(string tenant,string email)
         {
-            userAccountService.ResetPassword(email);
+            userAccountService.ResetPassword(tenant, email);
         }
 
         public bool ChangePasswordFromResetKey(string key, string newPassword)
@@ -162,9 +157,8 @@ namespace CUWebinars.Business.AccountService
             return userAccountService.ChangePasswordFromResetKey(key, newPassword);
         }
 
-
-
         public void UpdateUserDetails(
+            string tenant,
             string firstName,
             string lastName,
             string password,
@@ -175,7 +169,7 @@ namespace CUWebinars.Business.AccountService
             string title
             )
         {
-            if (userAccountService.AuthenticateWithEmail(email, password))
+            if (userAccountService.AuthenticateWithEmail(tenant, email, password))
             {                
                 var webUser = GetDetailsOfUser(email);
 
@@ -229,8 +223,7 @@ namespace CUWebinars.Business.AccountService
         {
             return refDataRepository.GetAddressesForUser(id);
         }
-
-
+        
         public UserAccount GetUserAccountByUserId(Guid userId)
         {
             return userAccountService.GetByID(userId);            

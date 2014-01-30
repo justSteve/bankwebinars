@@ -26,11 +26,11 @@ namespace CUWebinars.Web.Controllers
     [System.Web.Mvc.Authorize]
     public class AccountController : Controller
     {
+        private readonly GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
         private TTSWebinarsContext db = new TTSWebinarsContext();
         private IMailService mail;
-        public ILogger Logger { get; set; }
-
         public IMembershipService membershipService;
+        public ILogger Logger { get; set; }
         //public IOrderService orderService;
 
         public AccountController(IMailService mail, ILogger logger, IMembershipService membershipService)
@@ -97,7 +97,8 @@ namespace CUWebinars.Web.Controllers
 
                     IList<Address> addresses = new List<Address> { billingAddress, shippingAddress };
 
-                    var result = membershipService.CreateUser(model.FirstName
+                    var result = membershipService.CreateUser(globalConfig.AppTenant,
+                        model.FirstName
                         , model.LastName
                         , model.FirstName + ' ' + model.LastName
                         , model.LastName.ToLower()
@@ -243,7 +244,7 @@ namespace CUWebinars.Web.Controllers
                 AddressType = Enum.GetName(typeof(AddressType), shippingAddressFields.TypeOfAddress)
             };
 
-            membershipService.UpdateUserDetails(
+            membershipService.UpdateUserDetails(globalConfig.AppTenant,
                 updateFields.FirstName.Trim(), 
                 updateFields.LastName.Trim(),
                 updateFields.Password,
@@ -311,7 +312,7 @@ namespace CUWebinars.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SignIn(SignInModel model)
         {
-            if (ModelState.IsValid && membershipService.LogInUser(model.Email, model.Password, model.RememberMe))
+            if (ModelState.IsValid && membershipService.LogInUser(globalConfig.AppTenant, model.Email, model.Password, model.RememberMe))
             {
                 return RedirectToLocal(model.ReturnUrl);
             }
@@ -342,7 +343,7 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
-                    membershipService.ResetPassword(model.Email);
+                    membershipService.ResetPassword(globalConfig.AppTenant, model.Email);
                     model.EmailSent = true;
 
                     return View("Login", new LoginModel
@@ -484,7 +485,8 @@ namespace CUWebinars.Web.Controllers
 
 
 
-                    var result = membershipService.CreateUser(model.RegisterFields.FirstName.Trim()
+                    var result = membershipService.CreateUser(globalConfig.AppTenant,
+                        model.RegisterFields.FirstName.Trim()
                         , model.RegisterFields.LastName.Trim()
                         , model.RegisterFields.FirstName.Trim() + model.RegisterFields.LastName.Trim()
                         , model.RegisterFields.Password
@@ -497,7 +499,7 @@ namespace CUWebinars.Web.Controllers
                         , null
                         , "A");
 
-                    membershipService.LogInUser(model.RegisterFields.Email, model.RegisterFields.Password, true); // log the user in.
+                    membershipService.LogInUser(globalConfig.AppTenant, model.RegisterFields.Email, model.RegisterFields.Password, true); // log the user in.
 
                     return RedirectToAction("Index", "Home");
                 }

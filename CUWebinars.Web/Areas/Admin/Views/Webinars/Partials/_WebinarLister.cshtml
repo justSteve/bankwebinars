@@ -20,7 +20,7 @@
                //var allTopics = webinar.WebinarTopicXrefs.Contains()
                //.Select(x => x.Description);
                var allTopics = webinar.WebinarTopicXrefs
-                   .Select(webinarTopic => webinarTopic.Topic.TopicDesc)
+                   .Select(webinarTopic => webinarTopic.Topic.topicDesc)
                    .Aggregate((s1, s2) => s1 + ", " + s2);
 
                string title = "<h3>< a href = '/Webinar/Details/" + webinar.idWebinar + "' target='_blank'>" + webinar.Title + "</a></h3 > ";
@@ -36,7 +36,7 @@
     <h2>@Html.Raw(title)</h2>
     <div id="eventBody" style="width: 90%; margin-left: auto; margin-right: auto;">
         <p>
-            Presented By:<img class="alignleft" src="@webinar.Presenter.photoThumb" alt="Photo of @webinar.Presenter.WebUser.FullName"> @webinar.Presenter.WebUser.FullName <br />
+            Presented By:<img class="alignleft" src="@webinar.Presenter.PhotoThumb" alt="Photo of @webinar.Presenter.WebUser.FullName"> @webinar.Presenter.WebUser.FullName <br />
             <i>@Html.Raw(showDateValue)</i>
         </p>
         <div style="margin-right: 20%;">@Html.Raw(desc)</div>

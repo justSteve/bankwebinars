@@ -28,7 +28,7 @@
                 {
                     <li class="s-wrap">
                         @{
-                    var row = recorded.OrderRow.Single();
+                    var row = recorded.OrderRows.Single();
 
                     //TODO: re-code this so that the registration type can be obtained without
                     //a hit to the db on each record.
@@ -36,9 +36,7 @@
                     using (var context = new TTSWebinarsContext())
                     {
                         var paramWebinarID = new SqlParameter("idOption", SqlDbType.Int) { Value = (int)row.RegistrationType };
-                        registrationType = context.Options.SqlQuery(
-                            "dbo.GetRegistrationType @idOption", paramWebinarID).Single();
-
+                        registrationType = context.Options.SqlQuery("dbo.GetRegistrationType @idOption", paramWebinarID).Single();
                     }
                         }
                         <h4 class="trigger" id="upcoming-@row.idWebinar"><a href="#">@row.Webinar.Title<i class="icon-plus-sign"></i></a></h4>
@@ -50,7 +48,7 @@
                             </span>
 
                             @if (registrationType.OptionLabel != RegistrationType.Live_Session_Only.ToString() &&
-            registrationType.OptionLabel != RegistrationType.FourPart_Series.ToString())
+                                registrationType.OptionLabel != RegistrationType.FourPart_Series.ToString())
                             {
                                 if (row.Webinar.RecordingUrl != "")
                                 {

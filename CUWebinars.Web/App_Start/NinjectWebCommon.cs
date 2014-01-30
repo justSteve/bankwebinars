@@ -70,12 +70,18 @@ namespace CUWebinars.Web.App_Start
             //kernel.Bind<IAccountRepository>().To<AccountRepository>().InRequestScope();
             kernel.Bind<IPresenterRepository>().To<PresenterRepository>();
             kernel.Bind<TTSWebinarsContext>().To<TTSWebinarsContext>();
-            kernel.Bind<UserAccountService>().To<UserAccountService>();
             kernel.Bind<IOrderService>().To<OrderService>();
             kernel.Bind<IWebUserRepository>().To<WebUserRepository>();
             kernel.Bind<IRefDataRepository>().To<RefDataRepository>();
             kernel.Bind<IInstitutionRepository>().To<InstitutionRepository>();
             kernel.Bind<IUserAccountRepository>().To<DefaultUserAccountRepository>();
+
+            kernel.Bind<UserAccountService>().ToMethod(ctx =>
+                {
+                    var userAccountService = new UserAccountService(config, ctx.Kernel.Get<IUserAccountRepository>());
+                    return userAccountService;
+                });
+
             kernel.Bind<AuthenticationService>().To<SamAuthenticationService>();
             kernel.Bind<IMembershipService>().To<MembershipService>();
 #if DEBUG

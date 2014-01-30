@@ -1,6 +1,7 @@
 ﻿using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Web.App_Start;
+using CUWebinars.Web.Core;
 using CUWebinars.Web.Data.Repositories;
 using CUWebinars.Web.Data.Repositories.Interfaces;
 using CUWebinars.Web.Services;
@@ -50,6 +51,9 @@ namespace CUWebinars.Web
             log4net.Config.XmlConfigurator.Configure();
 
             AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.Email;
+            GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+
+            var bla = globalConfig.AppTenant;
         }
 
         //protected void Application_Error(object sender, EventArgs e)

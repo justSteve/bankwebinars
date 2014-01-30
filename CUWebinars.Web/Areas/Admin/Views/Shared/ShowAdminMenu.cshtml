@@ -1,11 +1,10 @@
-﻿@using CUWebinars.Business.Models
-@using CUWebinars.Web.Utils
-
-@{
+﻿@{
     if (Request.IsAuthenticated)
     {
+        IStateService stateService = new StateService();
+        
         string userMenu = "";
-        var user = CurrentSession.Instance.CurrentUser;
+        var user = stateService.GetValue<WebUser>("CurrentUser");
 
         if (user != null)
         {
