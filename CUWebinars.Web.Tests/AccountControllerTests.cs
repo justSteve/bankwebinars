@@ -12,12 +12,15 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using CUWebinars.Business.AccountService;
+using CUWebinars.Web.Core;
 
 namespace CUWebinars.Web.Tests
 {
     [TestClass]
     public class AccountControllerTests
     {
+        private readonly GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+
         Mock<IMailService> mailServiceMock;
         Mock<IMembershipService> membershipServiceMock;
         Mock<IOrderService> orderServiceMock;
@@ -86,7 +89,7 @@ namespace CUWebinars.Web.Tests
             string email = "ever@hopefultoauthenticate.com";
             string password = "tyu567&U";
 
-            membershipServiceMock.Setup(m => m.LogInUser(email, password, false)).Returns(() => true);
+            membershipServiceMock.Setup(m => m.LogInUser(globalConfig.Tenant, email, password, false)).Returns(() => true);
 
             var signInModel = new SignInModel
             {
@@ -107,7 +110,7 @@ namespace CUWebinars.Web.Tests
             string email = "ever@hopefultoauthenticate.com";
             string password = "tyu567&U";
 
-            membershipServiceMock.Setup(m => m.LogInUser(email, password, false)).Returns(() => true);
+            membershipServiceMock.Setup(m => m.LogInUser(globalConfig.Tenant, email, password, false)).Returns(() => true);
 
             var signInModel = new SignInModel
             {
@@ -130,7 +133,7 @@ namespace CUWebinars.Web.Tests
             string email = "authentication@ishopeless.com";
             string password = "tyu567&U";
 
-            membershipServiceMock.Setup(m => m.LogInUser(email, password, true)).Returns(() => false);
+            membershipServiceMock.Setup(m => m.LogInUser(globalConfig.Tenant, email, password, true)).Returns(() => false);
 
             var signInModel = new SignInModel
             {
@@ -151,7 +154,7 @@ namespace CUWebinars.Web.Tests
             string email = "authentication@ishopeless.com";
             string password = "tyu567&U";
 
-            membershipServiceMock.Setup(m => m.LogInUser(email, password, true)).Returns(() => false);
+            membershipServiceMock.Setup(m => m.LogInUser(globalConfig.Tenant, email, password, true)).Returns(() => false);
 
             var signInModel = new SignInModel
             {
@@ -182,7 +185,7 @@ namespace CUWebinars.Web.Tests
 
             };
 
-            membershipServiceMock.Setup(m => m.ResetPassword(email)).Verifiable();
+            membershipServiceMock.Setup(m => m.ResetPassword(globalConfig.Tenant, email)).Verifiable();
 
             var accountController = new AccountController(mailServiceMock.Object, loggerMock.Object, membershipServiceMock.Object);
 
@@ -204,7 +207,7 @@ namespace CUWebinars.Web.Tests
 
             };
 
-            membershipServiceMock.Setup(m => m.ResetPassword(email)).Throws(new ValidationException("Invalid email."));
+            membershipServiceMock.Setup(m => m.ResetPassword(globalConfig.Tenant, email)).Throws(new ValidationException("Invalid email."));
 
             var accountController = new AccountController(mailServiceMock.Object, loggerMock.Object, membershipServiceMock.Object);
 
@@ -226,7 +229,7 @@ namespace CUWebinars.Web.Tests
 
             };
 
-            membershipServiceMock.Setup(m => m.ResetPassword(email)).Throws(new ValidationException("Invalid email."));
+            membershipServiceMock.Setup(m => m.ResetPassword(globalConfig.Tenant, email)).Throws(new ValidationException("Invalid email."));
 
             var accountController = new AccountController(mailServiceMock.Object, loggerMock.Object, membershipServiceMock.Object);
 

@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Web;
 using CUWebinars.Web.Data.Repositories.Interfaces;
-using TTSDataLayer.Models;
-using TTSDataLayer.Repository;
+using CUWebinars.Business.Models;
+using CUWebinars.Business.Repository;
 
 namespace CUWebinars.Web.Utils
 {
@@ -20,7 +20,7 @@ namespace CUWebinars.Web.Utils
 
         protected override WebUser LoadCurrentUser(string WebUsername)
         {
-            WebUser currentWebUser = _reposWU.GetUsers().Single(w => w.email == WebUsername);
+            WebUser currentWebUser = _reposWU.GetAll().Single(w => w.email == WebUsername);
             return (WebUser)currentWebUser;
         }
 

@@ -1,8 +1,8 @@
-﻿@{
+﻿@model IEnumerable<Webinar>
+
+@{
     ViewBag.Title = "Index";
 }
-@using CUWebinars.Business.Models
-@model IEnumerable<Webinar>
 
 @{
 
@@ -19,9 +19,9 @@
 
 <div class="container ">
     @{
-        foreach (var webinar in webinars)
+        foreach (var webinar in Model)
         {
-Html.RenderPartial("partials/_WebinarsLister");
+            Html.RenderPartial("partials/_WebinarsLister");
         }
 
     }

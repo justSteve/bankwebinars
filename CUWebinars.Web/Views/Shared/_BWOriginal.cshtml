@@ -1,4 +1,4 @@
-﻿@using CUWebinars.Web.Utils
+﻿
 <!DOCTYPE html>
 <!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
 <!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
@@ -7,45 +7,58 @@
 
 
     @{
-    var currentAffiliate = UserSession.Instance.CurrentAffiliate;
-    //    var currentUser = UserFacade.Instance.GetCurrentUser();
-    var currentUserID = 0;
-    var currentUserAffiliateFullName = "na";
-    //var currentUser = CurrentSession.Instance.CurrentUser;
+        CUWebinars.Web.Services.IStateService stateService = new CUWebinars.Web.Services.StateService();
 
-    //if (currentUser != null)
-    //{
-    //    currentUserID = currentUser.ID;
-    //    currentUserAffiliateFullName = currentUser.Affiliate.FullName;
-    //}
+        var currentAffiliate = stateService.GetValue<Affiliate>("CurrentAffiliate");
+        //    var currentUser = UserFacade.Instance.GetCurrentUser();
+        var currentUserID = 0;
+        var currentUserAffiliateFullName = "na";
+        //var currentUser = CurrentSession.Instance.CurrentUser;
 
-    var sessionRecorded = "";
+        //if (currentUser != null)
+        //{
+        //    currentUserID = currentUser.ID;
+        //    currentUserAffiliateFullName = currentUser.Affiliate.FullName;
+        //}
 
-    var sessionUpcoming = "";
-    if (Session["upcoming"] != null)
-    {
-        sessionRecorded = Session["rec"].ToString();
-        sessionUpcoming = Session["upcoming"].ToString();
-    }
-    else
-    {
-        Response.Redirect("/");
-    }
+        var sessionRecorded = "";
 
-    if (Session["IncludeUpcoming"] == null)
-    {
-        Session["IncludeUpcoming"] = "true";
-    }
+        var sessionUpcoming = "";
 
-    if (Session["IncludeRecorded"] == null)
-    {
-        Session["IncludeRecorded"] = "false";
+        var upcomingSessions = stateService.GetValue<System.Text.StringBuilder>("upcoming");
+
+        if (upcomingSessions != null)
+        {
+            sessionRecorded = stateService.GetValue<System.Text.StringBuilder>("rec");
+            sessionUpcoming = upcomingSessions.ToString();
+        }
+        else
+        {
+            Response.Redirect("/");
+        }
+
+        var includeUpcoming = stateService.GetValue<bool>("IncludeUpcoming");
+
+        if (includeUpcoming == null)
+        {
+            stateService.SetValue("IncludeUpcoming", true);
+        }
+
+        var includeRecorded = stateService.GetValue<bool>("IncludeRecorded");
+
+        if (includeRecorded == null)
+        {
+            stateService.SetValue("IncludeRecorded", false);
+        }
+
+        var includeArchived = stateService.GetValue<bool>("IncludeArchived");
+
+        if (includeArchived == null)
+        {
+            stateService.SetValue("IncludeArchived", false);
+        }
+         
     }
-    if (Session["IncludeArchived"] == null)
-    {
-        Session["IncludeArchived"] = "false";
-    }
-}
 <html class="not-ie" lang="en">
 
 <script type="text/javascript">

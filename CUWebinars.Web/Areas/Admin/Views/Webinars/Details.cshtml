@@ -1,4 +1,4 @@
-﻿@model TTSDataLayer.Models.Webinar
+﻿@model Webinar
 
 @{
     ViewBag.Title = "Details";
@@ -10,10 +10,10 @@
     <legend>Webinar</legend>
 
     <div class="display-label">
-         @Html.DisplayNameFor(model => model.HasConnectionInformation)
+         @Html.DisplayNameFor(model => model.ConnectionInfo)
     </div>
     <div class="display-field">
-        @Html.DisplayFor(model => model.HasConnectionInformation)
+        @Html.DisplayFor(model => model.ConnectionInfo)
     </div>
 
     <div class="display-label">
@@ -101,10 +101,10 @@
     </div>
 
     <div class="display-label">
-         @Html.DisplayNameFor(model => model.additionalNotifications)
+         @Html.DisplayNameFor(model => model.AdditionalNotifications)
     </div>
     <div class="display-field">
-        @Html.DisplayFor(model => model.additionalNotifications)
+        @Html.DisplayFor(model => model.AdditionalNotifications)
     </div>
 
     <div class="display-label">
@@ -136,6 +136,6 @@
     </div>
 </fieldset>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id=Model.Id }) |
+    @Html.ActionLink("Edit", "Edit", new { id = Model.idWebinar }) |
     @Html.ActionLink("Back to List", "Index")
 </p>

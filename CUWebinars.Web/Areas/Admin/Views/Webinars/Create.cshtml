@@ -1,4 +1,4 @@
-﻿@model TTSDataLayer.Models.Webinar
+﻿@model Webinar
 
 @{
     ViewBag.Title = "Create";
@@ -102,19 +102,19 @@
         </div>
 
         <div class="editor-label">
-            @Html.LabelFor(model => model.PresenterId, "Presenter")
+            @Html.LabelFor(model => model.idPresenter, "Presenter")
         </div>
         <div class="editor-field">
-            @Html.DropDownList("PresenterId", String.Empty)
-            @Html.ValidationMessageFor(model => model.PresenterId)
+            @Html.DropDownList("idPresenter", String.Empty)
+            @Html.ValidationMessageFor(model => model.idPresenter)
         </div>
 
         <div class="editor-label">
-            @Html.LabelFor(model => model.additionalNotifications)
+            @Html.LabelFor(model => model.AdditionalNotifications)
         </div>
         <div class="editor-field">
-            @Html.EditorFor(model => model.additionalNotifications)
-            @Html.ValidationMessageFor(model => model.additionalNotifications)
+            @Html.EditorFor(model => model.AdditionalNotifications)
+            @Html.ValidationMessageFor(model => model.AdditionalNotifications)
         </div>
 
         <div class="editor-label">

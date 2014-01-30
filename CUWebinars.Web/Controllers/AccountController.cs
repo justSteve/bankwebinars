@@ -26,11 +26,11 @@ namespace CUWebinars.Web.Controllers
     [System.Web.Mvc.Authorize]
     public class AccountController : Controller
     {
+        private readonly GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
         private TTSWebinarsContext db = new TTSWebinarsContext();
         private IMailService mail;
-        public ILogger Logger { get; set; }
-
         public IMembershipService membershipService;
+        public ILogger Logger { get; set; }
         //public IOrderService orderService;
 
         public AccountController(IMailService mail, ILogger logger, IMembershipService membershipService)
@@ -91,7 +91,8 @@ namespace CUWebinars.Web.Controllers
 
                     IList<Address> addresses = new List<Address> { billingAddress, shippingAddress };
 
-                    var result = membershipService.CreateUser(model.FirstName
+                    var result = membershipService.CreateUser(globalConfig.Tenant,
+                        model.FirstName
                         , model.LastName
                         , model.FirstName + ' ' + model.LastName
                         , model.LastName.ToLower()
@@ -237,7 +238,7 @@ namespace CUWebinars.Web.Controllers
                 AddressType = Enum.GetName(typeof(AddressType), shippingAddressFields.TypeOfAddress)
             };
 
-            membershipService.UpdateUserDetails(
+            membershipService.UpdateUserDetails(globalConfig.Tenant,
                 updateFields.FirstName.Trim(), 
                 updateFields.LastName.Trim(),
                 updateFields.Password,
@@ -260,6 +261,9 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
+            var repo = new OrderRepository(db);
+            var bla = repo.Test(19);
+
             var loginModel = new LoginModel
                 {
                     SignIn = new SignInModel(),
@@ -302,7 +306,7 @@ namespace CUWebinars.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SignIn(SignInModel model)
         {
-            if (ModelState.IsValid && membershipService.LogInUser(model.Email, model.Password, model.RememberMe))
+            if (ModelState.IsValid && membershipService.LogInUser(globalConfig.Tenant, model.Email, model.Password, model.RememberMe))
             {
                 return RedirectToLocal(model.ReturnUrl);
             }
@@ -333,7 +337,7 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
-                    membershipService.ResetPassword(model.Email);
+                    membershipService.ResetPassword(globalConfig.Tenant, model.Email);
                     model.EmailSent = true;
 
                     return View("Login", new LoginModel
@@ -493,9 +497,10 @@ namespace CUWebinars.Web.Controllers
 
 
 
-                    var result = membershipService.CreateUser(model.RegisterFields.FirstName.Trim()
+                    var result = membershipService.CreateUser(globalConfig.Tenant,
+                        model.RegisterFields.FirstName.Trim()
                         , model.RegisterFields.LastName.Trim()
-                        , model.RegisterFields.FirstName.Trim() + model.RegisterFields.LastName.Trim()
+                        , string.Empty //  Pass empty string for username because MembershipReboot assigns the email to the username field where emailIsUsername is true
                         , model.RegisterFields.Password
                         , model.RegisterFields.Email.Trim()
                         , USTimeZone.Central
@@ -506,7 +511,7 @@ namespace CUWebinars.Web.Controllers
                         , null
                         , "A");
 
-                    membershipService.LogInUser(model.RegisterFields.Email, model.RegisterFields.Password, true); // log the user in.
+                    membershipService.LogInUser(globalConfig.Tenant, model.RegisterFields.Email, model.RegisterFields.Password, true); // log the user in.
 
                     return RedirectToAction("Index", "Home");
                 }
