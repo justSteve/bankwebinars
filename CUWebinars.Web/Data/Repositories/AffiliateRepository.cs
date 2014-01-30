@@ -25,7 +25,12 @@ namespace CUWebinars.Web.Data.Repositories
         public Affiliate SetCurrentAffiliate(int ID)
         {
             return _ctx.Affiliates.Single(a => a.idUserAff == ID);
-        }   
+        }
+
+        public Affiliate LoadByTTSDomain(string ttsDomain)
+        {
+            return _ctx.Affiliates.Single(a => a.ttsDomain == ttsDomain);
+        }
 
         public IQueryable<Order> GetOrdersByUser(int affiliateId, int userId)
         {

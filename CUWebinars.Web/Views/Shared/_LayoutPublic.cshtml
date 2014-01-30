@@ -1,11 +1,14 @@
-﻿@using CUWebinars.Web.Utils
+﻿@using System.Text
+@using CUWebinars.Web.Utils
 
 @{
     var PageStyleType = ViewBag.PageStyleType;
-    var currentAffiliate = CurrentSession.Instance.CurrentAffiliate;
-    //    var currentUser = UserFacade.Instance.GetCurrentUser();
+    IStateService stateService = new StateService();
+
+    var currentAffiliate = stateService.GetValue<Affiliate>("CurrentAffiliate");
+
     var currentUserID = 0;
-    var currentUserAffiliateFullName = "na";
+    var currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
     //var currentUser = CurrentSession.Instance.CurrentUser;
 
     //if (currentUser != null)
@@ -14,33 +17,55 @@
     //    currentUserAffiliateFullName = currentUser.Affiliate.FullName;
     //}
 
-    var sessionRecorded = "";
-    var sessionAll = "";
-    var sessionUpcoming = "";
-    if (Session["upcoming"] != null)
+    StringBuilder sessionRecorded = new StringBuilder();
+
+    StringBuilder sessionUpcoming = new StringBuilder();
+
+    var upcomingSessions = stateService.GetValue<StringBuilder>("upcoming");
+
+    if (upcomingSessions != null)
     {
-        sessionRecorded = Session["rec"].ToString();
-        sessionUpcoming = Session["upcoming"].ToString();
-        sessionAll = Session["allEvents"].ToString();
+        sessionRecorded = stateService.GetValue<StringBuilder>("rec");
+        sessionUpcoming = upcomingSessions;
     }
     else
     {
         Response.Redirect("/");
     }
 
-    if (Session["IncludeUpcoming"] == null)
+    var subdomainBranding = stateService.GetValue<string>("SubdomainBranding");
+    var firstPage = stateService.GetValue<string>("FirstPage");
+    var sessionID = stateService.GetValue<string>("SessionID");
+    var affiliateSessionSource = stateService.GetValue<string>("AffiliateSessionSource");
+
+
+    //var initialQueryString = stateService.GetValue<string>("InitialQueryString");
+    //TODO: Why's this?
+    // System.InvalidCastException was unhandled by user code
+    //HResult=-2147467262
+    //Message=Unable to cast object of type 'System.Web.HttpValueCollection' to type 'System.String'.
+
+
+    var includeUpcoming = stateService.GetValue<bool>("IncludeUpcoming");
+
+    if (includeUpcoming == null)
     {
-        Session["IncludeUpcoming"] = "true";
+        stateService.SetValue("IncludeUpcoming", true);
     }
 
-    if (Session["IncludeRecorded"] == null)
+    var includeRecorded = stateService.GetValue<bool>("IncludeRecorded");
+
+    if (includeRecorded == null)
     {
-        Session["IncludeRecorded"] = "false";
+        stateService.SetValue("IncludeRecorded", false);
     }
-    if (Session["IncludeArchived"] == null)
-    {
-        Session["IncludeArchived"] = "false";
-    }
+
+    //var includeArchived = stateService.GetValue<bool>("IncludeArchived");
+
+    //if (includeArchived == null)
+    //{
+    //    stateService.SetValue("IncludeArchived", false);
+    //}
 }
 <!doctype html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en" dir="ltr"> <![endif]-->
@@ -137,6 +162,36 @@
     <!--end mobile navigation trigger-->
     <section class="container preheader">
 
+        <!--
+            this section to be displayed only if current user = Admin
+            -->
+        <div class="container">
+            @*@Html.Raw(currentAffiliate.WebBanner)*@
+
+            <div class="row">
+                <div class="span2">
+                   Branding = @subdomainBranding<br />
+                    @*@initialQueryString<br />*@
+
+                </div>
+                <div class="span2">
+                    User's ID  = @currentUserID<br />
+
+                </div>
+                <div class="span3">
+                    Session Affiliate  = @currentUserAffiliateFullName<br />
+                    @firstPage
+
+                </div>
+                <div class="span3">
+                    SessionID  = @sessionID<br />
+                    AffiliateSessionSource  = @affiliateSessionSource<br />
+
+                </div>
+            </div>
+        </div>
+
+
         <!--this is the login for the user-->
         @Html.Partial("_LoginPartial")
 
@@ -154,6 +209,7 @@
             <li><a class="socicon small twitterbird" href="http://twitter.com/#!/ttstrain" target="_blank" data-placement="bottom" title="Follow us on Twitter"></a></li>
             <li><a class="socicon small linkedin" href="http://www.linkedin.com/profile/view?id=12319801&locale=en_US&trk=tyah&trkInfo=tas%3Akyle" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
         </ul>
+
     </section>
     <!-- begin .header-->
     <header class="header  clearfix" style="margin-bottom: 0px; padding-bottom: 0; ">
@@ -163,7 +219,7 @@
             <!-- begin #main_menu -->
             <nav id="main_menu">
                 <ul class="primary_menu">
-                    <li><a href="/home">Home</a></li>
+                    @*<li><a href="/home">Home</a></li>*@
 
                     @*<li><a href="webinar/calendar">calendar</a></li>*@
                     <li class="parent">
@@ -183,20 +239,25 @@
                         </ul>
                     </li>
                     <li class="parent">
-                        <a href="javascript:void(0)">Events<i></i></a>
-                        <ul>@Html.Raw(sessionAll)</ul>
+                        <a href="javascript:void(0)">Upcoming Events<i></i></a>
+                        <ul>@Html.Raw(sessionUpcoming)</ul>
                         @*<ul></ul>*@
                     </li>
                     <li class="parent">
-                        <a href="javascript:void(0)">Instructions<i></i></a>
+                        <a href="javascript:void(0)">OnDemand Events<i></i></a>
+                        <ul>@Html.Raw(sessionRecorded)</ul>
+                        @*<ul></ul>*@
+                    </li>
+                    <li class="parent">
+                        <a href="javascript:void(0)">About Us<i></i></a>
                         <ul>
-
                             <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/WhatIsAWebinar">What Is A Webinar?</a></li>
                             <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/CommonQuestions">Commonly Asked Questions</a></li>
                             <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/DetailedConnectionInstructions">Connecting to Your Webinar</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/contactus">Contact Us</a></li>
                         </ul>
                     </li>
-                    <li><a href="/home/contactus">Contact</a></li>
+
                     @if (Request.IsAuthenticated)
                     {
                         <li><a href="/Account/MyWebinars">My Webinars</a></li>
