@@ -3,7 +3,7 @@ namespace CUWebinars.Business.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class EnumsAdded : DbMigration
+    public partial class Initial : DbMigration
     {
         public override void Up()
         {
@@ -38,6 +38,7 @@ namespace CUWebinars.Business.Migrations
                         DateCreated = c.DateTime(nullable: false),
                         FirstName = c.String(nullable: false, maxLength: 50),
                         LastName = c.String(nullable: false, maxLength: 50),
+                        Initial = c.String(),
                         idUserInstitution = c.Int(nullable: false),
                         email = c.String(nullable: false, maxLength: 150),
                         futureMail = c.String(maxLength: 1),
@@ -91,30 +92,32 @@ namespace CUWebinars.Business.Migrations
                         idUser = c.Int(nullable: false),
                         idAffiliate = c.Int(nullable: false),
                         OrderDate = c.DateTime(nullable: false),
-                        Total = c.Decimal(precision: 18, scale: 2),
+                        Total = c.Decimal(nullable: false, precision: 18, scale: 2),
                         FirstName = c.String(maxLength: 100),
                         LastName = c.String(maxLength: 100),
-                        CustomerInstitution = c.String(maxLength: 250),
-                        Phone = c.String(maxLength: 30),
-                        Email = c.String(maxLength: 150),
-                        Address = c.String(maxLength: 100),
-                        City = c.String(maxLength: 100),
-                        State = c.String(maxLength: 100),
-                        Zip = c.String(maxLength: 20),
+                        Institution = c.String(maxLength: 250),
+                        BillingPhone = c.String(maxLength: 30),
+                        BillingEmail = c.String(maxLength: 150),
+                        BillingAddress = c.String(maxLength: 100),
+                        BillingAddress2 = c.String(maxLength: 100),
+                        BillingCity = c.String(maxLength: 100),
+                        BillingState = c.String(maxLength: 100),
+                        BillingZip = c.String(maxLength: 20),
                         ShippingFirstName = c.String(maxLength: 100),
                         ShippingLastName = c.String(maxLength: 100),
+                        ShippingPhone = c.String(maxLength: 30),
                         ShippingAddress = c.String(maxLength: 100),
+                        ShippingAddress2 = c.String(maxLength: 100),
                         ShippingCity = c.String(maxLength: 100),
                         ShippingState = c.String(maxLength: 100),
                         ShippingZip = c.String(maxLength: 20),
                         PaymentType = c.Byte(nullable: false),
-                        GeneralComments = c.String(maxLength: 2550),
+                        UserComments = c.String(maxLength: 2550),
                         AuditInfo = c.String(),
-                        StoreComments = c.String(),
-                        StoreCommentsPriv = c.String(),
+                        AffiliateComments = c.String(),
+                        AdminComments = c.String(),
                         TaxExempt = c.Boolean(nullable: false),
                         InitiatedBy = c.Byte(nullable: false),
-                        ShippingPhone = c.String(maxLength: 30),
                         PaidByCCNumber = c.String(maxLength: 40),
                         Origin = c.String(),
                     })
@@ -134,8 +137,6 @@ namespace CUWebinars.Business.Migrations
                         UnitPrice = c.Decimal(nullable: false, precision: 18, scale: 2),
                         RowPrice = c.Decimal(nullable: false, precision: 18, scale: 2),
                         idDiscount = c.Int(),
-                        DiscountPercentOff = c.Decimal(nullable: false, precision: 18, scale: 2),
-                        DiscountFlatOff = c.Decimal(nullable: false, precision: 18, scale: 2),
                         AlternateEmail = c.String(nullable: false, maxLength: 100),
                         RegistrationType = c.Int(nullable: false),
                         Status = c.Int(nullable: false),
@@ -162,6 +163,8 @@ namespace CUWebinars.Business.Migrations
                         Type = c.String(nullable: false, maxLength: 32),
                         additional_locations_count = c.Int(),
                         additional_locations_emails = c.String(maxLength: 1024),
+                        AdditionalLocationsCount = c.Int(),
+                        Discriminator = c.String(nullable: false, maxLength: 128),
                     })
                 .PrimaryKey(t => t.idOrderRowOption)
                 .ForeignKey("dbo.Options", t => t.idOption, cascadeDelete: true)
@@ -190,6 +193,7 @@ namespace CUWebinars.Business.Migrations
                         Stage2CheckoutConfirmationMsg = c.String(),
                         Stage1EmailConfirmationMsg = c.String(),
                         Stage2EmailConfirmationMsg = c.String(),
+                        //Discriminator = c.String(nullable: false, maxLength: 128),
                     })
                 .PrimaryKey(t => t.idOption);
             
@@ -252,6 +256,7 @@ namespace CUWebinars.Business.Migrations
                         idPresenter = c.Int(nullable: false),
                         AdditionalNotifications = c.String(),
                         ceu = c.String(maxLength: 1000),
+                        ConnectionInfo = c.String(),
                         DateCreated = c.DateTime(nullable: false),
                         DateChanged = c.DateTime(nullable: false),
                     })
@@ -260,36 +265,11 @@ namespace CUWebinars.Business.Migrations
                 .Index(t => t.idPresenter);
             
             CreateTable(
-                "dbo.HostPropertyValue",
-                c => new
-                    {
-                        idHostPropertyValue = c.Int(nullable: false, identity: true),
-                        idHostProperty = c.Int(nullable: false),
-                        idWebinar = c.Int(nullable: false),
-                        value = c.String(nullable: false, maxLength: 50),
-                    })
-                .PrimaryKey(t => t.idHostPropertyValue)
-                .ForeignKey("dbo.HostProperty", t => t.idHostProperty, cascadeDelete: true)
-                .ForeignKey("dbo.Webinar", t => t.idWebinar, cascadeDelete: true)
-                .Index(t => t.idHostProperty)
-                .Index(t => t.idWebinar);
-            
-            CreateTable(
-                "dbo.HostProperty",
-                c => new
-                    {
-                        idHostProperty = c.Int(nullable: false, identity: true),
-                        idHost = c.Int(nullable: false),
-                        name = c.String(nullable: false, maxLength: 50),
-                    })
-                .PrimaryKey(t => t.idHostProperty);
-            
-            CreateTable(
                 "dbo.Presenter",
                 c => new
                     {
                         idUser = c.Int(nullable: false),
-                        Biography = c.String(maxLength: 140),
+                        Biography = c.String(nullable: false, maxLength: 2500),
                         BiographyLong = c.String(nullable: false, maxLength: 2500),
                         PhotoFull = c.String(maxLength: 200),
                         PhotoThumb = c.String(maxLength: 200),
@@ -393,8 +373,6 @@ namespace CUWebinars.Business.Migrations
             DropForeignKey("dbo.WebinarFile", "idWebinar", "dbo.Webinar");
             DropForeignKey("dbo.Webinar", "idPresenter", "dbo.Presenter");
             DropForeignKey("dbo.Presenter", "idUser", "dbo.WebUser");
-            DropForeignKey("dbo.HostPropertyValue", "idWebinar", "dbo.Webinar");
-            DropForeignKey("dbo.HostPropertyValue", "idHostProperty", "dbo.HostProperty");
             DropForeignKey("dbo.OptionsGroupsXref", "idOptionGroup", "dbo.OptionsGroups");
             DropForeignKey("dbo.OptionsXref", "idOption", "dbo.Options");
             DropForeignKey("dbo.OrderRow", "idOrder", "dbo.Orders");
@@ -414,8 +392,6 @@ namespace CUWebinars.Business.Migrations
             DropIndex("dbo.WebinarFile", new[] { "idWebinar" });
             DropIndex("dbo.Webinar", new[] { "idPresenter" });
             DropIndex("dbo.Presenter", new[] { "idUser" });
-            DropIndex("dbo.HostPropertyValue", new[] { "idWebinar" });
-            DropIndex("dbo.HostPropertyValue", new[] { "idHostProperty" });
             DropIndex("dbo.OptionsGroupsXref", new[] { "idOptionGroup" });
             DropIndex("dbo.OptionsXref", new[] { "idOption" });
             DropIndex("dbo.OrderRow", new[] { "idOrder" });
@@ -426,8 +402,6 @@ namespace CUWebinars.Business.Migrations
             DropTable("dbo.WebinarTopicXref");
             DropTable("dbo.WebinarFile");
             DropTable("dbo.Presenter");
-            DropTable("dbo.HostProperty");
-            DropTable("dbo.HostPropertyValue");
             DropTable("dbo.Webinar");
             DropTable("dbo.OptionsGroupsXref");
             DropTable("dbo.OptionsGroups");

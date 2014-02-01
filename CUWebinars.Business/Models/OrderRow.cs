@@ -16,8 +16,8 @@ namespace CUWebinars.Business.Models
         public decimal UnitPrice { get; set; }
         public decimal RowPrice { get; set; }
         public Nullable<int> idDiscount { get; set; }
-        public decimal DiscountPercentOff { get; set; }
-        public decimal DiscountFlatOff { get; set; }
+        //public decimal DiscountPercentOff { get; set; }
+        //public decimal DiscountFlatOff { get; set; }
         public string AlternateEmail { get; set; }
         public int RegistrationType { get; set; }
         public OrderRowStatus Status { get; set; }

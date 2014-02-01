@@ -88,9 +88,9 @@
     <Compile Include="Core\Extensions\DisposableExtensions.cs" />
     <Compile Include="Core\TTSException.cs" />
     <Compile Include="Core\URLValidator.cs" />
-    <Compile Include="Migrations\201312180449592_EnumsAdded.cs" />
-    <Compile Include="Migrations\201312180449592_EnumsAdded.Designer.cs">
-      <DependentUpon>201312180449592_EnumsAdded.cs</DependentUpon>
+    <Compile Include="Migrations\201402010842420_Initial.cs" />
+    <Compile Include="Migrations\201402010842420_Initial.Designer.cs">
+      <DependentUpon>201402010842420_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AdditionalLocationsOption.cs" />
@@ -149,12 +149,9 @@
     <None Include="App.config" />
     <None Include="packages.config" />
     <None Include="SQLSeeding\BACPACs\BankWebinars.bacpac" />
+    <None Include="SQLSeeding\BACPACs\BankWebinars2.bacpac" />
+    <None Include="SQLSeeding\BACPACs\BankWebinarsSeeder.bacpac" />
     <None Include="SQLSeeding\BACPACs\MembershipReboot.bacpac" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201312180449592_EnumsAdded.resx">
-      <DependentUpon>201312180449592_EnumsAdded.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Notification\Email\EmailTemplates\AccountClosedEvent_Body.txt" />
@@ -189,21 +186,28 @@
     <Content Include="Notification\Email\EmailTemplates\UsernameChangedEvent_Subject.txt" />
     <Content Include="Notification\Email\EmailTemplates\UsernameReminderRequestedEvent_Body.txt" />
     <Content Include="Notification\Email\EmailTemplates\UsernameReminderRequestedEvent_Subject.txt" />
-    <Content Include="SQLSeeding\BuildTTSWebinarsSeeder.sql" />
+    <Content Include="SQLSeeding\InitialSeeding\BuildTTSWebinarsSeeder.sql" />
+    <Content Include="SQLSeeding\InitialSeeding\MigrationNotes.txt" />
+    <Content Include="SQLSeeding\InitialSeeding\seeder1_ini.sql" />
+    <Content Include="SQLSeeding\InitialSeeding\seeder2_ImportPresenters.sql" />
+    <Content Include="SQLSeeding\InitialSeeding\seeder2_RestorePresenters.sql" />
+    <Content Include="SQLSeeding\InitialSeeding\seeder3_ImportAffiliates.sql" />
+    <Content Include="SQLSeeding\InitialSeeding\seeder3_RestoreAffiliates.sql" />
+    <Content Include="SQLSeeding\InitialSeeding\seeder4_CreateOptions.sql" />
+    <Content Include="SQLSeeding\InitialSeeding\seeder5_ImportWebinars.sql" />
+    <Content Include="SQLSeeding\InitialSeeding\seeder5_ImportWebinars__CU.sql" />
+    <Content Include="SQLSeeding\InitialSeeding\seeder6_post.sql" />
     <Content Include="SQLSeeding\MigrationNotes.txt" />
-    <Content Include="SQLSeeding\seeder1_ini.sql" />
-    <Content Include="SQLSeeding\seeder2_ImportPresenters.sql" />
-    <Content Include="SQLSeeding\seeder2_RestorePresenters.sql" />
-    <Content Include="SQLSeeding\seeder3_ImportAffiliates.sql" />
-    <Content Include="SQLSeeding\seeder3_RestoreAffiliates.sql" />
-    <Content Include="SQLSeeding\seeder4_CreateOptions.sql" />
-    <Content Include="SQLSeeding\seeder5_ImportWebinars.sql" />
-    <Content Include="SQLSeeding\seeder5_ImportWebinars__CU.sql" />
-    <Content Include="SQLSeeding\seeder6_post.sql" />
+    <Content Include="SQLSeeding\CopyTables.sql" />
     <Content Include="SQLSeeding\VBA\CUWebinarImporter.bas" />
     <Content Include="SQLSeeding\VBA\SetOrdersToShipped.bas" />
-    <Content Include="SQLSeeding\_buildSprocsAndErrorLog.sql" />
-    <Content Include="SQLSeeding\_scriptRunner.sql" />
+    <Content Include="SQLSeeding\InitialSeeding\_buildSprocsAndErrorLog.sql" />
+    <Content Include="SQLSeeding\InitialSeeding\_scriptRunner.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201402010842420_Initial.resx">
+      <DependentUpon>201402010842420_Initial.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

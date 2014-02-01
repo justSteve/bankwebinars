@@ -23,36 +23,43 @@
         //        //}
         //});
         $.ajax({
-            contentType: 'application/jsonp',
-            url: "http://localhost:2524/account/GetSageIDsAreNull?callback=?",
+            //contentType: 'application/jsonp',
+            crossDomain: true,
+            url: "http://localhost:2524/account/GetSageIDsAreNull",
             type: 'get',
-            dataType: 'jsonp',
-            //jsonp: "callback",
+            dataType: 'json',
             cache: false,
-            //complete: function (xhr, textStatus) {
-            //    var message = "\r\ntextStatus: " + textStatus +
-            //        "\r\nContentType: " + xhr.getResponseHeader("Content-Type") +
-            //        "\r\nStatus: " + xhr.status +
-            //        "\r\nResponseText:\r\n" + xhr.data;
-            //    alert(message);
-            //},
+            async: false,
+            complete: function (xhr, textStatus) {
+                var message = "\r\ntextStatus: " + textStatus +
+                    "\r\nContentType: " + xhr.getResponseHeader("Content-Type") +
+                    "\r\nStatus: " + xhr.status +
+                    "\r\nResponseText:\r\n" + xhr.responseText;
 
-            success: function (data, status) {
-                //$.each($.parseJSON(data.d), function (key, value) {
-                //    $("#txt_speciality").tokenInput("add", {
-                //        name: value.name,
-                //        id: value.id
-                //    });
-                //});
-                //$.each(data, function (dt) {
-                    var mydata = data.d;
+                alert("complete " + message);
+            },
+        }).success(function (response) {
+            alert("Success: " + response.data);
+            //}).error(function (response) {
+            //    app.showNotification("Error", response.statusText);
+            //
 
-                    alert(mydata); // returns [{"id":"67","name":"TestString"}]
-
-                //    $("#txt_speciality").tokenInput("add", mydata.id);
-                //});
-            }
+        }).error(function (response) {
+            alert("error: " + response.statusText);
+            //}).error(function (response) {
+            //    app.showNotification("Error", response.statusText);
+            //
         });
+        //    $("#txt_speciality").tokenInput("add", {
+        //        name: value.name,
+        //        id: value.id
+        //    });
+        //});
+        //$.each(data, function (dt) {
+
+        //    $("#txt_speciality").tokenInput("add", mydata.id);
+        //});
+
     });
 
 </script>

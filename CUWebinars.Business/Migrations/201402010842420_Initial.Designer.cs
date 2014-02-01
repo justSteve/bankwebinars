@@ -7,13 +7,13 @@ namespace CUWebinars.Business.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.0.2-21211")]
-    public sealed partial class EnumsAdded : IMigrationMetadata
+    public sealed partial class Initial : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(EnumsAdded));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Initial));
         
         string IMigrationMetadata.Id
         {
-            get { return "201312180449592_EnumsAdded"; }
+            get { return "201402010842420_Initial"; }
         }
         
         string IMigrationMetadata.Source

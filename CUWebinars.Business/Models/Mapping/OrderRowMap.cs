@@ -23,8 +23,8 @@ namespace CUWebinars.Business.Models.Mapping
             this.Property(t => t.UnitPrice).HasColumnName("UnitPrice");
             this.Property(t => t.RowPrice).HasColumnName("RowPrice");
             this.Property(t => t.idDiscount).HasColumnName("idDiscount");
-            this.Property(t => t.DiscountPercentOff).HasColumnName("DiscountPercentOff");
-            this.Property(t => t.DiscountFlatOff).HasColumnName("DiscountFlatOff");
+            //this.Property(t => t.DiscountPercentOff).HasColumnName("DiscountPercentOff");
+            //this.Property(t => t.DiscountFlatOff).HasColumnName("DiscountFlatOff");
             this.Property(t => t.AlternateEmail).HasColumnName("AlternateEmail");
             this.Property(t => t.RegistrationType).HasColumnName("RegistrationType");
             this.Property(t => t.Status).HasColumnName("Status");

@@ -21,6 +21,7 @@ namespace CUWebinars.Business.Models
             get { return FirstName + " " + LastName; }
         }
         public string LastName { get; set; }
+        public string Initial { get; set; }
         public int idUserInstitution { get; set; }
         public string email { get; set; }
         public string futureMail { get; set; }

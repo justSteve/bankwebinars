@@ -1,13 +1,6 @@
-﻿Starting from fresh copy of production db
+﻿Conventional migration still runs up against 'Address table already exists.' So manual migration proceeds by:
 
-Copy production db to local:
-C:\Users\Steve\SkyDrive\Documents\SQL\PullProductionDB.ps1
+Change connectionstring to target a new database.
+Update-Database -v -f  --creates the db locally
+Execute 'CopyTables.sql'  --copies records from Original db to V2
 
-Migrate production to new schema that's shared by CUWebinars and by BankWebinars:
-   C:\Users\Steve\SkyDrive\Documents\SQL\Migration\_scriptRunner.sql
-
-Migrate BankWebinars or CUWebinars according to scripts specific to given project:
-   C:\Users\Steve\Source\Repos\BankWebinars\CUWebinars.Business\SQLSeeding\_scriptRunner.sql
-
-As of 1/25/14 within this commit the BankWebinars and MembershipReboot .bacpacs have seeded good data for
-Presenters, Affiliates, Options and Webinars and can be relied on as a restore/checkpoint.

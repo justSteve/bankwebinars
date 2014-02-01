@@ -1,25 +1,19 @@
-using System.Data.Entity;
-
 namespace CUWebinars.Business.Migrations
 {
-    using CUWebinars.Business.Models;
+    using System;
+    using System.Data.Entity;
     using System.Data.Entity.Migrations;
+    using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<TTSWebinarsContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<CUWebinars.Business.Models.TTSWebinarsContext>
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = true;
-            //ProxyCreationEnabled = false;
-            
-
+            AutomaticMigrationsEnabled = false;
         }
 
         protected override void Seed(CUWebinars.Business.Models.TTSWebinarsContext context)
         {
-            // 'FirstName=Mark&LastName=Bennett&Email=affiliate@ttstrain.com&Institution=TTS&AddressType=Billing&City=city&Country=country&Name=Mark Bennett&Phone=608-849-5563&State=state&StreetAddress=street&StreetAddress2=street2&Zip=zip&Password=bennett....&ConfirmPassword=bennett....&userType=2&title=na&idWebUser=19'
-            //var regModel = context.Institutions.Add()
-
             //  This method will be called after migrating to the latest version.
 
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
