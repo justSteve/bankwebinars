@@ -14644,3 +14644,218 @@ GO
 SET IDENTITY_INSERT [dbo].[ErrorLog] OFF
 GO
 
+USE [BankWebinars2]
+GO
+
+/****** Object:  StoredProcedure [dbo].[uspPrintError]    Script Date: 2/1/2014 11:56:25 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+-- uspPrintError prints error information about the error that caused 
+-- execution to jump to the CATCH block of a TRY...CATCH construct. 
+-- Should be executed from within the scope of a CATCH block otherwise 
+-- it will return without printing any error information.
+CREATE PROCEDURE [dbo].[uspPrintError]
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Print error information. 
+    PRINT 'Error ' + CONVERT(VARCHAR(50), ERROR_NUMBER()) + ', Severity ' + CONVERT(VARCHAR(5), ERROR_SEVERITY()) + ', State '
+        + CONVERT(VARCHAR(5), ERROR_STATE()) + ', Procedure ' + ISNULL(ERROR_PROCEDURE(), '-') + ', Line ' + CONVERT(VARCHAR(5), ERROR_LINE());
+    PRINT ERROR_MESSAGE();
+END;
+GO
+
+
+USE [BankWebinars2]
+GO
+
+/****** Object:  StoredProcedure [dbo].[uspLogError]    Script Date: 2/1/2014 11:56:16 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+-- uspLogError logs error information in the ErrorLog table about the 
+-- error that caused execution to jump to the CATCH block of a 
+-- TRY...CATCH construct. This should be executed from within the scope 
+-- of a CATCH block otherwise it will return without inserting error 
+-- information. 
+CREATE PROCEDURE [dbo].[uspLogError]
+    @ErrorLogID [int] = 0 OUTPUT -- contains the ErrorLogID of the row inserted
+AS -- by uspLogError in the ErrorLog table
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Output parameter value of 0 indicates that error 
+    -- information was not logged
+    SET @ErrorLogID = 0;
+
+    BEGIN TRY
+        -- Return if there is no error information to log
+        IF ERROR_NUMBER() IS NULL
+            RETURN;
+
+        -- Return if inside an uncommittable transaction.
+        -- Data insertion/modification is not allowed when 
+        -- a transaction is in an uncommittable state.
+        IF XACT_STATE() = -1
+            BEGIN
+                PRINT 'Cannot log error since the current transaction is in an uncommittable state. '
+                    + 'Rollback the transaction before executing uspLogError in order to successfully log error information.';
+                RETURN;
+            END
+
+        INSERT  [dbo].[ErrorLog]
+                ( [UserName] ,
+                  [ErrorNumber] ,
+                  [ErrorSeverity] ,
+                  [ErrorState] ,
+                  [ErrorProcedure] ,
+                  [ErrorLine] ,
+                  [ErrorMessage]
+                )
+        VALUES  ( CONVERT(SYSNAME, CURRENT_USER) ,
+                  ERROR_NUMBER() ,
+                  ERROR_SEVERITY() ,
+                  ERROR_STATE() ,
+                  ERROR_PROCEDURE() ,
+                  ERROR_LINE() ,
+                  ERROR_MESSAGE()
+                );
+
+        -- Pass back the ErrorLogID of the row inserted
+        SET @ErrorLogID = @@IDENTITY;
+    END TRY
+    BEGIN CATCH
+        PRINT 'An error occurred in stored procedure uspLogError: ';
+        EXECUTE [dbo].[uspPrintError];
+        RETURN -1;
+    END CATCH
+END;
+GO
+
+
+USE [BankWebinars2]
+GO
+
+/****** Object:  StoredProcedure [dbo].[CreateCUOrder]    Script Date: 2/1/2014 11:56:57 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+USE [BankWebinars2]
+GO
+
+/****** Object:  StoredProcedure [dbo].[GetRegistrationType]    Script Date: 2/1/2014 11:56:49 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:      SJH
+-- Create date: 12/13
+-- Description: Produce list of Options based on idWebinar
+-- =============================================
+CREATE PROCEDURE [dbo].[GetRegistrationType]
+    -- Add the parameters for the stored procedure here
+    @idOption INT = 0
+AS
+BEGIN
+    SET NOCOUNT ON-- added to prevent extra result sets from
+    -- interfering with SELECT statements.
+    SELECT  o.[idOption] ,
+            o.[OptionExplain] ,
+            o.[OptionLabel] ,
+            o.[PriceToAdd] ,
+            o.[TaxExempt] ,
+            o.[PercToAdd] ,
+            o.[SortOrder] ,
+            o.[Type] ,
+            o.[MsgConfirm] ,
+            o.[SKU] ,
+            o.[ShowLiveNotifications] ,
+            o.[ShowRecordingNotifications] ,
+            o.[ShowShippedNotifications] ,
+            o.[Stage1CheckoutConfirmationMsg] ,
+            o.[Stage2CheckoutConfirmationMsg] ,
+            o.[Stage1EmailConfirmationMsg] ,
+            o.[Stage2EmailConfirmationMsg]
+    FROM    dbo.Options o
+    WHERE   o.idOption = @idOption
+END
+GO
+
+
+USE [BankWebinars2]
+GO
+
+/****** Object:  StoredProcedure [dbo].[GetWebinarsOptions]    Script Date: 2/1/2014 11:56:41 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:      SJH
+-- Create date: 12/13
+-- Description: Produce list of Options based on idWebinar
+-- =============================================
+CREATE PROCEDURE [dbo].[GetWebinarsOptions]
+    -- Add the parameters for the stored procedure here
+    @idWebinar INT = 0
+AS
+BEGIN
+    SET NOCOUNT ON-- added to prevent extra result sets from
+    -- interfering with SELECT statements.
+    SET NOCOUNT ON;
+    SELECT  o.[idOption] ,
+            o.[OptionExplain] ,
+            o.[OptionLabel] ,
+            o.[PriceToAdd] ,
+            o.[TaxExempt] ,
+            o.[PercToAdd] ,
+            o.[SortOrder] ,
+            o.[Type] ,
+            o.[MsgConfirm] ,
+            o.[SKU] ,
+            o.[ShowLiveNotifications] ,
+            o.[ShowRecordingNotifications] ,
+            o.[ShowShippedNotifications] ,
+            o.[Stage1CheckoutConfirmationMsg] ,
+            o.[Stage2CheckoutConfirmationMsg] ,
+            o.[Stage1EmailConfirmationMsg] ,
+            o.[Stage2EmailConfirmationMsg]
+
+        --oRef.idOptionsXref ,
+        --oRef.idOptionGroup ,
+        --ogRef.idWebinarOptionGroup
+    FROM    dbo.Options o
+            INNER JOIN dbo.OptionsXref oRef ON oRef.idOption = o.idOption
+            INNER JOIN dbo.OptionsGroupsXref ogRef ON ogRef.idOptionGroup = oRef.idOptionGroup
+            INNER JOIN dbo.Webinar w ON w.idWebinar = ogRef.idWebinar
+    WHERE   w.idWebinar = @idWebinar
+END
+GO
+
+
