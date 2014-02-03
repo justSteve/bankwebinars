@@ -1,6 +1,4 @@
-﻿@using CUWebinars.Business.Models
-@using CUWebinars.Web.Utils
-@model CUWebinars.Web.ViewModel.RegisterViewModel
+﻿@model RegisterViewModel
 
 @{
     //WebUser currentUser = CurrentSession.Instance.CurrentUser;
@@ -64,11 +62,11 @@
                 $('#LastName').val(tempName[1]);
 
             } else {
-                $('#RegisterFields_FirstName').val = tempName[0];
-                $('#RegisterFields_LastName').val = tempName[1];
+                $('#RegisterFields_FirstName').val(tempName[0]);
+                $('#RegisterFields_LastName').val(tempName[1]);
                 $('#getFull').hide();
                 $('#getFirstLast').show();
-                $('#RegisterFields_FirstName').focus();
+                $('#RegisterFields_LastName').focus();
             }
         });
 
@@ -102,6 +100,7 @@
             $("#RegisterFields_ShippingAddress_State").val($("#RegisterFields_BillingAddress_State").val());
             $("#RegisterFields_ShippingAddress_Zip").val($("#RegisterFields_BillingAddress_Zip").val());
             $("#RegisterFields_ShippingAddress_Country").val($("#RegisterFields_BillingAddress_Country").val());
+            $("#RegisterFields_ShippingAddress_Phone").val($("#RegisterFields_BillingAddress_Phone").val());
         }
     });
 
@@ -115,8 +114,8 @@
     <input type="hidden" id="LastName" name="LastName" />
     <input type="hidden" id="ShippingFirstName" name="ShippingFirstName" />
     <input type="hidden" id="ShippingLastName" name="ShippingLastName" />
-    <input type="hidden" id="RegisterFields_BillingAddress_Country" name="RegisterFields_BillingAddress_Country" value="US" />
-    <input type="hidden" id="RegisterFields_ShippingAddress_Country" name="RegisterFields_ShippingAddress_Country" value="US" />
+    <input type="hidden" id="RegisterFields.BillingAddress.Country" name="RegisterFields.BillingAddress.Country" value="US" />
+    <input type="hidden" id="RegisterFields.ShippingAddress.Country" name="RegisterFields.ShippingAddress.Country" value="US" />
     <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
 
     @Html.ValidationSummary(true)
@@ -134,12 +133,12 @@
                             First:
                         </div>
                         <div class="span4">
-                            <input type="text" id="RegisterFields_FirstName" name="RegisterFields_FirstName" style="width: 100px;" />
-                            @*@Html.EditorFor(model => model.RegisterFields.FirstName, new { style = "width: 75px;" })*@
+                            @*<input type="text" id="RegisterFields.FirstName" name="RegisterFields_FirstName" style="width: 100px;" />*@
+                            @Html.TextBoxFor(model => model.RegisterFields.FirstName, new { style = "width: 75px;" })
                             @Html.ValidationMessageFor(model => model.RegisterFields.FirstName)
                             &nbsp;&nbsp; &nbsp;Last:
-                            <input type="text" id="RegisterFields_LastName" name="RegisterFields_LastName" style="width: 100px;" />
-                            @*@Html.EditorFor(model => model.RegisterFields.LastName, new { style = "width: 75px;" })*@
+                            @*<input type="text" id="RegisterFields.LastName" name="RegisterFields_LastName" style="width: 100px;" />*@
+                            @Html.TextBoxFor(model => model.RegisterFields.LastName, new { style = "width: 75px;" })
                             @Html.ValidationMessageFor(model => model.RegisterFields.LastName)
                         </div>
                     </div>
@@ -222,13 +221,13 @@
                         </div>
                     </div>
 
-                    @*<div class="fieldContainer" id="wrapPhone">
+                    <div class="fieldContainer" id="wrapPhone">
                             <div class="span1">Phone:</div>
                             <div class="span4">
                                 @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.Phone, new { style = "width: 140px;" })
                                 @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.Phone)
                             </div>
-                        </div>*@
+                        </div>
                     <div class="fieldContainer" id="wrapAddress">
                         <div class="span1">
                             Address:
@@ -265,27 +264,41 @@
             </div>
             <div id="collapseAcct" class="accordion-body collapse">
                 <div class="accordion-inner">
-                    <div class="fieldContainer">
-                        <div class="span6">
-                            Password:
-                            @Html.Password("Password", string.Empty, new { style = "width: 80px;" })
+                    <div class="row">
+                        <div class="span1">
+                            @Html.LabelFor(m => m.RegisterFields.Password, new { style = "display:inline-block" }):
+                        </div>
+                        <div class="span3">
+                            @Html.PasswordFor(m => m.RegisterFields.Password)
                             @Html.ValidationMessage("Password")
                         </div>
+
                     </div>
-                    <div class="fieldContainer">
-                        <div class="span6">
-                            Confirm:
-                            @Html.Password("PasswordConfirmation", string.Empty, new
+                    <div class="row">
+                        <div class="span1">
+                            @Html.LabelFor(m => m.RegisterFields.ConfirmPassword,
+                                new
+                                {
+                                    @for = "RegisterFields.ConfirmPassword",
+                                    style = "display:inline-block"
+                                }
+                                ):
+                        </div>
+                        <div class="span3">
+
+                            @Html.PasswordFor(m => m.RegisterFields.ConfirmPassword, new
                             {
-                                @class = "{equalTo: '#Password'}",
-                                style = "width: 80px;"
+                                id = "RegisterFields.ConfirmPassword",
+                                @class = "{equalTo: '#Password'}"
                             })
                             @Html.ValidationMessage("PasswordConfirmation")
                         </div>
                     </div>
-                    <div class="fieldContainer">
-                        <div class="span6">
-                            Time Zone:
+                    <div class="row">
+                        <div class="span1">
+                            <label for="TimeZone" style="display: inline-block">Time Zone:</label>
+                        </div>
+                        <div class="span3">
                             <select style="width: 120px" id="TimeZone" name="TimeZone">
                                 <option value="4">Eastern</option>
                                 <option value="3">Central</option>

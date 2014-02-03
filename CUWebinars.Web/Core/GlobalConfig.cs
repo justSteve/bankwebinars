@@ -16,7 +16,7 @@ namespace CUWebinars.Web.Core
 
         }
 
-        private class GlobalConfigSingletonCreator
+        internal class GlobalConfigSingletonCreator
         {
             static GlobalConfigSingletonCreator()
             {
