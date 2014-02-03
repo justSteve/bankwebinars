@@ -16,23 +16,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUWebinars.Web.Tests", "CUW
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUWebinars.Business.Tests", "CUWebinars.Business.Tests\CUWebinars.Business.Tests.csproj", "{67ADE7C7-0AE7-410B-8B18-58598EE41C01}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assemblies", "assemblies", "{34DC5C9B-FA62-4B78-8305-38D93BFA7D0A}"
-	ProjectSection(SolutionItems) = preProject
-		assemblies\BrockAllen.MembershipReboot.dll = assemblies\BrockAllen.MembershipReboot.dll
-		assemblies\BrockAllen.MembershipReboot.Ef.dll = assemblies\BrockAllen.MembershipReboot.Ef.dll
-		assemblies\BrockAllen.MembershipReboot.Ef.pdb = assemblies\BrockAllen.MembershipReboot.Ef.pdb
-		assemblies\BrockAllen.MembershipReboot.Owin.dll = assemblies\BrockAllen.MembershipReboot.Owin.dll
-		assemblies\BrockAllen.MembershipReboot.Owin.pdb = assemblies\BrockAllen.MembershipReboot.Owin.pdb
-		assemblies\BrockAllen.MembershipReboot.pdb = assemblies\BrockAllen.MembershipReboot.pdb
-		assemblies\BrockAllen.MembershipReboot.WebHost.dll = assemblies\BrockAllen.MembershipReboot.WebHost.dll
-		assemblies\BrockAllen.MembershipReboot.WebHost.pdb = assemblies\BrockAllen.MembershipReboot.WebHost.pdb
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ru-ru", "ru-ru", "{2AA9264D-5886-4D3E-8F89-99F05CB806BD}"
-	ProjectSection(SolutionItems) = preProject
-		assemblies\ru-ru\BrockAllen.MembershipReboot.resources.dll = assemblies\ru-ru\BrockAllen.MembershipReboot.resources.dll
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUWebinars.Business", "CUWebinars.Business\CUWebinars.Business.csproj", "{D4250C01-6EE8-4D3C-AE39-9CD038422210}"
 EndProject
 Global
@@ -60,8 +43,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{2AA9264D-5886-4D3E-8F89-99F05CB806BD} = {34DC5C9B-FA62-4B78-8305-38D93BFA7D0A}
 	EndGlobalSection
 EndGlobal
