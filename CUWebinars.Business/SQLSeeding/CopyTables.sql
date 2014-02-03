@@ -14647,7 +14647,7 @@ GO
 USE [BankWebinars2]
 GO
 
-/****** Object:  StoredProcedure [dbo].[uspPrintError]    Script Date: 2/1/2014 11:56:25 AM ******/
+/****** Object:  StoredProcedure [dbo].[CreateOrder]    Script Date: 2/2/2014 12:44:07 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -14655,34 +14655,311 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
--- uspPrintError prints error information about the error that caused 
--- execution to jump to the CATCH block of a TRY...CATCH construct. 
--- Should be executed from within the scope of a CATCH block otherwise 
--- it will return without printing any error information.
-CREATE PROCEDURE [dbo].[uspPrintError]
+-- =============================================
+-- Author:		sjh
+-- Create date: 11/13
+-- Description:	Creates WebUser by assembling account fields
+-- and calling CreateAccount method on assembly.
+-- ---- error handling logic is detailed at
+-- http://technet.microsoft.com/en-us/library/ms179296%28v=sql.105%29.aspx
+-- =============================================
+CREATE PROCEDURE [dbo].[CreateOrder]
+	-- Add the parameters for the stored procedure here
+    @WebUserID INT ,
+    @FirstName NVARCHAR(50) ,
+    @LastName NVARCHAR(50) ,
+    @Title NVARCHAR(50) ,
+    @Institution NVARCHAR(250) ,
+    @Initial NVARCHAR(100) = ' ',
+    @PhoneNumber NVARCHAR(50) ,
+    @StreetAddress NVARCHAR(150) ,
+    @StreetAddress2 NVARCHAR(150) =  ' ' ,
+    @City NVARCHAR(250) ,
+    @State NVARCHAR(100) ,
+    @Zip NVARCHAR(20) ,
+    @Country NVARCHAR(150) ,
+    @Email NVARCHAR(150)
 AS
+SET NOCOUNT ON
 BEGIN
-    SET NOCOUNT ON;
+DECLARE	@return_value INT
 
-    -- Print error information. 
-    PRINT 'Error ' + CONVERT(VARCHAR(50), ERROR_NUMBER()) + ', Severity ' + CONVERT(VARCHAR(5), ERROR_SEVERITY()) + ', State '
-        + CONVERT(VARCHAR(5), ERROR_STATE()) + ', Procedure ' + ISNULL(ERROR_PROCEDURE(), '-') + ', Line ' + CONVERT(VARCHAR(5), ERROR_LINE());
-    PRINT ERROR_MESSAGE();
-END;
+
+--SET @Initial = (SELECT ISNULL(@Initial, ' ')
+--select @StreetAddress2 = (SELECT ISNULL(@StreetAddress2, ' ')
+
+    EXEC @return_value = [dbo].[CreateWebUser] @WebUserID = @WebUserID, @FirstName = @FirstName, @LastName = @LastName, @Title = @Title,
+        @Institution = @Institution, @Initial = @Initial, @PhoneNumber = @PhoneNumber, @StreetAddress = @StreetAddress, @StreetAddress2 = @StreetAddress2,
+        @City = @City, @State = @State, @Zip = @Zip, @Country = @Country, @Email = @Email
+
+
+		SELECT CAST(@return_value AS VARCHAR) as result
+
+END
+
 GO
 
 
 USE [BankWebinars2]
 GO
 
-/****** Object:  StoredProcedure [dbo].[uspLogError]    Script Date: 2/1/2014 11:56:16 AM ******/
+/****** Object:  StoredProcedure [dbo].[CreateWebUser]    Script Date: 2/2/2014 12:44:13 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+-- =============================================
+-- Author:		sjh
+-- Create date: 11/13
+-- Description:	Creates WebUser by assembling account fields
+-- and calling CreateAccount method on assembly.
+-- ---- error handling logic is detailed at
+-- http://technet.microsoft.com/en-us/library/ms179296%28v=sql.105%29.aspx
+-- =============================================
+CREATE PROCEDURE [dbo].[CreateWebUser]
+	-- Add the parameters for the stored procedure here
+    @WebUserID INT ,
+    @FirstName NVARCHAR(50) ,
+    @LastName NVARCHAR(50) ,
+    @Title NVARCHAR(50) ,
+    @Institution NVARCHAR(250) ,
+    @Initial NVARCHAR(100) ,
+    @PhoneNumber NVARCHAR(50) ,
+    @StreetAddress NVARCHAR(150) ,
+    @StreetAddress2 NVARCHAR(150) ,
+    @City NVARCHAR(250) ,
+    @State NVARCHAR(100) ,
+    @Zip NVARCHAR(20) ,
+    @Country NVARCHAR(150) ,
+    @Email NVARCHAR(150)
+AS
+SET NOCOUNT ON
+BEGIN
+    DECLARE @queryString VARCHAR(MAX)
+    DECLARE @result VARCHAR(MAX)
+
+    SET @queryString = 'FirstName=' + @FirstName
+    SET @queryString = @queryString + '&lastname=' + @LastName
+    SET @queryString = @queryString + '&email=' + @Email
+    SET @queryString = @queryString + '&institution=' + @Institution
+    SET @queryString = @queryString + '&addresstype=Billing'
+    SET @queryString = @queryString + '&city=' + @City
+    SET @queryString = @queryString + '&country=' + @Country
+    SET @queryString = @queryString + '&username=' + @LastName + @FirstName
+    SET @queryString = @queryString + '&phone=' + @PhoneNumber
+    SET @queryString = @queryString + '&state=' + @State
+    SET @queryString = @queryString + '&streetaddress=' + @StreetAddress
+    SET @queryString = @queryString + '&streetaddress2=' + @StreetAddress2
+    SET @queryString = @queryString + '&zip=' + @Zip
+    SET @queryString = @queryString + '&usertype=1&title=' + @Title
+    SET @queryString = @queryString + '&password=' + '....' + @LastName
+    SET @queryString = @queryString + '&confirmPassword=' + '....' + @LastName
+    SET @queryString = @queryString + '&idWebUser=' + CAST(@WebUserID AS VARCHAR)
+
+
+    DECLARE @loggerID INT
+    INSERT  dbo.ErrorLog
+            ( ErrorTime ,
+              UserName ,
+              ErrorNumber ,
+              ErrorSeverity ,
+              ErrorState ,
+              ErrorProcedure ,
+              ErrorLine ,
+              ErrorMessage
+	        )
+    VALUES  ( GETDATE() , -- ErrorTime - datetime
+              'tracing' , -- UserName - sysname
+              0 , -- ErrorNumber - int
+              0 , -- ErrorSeverity - int
+              0 , -- ErrorState - int
+              N'[CreateWebUser]: ' + CAST(@WebUserID AS VARCHAR) , -- ErrorProcedure - nvarchar(126)
+              0 , -- ErrorLine - int
+              @queryString	
+            )
+    SET @loggerID = SCOPE_IDENTITY()
+
+    DECLARE @accountExists VARCHAR(50)
+    DECLARE @webuserexists INT
+
+    SET @accountExists = ( SELECT   id
+                           FROM     MembershipReboot.dbo.UserAccounts
+                           WHERE    Email = @Email
+                         )
+    SET @webuserexists = ( SELECT   idUser
+                           FROM     dbo.WebUser
+                           WHERE    email = @Email
+                         )
+
+    IF ( @accountExists IS NOT NULL
+         AND @webuserexists IS NOT NULL
+       )
+        BEGIN
+            SELECT  @webuserexists AS RESULT
+            RETURN 1
+        END
+    IF ( ( @accountExists IS NULL
+           AND @webuserexists IS NOT NULL
+         )
+         OR ( @accountExists IS NOT NULL
+              AND @webuserexists IS  NULL
+            )
+       )
+        BEGIN
+            SELECT  0 AS RESULT
+            RETURN 0
+        END
+    IF ( @accountExists IS NULL
+         AND @webuserexists IS NULL
+       )
+        BEGIN
+            --PRINT @QueryString
+            EXEC @result = TTSDatabase.dbo.[CallCreateUser] @qString = @queryString
+        END
+    INSERT  dbo.ErrorLog
+            ( ErrorTime ,
+              UserName ,
+              ErrorNumber ,
+              ErrorSeverity ,
+              ErrorState ,
+              ErrorProcedure ,
+              ErrorLine ,
+              ErrorMessage
+	        )
+    VALUES  ( GETDATE() , -- ErrorTime - datetime
+              'tracing' , -- UserName - sysname
+              0 , -- ErrorNumber - int
+              0 , -- ErrorSeverity - int
+              0 , -- ErrorState - int
+              N'[CreateWebUser] logging the call' , -- ErrorProcedure - nvarchar(126)
+              0 , -- ErrorLine - int
+              'NEW USER! LoggerID:' + CAST(@loggerID AS VARCHAR) + @queryString
+	        )
+    SELECT  @RESULT        
+    --RETURN 1
+
+END
+
+GO
+
+
+USE [BankWebinars2]
+GO
+
+/****** Object:  StoredProcedure [dbo].[GetRegistrationType]    Script Date: 2/2/2014 12:44:20 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+-- =============================================
+-- Author:      SJH
+-- Create date: 12/13
+-- Description: Produce list of Options based on idWebinar
+-- =============================================
+CREATE PROCEDURE [dbo].[GetRegistrationType]
+    -- Add the parameters for the stored procedure here
+    @idOption INT = 0
+AS
+BEGIN
+    SET NOCOUNT ON-- added to prevent extra result sets from
+    -- interfering with SELECT statements.
+    SELECT  o.[idOption] ,
+            o.[OptionExplain] ,
+            o.[OptionLabel] ,
+            o.[PriceToAdd] ,
+            o.[TaxExempt] ,
+            o.[PercToAdd] ,
+            o.[SortOrder] ,
+            o.[Type] ,
+            o.[MsgConfirm] ,
+            o.[SKU] ,
+            o.[ShowLiveNotifications] ,
+            o.[ShowRecordingNotifications] ,
+            o.[ShowShippedNotifications] ,
+            o.[Stage1CheckoutConfirmationMsg] ,
+            o.[Stage2CheckoutConfirmationMsg] ,
+            o.[Stage1EmailConfirmationMsg] ,
+            o.[Stage2EmailConfirmationMsg]
+    FROM    dbo.Options o
+    WHERE   o.idOption = @idOption
+END
+
+GO
+
+
+USE [BankWebinars2]
+GO
+
+/****** Object:  StoredProcedure [dbo].[GetWebinarsOptions]    Script Date: 2/2/2014 12:44:27 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+-- =============================================
+-- Author:      SJH
+-- Create date: 12/13
+-- Description: Produce list of Options based on idWebinar
+-- =============================================
+CREATE PROCEDURE [dbo].[GetWebinarsOptions]
+    -- Add the parameters for the stored procedure here
+    @idWebinar INT = 0
+AS
+BEGIN
+    SET NOCOUNT ON-- added to prevent extra result sets from
+    -- interfering with SELECT statements.
+    SET NOCOUNT ON;
+    SELECT  o.[idOption] ,
+            o.[OptionExplain] ,
+            o.[OptionLabel] ,
+            o.[PriceToAdd] ,
+            o.[TaxExempt] ,
+            o.[PercToAdd] ,
+            o.[SortOrder] ,
+            o.[Type] ,
+            o.[MsgConfirm] ,
+            o.[SKU] ,
+            o.[ShowLiveNotifications] ,
+            o.[ShowRecordingNotifications] ,
+            o.[ShowShippedNotifications] ,
+            o.[Stage1CheckoutConfirmationMsg] ,
+            o.[Stage2CheckoutConfirmationMsg] ,
+            o.[Stage1EmailConfirmationMsg] ,
+            o.[Stage2EmailConfirmationMsg]
+
+        --oRef.idOptionsXref ,
+        --oRef.idOptionGroup ,
+        --ogRef.idWebinarOptionGroup
+    FROM    dbo.Options o
+            INNER JOIN dbo.OptionsXref oRef ON oRef.idOption = o.idOption
+            INNER JOIN dbo.OptionsGroupsXref ogRef ON ogRef.idOptionGroup = oRef.idOptionGroup
+            INNER JOIN dbo.Webinar w ON w.idWebinar = ogRef.idWebinar
+    WHERE   w.idWebinar = @idWebinar
+END
+
+GO
+
+
+USE [BankWebinars2]
+GO
+
+/****** Object:  StoredProcedure [dbo].[uspLogError]    Script Date: 2/2/2014 12:44:33 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
 
 
 
@@ -14745,13 +15022,14 @@ BEGIN
         RETURN -1;
     END CATCH
 END;
+
 GO
 
 
 USE [BankWebinars2]
 GO
 
-/****** Object:  StoredProcedure [dbo].[CreateCUOrder]    Script Date: 2/1/2014 11:56:57 AM ******/
+/****** Object:  StoredProcedure [dbo].[uspPrintError]    Script Date: 2/2/2014 12:44:39 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -14759,103 +15037,24 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-USE [BankWebinars2]
-GO
-
-/****** Object:  StoredProcedure [dbo].[GetRegistrationType]    Script Date: 2/1/2014 11:56:49 AM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 
--- =============================================
--- Author:      SJH
--- Create date: 12/13
--- Description: Produce list of Options based on idWebinar
--- =============================================
-CREATE PROCEDURE [dbo].[GetRegistrationType]
-    -- Add the parameters for the stored procedure here
-    @idOption INT = 0
+
+-- uspPrintError prints error information about the error that caused 
+-- execution to jump to the CATCH block of a TRY...CATCH construct. 
+-- Should be executed from within the scope of a CATCH block otherwise 
+-- it will return without printing any error information.
+CREATE PROCEDURE [dbo].[uspPrintError]
 AS
 BEGIN
-    SET NOCOUNT ON-- added to prevent extra result sets from
-    -- interfering with SELECT statements.
-    SELECT  o.[idOption] ,
-            o.[OptionExplain] ,
-            o.[OptionLabel] ,
-            o.[PriceToAdd] ,
-            o.[TaxExempt] ,
-            o.[PercToAdd] ,
-            o.[SortOrder] ,
-            o.[Type] ,
-            o.[MsgConfirm] ,
-            o.[SKU] ,
-            o.[ShowLiveNotifications] ,
-            o.[ShowRecordingNotifications] ,
-            o.[ShowShippedNotifications] ,
-            o.[Stage1CheckoutConfirmationMsg] ,
-            o.[Stage2CheckoutConfirmationMsg] ,
-            o.[Stage1EmailConfirmationMsg] ,
-            o.[Stage2EmailConfirmationMsg]
-    FROM    dbo.Options o
-    WHERE   o.idOption = @idOption
-END
-GO
-
-
-USE [BankWebinars2]
-GO
-
-/****** Object:  StoredProcedure [dbo].[GetWebinarsOptions]    Script Date: 2/1/2014 11:56:41 AM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-
--- =============================================
--- Author:      SJH
--- Create date: 12/13
--- Description: Produce list of Options based on idWebinar
--- =============================================
-CREATE PROCEDURE [dbo].[GetWebinarsOptions]
-    -- Add the parameters for the stored procedure here
-    @idWebinar INT = 0
-AS
-BEGIN
-    SET NOCOUNT ON-- added to prevent extra result sets from
-    -- interfering with SELECT statements.
     SET NOCOUNT ON;
-    SELECT  o.[idOption] ,
-            o.[OptionExplain] ,
-            o.[OptionLabel] ,
-            o.[PriceToAdd] ,
-            o.[TaxExempt] ,
-            o.[PercToAdd] ,
-            o.[SortOrder] ,
-            o.[Type] ,
-            o.[MsgConfirm] ,
-            o.[SKU] ,
-            o.[ShowLiveNotifications] ,
-            o.[ShowRecordingNotifications] ,
-            o.[ShowShippedNotifications] ,
-            o.[Stage1CheckoutConfirmationMsg] ,
-            o.[Stage2CheckoutConfirmationMsg] ,
-            o.[Stage1EmailConfirmationMsg] ,
-            o.[Stage2EmailConfirmationMsg]
 
-        --oRef.idOptionsXref ,
-        --oRef.idOptionGroup ,
-        --ogRef.idWebinarOptionGroup
-    FROM    dbo.Options o
-            INNER JOIN dbo.OptionsXref oRef ON oRef.idOption = o.idOption
-            INNER JOIN dbo.OptionsGroupsXref ogRef ON ogRef.idOptionGroup = oRef.idOptionGroup
-            INNER JOIN dbo.Webinar w ON w.idWebinar = ogRef.idWebinar
-    WHERE   w.idWebinar = @idWebinar
-END
+    -- Print error information. 
+    PRINT 'Error ' + CONVERT(VARCHAR(50), ERROR_NUMBER()) + ', Severity ' + CONVERT(VARCHAR(5), ERROR_SEVERITY()) + ', State '
+        + CONVERT(VARCHAR(5), ERROR_STATE()) + ', Procedure ' + ISNULL(ERROR_PROCEDURE(), '-') + ', Line ' + CONVERT(VARCHAR(5), ERROR_LINE());
+    PRINT ERROR_MESSAGE();
+END;
+
 GO
 
 

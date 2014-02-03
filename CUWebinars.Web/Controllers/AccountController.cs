@@ -50,7 +50,13 @@ namespace CUWebinars.Web.Controllers
             
             if (ModelState.IsValid)
             {
-
+                //first check if email exists
+                var checkIfUsed = membershipService.GetUserByEmail(model.Email);
+                if (checkIfUsed != null)
+                {
+                    return "email exists";
+                }
+                
                 // Attempt to register the user
                 WebUserRepository repo = new WebUserRepository();
                 var myInstitution = membershipService.ProcessInstitutionForUser(model.Institution,
