@@ -1,6 +1,7 @@
 ﻿using System.Runtime.Remoting.Contexts;
 using CUWebinars.Business.Models;
 using System;
+using System.Data.Entity;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -67,21 +68,27 @@ namespace CUWebinars.Business.Repository
             }
         }
 
-        public IQueryable<Option> FindOptionsByWebinarId(int id)
+        public IList<Option> FindOptionsByWebinarId(int id)
         {
             using (var context = new TTSWebinarsContext())
             {
-                //  First get the OrderRows
-                var webinar = context.Webinars.Find(id);
-                var orderRows = webinar.OrderRows.ToList();
+                var webinars = context.Webinars
+                    .Where(w => w.idWebinar == id).ToList();
 
-                //  Then, get the options with a join on idOption == RegistrationType
-                var options = orderRows.SelectMany(
-                    ords => context.Options
-                        .Where(opts => opts.idOption == ords.RegistrationType)
-                        );
+                //  Get all OptionsGroupsXrefs for those webinars
+                var optionsGroupsXrefs = webinars.SelectMany(w => w.OptionsGroupsXrefs);
 
-                return options.AsQueryable();
+                //  For each of those OptionsGroupsXrefs, get the relevant OptionGroup
+                var optionsGroups = optionsGroupsXrefs.Select(o => o.OptionsGroup);
+
+                //  Get all OptionsXrefs for those OptionGroups
+                var optionsXrefs = optionsGroups.SelectMany(opt => opt.OptionsXrefs);
+
+                //  Finally, get the options
+                var options = optionsXrefs.Select(o => o.Option);
+
+                return options.ToList();
+
             }
         }
     }
