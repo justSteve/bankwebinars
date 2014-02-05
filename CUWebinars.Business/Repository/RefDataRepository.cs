@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Models;
+﻿using System.Runtime.Remoting.Contexts;
+using CUWebinars.Business.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,6 +64,24 @@ namespace CUWebinars.Business.Repository
                     .Where(w => w.idUser == id)
                     .Single()
                     .Addresses;
+            }
+        }
+
+        public IQueryable<Option> FindOptionsByWebinarId(int id)
+        {
+            using (var context = new TTSWebinarsContext())
+            {
+                //  First get the OrderRows
+                var webinar = context.Webinars.Find(id);
+                var orderRows = webinar.OrderRows.ToList();
+
+                //  Then, get the options with a join on idOption == RegistrationType
+                var options = orderRows.SelectMany(
+                    ords => context.Options
+                        .Where(opts => opts.idOption == ords.RegistrationType)
+                        );
+
+                return options.AsQueryable();
             }
         }
     }

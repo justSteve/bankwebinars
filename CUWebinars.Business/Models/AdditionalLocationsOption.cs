@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace CUWebinars.Business.Models
 {
     // marker class
-    public class AdditionalLocationsOption : Option
+    public class AdditionalLocationsOption : OrderRowOption
     {
+        public Nullable<int> AdditionalLocationsCount { get; set; }
     }
 }

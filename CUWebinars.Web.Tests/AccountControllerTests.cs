@@ -1,4 +1,5 @@
-﻿using CUWebinars.Web.Controllers;
+﻿using CUWebinars.Business.Services;
+using CUWebinars.Web.Controllers;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -23,7 +24,7 @@ namespace CUWebinars.Web.Tests
 
         Mock<IMailService> mailServiceMock;
         Mock<IMembershipService> membershipServiceMock;
-        Mock<IOrderService> orderServiceMock;
+        Mock<IOrderManagementService> orderServiceMock;
         Mock<ILogger> loggerMock;
 
 
@@ -32,7 +33,7 @@ namespace CUWebinars.Web.Tests
         {
             mailServiceMock = new Mock<IMailService>();
             membershipServiceMock = new Mock<IMembershipService>();
-            orderServiceMock = new Mock<IOrderService>();
+            orderServiceMock = new Mock<IOrderManagementService>();
             loggerMock = new Mock<ILogger>();
         }
 

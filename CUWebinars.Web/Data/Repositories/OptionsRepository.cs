@@ -17,6 +17,11 @@ namespace CUWebinars.Web.Data.Repositories
             _ctx = ctx;
         }
 
+        public OptionRepository()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public IQueryable<Option> GetOptionsByWebinar(int webinarId)
         {
 

@@ -4,6 +4,7 @@ using BrockAllen.MembershipReboot.WebHost;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
+using CUWebinars.Business.Services;
 using CUWebinars.Web.App_Start;
 using CUWebinars.Web.Data.Repositories;
 using CUWebinars.Web.Data.Repositories.Interfaces;
@@ -70,11 +71,12 @@ namespace CUWebinars.Web.App_Start
             //kernel.Bind<IAccountRepository>().To<AccountRepository>().InRequestScope();
             kernel.Bind<IPresenterRepository>().To<PresenterRepository>();
             kernel.Bind<TTSWebinarsContext>().To<TTSWebinarsContext>();
-            kernel.Bind<IOrderService>().To<OrderService>();
             kernel.Bind<IWebUserRepository>().To<WebUserRepository>();
             kernel.Bind<IRefDataRepository>().To<RefDataRepository>();
             kernel.Bind<IInstitutionRepository>().To<InstitutionRepository>();
             kernel.Bind<IUserAccountRepository>().To<DefaultUserAccountRepository>();
+            kernel.Bind<CUWebinars.Business.Repository.IOptionRepository>().To<CUWebinars.Business.Repository.OptionRepository>();
+            kernel.Bind<IOrderManagementService>().To<OrderManagementService>();
 
             kernel.Bind<UserAccountService>().ToMethod(ctx =>
                 {

@@ -18,6 +18,12 @@ namespace CUWebinars.Business.Repository
 
         }
 
+        public TTSWebinarsRepository(Ctx ctx)
+        {
+            db = ctx;
+            items = db.Set<T>();
+        }
+
         public void Add(T item)
         {
             items.Add(item);
@@ -29,10 +35,10 @@ namespace CUWebinars.Business.Repository
             return items;
         }
 
-        public TTSWebinarsRepository(Ctx ctx)
+        public T FindById(int id)
         {
-            db = ctx;
-            items = db.Set<T>();
+            var item = items.Find(id);
+            return item;
         }
 
         protected void CheckDisposed()

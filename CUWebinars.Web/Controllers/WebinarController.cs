@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
+using CUWebinars.Business.Services;
 using CUWebinars.Web.Data.Repositories.Interfaces;
 using CUWebinars.Web.Core.Browsers.Webinars;
 using CUWebinars.Web.Services;
@@ -18,13 +19,15 @@ namespace CUWebinars.Web.Controllers
         private TTSWebinarsContext db = new TTSWebinarsContext();
         private IMailService _mail;
         private readonly IWebinarRepository _repos;
+        private IOrderManagementService _orderManagementService;
         public ILogger Logger { get; set; }
 
-        public WebinarController(IMailService mail, IWebinarRepository repos, ILogger logger)
+        public WebinarController(IMailService mail, IWebinarRepository repos, ILogger logger, IOrderManagementService orderManagementService)
         {
             _mail = mail;
             _repos = repos;
             Logger = logger;
+            _orderManagementService = orderManagementService;
         }
         //
         // GET: /Webinar/
@@ -243,7 +246,7 @@ namespace CUWebinars.Web.Controllers
             var model = new WebinarDetailsViewModel()
             {
                 Webinar = db.Webinars.Find(id)
-                ,Options = _repos.GetCurrentOptions(id)
+                ,Options = _orderManagementService.GetOptionsByWebinarId(id)
                 ,ConnectionInfo = ""
             };
 
