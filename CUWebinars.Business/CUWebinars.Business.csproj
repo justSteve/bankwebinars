@@ -69,7 +69,6 @@
     <Compile Include="Services\IOrderManagementService.cs" />
     <Compile Include="AccountService\IUserAccountService.cs" />
     <Compile Include="AccountService\MembershipService.cs" />
-    <Compile Include="Services\OrderManagementService.cs" />
     <Compile Include="AccountService\TTSUserAccountService.cs" />
     <Compile Include="Constants\ClaimTypes.cs" />
     <Compile Include="Constants\DomainConstants.cs" />
@@ -149,6 +148,7 @@
     <Compile Include="Repository\RefDataRepository.cs" />
     <Compile Include="Repository\TTSWebinarsRepository.cs" />
     <Compile Include="Repository\WebUserRepository.cs" />
+    <Compile Include="Services\OrderManagementService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

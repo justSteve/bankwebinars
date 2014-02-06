@@ -1,11 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 
 namespace CUWebinars.Business.Services
 {
-    public class OrderManagementService : IOrderManagementService
+    public class OrderManagementService
     {
         private readonly IOptionRepository _optionRepository;
         private IRefDataRepository _refDataRepository;
@@ -20,7 +23,7 @@ namespace CUWebinars.Business.Services
         {
             // add code here to build string
 
-            var option = _optionRepository.FindOption((int) orderRow.RegistrationType);
+            var option = _optionRepository.FindOption((int)orderRow.RegistrationType);
 
             return string.Empty;
         }
@@ -29,5 +32,7 @@ namespace CUWebinars.Business.Services
         {
             return _refDataRepository.FindOptionsByWebinarId(id);
         }
+
+
     }
 }
