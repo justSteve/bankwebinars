@@ -1,4 +1,4 @@
-﻿html {
+html {
   background-color: #E7F1FA;
   margin: 0;
   padding: 0;
@@ -6,7 +6,6 @@
 body {
   background-color: #E7F1FA;
   /*border-top: solid 10px #000;*/
-
   color: #555555;
   font-size: 12px;
   font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
@@ -483,7 +482,7 @@ tr.pager td {
 ********************/
 @media only screen and (max-width: 850px) {
   /* header
-      ----------------------------------------------------------*/
+    ----------------------------------------------------------*/
   header .float-left,
   header .float-right {
     float: none;
@@ -533,7 +532,7 @@ tr.pager td {
     padding: 0;
   }
   /* main layout
-      ----------------------------------------------------------*/
+    ----------------------------------------------------------*/
   .main-content,
   .featured + .main-content {
     background-position: 10px 0;
@@ -604,7 +603,7 @@ tr.pager td {
     width: auto;
   }
   /* footer
-      ----------------------------------------------------------*/
+    ----------------------------------------------------------*/
   footer .float-left,
   footer .float-right {
     float: none;
@@ -618,3 +617,4 @@ tr.pager td {
     margin: 0;
   }
 }
+/*# sourceMappingURL=site.css.map */

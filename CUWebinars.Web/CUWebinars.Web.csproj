@@ -586,7 +586,9 @@
     <Content Include="Content\css\BootstrapTemplates\img\warning.png" />
     <Content Include="Content\css\BootstrapTemplates\img\zigzag.png" />
     <Content Include="Content\css\BootstrapTemplates\shDocumenter.css" />
-    <Content Include="Content\css\BootstrapTemplates\style.css" />
+    <Content Include="Content\css\BootstrapTemplates\style.css">
+      <DependentUpon>style.less</DependentUpon>
+    </Content>
     <Content Include="Content\css\BootstrapTemplates\style.min.css" />
     <Content Include="Content\css\checkout.css" />
     <Content Include="Content\css\Details.css" />
@@ -868,7 +870,9 @@
     <Content Include="EmailTemplates\PasswordResetRequestedEvent_Subject.txt" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
-    <Content Include="Content\Site.css" />
+    <Content Include="Content\Site.css">
+      <DependentUpon>site.less</DependentUpon>
+    </Content>
     <Content Include="Scripts\app\constants.js" />
     <Content Include="Scripts\app\common.js" />
     <Content Include="Scripts\app\EditOrder.js" />
@@ -920,6 +924,12 @@
     <Content Include="Areas\Admin\Views\_ViewStart.cshtml" />
     <Content Include="Areas\Admin\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Admin\Views\Shared\ShowAdminMenu.cshtml" />
+    <Content Include="Content\site.css.map">
+      <DependentUpon>Site.css</DependentUpon>
+    </Content>
+    <Content Include="Content\css\BootstrapTemplates\style.css.map">
+      <DependentUpon>style.css</DependentUpon>
+    </Content>
     <None Include="Properties\PublishProfiles\BankWebinars - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars - FTP.pubxml" />
