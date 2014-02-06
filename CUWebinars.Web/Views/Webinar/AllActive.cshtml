@@ -1,6 +1,5 @@
 ﻿@using System.Linq
-@using CUWebinars.Web.Helpers
-@using CUWebinars.Business.Models
+
 @model IEnumerable<Webinar>
 
 @{
@@ -56,21 +55,21 @@
                 .Select(webinarTopic => webinarTopic.Topic.topicDesc)
                 .Aggregate((s1, s2) => s1 + ", " + s2);
 
-            string title = "<h3><a href='/Webinar/Details/" +
-                                     webinar.idWebinar + "' target='_blank'>" + webinar.Title + "</a></h3>";
+            string title = "<a href='/Webinar/Details/" +
+                                     webinar.idWebinar + "' target='_blank'>" + webinar.Title + "</a>";
             var desc = webinar.Description.Length > 200
                 ? webinar.Description.Substring(0, 200) + "... <a class=\"btn  btn-primary btn-small\" href='/Webinar/Details/" + webinar.idWebinar + "'>More →</a></p>"
                 : webinar.Description;
 
-            var relatedTopics = "Related Topics: <b><i>" + string.Join(", ", allTopics) + "</i></b></blockquote>";
+            var relatedTopics = "Related Topics: <b><i>" + string.Join(", ", allTopics) + "</i></b>";
             <div class="wTitle clearfix">
-                <h2>@Html.Raw(title)</h2>
+                <h3>@Html.Raw(title)</h3>
                 <div id="eventBody" style="width: 90%; margin-left: auto; margin-right: auto;">
                     <p>
-                        Presented by <img class="alignleft" src="@webinar.Presenter.PhotoThumb" alt="Photo of @webinar.Presenter.WebUser.FullName"> @webinar.Presenter.WebUser.FullName <br />
+                        Presented by <img class="alignleft" src="@webinar.Presenter.PhotoThumb" alt="Photo of @webinar.Presenter.WebUser.FullName" /> @webinar.Presenter.WebUser.FullName <br />
                         <i>@Html.Raw(showDateValue)</i>
                     </p>
-                    <p style="margin-right: 20%;">@Html.Raw(desc)</p>
+                    <span style="margin-right: 20%;">@Html.Raw(desc)</span>
                     <p>@Html.Raw(relatedTopics)</p>
                 </div>
             </div>

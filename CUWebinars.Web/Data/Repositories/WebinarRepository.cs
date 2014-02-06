@@ -21,7 +21,8 @@ namespace CUWebinars.Web.Data.Repositories
         }
         public IQueryable<Webinar> GetUpcoming()
         {
-            return _ctx.Webinars.Where(w => w.Status == WebinarStatus.Scheduled);
+            return _ctx.Webinars.Where(w => w.Status == WebinarStatus.Scheduled)
+                    .OrderByDescending(w => w.Date);
         }
 
         public IQueryable<Webinar> GetAllActive()
@@ -32,7 +33,8 @@ namespace CUWebinars.Web.Data.Repositories
 
         public IQueryable<Webinar> GetRecorded()
         {
-            return _ctx.Webinars.Where(w => w.Status == WebinarStatus.Recorded);
+            return _ctx.Webinars.Where(w => w.Status == WebinarStatus.Recorded)
+                .OrderByDescending(w => w.Date);
         }
 
         public IQueryable<Order> GetOrdersByWebinar(int webinarId)
@@ -45,7 +47,6 @@ namespace CUWebinars.Web.Data.Repositories
 
         public IQueryable<Webinar> GetByTopic(int topicId)
         {
-
             var webinars = _ctx.Webinars.Where(w => w.WebinarTopicXrefs
                 .Any(t => t.idTopic == topicId)
                     && (w.Status == WebinarStatus.Recorded || w.Status == WebinarStatus.Scheduled));
@@ -61,10 +62,10 @@ namespace CUWebinars.Web.Data.Repositories
         public List<Option> GetCurrentOptions(int idWebinar)
         {
             //resolves: Impediment 6:Implement GetCurrentOptions Method
-            var paramWebinarID = new SqlParameter("idWebinar", SqlDbType.Int) {Value = idWebinar};
-            List<Option> myOptions  = _ctx.Options.SqlQuery(
+            var paramWebinarID = new SqlParameter("idWebinar", SqlDbType.Int) { Value = idWebinar };
+            List<Option> myOptions = _ctx.Options.SqlQuery(
                 "dbo.GetWebinarsOptions @idWebinar", paramWebinarID).ToList();
-                    
+
             return myOptions;
         }
 

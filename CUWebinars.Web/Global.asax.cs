@@ -239,12 +239,10 @@ namespace CUWebinars.Web
                 stateService.SetValue("FirstCookies", allCookies.ToString());
 
                 //setup upcoming and recorded menu contents
-                var upcomingWebinars = _reposWebinars.GetUpcoming().OrderBy(w => w.Date).Take(15).ToList();
+                var upcomingWebinars = _reposWebinars.GetUpcoming().OrderBy(w => w.Date).Take(10).ToList();
                 var upComingPresentationListItems = new StringBuilder();
                 upComingPresentationListItems.Append(
-                    "<li role='presentation'><a role=\"menuitem\" tabindex=\"-1\" href='/Webinar/Upcoming/'><b>View All Upcoming</b></a></li>"
-                    );
-
+                    "<li role='presentation'><a role=\"menuitem\" tabindex=\"-1\"  href='/Webinar/allActive/?eventsToShow=upcoming'><b>View All Upcoming</b></a></li>");
                 if (upcomingWebinars.Count > 0)
                 {
                     for (int i = 0; i < upcomingWebinars.Count; i++)
@@ -260,14 +258,14 @@ namespace CUWebinars.Web
                             );
                     }
                 }
-
                 stateService.SetValue("upcoming", upComingPresentationListItems);
-                var recordedWebinars = _reposWebinars.GetRecorded().OrderBy(w => w.Date).Take(15).ToList();
+
+
+
+                var recordedWebinars = _reposWebinars.GetRecorded().OrderBy( w => w.Date).Take(10).ToList();
                 StringBuilder recordedWebinarsListItems = new StringBuilder();
                 recordedWebinarsListItems.Append(
-                    "<li role='presentation'><a role=\"menuitem\" tabindex=\"-1\"  href='/Webinar/recorded/'><b>View All Recordings</b></a></li>"
-                    );
-
+                    "<li role='presentation'><a role=\"menuitem\" tabindex=\"-1\"  href='/Webinar/allActive/?eventsToShow=recorded'><b>View All Recordings</b></a></li>");
                 if (recordedWebinars.Count > 0)
                 {
                     for (int i = 0; i < 8; i++)
@@ -283,44 +281,7 @@ namespace CUWebinars.Web
                             );
                     }
                 }
-
                 stateService.SetValue("rec", recordedWebinarsListItems);
-                StringBuilder allActiveEventsListItems = new StringBuilder();
-                allActiveEventsListItems.Append(
-                    "<li role='presentation'><a role=\"menuitem\" tabindex=\"-1\"  href='/Webinar/allActive/'><b>View All Events</b></a></li>"
-                    );
-
-                for (int i = 0; i < upcomingWebinars.Count; i++)
-                {
-                    string ShortTitle =
-                        upcomingWebinars[i].Title.Length > 45
-                            ? upcomingWebinars[i].Title.Substring(0, 45) + "..."
-                            : upcomingWebinars[i].Title;
-
-                    allActiveEventsListItems.Append(
-                        "<li role='presentation'><a role=\"menuitem\" tabindex=\"-1\" href='/Webinar/Details/" +
-                        upcomingWebinars[i].idWebinar + "'>" + Server.HtmlEncode(ShortTitle) + "</a></li>"
-                        );
-                }
-
-                if (upcomingWebinars.Count < 9)
-                {
-                    var fillToTotalCount = 9 - upcomingWebinars.Count;
-                    for (int i = 0; i < fillToTotalCount; i++)
-                    {
-                        string ShortTitle =
-                            recordedWebinars[i].Title.Length > 45
-                                ? recordedWebinars[i].Title.Substring(0, 45) + "..."
-                                : recordedWebinars[i].Title;
-
-                        allActiveEventsListItems.Append(
-                            "<li role='presentation'><a role=\"menuitem\" tabindex=\"-1\" href='/Webinar/Details/" +
-                            recordedWebinars[i].idWebinar + "'>" + Server.HtmlEncode(ShortTitle) + "</a></li>"
-                            );
-                    }
-                }
-
-                stateService.SetValue("allEvents", allActiveEventsListItems);
             }
         }
     }
