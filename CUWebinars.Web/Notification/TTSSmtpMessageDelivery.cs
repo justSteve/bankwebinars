@@ -1,12 +1,12 @@
-﻿using BrockAllen.MembershipReboot;
-using System;
+﻿using System;
 using System.Configuration;
 using System.Net.Configuration;
 using System.Net.Mail;
+using BrockAllen.MembershipReboot;
 
-namespace CUWebinars.Business.Notification.Email
+namespace CUWebinars.Web.Notification
 {
-    public class TTSSmtpMessageDelivery : IMessageDelivery
+    public class TtsSmtpMessageDelivery : IMessageDelivery
     {
         public void Send(Message msg)
         {

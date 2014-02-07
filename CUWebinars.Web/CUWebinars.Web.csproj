@@ -206,6 +206,9 @@
     <Reference Include="Ninject.Web.Mvc">
       <HintPath>..\packages\Ninject.MVC3.3.0.0.6\lib\net45-full\Ninject.Web.Mvc.dll</HintPath>
     </Reference>
+    <Reference Include="RazorEngine">
+      <HintPath>..\packages\RazorEngine.3.4.1\lib\net45\RazorEngine.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -406,6 +409,10 @@
     <Compile Include="Models\ChangePasswordFromResetKeyInputModel.cs" />
     <Compile Include="Models\ManageModel.cs" />
     <Compile Include="Models\RegisterModel.cs" />
+    <Compile Include="Notification\Notification.cs" />
+    <Compile Include="Notification\TtsEmailFormatter.cs" />
+    <Compile Include="Notification\TtsSmtpMessageDelivery.cs" />
+    <Compile Include="Notification\TtsTokenizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IMailService.cs" />
     <Compile Include="Services\IStateService.cs" />
@@ -858,16 +865,12 @@
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
-    <Content Include="EmailTemplates\AccountCreatedEvent_Body.txt" />
-    <Content Include="EmailTemplates\AccountCreatedEvent_Subject.txt" />
-    <Content Include="EmailTemplates\EmailChangedEvent_Body.txt" />
-    <Content Include="EmailTemplates\EmailChangedEvent_Subject.txt" />
-    <Content Include="EmailTemplates\EmailChangeRequestedEvent_Body.txt" />
-    <Content Include="EmailTemplates\EmailChangeRequestedEvent_Subject.txt" />
-    <Content Include="EmailTemplates\PasswordChangedEvent_Body.txt" />
-    <Content Include="EmailTemplates\PasswordChangedEvent_Subject.txt" />
-    <Content Include="EmailTemplates\PasswordResetRequestedEvent_Body.txt" />
-    <Content Include="EmailTemplates\PasswordResetRequestedEvent_Subject.txt" />
+    <Content Include="EmailTemplates\AccountCreatedEvent_Body.cshtml" />
+    <Content Include="EmailTemplates\AccountCreatedEvent_Subject.cshtml" />
+    <Content Include="EmailTemplates\EmailChangedEvent_Body.cshtml" />
+    <Content Include="EmailTemplates\EmailChangedEvent_Subject.cshtml" />
+    <None Include="EmailTemplates\EmailChangeRequestedEvent_Body.cshtml" />
+    <None Include="EmailTemplates\EmailChangeRequestedEvent_Subject.cshtml" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css">
@@ -930,6 +933,10 @@
     <Content Include="Content\css\BootstrapTemplates\style.css.map">
       <DependentUpon>style.css</DependentUpon>
     </Content>
+    <Content Include="EmailTemplates\PasswordResetRequestedEvent_Body.cshtml" />
+    <Content Include="EmailTemplates\PasswordChangedEvent_Body.cshtml" />
+    <Content Include="EmailTemplates\PasswordChangedEvent_Subject.cshtml" />
+    <Content Include="EmailTemplates\PasswordResetRequestedEvent_Subject.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars - FTP.pubxml" />

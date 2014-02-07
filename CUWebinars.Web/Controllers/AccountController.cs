@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Models;
@@ -454,6 +455,13 @@ namespace CUWebinars.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Register(RegisterViewModel model)
         {
+            var errors = ModelState.Values.SelectMany(v => v.Errors);
+
+            foreach (var error in errors)
+            {
+                Debug.WriteLine(error.ErrorMessage);
+            }
+
             if (ModelState.IsValid)
             {
                 //first check if email exists

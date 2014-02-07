@@ -1,15 +1,14 @@
-﻿using BrockAllen.MembershipReboot;
-using System;
+﻿using System;
 using System.IO;
+using BrockAllen.MembershipReboot;
 
-namespace CUWebinars.Business.Notification
+namespace CUWebinars.Web.Notification
 {
-    public class TTSEmailFormatter : EmailMessageFormatter<UserAccount>
+    public class TtsEmailFormatter : EmailMessageFormatter<UserAccount>
     {
         private string pathToTemplates;
-        
 
-        public TTSEmailFormatter(ApplicationInformation appInfo)
+        public TtsEmailFormatter(ApplicationInformation appInfo)
             : base(appInfo)
         {
 
@@ -20,14 +19,15 @@ namespace CUWebinars.Business.Notification
             set { pathToTemplates = Path.Combine(value, "EmailTemplates"); }
         }
 
+        
         protected override string LoadBodyTemplate(UserAccountEvent<UserAccount> evt)
         {
-            return LoadTemplate(string.Concat(CleanGenericName(evt.GetType()), "_Body.txt"));
+            return LoadTemplate(string.Concat(CleanGenericName(evt.GetType()), "_Body.cshtml"));
         }
 
         protected override string LoadSubjectTemplate(UserAccountEvent<UserAccount> evt)
         {
-            return LoadTemplate(string.Concat(CleanGenericName(evt.GetType()), "_Subject.txt"));
+            return LoadTemplate(string.Concat(CleanGenericName(evt.GetType()), "_Subject.cshtml"));
         }
 
         private string CleanGenericName(Type type)
@@ -54,6 +54,11 @@ namespace CUWebinars.Business.Notification
                     return sr.ReadToEnd();
                 }
             }
+        }
+
+        protected override Tokenizer GetTokenizer(UserAccountEvent<UserAccount> evt)
+        {
+            return new TtsTokenizer();
         }
     }
 }

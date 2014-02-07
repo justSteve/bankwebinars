@@ -1,0 +1,18 @@
+﻿@model CUWebinars.Web.Notification.Notification
+
+This message is to confirm your email address with @Model.ApplicationName.
+
+Username: @Model.Username
+Email: @Model.Email
+
+Please click here to confirm your email address:
+
+@Model.ConfirmChangeEmailUrl
+
+If this was in error or not requested then click to cancel the request:
+
+@Model.CancelVerificationUrl
+
+Thanks!
+
+@Model.EmailSignature

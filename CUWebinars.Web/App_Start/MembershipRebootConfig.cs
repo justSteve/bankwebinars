@@ -1,9 +1,7 @@
-﻿
-using BrockAllen.MembershipReboot;
+﻿using BrockAllen.MembershipReboot;
 using BrockAllen.MembershipReboot.WebHost;
-using CUWebinars.Business.Notification;
-using CUWebinars.Business.Notification.Email;
-using System.Web;
+using CUWebinars.Web.Notification;
+
 namespace CUWebinars.Web.App_Start
 {
     public class MembershipRebootConfig
@@ -22,9 +20,8 @@ namespace CUWebinars.Web.App_Start
                 "Account/Register/Cancel/",
                 "Account/PasswordResetConfirm/");
 
-            var delivery = new TTSSmtpMessageDelivery();
-            var emailFormatter = new TTSEmailFormatter(appinfo);
-            emailFormatter.PathToRoot = pathToRootDirectory;
+            var delivery = new TtsSmtpMessageDelivery();
+            var emailFormatter = new TtsEmailFormatter(appinfo) {PathToRoot = pathToRootDirectory};
 
             // uncomment if you want email notifications -- also update smtp settings in web.config
             config.AddEventHandler(new EmailAccountEventsHandler(emailFormatter, delivery));
