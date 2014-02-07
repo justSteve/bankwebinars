@@ -155,6 +155,7 @@
     <None Include="SQLSeeding\BACPACs\BankWebinars2.bacpac" />
     <None Include="SQLSeeding\BACPACs\BankWebinarsSeeder.bacpac" />
     <None Include="SQLSeeding\BACPACs\MembershipReboot.bacpac" />
+    <None Include="SQLSeeding\BACPACs\TTSDatabase-2014-2-7-0-53.bacpac" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Notification\Email\EmailTemplates\AccountClosedEvent_Body.txt" />

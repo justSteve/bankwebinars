@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CUWebinars.Web.Services;
 using CUWebinars.Web.Utils;
 using CUWebinars.Business.Models;
 
@@ -8,6 +9,8 @@ namespace CUWebinars.Web.Core.Browsers.Webinars
     public class WebinarsBrowserTableDataDTOAssembler : AbstractDTOAssembler<EntitiesBrowserTableDataDTO, WebinarsBrowserSearchResultDTO>
     {
         private readonly string _echoId;
+        IStateService stateService = new StateService();
+
 
         public WebinarsBrowserTableDataDTOAssembler(string echoId)
         {
@@ -23,26 +26,28 @@ namespace CUWebinars.Web.Core.Browsers.Webinars
         public override EntitiesBrowserTableDataDTO Entity2DTO(WebinarsBrowserSearchResultDTO entity)
         {
             var rowsData = new List<object>();
-
+            var user = stateService.GetValue<WebUser>("CurrentUser");
             foreach (var entry in entity.Entries)
             {
                 string buildTitle = "";
                 buildTitle = entry.Webinar.Title + "<br/>&nbsp;<a href='/Admin/Webinars/ViewFiles/" +
                                         entry.Webinar.idWebinar + "' target='_blank'>[Links]</a>";
-                if (CurrentSession.Instance.CurrentWebUser.UserType == UserType.Affiliate)
-                {
-                    buildTitle += "<a href='/Admin/Reports/AffiliateRevenue/" + entry.Webinar.idWebinar +
-                                  "'>[Revenue Report]</a>";
-                }
-                if (CurrentSession.Instance.CurrentWebUser.UserType == UserType.Admin)
-                {
-                    //if (entry.Webinar.HasConnectionInformation && entry.Webinar.Status == WebinarStatus.Scheduled)
-                    //{
-                    //    buildTitle += "&nbsp;<a href='/Admin/Webinars/SendInfo/" + entry.webinar.idWebinar +
-                    //                  "' target='_blank'>[Send Connection Info]</a>";
-                    //}
-                    buildTitle += "&nbsp;<a href='/Admin/Webinars/Edit/" + entry.Webinar.idWebinar + "'>[Edit]</a>";
-                }
+                //TODO: Now that we use Claims for typing a current user what is the correct way to 
+                //  determine usertype?
+                //if (CurrentSession.Instance.CurrentWebUser.UserType == UserType.Affiliate)
+                //{
+                //    buildTitle += "<a href='/Admin/Reports/AffiliateRevenue/" + entry.Webinar.idWebinar +
+                //                  "'>[Revenue Report]</a>";
+                //}
+                //if (CurrentSession.Instance.CurrentWebUser.UserType == UserType.Admin)
+                //{
+                //    //if (entry.Webinar.HasConnectionInformation && entry.Webinar.Status == WebinarStatus.Scheduled)
+                //    //{
+                //    //    buildTitle += "&nbsp;<a href='/Admin/Webinars/SendInfo/" + entry.webinar.idWebinar +
+                //    //                  "' target='_blank'>[Send Connection Info]</a>";
+                //    //}
+                //    buildTitle += "&nbsp;<a href='/Admin/Webinars/Edit/" + entry.Webinar.idWebinar + "'>[Edit]</a>";
+                //}
 
                 rowsData.Add(new List<object>
                                  {

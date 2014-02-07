@@ -421,10 +421,7 @@
     <Compile Include="Services\StateService.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utils\AzureTableAppender.cs" />
-    <Compile Include="Utils\CurrentSession.cs" />
     <Compile Include="Utils\LogItem.cs" />
-    <Compile Include="Utils\MySession.cs" />
-    <Compile Include="Utils\UserSession.cs" />
     <Compile Include="ViewModel\ConnectionInfoViewModel.cs" />
     <Compile Include="ViewModel\RegisterViewModel.cs" />
     <Compile Include="ViewModel\WebinarDetailsViewModel.cs" />
