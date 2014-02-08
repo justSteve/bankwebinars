@@ -2,7 +2,7 @@
 using System.Linq;
 using CUWebinars.Business.Models;
 
-namespace CUWebinars.Web.Data.Repositories.Interfaces
+namespace CUWebinars.Business.Repository
 {
     public interface IWebinarRepository
     {

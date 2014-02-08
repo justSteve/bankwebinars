@@ -4,7 +4,7 @@ using System.Net.Configuration;
 using System.Net.Mail;
 using BrockAllen.MembershipReboot;
 
-namespace CUWebinars.Web.Notification
+namespace CUWebinars.Web.Notification.Email
 {
     public class TtsSmtpMessageDelivery : IMessageDelivery
     {

@@ -1,11 +1,10 @@
 ﻿using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
+using CUWebinars.Business.Repository;
 using CUWebinars.Web.App_Start;
-using CUWebinars.Web.Core;
 using CUWebinars.Web.Data.Repositories;
 using CUWebinars.Web.Data.Repositories.Interfaces;
 using CUWebinars.Web.Services;
-using CUWebinars.Web.Utils;
 using log4net;
 using System;
 using System.Collections.Specialized;
@@ -24,13 +23,13 @@ namespace CUWebinars.Web
     // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
     // visit http://go.microsoft.com/?LinkId=9394801
 
-    public class MvcApplication : System.Web.HttpApplication
+    public class MvcApplication : HttpApplication
     {
         public static ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private static TTSWebinarsContext ctx = new TTSWebinarsContext();
-        private static IAffiliateRepository _repos = new AffiliateRepository(ctx);
-        private static IWebinarRepository _reposWebinars = new WebinarRepository(ctx);
-        private static IStateService stateService = new StateService();
+        private static readonly IAffiliateRepository affiliateRepository = new AffiliateRepository(ctx);
+        private static readonly IWebinarRepository _reposWebinars = new WebinarRepository(ctx);
+        private static readonly IStateService StateService = new StateService();
 
         const string AffiliateId = "idAff";
         const string HtmlBreak = "<br />";
@@ -90,12 +89,12 @@ namespace CUWebinars.Web
         {
             if (System.Web.HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath != "~/account/get/")
             {
-                stateService.SetValue("searchTerm", string.Empty);
-                stateService.SetValue("IncludeRecorded", false);
-                stateService.SetValue("IncludeUpcoming", true);
-                stateService.SetValue("searchExtent", "Upcoming");
+                StateService.SetValue("searchTerm", string.Empty);
+                StateService.SetValue("IncludeRecorded", false);
+                StateService.SetValue("IncludeUpcoming", true);
+                StateService.SetValue("searchExtent", "Upcoming");
 
-                //stateService.SetValue("CurrentAffiliate", _repos.GetCurrentAffiliate());
+                //stateService.SetValue("CurrentAffiliate", affiliateRepository.GetCurrentAffiliate());
 
 
                 // as we started this project, this method's name (GetCurrentAffiliate) simply carried over from the legacy project.
@@ -107,21 +106,21 @@ namespace CUWebinars.Web
                 //  
                 // unless otherwise advised - this statement effectively establishes the default affiliate
                 // something that subsequent code may over-ride. 
-                stateService.SetValue("CurrentAffiliate", _repos.SetCurrentAffiliate(19));
+                StateService.SetValue("CurrentAffiliate", affiliateRepository.FindById(19));
 
                 //This session var lets us understand the origin of the Affiliate session - 
                 //...answers the question - How was the Session Affiliate determined?
                 //Here we the initial value to 'default' ... later code will
                 // override if conditions dictate.
-                stateService.SetValue("AffiliateSessionSource", "default" + Pipe + AppConst.DEFAULT_AFFILIATE);
-                stateService.SetValue("SubdomainBranding", @System.Configuration.ConfigurationManager.AppSettings[AppConst.TESTING_URL]);
+                StateService.SetValue("AffiliateSessionSource", "default" + Pipe + AppConst.DEFAULT_AFFILIATE);
+                StateService.SetValue("SubdomainBranding", @System.Configuration.ConfigurationManager.AppSettings[AppConst.TESTING_URL]);
 
                 //following are values to be stored for audit purposes.
                 if (System.Web.HttpContext.Current.Request.UrlReferrer != null)
-                    stateService.SetValue("SubdomainBranding", HttpContext.Current.Request.UrlReferrer.ToString().Trim());
-                stateService.SetValue("FirstPage", HttpContext.Current.Request.Url.ToString().Trim());
-                stateService.SetValue("InitialQueryString", Request.QueryString);
-                stateService.SetValue("SessionID", HttpContext.Current.Session.SessionID);
+                    StateService.SetValue("SubdomainBranding", HttpContext.Current.Request.UrlReferrer.ToString().Trim());
+                StateService.SetValue("FirstPage", HttpContext.Current.Request.Url.ToString().Trim());
+                StateService.SetValue("InitialQueryString", Request.QueryString);
+                StateService.SetValue("SessionID", HttpContext.Current.Session.SessionID);
 
                 //DETERMINE CURRENT AFFILIATE
                 //MEHTOD 1: VIA QUERY STRING -- idAff=[idUserAff]   
@@ -134,10 +133,10 @@ namespace CUWebinars.Web
                     {
                         try
                         {
-                            stateService.SetValue("AffiliateSessionSource", AffiliateId + Pipe + loadAff);
+                            StateService.SetValue("AffiliateSessionSource", AffiliateId + Pipe + loadAff);
                             //TODO ... unit test required of this method of loading affiliate by id
                             // determine the current affiliate
-                            stateService.SetValue("CurrentAffiliate", _repos.SetCurrentAffiliate(Convert.ToInt32(loadAff)));
+                            StateService.SetValue("CurrentAffiliate", affiliateRepository.FindById(loadAff));
                         }
                         catch (Exception ex)
                         {
@@ -153,7 +152,7 @@ namespace CUWebinars.Web
                 }
 
 
-                var subdomainBranding = stateService.GetValue<string>("SubdomainBranding");
+                var subdomainBranding = StateService.GetValue<string>("SubdomainBranding");
                 //METHOD 2: VIA THE DOMAIN NAME BEING RUN
                 //e.g. http://webinars.cftws.org - means CurrentAffiliate should be 'cftws'
                 if (!string.IsNullOrEmpty(subdomainBranding))
@@ -165,13 +164,13 @@ namespace CUWebinars.Web
                         string affilliateDomain = @System.Configuration.ConfigurationManager.AppSettings[AppConst.TESTING_URL].Split('.')[1];
                         try
                         {
-                            stateService.SetValue("AffiliateSessionSource", "Sub" + Pipe + affilliateDomain);
+                            StateService.SetValue("AffiliateSessionSource", "Sub" + Pipe + affilliateDomain);
                             //todo: unit test required 
                             //   the name of the property 'ttsDomain' is the abbreviated name chosen
                             //   for use (as a shortcut or nicname) by us to refer to a given affiliate. It may or may not
                             //   be literally the Domain Name used by the given affiliate.
 
-                            stateService.SetValue("CurrentAffiliate", _repos.LoadByTTSDomain(affilliateDomain) ?? _repos.LoadByTTSDomain("bennett"));
+                            StateService.SetValue("CurrentAffiliate", affiliateRepository.LoadByTTSDomain(affilliateDomain) ?? affiliateRepository.LoadByTTSDomain("bennett"));
                         }
                         catch (Exception ex)
                         {
@@ -203,7 +202,7 @@ namespace CUWebinars.Web
                 //    
                 //}
                 */
-                logger.Info("Start Session: " + stateService.GetValue<string>("SessionID"));
+                logger.Info("Start Session: " + StateService.GetValue<string>("SessionID"));
 
                 var allCookies = new StringBuilder();
 
@@ -236,7 +235,7 @@ namespace CUWebinars.Web
                     }
                 }
 
-                stateService.SetValue("FirstCookies", allCookies.ToString());
+                StateService.SetValue("FirstCookies", allCookies.ToString());
 
                 //setup upcoming and recorded menu contents
                 var upcomingWebinars = _reposWebinars.GetUpcoming().OrderBy(w => w.Date).Take(10).ToList();
@@ -258,7 +257,7 @@ namespace CUWebinars.Web
                             );
                     }
                 }
-                stateService.SetValue("upcoming", upComingPresentationListItems);
+                StateService.SetValue("upcoming", upComingPresentationListItems);
 
 
 
@@ -281,7 +280,7 @@ namespace CUWebinars.Web
                             );
                     }
                 }
-                stateService.SetValue("rec", recordedWebinarsListItems);
+                StateService.SetValue("rec", recordedWebinarsListItems);
             }
         }
     }

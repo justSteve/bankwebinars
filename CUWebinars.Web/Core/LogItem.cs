@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CUWebinars.Web.Utils
+namespace CUWebinars.Web.Core
 {
     public sealed class LogItem : Microsoft.WindowsAzure.StorageClient.TableServiceEntity
     {

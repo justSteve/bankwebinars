@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Security;
 
-namespace CUWebinars.Web.Utils
+namespace CUWebinars.Web.Core
 {
     /// <summary>
     /// Provides a default pattern to access the current user in the session, identified

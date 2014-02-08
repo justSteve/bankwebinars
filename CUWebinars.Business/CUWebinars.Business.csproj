@@ -66,6 +66,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountService\IMembershipService.cs" />
+    <Compile Include="Repository\IAccountRepository.cs" />
+    <Compile Include="Repository\IAffiliateRepository.cs" />
+    <Compile Include="Repository\AffiliateRepository.cs" />
+    <Compile Include="Repository\IWebinarRepository.cs" />
+    <Compile Include="Repository\WebinarRepository.cs" />
     <Compile Include="Services\IOrderManagementService.cs" />
     <Compile Include="AccountService\IUserAccountService.cs" />
     <Compile Include="AccountService\MembershipService.cs" />

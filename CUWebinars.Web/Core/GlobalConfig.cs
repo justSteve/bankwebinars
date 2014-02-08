@@ -27,14 +27,14 @@ namespace CUWebinars.Web.Core
                     throw new ArgumentNullException("AppSettings not found in config file as expected.");
                 }
 
-                uniqueInstance.Tenant = ApplicationSettingsSection["Tenant"];
-                uniqueInstance.WMVRepository = ApplicationSettingsSection["WMVRepository"];
-                uniqueInstance.HandoutRepository = ApplicationSettingsSection["HandoutRepository"];
-                uniqueInstance.ImgRepository = ApplicationSettingsSection["ImgRepository"];
+                UniqueInstance.Tenant = ApplicationSettingsSection["Tenant"];
+                UniqueInstance.WMVRepository = ApplicationSettingsSection["WMVRepository"];
+                UniqueInstance.HandoutRepository = ApplicationSettingsSection["HandoutRepository"];
+                UniqueInstance.ImgRepository = ApplicationSettingsSection["ImgRepository"];
             }
 
             // Private object instantiated with private constructor
-            internal static readonly GlobalConfig uniqueInstance = new GlobalConfig();
+            internal static readonly GlobalConfig UniqueInstance = new GlobalConfig();
         }
 
         // Public static property to get the singleton object
@@ -42,7 +42,7 @@ namespace CUWebinars.Web.Core
         {
             get
             {
-                return GlobalConfigSingletonCreator.uniqueInstance;
+                return GlobalConfigSingletonCreator.UniqueInstance;
             }
         }
     }
