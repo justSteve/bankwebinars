@@ -934,7 +934,9 @@
     <Content Include="EmailTemplates\PasswordChangedEvent_Body.cshtml" />
     <Content Include="EmailTemplates\PasswordChangedEvent_Subject.cshtml" />
     <Content Include="EmailTemplates\PasswordResetRequestedEvent_Subject.cshtml" />
+    <None Include="Properties\PublishProfiles\BankWebinars - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars - Web Deploy.pubxml" />
@@ -970,6 +972,7 @@
     </Content>
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\Web.config">
       <SubType>Designer</SubType>
@@ -1001,9 +1004,7 @@
     <Content Include="Views\Webinar\Partials\AdditionalLocationsOptionView.cshtml" />
     <Content Include="Views\Webinar\Partials\DisplayOptions.cshtml" />
     <Content Include="Views\Webinar\Partials\ResultsGrid.cshtml" />
-    <Content Include="Views\Webinar\Recorded.cshtml" />
     <Content Include="Views\Webinar\SearchWebinars.cshtml" />
-    <Content Include="Views\Webinar\Upcoming.cshtml" />
     <Content Include="Views\Cart\Partials\AdditionalLocationsOrderRowOptionView.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutConfirm.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutContact.cshtml" />
@@ -1075,7 +1076,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>3538</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:5555</IISUrl>
+          <IISUrl>http://localhost:5556</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
