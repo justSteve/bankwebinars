@@ -1,13 +1,12 @@
-﻿using System;
+﻿//http://stackoverflow.com/questions/1710875/better-way-of-doing-strongly-typed-asp-net-mvc-sessions
+using System;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Web;
-using CUWebinars.Web.Data.Repositories.Interfaces;
 using CUWebinars.Business.Models;
-//http://stackoverflow.com/questions/1710875/better-way-of-doing-strongly-typed-asp-net-mvc-sessions
 using CUWebinars.Business.Repository;
 
-namespace CUWebinars.Web.Utils
+namespace CUWebinars.Web.Core
 {
     public class CurrentSession : MySession<WebUser>
     {

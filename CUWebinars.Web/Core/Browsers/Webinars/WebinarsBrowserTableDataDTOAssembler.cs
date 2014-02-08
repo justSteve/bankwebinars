@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using CUWebinars.Web.Services;
-using CUWebinars.Web.Utils;
 using CUWebinars.Business.Models;
 
 namespace CUWebinars.Web.Core.Browsers.Webinars

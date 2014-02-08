@@ -10,7 +10,6 @@
         public string EmailSignature { get; set; }
         public string LoginUrl { get; set; }
         public string VerificationKey { get; set; }
-
         public string Username { get; set; }
     }
 }

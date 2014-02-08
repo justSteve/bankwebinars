@@ -16,7 +16,6 @@ using System.Web.Security;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
-using OrderRepository = CUWebinars.Web.Data.Repositories.OrderRepository;
 using CUWebinars.Web.ViewModel;
 using System.Security.Claims;
 using Thinktecture.IdentityModel.Authorization.Mvc;
@@ -31,14 +30,16 @@ namespace CUWebinars.Web.Controllers
         private TTSWebinarsContext db = new TTSWebinarsContext();
         private IMailService mail;
         public IMembershipService membershipService;
+        private readonly IOrderRepository orderRepository;
         public ILogger Logger { get; set; }
         //public IOrderService orderService;
 
-        public AccountController(IMailService mail, ILogger logger, IMembershipService membershipService)
+        public AccountController(IMailService mail, ILogger logger, IMembershipService membershipService, IOrderRepository orderRepository)
         {
             this.mail = mail;
             this.Logger = logger;
             this.membershipService = membershipService;
+            this.orderRepository = orderRepository;
         }
 
         //
@@ -137,10 +138,10 @@ namespace CUWebinars.Web.Controllers
             //    discountsList, rowsWithDiscount);
 
             ViewData["DiscountMsg"] = "";
-            var repo = new OrderRepository(db);
-            model.Scheduled = repo.SelectOrdersWithScheduledWebinars(currentUser.idUser);
-            model.Recorded = repo.SelectOrdersWithRecordedWebinars(currentUser.idUser);
-            model.Archived = repo.SelectOrdersWithArchivedWebinars(currentUser.idUser);
+            
+            model.Scheduled = orderRepository.SelectOrdersWithScheduledWebinars(currentUser.idUser);
+            model.Recorded = orderRepository.SelectOrdersWithRecordedWebinars(currentUser.idUser);
+            model.Archived = orderRepository.SelectOrdersWithArchivedWebinars(currentUser.idUser);
 
             var optionAndOrderdictionary = model.Scheduled;
             var optionAndOrderdictionarySortedByWebinarDate = optionAndOrderdictionary.OrderBy(f => f.Value.OrderRows.SingleOrDefault().Webinar.Date);

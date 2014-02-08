@@ -1,9 +1,13 @@
+using System.Collections.Generic;
 using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.Repository
 {
     public interface IOrderRepository
     {
-        Order FindOrder(int id);
+        IDictionary<Option, Order> SelectOrdersWithScheduledWebinars(int idUser);
+        IList<Order> Test(int idUser);
+        IList<Order> SelectOrdersWithRecordedWebinars(int idUser);
+        IList<Order> SelectOrdersWithArchivedWebinars(int idUser);
     }
 }

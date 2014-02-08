@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using CUWebinars.Business.Models;
+using CUWebinars.Business.Repository;
+using CUWebinars.Web.Services;
+using Ninject.Extensions.Logging;
 using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
-using CUWebinars.Web.Data.Repositories.Interfaces;
-using CUWebinars.Web.Controllers;
-using CUWebinars.Web.Services;
-using Ninject.Extensions.Logging;
-using CUWebinars.Business.Models;
 
 namespace CUWebinars.Web.Areas.Admin.Controllers
 {
@@ -14,15 +12,15 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
     {
         private TTSWebinarsContext db = new TTSWebinarsContext();
         private IMailService _mail;
-        private readonly IWebinarRepository _repos;
+        private readonly IWebinarRepository _webinarRepository;
         public ILogger Logger { get; set; }
 
         //
         // GET: /Admin/Webinars/
-        public WebinarsController(IMailService mail, IWebinarRepository repos, ILogger logger)
+        public WebinarsController(IMailService mail, IWebinarRepository webinarRepository, ILogger logger)
         {
             _mail = mail;
-            _repos = repos;
+            _webinarRepository = webinarRepository;
             Logger = logger;
         }
 
@@ -31,9 +29,9 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
         //[AcceptVerbs(HttpVerbs.Post)]
         //public ActionResult SendInfo(int ID, FormCollection formValues)
         //{
-        //    IList<Order> orders = _repos.GetOrdersByWebinarForConnectionInfo(ID);
+        //    IList<Order> orders = webinarRepository.GetOrdersByWebinarForConnectionInfo(ID);
 
-        //    new MailController(_mail, _repos, Logger).ConnectionInfoEmail(orders).Deliver();
+        //    new MailController(_mail, webinarRepository, Logger).ConnectionInfoEmail(orders).Deliver();
         //    return RedirectToAction("HostProperties");
         //}
 
