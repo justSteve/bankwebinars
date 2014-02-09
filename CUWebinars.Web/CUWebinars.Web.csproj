@@ -934,14 +934,8 @@
     <Content Include="EmailTemplates\PasswordChangedEvent_Body.cshtml" />
     <Content Include="EmailTemplates\PasswordChangedEvent_Subject.cshtml" />
     <Content Include="EmailTemplates\PasswordResetRequestedEvent_Subject.cshtml" />
-    <None Include="Properties\PublishProfiles\BankWebinars - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy.pubxml" />
-    <None Include="Properties\PublishProfiles\CUWebinars - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars - Web Deploy.pubxml" />
-    <None Include="Properties\PublishProfiles\cuwebinarsstage - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\cuwebinarsstage - Web Deploy.pubxml">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />
@@ -1001,9 +995,7 @@
     <Content Include="Views\Webinar\Partials\AdditionalLocationsOptionView.cshtml" />
     <Content Include="Views\Webinar\Partials\DisplayOptions.cshtml" />
     <Content Include="Views\Webinar\Partials\ResultsGrid.cshtml" />
-    <Content Include="Views\Webinar\Recorded.cshtml" />
     <Content Include="Views\Webinar\SearchWebinars.cshtml" />
-    <Content Include="Views\Webinar\Upcoming.cshtml" />
     <Content Include="Views\Cart\Partials\AdditionalLocationsOrderRowOptionView.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutConfirm.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutContact.cshtml" />
