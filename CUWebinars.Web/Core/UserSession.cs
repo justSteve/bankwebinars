@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Web;
-using CUWebinars.Web.Data.Repositories.Interfaces;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 
-namespace CUWebinars.Web.Utils
+namespace CUWebinars.Web.Core
 {
     public class UserSession : MySession<WebUser>
     {

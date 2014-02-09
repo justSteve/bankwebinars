@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
+using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Data.Repositories.Interfaces;
 using CUWebinars.Web.Core.Browsers.Webinars;
@@ -18,14 +19,14 @@ namespace CUWebinars.Web.Controllers
     {
         private TTSWebinarsContext db = new TTSWebinarsContext();
         private IMailService _mail;
-        private readonly IWebinarRepository _repos;
-        private IOrderManagementService _orderManagementService;
+        private readonly IWebinarRepository _webinarRepository;
+        private readonly IOrderManagementService _orderManagementService;
         public ILogger Logger { get; set; }
 
-        public WebinarController(IMailService mail, IWebinarRepository repos, ILogger logger, IOrderManagementService orderManagementService)
+        public WebinarController(IMailService mail, IWebinarRepository webinarRepository, ILogger logger, IOrderManagementService orderManagementService)
         {
             _mail = mail;
-            _repos = repos;
+            _webinarRepository = webinarRepository;
             Logger = logger;
             _orderManagementService = orderManagementService;
         }
@@ -100,7 +101,7 @@ namespace CUWebinars.Web.Controllers
 
             }
 
-            var webinars = _repos.GetByTopic(ID);
+            var webinars = _webinarRepository.GetByTopic(ID);
             //var dtos = new WebinarDTOAssembler().Entities2DTOs(webinars);
             //return View(dtos);
             return View(webinars);
@@ -117,7 +118,7 @@ namespace CUWebinars.Web.Controllers
         }
         public ActionResult AllActive()
         {
-            var webinars = _repos.GetAllActive();
+            var webinars = _webinarRepository.GetAllActive();
             ViewBag.TopicCaption = " ";
             ViewBag.Title = "All Listed Events for CUWebinars";
             return View(webinars);
@@ -149,7 +150,7 @@ namespace CUWebinars.Web.Controllers
         public ActionResult ShowRecorded(
             [Core.DataTables.WebinarsBrowserRequestModelBinder] WebinarsBrowserRequestModel webinarsBrowserRequest)
         {
-            var webinars = _repos.GetRecorded();
+            var webinars = _webinarRepository.GetRecorded();
             var wList = new List<WebinarsBrowserSearchResultEntryDTO>();
             foreach (var webinar in webinars)
             {
@@ -172,7 +173,7 @@ namespace CUWebinars.Web.Controllers
         public ActionResult ShowAllActive(
             [Core.DataTables.WebinarsBrowserRequestModelBinder] WebinarsBrowserRequestModel webinarsBrowserRequest)
         {
-            var webinars = _repos.GetAllActive();
+            var webinars = _webinarRepository.GetAllActive();
             var wList = new List<WebinarsBrowserSearchResultEntryDTO>();
             foreach (var webinar in webinars)
             {
@@ -196,7 +197,7 @@ namespace CUWebinars.Web.Controllers
         public ActionResult ShowUpcoming(
             [Core.DataTables.WebinarsBrowserRequestModelBinder] WebinarsBrowserRequestModel webinarsBrowserRequest)
         {
-            var webinars = _repos.GetUpcoming();
+            var webinars = _webinarRepository.GetUpcoming();
             var wList = new List<WebinarsBrowserSearchResultEntryDTO>();
             foreach (var webinar in webinars)
             {
@@ -221,7 +222,7 @@ namespace CUWebinars.Web.Controllers
             [Core.DataTables.WebinarsBrowserRequestModelBinder] WebinarsBrowserRequestModel webinarsBrowserRequest)
         {
 
-            var webinars = _repos.GetByTopic(Convert.ToInt32(webinarsBrowserRequest.Search.Replace("TopicID=", "")));
+            var webinars = _webinarRepository.GetByTopic(Convert.ToInt32(webinarsBrowserRequest.Search.Replace("TopicID=", "")));
             var wList = new List<WebinarsBrowserSearchResultEntryDTO>();
             foreach (var webinar in webinars)
             {

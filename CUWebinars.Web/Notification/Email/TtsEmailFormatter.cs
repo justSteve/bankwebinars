@@ -2,10 +2,11 @@
 using System.IO;
 using BrockAllen.MembershipReboot;
 
-namespace CUWebinars.Web.Notification
+namespace CUWebinars.Web.Notification.Email
 {
     public class TtsEmailFormatter : EmailMessageFormatter<UserAccount>
     {
+// ReSharper disable once InconsistentNaming
         private string pathToTemplates;
 
         public TtsEmailFormatter(ApplicationInformation appInfo)
@@ -16,7 +17,7 @@ namespace CUWebinars.Web.Notification
 
         public string PathToRoot 
         {
-            set { pathToTemplates = Path.Combine(value, "EmailTemplates"); }
+            set { pathToTemplates = Path.Combine(value, "Notification/Email/EmailTemplates"); }
         }
 
         

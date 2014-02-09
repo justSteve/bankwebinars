@@ -1,10 +1,11 @@
-﻿using Microsoft.WindowsAzure;
+﻿using log4net.Appender;
+using log4net.Core;
+using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using Microsoft.WindowsAzure.StorageClient;
-using log4net.Appender;
-using log4net.Core;
+
 //from http://axilis.hr/log4net-windows-azure/
-namespace CUWebinars.Web.Utils
+namespace CUWebinars.Web.Core
 {
     public class AzureTableAppender : AppenderSkeleton
     {

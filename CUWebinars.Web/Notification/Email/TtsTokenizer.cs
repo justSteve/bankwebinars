@@ -3,7 +3,7 @@ using System.IO;
 using BrockAllen.MembershipReboot;
 using RazorEngine.Templating;
 
-namespace CUWebinars.Web.Notification
+namespace CUWebinars.Web.Notification.Email
 {
     public class TtsTokenizer : EmailMessageFormatter.Tokenizer
     {

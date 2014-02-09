@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ActionMailer.Net.Mvc;
+using CUWebinars.Business.Repository;
 using CUWebinars.Web.Data.Repositories.Interfaces;
 using CUWebinars.Web.Services;
 using Ninject.Extensions.Logging;
@@ -12,12 +13,12 @@ namespace CUWebinars.Web.Controllers
     {
         private TTSWebinarsContext db = new TTSWebinarsContext();
         private IMailService _mail;
-        private readonly IWebinarRepository _repos;
+        private readonly IWebinarRepository webinarRepository;
         public ILogger Logger { get; set; }
-        public MailController(IMailService mail, IWebinarRepository repos, ILogger logger)
+        public MailController(IMailService mail, IWebinarRepository webinarRepository, ILogger logger)
         {
             _mail = mail;
-            _repos = repos;
+            this.webinarRepository = webinarRepository;
             Logger = logger;
         }
 

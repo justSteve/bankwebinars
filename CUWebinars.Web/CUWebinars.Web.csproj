@@ -380,18 +380,6 @@
     <Compile Include="Core\GlobalConfig.cs" />
     <Compile Include="Core\IDTOAssembler.cs" />
     <Compile Include="Core\MyWebinarsDTO.cs" />
-    <Compile Include="Data\Repositories\AccountRepository.cs" />
-    <Compile Include="Data\Repositories\AffiliateRepository.cs" />
-    <Compile Include="Data\Repositories\Interfaces\IOrderRepository.cs" />
-    <Compile Include="Data\Repositories\OrderRepository.cs" />
-    <Compile Include="Data\Repositories\Interfaces\IAccountRepository.cs" />
-    <Compile Include="Data\Repositories\Interfaces\IAffiliateRepository.cs" />
-    <Compile Include="Data\Repositories\Interfaces\IOptionsRepository.cs" />
-    <Compile Include="Data\Repositories\Interfaces\IPresenterRepository.cs" />
-    <Compile Include="Data\Repositories\Interfaces\IWebinarRepository.cs" />
-    <Compile Include="Data\Repositories\OptionsRepository.cs" />
-    <Compile Include="Data\Repositories\PresenterRepository.cs" />
-    <Compile Include="Data\Repositories\WebinarRepository.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -410,9 +398,9 @@
     <Compile Include="Models\ManageModel.cs" />
     <Compile Include="Models\RegisterModel.cs" />
     <Compile Include="Notification\Notification.cs" />
-    <Compile Include="Notification\TtsEmailFormatter.cs" />
-    <Compile Include="Notification\TtsSmtpMessageDelivery.cs" />
-    <Compile Include="Notification\TtsTokenizer.cs" />
+    <Compile Include="Notification\Email\TtsEmailFormatter.cs" />
+    <Compile Include="Notification\Email\TtsSmtpMessageDelivery.cs" />
+    <Compile Include="Notification\Email\TtsTokenizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IMailService.cs" />
     <Compile Include="Services\IStateService.cs" />
@@ -420,8 +408,11 @@
     <Compile Include="Services\MailServiceMock.cs" />
     <Compile Include="Services\StateService.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="Utils\AzureTableAppender.cs" />
-    <Compile Include="Utils\LogItem.cs" />
+    <Compile Include="Core\AzureTableAppender.cs" />
+    <Compile Include="Core\CurrentSession.cs" />
+    <Compile Include="Core\LogItem.cs" />
+    <Compile Include="Core\MySession.cs" />
+    <Compile Include="Core\UserSession.cs" />
     <Compile Include="ViewModel\ConnectionInfoViewModel.cs" />
     <Compile Include="ViewModel\RegisterViewModel.cs" />
     <Compile Include="ViewModel\WebinarDetailsViewModel.cs" />
@@ -862,12 +853,12 @@
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
-    <Content Include="EmailTemplates\AccountCreatedEvent_Body.cshtml" />
-    <Content Include="EmailTemplates\AccountCreatedEvent_Subject.cshtml" />
-    <Content Include="EmailTemplates\EmailChangedEvent_Body.cshtml" />
-    <Content Include="EmailTemplates\EmailChangedEvent_Subject.cshtml" />
-    <None Include="EmailTemplates\EmailChangeRequestedEvent_Body.cshtml" />
-    <None Include="EmailTemplates\EmailChangeRequestedEvent_Subject.cshtml" />
+    <Content Include="Notification\Email\EmailTemplates\AccountCreatedEvent_Body.cshtml" />
+    <Content Include="Notification\Email\EmailTemplates\AccountCreatedEvent_Subject.cshtml" />
+    <Content Include="Notification\Email\EmailTemplates\EmailChangedEvent_Body.cshtml" />
+    <Content Include="Notification\Email\EmailTemplates\EmailChangedEvent_Subject.cshtml" />
+    <None Include="Notification\Email\EmailTemplates\EmailChangeRequestedEvent_Body.cshtml" />
+    <None Include="Notification\Email\EmailTemplates\EmailChangeRequestedEvent_Subject.cshtml" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css">
@@ -930,10 +921,12 @@
     <Content Include="Content\css\BootstrapTemplates\style.css.map">
       <DependentUpon>style.css</DependentUpon>
     </Content>
-    <Content Include="EmailTemplates\PasswordResetRequestedEvent_Body.cshtml" />
-    <Content Include="EmailTemplates\PasswordChangedEvent_Body.cshtml" />
-    <Content Include="EmailTemplates\PasswordChangedEvent_Subject.cshtml" />
-    <Content Include="EmailTemplates\PasswordResetRequestedEvent_Subject.cshtml" />
+    <Content Include="Notification\Email\EmailTemplates\PasswordResetRequestedEvent_Body.cshtml" />
+    <Content Include="Notification\Email\EmailTemplates\PasswordChangedEvent_Body.cshtml" />
+    <Content Include="Notification\Email\EmailTemplates\PasswordChangedEvent_Subject.cshtml" />
+    <Content Include="Notification\Email\EmailTemplates\PasswordResetRequestedEvent_Subject.cshtml" />
+    <None Include="Properties\PublishProfiles\BankWebinars - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars - Web Deploy.pubxml" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -964,6 +957,7 @@
     </Content>
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\Web.config">
       <SubType>Designer</SubType>
@@ -1039,6 +1033,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Admin\Models\" />
     <Folder Include="Images\" />
+    <Folder Include="Utils\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -1067,7 +1062,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>3538</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:5555</IISUrl>
+          <IISUrl>http://localhost:5556</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

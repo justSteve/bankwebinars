@@ -1,45 +1,46 @@
-﻿using System.Collections.Generic;
+﻿using CUWebinars.Business.Models;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using CUWebinars.Web.Data.Repositories.Interfaces;
-using CUWebinars.Business.Core;
-using CUWebinars.Business.Models;
-using log4net;
 
-
-namespace CUWebinars.Web.Data.Repositories
+namespace CUWebinars.Business.Repository
 {
-    public class WebinarRepository : IWebinarRepository
+    public class WebinarRepository : TTSWebinarsRepository<TTSWebinarsContext, Webinar>,  IWebinarRepository
     {
-        TTSWebinarsContext _ctx;
-        public static ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
-        public WebinarRepository(TTSWebinarsContext ctx)
+        public WebinarRepository()
         {
-            _ctx = ctx;
+            
         }
+
+        public WebinarRepository(TTSWebinarsContext context)
+            : base(context)
+        {
+            
+        }
+
+        //public static ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public IQueryable<Webinar> GetUpcoming()
         {
-            return _ctx.Webinars.Where(w => w.Status == WebinarStatus.Scheduled)
+            return items.Where(w => w.Status == WebinarStatus.Scheduled)
                     .OrderByDescending(w => w.Date);
         }
 
         public IQueryable<Webinar> GetAllActive()
         {
-            return _ctx.Webinars.Where(w => w.Status == WebinarStatus.Scheduled || w.Status == WebinarStatus.Recorded);
+            return items.Where(w => w.Status == WebinarStatus.Scheduled || w.Status == WebinarStatus.Recorded);
         }
 
 
         public IQueryable<Webinar> GetRecorded()
         {
-            return _ctx.Webinars.Where(w => w.Status == WebinarStatus.Recorded)
+            return items.Where(w => w.Status == WebinarStatus.Recorded)
                 .OrderByDescending(w => w.Date);
         }
 
         public IQueryable<Order> GetOrdersByWebinar(int webinarId)
         {
-            return _ctx.Orders.Where(o => o.OrderRows.Single().Webinar.idWebinar == webinarId
+            return ((TTSWebinarsContext)db).Orders.Where(o => o.OrderRows.Single().Webinar.idWebinar == webinarId
                     && (o.OrderRows.Single().Status == OrderRowStatus.Billed
                         || o.OrderRows.Single().Status == OrderRowStatus.Paid
                         || o.OrderRows.Single().Status == OrderRowStatus.Submitted));
@@ -47,10 +48,10 @@ namespace CUWebinars.Web.Data.Repositories
 
         public IQueryable<Webinar> GetByTopic(int topicId)
         {
-            var webinars = _ctx.Webinars.Where(w => w.WebinarTopicXrefs
+            var webinars = items.Where(w => w.WebinarTopicXrefs
                 .Any(t => t.idTopic == topicId)
                     && (w.Status == WebinarStatus.Recorded || w.Status == WebinarStatus.Scheduled));
-            Logger.Debug("TopicId=" + topicId);
+            //Logger.Debug("TopicId=" + topicId); 
             return webinars;
         }
 
@@ -63,7 +64,7 @@ namespace CUWebinars.Web.Data.Repositories
         {
             //resolves: Impediment 6:Implement GetCurrentOptions Method
             var paramWebinarID = new SqlParameter("idWebinar", SqlDbType.Int) { Value = idWebinar };
-            List<Option> myOptions = _ctx.Options.SqlQuery(
+            List<Option> myOptions = ((TTSWebinarsContext)db).Options.SqlQuery(
                 "dbo.GetWebinarsOptions @idWebinar", paramWebinarID).ToList();
 
             return myOptions;
@@ -81,7 +82,7 @@ namespace CUWebinars.Web.Data.Repositories
                     //TODO: log this exception condition
                     continue;
                 }
-                if (_ctx.Options.Find((int)row.RegistrationType).ShowLiveNotifications == "No"
+                if (((TTSWebinarsContext)db).Options.Find((int)row.RegistrationType).ShowLiveNotifications == "No"
                     && row.Status == OrderRowStatus.Abandoned
                     || row.Status == OrderRowStatus.InProcess
                     || row.Status == OrderRowStatus.Canceled)
@@ -93,7 +94,7 @@ namespace CUWebinars.Web.Data.Repositories
             return orders2Send;
             //return (from order in orders let row = order.OrderRows.SingleOrDefault()
             //        where row != null 
-            //        where (_ctx.Options.Find((int) row.RegistrationType).ShowLiveNotifications != "No" 
+            //        where (((TTSWebinarsContext)db).Options.Find((int) row.RegistrationType).ShowLiveNotifications != "No" 
             //        || row.Status != OrderRowStatus.Abandoned) 
             //        && row.Status != OrderRowStatus.InProcess 
             //        && row.Status != OrderRowStatus.Canceled select order).ToList();

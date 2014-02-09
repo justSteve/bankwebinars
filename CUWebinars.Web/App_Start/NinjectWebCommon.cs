@@ -69,7 +69,7 @@ namespace CUWebinars.Web.App_Start
             kernel.Bind<IAffiliateRepository>().To<AffiliateRepository>();
             kernel.Bind<IWebinarRepository>().To<WebinarRepository>();
             //kernel.Bind<IAccountRepository>().To<AccountRepository>().InRequestScope();
-            kernel.Bind<IPresenterRepository>().To<PresenterRepository>();
+            //kernel.Bind<IPresenterRepository>().To<PresenterRepository>();
             kernel.Bind<TTSWebinarsContext>().To<TTSWebinarsContext>();
             kernel.Bind<IWebUserRepository>().To<WebUserRepository>();
             kernel.Bind<IRefDataRepository>().To<RefDataRepository>();
