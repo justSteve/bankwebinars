@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		WebEssentials-Settings.json = WebEssentials-Settings.json
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUWebinars.NotificationSystem", "CUWebinars.NotificationSystem\CUWebinars.NotificationSystem.csproj", "{281C6443-2348-4578-9704-2F953CD3AF87}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{D4250C01-6EE8-4D3C-AE39-9CD038422210}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4250C01-6EE8-4D3C-AE39-9CD038422210}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4250C01-6EE8-4D3C-AE39-9CD038422210}.Release|Any CPU.Build.0 = Release|Any CPU
+		{281C6443-2348-4578-9704-2F953CD3AF87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{281C6443-2348-4578-9704-2F953CD3AF87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{281C6443-2348-4578-9704-2F953CD3AF87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{281C6443-2348-4578-9704-2F953CD3AF87}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
