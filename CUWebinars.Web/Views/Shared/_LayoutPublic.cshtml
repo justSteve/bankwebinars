@@ -74,7 +74,7 @@
 <html class="no-js" lang="en" dir="ltr">
 <!--<![endif]-->
 <head>
-    <!--Start of Zopim Live Chat Script
+    <!--Start of Zopim Live Chat Script-->
     <script type="text/javascript">
         window.$zopim || (function (d, s) {
             var z = $zopim = function (c) { z._.push(c) }, $ = z.s =
@@ -85,7 +85,7 @@
             $.src = '//cdn.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU'; z.t = +new Date; $.
             type = 'text/javascript'; e.parentNode.insertBefore($, e)
         })(document, 'script');
-    </script>-->
+    </script>
     <!--End of Zopim Live Chat Script-->
 
     <title>@ViewBag.Title</title>
@@ -161,34 +161,7 @@
     <!--end mobile navigation trigger-->
     <section class="container preheader">
 
-        <!--
-            this section to be displayed only if current user = Admin
-            -->
-        <div class="container">
-            @*@Html.Raw(currentAffiliate.WebBanner)*@
 
-            <div class="row">
-                <div class="span2">
-                   Branding = @subdomainBranding<br />
-                    @*@initialQueryString<br />*@
-
-                </div>
-                <div class="span2">
-                    User's ID  = @currentUserID<br />
-
-                </div>
-                <div class="span3">
-                    Session Affiliate  = @currentUserAffiliateFullName<br />
-                    @firstPage
-
-                </div>
-                <div class="span3">
-                    SessionID  = @sessionID<br />
-                    AffiliateSessionSource  = @affiliateSessionSource<br />
-
-                </div>
-            </div>
-        </div>
 
 
         <!--this is the login for the user-->

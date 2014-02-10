@@ -76,9 +76,13 @@ namespace CUWebinars.Business.AccountService
             string accountStatus = null
             )
         {
+            //TODO: Needs another change for email in use condition
+            //   or a bulletproof method of ensuring that for every Membership UserAccount created
+            //   a WebUser account as also been created.
             var account = userAccountService.CreateAccount(tenant, userName, password, email);
             userAccountService.AddClaim(account.ID, CUWebinars.Business.Constants.ClaimTypes.FullName, string.Format("{0} {1}", firstName, lastName));
             userAccountService.AddClaim(account.ID, CUWebinars.Business.Constants.ClaimTypes.Role, "WebUser");
+            if (idUserImported == 0) idUserImported = null;
 
             WebUser webUser = new WebUser
             {

@@ -928,12 +928,7 @@
     <None Include="Properties\PublishProfiles\BankWebinars - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy.pubxml" />
-    <None Include="Properties\PublishProfiles\CUWebinars - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars - Web Deploy.pubxml" />
-    <None Include="Properties\PublishProfiles\cuwebinarsstage - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\cuwebinarsstage - Web Deploy.pubxml">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />

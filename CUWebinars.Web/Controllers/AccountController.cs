@@ -56,7 +56,7 @@ namespace CUWebinars.Web.Controllers
                 var checkIfUsed = membershipService.GetUserByEmail(model.Email);
                 if (checkIfUsed != null)
                 {
-                    return "email exists";
+                    return checkIfUsed.idUser.ToString();
                 }
                 
                 // Attempt to register the user
@@ -102,8 +102,8 @@ namespace CUWebinars.Web.Controllers
                     var result = membershipService.CreateUser(globalConfig.Tenant,
                         model.FirstName
                         , model.LastName
-                        , model.FirstName + ' ' + model.LastName
-                        , model.LastName.ToLower()
+                        , model.Email
+                        , model.LastName.ToLower() // password
                         , model.Email
                         , USTimeZone.Central
                         , model.UserType
@@ -471,7 +471,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     Logger.Error("dupe email attempt: " + model.RegisterFields.Email);
                     ModelState.AddModelError("Email", "That email already exists. Would you like to reset the password?");
-                    return View(" ", model);
+                    return View("_CreateUserForm", model);
                 }
                 
                 var myInstitution = membershipService.ProcessInstitutionForUser(model.RegisterFields.Institution.Trim(),

@@ -159,7 +159,9 @@
     <None Include="SQLSeeding\BACPACs\BankWebinars.bacpac" />
     <None Include="SQLSeeding\BACPACs\BankWebinars2.bacpac" />
     <None Include="SQLSeeding\BACPACs\BankWebinarsSeeder.bacpac" />
+    <None Include="SQLSeeding\BACPACs\CUWebinarsV3.bacpac" />
     <None Include="SQLSeeding\BACPACs\MembershipReboot.bacpac" />
+    <None Include="SQLSeeding\BACPACs\MembershipReboot.old" />
     <None Include="SQLSeeding\BACPACs\TTSDatabase-2014-2-7-0-53.bacpac" />
   </ItemGroup>
   <ItemGroup>
