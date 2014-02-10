@@ -1,10 +1,12 @@
 ﻿@using System.Linq
 
+
+
 @model IEnumerable<Webinar>
 
 @{
     Layout = "~/Views/Shared/_LayoutPublic.cshtml";
-    List<Webinar> webinars = Model.ToList();
+    var webinars = Model;
     var rowsData = new List<object>();
     //foreach (var entry in webinars)
     //{

@@ -35,9 +35,14 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Index()
         {
-            var webinars = db.Webinars.Include(w => w.Presenter).Include(t => t.WebinarTopicXrefs);
+            var webinars = _webinarRepository.GetAllActive();
+            ViewBag.TopicCaption = " ";
+            ViewBag.Title = "All Listed Events for CUWebinars";
 
-            return View(webinars.ToList());
+            webinars = _webinarRepository.GetUpcoming().OrderBy(w => w.Date);
+            ViewBag.Title = "All Upcoming Events for CUWebinars";
+
+            return View(webinars);
         }
 
         public ActionResult ListByTopic(int ID)
@@ -98,7 +103,6 @@ namespace CUWebinars.Web.Controllers
                     ViewBag.TopicCaption = "Teller ";
                     ViewBag.Title = "CUWebinars related to Teller ";
                     break;
-
             }
 
             var webinars = _webinarRepository.GetByTopic(ID);
@@ -106,116 +110,33 @@ namespace CUWebinars.Web.Controllers
             //return View(dtos);
             return View(webinars);
         }
-        public ActionResult Upcoming()
-        {
-            Session["searchTerm"] = "";
 
-            Session["IncludeRecorded"] = false;
-            Session["IncludeUpcoming"] = true;
-            Session["IncludeArchived"] = false;
-
-            return View();
-        }
-        public ActionResult AllActive()
+        public ActionResult AllActive(string eventsToShow)
         {
             var webinars = _webinarRepository.GetAllActive();
             ViewBag.TopicCaption = " ";
             ViewBag.Title = "All Listed Events for CUWebinars";
+            if (eventsToShow == "upcoming")
+            {
+                webinars = _webinarRepository.GetUpcoming().OrderBy(w => w.Date);
+                ViewBag.Title = "All Upcoming Events for CUWebinars";
+            }
+            if (eventsToShow == "recorded")
+            {
+                webinars = _webinarRepository.GetRecorded().OrderBy(w => w.Date);
+                ViewBag.Title = "All Recorded Events for CUWebinars";
+            }
+
             return View(webinars);
-            //Session["searchTerm"] = "";
-
-            //Session["IncludeRecorded"] = false;
-            //Session["IncludeUpcoming"] = true;
-            //Session["IncludeArchived"] = false;
-
-            //return View();
-        }
-        public ActionResult Recorded([Core.DataTables.WebinarsBrowserRequestModelBinder] WebinarsBrowserRequestModel webinarsBrowserRequest)
-        {
-            Session["searchTerm"] = "";
-            Session["IncludeArchived"] = false;
-            Session["IncludeRecorded"] = true;
-            Session["IncludeUpcoming"] = false;
-            return View();
-            //return RedirectToAction("ShowRecorded");
 
         }
+
         public ActionResult SearchWebinars()
         {
             if (Request["searchFor"] != null)
                 Session["searchTerm"] = Request["searchFor"].ToString();
 
             return View("~/Views/Webinar/SearchWebinars.cshtml");
-        }
-        public ActionResult ShowRecorded(
-            [Core.DataTables.WebinarsBrowserRequestModelBinder] WebinarsBrowserRequestModel webinarsBrowserRequest)
-        {
-            var webinars = _webinarRepository.GetRecorded();
-            var wList = new List<WebinarsBrowserSearchResultEntryDTO>();
-            foreach (var webinar in webinars)
-            {
-                var item = new WebinarsBrowserSearchResultEntryDTO();
-                item.Webinar = webinar;
-                item.RegistrationsCount = 0;
-                wList.Add(item);
-            }
-
-            WebinarsBrowserSearchResultDTO searchResult = new WebinarsBrowserSearchResultDTO();
-            searchResult.Entries = wList;
-            searchResult.FoundCount = 2;
-            searchResult.TotalCount = webinars.Count();
-
-            var data = new WebinarsSearchDTOAssembler(webinarsBrowserRequest.EchoId).Entity2DTO(searchResult);
-            return Json(data, JsonRequestBehavior.AllowGet);
-
-            //return View("~/Views/Webinar/OnDemand.cshtml");
-        }
-        public ActionResult ShowAllActive(
-            [Core.DataTables.WebinarsBrowserRequestModelBinder] WebinarsBrowserRequestModel webinarsBrowserRequest)
-        {
-            var webinars = _webinarRepository.GetAllActive();
-            var wList = new List<WebinarsBrowserSearchResultEntryDTO>();
-            foreach (var webinar in webinars)
-            {
-                var item = new WebinarsBrowserSearchResultEntryDTO();
-                item.Webinar = webinar;
-                item.RegistrationsCount = 0;
-                wList.Add(item);
-            }
-
-            WebinarsBrowserSearchResultDTO searchResult = new WebinarsBrowserSearchResultDTO();
-            searchResult.Entries = wList;
-            searchResult.FoundCount = 2;
-            searchResult.TotalCount = webinars.Count();
-
-            var data = new WebinarsSearchDTOAssembler(webinarsBrowserRequest.EchoId).Entity2DTO(searchResult);
-            return Json(data, JsonRequestBehavior.AllowGet);
-
-            //return View("~/Views/Webinar/OnDemand.cshtml");
-        }
-
-        public ActionResult ShowUpcoming(
-            [Core.DataTables.WebinarsBrowserRequestModelBinder] WebinarsBrowserRequestModel webinarsBrowserRequest)
-        {
-            var webinars = _webinarRepository.GetUpcoming();
-            var wList = new List<WebinarsBrowserSearchResultEntryDTO>();
-            foreach (var webinar in webinars)
-            {
-                var item = new WebinarsBrowserSearchResultEntryDTO();
-                item.Webinar = webinar;
-                item.RegistrationsCount = 0;
-                wList.Add(item);
-            }
-
-            WebinarsBrowserSearchResultDTO searchResult = new WebinarsBrowserSearchResultDTO();
-            searchResult.Entries = wList;
-            searchResult.FoundCount = 2;
-            searchResult.TotalCount = webinars.Count();
-
-            var data = new WebinarsSearchDTOAssembler(webinarsBrowserRequest.EchoId).Entity2DTO(searchResult);
-            return Json(data, JsonRequestBehavior.AllowGet);
-
-            //return View("~/Views/Webinar/OnDemand.cshtml");
         }
 
         public ActionResult SearchByTopic(
@@ -243,12 +164,14 @@ namespace CUWebinars.Web.Controllers
         public ActionResult Details(int id)
         {
             ViewBag.PageStyleType = "holy-grail-three-columns";
-            
+
             var model = new WebinarDetailsViewModel()
             {
                 Webinar = db.Webinars.Find(id)
-                ,Options = _orderManagementService.GetOptionsByWebinarId(id)
-                ,ConnectionInfo = ""
+                ,
+                Options = _orderManagementService.GetOptionsByWebinarId(id)
+                ,
+                ConnectionInfo = ""
             };
 
             if (model.Webinar == null)
