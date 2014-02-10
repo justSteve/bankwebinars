@@ -72,10 +72,11 @@ namespace CUWebinars.Web.App_Start
             //kernel.Bind<IPresenterRepository>().To<PresenterRepository>();
             kernel.Bind<TTSWebinarsContext>().To<TTSWebinarsContext>();
             kernel.Bind<IWebUserRepository>().To<WebUserRepository>();
+            kernel.Bind<IOrderRepository>().To<OrderRepository>();
             kernel.Bind<IRefDataRepository>().To<RefDataRepository>();
             kernel.Bind<IInstitutionRepository>().To<InstitutionRepository>();
             kernel.Bind<IUserAccountRepository>().To<DefaultUserAccountRepository>();
-            kernel.Bind<CUWebinars.Business.Repository.IOptionRepository>().To<CUWebinars.Business.Repository.OptionRepository>();
+            kernel.Bind<IOptionRepository>().To<OptionRepository>();
             kernel.Bind<IOrderManagementService>().To<OrderManagementService>();
 
             kernel.Bind<UserAccountService>().ToMethod(ctx =>
