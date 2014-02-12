@@ -384,6 +384,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\AppHelper.cs" />
     <Compile Include="Helpers\ClaimsExtensions.cs" />
     <Compile Include="Helpers\IdentityConstants.cs" />
     <Compile Include="Helpers\WebUiConstants.cs" />
@@ -611,6 +612,7 @@
     <Content Include="Content\css\stylesEmail.css" />
     <Content Include="Content\css\TTSstyles.css" />
     <Content Include="Content\css\ui.jqgrid.css" />
+    <Content Include="Content\css\waitButton.css" />
     <Content Include="Content\img\Auditing.jpg" />
     <Content Include="Content\img\blankImage.gif" />
     <Content Include="Content\img\BTN_Auditing1.jpg" />
@@ -853,7 +855,10 @@
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
-    <Content Include="Notification\Email\EmailTemplates\AccountCreatedEvent_Body.cshtml" />
+    <Content Include="Notification\Email\EmailTemplates\AccountCreatedEvent_Body.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Notification\Email\EmailTemplates\RecordingPostedEventBody.cshtml" />
     <Content Include="Notification\Email\EmailTemplates\AccountCreatedEvent_Subject.cshtml" />
     <Content Include="Notification\Email\EmailTemplates\EmailChangedEvent_Body.cshtml" />
     <Content Include="Notification\Email\EmailTemplates\EmailChangedEvent_Subject.cshtml" />
@@ -869,6 +874,7 @@
     <Content Include="Scripts\app\EditOrder.js" />
     <Content Include="Scripts\app\Main.js" />
     <Content Include="Scripts\app\Main.ts" />
+    <Content Include="Scripts\app\waitButton.js" />
     <Content Include="Scripts\app\web-user-details-manage.js" />
     <Content Include="Scripts\app\web-user-details-register.js" />
     <Content Include="Scripts\bootstrap-modal.js" />
@@ -933,6 +939,8 @@
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />
     <Content Include="Scripts\jquery-1.8.2.min.js" />
+    <Content Include="Scripts\jquery-1.9.1.min.js" />
+    <Content Include="Scripts\jquery-ui-1.10.3.min.js" />
     <Content Include="Scripts\jquery-ui-1.8.24.js" />
     <Content Include="Scripts\jquery-ui-1.8.24.min.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />

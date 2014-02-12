@@ -35,23 +35,140 @@
                 SetShippingToBilling();
             }
         });
+        $("form#checkEmail").submit(function () {
 
-        $('.accordion-group').each(function () {
-            var topcontainer = $(this);
-            topcontainer.find('input:last').each(function () {
-                $(this).blur(function () {
-                    //swap slideup and slidedown for 'collapse' as appropriate
-                    var nextag = topcontainer.next('.accordion-group');
-                    var lastag = $('.accordion-group').last();
-                    if (topcontainer.is(lastag)) {
-                        var nextag = $('.accordion-group').first();
+            var jsonUrl = "/Account/CheckEmail";
+            var q = $("#emailChecker").val();
+            if (q.length == 0) {
+                $("#RegisterFields_Email").focus();
+            } else {
+
+                $.ajax({
+                    type: 'GET',
+                    cache: false,
+                    url: jsonUrl,
+                    data: { email: q },
+                    beforeSend: function () {
+                        // this is where we append a loading image
+                        $('#lableEmail').html('<div class="btn-warning style="width: 400px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</div>');
+                    },
+                    success: function (data) {
+                        // successful request; do something with the data
+                        if (data.success == "foundNothing") {
+                            $('#collapseEmail').collapse('toggle');
+                            $('#collapseZip').collapse('toggle');
+                            $('#lableEmail').html('<div class="btn-success" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + q + '</b>&nbsp; is recorded.</div>');
+                        }
+                        if (data.success == "foundInstitution") {
+                            $('#lableEmail').html('<div class="btn-success" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + q + '</b>&nbsp; is recorded.</div>');
+                            $('#wrapEmail').html('<h3>Login to existing account?</h3><p>Email: <input id="Email" name="Email" value="' + q + '" type="text"> <br>Password: <input id="Password" name="Password" type="password"><br><input type="button" class="btn-info btn" id="submitLogin" value="Login" /></p><h3>Or...</h3><p>We can email you a link that will reset your password. <input type="button" class="btn btn-danger" id="resetPassword" value="Reset Password" /></p>');
+                        }
+
+                        if (data.success == "foundExistingEmail") {
+                            $('#ResetPasswordForm input[name=Email]').val(q);
+                            $('#lableEmail').html('<div class="btn-danger" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + q + '</b>&nbsp; is already on file.</div>');
+                            $('#wrapEmail').html('<h3>Login to existing account?</h3><p>Email: <input id="Email" name="Email" value="' + q + '" type="text"> <br>Password: <input id="Password" name="Password" type="password"><br><input type="button" class="btn-info btn" id="submitLogin" value="Login" /></p><h3>Or...</h3><p>We can email you a link that will reset your password. <input type="button" class="btn btn-danger" id="resetPassword" value="Reset Password" /></p>');
+                        }
+                        //$(data).each(function (i) {
+                        //    $('#wrapEmail').html('<h4>' + $(this).find('title').text() + '</h4><p>' + $(this).find('link').text() + '</p>');
+                        //});
+
+                    },
+                    error: function () {
+                        // failed request; give feedback to user
+                        $('#wrapEmail').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
                     }
-                    var showag = nextag.find('.collapse');
-                    var hideag = topcontainer.find('.collapse');
-                    showag.collapse('toggle');
-                    hideag.collapse('toggle');
                 });
-            });
+
+            }
+            return false;
+        });
+        $("form#checkZip").submit(function () {
+
+            var jsonUrl = "/Account/CheckZip";
+            var q = $("#ZipChecker").val();
+            if (q.length == 0) {
+                $("#RegisterFields_Zip").focus();
+            } else {
+                $.ajax({
+                    type: 'GET',
+                    cache: false,
+                    url: jsonUrl,
+                    data: { Zip: q },
+                    beforeSend: function () {
+                        // this is where we append a loading image
+                        $('#lableZip').html('<div class="btn-warning style="width: 400px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Zip...</div>');
+                    },
+                    success: function (data) {
+                        // successful request; do something with the data
+                        if (data.success == "foundNothing") {
+                            $('#collapseZip').collapse('toggle');
+                            $('#collapseZip').collapse('toggle');
+                            $('#lableZip').html('<div class="btn-success" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + q + '</b>&nbsp; is recorded.</div>');
+                        }
+                        if (data.success == "foundInstitution") {
+                            $('#lableZip').html('<div class="btn-success" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + q + '</b>&nbsp; is recorded.</div>');
+                            $('#wrapZip').html('<h3>Login to existing account?</h3><p>Zip: <input id="Zip" name="Zip" value="' + q + '" type="text"> <br>Password: <input id="Password" name="Password" type="password"><br><input type="button" class="btn-info btn" id="submitLogin" value="Login" /></p><h3>Or...</h3><p>We can Zip you a link that will reset your password. <input type="button" class="btn btn-danger" id="resetPassword" value="Reset Password" /></p>');
+                        }
+
+                        if (data.success == "foundExistingZip") {
+                            $('#ResetPasswordForm input[name=Zip]').val(q);
+                            $('#lableZip').html('<div class="btn-danger" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + q + '</b>&nbsp; is already on file.</div>');
+                            $('#wrapZip').html('<h3>Login to existing account?</h3><p>Zip: <input id="Zip" name="Zip" value="' + q + '" type="text"> <br>Password: <input id="Password" name="Password" type="password"><br><input type="button" class="btn-info btn" id="submitLogin" value="Login" /></p><h3>Or...</h3><p>We can Zip you a link that will reset your password. <input type="button" class="btn btn-danger" id="resetPassword" value="Reset Password" /></p>');
+                        }
+                        //$(data).each(function (i) {
+                        //    $('#wrapZip').html('<h4>' + $(this).find('title').text() + '</h4><p>' + $(this).find('link').text() + '</p>');
+                        //});
+
+                    },
+                    error: function () {
+                        // failed request; give feedback to user
+                        $('#wrapZip').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+                    }
+                });
+
+            }
+            return false;
+        });
+
+        $("form#checkInstitution").submit(function () {
+
+            var jsonUrl = "/Account/CheckInstitution";
+            var q = $("#InstitutionChecker").val();
+            if (q.length == 0) {
+                $("#RegisterFields_Institution").focus();
+            } else {
+                //$("#RegisterFields_Institution").html(ajax_load);
+                $.getJSON(
+                    jsonUrl,
+                    { "Institution": q },
+                    function (json) {
+                        var result = "Language code is \"<strong>" + json.responseData.cResult + "\"";
+                        $("#RegisterFields_Institution").html(result);
+                    }
+                );
+            }
+            return false;
+        });
+
+        $('#RegisterFields_Email').change(function () {
+            //alert("hit: " + $('#RegisterFields_Email').val());
+            //  $.getJSON()
+            $('#emailChecker').val($('#RegisterFields_Email').val());
+            $("#checkEmail").submit();
+        });
+        $('#RegisterFields_Institution').change(function () {
+            alert("hit" + $('#RegisterFields_Institution').val());
+            //  $.getJSON()
+            $('#InstitutionChecker').val($('#RegisterFields_Institution').val());
+            $("form#checkInstitution").submit();
+        });
+
+        $('#RegisterFields_Zip').change(function () {
+            alert("hit" + $('#RegisterFields_Zip').val());
+            //  $.getJSON()
+            $('#ZipChecker').val($('#RegisterFields_Zip').val());
+            $("form#checkZip").submit();
         });
 
         $('#FullName').blur(function () {
@@ -120,13 +237,75 @@
 
     @Html.ValidationSummary(true)
     <div class="accordion" id="createUserPanes">
+
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#createUserPanes" href="#collapseEmail">
+                    <span id="lableEmail">Please Enter Your Email Address</span>
+                </a>
+            </div>
+            <div id="collapseEmail" class="accordion-body collapse in">
+                <div class="accordion-inner">
+                    <div class="fieldContainer" id="wrapEmail">
+                        <div class="span1" style="text-align: right;">
+                            Email:
+                        </div>
+                        <div class="span4">
+                            @Html.TextBoxFor(model => model.RegisterFields.Email, new { style = "width: 180px;" })
+                            @Html.ValidationMessageFor(model => model.RegisterFields.Email)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#createUserPanes" href="#collapseZip">
+                    <span id="lableZip">Zip</span>
+                </a>
+            </div>
+            <div id="collapseZip" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <div class="fieldContainer" id="wrapZip">
+                        <div class="span1" style="text-align: right;">
+                            Zip Code:
+                        </div>
+                        <div class="span4">
+                            @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Zip, new { style = "width: 50px;" })
+                            @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.Zip)<br />
+                            <input type="button" value="Have a Non-US Address?" id="nonUSAddress" class="btn btn-mini btn-info" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#createUserPanes" href="#collapseInstitution">
+                    <span id="lableInstitution">Institution</span>
+                </a>
+            </div>
+            <div id="collapseInstitution" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <div class="fieldContainer" id="wrapInstitution">
+                        <div class="span1" style="text-align: right;">
+                            Name of Institution:
+                        </div>
+                        <div class="span4">
+                            @Html.TextBoxFor(model => model.RegisterFields.Institution, new { style = "width: 250px;" })
+                            @Html.ValidationMessageFor(model => model.RegisterFields.Institution)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="accordion-group">
             <div class="accordion-heading">
                 <a class="accordion-toggle" data-toggle="collapse" data-parent="#createUserPanes" href="#collapseBilling">
                     Billing
                 </a>
             </div>
-            <div id="collapseBilling" class="accordion-body collapse in">
+            <div id="collapseBilling" class="accordion-body collapse">
                 <div class="accordion-inner">
                     <div class="fieldContainer" id="getFirstLast">
                         <div class="span1">
@@ -148,16 +327,6 @@
                         </div>
                         <div class="span4">
                             <input type="text" id="FullName" name="FullName" style="width: 240px;" />
-                        </div>
-                    </div>
-
-                    <div class="fieldContainer" id="wrapEmail">
-                        <div class="span1" style="text-align: right;">
-                            Email:
-                        </div>
-                        <div class="span4">
-                            @Html.TextBoxFor(model => model.RegisterFields.Email, new { style = "width: 180px;" })
-                            @Html.ValidationMessageFor(model => model.RegisterFields.Email)
                         </div>
                     </div>
                     <div class="fieldContainer" id="wrapInstitution">
@@ -200,70 +369,6 @@
                             @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.Zip)
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="accordion-group">
-            <div class="accordion-heading">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#createUserPanes" href="#collapseShipping">Shipping</a>
-            </div>
-            <div id="collapseShipping" class="accordion-body collapse">
-                <div class="accordion-inner">
-                    <div>
-                        Same As Billing?
-                        <input type="checkbox" @(SetSameAsBilling) name="sameAsBilling" id="sameAsBilling" />
-                    </div>
-
-                    <div class="fieldContainer">
-                        <div class="span1">Name:</div>
-                        <div class="span4">
-                            <input type="text" id="FullNameShipping" name="FullNameShipping" style="width: 180px;" />
-                        </div>
-                    </div>
-
-                    <div class="fieldContainer" id="wrapPhone">
-                            <div class="span1">Phone:</div>
-                            <div class="span4">
-                                @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.Phone, new { style = "width: 140px;" })
-                                @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.Phone)
-                            </div>
-                        </div>
-                    <div class="fieldContainer" id="wrapAddress">
-                        <div class="span1">
-                            Address:
-                        </div>
-                        <div class="span4">
-                            @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.StreetAddress, new { style = "width: 175px;" })
-                            @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.StreetAddress)&nbsp;&nbsp;
-                            @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.StreetAddress2, new { style = "width: 150px;" })
-                        </div>
-                    </div>
-                    <div class="fieldContainer" id="wrapCity">
-                        <div class="span1">
-                            City:
-                        </div>
-                        <div class="span4">
-                            @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.City, new { style = "width: 140px;" })
-                            @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.City)
-
-                            &nbsp;&nbsp; State: @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.State, new { style = "width: 30px;" })
-                            @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.State)
-                            &nbsp;&nbsp; Zip:
-                            @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.Zip, new { style = "width: 50px;" })
-                            @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.Zip)
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="accordion-group">
-            <div class="accordion-heading">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#createUserPanes" href="#collapseAcct">Account</a>
-            </div>
-            <div id="collapseAcct" class="accordion-body collapse">
-                <div class="accordion-inner">
                     <div class="row">
                         <div class="span1">
                             @Html.LabelFor(m => m.RegisterFields.Password, new { style = "display:inline-block" }):
@@ -307,22 +412,71 @@
                             </select>
                         </div>
                     </div>
-                    @*<div class="fieldContainer">
-                            <div class="span6">
-                                Mailing List:
-                                @Html.CheckBox("FutureMail", Model.RegisterFields.FutureMail)
-                            </div>
-                        </div>*@
+                </div>
+            </div>
+        </div>
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#createUserPanes" href="#collapseShipping">Shipping</a>
+            </div>
+            <div id="collapseShipping" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <div>
+                        Same As Billing?
+                        <input type="checkbox" @(SetSameAsBilling) name="sameAsBilling" id="sameAsBilling" />
+                    </div>
 
+                    <div class="fieldContainer">
+                        <div class="span1">Name:</div>
+                        <div class="span4">
+                            <input type="text" id="FullNameShipping" name="FullNameShipping" style="width: 180px;" />
+                        </div>
+                    </div>
+
+                    <div class="fieldContainer" id="wrapPhone">
+                        <div class="span1">Phone:</div>
+                        <div class="span4">
+                            @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.Phone, new { style = "width: 140px;" })
+                            @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.Phone)
+                        </div>
+                    </div>
+                    <div class="fieldContainer" id="wrapAddress">
+                        <div class="span1">
+                            Address:
+                        </div>
+                        <div class="span4">
+                            @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.StreetAddress, new { style = "width: 175px;" })
+                            @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.StreetAddress)&nbsp;&nbsp;
+                            @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.StreetAddress2, new { style = "width: 150px;" })
+                        </div>
+                    </div>
+                    <div class="fieldContainer" id="wrapCity">
+                        <div class="span1">
+                            City:
+                        </div>
+                        <div class="span4">
+                            @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.City, new { style = "width: 140px;" })
+                            @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.City)
+
+                            &nbsp;&nbsp; State: @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.State, new { style = "width: 30px;" })
+                            @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.State)
+                            &nbsp;&nbsp; Zip:
+                            @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.Zip, new { style = "width: 50px;" })
+                            @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.Zip)
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="form-inline">
-        <div class="btn-group" style="width:160px">&nbsp;</div>
+        <div class="btn-group" style="width: 160px">&nbsp;</div>
         <div class="btn-group">
             <input type="submit" value="Register" class="btn btn-default" />
         </div>
     </div>
-
 }
+<form id="checkEmail"><input type="hidden" name="emailChecker" id="emailChecker" /></form>
+<form id="checkZip"><input type="hidden" name="ZipChecker" id="ZipChecker" /></form>
+<form id="checkInstitution"><input type="hidden" name="InstitutionChecker" id="InstitutionChecker" /></form>

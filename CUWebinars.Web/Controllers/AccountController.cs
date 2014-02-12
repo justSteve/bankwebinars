@@ -49,7 +49,7 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.AllowAnonymous]
         public string Get([FromUri] RegisterModel model)
         {
-            
+
             if (ModelState.IsValid)
             {
                 //first check if email exists
@@ -58,7 +58,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     return checkIfUsed.idUser.ToString();
                 }
-                
+
                 // Attempt to register the user
                 WebUserRepository repo = new WebUserRepository();
                 var myInstitution = membershipService.ProcessInstitutionForUser(model.Institution,
@@ -77,25 +77,25 @@ namespace CUWebinars.Web.Controllers
                 {
                     var billingAddress = new Address();
                     billingAddress.AddressType = Enum.GetName(typeof(AddressType), 0);
-                    billingAddress.City =  Request.QueryString["City"];
-                    billingAddress.Country =  Request.QueryString["Country"];
+                    billingAddress.City = Request.QueryString["City"];
+                    billingAddress.Country = Request.QueryString["Country"];
                     billingAddress.Name = model.FirstName + ' ' + model.LastName;
-                    billingAddress.Phone =  Request.QueryString["Phone"];
-                    billingAddress.State =  Request.QueryString["State"];
-                    billingAddress.StreetAddress =  Request.QueryString["StreetAddress"];
-                    billingAddress.StreetAddress2 =  Request.QueryString["StreetAddress2"];
-                    billingAddress.Zip =  Request.QueryString["Zip"];
+                    billingAddress.Phone = Request.QueryString["Phone"];
+                    billingAddress.State = Request.QueryString["State"];
+                    billingAddress.StreetAddress = Request.QueryString["StreetAddress"];
+                    billingAddress.StreetAddress2 = Request.QueryString["StreetAddress2"];
+                    billingAddress.Zip = Request.QueryString["Zip"];
 
                     var shippingAddress = new Address();
-                    shippingAddress.AddressType = Enum.GetName(typeof(AddressType),  1);
-                    shippingAddress.City =  Request.QueryString["City"];
-                    shippingAddress.Country =  Request.QueryString["Country"];
+                    shippingAddress.AddressType = Enum.GetName(typeof(AddressType), 1);
+                    shippingAddress.City = Request.QueryString["City"];
+                    shippingAddress.Country = Request.QueryString["Country"];
                     shippingAddress.Name = model.FirstName + ' ' + model.LastName;
-                    shippingAddress.Phone =  Request.QueryString["Phone"];
-                    shippingAddress.State =  Request.QueryString["State"];
-                    shippingAddress.StreetAddress =  Request.QueryString["StreetAddress"];
-                    shippingAddress.StreetAddress2 =  Request.QueryString["StreetAddress2"];
-                    shippingAddress.Zip =  Request.QueryString["Zip"];
+                    shippingAddress.Phone = Request.QueryString["Phone"];
+                    shippingAddress.State = Request.QueryString["State"];
+                    shippingAddress.StreetAddress = Request.QueryString["StreetAddress"];
+                    shippingAddress.StreetAddress2 = Request.QueryString["StreetAddress2"];
+                    shippingAddress.Zip = Request.QueryString["Zip"];
 
                     IList<Address> addresses = new List<Address> { billingAddress, shippingAddress };
 
@@ -138,7 +138,7 @@ namespace CUWebinars.Web.Controllers
             //    discountsList, rowsWithDiscount);
 
             ViewData["DiscountMsg"] = "";
-            
+
             model.Scheduled = orderRepository.SelectOrdersWithScheduledWebinars(currentUser.idUser);
             model.Recorded = orderRepository.SelectOrdersWithRecordedWebinars(currentUser.idUser);
             model.Archived = orderRepository.SelectOrdersWithArchivedWebinars(currentUser.idUser);
@@ -160,7 +160,7 @@ namespace CUWebinars.Web.Controllers
             return View("MyWebinars", model);
         }
 
-        [ClaimsAuthorize(Roles="Admin")]
+        [ClaimsAuthorize(Roles = "Admin")]
         public ActionResult Manage(ManageMessageId? message)
         {
             ManageModel manageModel = new ManageModel
@@ -225,7 +225,7 @@ namespace CUWebinars.Web.Controllers
             var billingAddress = new Address
             {
                 StreetAddress = billingAddressFields.StreetAddress.Trim(),
-                StreetAddress2 = billingAddressFields.StreetAddress2 == null ? billingAddressFields.StreetAddress2 : billingAddressFields.StreetAddress2.Trim(), 
+                StreetAddress2 = billingAddressFields.StreetAddress2 == null ? billingAddressFields.StreetAddress2 : billingAddressFields.StreetAddress2.Trim(),
                 State = billingAddressFields.State.Trim(),
                 City = billingAddressFields.City.Trim(),
                 Country = billingAddressFields.Country.Trim(),
@@ -247,7 +247,7 @@ namespace CUWebinars.Web.Controllers
             };
 
             membershipService.UpdateUserDetails(globalConfig.Tenant,
-                updateFields.FirstName.Trim(), 
+                updateFields.FirstName.Trim(),
                 updateFields.LastName.Trim(),
                 updateFields.Password,
                 updateFields.Email.Trim(),
@@ -447,10 +447,47 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
-
-        //
         // POST: /Account/Register
+        [System.Web.Mvc.HttpGet]
+        [System.Web.Mvc.AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        public JsonResult CheckInstitution(string institution)
+        {
+            Dictionary<string, string> cResult = new Dictionary<string, string>();
+            cResult.Add("success", "steve@juststeve.com");
 
+            return Json(cResult, JsonRequestBehavior.AllowGet);
+
+        }
+        // POST: /Account/Register
+        [System.Web.Mvc.HttpGet]
+        [System.Web.Mvc.AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        public JsonResult CheckZip(string zip)
+        {
+            Dictionary<string, string> cResult = new Dictionary<string, string>();
+            cResult.Add("success", "steve@juststeve.com");
+            return Json(cResult, JsonRequestBehavior.AllowGet);
+
+        }
+        //
+
+        [System.Web.Mvc.HttpGet]
+        [System.Web.Mvc.AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        public JsonResult CheckEmail(string email)
+        {
+            Dictionary<string, string> cResult = new Dictionary<string, string>();
+            cResult.Add("success", "foundNothing");
+            cResult.Add("Institution", "A Bank");
+            cResult.Add("Address", "10 Main");
+            cResult.Add("City", "Clevland");
+            cResult.Add("State", "OH");
+            cResult.Add("Zip", "55");
+            return Json(cResult, JsonRequestBehavior.AllowGet);
+        }
+
+        // POST: /Account/Register
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -471,9 +508,9 @@ namespace CUWebinars.Web.Controllers
                 {
                     Logger.Error("dupe email attempt: " + model.RegisterFields.Email);
                     ModelState.AddModelError("Email", "That email already exists. Would you like to reset the password?");
-                    return View("_CreateUserForm", model);
+                    return PartialView("_CreateUserForm", model);
                 }
-                
+
                 var myInstitution = membershipService.ProcessInstitutionForUser(model.RegisterFields.Institution.Trim(),
                     model.RegisterFields.BillingAddress.City.Trim(),
                     model.RegisterFields.BillingAddress.State.Trim(),
@@ -484,7 +521,7 @@ namespace CUWebinars.Web.Controllers
                 try
                 {
                     var billingAddress = new Address();
-                    billingAddress.AddressType = Enum.GetName(typeof(AddressType),model.RegisterFields.BillingAddress.TypeOfAddress);
+                    billingAddress.AddressType = Enum.GetName(typeof(AddressType), model.RegisterFields.BillingAddress.TypeOfAddress);
                     billingAddress.City = model.RegisterFields.BillingAddress.City.Trim();
                     billingAddress.Country = model.RegisterFields.BillingAddress.Country.Trim();
                     billingAddress.Name = model.RegisterFields.FirstName.Trim() + ' ' + model.RegisterFields.LastName.Trim();
@@ -534,7 +571,7 @@ namespace CUWebinars.Web.Controllers
             }
 
             // If we got this far, something failed, redisplay form
-            return View(model);
+            return PartialView("_CreateUserForm", model);
         }
 
         //
