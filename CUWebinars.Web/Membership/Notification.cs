@@ -1,4 +1,4 @@
-﻿namespace CUWebinars.Web.Notification
+﻿namespace CUWebinars.Web.Membership
 {
     public class Notification
     {

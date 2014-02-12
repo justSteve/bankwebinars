@@ -6,8 +6,6 @@ using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.App_Start;
-using CUWebinars.Web.Data.Repositories;
-using CUWebinars.Web.Data.Repositories.Interfaces;
 using CUWebinars.Web.Services;
 using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 using Ninject;

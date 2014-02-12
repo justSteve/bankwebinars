@@ -2,7 +2,7 @@
 using System.IO;
 using BrockAllen.MembershipReboot;
 
-namespace CUWebinars.Web.Notification.Email
+namespace CUWebinars.Web.Membership.Email
 {
     public class TtsEmailFormatter : EmailMessageFormatter<UserAccount>
     {
@@ -17,7 +17,7 @@ namespace CUWebinars.Web.Notification.Email
 
         public string PathToRoot 
         {
-            set { pathToTemplates = Path.Combine(value, "Notification/Email/EmailTemplates"); }
+            set { pathToTemplates = Path.Combine(value, "Membership/Email/EmailTemplates"); }
         }
 
         

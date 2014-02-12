@@ -1,7 +1,6 @@
 ﻿using BrockAllen.MembershipReboot;
 using BrockAllen.MembershipReboot.WebHost;
-using CUWebinars.Web.Notification;
-using CUWebinars.Web.Notification.Email;
+using CUWebinars.Web.Membership.Email;
 
 namespace CUWebinars.Web.App_Start
 {

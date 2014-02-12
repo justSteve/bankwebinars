@@ -4,7 +4,7 @@ using System.Linq;
 using BrockAllen.MembershipReboot;
 using RazorEngine.Templating;
 
-namespace CUWebinars.Web.Notification.Email
+namespace CUWebinars.Web.Membership.Email
 {
     public class TtsTokenizer : EmailMessageFormatter.Tokenizer
     {
@@ -15,7 +15,7 @@ namespace CUWebinars.Web.Notification.Email
             var body = new TemplateService();
             var user = accountEvent.Account;
             
-            var notification = new Notification
+            var notification = new Membership.Notification
             {
                 ApplicationName = appInfo.ApplicationName,
                 CancelVerificationUrl = appInfo.CancelVerificationUrl,

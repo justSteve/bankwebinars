@@ -397,10 +397,10 @@
     <Compile Include="Models\ChangePasswordFromResetKeyInputModel.cs" />
     <Compile Include="Models\ManageModel.cs" />
     <Compile Include="Models\RegisterModel.cs" />
-    <Compile Include="Notification\Notification.cs" />
-    <Compile Include="Notification\Email\TtsEmailFormatter.cs" />
-    <Compile Include="Notification\Email\TtsSmtpMessageDelivery.cs" />
-    <Compile Include="Notification\Email\TtsTokenizer.cs" />
+    <Compile Include="Membership\Notification.cs" />
+    <Compile Include="Membership\Email\TtsEmailFormatter.cs" />
+    <Compile Include="Membership\Email\TtsSmtpMessageDelivery.cs" />
+    <Compile Include="Membership\Email\TtsTokenizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IMailService.cs" />
     <Compile Include="Services\IStateService.cs" />
@@ -853,12 +853,12 @@
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
-    <Content Include="Notification\Email\EmailTemplates\AccountCreatedEvent_Body.cshtml" />
-    <Content Include="Notification\Email\EmailTemplates\AccountCreatedEvent_Subject.cshtml" />
-    <Content Include="Notification\Email\EmailTemplates\EmailChangedEvent_Body.cshtml" />
-    <Content Include="Notification\Email\EmailTemplates\EmailChangedEvent_Subject.cshtml" />
-    <None Include="Notification\Email\EmailTemplates\EmailChangeRequestedEvent_Body.cshtml" />
-    <None Include="Notification\Email\EmailTemplates\EmailChangeRequestedEvent_Subject.cshtml" />
+    <Content Include="Membership\Email\EmailTemplates\AccountCreatedEvent_Body.cshtml" />
+    <Content Include="Membership\Email\EmailTemplates\AccountCreatedEvent_Subject.cshtml" />
+    <Content Include="Membership\Email\EmailTemplates\EmailChangedEvent_Body.cshtml" />
+    <Content Include="Membership\Email\EmailTemplates\EmailChangedEvent_Subject.cshtml" />
+    <None Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Body.cshtml" />
+    <None Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Subject.cshtml" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css">
@@ -921,10 +921,10 @@
     <Content Include="Content\css\BootstrapTemplates\style.css.map">
       <DependentUpon>style.css</DependentUpon>
     </Content>
-    <Content Include="Notification\Email\EmailTemplates\PasswordResetRequestedEvent_Body.cshtml" />
-    <Content Include="Notification\Email\EmailTemplates\PasswordChangedEvent_Body.cshtml" />
-    <Content Include="Notification\Email\EmailTemplates\PasswordChangedEvent_Subject.cshtml" />
-    <Content Include="Notification\Email\EmailTemplates\PasswordResetRequestedEvent_Subject.cshtml" />
+    <Content Include="Membership\Email\EmailTemplates\PasswordResetRequestedEvent_Body.cshtml" />
+    <Content Include="Membership\Email\EmailTemplates\PasswordChangedEvent_Body.cshtml" />
+    <Content Include="Membership\Email\EmailTemplates\PasswordChangedEvent_Subject.cshtml" />
+    <Content Include="Membership\Email\EmailTemplates\PasswordResetRequestedEvent_Subject.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy.pubxml" />
@@ -1033,6 +1033,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Admin\Models\" />
     <Folder Include="Images\" />
+    <Folder Include="Notification\" />
     <Folder Include="Utils\" />
   </ItemGroup>
   <ItemGroup>
