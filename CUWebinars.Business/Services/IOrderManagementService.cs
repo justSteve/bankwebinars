@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.Services
@@ -7,5 +8,8 @@ namespace CUWebinars.Business.Services
     {
         string BuildConnectionInfo(OrderRow orderRow);
         IList<Option> GetOptionsByWebinarId(int id);
+
+        void CreateOrderEvent(Order order, UserAccount userAccount);
+        void DispatchDummyOrder();
     }
 }

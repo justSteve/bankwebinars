@@ -925,8 +925,10 @@
     <Content Include="Membership\Email\EmailTemplates\PasswordChangedEvent_Body.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\PasswordChangedEvent_Subject.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\PasswordResetRequestedEvent_Subject.cshtml" />
+    <Content Include="Notification\Templates\OrderSubmittedEvent.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy %283%29.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars - Web Deploy.pubxml" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -1033,7 +1035,6 @@
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Admin\Models\" />
     <Folder Include="Images\" />
-    <Folder Include="Notification\" />
     <Folder Include="Utils\" />
   </ItemGroup>
   <ItemGroup>
@@ -1043,6 +1044,10 @@
     <ProjectReference Include="..\CUWebinars.Business\CUWebinars.Business.csproj">
       <Project>{d4250c01-6ee8-4d3c-ae39-9cd038422210}</Project>
       <Name>CUWebinars.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CUWebinars.NotificationSystem\CUWebinars.NotificationSystem.csproj">
+      <Project>{281c6443-2348-4578-9704-2f953cd3af87}</Project>
+      <Name>CUWebinars.NotificationSystem</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

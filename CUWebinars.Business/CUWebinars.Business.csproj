@@ -52,12 +52,19 @@
     <Reference Include="EntityFramework.SqlServer">
       <HintPath>..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="RazorEngine">
+      <HintPath>..\packages\RazorEngine.3.4.1\lib\net45\RazorEngine.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.IdentityModel.Services" />
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.0.0\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -66,6 +73,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountService\IMembershipService.cs" />
+    <Compile Include="Notification\Email\NotificationMessage.cs" />
+    <Compile Include="Notification\Email\SmtpMessageDelivery.cs" />
+    <Compile Include="Notification\Events\OrderSubmittedEvent.cs" />
+    <Compile Include="Notification\Events\UserAccountEvent.cs" />
+    <Compile Include="Notification\INotificationDelivery.cs" />
+    <Compile Include="Notification\INotificationFormatter.cs" />
+    <Compile Include="Notification\INotificationMessage.cs" />
+    <Compile Include="Notification\IRazorRenderer.cs" />
+    <Compile Include="Notification\NotificationFormatter.cs" />
+    <Compile Include="Notification\NotificationOrderHandler.cs" />
+    <Compile Include="Notification\NotifyEventHandler.cs" />
+    <Compile Include="Notification\RazorRenderer.cs" />
     <Compile Include="Repository\IAccountRepository.cs" />
     <Compile Include="Repository\IAffiliateRepository.cs" />
     <Compile Include="Repository\AffiliateRepository.cs" />
@@ -152,6 +171,8 @@
     <Compile Include="Repository\TTSWebinarsRepository.cs" />
     <Compile Include="Repository\WebUserRepository.cs" />
     <Compile Include="Services\OrderManagementService.cs" />
+    <Compile Include="Core\TtsConfiguration.cs" />
+    <Compile Include="Core\TtsConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -165,38 +186,6 @@
     <None Include="SQLSeeding\BACPACs\TTSDatabase-2014-2-7-0-53.bacpac" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Notification\Email\EmailTemplates\AccountClosedEvent_Body.txt" />
-    <Content Include="Notification\Email\EmailTemplates\AccountClosedEvent_Subject.txt" />
-    <Content Include="Notification\Email\EmailTemplates\AccountCreatedEvent_Body.txt" />
-    <Content Include="Notification\Email\EmailTemplates\AccountCreatedEvent_Subject.txt" />
-    <Content Include="Notification\Email\EmailTemplates\AccountReopenedEvent_Body.txt" />
-    <Content Include="Notification\Email\EmailTemplates\AccountReopenedEvent_Subject.txt" />
-    <Content Include="Notification\Email\EmailTemplates\CertificateAddedEvent_Body.txt" />
-    <Content Include="Notification\Email\EmailTemplates\CertificateAddedEvent_Subject.txt" />
-    <Content Include="Notification\Email\EmailTemplates\CertificateRemovedEvent_Body.txt" />
-    <Content Include="Notification\Email\EmailTemplates\CertificateRemovedEvent_Subject.txt" />
-    <Content Include="Notification\Email\EmailTemplates\EmailChangedEvent_Body.txt" />
-    <Content Include="Notification\Email\EmailTemplates\EmailChangedEvent_Subject.txt" />
-    <Content Include="Notification\Email\EmailTemplates\EmailChangeRequestedEvent_Body.txt" />
-    <Content Include="Notification\Email\EmailTemplates\EmailChangeRequestedEvent_Subject.txt" />
-    <Content Include="Notification\Email\EmailTemplates\EmailVerifiedEvent_Body.txt" />
-    <Content Include="Notification\Email\EmailTemplates\EmailVerifiedEvent_Subject.txt" />
-    <Content Include="Notification\Email\EmailTemplates\LinkedAccountAddedEvent_Body.txt" />
-    <Content Include="Notification\Email\EmailTemplates\LinkedAccountAddedEvent_Subject.txt" />
-    <Content Include="Notification\Email\EmailTemplates\LinkedAccountRemovedEvent_Body.txt" />
-    <Content Include="Notification\Email\EmailTemplates\LinkedAccountRemovedEvent_Subject.txt" />
-    <Content Include="Notification\Email\EmailTemplates\MobilePhoneChangedEvent_Body.txt" />
-    <Content Include="Notification\Email\EmailTemplates\MobilePhoneChangedEvent_Subject.txt" />
-    <Content Include="Notification\Email\EmailTemplates\MobilePhoneRemovedEvent_Body.txt" />
-    <Content Include="Notification\Email\EmailTemplates\MobilePhoneRemovedEvent_Subject.txt" />
-    <Content Include="Notification\Email\EmailTemplates\PasswordChangedEvent_Body.txt" />
-    <Content Include="Notification\Email\EmailTemplates\PasswordChangedEvent_Subject.txt" />
-    <Content Include="Notification\Email\EmailTemplates\PasswordResetRequestedEvent_Body.txt" />
-    <Content Include="Notification\Email\EmailTemplates\PasswordResetRequestedEvent_Subject.txt" />
-    <Content Include="Notification\Email\EmailTemplates\UsernameChangedEvent_Body.txt" />
-    <Content Include="Notification\Email\EmailTemplates\UsernameChangedEvent_Subject.txt" />
-    <Content Include="Notification\Email\EmailTemplates\UsernameReminderRequestedEvent_Body.txt" />
-    <Content Include="Notification\Email\EmailTemplates\UsernameReminderRequestedEvent_Subject.txt" />
     <Content Include="SQLSeeding\InitialSeeding\BuildTTSWebinarsSeeder.sql" />
     <Content Include="SQLSeeding\InitialSeeding\MigrationNotes.txt" />
     <Content Include="SQLSeeding\InitialSeeding\seeder1_ini.sql" />
@@ -220,6 +209,13 @@
       <DependentUpon>201402010842420_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CUWebinars.NotificationSystem\CUWebinars.NotificationSystem.csproj">
+      <Project>{281c6443-2348-4578-9704-2f953cd3af87}</Project>
+      <Name>CUWebinars.NotificationSystem</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

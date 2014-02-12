@@ -2,6 +2,7 @@ using BrockAllen.MembershipReboot;
 using BrockAllen.MembershipReboot.Ef;
 using BrockAllen.MembershipReboot.WebHost;
 using CUWebinars.Business.AccountService;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
@@ -61,9 +62,14 @@ namespace CUWebinars.Web.App_Start
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
+            string baseUrl = HttpRuntime.AppDomainAppPath;
+
             var config = MembershipRebootConfig.Create(HttpRuntime.AppDomainAppPath);
+            var ttsConfig = TtsConfig.Create(baseUrl);
             
             kernel.Bind<MembershipRebootConfiguration>().ToConstant(config);
+            kernel.Bind<TtsConfiguration>().ToConstant(ttsConfig);
+
             kernel.Bind<IAffiliateRepository>().To<AffiliateRepository>();
             kernel.Bind<IWebinarRepository>().To<WebinarRepository>();
             //kernel.Bind<IAccountRepository>().To<AccountRepository>().InRequestScope();
@@ -75,7 +81,16 @@ namespace CUWebinars.Web.App_Start
             kernel.Bind<IInstitutionRepository>().To<InstitutionRepository>();
             kernel.Bind<IUserAccountRepository>().To<DefaultUserAccountRepository>();
             kernel.Bind<IOptionRepository>().To<OptionRepository>();
-            kernel.Bind<IOrderManagementService>().To<OrderManagementService>();
+            kernel.Bind<IOrderManagementService>().ToMethod(ctx =>
+            {
+                var orderManagementService = new OrderManagementService(
+                    ctx.Kernel.Get<IOptionRepository>(),
+                    ctx.Kernel.Get<IRefDataRepository>(),
+                    ttsConfig
+                    );
+                return orderManagementService;
+
+            });
 
             kernel.Bind<UserAccountService>().ToMethod(ctx =>
                 {

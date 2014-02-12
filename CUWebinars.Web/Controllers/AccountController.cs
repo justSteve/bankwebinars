@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Models;
@@ -31,15 +32,39 @@ namespace CUWebinars.Web.Controllers
         private IMailService mail;
         public IMembershipService membershipService;
         private readonly IOrderRepository orderRepository;
+        private readonly IOrderManagementService orderManagementService;
         public ILogger Logger { get; set; }
         //public IOrderService orderService;
 
-        public AccountController(IMailService mail, ILogger logger, IMembershipService membershipService, IOrderRepository orderRepository)
+        public AccountController(IMailService mail, ILogger logger, IMembershipService membershipService, IOrderRepository orderRepository, IOrderManagementService orderManagementService)
         {
             this.mail = mail;
             this.Logger = logger;
             this.membershipService = membershipService;
             this.orderRepository = orderRepository;
+            this.orderManagementService = orderManagementService;
+        }
+
+        [System.Web.Mvc.HttpGet]
+        public ActionResult CreateOrder()
+        {
+            //var currentUser = GetWebUserFromIPrincipal();
+            var identity = ClaimsPrincipal.Current;
+
+            var order = new Order
+            {
+                FirstName = "Birgit",
+                LastName = "Roby",
+                idOrder = 1114,
+                OrderDate = DateTime.Parse("2014-02-05 21:32:53.000")
+            };
+
+            orderManagementService.CreateOrderEvent(order, membershipService.GetUserAccountByUserId(identity.GetUserID()));
+
+
+            orderManagementService.DispatchDummyOrder();
+
+            return RedirectToLocal(null);
         }
 
         //
