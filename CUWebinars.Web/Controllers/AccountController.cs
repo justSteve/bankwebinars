@@ -465,12 +465,51 @@ namespace CUWebinars.Web.Controllers
         //[ValidateAntiForgeryToken]
         public JsonResult CheckZip(string zip)
         {
+            int numVal = -1;
             Dictionary<string, string> cResult = new Dictionary<string, string>();
-            cResult.Add("success", "steve@juststeve.com");
+
+            try
+            {
+                numVal = Convert.ToInt32(zip);
+            }
+            catch (FormatException e)
+            {
+                try
+                {
+                    numVal = Convert.ToInt32(zip.Split('-')[0]);
+                }
+                catch (FormatException e1)
+                {
+                    cResult.Add("success", "invalid format");
+                    return Json(cResult, JsonRequestBehavior.AllowGet);
+                }
+            }
+
+            var zipAddress = AppHelper.GetCityStateFromZip(numVal);
+            var myCity = new string(AppHelper.CharsToTitleCase(zipAddress.Split(',')[0]).ToArray());
+            //newUser.City = myCity;
+            //newUser.State = cityState.Split(',')[1];
+
+            cResult.Add("success", "true");
+            cResult.Add("City", myCity);
+            cResult.Add("State", zipAddress.Split(',')[1]);
+            cResult.Add("TimeZone", zipAddress.Split(',')[2]);
             return Json(cResult, JsonRequestBehavior.AllowGet);
 
         }
         //
+
+        //[System.Web.Mvc.ActionName("autocomplete")]
+        [System.Web.Mvc.AcceptVerbs(HttpVerbs.Get)]
+        [System.Web.Mvc.AllowAnonymous]
+        public JsonResult AutocompleteInstitution(string term)
+        {
+            List<string> ac = AppHelper.InstitutionAutoComplete(Request.QueryString["term"]);
+            string name, msa;
+            var retValue = new { values = ac };
+            return Json(ac, JsonRequestBehavior.AllowGet);
+
+        }
 
         [System.Web.Mvc.HttpGet]
         [System.Web.Mvc.AllowAnonymous]

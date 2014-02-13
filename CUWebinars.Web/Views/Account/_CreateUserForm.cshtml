@@ -21,13 +21,10 @@
 </style>
 
 <script language="javascript" type="text/javascript">
-    function getZip() {
-        $("#getZip").show();
-        $(".loginContainer").hide();
-    }
+
 
     $(document).ready(function () {
-        $("#getZip").hide();
+        $("#wrapZip").hide();
         $("#getFirstLast").hide();
 
         $('#collapseShipping').on('shown', function () {
@@ -35,14 +32,50 @@
                 SetShippingToBilling();
             }
         });
-        $("form#checkEmail").submit(function () {
+        var availableTags = [];
+        //http://stackoverflow.com/questions/5077409/what-does-autocomplete-request-server-response-look-like
+        $("#RegisterFields_Institution").autocomplete({
+            source: function (request, response) {
+                alert(request.term);
+                $.ajax({
+                    type: 'GET',
+                    cache: false,
+                    url: '/Account/AutocompleteInstitution',
+                    data: {
+                        zip: "54636", term: request.term
+                    },
+                    //data: { zip: $("#RegisterFields_BillingAddress_Zip").val()},
+                    //beforeSend: function () {
+                    //    // this is where we append a loading image
+                    //    $('#lableEmail').html('<div class="btn-warning style="width: 400px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</div>');
+                    //},
+                    success: function (data) {
+                        response($.map(data.geonames, function (item) {
+                            return {
+                                label: item.name + (item.adminName1 ? ", " + item.adminName1 : "") + ", " + item.countryName,
+                                value: item.name
+                            };
+                        }));
+                    }
+                });
+            },
+            //source: '/Account/AutocompleteInstitution',
+            //minLength: ,
+            open: function (event, ui) {
+                $(".ui-autocomplete").css("z-index", 1000);
+            },
+            select: function (event, ui) {
+                $("#RegisterFields_Institution").val(ui.item.Work_Item);
+                return false;
+            }
+        });
 
+        $("form#checkEmail").submit(function () {
             var jsonUrl = "/Account/CheckEmail";
             var q = $("#emailChecker").val();
             if (q.length == 0) {
                 $("#RegisterFields_Email").focus();
             } else {
-
                 $.ajax({
                     type: 'GET',
                     cache: false,
@@ -55,8 +88,8 @@
                     success: function (data) {
                         // successful request; do something with the data
                         if (data.success == "foundNothing") {
-                            $('#collapseEmail').collapse('toggle');
-                            $('#collapseZip').collapse('toggle');
+                            $('#wrapEmail').hide("fast");
+                            $('#wrapZip').show("fast");
                             $('#lableEmail').html('<div class="btn-success" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + q + '</b>&nbsp; is recorded.</div>');
                         }
                         if (data.success == "foundInstitution") {
@@ -69,22 +102,17 @@
                             $('#lableEmail').html('<div class="btn-danger" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + q + '</b>&nbsp; is already on file.</div>');
                             $('#wrapEmail').html('<h3>Login to existing account?</h3><p>Email: <input id="Email" name="Email" value="' + q + '" type="text"> <br>Password: <input id="Password" name="Password" type="password"><br><input type="button" class="btn-info btn" id="submitLogin" value="Login" /></p><h3>Or...</h3><p>We can email you a link that will reset your password. <input type="button" class="btn btn-danger" id="resetPassword" value="Reset Password" /></p>');
                         }
-                        //$(data).each(function (i) {
-                        //    $('#wrapEmail').html('<h4>' + $(this).find('title').text() + '</h4><p>' + $(this).find('link').text() + '</p>');
-                        //});
-
                     },
                     error: function () {
                         // failed request; give feedback to user
                         $('#wrapEmail').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
                     }
                 });
-
             }
             return false;
         });
-        $("form#checkZip").submit(function () {
 
+        $("form#checkZip").submit(function () {
             var jsonUrl = "/Account/CheckZip";
             var q = $("#ZipChecker").val();
             if (q.length == 0) {
@@ -97,36 +125,33 @@
                     data: { Zip: q },
                     beforeSend: function () {
                         // this is where we append a loading image
-                        $('#lableZip').html('<div class="btn-warning style="width: 400px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Zip...</div>');
+                        $('#lableEmail').html('<div class="btn-warning style="width: 400px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Zip...</div>');
                     },
                     success: function (data) {
                         // successful request; do something with the data
-                        if (data.success == "foundNothing") {
-                            $('#collapseZip').collapse('toggle');
-                            $('#collapseZip').collapse('toggle');
-                            $('#lableZip').html('<div class="btn-success" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + q + '</b>&nbsp; is recorded.</div>');
+                        if (data.success == "true") {
+                            $('#collapseEmail').collapse('toggle');
+                            $('#collapseInstitution').collapse('toggle');
+                            $('#RegisterFields_BillingAddress_City').val(data.City);
+                            $('#RegisterFields_BillingAddress_State').val(data.State);
+                            $('#RegisterFields_BillingAddress_Zip').val(q);
+                            $('#TimeZone').val(data.TimeZone);
+                            $('#lableEmail').html('<div class="btn-success" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</div>');
                         }
-                        if (data.success == "foundInstitution") {
-                            $('#lableZip').html('<div class="btn-success" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + q + '</b>&nbsp; is recorded.</div>');
-                            $('#wrapZip').html('<h3>Login to existing account?</h3><p>Zip: <input id="Zip" name="Zip" value="' + q + '" type="text"> <br>Password: <input id="Password" name="Password" type="password"><br><input type="button" class="btn-info btn" id="submitLogin" value="Login" /></p><h3>Or...</h3><p>We can Zip you a link that will reset your password. <input type="button" class="btn btn-danger" id="resetPassword" value="Reset Password" /></p>');
+                        if (data.success == "false") {
+                            $('#lableZip').html('<div class="btn-danger" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;Zipcode was not found!</div>');
                         }
 
                         if (data.success == "foundExistingZip") {
                             $('#ResetPasswordForm input[name=Zip]').val(q);
-                            $('#lableZip').html('<div class="btn-danger" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + q + '</b>&nbsp; is already on file.</div>');
                             $('#wrapZip').html('<h3>Login to existing account?</h3><p>Zip: <input id="Zip" name="Zip" value="' + q + '" type="text"> <br>Password: <input id="Password" name="Password" type="password"><br><input type="button" class="btn-info btn" id="submitLogin" value="Login" /></p><h3>Or...</h3><p>We can Zip you a link that will reset your password. <input type="button" class="btn btn-danger" id="resetPassword" value="Reset Password" /></p>');
                         }
-                        //$(data).each(function (i) {
-                        //    $('#wrapZip').html('<h4>' + $(this).find('title').text() + '</h4><p>' + $(this).find('link').text() + '</p>');
-                        //});
-
                     },
                     error: function () {
                         // failed request; give feedback to user
                         $('#wrapZip').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
                     }
                 });
-
             }
             return false;
         });
@@ -157,17 +182,16 @@
             $('#emailChecker').val($('#RegisterFields_Email').val());
             $("#checkEmail").submit();
         });
-        $('#RegisterFields_Institution').change(function () {
-            alert("hit" + $('#RegisterFields_Institution').val());
-            //  $.getJSON()
-            $('#InstitutionChecker').val($('#RegisterFields_Institution').val());
-            $("form#checkInstitution").submit();
-        });
 
-        $('#RegisterFields_Zip').change(function () {
-            alert("hit" + $('#RegisterFields_Zip').val());
-            //  $.getJSON()
-            $('#ZipChecker').val($('#RegisterFields_Zip').val());
+        //$('#RegisterFields_Institution').change(function () {
+        //    alert("hit" + $('#RegisterFields_Institution').val());
+        //    //  $.getJSON()
+        //    $('#InstitutionChecker').val($('#RegisterFields_Institution').val());
+        //    $("form#checkInstitution").submit();
+        //});
+
+        $('#RegisterFields_BillingAddress_Zip').change(function () {
+            $('#ZipChecker').val($('#RegisterFields_BillingAddress_Zip').val());
             $("form#checkZip").submit();
         });
 
@@ -255,17 +279,6 @@
                             @Html.ValidationMessageFor(model => model.RegisterFields.Email)
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="accordion-group">
-            <div class="accordion-heading">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#createUserPanes" href="#collapseZip">
-                    <span id="lableZip">Zip</span>
-                </a>
-            </div>
-            <div id="collapseZip" class="accordion-body collapse">
-                <div class="accordion-inner">
                     <div class="fieldContainer" id="wrapZip">
                         <div class="span1" style="text-align: right;">
                             Zip Code:
@@ -288,10 +301,10 @@
             <div id="collapseInstitution" class="accordion-body collapse">
                 <div class="accordion-inner">
                     <div class="fieldContainer" id="wrapInstitution">
-                        <div class="span1" style="text-align: right;">
+                        <div class="span2" style="text-align: right;">
                             Name of Institution:
                         </div>
-                        <div class="span4">
+                        <div class="span5 ui-widget">
                             @Html.TextBoxFor(model => model.RegisterFields.Institution, new { style = "width: 250px;" })
                             @Html.ValidationMessageFor(model => model.RegisterFields.Institution)
                         </div>

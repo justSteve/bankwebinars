@@ -11,12 +11,12 @@ namespace CUWebinars.Web.App_Start
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                     "~/Scripts/jquery-1.9.1.min.js"
-                    //"~/Scripts/jquery-1.8.2.js"
+                //"~/Scripts/jquery-1.8.2.js"
                 ));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
-                        "~/Scripts/jquery-ui-1.10.3.min.js"));
-                        //"~/Scripts/jquery-ui-1.8.24.js"));
+                        "~/Scripts/jquery-ui-1.10.3.custom.js"));
+            //"~/Scripts/jquery-ui-1.8.24.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.unobtrusive*",
@@ -41,7 +41,7 @@ namespace CUWebinars.Web.App_Start
                         "~/Content/js/jquery.fitvid.js",         //responsive videos --> 
                 //initialize scripts / custom scripts all pages--> 
                         "~/Content/js/scripts.js",
-                         //"~/Scripts/app/waitButton.js",
+                //"~/Scripts/app/waitButton.js",
                          "~/Scripts/app/EditOrder.js"
                         ));
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
@@ -52,13 +52,13 @@ namespace CUWebinars.Web.App_Start
             bundles.Add(new ScriptBundle("~/bundles/app-processing-manage").Include(
                         "~/Scripts/app/constants.js",
                         "~/Scripts/app/common.js",
-                        "~/Scripts/app/web-user-details-manage.js"                        
+                        "~/Scripts/app/web-user-details-manage.js"
                         ));
 
             bundles.Add(new ScriptBundle("~/bundles/app-processing-register").Include(
                         "~/Scripts/app/constants.js",
                         "~/Scripts/app/common.js",
-                       
+
                         "~/Scripts/app/web-user-details-register.js"
             ));
 
@@ -67,7 +67,11 @@ namespace CUWebinars.Web.App_Start
                     "~/Content/css/header-1.css",
                     "~/Content/css/bootstrap.css",
                     "~/Content/css/bootstrap-responsive.css",
-                    "~/Content/css/waitButton.css",
+                    "~/Scripts/AutoComplete/css/styles.css",
+                    "~/Scripts/AutoComplete/css/styles.css/ui-lightness/jquery-ui-1.10.3.custom.css",
+                    //"~/Scripts/AutoComplete/css/styles.css/ui-lightness/jquery-ui-1.10.3.custom.min.css",
+
+                //"~/Content/css/waitButton.css",
                     "~/Content/validation.css"
                 ));
 
