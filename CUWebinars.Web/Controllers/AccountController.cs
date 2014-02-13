@@ -502,9 +502,9 @@ namespace CUWebinars.Web.Controllers
         //[System.Web.Mvc.ActionName("autocomplete")]
         [System.Web.Mvc.AcceptVerbs(HttpVerbs.Get)]
         [System.Web.Mvc.AllowAnonymous]
-        public JsonResult AutocompleteInstitution(string term)
+        public JsonResult AutocompleteInstitution()
         {
-            List<string> ac = AppHelper.InstitutionAutoComplete(Request.QueryString["term"]);
+            List<string> ac = AppHelper.InstitutionAutoComplete(Request.QueryString["term"], Request.QueryString["zip"]);
             string name, msa;
             var retValue = new { values = ac };
             return Json(ac, JsonRequestBehavior.AllowGet);

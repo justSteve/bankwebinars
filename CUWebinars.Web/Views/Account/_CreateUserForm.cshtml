@@ -21,54 +21,69 @@
 </style>
 
 <script language="javascript" type="text/javascript">
+    function submitLogin() {
+        $("#Email").val($("#RegisterFields_Email").val());
+        $("#Password").val($("#Password1").val());
+        $("#frmSignin").submit();
 
+    }
 
     $(document).ready(function () {
         $("#wrapZip").hide();
+        $("#wrapFoundInstitution").hide();
         $("#getFirstLast").hide();
+        //$("[data-val-email]").keyup(function () { return false; });
+        //$("[data-val-email]").blur(function () { return true; });
+
+        $("#RegisterFields_Email").validate({
+            onfocusout: true,
+            onkeyup: false,
+            onkeypress: false,
+            onkeydown: false
+        });
 
         $('#collapseShipping').on('shown', function () {
             if ($("#sameAsBilling:checked").val()) {
                 SetShippingToBilling();
             }
         });
-        var availableTags = [];
-        //http://stackoverflow.com/questions/5077409/what-does-autocomplete-request-server-response-look-like
-        $("#RegisterFields_Institution").autocomplete({
-            source: function (request, response) {
-                alert(request.term);
-                $.ajax({
-                    type: 'GET',
-                    cache: false,
-                    url: '/Account/AutocompleteInstitution',
-                    data: {
-                        zip: "54636", term: request.term
-                    },
-                    //data: { zip: $("#RegisterFields_BillingAddress_Zip").val()},
-                    //beforeSend: function () {
-                    //    // this is where we append a loading image
-                    //    $('#lableEmail').html('<div class="btn-warning style="width: 400px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</div>');
-                    //},
-                    success: function (data) {
-                        response($.map(data.geonames, function (item) {
-                            return {
-                                label: item.name + (item.adminName1 ? ", " + item.adminName1 : "") + ", " + item.countryName,
-                                value: item.name
-                            };
-                        }));
-                    }
-                });
-            },
-            //source: '/Account/AutocompleteInstitution',
-            //minLength: ,
-            open: function (event, ui) {
-                $(".ui-autocomplete").css("z-index", 1000);
-            },
-            select: function (event, ui) {
-                $("#RegisterFields_Institution").val(ui.item.Work_Item);
-                return false;
-            }
-        });
+        //var availableTags = [];
+        ////http://stackoverflow.com/questions/5077409/what-does-autocomplete-request-server-response-look-like
+        //$("#RegisterFields_Institution").autocomplete({
+        //    source: function (request, response) {
+        //        alert(request.term);
+        //        $.ajax({
+        //            type: 'GET',
+        //            cache: false,
+        //            url: '/Account/AutocompleteInstitution',
+        //            data: {
+        //                zip: "54636", term: request.term
+        //            },
+        //            //data: { zip: $("#RegisterFields_BillingAddress_Zip").val()},
+        //            //beforeSend: function () {
+        //            //    // this is where we append a loading image
+        //            //    $('#lableEmail').html('<div class="btn-warning style="width: 400px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</div>');
+        //            //},
+        //            success: function (data) {
+        //                response($.map(data.geonames, function (item) {
+        //                    return {
+        //                        label: item.name + (item.adminName1 ? ", " + item.adminName1 : "") + ", " + item.countryName,
+        //                        value: item.name
+        //                    };
+        //                }));
+        //            }
+        //        });
+        //    },
+        //    //source: '/Account/AutocompleteInstitution',
+        //    //minLength: ,
+        //    open: function (event, ui) {
+        //        $(".ui-autocomplete").css("z-index", 1000);
+        //    },
+        //    select: function (event, ui) {
+        //        $("#RegisterFields_Institution").val(ui.item.Work_Item);
+        //        return false;
+        //    }
+        //});
 
         $("form#checkEmail").submit(function () {
             var jsonUrl = "/Account/CheckEmail";
@@ -82,6 +97,7 @@
                     url: jsonUrl,
                     data: { email: q },
                     beforeSend: function () {
+                        $("#regForm").validate().element(this);
                         // this is where we append a loading image
                         $('#lableEmail').html('<div class="btn-warning style="width: 400px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</div>');
                     },
@@ -93,14 +109,18 @@
                             $('#lableEmail').html('<div class="btn-success" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + q + '</b>&nbsp; is recorded.</div>');
                         }
                         if (data.success == "foundInstitution") {
+                            $('#wrapEmail').hide("fast");
+                            $('#wrapFoundInstitution').show("fast");
                             $('#lableEmail').html('<div class="btn-success" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + q + '</b>&nbsp; is recorded.</div>');
-                            $('#wrapEmail').html('<h3>Login to existing account?</h3><p>Email: <input id="Email" name="Email" value="' + q + '" type="text"> <br>Password: <input id="Password" name="Password" type="password"><br><input type="button" class="btn-info btn" id="submitLogin" value="Login" /></p><h3>Or...</h3><p>We can email you a link that will reset your password. <input type="button" class="btn btn-danger" id="resetPassword" value="Reset Password" /></p>');
+                            $('#wrapFoundInstitution').html('<h3>Is this your institution?</h3>' +
+                                '<p>'+data.Institution+'<br>' +data.Address+'<br>'+data.City+'<br>'+data.State+'<br>'+data.Zip+'<br></p>');
+                            
                         }
 
                         if (data.success == "foundExistingEmail") {
                             $('#ResetPasswordForm input[name=Email]').val(q);
                             $('#lableEmail').html('<div class="btn-danger" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + q + '</b>&nbsp; is already on file.</div>');
-                            $('#wrapEmail').html('<h3>Login to existing account?</h3><p>Email: <input id="Email" name="Email" value="' + q + '" type="text"> <br>Password: <input id="Password" name="Password" type="password"><br><input type="button" class="btn-info btn" id="submitLogin" value="Login" /></p><h3>Or...</h3><p>We can email you a link that will reset your password. <input type="button" class="btn btn-danger" id="resetPassword" value="Reset Password" /></p>');
+                            $('#wrapEmail').html('<h3>Login to existing account?</h3><p>Email: <input id="Email" name="Email" value="' + q + '" type="text"> <br>Password: <input id="Password1" name="Password1" type="password"><br><input type="button" class="btn-info btn" id="submitLogin" value="Login" /></p><h3>Or...</h3><p>We can email you a link that will reset your password. <input type="button" class="btn btn-danger" id="resetPassword" value="Reset Password" /></p>');
                         }
                     },
                     error: function () {
@@ -177,8 +197,6 @@
         });
 
         $('#RegisterFields_Email').change(function () {
-            //alert("hit: " + $('#RegisterFields_Email').val());
-            //  $.getJSON()
             $('#emailChecker').val($('#RegisterFields_Email').val());
             $("#checkEmail").submit();
         });
@@ -265,7 +283,7 @@
         <div class="accordion-group">
             <div class="accordion-heading">
                 <a class="accordion-toggle" data-toggle="collapse" data-parent="#createUserPanes" href="#collapseEmail">
-                    <span id="lableEmail">Please Enter Your Email Address</span>
+                    <span id="lableEmail">Email</span>
                 </a>
             </div>
             <div id="collapseEmail" class="accordion-body collapse in">
@@ -274,7 +292,7 @@
                         <div class="span1" style="text-align: right;">
                             Email:
                         </div>
-                        <div class="span4">
+                        <div class="span6">
                             @Html.TextBoxFor(model => model.RegisterFields.Email, new { style = "width: 180px;" })
                             @Html.ValidationMessageFor(model => model.RegisterFields.Email)
                         </div>
@@ -287,6 +305,14 @@
                             @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Zip, new { style = "width: 50px;" })
                             @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.Zip)<br />
                             <input type="button" value="Have a Non-US Address?" id="nonUSAddress" class="btn btn-mini btn-info" />
+                        </div>
+                    </div>
+                    <div class="fieldContainer" id="wrapFoundInstitution">
+                        <div class="span4" style="text-align: right;">
+                            Based on the domain name of your email:
+                        </div>
+                        <div class="span4">
+                            <div id="provisionalInstitution"><input type="button" class="btn btn-success"/></div>
                         </div>
                     </div>
                 </div>

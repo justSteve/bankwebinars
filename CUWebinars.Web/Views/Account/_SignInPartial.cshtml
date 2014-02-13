@@ -1,6 +1,6 @@
 ﻿@model SignInModel
 
-@using (Html.BeginForm("SignIn", "Account"))
+@using (Html.BeginForm("SignIn", "Account", FormMethod.Post, new { name = "frmSignIn", id = "frmSignIn" }))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true)

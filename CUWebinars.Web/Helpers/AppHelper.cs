@@ -117,12 +117,12 @@ namespace CUWebinars.Web.Helpers
         }
 
 
-        public static List<string> InstitutionAutoComplete(string name)
+        public static List<string> InstitutionAutoComplete(string name, string zip)
         {
             var _connSproc = new SqlConnection(ConfigurationManager.ConnectionStrings["LoggerConnection"].ConnectionString);
             _connSproc.Open();
             SqlCommand cmdGetBody = new SqlCommand(
-                "select top 15 Name +'|'+ city + ', ' + STNAME from Institutions where NAME like '%" + name + "%' " +
+                "select top 15 Name +'|'+ city + ', ' + STNAME from Institution where NAME like '" + name + "%' " +
                 " order by name", _connSproc);
 
             cmdGetBody.CommandType = CommandType.Text;

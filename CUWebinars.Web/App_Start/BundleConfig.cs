@@ -10,7 +10,7 @@ namespace CUWebinars.Web.App_Start
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-                    "~/Scripts/jquery-1.9.1.min.js"
+                    "~/Scripts/jquery-1.9.1.js"
                 //"~/Scripts/jquery-1.8.2.js"
                 ));
 
