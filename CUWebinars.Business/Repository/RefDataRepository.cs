@@ -75,17 +75,30 @@ namespace CUWebinars.Business.Repository
                 var webinars = context.Webinars
                     .Where(w => w.idWebinar == id).ToList();
 
-                //  Get all OptionsGroupsXrefs for those webinars
-                var optionsGroupsXrefs = webinars.SelectMany(w => w.OptionsGroupsXrefs);
+                ////  Get all OptionsGroupsXrefs for those webinars
+                //var optionsGroupsXrefs = webinars.SelectMany(w => w.OptionsGroupsXrefs);
+                //var A = optionsGroupsXrefs.ToList();
+
+                ////  For each of those OptionsGroupsXrefs, get the relevant OptionGroup
+                //var optionsGroups = optionsGroupsXrefs.Select(o => o.OptionsGroup);
+                //var B = optionsGroups.ToList();
+
+                ////  Get all OptionsXrefs for those OptionGroups
+                //var optionsXrefs = optionsGroups.SelectMany(opt => opt.OptionsXrefs);
+                //var C = optionsXrefs.ToList();
+
+                ////  Finally, get the options
+                //var options = optionsXrefs.Select(o => o.Option);                //  Get all OptionsGroupsXrefs for those webinars
+                
+                var orderRows = webinars.SelectMany(w => w.OrderRows);
+                var A = orderRows.ToList();
 
                 //  For each of those OptionsGroupsXrefs, get the relevant OptionGroup
-                var optionsGroups = optionsGroupsXrefs.Select(o => o.OptionsGroup);
+                var orderRowOptions = orderRows.SelectMany(o => o.OrderRowOptions);
+                var B = orderRowOptions.ToList();
 
                 //  Get all OptionsXrefs for those OptionGroups
-                var optionsXrefs = optionsGroups.SelectMany(opt => opt.OptionsXrefs);
-
-                //  Finally, get the options
-                var options = optionsXrefs.Select(o => o.Option);
+                var options = orderRowOptions.Select(opt => opt.Option);
 
                 return options.ToList();
 

@@ -93,7 +93,8 @@ namespace CUWebinars.Web.Tests
             string email = "ever@hopefultoauthenticate.com";
             string password = "tyu567&U";
 
-            membershipServiceMock.Setup(m => m.LogInUser(globalConfig.Tenant, email, password, false)).Returns(() => true);
+            membershipServiceMock.Setup(m => m.LogInUser(globalConfig.Tenant, email, password, false))
+                .Returns(() => true);
 
             var signInModel = new SignInModel
             {
@@ -101,11 +102,16 @@ namespace CUWebinars.Web.Tests
                 Password = password
             };
 
-            var accountController = new AccountController(mailServiceMock.Object, loggerMock.Object, membershipServiceMock.Object, orderRepositoryMock.Object);
+            var accountController = new AccountController(
+                mailServiceMock.Object,
+                loggerMock.Object,
+                membershipServiceMock.Object,
+                orderRepositoryMock.Object,
+                orderServiceMock.Object);
 
             var result = accountController.SignIn(signInModel);
 
-            Assert.IsInstanceOfType(result, typeof(RedirectToRouteResult));
+            Assert.IsInstanceOfType(result, typeof (RedirectToRouteResult));
         }
 
         [TestMethod]
@@ -122,7 +128,12 @@ namespace CUWebinars.Web.Tests
                 Password = password
             };
 
-            var accountController = new AccountController(mailServiceMock.Object, loggerMock.Object, membershipServiceMock.Object, orderRepositoryMock.Object);
+            var accountController = new AccountController(
+                mailServiceMock.Object,
+                loggerMock.Object,
+                membershipServiceMock.Object,
+                orderRepositoryMock.Object,
+                orderServiceMock.Object);
 
             var result = accountController.SignIn(signInModel);
 
@@ -145,7 +156,12 @@ namespace CUWebinars.Web.Tests
                 Password = password
             };
 
-            var accountController = new AccountController(mailServiceMock.Object, loggerMock.Object, membershipServiceMock.Object, orderRepositoryMock.Object);
+            var accountController = new AccountController(
+                mailServiceMock.Object,
+                loggerMock.Object,
+                membershipServiceMock.Object,
+                orderRepositoryMock.Object,
+                orderServiceMock.Object);
 
             var result = accountController.SignIn(signInModel);
 
@@ -167,7 +183,12 @@ namespace CUWebinars.Web.Tests
                 ReturnUrl = null
             };
 
-            var accountController = new AccountController(mailServiceMock.Object, loggerMock.Object, membershipServiceMock.Object, orderRepositoryMock.Object);
+            var accountController = new AccountController(
+                mailServiceMock.Object,
+                loggerMock.Object,
+                membershipServiceMock.Object,
+                orderRepositoryMock.Object,
+                orderServiceMock.Object);
 
             var result = accountController.SignIn(signInModel);
 
@@ -191,7 +212,12 @@ namespace CUWebinars.Web.Tests
 
             membershipServiceMock.Setup(m => m.ResetPassword(globalConfig.Tenant, email)).Verifiable();
 
-            var accountController = new AccountController(mailServiceMock.Object, loggerMock.Object, membershipServiceMock.Object, orderRepositoryMock.Object);
+            var accountController = new AccountController(
+                mailServiceMock.Object,
+                loggerMock.Object,
+                membershipServiceMock.Object,
+                orderRepositoryMock.Object,
+                orderServiceMock.Object);
 
             var result = accountController.ResetPassword(resetPasswordModel);
 
@@ -213,7 +239,12 @@ namespace CUWebinars.Web.Tests
 
             membershipServiceMock.Setup(m => m.ResetPassword(globalConfig.Tenant, email)).Throws(new ValidationException("Invalid email."));
 
-            var accountController = new AccountController(mailServiceMock.Object, loggerMock.Object, membershipServiceMock.Object, orderRepositoryMock.Object);
+            var accountController = new AccountController(
+                mailServiceMock.Object,
+                loggerMock.Object,
+                membershipServiceMock.Object,
+                orderRepositoryMock.Object,
+                orderServiceMock.Object);
 
             var result = accountController.ResetPassword(resetPasswordModel);
 
@@ -235,7 +266,12 @@ namespace CUWebinars.Web.Tests
 
             membershipServiceMock.Setup(m => m.ResetPassword(globalConfig.Tenant, email)).Throws(new ValidationException("Invalid email."));
 
-            var accountController = new AccountController(mailServiceMock.Object, loggerMock.Object, membershipServiceMock.Object, orderRepositoryMock.Object);
+            var accountController = new AccountController(
+                mailServiceMock.Object,
+                loggerMock.Object,
+                membershipServiceMock.Object,
+                orderRepositoryMock.Object,
+                orderServiceMock.Object);
 
             var result = accountController.ResetPassword(resetPasswordModel);
 
@@ -248,7 +284,12 @@ namespace CUWebinars.Web.Tests
         {
             string randomString = GetRandomString(24);
 
-            var accountController = new AccountController(mailServiceMock.Object, loggerMock.Object, membershipServiceMock.Object, orderRepositoryMock.Object);
+            var accountController = new AccountController(
+                mailServiceMock.Object,
+                loggerMock.Object,
+                membershipServiceMock.Object,
+                orderRepositoryMock.Object,
+                orderServiceMock.Object);
 
             var result = accountController.PasswordResetConfirm(randomString);
                         
@@ -260,7 +301,12 @@ namespace CUWebinars.Web.Tests
         {
             string randomString = GetRandomString(24);
 
-            var accountController = new AccountController(mailServiceMock.Object, loggerMock.Object, membershipServiceMock.Object, orderRepositoryMock.Object);
+            var accountController = new AccountController(
+                mailServiceMock.Object,
+                loggerMock.Object,
+                membershipServiceMock.Object,
+                orderRepositoryMock.Object,
+                orderServiceMock.Object);
 
             var result = accountController.PasswordResetConfirm(randomString);
 
@@ -270,7 +316,12 @@ namespace CUWebinars.Web.Tests
         [TestMethod]
         public void PasswordResetConfirmModelStateIsFalseWhereNullSentToResetPassword()
         {
-            var accountController = new AccountController(mailServiceMock.Object, loggerMock.Object, membershipServiceMock.Object, orderRepositoryMock.Object);
+            var accountController = new AccountController(
+                mailServiceMock.Object,
+                loggerMock.Object,
+                membershipServiceMock.Object,
+                orderRepositoryMock.Object,
+                orderServiceMock.Object);
 
             var result = accountController.PasswordResetConfirm(null);
 
@@ -280,7 +331,12 @@ namespace CUWebinars.Web.Tests
         [TestMethod]
         public void PasswordResetConfirmModelStateIsFalseWhereEmptyStringSentToResetPassword()
         {
-            var accountController = new AccountController(mailServiceMock.Object, loggerMock.Object, membershipServiceMock.Object, orderRepositoryMock.Object);
+            var accountController = new AccountController(
+                mailServiceMock.Object,
+                loggerMock.Object,
+                membershipServiceMock.Object,
+                orderRepositoryMock.Object,
+                orderServiceMock.Object);
 
             var result = accountController.PasswordResetConfirm(string.Empty);
 
@@ -303,7 +359,12 @@ namespace CUWebinars.Web.Tests
             RequestContext requestContext = new RequestContext(context.Object, new RouteData());
             urlHelper = new UrlHelper(requestContext);
 
-            return new AccountController(mailServiceMock.Object, loggerMock.Object, membershipServiceMock.Object, orderRepositoryMock.Object);
+            return new AccountController(
+                mailServiceMock.Object, 
+                loggerMock.Object, 
+                membershipServiceMock.Object, 
+                orderRepositoryMock.Object,
+                orderServiceMock.Object);
         }
 
         private string GetRandomString(int size)
