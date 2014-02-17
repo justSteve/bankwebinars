@@ -394,6 +394,7 @@
     <Compile Include="Infrastructure\TTSAuthorizationManager.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\AddressModel.cs" />
+    <Compile Include="Models\ChangeEmailFromKeyInputModel.cs" />
     <Compile Include="Models\ChangePasswordFromResetKeyInputModel.cs" />
     <Compile Include="Models\ManageModel.cs" />
     <Compile Include="Models\RegisterModel.cs" />
@@ -926,6 +927,8 @@
     <Content Include="Membership\Email\EmailTemplates\PasswordChangedEvent_Subject.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\PasswordResetRequestedEvent_Subject.cshtml" />
     <Content Include="Notification\Templates\OrderSubmittedEvent.cshtml" />
+    <Content Include="Membership\Email\EmailTemplates\EmailVerifiedEvent_Subject.cshtml" />
+    <Content Include="Membership\Email\EmailTemplates\EmailVerifiedEvent_Body.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy %283%29.pubxml" />
@@ -1030,6 +1033,7 @@
     <Content Include="Views\Shared\EditorTemplates\Address.cshtml" />
     <Content Include="Views\Account\_CreateUserForm.cshtml" />
     <Content Include="Views\Account\test.cshtml" />
+    <Content Include="Views\Account\Confirm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

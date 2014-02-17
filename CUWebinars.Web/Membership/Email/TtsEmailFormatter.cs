@@ -17,7 +17,7 @@ namespace CUWebinars.Web.Membership.Email
 
         public string PathToRoot 
         {
-            set { pathToTemplates = Path.Combine(value, "Membership/Email/EmailTemplates"); }
+            set { pathToTemplates = Path.Combine(value, @"Membership\Email\EmailTemplates"); }
         }
 
         

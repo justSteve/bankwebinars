@@ -185,6 +185,45 @@ namespace CUWebinars.Web.Controllers
             return View("MyWebinars", model);
         }
 
+        [System.Web.Mvc.AllowAnonymous]
+        public ActionResult Confirm(string id)
+        {
+            var account = membershipService.GetByVerificationKey(id);
+            if (account.HasPassword())
+            {
+                var vm = new ChangeEmailFromKeyInputModel();
+                vm.Key = id;
+                return View("Confirm", vm);
+            }
+
+            return null;
+        }
+
+        [System.Web.Mvc.AllowAnonymous]
+        [System.Web.Mvc.HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Confirm(ChangeEmailFromKeyInputModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    BrockAllen.MembershipReboot.UserAccount account = membershipService.VerifyEmailFromKey(model.Key, model.Password);
+
+                    // since we've changed the email, we need to re-issue the cookie that
+                    // contains the claims.
+                    membershipService.SignIn(account, true);
+                    return RedirectToLocal(null);
+                }
+                catch (ValidationException ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
+            }
+
+            return View("Confirm", model);
+        }
+
         [ClaimsAuthorize(Roles="Admin")]
         public ActionResult Manage(ManageMessageId? message)
         {

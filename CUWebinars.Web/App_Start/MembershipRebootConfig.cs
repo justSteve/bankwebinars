@@ -16,8 +16,8 @@ namespace CUWebinars.Web.App_Start
                 "CUWebinars",
                 "Test Email Signature",
                 "Account/Login",
-                "Account/PasswordResetConfirm/",
-                "Account/Register/Cancel/",
+                "Account/Confirm/",
+                "Account/RegisterCancel/",
                 "Account/PasswordResetConfirm/");
 
             var delivery = new TtsSmtpMessageDelivery();

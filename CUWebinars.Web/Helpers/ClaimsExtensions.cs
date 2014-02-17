@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Web;
+using BrockAllen.MembershipReboot;
 
 namespace CUWebinars.Web.Helpers
 {
@@ -45,6 +46,12 @@ namespace CUWebinars.Web.Helpers
                 }
             }
             throw new Exception("Invalid NameIdentifier");
+        }
+
+        public static bool HasPassword(this UserAccount account)
+        {
+            if (account == null) throw new ArgumentException("account");
+            return !String.IsNullOrWhiteSpace(account.HashedPassword);
         }
 
         public static bool HasUserID(this IPrincipal p)

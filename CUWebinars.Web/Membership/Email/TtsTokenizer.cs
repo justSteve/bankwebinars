@@ -53,7 +53,7 @@ namespace CUWebinars.Web.Membership.Email
 
             var b = body.Parse(msg, notification, null, null);
 
-            return b;
+            return b.Trim();
         }
     }
 }

@@ -31,6 +31,11 @@ namespace CUWebinars.Business.AccountService
             this.webUserRepository = webUserRepository;
         }
 
+        public UserAccount GetByVerificationKey(string id)
+        {
+            return userAccountService.GetByVerificationKey(id);
+        }
+
         public WebUser GetDetailsOfUser(string email)
         {
             var webUser = refDataRepository.GetWebUserByEmail(email);
@@ -158,6 +163,11 @@ namespace CUWebinars.Business.AccountService
             userAccountService.ResetPassword(tenant, email);
         }
 
+        public void SignIn(UserAccount userAccount, bool persistant)
+        {
+            samAuthenticationService.SignIn(userAccount, persistant);
+        }
+
         public bool ChangePasswordFromResetKey(string key, string newPassword)
         {
             return userAccountService.ChangePasswordFromResetKey(key, newPassword);
@@ -223,6 +233,14 @@ namespace CUWebinars.Business.AccountService
                 webUserRepository.UpdateAddresses(shippingAddressFromDb);
                 webUserRepository.Update(webUser);
             }
+        }
+
+        public UserAccount VerifyEmailFromKey(string key, string password)
+        {
+            UserAccount userAccount;
+            userAccountService.VerifyEmailFromKey(key, password, out userAccount);
+
+            return userAccount;
         }
 
         public IEnumerable<Address> GetAddressesForUser(int id)

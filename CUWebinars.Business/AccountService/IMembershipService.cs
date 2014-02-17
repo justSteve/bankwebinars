@@ -24,6 +24,8 @@ namespace CUWebinars.Business.AccountService
             string accountStatus = null);
 
         IEnumerable<Address> GetAddressesForUser(int id);
+
+        UserAccount GetByVerificationKey(string id);
         WebUser GetDetailsOfUser(string email);
         UserAccount GetUserAccountByUserId(Guid userId);
         WebUser GetUserByEmail(string email);
@@ -38,6 +40,7 @@ namespace CUWebinars.Business.AccountService
             string zip);
         void ResetPassword(string tenant, string email);
 
+        void SignIn(UserAccount userAccount, bool persistant);
         void UpdateUserDetails(string tenant, 
             string firstName,
             string lastName,
@@ -48,5 +51,7 @@ namespace CUWebinars.Business.AccountService
             Address shippingAddress,
             string title
             );
+
+        UserAccount VerifyEmailFromKey(string key, string password);
     }
 }
