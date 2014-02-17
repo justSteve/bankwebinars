@@ -143,7 +143,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (MembershipCreateUserException e)
                 {
-                    ModelState.AddModelError("", e.StatusCode.ToString());
+                    ModelState.AddModelError(string.Empty, e.StatusCode.ToString());
                 }
             }
 
@@ -162,7 +162,7 @@ namespace CUWebinars.Web.Controllers
             //IList<DiscountDTO> discountDto = new DiscountDTOAssembler().Entities2DTOs(
             //    discountsList, rowsWithDiscount);
 
-            ViewData["DiscountMsg"] = "";
+            ViewData["DiscountMsg"] = string.Empty;
             
             model.Scheduled = orderRepository.SelectOrdersWithScheduledWebinars(currentUser.idUser);
             model.Recorded = orderRepository.SelectOrdersWithRecordedWebinars(currentUser.idUser);
@@ -217,7 +217,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (ValidationException ex)
                 {
-                    ModelState.AddModelError("", ex.Message);
+                    ModelState.AddModelError(string.Empty, ex.Message);
                 }
             }
 
@@ -381,7 +381,7 @@ namespace CUWebinars.Web.Controllers
             }
 
             // If we got this far, something failed, redisplay form
-            ModelState.AddModelError("", "The user name or password provided is incorrect.");
+            ModelState.AddModelError(string.Empty, "The user name or password provided is incorrect.");
             return View("Login", new LoginModel
             {
                 Register = new RegisterViewModel
@@ -593,7 +593,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (MembershipCreateUserException e)
                 {
-                    ModelState.AddModelError("", ErrorCodeToString(e.StatusCode)); //TODO: add error message here and handle in razor
+                    ModelState.AddModelError(string.Empty, ErrorCodeToString(e.StatusCode)); //TODO: add error message here and handle in razor
                 }
             }
 
