@@ -49,6 +49,9 @@ namespace CUWebinars.Web.Controllers
         public ActionResult CreateOrder()
         {
             //var currentUser = GetWebUserFromIPrincipal();
+            var refDataRepository = new RefDataRepository();
+            var bla = refDataRepository.FindOptionsByWebinarId(435);
+
             var identity = ClaimsPrincipal.Current;
 
             var order = new Order
@@ -56,7 +59,12 @@ namespace CUWebinars.Web.Controllers
                 FirstName = "Birgit",
                 LastName = "Roby",
                 idOrder = 1114,
-                OrderDate = DateTime.Parse("2014-02-05 21:32:53.000")
+                OrderDate = DateTime.Parse("2014-02-05 21:32:53.000"),
+                Affiliate = new Affiliate
+                {
+                    ContactEmail = "affiliate@with.com",
+                    URL = "http://microsoft.com"
+                }
             };
 
             orderManagementService.CreateOrderEvent(order, membershipService.GetUserAccountByUserId(identity.GetUserID()));

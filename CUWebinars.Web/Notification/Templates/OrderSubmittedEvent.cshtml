@@ -6,4 +6,6 @@
     <div>First Name: @Model.FirstName</div>
     <div>Last Name: @Model.LastName</div>@*This comment gets ignored (just an example)*@
     <div>Ordered on : @Model.OrderDate</div>
+    
+    @Include("_AffiliatedAffiliate.cshtml", @Model.Affiliate)
 </div>

@@ -2,16 +2,16 @@
 
 namespace CUWebinars.Business.Models.Mapping
 {
-    public class AdditionalLocationsOptionMap : EntityTypeConfiguration<AdditionalLocationsOption>
-    {
-        public AdditionalLocationsOptionMap()
-        {
-            Property(t => t.AdditionalLocationsCount)
-                .IsOptional();
+    //public class AdditionalLocationsOptionMap : EntityTypeConfiguration<AdditionalLocationsOption>
+    //{
+    //    public AdditionalLocationsOptionMap()
+    //    {
+    //        Property(t => t.AdditionalLocationsCount)
+    //            .IsOptional();
 
-            ToTable("OrderRowOptions");
+    //        ToTable("OrderRowOptions");
 
-            Property(t => t.AdditionalLocationsCount).HasColumnName("AdditionalLocationsCount");
-        }
-    }
+    //        Property(t => t.AdditionalLocationsCount).HasColumnName("AdditionalLocationsCount");
+    //    }
+    //}
 }

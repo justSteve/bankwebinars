@@ -14,7 +14,13 @@ namespace CUWebinars.Web.Notification
             T objectOfMessage
             )
         {
-            var config = new FluentTemplateServiceConfiguration(c => c.WithEncoding(Encoding.Html));
+            //  create a configuration file for the template service
+            var config = new FluentTemplateServiceConfiguration(c =>
+            {
+                c.WithEncoding(Encoding.Html);
+                c.ResolveUsing<TemplateResolver>();
+            });
+
             var user = accountEvent.Account;
 
             // create a new TemplateService and pass in the configuration to the constructor

@@ -3,6 +3,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Linq;
 using BrockAllen.MembershipReboot;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Web.Notification;
 
@@ -12,7 +13,6 @@ namespace CUWebinars.Business.Notification
         where TAccount : UserAccount
     {
         private readonly Lazy<EnvironmentInformation> _environmentInformation;
-        private const string ResourcePathTemplate = @"Notification\Templates";
         private const string RazorExtension = ".cshtml";
         private string _emailSubject;
         private string _emailBody;
@@ -101,7 +101,7 @@ namespace CUWebinars.Business.Notification
 
         private void LoadTemplate(string name)
         {
-            var templatePath = Path.Combine(EnvironmentInformation.BaseUrl, ResourcePathTemplate, name);
+            var templatePath = Path.Combine(EnvironmentInformation.BaseUrl, DomainConstants.ResourcePathTemplate, name);
             var settings = new XmlReaderSettings{ ConformanceLevel = ConformanceLevel.Fragment };
 
             using (XmlReader reader = XmlReader.Create(templatePath, settings))

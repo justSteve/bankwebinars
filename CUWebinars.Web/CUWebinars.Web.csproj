@@ -929,6 +929,7 @@
     <Content Include="Notification\Templates\OrderSubmittedEvent.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailVerifiedEvent_Subject.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailVerifiedEvent_Body.cshtml" />
+    <Content Include="Notification\Templates\_AffiliatedAffiliate.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy %283%29.pubxml" />
