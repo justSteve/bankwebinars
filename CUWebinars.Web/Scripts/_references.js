@@ -1,5 +1,5 @@
-﻿/// <reference path="~/Scripts/jquery-1.8.2.js" />
-/// <reference path="~/Scripts/jquery-ui-1.8.24.js" />
+﻿/// <reference path="~/Scripts/jquery-1.9.1.min.js" />
+/// <reference path="~/Scripts/jquery-ui-1.10.3.min.js" />
 /// <reference path="~/Scripts/jquery.validate.js" />
 /// <reference path="~/Scripts/jquery.validate.unobtrusive.js" />
 /// <reference path="~/Scripts/knockout-2.3.0.js" />

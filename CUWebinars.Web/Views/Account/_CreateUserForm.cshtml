@@ -21,46 +21,279 @@
 </style>
 
 <script language="javascript" type="text/javascript">
-    function getZip() {
-        $("#getZip").show();
-        $(".loginContainer").hide();
+    function submitLogin() {
+        $("#Email").val($("#RegisterFields_Email").val());
+        $("#Password").val($("#Password1").val());
+        $("#frmSignin").submit();
+    }
+
+    function SetModalTop() {
+        
+        $('#modalInstitution').modal().css('position:absolute;top:145px;');
     }
 
     $(document).ready(function () {
-        $("#getZip").hide();
+        $("#wrapZip").hide();
+        $("#wrapReset").hide();
+        $("#wrapNonUS").hide();
         $("#getFirstLast").hide();
+        //$("[data-val-email]").keyup(function () { return false; });
+        //$("[data-val-email]").blur(function () { return true; });
+        
+        $("#RegisterFields_Email").validate({
+            onfocusout: true,
+            onkeyup: false,
+            onkeypress: false,
+            onkeydown: false
+        });
 
+        $("body").on('click', 'input:button', (function (e, data) {
+            var clickedButton = e.currentTarget.name;
+            //possible values
+            // findCityState
+            // nonUSAddress
+            // submitLogin
+            // resetPass
+            // YesUseAddress
+            // EnterDiffAddress
+            // NotInstitution
+
+            if (clickedButton == "findCityState") {
+                $('#ZipChecker').val($('#getZip').val());
+                $("form#checkZip").submit();
+            }
+            if (clickedButton == "nonUSAddress") {
+
+                $("#wrapZip").hide("slow");
+                $("#wrapNonUS").show("slow");
+                $('#collapseEmail').collapse('toggle');
+                $('#collapseBilling').collapse('toggle');
+            }
+            if (clickedButton == "submitLogin") {
+                $('#Password').val($('#Password1').val());
+                $('#Email').val($('#Email1').val());
+                $("form#frmSignIn").submit();
+            }
+            if (clickedButton == "resetPass") {
+                //
+                $("form#ResetPasswordForm").submit();
+            }
+            if (clickedButton == "YesUseAddress") {
+                $("#wrapZip").hide("slow");
+                $('#modalInstitution').modal("hide");
+                $('#collapseEmail').collapse('toggle');
+                $('#collapseBilling').collapse('toggle');
+            }
+            if (clickedButton == "EnterDiffAddress") {
+                $("#wrapZip").hide("slow");
+                $('#modalInstitution').modal("hide");
+                $("#RegisterFields_ShippingAddress_StreetAddress").val("");
+                $("#RegisterFields_ShippingAddress_StreetAddress").val("");
+                $("#RegisterFields_ShippingAddress_StreetAddress").val("");
+                $("#RegisterFields_ShippingAddress_StreetAddress").val("");
+                $("#RegisterFields_BillingAddress_StreetAddress").val("");
+                $("#RegisterFields_BillingAddress_StreetAddress").val("");
+                $("#RegisterFields_BillingAddress_StreetAddress").val("");
+                $("#RegisterFields_BillingAddress_StreetAddress").val("");
+                $('#collapseEmail').collapse('toggle');
+                $('#collapseBilling').collapse('toggle');
+            }
+            if (clickedButton == "NotInstitution") {
+
+                $('#modalInstitution').modal("hide");
+                
+                $("#wrapZip").hide("slow");
+                $("#RegisterFields_Institution").val("");
+                $("#RegisterFields_ShippingAddress_StreetAddress").val("");
+                $("#RegisterFields_ShippingAddress_City").val("");
+                $("#RegisterFields_ShippingAddress_State").val("");
+                $("#RegisterFields_ShippingAddress_Zip").val("");
+                $("#RegisterFields_BillingAddress_StreetAddress").val("");
+                $("#RegisterFields_BillingAddress_City").val("");
+                $("#RegisterFields_BillingAddress_State").val("");
+                $("#RegisterFields_BillingAddress_Zip").val("");
+                $('#collapseEmail').collapse('toggle');
+                $('#collapseBilling').collapse('toggle');
+            }
+        }));
+
+        $('#modalInstitution').on('shown', function () {
+            SetModalTop();
+        });
         $('#collapseShipping').on('shown', function () {
             if ($("#sameAsBilling:checked").val()) {
                 SetShippingToBilling();
             }
         });
+        //var availableTags = [];
+        ////http://stackoverflow.com/questions/5077409/what-does-autocomplete-request-server-response-look-like
+        //$("#RegisterFields_Institution").autocomplete({
+        //    source: function (request, response) {
+        //        alert(request.term);
+        //        $.ajax({
+        //            type: 'GET',
+        //            cache: false,
+        //            url: '/Account/AutocompleteInstitution',
+        //            data: {
+        //                zip: "54636", term: request.term
+        //            },
+        //            //data: { zip: $("#RegisterFields_BillingAddress_Zip").val()},
+        //            //beforeSend: function () {
+        //            //    // this is where we append a loading image
+        //            //    $('#labelEmail').html('<div class="btn-warning style="width: 400px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</div>');
+        //            //},
+        //            success: function (data) {
+        //                response($.map(data.geonames, function (item) {
+        //                    return {
+        //                        label: item.name + (item.adminName1 ? ", " + item.adminName1 : "") + ", " + item.countryName,
+        //                        value: item.name
+        //                    };
+        //                }));
+        //            }
+        //        });
+        //    },
+        //    //source: '/Account/AutocompleteInstitution',
+        //    //minLength: ,
+        //    open: function (event, ui) {
+        //        $(".ui-autocomplete").css("z-index", 1000);
+        //    },
+        //    select: function (event, ui) {
+        //        $("#RegisterFields_Institution").val(ui.item.Work_Item);
+        //        return false;
+        //    }
+        //});
 
-        $('.accordion-group').each(function () {
-            var topcontainer = $(this);
-            topcontainer.find('input:last').each(function () {
-                $(this).blur(function () {
-                    //swap slideup and slidedown for 'collapse' as appropriate
-                    var nextag = topcontainer.next('.accordion-group');
-                    var lastag = $('.accordion-group').last();
-                    if (topcontainer.is(lastag)) {
-                        var nextag = $('.accordion-group').first();
+        $("form#checkEmail").submit(function () {
+            var jsonUrl = "/Account/CheckEmail";
+            var q = $("#emailChecker").val();
+            if (q.length == 0) {
+                $("#RegisterFields_Email").focus();
+            } else {
+                $.ajax({
+                    type: 'GET',
+                    cache: false,
+                    url: jsonUrl,
+                    data: { email: q },
+                    beforeSend: function () {
+                        // this is where we append a loading image
+                        $('#labelEmail').html('<div class="btn-warning style="width: 400px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</div>');
+                    },
+                    success: function (data) {
+                        // successful request; do something with the data
+                        if (data.email == "wasNotFound") {
+                            $('#wrapEmail').hide("fast");
+                            $('#wrapZip').show("fast");
+                            $('#labelEmail').html('<div class="btn-success" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + q + '</b>&nbsp; is recorded.</div>');
+                        }
+                        if (data.success == "foundInstitution") {
+                            $('#wrapEmail').hide("fast");
+                            $('#modalInstitution').modal("show");
+                            $("#RegisterFields_Institution").val(data.Institution);
+                            $("#RegisterFields_ShippingAddress_StreetAddress").val(data.Address);
+                            $("#RegisterFields_ShippingAddress_City").val(data.City);
+                            $("#RegisterFields_ShippingAddress_State").val(data.State);
+                            $("#RegisterFields_ShippingAddress_Zip").val(data.Zip);
+                            $("#RegisterFields_BillingAddress_StreetAddress").val(data.Address);
+                            $("#RegisterFields_BillingAddress_City").val(data.City);
+                            $("#RegisterFields_BillingAddress_State").val(data.State);
+                            $("#RegisterFields_BillingAddress_Zip").val(data.Zip);
+                            $('#labelEmail').html('<div class="btn-success" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + q + '</b>&nbsp; is recorded.</div>');
+                            $('#ShowInstitution').html(data.Institution + '<br>' + data.Address + '<br>' + data.City + ', ' + data.State + ' ' + data.Zip + '<br>');
+                        }
+
+                        if (data.success == "foundExisting") {
+                            $('#Email1').val(q);
+                            $('#ResetPassEmail').val(q);
+                            $('#labelEmail').html('<div class="btn-danger" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + q + '</b>&nbsp; is already on file.</div>');
+                            $('#wrapReset').show('fast');
+                            $('#wrapEmail').hide("fast");
+                        }
+                    },
+                    error: function () {
+                        // failed request; give feedback to user
+                        $('#wrapEmail').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
                     }
-                    var showag = nextag.find('.collapse');
-                    var hideag = topcontainer.find('.collapse');
-                    showag.collapse('toggle');
-                    hideag.collapse('toggle');
                 });
-            });
+            }
+            return false;
         });
+
+        $("form#checkZip").submit(function () {
+            var jsonUrl = "/Account/CheckZip";
+            var q = $("#ZipChecker").val();
+            if (q.length == 0) {
+                $("#RegisterFields_Zip").focus();
+            } else {
+                $.ajax({
+                    type: 'GET',
+                    cache: false,
+                    url: jsonUrl,
+                    data: { Zip: q },
+                    beforeSend: function () {
+                        // this is where we append a loading image
+                        $('#labelEmail').html('<div class="btn-warning style="width: 400px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Zip...</div>');
+                    },
+                    success: function (data) {
+                        // successful request; do something with the data
+                        if (data.success == "true") {
+
+                            $('#collapseEmail').collapse('toggle');
+                            $('#collapseBilling').collapse('toggle');
+                            $('#RegisterFields_BillingAddress_City').val(data.City);
+                            $('#RegisterFields_BillingAddress_State').val(data.State);
+                            $('#RegisterFields_BillingAddress_Zip').val(q);
+                            $('#TimeZone').val(data.TimeZone);
+                            $('#labelEmail').html('<div class="btn-success" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</div>');
+                        }
+                        if (data.success == "false") {
+                            $('#labelZip').html('<div class="btn-danger" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;Zipcode was not found!</div>');
+                        }
+                    },
+                    error: function () {
+                        // failed request; give feedback to user
+                        $('#wrapZip').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+                    }
+                });
+            }
+            return false;
+        });
+
+        //$("form#checkInstitution").submit(function () {
+        //    var jsonUrl = "/Account/CheckInstitution";
+        //    var q = $("#InstitutionChecker").val();
+        //    if (q.length == 0) {
+        //        $("#RegisterFields_Institution").focus();
+        //    } else {
+        //        //$("#RegisterFields_Institution").html(ajax_load);
+        //        $.getJSON(
+        //            jsonUrl,
+        //            { "Institution": q },
+        //            function (json) {
+        //                var result = "Language code is \"<strong>" + json.responseData.cResult + "\"";
+        //                $("#RegisterFields_Institution").html(result);
+        //            }
+        //        );
+        //    }
+        //    return false;
+        //});
+
+        $('#RegisterFields_Email').change(function () {
+            $('#emailChecker').val($('#RegisterFields_Email').val());
+            $("#checkEmail").submit();
+        });
+
+        //$('#RegisterFields_Institution').change(function () {
+        //    alert("hit" + $('#RegisterFields_Institution').val());
+        //    //  $.getJSON()
+        //    $('#InstitutionChecker').val($('#RegisterFields_Institution').val());
+        //    $("form#checkInstitution").submit();
+        //});
 
         $('#FullName').blur(function () {
             var tempName = $('#FullName').val().split(' ');
-
             if (tempName.length == 2) {
                 $('#RegisterFields_FirstName').val(tempName[0]);
                 $('#RegisterFields_LastName').val(tempName[1]);
-
             } else {
                 $('#RegisterFields_FirstName').val(tempName[0]);
                 $('#RegisterFields_LastName').val(tempName[1]);
@@ -105,28 +338,71 @@
     });
 
 </script>
-@using (Html.BeginForm("Register", "Account", null, FormMethod.Post, new { id = "_CreateUserForm" }))
+@using (Html.BeginForm("Register", "Account", null, FormMethod.Post, new { id = "_CreateUserForm", name = "createUser" }))
 {
-
+    <legend>Creating Account</legend>
     @Html.AntiForgeryToken()
-
     <input type="hidden" id="FirstName" name="FirstName" />
     <input type="hidden" id="LastName" name="LastName" />
     <input type="hidden" id="ShippingFirstName" name="ShippingFirstName" />
     <input type="hidden" id="ShippingLastName" name="ShippingLastName" />
-    <input type="hidden" id="RegisterFields.BillingAddress.Country" name="RegisterFields.BillingAddress.Country" value="US" />
-    <input type="hidden" id="RegisterFields.ShippingAddress.Country" name="RegisterFields.ShippingAddress.Country" value="US" />
+    <input type="hidden" id="RegisterFields_BillingAddress_Country" name="RegisterFields.BillingAddress.Country" value="US" />
+    <input type="hidden" id="RegisterFields_ShippingAddress_Country" name="RegisterFields.ShippingAddress.Country" value="US" />
     <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
 
     @Html.ValidationSummary(true)
     <div class="accordion" id="createUserPanes">
+
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#createUserPanes" href="#collapseEmail">
+                    <span id="labelEmail">Email</span>
+                </a>
+            </div>
+            <div id="collapseEmail" class="accordion-body collapse in">
+                <div class="accordion-inner">
+                    <div class="fieldContainer" id="wrapEmail">
+                        <div class="span1" style="text-align: right;">
+                            Email:
+                        </div>
+                        <div class="span6">
+                            @Html.TextBoxFor(model => model.RegisterFields.Email, new { style = "width: 180px;" })
+                            @Html.ValidationMessageFor(model => model.RegisterFields.Email)
+                        </div>
+                    </div>
+                    <div class="fieldContainer" id="wrapZip">
+                        <div class="span1" style="text-align: right;">
+                            Zip Code:
+                        </div>
+                        <div class="span4">
+                            <input type="text" name="getZip" id="getZip" style="width: 70px;" />
+                            <input type="button" value="Find City/State" name="findCityState" class="btn btn-success" />
+                            <input type="button" value="Have a Non-US Address?" name="nonUSAddress" class="btn btn-mini btn-info" />
+                        </div>
+                    </div>
+                    <div class="fieldContainer" id="wrapReset">
+                        <div class="container">
+                            <div class="span4">
+                                <h3>Login to existing account?</h3><p style="text-align: right;">
+                                    Email: <input id="Email1" name="Email1" value="" type="text"> <br>
+                                    Password: <input id="Password1" name="Password1" type="password"><br><input type="button" class="btn-success btn" name="submitLogin" value="Login" />
+                                </p>
+                            </div>
+                            <div class="span2"><h3 style="text-align: center; background-color: blanchedalmond">Or...</h3></div><div class="span4">
+                                <p style="margin-top: 50px;">We can email you a link that will reset your password. <input type="button" class="btn btn-danger" name="resetPass" value="Reset Password." /></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="accordion-group">
             <div class="accordion-heading">
                 <a class="accordion-toggle" data-toggle="collapse" data-parent="#createUserPanes" href="#collapseBilling">
                     Billing
                 </a>
             </div>
-            <div id="collapseBilling" class="accordion-body collapse in">
+            <div id="collapseBilling" class="accordion-body collapse">
                 <div class="accordion-inner">
                     <div class="fieldContainer" id="getFirstLast">
                         <div class="span1">
@@ -148,16 +424,6 @@
                         </div>
                         <div class="span4">
                             <input type="text" id="FullName" name="FullName" style="width: 240px;" />
-                        </div>
-                    </div>
-
-                    <div class="fieldContainer" id="wrapEmail">
-                        <div class="span1" style="text-align: right;">
-                            Email:
-                        </div>
-                        <div class="span4">
-                            @Html.TextBoxFor(model => model.RegisterFields.Email, new { style = "width: 180px;" })
-                            @Html.ValidationMessageFor(model => model.RegisterFields.Email)
                         </div>
                     </div>
                     <div class="fieldContainer" id="wrapInstitution">
@@ -200,9 +466,304 @@
                             @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.Zip)
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="span1">
+                            @Html.LabelFor(m => m.RegisterFields.Password, new { style = "display:inline-block;" }):
+                        </div>
+                        <div class="span4">
+                            @Html.PasswordFor(m => m.RegisterFields.Password, new { style = " width:100px;" })
+                            @Html.ValidationMessage("Password")
+
+                            @Html.LabelFor(m => m.RegisterFields.ConfirmPassword,
+                                new
+                                {
+                                    @for = "RegisterFields.ConfirmPassword",
+                                    style = "display:inline-block;"
+                                }
+                                ):
+
+                            @Html.PasswordFor(m => m.RegisterFields.ConfirmPassword, new
+                            {
+                                id = "RegisterFields.ConfirmPassword",
+                                @class = "{equalTo: '#Password'}",
+                                style = " width:100px;"
+                            })
+                            @Html.ValidationMessage("PasswordConfirmation")
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="fieldContainer" id="wrapCity">
+                            <div class="span1">
+                                <label for="TimeZone" style="display: inline-block">Time Zone:</label>
+                            </div>
+                            <div class="span2">
+                                <select style="width: 120px" id="TimeZone" name="TimeZone">
+                                    <option value="4">Eastern</option>
+                                    <option value="3">Central</option>
+                                    <option value="2">Mountain</option>
+                                    <option value="1">Pacific</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="span3">
+                            <select name="country">
+                                <option value="US">USA</option>
+                                <option value="Canada">Canada</option>
+                                <option value="Cayman Islands">Cayman Islands</option>
+                                <option value="Mexico">Mexico</option>
+                                <option value="Afganistan">Afghanistan</option>
+                                <option value="Albania">Albania</option>
+                                <option value="Algeria">Algeria</option>
+                                <option value="American Samoa">American Samoa</option>
+                                <option value="Andorra">Andorra</option>
+                                <option value="Angola">Angola</option>
+                                <option value="Anguilla">Anguilla</option>
+                                <option value="Antigua &amp; Barbuda">Antigua &amp; Barbuda</option>
+                                <option value="Argentina">Argentina</option>
+                                <option value="Armenia">Armenia</option>
+                                <option value="Aruba">Aruba</option>
+                                <option value="Australia">Australia</option>
+                                <option value="Austria">Austria</option>
+                                <option value="Azerbaijan">Azerbaijan</option>
+                                <option value="Bahamas">Bahamas</option>
+                                <option value="Bahrain">Bahrain</option>
+                                <option value="Bangladesh">Bangladesh</option>
+                                <option value="Barbados">Barbados</option>
+                                <option value="Belarus">Belarus</option>
+                                <option value="Belgium">Belgium</option>
+                                <option value="Belize">Belize</option>
+                                <option value="Benin">Benin</option>
+                                <option value="Bermuda">Bermuda</option>
+                                <option value="Bhutan">Bhutan</option>
+                                <option value="Bolivia">Bolivia</option>
+                                <option value="Bonaire">Bonaire</option>
+                                <option value="Bosnia &amp; Herzegovina">Bosnia &amp; Herzegovina</option>
+                                <option value="Botswana">Botswana</option>
+                                <option value="Brazil">Brazil</option>
+                                <option value="British Indian Ocean Ter">British Indian Ocean Ter</option>
+                                <option value="Brunei">Brunei</option>
+                                <option value="Bulgaria">Bulgaria</option>
+                                <option value="Burkina Faso">Burkina Faso</option>
+                                <option value="Burundi">Burundi</option>
+                                <option value="Cambodia">Cambodia</option>
+                                <option value="Cameroon">Cameroon</option>
+                                <option value="Canary Islands">Canary Islands</option>
+                                <option value="Cape Verde">Cape Verde</option>
+                                <option value="Central African Republic">Central African Republic</option>
+                                <option value="Chad">Chad</option>
+                                <option value="Channel Islands">Channel Islands</option>
+                                <option value="Chile">Chile</option>
+                                <option value="China">China</option>
+                                <option value="Christmas Island">Christmas Island</option>
+                                <option value="Cocos Island">Cocos Island</option>
+                                <option value="Colombia">Colombia</option>
+                                <option value="Comoros">Comoros</option>
+                                <option value="Congo">Congo</option>
+                                <option value="Cook Islands">Cook Islands</option>
+                                <option value="Costa Rica">Costa Rica</option>
+                                <option value="Cote DIvoire">Cote D'Ivoire</option>
+                                <option value="Croatia">Croatia</option>
+                                <option value="Cuba">Cuba</option>
+                                <option value="Curaco">Curacao</option>
+                                <option value="Cyprus">Cyprus</option>
+                                <option value="Czech Republic">Czech Republic</option>
+                                <option value="Denmark">Denmark</option>
+                                <option value="Djibouti">Djibouti</option>
+                                <option value="Dominica">Dominica</option>
+                                <option value="Dominican Republic">Dominican Republic</option>
+                                <option value="East Timor">East Timor</option>
+                                <option value="Ecuador">Ecuador</option>
+                                <option value="Egypt">Egypt</option>
+                                <option value="El Salvador">El Salvador</option>
+                                <option value="Equatorial Guinea">Equatorial Guinea</option>
+                                <option value="Eritrea">Eritrea</option>
+                                <option value="Estonia">Estonia</option>
+                                <option value="Ethiopia">Ethiopia</option>
+                                <option value="Falkland Islands">Falkland Islands</option>
+                                <option value="Faroe Islands">Faroe Islands</option>
+                                <option value="Fiji">Fiji</option>
+                                <option value="Finland">Finland</option>
+                                <option value="France">France</option>
+                                <option value="French Guiana">French Guiana</option>
+                                <option value="French Polynesia">French Polynesia</option>
+                                <option value="French Southern Ter">French Southern Ter</option>
+                                <option value="Gabon">Gabon</option>
+                                <option value="Gambia">Gambia</option>
+                                <option value="Georgia">Georgia</option>
+                                <option value="Germany">Germany</option>
+                                <option value="Ghana">Ghana</option>
+                                <option value="Gibraltar">Gibraltar</option>
+                                <option value="Great Britain">Great Britain</option>
+                                <option value="Greece">Greece</option>
+                                <option value="Greenland">Greenland</option>
+                                <option value="Grenada">Grenada</option>
+                                <option value="Guadeloupe">Guadeloupe</option>
+                                <option value="Guam">Guam</option>
+                                <option value="Guatemala">Guatemala</option>
+                                <option value="Guinea">Guinea</option>
+                                <option value="Guyana">Guyana</option>
+                                <option value="Haiti">Haiti</option>
+                                <option value="Hawaii">Hawaii</option>
+                                <option value="Honduras">Honduras</option>
+                                <option value="Hong Kong">Hong Kong</option>
+                                <option value="Hungary">Hungary</option>
+                                <option value="Iceland">Iceland</option>
+                                <option value="India">India</option>
+                                <option value="Indonesia">Indonesia</option>
+                                <option value="Iran">Iran</option>
+                                <option value="Iraq">Iraq</option>
+                                <option value="Ireland">Ireland</option>
+                                <option value="Isle of Man">Isle of Man</option>
+                                <option value="Israel">Israel</option>
+                                <option value="Italy">Italy</option>
+                                <option value="Jamaica">Jamaica</option>
+                                <option value="Japan">Japan</option>
+                                <option value="Jordan">Jordan</option>
+                                <option value="Kazakhstan">Kazakhstan</option>
+                                <option value="Kenya">Kenya</option>
+                                <option value="Kiribati">Kiribati</option>
+                                <option value="Korea North">Korea North</option>
+                                <option value="Korea Sout">Korea South</option>
+                                <option value="Kuwait">Kuwait</option>
+                                <option value="Kyrgyzstan">Kyrgyzstan</option>
+                                <option value="Laos">Laos</option>
+                                <option value="Latvia">Latvia</option>
+                                <option value="Lebanon">Lebanon</option>
+                                <option value="Lesotho">Lesotho</option>
+                                <option value="Liberia">Liberia</option>
+                                <option value="Libya">Libya</option>
+                                <option value="Liechtenstein">Liechtenstein</option>
+                                <option value="Lithuania">Lithuania</option>
+                                <option value="Luxembourg">Luxembourg</option>
+                                <option value="Macau">Macau</option>
+                                <option value="Macedonia">Macedonia</option>
+                                <option value="Madagascar">Madagascar</option>
+                                <option value="Malaysia">Malaysia</option>
+                                <option value="Malawi">Malawi</option>
+                                <option value="Maldives">Maldives</option>
+                                <option value="Mali">Mali</option>
+                                <option value="Malta">Malta</option>
+                                <option value="Marshall Islands">Marshall Islands</option>
+                                <option value="Martinique">Martinique</option>
+                                <option value="Mauritania">Mauritania</option>
+                                <option value="Mauritius">Mauritius</option>
+                                <option value="Mayotte">Mayotte</option>
+                                <option value="Midway Islands">Midway Islands</option>
+                                <option value="Moldova">Moldova</option>
+                                <option value="Monaco">Monaco</option>
+                                <option value="Mongolia">Mongolia</option>
+                                <option value="Montserrat">Montserrat</option>
+                                <option value="Morocco">Morocco</option>
+                                <option value="Mozambique">Mozambique</option>
+                                <option value="Myanmar">Myanmar</option>
+                                <option value="Nambia">Nambia</option>
+                                <option value="Nauru">Nauru</option>
+                                <option value="Nepal">Nepal</option>
+                                <option value="Netherland Antilles">Netherland Antilles</option>
+                                <option value="Netherlands">Netherlands (Holland, Europe)</option>
+                                <option value="Nevis">Nevis</option>
+                                <option value="New Caledonia">New Caledonia</option>
+                                <option value="New Zealand">New Zealand</option>
+                                <option value="Nicaragua">Nicaragua</option>
+                                <option value="Niger">Niger</option>
+                                <option value="Nigeria">Nigeria</option>
+                                <option value="Niue">Niue</option>
+                                <option value="Norfolk Island">Norfolk Island</option>
+                                <option value="Norway">Norway</option>
+                                <option value="Oman">Oman</option>
+                                <option value="Pakistan">Pakistan</option>
+                                <option value="Palau Island">Palau Island</option>
+                                <option value="Palestine">Palestine</option>
+                                <option value="Panama">Panama</option>
+                                <option value="Papua New Guinea">Papua New Guinea</option>
+                                <option value="Paraguay">Paraguay</option>
+                                <option value="Peru">Peru</option>
+                                <option value="Phillipines">Philippines</option>
+                                <option value="Pitcairn Island">Pitcairn Island</option>
+                                <option value="Poland">Poland</option>
+                                <option value="Portugal">Portugal</option>
+                                <option value="Puerto Rico">Puerto Rico</option>
+                                <option value="Qatar">Qatar</option>
+                                <option value="Republic of Montenegro">Republic of Montenegro</option>
+                                <option value="Republic of Serbia">Republic of Serbia</option>
+                                <option value="Reunion">Reunion</option>
+                                <option value="Romania">Romania</option>
+                                <option value="Russia">Russia</option>
+                                <option value="Rwanda">Rwanda</option>
+                                <option value="St Barthelemy">St Barthelemy</option>
+                                <option value="St Eustatius">St Eustatius</option>
+                                <option value="St Helena">St Helena</option>
+                                <option value="St Kitts-Nevis">St Kitts-Nevis</option>
+                                <option value="St Lucia">St Lucia</option>
+                                <option value="St Maarten">St Maarten</option>
+                                <option value="St Pierre &amp; Miquelon">St Pierre &amp; Miquelon</option>
+                                <option value="St Vincent &amp; Grenadines">St Vincent &amp; Grenadines</option>
+                                <option value="Saipan">Saipan</option>
+                                <option value="Samoa">Samoa</option>
+                                <option value="Samoa American">Samoa American</option>
+                                <option value="San Marino">San Marino</option>
+                                <option value="Sao Tome &amp; Principe">Sao Tome &amp; Principe</option>
+                                <option value="Saudi Arabia">Saudi Arabia</option>
+                                <option value="Senegal">Senegal</option>
+                                <option value="Serbia">Serbia</option>
+                                <option value="Seychelles">Seychelles</option>
+                                <option value="Sierra Leone">Sierra Leone</option>
+                                <option value="Singapore">Singapore</option>
+                                <option value="Slovakia">Slovakia</option>
+                                <option value="Slovenia">Slovenia</option>
+                                <option value="Solomon Islands">Solomon Islands</option>
+                                <option value="Somalia">Somalia</option>
+                                <option value="South Africa">South Africa</option>
+                                <option value="Spain">Spain</option>
+                                <option value="Sri Lanka">Sri Lanka</option>
+                                <option value="Sudan">Sudan</option>
+                                <option value="Suriname">Suriname</option>
+                                <option value="Swaziland">Swaziland</option>
+                                <option value="Sweden">Sweden</option>
+                                <option value="Switzerland">Switzerland</option>
+                                <option value="Syria">Syria</option>
+                                <option value="Tahiti">Tahiti</option>
+                                <option value="Taiwan">Taiwan</option>
+                                <option value="Tajikistan">Tajikistan</option>
+                                <option value="Tanzania">Tanzania</option>
+                                <option value="Thailand">Thailand</option>
+                                <option value="Togo">Togo</option>
+                                <option value="Tokelau">Tokelau</option>
+                                <option value="Tonga">Tonga</option>
+                                <option value="Trinidad &amp; Tobago">Trinidad &amp; Tobago</option>
+                                <option value="Tunisia">Tunisia</option>
+                                <option value="Turkey">Turkey</option>
+                                <option value="Turkmenistan">Turkmenistan</option>
+                                <option value="Turks &amp; Caicos Is">Turks &amp; Caicos Is</option>
+                                <option value="Tuvalu">Tuvalu</option>
+                                <option value="Uganda">Uganda</option>
+                                <option value="Ukraine">Ukraine</option>
+                                <option value="United Arab Erimates">United Arab Emirates</option>
+                                <option value="United Kingdom">United Kingdom</option>
+                                <option value="Uraguay">Uruguay</option>
+                                <option value="Uzbekistan">Uzbekistan</option>
+                                <option value="Vanuatu">Vanuatu</option>
+                                <option value="Vatican City State">Vatican City State</option>
+                                <option value="Venezuela">Venezuela</option>
+                                <option value="Vietnam">Vietnam</option>
+                                <option value="Virgin Islands (Brit)">Virgin Islands (Brit)</option>
+                                <option value="Virgin Islands (USA)">Virgin Islands (USA)</option>
+                                <option value="Wake Island">Wake Island</option>
+                                <option value="Wallis &amp; Futana Is">Wallis &amp; Futana Is</option>
+                                <option value="Yemen">Yemen</option>
+                                <option value="Zaire">Zaire</option>
+                                <option value="Zambia">Zambia</option>
+                                <option value="Zimbabwe">Zimbabwe</option>
+                            </select>
+                        </div>
+                        <div class="span1">
+                            <textarea name="nonUS" rows="5" cols="100">Mailing address notes:</textarea>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+
         <div class="accordion-group">
             <div class="accordion-heading">
                 <a class="accordion-toggle" data-toggle="collapse" data-parent="#createUserPanes" href="#collapseShipping">Shipping</a>
@@ -222,12 +783,12 @@
                     </div>
 
                     <div class="fieldContainer" id="wrapPhone">
-                            <div class="span1">Phone:</div>
-                            <div class="span4">
-                                @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.Phone, new { style = "width: 140px;" })
-                                @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.Phone)
-                            </div>
+                        <div class="span1">Phone:</div>
+                        <div class="span4">
+                            @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.Phone, new { style = "width: 140px;" })
+                            @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.Phone)
                         </div>
+                    </div>
                     <div class="fieldContainer" id="wrapAddress">
                         <div class="span1">
                             Address:
@@ -248,8 +809,7 @@
 
                             &nbsp;&nbsp; State: @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.State, new { style = "width: 30px;" })
                             @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.State)
-                            &nbsp;&nbsp; Zip:
-                            @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.Zip, new { style = "width: 50px;" })
+                            &nbsp;&nbsp; Zip:   @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.Zip, new { style = "width: 50px;" })
                             @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.Zip)
                         </div>
 
@@ -257,72 +817,36 @@
                 </div>
             </div>
         </div>
-
-        <div class="accordion-group">
-            <div class="accordion-heading">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#createUserPanes" href="#collapseAcct">Account</a>
-            </div>
-            <div id="collapseAcct" class="accordion-body collapse">
-                <div class="accordion-inner">
-                    <div class="row">
-                        <div class="span1">
-                            @Html.LabelFor(m => m.RegisterFields.Password, new { style = "display:inline-block" }):
-                        </div>
-                        <div class="span3">
-                            @Html.PasswordFor(m => m.RegisterFields.Password)
-                            @Html.ValidationMessage("Password")
-                        </div>
-
-                    </div>
-                    <div class="row">
-                        <div class="span1">
-                            @Html.LabelFor(m => m.RegisterFields.ConfirmPassword,
-                                new
-                                {
-                                    @for = "RegisterFields.ConfirmPassword",
-                                    style = "display:inline-block"
-                                }
-                                ):
-                        </div>
-                        <div class="span3">
-
-                            @Html.PasswordFor(m => m.RegisterFields.ConfirmPassword, new
-                            {
-                                id = "RegisterFields.ConfirmPassword",
-                                @class = "{equalTo: '#Password'}"
-                            })
-                            @Html.ValidationMessage("PasswordConfirmation")
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="span1">
-                            <label for="TimeZone" style="display: inline-block">Time Zone:</label>
-                        </div>
-                        <div class="span3">
-                            <select style="width: 120px" id="TimeZone" name="TimeZone">
-                                <option value="4">Eastern</option>
-                                <option value="3">Central</option>
-                                <option value="2">Mountain</option>
-                                <option value="1">Pacific</option>
-                            </select>
-                        </div>
-                    </div>
-                    @*<div class="fieldContainer">
-                            <div class="span6">
-                                Mailing List:
-                                @Html.CheckBox("FutureMail", Model.RegisterFields.FutureMail)
-                            </div>
-                        </div>*@
-
-                </div>
-            </div>
-        </div>
     </div>
     <div class="form-inline">
-        <div class="btn-group" style="width:160px">&nbsp;</div>
+        <div class="btn-group" style="width: 160px">&nbsp;</div>
         <div class="btn-group">
             <input type="submit" value="Register" class="btn btn-default" />
         </div>
     </div>
-
 }
+<form id="checkEmail"><input type="hidden" name="emailChecker" id="emailChecker" /></form>
+<form id="checkZip"><input type="hidden" name="ZipChecker" id="ZipChecker" /></form>
+<form id="nonUSForm"><input type="hidden" name="AddressText" id="AddressText" /></form>
+<form id="checkInstitution"><input type="hidden" name="InstitutionChecker" id="InstitutionChecker" /></form>
+
+
+<div id="modalInstitution" class="modal hide">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Insitution Information</h3>
+    </div>
+    <div id="UserInstitutionBody" class="modal-body">
+        <h5>Is this your institution?</h5>        <div id="ShowInstitution">placeholder for ajax response</div>
+
+        <div id="instInfo">
+            <p><input type="button" class="btn btn-primary" name="YesUseAddress" value="Yes, use this address." /></p>
+            <p><input type="button" class="btn btn-warning" name="EnterDiffAddress" value="Yes, that's my institution but I want to enter a different address." /></p>
+            <p><input type="button" class="btn btn-warning" name="NotInstitution" value="No, that's not my institution" /></p>
+        </div>
+    </div>
+    @*<div class="modal-footer">
+            <a href="#" id="cancelContinue" class="close btn" data-dismiss="modal">Cancel</a>
+            <a href="#" id="updateInstitution" class="btn btn-danger">Update</a>
+        </div>*@
+</div>
