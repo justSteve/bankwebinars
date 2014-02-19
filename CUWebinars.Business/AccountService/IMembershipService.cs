@@ -29,6 +29,7 @@ namespace CUWebinars.Business.AccountService
         WebUser GetDetailsOfUser(string email);
         UserAccount GetUserAccountByUserId(Guid userId);
         WebUser GetUserByEmail(string email);
+        Institution GetInstitutionByDomain(string domain);
         bool HasPassword(string tenant, string emailAddress);
         bool LogInUser(string tenant, string emailAddress, string password, bool persistent);
         bool LogOutUser();

@@ -1,6 +1,6 @@
 ﻿@model SignInModel
 
-@using (Html.BeginForm("SignIn", "Account"))
+@using (Html.BeginForm("SignIn", "Account", FormMethod.Post, new { name = "frmSignIn", id = "frmSignIn" }))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true)
@@ -27,6 +27,12 @@
         <div>
             <input class="btn" type="submit" value="Log in" />
             @Html.HiddenFor(m => m.ReturnUrl)
+
+        </div>
+        <div style="margin-top: 25px;">
+            <input type="button" class="btn-small btn btn-link" onclick="javascript: showRegister(); return false;" value="Create New Account?" />
+            <span style="margin-left: 25px;"><input type="button" class="btn-small btn btn-link" onclick="javascript: showPassReset(); return false;" value="Forgot Password?" /></span>
         </div>
     </fieldset>
 }
+

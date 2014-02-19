@@ -107,16 +107,14 @@
             {
                 if (myOption.Type == "Text")
                 {
-                    if (Model.OrderRow == null)
-                    //||
-                    //Model.OrderRow.idOrderRow < 1 ||
-                    //Model.OrderRow.Status == OrderRowStatus.InProcess)
-                    //&& !myOption.SKU.Contains("Upgrade")
+                    if ((Model.OrderRow == null ||
+                        Model.OrderRow.idOrderRow < 1 ||
+                        Model.OrderRow.Status == OrderRowStatus.InProcess)
+                        && !myOption.SKU.Contains("Upgrade"))
                     {
                         <dt>
                             <input type="radio" class="checkbox" id='mode_@(myOption.idOption)' name="mode" value="@myOption.idOption" />
                             &nbsp;&nbsp;@myOption.OptionLabel - $@myOption.PriceToAdd&nbsp;&nbsp;<a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.OptionExplain) "><i class="icon-question-sign"></i></a>
-
                             <br />
                         </dt>
                     }

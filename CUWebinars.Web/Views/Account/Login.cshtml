@@ -1,6 +1,41 @@
 ﻿@model LoginModel
 
-<div id="LogInContainer" class="container">
+<script language="javascript">
+
+    $(document).ready(function() {
+        $('#register').hide();
+        $('#reset').hide();
+    });
+
+    function showRegister() {
+        $('#login').hide("slow");
+        $('#register').show("slow");
+    }
+
+    function showPassReset() {
+        $('#login').hide("slow");
+        $('#reset').show("slow");
+    }
+</script>
+
+<div id="LogInContainer"class="container">
+    <div style="margin-left: 200px;" id="login">
+        @Html.Partial("_SignInPartial", Model.SignIn)
+    </div>
+    <div id="register">
+        @Html.Partial("_CreateUserForm", Model.Register)
+    </div>
+    <div style="margin-left: 200px;" id="reset">
+        @Html.Partial("_ResetPasswordPartial", Model.ResetPassword)
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/app-processing-register")
+
+}
+@*
     <div class="flat-form">
         <ul class="nav nav-tabs">
             <li>
@@ -57,15 +92,13 @@
 
             @if (Model.ActiveTab.Equals("register", StringComparison.Ordinal)){
                 <div id="register" class="tab-pane active">
-                    @Html.Partial("_CreateUserForm", Model.Register)
-                    @*@Html.Partial("_RegisterPartial", Model.Register)*@
+                    @Html.Partial("_RegisterPartial", Model.Register)
                 </div>
             }
             else
             {
                 <div id="register" class="tab-pane">
-                    @Html.Partial("_CreateUserForm", Model.Register)
-                    @*@Html.Partial("_RegisterPartial", Model.Register)*@
+                    @Html.Partial("_RegisterPartial", Model.Register)
                 </div>
             }
 

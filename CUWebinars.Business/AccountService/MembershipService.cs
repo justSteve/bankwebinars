@@ -53,6 +53,12 @@ namespace CUWebinars.Business.AccountService
             return webUser;
         }
 
+        public Institution GetInstitutionByDomain(string domain)
+        {
+            var inst = institutionRepository.GetAll().FirstOrDefault(i => i.domainName == domain);
+            return inst;
+        }
+
         public bool HasPassword(string tenant, string emailAddress)
         {
             var userAccount = userAccountService.GetByEmail(tenant, emailAddress);
@@ -119,8 +125,8 @@ namespace CUWebinars.Business.AccountService
                 samAuthenticationService.SignIn(userAccount, persistent);
                 return true;
             }
-                return false;
-            }
+            return false;
+        }
 
         public bool LogOutUser()
         {
@@ -158,7 +164,7 @@ namespace CUWebinars.Business.AccountService
             return newInstitution;
         }
 
-        public void ResetPassword(string tenant,string email)
+        public void ResetPassword(string tenant, string email)
         {
             userAccountService.ResetPassword(tenant, email);
         }
@@ -186,13 +192,13 @@ namespace CUWebinars.Business.AccountService
             )
         {
             if (userAccountService.AuthenticateWithEmail(tenant, email, password))
-            {                
+            {
                 var webUser = GetDetailsOfUser(email);
 
                 var billingAddressFromDb = webUser.Addresses.Where(a => a.AddressType == DomainConstants.BillingAddress).Single();
 
-                if(!(billingAddress.City.Equals(billingAddressFromDb.City, StringComparison.OrdinalIgnoreCase) && 
-                    billingAddress.State.Equals(billingAddressFromDb.State, StringComparison.OrdinalIgnoreCase) && 
+                if (!(billingAddress.City.Equals(billingAddressFromDb.City, StringComparison.OrdinalIgnoreCase) &&
+                    billingAddress.State.Equals(billingAddressFromDb.State, StringComparison.OrdinalIgnoreCase) &&
                     billingAddress.Zip.Equals(billingAddressFromDb.Zip, StringComparison.OrdinalIgnoreCase)) ||
                     !webUser.Institution.InstitutionName.Equals(institutionName, StringComparison.OrdinalIgnoreCase))
                 {
@@ -204,7 +210,7 @@ namespace CUWebinars.Business.AccountService
                 billingAddressFromDb.StreetAddress = billingAddress.StreetAddress;
                 billingAddressFromDb.StreetAddress2 = billingAddress.StreetAddress2;
                 billingAddressFromDb.State = billingAddress.State;
-                billingAddressFromDb.Phone = billingAddress.Phone ;
+                billingAddressFromDb.Phone = billingAddress.Phone;
                 billingAddressFromDb.Zip = billingAddress.Zip;
                 billingAddressFromDb.Country = billingAddress.Country;
 
@@ -217,14 +223,14 @@ namespace CUWebinars.Business.AccountService
                 shippingAddressFromDb.StreetAddress = shippingAddress.StreetAddress;
                 shippingAddressFromDb.StreetAddress2 = shippingAddress.StreetAddress2;
                 shippingAddressFromDb.State = shippingAddress.State;
-                shippingAddressFromDb.Phone = shippingAddress.Phone ;
+                shippingAddressFromDb.Phone = shippingAddress.Phone;
                 shippingAddressFromDb.Zip = shippingAddress.Zip;
                 shippingAddressFromDb.Country = shippingAddress.Country;
 
                 webUser.Addresses.Clear();
                 webUser.Addresses.Add(billingAddressFromDb);
                 webUser.Addresses.Add(shippingAddressFromDb);
-                
+
                 webUser.email = email;
                 webUser.FirstName = firstName;
                 webUser.LastName = lastName;
@@ -250,7 +256,7 @@ namespace CUWebinars.Business.AccountService
 
         public UserAccount GetUserAccountByUserId(Guid userId)
         {
-            return userAccountService.GetByID(userId);            
+            return userAccountService.GetByID(userId);
         }
     }
 }
