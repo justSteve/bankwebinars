@@ -40,9 +40,9 @@ namespace CUWebinars.Web.App_Start
                         "~/Content/js/responsive-tables.js",  //responsive table--> 
                         "~/Content/js/jquery.fitvid.js",         //responsive videos --> 
                 //initialize scripts / custom scripts all pages--> 
-                        "~/Content/js/scripts.js",
+                        "~/Content/js/scripts.js"
                 //"~/Scripts/app/waitButton.js",
-                         "~/Scripts/app/EditOrder.js"
+                         //"~/Scripts/app/EditOrder.js"
                         ));
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at http://modernizr.com to pick only the tests you need.

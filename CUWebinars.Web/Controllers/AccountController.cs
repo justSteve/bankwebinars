@@ -345,33 +345,37 @@ namespace CUWebinars.Web.Controllers
                     membershipService.ResetPassword(globalConfig.Tenant, model.Email);
                     model.EmailSent = true;
 
-                    return View("Login", new LoginModel
-                    {
-                        Register = new RegisterViewModel
-                        {
-                            RegisterFields = new RegisterModel()
-                        },
-                        ResetPassword = model,
-                        SignIn = new SignInModel(),
-                        ActiveTab = "reset"
-                    });
+                    return PartialView("_ResetPasswordPartial", model);
+
+                    //return View("Login", new LoginModel
+                    //{
+                    //    Register = new RegisterViewModel
+                    //    {
+                    //        RegisterFields = new RegisterModel()
+                    //    },
+                    //    ResetPassword = model,
+                    //    SignIn = new SignInModel(),
+                    //    ActiveTab = "reset"
+                    //});
                 }
                 catch (ValidationException validationException)
                 {
                     ModelState.AddModelError("InvalidEmail", "You have entered an invalid email address.");
                 }
             }
-            return View("Login", new LoginModel
-                    {
-                        Register = new RegisterViewModel
-                        {
-                            RegisterFields = new RegisterModel()
-                        },
-                        ResetPassword = model,
-                        SignIn = new SignInModel(),
-                        ActiveTab = "reset"
-                    }
-                );
+            return PartialView("_ResetPasswordPartial", model);
+
+            //return View("Login", new LoginModel
+            //    {
+            //        Register = new RegisterViewModel
+            //        {
+            //            RegisterFields = new RegisterModel()
+            //        },
+            //        ResetPassword = model,
+            //        SignIn = new SignInModel(),
+            //        ActiveTab = "reset"
+            //    }
+            //);
         }
 
         [System.Web.Mvc.AllowAnonymous]
@@ -495,7 +499,6 @@ namespace CUWebinars.Web.Controllers
             cResult.Add("State", zipAddress.Split(',')[1]);
             cResult.Add("TimeZone", zipAddress.Split(',')[2]);
             return Json(cResult, JsonRequestBehavior.AllowGet);
-
         }
         //
 
@@ -517,12 +520,35 @@ namespace CUWebinars.Web.Controllers
         public JsonResult CheckEmail(string email)
         {
             Dictionary<string, string> cResult = new Dictionary<string, string>();
-            cResult.Add("success", "foundNothing");
-            cResult.Add("Institution", "A Bank");
-            cResult.Add("Address", "10 Main");
-            cResult.Add("City", "Clevland");
-            cResult.Add("State", "OH");
-            cResult.Add("Zip", "55");
+            ;
+
+            var user = membershipService.GetUserByEmail(email);
+            if (user != null)
+            {//email exists and view is notified.
+                cResult.Add("success", "foundExisting");
+                return Json(cResult, JsonRequestBehavior.AllowGet);
+            }
+
+            cResult.Add("email", "wasNotFound");
+
+            var domain = email.Split('@')[1];
+            var institution = membershipService.GetInstitutionByDomain(domain);
+
+            if (institution != null)
+            {
+                //if we have a match between user's email (domain)
+                // and the domainName stored in existing Institution record
+                // we can offer to populate the user's billing info
+                cResult.Add("success", "foundInstitution");
+                cResult.Add("Institution", institution.InstitutionName);
+                cResult.Add("Address", institution.Address);
+                cResult.Add("City", institution.City);
+                cResult.Add("State", institution.State);
+                cResult.Add("Zip", institution.Zip);
+
+            }
+            return Json(cResult, JsonRequestBehavior.AllowGet);
+
             return Json(cResult, JsonRequestBehavior.AllowGet);
         }
 
