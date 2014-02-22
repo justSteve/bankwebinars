@@ -1,8 +1,8 @@
-﻿using System;
+﻿using BrockAllen.MembershipReboot;
+using System;
 using System.Configuration;
 using System.Net.Configuration;
 using System.Net.Mail;
-using BrockAllen.MembershipReboot;
 
 namespace CUWebinars.Web.Membership.Email
 {
@@ -14,11 +14,11 @@ namespace CUWebinars.Web.Membership.Email
 
             if (string.IsNullOrWhiteSpace(msg.From))
             {
-                SmtpSection smtp = ConfigurationManager.GetSection("system.net/mailSettings/smtp") as SmtpSection;
+                var smtp = ConfigurationManager.GetSection("system.net/mailSettings/smtp") as SmtpSection;
                 msg.From = smtp.From;
             }
 
-            using (SmtpClient smtp = new SmtpClient())
+            using (var smtp = new SmtpClient())
             {
                 smtp.Timeout = 5000;
 

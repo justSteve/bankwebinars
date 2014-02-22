@@ -15,7 +15,7 @@ namespace CUWebinars.Web.Membership.Email
             var body = new TemplateService();
             var user = accountEvent.Account;
             
-            var notification = new Membership.Notification
+            var notification = new Notification
             {
                 ApplicationName = appInfo.ApplicationName,
                 CancelVerificationUrl = appInfo.CancelVerificationUrl,
