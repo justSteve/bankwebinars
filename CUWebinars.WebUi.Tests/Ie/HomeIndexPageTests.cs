@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using CUWebinars.WebUi.Tests.Page.Ie;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CUWebinars.WebUi.Tests.Ie
 {
@@ -10,7 +11,7 @@ namespace CUWebinars.WebUi.Tests.Ie
         {
             var home = NavigateToHomeIndexPage();
             
-            Assert.IsTrue(home.HeadingIsPresentOnPage);
+            Assert.IsTrue(home.LoginLinkIsPresentOnPage);
         }
         
         public HomeIndexPage NavigateToHomeIndexPage()

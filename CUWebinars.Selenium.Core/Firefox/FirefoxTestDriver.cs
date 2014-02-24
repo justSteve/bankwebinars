@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
 
@@ -9,8 +10,7 @@ namespace CUWebinars.Selenium.Core.Firefox
        public FirefoxTestDriver(string port)
         {
             this.port = port;
-            //firefoxBinaryPath = ConfigurationManager.AppSettings["firefox"].ToString();
-            const string firefoxBinaryPath = @"C:\Program Files (x86)\Mozilla Firefox\firefox.exe";
+            var firefoxBinaryPath = ConfigurationManager.AppSettings["FirefoxExePath"]; 
 
             var firefoxBinary = new FirefoxBinary(firefoxBinaryPath);
             var firefoxProfile = new FirefoxProfile();
@@ -21,12 +21,16 @@ namespace CUWebinars.Selenium.Core.Firefox
             
         }
 
+       public override void Initialize()
+       {
+           //   do nothing intentionally.
+       }
+
         public override void GoToUrl(string url)
         {
             if (string.IsNullOrEmpty(url))
             {
-                //url = ConfigurationManager.AppSettings["testServerUrl"].ToString();
-                url = "localhost";
+                url = ConfigurationManager.AppSettings["HomeUrl"];
             }
 
             INavigation navigation = webDriver.Navigate();

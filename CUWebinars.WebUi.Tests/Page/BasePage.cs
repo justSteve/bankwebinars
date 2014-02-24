@@ -15,6 +15,15 @@ namespace CUWebinars.WebUi.Tests.Page
             }
         }
 
+        public bool LoginLinkIsPresentOnPage
+        {
+            get
+            {
+                return SeleniumTestDriver.FindByXPath(Constants.LoginLinkPath) != null;
+
+            }
+        }
+
         public virtual string Title
         {
             get
