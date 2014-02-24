@@ -132,6 +132,8 @@ UpgradeLog*.htm
 App_Data/*.mdf
 App_Data/*.ldf
 
+#Elmah error files
+App_Data/*.xml
 
 #LightSwitch generated files
 GeneratedArtifacts/
@@ -160,3 +162,4 @@ $RECYCLE.BIN/
 # Selenium Binaries
 # =========================
 CUWebinars.Selenium.Core/*.exe
+CUWebinars.WebUi.Tests/*.exe
