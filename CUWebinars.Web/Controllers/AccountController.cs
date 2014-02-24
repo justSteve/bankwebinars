@@ -417,18 +417,18 @@ namespace CUWebinars.Web.Controllers
                     membershipService.ResetPassword(globalConfig.Tenant, model.Email);
                     model.EmailSent = true;
 
-                    return PartialView("_ResetPasswordPartial", model);
+                    //return PartialView("_ResetPasswordPartial", model);
 
-                    //return View("Login", new LoginModel
-                    //{
-                    //    Register = new RegisterViewModel
-                    //    {
-                    //        RegisterFields = new RegisterModel()
-                    //    },
-                    //    ResetPassword = model,
-                    //    SignIn = new SignInModel(),
-                    //    ActiveTab = "reset"
-                    //});
+                    return View("Login", new LoginModel
+                    {
+                        Register = new RegisterViewModel
+                        {
+                            RegisterFields = new RegisterModel()
+                        },
+                        ResetPassword = model,
+                        SignIn = new SignInModel(),
+                        ActiveTab = "reset"
+                    });
                 }
                 catch (ValidationException validationException)
                 {
