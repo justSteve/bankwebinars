@@ -21,6 +21,15 @@
 </style>
 
 <script language="javascript" type="text/javascript">
+    function CheckAndSubmitEmail() {
+        $('TheSubmit').attr('value', 'Next...');
+
+        if ($('#RegisterFields_Email').valid() == "1") {
+            console.log($('#RegisterFields_Email').valid());
+            $("#checkEmail").submit();
+        }
+    }
+
     function submitLogin() {
         $("#Email").val($("#RegisterFields_Email").val());
         $("#Password").val($("#Password1").val());
@@ -28,19 +37,83 @@
     }
 
     function SetModalTop() {
-        
+
         $('#modalInstitution').modal().css('position:absolute;top:145px;');
     }
 
     $(document).ready(function () {
+        $('#RegisterFields_Email').bind('change keyup', function () {
+            if ($(this).validate().checkForm()) {
+                $('[name=TheSubmit]').removeClass('button_disabled').attr('disabled', false);
+            } else {
+                $('[name=TheSubmit]').addClass('button_disabled').attr('disabled', true);
+            }
+        });
+
+        // Turns out that I've contracted a cold/flu during the travel - got a little but not enough
+        // progress with this form. If you'd like to see if you can advance the ball on it - feel free 
+        // But I'm going back to bed - given how much sleep i've already had, i may log in another few hours...
+        // not really sure.
+        // 
+        // Have I mentioned we have to support browsers back to IE6? Lots of banks still running that. 
+        // Rather than beat our heads making the jquery version work (barring an asounding finding) I think
+        // we can browser detect and for anything at IE7 and less, re-direct to a seperate page and
+        // just give the flat list of fields that our first draft had. 
+
+
+        //Because there are so many sub-tasks going on before the full form is ready to submit - 
+        // and because any 'Enter' key will trigger the validation much too early (that's what was going 
+        // on yesterday when the Billing pane opened with all fields showing red)....
+        //
+        //I've replaced the 'submit' input with a 'button' with name = TheSubmit -- I'll assign different 
+        // strings to it to indicate what function it should trigger. Of course, now that it's a button and not
+        // a submit the Enter key doesn't auto-fire. So I'm trapping keypress as per a few lines below this one.
+
+        // 
+        var ActionForTheSubmit = "CheckEmail";
+        $('[name=TheSubmit]').prop('value', 'Next...');
+        //$('[name=TheSubmit]').css('value', 'Next...');
+
+        $("#collapseBilling").parent().hide();
+        $("#collapseShipping").parent().hide();
         $("#wrapZip").hide();
         $("#wrapReset").hide();
         $("#wrapNonUS").hide();
         $("#getFirstLast").hide();
         //$("[data-val-email]").keyup(function () { return false; });
         //$("[data-val-email]").blur(function () { return true; });
-        
+
+        $('input').keypress(function (event) {
+            var enterOkClass = $(this).attr('class');
+
+            if (event.which == 13) {
+                if (ActionForTheSubmit == "CheckEmail") {
+                    ActionForTheSubmit = "CheckZip";
+                    if ($('#RegisterFields_Email').valid() == 1) {
+                        CheckAndSubmitEmail();
+                    }
+                }
+                if (ActionForTheSubmit == "CheckZip") {
+                    ActionForTheSubmit = "SubmitRegister";
+                    if ($('#_CreateUserForm').valid() == 1) {
+                        CheckAndSubmitEmail();
+                    }
+                }
+
+                if (ActionForTheSubmit == "SubmitRegister") {
+                    if ($('#_CreateUserForm').valid() == 1) {
+                        CheckAndSubmitEmail();
+                    }
+                }
+                if (enterOkClass != 'enterSubmit') {
+                    event.preventDefault();
+                    return false;
+                }
+            }
+        });
+
         $("#RegisterFields_Email").validate({
+            //TODO: this is an attempt to turn off real-time validation of the email address.
             onfocusout: true,
             onkeyup: false,
             onkeypress: false,
@@ -57,9 +130,15 @@
             // YesUseAddress
             // EnterDiffAddress
             // NotInstitution
+            if (clickedButton == "TheSubmit") {
 
+                if (ActionForTheSubmit == "CheckEmail") {
+                    CheckAndSubmitEmail();
+                }
+            }
             if (clickedButton == "findCityState") {
                 $('#ZipChecker').val($('#getZip').val());
+
                 $("form#checkZip").submit();
             }
             if (clickedButton == "nonUSAddress") {
@@ -101,7 +180,7 @@
             if (clickedButton == "NotInstitution") {
 
                 $('#modalInstitution').modal("hide");
-                
+
                 $("#wrapZip").hide("slow");
                 $("#RegisterFields_Institution").val("");
                 $("#RegisterFields_ShippingAddress_StreetAddress").val("");
@@ -164,8 +243,9 @@
         //});
 
         $("form#checkEmail").submit(function () {
+            console.log("Hit");
             var jsonUrl = "/Account/CheckEmail";
-            var q = $("#emailChecker").val();
+            var q = $('#RegisterFields_Email').val();
             if (q.length == 0) {
                 $("#RegisterFields_Email").focus();
             } else {
@@ -202,6 +282,10 @@
                         }
 
                         if (data.success == "foundExisting") {
+                            //TODO: Add a bit of javascript that will hijack an 'Enter' key and will fire the
+                            // 'blur' method on the text input (id='Email1'). The intent is to fire the
+                            // blur both on the actual blur (user clicks outside the text box or tabs off
+                            // the text box) or on an 'Enter' key.
                             $('#Email1').val(q);
                             $('#ResetPassEmail').val(q);
                             $('#labelEmail').html('<div class="btn-danger" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + q + '</b>&nbsp; is already on file.</div>');
@@ -236,7 +320,8 @@
                     success: function (data) {
                         // successful request; do something with the data
                         if (data.success == "true") {
-
+                            $("#collapseBilling").parent().show();
+                            $("#collapseShipping").parent().show();
                             $('#collapseEmail').collapse('toggle');
                             $('#collapseBilling').collapse('toggle');
                             $('#RegisterFields_BillingAddress_City').val(data.City);
@@ -258,28 +343,9 @@
             return false;
         });
 
-        //$("form#checkInstitution").submit(function () {
-        //    var jsonUrl = "/Account/CheckInstitution";
-        //    var q = $("#InstitutionChecker").val();
-        //    if (q.length == 0) {
-        //        $("#RegisterFields_Institution").focus();
-        //    } else {
-        //        //$("#RegisterFields_Institution").html(ajax_load);
-        //        $.getJSON(
-        //            jsonUrl,
-        //            { "Institution": q },
-        //            function (json) {
-        //                var result = "Language code is \"<strong>" + json.responseData.cResult + "\"";
-        //                $("#RegisterFields_Institution").html(result);
-        //            }
-        //        );
-        //    }
-        //    return false;
-        //});
 
         $('#RegisterFields_Email').change(function () {
-            $('#emailChecker').val($('#RegisterFields_Email').val());
-            $("#checkEmail").submit();
+            CheckAndSubmitEmail();
         });
 
         //$('#RegisterFields_Institution').change(function () {
@@ -362,9 +428,9 @@
             <div id="collapseEmail" class="accordion-body collapse in">
                 <div class="accordion-inner">
                     <div class="fieldContainer" id="wrapEmail">
-                        <div class="span1" style="text-align: right;">
-                            Email:
-                        </div>
+                        @*<div class="span1" style="text-align: right;">
+                                Email:
+                            </div>*@
                         <div class="span6">
                             @Html.TextBoxFor(model => model.RegisterFields.Email, new { style = "width: 180px;" })
                             @Html.ValidationMessageFor(model => model.RegisterFields.Email)
@@ -389,7 +455,7 @@
                                 </p>
                             </div>
                             <div class="span2"><h3 style="text-align: center; background-color: blanchedalmond">Or...</h3></div><div class="span4">
-                                <p style="margin-top: 50px;">We can email you a link that will reset your password. <input type="button" class="btn btn-danger" name="resetPass" value="Reset Password." /></p>
+                                <p style="margin-top: 50px;">We can email you a link that will reset your password. <input type="button" class="btn btn-danger" name="resetPass" value="Reset Password" /></p>
                             </div>
                         </div>
                     </div>
@@ -435,9 +501,10 @@
                     </div>
 
                     <div class="fieldContainer" id="wrapPhone">
-                        <div class="span1">Phone:</div>
+                        <div class="span1">Title:</div>
                         <div class="span4">
-                            @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Phone, new { style = "width: 140px;" })
+                            @Html.TextBoxFor(model => model.RegisterFields.Title, new { style = "width: 140px;" }) &nbsp; &nbsp;
+                            &nbsp;&nbsp; Phone: @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Phone, new { style = "width: 100px;" })
                             @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.Phone)
                         </div>
                     </div>
@@ -821,7 +888,7 @@
     <div class="form-inline">
         <div class="btn-group" style="width: 160px">&nbsp;</div>
         <div class="btn-group">
-            <input type="submit" value="Register" class="btn btn-default" />
+            <input type="button" value="Register" name="TheSubmit" class="btn btn-default" />
         </div>
     </div>
 }

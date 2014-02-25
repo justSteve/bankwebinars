@@ -166,7 +166,15 @@ namespace CUWebinars.Business.AccountService
 
         public void ResetPassword(string tenant, string email)
         {
-            userAccountService.ResetPassword(tenant, email);
+            //TODO: are calls to this method logged?
+            try
+            {
+                userAccountService.ResetPassword(tenant, email);
+            }
+            catch (Exception)
+            {
+                var a = 2;
+            }
         }
 
         public void SignIn(UserAccount userAccount, bool persistant)

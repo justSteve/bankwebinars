@@ -1,7 +1,7 @@
 ﻿@model LoginModel
 
 <script language="javascript">
-
+    
     $(document).ready(function () {
         $('#register').hide();
         $('#reset').hide();
@@ -15,44 +15,12 @@
     function showPassReset() {
         $('#login').hide("slow");
         $('#reset').show("slow");
+        $('#MailSent').hide();
     }
 </script>
 
 <div id="LogInContainer" class="container">
 
-    @if (Model.ActiveTab.Equals("reset", StringComparison.Ordinal))
-    {
-        ViewBag.Title = WebUiConstants.PasswordReset;
-
-        using (Html.BeginForm("ResetPassword", "Account", FormMethod.Post, new { id = "ResetPasswordForm", ReturnUrl = "Account/Login" }))
-        {
-            @Html.AntiForgeryToken()
-            @Html.ValidationSummary(false)
-
-            <div style="margin-left: 200px;">
-                <fieldset>
-
-                    <legend>Reset Password</legend>
-                    <p>
-                        We've sent an email with reset instructions to the requested address: <b>@Model.ResetPassword.Email.</b>
-                        If you don't see those instructions (after a short period of time) or need immediate assistance,
-                        please call tech support at 800-831-0678 ext 706. Thank you.
-                    </p>
-                    <div>
-                        @*@Html.LabelFor(l => l.ResetPassword.Email)*@
-                        @Html.TextBoxFor(t => t.ResetPassword.Email, new { id = "ResetPassEmail", value = "Try again?" })
-                        @Html.ValidationMessageFor(m => m.ResetPassword.Email)
-                    </div>
-                    <div>
-                        <input class="btn" type="submit" value="Enter Different Address?" />
-                    </div>
-
-                </fieldset>
-            </div>
-        }
-    }
-    else
-    {
         <div style="margin-left: 200px;" id="login">
             @Html.Partial("_SignInPartial", Model.SignIn)
         </div>
@@ -62,8 +30,6 @@
         <div style="margin-left: 200px;" id="reset">
             @Html.Partial("_ResetPasswordPartial", Model.ResetPassword)
         </div>
-    }
-
 </div>
 
 @section Scripts {
