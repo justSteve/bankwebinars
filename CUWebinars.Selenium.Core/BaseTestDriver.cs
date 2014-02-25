@@ -16,6 +16,11 @@ namespace CUWebinars.Selenium.Core
 
         }
 
+        public string DriverPath { set; protected get; }
+        public int DriverPort { set; protected get; }
+
+        public abstract void Initialize();
+
         public virtual void CloseWindow()
         {
             webDriver.Close();
@@ -324,17 +329,6 @@ namespace CUWebinars.Selenium.Core
             alert.Accept();
 
             return alertText;
-        }
-
-        public virtual void SelectTelerikComboBox(string name, string itemName)
-        {
-            var element = webDriver.FindElement(By.Name(name + "-input"));
-            element.Clear();
-            element.SendKeys(itemName);
-
-            Thread.Sleep(1000);
-
-            element.SendKeys(Keys.Return);
         }
 
         public virtual void Wait(int milliseconds = 1000)

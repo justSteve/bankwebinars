@@ -5,6 +5,8 @@ namespace CUWebinars.Selenium.Core
 {
     public interface ITestDriver
     {
+        string DriverPath { set; }
+        int DriverPort { set; }
         void ClearTextFromInput(string nameOfInputElement);
         void CloseWindow();
         bool DoesElementContainText(string nameToFind, string text);
@@ -24,6 +26,7 @@ namespace CUWebinars.Selenium.Core
         string GetElementValue(string idToFind);
         void GoToUrl(string url);
         ReadOnlyCollection<string> GetSelectedOptions(string idToFind);
+        void Initialize();
         bool IsElementChecked(string idToFind);
         bool IsElementEnabled(string idToFind);
         bool IsElementPresentById(string idToFind);
@@ -33,7 +36,6 @@ namespace CUWebinars.Selenium.Core
         bool IsValuePresent(string nameToFind, string attributeToFind, string attributeValue);
         void Quit();
         void SelectANode(string classNameToFind, string attributeValue);
-        void SelectTelerikComboBox(string name, string itemName);
         void TabAwayFromInput(string idOfInput);
         IWebElement TypeTextWithEnter(string nameToFind, string text);
         void TypeText(string nameToFind, string text);

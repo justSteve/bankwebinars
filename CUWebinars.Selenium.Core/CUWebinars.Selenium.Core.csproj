@@ -33,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
@@ -46,7 +47,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseTestDriver.cs" />
+    <Compile Include="Chrome\ChromeTestDriver.cs" />
     <Compile Include="Firefox\FirefoxTestDriver.cs" />
+    <Compile Include="IExternalWebDriver.cs" />
     <Compile Include="Ie\IeTestDriver.cs" />
     <Compile Include="ITestDriver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

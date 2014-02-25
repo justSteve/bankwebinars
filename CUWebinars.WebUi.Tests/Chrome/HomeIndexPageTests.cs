@@ -1,10 +1,10 @@
-﻿using CUWebinars.WebUi.Tests.Page.Ie;
+﻿using CUWebinars.WebUi.Tests.Page.Chrome;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace CUWebinars.WebUi.Tests.Ie
+namespace CUWebinars.WebUi.Tests.Chrome
 {
     [TestClass]
-    public class HomeIndexPageTests : IeBaseTest
+    public class HomeIndexPageTests : ChromeBaseTest
     {
         [TestMethod]
         [TestCategory("GUI Tests")]
@@ -14,7 +14,7 @@ namespace CUWebinars.WebUi.Tests.Ie
 
             Assert.IsTrue(home.PhoneNrLinkIsPresentOnPage);
         }
-        
+
         public HomeIndexPage NavigateToHomeIndexPage()
         {
             var homeIndexPage = new HomeIndexPage(TestDriver);
@@ -23,13 +23,5 @@ namespace CUWebinars.WebUi.Tests.Ie
 
             return homeIndexPage;
         }
-
-        //public PageNotFoundErrorPage NavigateToPageNotFoundErrorPage(string badUrl)
-        //{
-        //    var pageNotFoundErrorPage = new PageNotFoundErrorPage(TestDriver, badUrl);
-        //    pageNotFoundErrorPage.Open();
-
-        //    return pageNotFoundErrorPage;
-        //}
     }
 }

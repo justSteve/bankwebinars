@@ -15,6 +15,21 @@ namespace CUWebinars.WebUi.Tests.Page
             }
         }
 
+        public bool PhoneNrLinkIsPresentOnPage
+        {
+            get { return SeleniumTestDriver.FindByCssSelector("div.phone a.tele") != null; }
+        }
+
+        
+        public bool LoginLinkIsPresentOnPage
+        {
+            get
+            {
+                return SeleniumTestDriver.FindByXPath(Constants.LoginLinkPath) != null;
+
+            }
+        }
+
         public virtual string Title
         {
             get
