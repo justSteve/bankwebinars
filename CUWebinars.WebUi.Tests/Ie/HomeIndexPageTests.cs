@@ -7,11 +7,12 @@ namespace CUWebinars.WebUi.Tests.Ie
     public class HomeIndexPageTests : IeBaseTest
     {
         [TestMethod]
+        [TestCategory("GUI Tests")]
         public void Load_Home_Page()
         {
             var home = NavigateToHomeIndexPage();
-            
-            Assert.IsTrue(home.LoginLinkIsPresentOnPage);
+
+            Assert.IsTrue(home.PhoneNrLinkIsPresentOnPage);
         }
         
         public HomeIndexPage NavigateToHomeIndexPage()

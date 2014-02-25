@@ -7,11 +7,12 @@ namespace CUWebinars.WebUi.Tests.Firefox
     public class HomeIndexPageTests : FirefoxBaseTest
     {
         [TestMethod]
+        [TestCategory("GUI Tests")]
         public void Load_Home_Page()
         {
             var homeIndexPage = NavigateToHomeIndexPage();
 
-            Assert.IsTrue(homeIndexPage.LoginLinkIsPresentOnPage);
+            Assert.IsTrue(homeIndexPage.PhoneNrLinkIsPresentOnPage);
         }
 
 
