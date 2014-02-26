@@ -82,7 +82,7 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.AllowAnonymous]
         public string Get([FromUri] RegisterModel model)
         {
-            
+
             if (ModelState.IsValid)
             {
                 //first check if email exists
@@ -91,7 +91,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     return checkIfUsed.idUser.ToString();
                 }
-                
+
                 // Attempt to register the user
                 WebUserRepository repo = new WebUserRepository();
                 var myInstitution = membershipService.ProcessInstitutionForUser(model.Institution,
@@ -171,7 +171,7 @@ namespace CUWebinars.Web.Controllers
             //    discountsList, rowsWithDiscount);
 
             ViewData["DiscountMsg"] = string.Empty;
-            
+
             model.Scheduled = orderRepository.SelectOrdersWithScheduledWebinars(currentUser.idUser);
             model.Recorded = orderRepository.SelectOrdersWithRecordedWebinars(currentUser.idUser);
             model.Archived = orderRepository.SelectOrdersWithArchivedWebinars(currentUser.idUser);
@@ -232,7 +232,7 @@ namespace CUWebinars.Web.Controllers
             return View("Confirm", model);
         }
 
-        [ClaimsAuthorize(Roles="Admin")]
+        [ClaimsAuthorize(Roles = "Admin")]
         public ActionResult Manage(ManageMessageId? message)
         {
             ManageModel manageModel = new ManageModel
@@ -297,7 +297,7 @@ namespace CUWebinars.Web.Controllers
             var billingAddress = new Address
             {
                 StreetAddress = billingAddressFields.StreetAddress.Trim(),
-                StreetAddress2 = billingAddressFields.StreetAddress2 == null ? billingAddressFields.StreetAddress2 : billingAddressFields.StreetAddress2.Trim(), 
+                StreetAddress2 = billingAddressFields.StreetAddress2 == null ? billingAddressFields.StreetAddress2 : billingAddressFields.StreetAddress2.Trim(),
                 State = billingAddressFields.State.Trim(),
                 City = billingAddressFields.City.Trim(),
                 Country = billingAddressFields.Country.Trim(),
@@ -319,7 +319,7 @@ namespace CUWebinars.Web.Controllers
             };
 
             membershipService.UpdateUserDetails(globalConfig.Tenant,
-                updateFields.FirstName.Trim(), 
+                updateFields.FirstName.Trim(),
                 updateFields.LastName.Trim(),
                 updateFields.Password,
                 updateFields.Email.Trim(),
@@ -405,49 +405,17 @@ namespace CUWebinars.Web.Controllers
             });
         }
 
-        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.HttpGet]
         [System.Web.Mvc.AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public ActionResult ResetPassword(ResetPasswordModel model)
+        //[ValidateAntiForgeryToken]
+        public JsonResult ResetPassword(string email)
         {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    membershipService.ResetPassword(globalConfig.Tenant, model.Email);
-                    model.EmailSent = true;
+            membershipService.ResetPassword(globalConfig.Tenant, email);
+            //model.EmailSent = true;
 
-                    //return PartialView("_ResetPasswordPartial", model);
+            var cResult = new Dictionary<string, string> { { "success", email } };
 
-                    return View("Login", new LoginModel
-                    {
-                        Register = new RegisterViewModel
-                        {
-                            RegisterFields = new RegisterModel()
-                        },
-                        ResetPassword = model,
-                        SignIn = new SignInModel(),
-                        ActiveTab = "reset"
-                    });
-                }
-                catch (ValidationException validationException)
-                {
-                    ModelState.AddModelError("InvalidEmail", "You have entered an invalid email address.");
-                }
-                    }
-            return PartialView("_ResetPasswordPartial", model);
-
-            //return View("Login", new LoginModel
-            //    {
-            //        Register = new RegisterViewModel
-            //        {
-            //            RegisterFields = new RegisterModel()
-            //        },
-            //        ResetPassword = model,
-            //        SignIn = new SignInModel(),
-            //        ActiveTab = "reset"
-            //    }
-            //);
+            return Json(cResult, JsonRequestBehavior.AllowGet);
         }
 
         [System.Web.Mvc.AllowAnonymous]
@@ -647,7 +615,7 @@ namespace CUWebinars.Web.Controllers
                     ModelState.AddModelError("Email", "That email already exists. Would you like to reset the password?");
                     return PartialView("_CreateUserForm", model);
                 }
-                
+
                 var myInstitution = membershipService.ProcessInstitutionForUser(model.RegisterFields.Institution.Trim(),
                     model.RegisterFields.BillingAddress.City.Trim(),
                     model.RegisterFields.BillingAddress.State.Trim(),
