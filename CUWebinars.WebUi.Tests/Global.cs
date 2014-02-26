@@ -1,10 +1,52 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.Collections.Specialized;
+using System.Configuration;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CUWebinars.WebUi.Tests
 {
     [TestClass]
     public class Global
     {
+        public string ChromeWebDriverPath { get; set; }
+        public string ChromeWebDriverPort { get; set; }
+        public string FirefoxExePath { get; set; }
+        public string HomeUrl { get; set; }
+        public string IeWebDriverPath { get; set; }
+        public string IeWebDriverPort { get; set; }
+
+
+        internal class GlobalSingletonCreator
+        {
+            static GlobalSingletonCreator()
+            {
+                NameValueCollection ApplicationSettingsSection = ConfigurationManager.AppSettings;
+
+                if (ReferenceEquals(null, ApplicationSettingsSection))
+                {
+                    throw new ArgumentNullException("AppSettings not found in config file as expected.");
+                }
+
+                UniqueInstance.IeWebDriverPath = ApplicationSettingsSection["IeWebDriverPath"];
+                UniqueInstance.IeWebDriverPort = ApplicationSettingsSection["IeWebDriverPort"];
+                UniqueInstance.ChromeWebDriverPort = ApplicationSettingsSection["ChromeWebDriverPort"];
+                UniqueInstance.ChromeWebDriverPath = ApplicationSettingsSection["ChromeWebDriverPath"];
+                UniqueInstance.FirefoxExePath = ApplicationSettingsSection["FirefoxExePath"];
+                UniqueInstance.HomeUrl = ApplicationSettingsSection["HomeUrl"];
+            }
+
+            // Private object instantiated with private constructor
+            internal static readonly Global UniqueInstance = new Global();
+        }
+
+        public static Global GlobalConfigSingleton
+        {
+            get
+            {
+                return GlobalSingletonCreator.UniqueInstance;
+            }
+        }
+
         //private const int IisPort = 5556;
         //private const string ApplicationName = "CUWebinars.Web";
         //private static Process _iisProcess;
