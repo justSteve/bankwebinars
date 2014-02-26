@@ -1,6 +1,5 @@
 ﻿function CheckAndSubmitEmail() {
-    $('TheSubmit').attr('value', 'Next...');
-
+    $('[name=TheSubmit]').prop('value', 'Next...');
     if ($('#RegisterFields_Email').valid() == "1") {
         console.log($('#RegisterFields_Email').valid());
         $("#checkEmail").submit();
@@ -50,7 +49,6 @@ $(function () {
     // 
     var ActionForTheSubmit = "CheckEmail";
     $('[name=TheSubmit]').prop('value', 'Next...');
-    //$('[name=TheSubmit]').css('value', 'Next...');
 
     $("#collapseBilling").parent().hide();
     $("#collapseShipping").parent().hide();
@@ -229,8 +227,10 @@ $(function () {
         } else {
             $.ajax({
                 type: 'GET',
+                contentType: 'application/x-www-form-urlencoded',
                 cache: false,
                 url: jsonUrl,
+                dataType: "json",
                 data: { email: email },
                 beforeSend: function () {
                     // this is where we append a loading image
@@ -286,8 +286,10 @@ $(function () {
         } else {
             $.ajax({
                 type: 'GET',
+                contentType: 'application/x-www-form-urlencoded',
                 cache: false,
                 url: jsonUrl,
+                dataType: "json",
                 data: { Zip: q },
                 beforeSend: function () {
                     // this is where we append a loading image
@@ -295,7 +297,7 @@ $(function () {
                 }
             }).done(function (data) {
                     // successful request; do something with the data
-                    if (data.success == "true") {
+                    if (data.success === "true") {
                         $("#collapseBilling").parent().show();
                         $("#collapseShipping").parent().show();
                         $('#collapseEmail').collapse('toggle');
@@ -305,9 +307,10 @@ $(function () {
                         $('#RegisterFields_BillingAddress_Zip').val(q);
                         $('#TimeZone').val(data.TimeZone);
                         $('#labelEmail').html('<div class="btn-success" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</div>');
-                    }
-                    if (data.success == "false") {
-                        $('#labelZip').html('<div class="btn-danger" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;Zipcode was not found!</div>');
+                    } else if (data.success === "false") { 
+                        $('#labelEmail').html('<div class="btn-danger" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;Zipcode was not found!</div>');
+                    } else if (data.success === "invalid format") {
+                        $('#labelEmail').html('<div class="btn-danger" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;Zipcode entered was not in the correct format!</div>');
                     }
                 }).fail(function () {
                     // failed request; give feedback to user
@@ -315,11 +318,6 @@ $(function () {
                 });
         }
         return false;
-    });
-
-
-    $('#RegisterFields_Email').change(function () {
-        CheckAndSubmitEmail();
     });
 
     //$('#RegisterFields_Institution').change(function () {

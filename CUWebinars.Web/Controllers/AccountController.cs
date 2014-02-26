@@ -525,12 +525,19 @@ namespace CUWebinars.Web.Controllers
                 }
             
             var zipAddress = AppHelper.GetCityStateFromZip(numVal);
-            var myCity = new string(AppHelper.CharsToTitleCase(zipAddress.Split(fieldDelimiter)[0]).ToArray());
+
+            if (string.IsNullOrWhiteSpace(zipAddress))
+            {
+                resultObject.Add("success", "false");
+                return Json(resultObject, JsonRequestBehavior.AllowGet);
+            }
+
+            var myCity = new string(AppHelper.CharsToTitleCase(zipAddress.Split(fieldDelimiter).First()).ToArray());
 
             resultObject.Add("success", "true");
             resultObject.Add("City", myCity);
             resultObject.Add("State", zipAddress.Split(fieldDelimiter)[1]);
-            resultObject.Add("TimeZone", zipAddress.Split(fieldDelimiter)[2]);
+            resultObject.Add("TimeZone", ((int)Enum.Parse(typeof(USTimeZone), zipAddress.Split(fieldDelimiter)[2])).ToString());
 
             return Json(resultObject, JsonRequestBehavior.AllowGet);
         }

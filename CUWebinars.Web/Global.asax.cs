@@ -2,8 +2,6 @@
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Web.App_Start;
-using CUWebinars.Web.Data.Repositories;
-using CUWebinars.Web.Data.Repositories.Interfaces;
 using CUWebinars.Web.Services;
 using log4net;
 using System;
@@ -38,6 +36,12 @@ namespace CUWebinars.Web
 
         protected void Application_Start()
         {
+            // Clears all previously registered view engines.
+            ViewEngines.Engines.Clear();
+
+            // Registers our Razor C# specific view engine.
+            ViewEngines.Engines.Add(new RazorViewEngine());
+
             AreaRegistration.RegisterAllAreas();
 
             //Database.SetInitializer<TTSWebinarsContext>(new DatabaseInitializer());
