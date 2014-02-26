@@ -58,7 +58,7 @@ namespace CUWebinars.Web.App_Start
             bundles.Add(new ScriptBundle("~/bundles/app-processing-register").Include(
                         "~/Scripts/app/constants.js",
                         "~/Scripts/app/common.js",
-
+                        "~/Scripts/app/register/create-user.js",
                         "~/Scripts/app/web-user-details-register.js"
             ));
 

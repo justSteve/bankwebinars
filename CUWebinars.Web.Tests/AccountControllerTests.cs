@@ -18,6 +18,7 @@ using CUWebinars.Web.Core;
 
 namespace CUWebinars.Web.Tests
 {
+    /*
     [TestClass]
     public class AccountControllerTests
     {
@@ -378,4 +379,6 @@ namespace CUWebinars.Web.Tests
                           );
         }
     }
+
+     */
 }

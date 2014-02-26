@@ -509,38 +509,31 @@ namespace CUWebinars.Web.Controllers
         //[ValidateAntiForgeryToken]
         public JsonResult CheckZip(string zip)
         {
-            int numVal = -1;
-            Dictionary<string, string> cResult = new Dictionary<string, string>();
+            const char fieldDelimiter = ',';
+            int numVal;
+            var resultObject = new Dictionary<string, string>();
 
-            try
-            {
-                numVal = Convert.ToInt32(zip);
-            }
-            catch (FormatException e)
-            {
-                try
+                if (!int.TryParse(zip, out numVal))
                 {
-                    numVal = Convert.ToInt32(zip.Split('-')[0]);
-                }
-                catch (FormatException e1)
-                {
-                    cResult.Add("success", "invalid format");
-                    return Json(cResult, JsonRequestBehavior.AllowGet);
-                }
-            }
+                    var zipToParse = zip.Split('-').FirstOrDefault();
 
+                    if (zipToParse == null || !int.TryParse(zipToParse, out numVal))
+                    {
+                        resultObject.Add("success", "invalid format");
+                        return Json(resultObject, JsonRequestBehavior.AllowGet);
+                    }
+                }
+            
             var zipAddress = AppHelper.GetCityStateFromZip(numVal);
-            var myCity = new string(AppHelper.CharsToTitleCase(zipAddress.Split(',')[0]).ToArray());
-            //newUser.City = myCity;
-            //newUser.State = cityState.Split(',')[1];
+            var myCity = new string(AppHelper.CharsToTitleCase(zipAddress.Split(fieldDelimiter)[0]).ToArray());
 
-            cResult.Add("success", "true");
-            cResult.Add("City", myCity);
-            cResult.Add("State", zipAddress.Split(',')[1]);
-            cResult.Add("TimeZone", zipAddress.Split(',')[2]);
-            return Json(cResult, JsonRequestBehavior.AllowGet);
+            resultObject.Add("success", "true");
+            resultObject.Add("City", myCity);
+            resultObject.Add("State", zipAddress.Split(fieldDelimiter)[1]);
+            resultObject.Add("TimeZone", zipAddress.Split(fieldDelimiter)[2]);
+
+            return Json(resultObject, JsonRequestBehavior.AllowGet);
         }
-        //
 
         //[System.Web.Mvc.ActionName("autocomplete")]
         [System.Web.Mvc.AcceptVerbs(HttpVerbs.Get)]
@@ -559,37 +552,35 @@ namespace CUWebinars.Web.Controllers
         //[ValidateAntiForgeryToken]
         public JsonResult CheckEmail(string email)
         {
-            Dictionary<string, string> cResult = new Dictionary<string, string>();
-            ;
+            var resultObject = new Dictionary<string, string>();
 
             var user = membershipService.GetUserByEmail(email);
+
             if (user != null)
             {//email exists and view is notified.
-                cResult.Add("success", "foundExisting");
-                return Json(cResult, JsonRequestBehavior.AllowGet);
+                resultObject.Add("success", "foundExisting");
+                return Json(resultObject, JsonRequestBehavior.AllowGet);
             }
 
-            cResult.Add("email", "wasNotFound");
+            resultObject.Add("email", "wasNotFound");
 
             var domain = email.Split('@')[1];
             var institution = membershipService.GetInstitutionByDomain(domain);
 
-            if (institution != null)
-            {
-                //if we have a match between user's email (domain)
-                // and the domainName stored in existing Institution record
-                // we can offer to populate the user's billing info
-                cResult.Add("success", "foundInstitution");
-                cResult.Add("Institution", institution.InstitutionName);
-                cResult.Add("Address", institution.Address);
-                cResult.Add("City", institution.City);
-                cResult.Add("State", institution.State);
-                cResult.Add("Zip", institution.Zip);
+            if (institution == null) 
+                return Json(resultObject, JsonRequestBehavior.AllowGet);
 
-            }
-            return Json(cResult, JsonRequestBehavior.AllowGet);
+            //  if we have a match between user's email (domain)
+            //  and the domainName stored in existing Institution record
+            //  we can offer to populate the user's billing info
+            resultObject.Add("success", "foundInstitution");
+            resultObject.Add("Institution", institution.InstitutionName);
+            resultObject.Add("Address", institution.Address);
+            resultObject.Add("City", institution.City);
+            resultObject.Add("State", institution.State);
+            resultObject.Add("Zip", institution.Zip);
 
-            return Json(cResult, JsonRequestBehavior.AllowGet);
+            return Json(resultObject, JsonRequestBehavior.AllowGet);
         }
 
         // POST: /Account/Register
