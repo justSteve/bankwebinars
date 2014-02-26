@@ -665,7 +665,7 @@ namespace CUWebinars.Web.Controllers
 
                     membershipService.LogInUser(globalConfig.Tenant, model.RegisterFields.Email, model.RegisterFields.Password, true); // log the user in.
 
-                    return RedirectToAction("Index", "Home");
+                    return Json(new {Status = "Success"});
                 }
                 catch (MembershipCreateUserException e)
                 {

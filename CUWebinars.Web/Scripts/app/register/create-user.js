@@ -1,25 +1,69 @@
-﻿function CheckAndSubmitEmail() {
+﻿function checkAndSubmitEmail() {
     $('[name=TheSubmit]').prop('value', 'Next...');
     if ($('#RegisterFields_Email').valid() == "1") {
         console.log($('#RegisterFields_Email').valid());
+        $('#emailAddress').val($("#checkEmail").val());
         $("#checkEmail").submit();
     }
 }
 
-function submitLogin() {
-    $("#Email").val($("#RegisterFields_Email").val());
-    $("#Password").val($("#Password1").val());
-    $("#frmSignin").submit();
+function submitCreateUserForm() {
+    
+    if ($('#_CreateUserForm').valid() == "1") {
+        console.log($('#_CreateUserForm').valid());
+        $("#_CreateUserForm").submit();
+    }
 }
 
-function SetModalTop() {
+function submitLogin() {
+    //$("#Email").val($("#RegisterFields_Email").val());
+    //$("#Password").val($("#Password1").val());
+    //$("#frmSignin").submit();
+    $('#Password').val($('#RegisterFields_Password').val());
+    $('#Email').val($('#emailAddress').val());
+    $("form#frmSignIn").submit();
+}
+
+function setModalTop() {
 
     $('#modalInstitution').modal().css('position:absolute;top:145px;');
 }
 
-$(function () {
+function setShippingToBilling() {
+    $("#FullNameShipping").val($("#FullName").val());
+    $("#ShippingFirstName").val($("#FirstName").val());
+    $("#ShippingLastName").val($("#LastName").val());
+    $("#RegisterFields_ShippingAddress_City").val($("#RegisterFields_BillingAddress_City").val());
+    $("#RegisterFields_ShippingAddress_StreetAddress").val($("#RegisterFields_BillingAddress_StreetAddress").val());
+    $("#RegisterFields_ShippingAddress_StreetAddress2").val($("#RegisterFields_BillingAddress_StreetAddress2").val());
+    $("#RegisterFields_ShippingAddress_State").val($("#RegisterFields_BillingAddress_State").val());
+    $("#RegisterFields_ShippingAddress_Zip").val($("#RegisterFields_BillingAddress_Zip").val());
+    $("#RegisterFields_ShippingAddress_Country").val($("#RegisterFields_BillingAddress_Country").val());
+    $("#RegisterFields_ShippingAddress_Phone").val($("#RegisterFields_BillingAddress_Phone").val());
+}
 
-    $('#RegisterFields_Email').bind('change keyup', function () {
+function getMainPath(pathToCheck) {
+
+    if (pathToCheck.substr(pathToCheck.length - 1) === '/')
+        return pathToCheck.substr(0, pathToCheck.length - 1);
+    return pathToCheck;
+}
+
+$(function() {
+
+    var indexOfHome = location.href.indexOf('Account');
+    var path = null;
+
+    if (indexOfHome > -1)
+        path = location.href.substr(0, location.href.indexOf('Account') - 1);
+    else
+        path = location.href;
+
+    //  IE is a rubbish browser!
+    if (path === '')
+        path = $(location).attr('href');
+
+    $('#RegisterFields_Email').bind('change keyup', function() {
         if ($(this).validate().checkForm()) {
             $('[name=TheSubmit]').removeClass('button_disabled').attr('disabled', false);
         } else {
@@ -59,29 +103,29 @@ $(function () {
     //$("[data-val-email]").keyup(function () { return false; });
     //$("[data-val-email]").blur(function () { return true; });
 
-    $('input').keypress(function (event) {
+    $('input').keypress(function(event) {
         var enterOkClass = $(this).attr('class');
 
         if (event.which == 13) {
-            if (ActionForTheSubmit == "CheckEmail") {
+            if (ActionForTheSubmit === "CheckEmail") {
                 ActionForTheSubmit = "CheckZip";
                 if ($('#RegisterFields_Email').valid() == 1) {
-                    CheckAndSubmitEmail();
+                    checkAndSubmitEmail();
                 }
             }
-            if (ActionForTheSubmit == "CheckZip") {
+            if (ActionForTheSubmit === "CheckZip") {
                 ActionForTheSubmit = "SubmitRegister";
                 if ($('#_CreateUserForm').valid() == 1) {
-                    CheckAndSubmitEmail();
+                    checkAndSubmitEmail();
                 }
             }
 
-            if (ActionForTheSubmit == "SubmitRegister") {
+            if (ActionForTheSubmit === "SubmitRegister") {
                 if ($('#_CreateUserForm').valid() == 1) {
-                    CheckAndSubmitEmail();
+                    submitCreateUserForm();
                 }
             }
-            if (enterOkClass != 'enterSubmit') {
+            if (enterOkClass !== 'enterSubmit') {
                 event.preventDefault();
                 return false;
             }
@@ -96,7 +140,7 @@ $(function () {
         onkeydown: false
     });
 
-    $("body").on('click', 'input:button', (function (e, data) {
+    $("body").on('click', 'input:button', (function(e, data) {
         var clickedButton = e.currentTarget.name;
         //possible values
         // findCityState
@@ -106,40 +150,46 @@ $(function () {
         // YesUseAddress
         // EnterDiffAddress
         // NotInstitution
-        if (clickedButton == "TheSubmit") {
+        if (clickedButton === "TheSubmit") {
 
             if (ActionForTheSubmit == "CheckEmail") {
-                CheckAndSubmitEmail();
+                checkAndSubmitEmail();
+            }
+
+            if (ActionForTheSubmit === "SubmitRegister") {
+                if ($('#_CreateUserForm').valid() == 1) {
+                    submitCreateUserForm();
+                }
             }
         }
-        if (clickedButton == "findCityState") {
+        if (clickedButton === "findCityState") {
             $('#ZipChecker').val($('#getZip').val());
 
             $("form#checkZip").submit();
         }
-        if (clickedButton == "nonUSAddress") {
+        if (clickedButton === "nonUSAddress") {
 
             $("#wrapZip").hide("slow");
             $("#wrapNonUS").show("slow");
             $('#collapseEmail').collapse('toggle');
             $('#collapseBilling').collapse('toggle');
         }
-        if (clickedButton == "submitLogin") {
+        if (clickedButton === "submitLogin") {
             $('#Password').val($('#Password1').val());
             $('#Email').val($('#Email1').val());
             $("form#frmSignIn").submit();
         }
-        if (clickedButton == "resetPass") {
+        if (clickedButton === "resetPass") {
             //
             $("form#ResetPasswordForm").submit();
         }
-        if (clickedButton == "YesUseAddress") {
+        if (clickedButton === "YesUseAddress") {
             $("#wrapZip").hide("slow");
             $('#modalInstitution').modal("hide");
             $('#collapseEmail').collapse('toggle');
             $('#collapseBilling').collapse('toggle');
         }
-        if (clickedButton == "EnterDiffAddress") {
+        if (clickedButton === "EnterDiffAddress") {
             $("#wrapZip").hide("slow");
             $('#modalInstitution').modal("hide");
             $("#RegisterFields_ShippingAddress_StreetAddress").val("");
@@ -153,7 +203,7 @@ $(function () {
             $('#collapseEmail').collapse('toggle');
             $('#collapseBilling').collapse('toggle');
         }
-        if (clickedButton == "NotInstitution") {
+        if (clickedButton === "NotInstitution") {
 
             $('#modalInstitution').modal("hide");
 
@@ -172,12 +222,12 @@ $(function () {
         }
     }));
 
-    $('#modalInstitution').on('shown', function () {
-        SetModalTop();
+    $('#modalInstitution').on('shown', function() {
+        setModalTop();
     });
-    $('#collapseShipping').on('shown', function () {
+    $('#collapseShipping').on('shown', function() {
         if ($("#sameAsBilling:checked").val()) {
-            SetShippingToBilling();
+            setShippingToBilling();
         }
     });
     //var availableTags = [];
@@ -218,7 +268,7 @@ $(function () {
     //    }
     //});
 
-    $("form#checkEmail").submit(function () {
+    $("form#checkEmail").submit(function() {
         console.log("Hit");
         var jsonUrl = "/Account/CheckEmail";
         var email = $('#RegisterFields_Email').val();
@@ -227,23 +277,23 @@ $(function () {
         } else {
             $.ajax({
                 type: 'GET',
-                contentType: 'application/x-www-form-urlencoded',
+                contentType: constants.FormPostContentType,
                 cache: false,
                 url: jsonUrl,
                 dataType: "json",
                 data: { email: email },
-                beforeSend: function () {
+                beforeSend: function() {
                     // this is where we append a loading image
                     $('#labelEmail').html('<div class="btn-warning style="width: 400px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</div>');
                 }
-            }).done(function (data) {
+            }).done(function(data) {
                 // successful request; do something with the data
-                if (data.email == "wasNotFound") {
+                if (data.email === "wasNotFound") {
                     $('#wrapEmail').hide("fast");
                     $('#wrapZip').show("fast");
                     $('#labelEmail').html('<div class="btn-success" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is recorded.</div>');
                 }
-                if (data.success == "foundInstitution") {
+                if (data.success === "foundInstitution") {
                     $('#wrapEmail').hide("fast");
                     $('#modalInstitution').modal("show");
                     $("#RegisterFields_Institution").val(data.Institution);
@@ -257,9 +307,7 @@ $(function () {
                     $("#RegisterFields_BillingAddress_Zip").val(data.Zip);
                     $('#labelEmail').html('<div class="btn-success" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is recorded.</div>');
                     $('#ShowInstitution').html(data.Institution + '<br>' + data.Address + '<br>' + data.City + ', ' + data.State + ' ' + data.Zip + '<br>');
-                }
-
-                if (data.success == "foundExisting") {
+                } else if (data.success === "foundExisting") {
                     //TODO: Add a bit of javascript that will hijack an 'Enter' key and will fire the
                     // 'blur' method on the text input (id='Email1'). The intent is to fire the
                     // blur both on the actual blur (user clicks outside the text box or tabs off
@@ -270,7 +318,7 @@ $(function () {
                     $('#wrapReset').show('fast');
                     $('#wrapEmail').hide("fast");
                 }
-            }).fail(function () {
+            }).fail(function() {
                 // failed request; give feedback to user
                 $('#wrapEmail').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
             });
@@ -278,7 +326,7 @@ $(function () {
         return false;
     });
 
-    $("form#checkZip").submit(function () {
+    $("form#checkZip").submit(function() {
         var jsonUrl = "/Account/CheckZip";
         var q = $("#ZipChecker").val();
         if (q.length == 0) {
@@ -286,36 +334,38 @@ $(function () {
         } else {
             $.ajax({
                 type: 'GET',
-                contentType: 'application/x-www-form-urlencoded',
+                contentType: constants.FormPostContentType,
                 cache: false,
                 url: jsonUrl,
                 dataType: "json",
                 data: { Zip: q },
-                beforeSend: function () {
+                beforeSend: function() {
                     // this is where we append a loading image
                     $('#labelEmail').html('<div class="btn-warning style="width: 400px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Zip...</div>');
                 }
-            }).done(function (data) {
-                    // successful request; do something with the data
-                    if (data.success === "true") {
-                        $("#collapseBilling").parent().show();
-                        $("#collapseShipping").parent().show();
-                        $('#collapseEmail').collapse('toggle');
-                        $('#collapseBilling').collapse('toggle');
-                        $('#RegisterFields_BillingAddress_City').val(data.City);
-                        $('#RegisterFields_BillingAddress_State').val(data.State);
-                        $('#RegisterFields_BillingAddress_Zip').val(q);
-                        $('#TimeZone').val(data.TimeZone);
-                        $('#labelEmail').html('<div class="btn-success" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</div>');
-                    } else if (data.success === "false") { 
-                        $('#labelEmail').html('<div class="btn-danger" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;Zipcode was not found!</div>');
-                    } else if (data.success === "invalid format") {
-                        $('#labelEmail').html('<div class="btn-danger" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;Zipcode entered was not in the correct format!</div>');
-                    }
-                }).fail(function () {
-                    // failed request; give feedback to user
-                    $('#wrapZip').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
-                });
+            }).done(function(data) {
+                // successful request; do something with the data
+                if (data.success === "true") {
+                    $("#collapseBilling").parent().show();
+                    $("#collapseShipping").parent().show();
+                    $('#collapseEmail').collapse('toggle');
+                    $('#collapseBilling').collapse('toggle');
+                    $('#RegisterFields_BillingAddress_City').val(data.City);
+                    $('#RegisterFields_BillingAddress_State').val(data.State);
+                    $('#RegisterFields_BillingAddress_Zip').val(q);
+                    $('#TimeZone').val(data.TimeZone);
+                    $('#labelEmail').html('<div class="btn-success" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</div>');
+                    $('[name=TheSubmit]').prop('value', 'SubmitRegister');
+                    ActionForTheSubmit = 'SubmitRegister';
+                } else if (data.success === "false") {
+                    $('#labelEmail').html('<div class="btn-danger" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;Zipcode was not found!</div>');
+                } else if (data.success === "invalid format") {
+                    $('#labelEmail').html('<div class="btn-danger" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;Zipcode entered was not in the correct format!</div>');
+                }
+            }).fail(function() {
+                // failed request; give feedback to user
+                $('#wrapZip').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+            });
         }
         return false;
     });
@@ -327,7 +377,7 @@ $(function () {
     //    $("form#checkInstitution").submit();
     //});
 
-    $('#FullName').blur(function () {
+    $('#FullName').blur(function() {
         var tempName = $('#FullName').val().split(' ');
         if (tempName.length == 2) {
             $('#RegisterFields_FirstName').val(tempName[0]);
@@ -341,11 +391,11 @@ $(function () {
         }
     });
 
-    $("#sameAsBilling").change(function (e) {
+    $("#sameAsBilling").change(function(e) {
         var thisCheck = $(this);
         if (thisCheck.is(':checked')) {
             if ($("#sameAsBilling:checked").val()) {
-                SetShippingToBilling();
+                setShippingToBilling();
             } else {
                 if ($("#FullNameShipping").val() === null || $("#FullNameShipping").val() === "") $("#FullNameShipping").val($("#FullName").val());
                 if ($("#ShippingFirstName").val() === null || $("#ShippingFirstName").val() === "") $("#ShippingFirstName").val($("#FirstName").val());
@@ -360,17 +410,31 @@ $(function () {
         return false;
     });
 
+    $("#_CreateUserForm").on('submit', function (e) {
 
-    function SetShippingToBilling() {
-        $("#FullNameShipping").val($("#FullName").val());
-        $("#ShippingFirstName").val($("#FirstName").val());
-        $("#ShippingLastName").val($("#LastName").val());
-        $("#RegisterFields_ShippingAddress_City").val($("#RegisterFields_BillingAddress_City").val());
-        $("#RegisterFields_ShippingAddress_StreetAddress").val($("#RegisterFields_BillingAddress_StreetAddress").val());
-        $("#RegisterFields_ShippingAddress_StreetAddress2").val($("#RegisterFields_BillingAddress_StreetAddress2").val());
-        $("#RegisterFields_ShippingAddress_State").val($("#RegisterFields_BillingAddress_State").val());
-        $("#RegisterFields_ShippingAddress_Zip").val($("#RegisterFields_BillingAddress_Zip").val());
-        $("#RegisterFields_ShippingAddress_Country").val($("#RegisterFields_BillingAddress_Country").val());
-        $("#RegisterFields_ShippingAddress_Phone").val($("#RegisterFields_BillingAddress_Phone").val());
-    }
+        e.preventDefault();
+
+        console.log("Submitting Register Details");
+        var url = "/Account/Register";
+        $.ajax({
+            type: 'POST',
+            contentType: constants.FormPostContentType,
+            cache: false,
+            url: url,
+            dataType: "json",
+            data: $(this).serialize(),
+            beforeSend: function() {
+                // this is where we append a loading image
+                $('#labelEmail').html('<div class="btn-warning style="width: 400px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</div>');
+            }
+        }).done(function(data) {
+            console.log(data);
+            if (data.Status === 'Success') {
+                $('#labelEmail').html('<div class="btn-success style="width: 500px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</div>');
+                location.assign(path + '/Account/Login'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
+            }
+        }).fail(function(data) {
+            console.log(data);
+        });
+    });
 });
