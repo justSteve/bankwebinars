@@ -59,6 +59,7 @@ namespace CUWebinars.Web.App_Start
                         "~/Scripts/app/constants.js",
                         "~/Scripts/app/common.js",
                         "~/Scripts/app/register/create-user.js",
+                        "~/Scripts/app/passwordReset/password-reset.js",
                         "~/Scripts/app/web-user-details-register.js"
             ));
 

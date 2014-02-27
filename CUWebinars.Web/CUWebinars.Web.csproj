@@ -872,6 +872,7 @@
     <Content Include="Scripts\app\EditOrder.js" />
     <Content Include="Scripts\app\Main.js" />
     <Content Include="Scripts\app\Main.ts" />
+    <Content Include="Scripts\app\passwordReset\password-reset.js" />
     <Content Include="Scripts\app\register\create-user.js" />
     <Content Include="Scripts\app\waitButton.js" />
     <Content Include="Scripts\app\web-user-details-manage.js" />

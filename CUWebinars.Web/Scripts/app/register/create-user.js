@@ -194,7 +194,6 @@ $(function() {
             $("form#frmSignIn").submit();
         }
         if (clickedButton === "resetPass") {
-            //
             $("form#ResetPasswordForm").submit();
         }
         if (clickedButton === "YesUseAddress") {
@@ -305,7 +304,7 @@ $(function() {
                 contentType: constants.FormPostContentType,
                 cache: false,
                 url: jsonUrl,
-                dataType: "json",
+                dataType: constants.JsonDataType,
                 data: { email: email, disregardIntitutionDomain: disregardIntitutionDomain },
                 beforeSend: function() {
                     // this is where we append a loading image
@@ -341,9 +340,10 @@ $(function() {
                     // the text box) or on an 'Enter' key.
                     $('#Email1').val(email);
                     $('#ResetPassEmail').val(email);
+                    $('#MailSentForm').hide();
                     $('#labelEmail').html('<div class="btn-danger" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is already on file.</div>');
-                    $('#wrapReset').show('fast');
-                    $('#wrapEmail').hide("fast");
+                    $('#wrapReset').show('slow');
+                    $('#wrapEmail').hide("slow");
                 }
             }).fail(function() {
                 // failed request; give feedback to user
@@ -363,7 +363,7 @@ $(function() {
                 contentType: constants.FormPostContentType,
                 cache: false,
                 url: jsonUrl,
-                dataType: "json",
+                dataType: constants.JsonDataType,
                 data: { Zip: q },
                 beforeSend: function() {
                     // this is where we append a loading image
@@ -447,7 +447,7 @@ $(function() {
             contentType: constants.FormPostContentType,
             cache: false,
             url: url,
-            dataType: "json",
+            dataType: constants.JsonDataType,
             data: $(this).serialize(),
             beforeSend: function() {
                 // this is where we append a loading image

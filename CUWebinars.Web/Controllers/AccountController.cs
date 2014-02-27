@@ -405,15 +405,23 @@ namespace CUWebinars.Web.Controllers
             });
         }
 
-        [System.Web.Mvc.HttpGet]
+        [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
         //[ValidateAntiForgeryToken]
         public JsonResult ResetPassword(string email)
         {
-            membershipService.ResetPassword(globalConfig.Tenant, email);
-            //model.EmailSent = true;
+            var cResult = new Dictionary<string, string>(1);
 
-            var cResult = new Dictionary<string, string> { { "success", email } };
+            try
+            {
+                membershipService.ResetPassword(globalConfig.Tenant, email);
+                cResult.Add("status", "success");
+            }
+            catch (Exception)
+            {
+                cResult.Add("status", "fail");
+            }
+
 
             return Json(cResult, JsonRequestBehavior.AllowGet);
         }
