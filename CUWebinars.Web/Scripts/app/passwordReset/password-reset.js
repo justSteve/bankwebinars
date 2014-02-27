@@ -29,7 +29,7 @@ $(function () {
                 data: JSON.stringify({ email: email }),
                 beforeSend: function() {
                     // this is where we append a loading image
-                    $('#ResetPassLegend').html('<div class="btn-warning style="width: 200px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Please Wait...</div>');
+                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Please Wait...</warning>');
                 }
             }).done(function(data) {
 
@@ -39,7 +39,7 @@ $(function () {
                     $('#MailSentForm').show("slow");
                     $('#sent2Address').html(email);
                 } else {
-                    $('#ResetPassLegend').html('<div class="btn-warning style="width: 200px; height: 20px;">&nbsp;&nbsp;Error. Please retry...</div>');
+                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;Error. Please retry...</span>');
                 }
 
 
@@ -70,7 +70,7 @@ $(function () {
                 data: JSON.stringify({ email: email }),
                 beforeSend: function() {
                     // this is where we append a loading image
-                    $('#ResetPassLegend').html('<div class="btn-warning style="width: 200px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Please Wait...</div>');
+                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Please Wait...</span>');
                 }
             }).done(function(data) {
                 // successful request; do something with the data

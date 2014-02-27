@@ -224,7 +224,7 @@ $(function() {
             $('#modalInstitution').modal("hide");
             $('#wrapEmail').show("slow");
             $("#wrapZip").hide("slow");
-            $('#labelEmail').html('<div class="btn-info" style="width: 400px; height: 20px;">&nbsp;&nbsp;&nbsp;&nbsp;Proceed or enter a different email address.</div>');
+            $('#labelEmail').html('<span class="label label-info">&nbsp;&nbsp;&nbsp;&nbsp;Proceed or enter a different email address.</span>');
 
             $("#RegisterFields_Institution").val("");
             $("#RegisterFields_ShippingAddress_StreetAddress").val("");
@@ -308,14 +308,14 @@ $(function() {
                 data: { email: email, disregardIntitutionDomain: disregardIntitutionDomain },
                 beforeSend: function() {
                     // this is where we append a loading image
-                    $('#labelEmail').html('<div class="btn-warning style="width: 400px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</div>');
+                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</span>');
                 }
             }).done(function(data) {
                 // successful request; do something with the data
                 if (data.email === "wasNotFound") {
                     $('#wrapEmail').hide("fast");
                     $('#wrapZip').show("fast");
-                    $('#labelEmail').html('<div class="btn-success" style="width: 500px; height: 20px;"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; has been recorded.</div>');
+                    $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; has been recorded.</span>');
                 }
 
                 if (data.success === "foundInstitution") {
@@ -331,7 +331,7 @@ $(function() {
                     $("#RegisterFields_BillingAddress_City").val(data.City);
                     $("#RegisterFields_BillingAddress_State").val(data.State);
                     $("#RegisterFields_BillingAddress_Zip").val(data.Zip);
-                    $('#labelEmail').html('<div class="btn-success" style="width: 500px; height: 20px;"><b>&nbsp;&nbsp;' + email.substring(email.indexOf("@")) + '</b>&nbsp; domain has been identified.</div>');
+                    $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;' + email.substring(email.indexOf("@")) + '</b>&nbsp; domain has been identified.</span>');
                     $('#ShowInstitution').html(data.Institution + '<br>' + data.Address + '<br>' + data.City + ', ' + data.State + ' ' + data.Zip + '<br>');
                 } else if (data.success === "foundExisting") {
                     //TODO: Add a bit of javascript that will hijack an 'Enter' key and will fire the
@@ -341,7 +341,7 @@ $(function() {
                     $('#Email1').val(email);
                     $('#ResetPassEmail').val(email);
                     $('#MailSentForm').hide();
-                    $('#labelEmail').html('<div class="btn-danger" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is already on file.</div>');
+                    $('#labelEmail').html('<span class="label label-important"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is already on file.</span>');
                     $('#wrapReset').show('slow');
                     $('#wrapEmail').hide("slow");
                 }
@@ -367,7 +367,7 @@ $(function() {
                 data: { Zip: q },
                 beforeSend: function() {
                     // this is where we append a loading image
-                    $('#labelEmail').html('<div class="btn-warning style="width: 400px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Zip...</div>');
+                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Zip...</span>');
                 }
             }).done(function(data) {
                 // successful request; do something with the data
@@ -380,13 +380,13 @@ $(function() {
                     $('#RegisterFields_BillingAddress_State').val(data.State);
                     $('#RegisterFields_BillingAddress_Zip').val(q);
                     $('#TimeZone').val(data.TimeZone);
-                    $('#labelEmail').html('<div class="btn-success" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</div>');
+                    $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</span>');
                     $('[name=TheSubmit]').prop('value', 'SubmitRegister');
                     ActionForTheSubmit = 'SubmitRegister';
                 } else if (data.success === "false") {
-                    $('#labelEmail').html('<div class="btn-danger" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;Zipcode was not found!</div>');
+                    $('#labelEmail').html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode was not found!</span>');
                 } else if (data.success === "invalid format") {
-                    $('#labelEmail').html('<div class="btn-danger" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;Zipcode entered was not in the correct format!</div>');
+                    $('#labelEmail').html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode entered was not in the correct format!</span>');
                 }
             }).fail(function() {
                 // failed request; give feedback to user
@@ -451,12 +451,12 @@ $(function() {
             data: $(this).serialize(),
             beforeSend: function() {
                 // this is where we append a loading image
-                $('#labelEmail').html('<div class="btn-warning style="width: 400px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</div>');
+                $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
             }
         }).done(function(data) {
             console.log(data);
             if (data.Status === 'Success') {
-                $('#labelEmail').html('<div class="btn-success style="width: 500px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</div>');
+                $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
                 location.assign(path + '/Account/Login'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
             }
         }).fail(function(data) {
