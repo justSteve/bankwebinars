@@ -379,6 +379,7 @@
     <Compile Include="Core\DataTables\WebinarsBrowserRequestModel.cs" />
     <Compile Include="Core\GlobalConfig.cs" />
     <Compile Include="Core\IDTOAssembler.cs" />
+    <Compile Include="Core\LogItem.cs" />
     <Compile Include="Core\MyWebinarsDTO.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Global.asax.cs">
@@ -411,10 +412,6 @@
     <Compile Include="Services\StateService.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Core\AzureTableAppender.cs" />
-    <Compile Include="Core\CurrentSession.cs" />
-    <Compile Include="Core\LogItem.cs" />
-    <Compile Include="Core\MySession.cs" />
-    <Compile Include="Core\UserSession.cs" />
     <Compile Include="ViewModel\ConnectionInfoViewModel.cs" />
     <Compile Include="ViewModel\RegisterViewModel.cs" />
     <Compile Include="ViewModel\WebinarDetailsViewModel.cs" />
@@ -867,11 +864,11 @@
     <Content Include="Content\Site.css">
       <DependentUpon>site.less</DependentUpon>
     </Content>
+    <Content Include="Properties\PublishProfiles\BankWebinars - Web Deploy %284%29.pubxml.user" />
+    <Content Include="Properties\PublishProfiles\CUWebinars - Web Deploy.pubxml.user" />
     <Content Include="Scripts\app\constants.js" />
     <Content Include="Scripts\app\common.js" />
     <Content Include="Scripts\app\EditOrder.js" />
-    <Content Include="Scripts\app\Main.js" />
-    <Content Include="Scripts\app\Main.ts" />
     <Content Include="Scripts\app\passwordReset\password-reset.js" />
     <Content Include="Scripts\app\register\create-user.js" />
     <Content Include="Scripts\app\waitButton.js" />
@@ -936,7 +933,6 @@
     <Content Include="Scripts\bootstrap.min.js.map">
       <DependentUpon>bootstrap.js</DependentUpon>
     </Content>
-    <Content Include="Scripts\app\Main.js.map" />
     <Content Include="Areas\Admin\Views\_ViewStart.cshtml" />
     <Content Include="Areas\Admin\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Admin\Views\Shared\ShowAdminMenu.cshtml" />
@@ -954,9 +950,6 @@
     <Content Include="Membership\Email\EmailTemplates\EmailVerifiedEvent_Subject.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailVerifiedEvent_Body.cshtml" />
     <Content Include="Notification\Templates\_AffiliatedAffiliate.cshtml" />
-    <None Include="Properties\PublishProfiles\BankWebinars - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy %282%29.pubxml" />
-    <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy %283%29.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars - Web Deploy.pubxml" />
     <Content Include="Scripts\Autocomplete\css\ui-lightness\images\Thumbs.db" />
