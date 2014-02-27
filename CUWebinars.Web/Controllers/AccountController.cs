@@ -557,7 +557,7 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.HttpGet]
         [System.Web.Mvc.AllowAnonymous]
         //[ValidateAntiForgeryToken]
-        public JsonResult CheckEmail(string email)
+        public JsonResult CheckEmail(string email, bool disregardIntitutionDomain)
         {
             var resultObject = new Dictionary<string, string>();
 
@@ -570,6 +570,9 @@ namespace CUWebinars.Web.Controllers
             }
 
             resultObject.Add("email", "wasNotFound");
+
+            if(disregardIntitutionDomain)
+                return Json(resultObject, JsonRequestBehavior.AllowGet);
 
             var domain = email.Split('@')[1];
             var institution = membershipService.GetInstitutionByDomain(domain);

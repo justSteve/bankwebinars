@@ -49,10 +49,12 @@ function getMainPath(pathToCheck) {
     return pathToCheck;
 }
 
+// document.ready starts here
 $(function() {
 
+    var disregardIntitutionDomain = false;
     var indexOfHome = location.href.indexOf('Account');
-    var path = null;
+    var path = '';
 
     if (indexOfHome > -1)
         path = location.href.substr(0, location.href.indexOf('Account') - 1);
@@ -152,13 +154,25 @@ $(function() {
         // NotInstitution
         if (clickedButton === "TheSubmit") {
 
-            if (ActionForTheSubmit == "CheckEmail") {
+            if (ActionForTheSubmit === "CheckEmail") {
                 checkAndSubmitEmail();
             }
 
             if (ActionForTheSubmit === "SubmitRegister") {
                 if ($('#_CreateUserForm').valid() == 1) {
                     submitCreateUserForm();
+                }
+            }
+
+            if (ActionForTheSubmit === "DisplayBillingAddressFields") {
+                if ($('#RegisterFields_Email').valid() == "1") {
+                    $("#collapseBilling").parent().show();
+                    $("#collapseBilling").collapse('show');
+                    $("#collapseShipping").parent().show();
+                    $('#collapseEmail').collapse('toggle');
+
+                    ActionForTheSubmit = "SubmitRegister";
+                    $('[name=TheSubmit]').prop('value', 'SubmitRegister');
                 }
             }
         }
@@ -186,12 +200,15 @@ $(function() {
         if (clickedButton === "YesUseAddress") {
             $("#wrapZip").hide("slow");
             $('#modalInstitution').modal("hide");
-            $('#collapseEmail').collapse('toggle');
-            $('#collapseBilling').collapse('toggle');
+            $("#collapseBilling").parent().show();
+            $("#collapseShipping").parent().show();
+            $("#collapseBilling").collapse('show');
         }
         if (clickedButton === "EnterDiffAddress") {
-            $("#wrapZip").hide("slow");
             $('#modalInstitution').modal("hide");
+            $('#wrapEmail').show("slow");
+            $("#wrapZip").hide("slow");
+
             $("#RegisterFields_ShippingAddress_StreetAddress").val("");
             $("#RegisterFields_ShippingAddress_StreetAddress").val("");
             $("#RegisterFields_ShippingAddress_StreetAddress").val("");
@@ -200,14 +217,16 @@ $(function() {
             $("#RegisterFields_BillingAddress_StreetAddress").val("");
             $("#RegisterFields_BillingAddress_StreetAddress").val("");
             $("#RegisterFields_BillingAddress_StreetAddress").val("");
-            $('#collapseEmail').collapse('toggle');
-            $('#collapseBilling').collapse('toggle');
+            $('[name=TheSubmit]').prop('value', 'Submit New Email...');
+            ActionForTheSubmit = "DisplayBillingAddressFields";
         }
         if (clickedButton === "NotInstitution") {
 
             $('#modalInstitution').modal("hide");
-
+            $('#wrapEmail').show("slow");
             $("#wrapZip").hide("slow");
+            $('#labelEmail').html('<div class="btn-info" style="width: 400px; height: 20px;">&nbsp;&nbsp;&nbsp;&nbsp;Proceed or enter a different email address.</div>');
+
             $("#RegisterFields_Institution").val("");
             $("#RegisterFields_ShippingAddress_StreetAddress").val("");
             $("#RegisterFields_ShippingAddress_City").val("");
@@ -217,8 +236,11 @@ $(function() {
             $("#RegisterFields_BillingAddress_City").val("");
             $("#RegisterFields_BillingAddress_State").val("");
             $("#RegisterFields_BillingAddress_Zip").val("");
-            $('#collapseEmail').collapse('toggle');
-            $('#collapseBilling').collapse('toggle');
+            //$('#collapseEmail').collapse('toggle');
+            //$('#collapseBilling').collapse('toggle');
+            $('[name=TheSubmit]').prop('value', 'Next...');
+            ActionForTheSubmit = "CheckEmail";
+            disregardIntitutionDomain = true;
         }
     }));
 
@@ -268,7 +290,10 @@ $(function() {
     //    }
     //});
 
-    $("form#checkEmail").submit(function() {
+    $("form#checkEmail").submit(function (e) {
+
+        e.preventDefault();
+
         console.log("Hit");
         var jsonUrl = "/Account/CheckEmail";
         var email = $('#RegisterFields_Email').val();
@@ -281,7 +306,7 @@ $(function() {
                 cache: false,
                 url: jsonUrl,
                 dataType: "json",
-                data: { email: email },
+                data: { email: email, disregardIntitutionDomain: disregardIntitutionDomain },
                 beforeSend: function() {
                     // this is where we append a loading image
                     $('#labelEmail').html('<div class="btn-warning style="width: 400px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</div>');
@@ -291,11 +316,13 @@ $(function() {
                 if (data.email === "wasNotFound") {
                     $('#wrapEmail').hide("fast");
                     $('#wrapZip').show("fast");
-                    $('#labelEmail').html('<div class="btn-success" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is recorded.</div>');
+                    $('#labelEmail').html('<div class="btn-success" style="width: 500px; height: 20px;"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; has been recorded.</div>');
                 }
+
                 if (data.success === "foundInstitution") {
                     $('#wrapEmail').hide("fast");
                     $('#modalInstitution').modal("show");
+
                     $("#RegisterFields_Institution").val(data.Institution);
                     $("#RegisterFields_ShippingAddress_StreetAddress").val(data.Address);
                     $("#RegisterFields_ShippingAddress_City").val(data.City);
@@ -305,7 +332,7 @@ $(function() {
                     $("#RegisterFields_BillingAddress_City").val(data.City);
                     $("#RegisterFields_BillingAddress_State").val(data.State);
                     $("#RegisterFields_BillingAddress_Zip").val(data.Zip);
-                    $('#labelEmail').html('<div class="btn-success" style="width: 400px; height: 20px;"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is recorded.</div>');
+                    $('#labelEmail').html('<div class="btn-success" style="width: 500px; height: 20px;"><b>&nbsp;&nbsp;' + email.substring(email.indexOf("@")) + '</b>&nbsp; domain has been identified.</div>');
                     $('#ShowInstitution').html(data.Institution + '<br>' + data.Address + '<br>' + data.City + ', ' + data.State + ' ' + data.Zip + '<br>');
                 } else if (data.success === "foundExisting") {
                     //TODO: Add a bit of javascript that will hijack an 'Enter' key and will fire the
@@ -323,7 +350,6 @@ $(function() {
                 $('#wrapEmail').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
             });
         }
-        return false;
     });
 
     $("form#checkZip").submit(function() {

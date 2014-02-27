@@ -1,4 +1,6 @@
-﻿using CUWebinars.Business.Core.Extensions;
+﻿using System.Linq;
+using System.Linq.Expressions;
+using CUWebinars.Business.Core.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -33,6 +35,11 @@ namespace CUWebinars.Business.Repository
         public  IEnumerable<T> GetAll()
         {
             return items;
+        }
+
+        public IEnumerable<T> GetAllIncluding(params Expression<Func<T, object>>[] includeProperties)
+        {
+            return includeProperties.Aggregate<Expression<Func<T, object>>, IQueryable<T>>(items, (current, includeProperty) => current.Include(includeProperty));
         }
 
         public T FindById(int id)
