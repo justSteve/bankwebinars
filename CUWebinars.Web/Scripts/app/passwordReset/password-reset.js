@@ -23,11 +23,7 @@ $(function () {
 
         e.preventDefault();
 
-
         var crunchingLabel = normalResetPasswordButtonClicked ? $('#ResetPassEmail').after('<div id="crunchingLabel" style="display:inline-block; margin-left:5px"></div>').next() : $('#labelEmail');
-
-        
-
             
         if (!$('#ResetPassEmail').valid()) {
             return false;

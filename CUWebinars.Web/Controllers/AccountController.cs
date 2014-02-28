@@ -685,7 +685,7 @@ namespace CUWebinars.Web.Controllers
             }
 
             // If we got this far, something failed, redisplay form
-            return PartialView("_CreateUserForm", model);
+            return Json(new { Status = "Fail" });
         }
 
         //

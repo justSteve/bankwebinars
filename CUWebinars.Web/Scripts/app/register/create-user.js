@@ -1,6 +1,21 @@
-﻿function checkAndSubmitEmail() {
+﻿var ActionForTheSubmit = "CheckEmail";
+var wrapZip = $('#wrapZip');
+
+$('#modalInstitution').on('hidden', function (e) {
+
+    var d = e.target.id;
+
+    if (wrapZip.is(":visible")) {
+        ActionForTheSubmit = 'CheckEmail';
+    }
+
+    // do something…
+    console.log(65);
+});
+
+function checkAndSubmitEmail() {
     $('[name=TheSubmit]').prop('value', 'Next...');
-    if ($('#RegisterFields_Email').valid() == "1") {
+    if ($('#RegisterFields_Email').valid() === 1) {
         console.log($('#RegisterFields_Email').valid());
         $('#emailAddress').val($("#checkEmail").val());
         $("#checkEmail").submit();
@@ -9,7 +24,7 @@
 
 function submitCreateUserForm() {
     
-    if ($('#_CreateUserForm').valid() == "1") {
+    if ($('#_CreateUserForm').valid() === 1) {
         console.log($('#_CreateUserForm').valid());
         $("#_CreateUserForm").submit();
     }
@@ -93,7 +108,6 @@ $(function() {
     // a submit the Enter key doesn't auto-fire. So I'm trapping keypress as per a few lines below this one.
 
     // 
-    var ActionForTheSubmit = "CheckEmail";
     $('[name=TheSubmit]').prop('value', 'Next...');
 
     $("#collapseBilling").parent().hide();
@@ -111,19 +125,21 @@ $(function() {
         if (event.which == 13) {
             if (ActionForTheSubmit === "CheckEmail") {
                 ActionForTheSubmit = "CheckZip";
-                if ($('#RegisterFields_Email').valid() == 1) {
+                if ($('#RegisterFields_Email').valid() === 1) {
                     checkAndSubmitEmail();
                 }
             }
             if (ActionForTheSubmit === "CheckZip") {
                 ActionForTheSubmit = "SubmitRegister";
-                if ($('#_CreateUserForm').valid() == 1) {
+                
+                if ($('#_CreateUserForm').valid() === 1) {
                     checkAndSubmitEmail();
                 }
             }
 
             if (ActionForTheSubmit === "SubmitRegister") {
-                if ($('#_CreateUserForm').valid() == 1) {
+
+                if ($('#_CreateUserForm').valid() === 1) {
                     submitCreateUserForm();
                 }
             }
@@ -159,13 +175,13 @@ $(function() {
             }
 
             if (ActionForTheSubmit === "SubmitRegister") {
-                if ($('#_CreateUserForm').valid() == 1) {
+                if ($('#_CreateUserForm').valid() === 1) {
                     submitCreateUserForm();
                 }
             }
 
             if (ActionForTheSubmit === "DisplayBillingAddressFields") {
-                if ($('#RegisterFields_Email').valid() == "1") {
+                if ($('#RegisterFields_Email').valid() === "1") {
                     $("#collapseBilling").parent().show();
                     $("#collapseBilling").collapse('show');
                     $("#collapseShipping").parent().show();
@@ -206,6 +222,13 @@ $(function() {
             $("#collapseBilling").parent().show();
             $("#collapseShipping").parent().show();
             $("#collapseBilling").collapse('show');
+            $('#collapseEmail').collapse('toggle');
+            $('#labelEmail').fadeOut(500, function() {
+                $(this).html('<span class="label label-success">&nbsp;&nbsp;&nbsp;&nbsp;' + $('#RegisterFields_Email').val() + ' will be used for your email address.</span>');
+                $(this).fadeIn(500);
+            });
+            ActionForTheSubmit = "SubmitRegister";
+
         }
         if (clickedButton === "EnterDiffAddress") {
             $('#modalInstitution').modal("hide");
@@ -462,6 +485,8 @@ $(function() {
             if (data.Status === 'Success') {
                 $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
                 location.assign(path + '/Account/Login'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
+            } else if (data.status === 'Fail') {
+                $('#labelEmail').html('<span class="label label-information">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
             }
         }).fail(function(data) {
             console.log(data);
