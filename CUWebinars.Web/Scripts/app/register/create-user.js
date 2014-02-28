@@ -26,7 +26,7 @@ function submitLogin() {
 
 function setModalTop() {
 
-    $('#modalInstitution').modal().css('position:absolute;top:145px;');
+    //$('#modalInstitution').modal().css('margin-top:145px;');
 }
 
 function setShippingToBilling() {
@@ -194,6 +194,10 @@ $(function() {
             $("form#frmSignIn").submit();
         }
         if (clickedButton === "resetPass") {
+            if ($('#NormalResetPasswordButton').data('clicked'))
+                $('#NormalResetPasswordButton').removeData('clicked');
+
+            $('#EdgeCaseResetPasswordButton').data('clicked', true);
             $("form#ResetPasswordForm").submit();
         }
         if (clickedButton === "YesUseAddress") {

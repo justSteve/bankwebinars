@@ -7,17 +7,36 @@
 // document.ready starts here
 $(function () {
 
+    $('#NormalResetPasswordButton').on('click', function (e) {
+        if ($('#EdgeCaseResetPasswordButton').data('clicked'))
+            $('#EdgeCaseResetPasswordButton').removeData('clicked');
+        $(this).data('clicked', true);
+    });
+
+    $('#ResetPassEmail').on('keyup', function() {
+        return false;
+    });
+
     $("form#ResetPasswordForm").submit(function (e) {
+
+        var normalResetPasswordButtonClicked = $('#NormalResetPasswordButton').data('clicked');
 
         e.preventDefault();
 
+
+        var crunchingLabel = normalResetPasswordButtonClicked ? $('#ResetPassEmail').after('<div id="crunchingLabel" style="display:inline-block; margin-left:5px"></div>').next() : $('#labelEmail');
+
+        
+
+            
         if (!$('#ResetPassEmail').valid()) {
             return false;
         }
 
         var jsonUrl = "/Account/ResetPassword";
         var email = $("#ResetPassEmail").val();
-        if (email.length == 0) {
+
+        if (email.length === 0) {
             $("#ResetPassEmail").focus();
         } else {
             $.ajax({
@@ -29,22 +48,28 @@ $(function () {
                 data: JSON.stringify({ email: email }),
                 beforeSend: function() {
                     // this is where we append a loading image
-                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Please Wait...</warning>');
+                    crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Please Wait...</warning>');
                 }
             }).done(function(data) {
 
+                //crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Please Wait...</warning>');
+
                 if (data.status === "success") {
-                    $('#labelEmail').html('<span class="label label-success">&nbsp; Reset Instructions sent!</span>');
+                    crunchingLabel.html('<span class="label label-success">&nbsp; Reset Instructions sent!</span>');
                     $('#wrapReset div.container').hide("slow");
                     $('#MailSentForm').show("slow");
                     $('#sent2Address').html(email);
                 } else {
-                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;Error. Please retry...</span>');
+                    crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;Error. Please retry...</span>');
                 }
 
 
 
             }).fail(function() {
+
+                if (normalResetPasswordButtonClicked)
+                    $('#crunchingLabel').remove();
+
                 // failed request; give feedback to user
                 $('body').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
             });

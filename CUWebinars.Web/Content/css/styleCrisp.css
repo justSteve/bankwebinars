@@ -1848,3 +1848,10 @@ h2,  h3 { page-break-after: avoid; }
 	color: #b94a48;	
 	padding: 10px;
 }
+
+
+.modal {
+    position: fixed;
+    top: 50% !important;
+    left: 50%;
+}
