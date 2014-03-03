@@ -27,7 +27,10 @@ namespace CUWebinars.Web.App_Start
                         "~/Scripts/bootstrap-modal.js",
                         "~/Scripts/bootstrap-modalmanager.js",
                         "~/Content/js/jquery-plugins/dataTables/media/js/jquery.dataTables.js",
-                        "~/Content/js/jquery-plugins/dataTables/plugins/fnSetFilteringDelay.js"
+                        "~/Content/js/jquery-plugins/dataTables/plugins/fnSetFilteringDelay.js",
+                         "~/Scripts/app/cart/additional-locations.js",
+                         "~/Scripts/app/cart/create-order.js",
+                         "~/Scripts/app/cart/edit-order.js"
                         ));
 
             bundles.Add(new ScriptBundle("~/bundles/CrispApp").Include(

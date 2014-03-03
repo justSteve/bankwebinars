@@ -354,10 +354,12 @@
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
     <Compile Include="Areas\Admin\Controllers\AcctAPIController.cs" />
     <Compile Include="Areas\Admin\Controllers\NotificationsController.cs" />
+    <Compile Include="Areas\Admin\Controllers\RegistrationsController.cs" />
     <Compile Include="Areas\Admin\Controllers\WebinarsController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\api\AddressesController.cs" />
     <Compile Include="Controllers\api\ParentApiController.cs" />
+    <Compile Include="Controllers\CartController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MailController.cs" />
@@ -767,7 +769,6 @@
     <Content Include="Content\js\UserEditor.js" />
     <Content Include="Content\js\usersBrowser.js" />
     <Content Include="Content\js\usersBrowser4AffiliateCheckout.js" />
-    <Content Include="Content\js\validateUser.js" />
     <Content Include="Content\js\webinarsBrowser.js" />
     <Content Include="Content\js\webinarsCalendar.js" />
     <Content Include="Content\validation.css" />
@@ -866,9 +867,11 @@
     </Content>
     <Content Include="Properties\PublishProfiles\BankWebinars - Web Deploy %284%29.pubxml.user" />
     <Content Include="Properties\PublishProfiles\CUWebinars - Web Deploy.pubxml.user" />
+    <Content Include="Scripts\app\cart\additional-locations.js" />
+    <Content Include="Scripts\app\cart\create-order.js" />
     <Content Include="Scripts\app\constants.js" />
     <Content Include="Scripts\app\common.js" />
-    <Content Include="Scripts\app\EditOrder.js" />
+    <Content Include="Scripts\app\cart\edit-order.js" />
     <Content Include="Scripts\app\passwordReset\password-reset.js" />
     <Content Include="Scripts\app\register\create-user.js" />
     <Content Include="Scripts\app\waitButton.js" />
@@ -1019,7 +1022,6 @@
     <Content Include="Views\Webinar\Partials\DisplayOptions.cshtml" />
     <Content Include="Views\Webinar\Partials\ResultsGrid.cshtml" />
     <Content Include="Views\Webinar\SearchWebinars.cshtml" />
-    <Content Include="Views\Cart\Partials\AdditionalLocationsOrderRowOptionView.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutConfirm.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutContact.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutOptions.cshtml" />
@@ -1059,10 +1061,13 @@
     <Content Include="Views\Account\test.cshtml" />
     <Content Include="Views\Account\Confirm.cshtml" />
     <Content Include="Views\Account\Closed.cshtml" />
+    <Content Include="Views\Shared\Partial1.cshtml" />
+    <Content Include="Views\Shared\Partials\_DisplayRowPrice.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="Areas\Admin\Views\Registrations\" />
     <Folder Include="Images\" />
     <Folder Include="Utils\" />
   </ItemGroup>

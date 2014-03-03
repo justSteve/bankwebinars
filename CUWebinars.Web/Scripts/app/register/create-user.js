@@ -72,27 +72,6 @@ $(function() {
             $('[name=TheSubmit]').addClass('button_disabled').attr('disabled', true);
         }
     });
-
-    // Turns out that I've contracted a cold/flu during the travel - got a little but not enough
-    // progress with this form. If you'd like to see if you can advance the ball on it - feel free 
-    // But I'm going back to bed - given how much sleep i've already had, i may log in another few hours...
-    // not really sure.
-    // 
-    // Have I mentioned we have to support browsers back to IE6? Lots of banks still running that. 
-    // Rather than beat our heads making the jquery version work (barring an asounding finding) I think
-    // we can browser detect and for anything at IE7 and less, re-direct to a seperate page and
-    // just give the flat list of fields that our first draft had. 
-
-
-    //Because there are so many sub-tasks going on before the full form is ready to submit - 
-    // and because any 'Enter' key will trigger the validation much too early (that's what was going 
-    // on yesterday when the Billing pane opened with all fields showing red)....
-    //
-    //I've replaced the 'submit' input with a 'button' with name = TheSubmit -- I'll assign different 
-    // strings to it to indicate what function it should trigger. Of course, now that it's a button and not
-    // a submit the Enter key doesn't auto-fire. So I'm trapping keypress as per a few lines below this one.
-
-    // 
     var ActionForTheSubmit = "CheckEmail";
     $('[name=TheSubmit]').prop('value', 'Next...');
 

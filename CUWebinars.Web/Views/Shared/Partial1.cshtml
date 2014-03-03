@@ -1,0 +1,126 @@
+﻿@using System.Linq
+@using CUWebinars.Web.Helpers
+@using CUWebinars.Business.Models
+@model CUWebinars.Web.ViewModel.WebinarDetailsViewModel
+
+
+@{
+    var optionCost = 0.00;
+    int connCount = 0;
+    var options = Model.Options;
+    if (options != null)
+    {
+        //var additionalLocationsOption = options.OfType<AdditionalLocationsOption>().SingleOrDefault();
+        var additionalLocationsOption = Model.Options.SingleOrDefault(o => o.Type == "additional_location");
+
+        if (additionalLocationsOption != null)
+        {
+            optionCost = additionalLocationsOption.PriceToAdd.Value;
+        }
+    }
+    AdditionalLocationsOrderRowOption additionalLocations = Model.Options.OfType<AdditionalLocationsOrderRowOption>().SingleOrDefault();
+    if (additionalLocations == null)
+    {
+        additionalLocations = new AdditionalLocationsOrderRowOption
+        {
+            AdditionalLocationsCount = 0,
+
+        };
+        connCount = 1;
+    }
+    else
+    {
+        connCount = additionalLocations.AdditionalLocationsCount;
+    }
+}
+
+@using (Html.BeginForm("SetAdditionalLocations", "Registrations", FormMethod.Post, new { id = "frmAddLocations_" + @Model.Order.OrderRows.Single().idOrderRow }))
+{
+
+    <input type="hidden" id="ConnectionsCount_@(Model.Order.OrderRows.Single().idOrderRow)" name="connectionsCount" value="@(connCount)" />
+    <input type="hidden" name="ID" value="@Model.Order.OrderRows.Single().idOrderRow" />
+    <input type="hidden" name="action" value="add" />
+    <div id="AddLocModal_@(Model.Order.OrderRows.Single().idOrderRow)" class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Additional Locations</h3>
+    </div>
+    <div id="AdditionalLocationContainer_@(Model.Order.OrderRows.Single().idOrderRow)" class="modal-body">
+        @{
+    if (Model.Webinar.IsSubscriptionWebinar && Model.Webinar.Status == WebinarStatus.Scheduled)
+    {
+        <div style="display: none" id="trial">
+            <p>Additional locations are not included in the trial subscription.</p>
+        </div>
+            <div id="first3">
+                <p>
+                    The first three locations are included in your subscription:
+                </p>
+                <blockquote>
+                    <input type="text" name="Email0" id="Email_0" value="Email for Additional Location" class="{email: true}" /><br />
+                    <input type="text" name="Email1" id="Email_1" value="2nd Location" disabled="disabled" class="{email: true}" /><br />
+                    <input type="text" name="Email2" id="Email_2" value="3rd Location" disabled="disabled" class="{email: true}" /><br />
+                </blockquote>
+            </div>
+            <div id="AddButton" style="display: none;" class="AddButton btn btn-mini  btn-success" role="button" onclick="AddLocation(3, '@optionCost.ToString("C0")' ); return false; ">Add More?</div>
+            <div id="CollectAdditionalLocations_@(Model.Order.OrderRows.Single().idOrderRow)"></div>
+    }
+    else
+    {
+        if (additionalLocations.Emails.Count == 0)
+        {
+            //additionalLocations = new AdditionalLocationsOrderRowOption { AdditionalLocationsCount = 0 };
+            <div id="CollectAdditionalLocations_@(Model.Order.OrderRows.Single().idOrderRow)"></div>
+            <div>
+                <div id="line_1">
+                    1.
+                    <input type="text" onblur="CheckEmails();" id="Email_1" name="Email_1" class="emailInput" placeholder="email" size="30" />&nbsp; &nbsp;&nbsp;@(optionCost.ToString("C0"))
+                </div>
+                @*                <div id="AddButton_@(Model.Order.OrderRows.Single().idOrderRow)" class="btn btn-mini  btn-success emailInput" role="button" onclick="AddLocation(1,  '@(additionalLocations.OptionPrice.ToString("C0")); return false; ">Add?</div>*@
+            </div>
+        }
+        else
+        {
+            if (additionalLocations.AdditionalLocationsCount > 0)
+            {
+                var showCount = "";
+                var showTotalCost = 0M;
+                <div id="CollectAdditionalLocations_@(Model.Order.OrderRows.Single().idOrderRow)">
+                    <div id="NumLocationsMsg_@(Model.Order.OrderRows.Single().idOrderRow)">
+                        You have @additionalLocations.AdditionalLocationsCount Additional Locations.<br />
+                    </div>
+                    @for (var i = 1; i <= additionalLocations.AdditionalLocationsCount; i++)
+                    {
+                        showCount = (i) + ". ";
+                        showTotalCost = showTotalCost + additionalLocations.OptionPrice;
+                        <div class="line_@(i)">
+
+                            @showCount
+                            <input type="text" name="Email_@(i)" value="@(additionalLocations.Emails[i - 1])" />
+                            &nbsp;<a class="btn  btn-mini emailInput btn-danger" onclick="RemoveLocation('line_@(i)');">
+                                <i class="icon-trash icon-large"></i>Remove?
+                            </a>
+                            &nbsp;&nbsp;@(additionalLocations.OptionPrice.ToString("C0"))<br />
+                        </div>
+                    }
+                </div>
+                <div id="AddButton_@(Model.Order.OrderRows.Single().idOrderRow)" class="btn btn-mini emailInput btn-success" role="button" onclick=" addlocation(@additionallocations.additionallocationscount + 1, '@(additionalLocations.OptionPrice.ToString("C0"))' ); return false; ">Add More?</div>
+                <div class="pull-right" id="ShowsAddLocTotalCost">Total cost of Additional Locations: @showTotalCost.ToString("C0")</div>
+            }
+            else
+            {
+                <div class="line_1">
+                    1. <input type="text" name="Email_1" value="@(additionalLocations.Emails[0])" />
+                    &nbsp;&nbsp;@(additionalLocations.OptionPrice.ToString("C0"))<br />
+                </div>
+
+            }
+        }
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            <input type="button" name="submitAddLocations" id="SubmitAddLocations_@(Model.Order.OrderRows.Single().idOrderRow)" class="btn btn-primary" value="Waiting for valid email" />
+        </div>
+    }
+
+        }
+    </div>
+}

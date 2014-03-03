@@ -11,5 +11,6 @@ namespace CUWebinars.Business.Repository
         WebUser GetWebUserByEmail(string email);        
         IQueryable<WebUser> GetWebUsers();
         int GetMaxWebUserId();
+        IList<Order> FindOrdersByUserId(int id);
     }
 }
