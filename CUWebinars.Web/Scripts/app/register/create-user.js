@@ -492,4 +492,11 @@ $(function() {
             console.log(data);
         });
     });
+
+    var p = $('#RegisterFields_BillingAddress_Phone');
+
+    $('#RegisterFields_BillingAddress_Phone').on('keyup', function () {
+        
+        $('#RegisterFields_ShippingAddress_Phone').val(p.val());
+    });
 });
