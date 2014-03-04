@@ -75,7 +75,7 @@
                     1.
                     <input type="text" onblur="CheckEmails();" id="Email_1" name="Email_1" class="emailInput" placeholder="email" size="30" />&nbsp; &nbsp;&nbsp;@(optionCost.ToString("C0"))
                 </div>
-                @*                <div id="AddButton_@(Model.Order.OrderRows.Single().idOrderRow)" class="btn btn-mini  btn-success emailInput" role="button" onclick="AddLocation(1,  '@(additionalLocations.OptionPrice.ToString("C0")); return false; ">Add?</div>*@
+                <div id="AddButton_@(Model.Order.OrderRows.Single().idOrderRow)" class="btn btn-mini  btn-success emailInput" role="button" onclick="AddLocation(1,  '@(additionalLocations.OptionPrice.ToString("C0")); return false; ">Add?</div>
             </div>
         }
         else

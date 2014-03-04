@@ -230,6 +230,15 @@ namespace CUWebinars.Business.Services
 
         public void Save(Order currentOrder)
         {
+            ProcessDiscountCodes(currentOrder);
+            CalculateOrderPrices(currentOrder);
+
+            //base.Save(instance);
+            throw new NotImplementedException();
+        }
+
+        private void ProcessDiscountCodes(object instance)
+        {
             throw new NotImplementedException();
         }
 

@@ -168,27 +168,31 @@ namespace CUWebinars.Web.Controllers
         public ActionResult Signup2(WebinarDetailsViewModel formModel
                 , int mode
                 , string stage_of_checkout
-                , int? connectionsCount
+                , string addEmails
                 , int? sixMonthPaidConnectionsCount
-                , int? twelveMonthPaidConnectionsCount)
+                , int? twelveMonthPaidConnectionsCount
+
+            )
         {
+
+            Affiliate currentAffiliate = stateService.GetValue<Affiliate>("CurrentAffiliate");
             var isPreReg = stage_of_checkout;
             ViewData["CheckoutInProcess"] = "true";
             var IsUserLogged = false;
+
             var currentOrder = new Order();
+
+            currentOrder.Affiliate = currentAffiliate;
+
             currentOrder.Origin = "<p>InitialPage: " + HttpContext.Session["FirstPageOfSession"] + "</p><p>" +
                                    " InitialReferrer: " + HttpContext.Session["FirstReferrerOfSession"] + "</p><p>" +
                                    " InitialCookies: " + HttpContext.Session["FirstCookiesOfSession"] + "</p><p>" +
                                    " SessionID: " + HttpContext.Session["SessionID"] + "</p>";
 
-            IDictionary<string, string> addEmails = Request.Params.AllKeys
-                .Where(x => x.StartsWith("Email"))
-                .Where(x => Request.Params[x] != null && Request.Params[x].ToString().Length > 0)
-                .Select(x => new { key = x, value = Request.Params[x] })
-                .ToDictionary(x => (x.key), x => (x.value));
+
 
             var model = formModel;
-            //model.Affiliate = AppHelper.GetCurrentAffiliate();
+
             model.Webinar = db.Webinars.Find(formModel.Webinar.idWebinar);
 
             try
@@ -199,7 +203,7 @@ namespace CUWebinars.Web.Controllers
             {
 
             }
-
+            currentOrder.WebUser = model.WebUser;
             if (Request.IsAuthenticated)
             {
                 IsUserLogged = true;
@@ -218,6 +222,7 @@ namespace CUWebinars.Web.Controllers
             {
                 model.Webinar = db.Webinars.Find(883);
             }
+            db.SaveChanges();
             var orderRow = new OrderRow
                                     {
                                         Webinar = model.Webinar,
@@ -237,6 +242,7 @@ namespace CUWebinars.Web.Controllers
                 }
             }
 
+            //var additionalLocations = orderRow.Options.OfType<AdditionalLocationsOrderRowOption>();
             var additionalLocations = orderRow.OrderRowOptions.OfType<AdditionalLocationsOrderRowOption>();
             AdditionalLocationsOrderRowOption[] additionalLocationsOption =
                 additionalLocations as AdditionalLocationsOrderRowOption[] ?? additionalLocations.ToArray();
@@ -258,16 +264,18 @@ namespace CUWebinars.Web.Controllers
             var options = _orderManagementService.GetOptionsByWebinarId(model.Webinar.idWebinar);
             var option = options.SingleOrDefault(o => o.Type == "additional_location");
 
-            if (option != null)
+            addEmails = addEmails.TrimStart(',');
+            var connectionsCount = addEmails.Split(',');
+            if (connectionsCount.Any())
             {
-                var orderRowOption = new AdditionalLocationsOrderRowOption()
+                var orderRowOption = new OrderRowOption()
                 {
-                    additional_locations_count = connectionsCount.HasValue ? connectionsCount.Value : 0,
+                    additional_locations_count = connectionsCount.Count(),
                     Option = option,
                     OrderRow = orderRow,
                     OptionDescription = option.OptionExplain,
                     OptionPrice = Convert.ToDecimal(option.PriceToAdd),
-                    Emails = addEmails.Select(e => e.Value).ToList()
+                    additional_locations_emails = addEmails
                 };
 
                 if (model.Webinar.idWebinar == 842 && model.Webinar.Status == WebinarStatus.Scheduled)
@@ -311,13 +319,15 @@ namespace CUWebinars.Web.Controllers
                 }
                 else
                 {
-                    _orderManagementService.Save(currentOrder);
+                    //_orderManagementService.Save(currentOrder);
+
                     _orderManagementService.AddOrderRow(currentOrder, orderRow);
 
                     Session["CurrentOrderId"] = currentOrder.idOrder;
                     //_checkoutWorkflow.AddOrder(currentOrder);
                     model.Order.OrderRows.Add(orderRow);
 
+                    db.SaveChanges();
                     ViewData["WhichStep"] = IsUserLogged ? "Step2" : "Step1";
                     return Json(new
                                     {

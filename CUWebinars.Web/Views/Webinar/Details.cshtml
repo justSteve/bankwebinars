@@ -264,11 +264,11 @@
                     <form action="/cart/signup2" id="frmSignup2" method="post">
                         <input type="hidden" name="stage_of_checkout" id="stage_of_checkout" value="step0" />
                         <input type="hidden" name="webinar.idWebinar" value="@Model.Webinar.idWebinar" />
-                        <input type="hidden" name="order.idOrder" value="@rowID" />
+                        <input type="hidden" name="order.idOrder" value="@orderID" />
                         <input type="hidden" name="webuser.idUser" value="@idUser" />
                         <input type="hidden" name="mode" />
 
-                        <input type="hidden" id="addEmails" name="addEmails" value="" />
+                        <input type="hidden" id="addEmails" name="addEmails"/>
                     </form>
                 </div>
 

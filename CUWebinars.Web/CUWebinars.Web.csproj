@@ -1061,7 +1061,7 @@
     <Content Include="Views\Account\test.cshtml" />
     <Content Include="Views\Account\Confirm.cshtml" />
     <Content Include="Views\Account\Closed.cshtml" />
-    <Content Include="Views\Shared\Partial1.cshtml" />
+    <Content Include="Views\Shared\AddLocationsView.cshtml" />
     <Content Include="Views\Shared\Partials\_DisplayRowPrice.cshtml" />
   </ItemGroup>
   <ItemGroup>

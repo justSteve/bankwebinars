@@ -21,7 +21,12 @@ $(document).ready(function () {
 
     $('[id^="AddToCart"]').on('click', function () {
         $("#frmSignup2 [name='mode']").val($('input[name=mode]:checked', '#ModeOptions').val());
-        //alert($("#frmSignup2 [name='mode']").val());
+        var emails2Add = "";
+        $('[name^="Email"]').each(function() {
+            emails2Add = emails2Add + ',' + $(this).val();
+        });
+        $("#frmSignup2 [name='addEmails']").val(emails2Add);   //alert($("#frmSignup2 [name='mode']").val());
+        //alert($("#frmSignup2 [name='addEmails']").val());
         signUpForm.submit();
     });
     if (!discount == "none") {
@@ -38,21 +43,25 @@ $(document).ready(function () {
                     })
                     .done(SetCartState());
             }).error(function (result) {
-                jslogger.log({ exception: { name: "updateCheckout", message: "The update of checkout request failed." } });
+                //jslogger.log({ exception: { name: "updateCheckout", message: "The update of checkout request failed." } });
             });
         $("#eDetails").collapse('hide');
     }
 
     var signUpForm = $("#frmSignup2");
     signUpForm.submit(function (e) {
-        alert("sigupForm Submission");
+        
         e.preventDefault();
         CheckoutInProcess = true;
         if (!isUserLogged) {
-            
-            $("#btnLogin").trigger("click");
+            //TODO: How can javascript re-direct the execution to the '_CreateUserFrom' partial of the Login.cshtml?
+            //  idea is that we should start off with the prompt for the email - if an account already exists
+            // for that email the user is prompted to enter password.
+            // --
+            //  the flow must include enough 'returnURL' info to resume checkout after a new account (or login to existing)
+            // is completed.
         } else {
-            
+
             $("#ProgressDialogBS").modal('show');
             var data = signUpForm.serialize();
             $.post(signUpForm.attr("action"), data, function (result, status) {
@@ -93,41 +102,6 @@ $(document).ready(function () {
         }
     });
 
-
-    $("#frmTemplate").submit(function (nEvent) {
-        var $tForm = $(this).closest("form");
-
-        $("#btnHasOrder").val($('.btnHasOrder[class*="active"]').val());
-        $("#btnWhichState").val($('.btnWhichState[class*="active"]').val());
-        $("#btnWebinar").val($('.btnWebinar[class*="active"]').val());
-
-        //if (
-        //    $("#btnWhichState").val() == "Post" &&
-        //    ($("#btnHasOrder").val() == "Live" ||
-        //    $("#btnHasOrder").val() == "Premium" ||
-        //    $("#btnHasOrder").val() == "Live+OnDemand")) {
-        //    alert($("#btnHasOrder").val());
-        //    $("#btnHasOrder").val("No");
-        //}
-
-        // nEvent.preventDefault();
-        $("#ProgressDialogBS").modal('show');
-        $.ajax({
-            url: $tForm.attr('action'),
-            type: "POST",
-            data: $tForm.serialize(),
-            success: function (data) {
-            },
-            error: function () {
-                $("#" + parentForm + " .modalHeaderText").html("<span class=\"label label-warning\">Error condition detected</span>");
-
-            }
-            , complete: function () {
-
-                $("#ProgressDialogBS").modal('hide');
-            }
-        });
-    });
 
 
     //$('[id^="ConfirmRegistrationConfirmRegistration"]').on('click', function (e) {
