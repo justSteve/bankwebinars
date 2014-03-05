@@ -162,8 +162,8 @@ $(function() {
     //$("[data-val-email]").blur(function () { return true; });
 
     $('input').keypress(function(event) {
-        var enterOkClass = $(this).attr('class');
-
+        var enterOkClass = $(this).hasClass('enterSubmit');
+        
         if (event.which == 13) {
             if (ActionForTheSubmit === "CheckEmail") {
                 ActionForTheSubmit = "CheckZip";
@@ -185,7 +185,7 @@ $(function() {
                     submitCreateUserForm();
                 }
             }
-            if (enterOkClass !== 'enterSubmit') {
+            if (!enterOkClass) {
                 event.preventDefault();
                 return false;
             }

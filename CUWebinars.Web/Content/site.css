@@ -1,4 +1,4 @@
-html {
+﻿html {
   background-color: #E7F1FA;
   margin: 0;
   padding: 0;
@@ -386,7 +386,7 @@ td button {
 }
 .message-error {
   clear: both;
-  color: #e80c4d;
+  color: #ff0000;
   font-size: 1.1em;
   font-weight: bold;
   margin: 20px 0 10px 0;
@@ -398,24 +398,24 @@ td button {
   margin: 20px 0 10px 0;
 }
 .error {
-  color: #e80c4d;
+  color: #ff0000;
 }
 /* styles for validation helpers */
 .field-validation-error {
-  color: #e80c4d;
+  color: #ff0000;
   font-weight: bold;
 }
 .field-validation-valid {
   display: none;
 }
 input.input-validation-error {
-  border: 1px solid #e80c4d;
+  border: 1px solid #ff0000;
 }
 input[type="checkbox"].input-validation-error {
   border: 0 none;
 }
 .validation-summary-errors {
-  color: #e80c4d;
+  color: #ff0000;
   font-weight: bold;
   font-size: 1.1em;
 }
