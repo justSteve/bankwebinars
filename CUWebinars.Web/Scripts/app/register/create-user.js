@@ -7,7 +7,7 @@ var createUserForm;
 var phoneBilling;
 var fullNameShipping;
 var streetAddressBilling;
-var streetAddress2Billing;
+var streetAddressBilling2;
 var cityBilling;
 var stateBilling;
 var zipBilling;
@@ -34,15 +34,14 @@ var pageObjects = {
     fullName: fullName || $("#FullName"),
     firstName: firstName|| $("#FirstName"),
     lastName: lastName || $("#LastName"),
-    streetAddressBilling: streetAddressBilling = $('#RegisterFields_BillingAddress_StreetAddress'),
-    streetAddressBilling2: streetAddressBilling2 = $('#RegisterFields_BillingAddress_StreetAddress2'),
+    streetAddressBilling: streetAddressBilling || $('#RegisterFields_BillingAddress_StreetAddress'),
+    streetAddressBilling2: streetAddressBilling2 || $('#RegisterFields_BillingAddress_StreetAddress2'),
     cityBilling: cityBilling || $('#RegisterFields_BillingAddress_City'),
     stateBilling: stateBilling || $('#RegisterFields_BillingAddress_State'),
     zipBilling: zipBilling || $('#RegisterFields_BillingAddress_Zip'),
     phoneShipping: phoneShipping || $('#RegisterFields_ShippingAddress_Phone'),
-    //fullNameShipping: fullNameShipping = $('#fullNameShipping'),
-    streetAddressShipping: streetAddressShipping = $('#RegisterFields_ShippingAddress_StreetAddress'),
-    streetAddressShipping2: streetAddressShipping2 = $('#RegisterFields_ShippingAddress_StreetAddress2'),
+    streetAddressShipping: streetAddressShipping || $('#RegisterFields_ShippingAddress_StreetAddress'),
+    streetAddressShipping2: streetAddressShipping2 || $('#RegisterFields_ShippingAddress_StreetAddress2'),
     cityShipping: cityShipping || $('#RegisterFields_ShippingAddress_City'),
     stateShipping: stateShipping || $('#RegisterFields_ShippingAddress_State'),
     zipShipping: zipShipping || $('#RegisterFields_ShippingAddress_Zip'),
@@ -114,7 +113,7 @@ $(function() {
     phoneBilling = $('#RegisterFields_BillingAddress_Phone');
     fullNameShipping = $('#FullNameShipping');
     streetAddressBilling = $('#RegisterFields_BillingAddress_StreetAddress');
-    streetAddress2Billing = $('#RegisterFields_BillingAddress_StreetAddress2');
+    streetAddressBilling2 = $('#RegisterFields_BillingAddress_StreetAddress2');
     cityBilling = $('#RegisterFields_BillingAddress_City');
     stateBilling = $('#RegisterFields_BillingAddress_State');
     zipBilling = $('#RegisterFields_BillingAddress_Zip');
@@ -418,7 +417,6 @@ $(function() {
                     // the text box) or on an 'Enter' key.
                     $('#Email1').val(email);
                     $('#ResetPassEmail').val(email);
-                    $('#MailSentForm').hide();
                     $('#labelEmail').html('<span class="label label-important"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is already on file.</span>');
                     $('#wrapReset').show('slow');
                     $('#wrapEmail').hide("slow");

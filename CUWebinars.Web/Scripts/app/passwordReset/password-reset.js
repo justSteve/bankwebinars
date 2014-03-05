@@ -1,39 +1,36 @@
-﻿//function submitReset() {
-//    $("#Email").val($("#RegisterFields_Email").val());
-//    $("#Password").val($("#Password1").val());
-//    $("#frmSignin").submit();
-//}
-
-// document.ready starts here
+﻿// document.ready starts here
 $(function () {
 
-    $('#NormalResetPasswordButton').on('click', function (e) {
+    var normalResetPasswordButton = $('#NormalResetPasswordButton');
+    var resetPassEmail = $('#ResetPassEmail');
+
+    normalResetPasswordButton.on('click', function (e) {
         if ($('#EdgeCaseResetPasswordButton').data('clicked'))
             $('#EdgeCaseResetPasswordButton').removeData('clicked');
         $(this).data('clicked', true);
     });
 
-    $('#ResetPassEmail').on('keyup', function() {
+    resetPassEmail.on('keyup', function() {
         return false;
     });
 
     $("form#ResetPasswordForm").submit(function (e) {
 
-        var normalResetPasswordButtonClicked = $('#NormalResetPasswordButton').data('clicked');
+        var normalResetPasswordButtonClicked = normalResetPasswordButton.data('clicked');
 
         e.preventDefault();
 
-        var crunchingLabel = normalResetPasswordButtonClicked ? $('#ResetPassEmail').after('<div id="crunchingLabel" style="display:inline-block; margin-left:5px"></div>').next() : $('#labelEmail');
+        var crunchingLabel = normalResetPasswordButtonClicked ? resetPassEmail.after('<div id="crunchingLabel" style="display:inline-block; margin-left:5px"></div>').next() : $('#labelEmail');
             
-        if (!$('#ResetPassEmail').valid()) {
+        if (!resetPassEmail.valid()) {
             return false;
         }
 
         var jsonUrl = "/Account/ResetPassword";
-        var email = $("#ResetPassEmail").val();
+        var email = resetPassEmail.val();
 
         if (email.length === 0) {
-            $("#ResetPassEmail").focus();
+            resetPassEmail.focus();
         } else {
             $.ajax({
                 type: 'POST',
@@ -44,11 +41,9 @@ $(function () {
                 data: JSON.stringify({ email: email }),
                 beforeSend: function() {
                     // this is where we append a loading image
-                    crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Please Wait...</warning>');
+                    crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Please Wait...</span>');
                 }
             }).done(function(data) {
-
-                //crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Please Wait...</warning>');
 
                 if (data.status === "success") {
                     crunchingLabel.html('<span class="label label-success">&nbsp; Reset Instructions sent!</span>');
@@ -59,57 +54,11 @@ $(function () {
                     crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;Error. Please retry...</span>');
                 }
 
-
-
             }).fail(function() {
-
-                if (normalResetPasswordButtonClicked)
-                    $('#crunchingLabel').remove();
-
                 // failed request; give feedback to user
-                $('body').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+                crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;<strong>Oops!</strong> Try that again in a few moments.</span>');
             });
         }
         return false;
     });
-
-    $("form#ResetSent").submit(function (e) {
-
-        e.preventDefault();
-
-        var jsonUrl = "/Account/ResetPassword";
-        var email = $("#RetryPassEmail").val();
-        if (email.length == 0) {
-            $("#RetryPassEmail").focus();
-        } else {
-            $.ajax({
-                type: 'POST',
-                contentType: constants.JsonContentType,
-                dataType: constants.JsonDataType,
-                cache: false,
-                url: jsonUrl,
-                data: JSON.stringify({ email: email }),
-                beforeSend: function() {
-                    // this is where we append a loading image
-                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Please Wait...</span>');
-                }
-            }).done(function(data) {
-                // successful request; do something with the data
-                    if (data.status === "success") {
-
-                     console.log("Hit: " + email);
-                    }
-
-                    //$('#ResetPW').hide("slow");
-                    //$('#MailSent').show("slow");
-                    //$('#sent2Address').html(email);
-                    //$('#ResetPassLegend').html('<div class="btn-warning style="width: 200px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Reset Instructions Sent</div>');
-                }).fail(function() {
-                // failed request; give feedback to user
-                $('body').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
-            });
-        }
-        return false;
-    });
-
 });
