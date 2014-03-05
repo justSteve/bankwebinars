@@ -16,11 +16,14 @@ $(function () {
 
     $("form#ResetPasswordForm").submit(function (e) {
 
+        e.preventDefault();
+        
         var normalResetPasswordButtonClicked = normalResetPasswordButton.data('clicked');
 
-        e.preventDefault();
-
-        var crunchingLabel = normalResetPasswordButtonClicked ? resetPassEmail.after('<div id="crunchingLabel" style="display:inline-block; margin-left:5px"></div>').next() : $('#labelEmail');
+        //  Check if the label is already in existance (user may hit the button twice - for some odd reason). If not, create it.
+        var crunchingLabel = $('#crunchingLabel');
+        if (crunchingLabel.length < 1)
+            crunchingLabel = normalResetPasswordButtonClicked ? resetPassEmail.after('<div id="crunchingLabel" style="display:inline-block; margin-left:5px"></div>').next() : $('#labelEmail');
             
         if (!resetPassEmail.valid()) {
             return false;
