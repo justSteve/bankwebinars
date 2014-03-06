@@ -88,6 +88,7 @@ namespace CUWebinars.Web.App_Start
                     ctx.Kernel.Get<IOptionRepository>(),
                     ctx.Kernel.Get<IOrderRepository>(),
                     ctx.Kernel.Get<IRefDataRepository>(),
+                    ctx.Kernel.Get<IWebUserRepository>(),
                     ttsConfig
                     );
                 return orderManagementService;

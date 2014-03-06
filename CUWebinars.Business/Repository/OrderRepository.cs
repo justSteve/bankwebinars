@@ -19,11 +19,41 @@ namespace CUWebinars.Business.Repository
             return newOrder;
         }
 
-        public bool AssignAffiliate(Affiliate affiliate, Order order)
+        public Order AssignAffiliate(Affiliate affiliate, Order order)
         {
-            db.Entry(affiliate).State = EntityState.Modified;
-            order.Affiliate = affiliate;
-            return db.SaveChanges() > 0;
+            order.idAffiliate = affiliate.idUserAff;
+
+            //if (db.SaveChanges() > 0)
+            //{
+            //    //db.Entry(order).Reference(o => o.Affiliate).Load();
+            //    return order;
+            //}
+
+            return order;
+        }
+
+        public Order AssignWebUserToOrder(WebUser webUser, Order order)
+        {
+            order.idUser = webUser.idUser;
+
+            //if (db.SaveChanges() > 0)
+            //{
+            //    //db.Entry(order).Reference(o => o.WebUser).Load();
+            //    return order;
+            //}
+
+            return order;
+        }
+
+        public Order SaveOrder(Order order)
+        {
+            if (db.SaveChanges() > 0)
+            {
+                //db.Entry(order).Reference(o => o.WebUser).Load();
+                return order;
+            }
+
+            throw new Exception(""); // TODO: come up with meaningful exception and msg
         }
 
         public virtual IDictionary<Option, Order> SelectOrdersWithScheduledWebinars(int idUser)

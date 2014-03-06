@@ -20,23 +20,35 @@ namespace CUWebinars.Business.Services
         private readonly IOptionRepository _optionRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly IRefDataRepository _refDataRepository;
+        private readonly IWebUserRepository _webUserRepository;
         private readonly TtsConfiguration _ttsConfig;
         List<IEvent> events = new List<IEvent>();
 
-        public OrderManagementService(IAffiliateRepository affiliateRepository, IOptionRepository optionRepository, IOrderRepository orderRepository, IRefDataRepository refDataRepository, TtsConfiguration ttsConfig)
+        public OrderManagementService(
+            IAffiliateRepository affiliateRepository, 
+            IOptionRepository optionRepository, 
+            IOrderRepository orderRepository, 
+            IRefDataRepository refDataRepository, 
+            IWebUserRepository webUserRepository,
+            TtsConfiguration ttsConfig)
         {
             _affiliateRepository = affiliateRepository;
             _optionRepository = optionRepository;
             _orderRepository = orderRepository;
             _refDataRepository = refDataRepository;
             _ttsConfig = ttsConfig;
+            _webUserRepository = webUserRepository;
         }
 
-        public bool AssignAffiliateToOrder(Affiliate affiliate, Order order)
+        public Order AssignAffiliateToOrder(Affiliate affiliate, Order order)
         {
-            var affilateToAssign = _affiliateRepository.FindByIdAndDetachItem(affiliate.idUserAff);
-            
-            return _orderRepository.AssignAffiliate(affilateToAssign, order);
+            //var affilateToAssign = _affiliateRepository.FindByIdAndDetachItem(affiliate.idUserAff);
+            return _orderRepository.AssignAffiliate(affiliate, order);
+        }
+
+        public Order AssignWebUserToOrder(WebUser webUser, Order order)
+        {
+            return _orderRepository.AssignWebUserToOrder(webUser, order);
         }
 
         public string BuildConnectionInfo(OrderRow orderRow)
@@ -251,6 +263,11 @@ namespace CUWebinars.Business.Services
 
             //base.Save(instance);
             throw new NotImplementedException();
+        }
+
+        public Order SaveChanges(Order currentOrder)
+        {
+            return _orderRepository.SaveOrder(currentOrder);
         }
 
         private void ProcessDiscountCodes(object instance)

@@ -175,24 +175,21 @@ namespace CUWebinars.Web.Controllers
             )
         {
 
-            Affiliate currentAffiliate = stateService.GetValue<Affiliate>("CurrentAffiliate");
+            var currentAffiliate = stateService.GetValue<Affiliate>("CurrentAffiliate");
             var isPreReg = stage_of_checkout;
             ViewData["CheckoutInProcess"] = "true";
             var IsUserLogged = false;
 
             var currentOrder = _orderManagementService.CreateNewOrder();
 
-            if (!_orderManagementService.AssignAffiliateToOrder(currentAffiliate, currentOrder))
-                throw new Exception("Fail");
-            
-
             currentOrder.Origin = "<p>InitialPage: " + HttpContext.Session["FirstPageOfSession"] + "</p><p>" +
-                                   " InitialReferrer: " + HttpContext.Session["FirstReferrerOfSession"] + "</p><p>" +
-                                   " InitialCookies: " + HttpContext.Session["FirstCookiesOfSession"] + "</p><p>" +
-                                   " SessionID: " + HttpContext.Session["SessionID"] + "</p>";
+                       " InitialReferrer: " + HttpContext.Session["FirstReferrerOfSession"] + "</p><p>" +
+                       " InitialCookies: " + HttpContext.Session["FirstCookiesOfSession"] + "</p><p>" +
+                       " SessionID: " + HttpContext.Session["SessionID"] + "</p>";
 
-
-
+            currentOrder = _orderManagementService.AssignAffiliateToOrder(currentAffiliate, currentOrder);
+            currentOrder = _orderManagementService.AssignWebUserToOrder(formModel.WebUser, currentOrder);
+            
             var model = formModel;
 
             model.Webinar = db.Webinars.Find(formModel.Webinar.idWebinar);
@@ -205,11 +202,11 @@ namespace CUWebinars.Web.Controllers
             {
 
             }
-            currentOrder.WebUser = model.WebUser;
+            
             if (Request.IsAuthenticated)
             {
                 IsUserLogged = true;
-                _orderManagementService.AssignUserToOrder(currentOrder, model.WebUser);
+                //_orderManagementService.AssignUserToOrder(currentOrder, model.WebUser);
                 currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
                 currentOrder.InitiatedBy = _orderManagementService.GetOrderInitiator();
             }
@@ -224,7 +221,9 @@ namespace CUWebinars.Web.Controllers
             {
                 model.Webinar = db.Webinars.Find(883);
             }
-            db.SaveChanges();
+
+            currentOrder = _orderManagementService.SaveChanges(currentOrder);
+            
             var orderRow = new OrderRow
                                     {
                                         Webinar = model.Webinar,
