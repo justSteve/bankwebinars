@@ -206,7 +206,7 @@ namespace CUWebinars.Web.Controllers
             if (Request.IsAuthenticated)
             {
                 IsUserLogged = true;
-                //_orderManagementService.AssignUserToOrder(currentOrder, model.WebUser);
+                _orderManagementService.AssignUserToOrder(currentOrder, model.WebUser);
                 currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
                 currentOrder.InitiatedBy = _orderManagementService.GetOrderInitiator();
             }

@@ -23,11 +23,11 @@ namespace CUWebinars.Business.Repository
         {
             order.idAffiliate = affiliate.idUserAff;
 
-            //if (db.SaveChanges() > 0)
-            //{
-            //    //db.Entry(order).Reference(o => o.Affiliate).Load();
-            //    return order;
-            //}
+            if (db.SaveChanges() > 0)
+            {
+                db.Entry(order).Reference(o => o.Affiliate).Load();
+                return order;
+            }
 
             return order;
         }

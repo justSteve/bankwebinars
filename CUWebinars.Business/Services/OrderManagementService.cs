@@ -208,47 +208,54 @@ namespace CUWebinars.Business.Services
         }
         public virtual void AssignUserToOrder(Order order, WebUser user)
         {
-            order.WebUser = user;
+            //order.WebUser = user;
             //order.Affiliate = user.Affiliate;
 
-            order.BillingAddress = user.Addresses.Where(a => a.AddressType == "Billing").Select(a => a.StreetAddress).ToString();
-            order.BillingCity ="City";
-            order.BillingEmail = "user.Email";
-            order.FirstName = user.FirstName;
-            order.LastName = user.LastName;
-            order.BillingPhone = "user.Phone1";
-            order.ShippingAddress = "user.ShippingAddress";
+            var billingAddress = user.Addresses.FirstOrDefault(a => a.AddressType == "Billing");
+            var shippingAddress = user.Addresses.FirstOrDefault(a => a.AddressType == "Shipping");
 
-            order.ShippingCity = "user.ShippingCity";
-            order.ShippingFirstName = "user.ShippingFirstName";
-            order.ShippingLastName = "user.ShippingLastName";
-            order.ShippingPhone = "user.ShippingPhone";
-            order.ShippingState = "user.ShippingState";
-            order.ShippingZip = "user.ShippingZip";
-            order.ShippingState = "user.State";
-            order.BillingState = "user.State";
-            order.ShippingZip = "user.Zip";
-            order.BillingZip = "user.Zip";
-            //order.Affiliate = user.Affiliate;
-            order.Institution = user.Institution.InstitutionName;
+            if (billingAddress != null)
+            {
 
-            //if (user.SubscriptionDiscount != null)
-            //{
-            //    foreach (OrderRow row in order.Rows)
-            //    {
-            //        row.DiscountCode = user.SubscriptionDiscount.Code;
-            //    }
-            //}
-            //try
-            //{
-            //    Save(order);
-            //}
-            //catch (Exception ex)
-            //{
-            //    Logger.Instance.LogException(ex);
-            //    Logger.Instance.LogMessage("ERROR: Failed to save user assigned to order: "+ user.Email + " order = " + order.ID);
-            //    throw;
-            //}
+                order.BillingAddress = billingAddress.StreetAddress;
+                order.BillingCity = billingAddress.City;
+                order.BillingEmail = user.email;
+                order.FirstName = user.FirstName;
+                order.LastName = user.LastName;
+                order.BillingPhone = billingAddress.Phone;
+                order.BillingZip = billingAddress.Zip;
+                order.BillingState = billingAddress.State;
+
+                if (shippingAddress != null)
+                {
+                    order.ShippingAddress = shippingAddress.StreetAddress;
+                    order.ShippingCity = shippingAddress.City;
+                    order.ShippingFirstName = user.FirstName;
+                    order.ShippingLastName = user.LastName;
+                    order.ShippingPhone = shippingAddress.Phone;
+                    order.ShippingState = shippingAddress.State;
+                    order.ShippingZip = shippingAddress.Zip;
+                    order.Institution = user.Institution.InstitutionName;
+
+                    //if (user.SubscriptionDiscount != null)
+                    //{
+                    //    foreach (OrderRow row in order.Rows)
+                    //    {
+                    //        row.DiscountCode = user.SubscriptionDiscount.Code;
+                    //    }
+                    //}
+                    //try
+                    //{
+                    //    Save(order);
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    Logger.Instance.LogException(ex);
+                    //    Logger.Instance.LogMessage("ERROR: Failed to save user assigned to order: "+ user.Email + " order = " + order.ID);
+                    //    throw;
+                    //}
+                }
+            }
         }
 
         public void CreateCPSubscription(OrderRow orderRow)
