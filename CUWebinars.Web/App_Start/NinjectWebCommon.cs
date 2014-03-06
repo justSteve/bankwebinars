@@ -84,8 +84,11 @@ namespace CUWebinars.Web.App_Start
             kernel.Bind<IOrderManagementService>().ToMethod(ctx =>
             {
                 var orderManagementService = new OrderManagementService(
+                    ctx.Kernel.Get<IAffiliateRepository>(),
                     ctx.Kernel.Get<IOptionRepository>(),
+                    ctx.Kernel.Get<IOrderRepository>(),
                     ctx.Kernel.Get<IRefDataRepository>(),
+                    ctx.Kernel.Get<IWebUserRepository>(),
                     ttsConfig
                     );
                 return orderManagementService;

@@ -1,4 +1,5 @@
-﻿var discount = '';
+﻿$('input[name=mode]:eq(0)').attr('checked', 'checked');
+var discount = '';
 var wait4Emails = '';
 var orderRowID = 0;
 var CheckoutInProcess = false;
@@ -20,7 +21,12 @@ $(document).ready(function () {
 
     $('[id^="AddToCart"]').on('click', function () {
         $("#frmSignup2 [name='mode']").val($('input[name=mode]:checked', '#ModeOptions').val());
-        //alert($('input[name=mode]:checked', '#ModeOptions').val());
+        var emails2Add = "";
+        $('[name^="Email"]').each(function() {
+            emails2Add = emails2Add + ',' + $(this).val();
+        });
+        $("#frmSignup2 [name='addEmails']").val(emails2Add);   //alert($("#frmSignup2 [name='mode']").val());
+        //alert($("#frmSignup2 [name='addEmails']").val());
         signUpForm.submit();
     });
     if (!discount == "none") {
@@ -37,18 +43,25 @@ $(document).ready(function () {
                     })
                     .done(SetCartState());
             }).error(function (result) {
-                jslogger.log({ exception: { name: "updateCheckout", message: "The update of checkout request failed." } });
+                //jslogger.log({ exception: { name: "updateCheckout", message: "The update of checkout request failed." } });
             });
         $("#eDetails").collapse('hide');
     }
 
     var signUpForm = $("#frmSignup2");
     signUpForm.submit(function (e) {
+        
         e.preventDefault();
         CheckoutInProcess = true;
         if (!isUserLogged) {
-            $("#btnLogin").trigger("click");
+            //TODO: How can javascript re-direct the execution to the '_CreateUserFrom' partial of the Login.cshtml?
+            //  idea is that we should start off with the prompt for the email - if an account already exists
+            // for that email the user is prompted to enter password.
+            // --
+            //  the flow must include enough 'returnURL' info to resume checkout after a new account (or login to existing)
+            // is completed.
         } else {
+
             $("#ProgressDialogBS").modal('show');
             var data = signUpForm.serialize();
             $.post(signUpForm.attr("action"), data, function (result, status) {
@@ -89,154 +102,6 @@ $(document).ready(function () {
         }
     });
 
-    $('#connectionsCount').on('focus', function () {
-        $("#connectionsCount").val('');
-    });
-    $('input[name=mode]:eq(0)').attr('checked', 'checked');
-    $('#connectionsCount').on('blur', function () {
-        wait4Emails = true;
-        var collectEmails = '<div id="instruct">Please enter your desired emails</div>';
-        var numInputs2Render = $("#connectionsCount").val();
-
-        $('#AddToCart').attr({ disabled: 'disabled', value: 'Waiting for Emails' });
-        $('#AddToCart1').attr({ disabled: 'disabled', value: 'Waiting for Emails' });
-
-        if (numInputs2Render == 0) {
-            wait4Emails = false;
-            collectEmails = "";
-            $('#AddToCart').attr({ disabled: false, value: 'Sign Up' });
-            $('#AddToCart1').attr({ disabled: false, value: 'Sign Up' });
-        }
-
-        for (var i = 0; i < numInputs2Render; i++) {
-            collectEmails = collectEmails + '<input type="text" id="Email_' + i + '" name="Email_' + i + '" class="emailInput"  size="30"   ><br>';
-        }
-
-        $('#collectAdditionalLocations').html(collectEmails);
-        $('#Email_0').focus();
-    });
-
-    var timer; // external so it's value is held over all instances of the timer function
-    $('body').on('keyup', 'input:text.emailInput', function () {
-        if (timer) {
-            clearTimeout(timer);
-            console.log("checking:");
-        }
-        timer = setTimeout(function () {
-            // perform your check
-            CheckEmails();
-        }, 500);
-    });
-
-    function CheckEmails() {
-        $('[name^="Email"]').each(function (nr) {
-            if ($(this).val() === "") { } else {
-                //console.log("checking if isValid:" + $(this).val());
-                if (isValidEmailAddress($(this).val())) {
-                    //console.log("found it valid");
-                    //$("[id^=SubmitAddLocations_]").removeAttr("disabled").val("Submit");
-                    //$("[id^=SubmitResendConfirmation]").removeAttr("disabled").val("Submit");
-
-                    wait4Emails = false;
-                    $('#instruct').hide(500);
-                    $('#AddToCart').attr({ disabled: false, value: 'Sign Up' });
-                    $('#AddToCart1').attr({ disabled: false, value: 'Sign Up' });
-                }
-            }
-        });
-    }
-    function SetCartState() {
-        switch (whichStep) {
-            case "Step0":
-                console.log("Step0");
-                $("#connectionsCount").val(0);
-                $('#collectAdditionalLocations').html('');
-                $("#confirmationTab").hide();
-                $("#signUpTab").hide();
-                $("#contactInfoTab").hide();
-                $('#AddToCart').attr({ disabled: false, value: 'SignUp' });
-                $('#AddToCart1').attr({ disabled: false, value: 'SignUp' });
-
-                break;
-
-            case "Step1":
-                console.log("Step1");
-
-                $("#confirmationTab").hide();
-                $("#signUpTab").hide();
-                $("#contactInfoTab").show();
-                break;
-
-            case "Step2":
-                $("#signUpTab").hide();
-                $("#signUp").hide();
-
-                $("#confirmationTab").tab('show');
-                $("#confirmationTab").addClass('active');
-                $("#confirmation").addClass('active');
-                $("#confirmation").show();
-                //$.get("/cart/checkoutConfirm/" + orderRowID)
-                //    .success(function (dataConfirm) {
-                //        $('#confirmation').html(dataConfirm);
-                //    })
-                //.done($("#confirmation").show())
-                $("#confirmationTab").trigger('click');
-
-                console.log("Step2");
-
-                break;
-
-            case "Registered":
-                console.log("state is registered");
-                $("#confirmationTab a").text('Order Summary');
-                $("#signUpTab a").text('Connection Info');
-
-                $.get("/cart/checkoutConfirm/" + orderRowID)
-                    .success(function (dataConfirm) {
-                        $('#confirmation').html(dataConfirm);
-                    });
-                $('#AddToCart').hide();
-                $('#AddToCart1').hide();
-                break;
-        }
-
-
-    }
-
-    $("#frmTemplate").submit(function (nEvent) {
-        var $tForm = $(this).closest("form");
-
-        $("#btnHasOrder").val($('.btnHasOrder[class*="active"]').val());
-        $("#btnWhichState").val($('.btnWhichState[class*="active"]').val());
-        $("#btnWebinar").val($('.btnWebinar[class*="active"]').val());
-
-        //if (
-        //    $("#btnWhichState").val() == "Post" &&
-        //    ($("#btnHasOrder").val() == "Live" ||
-        //    $("#btnHasOrder").val() == "Premium" ||
-        //    $("#btnHasOrder").val() == "Live+OnDemand")) {
-        //    alert($("#btnHasOrder").val());
-        //    $("#btnHasOrder").val("No");
-        //}
-
-        // nEvent.preventDefault();
-        $("#ProgressDialogBS").modal('show');
-        $.ajax({
-            url: $tForm.attr('action'),
-            type: "POST",
-            data: $tForm.serialize(),
-            success: function (data) {
-            },
-            error: function () {
-                $("#" + parentForm + " .modalHeaderText").html("<span class=\"label label-warning\">Error condition detected</span>");
-
-            }
-            , complete: function () {
-
-                $("#ProgressDialogBS").modal('hide');
-            }
-        });
-    });
 
 
     //$('[id^="ConfirmRegistrationConfirmRegistration"]').on('click', function (e) {
@@ -311,4 +176,58 @@ $(document).ready(function () {
 });
 
 
+function SetCartState() {
+    switch (whichStep) {
+        case "Step0":
+            console.log("Step0");
+            $("#connectionsCount").val(0);
+            $('#collectAdditionalLocations').html('');
+            $("#confirmationTab").hide();
+            $("#signUpTab").hide();
+            $("#contactInfoTab").hide();
+            $('#AddToCart').attr({ disabled: false, value: 'SignUp' });
+            $('#AddToCart1').attr({ disabled: false, value: 'SignUp' });
 
+            break;
+
+        case "Step1":
+            console.log("Step1");
+
+            $("#confirmationTab").hide();
+            $("#signUpTab").hide();
+            $("#contactInfoTab").show();
+            break;
+
+        case "Step2":
+            $("#signUpTab").hide();
+            $("#signUp").hide();
+
+            $("#confirmationTab").tab('show');
+            $("#confirmationTab").addClass('active');
+            $("#confirmation").addClass('active');
+            $("#confirmation").show();
+            //$.get("/cart/checkoutConfirm/" + orderRowID)
+            //    .success(function (dataConfirm) {
+            //        $('#confirmation').html(dataConfirm);
+            //    })
+            //.done($("#confirmation").show())
+            $("#confirmationTab").trigger('click');
+
+            console.log("Step2");
+
+            break;
+
+        case "Registered":
+            console.log("state is registered");
+            $("#confirmationTab a").text('Order Summary');
+            $("#signUpTab a").text('Connection Info');
+
+            $.get("/cart/checkoutConfirm/" + orderRowID)
+                .success(function (dataConfirm) {
+                    $('#confirmation').html(dataConfirm);
+                });
+            $('#AddToCart').hide();
+            $('#AddToCart1').hide();
+            break;
+    }
+}

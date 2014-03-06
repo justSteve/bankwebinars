@@ -1,0 +1,87 @@
+﻿@using System.Text
+@using CUWebinars.Business.Services
+@model OrderRow
+@{
+    @*if (Model != null)
+    {
+        var verbose = false;
+        if (ViewData.ContainsKey("verbose"))
+        {
+            if (!String.IsNullOrEmpty(ViewData["verbose"].ToString()))
+            {
+                verbose = (bool)ViewData["verbose"];
+            }
+        }
+        var row = Model;
+
+        decimal optionsTotal = OrderManagementService.CalculateOptionsPrice(row);
+        StringBuilder rowAmount = new StringBuilder();
+        if (row.DiscountFlatOff != 0.0M || row.DiscountPercentOff != 0.0M || optionsTotal != 0.0M)
+        {
+            rowAmount.Append("Base Cost: " + OptionsFacade.Instance.Load((int)row.RegistrationType).PriceToAdd.ToString("c0") + "<br />");
+        }
+        else if (verbose == true)
+        {
+            rowAmount.Append("Base Cost: " + OptionsFacade.Instance.Load((int)row.RegistrationType).PriceToAdd.ToString("c0") + "<br />");
+        }
+
+        if (row.DiscountFlatOff != 0.0M)
+        {
+            rowAmount.Append("Discounted: " + row.DiscountFlatOff.ToString("c") + " (" + row.DiscountCode + ")<br />");
+        }
+        else if (verbose == true)
+        {
+            rowAmount.Append("Discounted: " + row.DiscountFlatOff.ToString("c") + " (" + row.DiscountCode + ")<br />");
+        }
+        if (optionsTotal != 0.0M)
+        {
+            if (row.Options.OfType<AdditionalLocationsOrderRowOption>().Single().AdditionalLocationsCount == 1)
+            {
+                rowAmount.Append("One Additional Location: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
+            }
+            else
+            {
+                rowAmount.Append(row.Options.OfType<AdditionalLocationsOrderRowOption>().Single().AdditionalLocationsCount.ToString() + " Additional Locations: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
+            }
+        }
+        else if (verbose == true)
+        {
+            if (row.Options.OfType<AdditionalLocationsOrderRowOption>().Single().AdditionalLocationsCount == 1)
+            {
+                rowAmount.Append("One Additional Location: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
+            }
+            else
+            {
+                rowAmount.Append(row.Options.OfType<AdditionalLocationsOrderRowOption>().Single().AdditionalLocationsCount.ToString() + " Additional Locations: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
+            }
+        }
+        rowAmount.Append("Total Cost: " + row.RowPrice.ToString("c").Replace(".00", ""));
+
+        <div id="billingDetails" class="well" style="text-align: right;">
+            @Html.Raw(rowAmount.ToString())<br />
+
+        @{
+        var statusLabel = "";
+        switch (row.Status)
+        {
+            case OrderRowStatus.InProcess:
+                <span class="label label-warning">@OrderRowStatus.InProcess</span>
+                break;
+
+            case OrderRowStatus.Submitted:
+            <span class="label label-info">@OrderRowStatus.Submitted</span>
+                break;
+
+            case OrderRowStatus.Paid:
+            <span class="label label-success">@OrderRowStatus.Paid</span>
+                break;
+
+            case OrderRowStatus.PendingAuth:
+            <span class="label label-warning">@OrderRowStatus.PendingAuth</span>
+                break;
+        }
+        }
+
+    </div>
+    }*@
+}

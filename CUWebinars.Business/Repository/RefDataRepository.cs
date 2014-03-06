@@ -46,6 +46,14 @@ namespace CUWebinars.Business.Repository
             }
         }
 
+        public IList<Order> FindOrdersByUserId(int id)
+        {
+            using (var context = new TTSWebinarsContext())
+            {
+                return context.Orders.Where(o => o.WebUser.idUser == id).ToList();
+            }
+        }
+
         public WebUser GetWebUserByEmail(string email)
         {
             using (var context = new TTSWebinarsContext())
@@ -115,29 +123,29 @@ namespace CUWebinars.Business.Repository
                 // (which set of options) should I show?
                 //<< end of steve's insertion>>
 
-                //var optionsGroupsXrefs = webinars.SelectMany(w => w.OptionsGroupsXrefs);
-                //var A = optionsGroupsXrefs.ToList();
-
-                ////  For each of those OptionsGroupsXrefs, get the relevant OptionGroup
-                //var optionsGroups = optionsGroupsXrefs.Select(o => o.OptionsGroup);
-                //var B = optionsGroups.ToList();
-
-                ////  Get all OptionsXrefs for those OptionGroups
-                //var optionsXrefs = optionsGroups.SelectMany(opt => opt.OptionsXrefs);
-                //var C = optionsXrefs.ToList();
-
-                ////  Finally, get the options
-                //var options = optionsXrefs.Select(o => o.Option);                //  Get all OptionsGroupsXrefs for those webinars
-                
-                var orderRows = webinars.SelectMany(w => w.OrderRows);
-                var A = orderRows.ToList();
+                var optionsGroupsXrefs = webinars.SelectMany(w => w.OptionsGroupsXrefs);
+                var A = optionsGroupsXrefs.ToList();
 
                 //  For each of those OptionsGroupsXrefs, get the relevant OptionGroup
-                var orderRowOptions = orderRows.SelectMany(o => o.OrderRowOptions);
-                var B = orderRowOptions.ToList();
+                var optionsGroups = optionsGroupsXrefs.Select(o => o.OptionsGroup);
+                var B = optionsGroups.ToList();
 
                 //  Get all OptionsXrefs for those OptionGroups
-                var options = orderRowOptions.Select(opt => opt.Option);
+                var optionsXrefs = optionsGroups.SelectMany(opt => opt.OptionsXrefs);
+                var C = optionsXrefs.ToList();
+
+                //  Finally, get the options
+                var options = optionsXrefs.Select(o => o.Option);                //  Get all OptionsGroupsXrefs for those webinars
+                
+                //var orderRows = webinars.SelectMany(w => w.OrderRows);
+                //var A = orderRows.ToList();
+
+                ////  For each of those OptionsGroupsXrefs, get the relevant OptionGroup
+                //var orderRowOptions = orderRows.SelectMany(o => o.OrderRowOptions);
+                //var B = orderRowOptions.ToList();
+
+                ////  Get all OptionsXrefs for those OptionGroups
+                //var options = orderRowOptions.Select(opt => opt.Option);
 
                 return options.ToList();
 

@@ -1,0 +1,164 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using CUWebinars.Business.AccountService;
+using CUWebinars.Business.Models;
+using CUWebinars.Business.Repository;
+using CUWebinars.Business.Services;
+using CUWebinars.Web.Services;
+using Ninject.Extensions.Logging;
+
+namespace CUWebinars.Web.Areas.Admin.Controllers
+{
+    public class RegistrationsController : Controller
+    {
+        private TTSWebinarsContext db = new TTSWebinarsContext();
+        private IMailService _mail;
+
+        //Steve added MembershipService dependancy to allow for 'currentUser' in Details.
+        public IMembershipService membershipService;
+        private readonly IWebinarRepository _webinarRepository;
+        private readonly IOrderManagementService _orderManagementService;
+        public ILogger Logger { get; set; }
+
+        public RegistrationsController(MembershipService membershipService, IMailService mail, IWebinarRepository webinarRepository, ILogger logger, IOrderManagementService orderManagementService)
+        {
+            this.membershipService = membershipService;
+            _mail = mail;
+            _webinarRepository = webinarRepository;
+            Logger = logger;
+            _orderManagementService = orderManagementService;
+        }
+        //
+        // GET: /Admin/Registrations/
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+
+        //[Authorize(Roles = AppRoles.CustomerAffiliateAdmin)]
+        [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult SetAdditionalLocations(FormCollection formValues)
+        {
+            var ID = Convert.ToInt32(formValues["ID"]);
+            var connectionsCount = Convert.ToInt32(formValues["connectionsCount"]);
+            var msg = "";
+            var originalCost = _orderManagementService.LoadOrderRow(ID).Order.Total;
+            int originalLocCount = 0;
+            OrderRow row = _orderManagementService.LoadOrderRow(ID);
+            //TODO: Help me with 'row.Options' reference?
+
+            //OrderRowOption option in row.OrderRowOptions
+            //var option = row.OrderRowOptions.SingleOrDefault(o => o.Type == "additional_location");
+
+            var locations =
+                row.OrderRowOptions.SingleOrDefault(o => o.Type == "additional_location");
+            //Options.OfType<AdditionalLocationsOrderRowOption>().SingleOrDefault();
+
+            IDictionary<string, string> addEmails = Request.Params.AllKeys
+                .Where(x => x.StartsWith("Email"))
+                .Where(x => Request.Params[x] != null && Request.Params[x].ToString().Length > 0)
+                .Select(x => new { key = x, value = Request.Params[x] })
+                .ToDictionary(x => (x.key), x => (x.value));
+
+            connectionsCount = addEmails.Count;
+            if (connectionsCount <= 0 && locations != null)
+            {
+                row.OrderRowOptions.Remove(locations);
+                msg = "There are no Additional Locations specified.";
+            }
+
+            if (connectionsCount > 0 && locations == null)
+            {
+                var options = _orderManagementService.GetOptionsByWebinarId(row.Webinar.idWebinar);
+                var option = options.SingleOrDefault(o => o.Type == "additional_location");
+                //                AdditionalLocationsOption option = options.OfType<AdditionalLocationsOption>().SingleOrDefault();
+                if (option != null)
+                {
+                    locations = new AdditionalLocationsOrderRowOption
+                    {
+                        AdditionalLocationsCount = connectionsCount,
+                        Option = option,
+                        OrderRow = row,
+                        OptionDescription = option.OptionExplain,
+                        OptionPrice = Convert.ToDecimal(option.PriceToAdd),
+                        Emails = addEmails.Select(e => e.Value).ToList()
+                    };
+                    row.OrderRowOptions.Add(locations);
+                }
+            }
+            else
+            {
+                if (locations != null)
+                {
+                    originalLocCount = locations.additional_locations_count.Value;
+                    locations.additional_locations_count = connectionsCount;
+                    locations.additional_locations_emails = addEmails.Select(e => e.Value).ToList().ToString();
+                }
+            }
+
+            var optionsCost = "";
+            if (connectionsCount == 1)
+            {
+                msg = "One Additional Location.<br>";
+
+                optionsCost = "Total cost of Additional Locations: " + (locations.OptionPrice * connectionsCount).ToString("C0");
+
+            }
+            if (connectionsCount > 1)
+            {
+                msg = "This order carries " + connectionsCount + " Additional Locations.";
+            }
+
+            try
+            {
+                //_orderManagementService.Save(row.Order);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            if (originalCost != row.Order.Total && row.Status != OrderRowStatus.InProcess)
+            {
+                try
+                {
+                    var BuildChangedOrderRow = new Dictionary<string, string>
+                                                   {
+                                                       {"Date", DateTime.Now.ToShortDateString()},
+                                                       {"Order", row.Order.idOrder.ToString()},
+                                                       {"Individual", row.Order.FirstName+ ' ' +  row.Order.LastName},
+                                                       {
+                                                           "Additional Locations Changed",
+                                                           originalLocCount + " to " + row.RegistrationType.ToString()
+                                                       },
+                                                       {"OriginalCost", originalCost.ToString()},
+                                                       {"UpdatedCost", row.Order.Total.ToString()},
+                                                       {"Affiliate", row.Order.Affiliate.ttsDomain},
+                                                       {"Billed", "N"},
+                                                       {"Difference", (originalCost - row.Order.Total).ToString("C")},
+                                                       {"ChangedBy", ""}
+                                                       //TODO: How to get CurrentUser?
+                                                       //UserFacade.Instance.GetCurrentUser().FullName}
+                                                   };
+                    //TTSTrain.Webinars.Business.RssBusService.Instance.AddChangedOrder(BuildChangedOrderRow);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("ERROR AddLocations Op on ID: " + ID + " " + ex);
+                }
+            }
+            return Json(new
+            {
+                numLocations = connectionsCount,
+                msg = msg,
+                Success = true,
+                optionsCost
+            }, JsonRequestBehavior.AllowGet);
+        }
+    }
+}
