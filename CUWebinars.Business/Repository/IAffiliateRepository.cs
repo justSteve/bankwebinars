@@ -3,8 +3,9 @@ using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.Repository
 {
-    public interface IAffiliateRepository 
+    public interface IAffiliateRepository
     {
+        Affiliate FindByIdAndDetachItem(int id);
         IQueryable<Affiliate> GetAffiliates();
         Affiliate GetCurrentAffiliate();
         Affiliate FindById(int id);

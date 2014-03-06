@@ -6,7 +6,9 @@ namespace CUWebinars.Business.Services
 {
     public interface IOrderManagementService
     {
+        bool AssignAffiliateToOrder(Affiliate affiliate, Order order);
         string BuildConnectionInfo(OrderRow orderRow);
+        Order CreateNewOrder();
         IList<Option> GetOptionsByWebinarId(int id);
         IList<Order> GetOrdersByUserId(int id);
 

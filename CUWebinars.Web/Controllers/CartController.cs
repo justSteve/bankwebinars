@@ -180,9 +180,11 @@ namespace CUWebinars.Web.Controllers
             ViewData["CheckoutInProcess"] = "true";
             var IsUserLogged = false;
 
-            var currentOrder = new Order();
+            var currentOrder = _orderManagementService.CreateNewOrder();
 
-            currentOrder.Affiliate = currentAffiliate;
+            if (!_orderManagementService.AssignAffiliateToOrder(currentAffiliate, currentOrder))
+                throw new Exception("Fail");
+            
 
             currentOrder.Origin = "<p>InitialPage: " + HttpContext.Session["FirstPageOfSession"] + "</p><p>" +
                                    " InitialReferrer: " + HttpContext.Session["FirstReferrerOfSession"] + "</p><p>" +

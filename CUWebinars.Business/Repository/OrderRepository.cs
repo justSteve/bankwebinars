@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
 using CUWebinars.Business.Models;
@@ -8,6 +10,22 @@ namespace CUWebinars.Business.Repository
 {
     public class OrderRepository : TTSWebinarsRepository<TTSWebinarsContext, Order>, IOrderRepository
     {
+        public Order CreateOrder()
+        {
+            var newOrder = items.Create();
+            newOrder.OrderDate = DateTime.Now;
+            Add(newOrder);
+            db.SaveChanges();
+            return newOrder;
+        }
+
+        public bool AssignAffiliate(Affiliate affiliate, Order order)
+        {
+            db.Entry(affiliate).State = EntityState.Modified;
+            order.Affiliate = affiliate;
+            return db.SaveChanges() > 0;
+        }
+
         public virtual IDictionary<Option, Order> SelectOrdersWithScheduledWebinars(int idUser)
         {
             var optionAndOrder = new Dictionary<Option, Order>();

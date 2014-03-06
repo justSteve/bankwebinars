@@ -16,16 +16,27 @@ namespace CUWebinars.Business.Services
 {
     public class OrderManagementService : IOrderManagementService, IEventSource
     {
+        private readonly IAffiliateRepository _affiliateRepository;
         private readonly IOptionRepository _optionRepository;
+        private readonly IOrderRepository _orderRepository;
         private readonly IRefDataRepository _refDataRepository;
         private readonly TtsConfiguration _ttsConfig;
         List<IEvent> events = new List<IEvent>();
 
-        public OrderManagementService(IOptionRepository optionRepository, IRefDataRepository refDataRepository, TtsConfiguration ttsConfig)
+        public OrderManagementService(IAffiliateRepository affiliateRepository, IOptionRepository optionRepository, IOrderRepository orderRepository, IRefDataRepository refDataRepository, TtsConfiguration ttsConfig)
         {
+            _affiliateRepository = affiliateRepository;
             _optionRepository = optionRepository;
+            _orderRepository = orderRepository;
             _refDataRepository = refDataRepository;
             _ttsConfig = ttsConfig;
+        }
+
+        public bool AssignAffiliateToOrder(Affiliate affiliate, Order order)
+        {
+            var affilateToAssign = _affiliateRepository.FindByIdAndDetachItem(affiliate.idUserAff);
+            
+            return _orderRepository.AssignAffiliate(affilateToAssign, order);
         }
 
         public string BuildConnectionInfo(OrderRow orderRow)
@@ -35,6 +46,11 @@ namespace CUWebinars.Business.Services
             var option = _optionRepository.FindOption((int)orderRow.RegistrationType);
 
             return string.Empty;
+        }
+
+        public Order CreateNewOrder()
+        {
+            return _orderRepository.CreateOrder();
         }
 
         public IList<Option> GetOptionsByWebinarId(int id)
