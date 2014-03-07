@@ -91,8 +91,9 @@ namespace CUWebinars.Business.AccountService
             //   or a bulletproof method of ensuring that for every Membership UserAccount created
             //   a WebUser account as also been created.
             var account = userAccountService.CreateAccount(tenant, userName, password, email);
-            userAccountService.AddClaim(account.ID, CUWebinars.Business.Constants.ClaimTypes.FullName, string.Format("{0} {1}", firstName, lastName));
-            userAccountService.AddClaim(account.ID, CUWebinars.Business.Constants.ClaimTypes.Role, "WebUser");
+            userAccountService.AddClaim(account.ID, ClaimTypes.FullName, string.Format("{0} {1}", firstName, lastName));
+            userAccountService.AddClaim(account.ID, System.Security.Claims.ClaimTypes.Role, "WebUser");
+            userAccountService.AddClaim(account.ID, ClaimTypes.HasNotVerified, "true");
             if (idUserImported == 0) idUserImported = null;
 
             WebUser webUser = new WebUser
@@ -253,6 +254,8 @@ namespace CUWebinars.Business.AccountService
         {
             UserAccount userAccount;
             userAccountService.VerifyEmailFromKey(key, password, out userAccount);
+
+                userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.HasNotVerified);
 
             return userAccount;
         }

@@ -196,12 +196,19 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.AllowAnonymous]
         public ActionResult Confirm(string id)
         {
-            var account = membershipService.GetByVerificationKey(id);
-            if (account.HasPassword())
+            try
             {
-                var vm = new ChangeEmailFromKeyInputModel();
-                vm.Key = id;
-                return View("Confirm", vm);
+                var account = membershipService.GetByVerificationKey(id);
+
+                if (account.HasPassword())
+                {
+                    var vm = new ChangeEmailFromKeyInputModel {Key = id};
+                    return View("Confirm", vm);
+                }
+            }
+            catch (Exception exception)
+            {
+                //  TODO: Meaningful error handling/logging and feedback   
             }
 
             return null;
