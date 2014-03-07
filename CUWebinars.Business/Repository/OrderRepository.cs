@@ -16,6 +16,7 @@ namespace CUWebinars.Business.Repository
         {
             var newOrder = items.Create();
             newOrder.OrderDate = DateTime.Now;
+            newOrder.Affiliate = 
             Add(newOrder);
             db.SaveChanges();
             return newOrder;

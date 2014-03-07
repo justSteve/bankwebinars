@@ -1,0 +1,207 @@
+﻿
+@{
+    ViewBag.Title = "CUWebinars Calendar";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+}
+<script type="text/javascript">
+    $(function () {
+        var thisMonth = moment().format('YYYY-MM');
+
+        $('#full-clndr').clndr({
+
+            // the template: this could be stored in markup as a <script type="text/template">
+            // or pulled in as a string
+            template: $('#clndrTemplate').html(),
+
+            // determines which month to start with using either a date string or a moment object.
+            startWithMonth: thisMonth,//moment().add('month', 1),
+
+            // the target classnames that CLNDR will look for to bind events.
+            // these are the defaults.
+            targets: {
+                nextButton: 'clndr-next-button',
+                previousButton: 'clndr-previous-button',
+                nextYearButton: 'clndr-next-year-button',
+                previousYearButton: 'clndr-previous-year-button',
+                todayButton: 'clndr-today-button',
+                day: 'day',
+                empty: 'empty'
+            },
+            // click callbacks! the keyword 'this' is set to the clndr instance in all callbacks.
+            clickEvents: {
+                // fired whenever a calendar box is clicked.
+                // returns a 'target' object containing the DOM element, any events,
+                // and the date as a moment.js object.
+                click: function (target) { },
+                // fired when a user goes forward a month.
+                // returns a moment.js object set to the correct month.
+                nextMonth: function (month) { },
+                // fired when a user goes back a month.
+                // returns a moment.js object set to the correct month.
+                previousMonth: function (month) { },
+                // fired when the next year button is clicked.
+                // returns a moment.js object set to the correct month and year.
+                nextYear: function (month) { },
+                // fired when the previous year button is clicked.
+                // returns a moment.js object set to the correct month and year.
+                previousYear: function (month) { },
+                // fires any time the month changes as a result of a click action.
+                // returns a moment.js object set to the correct month.
+                onMonthChange: function (month) { },
+                // fires any time the year changes as a result of a click action.
+                // if onMonthChange is also set, it is fired BEFORE onYearChange.
+                // returns a moment.js object set to the correct month and year.
+                onYearChange: function (month) { },
+                // fired when a user goes to the current month & year.
+                // returns a moment.js object set to the correct month.
+                today: function (month) { }
+            },
+
+            // this is called only once after clndr has been initialized and rendered.
+            // use this to bind custom event handlers that don't need to be re-attached
+            // every time the month changes (most event handlers fall in this category).
+            // hint: this.element refers to the parent element that holds the clndr,
+            // and is a great place to attach handlers that don't get tossed out every
+            // time the clndr is re-rendered.
+            ready: function () { },
+            // a callback when the calendar is done rendering.
+            // This is a good place to bind custom event handlers
+            // (also see the 'ready' option above).
+            doneRendering: function () { },
+
+            // an array of event objects
+            events: [
+                { date: moment().format('YYYY-MM-') + '07', title: 'This is an Event' },
+                { date: moment().format('YYYY-MM-') + '23', title: 'Another Event' }
+            ],
+
+            // if you're supplying an events array, dateParameter points to the
+            // field in your event object containing a date string.
+            // It's set to 'date' by default.
+            dateParameter: 'date',
+
+            // show the dates of days in months adjacent to the current month.
+            // defaults to true.
+            showAdjacentMonths: true,
+            // when days from adjacent months are clicked, switch the current month.
+            // fires nextMonth/previousMonth/onMonthChange click callbacks. defaults to false.
+            adjacentDaysChangeMonth: true
+            // anything you want access to in your template
+            //extras: { }
+        });
+    });
+</script>
+<div id="page">
+    <div class="container visible-phone">
+        <p class="right"><a class="btn btn-primary scrollto" href="#secondary-nav">Page Menu &nbsp;<i class="icon-align-justify"></i></a></p>
+    </div>
+    <div class="hero-unit">
+        <div class="container">
+            <h1 id="PageTitle">Our Calendar</h1>
+        </div>
+        <!--close container-->
+    </div>
+    <!--close hero-unit-->
+    <div class="container clearfix" id="main-content">
+        <!--begin main content-->
+
+        <div class="row-fluid sidebar-right">
+            <!--begin row-fluid-->
+            <div class="span9 primary-column">
+                <div id="full-clndr" class="clearfix">
+                    <script type="text/template" id="clndrTemplate">
+                        <div class='clndr-controls'>
+                            <div class='clndr-control-button'><span class='clndr-previous-button'>previous</span></div><div class='month'><%= month %> <%= year %></div><div class='clndr-control-button rightalign'><span class='clndr-next-button'>next</span></div>
+                        </div>
+                        <div class="clndr-grid">
+                            <div class="days-of-the-week">
+                                <% _.each(['M', 'T', 'W', 'T', 'F'], function(day) { %>
+                                <div class="header-day"><%= day %></div>
+                                <% }); %>
+                            </div>
+                            <div class="days">
+                                <% _.each(days, function(day) { %>
+                                <% if(day.date.weekday() !== 0 && day.date.weekday() !== 6){ %>
+                                <div class="<%= day.classes %>"><span class="day-number"><%= day.day %></span></div>
+                                <% } %>
+                                <% }); %>
+                            </div>
+                        </div>
+                    </script>
+                </div>
+            </div>
+        </div>
+        <!-- close span9 primary-column-->
+
+        <section class="span3 sidebar secondary-column" id="secondary-nav">
+            <aside class="widget">
+                <div class="rotating-testimonials">
+                    <!--"rotating-testimonials" is a required class-->
+                    <h5 class="short_headline"><span>Testimonials</span></h5>
+                    <div class="panels">
+                        <div id="t5">
+                            <blockquote>
+                                <p>I was concerned that a 2 hour compliance webinar was going to be boring and I wouldn't retain anything. I was surprised to find that I was engaged the entire time. Having the handouts before hand was very helpful. Thanks!</p>
+                                <footer>Casidhe Meriwether, Valero FCU</footer>
+                            </blockquote>
+                        </div>
+                        <!--close #t1 -->
+                        <div id="t2">
+                            <blockquote>
+                                <p>Thought this was one of the best [webinars] we have done, and we will now do more through you. We loved the interaction on the screen during the presentation.</p>
+                                <footer>Lynn Hayhurst, The Bank of Georgia </footer>
+                            </blockquote>
+                        </div>
+                        <!--close #t2 -->
+                        <div id="t3">
+                            <blockquote>
+                                <p>Excellent Webinar. I try to sign up for any webinar concerning lending or compliance that you or Carl Pry conduct. Both of you do an excellent job compared to others that I have attended. </p>
+                                <footer>Gary Jordan, Vice President, PeoplesBank </footer>
+                            </blockquote>
+                        </div>
+                        <!--close #t3 -->
+                        <div id="t4">
+                            <blockquote>
+                                <p>I have to say this has to be one of the best webinars I have ever attended!! Usually, I can barely keep my eyes open. I like how it had us interact with the webinar by filling in information. We had a total of 3 that attended this webinar, and they all agreed! Just want to say, GREAT JOB!!! </p>
+                                <footer>Lara E. Peterson, First National Bank Of Picayune</footer>
+                            </blockquote>
+                        </div>
+                        <!--close #t4 -->
+                        <div id="t1">
+                            <blockquote>
+                                <p>The speaker clarified a lot of information for me, I will not have to contact my legal counsel as often now and will be saving money on legal fees for my Credit Union. Thanks. </p>
+                                <footer>Lisa St. Francis, Rocky Mountain Law Enforcement FCU </footer>
+                            </blockquote>
+                        </div>
+                        <!--close #t5 -->
+                    </div>
+                    <!--close panels-->
+                    <ul class="tabs">
+                        <li class="tab"><a href="#t1">maya-angelou</a></li>
+                        <li class="tab"><a href="#t2">Lynn Hayhurst, The Bank of Georgia </a></li>
+                        <li class="tab"><a href="#t3">albert-einstein</a></li>
+                        <li class="tab"><a href="#t4">ralph-waldo-emerson</a></li>
+                    </ul>
+                </div>
+                <!--close rotating-testimonials-->
+            </aside>
+            <aside class="widget">
+                <h5 class="short_headline"><span>Stay Updated</span></h5>
+                @{Html.RenderPartial("Partials/_AddToMailingBox");}
+            </aside>
+            <!--close aside .widget -->
+
+            <aside class="widget">
+                <h5 class="short_headline"><span>Search</span></h5>
+                <form class="searchform" method="get">
+                    <input type="search" class="span12" value="type and hit enter" onfocus="this.value=''" onblur="this.value='type and hit enter'" />
+                </form>
+            </aside>
+            <!--close aside widget-->
+        </section>
+        <!--close aside .widget-->
+        <!--close section sidebar span3-->
+    </div>
+    <!--close row-fluid-->
+</div>
+</div>

@@ -25,10 +25,10 @@ namespace CUWebinars.Business.Services
         readonly List<IEvent> _events = new List<IEvent>();
 
         public OrderManagementService(
-            IAffiliateRepository affiliateRepository, 
-            IOptionRepository optionRepository, 
-            IOrderRepository orderRepository, 
-            IRefDataRepository refDataRepository, 
+            IAffiliateRepository affiliateRepository,
+            IOptionRepository optionRepository,
+            IOrderRepository orderRepository,
+            IRefDataRepository refDataRepository,
             IWebUserRepository webUserRepository,
             IWebinarRepository webinarRepository,
             TtsConfiguration ttsConfig)
@@ -62,10 +62,11 @@ namespace CUWebinars.Business.Services
             return string.Empty;
         }
 
-        public Order CreateNewOrder()
-        {
-            return _orderRepository.CreateOrder();
-        }
+
+        //public Order CreateNewOrder(WebinarDetailsViewModel model)
+        //{
+        //    return _orderRepository.CreateOrder();
+        //}
 
         public OrderRow CreateOrderRow(Webinar webinar, Order order, string alternateEmail, int registrationType)
         {
@@ -73,21 +74,21 @@ namespace CUWebinars.Business.Services
         }
 
         public OrderRowOption CreateOrderRowOption(
-            OrderRow orderRow, 
-            Option option, 
-            string optionDescription, 
+            OrderRow orderRow,
+            Option option,
+            string optionDescription,
             decimal price,
-            string alternateEmail, 
-            int additionalLocationsCount, 
+            string alternateEmail,
+            int additionalLocationsCount,
             string[] additionalLocationsEmails)
         {
             return _orderRepository.CreateOrderRowOption(
-                orderRow, 
-                option, 
-                optionDescription, 
-                price, 
+                orderRow,
+                option,
+                optionDescription,
+                price,
                 alternateEmail,
-                additionalLocationsCount, 
+                additionalLocationsCount,
                 additionalLocationsEmails
                 );
         }
@@ -115,7 +116,7 @@ namespace CUWebinars.Business.Services
 
         public void CreateOrderEvent(Order order, UserAccount userAccount)
         {
-            AddEvent(new OrderSubmittedEvent<UserAccount>{ Account = userAccount, Order = order });
+            AddEvent(new OrderSubmittedEvent<UserAccount> { Account = userAccount, Order = order });
         }
 
 
@@ -174,35 +175,38 @@ namespace CUWebinars.Business.Services
         {
             order.Total = 0.0M;
 
-            //foreach (OrderRow row in order.Rows)
-            //{
+            foreach (OrderRow row in order.OrderRows)
+            {
+                var option = _optionRepository.FindOption((int)row.RegistrationType);
 
-            //    row.UnitPrice = (decimal)OptionsFacade.Instance.Load((int)row.RegistrationType).PriceToAdd;
+                if (option.PriceToAdd != null) row.UnitPrice = (decimal)option.PriceToAdd;
+                //(decimal)OptionsFacade.Instance.Load((int)row.RegistrationType).PriceToAdd;
 
-            //    //Calculate options price
-            //    decimal optionsTotal = CalculateOptionsPrice(row);
+                //Calculate options price
+                decimal optionsTotal = CalculateOptionsPrice(row);
 
-            //    //Calculate row price before discount
-            //    row.RowPrice = row.UnitPrice + optionsTotal;
+                //Calculate row price before discount
+                row.RowPrice = row.UnitPrice + optionsTotal;
 
-            //    //Calculate discount. Discount is not valid for subscription webinars.
-            //    if (row.Webinar.IsSubscriptionWebinar == false)
-            //    {
-            //        decimal discountTotal = row.DiscountFlatOff;
-            //        if (row.DiscountPercentOff != 0.0M)
-            //        {
-            //            discountTotal = row.RowPrice * row.DiscountPercentOff / 100;
-            //        }
-            //        if (discountTotal > row.RowPrice)
-            //        {
-            //            discountTotal = row.RowPrice;
-            //        }
-            //        row.RowPrice = row.RowPrice - discountTotal;
-            //    }
+                //Calculate discount. Discount is not valid for subscription webinars.
+                if (row.Webinar.Title.Contains("Compliance Perspectives") == false)
+                {
+                    
+                    //decimal discountTotal = row.
+                    //if (row.DiscountPercentOff != 0.0M)
+                    //{
+                    //    discountTotal = row.RowPrice * row.DiscountPercentOff / 100;
+                    //}
+                    //if (discountTotal > row.RowPrice)
+                    //{
+                    //    discountTotal = row.RowPrice;
+                    //}
+                    //row.RowPrice = row.RowPrice - discountTotal;
+                }
 
-            //    //Calculate order total
-            //    order.Total += row.RowPrice;
-            //}
+                //Calculate order total
+                order.Total += row.RowPrice;
+            }
         }
 
         public virtual decimal CalculateOptionsPrice(OrderRow row)
@@ -214,7 +218,6 @@ namespace CUWebinars.Business.Services
 
             decimal optionsTotal = 0.0M;
             foreach (OrderRowOption option in row.OrderRowOptions
-                //.Options
                 )
             {
                 var locations = option as AdditionalLocationsOrderRowOption;
@@ -299,28 +302,35 @@ namespace CUWebinars.Business.Services
             throw new NotImplementedException();
         }
 
-        public void Save(Order currentOrder)
+
+        public Order SaveOrderChanges(Order currentOrder)
         {
             ProcessDiscountCodes(currentOrder);
             CalculateOrderPrices(currentOrder);
 
-            //base.Save(instance);
-            throw new NotImplementedException();
-        }
-
-        public Order SaveOrderChanges(Order currentOrder)
-        {
             return _orderRepository.SaveOrderChanges(currentOrder);
         }
 
         private void ProcessDiscountCodes(object instance)
         {
-            throw new NotImplementedException();
+            var a = 1;
         }
 
         public void AddOrderRow(Order currentOrder, OrderRow orderRow)
         {
             throw new NotImplementedException();
+        }
+
+        public Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, IList<Option> options)
+        {
+            
+                        var order = _orderRepository.CreateOrder();
+            order.Affiliate = affiliate;
+            order.WebUser = webUser;
+            // this is the point where I think it makes sense to 
+            //  define Row and (if needed) RowOption 
+            //??
+            return order;
         }
 
         public void Clear()

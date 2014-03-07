@@ -174,34 +174,49 @@ namespace CUWebinars.Web.Controllers
 
             )
         {
-
-            var currentAffiliate = stateService.GetValue<Affiliate>("CurrentAffiliate");
             var isPreReg = stage_of_checkout;
             ViewData["CheckoutInProcess"] = "true";
             var IsUserLogged = false;
-
-            var currentOrder = _orderManagementService.CreateNewOrder();
-
-            currentOrder.Origin = "<p>InitialPage: " + HttpContext.Session["FirstPageOfSession"] + "</p><p>" +
-                       " InitialReferrer: " + HttpContext.Session["FirstReferrerOfSession"] + "</p><p>" +
-                       " InitialCookies: " + HttpContext.Session["FirstCookiesOfSession"] + "</p><p>" +
-                       " SessionID: " + HttpContext.Session["SessionID"] + "</p>";
-
-            currentOrder = _orderManagementService.AssignAffiliateToOrder(currentAffiliate, currentOrder);
-            currentOrder = _orderManagementService.AssignWebUserToOrder(formModel.WebUser, currentOrder);
-            
             var model = formModel;
 
+            var currentOrder = stateService.GetValue<Order>("CurrentOrder");              
+            var currentAffiliate = stateService.GetValue<Affiliate>("CurrentAffiliate");
+
+            model.Order = currentOrder;
+            
+            model.Affiliate = currentAffiliate;
             model.Webinar = _orderManagementService.GetWebinar(formModel.Webinar.idWebinar);
 
             try
             {
                 model.WebUser = _orderManagementService.GetWebUser(formModel.WebUser.idUser);
+                // hardcode in the currentUser - steve@juststeve.com
+                //model.WebUser = _orderManagementService.GetWebUser(26357);
             }
             catch
             {
 
             }
+            //TODO Goal is to instantiate the order with as many nested objects as is 
+            //  possible. So I'd like to send the strongly typed model into the Order constructor
+            //  
+            if (currentOrder != null)
+            {
+                currentOrder = _orderManagementService.CreateNewOrder(
+                    model.Affiliate,
+                    model.WebUser,
+                    model.Webinar,
+                    model.Options
+                    );
+                StateService.SetValue("CurrentOrder", string.Empty);
+            }
+            currentOrder.Origin = "<p>InitialPage: " + stateService.GetValue<String>("FirstPage") + "</p><p>" +
+                       " InitialReferrer: " + stateService.GetValue<String>("InitialQueryString") + "</p><p>" +
+                       " InitialCookies: " +stateService.GetValue<String>("FirstCookies")+ "</p><p>" +
+                       " SessionID: " +stateService.GetValue<String>("SessionID")+ "</p>";
+
+            currentOrder = _orderManagementService.AssignAffiliateToOrder(currentAffiliate, currentOrder);
+            currentOrder = _orderManagementService.AssignWebUserToOrder(formModel.WebUser, currentOrder);
             
             if (Request.IsAuthenticated)
             {
@@ -212,7 +227,10 @@ namespace CUWebinars.Web.Controllers
             }
             else
             {
-
+                IsUserLogged = false;
+                //_orderManagementService.AssignUserToOrder(currentOrder, model.WebUser);
+                currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
+                currentOrder.InitiatedBy = _orderManagementService.GetOrderInitiator();
                 Logger.Error("ERROR: CartController | Signup - currentUser is null" + currentOrder.idOrder);
                 //TODO: assign appropriate ModelError and error logging/handling
             }
@@ -222,10 +240,10 @@ namespace CUWebinars.Web.Controllers
                 model.Webinar = _orderManagementService.GetWebinar(883);
             }
 
-            currentOrder = _orderManagementService.SaveOrderChanges(currentOrder);
-
             var orderRow = _orderManagementService.CreateOrderRow(model.Webinar, currentOrder, String.Empty, mode);
         
+            currentOrder = _orderManagementService.SaveOrderChanges(currentOrder);
+
             if (model.Webinar.idWebinar == 883 && model.Webinar.Status == WebinarStatus.Scheduled)
             {
                 try
@@ -239,22 +257,22 @@ namespace CUWebinars.Web.Controllers
             }
 
             //var additionalLocations = orderRow.Options.OfType<AdditionalLocationsOrderRowOption>();
-            var additionalLocations = orderRow.OrderRowOptions.OfType<AdditionalLocationsOrderRowOption>();
-            AdditionalLocationsOrderRowOption[] additionalLocationsOption =
-                additionalLocations as AdditionalLocationsOrderRowOption[] ?? additionalLocations.ToArray();
-            int count = additionalLocationsOption.Count();
-            if (count > 0)
-            {
-                int additionalLocationsCount;
-                if (int.TryParse(Request["AdditionalLocationsCount" + orderRow.idOrderRow], out additionalLocationsCount))
-                {
-                    additionalLocationsOption.Single().AdditionalLocationsCount = additionalLocationsCount;
-                }
-                else if (Request["AdditionalLocationsCount" + orderRow.idOrderRow] == "")
-                {
-                    additionalLocationsOption.Single().AdditionalLocationsCount = 0;
-                }
-            }
+            //var additionalLocations = orderRow.OrderRowOptions.OfType<AdditionalLocationsOrderRowOption>();
+            //AdditionalLocationsOrderRowOption[] additionalLocationsOption =
+            //    additionalLocations as AdditionalLocationsOrderRowOption[] ?? additionalLocations.ToArray();
+            //int count = additionalLocationsOption.Count();
+            //if (count > 0)
+            //{
+            //    int additionalLocationsCount;
+            //    if (int.TryParse(Request["AdditionalLocationsCount" + orderRow.idOrderRow], out additionalLocationsCount))
+            //    {
+            //        additionalLocationsOption.Single().AdditionalLocationsCount = additionalLocationsCount;
+            //    }
+            //    else if (Request["AdditionalLocationsCount" + orderRow.idOrderRow] == "")
+            //    {
+            //        additionalLocationsOption.Single().AdditionalLocationsCount = 0;
+            //    }
+            //}
 
 
             var options = _orderManagementService.GetOptionsByWebinarId(model.Webinar.idWebinar, true);
@@ -412,7 +430,7 @@ namespace CUWebinars.Web.Controllers
         {
             OrderRow row = _orderManagementService.LoadOrderRow(orderRowID);
             row.Status = status;
-            _orderManagementService.Save(row.Order);
+            _orderManagementService.SaveOrderChanges(row.Order);
 
             return Json(row.Status.ToString());
         }

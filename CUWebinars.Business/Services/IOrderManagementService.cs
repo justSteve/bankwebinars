@@ -9,7 +9,6 @@ namespace CUWebinars.Business.Services
         Order AssignAffiliateToOrder(Affiliate affiliate, Order order);
         Order AssignWebUserToOrder(WebUser webUser, Order order);
         string BuildConnectionInfo(OrderRow orderRow);
-        Order CreateNewOrder();
         OrderRow CreateOrderRow(Webinar webinar, Order order, string alternateEmail, int registrationType);
         OrderRowOption CreateOrderRowOption(
             OrderRow orderRow,
@@ -29,8 +28,9 @@ namespace CUWebinars.Business.Services
         byte GetOrderInitiator();
         void AssignUserToOrder(Order currentOrder, WebUser user);
         void CreateCPSubscription(OrderRow orderRow);
-        void Save(Order currentOrder);
+        //void Save(Order currentOrder);
         Order SaveOrderChanges(Order currentOrder);
         void AddOrderRow(Order currentOrder, OrderRow orderRow);
+        Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, IList<Option> options);
     }
 }

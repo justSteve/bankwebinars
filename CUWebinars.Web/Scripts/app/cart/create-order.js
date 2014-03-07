@@ -54,6 +54,7 @@ $(document).ready(function () {
         e.preventDefault();
         CheckoutInProcess = true;
         if (!isUserLogged) {
+            window.location.href = "/Account/Login?returnURL=" + window.location;
             //TODO: How can javascript re-direct the execution to the '_CreateUserFrom' partial of the Login.cshtml?
             //  idea is that we should start off with the prompt for the email - if an account already exists
             // for that email the user is prompted to enter password.
