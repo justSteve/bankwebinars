@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
 using CUWebinars.Business.Models;
@@ -8,6 +10,52 @@ namespace CUWebinars.Business.Repository
 {
     public class OrderRepository : TTSWebinarsRepository<TTSWebinarsContext, Order>, IOrderRepository
     {
+        public Order CreateOrder()
+        {
+            var newOrder = items.Create();
+            newOrder.OrderDate = DateTime.Now;
+            Add(newOrder);
+            db.SaveChanges();
+            return newOrder;
+        }
+
+        public Order AssignAffiliate(Affiliate affiliate, Order order)
+        {
+            order.idAffiliate = affiliate.idUserAff;
+
+            if (db.SaveChanges() > 0)
+            {
+                db.Entry(order).Reference(o => o.Affiliate).Load();
+                return order;
+            }
+
+            return order;
+        }
+
+        public Order AssignWebUserToOrder(WebUser webUser, Order order)
+        {
+            order.idUser = webUser.idUser;
+
+            //if (db.SaveChanges() > 0)
+            //{
+            //    //db.Entry(order).Reference(o => o.WebUser).Load();
+            //    return order;
+            //}
+
+            return order;
+        }
+
+        public Order SaveOrder(Order order)
+        {
+            if (db.SaveChanges() > 0)
+            {
+                //db.Entry(order).Reference(o => o.WebUser).Load();
+                return order;
+            }
+
+            throw new Exception(""); // TODO: come up with meaningful exception and msg
+        }
+
         public virtual IDictionary<Option, Order> SelectOrdersWithScheduledWebinars(int idUser)
         {
             var optionAndOrder = new Dictionary<Option, Order>();

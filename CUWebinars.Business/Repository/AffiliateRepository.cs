@@ -1,4 +1,6 @@
-﻿using CUWebinars.Business.Models;
+﻿using System;
+using System.Linq.Expressions;
+using CUWebinars.Business.Models;
 using System.Data.Entity;
 using System.Linq;
 
@@ -17,6 +19,18 @@ namespace CUWebinars.Business.Repository
             : base(context)
         {
             
+        }
+
+        
+        public Affiliate FindByIdWithIncluding(int id, params Expression<Func<Affiliate, object>>[] includeProperties)
+        {
+            IQueryable<Affiliate> queryable = items;
+            foreach (Expression<Func<Affiliate, object>> includeProperty in includeProperties)
+            {
+                queryable = queryable.Include<Affiliate, object>(includeProperty);
+            }
+
+            return queryable.First(a => a.idUserAff == id);
         }
 
         public IQueryable<Affiliate> GetAffiliates()
@@ -43,5 +57,7 @@ namespace CUWebinars.Business.Repository
         {
             throw new System.NotImplementedException();
         }
+
+
     }
 }

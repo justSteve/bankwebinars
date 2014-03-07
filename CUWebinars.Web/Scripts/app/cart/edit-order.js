@@ -1,7 +1,4 @@
-﻿/// <reference path="../typings/jquery/jquery.d.ts"/>
-/// <reference path="../typings/bootstrap/bootstrap.d.ts"/>
-/// <reference path="/Content/js/jquery-plugins/dataTables/media/js/jquery.dataTables.min.js"/>
-
+﻿
 var parentForm;
 var ConnCount = 0;
 var formID = 0;
@@ -84,33 +81,6 @@ $(document).ready(function () {
             },
             complete: function () {
                 //$("#ProgressDialogBS").modal('hide');
-            }
-        });
-    });
-
-    $("[id^=AdditionalLocationContainer]").on('click', "[id^=SubmitAddLocations]", function (nEvent) {
-        var $form = $(this).closest("form");
-        nEvent.preventDefault();
-        $("#AddLocModal_" + formID).html("<span class=\"label label-warning\">Processing...please wait.</span>");
-
-        $.ajax({
-            url: $form.attr('action'),
-            type: "POST",
-            data: $form.serialize(),
-            success: function (result) {
-                $("#AddLocModal_" + formID).html("<span class=\"label label-success\">" + result.msg + "</span>");
-            },
-            error: function () {
-                $("#" + parentForm + " .modalHeaderText").html("<span class=\"label label-error\">Error condition detected</span>");
-            },
-            complete: function () {
-                $("#AddButton_" + formID).show();
-                $("#NumLocationsMsg_" + formID).hide();
-                // $("#" + parentForm + " [name=connectionsCount]").val((result.numLocations) * 1);
-                //$("#[id^=SubmitAddLocations]").hide();
-                $("[id^=CollectAdditionalLocations] a").show();
-                //$("[id^=ShowsAddLocTotalCost]").html(result.optionsCost);
-                $("#ProgressDialogBS").modal('hide');
             }
         });
     });
@@ -211,39 +181,6 @@ $(document).ready(function () {
 //};
 
 
-function AddLocation(countIterator, cost) {
-
-    ConnCount = (countIterator);
-    //alert(ConnCount);
-    $("#AddButton_" + formID).hide();
-    $("#" + parentForm + " [name=submitAddLocations]").attr("disabled", "disabled").val("Waiting for valid email").show();
-
-    var inputNode = $(' <div id="line_' + (countIterator) + '">' + countIterator + '. <input type="text" onblur=CheckEmails(); id="Email_' + (countIterator) + '" name="Email_' + (countIterator) + '" class="emailInput"  placeholder="email" size="30"/>&nbsp;<a class="btn btn-mini btn-danger" onclick=RemoveLocation("line_' + (countIterator) + '"); href="#"><i class="icon-trash icon-large"></i> Remove?</a> ' + cost + '</div>');
-    $("#" + parentForm + " .action").val("add");
-    $("#CollectAdditionalLocations_" + formID).append(inputNode);
-    $("#" + parentForm + " [name=connectionsCount]").val((ConnCount) * 1);
-    $("#CollectAdditionalLocations_" + formID + " a").hide();
-    $("#CollectAdditionalLocations_" + formID + " input").focus();
-    $("#" + parentForm).animate({ scrollTop: $("#" + parentForm).scrollHeight }, 1000);
-
-}
-
-
-
-function RemoveLocation(theLine) {
-
-    //ConnCount = (ConnCount - 1);
-    var theInput = theLine.split("_")[1];
-    console.log(theLine);
-    alert(parentForm);
-    $("#" + parentForm + " [name=submitAddLocations]").removeAttr("disabled").val("Submit");
-    $("#" + parentForm + " [name=action]").val($("#" + parentForm + " [name=Email_" + theInput + "]").val());
-    $("#" + parentForm + " .line_" + theInput).remove();
-    $("#" + parentForm + " [name=connectionsCount]").val((ConnCount) * 1);
-    $("#" + parentForm + " [name=submitAddLocations]").trigger('click');
-}
-
-
 function getRegistrationsTableCode(userID) {
     //userID = $("#targetUserID").val();
 
@@ -256,6 +193,7 @@ function getRegistrationsTableCode(userID) {
     initRegistrationsTable(userID);
     return template;
 }
+
 function OpenSummary(userID) {
     window.open('/Admin/Registrations/UserSummary/' + userID, 'UserSummary');
 }
@@ -352,8 +290,3 @@ function resendConnectionInfo(link) {
 
     return false;
 }
-
-//// one-line, but useful jQuery plugin :)
-//jQuery.fn.outerHTML = function () {
-//    return $('<div>').append(this.eq(0).clone()).html();
-//};

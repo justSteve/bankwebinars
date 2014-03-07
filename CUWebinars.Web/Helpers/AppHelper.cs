@@ -4,6 +4,8 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Security;
+using System.Text;
 using System.Web;
 using CUWebinars.Business.Models;
 
@@ -84,7 +86,6 @@ namespace CUWebinars.Web.Helpers
             }
         }
 
-        //36632
         /// <summary>
         /// Retrieves the City State info found via FDI Certification code
         /// </summary>
@@ -114,6 +115,34 @@ namespace CUWebinars.Web.Helpers
                 value = msgReader.FieldCount > 0 ? msgReader[0].ToString() + "|" + msgReader[1].ToString() + "|" + msgReader[2].ToString() + "|" + msgReader[3].ToString() + "|" + msgReader[4].ToString() : null;
             }
             return value;
+        }
+
+        private static readonly string AUDIT_XML_TEMPLATE =
+            "<AuditInfo>" +
+            "<RemoteAddress>#REMOTE_ADDR#</RemoteAddress>" +
+            "<RemoteHost>#REMOTE_HOST#</RemoteHost>" +
+            "<RemoteUser>#REMOTE_USER#</RemoteUser>" +
+            "<UserAgent>#HTTP_USER_AGENT#</UserAgent>" +
+            "<Cookie>#HTTP_COOKIE#</Cookie>" +
+            "</AuditInfo>";
+
+        public static string GetUserAuditInfo()
+        {
+            HttpRequest request = HttpContext.Current.Request;
+
+            string remoteAddres = SecurityElement.Escape(request.ServerVariables["REMOTE_ADDR"]);
+            string remoteHost = SecurityElement.Escape(request.ServerVariables["REMOTE_HOST"]);
+            string remoteUser = SecurityElement.Escape(request.ServerVariables["REMOTE_USER"]);
+            string userAgent = SecurityElement.Escape(request.ServerVariables["HTTP_USER_AGENT"]);
+            string userCookie = SecurityElement.Escape(request.ServerVariables["HTTP_COOKIE"]);
+
+            StringBuilder auditXML = new StringBuilder(AUDIT_XML_TEMPLATE);
+            auditXML.Replace("#REMOTE_ADDR#", remoteAddres);
+            auditXML.Replace("#REMOTE_HOST#", remoteHost);
+            auditXML.Replace("#REMOTE_USER#", remoteUser);
+            auditXML.Replace("#HTTP_USER_AGENT#", userAgent);
+            auditXML.Replace("#HTTP_COOKIE#", userCookie);
+            return auditXML.ToString();
         }
 
 

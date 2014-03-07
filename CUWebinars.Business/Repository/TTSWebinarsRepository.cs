@@ -48,6 +48,13 @@ namespace CUWebinars.Business.Repository
             return item;
         }
 
+        public T FindByIdAndDetachItem(int id)
+        {
+            var item = items.Find(id);
+            db.Entry(item).State = EntityState.Detached;
+            return item;
+        }
+
         protected void CheckDisposed()
         {
             if (db == null)

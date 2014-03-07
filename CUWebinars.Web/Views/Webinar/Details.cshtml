@@ -37,15 +37,16 @@
         ceuShort = ceu[0];
         ceuStmt = ceu[1];
     }
-
+    var idUser = 0;
     var isUserLogged = "false";
     var timeZ = USTimeZone.Central;
-    if (Model.WebUser != null)
+    if (Model.WebUser != null && Model.WebUser.idUser > 0)
     {
         isUserLogged = "true";
         timeZ = Model.WebUser.timeZone;
+        idUser = Model.WebUser.idUser;
     }
-    var showUsersTimeFormat = "<i>" + Html.DisplayTime(Model.Webinar.Date, timeZ, false) + " - " + Html.DisplayTime(Model.Webinar.Date, Model.Webinar.Duration, timeZ) + "<br /></i>";
+    var showUsersTimeFormat = "<i>" + Html.DisplayTime(Model.Webinar.Date, (USTimeZone)timeZ, false) + " - " + Html.DisplayTime(Model.Webinar.Date, Model.Webinar.Duration, timeZ) + "<br /></i>";
     var msgOrderStatus = "";
     var rowID = 0;
     var orderID = 0;
@@ -53,25 +54,25 @@
     var ConfirmationCaption = "Confirmation";
 
 
-    if (Model.OrderRow != null && Model.OrderRow.idOrderRow > 0)
+    if (Model.Order != null && Model.Order.idOrder > 0)
     {
-        rowID = Model.OrderRow.idOrderRow;
-        orderID = Model.OrderRow.Order.idOrder;
-        if (Model.OrderRow.Status == OrderRowStatus.InProcess)
+        rowID = Model.Order.OrderRows.FirstOrDefault().idOrderRow;
+        orderID = Model.Order.idOrder;
+        if (Model.Order.OrderRows.FirstOrDefault().Status == OrderRowStatus.InProcess)
         {
             CheckoutInProcess = "true";
             msgOrderStatus = "<div align=\"center\" class=\"label-warning label\">Your order is InProcess and needs to be confirmed.</div>";
         }
-        if (Model.OrderRow.Status == OrderRowStatus.Billed ||
-            Model.OrderRow.Status == OrderRowStatus.Paid ||
-            Model.OrderRow.Status == OrderRowStatus.Submitted)
+        if (Model.Order.OrderRows.FirstOrDefault().Status == OrderRowStatus.Billed ||
+            Model.Order.OrderRows.FirstOrDefault().Status == OrderRowStatus.Paid ||
+            Model.Order.OrderRows.FirstOrDefault().Status == OrderRowStatus.Submitted)
         {
             signUpCaption = "Connection Info";
             ConfirmationCaption = "Order Summary";
             whichStep = "Registered";
             CheckoutInProcess = "false";
             msgOrderStatus = "<div align=\"center\" class=\"label-success label\">Your details are posted below.</div>";
-            //msgOrderStatus = "<div align=\"center\" class=\"label-success label\">Your " + OptionsFacade.Instance.Load((int)Model.OrderRow.RegistrationType).Label.Replace(" Only", " ") + " details are posted below.</div>";
+            //msgOrderStatus = "<div align=\"center\" class=\"label-success label\">Your " + OptionsFacade.Instance.Load((int)Model.Order.OrderRows.FirstOrDefault().RegistrationType).Label.Replace(" Only", " ") + " details are posted below.</div>";
 
         }
     }
@@ -239,8 +240,8 @@
                     <div id="SignUpFormContainer">
                         <ul class="nav nav-tabs" id="regTabs">
                             <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@signUpCaption</a></li>
-                            @*<li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
-                                <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@ConfirmationCaption</a></li>*@
+                            <li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
+                                <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@ConfirmationCaption</a></li>
                         </ul>
 
                         <div class="tab-content">
@@ -249,13 +250,13 @@
                                 <input type="button" onclick=" signUp(); " class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
                                 @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model)
                             </div>
-                            @*<div class="tab-pane" id="contactInfo">
+                            <div class="tab-pane" id="contactInfo">
                                     @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutContact.cshtml", model: Model)
 
                                 </div>
                                 <div class="tab-pane" id="confirmation">
                                     @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutConfirm.cshtml", model: Model)
-                                </div>*@
+                                </div>
 
 
                         </div>
@@ -263,10 +264,11 @@
                     <form action="/cart/signup2" id="frmSignup2" method="post">
                         <input type="hidden" name="stage_of_checkout" id="stage_of_checkout" value="step0" />
                         <input type="hidden" name="webinar.idWebinar" value="@Model.Webinar.idWebinar" />
-                        <input type="hidden" name="orderrow.Id" value="@rowID" />
+                        <input type="hidden" name="order.idOrder" value="@orderID" />
+                        <input type="hidden" name="webuser.idUser" value="@idUser" />
                         <input type="hidden" name="mode" />
 
-                        <input type="hidden" id="addEmails" name="addEmails" value="" />
+                        <input type="hidden" id="addEmails" name="addEmails"/>
                     </form>
                 </div>
 

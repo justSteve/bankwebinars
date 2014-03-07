@@ -110,7 +110,7 @@ namespace CUWebinars.Web
                 //  
                 // unless otherwise advised - this statement effectively establishes the default affiliate
                 // something that subsequent code may over-ride. 
-                StateService.SetValue("CurrentAffiliate", affiliateRepository.FindById(19));
+                StateService.SetValue("CurrentAffiliate", affiliateRepository.FindByIdWithIncluding(19, a => a.WebUser));
 
                 //This session var lets us understand the origin of the Affiliate session - 
                 //...answers the question - How was the Session Affiliate determined?
@@ -140,7 +140,7 @@ namespace CUWebinars.Web
                             StateService.SetValue("AffiliateSessionSource", AffiliateId + Pipe + loadAff);
                             //TODO ... unit test required of this method of loading affiliate by id
                             // determine the current affiliate
-                            StateService.SetValue("CurrentAffiliate", affiliateRepository.FindById(loadAff));
+                            StateService.SetValue("CurrentAffiliate", affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser));
                         }
                         catch (Exception ex)
                         {

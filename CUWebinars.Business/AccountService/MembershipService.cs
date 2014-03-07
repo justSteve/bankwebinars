@@ -256,6 +256,7 @@ namespace CUWebinars.Business.AccountService
             userAccountService.VerifyEmailFromKey(key, password, out userAccount);
 
                 userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.HasNotVerified);
+            
 
             return userAccount;
         }

@@ -36,8 +36,10 @@ namespace CUWebinars.Web.Helpers
                     timeZoneSuffix = AppConst.TIME_ZONE_EASTERN;
                     break;
                 default:
-                    throw new TTSException("Invalid time zone");
-
+                   timeZoneDifference = 0;
+                    timeZoneSuffix = AppConst.TIME_ZONE_CENTRAL;
+                    break;
+                    ;
             }
 
             DateTime timeToDisplay = time.AddHours(timeZoneDifference);

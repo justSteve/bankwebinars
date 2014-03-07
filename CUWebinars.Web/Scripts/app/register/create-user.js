@@ -59,7 +59,7 @@ function checkAndSubmitEmail() {
 }
 
 function submitCreateUserForm() {
-
+    
     var valid = pageObjects.createUserForm.valid();
 
     if (valid) {
@@ -149,8 +149,8 @@ $(function() {
             pageObjects.theSubmitButton.addClass('button_disabled').attr('disabled', true);
         }
     });
-
-    pageObjects.theSubmitButton.prop('value', 'Next...');
+    var ActionForTheSubmit = "CheckEmail";
+    $('[name=TheSubmit]').prop('value', 'Next...');
 
     $("#collapseBilling").parent().hide();
     $("#collapseShipping").parent().hide();
@@ -162,7 +162,7 @@ $(function() {
     //$("[data-val-email]").blur(function () { return true; });
 
     $('input').keypress(function(event) {
-        var enterOkClass = $(this).attr('class');
+        var enterOkClass = $(this).hasClass('enterSubmit');
 
         if (event.which == 13) {
             if (ActionForTheSubmit === "CheckEmail") {
@@ -185,7 +185,7 @@ $(function() {
                     submitCreateUserForm();
                 }
             }
-            if (enterOkClass !== 'enterSubmit') {
+            if (!enterOkClass) {
                 event.preventDefault();
                 return false;
             }

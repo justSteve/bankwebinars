@@ -21,7 +21,9 @@ namespace CUWebinars.Web.ViewModel
         public Webinar Webinar { get; set; }
         public IList<Option> Options { get; set; }
         public Affiliate Affiliate { get; set; }
-        public OrderRow OrderRow { get; set; }
-        public string ConnectionInfo { get; set; }
+        public Order Order { get; set; }
+        //public OrderRow OrderRow { get; set; }
+        // ConnectionInfo is now a property of the Webinar entity
+        //public string ConnectionInfo { get; set; }
     }
 }

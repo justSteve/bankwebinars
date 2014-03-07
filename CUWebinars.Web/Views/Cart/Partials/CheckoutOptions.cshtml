@@ -4,28 +4,28 @@
 <div class="tab-pane" id="signUp">
 
     @{
-        if (Model.OrderRow != null && Model.OrderRow.idOrderRow > 0)
+        if (Model.Order != null && Model.Order.idOrder > 0)
         {
-            var breakDownRegType = Model.OrderRow.RegistrationType.ToString().Split('_');
+            var breakDownRegType = Model.Order.OrderRows.FirstOrDefault().RegistrationType.ToString().Split('_');
 
-            var RegCost = Model.OrderRow.OrderRowOptions.Where(o => o.idOption == (int)Model.OrderRow.RegistrationType).First().OptionPrice;
-            var RegLabel = Model.OrderRow.OrderRowOptions.Where(o => o.idOption == (int)Model.OrderRow.RegistrationType).First().Option.OptionLabel;
+            var RegCost = Model.Order.OrderRows.FirstOrDefault().OrderRowOptions.Where(o => o.idOption == (int)Model.Order.OrderRows.FirstOrDefault().RegistrationType).First().OptionPrice;
+            var RegLabel = Model.Order.OrderRows.FirstOrDefault().OrderRowOptions.Where(o => o.idOption == (int)Model.Order.OrderRows.FirstOrDefault().RegistrationType).First().Option.OptionLabel;
 
 
             if (
-                Model.OrderRow.Status == OrderRowStatus.Submitted ||
-                Model.OrderRow.Status == OrderRowStatus.Paid ||
-                Model.OrderRow.Status == OrderRowStatus.Billed)
+                Model.Order.OrderRows.FirstOrDefault().Status == OrderRowStatus.Submitted ||
+                Model.Order.OrderRows.FirstOrDefault().Status == OrderRowStatus.Paid ||
+                Model.Order.OrderRows.FirstOrDefault().Status == OrderRowStatus.Billed)
             {
-                @*<span><i>Order# @Model.OrderRow.Order.ID<br>@RegLabel - $@RegCost<br></i></span>*@
-                if (Model.ConnectionInfo != null)
+                @*<span><i>Order# @Model.Order.OrderRows.FirstOrDefault().Order.ID<br>@RegLabel - $@RegCost<br></i></span>*@
+                if (Model.Webinar.ConnectionInfo != null)
                 {
-                    @*<blockquote style="margin-left: 150px; margin-right: 150px;" class="btn-success well">@Model.OrderRow.OrderRowOptions.First(o => o.idOption == Model.OrderRow.RegistrationType).Option.Stage2CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>*@
-                    <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn-success well">@Model.OrderRow.OrderRowOptions.Where(o => o.idOption == (int)Model.OrderRow.RegistrationType).First().Option.Stage2CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
+                    @*<blockquote style="margin-left: 150px; margin-right: 150px;" class="btn-success well">@Model.Order.OrderRows.FirstOrDefault().OrderRowOptions.First(o => o.idOption == Model.Order.OrderRows.FirstOrDefault().RegistrationType).Option.Stage2CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>*@
+                    <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn-success well">@Model.Order.OrderRows.FirstOrDefault().OrderRowOptions.Where(o => o.idOption == (int)Model.Order.OrderRows.FirstOrDefault().RegistrationType).First().Option.Stage2CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
                 }
                 else
                 {
-                    <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn-success well">@Model.OrderRow.OrderRowOptions.Where(o => o.idOption == (int)Model.OrderRow.RegistrationType).First().Option.Stage1CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
+                    <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn-success well">@Model.Order.OrderRows.FirstOrDefault().OrderRowOptions.Where(o => o.idOption == (int)Model.Order.OrderRows.FirstOrDefault().RegistrationType).First().Option.Stage1CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
                 }
             }
             else
