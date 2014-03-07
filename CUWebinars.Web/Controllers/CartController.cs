@@ -208,7 +208,7 @@ namespace CUWebinars.Web.Controllers
                     model.Webinar,
                     model.Options
                     );
-                StateService.SetValue("CurrentOrder", string.Empty);
+                //StateService.SetValue("CurrentOrder", string.Empty);
             }
             currentOrder.Origin = "<p>InitialPage: " + stateService.GetValue<String>("FirstPage") + "</p><p>" +
                        " InitialReferrer: " + stateService.GetValue<String>("InitialQueryString") + "</p><p>" +
