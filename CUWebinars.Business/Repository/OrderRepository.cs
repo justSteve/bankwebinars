@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Validation;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using CUWebinars.Business.Models;
 
@@ -17,6 +19,73 @@ namespace CUWebinars.Business.Repository
             Add(newOrder);
             db.SaveChanges();
             return newOrder;
+        }
+
+        public OrderRow CreateOrderRow(Webinar webinar, Order order, string alternateEmail, int registrationType)
+        {
+            var strongTypedContext = (TTSWebinarsContext) db;
+            var entry = db.Entry(webinar);
+
+            if (entry.State != EntityState.Detached)
+                throw new Exception("Webinar must be detached from its original DbContext");
+
+            strongTypedContext.Webinars.Attach(webinar);
+            db.Entry(webinar).State = EntityState.Modified;
+
+            var newOrderRow = strongTypedContext.OrderRows.Create();
+            newOrderRow.Order = order;
+            newOrderRow.Webinar = webinar;
+            newOrderRow.RegistrationType = registrationType;
+            newOrderRow.AlternateEmail = alternateEmail;
+            strongTypedContext.OrderRows.Add(newOrderRow);
+            db.SaveChanges();
+            return newOrderRow;
+        }
+
+        public OrderRowOption CreateOrderRowOption(
+            OrderRow orderRow, 
+            Option option, 
+            string optionDescription, 
+            decimal price, 
+            string alternateEmail, 
+            int additionalLocationsCount,
+            string [] additionalLocationsEmails)
+        {
+            var strongTypedContext = (TTSWebinarsContext) db;
+            var entry = db.Entry(option);
+
+            if (entry.State != EntityState.Detached)
+                throw new Exception("Webinar must be detached from its original DbContext");
+
+            strongTypedContext.Options.Attach(option);
+            db.Entry(option).State = EntityState.Modified;
+
+            var newOrderRowOption = strongTypedContext.OrderRowOptions.Create();
+            newOrderRowOption.Option = option;
+            newOrderRowOption.idOption = option.idOption;
+            newOrderRowOption.idOrderRow = orderRow.idOrderRow;
+            newOrderRowOption.OrderRow = orderRow;
+            newOrderRowOption.OptionDescription = optionDescription;
+            newOrderRowOption.OptionPrice = price;
+            newOrderRowOption.Type = "Additional Location"; // TODO: check this with Stephen.
+            strongTypedContext.OrderRowOptions.Add(newOrderRowOption);
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbEntityValidationException dbEx)
+            {
+                foreach (var validationErrors in dbEx.EntityValidationErrors)
+                {
+                    foreach (var validationError in validationErrors.ValidationErrors)
+                    {
+                        Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
+                    }
+                }
+            }
+            
+            return newOrderRowOption;
         }
 
         public Order AssignAffiliate(Affiliate affiliate, Order order)
@@ -45,7 +114,7 @@ namespace CUWebinars.Business.Repository
             return order;
         }
 
-        public Order SaveOrder(Order order)
+        public Order SaveOrderChanges(Order order)
         {
             if (db.SaveChanges() > 0)
             {

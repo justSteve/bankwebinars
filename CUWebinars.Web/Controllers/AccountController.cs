@@ -50,7 +50,7 @@ namespace CUWebinars.Web.Controllers
         {
             //var currentUser = GetWebUserFromIPrincipal();
             var refDataRepository = new RefDataRepository();
-            var bla = refDataRepository.FindOptionsByWebinarId(435);
+            var bla = refDataRepository.FindOptionsByWebinarId(435, false);
 
             var identity = ClaimsPrincipal.Current;
 

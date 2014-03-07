@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Models;
+﻿using System.Data.Entity;
+using CUWebinars.Business.Models;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -20,6 +21,13 @@ namespace CUWebinars.Business.Repository
         }
 
         //public static ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        public Webinar FindByIdAndDetach(int id)
+        {
+            var webinar = FindById(id);
+            db.Entry(webinar).State = EntityState.Detached;
+            return webinar;
+        }
+
         public IQueryable<Webinar> GetUpcoming()
         {
             return items.Where(w => w.Status == WebinarStatus.Scheduled)

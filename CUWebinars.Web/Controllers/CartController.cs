@@ -192,11 +192,11 @@ namespace CUWebinars.Web.Controllers
             
             var model = formModel;
 
-            model.Webinar = db.Webinars.Find(formModel.Webinar.idWebinar);
+            model.Webinar = _orderManagementService.GetWebinar(formModel.Webinar.idWebinar);
 
             try
             {
-                model.WebUser = db.WebUsers.Find(formModel.WebUser.idUser);
+                model.WebUser = _orderManagementService.GetWebUser(formModel.WebUser.idUser);
             }
             catch
             {
@@ -219,18 +219,13 @@ namespace CUWebinars.Web.Controllers
 
             if (model.Webinar.Title.Contains("Compliance Perspectives"))
             {
-                model.Webinar = db.Webinars.Find(883);
+                model.Webinar = _orderManagementService.GetWebinar(883);
             }
 
-            currentOrder = _orderManagementService.SaveChanges(currentOrder);
-            
-            var orderRow = new OrderRow
-                                    {
-                                        Webinar = model.Webinar,
-                                        Order = currentOrder,
-                                        AlternateEmail = String.Empty,
-                                        RegistrationType = mode
-                                    };
+            currentOrder = _orderManagementService.SaveOrderChanges(currentOrder);
+
+            var orderRow = _orderManagementService.CreateOrderRow(model.Webinar, currentOrder, String.Empty, mode);
+        
             if (model.Webinar.idWebinar == 883 && model.Webinar.Status == WebinarStatus.Scheduled)
             {
                 try
@@ -262,22 +257,30 @@ namespace CUWebinars.Web.Controllers
             }
 
 
-            var options = _orderManagementService.GetOptionsByWebinarId(model.Webinar.idWebinar);
+            var options = _orderManagementService.GetOptionsByWebinarId(model.Webinar.idWebinar, true);
             var option = options.SingleOrDefault(o => o.Type == "additional_location");
-
-            addEmails = addEmails.TrimStart(',');
-            var connectionsCount = addEmails.Split(',');
-            if (connectionsCount.Any())
+            
+            var connections = addEmails.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            
+            if (connections.Any())
             {
-                var orderRowOption = new OrderRowOption()
-                {
-                    additional_locations_count = connectionsCount.Count(),
-                    Option = option,
-                    OrderRow = orderRow,
-                    OptionDescription = option.OptionExplain,
-                    OptionPrice = Convert.ToDecimal(option.PriceToAdd),
-                    additional_locations_emails = addEmails
-                };
+                var orderRowOption = _orderManagementService.CreateOrderRowOption(
+                    orderRow,
+                    option,
+                    option.OptionExplain,
+                    Convert.ToDecimal(option.PriceToAdd.Value),
+                    orderRow.AlternateEmail,
+                    connections.Length,
+                    connections
+                    );
+                //{
+                //    additional_locations_count = connectionsCount.Count(),
+                //    Option = option,
+                //    OrderRow = orderRow,
+                //    OptionDescription = option.OptionExplain,
+                //    OptionPrice = Convert.ToDecimal(option.PriceToAdd),
+                //    additional_locations_emails = addEmails
+                //};
 
                 if (model.Webinar.idWebinar == 842 && model.Webinar.Status == WebinarStatus.Scheduled)
                 {
@@ -309,7 +312,7 @@ namespace CUWebinars.Web.Controllers
                     //}
                 }
 
-                orderRow.OrderRowOptions.Add(orderRowOption);
+                //orderRow.OrderRowOptions.Add(orderRowOption);
             }
 
             try
@@ -322,13 +325,14 @@ namespace CUWebinars.Web.Controllers
                 {
                     //_orderManagementService.Save(currentOrder);
 
-                    _orderManagementService.AddOrderRow(currentOrder, orderRow);
+                    //_orderManagementService.AddOrderRow(currentOrder, orderRow);
 
                     Session["CurrentOrderId"] = currentOrder.idOrder;
                     //_checkoutWorkflow.AddOrder(currentOrder);
-                    model.Order.OrderRows.Add(orderRow);
+                    //model.Order.OrderRows.Add(orderRow);
+                    model.Order = currentOrder;
 
-                    db.SaveChanges();
+                    //db.SaveChanges();
                     ViewData["WhichStep"] = IsUserLogged ? "Step2" : "Step1";
                     return Json(new
                                     {

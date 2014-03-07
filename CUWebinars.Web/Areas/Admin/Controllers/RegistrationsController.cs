@@ -73,7 +73,7 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
 
             if (connectionsCount > 0 && locations == null)
             {
-                var options = _orderManagementService.GetOptionsByWebinarId(row.Webinar.idWebinar);
+                var options = _orderManagementService.GetOptionsByWebinarId(row.Webinar.idWebinar, false);
                 var option = options.SingleOrDefault(o => o.Type == "additional_location");
                 //                AdditionalLocationsOption option = options.OfType<AdditionalLocationsOption>().SingleOrDefault();
                 if (option != null)

@@ -358,7 +358,7 @@ namespace CUWebinars.Web.Controllers
                 ,
                 Webinar = db.Webinars.Find(id)
                 ,
-                Options = _orderManagementService.GetOptionsByWebinarId(id)
+                Options = _orderManagementService.GetOptionsByWebinarId(id, false)
                 ,
                 Order = null
             };

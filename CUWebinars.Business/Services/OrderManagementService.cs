@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using BrockAllen.MembershipReboot;
+﻿using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Exceptions;
 using CUWebinars.Business.Models;
-using CUWebinars.Business.Notification;
 using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Repository;
 using CUWebinars.NotificationSystem.Event;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using IEvent = CUWebinars.NotificationSystem.Event.IEvent;
 using IEventSource = CUWebinars.NotificationSystem.Event.IEventSource;
 
@@ -20,9 +19,10 @@ namespace CUWebinars.Business.Services
         private readonly IOptionRepository _optionRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly IRefDataRepository _refDataRepository;
+        private readonly IWebinarRepository _webinarRepository;
         private readonly IWebUserRepository _webUserRepository;
         private readonly TtsConfiguration _ttsConfig;
-        List<IEvent> events = new List<IEvent>();
+        readonly List<IEvent> _events = new List<IEvent>();
 
         public OrderManagementService(
             IAffiliateRepository affiliateRepository, 
@@ -30,6 +30,7 @@ namespace CUWebinars.Business.Services
             IOrderRepository orderRepository, 
             IRefDataRepository refDataRepository, 
             IWebUserRepository webUserRepository,
+            IWebinarRepository webinarRepository,
             TtsConfiguration ttsConfig)
         {
             _affiliateRepository = affiliateRepository;
@@ -37,6 +38,7 @@ namespace CUWebinars.Business.Services
             _orderRepository = orderRepository;
             _refDataRepository = refDataRepository;
             _ttsConfig = ttsConfig;
+            _webinarRepository = webinarRepository;
             _webUserRepository = webUserRepository;
         }
 
@@ -65,9 +67,34 @@ namespace CUWebinars.Business.Services
             return _orderRepository.CreateOrder();
         }
 
-        public IList<Option> GetOptionsByWebinarId(int id)
+        public OrderRow CreateOrderRow(Webinar webinar, Order order, string alternateEmail, int registrationType)
         {
-            return _refDataRepository.FindOptionsByWebinarId(id);
+            return _orderRepository.CreateOrderRow(webinar, order, alternateEmail, registrationType);
+        }
+
+        public OrderRowOption CreateOrderRowOption(
+            OrderRow orderRow, 
+            Option option, 
+            string optionDescription, 
+            decimal price,
+            string alternateEmail, 
+            int additionalLocationsCount, 
+            string[] additionalLocationsEmails)
+        {
+            return _orderRepository.CreateOrderRowOption(
+                orderRow, 
+                option, 
+                optionDescription, 
+                price, 
+                alternateEmail,
+                additionalLocationsCount, 
+                additionalLocationsEmails
+                );
+        }
+
+        public IList<Option> GetOptionsByWebinarId(int id, bool detached)
+        {
+            return _refDataRepository.FindOptionsByWebinarId(id, detached);
         }
 
         public IList<Order> GetOrdersByUserId(int id)
@@ -75,6 +102,15 @@ namespace CUWebinars.Business.Services
             var sendback = _refDataRepository.FindOrdersByUserId(id);
 
             return sendback;
+        }
+
+        public Webinar GetWebinar(int id)
+        {
+            return _webinarRepository.FindByIdAndDetach(id);
+        }
+        public WebUser GetWebUser(int id)
+        {
+            return _webUserRepository.FindById(id);
         }
 
         public void CreateOrderEvent(Order order, UserAccount userAccount)
@@ -122,14 +158,14 @@ namespace CUWebinars.Business.Services
 
         public IEnumerable<IEvent> GetEvents()
         {
-            return events;
+            return _events;
         }
 
         protected void AddEvent<TE>(TE orderEvent) where TE : IEvent
         {
-            if (orderEvent is IAllowMultiple || events.All(x => x.GetType() != orderEvent.GetType()))
+            if (orderEvent is IAllowMultiple || _events.All(x => x.GetType() != orderEvent.GetType()))
             {
-                events.Add(orderEvent);
+                _events.Add(orderEvent);
             }
         }
 
@@ -272,9 +308,9 @@ namespace CUWebinars.Business.Services
             throw new NotImplementedException();
         }
 
-        public Order SaveChanges(Order currentOrder)
+        public Order SaveOrderChanges(Order currentOrder)
         {
-            return _orderRepository.SaveOrder(currentOrder);
+            return _orderRepository.SaveOrderChanges(currentOrder);
         }
 
         private void ProcessDiscountCodes(object instance)
@@ -289,7 +325,7 @@ namespace CUWebinars.Business.Services
 
         public void Clear()
         {
-            events.Clear();
+            _events.Clear();
         }
     }
 }

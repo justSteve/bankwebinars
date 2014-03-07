@@ -5,7 +5,7 @@ namespace CUWebinars.Business.Repository
 {
     public interface IRefDataRepository
     {
-        IList<Option> FindOptionsByWebinarId(int id);
+        IList<Option> FindOptionsByWebinarId(int id, bool detached);
         IEnumerable<Address> GetAddressesForUser(int id);
         IQueryable<Institution> GetInstitutions();
         WebUser GetWebUserByEmail(string email);        
