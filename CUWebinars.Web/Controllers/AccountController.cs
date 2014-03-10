@@ -586,8 +586,8 @@ namespace CUWebinars.Web.Controllers
 
             resultObject.Add("email", "wasNotFound");
 
-            if(disregardIntitutionDomain)
-                return Json(resultObject, JsonRequestBehavior.AllowGet);
+            //if(disregardIntitutionDomain)
+            //    return Json(resultObject, JsonRequestBehavior.AllowGet);
 
             var domain = email.Split('@')[1];
             var institution = membershipService.GetInstitutionByDomain(domain);
@@ -612,10 +612,11 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(RegisterViewModel model)
+        public JsonResult Register(RegisterViewModel model)
         {
             var errors = ModelState.Values.SelectMany(v => v.Errors);
 
+            
             foreach (var error in errors)
             {
                 Debug.WriteLine(error.ErrorMessage);
@@ -629,7 +630,11 @@ namespace CUWebinars.Web.Controllers
                 {
                     Logger.Error("dupe email attempt: " + model.RegisterFields.Email);
                     ModelState.AddModelError("Email", "That email already exists. Would you like to reset the password?");
-                    return PartialView("_CreateUserForm", model);
+                    //var scriptSerializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+                    //var jsonString = scriptSerializer.Serialize(model);
+
+                    //return Json(jsonString, JsonRequestBehavior.AllowGet);
+                    
                 }
 
                 var myInstitution = membershipService.ProcessInstitutionForUser(model.RegisterFields.Institution.Trim(),
@@ -683,7 +688,8 @@ namespace CUWebinars.Web.Controllers
 
                     membershipService.LogInUser(globalConfig.Tenant, model.RegisterFields.Email, model.RegisterFields.Password, true); // log the user in.
 
-                    return Json(new {Status = "Success"});
+                  return Json(new { Status = "Success" });
+
                 }
                 catch (MembershipCreateUserException e)
                 {
@@ -693,6 +699,7 @@ namespace CUWebinars.Web.Controllers
 
             // If we got this far, something failed, redisplay form
             return Json(new { Status = "Fail" });
+            
         }
 
         //

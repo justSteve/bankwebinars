@@ -63,11 +63,6 @@ namespace CUWebinars.Business.Services
         }
 
 
-        //public Order CreateNewOrder(WebinarDetailsViewModel model)
-        //{
-        //    return _orderRepository.CreateOrder();
-        //}
-
         public OrderRow CreateOrderRow(Webinar webinar, Order order, string alternateEmail, int registrationType)
         {
             return _orderRepository.CreateOrderRow(webinar, order, alternateEmail, registrationType);
@@ -142,6 +137,20 @@ namespace CUWebinars.Business.Services
                 throw new EntityNotFoundException(ex.Message, ex);
             }
         }
+        public Order LoadOrder(int id)
+        {
+            try
+            {
+                using (var context = new TTSWebinarsContext())
+                {
+                    return context.Orders.Single(o => o.idOrder == id);
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                throw new EntityNotFoundException(ex.Message, ex);
+            }
+        }
         //public static WebUser GetMasterUser(this UserFacade userFacadeInstance)
         //{
         //    if (userFacadeInstance.IsCurrentUserControlled() == false)
@@ -191,7 +200,7 @@ namespace CUWebinars.Business.Services
                 //Calculate discount. Discount is not valid for subscription webinars.
                 if (row.Webinar.Title.Contains("Compliance Perspectives") == false)
                 {
-                    
+
                     //decimal discountTotal = row.
                     //if (row.DiscountPercentOff != 0.0M)
                     //{
@@ -323,8 +332,8 @@ namespace CUWebinars.Business.Services
 
         public Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, IList<Option> options)
         {
-            
-                        var order = _orderRepository.CreateOrder();
+
+            var order = _orderRepository.CreateOrder();
             order.Affiliate = affiliate;
             order.WebUser = webUser;
             // this is the point where I think it makes sense to 
