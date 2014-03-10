@@ -103,7 +103,8 @@ namespace CUWebinars.Business.Models.Mapping
             this.Property(t => t.TechName).HasColumnName("TechName");
             this.Property(t => t.EmailPromo).HasColumnName("EmailPromo");
             this.Property(t => t.WebUser_Id).HasColumnName("WebUser_Id");
-
+            this.Ignore(t => t.State);
+            
             // Relationships
             this.HasRequired(t => t.WebUser)
                 .WithOptional(t => t.Affiliate);

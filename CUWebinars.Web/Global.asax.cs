@@ -123,7 +123,7 @@ namespace CUWebinars.Web
                 if (System.Web.HttpContext.Current.Request.UrlReferrer != null)
                     StateService.SetValue("SubdomainBranding", HttpContext.Current.Request.UrlReferrer.ToString().Trim());
                 StateService.SetValue("FirstPage", HttpContext.Current.Request.Url.ToString().Trim());
-                StateService.SetValue("InitialQueryString", Request.QueryString);
+                StateService.SetValue("InitialQueryString", Request.Url.Query);
                 StateService.SetValue("SessionID", HttpContext.Current.Session.SessionID);
 
                 //DETERMINE CURRENT AFFILIATE

@@ -63,24 +63,26 @@ namespace CUWebinars.Web.App_Start
         private static void RegisterServices(IKernel kernel)
         {
             string baseUrl = HttpRuntime.AppDomainAppPath;
+            const string contextParameter = "ctx";
 
             var config = MembershipRebootConfig.Create(HttpRuntime.AppDomainAppPath);
             var ttsConfig = TtsConfig.Create(baseUrl);
             
             kernel.Bind<MembershipRebootConfiguration>().ToConstant(config);
             kernel.Bind<TtsConfiguration>().ToConstant(ttsConfig);
+            kernel.Bind<TTSWebinarsContext>().To<TTSWebinarsContext>().InRequestScope();
 
-            kernel.Bind<IAffiliateRepository>().To<AffiliateRepository>();
-            kernel.Bind<IWebinarRepository>().To<WebinarRepository>();
+
+            kernel.Bind<IAffiliateRepository>().To<AffiliateRepository>().InRequestScope().WithConstructorArgument(contextParameter, ctx => ctx.Kernel.Get<TTSWebinarsContext>());
+            kernel.Bind<IWebinarRepository>().To<WebinarRepository>().InRequestScope().WithConstructorArgument(contextParameter, ctx => ctx.Kernel.Get<TTSWebinarsContext>());
             //kernel.Bind<IAccountRepository>().To<AccountRepository>().InRequestScope();
             //kernel.Bind<IPresenterRepository>().To<PresenterRepository>();
-            kernel.Bind<TTSWebinarsContext>().To<TTSWebinarsContext>();
-            kernel.Bind<IWebUserRepository>().To<WebUserRepository>();
-            kernel.Bind<IOrderRepository>().To<OrderRepository>();
-            kernel.Bind<IRefDataRepository>().To<RefDataRepository>();
-            kernel.Bind<IInstitutionRepository>().To<InstitutionRepository>();
-            kernel.Bind<IUserAccountRepository>().To<DefaultUserAccountRepository>();
-            kernel.Bind<IOptionRepository>().To<OptionRepository>();
+            kernel.Bind<IWebUserRepository>().To<WebUserRepository>().InRequestScope().WithConstructorArgument(contextParameter, ctx => ctx.Kernel.Get<TTSWebinarsContext>());
+            kernel.Bind<IOrderRepository>().To<OrderRepository>().InRequestScope().WithConstructorArgument(contextParameter, ctx => ctx.Kernel.Get<TTSWebinarsContext>());
+            kernel.Bind<IRefDataRepository>().To<RefDataRepository>().InRequestScope();
+            kernel.Bind<IInstitutionRepository>().To<InstitutionRepository>().InRequestScope().WithConstructorArgument(contextParameter, ctx => ctx.Kernel.Get<TTSWebinarsContext>());
+            kernel.Bind<IUserAccountRepository>().To<DefaultUserAccountRepository>().WithConstructorArgument(contextParameter, ctx => ctx.Kernel.Get<TTSWebinarsContext>());
+            kernel.Bind<IOptionRepository>().To<OptionRepository>().InRequestScope().WithConstructorArgument(contextParameter, ctx => ctx.Kernel.Get<TTSWebinarsContext>());
             kernel.Bind<IOrderManagementService>().ToMethod(ctx =>
             {
                 var orderManagementService = new OrderManagementService(
@@ -94,7 +96,7 @@ namespace CUWebinars.Web.App_Start
                     );
                 return orderManagementService;
 
-            });
+            }).InRequestScope();
 
             kernel.Bind<UserAccountService>().ToMethod(ctx =>
                 {

@@ -39,6 +39,17 @@ namespace CUWebinars.Business.Repository
             return myInst;
         }
 
+        public WebUser FindByIdLoaded(int id)
+        {
+            var webUser = items
+                .Include(i => i.Addresses)
+                .Include(i => i.Affiliate)
+                .Include(i => i.Institution)
+                .Include(i => i.Presenter)
+                .Where(i => i.idUser == id);
+            return webUser.FirstOrDefault();
+        }
+
         public void UpdateAddresses(Address address)
         {
             var entry = db.Entry(address);

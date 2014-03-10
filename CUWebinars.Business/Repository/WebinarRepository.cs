@@ -21,6 +21,18 @@ namespace CUWebinars.Business.Repository
         }
 
         //public static ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        public Webinar FindByIdLoaded(int id)
+        {
+            var webinar = items.Include(w => w.OrderRows)
+                .Include(w => w.OptionsGroupsXrefs)
+                .Include(w => w.Presenter)
+                .Include(w => w.WebinarFiles)
+                .Include(w => w.WebinarTopicXrefs)
+                .Where(w => w.idWebinar == id);
+
+            return webinar.FirstOrDefault();
+        }
+
         public Webinar FindByIdAndDetach(int id)
         {
             var webinar = FindById(id);

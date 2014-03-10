@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CUWebinars.Business.Models
 {
-    public partial class Affiliate
+    public partial class Affiliate : IObjectWithState
     {
         public Affiliate()
         {
@@ -35,5 +35,6 @@ namespace CUWebinars.Business.Models
         public Nullable<int> WebUser_Id { get; set; }
         public virtual WebUser WebUser { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
+        public State State { get; set; }
     }
 }

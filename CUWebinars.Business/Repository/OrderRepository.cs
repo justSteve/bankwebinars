@@ -12,39 +12,68 @@ namespace CUWebinars.Business.Repository
 {
     public class OrderRepository : TTSWebinarsRepository<TTSWebinarsContext, Order>, IOrderRepository
     {
-        public Order CreateOrder()
+        public Order CreateOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, IList<Option> options)
         {
             var newOrder = items.Create();
             newOrder.OrderDate = DateTime.Now;
-            //newOrder.Affiliate = 
+
+            newOrder.idAffiliate = affiliate.idUserAff;
+            newOrder.idUser = webUser.idUser;
+
+            newOrder.OrderRows.Add(orderRow);
+            
             Add(newOrder);
             db.SaveChanges();
+
+            //  Best to load these from the database
+            db.Entry(newOrder).Reference(no => no.Affiliate).Load();
+            db.Entry(newOrder).Reference(no => no.WebUser).Load();
+
+            //  Cannot load this from the database, as the Addresses collection of WebUser cannot be loaded. Get the WebUser populated via the WebUserRepository.
+            newOrder.WebUser = webUser;
+
             return newOrder;
         }
 
-        public OrderRow CreateOrderRow(Webinar webinar, Order order, string alternateEmail, int registrationType)
+        public OrderRow CreateOrderRow(Webinar webinar, OrderRowOption orderRowOption, string alternateEmail, int registrationType)
         {
             var strongTypedContext = (TTSWebinarsContext) db;
-            var entry = db.Entry(webinar);
+            var entry = strongTypedContext.Entry(webinar);
 
-            if (entry.State != EntityState.Detached)
-                throw new Exception("Webinar must be detached from its original DbContext");
+            if(entry.State != EntityState.Detached)
+                throw new Exception("Webinar cannot be attached to this context yet. It has to have been retrieved and previously detached.");
 
             strongTypedContext.Webinars.Attach(webinar);
-            db.Entry(webinar).State = EntityState.Modified;
-
+            entry.State = EntityState.Modified;
+            
             var newOrderRow = strongTypedContext.OrderRows.Create();
-            newOrderRow.Order = order;
+            //newOrderRow.Order = order;
+            newOrderRow.OrderRowOptions.Add(orderRowOption);
             newOrderRow.Webinar = webinar;
             newOrderRow.RegistrationType = registrationType;
             newOrderRow.AlternateEmail = alternateEmail;
+            
             strongTypedContext.OrderRows.Add(newOrderRow);
-            db.SaveChanges();
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbEntityValidationException dbEx)
+            {
+                foreach (var validationErrors in dbEx.EntityValidationErrors)
+                {
+                    foreach (var validationError in validationErrors.ValidationErrors)
+                    {
+                        Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
+                    }
+                }
+            }
+
             return newOrderRow;
         }
 
         public OrderRowOption CreateOrderRowOption(
-            OrderRow orderRow, 
             Option option, 
             string optionDescription, 
             decimal price, 
@@ -53,19 +82,17 @@ namespace CUWebinars.Business.Repository
             string [] additionalLocationsEmails)
         {
             var strongTypedContext = (TTSWebinarsContext) db;
-            var entry = db.Entry(option);
+            //var entry = db.Entry(option);
 
-            if (entry.State != EntityState.Detached)
-                throw new Exception("Webinar must be detached from its original DbContext");
+            //if (entry.State != EntityState.Detached)
+            //    throw new Exception("Webinar must be detached from its original DbContext");
 
-            strongTypedContext.Options.Attach(option);
-            db.Entry(option).State = EntityState.Modified;
+            //strongTypedContext.Options.Attach(option);
+            //db.Entry(option).State = EntityState.Modified;
 
             var newOrderRowOption = strongTypedContext.OrderRowOptions.Create();
             newOrderRowOption.Option = option;
             newOrderRowOption.idOption = option.idOption;
-            newOrderRowOption.idOrderRow = orderRow.idOrderRow;
-            newOrderRowOption.OrderRow = orderRow;
             newOrderRowOption.OptionDescription = optionDescription;
             newOrderRowOption.OptionPrice = price;
             newOrderRowOption.Type = "Additional Location"; // TODO: check this with Stephen.

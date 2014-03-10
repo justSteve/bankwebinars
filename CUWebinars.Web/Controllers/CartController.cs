@@ -179,11 +179,10 @@ namespace CUWebinars.Web.Controllers
             var IsUserLogged = false;
             var model = formModel;
 
-            var currentOrder = stateService.GetValue<Order>("CurrentOrder");              
+            var currentOrder = stateService.GetValue<Order>("CurrentOrder"); // Will we be putting this in Session at some point? I think we should minimize Session usage if possible.
             var currentAffiliate = stateService.GetValue<Affiliate>("CurrentAffiliate");
 
             model.Order = currentOrder;
-            
             model.Affiliate = currentAffiliate;
             model.Webinar = _orderManagementService.GetWebinar(formModel.Webinar.idWebinar);
 
@@ -197,97 +196,25 @@ namespace CUWebinars.Web.Controllers
             {
 
             }
-            //TODO Goal is to instantiate the order with as many nested objects as is 
-            //  possible. So I'd like to send the strongly typed model into the Order constructor
-            //  
-            if (currentOrder != null)
-            {
-                currentOrder = _orderManagementService.CreateNewOrder(
-                    model.Affiliate,
-                    model.WebUser,
-                    model.Webinar,
-                    model.Options
-                    );
-                //StateService.SetValue("CurrentOrder", string.Empty);
-            }
-            currentOrder.Origin = "<p>InitialPage: " + stateService.GetValue<String>("FirstPage") + "</p><p>" +
-                       " InitialReferrer: " + stateService.GetValue<String>("InitialQueryString") + "</p><p>" +
-                       " InitialCookies: " +stateService.GetValue<String>("FirstCookies")+ "</p><p>" +
-                       " SessionID: " +stateService.GetValue<String>("SessionID")+ "</p>";
 
-            currentOrder = _orderManagementService.AssignAffiliateToOrder(currentAffiliate, currentOrder);
-            currentOrder = _orderManagementService.AssignWebUserToOrder(formModel.WebUser, currentOrder);
-            
-            if (Request.IsAuthenticated)
-            {
-                IsUserLogged = true;
-                _orderManagementService.AssignUserToOrder(currentOrder, model.WebUser);
-                currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
-                currentOrder.InitiatedBy = _orderManagementService.GetOrderInitiator();
-            }
-            else
-            {
-                IsUserLogged = false;
-                //_orderManagementService.AssignUserToOrder(currentOrder, model.WebUser);
-                currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
-                currentOrder.InitiatedBy = _orderManagementService.GetOrderInitiator();
-                Logger.Error("ERROR: CartController | Signup - currentUser is null" + currentOrder.idOrder);
-                //TODO: assign appropriate ModelError and error logging/handling
-            }
-
-            if (model.Webinar.Title.Contains("Compliance Perspectives"))
+            if (model.Webinar.Title.Contains("Compliance Perspectives")) // TODO: Clarify the reason for this.
             {
                 model.Webinar = _orderManagementService.GetWebinar(883);
             }
 
-            var orderRow = _orderManagementService.CreateOrderRow(model.Webinar, currentOrder, String.Empty, mode);
-        
-            currentOrder = _orderManagementService.SaveOrderChanges(currentOrder);
-
-            if (model.Webinar.idWebinar == 883 && model.Webinar.Status == WebinarStatus.Scheduled)
-            {
-                try
-                {
-                    _orderManagementService.CreateCPSubscription(orderRow);
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-            }
-
-            //var additionalLocations = orderRow.Options.OfType<AdditionalLocationsOrderRowOption>();
-            //var additionalLocations = orderRow.OrderRowOptions.OfType<AdditionalLocationsOrderRowOption>();
-            //AdditionalLocationsOrderRowOption[] additionalLocationsOption =
-            //    additionalLocations as AdditionalLocationsOrderRowOption[] ?? additionalLocations.ToArray();
-            //int count = additionalLocationsOption.Count();
-            //if (count > 0)
-            //{
-            //    int additionalLocationsCount;
-            //    if (int.TryParse(Request["AdditionalLocationsCount" + orderRow.idOrderRow], out additionalLocationsCount))
-            //    {
-            //        additionalLocationsOption.Single().AdditionalLocationsCount = additionalLocationsCount;
-            //    }
-            //    else if (Request["AdditionalLocationsCount" + orderRow.idOrderRow] == "")
-            //    {
-            //        additionalLocationsOption.Single().AdditionalLocationsCount = 0;
-            //    }
-            //}
-
-
-            var options = _orderManagementService.GetOptionsByWebinarId(model.Webinar.idWebinar, true);
+            var options = _orderManagementService.GetOptionsByWebinarIdFromOptionsRepository(model.Webinar.idWebinar, true);
             var option = options.SingleOrDefault(o => o.Type == "additional_location");
-            
             var connections = addEmails.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-            
+
+            OrderRowOption orderRowOption = null;
+
             if (connections.Any())
             {
-                var orderRowOption = _orderManagementService.CreateOrderRowOption(
-                    orderRow,
+                orderRowOption = _orderManagementService.CreateOrderRowOption(
                     option,
                     option.OptionExplain,
-                    Convert.ToDecimal(option.PriceToAdd.Value),
-                    orderRow.AlternateEmail,
+                    Convert.ToDecimal(option.PriceToAdd ?? 0.0),
+                    string.Empty, //orderRow.AlternateEmail
                     connections.Length,
                     connections
                     );
@@ -331,6 +258,81 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 //orderRow.OrderRowOptions.Add(orderRowOption);
+            }
+
+            var orderRow = _orderManagementService.CreateOrderRow(model.Webinar, orderRowOption, string.Empty, mode);
+
+
+            //TODO Goal is to instantiate the order with as many nested objects as is 
+            //  possible. So I'd like to send the strongly typed model into the Order constructor
+            //  
+            if (currentOrder == null)
+            {
+                currentOrder = _orderManagementService.CreateNewOrder(
+                    model.Affiliate,
+                    model.WebUser,
+                    model.Webinar,
+                    orderRow,
+                    model.Options
+                    );
+                //StateService.SetValue("CurrentOrder", string.Empty);
+            }
+            
+            currentOrder.Origin = "<p>InitialPage: " + stateService.GetValue<String>("FirstPage") + "</p><p>" +
+                       " InitialReferrer: " + stateService.GetValue<String>("InitialQueryString") + "</p><p>" +
+                       " InitialCookies: " +stateService.GetValue<String>("FirstCookies")+ "</p><p>" +
+                       " SessionID: " +stateService.GetValue<String>("SessionID")+ "</p>";
+
+
+            //var additionalLocations = orderRow.OrderRowOptions.OfType<AdditionalLocationsOrderRowOption>();
+            //var additionalLocationsOption = additionalLocations as AdditionalLocationsOrderRowOption[] ?? additionalLocations.ToArray();
+            
+            //int count = additionalLocationsOption.Count();
+
+            //if (count > 0)
+            //{
+            //    int additionalLocationsCount;
+
+            //    if (int.TryParse(Request["AdditionalLocationsCount" + orderRow.idOrderRow], out additionalLocationsCount))
+            //    {
+            //        additionalLocationsOption.Single().AdditionalLocationsCount = additionalLocationsCount;
+            //    }
+            //    else if (Request["AdditionalLocationsCount" + orderRow.idOrderRow] == "")
+            //    {
+            //        additionalLocationsOption.Single().AdditionalLocationsCount = 0;
+            //    }
+            //}
+
+            if (Request.IsAuthenticated)
+            {
+                IsUserLogged = true;
+                _orderManagementService.AssignUserToOrder(currentOrder);
+                currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
+                currentOrder.InitiatedBy = _orderManagementService.GetOrderInitiator();
+            }
+            else
+            {
+                IsUserLogged = false;
+                //_orderManagementService.AssignUserToOrder(currentOrder);
+                currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
+                currentOrder.InitiatedBy = _orderManagementService.GetOrderInitiator();
+                Logger.Error("ERROR: CartController | Signup - currentUser is null" + currentOrder.idOrder);
+                //TODO: assign appropriate ModelError and error logging/handling
+            }
+
+        
+            currentOrder = _orderManagementService.SaveOrderChanges(currentOrder);
+
+            if (model.Webinar.idWebinar == 883 && model.Webinar.Status == WebinarStatus.Scheduled)
+            {
+                try
+                {
+                    _orderManagementService.CreateCPSubscription(orderRow);
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
             }
 
             try
