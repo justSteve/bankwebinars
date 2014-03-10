@@ -65,11 +65,10 @@ namespace CUWebinars.Business.Services
 
         public OrderRow CreateOrderRow(Webinar webinar, Order order, string alternateEmail, int registrationType)
         {
-            return _orderRepository.CreateOrderRow(webinar, order, alternateEmail, registrationType);
+            return _orderRepository.CreateOrderRow(webinar, orderRowOption, alternateEmail, registrationType);
         }
 
         public OrderRowOption CreateOrderRowOption(
-            OrderRow orderRow,
             Option option,
             string optionDescription,
             decimal price,
@@ -78,7 +77,6 @@ namespace CUWebinars.Business.Services
             string[] additionalLocationsEmails)
         {
             return _orderRepository.CreateOrderRowOption(
-                orderRow,
                 option,
                 optionDescription,
                 price,
@@ -90,7 +88,11 @@ namespace CUWebinars.Business.Services
 
         public IList<Option> GetOptionsByWebinarId(int id, bool detached)
         {
-            return _refDataRepository.FindOptionsByWebinarId(id, detached);
+            return _refDataRepository.FindOptionsByWebinarId(id, false);
+        }
+        public IList<Option> GetOptionsByWebinarIdFromOptionsRepository(int id, bool detached)
+        {
+            return _optionRepository.FindOptionsByWebinarId(id, false);
         }
 
         public IList<Order> GetOrdersByUserId(int id)
@@ -102,11 +104,11 @@ namespace CUWebinars.Business.Services
 
         public Webinar GetWebinar(int id)
         {
-            return _webinarRepository.FindByIdAndDetach(id);
+            return _webinarRepository.FindByIdLoaded(id);
         }
         public WebUser GetWebUser(int id)
         {
-            return _webUserRepository.FindById(id);
+            return _webUserRepository.FindByIdLoaded(id);
         }
 
         public void CreateOrderEvent(Order order, UserAccount userAccount)
@@ -200,7 +202,7 @@ namespace CUWebinars.Business.Services
                 //Calculate discount. Discount is not valid for subscription webinars.
                 if (row.Webinar.Title.Contains("Compliance Perspectives") == false)
                 {
-
+                    
                     //decimal discountTotal = row.
                     //if (row.DiscountPercentOff != 0.0M)
                     //{
@@ -254,10 +256,9 @@ namespace CUWebinars.Business.Services
             }
             return optionsTotal;
         }
-        public virtual void AssignUserToOrder(Order order, WebUser user)
+        public virtual void AssignUserToOrder(Order order)
         {
-            //order.WebUser = user;
-            //order.Affiliate = user.Affiliate;
+            var user = order.WebUser;
 
             var billingAddress = user.Addresses.FirstOrDefault(a => a.AddressType == "Billing");
             var shippingAddress = user.Addresses.FirstOrDefault(a => a.AddressType == "Shipping");
@@ -330,12 +331,12 @@ namespace CUWebinars.Business.Services
             throw new NotImplementedException();
         }
 
-        public Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, IList<Option> options)
+        public Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, IList<Option> options)
         {
-
-            var order = _orderRepository.CreateOrder();
-            order.Affiliate = affiliate;
-            order.WebUser = webUser;
+            
+            var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow , options);
+            //order.Affiliate = affiliate;
+            //order.WebUser = webUser;
             // this is the point where I think it makes sense to 
             //  define Row and (if needed) RowOption 
             //??

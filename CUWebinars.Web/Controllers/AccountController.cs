@@ -32,17 +32,19 @@ namespace CUWebinars.Web.Controllers
         private IMailService mail;
         public IMembershipService membershipService;
         private readonly IOrderRepository orderRepository;
+        private readonly IOptionRepository optionRepository;
         private readonly IOrderManagementService orderManagementService;
         public ILogger Logger { get; set; }
         //public IOrderService orderService;
 
-        public AccountController(IMailService mail, ILogger logger, IMembershipService membershipService, IOrderRepository orderRepository, IOrderManagementService orderManagementService)
+        public AccountController(IMailService mail, ILogger logger, IMembershipService membershipService, IOrderRepository orderRepository, IOrderManagementService orderManagementService, IOptionRepository optionRepository)
         {
             this.mail = mail;
             this.Logger = logger;
             this.membershipService = membershipService;
             this.orderRepository = orderRepository;
             this.orderManagementService = orderManagementService;
+            this.optionRepository = optionRepository;
         }
 
         [System.Web.Mvc.HttpGet]
@@ -50,7 +52,7 @@ namespace CUWebinars.Web.Controllers
         {
             //var currentUser = GetWebUserFromIPrincipal();
             var refDataRepository = new RefDataRepository();
-            var bla = refDataRepository.FindOptionsByWebinarId(435, false);
+            //var bla = refDataRepository.FindOptionsByWebinarId(435, false);
 
             var identity = ClaimsPrincipal.Current;
 

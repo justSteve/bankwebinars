@@ -15,7 +15,7 @@ namespace CUWebinars.Business.Models.Mapping
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
 
             this.Property(t => t.Biography)
-                .HasMaxLength(140);
+                .HasMaxLength(2500);
 
             this.Property(t => t.BiographyLong)
                 .IsRequired()

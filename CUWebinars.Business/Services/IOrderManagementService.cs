@@ -7,11 +7,11 @@ namespace CUWebinars.Business.Services
     public interface IOrderManagementService
     {
         Order AssignAffiliateToOrder(Affiliate affiliate, Order order);
+        void AssignUserToOrder(Order currentOrder);
         Order AssignWebUserToOrder(WebUser webUser, Order order);
         string BuildConnectionInfo(OrderRow orderRow);
-        OrderRow CreateOrderRow(Webinar webinar, Order order, string alternateEmail, int registrationType);
+        OrderRow CreateOrderRow(Webinar webinar, OrderRowOption orderRowOption, string alternateEmail, int registrationType);
         OrderRowOption CreateOrderRowOption(
-            OrderRow orderRow,
             Option option,
             string optionDescription,
             decimal price,
@@ -19,6 +19,7 @@ namespace CUWebinars.Business.Services
             int additionalLocationsCount,
             string[] additionalLocationsEmails);
         IList<Option> GetOptionsByWebinarId(int id, bool detached);
+        IList<Option> GetOptionsByWebinarIdFromOptionsRepository(int id, bool detached);
         IList<Order> GetOrdersByUserId(int id);
         Webinar GetWebinar(int id);
         WebUser GetWebUser(int id);
@@ -26,11 +27,11 @@ namespace CUWebinars.Business.Services
         void DispatchDummyOrder();
         OrderRow LoadOrderRow(int id);
         byte GetOrderInitiator();
-        void AssignUserToOrder(Order currentOrder, WebUser user);
         void CreateCPSubscription(OrderRow orderRow);
         //void Save(Order currentOrder);
         Order SaveOrderChanges(Order currentOrder);
         void AddOrderRow(Order currentOrder, OrderRow orderRow);
-        Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, IList<Option> options);
+
+        Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, IList<Option> options);
     }
 }

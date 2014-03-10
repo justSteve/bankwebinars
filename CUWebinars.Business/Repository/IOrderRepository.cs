@@ -5,10 +5,9 @@ namespace CUWebinars.Business.Repository
 {
     public interface IOrderRepository
     {
-        Order CreateOrder();
-        OrderRow CreateOrderRow(Webinar webinar, Order order, string alternateEmail, int registrationType);
+        Order CreateOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, IList<Option> options);
+        OrderRow CreateOrderRow(Webinar webinar, OrderRowOption orderRowOption, string alternateEmail, int registrationType);
         OrderRowOption CreateOrderRowOption(
-            OrderRow orderRow,
             Option option,
             string optionDescription,
             decimal price,

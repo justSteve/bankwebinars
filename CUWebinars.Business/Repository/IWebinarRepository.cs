@@ -7,6 +7,7 @@ namespace CUWebinars.Business.Repository
     public interface IWebinarRepository
     {
         Webinar FindById(int id);
+        Webinar FindByIdLoaded(int id);
         Webinar FindByIdAndDetach(int id);
         IQueryable<Webinar> GetUpcoming();
         IQueryable<Webinar> GetRecorded();

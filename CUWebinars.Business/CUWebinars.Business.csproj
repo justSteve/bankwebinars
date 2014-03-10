@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountService\IMembershipService.cs" />
+    <Compile Include="Models\IObjectWithState.cs" />
     <Compile Include="Notification\Email\NotificationMessage.cs" />
     <Compile Include="Notification\Email\SmtpMessageDelivery.cs" />
     <Compile Include="Notification\Events\OrderSubmittedEvent.cs" />

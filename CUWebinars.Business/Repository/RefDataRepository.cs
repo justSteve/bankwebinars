@@ -80,11 +80,12 @@ namespace CUWebinars.Business.Repository
         {
             using (var context = new TTSWebinarsContext())
             {
+
                 var webinars = context.Webinars
                     .Where(w => w.idWebinar == id)
                     .ToList();
 
-               // There can be only one OptionsGroupsXrefs per webinar at any one time
+                // There can be only one OptionsGroupsXrefs per webinar at any one time
                 var optionsGroupsXrefs = webinars.SelectMany(w => w.OptionsGroupsXrefs);
 
                 //  For each of those OptionsGroupsXrefs, get the relevant OptionGroup
@@ -96,11 +97,11 @@ namespace CUWebinars.Business.Repository
                 //  Finally, get the options
                 var options = optionsXrefs.Select(o => o.Option).ToList();
 
-                if (!detached) 
+                if (!detached)
                     return options;
-                
+
                 options.ForEach(o => context.Entry(o).State = EntityState.Detached);
-                
+
                 return options;
             }
         }
