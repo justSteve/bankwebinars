@@ -336,10 +336,15 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Details(int id)
         {
-            var user = new WebUser();
+            WebUser user;
             if (Request.IsAuthenticated)
             {
                 user = membershipService.GetUserByEmail(User.Identity.Name);
+            }
+            else
+            {
+                user = new WebUser();
+
             }
             var usersOrders = _orderManagementService.GetOrdersByUserId(user.idUser);
             //if (usersOrders == null) 

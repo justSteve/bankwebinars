@@ -62,11 +62,16 @@ namespace CUWebinars.Business.Services
             return string.Empty;
         }
 
-
-        public OrderRow CreateOrderRow(Webinar webinar, Order order, string alternateEmail, int registrationType)
+        public OrderRow CreateOrderRow(Webinar webinar, OrderRowOption orderRowOption, string alternateEmail, int registrationType)
         {
             return _orderRepository.CreateOrderRow(webinar, orderRowOption, alternateEmail, registrationType);
         }
+
+
+        //public OrderRow CreateOrderRow(Webinar webinar, Order order, string alternateEmail, int registrationType)
+        //{
+        //    return _orderRepository.CreateOrderRow(webinar, orderRowOption, alternateEmail, registrationType);
+        //}
 
         public OrderRowOption CreateOrderRowOption(
             Option option,
@@ -331,10 +336,11 @@ namespace CUWebinars.Business.Services
             throw new NotImplementedException();
         }
 
-        public Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, IList<Option> options)
+        public Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow)
         {
             
-            var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow , options);
+            //var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow , options);
+            var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow);
             //order.Affiliate = affiliate;
             //order.WebUser = webUser;
             // this is the point where I think it makes sense to 

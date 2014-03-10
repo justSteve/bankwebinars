@@ -47,35 +47,35 @@ namespace CUWebinars.Web.Controllers
             this.optionRepository = optionRepository;
         }
 
-        [System.Web.Mvc.HttpGet]
-        public ActionResult CreateOrder()
-        {
-            //var currentUser = GetWebUserFromIPrincipal();
-            var refDataRepository = new RefDataRepository();
-            //var bla = refDataRepository.FindOptionsByWebinarId(435, false);
+        //[System.Web.Mvc.HttpGet]
+        //public ActionResult CreateOrder()
+        //{
+        //    //var currentUser = GetWebUserFromIPrincipal();
+        //    var refDataRepository = new RefDataRepository();
+        //    //var bla = refDataRepository.FindOptionsByWebinarId(435, false);
 
-            var identity = ClaimsPrincipal.Current;
+        //    var identity = ClaimsPrincipal.Current;
 
-            var order = new Order
-            {
-                FirstName = "Birgit",
-                LastName = "Roby",
-                idOrder = 1114,
-                OrderDate = DateTime.Parse("2014-02-05 21:32:53.000"),
-                Affiliate = new Affiliate
-                {
-                    ContactEmail = "affiliate@with.com",
-                    URL = "http://microsoft.com"
-                }
-            };
+        //    var order = new Order
+        //    {
+        //        FirstName = "Birgit",
+        //        LastName = "Roby",
+        //        idOrder = 1114,
+        //        OrderDate = DateTime.Parse("2014-02-05 21:32:53.000"),
+        //        Affiliate = new Affiliate
+        //        {
+        //            ContactEmail = "affiliate@with.com",
+        //            URL = "http://microsoft.com"
+        //        }
+        //    };
 
-            orderManagementService.CreateOrderEvent(order, membershipService.GetUserAccountByUserId(identity.GetUserID()));
+        //    orderManagementService.CreateOrderEvent(order, membershipService.GetUserAccountByUserId(identity.GetUserID()));
 
 
-            orderManagementService.DispatchDummyOrder();
+        //    orderManagementService.DispatchDummyOrder();
 
-            return RedirectToLocal(null);
-        }
+        //    return RedirectToLocal(null);
+        //}
 
         //
         // GET: /Account/Manage
@@ -394,7 +394,9 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid && membershipService.LogInUser(globalConfig.Tenant, model.Email, model.Password, model.RememberMe))
             {
-                return RedirectToLocal(model.ReturnUrl);
+                var retURL = model.ReturnUrl.Replace("http://localhost:5556", "");
+
+                return RedirectToLocal(retURL);
             }
 
             // If we got this far, something failed, redisplay form

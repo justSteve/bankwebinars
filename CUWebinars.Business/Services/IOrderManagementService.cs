@@ -32,6 +32,8 @@ namespace CUWebinars.Business.Services
         Order SaveOrderChanges(Order currentOrder);
         void AddOrderRow(Order currentOrder, OrderRow orderRow);
 
-        Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, IList<Option> options);
+
+        Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow);
+//        Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, IList<Option> options);
     }
 }

@@ -12,13 +12,17 @@ namespace CUWebinars.Business.Repository
 {
     public class OrderRepository : TTSWebinarsRepository<TTSWebinarsContext, Order>, IOrderRepository
     {
-        public Order CreateOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, IList<Option> options)
+        public Order CreateOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow)
         {
             var newOrder = items.Create();
             newOrder.OrderDate = DateTime.Now;
 
             newOrder.idAffiliate = affiliate.idUserAff;
-            newOrder.idUser = webUser.idUser;
+//            newOrder.idUser = webUser.idUser;
+
+            //  Cannot load this from the database, as the Addresses collection of
+            //  WebUser cannot be loaded. Get the WebUser populated via the WebUserRepository.
+            newOrder.WebUser = webUser;
 
             newOrder.OrderRows.Add(orderRow);
             
@@ -28,9 +32,6 @@ namespace CUWebinars.Business.Repository
             //  Best to load these from the database
             db.Entry(newOrder).Reference(no => no.Affiliate).Load();
             db.Entry(newOrder).Reference(no => no.WebUser).Load();
-
-            //  Cannot load this from the database, as the Addresses collection of WebUser cannot be loaded. Get the WebUser populated via the WebUserRepository.
-            newOrder.WebUser = webUser;
 
             return newOrder;
         }
@@ -144,8 +145,11 @@ namespace CUWebinars.Business.Repository
 
         public Order SaveOrderChanges(Order order)
         {
+            var error = db.GetValidationErrors();
+            //db.ChangeTracker.
             if (db.SaveChanges() > 0)
             {
+                
                 //db.Entry(order).Reference(o => o.WebUser).Load();
                 return order;
             }

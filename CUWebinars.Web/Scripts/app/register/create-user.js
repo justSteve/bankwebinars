@@ -28,7 +28,9 @@ var pageObjects = {
     theSubmitButton: theSubmitButton || $('#TheSubmitButton'),
     emailInput: emailInput || $('#RegisterFields_Email'),
     createUserForm: createUserForm || $('#_CreateUserForm'),
+    wrapEmail: wrapZip || $('#wrapEmail'),
     wrapZip: wrapZip || $('#wrapZip'),
+    wrapPass: wrapZip || $('#wrapPass'),
     phoneBilling: phoneBilling || $('#RegisterFields_BillingAddress_Phone'),
     fullNameShipping: fullNameShipping || $('#FullNameShipping'),
     fullName: fullName || $("#FullName"),
@@ -73,7 +75,49 @@ function submitCreateUserForm() {
     console.log(valid);
     if (valid) {
         console.log("createUserForm submitted.");
-        pageObjects.createUserForm.submit();
+        //pageObjects.createUserForm.submit();
+        pageObjects.createUserForm.submit(function (e) {
+            e.preventDefault();
+            alert('createUserForm');
+            if (ActionForTheSubmit != "SubmitLogin") {
+                console.log("non-valid form");
+                return false;
+            }
+            alert("is " + ActionForTheSubmit);
+
+            if (pageObjects.createUserForm.valid() != "1") {
+                console.log("non-valid form");
+                return false;
+            }
+            var url = "/Account/Register";
+            console.log("Submitting Register Details");
+
+            $.ajax({
+                type: 'POST',
+                contentType: constants.FormPostContentType,
+                cache: false,
+                url: url,
+                dataType: constants.JsonDataType,
+                data: $(this).serialize(),
+                beforeSend: function () {
+                    console.log("beforeSend Register Details");
+                    // this is where we append a loading image
+                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
+                }
+            }).done(function (data) {
+                console.log("done: ");
+                if (data.Status === 'Success') {
+                    console.log("success: " + data.Status);
+                    ActionForTheSubmit = "";
+                    $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
+                    location.assign(path + '/Account/Login'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
+                } else if (data.status === 'Fail') {
+                    $('#labelEmail').html('<span class="label label-information">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
+                }
+            }).fail(function (data) {
+                console.log("failed: " + data);
+            });
+        });
     }
 }
 
@@ -176,6 +220,7 @@ $(function () {
     $("#collapseBilling").parent().hide();
     $("#collapseShipping").parent().hide();
     pageObjects.wrapZip.hide();
+    $("#wrapPass").hide();
     $("#wrapReset").hide();
     $("#wrapNonUS").hide();
     $("#getFirstLast").hide();
@@ -198,6 +243,12 @@ $(function () {
 
                 checkAndSubmitZip();
 
+                return false;
+            }
+            if (ActionForTheSubmit === "GetPassword") {
+
+                wrapZip.show();
+                wrapPass.hide("slow");
                 return false;
             }
 
@@ -264,7 +315,6 @@ $(function () {
             }
 
             if (ActionForTheSubmit === "DisplayBillingAddressFields") {
-
                 if (pageObjects.emailInput.valid() == "1") {
                     $("#collapseBilling").parent().show();
                     $("#collapseBilling").collapse('show');
@@ -423,10 +473,10 @@ $(function () {
             }).done(function (data) {
                 // successful request; do something with the data
                 if (data.email === "wasNotFound") {
-                    $('#wrapEmail').hide("fast");
-                    pageObjects.wrapZip.show("fast");
+                    pageObjects.wrapEmail.hide("fast");
+                    pageObjects.wrapPass.show("fast");
                     $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; has been recorded.</span>');
-                    ActionForTheSubmit = "CheckZip";
+                    ActionForTheSubmit = "GetPassword";
                 }
 
                 if (data.success === "foundInstitution") {
@@ -558,48 +608,6 @@ $(function () {
         return false;
     });
 
-
-    pageObjects.createUserForm.submit(function (e) {
-        alert('createUserForm');
-        if (ActionForTheSubmit != "SubmitLogin") {
-            console.log("non-valid form");
-            return false;
-        }
-        alert("is " + ActionForTheSubmit);
-        e.preventDefault();
-        if (pageObjects.createUserForm.valid() != "1") {
-            console.log("non-valid form");
-            return false;
-        }
-        var url = "/Account/Register";
-        console.log("Submitting Register Details");
-
-        $.ajax({
-            type: 'POST',
-            contentType: constants.FormPostContentType,
-            cache: false,
-            url: url,
-            dataType: constants.JsonDataType,
-            data: $(this).serialize(),
-            beforeSend: function () {
-                console.log("beforeSend Register Details");
-                // this is where we append a loading image
-                $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
-            }
-        }).done(function (data) {
-            console.log("done: ");
-            if (data.Status === 'Success') {
-                console.log("success: " + data.Status);
-                ActionForTheSubmit = "";
-                $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
-                location.assign(path + '/Account/Login'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
-            } else if (data.status === 'Fail') {
-                $('#labelEmail').html('<span class="label label-information">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
-            }
-        }).fail(function (data) {
-            console.log("failed: " + data);
-        });
-    });
 
     $('#modalInstitution').on('hidden', function (e) {
 

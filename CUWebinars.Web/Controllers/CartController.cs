@@ -179,7 +179,12 @@ namespace CUWebinars.Web.Controllers
             var IsUserLogged = false;
             var model = formModel;
 
-            var currentOrder = stateService.GetValue<Order>("CurrentOrder"); // Will we be putting this in Session at some point? I think we should minimize Session usage if possible.
+            var currentOrder = stateService.GetValue<Order>("CurrentOrder"); 
+            // Will we be putting this in Session at some point?
+            
+            //  i think we need a way to persist 'non-completed orders'
+            // in interest of minimizing - perhaps just storing the orderID and then 
+            // hydrating it as needed.
             var currentAffiliate = stateService.GetValue<Affiliate>("CurrentAffiliate");
 
             model.Order = currentOrder;
@@ -218,14 +223,6 @@ namespace CUWebinars.Web.Controllers
                     connections.Length,
                     connections
                     );
-                //{
-                //    additional_locations_count = connectionsCount.Count(),
-                //    Option = option,
-                //    OrderRow = orderRow,
-                //    OptionDescription = option.OptionExplain,
-                //    OptionPrice = Convert.ToDecimal(option.PriceToAdd),
-                //    additional_locations_emails = addEmails
-                //};
 
                 if (model.Webinar.idWebinar == 842 && model.Webinar.Status == WebinarStatus.Scheduled)
                 {
@@ -257,23 +254,18 @@ namespace CUWebinars.Web.Controllers
                     //}
                 }
 
-                //orderRow.OrderRowOptions.Add(orderRowOption);
             }
 
             var orderRow = _orderManagementService.CreateOrderRow(model.Webinar, orderRowOption, string.Empty, mode);
-
-
-            //TODO Goal is to instantiate the order with as many nested objects as is 
-            //  possible. So I'd like to send the strongly typed model into the Order constructor
-            //  
+  
             if (currentOrder == null)
             {
                 currentOrder = _orderManagementService.CreateNewOrder(
                     model.Affiliate,
                     model.WebUser,
                     model.Webinar,
-                    orderRow,
-                    model.Options
+                    orderRow
+                    //,model.Options
                     );
                 //StateService.SetValue("CurrentOrder", string.Empty);
             }
