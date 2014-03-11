@@ -71,12 +71,12 @@ var pageObjects = {
     zipShipping: zipShipping || $('#RegisterFields_ShippingAddress_Zip'),
 };
 
-var stateManager = function() {
+var stateManager = function () {
 
     var action = null,
         inputAction = null,
 
-        enterDifferentAddress = function() {
+        enterDifferentAddress = function () {
             console.log('EnterDiffAddress hit');
             pageObjects.modalInstitution.modal('hide');
             pageObjects.wrapEmail.show('slow');
@@ -95,7 +95,7 @@ var stateManager = function() {
             stateManager.action = actions.DisplayBillingAddressFields;
         },
 
-        foundInstitutionView = function(data, email) {
+        foundInstitutionView = function (data, email) {
             //pageObjects.wrapEmail.hide('fast');
             pageObjects.modalInstitution.modal('show');
 
@@ -112,7 +112,7 @@ var stateManager = function() {
             $('#ShowInstitution').html(data.Institution + '<br>' + data.Address + '<br>' + data.City + ', ' + data.State + ' ' + data.Zip + '<br>');
         },
 
-        newPasswordView = function(email) {
+        newPasswordView = function (email) {
             pageObjects.wrapEmail.hide('fast');
             pageObjects.wrapPass.show('fast');
 
@@ -129,13 +129,14 @@ var stateManager = function() {
 
             stateManager.action = actions.GetPassword;
         },
-        newPassWordToCheckZip = function() {
+
+        newPassWordToCheckZip = function () {
             wrapZip.show('slow');
             wrapPass.hide('slow');
             stateManager.action = actions.CheckZip;
         },
 
-        notInstitutionAddress = function() {
+        notInstitutionAddress = function () {
             console.log('NotInstitution hit');
             pageObjects.modalInstitution.modal('hide');
             pageObjects.wrapEmail.show('slow');
@@ -156,23 +157,23 @@ var stateManager = function() {
             stateManager.action = actions.CheckEmail;
         },
 
-        passResetView = function() {
+        passResetView = function () {
             pageObjects.login.hide('slow');
             pageObjects.reset.show('slow');
             pageObjects.MailSent.hide();
         },
-        registerView = function() {
+        registerView = function () {
             pageObjects.login.hide('slow');
             pageObjects.register.show('slow');
             stateManager.action = actions.CheckEmail;
         },
 
-        startView = function() {
+        startView = function () {
             pageObjects.register.hide();
             pageObjects.reset.hide();
         },
 
-        useRegisteredAddress = function() {
+        useRegisteredAddress = function () {
             console.log('YesUseAddress hit');
 
             stateManager.showNewPasswordInputs();
@@ -194,32 +195,35 @@ var stateManager = function() {
         zipCodeVerified = function (data, zipCode) {
 
             switch (data.success) {
-            case 'true':
-                $('#collapseBilling').parent().show();
-                $('#collapseShipping').parent().show();
-                $('#collapseEmail').collapse('toggle');
-                $('#collapseBilling').collapse('toggle');
+                case 'true':
+                    console.log('zipCodeVerified-true hit');
+                    $('#collapseBilling').parent().show();
+                    $('#collapseShipping').parent().show();
+                    $('#collapseEmail').collapse('toggle');
+                    $('#collapseBilling').collapse('toggle');
 
-                pageObjects.cityBilling.val(data.City);
-                pageObjects.stateBilling.val(data.State);
-                pageObjects.zipBilling.val(zipCode);
-                $('#TimeZone').val(data.TimeZone);
+                    pageObjects.cityBilling.val(data.City);
+                    pageObjects.stateBilling.val(data.State);
+                    pageObjects.zipBilling.val(zipCode);
+                    $('#TimeZone').val(data.TimeZone);
 
-                pageObjects.labelEmail.html('<span class="label label-success"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</span>');
-                pageObjects.theSubmitButton.prop('value', 'SubmitRegister');
+                    pageObjects.labelEmail.html('<span class="label label-success"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</span>');
+                    pageObjects.theSubmitButton.prop('value', 'SubmitRegister');
 
-                stateManager.action = actions.SubmitRegister;
-                break;
-            case 'false':
-                pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode was not found!</span>');
-                break;
-            case 'invalid format':
-                pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode entered was not in the correct format!</span>');
-                break;
+                    stateManager.action = actions.SubmitRegister;
+                    break;
+                case 'false':
+                    console.log('zipCodeVerified-false hit');
+                    pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode was not found!</span>');
+                    break;
+                case 'invalid format':
+                    console.log('zipCodeVerified-invalidformat hit');
+                    pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode entered was not in the correct format!</span>');
+                    break;
             }
 
         },
-        submit = function() {
+        submit = function () {
             if (stateManager.action === actions.CheckEmail) {
                 console.log('CheckEmail hit');
                 checkAndSubmitEmail();
@@ -245,7 +249,7 @@ var stateManager = function() {
                 if (pageObjects.createUserForm.valid() == '1') {
                     submitCreateUserForm();
                 }
-                    return false;
+                return false;
             }
 
             if (stateManager.action === actions.SubmitLogin) {
@@ -270,7 +274,7 @@ var stateManager = function() {
             }
         },
 
-        init = function(args) {
+        init = function (args) {
             stateManager.action = actions.CheckEmail;
             startView();
         };
@@ -355,18 +359,18 @@ function getMainPath(pathToCheck) {
 
 // document.ready starts here
 $(function () {
-        //setup ajax error handling
-        $.ajaxSetup({
-            error: function (x, status, error) {
-                if (x.status == 403) {
-                    alert('Sorry, your session has expired. Please login again to continue');
-                    window.location.href = '/Account/Login';
-                }
-                else {
-                    alert('An error occurred: ' + status + 'nError: ' + error);
-                }
+    //setup ajax error handling
+    $.ajaxSetup({
+        error: function (x, status, error) {
+            if (x.status == 403) {
+                alert('Sorry, your session has expired. Please login again to continue');
+                window.location.href = '/Account/Login';
             }
-        });
+            else {
+                alert('An error occurred: ' + status + 'nError: ' + error);
+            }
+        }
+    });
 
     register = $('#register');
     reset = $('#reset');
@@ -383,9 +387,9 @@ $(function () {
     pageObjects.wrapZip.hide();
     pageObjects.wrapPass.hide();
     pageObjects.wrapReset.hide();
-    $('#wrapNonUS').hide();
+    $('#nonUSAddress').hide();
     $('#getFirstLast').hide();
-    
+
     var disregardIntitutionDomain = false;
     var indexOfHome = location.href.indexOf('Account');
 
@@ -519,7 +523,7 @@ $(function () {
         if (clickedButton === 'nonUSAddress') {
             pageObjects.wrapZip.hide('slow');
             console.log('nonUSAddress hit');
-            $('#wrapNonUS').show('slow');
+            $('#nonUSAddress').show('slow');
             $('#collapseEmail').collapse('toggle');
             $('#collapseBilling').collapse('toggle');
         }

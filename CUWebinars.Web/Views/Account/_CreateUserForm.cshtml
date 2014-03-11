@@ -31,7 +31,7 @@
     <input type="hidden" id="RegisterFields_BillingAddress_Country" name="RegisterFields.BillingAddress.Country" value="US" />
     <input type="hidden" id="RegisterFields_ShippingAddress_Country" name="RegisterFields.ShippingAddress.Country" value="US" />
     <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
-    <input type="hidden" id="emailAddress"  />
+    <input type="hidden" id="emailAddress" />
 
     @Html.ValidationSummary(true)
     <div class="accordion" id="createUserPanes">
@@ -54,13 +54,11 @@
                         </div>
                     </div>
                     <div class="fieldContainer" id="wrapZip">
-                        <div class="span1" style="text-align: right;">
+                        <div class="span10" >
                             Zip Code:
-                        </div>
-                        <div class="span4">
                             <input type="text" class="enterSubmit" name="getZip" id="getZip" style="width: 70px;" />
                             @*<input type="button" value="Find City/State" name="findCityState" class="btn btn-success" />*@
-                            <input type="button" value="Have a Non-US Address?" name="nonUSAddress" class="btn btn-mini btn-info" />
+                            <input type="button" value="Have a Non-US Address?" name="nonUSAddress" id="nonUSAddress" class="btn btn-mini btn-info" />
                         </div>
                     </div>
                     <div class="fieldContainer" id="wrapReset">
@@ -70,7 +68,7 @@
                                 <p style="text-align: right;">
                                     <div class="span1">Email:</div> <input id="Email1" name="Email1" value="" type="text"> <br>
                                     <div class="span1">Password:</div> <input id="Password1" name="Password1" type="password"><br>
-                                                                       
+
                                     @*<input type="button" class="btn-success btn" name="submitLogin" value="Login" />*@
                                 </p>
                             </div>
@@ -87,14 +85,12 @@
                     <div class="fieldContainer" id="wrapPass">
                         <div class="container">
                             <div class="row">
-                                <div class="span1">
+                                <div class="span10">
                                     @Html.LabelFor(m => m.RegisterFields.Password, new { style = "display:inline-block;" }):
-                                </div>
-                                <div class="span4">
                                     @Html.PasswordFor(m => m.RegisterFields.Password, new { style = " width:100px;" })
                                     @Html.ValidationMessage("Password")
 
-                                    @Html.LabelFor(m => m.RegisterFields.ConfirmPassword,
+                                    &nbsp;&nbsp;@Html.LabelFor(m => m.RegisterFields.ConfirmPassword,
                                 new
                                 {
                                     @for = "RegisterFields.ConfirmPassword",
@@ -103,11 +99,11 @@
                                 ):
 
                                     @Html.PasswordFor(m => m.RegisterFields.ConfirmPassword, new
-                            {
-                                id = "RegisterFields.ConfirmPassword",
-                                @class = "{equalTo: '#Password'}",
-                                style = " width:100px;"
-                            })
+                                        {
+                                            id = "RegisterFields.ConfirmPassword",
+                                            @class = "{equalTo: '#Password'}",
+                                            style = " width:100px;"
+                                        })
                                     @Html.ValidationMessage("PasswordConfirmation")
                                 </div>
                             </div>
