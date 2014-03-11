@@ -55,8 +55,8 @@ namespace CUWebinars.Business.AccountService
 
         public Institution GetInstitutionByDomain(string domain)
         {
-            var inst = institutionRepository.GetAll().FirstOrDefault(i => i.domainName == domain);
-            return inst;
+            var institution = institutionRepository.GetAll().FirstOrDefault(i => i.domainName == domain);
+            return institution;
         }
 
         public bool HasPassword(string tenant, string emailAddress)

@@ -1,11 +1,19 @@
-﻿var ActionForTheSubmit = "CheckEmail";
+﻿var ActionForTheSubmit = 'CheckEmail';
 
+//  simple C-like enum implementation
+var actions = { CheckEmail: 'CheckEmail', CheckZip: 'CheckZip', GetPassword: 'GetPassword', SubmitLogin: 'SubmitLogin', SubmitRegister: 'SubmitRegister', DisplayBillingAddressFields: 'DisplayBillingAddressFields' };
+var inputAction = { EnterKeyPress: 'EnterKeyPress', ButtonClick: 'ButtonClick' };
+
+var wrapEmail;
+var wrapPass;
+var wrapReset;
 var wrapZip;
 var theSubmitButton;
 var emailInput;
 var createUserForm;
 var phoneBilling;
 var fullNameShipping;
+var institution;
 var streetAddressBilling;
 var streetAddressBilling2;
 var cityBilling;
@@ -22,49 +30,283 @@ var zipShipping;
 var fullName;
 var firstName;
 var lastName;
+var login;
+var reset;
+var register;
+var labelEmail;
+var modalInstitution;
 
 
 var pageObjects = {
     theSubmitButton: theSubmitButton || $('#TheSubmitButton'),
     emailInput: emailInput || $('#RegisterFields_Email'),
+    cityBilling: cityBilling || $('#RegisterFields_BillingAddress_City'),
+    cityShipping: cityShipping || $('#RegisterFields_ShippingAddress_City'),
     createUserForm: createUserForm || $('#_CreateUserForm'),
-    wrapEmail: wrapZip || $('#wrapEmail'),
-    wrapZip: wrapZip || $('#wrapZip'),
-    wrapPass: wrapZip || $('#wrapPass'),
     phoneBilling: phoneBilling || $('#RegisterFields_BillingAddress_Phone'),
     fullNameShipping: fullNameShipping || $('#FullNameShipping'),
-    fullName: fullName || $("#FullName"),
-    firstName: firstName || $("#FirstName"),
-    lastName: lastName || $("#LastName"),
+    fullName: fullName || $('#FullName'),
+    firstName: firstName || $('#FirstName'),
+    institution: institution || $('#RegisterFields_Institution'),
+    labelEmail: labelEmail || $('#labelEmail'),
+    lastName: lastName || $('#LastName'),
+    login: login || $('#login'),
+    modalInstitution: modalInstitution || $('#modalInstitution'),
+    phoneShipping: phoneShipping || $('#RegisterFields_ShippingAddress_Phone'),
+    register: register || $('#register'),
+    reset: reset || $('#reset'),
+    shippingFirstName: shippingFirstName || $('#ShippingFirstName'),
+    shippingLastName: shippingLastName || $('#ShippingLastName'),
+    stateBilling: stateBilling || $('#RegisterFields_BillingAddress_State'),
     streetAddressBilling: streetAddressBilling || $('#RegisterFields_BillingAddress_StreetAddress'),
     streetAddressBilling2: streetAddressBilling2 || $('#RegisterFields_BillingAddress_StreetAddress2'),
-    cityBilling: cityBilling || $('#RegisterFields_BillingAddress_City'),
-    stateBilling: stateBilling || $('#RegisterFields_BillingAddress_State'),
-    zipBilling: zipBilling || $('#RegisterFields_BillingAddress_Zip'),
-    phoneShipping: phoneShipping || $('#RegisterFields_ShippingAddress_Phone'),
     streetAddressShipping: streetAddressShipping || $('#RegisterFields_ShippingAddress_StreetAddress'),
     streetAddressShipping2: streetAddressShipping2 || $('#RegisterFields_ShippingAddress_StreetAddress2'),
-    cityShipping: cityShipping || $('#RegisterFields_ShippingAddress_City'),
     stateShipping: stateShipping || $('#RegisterFields_ShippingAddress_State'),
+    wrapEmail: wrapEmail || $('#wrapEmail'),
+    wrapReset: wrapReset || $('#wrapReset'),
+    wrapZip: wrapZip || $('#wrapZip'),
+    wrapPass: wrapPass || $('#wrapPass'),
+    zipBilling: zipBilling || $('#RegisterFields_BillingAddress_Zip'),
     zipShipping: zipShipping || $('#RegisterFields_ShippingAddress_Zip'),
-    shippingFirstName: shippingFirstName || $("#ShippingFirstName"),
-    shippingLastName: shippingLastName || $("#ShippingLastName")
 };
 
+var stateManager = function() {
+
+    var action = null,
+        inputAction = null,
+
+        enterDifferentAddress = function() {
+            console.log('EnterDiffAddress hit');
+            pageObjects.modalInstitution.modal('hide');
+            pageObjects.wrapEmail.show('slow');
+            pageObjects.wrapZip.hide('slow');
+
+            //  Clear the billing and shipping addresses
+            $('#collapseBilling input').val('');
+            $('#collapseBilling textarea').val('Mailing address notes:');
+            $('#collapseBilling select').val(0);
+
+            $('#collapseShipping input:not("#sameAsBilling")').val('');
+            $('#collapseShipping textarea').val('Mailing address notes:');
+            $('#collapseShipping select').val(0);
+
+            pageObjects.theSubmitButton.prop('value', 'Submit New Email...');
+            stateManager.action = actions.DisplayBillingAddressFields;
+        },
+
+        foundInstitutionView = function(data, email) {
+            //pageObjects.wrapEmail.hide('fast');
+            pageObjects.modalInstitution.modal('show');
+
+            pageObjects.institution.val(data.Institution);
+            pageObjects.streetAddressShipping.val(data.Address);
+            pageObjects.cityShipping.val(data.City);
+            pageObjects.stateShipping.val(data.State);
+            pageObjects.zipShipping.val(data.Zip);
+            pageObjects.streetAddressBilling.val(data.Address);
+            pageObjects.cityBilling.val(data.City);
+            pageObjects.cityBilling.val(data.State);
+            pageObjects.zipBilling.val(data.Zip);
+            pageObjects.labelEmail.html('<span class="label label-success"><b>&nbsp;&nbsp;' + email.substring(email.indexOf('@')) + '</b>&nbsp; domain has been identified.</span>');
+            $('#ShowInstitution').html(data.Institution + '<br>' + data.Address + '<br>' + data.City + ', ' + data.State + ' ' + data.Zip + '<br>');
+        },
+
+        newPasswordView = function(email) {
+            pageObjects.wrapEmail.hide('fast');
+            pageObjects.wrapPass.show('fast');
+
+            if (email) {
+                pageObjects.labelEmail.html('<span class="label label-success"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; has been recorded.</span>');
+            } else {
+                pageObjects.modalInstitution.modal('hide');
+                pageObjects.labelEmail.fadeOut(500, function () {
+                    $(this).html('<span class="label label-success">&nbsp;&nbsp;&nbsp;&nbsp;' + pageObjects.emailInput.val() + ' will be used for your email address.</span>');
+                    $(this).fadeIn(500);
+                });
+
+            }
+
+            stateManager.action = actions.GetPassword;
+        },
+        newPassWordToCheckZip = function() {
+            wrapZip.show('slow');
+            wrapPass.hide('slow');
+            stateManager.action = actions.CheckZip;
+        },
+
+        notInstitutionAddress = function() {
+            console.log('NotInstitution hit');
+            pageObjects.modalInstitution.modal('hide');
+            pageObjects.wrapEmail.show('slow');
+            pageObjects.wrapZip.hide('slow');
+            pageObjects.labelEmail.html('<span class="label label-info">&nbsp;&nbsp;&nbsp;&nbsp;Proceed or enter a different email address.</span>');
+
+            pageObjects.institution.val('');
+            pageObjects.streetAddressShipping.val('');
+            pageObjects.cityShipping.val('');
+            pageObjects.stateShipping.val('');
+            pageObjects.zipShipping.val('');
+            pageObjects.streetAddressBilling.val('');
+            pageObjects.cityBilling.val('');
+            pageObjects.cityBilling.val('');
+            pageObjects.zipBilling.val('');
+            pageObjects.theSubmitButton.prop('value', 'Next...');
+
+            stateManager.action = actions.CheckEmail;
+        },
+
+        passResetView = function() {
+            pageObjects.login.hide('slow');
+            pageObjects.reset.show('slow');
+            pageObjects.MailSent.hide();
+        },
+        registerView = function() {
+            pageObjects.login.hide('slow');
+            pageObjects.register.show('slow');
+            stateManager.action = actions.CheckEmail;
+        },
+
+        startView = function() {
+            pageObjects.register.hide();
+            pageObjects.reset.hide();
+        },
+
+        useRegisteredAddress = function() {
+            console.log('YesUseAddress hit');
+
+            stateManager.showNewPasswordInputs();
+
+            //pageObjects.wrapZip.hide('slow');
+            //pageObjects.modalInstitution.modal('hide');
+            //$('#collapseBilling').parent().show();
+            //$('#collapseShipping').parent().show();
+            //$('#collapseBilling').collapse('show');
+            //$('#collapseEmail').collapse('toggle');
+            //pageObjects.labelEmail.fadeOut(500, function () {
+            //    $(this).html('<span class="label label-success">&nbsp;&nbsp;&nbsp;&nbsp;' + pageObjects.emailInput.val() + ' will be used for your email address.</span>');
+            //    $(this).fadeIn(500);
+            //});
+            //stateManager.action = actions.SubmitRegister;
+            //pageObjects.theSubmitButton.prop('value', 'SubmitRegister');
+        },
+
+        zipCodeVerified = function (data, zipCode) {
+
+            switch (data.success) {
+            case 'true':
+                $('#collapseBilling').parent().show();
+                $('#collapseShipping').parent().show();
+                $('#collapseEmail').collapse('toggle');
+                $('#collapseBilling').collapse('toggle');
+
+                pageObjects.cityBilling.val(data.City);
+                pageObjects.stateBilling.val(data.State);
+                pageObjects.zipBilling.val(zipCode);
+                $('#TimeZone').val(data.TimeZone);
+
+                pageObjects.labelEmail.html('<span class="label label-success"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</span>');
+                pageObjects.theSubmitButton.prop('value', 'SubmitRegister');
+
+                stateManager.action = actions.SubmitRegister;
+                break;
+            case 'false':
+                pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode was not found!</span>');
+                break;
+            case 'invalid format':
+                pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode entered was not in the correct format!</span>');
+                break;
+            }
+
+        },
+        submit = function() {
+            if (stateManager.action === actions.CheckEmail) {
+                console.log('CheckEmail hit');
+                checkAndSubmitEmail();
+                pageObjects.theSubmitButton.prop('value', 'Next...');
+                return false;
+            }
+
+            if (stateManager.action === actions.GetPassword) {
+                stateManager.newPassWordToCheckZip();
+                return false;
+            }
+
+            if (stateManager.action === actions.CheckZip) {
+                console.log('CheckZip hit');
+                $('#ZipChecker').val($('#getZip').val());
+                $('form#checkZip').submit();
+                return false;
+            }
+
+            if (stateManager.action === actions.SubmitRegister) {
+                console.log('SubmitRegister hit');
+                stateManager.action = '';
+                if (pageObjects.createUserForm.valid() == '1') {
+                    submitCreateUserForm();
+                }
+                    return false;
+            }
+
+            if (stateManager.action === actions.SubmitLogin) {
+                console.log('submitLogin hit');
+                $('#Password').val($('#Password1').val());
+                $('#Email').val($('#Email1').val());
+                $('form#frmSignIn').submit();
+                return false;
+            }
+
+            if (stateManager.action === actions.DisplayBillingAddressFields) {
+                if (pageObjects.emailInput.valid() == '1') {
+                    $('#collapseBilling').parent().show();
+                    $('#collapseBilling').collapse('show');
+                    $('#collapseShipping').parent().show();
+                    $('#collapseEmail').collapse('toggle');
+
+                    stateManager.action = actions.SubmitRegister;
+                    pageObjects.theSubmitButton.prop('value', 'SubmitRegister');
+                    return false;
+                }
+            }
+        },
+
+        init = function(args) {
+            stateManager.action = actions.CheckEmail;
+            startView();
+        };
+
+
+    return {
+        action: action,
+        enterDifferentAddress: enterDifferentAddress,
+        foundInstitution: foundInstitutionView,
+        initialize: init,
+        inputAction: inputAction,
+        newPassWordToCheckZip: newPassWordToCheckZip,
+        notInstitutionAddress: notInstitutionAddress,
+        showNewPasswordInputs: newPasswordView,
+        showPassReset: passResetView,
+        showRegister: registerView,
+        submit: submit,
+        useRegisteredAddress: useRegisteredAddress,
+        zipCodeVerified: zipCodeVerified
+    };
+}();
+
+
 function checkAndSubmitEmail() {
-    pageObjects.theSubmitButton.prop('value', 'Next...');
-    if (pageObjects.emailInput.valid() == "1") {
+    if (pageObjects.emailInput.valid() == '1') {
         console.log(pageObjects.emailInput.valid());
-        $('#emailAddress').val($("#checkEmail").val());
-        $("#checkEmail").submit();
+        $('#emailAddress').val($('#checkEmail').val());
+        $('form#checkEmail').submit();
     }
 }
 
 function checkAndSubmitZip() {
     pageObjects.theSubmitButton.prop('value', 'Next...');
-    console.log("checkAndSubmitZip");
-    //$('#emailAddress').val($("#checkEmail").val());
-    $("#checkZip").submit();
+    console.log('checkAndSubmitZip');
+    //$('#emailAddress').val($('#checkEmail').val());
+    $('#checkZip').submit();
 }
 
 
@@ -73,61 +315,20 @@ function submitCreateUserForm() {
     var valid = pageObjects.createUserForm.valid();
 
     console.log(valid);
+
     if (valid) {
-        console.log("createUserForm submitted.");
-        //pageObjects.createUserForm.submit();
-        pageObjects.createUserForm.submit(function (e) {
-            e.preventDefault();
-            alert('createUserForm');
-            if (ActionForTheSubmit != "SubmitLogin") {
-                console.log("non-valid form");
-                return false;
-            }
-            alert("is " + ActionForTheSubmit);
-
-            if (pageObjects.createUserForm.valid() != "1") {
-                console.log("non-valid form");
-                return false;
-            }
-            var url = "/Account/Register";
-            console.log("Submitting Register Details");
-
-            $.ajax({
-                type: 'POST',
-                contentType: constants.FormPostContentType,
-                cache: false,
-                url: url,
-                dataType: constants.JsonDataType,
-                data: $(this).serialize(),
-                beforeSend: function () {
-                    console.log("beforeSend Register Details");
-                    // this is where we append a loading image
-                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
-                }
-            }).done(function (data) {
-                console.log("done: ");
-                if (data.Status === 'Success') {
-                    console.log("success: " + data.Status);
-                    ActionForTheSubmit = "";
-                    $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
-                    location.assign(path + '/Account/Login'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
-                } else if (data.status === 'Fail') {
-                    $('#labelEmail').html('<span class="label label-information">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
-                }
-            }).fail(function (data) {
-                console.log("failed: " + data);
-            });
-        });
+        console.log('createUserForm submitted.');
+        pageObjects.createUserForm.submit();
     }
 }
 
 function submitLogin() {
-    //$("#Email").val($("#RegisterFields_Email").val());
-    //$("#Password").val($("#Password1").val());
-    //$("#frmSignin").submit();
+    //$('#Email').val($('#RegisterFields_Email').val());
+    //$('#Password').val($('#Password1').val());
+    //$('#frmSignin').submit();
     $('#Password').val($('#RegisterFields_Password').val());
     $('#Email').val($('#emailAddress').val());
-    $("form#frmSignIn").submit();
+    $('form#frmSignIn').submit();
 }
 
 
@@ -141,7 +342,7 @@ function setShippingToBilling() {
     pageObjects.streetAddressShipping.val(pageObjects.streetAddressBilling.val());
     pageObjects.streetAddressShipping2.val(pageObjects.streetAddressBilling2.val());
     pageObjects.zipShipping.val(pageObjects.zipBilling.val());
-    $("#RegisterFields_ShippingAddress_Country").val($("#RegisterFields_BillingAddress_Country").val());
+    $('#RegisterFields_ShippingAddress_Country').val($('#RegisterFields_BillingAddress_Country').val());
     pageObjects.phoneShipping.val(pageObjects.phoneBilling.val());
 }
 
@@ -158,23 +359,40 @@ $(function () {
         $.ajaxSetup({
             error: function (x, status, error) {
                 if (x.status == 403) {
-                    alert("Sorry, your session has expired. Please login again to continue");
-                    window.location.href = "/Account/Login";
+                    alert('Sorry, your session has expired. Please login again to continue');
+                    window.location.href = '/Account/Login';
                 }
                 else {
-                    alert("An error occurred: " + status + "nError: " + error);
+                    alert('An error occurred: ' + status + 'nError: ' + error);
                 }
             }
         });
-    
 
+    register = $('#register');
+    reset = $('#reset');
+
+    stateManager.initialize();
+
+    wrapEmail = $('#wrapEmail'),
+    wrapPass = $('#wrapPass'),
+    wrapReset = $('#wrapReset'),
+    wrapZip = $('#wrapZip'),
+
+    $('#collapseBilling').parent().hide();
+    $('#collapseShipping').parent().hide();
+    pageObjects.wrapZip.hide();
+    pageObjects.wrapPass.hide();
+    pageObjects.wrapReset.hide();
+    $('#wrapNonUS').hide();
+    $('#getFirstLast').hide();
+    
     var disregardIntitutionDomain = false;
     var indexOfHome = location.href.indexOf('Account');
 
     theSubmitButton = $('#TheSubmitButton');
     emailInput = $('#RegisterFields_Email');
     createUserForm = $('#_CreateUserForm');
-    wrapZip = $('#wrapZip');
+    labelEmail = $('#labelEmail');
 
     phoneBilling = $('#RegisterFields_BillingAddress_Phone');
     fullNameShipping = $('#FullNameShipping');
@@ -190,11 +408,12 @@ $(function () {
     cityShipping = $('#RegisterFields_ShippingAddress_City');
     stateShipping = $('#RegisterFields_ShippingAddress_State');
     zipShipping = $('#RegisterFields_ShippingAddress_Zip');
-    shippingLastName = $("#ShippingLastName");
-    shippingFirstName = $("#ShippingFirstName");
-    fullName = $("#FullName");
-    firstName = $("#FirstName");
-    lastName = $("#LastName");
+    shippingLastName = $('#ShippingLastName');
+    shippingFirstName = $('#ShippingFirstName');
+    fullName = $('#FullName');
+    firstName = $('#FirstName');
+    lastName = $('#LastName');
+    institution = $('#RegisterFields_Institution');
 
 
     var path = '';
@@ -217,53 +436,46 @@ $(function () {
     });
     $('[name=TheSubmit]').prop('value', 'Next...');
 
-    $("#collapseBilling").parent().hide();
-    $("#collapseShipping").parent().hide();
-    pageObjects.wrapZip.hide();
-    $("#wrapPass").hide();
-    $("#wrapReset").hide();
-    $("#wrapNonUS").hide();
-    $("#getFirstLast").hide();
-    //$("[data-val-email]").keyup(function () { return false; });
-    //$("[data-val-email]").blur(function () { return true; });
+    //$('[data-val-email]').keyup(function () { return false; });
+    //$('[data-val-email]').blur(function () { return true; });
 
     $('input').keypress(function (event) {
         var enterOkClass = $(this).hasClass('enterSubmit');
         if (event.which == 13) {
-            console.log(ActionForTheSubmit);
+            console.log(stateManager.action);
             event.preventDefault();
-            if (ActionForTheSubmit === "CheckEmail") {
-                //ActionForTheSubmit = "CheckZip";
-                if (pageObjects.emailInput.valid() == "1") {
-                    checkAndSubmitEmail();
-                }
+            //if (ActionForTheSubmit === 'CheckEmail') {
+            //    //ActionForTheSubmit = 'CheckZip';
+            //    if (pageObjects.emailInput.valid() == '1') {
+            //        checkAndSubmitEmail();
+            //    }
+            //    return false;
+            //}
+            //if (ActionForTheSubmit === 'CheckZip') {
+
+            //    checkAndSubmitZip();
+
+            //    return false;
+            //}
+            if (stateManager.action === actions.GetPassword) {
+
+                stateManager.inputAction = inputAction.EnterKeyPress;
+                stateManager.newPassWordToCheckZip();
                 return false;
             }
-            if (ActionForTheSubmit === "CheckZip") {
 
-                checkAndSubmitZip();
+            //if (ActionForTheSubmit === 'SubmitRegister') {
 
-                return false;
-            }
-            if (ActionForTheSubmit === "GetPassword") {
-
-                wrapZip.show();
-                wrapPass.hide("slow");
-                return false;
-            }
-
-            //if (ActionForTheSubmit === "SubmitRegister") {
-
-            //    if (pageObjects.createUserForm.valid() == "1") {
+            //    if (pageObjects.createUserForm.valid() == '1') {
             //        submitCreateUserForm();
             //    }
             //    return false;
             //}
-            if (ActionForTheSubmit === "SubmitLogin") {
+            if (stateManager.action === actions.SubmitLogin) {
 
                 $('#Password').val($('#Password1').val());
                 $('#Email').val($('#Email1').val());
-                $("form#frmSignIn").submit();
+                $('form#frmSignIn').submit();
 
                 return false;
             }
@@ -274,11 +486,22 @@ $(function () {
     });
 
 
-    $("body").on('click', 'input:button', (function (e, data) {
+    $('body').on('click', 'input:button', (function (e, data) {
+
+        if (stateManager.inputAction === inputAction.EnterKeyPress)
+            return;
+
+        if (stateManager.action === '') {
+            alert('There registration has encountered a problem. You\'ll need to start the registration process again.'); // todo: give this error msg a home.
+            return false;
+        }
+
+        stateManager.inputAction = inputAction.ButtonClick;
 
         var normalResetPasswordButton = $('#NormalResetPasswordButton');
         var clickedButton = e.currentTarget.name;
-        //possible values
+
+        //  Possible values: //
         // TheSubmit
         // findCityState
         // nonUSAddress
@@ -287,135 +510,53 @@ $(function () {
         // YesUseAddress
         // EnterDiffAddress
         // NotInstitution
-        if (clickedButton === "TheSubmit") {
-            console.log("ActionForTheSubmit = " + ActionForTheSubmit);
-            if (ActionForTheSubmit == "CheckEmail") {
-                console.log("CheckEmail hit");
-                checkAndSubmitEmail();
-            }
-            if (ActionForTheSubmit == "CheckZip") {
-                console.log("CheckZip hit");
-                $('#ZipChecker').val($('#getZip').val());
-                $("form#checkZip").submit();
-            }
-
-            if (ActionForTheSubmit == "SubmitRegister") {
-                console.log("SubmitRegister hit");
-                ActionForTheSubmit = "";
-                if (pageObjects.createUserForm.valid() == "1") {
-                    submitCreateUserForm();
-                }
-            }
-
-            if (ActionForTheSubmit == "SubmitLogin") {
-                console.log("submitLogin hit");
-                $('#Password').val($('#Password1').val());
-                $('#Email').val($('#Email1').val());
-                $("form#frmSignIn").submit();
-            }
-
-            if (ActionForTheSubmit === "DisplayBillingAddressFields") {
-                if (pageObjects.emailInput.valid() == "1") {
-                    $("#collapseBilling").parent().show();
-                    $("#collapseBilling").collapse('show');
-                    $("#collapseShipping").parent().show();
-                    $('#collapseEmail').collapse('toggle');
-
-
-                    ActionForTheSubmit = "SubmitRegister";
-                    pageObjects.theSubmitButton.prop('value', 'SubmitRegister');
-                }
-            }
+        if (clickedButton === 'TheSubmit') {
+            console.log('ActionForTheSubmit = ' + stateManager.action);
+            stateManager.submit();
         }
 
 
-        if (clickedButton === "nonUSAddress") {
-            pageObjects.wrapZip.hide("slow");
-            console.log("nonUSAddress hit");
-            $("#wrapNonUS").show("slow");
+        if (clickedButton === 'nonUSAddress') {
+            pageObjects.wrapZip.hide('slow');
+            console.log('nonUSAddress hit');
+            $('#wrapNonUS').show('slow');
             $('#collapseEmail').collapse('toggle');
             $('#collapseBilling').collapse('toggle');
         }
 
 
-        if (clickedButton === "resetPass") {
-            console.log("resetPass hit");
+        if (clickedButton === 'resetPass') {
+            console.log('resetPass hit');
             if (normalResetPasswordButton.data('clicked'))
                 normalResetPasswordButton.removeData('clicked');
 
             $('#EdgeCaseResetPasswordButton').data('clicked', true);
-            $("form#ResetPasswordForm").submit();
+            $('form#ResetPasswordForm').submit();
         }
 
-        if (clickedButton === "YesUseAddress") {
-            console.log("YesUseAddress hit");
-            pageObjects.wrapZip.hide("slow");
-            $('#modalInstitution').modal("hide");
-            $("#collapseBilling").parent().show();
-            $("#collapseShipping").parent().show();
-            $("#collapseBilling").collapse('show');
-            $('#collapseEmail').collapse('toggle');
-            $('#labelEmail').fadeOut(500, function () {
-                $(this).html('<span class="label label-success">&nbsp;&nbsp;&nbsp;&nbsp;' + pageObjects.emailInput.val() + ' will be used for your email address.</span>');
-                $(this).fadeIn(500);
-            });
-            ActionForTheSubmit = "SubmitRegister";
-            pageObjects.theSubmitButton.prop('value', 'SubmitRegister');
+        if (clickedButton === 'YesUseAddress') {
+            stateManager.useRegisteredAddress();
         }
 
-        if (clickedButton === "EnterDiffAddress") {
-            console.log("EnterDiffAddress hit");
-            $('#modalInstitution').modal("hide");
-            $('#wrapEmail').show("slow");
-            pageObjects.wrapZip.hide("slow");
-
-            //  Clear the billing and shipping addresses
-            $('#collapseBilling input').val("");
-            $('#collapseBilling textarea').val("Mailing address notes:");
-            $('#collapseBilling select').val(0);
-
-            $('#collapseShipping input:not("#sameAsBilling")').val("");
-            $('#collapseShipping textarea').val("Mailing address notes:");
-            $('#collapseShipping select').val(0);
-
-            pageObjects.theSubmitButton.prop('value', 'Submit New Email...');
-            ActionForTheSubmit = "DisplayBillingAddressFields";
+        if (clickedButton === 'EnterDiffAddress') {
+            stateManager.enterDifferentAddress();
         }
 
-        if (clickedButton === "NotInstitution") {
-            console.log("NotInstitution hit");
-            $('#modalInstitution').modal("hide");
-            $('#wrapEmail').show("slow");
-            pageObjects.wrapZip.hide("slow");
-            $('#labelEmail').html('<span class="label label-info">&nbsp;&nbsp;&nbsp;&nbsp;Proceed or enter a different email address.</span>');
-
-            $("#RegisterFields_Institution").val("");
-            pageObjects.streetAddressShipping.val("");
-            pageObjects.cityShipping.val("");
-            pageObjects.stateShipping.val("");
-            pageObjects.zipShipping.val("");
-            pageObjects.streetAddressBilling.val("");
-            pageObjects.cityBilling.val("");
-            pageObjects.cityBilling.val("");
-            pageObjects.zipBilling.val("");
-            //$('#collapseEmail').collapse('toggle');
-            //$('#collapseBilling').collapse('toggle');
-            pageObjects.theSubmitButton.prop('value', 'Next...');
-            ActionForTheSubmit = "CheckEmail";
-            //disregardIntitutionDomain = true;
+        if (clickedButton === 'NotInstitution') {
+            stateManager.notInstitutionAddress();
         }
     }));
 
 
     $('#collapseShipping').on('shown', function () {
-        if ($("#sameAsBilling:checked").val()) {
+        if ($('#sameAsBilling:checked').val()) {
             setShippingToBilling();
 
         }
     });
     //var availableTags = [];
     ////http://stackoverflow.com/questions/5077409/what-does-autocomplete-request-server-response-look-like
-    //$("#RegisterFields_Institution").autocomplete({
+    //$('#RegisterFields_Institution').autocomplete({
     //    source: function (request, response) {
     //        alert(request.term);
     //        $.ajax({
@@ -423,17 +564,17 @@ $(function () {
     //            cache: false,
     //            url: '/Account/AutocompleteInstitution',
     //            data: {
-    //                zip: "54636", term: request.term
+    //                zip: '54636', term: request.term
     //            },
     //            //data: { zip: pageObjects.zipBilling.val()},
     //            //beforeSend: function () {
     //            //    // this is where we append a loading image
-    //            //    $('#labelEmail').html('<div class="btn-warning style="width: 400px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</div>');
+    //            //    pageObjects.labelEmail.html('<div class="btn-warning style='width: 400px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</div>');
     //            //},
     //            success: function (data) {
     //                response($.map(data.geonames, function (item) {
     //                    return {
-    //                        label: item.name + (item.adminName1 ? ", " + item.adminName1 : "") + ", " + item.countryName,
+    //                        label: item.name + (item.adminName1 ? ', ' + item.adminName1 : '') + ', ' + item.countryName,
     //                        value: item.name
     //                    };
     //                }));
@@ -443,21 +584,64 @@ $(function () {
     //    //source: '/Account/AutocompleteInstitution',
     //    //minLength: ,
     //    open: function (event, ui) {
-    //        $(".ui-autocomplete").css("z-index", 1000);
+    //        $('.ui-autocomplete').css('z-index', 1000);
     //    },
     //    select: function (event, ui) {
-    //        $("#RegisterFields_Institution").val(ui.item.Work_Item);
+    //        pageObjects.institution.val(ui.item.Work_Item);
     //        return false;
     //    }
     //});
 
-    $("form#checkEmail").submit(function (e) {
+    pageObjects.createUserForm.on('submit', function (e) {
+        e.preventDefault();
+        alert('createUserForm');
+        if (ActionForTheSubmit != 'SubmitLogin') {
+            console.log('non-valid form');
+            return false;
+        }
+        alert('is ' + ActionForTheSubmit);
+
+        if (pageObjects.createUserForm.valid() != '1') {
+            console.log('non-valid form');
+            return false;
+        }
+        var url = '/Account/Register';
+        console.log('Submitting Register Details');
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.FormPostContentType,
+            cache: false,
+            url: url,
+            dataType: constants.JsonDataType,
+            data: $(this).serialize(),
+            beforeSend: function () {
+                console.log('beforeSend Register Details');
+                // this is where we append a loading image
+                pageObjects.labelEmail.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
+            }
+        }).done(function (data) {
+            console.log('done: ');
+            if (data.Status === 'Success') {
+                console.log('success: ' + data.Status);
+                ActionForTheSubmit = '';
+                pageObjects.labelEmail.html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
+                location.assign(path + '/Account/Login'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
+            } else if (data.status === 'Fail') {
+                pageObjects.labelEmail.html('<span class="label label-information">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
+            }
+        }).fail(function (data) {
+            console.log('failed: ' + data);
+        });
+    });
+
+    $('form#checkEmail').submit(function (e) {
 
         e.preventDefault();
-        var jsonUrl = "/Account/CheckEmail";
+        var jsonUrl = '/Account/CheckEmail';
         var email = pageObjects.emailInput.val();
         if (email.length === 0) {
-            $("#RegisterFields_Email").focus();
+            $('#RegisterFields_Email').focus();
         } else {
             $.ajax({
                 type: 'GET',
@@ -468,56 +652,43 @@ $(function () {
                 data: { email: email, disregardIntitutionDomain: disregardIntitutionDomain },
                 beforeSend: function () {
                     // this is where we append a loading image
-                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</span>');
+                    pageObjects.labelEmail.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</span>');
                 }
             }).done(function (data) {
                 // successful request; do something with the data
-                if (data.email === "wasNotFound") {
-                    pageObjects.wrapEmail.hide("fast");
-                    pageObjects.wrapPass.show("fast");
-                    $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; has been recorded.</span>');
-                    ActionForTheSubmit = "GetPassword";
-                }
 
-                if (data.success === "foundInstitution") {
-                    $('#wrapEmail').hide("fast");
-                    $('#modalInstitution').modal("show");
 
-                    $("#RegisterFields_Institution").val(data.Institution);
-                    pageObjects.streetAddressShipping.val(data.Address);
-                    pageObjects.cityShipping.val(data.City);
-                    pageObjects.stateShipping.val(data.State);
-                    pageObjects.zipShipping.val(data.Zip);
-                    pageObjects.streetAddressBilling.val(data.Address);
-                    pageObjects.cityBilling.val(data.City);
-                    pageObjects.cityBilling.val(data.State);
-                    pageObjects.zipBilling.val(data.Zip);
-                    $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;' + email.substring(email.indexOf("@")) + '</b>&nbsp; domain has been identified.</span>');
-                    $('#ShowInstitution').html(data.Institution + '<br>' + data.Address + '<br>' + data.City + ', ' + data.State + ' ' + data.Zip + '<br>');
-                } else if (data.success === "foundExisting") {
+                if (data.success === 'foundExisting') {
                     //TODO: Add a bit of javascript that will hijack an 'Enter' key and will fire the
                     // 'blur' method on the text input (id='Email1'). The intent is to fire the
                     // blur both on the actual blur (user clicks outside the text box or tabs off
                     // the text box) or on an 'Enter' key.
-                    ActionForTheSubmit = "SubmitLogin";
+                    ActionForTheSubmit = 'SubmitLogin';
                     $('#Email1').val(email);
                     $('#ResetPassEmail').val(email);
-                    $('#labelEmail').html('<span class="label label-important"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is already on file.</span>');
-                    $('#wrapReset').show('slow');
-                    $('#wrapEmail').hide("slow");
+                    pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is already on file.</span>');
+                    pageObjects.wrapReset.show('slow');
+                    pageObjects.wrapEmail.hide('slow');
+
+                } else if (data.success === 'foundInstitution') {
+                    stateManager.foundInstitution(data, email);
+
+                } else if (data.email === 'wasNotFound') {
+                    stateManager.showNewPasswordInputs(email);
                 }
+
             }).fail(function () {
                 // failed request; give feedback to user
-                $('#wrapEmail').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+                pageObjects.wrapEmail.html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
             });
         }
     });
 
-    $("form#checkZip").submit(function () {
-        var jsonUrl = "/Account/CheckZip";
-        var q = $("#ZipChecker").val();
+    $('form#checkZip').submit(function () {
+        var jsonUrl = '/Account/CheckZip';
+        var q = $('#ZipChecker').val();
         if (q.length == 0) {
-            $("#RegisterFields_Zip").focus();
+            $('#RegisterFields_Zip').focus();
         } else {
             $.ajax({
                 type: 'GET',
@@ -528,28 +699,11 @@ $(function () {
                 data: { Zip: q },
                 beforeSend: function () {
                     // this is where we append a loading image
-                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Zip...</span>');
+                    pageObjects.labelEmail.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Zip...</span>');
                 }
             }).done(function (data) {
                 // successful request; do something with the data
-                if (data.success === "true") {
-                    $("#collapseBilling").parent().show();
-                    $("#collapseShipping").parent().show();
-                    $('#collapseEmail').collapse('toggle');
-                    $('#collapseBilling').collapse('toggle');
-                    //$('#collapseShipping').collapse('toggle');
-                    $('#RegisterFields_BillingAddress_City').val(data.City);
-                    pageObjects.stateBilling.val(data.State);
-                    pageObjects.zipBilling.val(q);
-                    $('#TimeZone').val(data.TimeZone);
-                    $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</span>');
-                    pageObjects.theSubmitButton.prop('value', 'SubmitRegister');
-                    ActionForTheSubmit = 'SubmitRegister';
-                } else if (data.success === "false") {
-                    $('#labelEmail').html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode was not found!</span>');
-                } else if (data.success === "invalid format") {
-                    $('#labelEmail').html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode entered was not in the correct format!</span>');
-                }
+                stateManager.zipCodeVerified(data, q);
             }).fail(function () {
                 // failed request; give feedback to user
                 pageObjects.wrapZip.html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
@@ -558,11 +712,11 @@ $(function () {
         return false;
     });
 
-    //$('#RegisterFields_Institution').change(function () {
-    //    alert("hit" + $('#RegisterFields_Institution').val());
+    //pageObjects.institution.change(function () {
+    //    alert('hit' + pageObjects.institution.val());
     //    //  $.getJSON()
-    //    $('#InstitutionChecker').val($('#RegisterFields_Institution').val());
-    //    $("form#checkInstitution").submit();
+    //    $('#InstitutionChecker').val(pageObjects.institution.val());
+    //    $('form#checkInstitution').submit();
     //});
 
     $('#FullName').blur(function () {
@@ -579,46 +733,46 @@ $(function () {
         }
     });
 
-    $("#sameAsBilling").change(function (e) {
-        var thisCheck = $(this);
+    //$('#sameAsBilling').change(function (e) {
+    //    var thisCheck = $(this);
 
-        //  Remove keyup handlers on billing input fields first time (and each thereafter - which don't matter) checkbox clicked.
-        pageObjects.phoneBilling.off('keyup');
-        pageObjects.streetAddressBilling.off('keyup');
-        $('#RegisterFields_BillingAddress_StreetAddress2').off('keyup');
-        $('#RegisterFields_BillingAddress_City').off('keyup');
-        pageObjects.stateBilling.off('keyup');
-        pageObjects.zipBilling.off('keyup');
+    //    //  Remove keyup handlers on billing input fields first time (and each thereafter - which don't matter) checkbox clicked.
+    //    pageObjects.phoneBilling.off('keyup');
+    //    pageObjects.streetAddressBilling.off('keyup');
+    //    $('#RegisterFields_BillingAddress_StreetAddress2').off('keyup');
+    //    pageObjects.cityBilling.off('keyup');
+    //    pageObjects.stateBilling.off('keyup');
+    //    pageObjects.zipBilling.off('keyup');
 
-        if (thisCheck.is(':checked')) {
-            if ($("#sameAsBilling:checked").val()) {
-                setShippingToBilling();
-            } else {
-                if (pageObjects.fullNameShipping.val() === null || pageObjects.fullNameShipping.val() === "") pageObjects.fullNameShipping.val(pageObjects.fullName.val());
-                if (pageObjects.shippingFirstName.val() === null || pageObjects.shippingFirstName.val() === "") pageObjects.shippingFirstName.val(pageObjects.firstName.val());
-                if (pageObjects.shippingLastName.val() === null || pageObjects.shippingLastName.val() === "") pageObjects.shippingLastName.val(pageObjects.lastName.val());
-                if (pageObjects.cityShipping.val() === null || pageObjects.cityShipping.val() === "") pageObjects.cityShipping.val(pageObjects.cityBilling.val());
-                if (pageObjects.streetAddressShipping.val() === null || pageObjects.streetAddressShipping.val() === "") pageObjects.streetAddressShipping.val(pageObjects.streetAddressBilling.val());
-                if (pageObjects.streetAddressShipping2.val() === null || pageObjects.streetAddressShipping2.val() === "") pageObjects.streetAddressShipping2.val(pageObjects.streetAddressBilling2.val());
-                if (pageObjects.stateShipping.val() === null || pageObjects.stateShipping.val() === "") pageObjects.stateShipping.val(pageObjects.stateBilling.val());
-                if (pageObjects.zipShipping.val() === null || pageObjects.zipShipping.val() === "") pageObjects.zipShipping.val(pageObjects.zipBilling.val());
-            }
-        }
-        $(this).validate().checkForm();
-        return false;
-    });
+    //    if (thisCheck.is(':checked')) {
+    //        if ($('#sameAsBilling:checked').val()) {
+    //            setShippingToBilling();
+    //        } else {
+    //            if (pageObjects.fullNameShipping.val() === null || pageObjects.fullNameShipping.val() === '') pageObjects.fullNameShipping.val(pageObjects.fullName.val());
+    //            if (pageObjects.shippingFirstName.val() === null || pageObjects.shippingFirstName.val() === '') pageObjects.shippingFirstName.val(pageObjects.firstName.val());
+    //            if (pageObjects.shippingLastName.val() === null || pageObjects.shippingLastName.val() === '') pageObjects.shippingLastName.val(pageObjects.lastName.val());
+    //            if (pageObjects.cityShipping.val() === null || pageObjects.cityShipping.val() === '') pageObjects.cityShipping.val(pageObjects.cityBilling.val());
+    //            if (pageObjects.streetAddressShipping.val() === null || pageObjects.streetAddressShipping.val() === '') pageObjects.streetAddressShipping.val(pageObjects.streetAddressBilling.val());
+    //            if (pageObjects.streetAddressShipping2.val() === null || pageObjects.streetAddressShipping2.val() === '') pageObjects.streetAddressShipping2.val(pageObjects.streetAddressBilling2.val());
+    //            if (pageObjects.stateShipping.val() === null || pageObjects.stateShipping.val() === '') pageObjects.stateShipping.val(pageObjects.stateBilling.val());
+    //            if (pageObjects.zipShipping.val() === null || pageObjects.zipShipping.val() === '') pageObjects.zipShipping.val(pageObjects.zipBilling.val());
+    //        }
+    //    }
+    //    $(this).validate().checkForm();
+    //    return false;
+    //});
 
 
-    $('#modalInstitution').on('hidden', function (e) {
+    pageObjects.modalInstitution.on('hidden', function (e) {
 
-        if (pageObjects.wrapZip.is(":visible")) {
-            ActionForTheSubmit = 'CheckEmail';
+        if (pageObjects.wrapZip.is(':visible')) {
+            stateManager.action = actions.CheckEmail;
         }
 
     });
 
     $('#TheSubmitButton').on('mouseenter', function () {
-        if ($("#sameAsBilling:checked").val()) {
+        if ($('#sameAsBilling:checked').val()) {
             setShippingToBilling();
         }
     });

@@ -51,7 +51,6 @@ $(function () {
                 if (data.status === "success") {
                     crunchingLabel.html('<span class="label label-success">&nbsp; Reset Instructions sent!</span>');
                     $('#wrapReset div.container').hide("slow");
-                    $('#MailSentForm').show("slow");
                     $('#sent2Address').html(email);
                 } else {
                     crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;Error. Please retry...</span>');
