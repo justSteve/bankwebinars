@@ -20,27 +20,27 @@ namespace CUWebinars.Web.Helpers
         public static String GetCityStateFromZip(int zipCode)
         {
 
-            //var _connSproc = new SqlConnection(ConfigurationManager.ConnectionStrings["LoggerConnection"].ConnectionString);
+            var _connSproc = new SqlConnection(ConfigurationManager.ConnectionStrings["LoggerConnection"].ConnectionString);
 
-            //_connSproc.Open();
-            //var body =
-            //    "select City, (select stateAbbreviation from States where StateCode = (SELECT StateCode FROM zipcodes WHERE zipcode = " + zipCode + ")),(SELECT timezone FROM [dbo].[TimeZoneByZip] WHERE zip = '" + zipCode + "') from zipcodes where zipcode = " + zipCode;
+            _connSproc.Open();
+            var body =
+                "select City, (select stateAbbreviation from States where StateCode = (SELECT StateCode FROM zipcodes WHERE zipcode = " + zipCode + ")),(SELECT timezone FROM [dbo].[TimeZoneByZip] WHERE zip = '" + zipCode + "') from zipcodes where zipcode = " + zipCode;
 
-            //SqlCommand cmdGetBody = new SqlCommand(
-            //    body, _connSproc
-            //    );
+            SqlCommand cmdGetBody = new SqlCommand(
+                body, _connSproc
+                );
 
-            //cmdGetBody.CommandType = CommandType.Text;
-            //// execute the command
-            //SqlDataReader msgReader = cmdGetBody.ExecuteReader();
+            cmdGetBody.CommandType = CommandType.Text;
+            // execute the command
+            SqlDataReader msgReader = cmdGetBody.ExecuteReader();
 
-            //var value = "";
+            var value = "";
 
-            //while (msgReader.Read())
-            //{
-            //    return value = msgReader.FieldCount > 0 ? msgReader[0].ToString() + "," + msgReader[1].ToString() + "," + msgReader[2].ToString() : null;
-            //}
-            return "Omaha,NE,Central";
+            while (msgReader.Read())
+            {
+                return value = msgReader.FieldCount > 0 ? msgReader[0].ToString() + "," + msgReader[1].ToString() + "," + msgReader[2].ToString() : null;
+            }
+            return value;
         }
 
         public static USTimeZone ComputeTimeZone(string offset)
