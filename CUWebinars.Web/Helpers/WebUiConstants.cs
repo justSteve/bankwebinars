@@ -14,5 +14,7 @@ namespace CUWebinars.Web.Helpers
         public const string ManageUser = "Manage User Details";
         public const string PasswordReset = "Password Reset";
         public const string Register = "Register";
+
+        public const string OpStatus = "Status";
     }
 }

@@ -16,8 +16,24 @@ function showHtmlPopup(url) {
     //'toolbar=1,scrollbars=0,location=1,statusbar=1,menubar=1,resizable=1,width=100,height=100');"
 }
 
+function setPath() {
+    var indexOfHome = location.href.indexOf('Account');
+    var path = '';
+
+    if (indexOfHome > -1)
+        path = location.href.substr(0, location.href.indexOf('Account') - 1);
+    else
+        path = location.href;
+
+    //  IE is a rubbish browser!
+    if (path === '')
+        path = $(location).attr('href');
+    return path;
+}
+
 $(document).ready(function () {
     SetCartState();
+    var path = setPath();
 
     $('[id^="AddToCart"]').on('click', function () {
         $("#frmSignup2 [name='mode']").val($('input[name=mode]:checked', '#ModeOptions').val());
@@ -138,7 +154,7 @@ $(document).ready(function () {
     // Handle form submit ...
     $("#_CreateUserForm").on('submit', function (event) {
         event.preventDefault();
-        var cForm = $(this);
+        var createUserForm = $(this);
         $("#CreateUserHeader").text("Submitting Entry");
         if ($("#FullNameShipping").val() === null || $("#FullNameShipping").val() === "") $("#FullNameShipping").val($("#FullName").val());
         if ($("#ShippingFirstName").val() === null || $("#ShippingFirstName").val() === "") $("#ShippingFirstName").val($("#FirstName").val());
@@ -149,27 +165,53 @@ $(document).ready(function () {
         if ($("#ShippingState").val() === null || $("#ShippingState").val() === "") $("#ShippingState").val($("#State").val());
         if ($("#ShippingZip").val() === null || $("#ShippingZip").val() === "") $("#ShippingZip").val($("#Zip").val());
 
-        $("#ProgressDialogBS").modal('show');
+        //$("#ProgressDialogBS").modal('show');
 
-        var data = cForm.serialize();
-        $.post(
-            cForm.attr("action"), data, function (result, status) {
-                if (result.Success) {
-                    $("#displayLogin").modal("hide");
-                    //Show user name
-                    $.ajax({
-                        url: "/Account/ShowLoginStatus",
-                        cache: false,
-                        success: function (html) {
-                            $("#showLoggedUser").html(html);
-                        }
-                    });
-                } else {
-                    $('.loginErrors').html("Invalid Submission. Try again?");
-                }
+        var data = createUserForm.serialize();
+        var url = createUserForm.attr("action");
+        //$.post(
+        //    createUserForm.attr("action"), data, function (result, status) {
+        //        if (result.Success) {
+        //            $("#displayLogin").modal("hide");
+        //            //Show user name
+        //            $.ajax({
+        //                url: "/Account/ShowLoginStatus",
+        //                cache: false,
+        //                success: function (html) {
+        //                    $("#showLoggedUser").html(html);
+        //                }
+        //            });
+        //        } else {
+        //            $('.loginErrors').html("Invalid Submission. Try again?");
+        //        }
 
-                $("#ProgressDialogBS").modal('hide');
-            }, "json");
+        //        $("#ProgressDialogBS").modal('hide');
+        //    }, "json");
+        $.ajax({
+            type: 'POST',
+            contentType: constants.FormPostContentType,
+            cache: false,
+            url: url,
+            dataType: constants.JsonDataType,
+            data: data,
+            beforeSend: function () {
+                console.log('beforeSend Register Details');
+                // this is where we append a loading image
+                pageObjects.labelEmail.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
+            }
+        }).done(function (data) {
+            console.log('done: ');
+            if (data.Status === 'Success') {
+                console.log('success: ' + data.Status);
+                stateManager.action = '';
+                pageObjects.labelEmail.html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
+                location.assign(path + '/Account/Login'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
+            } else if (data.Status === 'Fail') {
+                pageObjects.labelEmail.html('<span class="label label-important">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
+            }
+        }).fail(function (data) {
+            console.log('failed: ' + data);
+        });
 
         return false;
     });

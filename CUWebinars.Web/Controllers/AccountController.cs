@@ -34,6 +34,7 @@ namespace CUWebinars.Web.Controllers
         private readonly IOrderRepository orderRepository;
         private readonly IOptionRepository optionRepository;
         private readonly IOrderManagementService orderManagementService;
+
         public ILogger Logger { get; set; }
         //public IOrderService orderService;
 
@@ -97,6 +98,7 @@ namespace CUWebinars.Web.Controllers
                 // Attempt to register the user
                 WebUserRepository repo = new WebUserRepository();
                 var myInstitution = membershipService.ProcessInstitutionForUser(model.Institution,
+                    model.Email,
                     Request.QueryString["City"],
                     Request.QueryString["State"],
                     "N",
@@ -426,11 +428,11 @@ namespace CUWebinars.Web.Controllers
             try
             {
                 membershipService.ResetPassword(globalConfig.Tenant, email);
-                cResult.Add("status", "success");
+                cResult.Add(WebUiConstants.OpStatus, "Success");
             }
             catch (Exception)
             {
-                cResult.Add("status", "fail");
+                cResult.Add(WebUiConstants.OpStatus, "Fail");
             }
 
 
@@ -642,6 +644,7 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 var myInstitution = membershipService.ProcessInstitutionForUser(model.RegisterFields.Institution.Trim(),
+                    model.RegisterFields.Email.TrimEnd(),
                     model.RegisterFields.BillingAddress.City.Trim(),
                     model.RegisterFields.BillingAddress.State.Trim(),
                     "N",

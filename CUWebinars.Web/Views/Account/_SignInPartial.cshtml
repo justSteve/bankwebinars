@@ -34,7 +34,7 @@
         @Html.ValidationSummary(true)
         <div style="margin-top: 25px;">
             <input type="button" class="btn-small btn btn-link" onclick="javascript: stateManager.showRegister(); return false;" value="Create New Account?" />
-            <span style="margin-left: 25px;"><input type="button" class="btn-small btn btn-link" onclick="javascript: showPassReset(); return false;" value="Forgot Password?" /></span>
+            <span style="margin-left: 25px;"><input type="button" class="btn-small btn btn-link" onclick="javascript: stateManager.showPassReset(); return false;" value="Forgot Password?" /></span>
         </div>
     </fieldset>
 }

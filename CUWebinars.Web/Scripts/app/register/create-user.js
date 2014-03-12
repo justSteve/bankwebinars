@@ -1,8 +1,11 @@
-﻿var ActionForTheSubmit = 'CheckEmail';
+﻿var registerButtonText = 'Submit Register';
+var nextButtonText = 'Next...';
 
 //  simple C-like enum implementation
 var actions = { CheckEmail: 'CheckEmail', CheckZip: 'CheckZip', GetPassword: 'GetPassword', SubmitLogin: 'SubmitLogin', SubmitRegister: 'SubmitRegister', DisplayBillingAddressFields: 'DisplayBillingAddressFields' };
-var inputActions = { EnterKeyPress: 'EnterKeyPress', ButtonClick: 'ButtonClick' };
+var inputActions = { EnterKeyPress: 'EnterKeyPress', ButtonClick: 'ButtonClick', None: 'None' };
+var buttons = { EnterDiffAddress:'EnterDiffAddress', nonUSAddress: 'nonUSAddress', NotInstitution: 'NotInstitution', ResetPass: 'resetPass', TheSubmit: 'TheSubmit', YesUseAddress: 'YesUseAddress' };
+
 
 var wrapEmail;
 var wrapPass;
@@ -84,20 +87,20 @@ var stateManager = function () {
                 $('#collapseBilling').collapse('show');
                 $('#collapseShipping').parent().show();
                 $('#collapseEmail').collapse('toggle');
-                
-                pageObjects.theSubmitButton.prop('value', 'Submit Register');
+
+                pageObjects.theSubmitButton.prop('value', registerButtonText);
             }
         },
 
-        enterDifferentAddress = function () {
+        enterDifferentAddress = function() {
             console.log('EnterDiffAddress hit');
             pageObjects.modalInstitution.modal('hide');
             pageObjects.wrapEmail.show('slow');
             pageObjects.wrapZip.hide('slow');
 
-            zipCheckRequired = false;
+            zipCheckRequired = true;
 
-            pageObjects.theSubmitButton.prop('value', 'Next...');
+            pageObjects.theSubmitButton.prop('value', nextButtonText);
 
             disregardIntitutionDomain = true;
 
@@ -118,8 +121,8 @@ var stateManager = function () {
             pageObjects.theSubmitButton.prop('value', 'Log In');
         },
 
-        foundInstitutionView = function (data, email) {
-            
+        foundInstitutionView = function(data, email) {
+            stateManager.inputAction = inputActions.None;
             pageObjects.modalInstitution.modal('show');
 
             pageObjects.institution.val(data.Institution);
@@ -129,21 +132,22 @@ var stateManager = function () {
             pageObjects.zipShipping.val(data.Zip);
             pageObjects.streetAddressBilling.val(data.Address);
             pageObjects.cityBilling.val(data.City);
-            pageObjects.cityBilling.val(data.State);
+            pageObjects.stateBilling.val(data.State);
             pageObjects.zipBilling.val(data.Zip);
             pageObjects.labelEmail.html('<span class="label label-success"><b>&nbsp;&nbsp;' + email.substring(email.indexOf('@')) + '</b>&nbsp; domain has been identified.</span>');
             $('#ShowInstitution').html(data.Institution + '<br>' + data.Address + '<br>' + data.City + ', ' + data.State + ' ' + data.Zip + '<br>');
         },
 
-        newPasswordView = function (email) {
+        newPasswordView = function(email) {
             pageObjects.wrapEmail.hide('fast');
             pageObjects.wrapPass.show('fast');
+            $('#RegisterFields_Password').focus();
 
             if (email) {
                 pageObjects.labelEmail.html('<span class="label label-success"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; has been recorded.</span>');
             } else {
                 pageObjects.modalInstitution.modal('hide');
-                pageObjects.labelEmail.fadeOut(500, function () {
+                pageObjects.labelEmail.fadeOut(500, function() {
                     $(this).html('<span class="label label-success">&nbsp;&nbsp;&nbsp;&nbsp;' + pageObjects.emailInput.val() + ' will be used for your email address.</span>');
                     $(this).fadeIn(500);
                 });
@@ -151,9 +155,15 @@ var stateManager = function () {
 
             stateManager.action = actions.GetPassword;
 
+            pageObjects.theSubmitButton.on('mouseenter', function() {
+                if ($('#sameAsBilling:checked').val()) {
+                    setShippingToBilling();
+                }
+            });
+
         },
 
-        newPassWordToNextStep = function () {
+        newPassWordToNextStep = function() {
 
             if (zipCheckRequired) {
                 wrapZip.show('slow');
@@ -166,7 +176,17 @@ var stateManager = function () {
             }
         },
 
-        notInstitutionAddress = function () {
+        nonUsAdddress = function() {
+            pageObjects.wrapZip.hide('slow');
+            console.log('nonUSAddress hit');
+            $('#nonUSAddress').show('slow');
+            $('#collapseEmail').collapse('toggle');
+            $('#collapseBilling').collapse('toggle');
+
+            //TODO:  not sure what to set the state to here. Need to discuss.
+        },
+
+        notInstitutionAddress = function() {
             console.log('NotInstitution hit');
             pageObjects.modalInstitution.modal('hide');
             pageObjects.wrapEmail.show('slow');
@@ -182,126 +202,115 @@ var stateManager = function () {
             $('#collapseShipping textarea').val('Mailing address notes:');
             $('#collapseShipping select').val(0);
 
-            pageObjects.theSubmitButton.prop('value', 'Next...');
+            pageObjects.theSubmitButton.prop('value', nextButtonText);
 
             disregardIntitutionDomain = true;
 
             stateManager.action = actions.CheckEmail;
         },
 
-        passResetView = function () {
+        passResetView = function() {
             pageObjects.login.hide('slow');
             pageObjects.reset.show('slow');
-            pageObjects.MailSent.hide();
+            $('ResetPassEmail').focus();
         },
-        registerView = function () {
+        registerView = function() {
             pageObjects.login.hide('slow');
             pageObjects.register.show('slow');
             stateManager.action = actions.CheckEmail;
         },
 
-        startView = function () {
+        resetPassword = function (normalResetPasswordButton) {
+            console.log('resetPass hit');
+            if (normalResetPasswordButton.data('clicked'))
+                normalResetPasswordButton.removeData('clicked');
+
+            $('#EdgeCaseResetPasswordButton').data('clicked', true);
+            $('form#ResetPasswordForm').submit();
+        },
+
+        startView = function() {
             pageObjects.register.hide();
             pageObjects.reset.hide();
         },
 
-        useRegisteredAddress = function () {
+        useRegisteredAddress = function() {
             console.log('YesUseAddress hit');
 
             zipCheckRequired = false;
 
             stateManager.showNewPasswordInputs();
-
-            //pageObjects.wrapZip.hide('slow');
-            //pageObjects.modalInstitution.modal('hide');
-            //$('#collapseBilling').parent().show();
-            //$('#collapseShipping').parent().show();
-            //$('#collapseBilling').collapse('show');
-            //$('#collapseEmail').collapse('toggle');
-            //pageObjects.labelEmail.fadeOut(500, function () {
-            //    $(this).html('<span class="label label-success">&nbsp;&nbsp;&nbsp;&nbsp;' + pageObjects.emailInput.val() + ' will be used for your email address.</span>');
-            //    $(this).fadeIn(500);
-            //});
-            //stateManager.action = actions.SubmitRegister;
-            //pageObjects.theSubmitButton.prop('value', 'SubmitRegister');
         },
 
-        zipCodeVerified = function (data, zipCode) {
+        zipCodeVerified = function(data, zipCode) {
 
             switch (data.success) {
-                case 'true':
-                    console.log('zipCodeVerified-true hit');
-                    $('#collapseBilling').parent().show();
-                    $('#collapseShipping').parent().show();
-                    $('#collapseEmail').collapse('toggle');
-                    $('#collapseBilling').collapse('toggle');
+            case 'true':
+                console.log('zipCodeVerified-true hit');
+                $('#collapseBilling').parent().show();
+                $('#collapseShipping').parent().show();
+                $('#collapseEmail').collapse('toggle');
+                $('#collapseBilling').collapse('toggle');
 
-                    pageObjects.cityBilling.val(data.City);
-                    pageObjects.stateBilling.val(data.State);
-                    pageObjects.zipBilling.val(zipCode);
-                    $('#TimeZone').val(data.TimeZone);
+                pageObjects.cityBilling.val(data.City);
+                pageObjects.stateBilling.val(data.State);
+                pageObjects.zipBilling.val(zipCode);
+                $('#TimeZone').val(data.TimeZone);
 
-                    pageObjects.labelEmail.html('<span class="label label-success"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</span>');
-                    pageObjects.theSubmitButton.prop('value', 'SubmitRegister');
+                pageObjects.labelEmail.html('<span class="label label-success"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</span>');
+                pageObjects.theSubmitButton.prop('value', registerButtonText);
 
-                    stateManager.action = actions.SubmitRegister;
-                    break;
-                case 'false':
-                    console.log('zipCodeVerified-false hit');
-                    pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode was not found!</span>');
-                    break;
-                case 'invalid format':
-                    console.log('zipCodeVerified-invalidformat hit');
-                    pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode entered was not in the correct format!</span>');
-                    break;
+                stateManager.action = actions.SubmitRegister;
+                break;
+            case 'false':
+                console.log('zipCodeVerified-false hit');
+                pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode was not found!</span>');
+                break;
+            case 'invalid format':
+                console.log('zipCodeVerified-invalidformat hit');
+                pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode entered was not in the correct format!</span>');
+                break;
             }
 
         },
-        submit = function () {
-            if (stateManager.action === actions.CheckEmail) {
+        submit = function() {
+
+            switch (stateManager.action) {
+            case actions.CheckEmail:
                 console.log('CheckEmail hit');
                 checkAndSubmitEmail();
                 if (!stateManager.disregardIntitutionDomain)
                     stateManager.disregardIntitutionDomain = true;
-                pageObjects.theSubmitButton.prop('value', 'Next...');
-                return false;
-            }
-
-            if (stateManager.action === actions.GetPassword) {
+                pageObjects.theSubmitButton.prop('value', nextButtonText);
+                break;
+            case actions.GetPassword:
                 stateManager.newPassWordToNextStep();
-                return false;
-            }
-
-            if (stateManager.action === actions.CheckZip) {
+                break;
+            case actions.CheckZip:
                 console.log('CheckZip hit');
                 $('#ZipChecker').val($('#getZip').val());
                 $('form#checkZip').submit();
-                return false;
-            }
-
-            if (stateManager.action === actions.SubmitRegister) {
+                break;
+            case actions.SubmitRegister:
                 console.log('SubmitRegister hit');
                 stateManager.action = '';
                 if (pageObjects.createUserForm.valid() == '1') {
                     submitCreateUserForm();
                 }
-                return false;
-            }
-
-            if (stateManager.action === actions.SubmitLogin) {
+                break;
+            case actions.SubmitLogin:
                 console.log('submitLogin hit');
                 $('#Password').val($('#Password1').val());
                 $('#Email').val($('#Email1').val());
                 $('form#frmSignIn').submit();
-                return false;
-            }
-
-            if (stateManager.action === actions.DisplayBillingAddressFields) {
+                break;
+            case actions.DisplayBillingAddressFields:
                 displayBillingFields();
+                break;
             }
         },
 
-        init = function (args) {
+        init = function(args) {
             stateManager.action = actions.CheckEmail;
             stateManager.inputAction = inputActions.ButtonClick;
             stateManager.disregardIntitutionDomain = false;
@@ -318,7 +327,9 @@ var stateManager = function () {
         initialize: init,
         inputAction: inputAction,
         newPassWordToNextStep: newPassWordToNextStep,
+        nonUsAdddressInvoked: nonUsAdddress,
         notInstitutionAddress: notInstitutionAddress,
+        resetPassword: resetPassword,
         showNewPasswordInputs: newPasswordView,
         showPassReset: passResetView,
         showRegister: registerView,
@@ -339,7 +350,7 @@ function checkAndSubmitEmail() {
 }
 
 function checkAndSubmitZip() {
-    pageObjects.theSubmitButton.prop('value', 'Next...');
+    pageObjects.theSubmitButton.prop('value', nextButtonText);
     console.log('checkAndSubmitZip');
     //$('#emailAddress').val($('#checkEmail').val());
     $('#checkZip').submit();
@@ -355,6 +366,12 @@ function submitCreateUserForm() {
     if (valid) {
         console.log('createUserForm submitted.');
         pageObjects.createUserForm.submit();
+
+        pageObjects.theSubmitButton.off('mouseenter', function () {
+            if ($('#sameAsBilling:checked').val()) {
+                setShippingToBilling();
+            }
+        });
     }
 }
 
@@ -389,6 +406,21 @@ function getMainPath(pathToCheck) {
     return pathToCheck;
 }
 
+function setPath() {
+    var indexOfHome = location.href.indexOf('Account');
+    var path = '';
+
+    if (indexOfHome > -1)
+        path = location.href.substr(0, location.href.indexOf('Account') - 1);
+    else
+        path = location.href;
+
+    //  IE is a rubbish browser!
+    if (path === '')
+        path = $(location).attr('href');
+    return path;
+}
+
 // document.ready starts here
 $(function () {
     //setup ajax error handling
@@ -404,25 +436,25 @@ $(function () {
         }
     });
 
+    $('#collapseBilling').parent().hide();
+    $('#collapseShipping').parent().hide();
+
     register = $('#register');
     reset = $('#reset');
 
     stateManager.initialize();
 
-    wrapEmail = $('#wrapEmail'),
-    wrapPass = $('#wrapPass'),
-    wrapReset = $('#wrapReset'),
-    wrapZip = $('#wrapZip'),
+    wrapEmail = $('#wrapEmail');
+    wrapPass = $('#wrapPass');
+    wrapReset = $('#wrapReset');
+    wrapZip = $('#wrapZip');
 
-    $('#collapseBilling').parent().hide();
-    $('#collapseShipping').parent().hide();
+
     pageObjects.wrapZip.hide();
     pageObjects.wrapPass.hide();
     pageObjects.wrapReset.hide();
     $('#nonUSAddress').hide();
     $('#getFirstLast').hide();
-    
-    var indexOfHome = location.href.indexOf('Account');
 
     theSubmitButton = $('#TheSubmitButton');
     emailInput = $('#RegisterFields_Email');
@@ -451,16 +483,7 @@ $(function () {
     institution = $('#RegisterFields_Institution');
 
 
-    var path = '';
-
-    if (indexOfHome > -1)
-        path = location.href.substr(0, location.href.indexOf('Account') - 1);
-    else
-        path = location.href;
-
-    //  IE is a rubbish browser!
-    if (path === '')
-        path = $(location).attr('href');
+    var path = setPath();
 
     pageObjects.emailInput.bind('change keyup', function () {
         if ($(this).validate().checkForm()) {
@@ -469,16 +492,51 @@ $(function () {
             pageObjects.theSubmitButton.addClass('button_disabled').attr('disabled', true);
         }
     });
-    $('[name=TheSubmit]').prop('value', 'Next...');
+    $('[name=TheSubmit]').prop('value', nextButtonText);
 
-    //$('[data-val-email]').keyup(function () { return false; });
-    //$('[data-val-email]').blur(function () { return true; });
 
     $('input').keypress(function (event) {
         var enterOkClass = $(this).hasClass('enterSubmit');
+        var inputElementTriggered = event.currentTarget.name;
+        var normalResetPasswordButton = $('#NormalResetPasswordButton');
+
         if (event.which == 13) {
+
+            if (pageObjects.modalInstitution.filter(':visible').length > 0
+                && inputElementTriggered !== buttons.YesUseAddress
+                && inputElementTriggered !== buttons.EnterDiffAddress
+                && inputElementTriggered !== buttons.NotInstitution) {
+                return false;
+            }
+
+            stateManager.inputAction = inputActions.EnterKeyPress;
+
+            switch (inputElementTriggered) {
+                case 'RegisterFields_Password':
+                case 'RegisterFields.ConfirmPassword':
+                case 'RegisterFields.Email':
+                case buttons.TheSubmit:
+                    console.log('ActionForTheSubmit = ' + stateManager.action);
+                    stateManager.submit(); break;
+                case buttons.nonUSAddress: stateManager.nonUsAdddressInvoked(); break;
+                case 'Email':
+                case buttons.ResetPass: stateManager.resetPassword(normalResetPasswordButton); break;
+                case buttons.YesUseAddress: stateManager.useRegisteredAddress(); break;
+                case buttons.EnterDiffAddress: stateManager.enterDifferentAddress(); break;
+                case buttons.NotInstitution: stateManager.notInstitutionAddress(); break;
+                default:
+                    if (pageObjects.theSubmitButton.val() === registerButtonText) {
+                        if ($('#sameAsBilling:checked').val()) {
+                            setShippingToBilling();
+                        }
+                        stateManager.action = actions.SubmitRegister;
+                        stateManager.submit();
+                    }
+            }
+
             console.log(stateManager.action);
             event.preventDefault();
+
             //if (ActionForTheSubmit === 'CheckEmail') {
             //    //ActionForTheSubmit = 'CheckZip';
             //    if (pageObjects.emailInput.valid() == '1') {
@@ -492,31 +550,31 @@ $(function () {
 
             //    return false;
             //}
-            if (stateManager.action === actions.GetPassword) {
+            //if (stateManager.action === actions.GetPassword) {
 
-                stateManager.inputAction = inputActions.EnterKeyPress;
-                stateManager.newPassWordToCheckZip();
-                return false;
-            }
-
-            //if (ActionForTheSubmit === 'SubmitRegister') {
-
-            //    if (pageObjects.createUserForm.valid() == '1') {
-            //        submitCreateUserForm();
-            //    }
+            //    stateManager.inputAction = inputActions.EnterKeyPress;
+            //    stateManager.newPassWordToCheckZip();
             //    return false;
             //}
-            if (stateManager.action === actions.SubmitLogin) {
 
-                $('#Password').val($('#Password1').val());
-                $('#Email').val($('#Email1').val());
-                $('form#frmSignIn').submit();
+            ////if (ActionForTheSubmit === 'SubmitRegister') {
 
-                return false;
-            }
-            if (!enterOkClass) {
-                return false;
-            }
+            ////    if (pageObjects.createUserForm.valid() == '1') {
+            ////        submitCreateUserForm();
+            ////    }
+            ////    return false;
+            ////}
+            //if (stateManager.action === actions.SubmitLogin) {
+
+            //    $('#Password').val($('#Password1').val());
+            //    $('#Email').val($('#Email1').val());
+            //    $('form#frmSignIn').submit();
+
+            //    return false;
+            //}
+            //if (!enterOkClass) {
+            //    return false;
+            //}
         }
     });
 
@@ -529,7 +587,8 @@ $(function () {
         stateManager.inputAction = inputActions.ButtonClick;
 
         if (stateManager.action === '') {
-            alert('There registration has encountered a problem. You\'ll need to start the registration process again.'); // todo: give this error msg a home.
+            pageObjects.labelEmail.html('<span class="label label-important">&nbsp;&nbsp;There registration has encountered a problem. You\'ll need to start the registration process again.</span>');
+            
             return false;
         }
 
@@ -545,38 +604,17 @@ $(function () {
         // YesUseAddress
         // EnterDiffAddress
         // NotInstitution
-        if (clickedButton === 'TheSubmit') {
-            console.log('ActionForTheSubmit = ' + stateManager.action);
-            stateManager.submit();
-        }
 
-        if (clickedButton === 'nonUSAddress') {
-            pageObjects.wrapZip.hide('slow');
-            console.log('nonUSAddress hit');
-            $('#nonUSAddress').show('slow');
-            $('#collapseEmail').collapse('toggle');
-            $('#collapseBilling').collapse('toggle');
-        }
-
-        if (clickedButton === 'resetPass') {
-            console.log('resetPass hit');
-            if (normalResetPasswordButton.data('clicked'))
-                normalResetPasswordButton.removeData('clicked');
-
-            $('#EdgeCaseResetPasswordButton').data('clicked', true);
-            $('form#ResetPasswordForm').submit();
-        }
-
-        if (clickedButton === 'YesUseAddress') {
-            stateManager.useRegisteredAddress();
-        }
-
-        if (clickedButton === 'EnterDiffAddress') {
-            stateManager.enterDifferentAddress();
-        }
-
-        if (clickedButton === 'NotInstitution') {
-            stateManager.notInstitutionAddress();
+        switch (clickedButton) {
+            case buttons.TheSubmit:
+                console.log('ActionForTheSubmit = ' + stateManager.action);
+                stateManager.submit(); break;
+            case buttons.nonUSAddress: stateManager.nonUsAdddressInvoked(); break;
+            case buttons.ResetPass: stateManager.resetPassword(normalResetPasswordButton); break;
+            case buttons.YesUseAddress: stateManager.useRegisteredAddress(); break;
+            case buttons.EnterDiffAddress: stateManager.enterDifferentAddress();break;
+            case buttons.NotInstitution: stateManager.notInstitutionAddress();break;
+        default:
         }
     }));
 
@@ -626,17 +664,17 @@ $(function () {
 
     pageObjects.createUserForm.on('submit', function (e) {
         e.preventDefault();
-        alert('createUserForm');
-        if (ActionForTheSubmit != 'SubmitLogin') {
+
+        if (stateManager.action !== actions.SubmitLogin) {
             console.log('non-valid form');
             return false;
         }
-        alert('is ' + ActionForTheSubmit);
 
         if (pageObjects.createUserForm.valid() != '1') {
             console.log('non-valid form');
             return false;
         }
+
         var url = '/Account/Register';
         console.log('Submitting Register Details');
 
@@ -656,10 +694,10 @@ $(function () {
             console.log('done: ');
             if (data.Status === 'Success') {
                 console.log('success: ' + data.Status);
-                ActionForTheSubmit = '';
+                stateManager.action = '';
                 pageObjects.labelEmail.html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
                 location.assign(path + '/Account/Login'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
-            } else if (data.status === 'Fail') {
+            } else if (data.Status === 'Fail') {
                 pageObjects.labelEmail.html('<span class="label label-information">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
             }
         }).fail(function (data) {
@@ -786,17 +824,13 @@ $(function () {
 
 
     pageObjects.modalInstitution.on('hidden', function (e) {
-
+        stateManager.inputAction = inputActions.None;
         if (pageObjects.wrapZip.is(':visible')) {
             stateManager.action = actions.CheckEmail;
         }
 
     });
 
-    $('#TheSubmitButton').on('mouseenter', function () {
-        if ($('#sameAsBilling:checked').val()) {
-            setShippingToBilling();
-        }
-    });
+
 
 });

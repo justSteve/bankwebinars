@@ -34,6 +34,7 @@ namespace CUWebinars.Business.AccountService
         bool LogInUser(string tenant, string emailAddress, string password, bool persistent);
         bool LogOutUser();
         Institution ProcessInstitutionForUser(string institutionName,
+            string email,
             string city,
             string state,
             string regIdentifier,

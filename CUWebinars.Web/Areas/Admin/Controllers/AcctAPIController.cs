@@ -41,6 +41,7 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
                 WebUserRepository repo = new WebUserRepository();
 
                 var myInstitution = membershipService.ProcessInstitutionForUser(model.Institution,
+                    model.Email,
                     model.BillingAddress.City,
                     model.BillingAddress.State,
                     "N",

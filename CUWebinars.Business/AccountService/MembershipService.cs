@@ -1,4 +1,5 @@
-﻿using BrockAllen.MembershipReboot;
+﻿using System.Diagnostics;
+using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
@@ -137,6 +138,7 @@ namespace CUWebinars.Business.AccountService
 
 
         public Institution ProcessInstitutionForUser(string institutionName,
+            string email, 
             string city,
             string state,
             string regIdentifier,
@@ -159,6 +161,8 @@ namespace CUWebinars.Business.AccountService
             newInstitution.Zip = zip;
             newInstitution.RegIdentifier = regIdentifier;
             newInstitution.InstitutionType = institutionType;
+
+            newInstitution.domainName = new string(email.SkipWhile(ltr => ltr != '@').Skip(1).ToArray());
 
             institutionRepository.Add(newInstitution);
 
@@ -212,7 +216,7 @@ namespace CUWebinars.Business.AccountService
                     !webUser.Institution.InstitutionName.Equals(institutionName, StringComparison.OrdinalIgnoreCase))
                 {
 
-                    webUser.Institution = ProcessInstitutionForUser(institutionName, billingAddress.City, billingAddress.State, "N", "New", billingAddress.Zip);
+                    webUser.Institution = ProcessInstitutionForUser(institutionName, email, billingAddress.City, billingAddress.State, "N", "New", billingAddress.Zip);
                 }
 
                 billingAddressFromDb.City = billingAddress.City;
