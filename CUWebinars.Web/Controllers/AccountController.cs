@@ -590,8 +590,8 @@ namespace CUWebinars.Web.Controllers
 
             resultObject.Add("email", "wasNotFound");
 
-            //if(disregardIntitutionDomain)
-            //    return Json(resultObject, JsonRequestBehavior.AllowGet);
+            if (disregardIntitutionDomain)
+                return Json(resultObject, JsonRequestBehavior.AllowGet);
 
             var domain = email.Split('@')[1];
             var institution = membershipService.GetInstitutionByDomain(domain);

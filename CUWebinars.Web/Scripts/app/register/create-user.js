@@ -2,7 +2,7 @@
 
 //  simple C-like enum implementation
 var actions = { CheckEmail: 'CheckEmail', CheckZip: 'CheckZip', GetPassword: 'GetPassword', SubmitLogin: 'SubmitLogin', SubmitRegister: 'SubmitRegister', DisplayBillingAddressFields: 'DisplayBillingAddressFields' };
-var inputAction = { EnterKeyPress: 'EnterKeyPress', ButtonClick: 'ButtonClick' };
+var inputActions = { EnterKeyPress: 'EnterKeyPress', ButtonClick: 'ButtonClick' };
 
 var wrapEmail;
 var wrapPass;
@@ -68,13 +68,26 @@ var pageObjects = {
     wrapZip: wrapZip || $('#wrapZip'),
     wrapPass: wrapPass || $('#wrapPass'),
     zipBilling: zipBilling || $('#RegisterFields_BillingAddress_Zip'),
-    zipShipping: zipShipping || $('#RegisterFields_ShippingAddress_Zip'),
+    zipShipping: zipShipping || $('#RegisterFields_ShippingAddress_Zip')
 };
 
 var stateManager = function () {
 
     var action = null,
         inputAction = null,
+        disregardIntitutionDomain = null,
+        zipCheckRequired = null,
+
+        displayBillingFields = function() {
+            if (pageObjects.emailInput.valid() == '1') {
+                $('#collapseBilling').parent().show();
+                $('#collapseBilling').collapse('show');
+                $('#collapseShipping').parent().show();
+                $('#collapseEmail').collapse('toggle');
+                
+                pageObjects.theSubmitButton.prop('value', 'Submit Register');
+            }
+        },
 
         enterDifferentAddress = function () {
             console.log('EnterDiffAddress hit');
@@ -82,21 +95,31 @@ var stateManager = function () {
             pageObjects.wrapEmail.show('slow');
             pageObjects.wrapZip.hide('slow');
 
-            //  Clear the billing and shipping addresses
-            $('#collapseBilling input').val('');
-            $('#collapseBilling textarea').val('Mailing address notes:');
-            $('#collapseBilling select').val(0);
+            zipCheckRequired = false;
 
-            $('#collapseShipping input:not("#sameAsBilling")').val('');
-            $('#collapseShipping textarea').val('Mailing address notes:');
-            $('#collapseShipping select').val(0);
+            pageObjects.theSubmitButton.prop('value', 'Next...');
 
-            pageObjects.theSubmitButton.prop('value', 'Submit New Email...');
-            stateManager.action = actions.DisplayBillingAddressFields;
+            disregardIntitutionDomain = true;
+
+            stateManager.action = actions.CheckEmail;
+        },
+
+        resetPasswordOrLoginView = function(email) {
+            //TODO: Add a bit of javascript that will hijack an 'Enter' key and will fire the
+            // 'blur' method on the text input (id='Email1'). The intent is to fire the
+            // blur both on the actual blur (user clicks outside the text box or tabs off
+            // the text box) or on an 'Enter' key.
+            $('#Email1').val(email);
+            $('#ResetPassEmail').val(email);
+            pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is already on file.</span>');
+            pageObjects.wrapReset.show('slow');
+            pageObjects.wrapEmail.hide('slow');
+            stateManager.action = actions.SubmitLogin;
+            pageObjects.theSubmitButton.prop('value', 'Log In');
         },
 
         foundInstitutionView = function (data, email) {
-            //pageObjects.wrapEmail.hide('fast');
+            
             pageObjects.modalInstitution.modal('show');
 
             pageObjects.institution.val(data.Institution);
@@ -124,16 +147,23 @@ var stateManager = function () {
                     $(this).html('<span class="label label-success">&nbsp;&nbsp;&nbsp;&nbsp;' + pageObjects.emailInput.val() + ' will be used for your email address.</span>');
                     $(this).fadeIn(500);
                 });
-
             }
 
             stateManager.action = actions.GetPassword;
+
         },
 
-        newPassWordToCheckZip = function () {
-            wrapZip.show('slow');
-            wrapPass.hide('slow');
-            stateManager.action = actions.CheckZip;
+        newPassWordToNextStep = function () {
+
+            if (zipCheckRequired) {
+                wrapZip.show('slow');
+                wrapPass.hide('slow');
+                stateManager.action = actions.CheckZip;
+            } else {
+                displayBillingFields();
+                stateManager.action = actions.SubmitRegister;
+                zipCheckRequired = true;
+            }
         },
 
         notInstitutionAddress = function () {
@@ -143,16 +173,18 @@ var stateManager = function () {
             pageObjects.wrapZip.hide('slow');
             pageObjects.labelEmail.html('<span class="label label-info">&nbsp;&nbsp;&nbsp;&nbsp;Proceed or enter a different email address.</span>');
 
-            pageObjects.institution.val('');
-            pageObjects.streetAddressShipping.val('');
-            pageObjects.cityShipping.val('');
-            pageObjects.stateShipping.val('');
-            pageObjects.zipShipping.val('');
-            pageObjects.streetAddressBilling.val('');
-            pageObjects.cityBilling.val('');
-            pageObjects.cityBilling.val('');
-            pageObjects.zipBilling.val('');
+            //  Clear the billing and shipping addresses
+            $('#collapseBilling input').val('');
+            $('#collapseBilling textarea').val('Mailing address notes:');
+            $('#collapseBilling select').val(0);
+
+            $('#collapseShipping input:not("#sameAsBilling")').val('');
+            $('#collapseShipping textarea').val('Mailing address notes:');
+            $('#collapseShipping select').val(0);
+
             pageObjects.theSubmitButton.prop('value', 'Next...');
+
+            disregardIntitutionDomain = true;
 
             stateManager.action = actions.CheckEmail;
         },
@@ -175,6 +207,8 @@ var stateManager = function () {
 
         useRegisteredAddress = function () {
             console.log('YesUseAddress hit');
+
+            zipCheckRequired = false;
 
             stateManager.showNewPasswordInputs();
 
@@ -227,12 +261,14 @@ var stateManager = function () {
             if (stateManager.action === actions.CheckEmail) {
                 console.log('CheckEmail hit');
                 checkAndSubmitEmail();
+                if (!stateManager.disregardIntitutionDomain)
+                    stateManager.disregardIntitutionDomain = true;
                 pageObjects.theSubmitButton.prop('value', 'Next...');
                 return false;
             }
 
             if (stateManager.action === actions.GetPassword) {
-                stateManager.newPassWordToCheckZip();
+                stateManager.newPassWordToNextStep();
                 return false;
             }
 
@@ -261,21 +297,15 @@ var stateManager = function () {
             }
 
             if (stateManager.action === actions.DisplayBillingAddressFields) {
-                if (pageObjects.emailInput.valid() == '1') {
-                    $('#collapseBilling').parent().show();
-                    $('#collapseBilling').collapse('show');
-                    $('#collapseShipping').parent().show();
-                    $('#collapseEmail').collapse('toggle');
-
-                    stateManager.action = actions.SubmitRegister;
-                    pageObjects.theSubmitButton.prop('value', 'SubmitRegister');
-                    return false;
-                }
+                displayBillingFields();
             }
         },
 
         init = function (args) {
             stateManager.action = actions.CheckEmail;
+            stateManager.inputAction = inputActions.ButtonClick;
+            stateManager.disregardIntitutionDomain = false;
+            zipCheckRequired = true;
             startView();
         };
 
@@ -284,13 +314,15 @@ var stateManager = function () {
         action: action,
         enterDifferentAddress: enterDifferentAddress,
         foundInstitution: foundInstitutionView,
+        disregardIntitutionDomain: disregardIntitutionDomain,
         initialize: init,
         inputAction: inputAction,
-        newPassWordToCheckZip: newPassWordToCheckZip,
+        newPassWordToNextStep: newPassWordToNextStep,
         notInstitutionAddress: notInstitutionAddress,
         showNewPasswordInputs: newPasswordView,
         showPassReset: passResetView,
         showRegister: registerView,
+        showResetPasswordOrLoginView: resetPasswordOrLoginView,
         submit: submit,
         useRegisteredAddress: useRegisteredAddress,
         zipCodeVerified: zipCodeVerified
@@ -389,8 +421,7 @@ $(function () {
     pageObjects.wrapReset.hide();
     $('#nonUSAddress').hide();
     $('#getFirstLast').hide();
-
-    var disregardIntitutionDomain = false;
+    
     var indexOfHome = location.href.indexOf('Account');
 
     theSubmitButton = $('#TheSubmitButton');
@@ -463,7 +494,7 @@ $(function () {
             //}
             if (stateManager.action === actions.GetPassword) {
 
-                stateManager.inputAction = inputAction.EnterKeyPress;
+                stateManager.inputAction = inputActions.EnterKeyPress;
                 stateManager.newPassWordToCheckZip();
                 return false;
             }
@@ -492,15 +523,15 @@ $(function () {
 
     $('body').on('click', 'input:button', (function (e, data) {
 
-        if (stateManager.inputAction === inputAction.EnterKeyPress)
-            return;
+        if (stateManager.inputAction === inputActions.EnterKeyPress)
+            return false;
+
+        stateManager.inputAction = inputActions.ButtonClick;
 
         if (stateManager.action === '') {
             alert('There registration has encountered a problem. You\'ll need to start the registration process again.'); // todo: give this error msg a home.
             return false;
         }
-
-        stateManager.inputAction = inputAction.ButtonClick;
 
         var normalResetPasswordButton = $('#NormalResetPasswordButton');
         var clickedButton = e.currentTarget.name;
@@ -519,7 +550,6 @@ $(function () {
             stateManager.submit();
         }
 
-
         if (clickedButton === 'nonUSAddress') {
             pageObjects.wrapZip.hide('slow');
             console.log('nonUSAddress hit');
@@ -527,7 +557,6 @@ $(function () {
             $('#collapseEmail').collapse('toggle');
             $('#collapseBilling').collapse('toggle');
         }
-
 
         if (clickedButton === 'resetPass') {
             console.log('resetPass hit');
@@ -555,7 +584,6 @@ $(function () {
     $('#collapseShipping').on('shown', function () {
         if ($('#sameAsBilling:checked').val()) {
             setShippingToBilling();
-
         }
     });
     //var availableTags = [];
@@ -653,7 +681,7 @@ $(function () {
                 cache: false,
                 url: jsonUrl,
                 dataType: constants.JsonDataType,
-                data: { email: email, disregardIntitutionDomain: disregardIntitutionDomain },
+                data: { email: email, disregardIntitutionDomain: stateManager.disregardIntitutionDomain },
                 beforeSend: function () {
                     // this is where we append a loading image
                     pageObjects.labelEmail.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</span>');
@@ -661,18 +689,8 @@ $(function () {
             }).done(function (data) {
                 // successful request; do something with the data
 
-
                 if (data.success === 'foundExisting') {
-                    //TODO: Add a bit of javascript that will hijack an 'Enter' key and will fire the
-                    // 'blur' method on the text input (id='Email1'). The intent is to fire the
-                    // blur both on the actual blur (user clicks outside the text box or tabs off
-                    // the text box) or on an 'Enter' key.
-                    ActionForTheSubmit = 'SubmitLogin';
-                    $('#Email1').val(email);
-                    $('#ResetPassEmail').val(email);
-                    pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is already on file.</span>');
-                    pageObjects.wrapReset.show('slow');
-                    pageObjects.wrapEmail.hide('slow');
+                    stateManager.showResetPasswordOrLoginView(email);
 
                 } else if (data.success === 'foundInstitution') {
                     stateManager.foundInstitution(data, email);
