@@ -50,7 +50,7 @@ namespace CUWebinars.Business.Repository
         {
             using (var context = new TTSWebinarsContext())
             {
-                return context.Orders.Where(o => o.WebUser.idUser == id).ToList();
+                return context.Orders.Include(o => o.OrderRows).Where(o => o.WebUser.idUser == id).ToList();
             }
         }
 
