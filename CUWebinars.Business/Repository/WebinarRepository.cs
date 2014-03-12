@@ -68,10 +68,13 @@ namespace CUWebinars.Business.Repository
 
         public IQueryable<Webinar> GetByTopic(int topicId)
         {
-            var webinars = items.Where(w => w.WebinarTopicXrefs
+            var webinars = items.Include(i => i.WebinarTopicXrefs.Select(w => w.Topic))
+                .Include(i => i.Presenter.WebUser)
+                .Where(w => w.WebinarTopicXrefs
                 .Any(t => t.idTopic == topicId)
                     && (w.Status == WebinarStatus.Recorded || w.Status == WebinarStatus.Scheduled));
             //Logger.Debug("TopicId=" + topicId); 
+
             return webinars;
         }
 
