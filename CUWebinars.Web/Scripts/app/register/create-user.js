@@ -1,11 +1,17 @@
 ﻿var registerButtonText = 'Submit Register';
 var nextButtonText = 'Next...';
-// TODO: Inprogress indicator missing on ResetPW
-//ResetPW text feedback missing
-//Post ajax/return from 'Yes But enter diff address') dies.
-// phone/address missing on inst copy.
 
+// TODO: Inprogress indicator missing on ResetPW via:
+//  EdgeCaseResetPasswordButton
 
+//ResetPW ajax/text feedback missing
+//Post ajax/return from 'Yes But enter diff address') needs UI something
+// phone/address missing on inst copy. or is it.
+
+// the reply  button lable is: '  Reset Instructions sent!' 
+// but is missing the bit of text narrative about checking email
+
+// was a <P> wrapped in a <div> i think.
 
 //  simple C-like enum implementation
 var actions = { CheckEmail: 'CheckEmail', CheckZip: 'CheckZip', GetPassword: 'GetPassword', SubmitLogin: 'SubmitLogin', SubmitRegister: 'SubmitRegister', DisplayBillingAddressFields: 'DisplayBillingAddressFields' };
@@ -124,7 +130,7 @@ var stateManager = function () {
         },
 
         resetPasswordOrLoginView = function(email) {
-
+            console.log("call resetPasswordOrLoginView: " + email);
             $('#Email1').val(email);
             $('#ResetPassEmail').val(email);
             pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is already on file.</span>');
@@ -142,7 +148,8 @@ var stateManager = function () {
             pageObjects.theSubmitButton.prop('value', 'Log In');
         },
 
-        foundInstitutionView = function(data, email) {
+        foundInstitutionView = function (data, email) {
+            console.log("call foundInstitutionView: " + email);
             stateManager.inputAction = inputActions.None;
             pageObjects.modalInstitution.modal('show');
 
@@ -160,9 +167,11 @@ var stateManager = function () {
         },
 
         newPasswordView = function(email) {
+            console.log("call newPasswordView: " + email);
             pageObjects.wrapEmail.hide('fast');
 
-            var showPwdInput = $.Deferred(function() {
+            var showPwdInput = $.Deferred(function () {
+                console.log("Deferred newPasswordView: " + email);
                 pageObjects.wrapPass.show('fast');
             });
 
@@ -184,6 +193,7 @@ var stateManager = function () {
 
             stateManager.action = actions.GetPassword;
 
+            
             pageObjects.theSubmitButton.on('mouseenter', function() {
                 if ($('#sameAsBilling:checked').val()) {
                     setShippingToBilling();
@@ -195,11 +205,13 @@ var stateManager = function () {
         newPassWordToNextStep = function() {
 
             if ($('#RegisterFields_Password').nextAll('span:last').hasClass('field-validation-error')) {
+                console.log("call RegisterFields_Password");
                 stateManager.inputAction = inputActions.None;
                 return false;
             }
 
             if (zipCheckRequired) {
+                console.log("call zipCheckRequired");
                 wrapPass.hide('slow');
                 stateManager.action = actions.CheckZip;
 
@@ -213,6 +225,8 @@ var stateManager = function () {
 
             } else {
                 displayBillingFields();
+
+                //TODO: does it make sense to fire a formfield validation at this point?
                 stateManager.action = actions.SubmitRegister;
                 zipCheckRequired = true;
             }
@@ -226,6 +240,9 @@ var stateManager = function () {
             $('#collapseBilling').collapse('toggle');
 
             //TODO:  not sure what to set the state to here. Need to discuss.
+            // I'd like to transition this code block so as to only display the 
+            //  'NonUSAddress Notes' input when invalid zip is detected.
+            // 
         },
 
         notInstitutionAddress = function() {
@@ -251,11 +268,13 @@ var stateManager = function () {
             stateManager.action = actions.CheckEmail;
         },
 
-        passResetView = function() {
+        passResetView = function () {
+            console.log("call passResetView");
             pageObjects.login.hide('slow');
             
 
             var showResetInput = $.Deferred(function () {
+                //TODO: inprocess indicator here?
                 pageObjects.reset.show('slow');
             });
 
