@@ -1,5 +1,11 @@
 ﻿var registerButtonText = 'Submit Register';
 var nextButtonText = 'Next...';
+// TODO: Inprogress indicator missing on ResetPW
+//ResetPW text feedback missing
+//Post ajax/return from 'Yes But enter diff address') dies.
+// phone/address missing on inst copy.
+
+
 
 //  simple C-like enum implementation
 var actions = { CheckEmail: 'CheckEmail', CheckZip: 'CheckZip', GetPassword: 'GetPassword', SubmitLogin: 'SubmitLogin', SubmitRegister: 'SubmitRegister', DisplayBillingAddressFields: 'DisplayBillingAddressFields' };
@@ -325,7 +331,8 @@ var stateManager = function () {
             }
 
         },
-        submit = function() {
+
+        submit = function () {
 
             switch (stateManager.action) {
             case actions.CheckEmail:
@@ -345,7 +352,8 @@ var stateManager = function () {
                 break;
             case actions.SubmitRegister:
                 console.log('SubmitRegister hit');
-                stateManager.action = '';
+                //TODO: provide an exitscreen confirming account creation.
+                stateManager.action = 'PostCreateAccount';
                 if (pageObjects.createUserForm.valid() == '1') {
                     submitCreateUserForm();
                 }
@@ -611,7 +619,7 @@ $(function () {
         stateManager.inputAction = inputActions.ButtonClick;
 
         if (stateManager.action === '') {
-            pageObjects.labelEmail.html('<span class="label label-important">&nbsp;&nbsp;There registration has encountered a problem. You\'ll need to start the registration process again.</span>');
+            pageObjects.labelEmail.html('<span class="label label-important">&nbsp;&nbsp;There registration has encountered a problem. Please refresh the page and re-start the registration process or call Tech Support at 800-831-0678 ext. 706.</span>');
             
             return false;
         }
@@ -715,13 +723,14 @@ $(function () {
                 pageObjects.labelEmail.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
             }
         }).done(function (data) {
-            console.log('done: ');
+            console.log('done Register Details');
             if (data.Status === 'Success') {
-                console.log('success: ' + data.Status);
+                console.log('success  Register Details');
                 stateManager.action = '';
                 pageObjects.labelEmail.html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
-                location.assign(path + '/Account/Login'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
+                location.assign(path + '/'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
             } else if (data.Status === 'Fail') {
+                console.log('statusFail  Register Details');
                 pageObjects.labelEmail.html('<span class="label label-information">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
             }
         }).fail(function (data) {
