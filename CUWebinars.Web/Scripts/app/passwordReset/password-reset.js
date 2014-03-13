@@ -52,6 +52,7 @@ $(function () {
                     crunchingLabel.html('<span class="label label-success">&nbsp; Reset Instructions sent!</span>');
                     $('#wrapReset div.container').hide("slow");
                     $('#sent2Address').html(email);
+                    pageObjects.theSubmitButton.hide();
                 } else {
                     crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;Error. Please retry...</span>');
                 }

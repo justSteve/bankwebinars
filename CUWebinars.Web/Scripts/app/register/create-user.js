@@ -84,9 +84,19 @@ var stateManager = function () {
         displayBillingFields = function() {
             if (pageObjects.emailInput.valid() == '1') {
                 $('#collapseBilling').parent().show();
-                $('#collapseBilling').collapse('show');
+
+                var showBillingInputs = $.Deferred(function() {
+                    return $('#collapseBilling').collapse('show');
+                });
+
+                $.when(showBillingInputs.resolve()).then(function() {
+                    pageObjects.fullName.focus();
+                });
+                
                 $('#collapseShipping').parent().show();
                 $('#collapseEmail').collapse('toggle');
+
+
 
                 pageObjects.theSubmitButton.prop('value', registerButtonText);
             }
@@ -108,17 +118,14 @@ var stateManager = function () {
         },
 
         resetPasswordOrLoginView = function(email) {
-            //TODO: Add a bit of javascript that will hijack an 'Enter' key and will fire the
-            // 'blur' method on the text input (id='Email1'). The intent is to fire the
-            // blur both on the actual blur (user clicks outside the text box or tabs off
-            // the text box) or on an 'Enter' key.
+
             $('#Email1').val(email);
             $('#ResetPassEmail').val(email);
             pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is already on file.</span>');
             pageObjects.wrapEmail.hide('slow');
 
             var showLoginInput = $.Deferred(function() {
-                pageObjects.wrapReset.show('slow');
+                return pageObjects.wrapReset.show('slow');
             });
 
             $.when(showLoginInput.resolve()).then(function() {
@@ -185,13 +192,13 @@ var stateManager = function () {
                 wrapPass.hide('slow');
                 stateManager.action = actions.CheckZip;
 
-            var showGetZipInput = $.Deferred(function () {
-                wrapZip.show('slow');
-            });
+                var showGetZipInput = $.Deferred(function() {
+                    wrapZip.show('slow');
+                });
 
-            $.when(showGetZipInput.resolve()).then(function () {
-                return $('#getZip').focus();
-            });
+                $.when(showGetZipInput.resolve()).then(function() {
+                    return $('#getZip').focus();
+                });
 
             } else {
                 displayBillingFields();
@@ -568,6 +575,7 @@ $(function () {
                         $('#EdgeCaseResetPasswordButton').removeData('clicked');
                     $('#NormalResetPasswordButton').data('clicked', true);
                     $('form#ResetPasswordForm').submit();
+                    break;
                 case '#EdgeCaseResetPasswordButton':
                 case buttons.ResetPass: stateManager.resetPassword(normalResetPasswordButton); break;
                 case buttons.YesUseAddress: stateManager.useRegisteredAddress(); break;
@@ -775,7 +783,6 @@ $(function () {
                 }
             }).done(function (data) {
                 // successful request; do something with the data
-
                 if (data.success === 'foundExisting') {
                     stateManager.showResetPasswordOrLoginView(email);
 
@@ -789,6 +796,8 @@ $(function () {
             }).fail(function () {
                 // failed request; give feedback to user
                 pageObjects.wrapEmail.html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+            }).always(function() {
+                 stateManager.inputAction = inputActions.None;
             });
         }
     });
@@ -816,6 +825,8 @@ $(function () {
             }).fail(function () {
                 // failed request; give feedback to user
                 pageObjects.wrapZip.html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+            }).always(function () {
+                stateManager.inputAction = inputActions.None;
             });
         }
         return false;

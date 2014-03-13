@@ -211,6 +211,8 @@ $(document).ready(function () {
             }
         }).fail(function (data) {
             console.log('failed: ' + data);
+        }).always(function () {
+            stateManager.inputAction = inputActions.None;
         });
 
         return false;
