@@ -188,6 +188,11 @@ var stateManager = function () {
 
         newPassWordToNextStep = function() {
 
+            if ($('#RegisterFields_Password').nextAll('span:last').hasClass('field-validation-error')) {
+                stateManager.inputAction = inputActions.None;
+                return false;
+            }
+
             if (zipCheckRequired) {
                 wrapPass.hide('slow');
                 stateManager.action = actions.CheckZip;
@@ -543,7 +548,7 @@ $(function () {
 
 
     $('input').keypress(function (event) {
-        var enterOkClass = $(this).hasClass('enterSubmit');
+        
         var inputElementTriggered = event.currentTarget.name;
         var normalResetPasswordButton = $('#NormalResetPasswordButton');
 
@@ -594,44 +599,6 @@ $(function () {
             console.log(stateManager.action);
             event.preventDefault();
 
-            //if (ActionForTheSubmit === 'CheckEmail') {
-            //    //ActionForTheSubmit = 'CheckZip';
-            //    if (pageObjects.emailInput.valid() == '1') {
-            //        checkAndSubmitEmail();
-            //    }
-            //    return false;
-            //}
-            //if (ActionForTheSubmit === 'CheckZip') {
-
-            //    checkAndSubmitZip();
-
-            //    return false;
-            //}
-            //if (stateManager.action === actions.GetPassword) {
-
-            //    stateManager.inputAction = inputActions.EnterKeyPress;
-            //    stateManager.newPassWordToCheckZip();
-            //    return false;
-            //}
-
-            ////if (ActionForTheSubmit === 'SubmitRegister') {
-
-            ////    if (pageObjects.createUserForm.valid() == '1') {
-            ////        submitCreateUserForm();
-            ////    }
-            ////    return false;
-            ////}
-            //if (stateManager.action === actions.SubmitLogin) {
-
-            //    $('#Password').val($('#Password1').val());
-            //    $('#Email').val($('#Email1').val());
-            //    $('form#frmSignIn').submit();
-
-            //    return false;
-            //}
-            //if (!enterOkClass) {
-            //    return false;
-            //}
         }
     });
 
@@ -853,34 +820,7 @@ $(function () {
         }
     });
 
-    //$('#sameAsBilling').change(function (e) {
-    //    var thisCheck = $(this);
 
-    //    //  Remove keyup handlers on billing input fields first time (and each thereafter - which don't matter) checkbox clicked.
-    //    pageObjects.phoneBilling.off('keyup');
-    //    pageObjects.streetAddressBilling.off('keyup');
-    //    $('#RegisterFields_BillingAddress_StreetAddress2').off('keyup');
-    //    pageObjects.cityBilling.off('keyup');
-    //    pageObjects.stateBilling.off('keyup');
-    //    pageObjects.zipBilling.off('keyup');
-
-    //    if (thisCheck.is(':checked')) {
-    //        if ($('#sameAsBilling:checked').val()) {
-    //            setShippingToBilling();
-    //        } else {
-    //            if (pageObjects.fullNameShipping.val() === null || pageObjects.fullNameShipping.val() === '') pageObjects.fullNameShipping.val(pageObjects.fullName.val());
-    //            if (pageObjects.shippingFirstName.val() === null || pageObjects.shippingFirstName.val() === '') pageObjects.shippingFirstName.val(pageObjects.firstName.val());
-    //            if (pageObjects.shippingLastName.val() === null || pageObjects.shippingLastName.val() === '') pageObjects.shippingLastName.val(pageObjects.lastName.val());
-    //            if (pageObjects.cityShipping.val() === null || pageObjects.cityShipping.val() === '') pageObjects.cityShipping.val(pageObjects.cityBilling.val());
-    //            if (pageObjects.streetAddressShipping.val() === null || pageObjects.streetAddressShipping.val() === '') pageObjects.streetAddressShipping.val(pageObjects.streetAddressBilling.val());
-    //            if (pageObjects.streetAddressShipping2.val() === null || pageObjects.streetAddressShipping2.val() === '') pageObjects.streetAddressShipping2.val(pageObjects.streetAddressBilling2.val());
-    //            if (pageObjects.stateShipping.val() === null || pageObjects.stateShipping.val() === '') pageObjects.stateShipping.val(pageObjects.stateBilling.val());
-    //            if (pageObjects.zipShipping.val() === null || pageObjects.zipShipping.val() === '') pageObjects.zipShipping.val(pageObjects.zipBilling.val());
-    //        }
-    //    }
-    //    $(this).validate().checkForm();
-    //    return false;
-    //});
 
 
     pageObjects.modalInstitution.on('hidden', function (e) {
