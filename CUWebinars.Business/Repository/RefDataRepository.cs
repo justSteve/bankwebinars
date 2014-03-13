@@ -50,7 +50,7 @@ namespace CUWebinars.Business.Repository
         {
             using (var context = new TTSWebinarsContext())
             {
-                return context.Orders.Where(o => o.WebUser.idUser == id).ToList();
+                return context.Orders.Include(o => o.OrderRows).Where(o => o.WebUser.idUser == id).ToList();
             }
         }
 
@@ -80,8 +80,10 @@ namespace CUWebinars.Business.Repository
         {
             using (var context = new TTSWebinarsContext())
             {
+                context.Configuration.ProxyCreationEnabled = false;
 
                 var webinars = context.Webinars
+                    .Include(w => w.OptionsGroupsXrefs.Select(o => o.OptionsGroup.OptionsXrefs.Select(ox => ox.Option)))
                     .Where(w => w.idWebinar == id)
                     .ToList();
 
@@ -92,7 +94,8 @@ namespace CUWebinars.Business.Repository
                 var optionsGroups = optionsGroupsXrefs.Select(o => o.OptionsGroup);
 
                 //  Get all OptionsXrefs for those OptionGroups
-                var optionsXrefs = optionsGroups.SelectMany(opt => opt.OptionsXrefs);
+                var optionsXrefs = optionsGroups
+                    .SelectMany(opt => opt.OptionsXrefs);
 
                 //  Finally, get the options
                 var options = optionsXrefs.Select(o => o.Option).ToList();

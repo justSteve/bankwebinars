@@ -23,11 +23,11 @@ namespace CUWebinars.Business.Repository
         public TTSWebinarsRepository(Ctx ctx)
         {
             db = ctx;
+            items = db.Set<T>();
 
             db.Configuration.ProxyCreationEnabled = false;
             db.Configuration.LazyLoadingEnabled = false;
 
-            items = db.Set<T>();
         }
 
         public void Add(T item)

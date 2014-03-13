@@ -18,11 +18,11 @@ namespace CUWebinars.Business.Repository
             newOrder.OrderDate = DateTime.Now;
 
             newOrder.idAffiliate = affiliate.idUserAff;
-//            newOrder.idUser = webUser.idUser;
+            newOrder.idUser = webUser.idUser;
 
             //  Cannot load this from the database, as the Addresses collection of
             //  WebUser cannot be loaded. Get the WebUser populated via the WebUserRepository.
-            newOrder.WebUser = webUser;
+            //newOrder.WebUser = webUser;
 
             newOrder.OrderRows.Add(orderRow);
             

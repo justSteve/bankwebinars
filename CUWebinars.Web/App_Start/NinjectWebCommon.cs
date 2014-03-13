@@ -70,8 +70,7 @@ namespace CUWebinars.Web.App_Start
             
             kernel.Bind<MembershipRebootConfiguration>().ToConstant(config);
             kernel.Bind<TtsConfiguration>().ToConstant(ttsConfig);
-            kernel.Bind<TTSWebinarsContext>().To<TTSWebinarsContext>().InRequestScope();
-
+            kernel.Bind<TTSWebinarsContext>().To<TTSWebinarsContext>().InTransientScope();
 
             kernel.Bind<IAffiliateRepository>().To<AffiliateRepository>().InRequestScope().WithConstructorArgument(contextParameter, ctx => ctx.Kernel.Get<TTSWebinarsContext>());
             kernel.Bind<IWebinarRepository>().To<WebinarRepository>().InRequestScope().WithConstructorArgument(contextParameter, ctx => ctx.Kernel.Get<TTSWebinarsContext>());
