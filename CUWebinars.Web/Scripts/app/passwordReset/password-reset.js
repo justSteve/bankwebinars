@@ -14,7 +14,7 @@ $(function () {
         return false;
     });
 
-    $("form#ResetPasswordForm").submit(function (e) {
+    $('form#ResetPasswordForm').submit(function (e) {
 
         e.preventDefault();
         
@@ -29,7 +29,7 @@ $(function () {
             return false;
         }
 
-        var jsonUrl = "/Account/ResetPassword";
+        var jsonUrl = '/Account/ResetPassword';
         var email = resetPassEmail.val();
 
         if (email.length === 0) {
@@ -48,7 +48,7 @@ $(function () {
                 }
             }).done(function(data) {
 
-                if (data.Status === "Success") {
+                if (data.Status === 'Success') {
                     crunchingLabel.html('<span class="label label-success">&nbsp; Reset Instructions sent!</span>');
                     $('#wrapReset div.container').hide("slow");
                     $('#sent2Address').html(email);

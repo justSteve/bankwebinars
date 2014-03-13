@@ -115,8 +115,16 @@ var stateManager = function () {
             $('#Email1').val(email);
             $('#ResetPassEmail').val(email);
             pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is already on file.</span>');
-            pageObjects.wrapReset.show('slow');
             pageObjects.wrapEmail.hide('slow');
+
+            var showLoginInput = $.Deferred(function() {
+                pageObjects.wrapReset.show('slow');
+            });
+
+            $.when(showLoginInput.resolve()).then(function() {
+                $('#Email1').focus();
+            });
+
             stateManager.action = actions.SubmitLogin;
             pageObjects.theSubmitButton.prop('value', 'Log In');
         },
@@ -140,8 +148,16 @@ var stateManager = function () {
 
         newPasswordView = function(email) {
             pageObjects.wrapEmail.hide('fast');
-            pageObjects.wrapPass.show('fast');
-            $('#RegisterFields_Password').focus();
+
+            var showPwdInput = $.Deferred(function() {
+                pageObjects.wrapPass.show('fast');
+            });
+
+            $.when(showPwdInput.resolve()).then(function() {
+                 return $('#RegisterFields_Password').focus();
+            });
+
+            
 
             if (email) {
                 pageObjects.labelEmail.html('<span class="label label-success"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; has been recorded.</span>');
@@ -166,9 +182,17 @@ var stateManager = function () {
         newPassWordToNextStep = function() {
 
             if (zipCheckRequired) {
-                wrapZip.show('slow');
                 wrapPass.hide('slow');
                 stateManager.action = actions.CheckZip;
+
+            var showGetZipInput = $.Deferred(function () {
+                wrapZip.show('slow');
+            });
+
+            $.when(showGetZipInput.resolve()).then(function () {
+                return $('#getZip').focus();
+            });
+
             } else {
                 displayBillingFields();
                 stateManager.action = actions.SubmitRegister;
@@ -211,13 +235,29 @@ var stateManager = function () {
 
         passResetView = function() {
             pageObjects.login.hide('slow');
-            pageObjects.reset.show('slow');
-            $('ResetPassEmail').focus();
+            
+
+            var showResetInput = $.Deferred(function () {
+                pageObjects.reset.show('slow');
+            });
+
+            $.when(showResetInput.resolve()).then(function () {
+                return $('#ResetPassEmail').focus();
+            });
+
         },
         registerView = function() {
             pageObjects.login.hide('slow');
             pageObjects.register.show('slow');
             stateManager.action = actions.CheckEmail;
+
+            var showRegisterInput = $.Deferred(function () {
+                pageObjects.register.show('slow');
+            });
+
+            $.when(showRegisterInput.resolve()).then(function () {
+                return pageObjects.emailInput.focus();
+            });
         },
 
         resetPassword = function (normalResetPasswordButton) {
@@ -515,11 +555,20 @@ $(function () {
                 case 'RegisterFields_Password':
                 case 'RegisterFields.ConfirmPassword':
                 case 'RegisterFields.Email':
+                case 'getZip':
+                case 'Password1':
+                case 'Email1':
                 case buttons.TheSubmit:
                     console.log('ActionForTheSubmit = ' + stateManager.action);
                     stateManager.submit(); break;
                 case buttons.nonUSAddress: stateManager.nonUsAdddressInvoked(); break;
                 case 'Email':
+                case 'NormalResetPasswordButton':
+                    if ($('#EdgeCaseResetPasswordButton').data('clicked'))
+                        $('#EdgeCaseResetPasswordButton').removeData('clicked');
+                    $('#NormalResetPasswordButton').data('clicked', true);
+                    $('form#ResetPasswordForm').submit();
+                case '#EdgeCaseResetPasswordButton':
                 case buttons.ResetPass: stateManager.resetPassword(normalResetPasswordButton); break;
                 case buttons.YesUseAddress: stateManager.useRegisteredAddress(); break;
                 case buttons.EnterDiffAddress: stateManager.enterDifferentAddress(); break;
