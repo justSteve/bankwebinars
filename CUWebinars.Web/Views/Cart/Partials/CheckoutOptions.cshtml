@@ -10,7 +10,7 @@
             var breakDownRegType = orderRow.ToString().Split('_');
             int registrationType = orderRow.RegistrationType;
 
-            var orderRowOption = Model.Order.OrderRows.FirstOrDefault().OrderRowOptions.Where(o => o.idOption == registrationType).FirstOrDefault();
+            var orderRowOption = orderRow.OrderRowOptions.FirstOrDefault(o => o.idOption == registrationType);
 
             if (orderRowOption != null)
             {
