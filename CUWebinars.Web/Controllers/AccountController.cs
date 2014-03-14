@@ -558,7 +558,8 @@ namespace CUWebinars.Web.Controllers
             resultObject.Add("success", "true");
             resultObject.Add("City", myCity);
             resultObject.Add("State", zipAddress.Split(fieldDelimiter)[1]);
-            resultObject.Add("TimeZone", ((int)Enum.Parse(typeof(USTimeZone), zipAddress.Split(fieldDelimiter)[2])).ToString());
+            //resultObject.Add("TimeZone", ((int)Enum.Parse(typeof(USTimeZone), zipAddress.Split(fieldDelimiter)[1])).ToString());
+            resultObject.Add("TimeZone", 3.ToString());
 
             return Json(resultObject, JsonRequestBehavior.AllowGet);
         }

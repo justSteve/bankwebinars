@@ -208,6 +208,7 @@ $(document).ready(function () {
                 location.assign(path + '/Account/Login'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
             } else if (data.Status === 'Fail') {
                 pageObjects.labelEmail.html('<span class="label label-important">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
+                stateManager.action = actions.SubmitRegister;
             }
         }).fail(function (data) {
             console.log('failed: ' + data);
