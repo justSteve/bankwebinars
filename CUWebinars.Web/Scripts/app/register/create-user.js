@@ -209,7 +209,6 @@ var stateManager = function () {
                     setShippingToBilling();
                 }
             });
-
         },
 
         newPassWordToNextStep = function() {
