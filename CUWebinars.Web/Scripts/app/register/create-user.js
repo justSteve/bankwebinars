@@ -610,7 +610,9 @@ $(function () {
                 case 'RegisterFields.Email':
                 case 'getZip':
                 case 'Password1':
+                case 'Password':
                 case 'Email1':
+                case 'Email':
                 case buttons.TheSubmit:
                     console.log('ActionForTheSubmit = ' + stateManager.action);
                     stateManager.submit(); break;
