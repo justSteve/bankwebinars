@@ -20,14 +20,16 @@ namespace CUWebinars.Web.Helpers
         public static String GetCityStateFromZip(int zipCode)
         {
 
-            var _connSproc = new SqlConnection(ConfigurationManager.ConnectionStrings["LoggerConnection"].ConnectionString);
+            var _connLogger = new SqlConnection(ConfigurationManager.ConnectionStrings["LoggerConnection"].ConnectionString);
 
-            _connSproc.Open();
+            _connLogger.Open();
             var body =
-                "select City, (select stateAbbreviation from States where StateCode = (SELECT StateCode FROM zipcodes WHERE zipcode = " + zipCode + ")),(SELECT timezone FROM [dbo].[TimeZoneByZip] WHERE zip = '" + zipCode + "') from zipcodes where zipcode = " + zipCode;
+                "select City, (select stateAbbreviation from States where StateCode = " +
+                "               (SELECT StateCode FROM [dbo].zipcodes WHERE zipcode = " + zipCode + "))," +
+                "               (SELECT timezone FROM [dbo].[TimeZoneByZip] WHERE zip = '" + zipCode + "') from [dbo].zipcodes where zipcode = " + zipCode;
 
             SqlCommand cmdGetBody = new SqlCommand(
-                body, _connSproc
+                body, _connLogger
                 );
 
             cmdGetBody.CommandType = CommandType.Text;
