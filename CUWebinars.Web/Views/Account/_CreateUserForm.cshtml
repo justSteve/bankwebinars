@@ -88,7 +88,7 @@
                                 <div class="span10">
                                     @Html.LabelFor(m => m.RegisterFields.Password, new { style = "display:inline-block;" }):
                                     @Html.PasswordFor(m => m.RegisterFields.Password, new { style = " width:100px;" })
-                                    @Html.ValidationMessage("Password")
+                                    @Html.ValidationMessageFor(m => m.RegisterFields.Password)
 
                                     &nbsp;&nbsp;
                                     @Html.LabelFor(m => m.RegisterFields.ConfirmPassword,

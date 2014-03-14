@@ -13,6 +13,8 @@ namespace CUWebinars.Business.Repository
         {
             using (var context = new TTSWebinarsContext())
             {
+                context.Configuration.ProxyCreationEnabled = false;
+
                 return context.Institutions;
             }
         }
@@ -26,6 +28,7 @@ namespace CUWebinars.Business.Repository
         {
             using (var context = new TTSWebinarsContext())
             {
+                context.Configuration.ProxyCreationEnabled = false;
                 return context.WebUsers;
             }
         }
@@ -37,6 +40,7 @@ namespace CUWebinars.Business.Repository
             {
                 using (var context = new TTSWebinarsContext())
                 {
+                    context.Configuration.ProxyCreationEnabled = false;
                     return context.WebUsers.Max(u => u.idUser);
                 }
             }
@@ -50,6 +54,7 @@ namespace CUWebinars.Business.Repository
         {
             using (var context = new TTSWebinarsContext())
             {
+                context.Configuration.ProxyCreationEnabled = false;
                 return context.Orders.Include(o => o.OrderRows).Where(o => o.WebUser.idUser == id).ToList();
             }
         }
@@ -58,6 +63,7 @@ namespace CUWebinars.Business.Repository
         {
             using (var context = new TTSWebinarsContext())
             {
+                context.Configuration.ProxyCreationEnabled = false;
                 return context.WebUsers
                     .Include("Addresses")
                     .Include("Institution")
@@ -69,6 +75,7 @@ namespace CUWebinars.Business.Repository
         {
             using (var context = new TTSWebinarsContext())
             {
+                context.Configuration.ProxyCreationEnabled = false;
                 return context.WebUsers
                     .Where(w => w.idUser == id)
                     .Single()

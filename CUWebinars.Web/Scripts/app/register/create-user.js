@@ -50,6 +50,9 @@ var reset;
 var register;
 var labelEmail;
 var modalInstitution;
+var collapseBilling;
+var collapseShipping;
+var registerFieldsPassword;
 
 
 var pageObjects = {
@@ -57,8 +60,9 @@ var pageObjects = {
     emailInput: emailInput || $('#RegisterFields_Email'),
     cityBilling: cityBilling || $('#RegisterFields_BillingAddress_City'),
     cityShipping: cityShipping || $('#RegisterFields_ShippingAddress_City'),
+    collapseBilling: collapseBilling || $('#collapseBilling'),
+    collapseShipping: collapseShipping || $('#collapseShipping'),
     createUserForm: createUserForm || $('#_CreateUserForm'),
-    phoneBilling: phoneBilling || $('#RegisterFields_BillingAddress_Phone'),
     fullNameShipping: fullNameShipping || $('#FullNameShipping'),
     fullName: fullName || $('#FullName'),
     firstName: firstName || $('#FirstName'),
@@ -67,8 +71,10 @@ var pageObjects = {
     lastName: lastName || $('#LastName'),
     login: login || $('#login'),
     modalInstitution: modalInstitution || $('#modalInstitution'),
+    phoneBilling: phoneBilling || $('#RegisterFields_BillingAddress_Phone'),
     phoneShipping: phoneShipping || $('#RegisterFields_ShippingAddress_Phone'),
     register: register || $('#register'),
+    registerFieldsPassword: registerFieldsPassword || $('#RegisterFields_Password'),
     reset: reset || $('#reset'),
     shippingFirstName: shippingFirstName || $('#ShippingFirstName'),
     shippingLastName: shippingLastName || $('#ShippingLastName'),
@@ -79,9 +85,9 @@ var pageObjects = {
     streetAddressShipping2: streetAddressShipping2 || $('#RegisterFields_ShippingAddress_StreetAddress2'),
     stateShipping: stateShipping || $('#RegisterFields_ShippingAddress_State'),
     wrapEmail: wrapEmail || $('#wrapEmail'),
+    wrapPass: wrapPass || $('#wrapPass'),
     wrapReset: wrapReset || $('#wrapReset'),
     wrapZip: wrapZip || $('#wrapZip'),
-    wrapPass: wrapPass || $('#wrapPass'),
     zipBilling: zipBilling || $('#RegisterFields_BillingAddress_Zip'),
     zipShipping: zipShipping || $('#RegisterFields_ShippingAddress_Zip')
 };
@@ -93,19 +99,23 @@ var stateManager = function () {
         disregardIntitutionDomain = null,
         zipCheckRequired = null,
 
-        displayBillingFields = function() {
+        displayBillingFields = function () {
+
+            if (stateManager.inputAction === inputActions.EnterKeyPress)
+                stateManager.inputAction = inputActions.None;
+
             if (pageObjects.emailInput.valid() == '1') {
-                $('#collapseBilling').parent().show();
+                pageObjects.collapseBilling.parent().show();
 
                 var showBillingInputs = $.Deferred(function() {
-                    return $('#collapseBilling').collapse('show');
+                    pageObjects.collapseBilling.collapse('show');
                 });
 
                 $.when(showBillingInputs.resolve()).then(function() {
                     pageObjects.fullName.focus();
                 });
                 
-                $('#collapseShipping').parent().show();
+                pageObjects.collapseShipping.parent().show();
                 $('#collapseEmail').collapse('toggle');
 
 
@@ -117,7 +127,6 @@ var stateManager = function () {
         enterDifferentAddress = function() {
             console.log('EnterDiffAddress hit');
             pageObjects.modalInstitution.modal('hide');
-            pageObjects.wrapEmail.show('slow');
             pageObjects.wrapZip.hide('slow');
 
             zipCheckRequired = true;
@@ -127,6 +136,17 @@ var stateManager = function () {
             disregardIntitutionDomain = true;
 
             stateManager.action = actions.CheckEmail;
+
+            //    Set to none because flow ends here for that stage
+            stateManager.inputAction = inputActions.None; 
+
+            var showEmailInput = $.Deferred(function () {
+                pageObjects.wrapEmail.show('slow');
+            });
+
+            $.when(showEmailInput.resolve()).then(function () {
+                pageObjects.emailInput.focus();
+            });
         },
 
         resetPasswordOrLoginView = function(email) {
@@ -137,7 +157,7 @@ var stateManager = function () {
             pageObjects.wrapEmail.hide('slow');
 
             var showLoginInput = $.Deferred(function() {
-                return pageObjects.wrapReset.show('slow');
+                pageObjects.wrapReset.show('slow');
             });
 
             $.when(showLoginInput.resolve()).then(function() {
@@ -149,8 +169,10 @@ var stateManager = function () {
         },
 
         foundInstitutionView = function (data, email) {
-            console.log("call foundInstitutionView: " + email);
+
+            if (stateManager.inputAction.inputAction === inputActions.EnterKeyPress)
             stateManager.inputAction = inputActions.None;
+            console.log("call foundInstitutionView: " + email);
             pageObjects.modalInstitution.modal('show');
 
             pageObjects.institution.val(data.Institution);
@@ -176,7 +198,7 @@ var stateManager = function () {
             });
 
             $.when(showPwdInput.resolve()).then(function() {
-                 return $('#RegisterFields_Password').focus();
+                 pageObjects.registerFieldsPassword.focus();
             });
 
             
@@ -193,35 +215,40 @@ var stateManager = function () {
 
             stateManager.action = actions.GetPassword;
 
-            
+            if (stateManager.inputAction === inputActions.EnterKeyPress)
+                stateManager.inputAction = inputActions.None;
+
             pageObjects.theSubmitButton.on('mouseenter', function() {
                 if ($('#sameAsBilling:checked').val()) {
                     setShippingToBilling();
                 }
             });
-
         },
 
         newPassWordToNextStep = function() {
 
-            if ($('#RegisterFields_Password').nextAll('span:last').hasClass('field-validation-error')) {
+            var pwd = $.trim(pageObjects.registerFieldsPassword.val());
+
+            if (!pwd || pwd.length < 2 || pageObjects.registerFieldsPassword.nextAll('span:last').hasClass('field-validation-error')) {
                 console.log("call RegisterFields_Password");
-                stateManager.inputAction = inputActions.None;
+                if (stateManager.inputAction === inputActions.EnterKeyPress)
+                    stateManager.inputAction = inputActions.None;
                 return false;
             }
 
             if (zipCheckRequired) {
-                console.log("call zipCheckRequired");
-                wrapPass.hide('slow');
+                pageObjects.wrapPass.hide('slow');
                 stateManager.action = actions.CheckZip;
 
                 var showGetZipInput = $.Deferred(function() {
-                    wrapZip.show('slow');
+                    pageObjects.wrapZip.show('slow');
                 });
 
                 $.when(showGetZipInput.resolve()).then(function() {
-                    return $('#getZip').focus();
+                    $('#getZip').focus();
                 });
+
+
 
             } else {
                 displayBillingFields();
@@ -237,7 +264,7 @@ var stateManager = function () {
             console.log('nonUSAddress hit');
             $('#nonUSAddress').show('slow');
             $('#collapseEmail').collapse('toggle');
-            $('#collapseBilling').collapse('toggle');
+            pageObjects.collapseBilling.collapse('toggle');
 
             //TODO:  not sure what to set the state to here. Need to discuss.
             // I'd like to transition this code block so as to only display the 
@@ -248,7 +275,16 @@ var stateManager = function () {
         notInstitutionAddress = function() {
             console.log('NotInstitution hit');
             pageObjects.modalInstitution.modal('hide');
+
+            var showEmailInput = $.Deferred(function () {
             pageObjects.wrapEmail.show('slow');
+            });
+
+            $.when(showEmailInput.resolve()).then(function () {
+                pageObjects.emailInput.focus();
+            });
+            
+
             pageObjects.wrapZip.hide('slow');
             pageObjects.labelEmail.html('<span class="label label-info">&nbsp;&nbsp;&nbsp;&nbsp;Proceed or enter a different email address.</span>');
 
@@ -266,6 +302,9 @@ var stateManager = function () {
             disregardIntitutionDomain = true;
 
             stateManager.action = actions.CheckEmail;
+
+            if (stateManager.inputAction === inputActions.EnterKeyPress)
+                stateManager.inputAction = inputActions.None;
         },
 
         passResetView = function () {
@@ -279,7 +318,7 @@ var stateManager = function () {
             });
 
             $.when(showResetInput.resolve()).then(function () {
-                return $('#ResetPassEmail').focus();
+                $('#ResetPassEmail').focus();
             });
 
         },
@@ -293,7 +332,7 @@ var stateManager = function () {
             });
 
             $.when(showRegisterInput.resolve()).then(function () {
-                return pageObjects.emailInput.focus();
+                pageObjects.emailInput.focus();
             });
         },
 
@@ -324,10 +363,18 @@ var stateManager = function () {
             switch (data.success) {
             case 'true':
                 console.log('zipCodeVerified-true hit');
-                $('#collapseBilling').parent().show();
-                $('#collapseShipping').parent().show();
+                pageObjects.collapseBilling.parent().show();
+                pageObjects.collapseShipping.parent().show();
                 $('#collapseEmail').collapse('toggle');
-                $('#collapseBilling').collapse('toggle');
+
+                var showBillingInputs = $.Deferred(function () {
+                    pageObjects.collapseBilling.collapse('toggle');
+
+                });
+
+                $.when(showBillingInputs.resolve()).then(function () {
+                    pageObjects.fullName.focus();
+                });
 
                 pageObjects.cityBilling.val(data.City);
                 pageObjects.stateBilling.val(data.State);
@@ -391,7 +438,7 @@ var stateManager = function () {
 
         init = function(args) {
             stateManager.action = actions.CheckEmail;
-            stateManager.inputAction = inputActions.ButtonClick;
+            stateManager.inputAction = inputActions.None;
             stateManager.disregardIntitutionDomain = false;
             zipCheckRequired = true;
             startView();
@@ -458,7 +505,7 @@ function submitLogin() {
     //$('#Email').val($('#RegisterFields_Email').val());
     //$('#Password').val($('#Password1').val());
     //$('#frmSignin').submit();
-    $('#Password').val($('#RegisterFields_Password').val());
+    $('#Password').val(pageObjects.registerFieldsPassword.val());
     $('#Email').val($('#emailAddress').val());
     $('form#frmSignIn').submit();
 }
@@ -515,52 +562,19 @@ $(function () {
         }
     });
 
-    $('#collapseBilling').parent().hide();
-    $('#collapseShipping').parent().hide();
+    collapseBilling = $('#collapseBilling');
+    collapseShipping = $('#collapseShipping');
 
-    register = $('#register');
-    reset = $('#reset');
+    collapseBilling.parent().hide();
+    collapseShipping.parent().hide();
 
     stateManager.initialize();
-
-    wrapEmail = $('#wrapEmail');
-    wrapPass = $('#wrapPass');
-    wrapReset = $('#wrapReset');
-    wrapZip = $('#wrapZip');
-
 
     pageObjects.wrapZip.hide();
     pageObjects.wrapPass.hide();
     pageObjects.wrapReset.hide();
     $('#nonUSAddress').hide();
     $('#getFirstLast').hide();
-
-    theSubmitButton = $('#TheSubmitButton');
-    emailInput = $('#RegisterFields_Email');
-    createUserForm = $('#_CreateUserForm');
-    labelEmail = $('#labelEmail');
-
-    phoneBilling = $('#RegisterFields_BillingAddress_Phone');
-    fullNameShipping = $('#FullNameShipping');
-    streetAddressBilling = $('#RegisterFields_BillingAddress_StreetAddress');
-    streetAddressBilling2 = $('#RegisterFields_BillingAddress_StreetAddress2');
-    cityBilling = $('#RegisterFields_BillingAddress_City');
-    stateBilling = $('#RegisterFields_BillingAddress_State');
-    zipBilling = $('#RegisterFields_BillingAddress_Zip');
-    phoneShipping = $('#RegisterFields_ShippingAddress_Phone');
-    fullNameShipping = $('#fullNameShipping');
-    streetAddressShipping = $('#RegisterFields_ShippingAddress_StreetAddress');
-    streetAddressShipping2 = $('#RegisterFields_ShippingAddress_StreetAddress2');
-    cityShipping = $('#RegisterFields_ShippingAddress_City');
-    stateShipping = $('#RegisterFields_ShippingAddress_State');
-    zipShipping = $('#RegisterFields_ShippingAddress_Zip');
-    shippingLastName = $('#ShippingLastName');
-    shippingFirstName = $('#ShippingFirstName');
-    fullName = $('#FullName');
-    firstName = $('#FirstName');
-    lastName = $('#LastName');
-    institution = $('#RegisterFields_Institution');
-
 
     var path = setPath();
 
@@ -571,8 +585,8 @@ $(function () {
             pageObjects.theSubmitButton.addClass('button_disabled').attr('disabled', true);
         }
     });
-    $('[name=TheSubmit]').prop('value', nextButtonText);
 
+    pageObjects.theSubmitButton.prop('value', nextButtonText);
 
     $('input').keypress(function (event) {
         
@@ -591,12 +605,14 @@ $(function () {
             stateManager.inputAction = inputActions.EnterKeyPress;
 
             switch (inputElementTriggered) {
-                case 'RegisterFields_Password':
+                case 'RegisterFields.Password':
                 case 'RegisterFields.ConfirmPassword':
                 case 'RegisterFields.Email':
                 case 'getZip':
                 case 'Password1':
+                case 'Password':
                 case 'Email1':
+                case 'Email':
                 case buttons.TheSubmit:
                     console.log('ActionForTheSubmit = ' + stateManager.action);
                     stateManager.submit(); break;
@@ -670,7 +686,7 @@ $(function () {
     }));
 
 
-    $('#collapseShipping').on('shown', function () {
+    pageObjects.collapseShipping.on('shown', function () {
         if ($('#sameAsBilling:checked').val()) {
             setShippingToBilling();
         }
@@ -799,8 +815,8 @@ $(function () {
 
     $('form#checkZip').submit(function () {
         var jsonUrl = '/Account/CheckZip';
-        var q = $('#ZipChecker').val();
-        if (q.length == 0) {
+        var zipCode = $('#ZipChecker').val();
+        if (zipCode.length == 0) {
             $('#RegisterFields_Zip').focus();
         } else {
             $.ajax({
@@ -809,14 +825,14 @@ $(function () {
                 cache: false,
                 url: jsonUrl,
                 dataType: constants.JsonDataType,
-                data: { Zip: q },
+                data: { Zip: zipCode },
                 beforeSend: function () {
                     // this is where we append a loading image
                     pageObjects.labelEmail.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Zip...</span>');
                 }
             }).done(function (data) {
                 // successful request; do something with the data
-                stateManager.zipCodeVerified(data, q);
+                stateManager.zipCodeVerified(data, zipCode);
             }).fail(function () {
                 // failed request; give feedback to user
                 pageObjects.wrapZip.html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');

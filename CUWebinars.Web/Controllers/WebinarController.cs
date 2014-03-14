@@ -31,7 +31,7 @@ namespace CUWebinars.Web.Controllers
 
         public WebinarController(MembershipService membershipService, IMailService mail, IWebinarRepository webinarRepository, ILogger logger, IOrderManagementService orderManagementService)
         {
-
+            db.Configuration.ProxyCreationEnabled = false;
             this.membershipService = membershipService;
             _mail = mail;
             _webinarRepository = webinarRepository;
