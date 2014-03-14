@@ -580,6 +580,7 @@ namespace CUWebinars.Web.Controllers
         //[ValidateAntiForgeryToken]
         public JsonResult CheckEmail(string email, bool disregardIntitutionDomain)
         {
+            Logger.Info("CheckEmail called: " + email);
             var resultObject = new Dictionary<string, string>();
 
             var user = membershipService.GetUserByEmail(email);
@@ -610,7 +611,7 @@ namespace CUWebinars.Web.Controllers
             resultObject.Add("City", institution.City);
             resultObject.Add("State", institution.State);
             resultObject.Add("Zip", institution.Zip);
-
+            Logger.Info("CheckEmailResult: " + resultObject);
             return Json(resultObject, JsonRequestBehavior.AllowGet);
         }
 

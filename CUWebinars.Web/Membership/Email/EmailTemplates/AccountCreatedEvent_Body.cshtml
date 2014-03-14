@@ -1,6 +1,12 @@
-﻿@model CUWebinars.Web.Membership.Notification
+﻿@using CUWebinars.Business.Services
+@using CUWebinars.Business.Services
+@model CUWebinars.Web.Membership.Notification
 [@Model.ApplicationName] Account Created
 
+@{
+    
+    var user = OrderManagementService.
+}
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -95,7 +101,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-size: smaller">&nbsp;</td>
-                                                        <td width="400px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">&nbsp;</td>
+                                                        <td width="400px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">&nbsp;@Model.Email</td>
                                                     </tr>
                                                 </table>
                                             </td>
@@ -116,7 +122,7 @@
                                                 </p>
                                                 <blockquote>
 
-                                                    Please click here to confirm your email address:<br><br><b>
+                                                    Please verify your reciept of this message by clicking:<br><br><b>
 
                                                     <a href="@Model.ConfirmChangeEmailUrl">@Model.ConfirmChangeEmailUrl</a>
                                                     </b><br><br>

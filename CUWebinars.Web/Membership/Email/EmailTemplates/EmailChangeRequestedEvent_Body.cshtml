@@ -36,7 +36,7 @@
                                     <img alt="https://ttseast.blob.core.windows.net/images/vrLocal/hardware_2_header_1.jpg" border="0" height="36" margin="0px 0px 0px 0px" src="https://ttseast.blob.core.windows.net/images/vrLocal/hardware_2_header_1.jpg" style="width: 374px; height: 36px; display: block;" width="374" />
                                 </td>
                                 <td align="right" bgcolor="#01232a" style="padding-right: 15px; border-top-color: rgb(52, 74, 88); border-right-color: rgb(52, 74, 88); border-top-width: 1px; border-right-width: 1px; border-top-style: solid; border-right-style: solid;" width="286">
-                                    <div style="color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold;">Email Changed</div>
+                                    <div style="color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold;">Email Change Requested</div>
                                 </td>
                             </tr>
                             <tr>
@@ -45,7 +45,7 @@
                                 </td>
                                 <td align="left" bgcolor="#344a58" style="padding: 0px 15px 0px 0px; border-right-color: rgb(52, 74, 88); border-right-width: 1px; border-right-style: solid;">
                                     <p style="text-align: center; color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
-                                        Important Message From Account Management at CUWebinars!
+                                        An Important Message From Account Management at @Model.ApplicationName!
                                     </p>
                                 </td>
                             </tr>
@@ -82,7 +82,7 @@
                                             <td colspan="2">
                                                 <table width="550px" border="0" align="center" cellpadding="0" cellspacing="0">
                                                     <tr>
-                                                        <td width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-size: smaller">&nbsp;</td>
+                                                        <td width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-size: smaller">&nbsp;@Model.Username</td>
                                                         <td width="400px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">&nbsp;</td>
                                                     </tr>
                                                     <tr>
@@ -94,7 +94,7 @@
                                                         <td style="text-align: left; background-color: #B4D1EC; padding-left: 6px;"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-size: smaller">&nbsp;</td>
+                                                        <td width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-size: smaller">&nbsp;@Model.Email</td>
                                                         <td width="400px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">&nbsp;</td>
                                                     </tr>
                                                 </table>
@@ -104,7 +104,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td style="background-color: #344a58; color: #FFFFCC; padding: 10px;" colspan="2"><b>Account Details</b></td>
+                                <td style="background-color: #344a58; color: #FFFFCC; padding: 10px;" colspan="2"><b>Notification Details</b></td>
                             </tr>
                             <tr>
                                 <td colspan="2">
@@ -116,26 +116,21 @@
                                                 </p>
                                                 <blockquote>
 
-                                                    Please click here to confirm your email address:<br><br><b>
+                                                    Please click here to confirm recipt of this message:<br /><br /><b>
 
-@Model.ConfirmChangeEmailUrl
-                                                    </b><br><br>
+                                                        @Model.ConfirmChangeEmailUrl
+                                                    </b><br /><br />
 
-                                                    If this was in error or not requested then click to cancel the request:<br><br><b>
+                                                    If this was in error or not requested no action is required.<br /><br /><b>
 
-@Model.CancelVerificationUrl
                                                     </b>
 
                                                 </blockquote>
-
-
-                                                </p>
                                             </td>
                                         </tr>
                                     </table>
                                 </td>
                             </tr>
-
                         </tbody>
                     </table>
                 </td>
