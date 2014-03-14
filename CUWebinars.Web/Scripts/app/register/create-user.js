@@ -14,9 +14,9 @@ var nextButtonText = 'Next...';
 // was a <P> wrapped in a <div> i think.
 
 //  simple C-like enum implementation
-var actions = { CheckEmail: 'CheckEmail', CheckZip: 'CheckZip', GetPassword: 'GetPassword', SubmitLogin: 'SubmitLogin', SubmitRegister: 'SubmitRegister', DisplayBillingAddressFields: 'DisplayBillingAddressFields' };
+var actions = { CheckEmail: 'CheckEmail', CheckZip: 'CheckZip', GetPassword: 'GetPassword', LogIn: 'LogIn', PostCreateAccount: 'PostCreateAccount', SubmitLogin: 'SubmitLogin', SubmitRegister: 'SubmitRegister', DisplayBillingAddressFields: 'DisplayBillingAddressFields' };
 var inputActions = { EnterKeyPress: 'EnterKeyPress', ButtonClick: 'ButtonClick', None: 'None' };
-var buttons = { EnterDiffAddress:'EnterDiffAddress', nonUSAddress: 'nonUSAddress', NotInstitution: 'NotInstitution', ResetPass: 'resetPass', TheSubmit: 'TheSubmit', YesUseAddress: 'YesUseAddress' };
+var buttons = { EnterDiffAddress:'EnterDiffAddress', nonUSAddress: 'nonUSAddress', NotInstitution: 'NotInstitution', ResetPass: 'resetPass', SignInButton: 'SignInButton', TheSubmit: 'TheSubmit', YesUseAddress: 'YesUseAddress' };
 
 
 var wrapEmail;
@@ -186,6 +186,11 @@ var stateManager = function () {
             pageObjects.zipBilling.val(data.Zip);
             pageObjects.labelEmail.html('<span class="label label-success"><b>&nbsp;&nbsp;' + email.substring(email.indexOf('@')) + '</b>&nbsp; domain has been identified.</span>');
             $('#ShowInstitution').html(data.Institution + '<br>' + data.Address + '<br>' + data.City + ', ' + data.State + ' ' + data.Zip + '<br>');
+        },
+
+        logIn = function () {
+
+            $('form#frmSignIn').submit();
         },
 
         newPasswordView = function(email) {
@@ -419,7 +424,7 @@ var stateManager = function () {
             case actions.SubmitRegister:
                 console.log('SubmitRegister hit');
                 //TODO: provide an exitscreen confirming account creation.
-                stateManager.action = 'PostCreateAccount';
+                stateManager.action = actions.PostCreateAccount;
                 if (pageObjects.createUserForm.valid() == '1') {
                     submitCreateUserForm();
                 }
@@ -437,7 +442,7 @@ var stateManager = function () {
         },
 
         init = function(args) {
-            stateManager.action = actions.CheckEmail;
+            stateManager.action = actions.LogIn;
             stateManager.inputAction = inputActions.None;
             stateManager.disregardIntitutionDomain = false;
             zipCheckRequired = true;
@@ -452,6 +457,7 @@ var stateManager = function () {
         disregardIntitutionDomain: disregardIntitutionDomain,
         initialize: init,
         inputAction: inputAction,
+        logIn: logIn,
         newPassWordToNextStep: newPassWordToNextStep,
         nonUsAdddressInvoked: nonUsAdddress,
         notInstitutionAddress: notInstitutionAddress,
@@ -605,14 +611,17 @@ $(function () {
             stateManager.inputAction = inputActions.EnterKeyPress;
 
             switch (inputElementTriggered) {
+                case 'Password':
+                case 'Email':
+                case buttons.SignInButton:
+                    stateManager.logIn();
+                    break;
                 case 'RegisterFields.Password':
                 case 'RegisterFields.ConfirmPassword':
                 case 'RegisterFields.Email':
                 case 'getZip':
                 case 'Password1':
-                case 'Password':
                 case 'Email1':
-                case 'Email':
                 case buttons.TheSubmit:
                     console.log('ActionForTheSubmit = ' + stateManager.action);
                     stateManager.submit(); break;
@@ -673,6 +682,7 @@ $(function () {
         // NotInstitution
 
         switch (clickedButton) {
+            case buttons.SignInButton: stateManager.logIn(); break;
             case buttons.TheSubmit:
                 console.log('ActionForTheSubmit = ' + stateManager.action);
                 stateManager.submit(); break;

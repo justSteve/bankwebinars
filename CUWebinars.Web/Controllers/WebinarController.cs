@@ -361,7 +361,7 @@ namespace CUWebinars.Web.Controllers
                 ,
                 Affiliate = stateService.GetValue<Affiliate>("CurrentAffiliate")
                 ,
-                Webinar = db.Webinars.Find(id)
+                Webinar = db.Webinars.Include(w => w.Presenter.WebUser).First(w => w.idWebinar == id)
                 ,
                 Options = _orderManagementService.GetOptionsByWebinarId(id, false)
                 ,

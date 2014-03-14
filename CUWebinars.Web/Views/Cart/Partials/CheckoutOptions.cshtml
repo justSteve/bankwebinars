@@ -6,41 +6,34 @@
     @{
         if (Model.Order != null && Model.Order.idOrder > 0)
         {
-            var breakDownRegType = Model.Order.OrderRows.FirstOrDefault().RegistrationType.ToString().Split('_');
-            int registrationType = Model.Order.OrderRows.FirstOrDefault().RegistrationType;
+            var orderRow = Model.Order.OrderRows.First();
+            var breakDownRegType = orderRow.ToString().Split('_');
+            int registrationType = orderRow.RegistrationType;
 
-            if (Model.Order.OrderRows.Any())
+            var orderRowOption = orderRow.OrderRowOptions.FirstOrDefault(o => o.idOption == registrationType);
+
+            if (orderRowOption != null)
             {
-                var orderRowOption = Model.Order.OrderRows.FirstOrDefault().OrderRowOptions.Where(o => o.idOption == registrationType).FirstOrDefault();
-                Decimal RegCost;
-                string RegLabel = string.Empty;
+                var RegCost = orderRowOption.OptionPrice;
+                var RegLabel = orderRowOption.Option.OptionLabel;
 
-                if (orderRowOption != null)
+                if (orderRow.Status == OrderRowStatus.Submitted || orderRow.Status == OrderRowStatus.Paid || orderRow.Status == OrderRowStatus.Billed)
                 {
-                    RegCost = orderRowOption.OptionPrice;
-                    RegLabel = orderRowOption.Option.OptionLabel;
-
-                    if (
-                        Model.Order.OrderRows.FirstOrDefault().Status == OrderRowStatus.Submitted ||
-                        Model.Order.OrderRows.FirstOrDefault().Status == OrderRowStatus.Paid ||
-                        Model.Order.OrderRows.FirstOrDefault().Status == OrderRowStatus.Billed)
-                    {
                 @*<span><i>Order# @Model.Order.OrderRows.FirstOrDefault().Order.ID<br>@RegLabel - $@RegCost<br></i></span>*@
-                        if (Model.Webinar.ConnectionInfo != null)
-                        {
+                    if (Model.Webinar.ConnectionInfo != null)
+                    {
                     @*<blockquote style="margin-left: 150px; margin-right: 150px;" class="btn-success well">@Model.Order.OrderRows.FirstOrDefault().OrderRowOptions.First(o => o.idOption == Model.Order.OrderRows.FirstOrDefault().RegistrationType).Option.Stage2CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>*@
-                            <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn-success well">@orderRowOption.Option.Stage2CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
-                        }
-                        else
-                        {
-                            <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn-success well">@orderRowOption.Option.Stage1CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
-                        }
+                        <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn-success well">@orderRowOption.Option.Stage2CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
                     }
                     else
                     {
-                        <span>There is a pending order for this event that requires your confirmation.</span>
-                        @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model)
+                        <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn-success well">@orderRowOption.Option.Stage1CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
                     }
+                }
+                else
+                {
+                    <span>There is a pending order for this event that requires your confirmation.</span>
+                    @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model)
                 }
             }
         }
