@@ -16,8 +16,8 @@ $(function () {
             });
         }
     });
-        
-    addShippingAddressLink.hide()
+
+    addShippingAddressLink.hide();
     
     hideAddShippingAddressLink.on('click', function (e) {
         e.preventDefault();
@@ -48,37 +48,37 @@ $(function () {
         }
     });
 
-    $(constants.ConfirmDeleteShippingAddressdialog).dialog({
-        autoOpen: false,
-        resizable: false,
-        height: 260,
-        modal: true,
-        show: 'fade',
-        hide: 'fade',
-        buttons: [
-            {
-                text: "Proceed",
-                click: function () {
+    //$(constants.ConfirmDeleteShippingAddressdialog).dialog({
+    //    autoOpen: false,
+    //    resizable: false,
+    //    height: 260,
+    //    modal: true,
+    //    show: 'fade',
+    //    hide: 'fade',
+    //    buttons: [
+    //        {
+    //            text: "Proceed",
+    //            click: function () {
 
-                    shippingAddressContainer.slideUp(800, function () {
-                        hideAddShippingAddressLink.fadeOut(400, function () {
-                            addShippingAddressLink.fadeIn(400);
-                        });
+    //                shippingAddressContainer.slideUp(800, function () {
+    //                    hideAddShippingAddressLink.fadeOut(400, function () {
+    //                        addShippingAddressLink.fadeIn(400);
+    //                    });
                         
-                    });
+    //                });
 
-                    $(this).dialog("close");
-                    return true;
-                }
-            },
-            {
-                text: "Cancel",
-                click: function () {
-                    $(this).dialog("close");
-                    return false;
-                }
-            }]
-        }
-    );
+    //                $(this).dialog("close");
+    //                return true;
+    //            }
+    //        },
+    //        {
+    //            text: "Cancel",
+    //            click: function () {
+    //                $(this).dialog("close");
+    //                return false;
+    //            }
+    //        }]
+    //    }
+    //);
 
 });

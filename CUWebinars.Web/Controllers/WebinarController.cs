@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
+using CUWebinars.Web.Core;
 using CUWebinars.Web.Data.Repositories.Interfaces;
 using CUWebinars.Web.Core.Browsers.Webinars;
 using CUWebinars.Web.Helpers;
@@ -409,6 +410,25 @@ namespace CUWebinars.Web.Controllers
             }
             return View(model);
         }
+
+        public ActionResult Calendar(int? ID)
+        {
+            return View();
+        }
+
+        [AcceptVerbs(HttpVerbs.Get)]
+        public ActionResult CalendarData()
+        {
+            //IList<Webinar> webinarsList = WebinarFacade.Instance.SelectAllActiveWebinars();
+            IList<Webinar> webinarsList = _webinarRepository.GetAllActive().ToList();
+
+            var dtos = new CalendarDTOAssembler().Entities2DTOs(webinarsList);
+
+            TempData["ListUpcoming"] = webinarsList;
+
+            return Json(dtos, JsonRequestBehavior.AllowGet);
+        }
+
 
         //
         // GET: /Webinar/Create
