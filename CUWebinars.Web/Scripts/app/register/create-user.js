@@ -93,6 +93,31 @@ var pageObjects = {
     zipShipping: zipShipping || $('#RegisterFields_ShippingAddress_Zip')
 };
 
+function EnterBillingPane() {
+    pageObjects.collapseBilling.parent().show();
+    pageObjects.collapseShipping.parent().show();
+    $('#collapseEmail').collapse('toggle');
+
+    var showBillingInputs = $.Deferred(function () {
+        pageObjects.collapseBilling.collapse('toggle');
+
+    });
+
+    $.when(showBillingInputs.resolve()).then(function () {
+        pageObjects.fullName.focus();
+    });
+
+    pageObjects.cityBilling.val(data.City);
+    pageObjects.stateBilling.val(data.State);
+    pageObjects.zipBilling.val(zipBilling);
+    $('#TimeZone').val(data.TimeZone);
+
+    pageObjects.labelEmail.html('<span class="label label-success"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</span>');
+    pageObjects.theSubmitButton.prop('value', registerButtonText);
+
+    stateManager.action = actions.SubmitRegister;
+}
+
 var stateManager = function () {
 
     var action = null,
@@ -265,20 +290,6 @@ var stateManager = function () {
             }
         },
 
-
-        handleNonUSAdddress = function () {
-            pageObjects.wrapZip.hide('slow');
-            console.log('handleNonUSAddress hit');
-            $('#nonUSAddressInput').show();
-            $('#collapseEmail').collapse('toggle');
-            pageObjects.collapseBilling.collapse('toggle');
-
-            //TODO:  not sure what to set the state to here. Need to discuss.
-            // I'd like to transition this code block so as to only display the 
-            //  'NonUSAddress Notes' input when invalid zip is detected.
-            // 
-        },
-
         notInstitutionAddress = function () {
             console.log('NotInstitution hit');
             pageObjects.modalInstitution.modal('hide');
@@ -365,8 +376,11 @@ var stateManager = function () {
             stateManager.showNewPasswordInputs();
         },
         nonUsAdddressInvoked = function () {
-            alert("hit nonUsAdddressInvoked");
             console.log("hit nonUsAdddressInvoked");
+            pageObjects.labelEmail.html('<span class="label label-info"><b>&nbsp;&nbsp;Non-US address? Please enter Special Handling Instructions</span>');
+            pageObjects.zipBilling = 'na';
+            $('#nonUSAddressInput').show();
+            EnterBillingPane();
         },
 
         zipCodeVerified = function (data, zipCode) {
@@ -374,28 +388,9 @@ var stateManager = function () {
             switch (data.success) {
                 case 'true':
                     console.log('zipCodeVerified-true hit');
-                    pageObjects.collapseBilling.parent().show();
-                    pageObjects.collapseShipping.parent().show();
-                    $('#collapseEmail').collapse('toggle');
+                    pageObjects.zipBilling = zipCode;
+                    EnterBillingPane();
 
-                    var showBillingInputs = $.Deferred(function () {
-                        pageObjects.collapseBilling.collapse('toggle');
-
-                    });
-
-                    $.when(showBillingInputs.resolve()).then(function () {
-                        pageObjects.fullName.focus();
-                    });
-
-                    pageObjects.cityBilling.val(data.City);
-                    pageObjects.stateBilling.val(data.State);
-                    pageObjects.zipBilling.val(zipCode);
-                    $('#TimeZone').val(data.TimeZone);
-
-                    pageObjects.labelEmail.html('<span class="label label-success"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</span>');
-                    pageObjects.theSubmitButton.prop('value', registerButtonText);
-
-                    stateManager.action = actions.SubmitRegister;
                     break;
                 case 'false':
                     console.log('zipCodeVerified-false hit');
@@ -500,7 +495,9 @@ function submitCreateUserForm() {
 
     var valid = pageObjects.createUserForm.valid();
 
-    console.log(valid);
+    //on account creation default the shipping phone to be same as billing
+    $("#RegisterFields.ShippingAddress.phone").val(phoneBilling);
+    console.log("validating createUserForm: " + valid);
 
     if (valid) {
         console.log('createUserForm submitted.');
