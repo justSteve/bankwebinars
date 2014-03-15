@@ -16,7 +16,7 @@ var nextButtonText = 'Next...';
 //  simple C-like enum implementation
 var actions = { CheckEmail: 'CheckEmail', CheckZip: 'CheckZip', GetPassword: 'GetPassword', LogIn: 'LogIn', PostCreateAccount: 'PostCreateAccount', SubmitLogin: 'SubmitLogin', SubmitRegister: 'SubmitRegister', DisplayBillingAddressFields: 'DisplayBillingAddressFields' };
 var inputActions = { EnterKeyPress: 'EnterKeyPress', ButtonClick: 'ButtonClick', None: 'None' };
-var buttons = { EnterDiffAddress:'EnterDiffAddress', nonUSAddress: 'nonUSAddress', NotInstitution: 'NotInstitution', ResetPass: 'resetPass', SignInButton: 'SignInButton', TheSubmit: 'TheSubmit', YesUseAddress: 'YesUseAddress' };
+var buttons = { EnterDiffAddress: 'EnterDiffAddress', nonUSAddress: 'nonUSAddress', NotInstitution: 'NotInstitution', ResetPass: 'resetPass', SignInButton: 'SignInButton', TheSubmit: 'TheSubmit', YesUseAddress: 'YesUseAddress' };
 
 
 var wrapEmail;
@@ -107,14 +107,14 @@ var stateManager = function () {
             if (pageObjects.emailInput.valid() == '1') {
                 pageObjects.collapseBilling.parent().show();
 
-                var showBillingInputs = $.Deferred(function() {
+                var showBillingInputs = $.Deferred(function () {
                     pageObjects.collapseBilling.collapse('show');
                 });
 
-                $.when(showBillingInputs.resolve()).then(function() {
+                $.when(showBillingInputs.resolve()).then(function () {
                     pageObjects.fullName.focus();
                 });
-                
+
                 pageObjects.collapseShipping.parent().show();
                 $('#collapseEmail').collapse('toggle');
 
@@ -124,7 +124,7 @@ var stateManager = function () {
             }
         },
 
-        enterDifferentAddress = function() {
+        enterDifferentAddress = function () {
             console.log('EnterDiffAddress hit');
             pageObjects.modalInstitution.modal('hide');
             pageObjects.wrapZip.hide('slow');
@@ -138,7 +138,7 @@ var stateManager = function () {
             stateManager.action = actions.CheckEmail;
 
             //    Set to none because flow ends here for that stage
-            stateManager.inputAction = inputActions.None; 
+            stateManager.inputAction = inputActions.None;
 
             var showEmailInput = $.Deferred(function () {
                 pageObjects.wrapEmail.show('slow');
@@ -149,18 +149,18 @@ var stateManager = function () {
             });
         },
 
-        resetPasswordOrLoginView = function(email) {
+        resetPasswordOrLoginView = function (email) {
             console.log("call resetPasswordOrLoginView: " + email);
             $('#Email1').val(email);
             $('#ResetPassEmail').val(email);
             pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is already on file.</span>');
             pageObjects.wrapEmail.hide('slow');
 
-            var showLoginInput = $.Deferred(function() {
+            var showLoginInput = $.Deferred(function () {
                 pageObjects.wrapReset.show('slow');
             });
 
-            $.when(showLoginInput.resolve()).then(function() {
+            $.when(showLoginInput.resolve()).then(function () {
                 $('#Email1').focus();
             });
 
@@ -171,7 +171,7 @@ var stateManager = function () {
         foundInstitutionView = function (data, email) {
 
             if (stateManager.inputAction.inputAction === inputActions.EnterKeyPress)
-            stateManager.inputAction = inputActions.None;
+                stateManager.inputAction = inputActions.None;
             console.log("call foundInstitutionView: " + email);
             pageObjects.modalInstitution.modal('show');
 
@@ -193,7 +193,7 @@ var stateManager = function () {
             $('form#frmSignIn').submit();
         },
 
-        newPasswordView = function(email) {
+        newPasswordView = function (email) {
             console.log("call newPasswordView: " + email);
             pageObjects.wrapEmail.hide('fast');
 
@@ -202,17 +202,17 @@ var stateManager = function () {
                 pageObjects.wrapPass.show('fast');
             });
 
-            $.when(showPwdInput.resolve()).then(function() {
-                 pageObjects.registerFieldsPassword.focus();
+            $.when(showPwdInput.resolve()).then(function () {
+                pageObjects.registerFieldsPassword.focus();
             });
 
-            
+
 
             if (email) {
                 pageObjects.labelEmail.html('<span class="label label-success"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; has been recorded.</span>');
             } else {
                 pageObjects.modalInstitution.modal('hide');
-                pageObjects.labelEmail.fadeOut(500, function() {
+                pageObjects.labelEmail.fadeOut(500, function () {
                     $(this).html('<span class="label label-success">&nbsp;&nbsp;&nbsp;&nbsp;' + pageObjects.emailInput.val() + ' will be used for your email address.</span>');
                     $(this).fadeIn(500);
                 });
@@ -223,14 +223,14 @@ var stateManager = function () {
             if (stateManager.inputAction === inputActions.EnterKeyPress)
                 stateManager.inputAction = inputActions.None;
 
-            pageObjects.theSubmitButton.on('mouseenter', function() {
+            pageObjects.theSubmitButton.on('mouseenter', function () {
                 if ($('#sameAsBilling:checked').val()) {
                     setShippingToBilling();
                 }
             });
         },
 
-        newPassWordToNextStep = function() {
+        newPassWordToNextStep = function () {
 
             var pwd = $.trim(pageObjects.registerFieldsPassword.val());
 
@@ -245,11 +245,11 @@ var stateManager = function () {
                 pageObjects.wrapPass.hide('slow');
                 stateManager.action = actions.CheckZip;
 
-                var showGetZipInput = $.Deferred(function() {
+                var showGetZipInput = $.Deferred(function () {
                     pageObjects.wrapZip.show('slow');
                 });
 
-                $.when(showGetZipInput.resolve()).then(function() {
+                $.when(showGetZipInput.resolve()).then(function () {
                     $('#getZip').focus();
                 });
 
@@ -264,7 +264,7 @@ var stateManager = function () {
             }
         },
 
-        nonUsAdddress = function() {
+        nonUsAdddress = function () {
             pageObjects.wrapZip.hide('slow');
             console.log('nonUSAddress hit');
             $('#nonUSAddress').show('slow');
@@ -277,18 +277,18 @@ var stateManager = function () {
             // 
         },
 
-        notInstitutionAddress = function() {
+        notInstitutionAddress = function () {
             console.log('NotInstitution hit');
             pageObjects.modalInstitution.modal('hide');
 
             var showEmailInput = $.Deferred(function () {
-            pageObjects.wrapEmail.show('slow');
+                pageObjects.wrapEmail.show('slow');
             });
 
             $.when(showEmailInput.resolve()).then(function () {
                 pageObjects.emailInput.focus();
             });
-            
+
 
             pageObjects.wrapZip.hide('slow');
             pageObjects.labelEmail.html('<span class="label label-info">&nbsp;&nbsp;&nbsp;&nbsp;Proceed or enter a different email address.</span>');
@@ -315,7 +315,7 @@ var stateManager = function () {
         passResetView = function () {
             console.log("call passResetView");
             pageObjects.login.hide('slow');
-            
+
 
             var showResetInput = $.Deferred(function () {
                 //TODO: inprocess indicator here?
@@ -327,7 +327,7 @@ var stateManager = function () {
             });
 
         },
-        registerView = function() {
+        registerView = function () {
             pageObjects.login.hide('slow');
             pageObjects.register.show('slow');
             stateManager.action = actions.CheckEmail;
@@ -350,12 +350,12 @@ var stateManager = function () {
             $('form#ResetPasswordForm').submit();
         },
 
-        startView = function() {
+        startView = function () {
             pageObjects.register.hide();
             pageObjects.reset.hide();
         },
 
-        useRegisteredAddress = function() {
+        useRegisteredAddress = function () {
             console.log('YesUseAddress hit');
 
             zipCheckRequired = false;
@@ -363,42 +363,42 @@ var stateManager = function () {
             stateManager.showNewPasswordInputs();
         },
 
-        zipCodeVerified = function(data, zipCode) {
+        zipCodeVerified = function (data, zipCode) {
 
             switch (data.success) {
-            case 'true':
-                console.log('zipCodeVerified-true hit');
-                pageObjects.collapseBilling.parent().show();
-                pageObjects.collapseShipping.parent().show();
-                $('#collapseEmail').collapse('toggle');
+                case 'true':
+                    console.log('zipCodeVerified-true hit');
+                    pageObjects.collapseBilling.parent().show();
+                    pageObjects.collapseShipping.parent().show();
+                    $('#collapseEmail').collapse('toggle');
 
-                var showBillingInputs = $.Deferred(function () {
-                    pageObjects.collapseBilling.collapse('toggle');
+                    var showBillingInputs = $.Deferred(function () {
+                        pageObjects.collapseBilling.collapse('toggle');
 
-                });
+                    });
 
-                $.when(showBillingInputs.resolve()).then(function () {
-                    pageObjects.fullName.focus();
-                });
+                    $.when(showBillingInputs.resolve()).then(function () {
+                        pageObjects.fullName.focus();
+                    });
 
-                pageObjects.cityBilling.val(data.City);
-                pageObjects.stateBilling.val(data.State);
-                pageObjects.zipBilling.val(zipCode);
-                $('#TimeZone').val(data.TimeZone);
+                    pageObjects.cityBilling.val(data.City);
+                    pageObjects.stateBilling.val(data.State);
+                    pageObjects.zipBilling.val(zipCode);
+                    $('#TimeZone').val(data.TimeZone);
 
-                pageObjects.labelEmail.html('<span class="label label-success"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</span>');
-                pageObjects.theSubmitButton.prop('value', registerButtonText);
+                    pageObjects.labelEmail.html('<span class="label label-success"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</span>');
+                    pageObjects.theSubmitButton.prop('value', registerButtonText);
 
-                stateManager.action = actions.SubmitRegister;
-                break;
-            case 'false':
-                console.log('zipCodeVerified-false hit');
-                pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode was not found!</span>');
-                break;
-            case 'invalid format':
-                console.log('zipCodeVerified-invalidformat hit');
-                pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode entered was not in the correct format!</span>');
-                break;
+                    stateManager.action = actions.SubmitRegister;
+                    break;
+                case 'false':
+                    console.log('zipCodeVerified-false hit');
+                    pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode was not found!</span>');
+                    break;
+                case 'invalid format':
+                    console.log('zipCodeVerified-invalidformat hit');
+                    pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode entered was not in the correct format!</span>');
+                    break;
             }
 
         },
@@ -406,42 +406,42 @@ var stateManager = function () {
         submit = function () {
 
             switch (stateManager.action) {
-            case actions.CheckEmail:
-                console.log('CheckEmail hit');
-                checkAndSubmitEmail();
-                if (!stateManager.disregardIntitutionDomain)
-                    stateManager.disregardIntitutionDomain = true;
-                pageObjects.theSubmitButton.prop('value', nextButtonText);
-                break;
-            case actions.GetPassword:
-                stateManager.newPassWordToNextStep();
-                break;
-            case actions.CheckZip:
-                console.log('CheckZip hit');
-                $('#ZipChecker').val($('#getZip').val());
-                $('form#checkZip').submit();
-                break;
-            case actions.SubmitRegister:
-                console.log('SubmitRegister hit');
-                //TODO: provide an exitscreen confirming account creation.
-                stateManager.action = actions.PostCreateAccount;
-                if (pageObjects.createUserForm.valid() == '1') {
-                    submitCreateUserForm();
-                }
-                break;
-            case actions.SubmitLogin:
-                console.log('submitLogin hit');
-                $('#Password').val($('#Password1').val());
-                $('#Email').val($('#Email1').val());
-                $('form#frmSignIn').submit();
-                break;
-            case actions.DisplayBillingAddressFields:
-                displayBillingFields();
-                break;
+                case actions.CheckEmail:
+                    console.log('CheckEmail hit');
+                    checkAndSubmitEmail();
+                    if (!stateManager.disregardIntitutionDomain)
+                        stateManager.disregardIntitutionDomain = true;
+                    pageObjects.theSubmitButton.prop('value', nextButtonText);
+                    break;
+                case actions.GetPassword:
+                    stateManager.newPassWordToNextStep();
+                    break;
+                case actions.CheckZip:
+                    console.log('CheckZip hit');
+                    $('#ZipChecker').val($('#getZip').val());
+                    $('form#checkZip').submit();
+                    break;
+                case actions.SubmitRegister:
+                    console.log('SubmitRegister hit');
+                    //TODO: provide an exitscreen confirming account creation.
+                    stateManager.action = actions.PostCreateAccount;
+                    if (pageObjects.createUserForm.valid() == '1') {
+                        submitCreateUserForm();
+                    }
+                    break;
+                case actions.SubmitLogin:
+                    console.log('submitLogin hit');
+                    $('#Password').val($('#Password1').val());
+                    $('#Email').val($('#Email1').val());
+                    $('form#frmSignIn').submit();
+                    break;
+                case actions.DisplayBillingAddressFields:
+                    displayBillingFields();
+                    break;
             }
         },
 
-        init = function(args) {
+        init = function (args) {
             stateManager.action = actions.LogIn;
             stateManager.inputAction = inputActions.None;
             stateManager.disregardIntitutionDomain = false;
@@ -595,7 +595,7 @@ $(function () {
     pageObjects.theSubmitButton.prop('value', nextButtonText);
 
     $('input').keypress(function (event) {
-        
+
         var inputElementTriggered = event.currentTarget.name;
         var normalResetPasswordButton = $('#NormalResetPasswordButton');
 
@@ -664,7 +664,7 @@ $(function () {
 
         if (stateManager.action === '') {
             pageObjects.labelEmail.html('<span class="label label-important">&nbsp;&nbsp;There registration has encountered a problem. Please refresh the page and re-start the registration process or call Tech Support at 800-831-0678 ext. 706.</span>');
-            
+
             return false;
         }
 
@@ -689,9 +689,9 @@ $(function () {
             case buttons.nonUSAddress: stateManager.nonUsAdddressInvoked(); break;
             case buttons.ResetPass: stateManager.resetPassword(normalResetPasswordButton); break;
             case buttons.YesUseAddress: stateManager.useRegisteredAddress(); break;
-            case buttons.EnterDiffAddress: stateManager.enterDifferentAddress();break;
-            case buttons.NotInstitution: stateManager.notInstitutionAddress();break;
-        default:
+            case buttons.EnterDiffAddress: stateManager.enterDifferentAddress(); break;
+            case buttons.NotInstitution: stateManager.notInstitutionAddress(); break;
+            default:
         }
     }));
 
@@ -817,8 +817,8 @@ $(function () {
             }).fail(function () {
                 // failed request; give feedback to user
                 pageObjects.wrapEmail.html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
-            }).always(function() {
-                 stateManager.inputAction = inputActions.None;
+            }).always(function () {
+                stateManager.inputAction = inputActions.None;
             });
         }
     });
