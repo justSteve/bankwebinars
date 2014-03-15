@@ -16,9 +16,9 @@ var nextButtonText = 'Next...';
 //  simple C-like enum implementation
 var actions = { CheckEmail: 'CheckEmail', CheckZip: 'CheckZip', GetPassword: 'GetPassword', LogIn: 'LogIn', PostCreateAccount: 'PostCreateAccount', SubmitLogin: 'SubmitLogin', SubmitRegister: 'SubmitRegister', DisplayBillingAddressFields: 'DisplayBillingAddressFields' };
 var inputActions = { EnterKeyPress: 'EnterKeyPress', ButtonClick: 'ButtonClick', None: 'None' };
-var buttons = { EnterDiffAddress: 'EnterDiffAddress', nonUSAddress: 'nonUSAddress', NotInstitution: 'NotInstitution', ResetPass: 'resetPass', SignInButton: 'SignInButton', TheSubmit: 'TheSubmit', YesUseAddress: 'YesUseAddress' };
+var buttons = { EnterDiffAddress: 'EnterDiffAddress', nonUSAddressBtn: 'nonUSAddressBtn', NotInstitution: 'NotInstitution', ResetPass: 'resetPass', SignInButton: 'SignInButton', TheSubmit: 'TheSubmit', YesUseAddress: 'YesUseAddress' };
 
-
+var nonUSAddressBtn;
 var wrapEmail;
 var wrapPass;
 var wrapReset;
@@ -59,6 +59,7 @@ var pageObjects = {
     theSubmitButton: theSubmitButton || $('#TheSubmitButton'),
     emailInput: emailInput || $('#RegisterFields_Email'),
     cityBilling: cityBilling || $('#RegisterFields_BillingAddress_City'),
+    nonUSAddressBtn: nonUSAddressBtn || $('#nonUSAddressBtn'),
     cityShipping: cityShipping || $('#RegisterFields_ShippingAddress_City'),
     collapseBilling: collapseBilling || $('#collapseBilling'),
     collapseShipping: collapseShipping || $('#collapseShipping'),
@@ -264,10 +265,11 @@ var stateManager = function () {
             }
         },
 
-        nonUsAdddress = function () {
+
+        handleNonUSAdddress = function () {
             pageObjects.wrapZip.hide('slow');
-            console.log('nonUSAddress hit');
-            $('#nonUSAddress').show('slow');
+            console.log('handleNonUSAddress hit');
+            $('#nonUSAddressInput').show();
             $('#collapseEmail').collapse('toggle');
             pageObjects.collapseBilling.collapse('toggle');
 
@@ -362,6 +364,10 @@ var stateManager = function () {
 
             stateManager.showNewPasswordInputs();
         },
+        nonUsAdddressInvoked = function () {
+            alert("hit nonUsAdddressInvoked");
+            console.log("hit nonUsAdddressInvoked");
+        },
 
         zipCodeVerified = function (data, zipCode) {
 
@@ -394,6 +400,7 @@ var stateManager = function () {
                 case 'false':
                     console.log('zipCodeVerified-false hit');
                     pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode was not found!</span>');
+                    $('#nonUSAddressBtn').show('slow');
                     break;
                 case 'invalid format':
                     console.log('zipCodeVerified-invalidformat hit');
@@ -459,7 +466,7 @@ var stateManager = function () {
         inputAction: inputAction,
         logIn: logIn,
         newPassWordToNextStep: newPassWordToNextStep,
-        nonUsAdddressInvoked: nonUsAdddress,
+        nonUsAdddressInvoked: nonUsAdddressInvoked,
         notInstitutionAddress: notInstitutionAddress,
         resetPassword: resetPassword,
         showNewPasswordInputs: newPasswordView,
@@ -579,7 +586,9 @@ $(function () {
     pageObjects.wrapZip.hide();
     pageObjects.wrapPass.hide();
     pageObjects.wrapReset.hide();
-    $('#nonUSAddress').hide();
+    $('#nonUSAddressBtn').hide();
+    $('#nonUSAddressInput').hide();
+
     $('#getFirstLast').hide();
 
     var path = setPath();
@@ -625,8 +634,8 @@ $(function () {
                 case buttons.TheSubmit:
                     console.log('ActionForTheSubmit = ' + stateManager.action);
                     stateManager.submit(); break;
-                case buttons.nonUSAddress: stateManager.nonUsAdddressInvoked(); break;
-                case 'Email':
+                case buttons.nonUSAddressBtn: stateManager.nonUsAdddressInvoked(); break;
+                    //case 'Email':
                 case 'NormalResetPasswordButton':
                     if ($('#EdgeCaseResetPasswordButton').data('clicked'))
                         $('#EdgeCaseResetPasswordButton').removeData('clicked');
@@ -686,7 +695,7 @@ $(function () {
             case buttons.TheSubmit:
                 console.log('ActionForTheSubmit = ' + stateManager.action);
                 stateManager.submit(); break;
-            case buttons.nonUSAddress: stateManager.nonUsAdddressInvoked(); break;
+            case buttons.nonUSAddressBtn: stateManager.nonUsAdddressInvoked(); break;
             case buttons.ResetPass: stateManager.resetPassword(normalResetPasswordButton); break;
             case buttons.YesUseAddress: stateManager.useRegisteredAddress(); break;
             case buttons.EnterDiffAddress: stateManager.enterDifferentAddress(); break;
