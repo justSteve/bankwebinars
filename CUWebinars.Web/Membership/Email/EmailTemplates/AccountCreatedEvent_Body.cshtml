@@ -1,11 +1,17 @@
-﻿@using CUWebinars.Business.Services
+﻿@using System.Security.Claims
+@using CUWebinars.Business.Services
 @using CUWebinars.Business.Services
 @model CUWebinars.Web.Membership.Notification
 [@Model.ApplicationName] Account Created
 
 @{
-    
-    var user = OrderManagementService.
+    var identity = ((ClaimsIdentity)User.Identity)
+        .Claims.FirstOrDefault(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName);
+
+    if (!ReferenceEquals(null, identity))
+    {
+        ViewBag.LoggedInUserIdentity = identity;
+    }
 }
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">

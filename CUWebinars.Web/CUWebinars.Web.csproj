@@ -1072,6 +1072,9 @@
     <Content Include="Views\Account\Closed.cshtml" />
     <Content Include="Views\Shared\AddLocationsView.cshtml" />
     <Content Include="Views\Shared\Partials\_DisplayRowPrice.cshtml" />
+    <Content Include="Views\Webinar\Partials\_RegistrationSummary.cshtml" />
+    <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
+    <Content Include="Views\Webinar\Calendar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

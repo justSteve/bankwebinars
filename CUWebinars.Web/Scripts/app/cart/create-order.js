@@ -16,6 +16,71 @@ function showHtmlPopup(url) {
     //'toolbar=1,scrollbars=0,location=1,statusbar=1,menubar=1,resizable=1,width=100,height=100');"
 }
 
+
+function signUp() {
+    //$("#frmSignup2").submit();
+}
+var exprsOrder = function () { throw new Error("Not implemented"); };
+;
+$(document).ready(function () {
+    $("[id^='mode_']").on("click", function (oEvent) {
+
+        //signUp();
+        $("#stage_of_checkout").val("preReg");
+        BuildPreRegPrice(oEvent);
+        CheckIfAddLocShouldHide(oEvent.currentTarget.value);
+
+    });
+
+    function CheckIfAddLocShouldHide(optionID) {
+        //don't show AdditionalLocation when RegType
+        // can't support them. (ex: recorded only)
+
+        var $form = $("#frmSignup2");
+
+        $.ajax({
+            url: "/cart/CheckIfAddLocShouldHide?optionID=" + optionID,
+            type: "GET",
+            //data: optionID,
+            success: function (data) {
+                //$("#mode_" + data.orderRowID).prop('checked', true);
+                if (data.shouldShow == "true") {
+
+                    $("#displayAddLoc").show(1000);
+                } else {
+                    $("#displayAddLoc").hide(1000);
+                }
+            }
+        });
+    }
+});
+
+function BuildPreRegPrice(oEvent) {
+    //permits a 'preReg' pricing scheme to handle
+    //computation of discounts and addl locations prior
+    //to stepping to confirmation.
+
+    var $form = $("#frmSignup2");
+
+    oEvent.preventDefault();
+    $("#ProgressDialogBS").modal('show');
+    $.ajax({
+        url: $form.attr("action"),
+        type: "POST",
+        data: $form.serialize(),
+        success: function (data) {
+            $("#mode_" + data.orderRowID).prop('checked', true);
+
+        },
+        error: function () {
+
+        },
+        complete: function () {
+            $("#ProgressDialogBS").modal('hide');
+        }
+    });
+}
+
 function setPath() {
     var indexOfHome = location.href.indexOf('Account');
     var path = '';
