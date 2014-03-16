@@ -1,13 +1,17 @@
-﻿
-@model CUWebinars.Web.ViewModel.WebinarDetailsViewModel
+﻿@model CUWebinars.Web.ViewModel.WebinarDetailsViewModel
 <div class="tab-pane" id="contactInfo">
 
-@*    @{
+    @{
         var user = Model.WebUser;
         var shippingIsSame = true;
         var notifyOfShipped = false;
         var shippedCaption = "";
+        var ShowShippedNotifications = "";
 
+        if (ViewBag.RegistrationType != null)
+        {
+            ShowShippedNotifications = ViewBag.RegistrationType.ShowShippedNotifications;
+        }
 
         //if (Model.WebUser != null)
         //{
@@ -28,58 +32,63 @@
         //        shippingIsSame = false;
         //    }
         shippingIsSame = false;
-            if (Model.OrderRow != null && Model.OrderRow.Id > 0)
+        if (Model.Order != null && Model.Order.idOrder > 0)
+        {
+            OrderRow row = new OrderRow();
+            row = Model.Order.OrderRows.SingleOrDefault();
+
+            <div class="span4">
+                Billing:
+                @{
+            if (row.Status != OrderRowStatus.InProcess)
             {
-        <div class="span4">
-            Billing: 
-            @{
-                if (Model.OrderRow.Status != OrderRowStatus.InProcess)
-                {
-                <a role="button" href='/account/edit/@Model.OrderRow.Order.WebUser.idUser' class="btn btn-mini" target='new'>Edit?</a>
-                }
+                <a role="button" href='/account/edit/@Model.WebUser.idUser' class="btn btn-mini" target='new'>Edit?</a>
             }
-            <blockquote class="btn-success well">@user.LastName - @user.Email<br />@user.Institution.InstitutionName<br />
-                @user.Address. - @user.Address2<br />
-                @user.City, @user.State @user.Zip
-            </blockquote>
+                }
+                <blockquote class="btn-success well">
+                    @user.LastName - @user.email<br />@user.Institution.InstitutionName<br />
+                    @*@user.Address. - @user.Address2<br />
+                        @user.City, @user.State @user.Zip*@
+                </blockquote>
 
-        </div>
-                if (OptionsFacade.Instance.Load((int)Model.OrderRow.RegistrationType).ShowShippedNotifications == "Yes")
+            </div>
+            if (ShowShippedNotifications == "Yes")
+            {
+                notifyOfShipped = true;
+
+                if (row.ShipmentDate != null)
                 {
-                    notifyOfShipped = true;
+                    shippedCaption = "<div class=\"label-success\">Shipped:" + row.ShipmentDate + "</div>";
 
-                    if (Model.OrderRow.IsShipped)
-                    {
-                        shippedCaption = "<div class=\"label-success\">Shipped:" + Model.OrderRow.ShipmentDate + "</div>";
-
-                    }
-                    else
-                    {
-                        shippedCaption = "<div class=\"label-info\">Materials will ship within 2-4 days following the event.</div>";
-                    }
-
-                    if (shippingIsSame)
-                    {
-        <div class="span3 label label-info">Shipping address is same as Billing.</div>
-                    }
-                    else
-                    {
-        <div class="span3">
-            Order will be shipped to:
-        <blockquote class="well btn-success">@user.ShippingFirstName @user.ShippingLastName
-            <br />@user.Institution.Name<br />
-            @user.ShippingAddress - @user.ShippingAddress2<br />
-            @user.ShippingCity, @user.ShippingState @user.ShippingZip
-        </blockquote>
-        </div>
-                    }
                 }
                 else
                 {
-        <br />
-        <div class="span4 label label-info">Order does not include any shippable items.</div>
+                    shippedCaption = "<div class=\"label-info\">Materials will ship within 2-4 days following the event.</div>";
+                }
+
+                if (shippingIsSame)
+                {
+                    <div class="span3 label label-info">Shipping address is same as Billing.</div>
+                }
+                else
+                {
+                    <div class="span3">
+                        Order will be shipped to:
+                        <blockquote class="well btn-success">
+                            @*@user.ShippingFirstName @user.ShippingLastName
+                                <br />@user.Institution.Name<br />
+                                @user.ShippingAddress - @user.ShippingAddress2<br />
+                                @user.ShippingCity, @user.ShippingState @user.ShippingZip*@
+                        </blockquote>
+                    </div>
                 }
             }
+            else
+            {
+                <br />
+                <div class="span4 label label-info">Order does not include any shippable items.</div>
+            }
         }
-    }*@
+    }
+    }
 </div>

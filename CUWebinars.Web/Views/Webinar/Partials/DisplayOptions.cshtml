@@ -1,4 +1,5 @@
-﻿@using CUWebinars.Business.Models
+﻿@using System.Activities.Expressions
+@using CUWebinars.Business.Models
 @model CUWebinars.Web.ViewModel.WebinarDetailsViewModel
 @{
     var defaultCheck = "checked";
@@ -8,10 +9,30 @@
     // create-order.js
 </script>
 @{
-    <span>Choose the attendance option that's right for you! <a href="#AttendOptions" data-toggle="modal">(learn more)</a> </span>
+    AdditionalLocationsViewModel addLocViewModel = new AdditionalLocationsViewModel();
+    var addLocView = new OrderRowOption();
+
+    //if (Model.Order != null)
+    //{
+    //    var order = Model.Order;
+    //    if (order.OrderRows.SingleOrDefault().OrderRowOptions.SingleOrDefault() != null)
+    //    {
+    //        addLocView = order.OrderRows.SingleOrDefault().OrderRowOptions.SingleOrDefault();
+    //    }
+    //    else
+    //    {
+    //        order.OrderRows.SingleOrDefault().OrderRowOptions.Add(addLocView);
+    //    }
+
+    //}
+    addLocViewModel.Webinar = Model.Webinar;
+    
+    <span>
+        Choose the attendance option that's right for you! <a href="#AttendOptions" data-toggle="modal">(learn more)</a>
+    </span>
 
     <div class="pull-right">
-        @*@Html.Partial("_DisplayRowPrice", new ViewDataDictionary(Model.OrderRow))
+        @*@Html.Partial("_DisplayRowPrice", new ViewDataDictionary(row))
             @Html.Raw(TTSTrain.Webinars.WebEntry.Support.DisplayRowPrice.BuildRowPrice(workingRow))*@
     </div>
     <div id="ModeOptions">
@@ -20,9 +41,11 @@
             {
                 if (myOption.Type == "Text")
                 {
-                    if (!myOption.SKU.Contains("Upgrade")
-                        )
+                    if (!myOption.SKU.Contains("Upgrade"))
                     {
+                        //since the option hasn't been designated as an 'Upgrade' 
+                        // we need to display it. Only show 'Upgrades' to users 
+                        // who already own a registration.
                         <dt>
                             <input type="radio" class="checkbox" id='mode_@(myOption.idOption)' @defaultCheck name="mode" value="@myOption.idOption" />
                             &nbsp;&nbsp;@myOption.OptionLabel - $@myOption.PriceToAdd&nbsp;&nbsp;<a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.OptionExplain) "><i class="icon-question-sign"></i></a>
@@ -43,14 +66,19 @@
 
                     defaultCheck = "";
                 }
-
+                if (myOption.Type == "additional_location")
+                {
+                    addLocView.Option = myOption;
+                    addLocViewModel.AdditionalLocation = addLocView;
+                    //TODO: ERROR HERE. How to correctly populate the AdditionalLocation value
+                    // currently the Option that is received by the Partial view
+                    // is null.
+                }
             }
         </dl>
-
-
-
+        
         <div id="displayAddLoc">
-            @Html.Partial(partialViewName: "~/Views/Webinar/Partials/AdditionalLocationsOptionView.cshtml", model: Model)
+            @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationsView.cshtml", addLocViewModel)
         </div>
     </div>
 }

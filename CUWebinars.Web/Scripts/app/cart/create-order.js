@@ -6,81 +6,6 @@ var CheckoutInProcess = false;
 var isUserLogged = false;
 var whichStep = "Step0";
 
-
-function isValidEmailAddress(emailAddress) {
-    var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
-    return pattern.test(emailAddress);
-};
-function showHtmlPopup(url) {
-    window.open(url, null, "width=800, height=600,toolbar=1,scrollbars=1,location=1,statusbar=1,menubar=1,resizable=1");
-    //'toolbar=1,scrollbars=0,location=1,statusbar=1,menubar=1,resizable=1,width=100,height=100');"
-}
-
-
-function signUp() {
-    //$("#frmSignup2").submit();
-}
-var exprsOrder = function () { throw new Error("Not implemented"); };
-;
-$(document).ready(function () {
-    $("[id^='mode_']").on("click", function (oEvent) {
-
-        //signUp();
-        $("#stage_of_checkout").val("preReg");
-        BuildPreRegPrice(oEvent);
-        CheckIfAddLocShouldHide(oEvent.currentTarget.value);
-
-    });
-
-    function CheckIfAddLocShouldHide(optionID) {
-        //don't show AdditionalLocation when RegType
-        // can't support them. (ex: recorded only)
-
-        var $form = $("#frmSignup2");
-
-        $.ajax({
-            url: "/cart/CheckIfAddLocShouldHide?optionID=" + optionID,
-            type: "GET",
-            //data: optionID,
-            success: function (data) {
-                //$("#mode_" + data.orderRowID).prop('checked', true);
-                if (data.shouldShow == "true") {
-
-                    $("#displayAddLoc").show(1000);
-                } else {
-                    $("#displayAddLoc").hide(1000);
-                }
-            }
-        });
-    }
-});
-
-function BuildPreRegPrice(oEvent) {
-    //permits a 'preReg' pricing scheme to handle
-    //computation of discounts and addl locations prior
-    //to stepping to confirmation.
-
-    var $form = $("#frmSignup2");
-
-    oEvent.preventDefault();
-    $("#ProgressDialogBS").modal('show');
-    $.ajax({
-        url: $form.attr("action"),
-        type: "POST",
-        data: $form.serialize(),
-        success: function (data) {
-            $("#mode_" + data.orderRowID).prop('checked', true);
-
-        },
-        error: function () {
-
-        },
-        complete: function () {
-            $("#ProgressDialogBS").modal('hide');
-        }
-    });
-}
-
 function setPath() {
     var indexOfHome = location.href.indexOf('Account');
     var path = '';
@@ -96,14 +21,41 @@ function setPath() {
     return path;
 }
 
+//var pageObjects = {
+//    theSubmitButton: theSubmitButton || $('#TheSubmitButton'),
+//    webinarContent: webinarContent || $('#webinarContent'),
+
+//};
+
+
+function isValidEmailAddress(emailAddress) {
+    var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+    return pattern.test(emailAddress);
+};
+function showHtmlPopup(url) {
+    window.open(url, null, "width=800, height=600,toolbar=1,scrollbars=1,location=1,statusbar=1,menubar=1,resizable=1");
+    //'toolbar=1,scrollbars=0,location=1,statusbar=1,menubar=1,resizable=1,width=100,height=100');"
+}
+
+
+var exprsOrder = function (e) {
+    alert(e);
+};
+
 $(document).ready(function () {
     SetCartState();
     var path = setPath();
+    $("[id^='mode_']").on("click", function (oEvent) {
+        $("#stage_of_checkout").val("preReg");
+        //BuildPreRegPrice(oEvent);
+        CheckIfAddLocShouldHide(oEvent.currentTarget.value);
+    });
+
 
     $('[id^="AddToCart"]').on('click', function () {
         $("#frmSignup2 [name='mode']").val($('input[name=mode]:checked', '#ModeOptions').val());
         var emails2Add = "";
-        $('[name^="Email"]').each(function() {
+        $('[name^="Email"]').each(function () {
             emails2Add = emails2Add + ',' + $(this).val();
         });
         $("#frmSignup2 [name='addEmails']").val(emails2Add);   //alert($("#frmSignup2 [name='mode']").val());
@@ -131,7 +83,7 @@ $(document).ready(function () {
 
     var signUpForm = $("#frmSignup2");
     signUpForm.submit(function (e) {
-        
+
         e.preventDefault();
         CheckoutInProcess = true;
         if (!isUserLogged) {
@@ -148,7 +100,7 @@ $(document).ready(function () {
             var data = signUpForm.serialize();
             $.post(signUpForm.attr("action"), data, function (result, status) {
                 if (result.success) {
-                    jslogger.event({ signup: { from: "EndUser Checkout" } });
+                    //jslogger.event({ signup: { from: "EndUser Checkout" } });
                     orderRowID = result.orderRowID;
                     whichStep = result.whichStep;
 
@@ -171,7 +123,7 @@ $(document).ready(function () {
                                 });
                         });
                 } else {
-                    jslogger.log({ exception: { name: "SignupFail", message: "The signUpForm submission failed." } });
+                    //jslogger.log({ exception: { name: "SignupFail", message: "The signUpForm submission failed." } });
                     $('.signupErrors').html("Invalid Data. Try again?");
                 }
             }, "json");
@@ -284,7 +236,63 @@ $(document).ready(function () {
         return false;
     });
 
+
 });
+
+
+function CheckIfAddLocShouldHide(optionID) {
+    //don't show AdditionalLocation when RegType
+    // can't support them. (ex: recorded only)
+
+    $.ajax({
+        url: "/cart/CheckIfAddLocShouldHide?optionID=" + optionID,
+        type: "GET",
+        cache: false,
+        dataType: constants.JsonDataType,
+
+        beforeSend: function () {
+            console.log('beforeSend CheckIfAddLocShouldHide');
+            // no loading image needed
+        }
+    }).done(function (data) {
+        console.log('done CheckIfAddLocShouldHide');
+        if (data.shouldShow === 'Yes') {
+            console.log('show CheckIfAddLocShouldHide');
+            $("#displayAddLoc").show('slow');
+        } else if (data.shouldShow === 'No') {
+            console.log('hide  CheckIfAddLocShouldHide');
+            $("#displayAddLoc").hide(1000);
+        }
+    }).fail(function (data) {
+        console.log('CheckIfAddLocShouldHide failed!!! ');
+    });
+}
+
+function BuildPreRegPrice(oEvent) {
+    //permits a 'preReg' pricing scheme to handle
+    //computation of discounts and addl locations prior
+    //to stepping to confirmation.
+
+    var $form = $("#BuildPrice");
+
+    oEvent.preventDefault();
+    $("#ProgressDialogBS").modal('show');
+    $.ajax({
+        url: '/cart/buildPrice',
+        type: "POST",
+        data: $form.serialize(),
+        success: function (data) {
+            $("#mode_" + data.orderRowID).prop('checked', true);
+
+        },
+        error: function () {
+
+        },
+        complete: function () {
+            $("#ProgressDialogBS").modal('hide');
+        }
+    });
+}
 
 
 function SetCartState() {

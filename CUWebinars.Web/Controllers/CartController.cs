@@ -67,12 +67,12 @@ namespace CUWebinars.Web.Controllers
                 int rowID = Convert.ToInt32(orderRowID);
                 //thisModel.Order.OrderRow = OrderFacade.Instance.LoadOrderRow(rowID);
                 //{
-                //    if (thisModel.OrderRow != null)
+                //    if (thisrow != null)
                 //    {
-                //        thisModel.User = thisModel.OrderRow.Order.User;
-                //        thisModel.Webinar = thisModel.OrderRow.Webinar;
-                //        thisModel.Affiliate = thisModel.OrderRow.Order.Affiliate;
-                //        thisModel.ConnectionInfo = OrderFacade.Instance.BuildConnectionInfo(thisModel.OrderRow);
+                //        thisModel.User = thisrow.Order.User;
+                //        thisModel.Webinar = thisrow.Webinar;
+                //        thisModel.Affiliate = thisrow.Order.Affiliate;
+                //        thisModel.ConnectionInfo = OrderFacade.Instance.BuildConnectionInfo(thisrow);
                 //    }
                 //}
                 return thisModel;
@@ -102,7 +102,7 @@ namespace CUWebinars.Web.Controllers
             Session.Remove("CurrentOrderId");
             Session.Remove("IsOrderPaid");
 
-            //new MailController().OrderConfirmationEmail(model.OrderRow).Deliver();
+            //new MailController().OrderConfirmationEmail(row).Deliver();
 
             return Json(new
             {
@@ -161,7 +161,7 @@ namespace CUWebinars.Web.Controllers
         //public ActionResult CheckoutDisplayRowPrice(int ID)
         //{
         //    var model = CheckOutViewModel(ID);
-        //    return PartialView("_DisplayRowPrice", model.OrderRow);
+        //    return PartialView("_DisplayRowPrice", row);
         //}
 
         [AcceptVerbs(HttpVerbs.Post)]
@@ -179,9 +179,9 @@ namespace CUWebinars.Web.Controllers
             var IsUserLogged = false;
             var model = formModel;
 
-            var currentOrder = stateService.GetValue<Order>("CurrentOrder"); 
+            var currentOrder = stateService.GetValue<Order>("CurrentOrder");
             // Will we be putting this in Session at some point?
-            
+
             //  i think we need a way to persist 'non-completed orders'
             // in interest of minimizing - perhaps just storing the orderID and then 
             // hydrating it as needed.
@@ -208,6 +208,8 @@ namespace CUWebinars.Web.Controllers
             }
 
             var options = _orderManagementService.GetOptionsByWebinarIdFromOptionsRepository(model.Webinar.idWebinar, true);
+            model.Options = options;
+
             var option = options.SingleOrDefault(o => o.Type == "additional_location");
             var connections = addEmails.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 
@@ -257,7 +259,10 @@ namespace CUWebinars.Web.Controllers
             }
 
             var orderRow = _orderManagementService.CreateOrderRow(model.Webinar, orderRowOption, string.Empty, mode);
-  
+            // populate the ViewBag with the RegistrationType (aka Option)
+            ViewBag.RegistrationType = options.SingleOrDefault(o => o.idOption == orderRow.RegistrationType);
+
+
             if (currentOrder == null)
             {
                 currentOrder = _orderManagementService.CreateNewOrder(
@@ -269,16 +274,16 @@ namespace CUWebinars.Web.Controllers
                     );
                 //StateService.SetValue("CurrentOrder", string.Empty);
             }
-            
+
             currentOrder.Origin = "<p>InitialPage: " + stateService.GetValue<String>("FirstPage") + "</p><p>" +
                        " InitialReferrer: " + stateService.GetValue<String>("InitialQueryString") + "</p><p>" +
-                       " InitialCookies: " +stateService.GetValue<String>("FirstCookies")+ "</p><p>" +
-                       " SessionID: " +stateService.GetValue<String>("SessionID")+ "</p>";
+                       " InitialCookies: " + stateService.GetValue<String>("FirstCookies") + "</p><p>" +
+                       " SessionID: " + stateService.GetValue<String>("SessionID") + "</p>";
 
 
             //var additionalLocations = orderRow.OrderRowOptions.OfType<AdditionalLocationsOrderRowOption>();
             //var additionalLocationsOption = additionalLocations as AdditionalLocationsOrderRowOption[] ?? additionalLocations.ToArray();
-            
+
             //int count = additionalLocationsOption.Count();
 
             //if (count > 0)
@@ -301,6 +306,7 @@ namespace CUWebinars.Web.Controllers
                 _orderManagementService.AssignUserToOrder(currentOrder);
                 currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
                 currentOrder.InitiatedBy = _orderManagementService.GetOrderInitiator();
+
             }
             else
             {
@@ -312,7 +318,7 @@ namespace CUWebinars.Web.Controllers
                 //TODO: assign appropriate ModelError and error logging/handling
             }
 
-        
+
             currentOrder = _orderManagementService.SaveOrderChanges(currentOrder);
 
             if (model.Webinar.idWebinar == 883 && model.Webinar.Status == WebinarStatus.Scheduled)
@@ -408,14 +414,23 @@ namespace CUWebinars.Web.Controllers
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult CheckIfAddLocShouldHide(int optionID)
         {
+            var shouldShow = "";
+            var firstOrDefault = db.Options.Where(o => o.idOption == optionID)
+                .Select(o => o.ShowLiveNotifications).FirstOrDefault();
+            if (firstOrDefault != null)
+            {
+                shouldShow = firstOrDefault.ToString();
+                //if (OptionsFacade.Instance.Load(optionID).ShowLiveNotifications == "No") shouldShow = "false";
+                if (shouldShow == "Yes")
+                {
+                    Logger.Info(shouldShow);
+                }
 
-            //var shouldShow = "true";
-            var shouldShow = db.Options.Where(o => o.idOption == optionID).Select(o => o.ShowLiveNotifications);
-            //if (OptionsFacade.Instance.Load(optionID).ShowLiveNotifications == "No") shouldShow = "false";
+            }
             return Json(new
-                                {
-                                    shouldShow
-                                }, JsonRequestBehavior.AllowGet);
+                 {
+                     shouldShow
+                 }, JsonRequestBehavior.AllowGet);
         }
 
         //[Authorize(Roles = AppRoles.Admin)]

@@ -1,11 +1,11 @@
+@using System.Globalization
 @using CUWebinars.Business.Models
-@model CUWebinars.Web.ViewModel.WebinarDetailsViewModel
+@model CUWebinars.Web.ViewModel.AdditionalLocationsViewModel
 @{
     if (Model.Webinar.Status == WebinarStatus.Scheduled)
     {
-        //var option = Model.Options.OfType<AdditionalLocationsOption>().SingleOrDefault();
-        var option = Model.Options.SingleOrDefault(o => o.Type == "additional_location");
-
+        var option = Model.AdditionalLocation;
+        
         <div id="AdditionalLocationContainer" class="well" style="margin-right: 50px;margin-left: 50px;">
             <h5>Additional Locations</h5>
 
@@ -24,21 +24,20 @@
                         <input type="text" name="Email_1" id="Email_1" value="2nd Location" disabled="disabled" class="{email: true}" /><br />
                         <input type="text" name="Email_2" id="Email_2" value="3rd Location" disabled="disabled" class="{email: true}" /><br />
                     </div>
-
                 </div>
                 <div style="display: none" id="addLoc4Cost">
-                    <input type="hidden" name="connectionsCount" value="0" id="connectionsCount" />
+                    <button value="Add?" name="showAddLocModal" id="showAddLocModal">Add?</button>
                 </div>
             }
             else
             {
-                <blockquote style="margin-bottom: 0px;">
-                    @option.OptionExplain
+                <blockquote style="margin-bottom: 0;">
+                    @option.OptionDescription
                 </blockquote>
                 <div style="padding-left: 50px;">
-                    <b>Each additional location adds $@option.PriceToAdd.ToString() to your registration:</b>
-                    <input type="text" name="connectionsCount" style="width: 30px; text-align: right" value="0" size="2" maxlength="2" id="connectionsCount" />
-                    <div id="collectAdditionalLocations">
+                    <b>Each additional location adds $@option.OptionPrice.ToString(CultureInfo.InvariantCulture) to your registration:</b>
+                    <div id="addLoc4Cost">
+                        <button value="Add?" class="btn btn-success btn-small" name="showAddLocModal" id="showAddLocModal">Add?</button>
                     </div>
                 </div>
             }

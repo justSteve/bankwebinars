@@ -416,6 +416,7 @@
     <Compile Include="Services\StateService.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Core\AzureTableAppender.cs" />
+    <Compile Include="ViewModel\AdditionalLocationsViewModel.cs" />
     <Compile Include="ViewModel\ConnectionInfoViewModel.cs" />
     <Compile Include="ViewModel\RegisterViewModel.cs" />
     <Compile Include="ViewModel\WebinarDetailsViewModel.cs" />
@@ -1033,7 +1034,7 @@
     <Content Include="Views\Webinar\Error.cshtml" />
     <Content Include="Views\Webinar\Index.cshtml" />
     <Content Include="Views\Webinar\ListByTopic.cshtml" />
-    <Content Include="Views\Webinar\Partials\AdditionalLocationsOptionView.cshtml" />
+    <Content Include="Views\Webinar\Partials\AdditionalLocationsView.cshtml" />
     <Content Include="Views\Webinar\Partials\DisplayOptions.cshtml" />
     <Content Include="Views\Webinar\Partials\ResultsGrid.cshtml" />
     <Content Include="Views\Webinar\SearchWebinars.cshtml" />
