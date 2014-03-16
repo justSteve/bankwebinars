@@ -27,7 +27,6 @@ namespace CUWebinars.Business.Repository
 
             db.Configuration.ProxyCreationEnabled = false;
             db.Configuration.LazyLoadingEnabled = false;
-
         }
 
         public void Add(T item)
