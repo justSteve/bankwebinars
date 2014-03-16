@@ -2,6 +2,7 @@
 @using CUWebinars.Business.Models
 @model CUWebinars.Web.ViewModel.WebinarDetailsViewModel
 @{
+    
     IList<Webinar> upList = Model.Webinar.Presenter.Webinars.Where(w => w.Status == WebinarStatus.Scheduled).ToList();
     IList<Webinar> recList = Model.Webinar.Presenter.Webinars.Where(w => w.Status == WebinarStatus.Recorded).ToList();
 }

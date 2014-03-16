@@ -373,6 +373,8 @@
     <Compile Include="Core\Browsers\Webinars\WebinarsBrowserSearchResultEntryDTO.cs" />
     <Compile Include="Core\Browsers\Webinars\WebinarsBrowserTableDataDTOAssembler.cs" />
     <Compile Include="Core\Browsers\Webinars\WebinarsSearchDTOAssembler.cs" />
+    <Compile Include="Core\CalendarDTO.cs" />
+    <Compile Include="Core\CalendarDTOAssembler.cs" />
     <Compile Include="Core\DataTables\DataTablesRequestModel.cs" />
     <Compile Include="Core\DataTables\DataTablesRequestModelBinder.cs" />
     <Compile Include="Core\DataTables\DataTablesRequestModelBinderAttribute.cs" />
@@ -966,6 +968,10 @@
     <Content Include="Scripts\cleditor\jquery.cleditor.min.js" />
     <Content Include="Scripts\cleditor\jquery.cleditor.xhtml.js" />
     <Content Include="Scripts\cleditor\jquery.cleditor.xhtml.min.js" />
+    <Content Include="Scripts\fullcalendar\fullcalendar.css" />
+    <Content Include="Scripts\fullcalendar\fullcalendar.js" />
+    <Content Include="Scripts\fullcalendar\fullcalendar.min.js" />
+    <Content Include="Scripts\fullcalendar\gcal.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />
     <Content Include="Scripts\jquery-1.8.2.min.js" />
     <Content Include="Scripts\jquery-1.9.1.js" />
@@ -1072,6 +1078,9 @@
     <Content Include="Views\Account\Closed.cshtml" />
     <Content Include="Views\Shared\AddLocationsView.cshtml" />
     <Content Include="Views\Shared\Partials\_DisplayRowPrice.cshtml" />
+    <Content Include="Views\Webinar\Partials\_RegistrationSummary.cshtml" />
+    <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
+    <Content Include="Views\Webinar\Calendar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

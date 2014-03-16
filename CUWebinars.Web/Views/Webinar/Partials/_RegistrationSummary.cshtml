@@ -1,0 +1,110 @@
+﻿@using System.Diagnostics
+@using System.Text
+@model WebinarDetailsViewModel
+@{
+    <script language="javascript">
+        function exprsOrder(idOption) {
+            alert(idOption);
+
+        };
+        function upgrade(idOption) {
+            alert(idOption);
+
+        };
+    </script>
+    Order order = null;
+    if (ViewBag.userOwnsThisEvent > 0)
+    {
+        OrderRow row = null;
+        Option orderMsgs = ViewBag.orderMessages;
+        string[] webinarFiles = ViewBag.WebinarFiles;
+        var recording = "<li><a href='http://'"+ System.Configuration.ConfigurationManager.AppSettings["WMVRepository"] + Model.Webinar.RecordingUrl + "' target=_blank /> Recording: </a>"; ;
+        var showShipped = "";
+        if (Model.Webinar.Status != WebinarStatus.Recorded)
+        {
+            recording = "";
+        }
+        var wf = new StringBuilder();
+
+        foreach (OrderRow itemRow in Model.Order.OrderRows)
+        {
+            order = itemRow.Order;
+            row = itemRow;
+            //webinarFiles
+            for (var i = 0; i < webinarFiles.Count(); i++)
+            {
+                string itemDesc = webinarFiles[i].Split('|')[0];
+                string itemPath = webinarFiles[i].Split('|')[1];
+                wf.Append("<a href='" + System.Configuration.ConfigurationManager.AppSettings["HandoutRepository"] + itemPath + "' target=_blank />" + itemDesc + "</a>");
+            }
+            var plusOnDemand = "";
+            if (orderMsgs.ShowRecordingNotifications != "Yes")
+            {
+                recording = "<li>Upgrade order to include Recording?</li>";
+                plusOnDemand = " plus OnDemand Playback";
+            }
+            if (orderMsgs.ShowShippedNotifications != "Yes")
+            {
+
+                showShipped = "<li><a onclick='javascript:upgrade(idOption);return false;'>Upgrade order to CD-ROM" + plusOnDemand + "?</li>";
+            }
+            else
+            {
+                if (row.ShipmentDate != null)
+                {
+                    showShipped = "<li>Shipped on: " + row.ShipmentDate.Value.ToShortDateString()+"</li>";
+                }
+            }
+            break;
+        }
+        Debug.Assert(order != null, "order != null");
+        if (row.Status == OrderRowStatus.Billed ||
+            row.Status == OrderRowStatus.Paid ||
+            row.Status == OrderRowStatus.Submitted)
+        {
+            //webinarFiles ="";
+            <aside style="width: 100%" class="widget clearfix">
+                <div class="dropdown">
+                    <a class="dropdown-toggle btn btn-success" data-toggle="dropdown" href="#">Your Order# <b>CU-@order.idOrder</b> Summary</a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                        <li>Ordered on @order.OrderDate.ToShortDateString()</li>
+                        <li>@orderMsgs.OptionLabel</li>
+                        <li>@Html.Raw(wf.ToString())</li>
+                        @Html.Raw(@recording)
+                        @Html.Raw(@showShipped)
+
+                    </ul>
+                </div>
+            </aside>
+        }
+    }
+    else
+    {// not owned state
+
+        <aside style="width: 100%" class="widget clearfix">
+            <div class="dropdown">
+                <a class="dropdown-toggle btn btn-success" data-toggle="dropdown" href="#">Express SignUp!</a>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+
+                    @foreach (var myOption in Model.Options)
+                    {
+                        if (myOption.Type == "Text")
+                        {
+                            if (Model.Order == null
+                                //Model.Order.idOrder < 1
+                                //Model.Order.OrderRows.Single().Status == OrderRowStatus.InProcess
+
+                                && !myOption.SKU.Contains("Upgrade")
+                                )
+                            {
+                                <li>
+                                    <a onclick=javascript:exprsOrder("@myOption.idOption");>&nbsp;&nbsp;@myOption.OptionLabel - $@myOption.PriceToAdd&nbsp;&nbsp;</a>
+                                </li>
+                            }
+                        }
+                    }
+                </ul>
+            </div>
+        </aside>
+    }
+}

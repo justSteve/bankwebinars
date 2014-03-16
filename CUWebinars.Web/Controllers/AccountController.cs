@@ -558,7 +558,7 @@ namespace CUWebinars.Web.Controllers
             resultObject.Add("success", "true");
             resultObject.Add("City", myCity);
             resultObject.Add("State", zipAddress.Split(fieldDelimiter)[1]);
-            resultObject.Add("TimeZone", ((int)Enum.Parse(typeof(USTimeZone), zipAddress.Split(fieldDelimiter)[1])).ToString());
+            resultObject.Add("TimeZone", ((int)Enum.Parse(typeof(USTimeZone), zipAddress.Split(fieldDelimiter)[2])).ToString());
             //resultObject.Add("TimeZone", 3.ToString());
 
             return Json(resultObject, JsonRequestBehavior.AllowGet);
@@ -581,6 +581,7 @@ namespace CUWebinars.Web.Controllers
         //[ValidateAntiForgeryToken]
         public JsonResult CheckEmail(string email, bool disregardIntitutionDomain)
         {
+            Logger.Info("CheckEmail called: " + email);
             var resultObject = new Dictionary<string, string>();
 
             var user = membershipService.GetUserByEmail(email);
@@ -611,7 +612,7 @@ namespace CUWebinars.Web.Controllers
             resultObject.Add("City", institution.City);
             resultObject.Add("State", institution.State);
             resultObject.Add("Zip", institution.Zip);
-
+            Logger.Info("CheckEmailResult: " + resultObject);
             return Json(resultObject, JsonRequestBehavior.AllowGet);
         }
 

@@ -54,10 +54,11 @@
     var ConfirmationCaption = "Confirmation";
 
 
-    if (Model.Order != null && Model.Order.idOrder > 0)
+    if (ViewBag.userOwnsThisEvent > 0)
     {
         rowID = Model.Order.OrderRows.FirstOrDefault().idOrderRow;
         orderID = Model.Order.idOrder;
+
         if (Model.Order.OrderRows.FirstOrDefault().Status == OrderRowStatus.InProcess)
         {
             CheckoutInProcess = "true";
@@ -71,7 +72,8 @@
             ConfirmationCaption = "Order Summary";
             whichStep = "Registered";
             CheckoutInProcess = "false";
-            msgOrderStatus = "<div align=\"center\" class=\"label-success label\">Your details are posted below.</div>";
+            // <a class="dropdown-toggle" data-toggle="dropdown" href="#">Dropdown trigger</a>
+            //msgOrderStatus = "";
             //msgOrderStatus = "<div align=\"center\" class=\"label-success label\">Your " + OptionsFacade.Instance.Load((int)Model.Order.OrderRows.FirstOrDefault().RegistrationType).Label.Replace(" Only", " ") + " details are posted below.</div>";
 
         }
@@ -97,6 +99,14 @@
         background-position: 14px 14px;
     }
 
+    .hero-unit h1 {
+        color: inherit;
+        font-size: 50px;
+        letter-spacing: -1px;
+        line-height: 1;
+        margin-bottom: 0;
+    }
+
     blockquote {
         background: url("") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
         font-style: normal;
@@ -115,39 +125,15 @@
             font-size: small;
         }
 </style>
-@{
-    if (Model.WebUser != null)
-    {
-        if (Model.WebUser.UserType == UserType.Affiliate || Model.WebUser.UserType == UserType.Admin)
-        {
-            <div id="AdminBox">
-                @{
-                    <span>
-                        <a href="javascript:showHtmlPopup('/Admin/Webinars/ViewFiles/@(Model.Webinar.idWebinar)');">Summary of Links & Special Instructions</a>
-                        <br />
-                    </span>
-                }
-                @if (Model.Webinar.Status == WebinarStatus.Scheduled)
-                {
-                    if (Model.WebUser.idUser == 24033)
-                    {
-                        <a href="javascript:showHtmlPopup('/Home/CBATemplate/@Model.Webinar.idWebinar');">Generate Promotional HTML code for this event!</a>
-                    }
-                    else
-                    {
-                        <a href="javascript:showHtmlPopup('/Home/PromoDailySend/@Model.Webinar.idWebinar');">Generate Promotional HTML code for this event!</a>
-                    }
-                }
-            </div>
-        }
-    }
-}
+
 
 <div class="hero-unit">
     <div class="container">
-        <h1>@Model.Webinar.Title</h1>
+        <div class="span10">
+            <h1>@Model.Webinar.Title</h1>
+        </div>    <!--close container-->
     </div>
-    <!--close container-->
+
 </div>
 <!--close hero-unit-->
 <div class="container clearfix" id="main-content">
@@ -191,6 +177,7 @@
 
         <section class="span3">
             <aside class="widget">
+                @Html.Partial("Partials/_RegistrationSummary")
                 <h5 class="short_headline"><span>Date/Time</span></h5>
 
                 <b>@Html.DisplayDate(Model.Webinar.Date)</b><br />
@@ -200,7 +187,6 @@
                         @Html.Raw(ceuShort)
                     </a>
                 </div>
-                @Html.Raw(msgOrderStatus)
 
             </aside>
             <!-- close .widget -->
@@ -241,7 +227,7 @@
                         <ul class="nav nav-tabs" id="regTabs">
                             <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@signUpCaption</a></li>
                             <li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
-                                <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@ConfirmationCaption</a></li>
+                            <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@ConfirmationCaption</a></li>
                         </ul>
 
                         <div class="tab-content">
@@ -251,12 +237,12 @@
                                 @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model)
                             </div>
                             <div class="tab-pane" id="contactInfo">
-                                    @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutContact.cshtml", model: Model)
+                                @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutContact.cshtml", model: Model)
 
-                                </div>
-                                <div class="tab-pane" id="confirmation">
-                                    @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutConfirm.cshtml", model: Model)
-                                </div>
+                            </div>
+                            <div class="tab-pane" id="confirmation">
+                                @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutConfirm.cshtml", model: Model)
+                            </div>
 
 
                         </div>
@@ -268,11 +254,25 @@
                         <input type="hidden" name="webuser.idUser" value="@idUser" />
                         <input type="hidden" name="mode" />
 
-                        <input type="hidden" id="addEmails" name="addEmails"/>
+                        <input type="hidden" id="addEmails" name="addEmails" />
                     </form>
                 </div>
 
             </div>
         }
     }
+</div>
+<!-- Modal -->
+<div id="logsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="logsModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="logsModalLabel">Event Logs</h3>
+    </div>
+    <div class="modal-body">
+        <p>Logs</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary">Save changes</button>
+    </div>
 </div>

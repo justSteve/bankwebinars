@@ -2,11 +2,15 @@
     $(".control-label:not(span)").append(":&nbsp;");
 });
 
+
+
 var shsGlobal = new Globals();
 
 function Globals() {
 
 }
+
+
 
 Globals.prototype.ajaxLoaderStart = function () {
     

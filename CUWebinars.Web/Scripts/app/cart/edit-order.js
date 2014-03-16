@@ -85,29 +85,29 @@ $(document).ready(function () {
         });
     });
 
-    $(".dropdown-menu").click(function (event) {
+    //$(".dropdown-menu").click(function (event) {
 
-        formName = $(event.target).closest('a').attr('href').split("_")[0].replace("#", "");
-        parentForm = $(event.target).closest('a').attr('href').replace("#", "");
-        var formIDasnum = $(event.target).closest('a').attr('href').split("_")[1];
-        $("#" + parentForm + " [id^=SubmitAddLocations]").attr("disabled", "disabled").val("Waiting for valid email");
+    //    formName = $(event.target).closest('a').attr('href').split("_")[0].replace("#", "");
+    //    parentForm = $(event.target).closest('a').attr('href').replace("#", "");
+    //    var formIDasnum = $(event.target).closest('a').attr('href').split("_")[1];
+    //    $("#" + parentForm + " [id^=SubmitAddLocations]").attr("disabled", "disabled").val("Waiting for valid email");
 
 
-        //AddressesCount = 1;
-        ConnCount = ($("#ConnectionsCount_" + formIDasnum).val() * 1);
+    //    //AddressesCount = 1;
+    //    ConnCount = ($("#ConnectionsCount_" + formIDasnum).val() * 1);
 
-        //forces recalc
-        $("[id^=AddLocation_]").on('hidden', function () {
-            //console.log('Modal is hidden');
-            document.location.reload(true);
-        });
+    //    //forces recalc
+    //    $("[id^=AddLocation_]").on('hidden', function () {
+    //        //console.log('Modal is hidden');
+    //        document.location.reload(true);
+    //    });
 
-        $("[id^=EditRegistrationType_]").on('hidden', function () {
-            //console.log('Modal is hidden');
-            document.location.reload(true);
-        });
-        //$("#myModal").modal('show');
-    });
+    //    $("[id^=EditRegistrationType_]").on('hidden', function () {
+    //        //console.log('Modal is hidden');
+    //        document.location.reload(true);
+    //    });
+    //    //$("#myModal").modal('show');
+    //});
 
     var timer; // external so it's value is held over all instances of the timer function
     $('body').on('keyup', 'input:text.emailInput', function () {
