@@ -58,7 +58,7 @@
                             Zip Code:
                             <input type="text" class="enterSubmit" name="getZip" id="getZip" style="width: 70px;" />
                             @*<input type="button" value="Find City/State" name="findCityState" class="btn btn-success" />*@
-                            <input type="button" value="Have a Non-US Address?" name="nonUSAddress" id="nonUSAddress" class="btn btn-mini btn-info" />
+                            &nbsp;&nbsp;<input type="button" value="Have a Non-US Address?" name="nonUSAddressBtn" id="nonUSAddressBtn" class="btn btn-mini btn-info" />
                         </div>
                     </div>
                     <div class="fieldContainer" id="wrapReset">
@@ -108,7 +108,6 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -144,36 +143,31 @@
                         </div>
                     </div>
                     <div class="fieldContainer" id="wrapInstitution">
-                        <div class="span1">Institution:</div>
-                        <div class="span4">
-                            @Html.EditorFor(model => model.RegisterFields.Institution)
+                        <div class="span5">
+                            Title: @Html.TextBoxFor(model => model.RegisterFields.Title, new { style = "width: 110px;" }) &nbsp; &nbsp;Institution:&nbsp;&nbsp;@Html.EditorFor(model => model.RegisterFields.Institution, new { style = "width: 110px;" })
                             @Html.ValidationMessageFor(model => model.RegisterFields.Institution)
                         </div>
                     </div>
-
+                </div>
+                <div class="row">
                     <div class="fieldContainer" id="wrapPhone">
-                        <div class="span1">Title:</div>
-                        <div class="span4">
-                            @Html.TextBoxFor(model => model.RegisterFields.Title, new { style = "width: 140px;" }) &nbsp; &nbsp;
-                            &nbsp;&nbsp; Phone: @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Phone, new { style = "width: 100px;" })
+                        <div class="span1">Phone:</div>
+                        <div class="span8">
+                            @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Phone, new { style = "width: 100px;" })
                             @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.Phone)
+
+                            Address: @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.StreetAddress, new { style = "width: 175px;" })
+                            @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.StreetAddress)&nbsp;&nbsp;<text>(2nd address optional)</text> @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.StreetAddress2, new { style = "width: 150px;" })
+
                         </div>
                     </div>
-                    <div class="fieldContainer" id="wrapAddress">
-                        <div class="span1">
-                            Address:
-                        </div>
-                        <div class="span4">
-                            @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.StreetAddress, new { style = "width: 175px;" })
-                            @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.StreetAddress)&nbsp;&nbsp;
-                            @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.StreetAddress2, new { style = "width: 150px;" })
-                        </div>
-                    </div>
+                </div>
+                <div class="row">
                     <div class="fieldContainer" id="wrapCity">
                         <div class="span1">
                             City:
                         </div>
-                        <div class="span4">
+                        <div class="span8">
                             @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.City, new { style = "width: 140px;" })
                             @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.City)
 
@@ -182,80 +176,78 @@
                             &nbsp;&nbsp; Zip:
                             @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Zip, new { style = "width: 50px;" })
                             @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.Zip)
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="fieldContainer" id="wrapCity">
-                            <div class="span1">
-                                <label for="TimeZone" style="display: inline-block">Time Zone:</label>
-                            </div>
-                            <div class="span2">
-                                <select style="width: 120px" id="TimeZone" name="TimeZone">
-                                    <option value="4">Eastern</option>
-                                    <option value="3">Central</option>
-                                    <option value="2">Mountain</option>
-                                    <option value="1">Pacific</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="span1">
-                            <textarea name="nonUS" rows="5" cols="100">Mailing address notes:</textarea>
+
+                            <label for="TimeZone" style="display: inline-block">Time Zone:</label>
+                            <select style="width: 120px" id="TimeZone" name="TimeZone">
+                                <option value="4">Eastern</option>
+                                <option value="3">Central</option>
+                                <option value="2">Mountain</option>
+                                <option value="1">Pacific</option>
+                            </select>
+
                         </div>
                     </div>
                 </div>
+
+                <div class="span1" id="nonUSAddressInput">
+                    <textarea name="nonUSAddressInput" rows="5" cols="100">Special Handling for Address:</textarea>
+                </div>
+
             </div>
         </div>
+    </div>
 
-        <div class="accordion-group">
-            <div class="accordion-heading">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#createUserPanes" href="#collapseShipping">Shipping</a>
-            </div>
-            <div id="collapseShipping" class="accordion-body collapse">
-                <div class="accordion-inner">
-                    <div>
-                        Same As Billing?
-                        <input type="checkbox" @(SetSameAsBilling) name="sameAsBilling" id="sameAsBilling" />
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#createUserPanes" href="#collapseShipping">Shipping</a>
+        </div>
+        <div id="collapseShipping" class="accordion-body collapse">
+            <div class="accordion-inner">
+                <div>
+                    Same As Billing?
+                    @Html.HiddenFor(model => model.RegisterFields.ShippingAddress.Phone)
+
+                    <input type="checkbox" @(SetSameAsBilling) name="sameAsBilling" id="sameAsBilling" />
+                </div>
+
+                <div class="fieldContainer">
+                    <div class="span1">Name:</div>
+                    <div class="span4">
+                        <input type="text" id="FullNameShipping" name="FullNameShipping" style="width: 200px;" />
+                    </div>
+                </div>
+
+                @*<div class="fieldContainer" id="wrapPhone">
+                    <div class="span1">Phone:</div>
+                    <div class="span4">
+                        @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.Phone, new { style = "width: 140px;" })
+                        @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.Phone)
+                    </div>
+                </div>*@
+                <div class="fieldContainer" id="wrapAddress">
+                    <div class="span1">
+                        Address:
+                    </div>
+                    <div class="span4">
+                        @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.StreetAddress, new { style = "width: 175px;" })
+                        @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.StreetAddress)&nbsp;&nbsp;
+                        @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.StreetAddress2, new { style = "width: 150px;" })
+                    </div>
+                </div>
+                <div class="fieldContainer" id="wrapCity">
+                    <div class="span1">
+                        City:
+                    </div>
+                    <div class="span4">
+                        @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.City, new { style = "width: 140px;" })
+                        @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.City)
+
+                        &nbsp;&nbsp; State: @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.State, new { style = "width: 30px;" })
+                        @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.State)
+                        &nbsp;&nbsp; Zip:   @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.Zip, new { style = "width: 50px;" })
+                        @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.Zip)
                     </div>
 
-                    <div class="fieldContainer">
-                        <div class="span1">Name:</div>
-                        <div class="span4">
-                            <input type="text" id="FullNameShipping" name="FullNameShipping" style="width: 180px;" />
-                        </div>
-                    </div>
-
-                    <div class="fieldContainer" id="wrapPhone">
-                        <div class="span1">Phone:</div>
-                        <div class="span4">
-                            @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.Phone, new { style = "width: 140px;" })
-                            @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.Phone)
-                        </div>
-                    </div>
-                    <div class="fieldContainer" id="wrapAddress">
-                        <div class="span1">
-                            Address:
-                        </div>
-                        <div class="span4">
-                            @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.StreetAddress, new { style = "width: 175px;" })
-                            @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.StreetAddress)&nbsp;&nbsp;
-                            @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.StreetAddress2, new { style = "width: 150px;" })
-                        </div>
-                    </div>
-                    <div class="fieldContainer" id="wrapCity">
-                        <div class="span1">
-                            City:
-                        </div>
-                        <div class="span4">
-                            @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.City, new { style = "width: 140px;" })
-                            @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.City)
-
-                            &nbsp;&nbsp; State: @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.State, new { style = "width: 30px;" })
-                            @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.State)
-                            &nbsp;&nbsp; Zip:   @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.Zip, new { style = "width: 50px;" })
-                            @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.Zip)
-                        </div>
-
-                    </div>
                 </div>
             </div>
         </div>
