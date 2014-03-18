@@ -2,16 +2,27 @@
 using System.IO;
 using System.Linq;
 using BrockAllen.MembershipReboot;
+using CUWebinars.Business.Models;
+using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Services;
 using RazorEngine.Templating;
 
 namespace CUWebinars.Web.Membership.Email
 {
     public class TtsTokenizer : EmailMessageFormatter.Tokenizer
     {
+        private readonly IStateService _stateService;
+
+        public TtsTokenizer(IStateService stateService)
+        {
+            _stateService = stateService;
+        }
 
         const string VerificationKey = "VerificationKey";
         public override string Tokenize(UserAccountEvent<UserAccount> accountEvent, ApplicationInformation appInfo, string msg, IDictionary<string, string> values)
         {
+            var webUser = _stateService.GetValue<WebUser>(Constants.CurrentUser);
+
             var body = new TemplateService();
             var user = accountEvent.Account;
             

@@ -70,8 +70,9 @@ namespace CUWebinars.Web.App_Start
             const string optionRepository = "OptionRepository";
 
             string baseUrl = HttpRuntime.AppDomainAppPath;
+            kernel.Bind<IStateService>().To<StateService>();
 
-            var config = MembershipRebootConfig.Create(HttpRuntime.AppDomainAppPath);
+            var config = MembershipRebootConfig.Create(baseUrl, kernel.Get<IStateService>());
             var ttsConfig = TtsConfig.Create(baseUrl);
 
             kernel.Bind<MembershipRebootConfiguration>().ToConstant(config);
