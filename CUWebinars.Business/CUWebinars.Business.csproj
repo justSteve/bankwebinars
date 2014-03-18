@@ -73,7 +73,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountService\IMembershipService.cs" />
+    <Compile Include="Models\AdditionalLocation.cs" />
     <Compile Include="Models\IObjectWithState.cs" />
+    <Compile Include="Models\Mapping\AdditionalLocationMap.cs" />
     <Compile Include="Notification\Email\NotificationMessage.cs" />
     <Compile Include="Notification\Email\SmtpMessageDelivery.cs" />
     <Compile Include="Notification\Events\OrderSubmittedEvent.cs" />
@@ -118,7 +120,6 @@
       <DependentUpon>201402010842420_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\AdditionalLocationsOption.cs" />
     <Compile Include="Models\AdditionalLocationsOrderRowOption.cs" />
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\Affiliate.cs" />

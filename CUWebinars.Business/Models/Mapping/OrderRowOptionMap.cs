@@ -19,8 +19,8 @@ namespace CUWebinars.Business.Models.Mapping
                 .IsRequired()
                 .HasMaxLength(32);
 
-            this.Property(t => t.additional_locations_emails)
-                .HasMaxLength(1024);
+            //this.Property(t => t.additional_locations_emails)
+            //    .HasMaxLength(1024);
 
             // Table & Column Mappings
             this.ToTable("OrderRowOptions");
@@ -31,8 +31,8 @@ namespace CUWebinars.Business.Models.Mapping
             this.Property(t => t.OptionDescription).HasColumnName("OptionDescription");
             this.Property(t => t.TaxExempt).HasColumnName("TaxExempt");
             this.Property(t => t.Type).HasColumnName("Type");
-            this.Property(t => t.additional_locations_count).HasColumnName("additional_locations_count");
-            this.Property(t => t.additional_locations_emails).HasColumnName("additional_locations_emails");
+            //this.Property(t => t.additional_locations_count).HasColumnName("additional_locations_count");
+            //this.Property(t => t.additional_locations_emails).HasColumnName("additional_locations_emails");
 
             // Relationships
             this.HasRequired(t => t.Option)

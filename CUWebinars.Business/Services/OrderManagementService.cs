@@ -233,30 +233,27 @@ namespace CUWebinars.Business.Services
             //}
 
             decimal optionsTotal = 0.0M;
-            foreach (OrderRowOption option in row.OrderRowOptions
-                )
+            foreach (var option in row.OrderRowOptions)
             {
-                var locations = option as AdditionalLocationsOrderRowOption;
-                if (locations != null)
+                var additionalLocations = option.AdditionalLocations;
+
+                if (additionalLocations == null) continue;
+                
+                if (row.Webinar.Title.Contains("Compliance Perspectives")//.IsSubscriptionWebinar
+                    && additionalLocations.Count < 4)
                 {
-                    AdditionalLocationsOrderRowOption additionalLocations = locations;
-                    if (row.Webinar.Title.Contains("Compliance Perspectives")
-                        //.IsSubscriptionWebinar
-                        && additionalLocations.AdditionalLocationsCount < 4)
-                    {
-                        continue; //Subscription webinar with up to 3 additional locations. Do not charge.
-                    }
+                    continue; //Subscription webinar with up to 3 additional locations. Do not charge.
+                }
 
-                    if (row.Webinar.Title.Contains("Compliance Perspectives"))
-                    {
+                if (row.Webinar.Title.Contains("Compliance Perspectives"))
+                {
 
-                        int subscriptionPeriod = 12;//row.RegistrationType == RegistrationType.Twelve_Month_Subscription ? 12 : 6;
-                        optionsTotal += (additionalLocations.AdditionalLocationsCount - 3) * additionalLocations.OptionPrice * subscriptionPeriod;
-                    }
-                    else
-                    {
-                        optionsTotal += additionalLocations.AdditionalLocationsCount * additionalLocations.OptionPrice;
-                    }
+                    int subscriptionPeriod = 12;//row.RegistrationType == RegistrationType.Twelve_Month_Subscription ? 12 : 6;
+                    optionsTotal += (additionalLocations.Count - 3) * option.OptionPrice * subscriptionPeriod;
+                }
+                else
+                {
+                    optionsTotal += additionalLocations.Count * option.OptionPrice;
                 }
             }
             return optionsTotal;

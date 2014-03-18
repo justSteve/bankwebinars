@@ -9,6 +9,7 @@ using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Services;
 using Ninject.Extensions.Logging;
+using Ninject.Infrastructure.Language;
 
 namespace CUWebinars.Web.Areas.Admin.Controllers
 {
@@ -61,10 +62,24 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
             IDictionary<string, string> addEmails = Request.Params.AllKeys
                 .Where(x => x.StartsWith("Email"))
                 .Where(x => Request.Params[x] != null && Request.Params[x].ToString().Length > 0)
-                .Select(x => new { key = x, value = Request.Params[x] })
+                .Select(x => new {key = x, value = Request.Params[x]})
                 .ToDictionary(x => (x.key), x => (x.value));
 
             connectionsCount = addEmails.Count;
+
+            var emails = addEmails
+                .Select(e => e.Value)
+                .ToList();
+
+            var additionalLocations = new List<AdditionalLocation>(emails.Count);
+
+            emails.ForEach(email =>
+            {
+                var additionalLocation = new AdditionalLocation {Email = email};
+                additionalLocations.Add(additionalLocation);
+            });
+
+
             if (connectionsCount <= 0 && locations != null)
             {
                 row.OrderRowOptions.Remove(locations);
@@ -76,16 +91,18 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
                 var options = _orderManagementService.GetOptionsByWebinarId(row.Webinar.idWebinar, false);
                 var option = options.SingleOrDefault(o => o.Type == "additional_location");
                 //                AdditionalLocationsOption option = options.OfType<AdditionalLocationsOption>().SingleOrDefault();
+
+
+
                 if (option != null)
                 {
-                    locations = new AdditionalLocationsOrderRowOption
+                    locations = new OrderRowOption
                     {
-                        AdditionalLocationsCount = connectionsCount,
+                        AdditionalLocations = additionalLocations,
                         Option = option,
                         OrderRow = row,
                         OptionDescription = option.OptionExplain,
-                        OptionPrice = Convert.ToDecimal(option.PriceToAdd),
-                        Emails = addEmails.Select(e => e.Value).ToList()
+                        OptionPrice = Convert.ToDecimal(option.PriceToAdd)
                     };
                     row.OrderRowOptions.Add(locations);
                 }
@@ -94,18 +111,19 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
             {
                 if (locations != null)
                 {
-                    originalLocCount = locations.additional_locations_count.Value;
-                    locations.additional_locations_count = connectionsCount;
-                    locations.additional_locations_emails = addEmails.Select(e => e.Value).ToList().ToString();
+                    originalLocCount = locations.AdditionalLocations.Count;
+                    //locations.additional_locations_count = connectionsCount;
+                    locations.AdditionalLocations = additionalLocations;
                 }
             }
 
-            var optionsCost = "";
+            var optionsCost = string.Empty;
             if (connectionsCount == 1)
             {
                 msg = "One Additional Location.<br>";
 
-                optionsCost = "Total cost of Additional Locations: " + (locations.OptionPrice * connectionsCount).ToString("C0");
+                optionsCost = "Total cost of Additional Locations: " +
+                              (locations.OptionPrice*connectionsCount).ToString("C0");
 
             }
             if (connectionsCount > 1)
@@ -128,23 +146,23 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
                 try
                 {
                     var BuildChangedOrderRow = new Dictionary<string, string>
-                                                   {
-                                                       {"Date", DateTime.Now.ToShortDateString()},
-                                                       {"Order", row.Order.idOrder.ToString()},
-                                                       {"Individual", row.Order.FirstName+ ' ' +  row.Order.LastName},
-                                                       {
-                                                           "Additional Locations Changed",
-                                                           originalLocCount + " to " + row.RegistrationType.ToString()
-                                                       },
-                                                       {"OriginalCost", originalCost.ToString()},
-                                                       {"UpdatedCost", row.Order.Total.ToString()},
-                                                       {"Affiliate", row.Order.Affiliate.ttsDomain},
-                                                       {"Billed", "N"},
-                                                       {"Difference", (originalCost - row.Order.Total).ToString("C")},
-                                                       {"ChangedBy", ""}
-                                                       //TODO: How to get CurrentUser?
-                                                       //UserFacade.Instance.GetCurrentUser().FullName}
-                                                   };
+                    {
+                        {"Date", DateTime.Now.ToShortDateString()},
+                        {"Order", row.Order.idOrder.ToString()},
+                        {"Individual", row.Order.FirstName + ' ' + row.Order.LastName},
+                        {
+                            "Additional Locations Changed",
+                            originalLocCount + " to " + row.RegistrationType.ToString()
+                        },
+                        {"OriginalCost", originalCost.ToString()},
+                        {"UpdatedCost", row.Order.Total.ToString()},
+                        {"Affiliate", row.Order.Affiliate.ttsDomain},
+                        {"Billed", "N"},
+                        {"Difference", (originalCost - row.Order.Total).ToString("C")},
+                        {"ChangedBy", ""}
+                        //TODO: How to get CurrentUser?
+                        //UserFacade.Instance.GetCurrentUser().FullName}
+                    };
                     //TTSTrain.Webinars.Business.RssBusService.Instance.AddChangedOrder(BuildChangedOrderRow);
                 }
                 catch (Exception ex)

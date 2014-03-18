@@ -70,7 +70,6 @@
     <Compile Include="Firefox\FirefoxBaseTest.cs" />
     <Compile Include="Page\Firefox\HomeIndexPage.cs" />
     <Compile Include="Firefox\HomeIndexPageTests.cs" />
-    <Compile Include="Page\HomeIndexPage.cs" />
     <Compile Include="Page\Ie\HomeIndexPage.cs">
       <SubType>Code</SubType>
     </Compile>
