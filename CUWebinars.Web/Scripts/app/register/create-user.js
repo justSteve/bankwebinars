@@ -13,7 +13,7 @@ var nextButtonText = 'Next...';
 
 // was a <P> wrapped in a <div> i think.
 
-//  simple C-like enum implementation
+//  simple C-like enums implementation
 var actions = { CheckEmail: 'CheckEmail', CheckZip: 'CheckZip', GetPassword: 'GetPassword', LogIn: 'LogIn', PostCreateAccount: 'PostCreateAccount', SubmitLogin: 'SubmitLogin', SubmitRegister: 'SubmitRegister', DisplayBillingAddressFields: 'DisplayBillingAddressFields' };
 var inputActions = { EnterKeyPress: 'EnterKeyPress', ButtonClick: 'ButtonClick', None: 'None' };
 var buttons = { EnterDiffAddress: 'EnterDiffAddress', nonUSAddressBtn: 'nonUSAddressBtn', NotInstitution: 'NotInstitution', ResetPass: 'resetPass', SignInButton: 'SignInButton', TheSubmit: 'TheSubmit', YesUseAddress: 'YesUseAddress' };
@@ -56,7 +56,10 @@ var registerFieldsPassword;
 
 
 var pageObjects = {
-    theSubmitButton: theSubmitButton || $('#TheSubmitButton'),
+    //  This is the pattern which I want to implement. I just need to apply it to each of the members of the pageObjects object.
+    theSubmitButton: function() {
+        return theSubmitButton || $('#TheSubmitButton');
+    },
     emailInput: emailInput || $('#RegisterFields_Email'),
     cityBilling: cityBilling || $('#RegisterFields_BillingAddress_City'),
     nonUSAddressBtn: nonUSAddressBtn || $('#nonUSAddressBtn'),
@@ -93,7 +96,7 @@ var pageObjects = {
     zipShipping: zipShipping || $('#RegisterFields_ShippingAddress_Zip')
 };
 
-function EnterBillingPane() {
+function EnterBillingPane(data) {
     pageObjects.collapseBilling.parent().show();
     pageObjects.collapseShipping.parent().show();
     $('#collapseEmail').collapse('toggle');
@@ -109,11 +112,11 @@ function EnterBillingPane() {
 
     pageObjects.cityBilling.val(data.City);
     pageObjects.stateBilling.val(data.State);
-    pageObjects.zipBilling.val(zipBilling);
+    //pageObjects.zipBilling.val(zipBilling);
     $('#TimeZone').val(data.TimeZone);
 
     pageObjects.labelEmail.html('<span class="label label-success"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</span>');
-    pageObjects.theSubmitButton.prop('value', registerButtonText);
+    pageObjects.theSubmitButton().prop('value', registerButtonText);
 
     stateManager.action = actions.SubmitRegister;
 }
@@ -144,9 +147,7 @@ var stateManager = function () {
                 pageObjects.collapseShipping.parent().show();
                 $('#collapseEmail').collapse('toggle');
 
-
-
-                pageObjects.theSubmitButton.prop('value', registerButtonText);
+                pageObjects.theSubmitButton().prop('value', registerButtonText);
             }
         },
 
@@ -157,7 +158,7 @@ var stateManager = function () {
 
             zipCheckRequired = true;
 
-            pageObjects.theSubmitButton.prop('value', nextButtonText);
+            pageObjects.theSubmitButton().prop('value', nextButtonText);
 
             disregardIntitutionDomain = true;
 
@@ -191,7 +192,7 @@ var stateManager = function () {
             });
 
             stateManager.action = actions.SubmitLogin;
-            pageObjects.theSubmitButton.prop('value', 'Log In');
+            pageObjects.theSubmitButton().prop('value', 'Log In');
         },
 
         foundInstitutionView = function (data, email) {
@@ -249,7 +250,7 @@ var stateManager = function () {
             if (stateManager.inputAction === inputActions.EnterKeyPress)
                 stateManager.inputAction = inputActions.None;
 
-            pageObjects.theSubmitButton.on('mouseenter', function () {
+            pageObjects.theSubmitButton().on('mouseenter', function () {
                 if ($('#sameAsBilling:checked').val()) {
                     setShippingToBilling();
                 }
@@ -279,7 +280,8 @@ var stateManager = function () {
                     $('#getZip').focus();
                 });
 
-
+                if (stateManager.inputAction === inputActions.EnterKeyPress)
+                    stateManager.inputAction = inputActions.None;
 
             } else {
                 displayBillingFields();
@@ -315,7 +317,7 @@ var stateManager = function () {
             $('#collapseShipping textarea').val('Mailing address notes:');
             $('#collapseShipping select').val(0);
 
-            pageObjects.theSubmitButton.prop('value', nextButtonText);
+            pageObjects.theSubmitButton().prop('value', nextButtonText);
 
             disregardIntitutionDomain = true;
 
@@ -378,9 +380,9 @@ var stateManager = function () {
         nonUsAdddressInvoked = function () {
             console.log("hit nonUsAdddressInvoked");
             pageObjects.labelEmail.html('<span class="label label-info"><b>&nbsp;&nbsp;Non-US address? Please enter Special Handling Instructions</span>');
-            pageObjects.zipBilling = 'na';
+            pageObjects.zipBilling.val('na');
             $('#nonUSAddressInput').show();
-            EnterBillingPane();
+            displayBillingFields();
         },
 
         zipCodeVerified = function (data, zipCode) {
@@ -388,9 +390,8 @@ var stateManager = function () {
             switch (data.success) {
                 case 'true':
                     console.log('zipCodeVerified-true hit');
-                    pageObjects.zipBilling = zipCode;
-                    EnterBillingPane();
-
+                    pageObjects.zipBilling.val(zipCode);
+                    EnterBillingPane(data);
                     break;
                 case 'false':
                     console.log('zipCodeVerified-false hit');
@@ -413,7 +414,7 @@ var stateManager = function () {
                     checkAndSubmitEmail();
                     if (!stateManager.disregardIntitutionDomain)
                         stateManager.disregardIntitutionDomain = true;
-                    pageObjects.theSubmitButton.prop('value', nextButtonText);
+                    pageObjects.theSubmitButton().prop('value', nextButtonText);
                     break;
                 case actions.GetPassword:
                     stateManager.newPassWordToNextStep();
@@ -484,7 +485,7 @@ function checkAndSubmitEmail() {
 }
 
 function checkAndSubmitZip() {
-    pageObjects.theSubmitButton.prop('value', nextButtonText);
+    pageObjects.theSubmitButton().prop('value', nextButtonText);
     console.log('checkAndSubmitZip');
     //$('#emailAddress').val($('#checkEmail').val());
     $('#checkZip').submit();
@@ -503,7 +504,7 @@ function submitCreateUserForm() {
         console.log('createUserForm submitted.');
         pageObjects.createUserForm.submit();
 
-        pageObjects.theSubmitButton.off('mouseenter', function () {
+        pageObjects.theSubmitButton().off('mouseenter', function () {
             if ($('#sameAsBilling:checked').val()) {
                 setShippingToBilling();
             }
@@ -592,13 +593,13 @@ $(function () {
 
     pageObjects.emailInput.bind('change keyup', function () {
         if ($(this).validate().checkForm()) {
-            pageObjects.theSubmitButton.removeClass('button_disabled').attr('disabled', false);
+            pageObjects.theSubmitButton().removeClass('button_disabled').attr('disabled', false);
         } else {
-            pageObjects.theSubmitButton.addClass('button_disabled').attr('disabled', true);
+            pageObjects.theSubmitButton().addClass('button_disabled').attr('disabled', true);
         }
     });
 
-    pageObjects.theSubmitButton.prop('value', nextButtonText);
+    pageObjects.theSubmitButton().prop('value', nextButtonText);
 
     $('input').keypress(function (event) {
 
@@ -645,7 +646,7 @@ $(function () {
                 case buttons.EnterDiffAddress: stateManager.enterDifferentAddress(); break;
                 case buttons.NotInstitution: stateManager.notInstitutionAddress(); break;
                 default:
-                    if (pageObjects.theSubmitButton.val() === registerButtonText) {
+                    if (pageObjects.theSubmitButton().val() === registerButtonText) {
                         if ($('#sameAsBilling:checked').val()) {
                             setShippingToBilling();
                         }
