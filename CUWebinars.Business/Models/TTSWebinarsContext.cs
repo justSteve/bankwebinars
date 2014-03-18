@@ -47,6 +47,7 @@ namespace CUWebinars.Business.Models
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Configurations.Add(new AddressMap());
+            modelBuilder.Configurations.Add(new AdditionalLocationMap());
             modelBuilder.Configurations.Add(new AffiliateMap());
             modelBuilder.Configurations.Add(new DiscountMap());
             //modelBuilder.Configurations.Add(new HostPropertyMap());
