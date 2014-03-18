@@ -396,6 +396,8 @@
     <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="Helpers\EnumHelpers.cs" />
     <Compile Include="Helpers\HtmlHelpers.cs" />
+    <Compile Include="Infrastructure\apis\citrix\ShareFile\OAuth2Token.cs" />
+    <Compile Include="Infrastructure\apis\citrix\ShareFile\ShareFileV3Sample.cs" />
     <Compile Include="Infrastructure\TenantAuthenticationManager.cs" />
     <Compile Include="Infrastructure\TTSAuthorizationManager.cs" />
     <Compile Include="Models\AccountModels.cs" />
@@ -418,6 +420,7 @@
     <Compile Include="Core\AzureTableAppender.cs" />
     <Compile Include="ViewModel\AdditionalLocationsViewModel.cs" />
     <Compile Include="ViewModel\ConnectionInfoViewModel.cs" />
+    <Compile Include="ViewModel\GTWRegistrantViewModel.cs" />
     <Compile Include="ViewModel\RegisterViewModel.cs" />
     <Compile Include="ViewModel\WebinarDetailsViewModel.cs" />
     <Compile Include="ViewModel\WebUserInfoViewModel.cs" />
@@ -876,6 +879,8 @@
     <Content Include="Scripts\app\constants.js" />
     <Content Include="Scripts\app\common.js" />
     <Content Include="Scripts\app\cart\edit-order.js" />
+    <Content Include="Scripts\app\GTW\registrationForm.js" />
+    <Content Include="Scripts\app\GTW\utils.js" />
     <Content Include="Scripts\app\passwordReset\password-reset.js" />
     <Content Include="Scripts\app\register\create-user.js" />
     <Content Include="Scripts\app\waitButton.js" />
@@ -1082,6 +1087,7 @@
     <Content Include="Views\Webinar\Partials\_RegistrationSummary.cshtml" />
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
     <Content Include="Views\Webinar\Calendar.cshtml" />
+    <Content Include="Views\Cart\GTWRegistration.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
