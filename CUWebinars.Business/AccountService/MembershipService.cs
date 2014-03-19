@@ -72,7 +72,7 @@ namespace CUWebinars.Business.AccountService
             return false;
         }
 
-        public void CreateUser(
+        public UserAccount CreateUser(
             string tenant,
             string firstName,
             string lastName,
@@ -88,25 +88,8 @@ namespace CUWebinars.Business.AccountService
             userAccountService.AddClaim(account.ID, ClaimTypes.FullName, string.Format("{0} {1}", firstName, lastName));
             userAccountService.AddClaim(account.ID, System.Security.Claims.ClaimTypes.Role, "WebUser");
             userAccountService.AddClaim(account.ID, ClaimTypes.HasNotVerified, "true");
-            //if (idUserImported == 0) idUserImported = null;
 
-            //WebUser webUser = new WebUser
-            //{
-            //    idUser = idUserImported.HasValue ? idUserImported.Value : refDataRepository.GetMaxWebUserId() + 1,
-            //    // Check what default should be for nun-nullable field
-            //    AcctStatus = accountStatus ?? "A",
-            //    DateCreated = DateTime.Now,
-            //    email = email,
-            //    FirstName = firstName,
-            //    idUserInstitution = institutionId,
-            //    LastName = lastName,
-            //    Addresses = addresses,
-            //    Title = title,
-            //    timeZone = timeZone,
-            //    UserType = UserType.Customer,
-            //};
-
-            //webUserRepository.Add(webUser);
+            return account;
         }
 
         public WebUser CreateWebUser(
@@ -218,6 +201,8 @@ namespace CUWebinars.Business.AccountService
 
         public bool ChangePasswordFromResetKey(string key, string newPassword)
         {
+            var userAccount = userAccountService.GetByVerificationKey(key);
+            userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.HasNotVerified);
             return userAccountService.ChangePasswordFromResetKey(key, newPassword);
         }
 

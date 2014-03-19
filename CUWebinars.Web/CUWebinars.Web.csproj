@@ -401,6 +401,7 @@
     <Compile Include="Infrastructure\apis\citrix\ShareFile\ShareFileV3Sample.cs" />
     <Compile Include="Infrastructure\TenantAuthenticationManager.cs" />
     <Compile Include="Infrastructure\TTSAuthorizationManager.cs" />
+    <Compile Include="Membership\DataOperations.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\AddressModel.cs" />
     <Compile Include="Models\ChangeEmailFromKeyInputModel.cs" />

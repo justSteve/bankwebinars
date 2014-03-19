@@ -186,6 +186,7 @@
                             </select>
 
                         </div>
+                        @Html.HiddenFor(model => model.RegisterFields.BillingAddress.TypeOfAddress)
                     </div>
                 </div>
 
@@ -247,7 +248,7 @@
                         &nbsp;&nbsp; Zip:   @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.Zip, new { style = "width: 50px;" })
                         @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.Zip)
                     </div>
-
+                    @Html.HiddenFor(model => model.RegisterFields.ShippingAddress.TypeOfAddress)
                 </div>
             </div>
         </div>
