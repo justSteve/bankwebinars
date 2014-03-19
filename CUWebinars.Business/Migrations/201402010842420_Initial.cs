@@ -193,7 +193,7 @@ namespace CUWebinars.Business.Migrations
                         Stage2CheckoutConfirmationMsg = c.String(),
                         Stage1EmailConfirmationMsg = c.String(),
                         Stage2EmailConfirmationMsg = c.String(),
-                        //Discriminator = c.String(nullable: false, maxLength: 128),
+                        Discriminator = c.String(nullable: false, maxLength: 128),
                     })
                 .PrimaryKey(t => t.idOption);
             

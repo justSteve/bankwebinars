@@ -9,7 +9,7 @@ namespace CUWebinars.Business.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = false;
+            AutomaticMigrationsEnabled = true;
         }
 
         protected override void Seed(CUWebinars.Business.Models.TTSWebinarsContext context)
