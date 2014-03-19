@@ -96,7 +96,7 @@ var pageObjects = {
     zipShipping: zipShipping || $('#RegisterFields_ShippingAddress_Zip')
 };
 
-function EnterBillingPane(data) {
+function enterBillingPane(data) {
     pageObjects.collapseBilling.parent().show();
     pageObjects.collapseShipping.parent().show();
     $('#collapseEmail').collapse('toggle');
@@ -259,10 +259,16 @@ var stateManager = function () {
 
         newPassWordToNextStep = function () {
 
+            var confirmPasswordInput = $('[name="RegisterFields.ConfirmPassword"]');
             var pwd = $.trim(pageObjects.registerFieldsPassword.val());
+            var confirmedPwd = $.trim(confirmPasswordInput.val());
 
-            if (!pwd || pwd.length < 2 || pageObjects.registerFieldsPassword.nextAll('span:last').hasClass('field-validation-error')) {
-                console.log("call RegisterFields_Password");
+            if (!confirmedPwd) {
+                confirmPasswordInput.next('span').removeAttr('class').attr('class','field-validation-error').append('<span>Confirming your password is required.</span>');
+            }
+
+            if (!pwd || !confirmedPwd || pwd.length < 2 || pageObjects.registerFieldsPassword.nextAll('span:last').hasClass('field-validation-error')) {
+                console.log('call RegisterFields_Password');
                 if (stateManager.inputAction === inputActions.EnterKeyPress)
                     stateManager.inputAction = inputActions.None;
                 return false;
@@ -391,7 +397,7 @@ var stateManager = function () {
                 case 'true':
                     console.log('zipCodeVerified-true hit');
                     pageObjects.zipBilling.val(zipCode);
-                    EnterBillingPane(data);
+                    enterBillingPane(data);
                     break;
                 case 'false':
                     console.log('zipCodeVerified-false hit');
@@ -600,6 +606,11 @@ $(function () {
     });
 
     pageObjects.theSubmitButton().prop('value', nextButtonText);
+
+    $('[name="RegisterFields.ConfirmPassword"]').on('focus', function(event) {
+        $(this).next('span').removeAttr('class').attr('class', 'field-validation-valid');
+        $(this).next('span span').remove();
+    });
 
     $('input').keypress(function (event) {
 
