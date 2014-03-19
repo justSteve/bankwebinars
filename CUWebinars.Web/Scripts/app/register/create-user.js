@@ -53,6 +53,7 @@ var modalInstitution;
 var collapseBilling;
 var collapseShipping;
 var registerFieldsPassword;
+var getFirstLast;
 
 
 var pageObjects = {
@@ -70,6 +71,9 @@ var pageObjects = {
     fullNameShipping: fullNameShipping || $('#FullNameShipping'),
     fullName: fullName || $('#FullName'),
     firstName: firstName || $('#FirstName'),
+    getFirstLast: function () {
+        return getFirstLast || $('#getFirstLast');
+    },
     institution: institution || $('#RegisterFields_Institution'),
     labelEmail: labelEmail || $('#labelEmail'),
     lastName: lastName || $('#LastName'),
@@ -564,8 +568,62 @@ function setPath() {
     return path;
 }
 
+function initializeState() {
+
+    collapseBilling = $('#collapseBilling');
+    collapseShipping = $('#collapseShipping');
+
+    collapseBilling.parent().hide();
+    collapseShipping.parent().hide();
+
+    stateManager.initialize();
+
+    register = $('#register');
+    reset = $('#reset');
+
+    wrapEmail = $('#wrapEmail');
+    wrapPass = $('#wrapPass');
+    wrapReset = $('#wrapReset');
+    wrapZip = $('#wrapZip');
+
+    pageObjects.wrapZip.hide();
+    pageObjects.wrapPass.hide();
+    pageObjects.wrapReset.hide();
+    $('#nonUSAddress').hide();
+
+    getFirstLast = $('#getFirstLast');
+    pageObjects.getFirstLast().hide();
+
+    theSubmitButton = $('#TheSubmitButton');
+    emailInput = $('#RegisterFields_Email');
+    createUserForm = $('#_CreateUserForm');
+    labelEmail = $('#labelEmail');
+
+    phoneBilling = $('#RegisterFields_BillingAddress_Phone');
+    fullNameShipping = $('#FullNameShipping');
+    streetAddressBilling = $('#RegisterFields_BillingAddress_StreetAddress');
+    streetAddressBilling2 = $('#RegisterFields_BillingAddress_StreetAddress2');
+    cityBilling = $('#RegisterFields_BillingAddress_City');
+    stateBilling = $('#RegisterFields_BillingAddress_State');
+    zipBilling = $('#RegisterFields_BillingAddress_Zip');
+    phoneShipping = $('#RegisterFields_ShippingAddress_Phone');
+    fullNameShipping = $('#fullNameShipping');
+    streetAddressShipping = $('#RegisterFields_ShippingAddress_StreetAddress');
+    streetAddressShipping2 = $('#RegisterFields_ShippingAddress_StreetAddress2');
+    cityShipping = $('#RegisterFields_ShippingAddress_City');
+    stateShipping = $('#RegisterFields_ShippingAddress_State');
+    zipShipping = $('#RegisterFields_ShippingAddress_Zip');
+    shippingLastName = $('#ShippingLastName');
+    shippingFirstName = $('#ShippingFirstName');
+    fullName = $('#FullName');
+    firstName = $('#FirstName');
+    lastName = $('#LastName');
+    institution = $('#RegisterFields_Institution');
+}
+
 // document.ready starts here
 $(function () {
+
     //setup ajax error handling
     $.ajaxSetup({
         error: function (x, status, error) {
@@ -579,21 +637,7 @@ $(function () {
         }
     });
 
-    collapseBilling = $('#collapseBilling');
-    collapseShipping = $('#collapseShipping');
-
-    collapseBilling.parent().hide();
-    collapseShipping.parent().hide();
-
-    stateManager.initialize();
-
-    pageObjects.wrapZip.hide();
-    pageObjects.wrapPass.hide();
-    pageObjects.wrapReset.hide();
-    $('#nonUSAddressBtn').hide();
-    $('#nonUSAddressInput').hide();
-
-    $('#getFirstLast').hide();
+    initializeState();
 
     var path = setPath();
 
