@@ -3,6 +3,7 @@ using System.Diagnostics;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Membership;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using DotNetOpenAuth.AspNet;
@@ -704,12 +705,19 @@ namespace CUWebinars.Web.Controllers
                     if (!stateService.HasValue(Constants.CurrentUser))
                         stateService.SetValue<WebUser>(Constants.CurrentUser, webUser);
 
-                    membershipService.CreateUser(globalConfig.Tenant,
+                    var userAccount = membershipService.CreateUser(
+                        globalConfig.Tenant,
                         webUser.FirstName,
                         webUser.LastName,
                         string.Empty,
                         model.RegisterFields.Password,
                         webUser.email);
+
+                    if (userAccount != null)
+                    {
+                        var dataOperations = new DataOperations();
+                        dataOperations.SetNewAccountToVerified(userAccount.ID);
+                    }
 
                     membershipService.LogInUser(globalConfig.Tenant, model.RegisterFields.Email, model.RegisterFields.Password, true); // log the user in.
 

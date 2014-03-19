@@ -10,6 +10,7 @@ namespace CUWebinars.Web.Core
         public string WMVRepository { get; private set; }
         public string HandoutRepository { get; private set; }
         public string ImgRepository { get; private set; }
+        public string MembershipConnectionString { get; set; }
 
         private GlobalConfig()
         {
@@ -31,6 +32,7 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.WMVRepository = ApplicationSettingsSection["WMVRepository"];
                 UniqueInstance.HandoutRepository = ApplicationSettingsSection["HandoutRepository"];
                 UniqueInstance.ImgRepository = ApplicationSettingsSection["ImgRepository"];
+                UniqueInstance.MembershipConnectionString = WebConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString;
             }
 
             // Private object instantiated with private constructor

@@ -8,7 +8,7 @@ namespace CUWebinars.Business.AccountService
     public interface IMembershipService
     {
         bool ChangePasswordFromResetKey(string key, string newPassword);
-        void CreateUser(
+        UserAccount CreateUser(
             string tenant,
             string firstName, 
             string lastName, 
