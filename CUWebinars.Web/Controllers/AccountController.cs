@@ -33,12 +33,19 @@ namespace CUWebinars.Web.Controllers
         public IMembershipService membershipService;
         private readonly IOrderRepository orderRepository;
         private readonly IOptionRepository optionRepository;
+        private readonly IStateService stateService;
         private readonly IOrderManagementService orderManagementService;
 
         public ILogger Logger { get; set; }
         //public IOrderService orderService;
 
-        public AccountController(IMailService mail, ILogger logger, IMembershipService membershipService, IOrderRepository orderRepository, IOrderManagementService orderManagementService, IOptionRepository optionRepository)
+        public AccountController(IMailService mail, 
+            ILogger logger, 
+            IMembershipService membershipService, 
+            IOrderRepository orderRepository, 
+            IOrderManagementService orderManagementService, 
+            IOptionRepository optionRepository,
+            IStateService stateService)
         {
             this.mail = mail;
             this.Logger = logger;
@@ -46,6 +53,7 @@ namespace CUWebinars.Web.Controllers
             this.orderRepository = orderRepository;
             this.orderManagementService = orderManagementService;
             this.optionRepository = optionRepository;
+            this.stateService = stateService;
         }
 
         //[System.Web.Mvc.HttpGet]
@@ -136,7 +144,7 @@ namespace CUWebinars.Web.Controllers
 
                     IList<Address> addresses = new List<Address> { billingAddress, shippingAddress };
 
-                    var result = membershipService.CreateUser(globalConfig.Tenant,
+                    var result = membershipService.CreateWebUser(globalConfig.Tenant,
                         model.FirstName
                         , model.LastName
                         , model.Email
@@ -678,10 +686,8 @@ namespace CUWebinars.Web.Controllers
                     shippingAddress.Zip = model.RegisterFields.ShippingAddress.Zip.Trim();
 
                     IList<Address> addresses = new List<Address> { billingAddress, shippingAddress };
-
-
-
-                    var result = membershipService.CreateUser(globalConfig.Tenant,
+                    
+                    var webUser = membershipService.CreateWebUser(globalConfig.Tenant,
                         model.RegisterFields.FirstName.Trim()
                         , model.RegisterFields.LastName.Trim()
                         , string.Empty //  Pass empty string for username because MembershipReboot assigns the email to the username field where emailIsUsername is true
@@ -694,6 +700,16 @@ namespace CUWebinars.Web.Controllers
                         , model.RegisterFields.Title == null ? model.RegisterFields.Title : model.RegisterFields.Title.Trim()
                         , null
                         , "A");
+
+                    if (!stateService.HasValue(Constants.CurrentUser))
+                        stateService.SetValue<WebUser>(Constants.CurrentUser, webUser);
+
+                    membershipService.CreateUser(globalConfig.Tenant,
+                        webUser.FirstName,
+                        webUser.LastName,
+                        string.Empty,
+                        model.RegisterFields.Password,
+                        webUser.email);
 
                     membershipService.LogInUser(globalConfig.Tenant, model.RegisterFields.Email, model.RegisterFields.Password, true); // log the user in.
 

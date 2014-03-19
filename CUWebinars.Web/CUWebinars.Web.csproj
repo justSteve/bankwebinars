@@ -391,6 +391,7 @@
     </Compile>
     <Compile Include="Helpers\AppHelper.cs" />
     <Compile Include="Helpers\ClaimsExtensions.cs" />
+    <Compile Include="Helpers\Constants.cs" />
     <Compile Include="Helpers\IdentityConstants.cs" />
     <Compile Include="Helpers\WebUiConstants.cs" />
     <Compile Include="Helpers\DateTimeHelper.cs" />

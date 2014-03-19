@@ -1,18 +1,20 @@
 ﻿using System;
 using System.IO;
 using BrockAllen.MembershipReboot;
+using CUWebinars.Web.Services;
 
 namespace CUWebinars.Web.Membership.Email
 {
     public class TtsEmailFormatter : EmailMessageFormatter<UserAccount>
     {
+        private readonly IStateService _stateService;
 // ReSharper disable once InconsistentNaming
         private string pathToTemplates;
 
-        public TtsEmailFormatter(ApplicationInformation appInfo)
+        public TtsEmailFormatter(ApplicationInformation appInfo, IStateService stateService)
             : base(appInfo)
         {
-
+            _stateService = stateService;
         }
 
         public string PathToRoot 
@@ -59,7 +61,7 @@ namespace CUWebinars.Web.Membership.Email
 
         protected override Tokenizer GetTokenizer(UserAccountEvent<UserAccount> evt)
         {
-            return new TtsTokenizer();
+            return new TtsTokenizer(_stateService);
         }
     }
 }
