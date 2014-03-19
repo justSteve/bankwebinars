@@ -68,7 +68,7 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
 
                     IList<Address> addresses = new List<Address> { address };
 
-                    var result = membershipService.CreateUser(globalConfig.Tenant,
+                    var result = membershipService.CreateWebUser(globalConfig.Tenant,
                         model.FirstName
                         , model.LastName
                         , model.FirstName + ' ' + model.LastName
@@ -77,7 +77,6 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
                         , USTimeZone.Central
                         , model.UserType
                         , myInstitution.idInstitution
-                        
                         , addresses
                         , model.Title
                         , model.idWebUser

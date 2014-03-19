@@ -8,19 +8,28 @@ namespace CUWebinars.Business.AccountService
     public interface IMembershipService
     {
         bool ChangePasswordFromResetKey(string key, string newPassword);
-        WebUser CreateUser(
+        void CreateUser(
             string tenant,
             string firstName, 
             string lastName, 
             string userName, 
             string password, 
-            string email, 
-            USTimeZone timeZone, 
-            UserType userType, 
-            int institutionId, 
-            IList<Address> addresses, 
-            string title, 
-            int? idUserImported, 
+            string email
+            );
+
+        WebUser CreateWebUser(
+            string tenant,
+            string firstName,
+            string lastName,
+            string userName,
+            string password,
+            string email,
+            USTimeZone timeZone,
+            UserType userType,
+            int institutionId,
+            IList<Address> addresses,
+            string title,
+            int? idUserImported,
             string accountStatus = null);
 
         IEnumerable<Address> GetAddressesForUser(int id);

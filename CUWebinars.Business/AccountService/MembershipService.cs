@@ -72,20 +72,13 @@ namespace CUWebinars.Business.AccountService
             return false;
         }
 
-        public WebUser CreateUser(
+        public void CreateUser(
             string tenant,
             string firstName,
             string lastName,
             string userName,
             string password,
-            string email,
-            USTimeZone timeZone,
-            UserType userType,
-            int institutionId,
-            IList<Address> addresses,
-            string title,
-            int? idUserImported,
-            string accountStatus = null
+            string email
             )
         {
             //TODO: Needs another change for email in use condition
@@ -95,9 +88,45 @@ namespace CUWebinars.Business.AccountService
             userAccountService.AddClaim(account.ID, ClaimTypes.FullName, string.Format("{0} {1}", firstName, lastName));
             userAccountService.AddClaim(account.ID, System.Security.Claims.ClaimTypes.Role, "WebUser");
             userAccountService.AddClaim(account.ID, ClaimTypes.HasNotVerified, "true");
+            //if (idUserImported == 0) idUserImported = null;
+
+            //WebUser webUser = new WebUser
+            //{
+            //    idUser = idUserImported.HasValue ? idUserImported.Value : refDataRepository.GetMaxWebUserId() + 1,
+            //    // Check what default should be for nun-nullable field
+            //    AcctStatus = accountStatus ?? "A",
+            //    DateCreated = DateTime.Now,
+            //    email = email,
+            //    FirstName = firstName,
+            //    idUserInstitution = institutionId,
+            //    LastName = lastName,
+            //    Addresses = addresses,
+            //    Title = title,
+            //    timeZone = timeZone,
+            //    UserType = UserType.Customer,
+            //};
+
+            //webUserRepository.Add(webUser);
+        }
+
+        public WebUser CreateWebUser(
+            string tenant, 
+            string firstName, 
+            string lastName, 
+            string userName, 
+            string password, 
+            string email,
+            USTimeZone timeZone, 
+            UserType userType, 
+            int institutionId, 
+            IList<Address> addresses, 
+            string title, 
+            int? idUserImported,
+            string accountStatus = null)
+        {
             if (idUserImported == 0) idUserImported = null;
 
-            WebUser webUser = new WebUser
+            var webUser = new WebUser
             {
                 idUser = idUserImported.HasValue ? idUserImported.Value : refDataRepository.GetMaxWebUserId() + 1,
                 // Check what default should be for nun-nullable field
