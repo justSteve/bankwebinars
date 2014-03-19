@@ -117,8 +117,6 @@ function enterBillingPane(data) {
 
     pageObjects.labelEmail.html('<span class="label label-success"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</span>');
     pageObjects.theSubmitButton().prop('value', registerButtonText);
-
-    stateManager.action = actions.SubmitRegister;
 }
 
 var stateManager = function () {
@@ -389,6 +387,7 @@ var stateManager = function () {
             pageObjects.zipBilling.val('na');
             $('#nonUSAddressInput').show();
             displayBillingFields();
+            stateManager.action = actions.SubmitRegister;
         },
 
         zipCodeVerified = function (data, zipCode) {
@@ -397,6 +396,7 @@ var stateManager = function () {
                 case 'true':
                     console.log('zipCodeVerified-true hit');
                     pageObjects.zipBilling.val(zipCode);
+                    stateManager.action = actions.SubmitRegister;
                     enterBillingPane(data);
                     break;
                 case 'false':
