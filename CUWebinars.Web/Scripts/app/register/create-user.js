@@ -661,6 +661,9 @@ $(function () {
         var inputElementTriggered = event.currentTarget.name;
         var normalResetPasswordButton = $('#NormalResetPasswordButton');
 
+        if (normalResetPasswordButton.filter(':visible').length > 0)
+            inputElementTriggered = 'NormalResetPasswordInput';
+
         if (event.which == 13) {
 
             if (pageObjects.modalInstitution.filter(':visible').length > 0
@@ -688,7 +691,7 @@ $(function () {
                     console.log('ActionForTheSubmit = ' + stateManager.action);
                     stateManager.submit(); break;
                 case buttons.nonUSAddressBtn: stateManager.nonUsAdddressInvoked(); break;
-                    //case 'Email':
+                case 'NormalResetPasswordInput':
                 case 'NormalResetPasswordButton':
                     if ($('#EdgeCaseResetPasswordButton').data('clicked'))
                         $('#EdgeCaseResetPasswordButton').removeData('clicked');
