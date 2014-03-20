@@ -188,9 +188,10 @@ namespace CUWebinars.Business.AccountService
             {
                 userAccountService.ResetPassword(tenant, email);
             }
-            catch (Exception)
+            catch (Exception exception)
             {
                 var a = 2;
+                throw;
             }
         }
 

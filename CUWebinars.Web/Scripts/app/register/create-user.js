@@ -28,7 +28,7 @@ var emailInput;
 var createUserForm;
 var phoneBilling;
 var fullNameShipping;
-var institution;
+var institution; 
 var streetAddressBilling;
 var streetAddressBilling2;
 var cityBilling;
@@ -61,65 +61,133 @@ var pageObjects = {
     theSubmitButton: function() {
         return theSubmitButton || $('#TheSubmitButton');
     },
-    emailInput: emailInput || $('#RegisterFields_Email'),
-    cityBilling: cityBilling || $('#RegisterFields_BillingAddress_City'),
-    nonUSAddressBtn: nonUSAddressBtn || $('#nonUSAddressBtn'),
-    cityShipping: cityShipping || $('#RegisterFields_ShippingAddress_City'),
-    collapseBilling: collapseBilling || $('#collapseBilling'),
-    collapseShipping: collapseShipping || $('#collapseShipping'),
-    createUserForm: createUserForm || $('#_CreateUserForm'),
-    fullNameShipping: fullNameShipping || $('#FullNameShipping'),
-    fullName: fullName || $('#FullName'),
-    firstName: firstName || $('#FirstName'),
+    emailInput: function() {
+        return emailInput || $('#RegisterFields_Email');
+    },
+    cityBilling: function() {
+        return cityBilling || $('#RegisterFields_BillingAddress_City');
+    },
+    nonUSAddressBtn: function() {
+        return nonUSAddressBtn || $('#nonUSAddressBtn');
+    },
+    cityShipping: function() {
+        return cityShipping || $('#RegisterFields_ShippingAddress_City');
+    },
+    collapseBilling: function() {
+        return collapseBilling || $('#collapseBilling');
+    },
+    collapseShipping: function() {
+        return collapseShipping || $('#collapseShipping');
+    },
+    createUserForm: function() {
+        return createUserForm || $('#_CreateUserForm');
+    },
+    fullNameShipping: function() {
+        return fullNameShipping || $('#FullNameShipping');
+    },
+    fullName: function() {
+        return fullName || $('#FullName');
+    },
+    firstName: function() {
+        return firstName || $('#FirstName');
+    },
     getFirstLast: function () {
         return getFirstLast || $('#getFirstLast');
     },
-    institution: institution || $('#RegisterFields_Institution'),
-    labelEmail: labelEmail || $('#labelEmail'),
-    lastName: lastName || $('#LastName'),
-    login: login || $('#login'),
-    modalInstitution: modalInstitution || $('#modalInstitution'),
-    phoneBilling: phoneBilling || $('#RegisterFields_BillingAddress_Phone'),
-    phoneShipping: phoneShipping || $('#RegisterFields_ShippingAddress_Phone'),
-    register: register || $('#register'),
-    registerFieldsPassword: registerFieldsPassword || $('#RegisterFields_Password'),
-    reset: reset || $('#reset'),
-    shippingFirstName: shippingFirstName || $('#ShippingFirstName'),
-    shippingLastName: shippingLastName || $('#ShippingLastName'),
-    stateBilling: stateBilling || $('#RegisterFields_BillingAddress_State'),
-    streetAddressBilling: streetAddressBilling || $('#RegisterFields_BillingAddress_StreetAddress'),
-    streetAddressBilling2: streetAddressBilling2 || $('#RegisterFields_BillingAddress_StreetAddress2'),
-    streetAddressShipping: streetAddressShipping || $('#RegisterFields_ShippingAddress_StreetAddress'),
-    streetAddressShipping2: streetAddressShipping2 || $('#RegisterFields_ShippingAddress_StreetAddress2'),
-    stateShipping: stateShipping || $('#RegisterFields_ShippingAddress_State'),
-    wrapEmail: wrapEmail || $('#wrapEmail'),
-    wrapPass: wrapPass || $('#wrapPass'),
-    wrapReset: wrapReset || $('#wrapReset'),
-    wrapZip: wrapZip || $('#wrapZip'),
-    zipBilling: zipBilling || $('#RegisterFields_BillingAddress_Zip'),
-    zipShipping: zipShipping || $('#RegisterFields_ShippingAddress_Zip')
+    institution: function() {
+        return institution || $('#RegisterFields_Institution');
+    },
+    labelEmail: function() {
+        return labelEmail || $('#labelEmail');
+    },
+    lastName: function() {
+        return lastName || $('#LastName');
+    },
+    login: function() {
+        return login || $('#login');
+    },
+    modalInstitution: function() {
+        return modalInstitution || $('#modalInstitution');
+    },
+    phoneBilling: function() {
+        return phoneBilling || $('#RegisterFields_BillingAddress_Phone');
+    },
+    phoneShipping: function() {
+        return phoneShipping || $('#RegisterFields_ShippingAddress_Phone');
+    },
+    register: function() {
+        return register || $('#register');
+    },
+    registerFieldsPassword: function() {
+        return registerFieldsPassword || $('#RegisterFields_Password');
+    },
+    reset: function() {
+        return reset || $('#reset');
+    },
+    shippingFirstName: function() {
+        return shippingFirstName || $('#ShippingFirstName');
+    },
+    shippingLastName: function() {
+        return shippingLastName || $('#ShippingLastName');
+    },
+    stateBilling: function() {
+        return stateBilling || $('#RegisterFields_BillingAddress_State');
+    },
+    streetAddressBilling: function() {
+        return streetAddressBilling || $('#RegisterFields_BillingAddress_StreetAddress');
+    },
+    streetAddressBilling2: function() {
+        return streetAddressBilling2 || $('#RegisterFields_BillingAddress_StreetAddress2');
+    },
+    streetAddressShipping: function() {
+        return streetAddressShipping || $('#RegisterFields_ShippingAddress_StreetAddress');
+    },
+    streetAddressShipping2: function() {
+        return streetAddressShipping2 || $('#RegisterFields_ShippingAddress_StreetAddress2');
+    },
+    stateShipping: function() {
+        return stateShipping || $('#RegisterFields_ShippingAddress_State');
+    },
+    wrapEmail: function() {
+        return wrapEmail || $('#wrapEmail');
+    },
+    wrapPass: function() {
+        return wrapPass || $('#wrapPass');
+    },
+    wrapReset: function() {
+        return wrapReset || $('#wrapReset');
+    },
+    wrapZip: function() {
+        return wrapZip || $('#wrapZip');
+    },
+    zipBilling: function() {
+        return zipBilling || $('#RegisterFields_BillingAddress_Zip');
+    },
+    zipShipping: function() {
+        return zipShipping || $('#RegisterFields_ShippingAddress_Zip');
+    },
 };
 
 function enterBillingPane(data) {
-    pageObjects.collapseBilling.parent().show();
-    pageObjects.collapseShipping.parent().show();
+    pageObjects.collapseBilling().parent().show();
+    pageObjects.collapseShipping().parent().show();
     $('#collapseEmail').collapse('toggle');
 
     var showBillingInputs = $.Deferred(function () {
-        pageObjects.collapseBilling.collapse('toggle');
+        pageObjects.collapseBilling().collapse('toggle');
 
     });
 
     $.when(showBillingInputs.resolve()).then(function () {
-        pageObjects.fullName.focus();
+        pageObjects.fullName().focus();
     });
 
-    pageObjects.cityBilling.val(data.City);
-    pageObjects.stateBilling.val(data.State);
-    //pageObjects.zipBilling.val(zipBilling);
+    pageObjects.cityBilling().val(data.City);
+    pageObjects.stateBilling().val(data.State);
+    //pageObjects.zipBilling().val(zipBilling);
     $('#TimeZone').val(data.TimeZone);
 
-    pageObjects.labelEmail.html('<span class="label label-success"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</span>');
+    pageObjects.labelEmail().html('<span class="label label-success"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</span>');
     pageObjects.theSubmitButton().prop('value', registerButtonText);
 }
 
@@ -135,18 +203,18 @@ var stateManager = function () {
             if (stateManager.inputAction === inputActions.EnterKeyPress)
                 stateManager.inputAction = inputActions.None;
 
-            if (pageObjects.emailInput.valid() == '1') {
-                pageObjects.collapseBilling.parent().show();
+            if (pageObjects.emailInput().valid() == '1') {
+                pageObjects.collapseBilling().parent().show();
 
                 var showBillingInputs = $.Deferred(function () {
-                    pageObjects.collapseBilling.collapse('show');
+                    pageObjects.collapseBilling().collapse('show');
                 });
 
                 $.when(showBillingInputs.resolve()).then(function () {
-                    pageObjects.fullName.focus();
+                    pageObjects.fullName().focus();
                 });
 
-                pageObjects.collapseShipping.parent().show();
+                pageObjects.collapseShipping().parent().show();
                 $('#collapseEmail').collapse('toggle');
 
                 pageObjects.theSubmitButton().prop('value', registerButtonText);
@@ -155,8 +223,8 @@ var stateManager = function () {
 
         enterDifferentAddress = function () {
             console.log('EnterDiffAddress hit');
-            pageObjects.modalInstitution.modal('hide');
-            pageObjects.wrapZip.hide('slow');
+            pageObjects.modalInstitution().modal('hide');
+            pageObjects.wrapZip().hide('slow');
 
             zipCheckRequired = true;
 
@@ -170,11 +238,11 @@ var stateManager = function () {
             stateManager.inputAction = inputActions.None;
 
             var showEmailInput = $.Deferred(function () {
-                pageObjects.wrapEmail.show('slow');
+                pageObjects.wrapEmail().show('slow');
             });
 
             $.when(showEmailInput.resolve()).then(function () {
-                pageObjects.emailInput.focus();
+                pageObjects.emailInput().focus();
             });
         },
 
@@ -182,11 +250,11 @@ var stateManager = function () {
             console.log("call resetPasswordOrLoginView: " + email);
             $('#Email1').val(email);
             $('#ResetPassEmail').val(email);
-            pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is already on file.</span>');
-            pageObjects.wrapEmail.hide('slow');
+            pageObjects.labelEmail().html('<span class="label label-important"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is already on file.</span>');
+            pageObjects.wrapEmail().hide('slow');
 
             var showLoginInput = $.Deferred(function () {
-                pageObjects.wrapReset.show('slow');
+                pageObjects.wrapReset().show('slow');
             });
 
             $.when(showLoginInput.resolve()).then(function () {
@@ -202,18 +270,18 @@ var stateManager = function () {
             if (stateManager.inputAction.inputAction === inputActions.EnterKeyPress)
                 stateManager.inputAction = inputActions.None;
             console.log("call foundInstitutionView: " + email);
-            pageObjects.modalInstitution.modal('show');
+            pageObjects.modalInstitution().modal('show');
 
-            pageObjects.institution.val(data.Institution);
-            pageObjects.streetAddressShipping.val(data.Address);
-            pageObjects.cityShipping.val(data.City);
-            pageObjects.stateShipping.val(data.State);
-            pageObjects.zipShipping.val(data.Zip);
-            pageObjects.streetAddressBilling.val(data.Address);
-            pageObjects.cityBilling.val(data.City);
-            pageObjects.stateBilling.val(data.State);
-            pageObjects.zipBilling.val(data.Zip);
-            pageObjects.labelEmail.html('<span class="label label-success"><b>&nbsp;&nbsp;' + email.substring(email.indexOf('@')) + '</b>&nbsp; domain has been identified.</span>');
+            pageObjects.institution().val(data.Institution);
+            pageObjects.streetAddressShipping().val(data.Address);
+            pageObjects.cityShipping().val(data.City);
+            pageObjects.stateShipping().val(data.State);
+            pageObjects.zipShipping().val(data.Zip);
+            pageObjects.streetAddressBilling().val(data.Address);
+            pageObjects.cityBilling().val(data.City);
+            pageObjects.stateBilling().val(data.State);
+            pageObjects.zipBilling().val(data.Zip);
+            pageObjects.labelEmail().html('<span class="label label-success"><b>&nbsp;&nbsp;' + email.substring(email.indexOf('@')) + '</b>&nbsp; domain has been identified.</span>');
             $('#ShowInstitution').html(data.Institution + '<br>' + data.Address + '<br>' + data.City + ', ' + data.State + ' ' + data.Zip + '<br>');
         },
 
@@ -224,25 +292,25 @@ var stateManager = function () {
 
         newPasswordView = function (email) {
             console.log("call newPasswordView: " + email);
-            pageObjects.wrapEmail.hide('fast');
+            pageObjects.wrapEmail().hide('fast');
 
             var showPwdInput = $.Deferred(function () {
                 console.log("Deferred newPasswordView: " + email);
-                pageObjects.wrapPass.show('fast');
+                pageObjects.wrapPass().show('fast');
             });
 
             $.when(showPwdInput.resolve()).then(function () {
-                pageObjects.registerFieldsPassword.focus();
+                pageObjects.registerFieldsPassword().focus();
             });
 
 
 
             if (email) {
-                pageObjects.labelEmail.html('<span class="label label-success"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; has been recorded.</span>');
+                pageObjects.labelEmail().html('<span class="label label-success"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; has been recorded.</span>');
             } else {
-                pageObjects.modalInstitution.modal('hide');
-                pageObjects.labelEmail.fadeOut(500, function () {
-                    $(this).html('<span class="label label-success">&nbsp;&nbsp;&nbsp;&nbsp;' + pageObjects.emailInput.val() + ' will be used for your email address.</span>');
+                pageObjects.modalInstitution().modal('hide');
+                pageObjects.labelEmail().fadeOut(500, function () {
+                    $(this).html('<span class="label label-success">&nbsp;&nbsp;&nbsp;&nbsp;' + pageObjects.emailInput().val() + ' will be used for your email address.</span>');
                     $(this).fadeIn(500);
                 });
             }
@@ -262,14 +330,14 @@ var stateManager = function () {
         newPassWordToNextStep = function () {
 
             var confirmPasswordInput = $('[name="RegisterFields.ConfirmPassword"]');
-            var pwd = $.trim(pageObjects.registerFieldsPassword.val());
+            var pwd = $.trim(pageObjects.registerFieldsPassword().val());
             var confirmedPwd = $.trim(confirmPasswordInput.val());
 
             if (!confirmedPwd) {
                 confirmPasswordInput.next('span').removeAttr('class').attr('class','field-validation-error').append('<span>Confirming your password is required.</span>');
             }
 
-            if (!pwd || !confirmedPwd || pwd.length < 2 || pageObjects.registerFieldsPassword.nextAll('span:last').hasClass('field-validation-error')) {
+            if (!pwd || !confirmedPwd || pwd.length < 2 || pageObjects.registerFieldsPassword().nextAll('span:last').hasClass('field-validation-error')) {
                 console.log('call RegisterFields_Password');
                 if (stateManager.inputAction === inputActions.EnterKeyPress)
                     stateManager.inputAction = inputActions.None;
@@ -277,11 +345,11 @@ var stateManager = function () {
             }
 
             if (zipCheckRequired) {
-                pageObjects.wrapPass.hide('slow');
+                pageObjects.wrapPass().hide('slow');
                 stateManager.action = actions.CheckZip;
 
                 var showGetZipInput = $.Deferred(function () {
-                    pageObjects.wrapZip.show('slow');
+                    pageObjects.wrapZip().show('slow');
                 });
 
                 $.when(showGetZipInput.resolve()).then(function () {
@@ -302,19 +370,19 @@ var stateManager = function () {
 
         notInstitutionAddress = function () {
             console.log('NotInstitution hit');
-            pageObjects.modalInstitution.modal('hide');
+            pageObjects.modalInstitution().modal('hide');
 
             var showEmailInput = $.Deferred(function () {
-                pageObjects.wrapEmail.show('slow');
+                pageObjects.wrapEmail().show('slow');
             });
 
             $.when(showEmailInput.resolve()).then(function () {
-                pageObjects.emailInput.focus();
+                pageObjects.emailInput().focus();
             });
 
 
-            pageObjects.wrapZip.hide('slow');
-            pageObjects.labelEmail.html('<span class="label label-info">&nbsp;&nbsp;&nbsp;&nbsp;Proceed or enter a different email address.</span>');
+            pageObjects.wrapZip().hide('slow');
+            pageObjects.labelEmail().html('<span class="label label-info">&nbsp;&nbsp;&nbsp;&nbsp;Proceed or enter a different email address.</span>');
 
             //  Clear the billing and shipping addresses
             $('#collapseBilling input').val('');
@@ -337,12 +405,12 @@ var stateManager = function () {
 
         passResetView = function () {
             console.log("call passResetView");
-            pageObjects.login.hide('slow');
+            pageObjects.login().hide('slow');
 
 
             var showResetInput = $.Deferred(function () {
                 //TODO: inprocess indicator here?
-                pageObjects.reset.show('slow');
+                pageObjects.reset().show('slow');
             });
 
             $.when(showResetInput.resolve()).then(function () {
@@ -351,16 +419,16 @@ var stateManager = function () {
 
         },
         registerView = function () {
-            pageObjects.login.hide('slow');
-            pageObjects.register.show('slow');
+            pageObjects.login().hide('slow');
+            pageObjects.register().show('slow');
             stateManager.action = actions.CheckEmail;
 
             var showRegisterInput = $.Deferred(function () {
-                pageObjects.register.show('slow');
+                pageObjects.register().show('slow');
             });
 
             $.when(showRegisterInput.resolve()).then(function () {
-                pageObjects.emailInput.focus();
+                pageObjects.emailInput().focus();
             });
         },
 
@@ -374,8 +442,8 @@ var stateManager = function () {
         },
 
         startView = function () {
-            pageObjects.register.hide();
-            pageObjects.reset.hide();
+            pageObjects.register().hide();
+            pageObjects.reset().hide();
         },
 
         useRegisteredAddress = function () {
@@ -387,8 +455,8 @@ var stateManager = function () {
         },
         nonUsAdddressInvoked = function () {
             console.log("hit nonUsAdddressInvoked");
-            pageObjects.labelEmail.html('<span class="label label-info"><b>&nbsp;&nbsp;Non-US address? Please enter Special Handling Instructions</span>');
-            pageObjects.zipBilling.val('na');
+            pageObjects.labelEmail().html('<span class="label label-info"><b>&nbsp;&nbsp;Non-US address? Please enter Special Handling Instructions</span>');
+            pageObjects.zipBilling().val('na');
             $('#nonUSAddressInput').show();
             displayBillingFields();
             stateManager.action = actions.SubmitRegister;
@@ -399,18 +467,18 @@ var stateManager = function () {
             switch (data.success) {
                 case 'true':
                     console.log('zipCodeVerified-true hit');
-                    pageObjects.zipBilling.val(zipCode);
+                    pageObjects.zipBilling().val(zipCode);
                     stateManager.action = actions.SubmitRegister;
                     enterBillingPane(data);
                     break;
                 case 'false':
                     console.log('zipCodeVerified-false hit');
-                    pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode was not found!</span>');
+                    pageObjects.labelEmail().html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode was not found!</span>');
                     $('#nonUSAddressBtn').show('slow');
                     break;
                 case 'invalid format':
                     console.log('zipCodeVerified-invalidformat hit');
-                    pageObjects.labelEmail.html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode entered was not in the correct format!</span>');
+                    pageObjects.labelEmail().html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode entered was not in the correct format!</span>');
                     break;
             }
 
@@ -438,7 +506,7 @@ var stateManager = function () {
                     console.log('SubmitRegister hit');
                     //TODO: provide an exitscreen confirming account creation.
                     stateManager.action = actions.PostCreateAccount;
-                    if (pageObjects.createUserForm.valid() == '1') {
+                    if (pageObjects.createUserForm().valid() == '1') {
                         submitCreateUserForm();
                     }
                     break;
@@ -487,8 +555,8 @@ var stateManager = function () {
 
 
 function checkAndSubmitEmail() {
-    if (pageObjects.emailInput.valid() == '1') {
-        console.log(pageObjects.emailInput.valid());
+    if (pageObjects.emailInput().valid() == '1') {
+        console.log(pageObjects.emailInput().valid());
         $('#emailAddress').val($('#checkEmail').val());
         $('form#checkEmail').submit();
     }
@@ -504,7 +572,7 @@ function checkAndSubmitZip() {
 
 function submitCreateUserForm() {
 
-    var valid = pageObjects.createUserForm.valid();
+    var valid = pageObjects.createUserForm().valid();
 
     //on account creation default the shipping phone to be same as billing
     $("#RegisterFields.ShippingAddress.phone").val(phoneBilling);
@@ -512,7 +580,7 @@ function submitCreateUserForm() {
 
     if (valid) {
         console.log('createUserForm submitted.');
-        pageObjects.createUserForm.submit();
+        pageObjects.createUserForm().submit();
 
         pageObjects.theSubmitButton().off('mouseenter', function () {
             if ($('#sameAsBilling:checked').val()) {
@@ -526,7 +594,7 @@ function submitLogin() {
     //$('#Email').val($('#RegisterFields_Email').val());
     //$('#Password').val($('#Password1').val());
     //$('#frmSignin').submit();
-    $('#Password').val(pageObjects.registerFieldsPassword.val());
+    $('#Password').val(pageObjects.registerFieldsPassword().val());
     $('#Email').val($('#emailAddress').val());
     $('form#frmSignIn').submit();
 }
@@ -534,16 +602,16 @@ function submitLogin() {
 
 
 function setShippingToBilling() {
-    pageObjects.fullNameShipping.val(pageObjects.fullName.val());
-    pageObjects.shippingFirstName.val(pageObjects.firstName.val());
-    pageObjects.shippingLastName.val(pageObjects.lastName.val());
-    pageObjects.cityShipping.val(pageObjects.cityBilling.val());
-    pageObjects.stateShipping.val(pageObjects.stateBilling.val());
-    pageObjects.streetAddressShipping.val(pageObjects.streetAddressBilling.val());
-    pageObjects.streetAddressShipping2.val(pageObjects.streetAddressBilling2.val());
-    pageObjects.zipShipping.val(pageObjects.zipBilling.val());
+    pageObjects.fullNameShipping().val(pageObjects.fullName().val());
+    pageObjects.shippingFirstName().val(pageObjects.firstName().val());
+    pageObjects.shippingLastName().val(pageObjects.lastName().val());
+    pageObjects.cityShipping().val(pageObjects.cityBilling().val());
+    pageObjects.stateShipping().val(pageObjects.stateBilling().val());
+    pageObjects.streetAddressShipping().val(pageObjects.streetAddressBilling().val());
+    pageObjects.streetAddressShipping2().val(pageObjects.streetAddressBilling2().val());
+    pageObjects.zipShipping().val(pageObjects.zipBilling().val());
     $('#RegisterFields_ShippingAddress_Country').val($('#RegisterFields_BillingAddress_Country').val());
-    pageObjects.phoneShipping.val(pageObjects.phoneBilling.val());
+    pageObjects.phoneShipping().val(pageObjects.phoneBilling().val());
 }
 
 function getMainPath(pathToCheck) {
@@ -586,9 +654,9 @@ function initializeState() {
     wrapReset = $('#wrapReset');
     wrapZip = $('#wrapZip');
 
-    pageObjects.wrapZip.hide();
-    pageObjects.wrapPass.hide();
-    pageObjects.wrapReset.hide();
+    pageObjects.wrapZip().hide();
+    pageObjects.wrapPass().hide();
+    pageObjects.wrapReset().hide();
     $('#nonUSAddress').hide();
 
     getFirstLast = $('#getFirstLast');
@@ -641,7 +709,7 @@ $(function () {
 
     var path = setPath();
 
-    pageObjects.emailInput.bind('change keyup', function () {
+    pageObjects.emailInput().bind('change keyup', function () {
         if ($(this).validate().checkForm()) {
             pageObjects.theSubmitButton().removeClass('button_disabled').attr('disabled', false);
         } else {
@@ -666,7 +734,7 @@ $(function () {
 
         if (event.which == 13) {
 
-            if (pageObjects.modalInstitution.filter(':visible').length > 0
+            if (pageObjects.modalInstitution().filter(':visible').length > 0
                 && inputElementTriggered !== buttons.YesUseAddress
                 && inputElementTriggered !== buttons.EnterDiffAddress
                 && inputElementTriggered !== buttons.NotInstitution) {
@@ -728,7 +796,7 @@ $(function () {
         stateManager.inputAction = inputActions.ButtonClick;
 
         if (stateManager.action === '') {
-            pageObjects.labelEmail.html('<span class="label label-important">&nbsp;&nbsp;There registration has encountered a problem. Please refresh the page and re-start the registration process or call Tech Support at 800-831-0678 ext. 706.</span>');
+            pageObjects.labelEmail().html('<span class="label label-important">&nbsp;&nbsp;There registration has encountered a problem. Please refresh the page and re-start the registration process or call Tech Support at 800-831-0678 ext. 706.</span>');
 
             return false;
         }
@@ -761,7 +829,7 @@ $(function () {
     }));
 
 
-    pageObjects.collapseShipping.on('shown', function () {
+    pageObjects.collapseShipping().on('shown', function () {
         if ($('#sameAsBilling:checked').val()) {
             setShippingToBilling();
         }
@@ -778,10 +846,10 @@ $(function () {
     //            data: {
     //                zip: '54636', term: request.term
     //            },
-    //            //data: { zip: pageObjects.zipBilling.val()},
+    //            //data: { zip: pageObjects.zipBilling().val()},
     //            //beforeSend: function () {
     //            //    // this is where we append a loading image
-    //            //    pageObjects.labelEmail.html('<div class="btn-warning style='width: 400px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</div>');
+    //            //    pageObjects.labelEmail().html('<div class="btn-warning style='width: 400px; height: 20px;">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</div>');
     //            //},
     //            success: function (data) {
     //                response($.map(data.geonames, function (item) {
@@ -799,12 +867,12 @@ $(function () {
     //        $('.ui-autocomplete').css('z-index', 1000);
     //    },
     //    select: function (event, ui) {
-    //        pageObjects.institution.val(ui.item.Work_Item);
+    //        pageObjects.institution().val(ui.item.Work_Item);
     //        return false;
     //    }
     //});
 
-    pageObjects.createUserForm.on('submit', function (e) {
+    pageObjects.createUserForm().on('submit', function (e) {
         e.preventDefault();
 
         if (stateManager.action !== actions.SubmitLogin) {
@@ -812,7 +880,7 @@ $(function () {
             return false;
         }
 
-        if (pageObjects.createUserForm.valid() != '1') {
+        if (pageObjects.createUserForm().valid() != '1') {
             console.log('non-valid form');
             return false;
         }
@@ -830,18 +898,18 @@ $(function () {
             beforeSend: function () {
                 console.log('beforeSend Register Details');
                 // this is where we append a loading image
-                pageObjects.labelEmail.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
+                pageObjects.labelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
             }
         }).done(function (data) {
             console.log('done Register Details');
             if (data.Status === 'Success') {
                 console.log('success  Register Details');
                 stateManager.action = '';
-                pageObjects.labelEmail.html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
+                pageObjects.labelEmail().html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
                 location.assign(path + '/'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
             } else if (data.Status === 'Fail') {
                 console.log('statusFail  Register Details');
-                pageObjects.labelEmail.html('<span class="label label-information">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
+                pageObjects.labelEmail().html('<span class="label label-information">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
             }
         }).fail(function (data) {
             console.log('failed: ' + data);
@@ -852,7 +920,7 @@ $(function () {
 
         e.preventDefault();
         var jsonUrl = '/Account/CheckEmail';
-        var email = pageObjects.emailInput.val();
+        var email = pageObjects.emailInput().val();
         if (email.length === 0) {
             $('#RegisterFields_Email').focus();
         } else {
@@ -865,7 +933,7 @@ $(function () {
                 data: { email: email, disregardIntitutionDomain: stateManager.disregardIntitutionDomain },
                 beforeSend: function () {
                     // this is where we append a loading image
-                    pageObjects.labelEmail.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</span>');
+                    pageObjects.labelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</span>');
                 }
             }).done(function (data) {
                 // successful request; do something with the data
@@ -881,7 +949,7 @@ $(function () {
 
             }).fail(function () {
                 // failed request; give feedback to user
-                pageObjects.wrapEmail.html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+                pageObjects.wrapEmail().html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
             }).always(function () {
                 stateManager.inputAction = inputActions.None;
             });
@@ -903,14 +971,14 @@ $(function () {
                 data: { Zip: zipCode },
                 beforeSend: function () {
                     // this is where we append a loading image
-                    pageObjects.labelEmail.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Zip...</span>');
+                    pageObjects.labelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Zip...</span>');
                 }
             }).done(function (data) {
                 // successful request; do something with the data
                 stateManager.zipCodeVerified(data, zipCode);
             }).fail(function () {
                 // failed request; give feedback to user
-                pageObjects.wrapZip.html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+                pageObjects.wrapZip().html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
             }).always(function () {
                 stateManager.inputAction = inputActions.None;
             });
@@ -918,10 +986,10 @@ $(function () {
         return false;
     });
 
-    //pageObjects.institution.change(function () {
-    //    alert('hit' + pageObjects.institution.val());
+    //pageObjects.institution().change(function () {
+    //    alert('hit' + pageObjects.institution().val());
     //    //  $.getJSON()
-    //    $('#InstitutionChecker').val(pageObjects.institution.val());
+    //    $('#InstitutionChecker').val(pageObjects.institution().val());
     //    $('form#checkInstitution').submit();
     //});
 
@@ -942,9 +1010,9 @@ $(function () {
 
 
 
-    pageObjects.modalInstitution.on('hidden', function (e) {
+    pageObjects.modalInstitution().on('hidden', function (e) {
         stateManager.inputAction = inputActions.None;
-        if (pageObjects.wrapZip.is(':visible')) {
+        if (pageObjects.wrapZip().is(':visible')) {
             stateManager.action = actions.CheckEmail;
         }
 
