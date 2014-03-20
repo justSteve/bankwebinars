@@ -1,4 +1,6 @@
-﻿using BrockAllen.MembershipReboot;
+﻿using System.Collections.Generic;
+using System.Linq;
+using BrockAllen.MembershipReboot;
 using BrockAllen.MembershipReboot.Ef;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
@@ -12,146 +14,273 @@ namespace CUWebinars.Business.Tests
     [TestClass]
     public class MembershipServiceTests
     {
-        //Mock<IRefDataRepository> refDataRepositoryMock;
-        //Mock<IInstitutionRepository> institutionRepositoryMock;
-        //Mock<IWebUserRepository> webUserRepositoryMock;
-        //UserAccountServiceHappyPathFake userAccountServiceFake;
-        //SamAuthenticationServiceFake samAuthenticationServiceMock;
-        //MembershipService membershipService;
-        //private readonly GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+        Mock<IRefDataRepository> refDataRepositoryMock;
+        Mock<IInstitutionRepository> institutionRepositoryMock;
+        Mock<IWebUserRepository> webUserRepositoryMock;
+        UserAccountServiceHappyPathFake userAccountServiceFake;
+        SamAuthenticationServiceFake samAuthenticationServiceMock;
+        MembershipService membershipService;
 
-        //[TestInitialize]
-        //public void SetupTest()
-        //{
-        //    refDataRepositoryMock = new Mock<IRefDataRepository>();
-        //    institutionRepositoryMock = new Mock<IInstitutionRepository>();
-        //    webUserRepositoryMock = new Mock<IWebUserRepository>();
-        //    userAccountServiceFake = new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository());
-        //    samAuthenticationServiceMock = new SamAuthenticationServiceFake(userAccountServiceFake);
-        //}
+        public MembershipServiceTests()
+        {
+        
+        }
+
+        const string password = "OpenSesame";
+        
 
 
-        //[TestMethod]
-        //public void LoginUserWithValidCredentials()
-        //{
-        //    string email = "avalid@email.com";
-        //    string password = "openSesame";
+        [TestInitialize]
+        public void SetupTest()
+        {
+            refDataRepositoryMock = new Mock<IRefDataRepository>();
+            institutionRepositoryMock = new Mock<IInstitutionRepository>();
+            webUserRepositoryMock = new Mock<IWebUserRepository>();
+            userAccountServiceFake = new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository());
+            samAuthenticationServiceMock = new SamAuthenticationServiceFake(userAccountServiceFake);
 
-        //    membershipService = new MembershipService(
-        //        institutionRepositoryMock.Object,
-        //        refDataRepositoryMock.Object,
-        //        samAuthenticationServiceMock,
-        //        userAccountServiceFake,
-        //        webUserRepositoryMock.Object
-        //        );
+        }
 
-        //    var result = membershipService.LogInUser(globalConfig.AppTenant, email, password, true);
 
-        //    Assert.IsTrue(result);
-        //}
+        [TestMethod]
+        [TestCategory("Membership Tests")]
+        public void LoginUserWithValidCredentials()
+        {
+            string email = "avalid@email.com";
 
-        //[TestMethod]
-        //public void LoginUserWithInValidCredentials()
-        //{
-        //    string email = "aninvalid@email.com";
-        //    string password = "openSesame";
+            membershipService = new MembershipService(
+                institutionRepositoryMock.Object,
+                refDataRepositoryMock.Object,
+                samAuthenticationServiceMock,
+                userAccountServiceFake,
+                webUserRepositoryMock.Object
+                );
 
-        //    membershipService = new MembershipService(
-        //        institutionRepositoryMock.Object,
-        //        refDataRepositoryMock.Object,
-        //        samAuthenticationServiceMock,
-        //        new UserAccountServiceUnHappyPathFake(new DefaultUserAccountRepository()),
-        //        webUserRepositoryMock.Object
-        //        );
+            var result = membershipService.LogInUser(Globals.AppTenant, email, password, true);
 
-        //    var result = membershipService.LogInUser(globalConfig.AppTenant, email, password, true);
+            Assert.IsTrue(result);
+        }
 
-        //    Assert.IsFalse(result);
-        //}
+        [TestMethod]
+        [TestCategory("Membership Tests")]
+        public void LoginUserWithInValidCredentials()
+        {
+            string email = "aninvalid@email.com";
 
-        //[TestMethod]
-        //public void GetDetailsOfUserReturnsWebUser()
-        //{
-        //    string email = "avalid@email.com";
+            membershipService = new MembershipService(
+                institutionRepositoryMock.Object,
+                refDataRepositoryMock.Object,
+                samAuthenticationServiceMock,
+                new UserAccountServiceUnHappyPathFake(new DefaultUserAccountRepository()),
+                webUserRepositoryMock.Object
+                );
 
-        //    refDataRepositoryMock.Setup(r => r.GetWebUserByEmail(email)).Returns(new WebUser { email = email}).Verifiable();
+            var result = membershipService.LogInUser(Globals.AppTenant, email, password, true);
 
-        //    membershipService = new MembershipService(
-        //        institutionRepositoryMock.Object,
-        //        refDataRepositoryMock.Object,
-        //        samAuthenticationServiceMock,
-        //        new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository()),
-        //        webUserRepositoryMock.Object
-        //        );
+            Assert.IsFalse(result);
+        }
 
-        //    var result = membershipService.GetDetailsOfUser(email);
+        [TestMethod]
+        [TestCategory("Membership Tests")]
+        public void GetDetailsOfUserReturnsWebUser()
+        {
+            string email = "avalid@email.com";
 
-        //    refDataRepositoryMock.Verify(r => r.GetWebUserByEmail(email), Times.Exactly(1));
-        //    Assert.AreEqual(result.email, email);
-        //    Assert.IsInstanceOfType(result, typeof(WebUser));
-        //}
+            refDataRepositoryMock.Setup(r => r.GetWebUserByEmail(email)).Returns(new WebUser { email = email }).Verifiable();
 
-        //[TestMethod]
-        //public void GetDetailsOfUserReturnsNullWhereEmailIsWrong()
-        //{
-        //    string email = "aninvalid@email.com";
+            membershipService = new MembershipService(
+                institutionRepositoryMock.Object,
+                refDataRepositoryMock.Object,
+                samAuthenticationServiceMock,
+                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository()),
+                webUserRepositoryMock.Object
+                );
 
-        //    refDataRepositoryMock.Setup(r => r.GetWebUserByEmail(email)).Returns(() => null);
+            var result = membershipService.GetDetailsOfUser(email);
 
-        //    membershipService = new MembershipService(
-        //        institutionRepositoryMock.Object,
-        //        refDataRepositoryMock.Object,
-        //        samAuthenticationServiceMock,
-        //        new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository()),
-        //        webUserRepositoryMock.Object
-        //        );
+            refDataRepositoryMock.Verify(r => r.GetWebUserByEmail(email), Times.Exactly(1));
+            Assert.AreEqual(result.email, email);
+            Assert.IsInstanceOfType(result, typeof(WebUser));
+        }
 
-        //    var result = membershipService.GetDetailsOfUser(email);
+        [TestMethod]
+        [TestCategory("Membership Tests")]
+        public void GetDetailsOfUserReturnsNullWhereEmailIsWrong()
+        {
+            string email = "aninvalid@email.com";
 
-        //    refDataRepositoryMock.Verify(r => r.GetWebUserByEmail(email), Times.Exactly(1));
-        //    Assert.IsNull(result);            
-        //}
+            refDataRepositoryMock.Setup(r => r.GetWebUserByEmail(email)).Returns(() => null);
 
-        //[TestMethod]
-        //public void GetDetailsOfUserReturnsNullWhereEmailIsNull()
-        //{
-        //    string email = null;
+            membershipService = new MembershipService(
+                institutionRepositoryMock.Object,
+                refDataRepositoryMock.Object,
+                samAuthenticationServiceMock,
+                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository()),
+                webUserRepositoryMock.Object
+                );
 
-        //    refDataRepositoryMock.Setup(r => r.GetWebUserByEmail(email)).Returns(() => null);
+            var result = membershipService.GetDetailsOfUser(email);
 
-        //    membershipService = new MembershipService(
-        //        institutionRepositoryMock.Object,
-        //        refDataRepositoryMock.Object,
-        //        samAuthenticationServiceMock,
-        //        new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository()),
-        //        webUserRepositoryMock.Object
-        //        );
+            refDataRepositoryMock.Verify(r => r.GetWebUserByEmail(email), Times.Exactly(1));
+            Assert.IsNull(result);
+        }
 
-        //    var result = membershipService.GetDetailsOfUser(email);
+        [TestMethod]
+        [TestCategory("Membership Tests")]
+        public void GetDetailsOfUserReturnsNullWhereEmailIsNull()
+        {
+            string email = null;
 
-        //    refDataRepositoryMock.Verify(r => r.GetWebUserByEmail(email), Times.Exactly(1));
-        //    Assert.IsNull(result);
-        //}
+            refDataRepositoryMock.Setup(r => r.GetWebUserByEmail(email)).Returns(() => null);
 
-        //[TestMethod]
-        //public void GetDetailsOfUserReturnsNullWhereEmailIsAnEmptyString()
-        //{
-        //    string email = string.Empty;
+            membershipService = new MembershipService(
+                institutionRepositoryMock.Object,
+                refDataRepositoryMock.Object,
+                samAuthenticationServiceMock,
+                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository()),
+                webUserRepositoryMock.Object
+                );
 
-        //    refDataRepositoryMock.Setup(r => r.GetWebUserByEmail(email)).Returns(() => null);
+            var result = membershipService.GetDetailsOfUser(email);
 
-        //    membershipService = new MembershipService(
-        //        institutionRepositoryMock.Object,
-        //        refDataRepositoryMock.Object,
-        //        samAuthenticationServiceMock,
-        //        new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository()),
-        //        webUserRepositoryMock.Object
-        //        );
+            refDataRepositoryMock.Verify(r => r.GetWebUserByEmail(email), Times.Exactly(1));
+            Assert.IsNull(result);
+        }
 
-        //    var result = membershipService.GetDetailsOfUser(email);
+        [TestMethod]
+        [TestCategory("Membership Tests")]
+        public void GetDetailsOfUserReturnsNullWhereEmailIsAnEmptyString()
+        {
+            string email = string.Empty;
 
-        //    refDataRepositoryMock.Verify(r => r.GetWebUserByEmail(email), Times.Exactly(1));
-        //    Assert.IsNull(result);
-        //}
+            refDataRepositoryMock.Setup(r => r.GetWebUserByEmail(email)).Returns(() => null);
+
+            membershipService = new MembershipService(
+                institutionRepositoryMock.Object,
+                refDataRepositoryMock.Object,
+                samAuthenticationServiceMock,
+                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository()),
+                webUserRepositoryMock.Object
+                );
+
+            var result = membershipService.GetDetailsOfUser(email);
+
+            refDataRepositoryMock.Verify(r => r.GetWebUserByEmail(email), Times.Exactly(1));
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        [TestCategory("Membership Tests")]
+        public void CreateUserAddsClaims()
+        {
+            string email = string.Empty;
+            UserAccountServiceHappyPathFake userAccountService =
+                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository());
+
+            membershipService = new MembershipService(
+                institutionRepositoryMock.Object,
+                refDataRepositoryMock.Object,
+                samAuthenticationServiceMock,
+                userAccountService,
+                webUserRepositoryMock.Object
+                );
+
+            var result = membershipService.CreateUser(Globals.AppTenant, "Bob", "Smith", "BobSmith", password, email);
+
+
+            Assert.IsTrue(userAccountService.CreateAccountCalled);
+            Assert.AreEqual(3, userAccountService.ClaimsAdded);
+            Assert.IsNotNull(result);
+        }
+
+        [TestMethod]
+        [TestCategory("Membership Tests")]
+        public void ProcessInstitutionForUserFindsAndReturnsInstitution()
+        {
+            //  Arrange
+            string zipCode = "65748";
+            string email = "renoraines@gofarmersbank.com";
+            const string _institutionName = "Farmers Bank";
+
+            institutionRepositoryMock
+                .Setup(i => i.GetAll())
+                .Returns(new List<Institution> { new Institution { Zip = zipCode, InstitutionName = _institutionName } });
+            
+            membershipService = new MembershipService(
+                institutionRepositoryMock.Object,
+                refDataRepositoryMock.Object,
+                samAuthenticationServiceMock,
+                userAccountServiceFake,
+                webUserRepositoryMock.Object
+                );
+
+            //  Act
+            var institution = membershipService.ProcessInstitutionForUser(
+                _institutionName, 
+                email, 
+                "Greenwood", 
+                "AR",
+                "1296", 
+                "FDIC", 
+                zipCode
+                );
+
+            //  Assert
+            Assert.IsNotNull(institution);
+            Assert.AreEqual(zipCode, institution.Zip);
+            Assert.AreEqual(_institutionName, institution.InstitutionName);
+        }
+
+        [TestMethod]
+        [TestCategory("Membership Tests")]
+        public void ProcessInstitutionForUserDoesNotFindAndCreatesInstitution()
+        {
+            //  Arrange
+            string zipCode = "65748";
+            string email = "renoraines@gofarmersbank.com";
+            const string _institutionName = "Farmers Bank";
+
+            institutionRepositoryMock
+                .Setup(i => i.GetAll())
+                .Returns(new List<Institution> { new Institution { Zip = "11111", InstitutionName = _institutionName } });
+
+            membershipService = new MembershipService(
+                institutionRepositoryMock.Object,
+                refDataRepositoryMock.Object,
+                samAuthenticationServiceMock,
+                userAccountServiceFake,
+                webUserRepositoryMock.Object
+                );
+
+            //  Act
+            var institution = membershipService.ProcessInstitutionForUser(
+                _institutionName,
+                email,
+                "Greenwood",
+                "AR",
+                "1296",
+                "FDIC",
+                zipCode
+                );
+
+            //  Assert
+            Assert.IsNotNull(institution);
+            Assert.AreEqual(zipCode, institution.Zip);
+            Assert.AreEqual(_institutionName, institution.InstitutionName);
+            Assert.AreEqual(institution.domainName, "gofarmersbank.com");
+        }
+        
+        [TestMethod]
+        [TestCategory("Membership Tests")]
+        public void testtemplate()
+        {
+            //  Arrange
+
+            //  Act
+
+            //  Assert                        
+		
+        }
+
     }
 }

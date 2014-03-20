@@ -165,16 +165,16 @@ namespace CUWebinars.Business.AccountService
                 return institution.First();
             }
 
-            var newInstitution = new Institution();
-
-            newInstitution.InstitutionName = institutionName;
-            newInstitution.City = city;
-            newInstitution.State = state;
-            newInstitution.Zip = zip;
-            newInstitution.RegIdentifier = regIdentifier;
-            newInstitution.InstitutionType = institutionType;
-
-            newInstitution.domainName = new string(email.SkipWhile(ltr => ltr != '@').Skip(1).ToArray());
+            var newInstitution = new Institution
+            {
+                InstitutionName = institutionName,
+                City = city,
+                State = state,
+                Zip = zip,
+                RegIdentifier = regIdentifier,
+                InstitutionType = institutionType,
+                domainName = new string(email.SkipWhile(ltr => ltr != '@').Skip(1).ToArray())
+            };
 
             institutionRepository.Add(newInstitution);
 

@@ -11,7 +11,7 @@ namespace CUWebinars.Business.Tests
 
         }
 
-        public override bool AuthenticateWithEmail(string email, string password, out UserAccount account)
+        public override bool AuthenticateWithEmail(string tenant, string email, string password, out UserAccount account)
         {
             account = new RelationalUserAccount();
 
