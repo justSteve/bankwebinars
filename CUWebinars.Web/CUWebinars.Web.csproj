@@ -421,7 +421,9 @@
     <Compile Include="Startup.cs" />
     <Compile Include="Core\AzureTableAppender.cs" />
     <Compile Include="ViewModel\AdditionalLocationsViewModel.cs" />
+    <Compile Include="ViewModel\CheckoutOptionsViewModel.cs" />
     <Compile Include="ViewModel\ConnectionInfoViewModel.cs" />
+    <Compile Include="ViewModel\DisplayOptionsViewModel.cs" />
     <Compile Include="ViewModel\GTWRegistrantViewModel.cs" />
     <Compile Include="ViewModel\RegisterViewModel.cs" />
     <Compile Include="ViewModel\WebinarDetailsViewModel.cs" />
@@ -876,6 +878,7 @@
     </Content>
     <Content Include="Properties\PublishProfiles\BankWebinars - Web Deploy %284%29.pubxml.user" />
     <Content Include="Properties\PublishProfiles\CUWebinars - Web Deploy.pubxml.user" />
+    <Content Include="Scripts\app\cart\add-additional-locations.js" />
     <Content Include="Scripts\app\cart\additional-locations.js" />
     <Content Include="Scripts\app\cart\create-order.js" />
     <Content Include="Scripts\app\constants.js" />
@@ -1090,6 +1093,7 @@
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
     <Content Include="Views\Webinar\Calendar.cshtml" />
     <Content Include="Views\Cart\GTWRegistration.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\AdditionalLocationsViewModel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

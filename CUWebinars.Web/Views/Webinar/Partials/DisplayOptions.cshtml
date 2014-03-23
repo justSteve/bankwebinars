@@ -1,6 +1,4 @@
-﻿@using System.Activities.Expressions
-@using CUWebinars.Business.Models
-@model CUWebinars.Web.ViewModel.WebinarDetailsViewModel
+﻿@model DisplayOptionsViewModel
 @{
     var defaultCheck = "checked";
 }
@@ -9,9 +7,15 @@
     // create-order.js
 </script>
 @{
-    AdditionalLocationsViewModel addLocViewModel = new AdditionalLocationsViewModel();
-    var addLocView = new OrderRowOption();
+    var additionalLocationsViewModel = new AdditionalLocationsViewModel();
+    
+    
+    var orderRowOption = new OrderRowOption() { OptionDescription = "TODO: Change this is a temp description", OptionPrice = 150.00M };
+    //  TODO: also, I hard-coded 150 for the OptionPrice. Not sure where this should come from.
 
+    //  Comment: I assume order will be null where there is no existing order for the User for that WebinarId
+    //           This does not seem to have been handled in the controller as the Order is just set to null. I need to understand this.
+    
     //if (Model.Order != null)
     //{
     //    var order = Model.Order;
@@ -25,7 +29,7 @@
     //    }
 
     //}
-    addLocViewModel.Webinar = Model.Webinar;
+    additionalLocationsViewModel.Webinar = Model.Webinar;
     
     <span>
         Choose the attendance option that's right for you! <a href="#AttendOptions" data-toggle="modal">(learn more)</a>
@@ -68,8 +72,8 @@
                 }
                 if (myOption.Type == "additional_location")
                 {
-                    addLocView.Option = myOption;
-                    addLocViewModel.AdditionalLocation = addLocView;
+                    orderRowOption.Option = myOption;
+                    additionalLocationsViewModel.OrderRowOption = orderRowOption;
                     //TODO: ERROR HERE. How to correctly populate the AdditionalLocation value
                     // currently the Option that is received by the Partial view
                     // is null.
@@ -78,7 +82,7 @@
         </dl>
         
         <div id="displayAddLoc">
-            @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationsView.cshtml", addLocViewModel)
+            @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationsView.cshtml", additionalLocationsViewModel)
         </div>
     </div>
 }

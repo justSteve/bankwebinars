@@ -1,10 +1,9 @@
 @using System.Globalization
-@using CUWebinars.Business.Models
-@model CUWebinars.Web.ViewModel.AdditionalLocationsViewModel
+@model AdditionalLocationsViewModel
 @{
     if (Model.Webinar.Status == WebinarStatus.Scheduled)
     {
-        var option = Model.AdditionalLocation;
+        var option = Model.OrderRowOption;
         
         <div id="AdditionalLocationContainer" class="well" style="margin-right: 50px;margin-left: 50px;">
             <h5>Additional Locations</h5>
@@ -31,7 +30,7 @@
             }
             else
             {
-                <blockquote style="margin-bottom: 0;">
+                @*<blockquote style="margin-bottom: 0;">
                     @option.OptionDescription
                 </blockquote>
                 <div style="padding-left: 50px;">
@@ -39,7 +38,8 @@
                     <div id="addLoc4Cost">
                         <button value="Add?" class="btn btn-success btn-small" name="showAddLocModal" id="showAddLocModal">Add?</button>
                     </div>
-                </div>
+                </div>*@
+                @Html.EditorFor(m => m)
             }
         </div>
     }
