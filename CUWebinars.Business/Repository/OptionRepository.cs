@@ -22,15 +22,15 @@ namespace CUWebinars.Business.Repository
 
             // There can be only one OptionsGroupsXrefs per webinar at any one time
             var optionsGroupsXrefs = webinars.SelectMany(w => w.OptionsGroupsXrefs);
-            var a = optionsGroupsXrefs.ToList();
+            //var a = optionsGroupsXrefs.ToList();
 
             //  For each of those OptionsGroupsXrefs, get the relevant OptionGroup
             var optionsGroups = optionsGroupsXrefs.Include(o => o.OptionsGroup).Select(o => o.OptionsGroup);
-            var b = optionsGroups.ToList();
+            //var b = optionsGroups.ToList();
 
             //  Get all OptionsXrefs for those OptionGroups
             var optionsXrefs = optionsGroups.Include(o => o.OptionsXrefs).SelectMany(opt => opt.OptionsXrefs);
-            var c = optionsXrefs.ToList();
+            //var c = optionsXrefs.ToList();
 
             //  Finally, get the options
             var options = optionsXrefs.Include(o => o.Option).Select(o => o.Option).ToList();

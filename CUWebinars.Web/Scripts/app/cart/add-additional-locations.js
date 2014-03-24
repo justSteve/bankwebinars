@@ -20,7 +20,7 @@ function wireUpHandlers() {
         newLocationsContainer.empty();
 
         for (var i = 0; i < numberOfInputsToAdd; i++) {
-            newLocationsContainer.append('<span><input id="AdditionLocationEmail-' + i + '" name="AddAdditionalLocationsViewModel.Emails[' + i + ']" type="email" placeholder="Enter email address" /></span> <br>');
+            newLocationsContainer.append('<span><input id="AdditionLocationEmail-' + i + '" name="AddAdditionalLocationsViewModel.Emails[' + i + ']" type="email" placeholder="Enter email address" /></span>&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="AdditionLocationEmail-' + i + '-delete"></i> <br>');
         }
 
         if (typeof additionalLocationsSubmitButton === 'undefined') {
@@ -35,6 +35,12 @@ function wireUpHandlers() {
             //    signupForm.submit();
             //});
         }
+
+        
+
+        newLocationsContainer.find('i').on('click', function () {
+            console.log('I t5rashd it');
+        });
 
         newLocationsContainer.append(additionalLocationsSubmitButton);
 
