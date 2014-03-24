@@ -15,15 +15,18 @@ $(function() {
 
 function wireUpHandlers() {
 
+    var locationsSpanPrefix = 'LocationSpan-',
+        breakSuffix = '-break';
+
     addLocationsButton.on('click', function(e) {
         var numberOfInputsToAdd = numberOfEmailAddresses.val();
         newLocationsContainer.empty();
 
         for (var i = 0; i < numberOfInputsToAdd; i++) {
-            newLocationsContainer.append('<span><input id="AdditionLocationEmail-' + i + '" name="AddAdditionalLocationsViewModel.Emails[' + i + ']" type="email" placeholder="Enter email address" /></span>&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="AdditionLocationEmail-' + i + '-delete"></i> <br>');
+            newLocationsContainer.append('<span id="' + locationsSpanPrefix + i + '"><input id="AdditionLocationEmail-' + i + '" name="AddAdditionalLocationsViewModel.Emails[' + i + ']" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + i + '-AdditionLocationEmail-delete"></i></span> <br id="' + i + breakSuffix + '">');
         }
 
-        if (typeof additionalLocationsSubmitButton === 'undefined') {
+        if (typeof additionalLocationsSubmitButton === 'undefined' && numberOfInputsToAdd > 0) {
             additionalLocationsSubmitButton = $('<input>',
             {
                 id: 'AdditionalLocationsSubmitButton',
@@ -36,14 +39,33 @@ function wireUpHandlers() {
             //});
         }
 
-        
+        newLocationsContainer.find('i').on('click', function (event) {
+            var trashClicked = event.currentTarget.id;
+            var idx = trashClicked.substring(0, 1);
+            var spanToRemove = locationsSpanPrefix + idx;
+            
+            $('#' + spanToRemove).hide(500, function() {
+                $(this).remove();
+                $('#' + idx + breakSuffix).remove();
 
-        newLocationsContainer.find('i').on('click', function () {
-            console.log('I t5rashd it');
+                var inputsRemaining = newLocationsContainer.find('i');
+
+                if (inputsRemaining.length < 1) {
+                    additionalLocationsSubmitButton.hide(500, function() {
+                        $(this).remove();
+                    });
+                }
+
+            });
         });
 
         newLocationsContainer.append(additionalLocationsSubmitButton);
 
+        if (!additionalLocationsSubmitButton.is(':visible'))
+            additionalLocationsSubmitButton.show(500);
+
+        if (numberOfInputsToAdd < 1)
+            additionalLocationsSubmitButton.remove();
     });
 
     signupForm.on('submit', function (e) {
