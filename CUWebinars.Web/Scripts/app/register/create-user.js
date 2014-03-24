@@ -18,6 +18,7 @@ var actions = { CheckEmail: 'CheckEmail', CheckZip: 'CheckZip', GetPassword: 'Ge
 var inputActions = { EnterKeyPress: 'EnterKeyPress', ButtonClick: 'ButtonClick', None: 'None' };
 var buttons = { EnterDiffAddress: 'EnterDiffAddress', nonUSAddressBtn: 'nonUSAddressBtn', NotInstitution: 'NotInstitution', ResetPass: 'resetPass', SignInButton: 'SignInButton', TheSubmit: 'TheSubmit', YesUseAddress: 'YesUseAddress' };
 
+var emailLoginInput;
 var nonUSAddressBtn;
 var wrapEmail;
 var wrapPass;
@@ -81,6 +82,9 @@ var pageObjects = {
     },
     createUserForm: function() {
         return createUserForm || $('#_CreateUserForm');
+    },
+    emailLoginInput: function() {
+        return emailLoginInput || $('#Email');
     },
     fullNameShipping: function() {
         return fullNameShipping || $('#FullNameShipping');
@@ -513,7 +517,7 @@ var stateManager = function () {
                 case actions.SubmitLogin:
                     console.log('submitLogin hit');
                     $('#Password').val($('#Password1').val());
-                    $('#Email').val($('#Email1').val());
+                    pageObjects.emailLoginInput().val($('#Email1').val());
                     $('form#frmSignIn').submit();
                     break;
                 case actions.DisplayBillingAddressFields:
@@ -591,11 +595,11 @@ function submitCreateUserForm() {
 }
 
 function submitLogin() {
-    //$('#Email').val($('#RegisterFields_Email').val());
+    //pageObjects.emailLoginInput().val($('#RegisterFields_Email').val());
     //$('#Password').val($('#Password1').val());
     //$('#frmSignin').submit();
     $('#Password').val(pageObjects.registerFieldsPassword().val());
-    $('#Email').val($('#emailAddress').val());
+    pageObjects.emailLoginInput().val($('#emailAddress').val());
     $('form#frmSignIn').submit();
 }
 
@@ -668,14 +672,13 @@ function initializeState() {
     labelEmail = $('#labelEmail');
 
     phoneBilling = $('#RegisterFields_BillingAddress_Phone');
-    fullNameShipping = $('#FullNameShipping');
     streetAddressBilling = $('#RegisterFields_BillingAddress_StreetAddress');
     streetAddressBilling2 = $('#RegisterFields_BillingAddress_StreetAddress2');
     cityBilling = $('#RegisterFields_BillingAddress_City');
     stateBilling = $('#RegisterFields_BillingAddress_State');
     zipBilling = $('#RegisterFields_BillingAddress_Zip');
     phoneShipping = $('#RegisterFields_ShippingAddress_Phone');
-    fullNameShipping = $('#fullNameShipping');
+    fullNameShipping = $('#FullNameShipping');
     streetAddressShipping = $('#RegisterFields_ShippingAddress_StreetAddress');
     streetAddressShipping2 = $('#RegisterFields_ShippingAddress_StreetAddress2');
     cityShipping = $('#RegisterFields_ShippingAddress_City');
@@ -687,6 +690,9 @@ function initializeState() {
     firstName = $('#FirstName');
     lastName = $('#LastName');
     institution = $('#RegisterFields_Institution');
+    emailLoginInput = $('#Email');
+
+    pageObjects.emailLoginInput().focus();
 }
 
 // document.ready starts here
