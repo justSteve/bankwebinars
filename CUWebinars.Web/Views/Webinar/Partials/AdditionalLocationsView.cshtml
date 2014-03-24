@@ -1,9 +1,12 @@
-@using System.Globalization
 @model AdditionalLocationsViewModel
 @{
     if (Model.Webinar.Status == WebinarStatus.Scheduled)
     {
-        var option = Model.OrderRowOption;
+        Model.AddAdditionalLocationsViewModel = new AddAdditionalLocationsViewModel
+        {
+            Emails = new List<string>{ "dave@dave.com", "pakka@pat.com"},
+            OrderRowOption = Model.OrderRowOption
+        };
         
         <div id="AdditionalLocationContainer" class="well" style="margin-right: 50px;margin-left: 50px;">
             <h5>Additional Locations</h5>
@@ -30,16 +33,7 @@
             }
             else
             {
-                @*<blockquote style="margin-bottom: 0;">
-                    @option.OptionDescription
-                </blockquote>
-                <div style="padding-left: 50px;">
-                    <b>Each additional location adds $@option.OptionPrice.ToString(CultureInfo.InvariantCulture) to your registration:</b>
-                    <div id="addLoc4Cost">
-                        <button value="Add?" class="btn btn-success btn-small" name="showAddLocModal" id="showAddLocModal">Add?</button>
-                    </div>
-                </div>*@
-                @Html.EditorFor(m => m)
+                @Html.EditorFor(m => m.AddAdditionalLocationsViewModel)
             }
         </div>
     }

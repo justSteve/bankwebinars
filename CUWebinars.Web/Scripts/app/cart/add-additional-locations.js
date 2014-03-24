@@ -20,7 +20,7 @@ function wireUpHandlers() {
         newLocationsContainer.empty();
 
         for (var i = 0; i < numberOfInputsToAdd; i++) {
-            newLocationsContainer.append('<span><input id="AdditionLocationEmail-' + i + '" type="email" placeholder="Enter email address" /></span> <br>');
+            newLocationsContainer.append('<span><input id="AdditionLocationEmail-' + i + '" name="AddAdditionalLocationsViewModel.Emails[' + i + ']" type="email" placeholder="Enter email address" /></span> <br>');
         }
 
         if (typeof additionalLocationsSubmitButton === 'undefined') {
@@ -45,9 +45,9 @@ function wireUpHandlers() {
 
         var mode = $('#Mode').val();
         var stageOfCheckout = $('#Stage_of_checkout').val();
-        var orderId = $('[name="order.idOrder"]');
-        var webUserId = $('[name="webuser.idUser"]');
-        var webinarId = $('[name="webinar.idWebinar"]');
+        var orderId = $('[name="CheckoutOptionsViewModel.Order.idOrder"]');
+        var webUserId = $('[name="WebUser.idUser"]');
+        var webinarId = $('[name="Webinar.idWebinar"]');
 
         var emailAddresses = Object(); 
 
@@ -58,8 +58,8 @@ function wireUpHandlers() {
         });
 
         var payload = {
-            emailAddresses: emailAddresses,
-            'Order.dOrder': orderId.val(),
+            'CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationsViewModel.AddAdditionalLocationsViewModel.Emails': emailAddresses,
+            'CheckoutOptionsViewModel.Order.idOrder': orderId.val(),
             'WebUser.idUser': webUserId.val(),
             'Webinar.idWebinar': webinarId.val(),
             mode: 0,

@@ -168,7 +168,6 @@ namespace CUWebinars.Web.Controllers
         public ActionResult Signup2(WebinarDetailsViewModel formModel
                 , int mode
                 , string stageOfCheckout
-                , string[] emailAddresses
                 , int? sixMonthPaidConnectionsCount
                 , int? twelveMonthPaidConnectionsCount
 
@@ -215,6 +214,13 @@ namespace CUWebinars.Web.Controllers
 
             OrderRowOption orderRowOption = null;
 
+            var emailAddresses =
+                model.
+                CheckoutOptionsViewModel.
+                DisplayOptionsViewModel.
+                AdditionalLocationsViewModel.
+                AddAdditionalLocationsViewModel.Emails;
+
             if (emailAddresses.Any())
             {
                 orderRowOption = _orderManagementService.CreateOrderRowOption(
@@ -222,8 +228,8 @@ namespace CUWebinars.Web.Controllers
                     option.OptionExplain,
                     Convert.ToDecimal(option.PriceToAdd ?? 0.0),
                     string.Empty, //orderRow.AlternateEmail
-                    emailAddresses.Length,
-                    emailAddresses
+                    emailAddresses.Count,
+                    emailAddresses.ToArray()
                     );
 
                 if (model.Webinar.idWebinar == 842 && model.Webinar.Status == WebinarStatus.Scheduled)

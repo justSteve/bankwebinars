@@ -420,6 +420,7 @@
     <Compile Include="Services\StateService.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Core\AzureTableAppender.cs" />
+    <Compile Include="ViewModel\AddAdditionalLocationsViewModel.cs" />
     <Compile Include="ViewModel\AdditionalLocationsViewModel.cs" />
     <Compile Include="ViewModel\CheckoutOptionsViewModel.cs" />
     <Compile Include="ViewModel\ConnectionInfoViewModel.cs" />
@@ -1093,7 +1094,7 @@
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
     <Content Include="Views\Webinar\Calendar.cshtml" />
     <Content Include="Views\Cart\GTWRegistration.cshtml" />
-    <Content Include="Views\Shared\EditorTemplates\AdditionalLocationsViewModel.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\AddAdditionalLocationsViewModel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

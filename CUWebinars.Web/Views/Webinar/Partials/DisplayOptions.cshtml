@@ -7,7 +7,6 @@
     // create-order.js
 </script>
 @{
-    var additionalLocationsViewModel = new AdditionalLocationsViewModel();
     
     
     var orderRowOption = new OrderRowOption() { OptionDescription = "TODO: Change this is a temp description", OptionPrice = 150.00M };
@@ -29,8 +28,14 @@
     //    }
 
     //}
-    additionalLocationsViewModel.Webinar = Model.Webinar;
+
+    Model.AdditionalLocationsViewModel = new AdditionalLocationsViewModel
+    {
+        OrderRowOption = orderRowOption,
+        Webinar = Model.Webinar
+    };
     
+   
     <span>
         Choose the attendance option that's right for you! <a href="#AttendOptions" data-toggle="modal">(learn more)</a>
     </span>
@@ -73,7 +78,7 @@
                 if (myOption.Type == "additional_location")
                 {
                     orderRowOption.Option = myOption;
-                    additionalLocationsViewModel.OrderRowOption = orderRowOption;
+                    Model.AdditionalLocationsViewModel.OrderRowOption = orderRowOption;
                     //TODO: ERROR HERE. How to correctly populate the AdditionalLocation value
                     // currently the Option that is received by the Partial view
                     // is null.
@@ -82,7 +87,7 @@
         </dl>
         
         <div id="displayAddLoc">
-            @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationsView.cshtml", additionalLocationsViewModel)
+            @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationsView.cshtml", Model.AdditionalLocationsViewModel)
         </div>
     </div>
 }
