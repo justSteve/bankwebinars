@@ -52,6 +52,12 @@ namespace CUWebinars.Web.App_Start
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                         "~/Scripts/modernizr-*"));
 
+            bundles.Add(new ScriptBundle("~/bundles/app-certificate").Include(
+                        "~/Scripts/app/constants.js",
+                        "~/Scripts/app/common.js",
+                        "~/Scripts/app/web-user-certificate-manage.js"
+                        ));
+
             bundles.Add(new ScriptBundle("~/bundles/app-processing-manage").Include(
                         "~/Scripts/app/constants.js",
                         "~/Scripts/app/common.js",

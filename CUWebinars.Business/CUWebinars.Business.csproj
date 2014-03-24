@@ -152,7 +152,7 @@
     <Compile Include="Models\OrderRowOption.cs" />
     <Compile Include="Models\OrderRowStatus.cs" />
     <Compile Include="Models\Presenter.cs" />
-    <Compile Include="Models\TimeZone.cs" />
+    <Compile Include="Models\USTimeZone.cs" />
     <Compile Include="Models\Topic.cs" />
     <Compile Include="Models\TTSWebinarsContext.cs" />
     <Compile Include="Models\UserType.cs" />

@@ -56,6 +56,40 @@ namespace CUWebinars.Web.Controllers
             this.optionRepository = optionRepository;
             this.stateService = stateService;
         }
+        
+        //public ActionResult CertificateOfCompletion(int id, string displayName)
+        //{
+        //    OrderRow row = orderManagementService.LoadOrderRow(id);
+
+        //    ViewData["displayName"] = displayName;
+        //    Logger.Info("COC executed: " + id + " by " + membershipService.;
+
+        //    return View("~/Views/Admin/Registrations/Certificate.cshtml", row);
+        //}
+
+
+        public ActionResult CertificateOfCompletionList(int id, string displayNames)
+        {
+            string[] listNames = displayNames.Split(Environment.NewLine.ToCharArray());
+
+            string listing = "";
+
+            foreach (string s in listNames)
+            {
+                if (s != "")
+                {
+                    listing += ("<p>http://www.BankWebinars.com/Home/COC/?idUser=" + id + "&displayName=" +
+                                s.Replace(' ', '+') + "</p>");
+                }
+            }
+
+            ViewData["listing"] = listing;
+            //Logger.Instance.LogMessage("COC List executed: " + id + " by " +
+            //                           UserFacade.Instance.GetCurrentUser().FullName);
+
+            return View("~/Views/admin/Acc");
+        }
+
 
         //[System.Web.Mvc.HttpGet]
         //public ActionResult CreateOrder()
@@ -88,13 +122,10 @@ namespace CUWebinars.Web.Controllers
         //}
 
         //
-        // GET: /Account/Manage
-        // GET api/acctapi
-
+        
         [System.Web.Mvc.AllowAnonymous]
         public string Get([FromUri] RegisterModel model)
         {
-
             if (ModelState.IsValid)
             {
                 //first check if email exists

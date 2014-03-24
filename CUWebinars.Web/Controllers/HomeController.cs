@@ -22,6 +22,7 @@ namespace CUWebinars.Web.Controllers
             Logger = logger;
         }
 
+
         public ActionResult RssFeedOfAddedEvents()
         {
             //http://office.microsoft.com/en-us/office365-sharepoint-online-small-business-help/basic-tasks-in-sharepoint-online-for-office-365-for-professionals-and-small-businesses-HA101988906.aspx#_Toc272147708

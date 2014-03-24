@@ -886,6 +886,7 @@
     <Content Include="Scripts\app\passwordReset\password-reset.js" />
     <Content Include="Scripts\app\register\create-user.js" />
     <Content Include="Scripts\app\waitButton.js" />
+    <Content Include="Scripts\app\web-user-certificate-manage.js" />
     <Content Include="Scripts\app\web-user-details-manage.js" />
     <Content Include="Scripts\app\web-user-details-register.js" />
     <Content Include="Scripts\Autocomplete\css\styles.css" />
@@ -965,8 +966,10 @@
     <Content Include="Membership\Email\EmailTemplates\EmailVerifiedEvent_Body.cshtml" />
     <Content Include="Notification\Templates\_AffiliatedAffiliate.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\BWPackage.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars - Web Deploy.pubxml" />
     <Content Include="Scripts\Autocomplete\css\ui-lightness\images\Thumbs.db" />
+    <Content Include="App_Data\Deploy\DeployScript.ps1" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Scripts\cleditor\images\buttons.gif" />
@@ -1090,9 +1093,9 @@
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
     <Content Include="Views\Webinar\Calendar.cshtml" />
     <Content Include="Views\Cart\GTWRegistration.cshtml" />
+    <Content Include="Views\Shared\_LayoutCertificate.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Areas\Admin\Models\" />
     <Folder Include="Areas\Admin\Views\Registrations\" />
     <Folder Include="Images\" />
