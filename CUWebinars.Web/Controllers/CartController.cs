@@ -87,7 +87,7 @@ namespace CUWebinars.Web.Controllers
         {
             var model = CheckOutViewModel(ID);
 
-            var order = model.Order;
+            var order = model.CheckoutOptionsViewModel.Order;
 
             if (Request["referred"] != null && WebUtility.HtmlDecode(Request["referred"]) != "How did you hear about this webinar?")
             {
@@ -167,14 +167,13 @@ namespace CUWebinars.Web.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Signup2(WebinarDetailsViewModel formModel
                 , int mode
-                , string stage_of_checkout
-                , string addEmails
+                , string stageOfCheckout
                 , int? sixMonthPaidConnectionsCount
                 , int? twelveMonthPaidConnectionsCount
 
             )
         {
-            var isPreReg = stage_of_checkout;
+            var isPreReg = stageOfCheckout;
             ViewData["CheckoutInProcess"] = "true";
             var IsUserLogged = false;
             var model = formModel;
@@ -187,7 +186,7 @@ namespace CUWebinars.Web.Controllers
             // hydrating it as needed.
             var currentAffiliate = stateService.GetValue<Affiliate>("CurrentAffiliate");
 
-            model.Order = currentOrder;
+            model.CheckoutOptionsViewModel.Order = currentOrder;
             model.Affiliate = currentAffiliate;
             model.Webinar = _orderManagementService.GetWebinar(formModel.Webinar.idWebinar);
 
@@ -211,19 +210,26 @@ namespace CUWebinars.Web.Controllers
             model.Options = options;
 
             var option = options.SingleOrDefault(o => o.Type == "additional_location");
-            var connections = addEmails.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            //var connections = addEmails.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 
             OrderRowOption orderRowOption = null;
 
-            if (connections.Any())
+            var emailAddresses =
+                model.
+                CheckoutOptionsViewModel.
+                DisplayOptionsViewModel.
+                AdditionalLocationsViewModel.
+                AddAdditionalLocationsViewModel.Emails;
+
+            if (emailAddresses.Any())
             {
                 orderRowOption = _orderManagementService.CreateOrderRowOption(
                     option,
                     option.OptionExplain,
                     Convert.ToDecimal(option.PriceToAdd ?? 0.0),
                     string.Empty, //orderRow.AlternateEmail
-                    connections.Length,
-                    connections
+                    emailAddresses.Count,
+                    emailAddresses.ToArray()
                     );
 
                 if (model.Webinar.idWebinar == 842 && model.Webinar.Status == WebinarStatus.Scheduled)
@@ -335,9 +341,9 @@ namespace CUWebinars.Web.Controllers
 
             try
             {
-                if (stage_of_checkout == "preReg")
+                if (stageOfCheckout == "preReg")
                 {
-                    return PartialView("_DisplayRowPrice", model.Order.OrderRows.Single());
+                    return PartialView("_DisplayRowPrice", model.CheckoutOptionsViewModel.Order.OrderRows.Single());
                 }
                 else
                 {
@@ -348,7 +354,7 @@ namespace CUWebinars.Web.Controllers
                     Session["CurrentOrderId"] = currentOrder.idOrder;
                     //_checkoutWorkflow.AddOrder(currentOrder);
                     //model.Order.OrderRows.Add(orderRow);
-                    model.Order = currentOrder;
+                    model.CheckoutOptionsViewModel.Order = currentOrder;
 
                     //db.SaveChanges();
                     ViewData["WhichStep"] = IsUserLogged ? "Step2" : "Step1";
@@ -356,7 +362,7 @@ namespace CUWebinars.Web.Controllers
                                     {
                                         success = "success",
                                         whichStep = "Step1",
-                                        orderRowID = model.Order.OrderRows.Single().idOrderRow
+                                        orderRowID = model.CheckoutOptionsViewModel.Order.OrderRows.Single().idOrderRow
                                     }, JsonRequestBehavior.AllowGet);
                     //return View("~/Views/Webinar/Details2.cshtml", model);
                 }

@@ -343,15 +343,7 @@ namespace CUWebinars.Web.Controllers
             ;
             ViewBag.PageStyleType = "holy-grail-three-columns";
             //
-            WebUser user;
-            if (Request.IsAuthenticated)
-            {
-                user = membershipService.GetUserByEmail(User.Identity.Name);
-            }
-            else
-            {
-                user = new WebUser();
-            }
+            WebUser user = Request.IsAuthenticated ? membershipService.GetUserByEmail(User.Identity.Name) : new WebUser();
 
             var usersOrders = _orderManagementService.GetOrdersByUserId(user.idUser);
 
@@ -366,17 +358,30 @@ namespace CUWebinars.Web.Controllers
                          join wx in db.WebinarTopicXrefs on t.idTopic equals wx.idTopic
                          where wx.idWebinar == id
                          select t;
+
+            var options = _orderManagementService.GetOptionsByWebinarId(id, false);
+            var webinar = db.Webinars.Include(w => w.Presenter.WebUser).First(w => w.idWebinar == id);
+
             var model = new WebinarDetailsViewModel()
             {
                 WebUser = user
                 ,
                 Affiliate = stateService.GetValue<Affiliate>("CurrentAffiliate")
                 ,
-                Webinar = db.Webinars.Include(w => w.Presenter.WebUser).First(w => w.idWebinar == id)
+                Webinar = webinar
                 ,
-                Options = _orderManagementService.GetOptionsByWebinarId(id, false)
+                Options = options
                 ,
-                Order = null
+                CheckoutOptionsViewModel = new CheckoutOptionsViewModel
+                {
+                    DisplayOptionsViewModel = new DisplayOptionsViewModel
+                    {
+                      Options = options.ToList(),
+                      Webinar = webinar  
+                    },
+                    Order = null, //    new order?
+                    Webinar = webinar
+                }
             };
 
             if (usersOrders != null && usersOrders.Count > 0)
@@ -393,13 +398,13 @@ namespace CUWebinars.Web.Controllers
 
 
                         ViewBag.userOwnsThisEvent = checkOrder.idOrder;
-                        model.Order = checkOrder;
+                        model.CheckoutOptionsViewModel.Order = checkOrder;
                     }
                     if (checkOrder.OrderRows.Single().Status == OrderRowStatus.InProcess
                         && checkOrder.OrderRows.Single().idWebinar != id)
                     {
                         ViewBag.userHasOpenOrder = checkOrder.idOrder;
-                        model.Order = checkOrder;
+                        model.CheckoutOptionsViewModel.Order = checkOrder;
                     }
                 }
             }

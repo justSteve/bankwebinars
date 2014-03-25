@@ -1,4 +1,11 @@
 ﻿@using System.Text
+@using CUWebinars.Web.Core
+@{
+    var globals = GlobalConfig.GlobalConfigSingleton;
+    var imgUrl = globals.ImgRepository;
+    var certDir = "https://ttseast.blob.core.windows.net/images/BankWebinars/Webinars/w"+ ViewBag.Webinar + "/cert.jpg";
+}
+
 
 @{
     var PageStyleType = ViewBag.PageStyleType;
@@ -24,22 +31,6 @@
 <html class="no-js" lang="en" dir="ltr">
 <!--<![endif]-->
 <head>
-
-
-
-    <!--Start of Zopim Live Chat Script
-            <script type="text/javascript">
-        window.$zopim || (function (d, s) {
-            var z = $zopim = function (c) { z._.push(c) }, $ = z.s =
-            d.createElement(s), e = d.getElementsByTagName(s)[0]; z.set = function (o) {
-                z.set.
-                _.push(o)
-            }; z._ = []; z.set._ = []; $.async = !0; $.setAttribute('charset', 'utf-8');
-            $.src = '//cdn.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU'; z.t = +new Date; $.
-            type = 'text/javascript'; e.parentNode.insertBefore($, e)
-        })(document, 'script');
-    </script>-->
-    <!--End of Zopim Live Chat Script-->
 
     <title>@ViewBag.Title Certificate</title>
     <!-- Meta Data ================ -->
@@ -69,7 +60,7 @@
 
     <!-- Icons ================ -->
     <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
-    <link rel="apple-touch-icon-precomposed" href="https://ttseast.blob.core.windows.net/images/BankWebinars/apple-touch-icon.png" />
+    <link rel="apple-touch-icon-precomposed" href="@imgUrl/BankWebinars/apple-touch-icon.png" />
     <!-- For first- and second-generation iPad: -->
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="https://ttseast.blob.core.windows.net/images/BankWebinars/apple-touch-icon-72x72-precomposed.png" />
     <!-- For iPhone with high-resolution Retina display: -->
@@ -91,67 +82,16 @@
 
     @RenderSection("Styles", required: false)
     <style>
-        table td {
-            border: none;
-            text-align: center;
-        }
-
-        .hero-unit {
-            padding-top: 20px;
-            padding-bottom: 0px;
+        #image {
+            position: absolute;
+            margin-left: 16px;
         }
     </style>
 </head>
-<body class="@PageStyleType">
-    <!-- begin accesibility skip to nav skip content -->
-    <ul class="visuallyhidden" id="top">
-        <li><a href="#nav" title="Skip to navigation" accesskey="n">Skip to navigation</a></li>
-        <li><a href="#page" title="Skip to content" accesskey="c">Skip to content</a></li>
-    </ul>
-    <!-- end /.visuallyhidden accesibility-->
-    <!-- mobile navigation trigger-->
-    <h5 class="mobile_nav"><a href="javascript:void(0)">&nbsp;<span></span></a></h5>
-    <!--end mobile navigation trigger-->
-    <section class="container preheader">
+<body>
 
-        <!--this is the login for the user-->
-        @Html.Partial("_LoginPartial")
-
-        <!--close user nav
-        <div class="search-wrapper">
-                <form class="search" method="post" action="/home/search">
-                    <div id="search-trigger">Search:</div>
-                    <input id="search-box" type="text" placeholder="search + enter">
-                </form>
-            </div>-->
-        <div class="phone"><a href="tel:8008310678" class="tele">800.831.0678</a></div>
-        <ul class="social">
-            @*<li><a class="socicon small rss" href="#" data-placement="bottom" title="Subscribe to our RSS feed"></a></li>*@
-            <li><a class="socicon small facebook" href="http://www.facebook.com/home.php#!/pages/Total-Training-Solutions/300546163412" target="_blank" data-placement="bottom" title="Follow us on Facebook"></a></li>
-            <li><a class="socicon small twitterbird" href="http://twitter.com/#!/ttstrain" target="_blank" data-placement="bottom" title="Follow us on Twitter"></a></li>
-            <li><a class="socicon small linkedin" href="http://www.linkedin.com/profile/view?id=12319801&locale=en_US&trk=tyah&trkInfo=tas%3Akyle" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
-        </ul>
-
-    </section>
-    <!-- begin .header-->
-    <header class="header  clearfix" style="margin-bottom: 0px; padding-bottom: 0; ">
-        <img src="https://ttseast.blob.core.windows.net/images/BankWebinars/print-logo.png" class="print logo" alt="CUWebinars is a production of TTSTrain.com" />
-        <div class="container">
-
-            <!-- begin #main_menu -->
-            <nav id="main_menu">
-            </nav>
-            <!-- close / #main_menu -->
-            <!-- begin #logo -->
-            <div id="logo"> <a href="/Home"><img alt="" src="https://ttseast.blob.core.windows.net/images/BankWebinars/trans.gif" /><em>Credit Union Webinars</em><!--effing ie7 support--></a> </div>
-            <!-- end #logo -->
-            
-        </div>
-        <!-- close / .container-->
-    </header>
-    <!-- close /.header -->
-    <div id="page">
-
+    <div id="myPage" style="height: 950px; left: auto; right: auto; position: relative; width: 1300px; ">
+        <img id="image" src="@certDir" />
         @RenderBody()
 
         @*        @{Html.RenderPartial("LoginBoxBootstrap");}
@@ -159,117 +99,10 @@
 
     </div>
     @*//todo standardize progress dialog*@
-    @*<div id="ProgressDialogBS" class="modal hide fade">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3 id="progressCaption">...updating status...</h3>
-            </div>
-            <div id="progressResult" class="modal-body">
-                <i class="icon-spinner icon-spin icon-4x "></i>
-            </div>
-        </div>*@
-    <!--begin footer -->
-    <footer id="footer" class="clearfix">
-        <div class="container">
-            <!--footer container-->
-
-            <div class="row-fluid">
-                <div class="span4">
-                    <h4>
-                        @{Html.RenderPartial("Partials/_AddToMailingBox");}
-                    </h4>
-                </div>
-                <!-- close .span4 -->
-                <!--section containing newsletter signup and recent images-->
-                <div class="span4">
-                    <section>
-                        <h4>Contact Us</h4>
-                        <p>
-                            PO Box 310 . Waunakee, Wisconsin . 53597<br>
-                            <strong>phone:</strong> <a href="tel:8008310678" class="tele">800.831.0678</a><br>
-                            <strong>fax:</strong> 800.831.3776<br>
-                            <strong>email:</strong><a href="mailto:webinars@CUWebinars.com"> webinars@CUWebinars.com</a>
-                        </p>
-                    </section>
-                    <!--close section-->
-                    <!--close section-->
-                </div>
-                <!-- close .span4 -->
-                <!--section containing blog posts-->
-                <div class="span4">
-                    <section>
-                        <h4>Follow Us</h4>
-                        <ul class="social">
-                            @*<li><a class="socicon small rss" href="#" data-placement="bottom" title="Subscribe to our RSS feed"></a></li>*@
-                            <li><a class="socicon small facebook" href="http://www.facebook.com/home.php#!/pages/Total-Training-Solutions/300546163412" target="_blank" data-placement="bottom" title="Follow us on Facebook"></a></li>
-                            <li><a class="socicon small twitterbird" href="http://twitter.com/#!/ttstrain" target="_blank" data-placement="bottom" title="Follow us on Twitter"></a></li>
-                            <li><a class="socicon small linkedin" href="http://www.linkedin.com/profile/view?id=12319801&locale=en_US&trk=tyah&trkInfo=tas%3Akyle" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
-                        </ul>
-                    </section>
-
-                    <section>
-                        <h4>Latest Blog Posts</h4>
-                        <ul class="footerPosts">
-                            <li><a href="blog-single.html">We will amplify our power to benchmark</a> <span class="meta">December 10, 2012</span> </li>
-                            <li><a href="blog-single.html">Crisp has revolutionized the conceptualization of structuring</a> <span class="meta">September 10, 2012</span> </li>
-                            <li><a href="blog-single.html">A company that can implement correctly</a> <span class="meta">September 10, 2012</span> </li>
-                            <li><a href="blog-single.html">Claritas est etiam processus dynamicus</a> <span class="meta">September 10, 2012</span> </li>
-                            <li><a href="blog-single.html">It is stunning to you!</a> <span class="meta">September 10, 2012</span> </li>
-                            <li><a href="blog-single.html">We will increase our aptitude to evolve </a> <span class="meta">November 15, 2012</span> </li>
-                        </ul>
-                    </section>
-                </div>
-                <!-- close .span4 -->
-            </div>
-            <!-- close .row-fluid-->
-        </div>
-        <!-- close footer .container-->
-        <!--change this to your stuff-->
-        <section class="footerCredits">
-            <div class="container">
-                <ul class="clearfix">
-                    <li>This site is © 2013 By Total Training Solutions. All rights reserved. For financial institution training visit<a href="http://www.ttstrain.com/?s=cuwebinars" target="_new"> TTSTrain.com </a></li>
-                    @*<li><a href="privacy.html">Privacy</a></li>*@
-                </ul>
-            </div>
-            <!--footerCredits container-->
-        </section>
-        <!--close section-->
-    </footer>
-    <!--/.footer-->
-
-    <span class="backToTop"><a href="#top">back to top</a></span>
-    <!-- close #page-->
-
-    <div class="modal hide fade in" id="DisplayErrorModal">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3 id="CreateUserHeader">Error Condition Detected</h3>
-        </div>
-        <div id="DisplayErrorBody" class="modal-body">
-            <div id="ErrorBody"></div>
-        </div>
-        <div class="modal-footer">
-            <a href="#" id="ErrorSubmitter" class="btn btn-primary">Continue</a>
-        </div>
-    </div>
-
-    <div id="AttendOptions" class="modal hide fade">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3>CUWebinars.com's Attendance Options</h3>
-        </div>
-        <div class="modal-body">
-            <p>Spells 'em out</p>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-success" data-dismiss="modal" aria-hidden="true">Finished</button>
-        </div>
-    </div>
     @*@Scripts.Render("~/bundles/jquery")*@
 
     @Scripts.Render("~/bundles/jqueryui")
-    @Scripts.Render("~/bundles/CrispApp")
+    @*@Scripts.Render("~/bundles/CrispApp")*@
 
 
     @RenderSection("scripts", required: false)

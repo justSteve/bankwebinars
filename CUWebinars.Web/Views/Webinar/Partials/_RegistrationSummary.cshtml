@@ -26,7 +26,7 @@
         }
         var wf = new StringBuilder();
 
-        foreach (OrderRow itemRow in Model.Order.OrderRows)
+        foreach (OrderRow itemRow in Model.CheckoutOptionsViewModel.Order.OrderRows)
         {
             order = itemRow.Order;
             row = itemRow;
@@ -90,7 +90,7 @@
                     {
                         if (myOption.Type == "Text")
                         {
-                            if (Model.Order == null
+                            if (Model.CheckoutOptionsViewModel.Order == null
                                 //Model.Order.idOrder < 1
                                 //Model.Order.OrderRows.Single().Status == OrderRowStatus.InProcess
 

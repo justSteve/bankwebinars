@@ -41,7 +41,7 @@ namespace CUWebinars.Business.Repository
             var strongTypedContext = (TTSWebinarsContext) db;
             var entry = strongTypedContext.Entry(webinar);
 
-            if(entry.State != EntityState.Detached)
+            if (entry.State != EntityState.Detached)
                 throw new Exception("Webinar cannot be attached to this context yet. It has to have been retrieved and previously detached.");
 
             strongTypedContext.Webinars.Attach(webinar);
@@ -58,7 +58,7 @@ namespace CUWebinars.Business.Repository
 
             try
             {
-                db.SaveChanges();
+                //db.SaveChanges();
             }
             catch (DbEntityValidationException dbEx)
             {
@@ -91,17 +91,26 @@ namespace CUWebinars.Business.Repository
             //strongTypedContext.Options.Attach(option);
             //db.Entry(option).State = EntityState.Modified;
 
+            var additionalLocations = new List<AdditionalLocation>(additionalLocationsEmails.Length);
+            
+            additionalLocations.AddRange(additionalLocationsEmails.Select(email => new AdditionalLocation
+            {
+                Email = email
+            }));
+
+
             var newOrderRowOption = strongTypedContext.OrderRowOptions.Create();
             newOrderRowOption.Option = option;
             newOrderRowOption.idOption = option.idOption;
             newOrderRowOption.OptionDescription = optionDescription;
             newOrderRowOption.OptionPrice = price;
             newOrderRowOption.Type = "Additional Location"; // TODO: check this with Stephen.
+            newOrderRowOption.AdditionalLocations = additionalLocations;
             strongTypedContext.OrderRowOptions.Add(newOrderRowOption);
 
             try
             {
-                db.SaveChanges();
+                //db.SaveChanges();
             }
             catch (DbEntityValidationException dbEx)
             {

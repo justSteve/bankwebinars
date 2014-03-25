@@ -57,15 +57,19 @@ namespace CUWebinars.Web.Controllers
             this.stateService = stateService;
         }
         
-        //public ActionResult CertificateOfCompletion(int id, string displayName)
-        //{
-        //    OrderRow row = orderManagementService.LoadOrderRow(id);
+        public ActionResult COC(int idWebinar, string displayName)
+        {
+            //if (User.Identity.IsAuthenticated)
+            //{
+                
+            //}
+            //OrderRow row = orderManagementService.LoadOrderRow(id);
+            ViewBag.Webinar = idWebinar;
+            ViewBag.displayName = displayName;
+            //Logger.Info("COC executed: " + id + " by " + membershipService.;
 
-        //    ViewData["displayName"] = displayName;
-        //    Logger.Info("COC executed: " + id + " by " + membershipService.;
-
-        //    return View("~/Views/Admin/Registrations/Certificate.cshtml", row);
-        //}
+            return View("~/Views/home/coc.cshtml");
+        }
 
 
         public ActionResult CertificateOfCompletionList(int id, string displayNames)

@@ -32,10 +32,10 @@
         //        shippingIsSame = false;
         //    }
         shippingIsSame = false;
-        if (Model.Order != null && Model.Order.idOrder > 0)
+        if (Model.CheckoutOptionsViewModel.Order != null && Model.CheckoutOptionsViewModel.Order.idOrder > 0)
         {
             OrderRow row = new OrderRow();
-            row = Model.Order.OrderRows.SingleOrDefault();
+            row = Model.CheckoutOptionsViewModel.Order.OrderRows.SingleOrDefault();
 
             <div class="span4">
                 Billing:

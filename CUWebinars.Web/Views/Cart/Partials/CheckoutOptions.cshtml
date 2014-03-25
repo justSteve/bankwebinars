@@ -1,5 +1,4 @@
-﻿@using CUWebinars.Business.Models
-@model CUWebinars.Web.ViewModel.WebinarDetailsViewModel
+﻿@model CheckoutOptionsViewModel
 
 <div class="tab-pane" id="signUp">
 
@@ -33,13 +32,13 @@
                 else
                 {
                     <span>There is a pending order for this event that requires your confirmation.</span>
-                    @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model)
+                    @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model.DisplayOptionsViewModel)
                 }
             }
         }
         else
         {
-            @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model)
+            @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model.DisplayOptionsViewModel)
         }
     }
 </div>

@@ -420,8 +420,11 @@
     <Compile Include="Services\StateService.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Core\AzureTableAppender.cs" />
+    <Compile Include="ViewModel\AddAdditionalLocationsViewModel.cs" />
     <Compile Include="ViewModel\AdditionalLocationsViewModel.cs" />
+    <Compile Include="ViewModel\CheckoutOptionsViewModel.cs" />
     <Compile Include="ViewModel\ConnectionInfoViewModel.cs" />
+    <Compile Include="ViewModel\DisplayOptionsViewModel.cs" />
     <Compile Include="ViewModel\GTWRegistrantViewModel.cs" />
     <Compile Include="ViewModel\RegisterViewModel.cs" />
     <Compile Include="ViewModel\WebinarDetailsViewModel.cs" />
@@ -429,6 +432,7 @@
     <Compile Include="WebUserFacadeExtender.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App_Data\Deploy\Publish-AzureWebsite.ps1" />
     <Content Include="Content\css\affiliateCheckout.css" />
     <Content Include="Content\css\affStyling.css" />
     <Content Include="Content\css\anytime.css" />
@@ -876,6 +880,7 @@
     </Content>
     <Content Include="Properties\PublishProfiles\BankWebinars - Web Deploy %284%29.pubxml.user" />
     <Content Include="Properties\PublishProfiles\CUWebinars - Web Deploy.pubxml.user" />
+    <Content Include="Scripts\app\cart\add-additional-locations.js" />
     <Content Include="Scripts\app\cart\additional-locations.js" />
     <Content Include="Scripts\app\cart\create-order.js" />
     <Content Include="Scripts\app\constants.js" />
@@ -1093,7 +1098,10 @@
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
     <Content Include="Views\Webinar\Calendar.cshtml" />
     <Content Include="Views\Cart\GTWRegistration.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\AddAdditionalLocationsViewModel.cshtml" />
     <Content Include="Views\Shared\_LayoutCertificate.cshtml" />
+    <Content Include="Views\Home\Calendar.cshtml" />
+    <Content Include="Views\Home\COC.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\Admin\Models\" />

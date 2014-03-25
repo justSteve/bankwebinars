@@ -22,6 +22,10 @@ namespace CUWebinars.Web.App_Start
                         "~/Scripts/jquery.unobtrusive*",
                         "~/Scripts/jquery.validate*"));
 
+            bundles.Add(new ScriptBundle("~/bundles/additionalLocations").Include(
+                "~/Scripts/app/cart/add-additional-locations.js"
+                ));
+
             bundles.Add(new ScriptBundle("~/bundles/myApp").Include(
                         "~/Scripts/bootstrap.js",
                         "~/Scripts/bootstrap-modal.js",
@@ -32,6 +36,7 @@ namespace CUWebinars.Web.App_Start
                          "~/Scripts/app/cart/create-order.js"
                          //,"~/Scripts/app/cart/edit-order.js"
                         ));
+
 
             bundles.Add(new ScriptBundle("~/bundles/CrispApp").Include(
                         "~/Content/js/ddsmoothmenu-min.js",         //desktop edge detect menu --> 
