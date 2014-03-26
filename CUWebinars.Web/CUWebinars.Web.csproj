@@ -432,6 +432,9 @@
     <Compile Include="WebUserFacadeExtender.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\Deploy\New-AzureSql.ps1" />
+    <Content Include="App_Data\Deploy\New-AzureStorage.ps1" />
+    <Content Include="App_Data\Deploy\New-AzureWebsiteEnv.ps1" />
     <None Include="App_Data\Deploy\Publish-AzureWebsite.ps1" />
     <Content Include="Content\css\affiliateCheckout.css" />
     <Content Include="Content\css\affStyling.css" />
@@ -871,6 +874,8 @@
     <Content Include="Membership\Email\EmailTemplates\EmailChangedEvent_Body.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailChangedEvent_Subject.cshtml" />
     <Content Include="Areas\Admin\Views\Notifications\Index.cshtml" />
+    <Content Include="App_Data\Deploy\pubxml.template" />
+    <Content Include="App_Data\Deploy\website-environment.template" />
     <None Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Body.cshtml" />
     <None Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Subject.cshtml" />
     <Content Include="favicon.ico" />
