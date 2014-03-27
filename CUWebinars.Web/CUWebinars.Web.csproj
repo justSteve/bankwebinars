@@ -874,8 +874,6 @@
     <Content Include="Membership\Email\EmailTemplates\EmailChangedEvent_Body.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailChangedEvent_Subject.cshtml" />
     <Content Include="Areas\Admin\Views\Notifications\Index.cshtml" />
-    <Content Include="App_Data\Deploy\pubxml.template" />
-    <Content Include="App_Data\Deploy\website-environment.template" />
     <None Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Body.cshtml" />
     <None Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Subject.cshtml" />
     <Content Include="favicon.ico" />
@@ -975,8 +973,8 @@
     <Content Include="Membership\Email\EmailTemplates\EmailVerifiedEvent_Subject.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailVerifiedEvent_Body.cshtml" />
     <Content Include="Notification\Templates\_AffiliatedAffiliate.cshtml" />
+    <None Include="Properties\PublishProfiles\BankWebinars - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy.pubxml" />
-    <None Include="Properties\PublishProfiles\BWPackage.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars - Web Deploy.pubxml" />
     <Content Include="Scripts\Autocomplete\css\ui-lightness\images\Thumbs.db" />
     <Content Include="App_Data\Deploy\DeployScript.ps1" />

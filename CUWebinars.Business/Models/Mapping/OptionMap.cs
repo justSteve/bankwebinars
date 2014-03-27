@@ -12,7 +12,7 @@ namespace CUWebinars.Business.Models.Mapping
 
             // Properties
             this.Property(t => t.OptionLabel)
-                .HasMaxLength(150);
+                .HasMaxLength(200);
 
             this.Property(t => t.Type)
                 .IsRequired()

@@ -115,12 +115,7 @@
     <Compile Include="Core\Extensions\DisposableExtensions.cs" />
     <Compile Include="Core\TTSException.cs" />
     <Compile Include="Core\URLValidator.cs" />
-    <Compile Include="Migrations\201402010842420_Initial.cs" />
-    <Compile Include="Migrations\201402010842420_Initial.Designer.cs">
-      <DependentUpon>201402010842420_Initial.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\AdditionalLocationsOrderRowOption.cs" />
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\Affiliate.cs" />
     <Compile Include="Models\Discount.cs" />
@@ -206,11 +201,6 @@
     <Content Include="SQLSeeding\VBA\SetOrdersToShipped.bas" />
     <Content Include="SQLSeeding\InitialSeeding\_buildSprocsAndErrorLog.sql" />
     <Content Include="SQLSeeding\InitialSeeding\_scriptRunner.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201402010842420_Initial.resx">
-      <DependentUpon>201402010842420_Initial.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CUWebinars.NotificationSystem\CUWebinars.NotificationSystem.csproj">
