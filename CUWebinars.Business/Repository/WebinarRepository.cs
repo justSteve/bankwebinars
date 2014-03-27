@@ -42,19 +42,25 @@ namespace CUWebinars.Business.Repository
 
         public IQueryable<Webinar> GetUpcoming()
         {
-            return items.Where(w => w.Status == WebinarStatus.Scheduled)
-                    .OrderByDescending(w => w.Date);
+            return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
+                .Include(w => w.Presenter.WebUser)
+                .Where(w => w.Status == WebinarStatus.Scheduled)
+                .OrderByDescending(w => w.Date);
         }
 
         public IQueryable<Webinar> GetAllActive()
         {
-            return items.Where(w => w.Status == WebinarStatus.Scheduled || w.Status == WebinarStatus.Recorded);
+            return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
+                .Include(w => w.Presenter.WebUser)
+                .Where(w => w.Status == WebinarStatus.Scheduled || w.Status == WebinarStatus.Recorded);
         }
 
 
         public IQueryable<Webinar> GetRecorded()
         {
-            return items.Where(w => w.Status == WebinarStatus.Recorded)
+            return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
+                .Include(w => w.Presenter.WebUser)
+                .Where(w => w.Status == WebinarStatus.Recorded)
                 .OrderByDescending(w => w.Date);
         }
 
