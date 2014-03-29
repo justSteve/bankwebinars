@@ -1,5 +1,4 @@
-﻿using System.Runtime.Remoting.Contexts;
-using CUWebinars.Business.Models;
+﻿using CUWebinars.Business.Models;
 using System;
 using System.Data.Entity;
 using System.Collections.Generic;

@@ -51,11 +51,10 @@ namespace CUWebinars.Web.Controllers
         {
             var globals = GlobalConfig.GlobalConfigSingleton;
             var dataOperations = new DataOperations();
-            UserAccount userAccount = null;
 
             try
             {
-
+                UserAccount userAccount;
                 if (model.RegisterFields != null)
                 {
                     var myInstitution =
@@ -105,8 +104,7 @@ namespace CUWebinars.Web.Controllers
                         USTimeZone.Central,
                         UserType.Customer,
                         25,
-                        new Address[2]
-                        {
+                        new Address[] {
                             new Address
                             {
                                 AddressType = WebUiConstants.BillingAddress,
@@ -117,8 +115,6 @@ namespace CUWebinars.Web.Controllers
                                 StreetAddress = string.Concat(new Random(100).Next(0, 1000).ToString(), " Wildcat Dr"),
                                 StreetAddress2 = string.Empty,
                                 State = "Tx",
-                                WebUser_Id = null,
-                                WebUser_idUser = null,
                                 Zip = "5000"
                             },
                             new Address
@@ -131,14 +127,13 @@ namespace CUWebinars.Web.Controllers
                                 StreetAddress = string.Concat(new Random(100).Next(0, 1000).ToString(), " Wildcat Dr"),
                                 StreetAddress2 = string.Empty,
                                 State = "Tx",
-                                WebUser_Id = null,
-                                WebUser_idUser = null,
                                 Zip = "5000"
-                            }
-                        },
+                            }},
                         "Dr",
                         null
                         );
+
+                    //_membershipService.AddAddressesForWebUser(addresses);
 
                     userAccount =_membershipService.CreateUser(globals.Tenant, "John", "Hancock", string.Empty, newPassword, newEmail);
                     dataOperations.SetNewAccountToVerified(userAccount.ID);

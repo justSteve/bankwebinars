@@ -199,7 +199,7 @@ namespace CUWebinars.Business.AccountService
         {
             samAuthenticationService.SignIn(userAccount, persistant);
         }
-
+        
         public bool ChangePasswordFromResetKey(string key, string newPassword)
         {
             var userAccount = userAccountService.GetByVerificationKey(key);
