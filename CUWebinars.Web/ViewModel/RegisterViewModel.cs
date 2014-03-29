@@ -1,6 +1,5 @@
 ﻿using CUWebinars.Web.Models;
 using System.ComponentModel.DataAnnotations;
-using System.Web.Mvc;
 
 namespace CUWebinars.Web.ViewModel
 {
