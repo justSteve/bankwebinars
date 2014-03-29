@@ -937,7 +937,7 @@ namespace CUWebinars.Web.Controllers
             //return PartialView("_RemoveExternalLoginsPartial", externalLogins);
             return null;
         }
-
+        
         #region Helpers
         private ActionResult RedirectToLocal(string returnUrl)
         {

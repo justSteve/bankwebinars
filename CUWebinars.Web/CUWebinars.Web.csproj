@@ -363,6 +363,8 @@
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MailController.cs" />
+    <Compile Include="Controllers\MembershipNotificationOpsController.cs" />
+    <Compile Include="Membership\ViewModel\NewUserModel.cs" />
     <Compile Include="Controllers\WebinarController.cs" />
     <Compile Include="Core\AbstractDTOAssembler.cs" />
     <Compile Include="Core\Browsers\EntitiesBrowserTableDataDTO.cs" />
@@ -402,6 +404,7 @@
     <Compile Include="Infrastructure\TenantAuthenticationManager.cs" />
     <Compile Include="Infrastructure\TTSAuthorizationManager.cs" />
     <Compile Include="Membership\DataOperations.cs" />
+    <Compile Include="Membership\ViewModel\NotificationViewModel.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\AddressModel.cs" />
     <Compile Include="Models\ChangeEmailFromKeyInputModel.cs" />
@@ -893,6 +896,7 @@
     <Content Include="Scripts\app\cart\edit-order.js" />
     <Content Include="Scripts\app\GTW\registrationForm.js" />
     <Content Include="Scripts\app\GTW\utils.js" />
+    <Content Include="Scripts\app\notification-ops\membership-notifications.js" />
     <Content Include="Scripts\app\passwordReset\password-reset.js" />
     <Content Include="Scripts\app\register\create-user.js" />
     <Content Include="Scripts\app\waitButton.js" />
@@ -1107,6 +1111,10 @@
     <Content Include="Views\Shared\_LayoutCertificate.cshtml" />
     <Content Include="Views\Home\Calendar.cshtml" />
     <Content Include="Views\Home\COC.cshtml" />
+    <Content Include="Views\MembershipNotificationOps\MembershipNotifications.cshtml" />
+    <Content Include="Views\MembershipNotificationOps\_RegisterPartial.cshtml" />
+    <Content Include="Views\MembershipNotificationOps\_ResetPasswordPartial.cshtml" />
+    <Content Include="Views\MembershipNotificationOps\_PasswordResetConfirm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\Admin\Models\" />

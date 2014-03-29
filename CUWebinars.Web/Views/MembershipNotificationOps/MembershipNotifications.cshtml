@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewBag.Title = "MembershipNotifications";
+}
+
+<section>
+    <div style="width: 1100px; margin: 30px auto">
+        <h2>Membership Notifications</h2>
+        <div class="row">
+            <div class="span1"><button id="CreateUserButton" class="btn btn-primary">Create User</button></div>
+            <div class="span1"><button id="ResetPasswordButton" class="btn btn-primary">Reset Password</button></div>
+            <div class="span1"><button id="ConfirmPasswordButton" class="btn btn-primary">Confirm Reset Password</button></div>
+            <div class="span8"><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>
+        </div>
+    
+        <div class="row">
+            <div id="InputFormFields" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
+
+</section>
+
+@section scripts {
+
+@*    <script src="@Url.Content("~/Scripts/app/constants.js")"></script>*@
+    <script src="@Url.Content("~/Scripts/app/notification-ops/membership-notifications.js")"></script>
+    <script src="@Url.Content("~/Scripts/app/web-user-details-register.js")"></script>
+}

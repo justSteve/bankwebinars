@@ -1,0 +1,30 @@
+﻿@model RegisterViewModel
+           
+@{
+    Layout = null;
+}
+
+<div class="span8"><button id="QuickRegisterUserButton" class="btn btn-info">Quick Create</button><span id="OperationMessage"></span></div>           
+<div class="span8" style="margin-top:10px">OR, input custom fields</div>           
+<div class="span8">
+
+    @using (Html.BeginForm("CreateAUser", "MembershipNotificationOps", "Post"))
+    {
+        @Html.AntiForgeryToken()
+
+        <fieldset>
+            <legend>Create User</legend>
+
+            @Html.EditorFor(m => m.RegisterFields)
+
+            <div class="form-inline">
+                <div class="btn-group" style="width:160px">&nbsp;</div>
+                <div class="btn-group">
+                    <input type="submit" value="Register" class="btn btn-default" />
+                </div>
+            </div>
+
+        </fieldset>
+    }
+
+</div>

@@ -18,6 +18,27 @@ function wireUpHandlers() {
     var locationsSpanPrefix = 'LocationSpan-',
         breakSuffix = '-break';
 
+    var modalFormOptions = {
+        keyboard: true,
+        show: true,
+        //remote: '/Webinar/GetAdditionalLocationsByOrderId'
+    };
+
+    $('#LoadAddLocationsModalButton').on('click', function () {
+        modalFormOptions.remote = '/Webinar/GetAdditionalLocationsByOrderId/' + $('#CheckoutOptionsViewModel_Order_idOrder').val();
+        $('#SignupModal').modal(modalFormOptions);
+    });
+
+    
+    $('#myModal').on('show', function() {
+        // show load div
+        var oi = 'l';
+    });
+
+    //$('#LoadAddLocationsModalButton').on('click', function(e) {
+        
+    //});
+
     addLocationsButton.on('click', function(e) {
         var numberOfInputsToAdd = numberOfEmailAddresses.val();
         newLocationsContainer.empty();

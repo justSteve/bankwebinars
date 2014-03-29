@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Threading;
+using System.Web.Http;
 using System.Web.Mvc;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Repository;
@@ -119,6 +121,18 @@ namespace CUWebinars.Web.Controllers
             //var dtos = new WebinarDTOAssembler().Entities2DTOs(webinars);
             //return View(dtos);
             return View(webinars);
+        }
+
+        public PartialViewResult GetAdditionalLocationsByOrderId(int? id = null)
+        {
+            var order = _orderManagementService.GetOrderById(id.Value);
+            var addAdditionalLocationsViewModel = new AddAdditionalLocationsViewModel
+            {
+                Emails = null,
+                OrderRowOption = order.OrderRows.First().OrderRowOptions.First()
+            };
+
+            return PartialView(addAdditionalLocationsViewModel);
         }
 
         public ActionResult AllActive(string eventsToShow)
@@ -338,6 +352,7 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Details(int id)
         {
+            //_orderManagementService.GetOrderById(1162);
             ViewBag.userHasOpenOrder = 0;
             ViewBag.userOwnsThisEvent = 0;
             ;
@@ -421,7 +436,7 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
-        [AcceptVerbs(HttpVerbs.Get)]
+        [System.Web.Mvc.AcceptVerbs(HttpVerbs.Get)]
         public ActionResult CalendarData()
         {
             //IList<Webinar> webinarsList = WebinarFacade.Instance.SelectAllActiveWebinars();
@@ -447,7 +462,7 @@ namespace CUWebinars.Web.Controllers
         //
         // POST: /Webinar/Create
 
-        [HttpPost]
+        [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Webinar webinar)
         {
@@ -479,7 +494,7 @@ namespace CUWebinars.Web.Controllers
         //
         // POST: /Webinar/Edit/5
 
-        [HttpPost]
+        [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Webinar webinar)
         {
@@ -509,7 +524,7 @@ namespace CUWebinars.Web.Controllers
         //
         // POST: /Webinar/Delete/5
 
-        [HttpPost, ActionName("Delete")]
+        [System.Web.Mvc.HttpPost, System.Web.Mvc.ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
