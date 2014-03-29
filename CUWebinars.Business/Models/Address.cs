@@ -15,8 +15,8 @@ namespace CUWebinars.Business.Models
         public string Zip { get; set; }
         public string State { get; set; }
         public string Country { get; set; }
-        public Nullable<int> WebUser_Id { get; set; }
-        public Nullable<int> WebUser_idUser { get; set; }
+        //public Nullable<int> WebUser_Id { get; set; }
+        public int idUser { get; set; }
         public virtual WebUser WebUser { get; set; }
     }
 }

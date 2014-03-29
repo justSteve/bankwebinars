@@ -29,12 +29,7 @@
 
     //}
 
-    Model.AdditionalLocationsViewModel = new AdditionalLocationsViewModel
-    {
-        OrderRowOption = orderRowOption,
-        Webinar = Model.Webinar
-    };
-    
+
    
     <span>
         Choose the attendance option that's right for you! <a href="#AttendOptions" data-toggle="modal">(learn more)</a>
@@ -77,8 +72,15 @@
                 }
                 if (myOption.Type == "additional_location")
                 {
+
+
                     orderRowOption.Option = myOption;
-                    Model.AdditionalLocationsViewModel.OrderRowOption = orderRowOption;
+                    Model.AdditionalLocationsViewModel = new AdditionalLocationsViewModel
+                    {
+                        OrderRowOption = orderRowOption,
+                        Webinar = Model.Webinar
+                    };
+                    //Model.AdditionalLocationsViewModel.OrderRowOption = orderRowOption;
                     //TODO: ERROR HERE. How to correctly populate the AdditionalLocation value
                     // currently the Option that is received by the Partial view
                     // is null.

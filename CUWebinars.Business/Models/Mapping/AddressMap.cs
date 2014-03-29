@@ -23,13 +23,13 @@ namespace CUWebinars.Business.Models.Mapping
             this.Property(t => t.Zip).HasColumnName("Zip");
             this.Property(t => t.State).HasColumnName("State");
             this.Property(t => t.Country).HasColumnName("Country");
-            this.Property(t => t.WebUser_Id).HasColumnName("WebUser_Id");
-            this.Property(t => t.WebUser_idUser).HasColumnName("WebUser_idUser");
+            //this.Property(t => t.WebUser_Id).HasColumnName("WebUser_Id");
+            this.Property(t => t.idUser).HasColumnName("idUser");
 
             // Relationships
-            this.HasOptional(t => t.WebUser)
+            this.HasRequired(t => t.WebUser)
                 .WithMany(t => t.Addresses)
-                .HasForeignKey(d => d.WebUser_idUser);
+                .HasForeignKey(d => d.idUser);
 
         }
     }
