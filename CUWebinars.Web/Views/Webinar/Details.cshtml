@@ -232,8 +232,23 @@
                         <div class="tab-content">
 
                             <div class="tab-pane active" id="signUp">
+                              
+                                
+                                @using (Html.BeginForm("Signup2", "Cart", null, FormMethod.Post, new { id = "Signup2" }))
+                                {
+                                    <input type="hidden" name="stage_of_checkout" id="Stage_of_checkout" value="step0" />
+                                    @Html.HiddenFor(m => m.Webinar.idWebinar)
+                                    @Html.HiddenFor(m => m.WebUser.idUser)
+                                    @Html.HiddenFor(m => m.CheckoutOptionsViewModel.Order.idOrder)
+
+                                    <input type="hidden" name="mode" id="Mode" />
+                                    <input type="button" onclick=" signUp(); " class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
+                                    <button value="Add?" type="button" class="btn btn-success btn-small" name="AddLocationsButton" id="LoadAddLocationsModalButton">Add?</button>
+                                    @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)
+                                }
+
                                 <!-- Button to trigger modal -->
-                                <a href="#SignupModal" role="button" class="btn" data-toggle="modal">Launch demo modal</a>                                
+                                <a id="LaunchSignupModalLink" role="button" class="btn">Launch demo modal</a>                                
                                 <!-- Modal -->
                                 <div id="SignupModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                     <div class="modal-header">

@@ -120,7 +120,6 @@
       <DependentUpon>201402010842420_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\AdditionalLocationsOrderRowOption.cs" />
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\Affiliate.cs" />
     <Compile Include="Models\Discount.cs" />

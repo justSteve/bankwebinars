@@ -126,6 +126,12 @@ namespace CUWebinars.Business.Repository
             return newOrderRowOption;
         }
 
+        public Order FindOrderByIdWithOrderRows(int id)
+        {
+            var item = items.Include(o => o.OrderRows.Select(or => or.OrderRowOptions)).Where(o => o.idOrder == id);
+            return item.FirstOrDefault();
+        }
+
         public Order AssignAffiliate(Affiliate affiliate, Order order)
         {
             order.idAffiliate = affiliate.idUserAff;

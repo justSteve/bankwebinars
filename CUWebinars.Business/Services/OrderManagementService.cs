@@ -100,6 +100,12 @@ namespace CUWebinars.Business.Services
             return _optionRepository.FindOptionsByWebinarId(id, false);
         }
 
+        public Order GetOrderById(int id)
+        {
+            var order = _orderRepository.FindOrderByIdWithOrderRows(id);
+            return order;
+        }
+
         public IList<Order> GetOrdersByUserId(int id)
         {
             var sendback = _refDataRepository.FindOrdersByUserId(id);

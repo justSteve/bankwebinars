@@ -364,7 +364,6 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MailController.cs" />
     <Compile Include="Controllers\MembershipNotificationOpsController.cs" />
-    <Compile Include="Membership\ViewModel\NewUserModel.cs" />
     <Compile Include="Controllers\WebinarController.cs" />
     <Compile Include="Core\AbstractDTOAssembler.cs" />
     <Compile Include="Core\Browsers\EntitiesBrowserTableDataDTO.cs" />
@@ -404,7 +403,6 @@
     <Compile Include="Infrastructure\TenantAuthenticationManager.cs" />
     <Compile Include="Infrastructure\TTSAuthorizationManager.cs" />
     <Compile Include="Membership\DataOperations.cs" />
-    <Compile Include="Membership\ViewModel\NotificationViewModel.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\AddressModel.cs" />
     <Compile Include="Models\ChangeEmailFromKeyInputModel.cs" />

@@ -20,6 +20,7 @@ namespace CUWebinars.Business.Services
             string[] additionalLocationsEmails);
         IList<Option> GetOptionsByWebinarId(int id, bool detached);
         IList<Option> GetOptionsByWebinarIdFromOptionsRepository(int id, bool detached);
+        Order GetOrderById(int id);
         IList<Order> GetOrdersByUserId(int id);
         Webinar GetWebinar(int id);
         WebUser GetWebUser(int id);

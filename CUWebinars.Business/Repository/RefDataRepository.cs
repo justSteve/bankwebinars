@@ -55,7 +55,7 @@ namespace CUWebinars.Business.Repository
             using (var context = new TTSWebinarsContext())
             {
                 context.Configuration.ProxyCreationEnabled = false;
-                return context.Orders.Include(o => o.OrderRows).Where(o => o.WebUser.idUser == id).ToList();
+                return context.Orders.Include(o => o.OrderRows.Select(or => or.Webinar)).Where(o => o.WebUser.idUser == id).ToList();
             }
         }
 
