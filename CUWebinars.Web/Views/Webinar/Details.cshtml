@@ -15,9 +15,7 @@
             CheckoutInProcess = ViewData["CheckoutInProcess"].ToString();
         }
     }
-    //var topics = Model.Webinar.WebinarTopicXrefs
-    //    .Select(webinarTopic => webinarTopic.Topic.topicDesc)
-    //    .Aggregate((s1, s2) => "<li>" + s1 + "</li><li>" + s2+"</li>");
+
 
     var whichStep = "Step0";
     if (ViewData.ContainsKey("WhichStep"))
@@ -55,6 +53,12 @@
 
     if (ViewBag.userOwnsThisEvent > 0)
     {
+        <script language="javascript">
+            $(document).ready(function() {
+                $("#SignUpFormContainer").hide();
+            });
+        </script>
+    
         rowID = Model.CheckoutOptionsViewModel.Order.OrderRows.FirstOrDefault().idOrderRow;
         orderID = Model.CheckoutOptionsViewModel.Order.idOrder;
 
@@ -62,19 +66,6 @@
         {
             CheckoutInProcess = "true";
             msgOrderStatus = "<div align=\"center\" class=\"label-warning label\">Your order is InProcess and needs to be confirmed.</div>";
-        }
-        if (Model.CheckoutOptionsViewModel.Order.OrderRows.FirstOrDefault().Status == OrderRowStatus.Billed ||
-            Model.CheckoutOptionsViewModel.Order.OrderRows.FirstOrDefault().Status == OrderRowStatus.Paid ||
-            Model.CheckoutOptionsViewModel.Order.OrderRows.FirstOrDefault().Status == OrderRowStatus.Submitted)
-        {
-            signUpCaption = "Connection Info";
-            ConfirmationCaption = "Order Summary";
-            whichStep = "Registered";
-            CheckoutInProcess = "false";
-            // <a class="dropdown-toggle" data-toggle="dropdown" href="#">Dropdown trigger</a>
-            //msgOrderStatus = "";
-            //msgOrderStatus = "<div align=\"center\" class=\"label-success label\">Your " + OptionsFacade.Instance.Load((int)Model.CheckoutOptionsViewModel.Order.OrderRows.FirstOrDefault().RegistrationType).Label.Replace(" Only", " ") + " details are posted below.</div>";
-
         }
     }
 
@@ -176,7 +167,7 @@
 
         <section class="span3">
             <aside class="widget">
-                @Html.Partial("Partials/_RegistrationSummary")
+
                 <h5 class="short_headline"><span>Date/Time</span></h5>
 
                 <b>@Html.DisplayDate(Model.Webinar.Date)</b><br />
@@ -188,14 +179,15 @@
                 </div>
 
             </aside>
+            @Html.Partial("Partials/_RegistrationSummary")
             <!-- close .widget -->
             <aside class="widget">
                 <h5 class="short_headline"><span>Topics</span></h5>
                 <ul>
-                    @foreach (var webinarTopic in Model.Webinar.WebinarTopicXrefs)
+                    @foreach (var webinarTopic in ViewBag.topics)
                     {
                         <li>
-                            @webinarTopic.Topic.topicDesc
+                            @webinarTopic.topicDesc
                         </li>
                     }
                 </ul>
@@ -219,21 +211,20 @@
     </div>@{
         if ((int)Model.Webinar.Status < 4)
         {
-            <div class="row-fluid">
+            <div id="SignUpFormContainer" class="row-fluid">
                 <div class="content offset2 span8 well">
 
-                    <div id="SignUpFormContainer">
-                        <ul class="nav nav-tabs" id="regTabs">
-                            <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@signUpCaption</a></li>
-                            <li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
-                            <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@ConfirmationCaption</a></li>
-                        </ul>
+                    <ul class="nav nav-tabs" id="regTabs">
+                        <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@signUpCaption</a></li>
+                        <li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
+                        <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@ConfirmationCaption</a></li>
+                    </ul>
 
-                        <div class="tab-content">
+                    <div class="tab-content">
 
-                            @*<div class="tab-pane active" id="signUp">
+                        @*<div class="tab-pane active" id="signUp">
                                 <!-- Button to trigger modal -->
-                                <a href="#SignupModal" role="button" class="btn" data-toggle="modal">Launch demo modal</a>                                
+                                <a href="#SignupModal" role="button" class="btn" data-toggle="modal">Launch demo modal</a>
                                 <!-- Modal -->
                                 <div id="SignupModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                     <div class="modal-header">
@@ -258,26 +249,19 @@
                                     </div>
                                 </div>
                             </div>*@
-                            <div class="tab-pane active" id="signUp">
-                                <input type="button" onclick=" signUp(); " class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
-                                @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)
-                            </div>
-                            <div class="tab-pane" id="contactInfo">
-                                @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutContact.cshtml", model: Model)
-
-                            </div>
-                            <div class="tab-pane" id="confirmation">
-                                @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutConfirm.cshtml", model: Model)
-                            </div>
-
+                        <div class="tab-pane active" id="signUp">
+                            <input type="button" onclick=" signUp(); " class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
+                            @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)
+                        </div>
+                        <div class="tab-pane" id="contactInfo">
+                            @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutContact.cshtml", model: Model)
 
                         </div>
+                        <div class="tab-pane" id="confirmation">
+                            @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutConfirm.cshtml", model: Model)
+                        </div>
                     </div>
-
-
-
                 </div>
-
             </div>
         }
     }

@@ -2,9 +2,15 @@
 @using CUWebinars.Business.Models
 @model CUWebinars.Web.ViewModel.WebinarDetailsViewModel
 @{
-    
-    IList<Webinar> upList = Model.Webinar.Presenter.Webinars.Where(w => w.Status == WebinarStatus.Scheduled).ToList();
-    IList<Webinar> recList = Model.Webinar.Presenter.Webinars.Where(w => w.Status == WebinarStatus.Recorded).ToList();
+
+    var idPresenter = Model.Webinar.Presenter.idUser;
+
+
+
+    IList<Webinar> upList = Model.Webinar.Presenter
+        .Webinars.Where(w => w.Status == WebinarStatus.Scheduled && w.idPresenter == idPresenter).ToList();
+    IList<Webinar> recList = Model.Webinar.Presenter
+        .Webinars.Where(w => w.Status == WebinarStatus.Recorded && w.idPresenter == idPresenter).ToList();
 }
 <aside class="widget clearfix">
     <h5 class="short_headline"><span>@Model.Webinar.Presenter.WebUser.FirstName's Other Events</span></h5>

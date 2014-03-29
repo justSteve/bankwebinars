@@ -1105,6 +1105,7 @@
     <Content Include="Views\Shared\_LayoutCertificate.cshtml" />
     <Content Include="Views\Home\Calendar.cshtml" />
     <Content Include="Views\Home\COC.cshtml" />
+    <Content Include="Views\Webinar\Partials\_ConnectionSummary.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\Admin\Models\" />
