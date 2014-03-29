@@ -398,6 +398,7 @@
     <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="Helpers\EnumHelpers.cs" />
     <Compile Include="Helpers\HtmlHelpers.cs" />
+    <Compile Include="Infrastructure\apis\citrix\GTW\CreateRegistration.cs" />
     <Compile Include="Infrastructure\apis\citrix\ShareFile\OAuth2Token.cs" />
     <Compile Include="Infrastructure\apis\citrix\ShareFile\ShareFileV3Sample.cs" />
     <Compile Include="Infrastructure\TenantAuthenticationManager.cs" />
