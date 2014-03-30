@@ -203,7 +203,7 @@ namespace CUWebinars.Business.AccountService
         public bool ChangePasswordFromResetKey(string key, string newPassword)
         {
             var userAccount = userAccountService.GetByVerificationKey(key);
-            userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.HasNotVerified);
+            //userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.HasNotVerified);
             return userAccountService.ChangePasswordFromResetKey(key, newPassword);
         }
 
@@ -273,9 +273,7 @@ namespace CUWebinars.Business.AccountService
         {
             UserAccount userAccount;
             userAccountService.VerifyEmailFromKey(key, password, out userAccount);
-
-                userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.HasNotVerified);
-            
+            userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.HasNotVerified);
 
             return userAccount;
         }
