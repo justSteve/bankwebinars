@@ -5,9 +5,17 @@
     IStateService stateService = new StateService();
 
     var currentAffiliate = stateService.GetValue<Affiliate>("CurrentAffiliate");
+    if (currentAffiliate != null)
+    {
+        var currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
+    }
+    else
+    {
+        Response.Redirect("/?resetSessionAff=null");
+    }
 
     var currentUserID = 0;
-    var currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
+
     //var currentUser = CurrentSession.Instance.CurrentUser;
 
     //if (currentUser != null)
@@ -29,7 +37,7 @@
     }
     else
     {
-        Response.Redirect("/");
+        Response.Redirect("/?resetSession=null");
     }
 
     var subdomainBranding = stateService.GetValue<string>("SubdomainBranding");
@@ -198,7 +206,7 @@
                 <ul class="primary_menu">
                     @*<li><a href="/home">Home</a></li>*@
 
-                    <li><a href="webinar/calendar">calendar</a></li>
+                    <li><a href="/webinar/calendar">calendar</a></li>
                     <li class="parent">
                         <a href="javascript:void(0)">topics<i></i></a>
                         <ul>
@@ -226,14 +234,14 @@
                         @*<ul></ul>*@
                     </li>
                     @*<li>
-                        <a href="javascript:void(0)">About Us<i></i></a>
-                        <ul>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/WhatIsAWebinar">What Is A Webinar?</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/CommonQuestions">Commonly Asked Questions</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/DetailedConnectionInstructions">Connecting to Your Webinar</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/contactus">Contact Us</a></li>
-                        </ul>
-                    </li>*@
+                            <a href="javascript:void(0)">About Us<i></i></a>
+                            <ul>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/WhatIsAWebinar">What Is A Webinar?</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/CommonQuestions">Commonly Asked Questions</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/DetailedConnectionInstructions">Connecting to Your Webinar</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/contactus">Contact Us</a></li>
+                            </ul>
+                        </li>*@
                     <li class="parent">
                         @{
                             if (Request.IsAuthenticated)
@@ -249,7 +257,7 @@
                                         </div>
 
                                     }
-                                    
+
                                 </div>
                                 //}
                             }

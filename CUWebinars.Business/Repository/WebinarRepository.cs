@@ -1,4 +1,6 @@
 ﻿using System.Data.Entity;
+using System.IO;
+using System.Runtime.Remoting.Contexts;
 using CUWebinars.Business.Models;
 using System.Collections.Generic;
 using System.Data;
@@ -46,6 +48,14 @@ namespace CUWebinars.Business.Repository
                 .Include(w => w.Presenter.WebUser)
                 .Where(w => w.Status == WebinarStatus.Scheduled)
                 .OrderByDescending(w => w.Date);
+        }
+
+        public IQueryable<Topic> GetTopicsPerWebinar(int idWebinar)
+        {
+            return ((TTSWebinarsContext)db).WebinarTopicXrefs
+                //.Include(x => x.Webinar)
+                //.Include(w => w.Topic)
+                .Where(t => t.idWebinar == idWebinar).Select(t => t.Topic);
         }
 
         public IQueryable<Webinar> GetAllActive()

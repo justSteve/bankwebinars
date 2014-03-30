@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -362,20 +363,10 @@ namespace CUWebinars.Web.Controllers
 
             var usersOrders = _orderManagementService.GetOrdersByUserId(user.idUser);
 
-            //        var webinars = items.Include(i => i.WebinarTopicXrefs.Select(w => w.Topic))
-            //.Include(i => i.Presenter.WebUser)
-            //.Where(w => w.WebinarTopicXrefs
-            //.Any(t => t.idTopic == topicId)
-            //    && (w.Status == WebinarStatus.Recorded || w.Status == WebinarStatus.Scheduled));
-            //        //Logger.Debug("TopicId=" + topicId); 
-
-            var topics = from t in db.Topics
-                         join wx in db.WebinarTopicXrefs on t.idTopic equals wx.idTopic
-                         where wx.idWebinar == id
-                         select t;
-
             var options = _orderManagementService.GetOptionsByWebinarId(id, false);
             var webinar = db.Webinars.Include(w => w.Presenter.WebUser).First(w => w.idWebinar == id);
+            ViewBag.topics = _webinarRepository.GetTopicsPerWebinar(webinar.idWebinar);
+
 
             var model = new WebinarDetailsViewModel()
             {
@@ -411,9 +402,18 @@ namespace CUWebinars.Web.Controllers
                         var webinarFiles = db.WebinarFiles.Where(f => f.idWebinar == id).Select(f => f.fileDesc +"|"+ f.fileLocation ).ToArray();
                         ViewBag.WebinarFiles = webinarFiles;
 
-
                         ViewBag.userOwnsThisEvent = checkOrder.idOrder;
                         model.CheckoutOptionsViewModel.Order = checkOrder;
+
+                        var connectionText = new StringBuilder("<p>");
+                        connectionText.Append(ViewBag.orderMessages.Stage2EmailConfirmationMsg.Replace(" and is also available at http://www.BankWebinars.com", "</p><p>"));
+                        //var conn = 
+
+                        connectionText.Append(webinar.ConnectionInfo.Replace(Environment.NewLine,"<br>"));
+                        connectionText.Append("</p>");
+
+                        ViewBag.connectionText = connectionText;
+  
                     }
                     if (checkOrder.OrderRows.Single().Status == OrderRowStatus.InProcess
                         && checkOrder.OrderRows.Single().idWebinar != id)

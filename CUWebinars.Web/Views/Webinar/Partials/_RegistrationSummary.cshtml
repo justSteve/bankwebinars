@@ -13,12 +13,12 @@
         };
     </script>
     Order order = null;
+    OrderRow row = null;
     if (ViewBag.userOwnsThisEvent > 0)
     {
-        OrderRow row = null;
         Option orderMsgs = ViewBag.orderMessages;
         string[] webinarFiles = ViewBag.WebinarFiles;
-        var recording = "<li><a href='http://'"+ System.Configuration.ConfigurationManager.AppSettings["WMVRepository"] + Model.Webinar.RecordingUrl + "' target=_blank /> Recording: </a>"; ;
+        var recording = "<a href='" + Model.Webinar.RecordingUrl + "' target=_blank /> Recording Playback</a>"; ;
         var showShipped = "";
         if (Model.Webinar.Status != WebinarStatus.Recorded)
         {
@@ -28,6 +28,9 @@
 
         foreach (OrderRow itemRow in Model.CheckoutOptionsViewModel.Order.OrderRows)
         {
+            <script language="javascript">
+                var idOption = @orderMsgs.idOption;
+            </script>
             order = itemRow.Order;
             row = itemRow;
             //webinarFiles
@@ -35,25 +38,12 @@
             {
                 string itemDesc = webinarFiles[i].Split('|')[0];
                 string itemPath = webinarFiles[i].Split('|')[1];
-                wf.Append("<a href='" + System.Configuration.ConfigurationManager.AppSettings["HandoutRepository"] + itemPath + "' target=_blank />" + itemDesc + "</a>");
+                wf.Append("<a href='" + itemPath + "' target=_blank >" + itemDesc + "</a><br>");
             }
-            var plusOnDemand = "";
-            if (orderMsgs.ShowRecordingNotifications != "Yes")
-            {
-                recording = "<li>Upgrade order to include Recording?</li>";
-                plusOnDemand = " plus OnDemand Playback";
-            }
-            if (orderMsgs.ShowShippedNotifications != "Yes")
-            {
 
-                showShipped = "<li><a onclick='javascript:upgrade(idOption);return false;'>Upgrade order to CD-ROM" + plusOnDemand + "?</li>";
-            }
-            else
+            if (orderMsgs.ShowShippedNotifications == "Yes" && row.ShipmentDate != null)
             {
-                if (row.ShipmentDate != null)
-                {
-                    showShipped = "<li>Shipped on: " + row.ShipmentDate.Value.ToShortDateString()+"</li>";
-                }
+                showShipped = "<li>Shipped on: " + row.ShipmentDate.Value.ToShortDateString() + "</li>";
             }
             break;
         }
@@ -66,16 +56,51 @@
             <aside style="width: 100%" class="widget clearfix">
                 <div class="dropdown">
                     <a class="dropdown-toggle btn btn-success" data-toggle="dropdown" href="#">Your Order# <b>CU-@order.idOrder</b> Summary</a>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                        <li>Ordered on @order.OrderDate.ToShortDateString()</li>
+                    <ul style="width: 100%; padding-left: 10px;" class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                        <li>Ordered on: @order.OrderDate.ToShortDateString()</li>
                         <li>@orderMsgs.OptionLabel</li>
-                        <li>@Html.Raw(wf.ToString())</li>
-                        @Html.Raw(@recording)
+                        <li>$@order.Total</li>
                         @Html.Raw(@showShipped)
-
+                        <li><a href='#' onclick='upgrade(idOption);'>Upgrade order?</a></li>
                     </ul>
                 </div>
             </aside>
+            if (Model.Webinar.Status == WebinarStatus.Scheduled)
+            {
+                <h5 class="short_headline"><span>Connection Information</span></h5>
+                if (orderMsgs.ShowLiveNotifications == "Yes")
+                {
+
+                    if (Model.Webinar.ConnectionInfo != null)
+                    {
+                        <aside style="width: 100%" class="widget clearfix">
+                            <div>@Html.Raw(ViewBag.connectionText)</div>
+                        </aside>
+                    }
+                    else
+                    {
+                        <aside style="width: 100%" class="widget clearfix">
+                            [not yet generated]
+                        </aside>
+                    }
+                }
+                else
+                {
+                    <aside style="width: 100%; text-align: center;" class="widget clearfix">
+                        Your order is currently <br />not configured for <b>Live</b> attendance.
+                        <br /><a class="btn btn-mini btn-success" href='#' onclick='upgrade(idOption);'>Upgrade order?</a>
+                    </aside>
+                }
+            }
+            //webinarFiles ="";
+            if (webinarFiles.Count() > 0)
+            {
+                <aside style="width: 100%" class="widget clearfix">
+                    <h5 class="short_headline"><span>Your Files</span></h5>
+                    @Html.Raw(wf.ToString())
+                    @Html.Raw(@recording)
+                </aside>
+            }
         }
     }
     else
@@ -98,7 +123,7 @@
                                 )
                             {
                                 <li>
-                                    <a onclick=javascript:exprsOrder("@myOption.idOption");>&nbsp;&nbsp;@myOption.OptionLabel - $@myOption.PriceToAdd&nbsp;&nbsp;</a>
+                                    <a onclick='javascript:exprsOrder("@myOption.idOption");'>&nbsp;&nbsp;@myOption.OptionLabel - $@myOption.PriceToAdd&nbsp;&nbsp;</a>
                                 </li>
                             }
                         }

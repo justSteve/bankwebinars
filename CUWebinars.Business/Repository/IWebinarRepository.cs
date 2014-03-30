@@ -17,5 +17,6 @@ namespace CUWebinars.Business.Repository
         List<Option> GetCurrentOptions(int idWebinar);
         IList<Order> GetOrdersByWebinarForConnectionInfo(int id);
 
+        IQueryable<Topic>  GetTopicsPerWebinar(int idWebinar);
     }
 }
