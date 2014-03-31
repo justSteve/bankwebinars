@@ -30,6 +30,15 @@ namespace CUWebinars.WebUi.Tests.Page
             }
         }
 
+        public bool LogoutLinkIsPresentOnPage
+        {
+            get
+            {
+                return SeleniumTestDriver.FindByXPath(Constants.LogoffLinkPath) != null;
+
+            }
+        }
+
         public virtual string Title
         {
             get

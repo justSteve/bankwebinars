@@ -51,11 +51,11 @@ namespace CUWebinars.WebUi.Tests
         //private const string ApplicationName = "CUWebinars.Web";
         //private static Process _iisProcess;
 
-        //[AssemblyInitialize]
-        //public static void AssemblyInitialize(TestContext context)
-        //{
-        //    StartIis();
-        //}
+        [AssemblyInitialize]
+        public static void AssemblyInitialize(TestContext context)
+        {
+            //StartIis();
+        }
 
         //[AssemblyCleanup]
         //public static void TestCleanup()

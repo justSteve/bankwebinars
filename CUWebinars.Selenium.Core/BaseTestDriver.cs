@@ -21,6 +21,12 @@ namespace CUWebinars.Selenium.Core
 
         public abstract void Initialize();
 
+        public void ClearCookies()
+        {
+            webDriver.Manage().Cookies.DeleteCookieNamed("FedAuth");
+            webDriver.Manage().Cookies.DeleteCookieNamed("FedAuth1");
+        }
+
         public virtual void CloseWindow()
         {
             webDriver.Close();

@@ -33,9 +33,44 @@ namespace CUWebinars.WebUi.Tests.Page.Ie
             }
         }
 
+        public void ClearCookies()
+        {
+            SeleniumTestDriver.ClearCookies();
+        }
+
         public void ClickLoginLink()
         {
             SeleniumTestDriver.FindByXPathClick(@"/html/body/section/nav/a");
+        }
+
+        public void LogInToSite(string email, string password)
+        {
+            SeleniumTestDriver.TypeTextWithEnter(Constants.EmailInput, email);
+            SeleniumTestDriver.TypeTextAndTabAway(Constants.PasswordInput, password);
+            SeleniumTestDriver.FindByIdClick(Constants.SignInButtonInput);
+        }
+
+        public void ClickRegisterLinkOnLoginView()
+        {
+            SeleniumTestDriver.FindByXPathClick("/html/body/div/div/div/form/fieldset/div[3]/input");
+        }
+
+        public void EnterEmailAddressAndEnter(string email)
+        {
+            SeleniumTestDriver.Wait(500);
+            SeleniumTestDriver.TypeTextWithEnter("RegisterFields.Email", email);
+        }
+
+        public void EnterPasswordWhereUserExists(string password)
+        {
+            SeleniumTestDriver.Wait(500);
+            SeleniumTestDriver.TypeTextAndTabAway("Password1", password);
+            SeleniumTestDriver.FindByIdClick("TheSubmitButton");
+        }
+
+        public void LogOff()
+        {
+            SeleniumTestDriver.FindByXPathClick(Constants.LogoffLinkPath);
         }
 
         public bool NoNotceExistsErrorTextIsPresent

@@ -9,6 +9,7 @@ namespace CUWebinars.WebUi.Tests
     public class BaseTest
     {
         protected ITestDriver TestDriver { get; set; }
+        protected Global GlobalTestConfig { get; set; }
 
         [TestCleanup]
         public void TearDown()

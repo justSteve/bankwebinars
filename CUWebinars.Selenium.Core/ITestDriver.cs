@@ -8,6 +8,7 @@ namespace CUWebinars.Selenium.Core
         string DriverPath { set; }
         int DriverPort { set; }
         void ClearTextFromInput(string nameOfInputElement);
+        void ClearCookies();
         void CloseWindow();
         bool DoesElementContainText(string nameToFind, string text);
         ReadOnlyCollection<IWebElement> FindByClassName(string classNameToFind);

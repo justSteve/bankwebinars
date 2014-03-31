@@ -269,7 +269,79 @@ namespace CUWebinars.Business.Tests
             Assert.AreEqual(_institutionName, institution.InstitutionName);
             Assert.AreEqual(institution.domainName, "gofarmersbank.com");
         }
+
+        [TestMethod]
+        [TestCategory("Membership Tests")]
+        public void CreateWebUserCreatesWebUserWithIdOneBiggerThanExistingBiggestIdWhenZeroPassedForidUserImportedParameter()
+        {
+            //  Arrange
+            string email = "renoraines@gofarmersbank.com";
+            const int maxUser = 1000;
+            refDataRepositoryMock.Setup(r => r.GetMaxWebUserId()).Returns(maxUser);
+
+            //  Act
+            membershipService = new MembershipService(
+                institutionRepositoryMock.Object,
+                refDataRepositoryMock.Object,
+                samAuthenticationServiceMock,
+                userAccountServiceFake,
+                webUserRepositoryMock.Object
+                );
+
+            var newGuy = membershipService.CreateWebUser(Globals.AppTenant,
+                "John",
+                "Doh",
+                string.Empty,
+                password,
+                email,
+                USTimeZone.Central,
+                UserType.Customer,
+                20,
+                null,
+                "Dr",
+                0,
+                null);
+
+            //  Assert                   
+            Assert.AreEqual(maxUser + 1, newGuy.idUser);
+        } 
         
+        [TestMethod]
+        [TestCategory("Membership Tests")]
+        public void CreateWebUserCreatesWebUserWithIdOneBiggerThanExistingBiggestIdWhenNullPassedForidUserImportedParameter()
+        {
+            //  Arrange
+            string email = "renoraines@gofarmersbank.com";
+            const int maxUser = 1000;
+            refDataRepositoryMock.Setup(r => r.GetMaxWebUserId()).Returns(maxUser);
+
+            //  Act
+            membershipService = new MembershipService(
+                institutionRepositoryMock.Object,
+                refDataRepositoryMock.Object,
+                samAuthenticationServiceMock,
+                userAccountServiceFake,
+                webUserRepositoryMock.Object
+                );
+
+            var newGuy = membershipService.CreateWebUser(Globals.AppTenant,
+                "John",
+                "Doh",
+                string.Empty,
+                password,
+                email,
+                USTimeZone.Central,
+                UserType.Customer,
+                20,
+                null,
+                "Dr",
+                null,
+                null);
+
+            //  Assert                   
+            Assert.AreEqual(maxUser + 1, newGuy.idUser);
+        }
+
         [TestMethod]
         [TestCategory("Membership Tests")]
         public void testtemplate()

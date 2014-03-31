@@ -12,6 +12,7 @@ namespace CUWebinars.WebUi.Tests.Chrome
         {
             var port = int.Parse(ConfigurationManager.AppSettings["ChromeWebDriverPort"]);
             var pathToDriver = ConfigurationManager.AppSettings["ChromeWebDriverPath"];
+            GlobalTestConfig = Global.GlobalConfigSingleton;
             TestDriver = new ChromeTestDriver { DriverPort = port, DriverPath = pathToDriver };
             TestDriver.Initialize();
         }
