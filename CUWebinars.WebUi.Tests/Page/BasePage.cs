@@ -5,6 +5,8 @@ namespace CUWebinars.WebUi.Tests.Page
     public abstract class BasePage
     {
         protected string Url { get; set; }
+        protected Global GlobalTestConfig { get; set; }
+
         protected ITestDriver SeleniumTestDriver { get; set; }
 
         public virtual void Open()

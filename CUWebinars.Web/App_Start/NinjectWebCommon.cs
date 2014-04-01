@@ -1,3 +1,5 @@
+using System.Web.Http;
+using System.Web.Mvc;
 using BrockAllen.MembershipReboot;
 using BrockAllen.MembershipReboot.Ef;
 using BrockAllen.MembershipReboot.WebHost;
@@ -6,34 +8,36 @@ using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
-using CUWebinars.Web.App_Start;
 using CUWebinars.Web.Services;
-using Microsoft.Web.Infrastructure.DynamicModuleHelper;
-using Ninject;
-using Ninject.Web.Common;
-using System;
-using System.Web;
+using Ninject.Web.Mvc;
 
-[assembly: WebActivator.PreApplicationStartMethod(typeof(NinjectWebCommon), "Start")]
-[assembly: WebActivator.ApplicationShutdownMethodAttribute(typeof(NinjectWebCommon), "Stop")]
+[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(CUWebinars.Web.App_Start.NinjectWebCommon), "Start")]
+[assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(CUWebinars.Web.App_Start.NinjectWebCommon), "Stop")]
 
 namespace CUWebinars.Web.App_Start
 {
+    using System;
+    using System.Web;
 
-    public static class NinjectWebCommon
+    using Microsoft.Web.Infrastructure.DynamicModuleHelper;
+
+    using Ninject;
+    using Ninject.Web.Common;
+
+    public static class NinjectWebCommon 
     {
         private static readonly Bootstrapper bootstrapper = new Bootstrapper();
 
         /// <summary>
         /// Starts the application
         /// </summary>
-        public static void Start()
+        public static void Start() 
         {
             DynamicModuleUtility.RegisterModule(typeof(OnePerRequestHttpModule));
             DynamicModuleUtility.RegisterModule(typeof(NinjectHttpModule));
             bootstrapper.Initialize(CreateKernel);
         }
-
+        
         /// <summary>
         /// Stops the application.
         /// </summary>
@@ -41,7 +45,7 @@ namespace CUWebinars.Web.App_Start
         {
             bootstrapper.ShutDown();
         }
-
+        
         /// <summary>
         /// Creates the kernel that will manage your application.
         /// </summary>
@@ -49,11 +53,22 @@ namespace CUWebinars.Web.App_Start
         private static IKernel CreateKernel()
         {
             var kernel = new StandardKernel();
-            kernel.Bind<Func<IKernel>>().ToMethod(ctx => () => new Bootstrapper().Kernel);
-            kernel.Bind<IHttpModule>().To<HttpApplicationInitializationHttpModule>();
+            try
+            {
+                kernel.Bind<Func<IKernel>>().ToMethod(ctx => () => new Bootstrapper().Kernel);
+                kernel.Bind<IHttpModule>().To<HttpApplicationInitializationHttpModule>();
 
-            RegisterServices(kernel);
-            return kernel;
+                RegisterServices(kernel);
+
+                GlobalConfiguration.Configuration.DependencyResolver = new NinjectResolver(kernel);
+
+                return kernel;
+            }
+            catch
+            {
+                kernel.Dispose();
+                throw;
+            }
         }
 
         /// <summary>
@@ -108,10 +123,10 @@ namespace CUWebinars.Web.App_Start
             }).InRequestScope();
 
             kernel.Bind<UserAccountService>().ToMethod(ctx =>
-                {
-                    var userAccountService = new UserAccountService(config, ctx.Kernel.Get<IUserAccountRepository>());
-                    return userAccountService;
-                });
+            {
+                var userAccountService = new UserAccountService(config, ctx.Kernel.Get<IUserAccountRepository>());
+                return userAccountService;
+            });
 
             kernel.Bind<AuthenticationService>().To<SamAuthenticationService>();
             kernel.Bind<IMembershipService>().To<MembershipService>();

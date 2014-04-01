@@ -1,5 +1,4 @@
-﻿using System.Configuration;
-using CUWebinars.Selenium.Core.Firefox;
+﻿using CUWebinars.Selenium.Core.Firefox;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CUWebinars.WebUi.Tests.Firefox
@@ -10,7 +9,8 @@ namespace CUWebinars.WebUi.Tests.Firefox
         [TestInitialize]
         public void Setup()
         {
-            var port = ConfigurationManager.AppSettings["FirefoxBrowserPort"]; 
+            GlobalTestConfig = Global.GlobalConfigSingleton;
+            var port = GlobalTestConfig.FirefoxBrowserPort;
             TestDriver = new FirefoxTestDriver(port);
         }
     }

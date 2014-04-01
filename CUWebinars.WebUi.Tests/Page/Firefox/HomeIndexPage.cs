@@ -8,6 +8,7 @@ namespace CUWebinars.WebUi.Tests.Page.Firefox
         public HomeIndexPage(ITestDriver seleniumTestDriver)
         {
             SeleniumTestDriver = seleniumTestDriver;
+            GlobalTestConfig = Global.GlobalConfigSingleton;
         }
 
         public void ClearCookies()

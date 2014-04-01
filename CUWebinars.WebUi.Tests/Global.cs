@@ -11,6 +11,7 @@ namespace CUWebinars.WebUi.Tests
         public string ChromeWebDriverPath { get; set; }
         public string ChromeWebDriverPort { get; set; }
         public string FirefoxExePath { get; set; }
+        public string FirefoxBrowserPort { get; set; }
         public string HomeUrl { get; set; }
         public string IeWebDriverPath { get; set; }
         public string IeWebDriverPort { get; set; }
@@ -32,6 +33,7 @@ namespace CUWebinars.WebUi.Tests
                 UniqueInstance.ChromeWebDriverPort = ApplicationSettingsSection["ChromeWebDriverPort"];
                 UniqueInstance.ChromeWebDriverPath = ApplicationSettingsSection["ChromeWebDriverPath"];
                 UniqueInstance.FirefoxExePath = ApplicationSettingsSection["FirefoxExePath"];
+                UniqueInstance.FirefoxBrowserPort = ApplicationSettingsSection["FirefoxBrowserPort"];
                 UniqueInstance.HomeUrl = ApplicationSettingsSection["HomeUrl"];
             }
 
@@ -51,11 +53,11 @@ namespace CUWebinars.WebUi.Tests
         //private const string ApplicationName = "CUWebinars.Web";
         //private static Process _iisProcess;
 
-        [AssemblyInitialize]
-        public static void AssemblyInitialize(TestContext context)
-        {
-            //StartIis();
-        }
+        //[AssemblyInitialize]
+        //public static void AssemblyInitialize(TestContext context)
+        //{
+        //    //StartIis();
+        //}
 
         //[AssemblyCleanup]
         //public static void TestCleanup()

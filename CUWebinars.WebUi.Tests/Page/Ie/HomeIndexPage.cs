@@ -10,6 +10,7 @@ namespace CUWebinars.WebUi.Tests.Page.Ie
         public HomeIndexPage(ITestDriver seleniumTestDriver)
         {
             SeleniumTestDriver = seleniumTestDriver;
+            GlobalTestConfig = Global.GlobalConfigSingleton;
         }
 
         public void Wait(int milliSeconds = 1000)

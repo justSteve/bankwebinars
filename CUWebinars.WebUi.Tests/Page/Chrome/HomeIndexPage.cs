@@ -8,7 +8,8 @@ namespace CUWebinars.WebUi.Tests.Page.Chrome
         public HomeIndexPage(ITestDriver seleniumTestDriver)
         {
             SeleniumTestDriver = seleniumTestDriver;
-            Url = @"http://localhost:5556";
+            GlobalTestConfig = Global.GlobalConfigSingleton;
+            Url = GlobalTestConfig.HomeUrl;
         }
 
         public void ClearCookies()
@@ -18,11 +19,13 @@ namespace CUWebinars.WebUi.Tests.Page.Chrome
 
         public void ClickLoginLink()
         {
+            SeleniumTestDriver.Wait(1000);
             SeleniumTestDriver.FindByXPathClick(Constants.LoginLinkPath);
         }
 
         public void LogInToSite(string email, string password)
         {
+            SeleniumTestDriver.Wait(1000);
             SeleniumTestDriver.TypeTextWithEnter(Constants.EmailInput, email);
             SeleniumTestDriver.TypeTextAndTabAway(Constants.PasswordInput, password);
             SeleniumTestDriver.FindByIdClick(Constants.SignInButtonInput);
@@ -30,18 +33,19 @@ namespace CUWebinars.WebUi.Tests.Page.Chrome
 
         public void ClickRegisterLinkOnLoginView()
         {
+            SeleniumTestDriver.Wait(1000);
             SeleniumTestDriver.FindByXPathClick("/html/body/div/div/div/form/fieldset/div[3]/input");
         }
 
         public void EnterEmailAddressAndEnter(string email)
         {
-            SeleniumTestDriver.Wait(500);
+            SeleniumTestDriver.Wait(1000);
             SeleniumTestDriver.TypeTextWithEnter("RegisterFields.Email", email);
         }
 
         public void EnterPasswordWhereUserExists(string password)
         {
-            SeleniumTestDriver.Wait(500);
+            SeleniumTestDriver.Wait(1000);
             SeleniumTestDriver.TypeTextAndTabAway("Password1", password);
             SeleniumTestDriver.FindByIdClick("TheSubmitButton");
         }
