@@ -91,6 +91,16 @@ namespace CUWebinars.Business.Services
                 );
         }
 
+        public Affiliate GetAffiliateById(int id)
+        {
+            return _affiliateRepository.FindById(id);
+        }
+
+        public Option GetOptionById(int id)
+        {
+            return _optionRepository.FindOption(id);
+        }
+
         public IList<Option> GetOptionsByWebinarId(int id, bool detached)
         {
             return _refDataRepository.FindOptionsByWebinarId(id, false);
