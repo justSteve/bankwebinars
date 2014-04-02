@@ -50,9 +50,10 @@ namespace CUWebinars.Web.Controllers.api
                 model.RegistrationType
                 );
 
-            _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
+            var importedOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
 
-            var httpResponseMessage = Request.CreateResponse(HttpStatusCode.OK, new { Result = "Order successfully submitted"});
+            var httpResponseMessage = Request.CreateResponse(HttpStatusCode.Created, new { Result = "Order successfully submitted"});
+            httpResponseMessage.Headers.Location = new Uri(Request.RequestUri + importedOrder.idOrder.ToString());
 
             return httpResponseMessage;
         }
