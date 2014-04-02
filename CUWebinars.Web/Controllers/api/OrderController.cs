@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -53,7 +54,7 @@ namespace CUWebinars.Web.Controllers.api
             var importedOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
 
             var httpResponseMessage = Request.CreateResponse(HttpStatusCode.Created, new { Result = "Order successfully submitted"});
-            httpResponseMessage.Headers.Location = new Uri(Request.RequestUri + importedOrder.idOrder.ToString());
+            //httpResponseMessage.Headers.Location = new Uri(Path.Combine(Request.RequestUri.ToString(), importedOrder.idOrder.ToString()));
 
             return httpResponseMessage;
         }
