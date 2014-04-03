@@ -1,11 +1,11 @@
 ﻿@model CUWebinars.Web.Membership.Notification
-[@Model.ApplicationName] Account Created
+[@Model.ApplicationName] Email Change Requested
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Total Training Solutions Mail - Email Change Request</title>
+    <title>Email Change Requested</title>
     <style type="text/css">
         .auto-style1 {
             height: 10px;
@@ -36,7 +36,7 @@
                                     <img alt="https://ttseast.blob.core.windows.net/images/vrLocal/hardware_2_header_1.jpg" border="0" height="36" margin="0px 0px 0px 0px" src="https://ttseast.blob.core.windows.net/images/vrLocal/hardware_2_header_1.jpg" style="width: 374px; height: 36px; display: block;" width="374" />
                                 </td>
                                 <td align="right" bgcolor="#01232a" style="padding-right: 15px; border-top-color: rgb(52, 74, 88); border-right-color: rgb(52, 74, 88); border-top-width: 1px; border-right-width: 1px; border-top-style: solid; border-right-style: solid;" width="286">
-                                    <div style="color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold;">Email Change Requested</div>
+                                    <div style="color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold;"> Email Change Requested</div>
                                 </td>
                             </tr>
                             <tr>
@@ -45,7 +45,7 @@
                                 </td>
                                 <td align="left" bgcolor="#344a58" style="padding: 0px 15px 0px 0px; border-right-color: rgb(52, 74, 88); border-right-width: 1px; border-right-style: solid;">
                                     <p style="text-align: center; color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
-                                        An Important Message From Account Management at @Model.ApplicationName!
+                                        Important Message From Account Management at CUWebinars!
                                     </p>
                                 </td>
                             </tr>
@@ -56,6 +56,8 @@
                     <img alt="right_shadow.jpg" border="0" height="1" margin="0px 0px 0px 0px" src="https://ttseast.blob.core.windows.net/images/vrLocal/right_shadow.jpg" style="width: 5px; height: 1px; display: block;" width="5" />
                 </td>
             </tr>
+
+
             <tr style="background-color: #B4D1EC">
                 <td style="padding: 15px 0px; border-right-color: rgb(52, 74, 88); border-left-color: rgb(52, 74, 88); border-right-width: 1px; border-left-width: 1px; border-right-style: solid; border-left-style: solid;">
                     <table align="center" cellpadding="0" cellspacing="0">
@@ -66,7 +68,6 @@
                                 </td>
                             </tr>
 
-
                             <tr style="background-color: #344a58">
                                 <td colspan="2">
                                     <img alt="spacer.gif" height="10" src="https://ttseast.blob.core.windows.net/images/vrLocal/spacer.gif" style="width: 1px; height: 10px; display: block;" width="1" />
@@ -76,26 +77,21 @@
                                 <td colspan="2" style="background-color: #344a58">
                                     <table width="630px" border="0" align="center" cellpadding="0" cellspacing="0">
                                         <tr>
-                                            <td style="background-color: #344a58; color: #FFFFCC; padding: 10px;" colspan="2"><b>Summary</b></td>
-                                        </tr>
-                                        <tr>
                                             <td colspan="2">
                                                 <table width="550px" border="0" align="center" cellpadding="0" cellspacing="0">
                                                     <tr>
-                                                        <td width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-size: smaller">&nbsp;@Model.Username</td>
+                                                        <td width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-size: smaller">&nbsp;</td>
                                                         <td width="400px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">&nbsp;</td>
                                                     </tr>
                                                     <tr>
-                                                        <td style="text-align: right; width: 130px; background-color: #CCCCCC; padding-right: 6px; font-size: smaller">Full Name:</td>
-                                                        <td style="text-align: left; background-color: #B4D1EC; padding-left: 6px;"></td>
+                                                        <td style="text-align: right; width: 130px; background-color: #CCCCCC; padding-right: 6px; font-size: smaller"></td>
+                                                        <td style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
+                                                            We've recieved a request to change the email account associated with your account at @Model.ApplicationName. If you didn't request this change please take no action (or contact us at 800-831-0678 ext. 6).
+                                                        </td>
                                                     </tr>
                                                     <tr>
-                                                        <td style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-size: smaller">Email:</td>
-                                                        <td style="text-align: left; background-color: #B4D1EC; padding-left: 6px;"></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-size: smaller">&nbsp;@Model.Email</td>
-                                                        <td width="400px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">&nbsp;</td>
+                                                        <td style="text-align: right; width: 130px; background-color: #CCCCCC; padding-right: 6px; font-size: smaller"></td>
+                                                        <td style="text-align: left; background-color: #B4D1EC; padding-left: 6px;"><br />Confirm the change request by clicking: <b><a href="@Model.ConfirmChangeEmailUrl">@Model.ConfirmChangeEmailUrl</a></b><br /></td>
                                                     </tr>
                                                 </table>
                                             </td>
@@ -103,34 +99,16 @@
                                     </table>
                                 </td>
                             </tr>
+
                             <tr>
-                                <td style="background-color: #344a58; color: #FFFFCC; padding: 10px;" colspan="2"><b>Notification Details</b></td>
+                                <td style="background-color: #344a58; color: #FFFFCC; padding: 10px;" colspan="2">&nbsp;</td>
                             </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <table width="630px" border="0" cellspacing="10" cellpadding="10">
-                                        <tr>
-                                            <td colspan="2">
-                                                <p align="center">
-                                                    This message confirms your email address with @Model.ApplicationName.
-                                                </p>
-                                                <blockquote>
-
-                                                    Please click here to confirm recipt of this message:<br /><br /><b>
-
-                                                        @Model.ConfirmChangeEmailUrl
-                                                    </b><br /><br />
-
-                                                    If this was in error or not requested no action is required.<br /><br /><b>
-
-                                                    </b>
-
-                                                </blockquote>
-                                            </td>
-                                        </tr>
-                                    </table>
+                            <tr style="background-color: #344a58">
+                                <td colspan="2" height="6">
+                                    <img alt="large_box_bottom.gif" border="0" height="6" margin="0px 0px 0px 0px" src="https://ttseast.blob.core.windows.net/images/vrLocal/large_box_bottom.gif" style="width: 630px; height: 6px; display: block;" />
                                 </td>
                             </tr>
+
                         </tbody>
                     </table>
                 </td>
@@ -157,5 +135,6 @@
             </tr>
         </tbody>
     </table>
+
 </body>
 </html>
