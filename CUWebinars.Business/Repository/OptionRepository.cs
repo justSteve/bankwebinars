@@ -9,7 +9,7 @@ namespace CUWebinars.Business.Repository
     {
         public Option FindOption(int id)
         {
-            return items.Find(id);
+            return items.FirstOrDefault(o => o.idOption == id);
         }
 
         public IList<Option> FindOptionsByWebinarId(int id, bool detached)

@@ -17,7 +17,7 @@ namespace CUWebinars.Web.Models
         public IList<string> AdditionalLocations { get; set; }
         public string Origin { get; set; }
         public Address ShippingAddress { get; set; }
-        public int Status { get; set; }
+        public OrderRowStatus Status { get; set; }
         public string UserComments { get; set; }
     }
 }

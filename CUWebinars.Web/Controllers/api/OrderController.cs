@@ -44,17 +44,56 @@ namespace CUWebinars.Web.Controllers.api
             var webUser = _membershipService.GetUserByEmail(model.Email);
             var option = _orderManagementService.GetOptionById(model.idOption);
             var affiliate = _orderManagementService.GetAffiliateById(model.idAffiliate);
+            model.BillingAddress.WebUser = webUser;
+            model.ShippingAddress.WebUser = webUser;
+
+            var orderRowOption = _orderManagementService.CreateOrderRowOption(option,
+                option.OptionExplain,
+                Convert.ToDecimal(option.PriceToAdd ?? 0.0),
+                model.AlternativeEmail,
+                model.AdditionalLocations.Count,
+                model.AdditionalLocations.ToArray()
+                );
+            
             var orderRow = _orderManagementService.CreateOrderRow(
-                webinar, 
-                null, // OrderRowOption gord here 
+                webinar,
+                orderRowOption, 
                 model.AlternativeEmail,
                 model.idOption
                 );
+            orderRow.idDiscount = model.Discount;
+            orderRow.Status = model.Status;
 
             var importedOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
 
+            importedOrder.AdminComments = model.AdminComments;
+            importedOrder.AffiliateComments = model.AffiliateComments;
+            importedOrder.UserComments = model.UserComments;
+            importedOrder.Origin = model.Origin;
+            importedOrder.BillingAddress = model.BillingAddress.StreetAddress;
+            importedOrder.BillingAddress2 = model.BillingAddress.StreetAddress2;
+            importedOrder.BillingPhone = model.BillingAddress.Phone;
+            importedOrder.BillingEmail = model.Email;
+            importedOrder.BillingCity= model.BillingAddress.City;
+            importedOrder.BillingState = model.BillingAddress.State;
+            importedOrder.BillingZip= model.BillingAddress.Zip;
+            importedOrder.FirstName = webUser.FirstName;
+            importedOrder.LastName = webUser.LastName;
+            importedOrder.Institution = webUser.Institution.InstitutionName;
+            
+            importedOrder.ShippingAddress = model.ShippingAddress.StreetAddress;
+            importedOrder.ShippingAddress2 = model.ShippingAddress.StreetAddress2;
+            importedOrder.ShippingPhone = model.ShippingAddress.Phone;
+            importedOrder.ShippingCity= model.ShippingAddress.City;
+            importedOrder.ShippingState = model.ShippingAddress.State;
+            importedOrder.ShippingZip= model.ShippingAddress.Zip;
+            importedOrder.ShippingFirstName = webUser.FirstName;
+            importedOrder.ShippingLastName = webUser.LastName;
+
+            _orderManagementService.SaveOrderChanges(importedOrder);
+
             var httpResponseMessage = Request.CreateResponse(HttpStatusCode.Created, new { Result = "Order successfully submitted"});
-            //httpResponseMessage.Headers.Location = new Uri(Path.Combine(Request.RequestUri.ToString(), importedOrder.idOrder.ToString()));
+            httpResponseMessage.Headers.Location = new Uri(Path.Combine(Request.RequestUri.ToString(), importedOrder.idOrder.ToString()));
 
             return httpResponseMessage;
         }
