@@ -46,19 +46,25 @@ namespace CUWebinars.Web.Controllers.api
             var affiliate = _orderManagementService.GetAffiliateById(model.idAffiliate);
             model.BillingAddress.WebUser = webUser;
             model.ShippingAddress.WebUser = webUser;
+            var additionalLocationsAsString = string.Join(";", model.AdditionalLocations);
 
-            var orderRowOption = _orderManagementService.CreateOrderRowOption(option,
-                option.OptionExplain,
-                Convert.ToDecimal(option.PriceToAdd ?? 0.0),
-                model.AlternativeEmail,
-                model.AdditionalLocations.Count,
-                model.AdditionalLocations.ToArray()
-                );
-            
+            OrderRowOption orderRowOption = null;
+
+            if (model.AdditionalLocations.Any())
+            {
+                orderRowOption = _orderManagementService.CreateOrderRowOption(option,
+                    option.OptionExplain,
+                    Convert.ToDecimal(option.PriceToAdd ?? 0.0),
+                    additionalLocationsAsString,
+                    model.AdditionalLocations.Count,
+                    model.AdditionalLocations.ToArray()
+                    );
+            }
+
             var orderRow = _orderManagementService.CreateOrderRow(
                 webinar,
-                orderRowOption, 
-                model.AlternativeEmail,
+                orderRowOption,
+                additionalLocationsAsString,
                 model.idOption
                 );
             orderRow.idDiscount = model.Discount;
@@ -92,7 +98,7 @@ namespace CUWebinars.Web.Controllers.api
 
             _orderManagementService.SaveOrderChanges(importedOrder);
 
-            var httpResponseMessage = Request.CreateResponse(HttpStatusCode.Created, new { Result = "Order successfully submitted"});
+            var httpResponseMessage = Request.CreateResponse(HttpStatusCode.Created, new { Result = "Order successfully submitted" });
             httpResponseMessage.Headers.Location = new Uri(Path.Combine(Request.RequestUri.ToString(), importedOrder.idOrder.ToString()));
 
             return httpResponseMessage;
