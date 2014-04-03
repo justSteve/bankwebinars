@@ -14,7 +14,6 @@ namespace CUWebinars.Selenium.Core.Ie
 
         public override void Initialize()
         {
-            //ieTestDriverLocation = ConfigurationManager.AppSettings["ieTestDriverLocation"].ToString();
             var internetExplorerDriverService = InternetExplorerDriverService.CreateDefaultService(DriverPath);
             var internetExplorerOptions = new InternetExplorerOptions
             {

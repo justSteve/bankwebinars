@@ -48,7 +48,7 @@ namespace CUWebinars.Web.Controllers.api
                 webinar, 
                 null, // OrderRowOption gord here 
                 model.AlternativeEmail,
-                model.RegistrationType
+                model.idOption
                 );
 
             var importedOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);

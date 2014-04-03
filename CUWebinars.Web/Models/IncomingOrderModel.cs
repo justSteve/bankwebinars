@@ -13,11 +13,9 @@ namespace CUWebinars.Web.Models
         public string Email { get; set; }
         public int idAffiliate { get; set; }
         public int idOption { get; set; }
-        public int idOrder { get; set; }
         public int idWebinar { get; set; }
-        public IList<OrderRowOption> OrderRowOptions { get; set; }
+        public IList<string> AdditionalLocations { get; set; }
         public string Origin { get; set; }
-        public int RegistrationType { get; set; }
         public Address ShippingAddress { get; set; }
         public int Status { get; set; }
         public string UserComments { get; set; }
