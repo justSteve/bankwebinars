@@ -226,6 +226,7 @@ var stateManager = function () {
         },
 
         enterDifferentAddress = function () {
+            //user choose - yes that's my institution but I'd like to enter a different address'
             console.log('EnterDiffAddress hit');
             pageObjects.modalInstitution().modal('hide');
             pageObjects.wrapZip().hide('slow');
@@ -338,7 +339,7 @@ var stateManager = function () {
             var confirmedPwd = $.trim(confirmPasswordInput.val());
 
             if (!confirmedPwd) {
-                confirmPasswordInput.next('span').removeAttr('class').attr('class','field-validation-error').append('<span>Confirming your password is required.</span>');
+                confirmPasswordInput.next('span').removeAttr('class').attr('class','field-validation-error').append('<span>Passwors don\'t match.</span>');
             }
 
             if (!pwd || !confirmedPwd || pwd.length < 2 || pageObjects.registerFieldsPassword().nextAll('span:last').hasClass('field-validation-error')) {
@@ -448,6 +449,7 @@ var stateManager = function () {
         startView = function () {
             pageObjects.register().hide();
             pageObjects.reset().hide();
+            $('#nonUSAddressInput').hide();
         },
 
         useRegisteredAddress = function () {
@@ -893,7 +895,7 @@ $(function () {
 
         var url = '/Account/Register';
         console.log('Submitting Register Details');
-
+        alert("startSubmitting");
         $.ajax({
             type: 'POST',
             contentType: constants.FormPostContentType,
@@ -902,17 +904,19 @@ $(function () {
             dataType: constants.JsonDataType,
             data: $(this).serialize(),
             beforeSend: function () {
-                console.log('beforeSend Register Details');
+                console.log('beforeSend Register Details!!!');
                 // this is where we append a loading image
                 pageObjects.labelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
             }
         }).done(function (data) {
+            alert("datareturned");// never fires!
             console.log('done Register Details');
-            if (data.Status === 'Success') {
+            if (data.Status == 'Success') {
                 console.log('success  Register Details');
                 stateManager.action = '';
                 pageObjects.labelEmail().html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
-                location.assign(path + '/'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
+                //location.assign(path + '/'); //TODO: we need to implement a pattern where if 'returnURL' (server-side origin) is populated, it's used. Otherwise return to home page.
+                location.href = '/Home';
             } else if (data.Status === 'Fail') {
                 console.log('statusFail  Register Details');
                 pageObjects.labelEmail().html('<span class="label label-information">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');

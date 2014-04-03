@@ -672,6 +672,7 @@ namespace CUWebinars.Web.Controllers
             foreach (var error in errors)
             {
                 Debug.WriteLine(error.ErrorMessage);
+                Logger.Error("Account/Register: " + error.ErrorMessage);
             }
 
             if (ModelState.IsValid)
@@ -686,7 +687,6 @@ namespace CUWebinars.Web.Controllers
                     //var jsonString = scriptSerializer.Serialize(model);
 
                     //return Json(jsonString, JsonRequestBehavior.AllowGet);
-                    
                 }
 
                 var myInstitution = membershipService.ProcessInstitutionForUser(model.RegisterFields.Institution.Trim(),
@@ -755,13 +755,14 @@ namespace CUWebinars.Web.Controllers
                     }
 
                     membershipService.LogInUser(globalConfig.Tenant, model.RegisterFields.Email, model.RegisterFields.Password, true); // log the user in.
-
+                    Logger.Info("/Account/Register UserAdded: " + model.RegisterFields.Email);
                   return Json(new { Status = "Success" });
 
                 }
                 catch (MembershipCreateUserException e)
                 {
                     ModelState.AddModelError(string.Empty, ErrorCodeToString(e.StatusCode)); //TODO: add error message here and handle in razor
+                    Logger.Error("/Account/Register: " + e.Message);
                 }
             }
 
