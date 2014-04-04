@@ -64,7 +64,7 @@ namespace CUWebinars.Web.Controllers.api
             var orderRow = _orderManagementService.CreateOrderRow(
                 webinar,
                 orderRowOption,
-                additionalLocationsAsString,
+                model.AlternativeEmail,
                 model.idOption
                 );
             orderRow.idDiscount = model.Discount;
@@ -95,6 +95,7 @@ namespace CUWebinars.Web.Controllers.api
             importedOrder.ShippingZip= model.ShippingAddress.Zip;
             importedOrder.ShippingFirstName = webUser.FirstName;
             importedOrder.ShippingLastName = webUser.LastName;
+            
 
             _orderManagementService.SaveOrderChanges(importedOrder);
 
