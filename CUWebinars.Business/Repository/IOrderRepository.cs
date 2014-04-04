@@ -12,8 +12,6 @@ namespace CUWebinars.Business.Repository
             Option option,
             string optionDescription,
             decimal price,
-            string alternateEmail,
-            int additionalLocationsCount,
             string[] additionalLocationsEmails);
         Order AssignAffiliate(Affiliate affiliate, Order order);
         Order AssignWebUserToOrder(WebUser webUser, Order order);

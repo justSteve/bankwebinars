@@ -48,8 +48,10 @@ namespace CUWebinars.Business.Repository
             entry.State = EntityState.Modified;
             
             var newOrderRow = strongTypedContext.OrderRows.Create();
-            //newOrderRow.Order = order;
-            newOrderRow.OrderRowOptions.Add(orderRowOption);
+
+            if (orderRowOption != null)
+                newOrderRow.OrderRowOptions.Add(orderRowOption);
+
             newOrderRow.Webinar = webinar;
             newOrderRow.RegistrationType = registrationType;
             newOrderRow.AlternateEmail = alternateEmail;
@@ -78,8 +80,6 @@ namespace CUWebinars.Business.Repository
             Option option, 
             string optionDescription, 
             decimal price, 
-            string alternateEmail, 
-            int additionalLocationsCount,
             string [] additionalLocationsEmails)
         {
             var strongTypedContext = (TTSWebinarsContext) db;

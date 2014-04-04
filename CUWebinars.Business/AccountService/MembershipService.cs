@@ -97,7 +97,6 @@ namespace CUWebinars.Business.AccountService
             string firstName, 
             string lastName, 
             string userName, 
-            string password, 
             string email,
             USTimeZone timeZone, 
             UserType userType, 

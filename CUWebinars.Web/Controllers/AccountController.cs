@@ -183,7 +183,6 @@ namespace CUWebinars.Web.Controllers
                     var result = membershipService.CreateWebUser(globalConfig.Tenant,
                         model.FirstName
                         , model.LastName
-                        , model.Email
                         , model.LastName.ToLower() // password
                         , model.Email
                         , USTimeZone.Central
@@ -677,11 +676,15 @@ namespace CUWebinars.Web.Controllers
 
             if (ModelState.IsValid)
             {
+                var email = model.RegisterFields.Email.Trim();
+                var firstName = model.RegisterFields.FirstName.Trim();
+                var lastName = model.RegisterFields.LastName.Trim();
+
                 //first check if email exists
-                var checkIfUsed = membershipService.GetUserByEmail(model.RegisterFields.Email);
+                var checkIfUsed = membershipService.GetUserByEmail(email);
                 if (checkIfUsed != null)
                 {
-                    Logger.Error("dupe email attempt: " + model.RegisterFields.Email);
+                    Logger.Error("dupe email attempt: " + email);
                     ModelState.AddModelError("Email", "That email already exists. Would you like to reset the password?");
                     //var scriptSerializer = new System.Web.Script.Serialization.JavaScriptSerializer();
                     //var jsonString = scriptSerializer.Serialize(model);
@@ -690,7 +693,7 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 var myInstitution = membershipService.ProcessInstitutionForUser(model.RegisterFields.Institution.Trim(),
-                    model.RegisterFields.Email.TrimEnd(),
+                    email,
                     model.RegisterFields.BillingAddress.City.Trim(),
                     model.RegisterFields.BillingAddress.State.Trim(),
                     "N",
@@ -699,54 +702,62 @@ namespace CUWebinars.Web.Controllers
 
                 try
                 {
-                    var billingAddress = new Address();
-                    billingAddress.AddressType = Enum.GetName(typeof(AddressType), model.RegisterFields.BillingAddress.TypeOfAddress);
-                    billingAddress.City = model.RegisterFields.BillingAddress.City.Trim();
-                    billingAddress.Country = model.RegisterFields.BillingAddress.Country.Trim();
-                    billingAddress.Name = model.RegisterFields.FirstName.Trim() + ' ' + model.RegisterFields.LastName.Trim();
-                    billingAddress.Phone = model.RegisterFields.BillingAddress.Phone.Trim();
-                    billingAddress.State = model.RegisterFields.BillingAddress.State.Trim();
-                    billingAddress.StreetAddress = model.RegisterFields.BillingAddress.StreetAddress.Trim();
-                    billingAddress.StreetAddress2 = model.RegisterFields.BillingAddress.StreetAddress2 == null ? model.RegisterFields.BillingAddress.StreetAddress2 : model.RegisterFields.BillingAddress.StreetAddress2.Trim();
-                    billingAddress.Zip = model.RegisterFields.BillingAddress.Zip.Trim();
-
-                    var shippingAddress = new Address();
-                    shippingAddress.AddressType = Enum.GetName(typeof(AddressType), model.RegisterFields.ShippingAddress.TypeOfAddress);
-                    shippingAddress.City = model.RegisterFields.ShippingAddress.City.Trim();
-                    shippingAddress.Country = model.RegisterFields.ShippingAddress.Country.Trim();
-                    shippingAddress.Name = model.RegisterFields.FirstName.Trim() + ' ' + model.RegisterFields.LastName.Trim();
-                    shippingAddress.Phone = model.RegisterFields.ShippingAddress.Phone.Trim();
-                    shippingAddress.State = model.RegisterFields.ShippingAddress.State.Trim();
-                    shippingAddress.StreetAddress = model.RegisterFields.ShippingAddress.StreetAddress.Trim();
-                    shippingAddress.StreetAddress2 = model.RegisterFields.ShippingAddress.StreetAddress2 == null ? model.RegisterFields.ShippingAddress.StreetAddress2 : model.RegisterFields.ShippingAddress.StreetAddress2.Trim();
-                    shippingAddress.Zip = model.RegisterFields.ShippingAddress.Zip.Trim();
-
-                    IList<Address> addresses = new List<Address> { billingAddress, shippingAddress };
+                    IList<Address> addresses = new List<Address> { new Address
+                        {
+                            AddressType = Enum.GetName(typeof (AddressType), model.RegisterFields.BillingAddress.TypeOfAddress),
+                            City = model.RegisterFields.BillingAddress.City.Trim(),
+                            Country = model.RegisterFields.BillingAddress.Country.Trim(),
+                            Name = firstName + ' ' + lastName,
+                            Phone = model.RegisterFields.BillingAddress.Phone.Trim(),
+                            State = model.RegisterFields.BillingAddress.State.Trim(),
+                            StreetAddress = model.RegisterFields.BillingAddress.StreetAddress.Trim(),
+                            StreetAddress2 =
+                                model.RegisterFields.BillingAddress.StreetAddress2 == null
+                                    ? model.RegisterFields.BillingAddress.StreetAddress2
+                                    : model.RegisterFields.BillingAddress.StreetAddress2.Trim(),
+                            Zip = model.RegisterFields.BillingAddress.Zip.Trim()
+                        },
+                        new Address
+                        {
+                            AddressType = Enum.GetName(typeof (AddressType), model.RegisterFields.ShippingAddress.TypeOfAddress),
+                            City = model.RegisterFields.ShippingAddress.City.Trim(),
+                            Country = model.RegisterFields.ShippingAddress.Country.Trim(),
+                            Name = firstName + ' ' + lastName,
+                            Phone = model.RegisterFields.ShippingAddress.Phone.Trim(),
+                            State = model.RegisterFields.ShippingAddress.State.Trim(),
+                            StreetAddress = model.RegisterFields.ShippingAddress.StreetAddress.Trim(),
+                            StreetAddress2 =
+                                model.RegisterFields.ShippingAddress.StreetAddress2 == null
+                                    ? model.RegisterFields.ShippingAddress.StreetAddress2
+                                    : model.RegisterFields.ShippingAddress.StreetAddress2.Trim(),
+                            Zip = model.RegisterFields.ShippingAddress.Zip.Trim()
+                        }
+                    };
                     
                     var webUser = membershipService.CreateWebUser(globalConfig.Tenant,
-                        model.RegisterFields.FirstName.Trim()
-                        , model.RegisterFields.LastName.Trim()
-                        , string.Empty //  Pass empty string for username because MembershipReboot assigns the email to the username field where emailIsUsername is true
+                        firstName
+                        , lastName
                         , model.RegisterFields.Password
-                        , model.RegisterFields.Email.Trim()
+                        , email
                         , USTimeZone.Central
                         , UserType.Customer
                         , myInstitution.idInstitution
                         , addresses
                         , model.RegisterFields.Title == null ? model.RegisterFields.Title : model.RegisterFields.Title.Trim()
                         , null
-                        , "A");
+                        , "A"
+                        );
 
                     if (!stateService.HasValue(Constants.CurrentUser))
                         stateService.SetValue<WebUser>(Constants.CurrentUser, webUser);
 
                     var userAccount = membershipService.CreateUser(
                         globalConfig.Tenant,
-                        webUser.FirstName,
-                        webUser.LastName,
-                        string.Empty,
+                        firstName,
+                        lastName,
+                        string.Empty, //  Pass empty string for username because MembershipReboot assigns the email to the username field where emailIsUsername is true
                         model.RegisterFields.Password,
-                        webUser.email);
+                        email);
 
                     if (userAccount != null)
                     {

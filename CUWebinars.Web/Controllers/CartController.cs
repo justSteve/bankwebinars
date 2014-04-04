@@ -210,7 +210,6 @@ namespace CUWebinars.Web.Controllers
             model.Options = options;
 
             var option = options.SingleOrDefault(o => o.Type == "additional_location");
-            //var connections = addEmails.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 
             OrderRowOption orderRowOption = null;
 
@@ -227,8 +226,6 @@ namespace CUWebinars.Web.Controllers
                     option,
                     option.OptionExplain,
                     Convert.ToDecimal(option.PriceToAdd ?? 0.0),
-                    string.Empty, //orderRow.AlternateEmail
-                    emailAddresses.Count,
                     emailAddresses.ToArray()
                     );
 
