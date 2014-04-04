@@ -15,8 +15,6 @@ namespace CUWebinars.Business.Services
             Option option,
             string optionDescription,
             decimal price,
-            string alternateEmail,
-            int additionalLocationsCount,
             string[] additionalLocationsEmails);
         Affiliate GetAffiliateById(int id);
         Option GetOptionById(int id);

@@ -71,8 +71,7 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
                     var result = membershipService.CreateWebUser(globalConfig.Tenant,
                         model.FirstName
                         , model.LastName
-                        , model.FirstName + ' ' + model.LastName
-                        , model.LastName.ToLower()
+                        , model.Password
                         , model.Email
                         , USTimeZone.Central
                         , model.UserType

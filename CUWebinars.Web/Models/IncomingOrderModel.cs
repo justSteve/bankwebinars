@@ -20,9 +20,13 @@ namespace CUWebinars.Web.Models
         public string Institution  { get; set; }
         public string LastName { get; set; }
         public string Origin { get; set; }
+        public string Password { get; set; }
         public bool SendNotification { get; set; }
         public Address ShippingAddress { get; set; }
         public OrderRowStatus Status { get; set; }
+        public string Title { get; set; }
+        public UserType UserType { get; set; }
+        public USTimeZone UsTimeZone { get; set; }
         public string UserComments { get; set; }
     }
 }

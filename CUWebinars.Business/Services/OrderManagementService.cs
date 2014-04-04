@@ -67,26 +67,16 @@ namespace CUWebinars.Business.Services
             return _orderRepository.CreateOrderRow(webinar, orderRowOption, alternateEmail, registrationType);
         }
 
-
-        //public OrderRow CreateOrderRow(Webinar webinar, Order order, string alternateEmail, int registrationType)
-        //{
-        //    return _orderRepository.CreateOrderRow(webinar, orderRowOption, alternateEmail, registrationType);
-        //}
-
         public OrderRowOption CreateOrderRowOption(
             Option option,
             string optionDescription,
             decimal price,
-            string alternateEmail,
-            int additionalLocationsCount,
             string[] additionalLocationsEmails)
         {
             return _orderRepository.CreateOrderRowOption(
                 option,
                 optionDescription,
                 price,
-                alternateEmail,
-                additionalLocationsCount,
                 additionalLocationsEmails
                 );
         }

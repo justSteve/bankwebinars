@@ -21,7 +21,6 @@ namespace CUWebinars.Business.AccountService
             string tenant,
             string firstName,
             string lastName,
-            string userName,
             string password,
             string email,
             USTimeZone timeZone,
