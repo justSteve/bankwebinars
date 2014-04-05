@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations.Schema;
+
 using System.Data.Entity.ModelConfiguration;
 
 namespace CUWebinars.Business.Models.Mapping
@@ -8,28 +8,28 @@ namespace CUWebinars.Business.Models.Mapping
         public OrderRowMap()
         {
             // Primary Key
-            this.HasKey(t => t.idOrderRow);
+            HasKey(t => t.idOrderRow);
 
             // Table & Column Mappings
-            this.ToTable("OrderRow");
-            this.Property(t => t.idOrderRow).HasColumnName("idOrderRow");
-            this.Property(t => t.idOrder).HasColumnName("idOrder");
-            this.Property(t => t.idWebinar).HasColumnName("idWebinar");
-            this.Property(t => t.RowPrice).HasColumnName("RowPrice");
+            ToTable("OrderRow");
+            Property(t => t.idOrderRow).HasColumnName("idOrderRow");
+            Property(t => t.idOrder).HasColumnName("idOrder");
+            Property(t => t.idWebinar).HasColumnName("idWebinar");
+            Property(t => t.RowPrice).HasColumnName("RowPrice");
             //this.Property(t => t.RowStatus).HasColumnName("RowStatus");
-            this.Property(t => t.ShipmentDate).HasColumnName("ShipmentDate");
-            this.Property(t => t.AccessExpires).HasColumnName("AccessExpires");
-            this.Property(t => t.Royalty).HasColumnName("Royalty");
+            Property(t => t.ShipmentDate).HasColumnName("ShipmentDate");
+            Property(t => t.AccessExpires).HasColumnName("AccessExpires");
+            Property(t => t.Royalty).HasColumnName("Royalty");
 
             // Relationships
-            this.HasRequired(t => t.Order)
-                .WithMany(t => t.OrderRows)
-                .HasForeignKey(d => d.idOrder);
-            this.HasRequired(t => t.Webinar)
-                .WithMany(t => t.OrderRows)
-                .HasForeignKey(d => d.idWebinar);
-            this.HasOptional(t => t.AdditionalLocation)
-                .WithOptionalDependent(t => t.OrderRow);
+            HasRequired(t => t.Order)
+                            .WithMany(t => t.OrderRows)
+                            .HasForeignKey(d => d.idOrder);
+            HasRequired(t => t.Webinar)
+                            .WithMany(t => t.OrderRows)
+                            .HasForeignKey(d => d.idWebinar);
+            HasOptional(t => t.AdditionalLocation)
+                            .WithOptionalDependent(t => t.OrderRow);
         }
     }
 }

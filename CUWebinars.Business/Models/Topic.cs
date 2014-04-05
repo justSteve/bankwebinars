@@ -7,8 +7,8 @@ namespace CUWebinars.Business.Models
     {
         public Topic()
         {
-            this.Topic1 = new List<Topic>();
-            this.WebinarTopicXrefs = new List<WebinarTopicXref>();
+Topic1 = new List<Topic>();
+WebinarTopicXrefs = new List<WebinarTopicXref>();
         }
 
         public int idTopic { get; set; }

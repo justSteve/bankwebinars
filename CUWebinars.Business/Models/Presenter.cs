@@ -7,7 +7,7 @@ namespace CUWebinars.Business.Models
     {
         public Presenter()
         {
-            this.Webinars = new List<Webinar>();
+Webinars = new List<Webinar>();
         }
 
         public int idUser { get; set; }

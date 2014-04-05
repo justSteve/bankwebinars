@@ -8,10 +8,10 @@ namespace CUWebinars.Business.Models
         public Webinar()
         {
             //this.HostPropertyValues = new List<HostPropertyValue>();
-            this.RegTypes = new List<RegType>();
-            this.OrderRows = new List<OrderRow>();
-            this.WebinarFiles = new List<WebinarFile>();
-            this.WebinarTopicXrefs = new List<WebinarTopicXref>();
+RegTypes = new List<RegType>();
+OrderRows = new List<OrderRow>();
+WebinarFiles = new List<WebinarFile>();
+WebinarTopicXrefs = new List<WebinarTopicXref>();
         }
 
         public int idWebinar { get; set; }

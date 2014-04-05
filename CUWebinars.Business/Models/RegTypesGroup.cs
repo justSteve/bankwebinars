@@ -7,8 +7,8 @@ namespace CUWebinars.Business.Models
     {
         public RegTypesGroup()
         {
-            this.RegTypesGroupsXrefs = new List<RegTypesGroupsXref>();
-            this.RegTypesXrefs = new List<RegTypesXref>();
+            RegTypesGroupsXrefs = new List<RegTypesGroupsXref>();
+            RegTypesXrefs = new List<RegTypesXref>();
         }
 
         public int idRegTypeGroup { get; set; }

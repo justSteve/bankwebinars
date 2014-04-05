@@ -7,7 +7,7 @@ namespace CUWebinars.Business.Models
     {
         public Affiliate()
         {
-            this.Orders = new List<Order>();
+Orders = new List<Order>();
         }
 
         public int idUserAff { get; set; }

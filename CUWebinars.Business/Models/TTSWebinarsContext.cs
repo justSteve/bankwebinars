@@ -1,5 +1,4 @@
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using CUWebinars.Business.Models.Mapping;
 
 namespace CUWebinars.Business.Models
@@ -50,9 +49,9 @@ namespace CUWebinars.Business.Models
             modelBuilder.Configurations.Add(new DiscountMap());
             modelBuilder.Configurations.Add(new InstitutionMap());
             modelBuilder.Configurations.Add(new RegTypeMap());
-            ////modelBuilder.Configurations.Add(new RegTypesGroupMap());
-            ////modelBuilder.Configurations.Add(new RegTypesGroupsXrefMap());
-            ////modelBuilder.Configurations.Add(new RegTypesXrefMap());
+            modelBuilder.Configurations.Add(new RegTypesGroupMap());
+            modelBuilder.Configurations.Add(new RegTypesGroupsXrefMap());
+            modelBuilder.Configurations.Add(new RegTypesXrefMap());
             modelBuilder.Configurations.Add(new OrderRowMap());
             modelBuilder.Configurations.Add(new OrderMap());
             modelBuilder.Configurations.Add(new PresenterMap());
@@ -61,7 +60,7 @@ namespace CUWebinars.Business.Models
             modelBuilder.Configurations.Add(new WebinarFileMap());
             modelBuilder.Configurations.Add(new WebinarTopicXrefMap());
             modelBuilder.Configurations.Add(new WebUserMap());
-            
+
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+﻿
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
@@ -25,11 +25,11 @@ namespace CUWebinars.Business.AccountService
             IWebUserRepository webUserRepository)
         {
 
-            this.institutionRepository = institutionRepository;
-            this.refDataRepository = refDataRepository;
-            this.samAuthenticationService = samAuthenticationService;
-            this.userAccountService = userAccountService;
-            this.webUserRepository = webUserRepository;
+            institutionRepository = institutionRepository;
+            refDataRepository = refDataRepository;
+            samAuthenticationService = samAuthenticationService;
+            userAccountService = userAccountService;
+            webUserRepository = webUserRepository;
         }
 
         public UserAccount GetByVerificationKey(string id)
@@ -93,16 +93,16 @@ namespace CUWebinars.Business.AccountService
         }
 
         public WebUser CreateWebUser(
-            string tenant, 
-            string firstName, 
-            string lastName, 
-            string userName, 
+            string tenant,
+            string firstName,
+            string lastName,
+            string userName,
             string email,
-            USTimeZone timeZone, 
-            UserType userType, 
-            int institutionId, 
-            IList<Address> addresses, 
-            string title, 
+            USTimeZone timeZone,
+            UserType userType,
+            int institutionId,
+            IList<Address> addresses,
+            string title,
             int? idUserImported,
             string accountStatus = null)
         {
@@ -149,7 +149,7 @@ namespace CUWebinars.Business.AccountService
 
 
         public Institution ProcessInstitutionForUser(string institutionName,
-            string email, 
+            string email,
             string city,
             string state,
             string regIdentifier,
@@ -198,7 +198,7 @@ namespace CUWebinars.Business.AccountService
         {
             samAuthenticationService.SignIn(userAccount, persistant);
         }
-        
+
         public bool ChangePasswordFromResetKey(string key, string newPassword)
         {
             var userAccount = userAccountService.GetByVerificationKey(key);
