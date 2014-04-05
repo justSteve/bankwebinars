@@ -140,7 +140,7 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
                 throw;
             }
 
-            if (originalCost != row.Order.Total && row.Status != OrderRowStatus.InProcess)
+            if (originalCost != row.Order.Total && row.RowStatus != OrderStatus.InProcess)
             {
                 try
                 {

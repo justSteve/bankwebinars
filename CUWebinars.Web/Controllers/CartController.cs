@@ -309,7 +309,7 @@ namespace CUWebinars.Web.Controllers
                 IsUserLogged = true;
                 _orderManagementService.AssignUserToOrder(currentOrder);
                 currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
-                currentOrder.InitiatedBy = _orderManagementService.GetOrderInitiator();
+                currentOrder.Origin= _orderManagementService.GetOrderInitiator();
 
             }
             else
@@ -317,7 +317,7 @@ namespace CUWebinars.Web.Controllers
                 IsUserLogged = false;
                 //_orderManagementService.AssignUserToOrder(currentOrder);
                 currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
-                currentOrder.InitiatedBy = _orderManagementService.GetOrderInitiator();
+                currentOrder.Origin= _orderManagementService.GetOrderInitiator();
                 Logger.Error("ERROR: CartController | Signup - currentUser is null" + currentOrder.idOrder);
                 //TODO: assign appropriate ModelError and error logging/handling
             }
@@ -392,7 +392,7 @@ namespace CUWebinars.Web.Controllers
             //    {
             //        OrderFacade.Instance.AssignUserToOrder(_checkoutWorkflow.CurrentOrder, currentUser);
             //        _checkoutWorkflow.CurrentOrder.AuditInfo = forAuditInfo + " " + AppHelper.GetUserAuditInfo();
-            //        _checkoutWorkflow.CurrentOrder.InitiatedBy = currentUser.UserType;
+            //        _checkoutWorkflow.CurrentOrder.Origin= currentUser.UserType;
             //        //_checkoutWorkflow.CurrentOrder.InitiatedBy2 = currentUser;
             //        OrderFacade.Instance.Save(_checkoutWorkflow.CurrentOrder);
             //    }
@@ -439,13 +439,13 @@ namespace CUWebinars.Web.Controllers
 
         //[Authorize(Roles = AppRoles.Admin)]
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult SetOrderRowStatus(int orderRowID, OrderRowStatus status)
+        public ActionResult SetOrderStatus(int orderRowID, OrderStatus status)
         {
             OrderRow row = _orderManagementService.LoadOrderRow(orderRowID);
-            row.Status = status;
+            row.Order.OrderStatus = status;
             _orderManagementService.SaveOrderChanges(row.Order);
 
-            return Json(row.Status.ToString());
+            return Json(row.Order.OrderStatus.ToString());
         }
     }
 }

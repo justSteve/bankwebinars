@@ -77,9 +77,9 @@ namespace CUWebinars.Business.Repository
         public IQueryable<Order> GetOrdersByWebinar(int webinarId)
         {
             return ((TTSWebinarsContext)db).Orders.Where(o => o.OrderRows.Single().Webinar.idWebinar == webinarId
-                    && (o.OrderRows.Single().Status == OrderRowStatus.Billed
-                        || o.OrderRows.Single().Status == OrderRowStatus.Paid
-                        || o.OrderRows.Single().Status == OrderRowStatus.Submitted));
+                    && (o.OrderStatus == OrderStatus.Billed
+                        || o.OrderStatus == OrderStatus.Paid
+                        || o.OrderStatus == OrderStatus.Submitted));
         }
 
         public IQueryable<Webinar> GetByTopic(int topicId)
@@ -127,9 +127,10 @@ namespace CUWebinars.Business.Repository
                     continue;
                 }
                 if (((TTSWebinarsContext)db).RegTypes.Find(row.RegistrationType).ShowLiveNotifications == "No"
-                    && row.Status == OrderRowStatus.Abandoned
-                    || row.Status == OrderRowStatus.InProcess
-                    || row.Status == OrderRowStatus.Canceled)
+                    //&& Order.OrderStatus == OrderStatus.Abandoned
+                    //|| row.Status == OrderStatus.InProcess
+                    //|| row.Status == OrderStatus.Canceled
+                    )
                 {
                     continue;
                 }
@@ -139,9 +140,9 @@ namespace CUWebinars.Business.Repository
             //return (from order in orders let row = order.OrderRows.SingleOrDefault()
             //        where row != null 
             //        where (((TTSWebinarsContext)db).Options.Find((int) row.RegistrationType).ShowLiveNotifications != "No" 
-            //        || row.Status != OrderRowStatus.Abandoned) 
-            //        && row.Status != OrderRowStatus.InProcess 
-            //        && row.Status != OrderRowStatus.Canceled select order).ToList();
+            //        || row.Status != OrderStatus.Abandoned) 
+            //        && row.Status != OrderStatus.InProcess 
+            //        && row.Status != OrderStatus.Canceled select order).ToList();
         }
     }
 }

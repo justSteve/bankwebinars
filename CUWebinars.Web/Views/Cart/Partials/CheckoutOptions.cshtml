@@ -19,7 +19,7 @@
                 var RegCost = orderRowOption.RegTypePrice;
                 var RegLabel = orderRowOption.RegType.OptionLabel;
 
-                if (orderRow.Status == OrderRowStatus.Submitted || orderRow.Status == OrderRowStatus.Paid || orderRow.Status == OrderRowStatus.Billed)
+                if (orderRow.Status == OrderStatus.Submitted || orderRow.Status == OrderStatus.Paid || orderRow.Status == OrderStatus.Billed)
                 {
                 @*<span><i>Order# @Model.Order.OrderRows.FirstOrDefault().Order.ID<br>@RegLabel - $@RegCost<br></i></span>*@
                     if (Model.Webinar.ConnectionInfo != null)

@@ -182,9 +182,9 @@ namespace CUWebinars.Business.Services
         //    return GetAuthenticatedUser(userFacadeInstance);
         //}
 
-        public byte GetOrderInitiator()
+        public string GetOrderInitiator()
         {
-            return 0;
+            return "0";
         }
 
         public IEnumerable<IEvent> GetEvents()

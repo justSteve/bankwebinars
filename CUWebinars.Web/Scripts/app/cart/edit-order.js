@@ -220,7 +220,7 @@ function initRegistrationsTable(userID) {
             "sWidth": "15%",
             "fnRender": function (obj) {
                 var orderData = obj.aData[obj.iDataColumn];
-                return "<span class='alignright'>" + orderData.orderId + "<br>Source: " + orderData.initiatedBy + "</span> ";
+                return "<span class='alignright'>" + orderData.orderId + "<br>Source: " + orderData.Origin+ "</span> ";
             }
         },
 

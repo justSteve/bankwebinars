@@ -215,7 +215,7 @@ namespace CUWebinars.Web.Controllers
 
         //            _orderManagementService.AssignUserToOrder(currentOrder, user);
         //                currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
-        //                currentOrder.InitiatedBy = _orderManagementService.GetOrderInitiator();
+        //                currentOrder.Origin= _orderManagementService.GetOrderInitiator();
         //                //currentOrder.InitiatedBy2 = UserFacade.Instance.GetOrderInitiatorUser();
 
         //            var webinar = db.Webinars.Find(id);
@@ -415,7 +415,7 @@ namespace CUWebinars.Web.Controllers
                         ViewBag.connectionText = connectionText;
   
                     }
-                    if (checkOrder.OrderRows.Single().Status == OrderRowStatus.InProcess
+                    if (checkOrder.OrderStatus == OrderStatus.InProcess
                         && checkOrder.OrderRows.Single().idWebinar != id)
                     {
                         ViewBag.userHasOpenOrder = checkOrder.idOrder;

@@ -54,7 +54,7 @@ namespace CUWebinars.Business.Repository
 
             newOrderRow.Webinar = webinar;
             newOrderRow.RegistrationType = registrationType;
-            newOrderRow.AlternateEmail = alternateEmail;
+            //newOrderRow.AlternateEmail = alternateEmail;
             
             strongTypedContext.OrderRows.Add(newOrderRow);
 
@@ -101,9 +101,9 @@ namespace CUWebinars.Business.Repository
 
             var newOrderRowOption = strongTypedContext.AdditionalLocations.Create();
             //newOrderRowOption.
-            newOrderRowOption.idRegType = regType.idRegType;
-            newOrderRowOption.OptionDescription = optionDescription;
-            newOrderRowOption.RegTypePrice = price;
+            //newOrderRowOption.idRegType = regType.idRegType;
+            newOrderRowOption.DescriptionPromo = optionDescription;
+            newOrderRowOption.Price = price;
             //newOrderRowOption.Type = "Additional Location"; // TODO: check this with Stephen.
             //newOrderRowOption.AdditionalLocations = additionalLocations;
             strongTypedContext.AdditionalLocations.Add(newOrderRowOption);
@@ -181,8 +181,8 @@ namespace CUWebinars.Business.Repository
         //    items.Where(o => o.idUser == idUser
         //                                  && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Scheduled
         //                                  &&
-        //                                  (o.OrderRows.FirstOrDefault().Status == OrderRowStatus.Submitted ||
-        //                                   o.OrderRows.FirstOrDefault().Status == OrderRowStatus.Paid)
+        //                                  (o.OrderStatus == OrderStatus.Submitted ||
+        //                                   o.OrderStatus == OrderStatus.Paid)
         //        )
         //        .ToList()
         //        .ForEach(o =>
@@ -214,8 +214,9 @@ namespace CUWebinars.Business.Repository
             return items.Where(o => o.idUser == idUser
                                           && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Recorded
                                           &&
-                                          (o.OrderRows.FirstOrDefault().Status == OrderRowStatus.Submitted ||
-                                           o.OrderRows.FirstOrDefault().Status == OrderRowStatus.Paid)
+                                          (o.OrderStatus == OrderStatus.Submitted ||
+                                           o.OrderStatus == OrderStatus.Paid
+                                           )
                 )
                 .ToList();
         }
@@ -224,8 +225,8 @@ namespace CUWebinars.Business.Repository
             return items.Where(o => o.idUser == idUser
                                           && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Scheduled
                                           &&
-                                          (o.OrderRows.FirstOrDefault().Status == OrderRowStatus.Submitted ||
-                                           o.OrderRows.FirstOrDefault().Status == OrderRowStatus.Paid)
+                                          (o.OrderStatus == OrderStatus.Submitted ||
+                                           o.OrderStatus == OrderStatus.Paid)
                 )
                 .ToList();
         }
@@ -235,8 +236,8 @@ namespace CUWebinars.Business.Repository
             return items.Where(o => o.idUser == idUser
                                           && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Archived
                                           &&
-                                          (o.OrderRows.FirstOrDefault().Status == OrderRowStatus.Submitted ||
-                                           o.OrderRows.FirstOrDefault().Status == OrderRowStatus.Paid)
+                                          (o.OrderStatus == OrderStatus.Submitted ||
+                                           o.OrderStatus == OrderStatus.Paid)
                 )
                 .ToList();
 

@@ -84,7 +84,7 @@
             }
 
 
-            if (Model.OrderRow.Status == OrderRowStatus.InProcess)
+            if (Model.OrderRow.Status == OrderStatus.InProcess)
             {
         <div id="inProcCart" class="well pull-right">
             <div id="showCartPrice">@{Html.RenderPartial("_DisplayRowPrice", Model.OrderRow);}</div>
@@ -143,13 +143,13 @@
 
 
 
-            if (Model.OrderRow.Status != OrderRowStatus.InProcess)
+            if (Model.OrderRow.Status != OrderStatus.InProcess)
             {
                 UserDetails += " - <a role=\"button\" class=\"btn btn-mini\" target=\"new\" href='/account/edit/" + Model.OrderRow.Order.User.Id + "' > Edit?</a> ";
 
         <div id="postCheckout" class="well pull-right">
             <div id="showCartPrice">@{Html.RenderPartial("_DisplayRowPrice", Model.OrderRow);}</div>
-            @if (Model.OrderRow.Status != OrderRowStatus.Paid)
+            @if (Model.OrderRow.Status != OrderStatus.Paid)
             {<span style="font-size: small; text-align: center;">Invoice mailed following the event.<br />
                 Optionally you can </span>
                 <button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button><br />
@@ -251,7 +251,7 @@
             <div id="AddLocation_@(orderRowID)" class="modal hide fade">
                 @Html.Partial("~/Views/Shared/AddLocationsView.cshtml", Model.OrderRow)
             </div>
-            if (Model.OrderRow.Status != OrderRowStatus.InProcess)
+            if (Model.OrderRow.Status != OrderStatus.InProcess)
             {
                 <div id="ResendConfirmationModal" class="modal hide fade">
                     @Html.Partial("~/Views/Shared/ResendConfirmationView.cshtml", Model.OrderRow)

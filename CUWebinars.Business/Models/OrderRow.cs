@@ -17,12 +17,11 @@ namespace CUWebinars.Business.Models
         public decimal UnitPrice { get; set; }
         public decimal RowPrice { get; set; }
         public decimal Royalty { get; set; }
-        public OrderRowStatus Status { get; set; }
-        public Discount Discount { get; set; }
-        public string AlternateEmail { get; set; }
-        public RegType RegistrationType { get; set; }
         public Nullable<System.DateTime> ShipmentDate { get; set; }
         public Nullable<System.DateTime> AccessExpires { get; set; }
+        public OrderStatus RowStatus { get; set; }
+        public Discount Discount { get; set; }
+        public RegType RegistrationType { get; set; }
         public virtual Order Order { get; set; }
         public virtual Webinar Webinar { get; set; }
         public virtual AdditionalLocations AdditionalLocation { get; set; }

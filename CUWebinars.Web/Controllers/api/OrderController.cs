@@ -116,7 +116,7 @@ namespace CUWebinars.Web.Controllers.api
                 );
 
             orderRow.Discount = model.Discount;
-            orderRow.Status = model.Status;
+            orderRow.RowStatus = model.Status;
 
             var importedOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
 

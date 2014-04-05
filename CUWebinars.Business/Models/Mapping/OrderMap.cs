@@ -16,8 +16,8 @@ namespace CUWebinars.Business.Models.Mapping
             this.Property(t => t.Institution).HasMaxLength(250);
             this.Property(t => t.BillingPhone).HasMaxLength(30);
             this.Property(t => t.BillingEmail).HasMaxLength(150);
-            this.Property(t => t.BillingAddress).HasMaxLength(100);
-            this.Property(t => t.BillingAddress2).HasMaxLength(100);
+            this.Property(t => t.BillingAddress).HasMaxLength(200);
+            this.Property(t => t.BillingAddress2).HasMaxLength(200);
             this.Property(t => t.BillingCity).HasMaxLength(100);
             this.Property(t => t.BillingState).HasMaxLength(100);
             this.Property(t => t.BillingZip).HasMaxLength(20);
@@ -30,9 +30,9 @@ namespace CUWebinars.Business.Models.Mapping
             this.Property(t => t.ShippingZip).HasMaxLength(20);
             this.Property(t => t.UserComments).HasMaxLength(2550);
             this.Property(t => t.ShippingPhone).HasMaxLength(30);
-            this.Property(t => t.PaidByCCNumber).HasMaxLength(40);
+
             // Table & Column Mappings
-            this.ToTable("Orders");
+            this.ToTable("Order");
             this.Property(t => t.idOrder).HasColumnName("idOrder");
             this.Property(t => t.idUser).HasColumnName("idUser");
             this.Property(t => t.idAffiliate).HasColumnName("idAffiliate");
@@ -61,9 +61,7 @@ namespace CUWebinars.Business.Models.Mapping
             this.Property(t => t.AffiliateComments).HasColumnName("AffiliateComments");
             this.Property(t => t.AdminComments).HasColumnName("AdminComments");
             this.Property(t => t.TaxExempt).HasColumnName("TaxExempt");
-            this.Property(t => t.InitiatedBy).HasColumnName("InitiatedBy");
             this.Property(t => t.ShippingPhone).HasColumnName("ShippingPhone");
-            this.Property(t => t.PaidByCCNumber).HasColumnName("PaidByCCNumber");
             this.Property(t => t.Origin).HasColumnName("Origin");
 
             // Relationships

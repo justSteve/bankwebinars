@@ -27,7 +27,7 @@ namespace CUWebinars.Business.Services
         void CreateOrderEvent(Order order, UserAccount userAccount);
         void DispatchDummyOrder();
         OrderRow LoadOrderRow(int id);
-        byte GetOrderInitiator();
+        string GetOrderInitiator();
         void CreateCPSubscription(OrderRow orderRow);
         //void Save(Order currentOrder);
         Order SaveOrderChanges(Order currentOrder);

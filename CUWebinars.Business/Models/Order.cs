@@ -5,15 +5,16 @@ namespace CUWebinars.Business.Models
 {
     public partial class Order
     {
-        public Order()
-        {
-            this.OrderRows = new List<OrderRow>();
-        }
+        //public Order()
+        //{
+        //    this.OrderRows = new List<OrderRow>();
+        //}
 
         public int idOrder { get; set; }
         public int idUser { get; set; }
         public int idAffiliate { get; set; }
         public DateTime OrderDate { get; set; }
+        public OrderStatus OrderStatus { get; set; }
         public decimal Total { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -39,8 +40,6 @@ namespace CUWebinars.Business.Models
         public string AffiliateComments { get; set; }
         public string AdminComments { get; set; }
         public bool TaxExempt { get; set; }
-        public byte InitiatedBy { get; set; }
-        public string PaidByCCNumber { get; set; }
         public string Origin { get; set; }
         public virtual Affiliate Affiliate { get; set; }
         public virtual ICollection<OrderRow> OrderRows { get; set; }
