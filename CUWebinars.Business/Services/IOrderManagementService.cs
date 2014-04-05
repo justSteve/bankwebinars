@@ -17,7 +17,7 @@ namespace CUWebinars.Business.Services
             decimal price,
             string[] additionalLocationsEmails);
         Affiliate GetAffiliateById(int id);
-        RegType GetOptionById(int id);
+        RegType GetOptionById(RegType id);
         IList<RegType> GetOptionsByWebinarId(int id, bool detached);
         IList<RegType> GetOptionsByWebinarIdFromOptionsRepository(int id, bool detached);
         Order GetOrderById(int id);

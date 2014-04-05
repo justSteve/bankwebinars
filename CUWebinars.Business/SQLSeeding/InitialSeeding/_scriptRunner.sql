@@ -113,14 +113,14 @@ WHERE w.idWebinar = 803
 --    DECLARE @percentOff DECIMAL
 --    SET @percentOff = ( SELECT  percentOff
 --                        FROM    Discounts
---                        WHERE   idDiscounts = @idDiscount
+--                        WHERE   idDiscount = @idDiscount
 --                      )
 
 --    DECLARE @FlatOff DECIMAL
 
 --    SET @FlatOff = ( SELECT flatOff
 --                     FROM   Discounts
---                     WHERE  idDiscounts = @idDiscount
+--                     WHERE  idDiscount = @idDiscount
 --                   )
 --    BEGIN TRY
 --        INSERT  [Orders]

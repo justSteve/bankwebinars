@@ -20,16 +20,11 @@ namespace CUWebinars.Business.Models.Mapping
             this.Property(t => t.idOrderRow).HasColumnName("idOrderRow");
             this.Property(t => t.idOrder).HasColumnName("idOrder");
             this.Property(t => t.idWebinar).HasColumnName("idWebinar");
-            this.Property(t => t.UnitPrice).HasColumnName("UnitPrice");
             this.Property(t => t.RowPrice).HasColumnName("RowPrice");
-            this.Property(t => t.idDiscount).HasColumnName("idDiscount");
-            //this.Property(t => t.DiscountPercentOff).HasColumnName("DiscountPercentOff");
-            //this.Property(t => t.DiscountFlatOff).HasColumnName("DiscountFlatOff");
             this.Property(t => t.AlternateEmail).HasColumnName("AlternateEmail");
-            this.Property(t => t.RegistrationType).HasColumnName("RegistrationType");
             this.Property(t => t.Status).HasColumnName("Status");
             this.Property(t => t.ShipmentDate).HasColumnName("ShipmentDate");
-            this.Property(t => t.isAdHocRecording).HasColumnName("isAdHocRecording");
+            this.Property(t => t.AccessExpires).HasColumnName("AccessExpires");
             this.Property(t => t.Royalty).HasColumnName("Royalty");
 
             // Relationships
@@ -39,7 +34,9 @@ namespace CUWebinars.Business.Models.Mapping
             this.HasRequired(t => t.Webinar)
                 .WithMany(t => t.OrderRows)
                 .HasForeignKey(d => d.idWebinar);
-
+            this.HasOptional(t => t.AdditionalLocation).WithOptionalDependent(t => t.OrderRow)
+                //.HasForeignKey(d => d.idUser);
+                ;
         }
     }
 }

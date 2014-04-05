@@ -130,7 +130,7 @@ namespace CUWebinars.Web.Controllers
             var addAdditionalLocationsViewModel = new AddAdditionalLocationsViewModel
             {
                 Emails = null,
-                AdditionalLocations = order.OrderRows.First().AdditionalLocations.First()
+                //AdditionalLocations = order.OrderRows.First().AdditionalLocations.First()
             };
 
             return PartialView(addAdditionalLocationsViewModel);
@@ -398,7 +398,7 @@ namespace CUWebinars.Web.Controllers
                     {
                         var singleOrDefaultRow = checkOrder.OrderRows.SingleOrDefault();
                         if (singleOrDefaultRow != null)
-                            ViewBag.orderMessages = db.Options.Find(singleOrDefaultRow.RegistrationType);
+                            ViewBag.orderMessages = db.RegTypes.Find(singleOrDefaultRow.RegistrationType);
                         var webinarFiles = db.WebinarFiles.Where(f => f.idWebinar == id).Select(f => f.fileDesc +"|"+ f.fileLocation ).ToArray();
                         ViewBag.WebinarFiles = webinarFiles;
 

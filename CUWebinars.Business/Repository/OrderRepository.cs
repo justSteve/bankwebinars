@@ -36,7 +36,7 @@ namespace CUWebinars.Business.Repository
             return newOrder;
         }
 
-        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocations additionalLocations, string alternateEmail, int registrationType)
+        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocations additionalLocations, string alternateEmail, RegType registrationType)
         {
             var strongTypedContext = (TTSWebinarsContext) db;
             var entry = strongTypedContext.Entry(webinar);
@@ -49,8 +49,8 @@ namespace CUWebinars.Business.Repository
             
             var newOrderRow = strongTypedContext.OrderRows.Create();
 
-            if (additionalLocations != null)
-                newOrderRow.AdditionalLocations.Add(additionalLocations);
+            //if (additionalLocations != null)
+            //    newOrderRow.AdditionalLocations.Add(additionalLocations);
 
             newOrderRow.Webinar = webinar;
             newOrderRow.RegistrationType = registrationType;
@@ -100,7 +100,7 @@ namespace CUWebinars.Business.Repository
 
 
             var newOrderRowOption = strongTypedContext.AdditionalLocations.Create();
-            newOrderRowOption.RegType = regType;
+            //newOrderRowOption.
             newOrderRowOption.idRegType = regType.idRegType;
             newOrderRowOption.OptionDescription = optionDescription;
             newOrderRowOption.RegTypePrice = price;
@@ -128,7 +128,9 @@ namespace CUWebinars.Business.Repository
 
         public Order FindOrderByIdWithOrderRows(int id)
         {
-            var item = items.Include(o => o.OrderRows.Select(or => or.AdditionalLocations)).Where(o => o.idOrder == id);
+            var item = items
+                //.Include(o => o.OrderRows.Select(or => or.AdditionalLocations))
+                .Where(o => o.idOrder == id);
             return item.FirstOrDefault();
         }
 

@@ -96,17 +96,17 @@ namespace CUWebinars.Web.Controllers.api
 
             AdditionalLocations additionalLocations = null;
 
-            if (model.AdditionalLocations.Any())
-            {
-                var optionsForWebinar = _orderManagementService.GetOptionsByWebinarId(webinar.idWebinar, false);
-                var optionForAdditionalLocation = optionsForWebinar.First(o => o.Type == "additional_location");
+            //if (model.AdditionalLocations.Any())
+            //{
+            //    var optionsForWebinar = _orderManagementService.GetOptionsByWebinarId(webinar.idWebinar, false);
+            //    var optionForAdditionalLocation = optionsForWebinar.First(o => o.Type == "additional_location");
 
-                additionalLocations = _orderManagementService.CreateOrderRowOption(optionForAdditionalLocation,
-                    optionForAdditionalLocation.OptionExplain,
-                    Convert.ToDecimal(optionForAdditionalLocation.PriceToAdd ?? 0.0),
-                    model.AdditionalLocations.ToArray()
-                    );
-            }
+            //    additionalLocations = _orderManagementService.CreateOrderRowOption(optionForAdditionalLocation,
+            //        optionForAdditionalLocation.OptionExplain,
+            //        Convert.ToDecimal(optionForAdditionalLocation.PriceToAdd ?? 0.0),
+            //        model.AdditionalLocations.ToArray()
+            //        );
+            //}
 
             var orderRow = _orderManagementService.CreateOrderRow(
                 webinar,
@@ -115,7 +115,7 @@ namespace CUWebinars.Web.Controllers.api
                 model.idRegType
                 );
 
-            orderRow.idDiscount = model.Discount;
+            orderRow.Discount = model.Discount;
             orderRow.Status = model.Status;
 
             var importedOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);

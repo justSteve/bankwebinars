@@ -8,7 +8,7 @@ namespace CUWebinars.Business.Models.Mapping
         public DiscountMap()
         {
             // Primary Key
-            this.HasKey(t => t.idDiscounts);
+            this.HasKey(t => t.idDiscount);
 
             // Properties
             this.Property(t => t.code)
@@ -20,8 +20,8 @@ namespace CUWebinars.Business.Models.Mapping
                 .HasMaxLength(50);
 
             // Table & Column Mappings
-            this.ToTable("Discounts");
-            this.Property(t => t.idDiscounts).HasColumnName("idDiscounts");
+            this.ToTable("Discount");
+            this.Property(t => t.idDiscount).HasColumnName("idDiscount");
             this.Property(t => t.discountType).HasColumnName("discountType");
             this.Property(t => t.code).HasColumnName("code");
             this.Property(t => t.percentOff).HasColumnName("percentOff");

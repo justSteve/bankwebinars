@@ -14,12 +14,9 @@ namespace CUWebinars.Business.Models
         public int idRegType { get; set; }
         public string OptionExplain { get; set; }
         public string OptionLabel { get; set; }
-        public Nullable<double> PriceToAdd { get; set; }
+        public double PriceToAdd { get; set; }
         public Nullable<bool> TaxExempt { get; set; }
-        public Nullable<double> PercToAdd { get; set; }
-        public Nullable<int> SortOrder { get; set; }
-        public string Type { get; set; }
-        public string MsgConfirm { get; set; }
+        public int SortOrder { get; set; }
         public string SKU { get; set; }
         public string ShowLiveNotifications { get; set; }
         public string ShowRecordingNotifications { get; set; }

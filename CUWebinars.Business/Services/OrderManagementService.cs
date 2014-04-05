@@ -57,12 +57,18 @@ namespace CUWebinars.Business.Services
         {
             // add code here to build string
 
-            var option = _RegTypeRepository.FindRegType((int)orderRow.RegistrationType);
+            var option = _RegTypeRepository.FindRegType(orderRow.RegistrationType);
 
             return string.Empty;
         }
 
-        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocations additionalLocations, string alternateEmail, int registrationType)
+        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocations additionalLocations, string alternateEmail,
+            int registrationType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocations additionalLocations, string alternateEmail, RegType registrationType)
         {
             return _orderRepository.CreateOrderRow(webinar, additionalLocations, alternateEmail, registrationType);
         }
@@ -86,7 +92,7 @@ namespace CUWebinars.Business.Services
             return _affiliateRepository.FindById(id);
         }
 
-        public RegType GetOptionById(int id)
+        public RegType GetOptionById(RegType id)
         {
             return _RegTypeRepository.FindRegType(id);
         }
@@ -201,7 +207,7 @@ namespace CUWebinars.Business.Services
 
             foreach (OrderRow row in order.OrderRows)
             {
-                var option = _RegTypeRepository.FindRegType((int)row.RegistrationType);
+                var option = _RegTypeRepository.FindRegType(row.RegistrationType);
 
                 if (option.PriceToAdd != null) row.UnitPrice = (decimal)option.PriceToAdd;
                 //(decimal)OptionsFacade.Instance.Load((int)row.RegistrationType).PriceToAdd;

@@ -14,12 +14,12 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.Id).HasColumnName("Id");
             Property(t => t.Email).HasColumnName("Email").IsRequired().IsVariableLength().HasMaxLength(150);
             Property(t => t.FullName).HasColumnName("FullName").IsOptional().IsVariableLength().HasMaxLength(100);
-            Property(t => t.idOrderRowOption).HasColumnName("idOrderRowOption").IsRequired();
+            Property(t => t.Id).HasColumnName("idOrderRow").IsRequired();
 
             // Relationships
             //HasRequired(a => a.AdditionalLocations)
             //    .WithMany(o => o.A)
-            //    .HasForeignKey(a => a.idOrderRowOption);
+            //    .HasForeignKey(a => a.idOrderRow);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace CUWebinars.Business.Repository
     {
         Order CreateOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow);
         //Order CreateOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, IList<RegType> options);
-        OrderRow CreateOrderRow(Webinar webinar, AdditionalLocations additionalLocations, string alternateEmail, int registrationType);
+        OrderRow CreateOrderRow(Webinar webinar, AdditionalLocations additionalLocations, string alternateEmail, RegType registrationType);
         AdditionalLocations CreateOrderRowOption(
             RegType regType,
             string optionDescription,

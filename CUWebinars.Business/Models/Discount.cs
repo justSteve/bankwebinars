@@ -5,7 +5,7 @@ namespace CUWebinars.Business.Models
 {
     public partial class Discount
     {
-        public int idDiscounts { get; set; }
+        public int idDiscount { get; set; }
         public byte discountType { get; set; }
         public string code { get; set; }
         public decimal percentOff { get; set; }

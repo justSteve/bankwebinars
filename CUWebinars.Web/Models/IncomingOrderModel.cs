@@ -11,7 +11,7 @@ namespace CUWebinars.Web.Models
         public string AffiliateComments { get; set; }
         public string AlternativeEmail { get; set; }
         public Address BillingAddress { get; set; }
-        public int Discount { get; set; }
+        public Discount Discount { get; set; }
         public string Email { get; set; }
         public string FirstName { get; set; }
         public int idAffiliate { get; set; }

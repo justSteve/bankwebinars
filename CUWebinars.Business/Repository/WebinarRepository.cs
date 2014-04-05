@@ -94,20 +94,25 @@ namespace CUWebinars.Business.Repository
             return webinars;
         }
 
+        public List<RegType> GetCurrentOptions(int idWebinar)
+        {
+            throw new System.NotImplementedException();
+        }
+
         /// <summary>
         /// The act of getting the correct set of options to display is complex and spelled out
         /// </summary>
         /// <param name="idWebinar"></param>
         /// <returns>List of Type RegType</returns>
-        public List<RegType> GetCurrentOptions(int idWebinar)
-        {
-            //resolves: Impediment 6:Implement GetCurrentOptions Method
-            var paramWebinarID = new SqlParameter("idWebinar", SqlDbType.Int) { Value = idWebinar };
-            List<RegType> myOptions = ((TTSWebinarsContext)db).Options.SqlQuery(
-                "dbo.GetWebinarsOptions @idWebinar", paramWebinarID).ToList();
+        //public List<RegType> GetCurrentOptions(int idWebinar)
+        //{
+        //    //resolves: Impediment 6:Implement GetCurrentOptions Method
+        //    var paramWebinarID = new SqlParameter("idWebinar", SqlDbType.Int) { Value = idWebinar };
+        //    List<RegType> myOptions = ((TTSWebinarsContext)db).Options.SqlQuery(
+        //        "dbo.GetWebinarsOptions @idWebinar", paramWebinarID).ToList();
 
-            return myOptions;
-        }
+        //    return myOptions;
+        //}
 
         public IList<Order> GetOrdersByWebinarForConnectionInfo(int id)
         {
@@ -121,7 +126,7 @@ namespace CUWebinars.Business.Repository
                     //TODO: log this exception condition
                     continue;
                 }
-                if (((TTSWebinarsContext)db).Options.Find((int)row.RegistrationType).ShowLiveNotifications == "No"
+                if (((TTSWebinarsContext)db).RegTypes.Find(row.RegistrationType).ShowLiveNotifications == "No"
                     && row.Status == OrderRowStatus.Abandoned
                     || row.Status == OrderRowStatus.InProcess
                     || row.Status == OrderRowStatus.Canceled)

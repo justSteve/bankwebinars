@@ -11,30 +11,24 @@ namespace CUWebinars.Business.Models.Mapping
             this.HasKey(t => t.idRegType);
 
             // Properties
-            this.Property(t => t.OptionLabel)
-                .HasMaxLength(200);
+            //this.Property(t => t.OptionLabel)
+            //    .HasMaxLength(200)
+            //    .IsRequired();
 
-            this.Property(t => t.Type)
-                .IsRequired()
-                .HasMaxLength(32);
+            //this.Property(t => t.ShowLiveNotifications)
+            //    .IsRequired();
 
-            this.Property(t => t.MsgConfirm)
-                .HasMaxLength(10);
-
-            this.Property(t => t.SKU)
-                .HasMaxLength(150);
+            //this.Property(t => t.SKU)
+            //    .HasMaxLength(150);
 
             // Table & Column Mappings
-            this.ToTable("Options");
+            this.ToTable("RegType");
             this.Property(t => t.idRegType).HasColumnName("idRegType");
             this.Property(t => t.OptionExplain).HasColumnName("OptionExplain");
             this.Property(t => t.OptionLabel).HasColumnName("OptionLabel");
             this.Property(t => t.PriceToAdd).HasColumnName("PriceToAdd");
             this.Property(t => t.TaxExempt).HasColumnName("TaxExempt");
-            this.Property(t => t.PercToAdd).HasColumnName("PercToAdd");
             this.Property(t => t.SortOrder).HasColumnName("SortOrder");
-            this.Property(t => t.Type).HasColumnName("Type");
-            this.Property(t => t.MsgConfirm).HasColumnName("MsgConfirm");
             this.Property(t => t.SKU).HasColumnName("SKU");
             this.Property(t => t.ShowLiveNotifications).HasColumnName("ShowLiveNotifications");
             this.Property(t => t.ShowRecordingNotifications).HasColumnName("ShowRecordingNotifications");

@@ -50,13 +50,12 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
             var originalCost = _orderManagementService.LoadOrderRow(ID).Order.Total;
             int originalLocCount = 0;
             OrderRow row = _orderManagementService.LoadOrderRow(ID);
-            //TODO: Help me with 'row.Options' reference?
-
+            
             //AdditionalLocations RegType in row.AdditionalLocations
             //var RegType = row.AdditionalLocations.SingleOrDefault(o => o.Type == "additional_location");
 
-            var locations =
-                row.AdditionalLocations.SingleOrDefault(o => o.Type == "additional_location");
+            //var locations =
+            //    row.AdditionalLocations.SingleOrDefault(o => o.Type == "additional_location");
             //Options.OfType<AdditionalLocationsOrderRowOption>().SingleOrDefault();
 
             IDictionary<string, string> addEmails = Request.Params.AllKeys
@@ -80,56 +79,56 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
             });
 
 
-            if (connectionsCount <= 0 && locations != null)
-            {
-                row.AdditionalLocations.Remove(locations);
-                msg = "There are no Additional Locations specified.";
-            }
+            //if (connectionsCount <= 0 && locations != null)
+            //{
+            //    row.AdditionalLocations.Remove(locations);
+            //    msg = "There are no Additional Locations specified.";
+            //}
 
-            if (connectionsCount > 0 && locations == null)
-            {
-                var options = _orderManagementService.GetOptionsByWebinarId(row.Webinar.idWebinar, false);
-                var option = options.SingleOrDefault(o => o.Type == "additional_location");
-                //                AdditionalLocationsOption RegType = options.OfType<AdditionalLocationsOption>().SingleOrDefault();
+            //if (connectionsCount > 0 && locations == null)
+            //{
+            //    var options = _orderManagementService.GetOptionsByWebinarId(row.Webinar.idWebinar, false);
+            //    var option = options.SingleOrDefault(o => o.Type == "additional_location");
+            //    //                AdditionalLocationsOption RegType = options.OfType<AdditionalLocationsOption>().SingleOrDefault();
 
 
 
-                if (option != null)
-                {
-                    locations = new AdditionalLocations
-                    {
-                        //AdditionalLocations = additionalLocations,
-                        RegType = option,
-                        OrderRow = row,
-                        OptionDescription = option.OptionExplain,
-                        RegTypePrice = Convert.ToDecimal(option.PriceToAdd)
-                    };
-                    row.AdditionalLocations.Add(locations);
-                }
-            }
-            else
-            {
-                if (locations != null)
-                {
-                    //originalLocCount = locations.AdditionalLocations.Count;
-                    ////locations.additional_locations_count = connectionsCount;
-                    //locations.AdditionalLocations = additionalLocations;
-                }
-            }
+            //    if (option != null)
+            //    {
+            //        locations = new AdditionalLocations
+            //        {
+            //            //AdditionalLocations = additionalLocations,
+            //            RegType = option,
+            //            OrderRow = row,
+            //            OptionDescription = option.OptionExplain,
+            //            RegTypePrice = Convert.ToDecimal(option.PriceToAdd)
+            //        };
+            //        row.AdditionalLocations.Add(locations);
+            //    }
+            //}
+            //else
+            //{
+            //    if (locations != null)
+            //    {
+            //        //originalLocCount = locations.AdditionalLocations.Count;
+            //        ////locations.additional_locations_count = connectionsCount;
+            //        //locations.AdditionalLocations = additionalLocations;
+            //    }
+            //}
 
             var optionsCost = string.Empty;
-            if (connectionsCount == 1)
-            {
-                msg = "One Additional Location.<br>";
+            //if (connectionsCount == 1)
+            //{
+            //    msg = "One Additional Location.<br>";
 
-                optionsCost = "Total cost of Additional Locations: " +
-                              (locations.RegTypePrice*connectionsCount).ToString("C0");
+            //    optionsCost = "Total cost of Additional Locations: " +
+            //                  (locations.RegTypePrice*connectionsCount).ToString("C0");
 
-            }
-            if (connectionsCount > 1)
-            {
-                msg = "This order carries " + connectionsCount + " Additional Locations.";
-            }
+            //}
+            //if (connectionsCount > 1)
+            //{
+            //    msg = "This order carries " + connectionsCount + " Additional Locations.";
+            //}
 
             try
             {
