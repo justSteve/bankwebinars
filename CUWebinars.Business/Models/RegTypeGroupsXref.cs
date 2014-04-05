@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace CUWebinars.Business.Models
 {
-    public partial class OptionsGroupsXref
+    public partial class RegTypesGroupsXref
     {
-        public int idWebinarOptionGroup { get; set; }
+        public int idWebinarRegTypeGroup { get; set; }
         public int idWebinar { get; set; }
         public int idRegTypeGroup { get; set; }
-        public virtual OptionsGroup OptionsGroup { get; set; }
+        public virtual RegTypesGroup RegTypesGroup { get; set; }
         public virtual Webinar Webinar { get; set; }
     }
 }

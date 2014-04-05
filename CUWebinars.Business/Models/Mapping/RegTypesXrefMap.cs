@@ -3,26 +3,26 @@ using System.Data.Entity.ModelConfiguration;
 
 namespace CUWebinars.Business.Models.Mapping
 {
-    public class OptionsXrefMap : EntityTypeConfiguration<OptionsXref>
+    public class RegTypesXrefMap : EntityTypeConfiguration<RegTypesXref>
     {
-        public OptionsXrefMap()
+        public RegTypesXrefMap()
         {
             // Primary Key
             this.HasKey(t => t.idRegTypesXref);
 
             // Properties
             // Table & Column Mappings
-            this.ToTable("OptionsXref");
+            this.ToTable("RegTypesXref");
             this.Property(t => t.idRegTypesXref).HasColumnName("idRegTypesXref");
             this.Property(t => t.idRegTypeGroup).HasColumnName("idRegTypeGroup");
             this.Property(t => t.idRegType).HasColumnName("idRegType");
 
             // Relationships
-            this.HasRequired(t => t.RegType)
-                .WithMany(t => t.OptionsXrefs)
-                .HasForeignKey(d => d.idRegType);
-            this.HasRequired(t => t.OptionsGroup)
-                .WithMany(t => t.OptionsXrefs)
+            //this.HasRequired(t => t.RegType)
+            //    .WithMany(t => t.RegTypeXrefs)
+            //    .HasForeignKey(d => d.idRegType);
+            this.HasRequired(t => t.RegTypesGroup)
+                .WithMany(t => t.RegTypesXrefs)
                 .HasForeignKey(d => d.idRegTypeGroup);
 
         }

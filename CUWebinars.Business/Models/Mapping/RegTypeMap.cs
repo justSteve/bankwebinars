@@ -11,7 +11,7 @@ namespace CUWebinars.Business.Models.Mapping
             this.HasKey(t => t.idRegType);
 
             // Properties
-            //this.Property(t => t.OptionLabel)
+            //this.Property(t => t.RegTypeLabel)
             //    .HasMaxLength(200)
             //    .IsRequired();
 
@@ -24,8 +24,8 @@ namespace CUWebinars.Business.Models.Mapping
             // Table & Column Mappings
             this.ToTable("RegType");
             this.Property(t => t.idRegType).HasColumnName("idRegType");
-            this.Property(t => t.OptionExplain).HasColumnName("OptionExplain");
-            this.Property(t => t.OptionLabel).HasColumnName("OptionLabel");
+            this.Property(t => t.OptionExplain).HasColumnName("RegTypeExplain");
+            this.Property(t => t.OptionLabel).HasColumnName("RegTypeLabel");
             this.Property(t => t.PriceToAdd).HasColumnName("PriceToAdd");
             this.Property(t => t.TaxExempt).HasColumnName("TaxExempt");
             this.Property(t => t.SortOrder).HasColumnName("SortOrder");
