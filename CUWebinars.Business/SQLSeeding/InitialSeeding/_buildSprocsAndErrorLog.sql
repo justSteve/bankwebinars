@@ -15,12 +15,12 @@ GO
 -- =============================================
 CREATE PROCEDURE [dbo].[GetRegistrationType]
 	-- Add the parameters for the stored procedure here
-    @idOption INT = 0
+    @idRegType INT = 0
 AS
 BEGIN
     SET NOCOUNT ON-- added to prevent extra result sets from
 	-- interfering with SELECT statements.
-    SELECT  o.[idOption] ,
+    SELECT  o.[idRegType] ,
             o.[OptionExplain] ,
             o.[OptionLabel] ,
             o.[PriceToAdd] ,
@@ -38,7 +38,7 @@ BEGIN
             o.[Stage1EmailConfirmationMsg] ,
             o.[Stage2EmailConfirmationMsg]
     FROM    dbo.Options o
-    WHERE   o.idOption = @idOption
+    WHERE   o.idRegType = @idRegType
 END
 GO
 
@@ -84,7 +84,7 @@ GO
 CREATE PROCEDURE [dbo].[CreateCUOrder]
     @idUser INT , -- UserID
     @idWebinar INT ,
-    @idOption INT ,
+    @idRegType INT ,
     @idAffiliate INT = 19 ,
     @idDiscount INT = NULL ,
     @billStatus INT = 3
@@ -109,7 +109,7 @@ BEGIN
               0 , -- ErrorState - int
               N'[InsertOrder] logging the call' , -- ErrorProcedure - nvarchar(126)
               0 , -- ErrorLine - int
-              CAST(@idUser AS VARCHAR) + ', ' + CAST(@idWebinar AS VARCHAR) + ', ' + CAST(@idOption AS VARCHAR)
+              CAST(@idUser AS VARCHAR) + ', ' + CAST(@idWebinar AS VARCHAR) + ', ' + CAST(@idRegType AS VARCHAR)
 	        )
     DECLARE @ErrorLogID INT
     DECLARE @percentOff DECIMAL
@@ -159,7 +159,7 @@ BEGIN
                   GETDATE() ,  --orderDate                  
                   ( SELECT  PriceToAdd
                     FROM    dbo.Options
-                    WHERE   idOption = @idOption
+                    WHERE   idRegType = @idRegType
                   ) ,
                   ( SELECT  firstName
                     FROM    WebUser
@@ -291,17 +291,17 @@ BEGIN
                   @idWebinar ,
                   ( SELECT  priceToAdd
                     FROM    Options
-                    WHERE   idOption = @idOption
+                    WHERE   idRegType = @idRegType
                   ) ,
                   ( SELECT  priceToAdd
                     FROM    Options
-                    WHERE   idOption = @idOption
+                    WHERE   idRegType = @idRegType
                   ) ,
                   @idDiscount ,
                   ISNULL(@percentOff, 0) ,
                   ISNULL(@flatOff, 0) ,
                   ' ' ,
-                  @idOption ,
+                  @idRegType ,
                   2 ,
                   0 ,
                   ''
@@ -349,7 +349,7 @@ BEGIN
     SET NOCOUNT ON-- added to prevent extra result sets from
 	-- interfering with SELECT statements.
     SET NOCOUNT ON;
-    SELECT  o.[idOption] ,
+    SELECT  o.[idRegType] ,
             o.[OptionExplain] ,
             o.[OptionLabel] ,
             o.[PriceToAdd] ,
@@ -367,12 +367,12 @@ BEGIN
             o.[Stage1EmailConfirmationMsg] ,
             o.[Stage2EmailConfirmationMsg]
 
-        --oRef.idOptionsXref ,
-        --oRef.idOptionGroup ,
+        --oRef.idRegTypesXref ,
+        --oRef.idRegTypeGroup ,
         --ogRef.idWebinarOptionGroup
     FROM    dbo.Options o
-            INNER JOIN dbo.OptionsXref oRef ON oRef.idOption = o.idOption
-            INNER JOIN dbo.OptionsGroupsXref ogRef ON ogRef.idOptionGroup = oRef.idOptionGroup
+            INNER JOIN dbo.OptionsXref oRef ON oRef.idRegType = o.idRegType
+            INNER JOIN dbo.OptionsGroupsXref ogRef ON ogRef.idRegTypeGroup = oRef.idRegTypeGroup
             INNER JOIN dbo.Webinar w ON w.idWebinar = ogRef.idWebinar
     WHERE   w.idWebinar = @idWebinar
 END

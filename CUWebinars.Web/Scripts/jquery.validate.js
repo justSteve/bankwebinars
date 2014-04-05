@@ -250,7 +250,7 @@ $.extend($.validator, {
 			if ( element.name in this.submitted ) {
 				this.element(element);
 			}
-			// or option elements, check parent select in that case
+			// or RegType elements, check parent select in that case
 			else if (element.parentNode.name in this.submitted) {
 				this.element(element.parentNode);
 			}
@@ -335,7 +335,7 @@ $.extend($.validator, {
 					"[type='week'], [type='time'], [type='datetime-local'], " +
 					"[type='range'], [type='color'] ",
 					"focusin focusout keyup", delegate)
-				.validateDelegate("[type='radio'], [type='checkbox'], select, option", "click", delegate);
+				.validateDelegate("[type='radio'], [type='checkbox'], select, RegType", "click", delegate);
 
 			if (this.settings.invalidHandler) {
 				$(this.currentForm).bind("invalid-form.validate", this.settings.invalidHandler);
@@ -751,7 +751,7 @@ $.extend($.validator, {
 		getLength: function(value, element) {
 			switch( element.nodeName.toLowerCase() ) {
 			case 'select':
-				return $("option:selected", element).length;
+				return $("RegType:selected", element).length;
 			case 'input':
 				if( this.checkable( element) ) {
 					return this.findByName(element.name).filter(':checked').length;

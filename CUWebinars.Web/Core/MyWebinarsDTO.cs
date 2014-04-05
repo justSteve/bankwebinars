@@ -5,7 +5,7 @@ namespace CUWebinars.Web.Core
 {
     public class MyWebinarsDTO
     {
-        public IDictionary<Option, Order> Scheduled { get; set; }
+        public IList<Order> Scheduled { get; set; }
         public IList<Order> Recorded { get; set; }
         public IList<Order> Archived { get; set; }
 

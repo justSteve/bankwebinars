@@ -26,7 +26,7 @@ namespace CUWebinars.Business.Repository
         public Webinar FindByIdLoaded(int id)
         {
             var webinar = items.Include(w => w.OrderRows)
-                .Include(w => w.OptionsGroupsXrefs)
+                //.Include(w => w.OptionsGroupsXrefs)
                 .Include(w => w.Presenter)
                 .Include(w => w.WebinarFiles)
                 .Include(w => w.WebinarTopicXrefs)
@@ -98,12 +98,12 @@ namespace CUWebinars.Business.Repository
         /// The act of getting the correct set of options to display is complex and spelled out
         /// </summary>
         /// <param name="idWebinar"></param>
-        /// <returns>List of Type Option</returns>
-        public List<Option> GetCurrentOptions(int idWebinar)
+        /// <returns>List of Type RegType</returns>
+        public List<RegType> GetCurrentOptions(int idWebinar)
         {
             //resolves: Impediment 6:Implement GetCurrentOptions Method
             var paramWebinarID = new SqlParameter("idWebinar", SqlDbType.Int) { Value = idWebinar };
-            List<Option> myOptions = ((TTSWebinarsContext)db).Options.SqlQuery(
+            List<RegType> myOptions = ((TTSWebinarsContext)db).Options.SqlQuery(
                 "dbo.GetWebinarsOptions @idWebinar", paramWebinarID).ToList();
 
             return myOptions;

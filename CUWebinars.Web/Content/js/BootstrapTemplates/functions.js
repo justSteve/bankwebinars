@@ -114,7 +114,7 @@ jQuery(document).ready(function($) {
     //(function() {
 
     //	var $mainNav    = $('.navbar .nav'),
-    //		responsibleNav = '<option value="" selected>Navigate...</option>';
+    //		responsibleNav = '<RegType value="" selected>Navigate...</RegType>';
 
     //	// Responsive nav
     //	$mainNav.find('li').each(function() {
@@ -131,7 +131,7 @@ jQuery(document).ready(function($) {
     //		}
 
     //		if ($link.text())
-    //			responsibleNav += '<option ' + ($this.hasClass('active') ? 'selected="selected"':'') + ' value="' + $link.attr('href') + '">' + indent + ' ' + $link.text() + '</option>';
+    //			responsibleNav += '<RegType ' + ($this.hasClass('active') ? 'selected="selected"':'') + ' value="' + $link.attr('href') + '">' + indent + ' ' + $link.text() + '</RegType>';
 
     //	}).end().after('<select class="nav-responsive">' + responsibleNav + '</select>');
 

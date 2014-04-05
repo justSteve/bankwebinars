@@ -8,7 +8,7 @@ namespace CUWebinars.Business.Models.Mapping
         public OptionsGroupMap()
         {
             // Primary Key
-            this.HasKey(t => t.idOptionGroup);
+            this.HasKey(t => t.idRegTypeGroup);
 
             // Properties
             this.Property(t => t.OptionGroupDesc)
@@ -19,7 +19,7 @@ namespace CUWebinars.Business.Models.Mapping
 
             // Table & Column Mappings
             this.ToTable("OptionsGroups");
-            this.Property(t => t.idOptionGroup).HasColumnName("idOptionGroup");
+            this.Property(t => t.idRegTypeGroup).HasColumnName("idRegTypeGroup");
             this.Property(t => t.OptionGroupDesc).HasColumnName("OptionGroupDesc");
             this.Property(t => t.OptionType).HasColumnName("OptionType");
             this.Property(t => t.SortOrder).HasColumnName("SortOrder");

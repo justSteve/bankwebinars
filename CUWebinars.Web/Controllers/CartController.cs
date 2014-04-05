@@ -211,7 +211,7 @@ namespace CUWebinars.Web.Controllers
 
             var option = options.SingleOrDefault(o => o.Type == "additional_location");
 
-            OrderRowOption orderRowOption = null;
+            AdditionalLocations additionalLocations = null;
 
             var emailAddresses =
                 model.
@@ -222,7 +222,7 @@ namespace CUWebinars.Web.Controllers
 
             if (emailAddresses.Any())
             {
-                orderRowOption = _orderManagementService.CreateOrderRowOption(
+                additionalLocations = _orderManagementService.CreateOrderRowOption(
                     option,
                     option.OptionExplain,
                     Convert.ToDecimal(option.PriceToAdd ?? 0.0),
@@ -242,28 +242,28 @@ namespace CUWebinars.Web.Controllers
                     //    freeConnectionsCount = addEmails.Split(',').Count();
                     //}
                     ////int freeConnectionsCount = 0;
-                    //orderRowOption.AdditionalLocationsCount = freeConnectionsCount;
-                    //if (orderRowOption.AdditionalLocationsCount > 3)
+                    //AdditionalLocations.AdditionalLocationsCount = freeConnectionsCount;
+                    //if (AdditionalLocations.AdditionalLocationsCount > 3)
                     //{
-                    //    orderRowOption.AdditionalLocationsCount = 3;
+                    //    AdditionalLocations.AdditionalLocationsCount = 3;
                     //}
 
 
                     //if ((RegistrationType)mode == RegistrationType.Twelve_Month_Subscription)
                     //{
-                    //    orderRowOption.AdditionalLocationsCount += twelveMonthPaidConnectionsCount.HasValue ? twelveMonthPaidConnectionsCount.Value : 0;
+                    //    AdditionalLocations.AdditionalLocationsCount += twelveMonthPaidConnectionsCount.HasValue ? twelveMonthPaidConnectionsCount.Value : 0;
                     //}
                     //else
                     //{
-                    //    orderRowOption.AdditionalLocationsCount += sixMonthPaidConnectionsCount.HasValue ? sixMonthPaidConnectionsCount.Value : 0;
+                    //    AdditionalLocations.AdditionalLocationsCount += sixMonthPaidConnectionsCount.HasValue ? sixMonthPaidConnectionsCount.Value : 0;
                     //}
                 }
 
             }
 
-            var orderRow = _orderManagementService.CreateOrderRow(model.Webinar, orderRowOption, string.Empty, mode);
-            // populate the ViewBag with the RegistrationType (aka Option)
-            ViewBag.RegistrationType = options.SingleOrDefault(o => o.idOption == orderRow.RegistrationType);
+            var orderRow = _orderManagementService.CreateOrderRow(model.Webinar, additionalLocations, string.Empty, mode);
+            // populate the ViewBag with the RegistrationType (aka RegType)
+            ViewBag.RegistrationType = options.SingleOrDefault(o => o.idRegType == orderRow.RegistrationType);
 
 
             if (currentOrder == null)
@@ -284,7 +284,7 @@ namespace CUWebinars.Web.Controllers
                        " SessionID: " + stateService.GetValue<String>("SessionID") + "</p>";
 
 
-            //var additionalLocations = orderRow.OrderRowOptions.OfType<AdditionalLocationsOrderRowOption>();
+            //var additionalLocations = orderRow.AdditionalLocations.OfType<AdditionalLocationsOrderRowOption>();
             //var additionalLocationsOption = additionalLocations as AdditionalLocationsOrderRowOption[] ?? additionalLocations.ToArray();
 
             //int count = additionalLocationsOption.Count();
@@ -418,7 +418,7 @@ namespace CUWebinars.Web.Controllers
         public ActionResult CheckIfAddLocShouldHide(int optionID)
         {
             var shouldShow = "";
-            var firstOrDefault = db.Options.Where(o => o.idOption == optionID)
+            var firstOrDefault = db.Options.Where(o => o.idRegType == optionID)
                 .Select(o => o.ShowLiveNotifications).FirstOrDefault();
             if (firstOrDefault != null)
             {

@@ -26,15 +26,15 @@ PRINT '_________________________________________________________________________
 go
 :r $(path)\seeder4_CreateOptions.SQL
 UPDATE [dbo].[Options]
-   SET [OptionExplain] = (select OptionExplain FROM TTSWebinars2.dbo.Options WHERE idOption = 1)
-      ,[OptionLabel] = (select OptionLabel FROM TTSWebinars2.dbo.Options WHERE idOption = 1)
-      ,[PriceToAdd] = (select PriceToAdd FROM TTSWebinars2.dbo.Options WHERE idOption = 1)
-      ,[TaxExempt] = (select TaxExempt FROM TTSWebinars2.dbo.Options WHERE idOption = 1)
-      ,[PercToAdd] = (select PercToAdd FROM TTSWebinars2.dbo.Options WHERE idOption = 1)
-      ,[SortOrder] = (select SortOrder FROM TTSWebinars2.dbo.Options WHERE idOption = 1)
-      ,[Type] = (select Type FROM TTSWebinars2.dbo.Options WHERE idOption = 1)
-      ,[MsgConfirm] = (select MsgConfirm FROM TTSWebinars2.dbo.Options WHERE idOption = 1)
-      ,[SKU] = (select SKU FROM TTSWebinars2.dbo.Options WHERE idOption = 1)
+   SET [OptionExplain] = (select OptionExplain FROM TTSWebinars2.dbo.Options WHERE idRegType = 1)
+      ,[OptionLabel] = (select OptionLabel FROM TTSWebinars2.dbo.Options WHERE idRegType = 1)
+      ,[PriceToAdd] = (select PriceToAdd FROM TTSWebinars2.dbo.Options WHERE idRegType = 1)
+      ,[TaxExempt] = (select TaxExempt FROM TTSWebinars2.dbo.Options WHERE idRegType = 1)
+      ,[PercToAdd] = (select PercToAdd FROM TTSWebinars2.dbo.Options WHERE idRegType = 1)
+      ,[SortOrder] = (select SortOrder FROM TTSWebinars2.dbo.Options WHERE idRegType = 1)
+      ,[Type] = (select Type FROM TTSWebinars2.dbo.Options WHERE idRegType = 1)
+      ,[MsgConfirm] = (select MsgConfirm FROM TTSWebinars2.dbo.Options WHERE idRegType = 1)
+      ,[SKU] = (select SKU FROM TTSWebinars2.dbo.Options WHERE idRegType = 1)
       ,[ShowLiveNotifications] = 'Yes'
       ,[ShowRecordingNotifications] = 'No'
       ,[ShowShippedNotifications] = 'No'
@@ -42,7 +42,7 @@ UPDATE [dbo].[Options]
       ,[Stage2CheckoutConfirmationMsg] = 'This order is for the live session only. The information required to connect to the event is summarized below. Detailed information has been sent to your email and is also available at http://www.BankWebinars.com/MyWebinars.'
       ,[Stage1EmailConfirmationMsg] = 'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) you''ll receive another email with complete connection instructions.'
       ,[Stage2EmailConfirmationMsg] = 'Connection information is summerized below and is also available at http://www.BankWebinars.com.'
- WHERE dbo.Options.idOption = 84
+ WHERE dbo.Options.idRegType = 84
 GO
 
 print '_________________________________________________________________________________________begin webinars'
@@ -65,8 +65,8 @@ SELECT * FROM dbo.Addresses
 SELECT * FROM dbo.Presenter 
 
 SELECT w.idWebinar ,* FROM dbo.Webinar w INNER JOIN dbo.OptionsGroupsXref ogx ON ogx.idWebinar = w.idWebinar
-INNER JOIN dbo.OptionsGroups og ON og.idOptionGroup = ogx.idOptionGroup
-INNER JOIN dbo.OptionsXref ox ON ox.idOptionGroup = og.idOptionGroup INNER JOIN dbo.Options o ON o.idOption = ox.idOption
+INNER JOIN dbo.OptionsGroups og ON og.idRegTypeGroup = ogx.idRegTypeGroup
+INNER JOIN dbo.OptionsXref ox ON ox.idRegTypeGroup = og.idRegTypeGroup INNER JOIN dbo.Options o ON o.idRegType = ox.idRegType
 
 WHERE w.idWebinar = 803
 
@@ -82,7 +82,7 @@ WHERE w.idWebinar = 803
 --CREATE PROCEDURE [dbo].[CreateCUOrder]
 --    @idUser INT , -- UserID
 --    @idWebinar INT ,
---    @idOption INT ,
+--    @idRegType INT ,
 --    @idAffiliate INT = 19 ,
 --    @idDiscount INT = NULL ,
 --    @billStatus INT = 3
@@ -107,7 +107,7 @@ WHERE w.idWebinar = 803
 --              0 , -- ErrorState - int
 --              N'[InsertOrder] logging the call' , -- ErrorProcedure - nvarchar(126)
 --              0 , -- ErrorLine - int
---              CAST(@idUser AS VARCHAR) + ', ' + CAST(@idWebinar AS VARCHAR) + ', ' + CAST(@idOption AS VARCHAR)
+--              CAST(@idUser AS VARCHAR) + ', ' + CAST(@idWebinar AS VARCHAR) + ', ' + CAST(@idRegType AS VARCHAR)
 --	        )
 --    DECLARE @ErrorLogID INT
 --    DECLARE @percentOff DECIMAL
@@ -157,7 +157,7 @@ WHERE w.idWebinar = 803
 --                  GETDATE() ,  --orderDate                  
 --                  ( SELECT  PriceToAdd
 --                    FROM    dbo.Options
---                    WHERE   idOption = @idOption
+--                    WHERE   idRegType = @idRegType
 --                  ) ,
 --                  ( SELECT  firstName
 --                    FROM    WebUser
@@ -290,17 +290,17 @@ WHERE w.idWebinar = 803
 --                  @idWebinar ,
 --                  ( SELECT  priceToAdd
 --                    FROM    Options
---                    WHERE   idOption = @idOption
+--                    WHERE   idRegType = @idRegType
 --                  ) ,
 --                  ( SELECT  priceToAdd
 --                    FROM    Options
---                    WHERE   idOption = @idOption
+--                    WHERE   idRegType = @idRegType
 --                  ) ,
 --                  @idDiscount ,
 --                  ISNULL(@percentOff, 0) ,
 --                  ISNULL(@flatOff, 0) ,
 --                  ' ' ,
---                  @idOption ,
+--                  @idRegType ,
 --                  2 ,
 --                  0 ,
 --                  ''

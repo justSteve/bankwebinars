@@ -14,7 +14,7 @@ namespace CUWebinars.Business.Repository
         IQueryable<Webinar> GetAllActive();
         IQueryable<Order> GetOrdersByWebinar(int webinarId);
         IQueryable<Webinar> GetByTopic(int topicId);
-        List<Option> GetCurrentOptions(int idWebinar);
+        List<RegType> GetCurrentOptions(int idWebinar);
         IList<Order> GetOrdersByWebinarForConnectionInfo(int id);
 
         IQueryable<Topic>  GetTopicsPerWebinar(int idWebinar);

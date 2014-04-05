@@ -52,11 +52,11 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
             OrderRow row = _orderManagementService.LoadOrderRow(ID);
             //TODO: Help me with 'row.Options' reference?
 
-            //OrderRowOption option in row.OrderRowOptions
-            //var option = row.OrderRowOptions.SingleOrDefault(o => o.Type == "additional_location");
+            //AdditionalLocations RegType in row.AdditionalLocations
+            //var RegType = row.AdditionalLocations.SingleOrDefault(o => o.Type == "additional_location");
 
             var locations =
-                row.OrderRowOptions.SingleOrDefault(o => o.Type == "additional_location");
+                row.AdditionalLocations.SingleOrDefault(o => o.Type == "additional_location");
             //Options.OfType<AdditionalLocationsOrderRowOption>().SingleOrDefault();
 
             IDictionary<string, string> addEmails = Request.Params.AllKeys
@@ -71,18 +71,18 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
                 .Select(e => e.Value)
                 .ToList();
 
-            var additionalLocations = new List<AdditionalLocation>(emails.Count);
+            var additionalLocations = new List<AdditionalEmails>(emails.Count);
 
             emails.ForEach(email =>
             {
-                var additionalLocation = new AdditionalLocation {Email = email};
+                var additionalLocation = new AdditionalEmails {Email = email};
                 additionalLocations.Add(additionalLocation);
             });
 
 
             if (connectionsCount <= 0 && locations != null)
             {
-                row.OrderRowOptions.Remove(locations);
+                row.AdditionalLocations.Remove(locations);
                 msg = "There are no Additional Locations specified.";
             }
 
@@ -90,30 +90,30 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
             {
                 var options = _orderManagementService.GetOptionsByWebinarId(row.Webinar.idWebinar, false);
                 var option = options.SingleOrDefault(o => o.Type == "additional_location");
-                //                AdditionalLocationsOption option = options.OfType<AdditionalLocationsOption>().SingleOrDefault();
+                //                AdditionalLocationsOption RegType = options.OfType<AdditionalLocationsOption>().SingleOrDefault();
 
 
 
                 if (option != null)
                 {
-                    locations = new OrderRowOption
+                    locations = new AdditionalLocations
                     {
-                        AdditionalLocations = additionalLocations,
-                        Option = option,
+                        //AdditionalLocations = additionalLocations,
+                        RegType = option,
                         OrderRow = row,
                         OptionDescription = option.OptionExplain,
-                        OptionPrice = Convert.ToDecimal(option.PriceToAdd)
+                        RegTypePrice = Convert.ToDecimal(option.PriceToAdd)
                     };
-                    row.OrderRowOptions.Add(locations);
+                    row.AdditionalLocations.Add(locations);
                 }
             }
             else
             {
                 if (locations != null)
                 {
-                    originalLocCount = locations.AdditionalLocations.Count;
-                    //locations.additional_locations_count = connectionsCount;
-                    locations.AdditionalLocations = additionalLocations;
+                    //originalLocCount = locations.AdditionalLocations.Count;
+                    ////locations.additional_locations_count = connectionsCount;
+                    //locations.AdditionalLocations = additionalLocations;
                 }
             }
 
@@ -123,7 +123,7 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
                 msg = "One Additional Location.<br>";
 
                 optionsCost = "Total cost of Additional Locations: " +
-                              (locations.OptionPrice*connectionsCount).ToString("C0");
+                              (locations.RegTypePrice*connectionsCount).ToString("C0");
 
             }
             if (connectionsCount > 1)

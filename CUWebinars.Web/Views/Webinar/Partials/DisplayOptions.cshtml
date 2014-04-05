@@ -9,8 +9,8 @@
 @{
 
 
-    var orderRowOption = new OrderRowOption() { OptionDescription = "TODO: Change this is a temp description", OptionPrice = 150.00M };
-    //  TODO: also, I hard-coded 150 for the OptionPrice. Not sure where this should come from.
+    var orderRowOption = new AdditionalLocations() { OptionDescription = "TODO: Change this is a temp description", RegTypePrice = 150.00M };
+    //  TODO: also, I hard-coded 150 for the RegTypePrice. Not sure where this should come from.
 
     //  Comment: I assume order will be null where there is no existing order for the User for that WebinarId
     //           This does not seem to have been handled in the controller as the Order is just set to null. I need to understand this.
@@ -18,13 +18,13 @@
     //if (Model.Order != null)
     //{
     //    var order = Model.Order;
-    //    if (order.OrderRows.SingleOrDefault().OrderRowOptions.SingleOrDefault() != null)
+    //    if (order.OrderRows.SingleOrDefault().OrderRowRegTypes.SingleOrDefault() != null)
     //    {
-    //        addLocView = order.OrderRows.SingleOrDefault().OrderRowOptions.SingleOrDefault();
+    //        addLocView = order.OrderRows.SingleOrDefault().OrderRowRegTypes.SingleOrDefault();
     //    }
     //    else
     //    {
-    //        order.OrderRows.SingleOrDefault().OrderRowOptions.Add(addLocView);
+    //        order.OrderRows.SingleOrDefault().OrderRowRegTypes.Add(addLocView);
     //    }
 
     //}
@@ -32,7 +32,7 @@
 
 
     <span>
-        Choose the attendance option that's right for you! <a href="#AttendOptions" data-toggle="modal">(learn more)</a>
+        Choose the attendance RegType that's right for you! <a href="#AttendRegTypes" data-toggle="modal">(learn more)</a>
     </span>
 
     <div class="pull-right">
@@ -47,11 +47,11 @@
                 {
                     if (!myOption.SKU.Contains("Upgrade"))
                     {
-                        //since the option hasn't been designated as an 'Upgrade'
+                        //since the RegType hasn't been designated as an 'Upgrade'
                         // we need to display it. Only show 'Upgrades' to users
                         // who already own a registration.
                         <dt>
-                            <input type="radio" class="checkbox" id='mode_@(myOption.idOption)' @defaultCheck name="mode" value="@myOption.idOption" />
+                            <input type="radio" class="checkbox" id='mode_@(myOption.idRegType)' @defaultCheck name="mode" value="@myOption.idRegType" />
                             &nbsp;&nbsp;@myOption.OptionLabel - $@myOption.PriceToAdd&nbsp;&nbsp;<a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.OptionExplain) "><i class="icon-question-sign"></i></a>
                             <br />
                         </dt>
@@ -61,7 +61,7 @@
                         if (ViewBag.userOwnsThisEvent > 0)
                         {
                             <dt>
-                                <input type="radio" class="checkbox" id='mode_@(myOption.idOption)' @defaultCheck name="mode" value="@myOption.idOption" />
+                                <input type="radio" class="checkbox" id='mode_@(myOption.idRegType)' @defaultCheck name="mode" value="@myOption.idRegType" />
                                 &nbsp;&nbsp;@myOption.OptionLabel - $@myOption.PriceToAdd&nbsp;&nbsp;<a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.OptionExplain) "><i class="icon-question-sign"></i></a>
                                 <br />
                             </dt>
@@ -74,15 +74,15 @@
                 {
 
 
-                    orderRowOption.Option = myOption;
+                    orderRowOption.RegType = myOption;
                     Model.AdditionalLocationsViewModel = new AdditionalLocationsViewModel
                     {
-                        OrderRowOption = orderRowOption,
+                        AdditionalLocations = orderRowOption,
                         Webinar = Model.Webinar
                     };
-                    //Model.AdditionalLocationsViewModel.OrderRowOption = orderRowOption;
-                    //TODO: ERROR HERE. How to correctly populate the AdditionalLocation value
-                    // currently the Option that is received by the Partial view
+                    //Model.AdditionalEmailssViewModel.OrderRowRegType = orderRowRegType;
+                    //TODO: ERROR HERE. How to correctly populate the AdditionalEmails value
+                    // currently the RegType that is received by the Partial view
                     // is null.
                 }
             }

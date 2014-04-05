@@ -82,37 +82,37 @@ namespace CUWebinars.Business.Repository
             }
         }
 
-        public IList<Option> FindOptionsByWebinarId(int id, bool detached)
-        {
-            using (var context = new TTSWebinarsContext())
-            {
-                context.Configuration.ProxyCreationEnabled = false;
+        //public IList<RegType> FindRegTypesByWebinarId(int id, bool detached)
+        //{
+        //    using (var context = new TTSWebinarsContext())
+        //    {
+        //        context.Configuration.ProxyCreationEnabled = false;
 
-                var webinars = context.Webinars
-                    .Include(w => w.OptionsGroupsXrefs.Select(o => o.OptionsGroup.OptionsXrefs.Select(ox => ox.Option)))
-                    .Where(w => w.idWebinar == id)
-                    .ToList();
+        //        var webinars = context.Webinars
+        //            //.Include(w => w.OptionsGroupsXrefs.Select(o => o.OptionsGroup.OptionsXrefs.Select(ox => ox.RegType)))
+        //            .Where(w => w.idWebinar == id)
+        //            .ToList();
 
-                // There can be only one OptionsGroupsXrefs per webinar at any one time
-                var optionsGroupsXrefs = webinars.SelectMany(w => w.OptionsGroupsXrefs);
+        //        // There can be only one OptionsGroupsXrefs per webinar at any one time
+        //        var optionsGroupsXrefs = webinars.SelectMany(w => w.OptionsGroupsXrefs);
 
-                //  For each of those OptionsGroupsXrefs, get the relevant OptionGroup
-                var optionsGroups = optionsGroupsXrefs.Select(o => o.OptionsGroup);
+        //        //  For each of those OptionsGroupsXrefs, get the relevant OptionGroup
+        //        var optionsGroups = optionsGroupsXrefs.Select(o => o.OptionsGroup);
 
-                //  Get all OptionsXrefs for those OptionGroups
-                var optionsXrefs = optionsGroups
-                    .SelectMany(opt => opt.OptionsXrefs);
+        //        //  Get all OptionsXrefs for those OptionGroups
+        //        var optionsXrefs = optionsGroups
+        //            .SelectMany(opt => opt.OptionsXrefs);
 
-                //  Finally, get the options
-                var options = optionsXrefs.Select(o => o.Option).ToList();
+        //        //  Finally, get the options
+        //        var options = optionsXrefs.Select(o => o.RegType).ToList();
 
-                if (!detached)
-                    return options;
+        //        if (!detached)
+        //            return options;
 
-                options.ForEach(o => context.Entry(o).State = EntityState.Detached);
+        //        options.ForEach(o => context.Entry(o).State = EntityState.Detached);
 
-                return options;
-            }
-        }
+        //        return options;
+        //    }
+        //}
     }
 }

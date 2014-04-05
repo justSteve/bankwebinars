@@ -82,7 +82,7 @@ namespace CUWebinars.Web.App_Start
             const string webuserRepository = "WebUserRepository";
             const string orderRepository = "OrderRepository";
             const string refdataRepository = "RefDataRepository";
-            const string optionRepository = "OptionRepository";
+            const string regTypeRepository = "RegTypeRepository";
 
             string baseUrl = HttpRuntime.AppDomainAppPath;
             kernel.Bind<IStateService>().To<StateService>();
@@ -103,7 +103,7 @@ namespace CUWebinars.Web.App_Start
             kernel.Bind<IRefDataRepository>().To<RefDataRepository>().InRequestScope().Named(refdataRepository);
             kernel.Bind<IInstitutionRepository>().To<InstitutionRepository>().InRequestScope();
             kernel.Bind<IUserAccountRepository>().To<DefaultUserAccountRepository>();
-            kernel.Bind<IOptionRepository>().To<OptionRepository>().InRequestScope().Named(optionRepository);
+            kernel.Bind<IRegTypeRepository>().To<RegTypeRepository>().InRequestScope().Named(regTypeRepository);
             kernel.Bind<IOrderManagementService>().ToMethod(ctx =>
             {
                 var context = ctx.Kernel.Get<TTSWebinarsContext>();
@@ -111,7 +111,7 @@ namespace CUWebinars.Web.App_Start
 
                 var orderManagementService = new OrderManagementService(
                     ctx.Kernel.Get<IAffiliateRepository>(affiliateRepository, param),
-                    ctx.Kernel.Get<IOptionRepository>(optionRepository, param),
+                    ctx.Kernel.Get<IRegTypeRepository>(regTypeRepository, param),
                     ctx.Kernel.Get<IOrderRepository>(orderRepository, param),
                     ctx.Kernel.Get<IRefDataRepository>(refdataRepository, param),
                     ctx.Kernel.Get<IWebUserRepository>(webuserRepository, param),

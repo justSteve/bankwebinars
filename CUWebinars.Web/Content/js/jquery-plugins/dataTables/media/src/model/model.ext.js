@@ -117,7 +117,7 @@ DataTable.models.ext = {
 	/**
 	 * Feature plug-ins - This is an array of objects which describe the feature plug-ins that are
 	 * available to DataTables. These feature plug-ins are accessible through the sDom initialisation
-	 * option. As such, each feature plug-in must describe a function that is used to initialise
+	 * RegType. As such, each feature plug-in must describe a function that is used to initialise
 	 * itself (fnInit), a character so the feature can be enabled by sDom (cFeature) and the name
 	 * of the feature (sFeature). Thus the objects attached to this method must provide:
 	 *   <ul>

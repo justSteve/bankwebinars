@@ -6,6 +6,6 @@ namespace CUWebinars.Web.ViewModel
     public class AddAdditionalLocationsViewModel
     {
         public IList<string> Emails { get; set; }
-        public OrderRowOption OrderRowOption { get; set; }
+        public AdditionalLocations AdditionalLocations { get; set; }
     }
 }

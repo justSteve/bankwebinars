@@ -7,7 +7,7 @@ namespace CUWebinars.Business.Models
     {
         public OrderRow()
         {
-            this.OrderRowOptions = new List<OrderRowOption>();
+            this.AdditionalLocations = new List<AdditionalLocations>();
         }
 
         public int idOrderRow { get; set; }
@@ -26,6 +26,6 @@ namespace CUWebinars.Business.Models
         public Nullable<decimal> Royalty { get; set; }
         public virtual Order Order { get; set; }
         public virtual Webinar Webinar { get; set; }
-        public virtual ICollection<OrderRowOption> OrderRowOptions { get; set; }
+        public virtual ICollection<AdditionalLocations> AdditionalLocations { get; set; }
     }
 }

@@ -130,7 +130,7 @@ namespace CUWebinars.Web.Controllers
             var addAdditionalLocationsViewModel = new AddAdditionalLocationsViewModel
             {
                 Emails = null,
-                OrderRowOption = order.OrderRows.First().OrderRowOptions.First()
+                AdditionalLocations = order.OrderRows.First().AdditionalLocations.First()
             };
 
             return PartialView(addAdditionalLocationsViewModel);
@@ -242,34 +242,34 @@ namespace CUWebinars.Web.Controllers
         //            //        throw;
         //            //    }
         //            //}
-        //            var additionalLocationsOrderRowOptions = orderRow.OrderRowOptions.OfType<AdditionalLocationsOrderRowOption>();
-        //            if (additionalLocationsOrderRowOptions.Count() > 0)
+        //            var additionalLocationsAdditionalLocations = orderRow.AdditionalLocations.OfType<AdditionalLocationsOrderRowOption>();
+        //            if (additionalLocationsAdditionalLocations.Count() > 0)
         //            {
         //                int additionalLocationsCount;
         //                if (int.TryParse(Request["AdditionalLocationsCount" + orderRow.idOrderRow], out additionalLocationsCount))
         //                {
-        //                    additionalLocationsOrderRowOptions.Single().AdditionalLocationsCount = additionalLocationsCount;
+        //                    additionalLocationsAdditionalLocations.Single().AdditionalLocationsCount = additionalLocationsCount;
         //                }
         //                else if (Request["AdditionalLocationsCount" + orderRow.idOrderRow] == "")
         //                {
-        //                    additionalLocationsOrderRowOptions.Single().AdditionalLocationsCount = 0;
+        //                    additionalLocationsAdditionalLocations.Single().AdditionalLocationsCount = 0;
         //                }
         //            }
 
         //            var options = _orderManagementService.GetOptionsByWebinarId(webinar.idWebinar);
 
-        //            //var option = options.OfType<AdditionalLocationsOption>().SingleOrDefault();
-        //            var option = options.SingleOrDefault(o => o.Type == "additional_location");
+        //            //var RegType = options.OfType<AdditionalLocationsOption>().SingleOrDefault();
+        //            var RegType = options.SingleOrDefault(o => o.Type == "additional_location");
 
-        //            if (option != null)
+        //            if (RegType != null)
         //            {
-        //                var orderRowOption = new AdditionalLocationsOrderRowOption
+        //                var AdditionalLocations = new AdditionalLocationsOrderRowOption
         //                {
         //                    AdditionalLocationsCount = connectionsCount.HasValue ? connectionsCount.Value : 0,
-        //                    Option = option,
+        //                    RegType = RegType,
         //                    OrderRow = orderRow,
-        //                    OptionDescription = option.OptionExplain,
-        //                    OptionPrice = Convert.ToDecimal(option.PriceToAdd),
+        //                    OptionDescription = RegType.OptionExplain,
+        //                    RegTypePrice = Convert.ToDecimal(RegType.PriceToAdd),
         //                    Emails = addEmails.Select(e => e.Value).ToList()
         //                };
 
@@ -286,25 +286,25 @@ namespace CUWebinars.Web.Controllers
         //                    //    freeConnectionsCount = addEmails.Split(',').Count();
         //                    //}
         //                    ////int freeConnectionsCount = 0;
-        //                    //orderRowOption.AdditionalLocationsCount = freeConnectionsCount;
-        //                    //if (orderRowOption.AdditionalLocationsCount > 3)
+        //                    //AdditionalLocations.AdditionalLocationsCount = freeConnectionsCount;
+        //                    //if (AdditionalLocations.AdditionalLocationsCount > 3)
         //                    //{
-        //                    //    orderRowOption.AdditionalLocationsCount = 3;
+        //                    //    AdditionalLocations.AdditionalLocationsCount = 3;
         //                    //}
 
 
         //                    //if ((RegistrationType)mode == RegistrationType.Twelve_Month_Subscription)
         //                    //{
-        //                    //    orderRowOption.AdditionalLocationsCount += twelveMonthPaidConnectionsCount.HasValue ? twelveMonthPaidConnectionsCount.Value : 0;
+        //                    //    AdditionalLocations.AdditionalLocationsCount += twelveMonthPaidConnectionsCount.HasValue ? twelveMonthPaidConnectionsCount.Value : 0;
         //                    //}
         //                    //else
         //                    //{
-        //                    //    orderRowOption.AdditionalLocationsCount += sixMonthPaidConnectionsCount.HasValue ? sixMonthPaidConnectionsCount.Value : 0;
+        //                    //    AdditionalLocations.AdditionalLocationsCount += sixMonthPaidConnectionsCount.HasValue ? sixMonthPaidConnectionsCount.Value : 0;
         //                    //}
         //                }
 
-        //                orderRow.OrderRowOptions.Add(orderRowOption);
-        //                //orderRow.Options.Add(orderRowOption);
+        //                orderRow.AdditionalLocations.Add(AdditionalLocations);
+        //                //orderRow.Options.Add(AdditionalLocations);
         //            }
 
         //            //try

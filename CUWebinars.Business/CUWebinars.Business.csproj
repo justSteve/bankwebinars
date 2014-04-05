@@ -73,7 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountService\IMembershipService.cs" />
-    <Compile Include="Models\AdditionalLocation.cs" />
+    <Compile Include="Models\AdditionalEmails.cs" />
     <Compile Include="Models\IObjectWithState.cs" />
     <Compile Include="Models\Mapping\AdditionalLocationMap.cs" />
     <Compile Include="Notification\Email\NotificationMessage.cs" />
@@ -125,10 +125,7 @@
     <Compile Include="Models\Mapping\AffiliateMap.cs" />
     <Compile Include="Models\Mapping\DiscountMap.cs" />
     <Compile Include="Models\Mapping\InstitutionMap.cs" />
-    <Compile Include="Models\Mapping\OptionMap.cs" />
-    <Compile Include="Models\Mapping\OptionsGroupMap.cs" />
-    <Compile Include="Models\Mapping\OptionsGroupsXrefMap.cs" />
-    <Compile Include="Models\Mapping\OptionsXrefMap.cs" />
+    <Compile Include="Models\Mapping\RegTypeMap.cs" />
     <Compile Include="Models\Mapping\OrderMap.cs" />
     <Compile Include="Models\Mapping\OrderRowMap.cs" />
     <Compile Include="Models\Mapping\OrderRowOptionMap.cs" />
@@ -138,13 +135,13 @@
     <Compile Include="Models\Mapping\WebinarMap.cs" />
     <Compile Include="Models\Mapping\WebinarTopicXrefMap.cs" />
     <Compile Include="Models\Mapping\WebUserMap.cs" />
-    <Compile Include="Models\Option.cs" />
+    <Compile Include="Models\RegType.cs" />
     <Compile Include="Models\OptionsGroup.cs" />
     <Compile Include="Models\OptionsGroupsXref.cs" />
     <Compile Include="Models\OptionsXref.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderRow.cs" />
-    <Compile Include="Models\OrderRowOption.cs" />
+    <Compile Include="Models\AdditionalLocations.cs" />
     <Compile Include="Models\OrderRowStatus.cs" />
     <Compile Include="Models\Presenter.cs" />
     <Compile Include="Models\USTimeZone.cs" />

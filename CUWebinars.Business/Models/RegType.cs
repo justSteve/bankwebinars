@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 namespace CUWebinars.Business.Models
 {
-    public partial class Option
+    public partial class RegType
     {
-        public Option()
+        public RegType()
         {
-            this.OptionsXrefs = new List<OptionsXref>();
-            this.OrderRowOptions = new List<OrderRowOption>();
+            //this.OptionsXrefs = new List<OptionsXref>();
+            //this.AdditionalLocations = new List<AdditionalLocations>();
         }
 
-        public int idOption { get; set; }
+        public int idRegType { get; set; }
         public string OptionExplain { get; set; }
         public string OptionLabel { get; set; }
         public Nullable<double> PriceToAdd { get; set; }
@@ -28,7 +28,7 @@ namespace CUWebinars.Business.Models
         public string Stage2CheckoutConfirmationMsg { get; set; }
         public string Stage1EmailConfirmationMsg { get; set; }
         public string Stage2EmailConfirmationMsg { get; set; }
-        public virtual ICollection<OptionsXref> OptionsXrefs { get; set; }
-        public virtual ICollection<OrderRowOption> OrderRowOptions { get; set; }
+        //public virtual ICollection<OptionsXref> OptionsXrefs { get; set; }
+        //public virtual ICollection<AdditionalLocations> AdditionalLocations { get; set; }
     }
 }

@@ -36,12 +36,12 @@ PRINT '--==========--'
 SET IDENTITY_INSERT dbo.OptionsGroups ON
 
 INSERT  INTO dbo.OptionsGroups
-        ( [idOptionGroup] ,
+        ( [idRegTypeGroup] ,
           [OptionGroupDesc] ,
           [OptionType] ,
           [SortOrder]
         )
-        SELECT  [idOptionGroup] ,
+        SELECT  [idRegTypeGroup] ,
                 [OptionGroupDesc] ,
                 [OptionType] ,
                 [SortOrder]
@@ -56,9 +56,9 @@ PRINT '--==========--'
 
 DECLARE my_Cursor CURSOR
 FOR
-SELECT  idOption
+SELECT  idRegType
 FROM    TTSWebinarsSeeder.dbo.Options
-WHERE   idOption > 78
+WHERE   idRegType > 78
 
 
 OPEN my_Cursor
@@ -80,41 +80,41 @@ WHILE @@FETCH_STATUS = 0
 
         SET @sku = ( SELECT SKU
                      FROM   TTSWebinarsSeeder.dbo.Options
-                     WHERE  idoption = @id2InsertOption
+                     WHERE  idRegType = @id2InsertOption
                    )
         SET @ShowLiveNotifications = ( SELECT   ShowLiveNotifications
                                        FROM     TTSWebinarsSeeder.dbo.Options
-                                       WHERE    idoption = @id2InsertOption
+                                       WHERE    idRegType = @id2InsertOption
                                      )
         SET @ShowRecordingNotifications = ( SELECT  ShowRecordingNotifications
                                             FROM    TTSWebinarsSeeder.dbo.Options
-                                            WHERE   idoption = @id2InsertOption
+                                            WHERE   idRegType = @id2InsertOption
                                           )
         SET @ShowShippedNotifications = ( SELECT    ShowShippedNotifications
                                           FROM      TTSWebinarsSeeder.dbo.Options
-                                          WHERE     idoption = @id2InsertOption
+                                          WHERE     idRegType = @id2InsertOption
                                         )
         SET @Stage1CheckoutConfirmationMsg = ( SELECT   Stage1CheckoutConfirmationMsg
                                                FROM     TTSWebinarsSeeder.dbo.Options
-                                               WHERE    idoption = @id2InsertOption
+                                               WHERE    idRegType = @id2InsertOption
                                              )
         SET @Stage2CheckoutConfirmationMsg = ( SELECT   Stage2CheckoutConfirmationMsg
                                                FROM     TTSWebinarsSeeder.dbo.Options
-                                               WHERE    idoption = @id2InsertOption
+                                               WHERE    idRegType = @id2InsertOption
                                              )
         SET @Stage1EmailConfirmationMsg = ( SELECT  Stage1EmailConfirmationMsg
                                             FROM    TTSWebinarsSeeder.dbo.Options
-                                            WHERE   idoption = @id2InsertOption
+                                            WHERE   idRegType = @id2InsertOption
                                           )
         SET @Stage2EmailConfirmationMsg = ( SELECT  Stage2EmailConfirmationMsg
                                             FROM    TTSWebinarsSeeder.dbo.Options
-                                            WHERE   idoption = @id2InsertOption
+                                            WHERE   idRegType = @id2InsertOption
                                           )
 
 
 
         INSERT  INTO [Options]
-                ( idOption ,
+                ( idRegType ,
                   [optionExplain] ,
                   [optionLabel] ,
                   [priceToAdd] ,
@@ -135,31 +135,31 @@ WHILE @@FETCH_STATUS = 0
         VALUES  ( @id2InsertOption ,
                   ( SELECT  [optionExplain]
                     FROM    TTSWebinarsSeeder.dbo.Options
-                    WHERE   idoption = @id2InsertOption
+                    WHERE   idRegType = @id2InsertOption
                   ) ,
                   ( SELECT  [optionLabel]
                     FROM    TTSWebinarsSeeder.dbo.Options
-                    WHERE   idoption = @id2InsertOption
+                    WHERE   idRegType = @id2InsertOption
                   ) ,
                   ( SELECT  [priceToAdd]
                     FROM    TTSWebinarsSeeder.dbo.Options
-                    WHERE   idoption = @id2InsertOption
+                    WHERE   idRegType = @id2InsertOption
                   ) ,
                   ( SELECT  [SKU]
                     FROM    TTSWebinarsSeeder.dbo.Options
-                    WHERE   idoption = @id2InsertOption
+                    WHERE   idRegType = @id2InsertOption
                   ) ,
                   ( SELECT  [percToAdd]
                     FROM    TTSWebinarsSeeder.dbo.Options
-                    WHERE   idoption = @id2InsertOption
+                    WHERE   idRegType = @id2InsertOption
                   ) ,
                   ( SELECT  [sortOrder]
                     FROM    TTSWebinarsSeeder.dbo.Options
-                    WHERE   idoption = @id2InsertOption
+                    WHERE   idRegType = @id2InsertOption
                   ) ,
                   ( SELECT  [type]
                     FROM    TTSWebinarsSeeder.dbo.Options
-                    WHERE   idoption = @id2InsertOption
+                    WHERE   idRegType = @id2InsertOption
                   ) ,
                   @ShowLiveNotifications ,
                   @ShowRecordingNotifications ,
@@ -182,19 +182,19 @@ DEALLOCATE my_Cursor
 
 
 INSERT  INTO BankWebinars.[dbo].[OptionsXref]
-        ( idOptionGroup ,
-          idOption                
+        ( idRegTypeGroup ,
+          idRegType                
         )
-        SELECT  idOptionGroup ,
-                idOption
+        SELECT  idRegTypeGroup ,
+                idRegType
         FROM    TTSWebinarsSeeder.dbo.OptionsXref
 
 --PRINT 'inserted OptionsXref'
 
 INSERT  INTO dbo.OptionsGroupsXref
         ( idWebinar ,
-          idOptionGroup
+          idRegTypeGroup
         )
         SELECT  idWebinar ,
-                idOptionGroup
+                idRegTypeGroup
         FROM    TTSWebinarsSeeder.dbo.OptionsGroupsXref

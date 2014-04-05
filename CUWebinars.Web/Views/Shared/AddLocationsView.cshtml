@@ -75,7 +75,7 @@
                     1.
                     <input type="text" onblur="CheckEmails();" id="Email_1" name="Email_1" class="emailInput" placeholder="email" size="30" />&nbsp; &nbsp;&nbsp;@(optionCost.ToString("C0"))
                 </div>
-                <div id="AddButton_@(Model.Order.OrderRows.Single().idOrderRow)" class="btn btn-mini  btn-success emailInput" role="button" onclick="AddLocation(1,  '@(additionalLocations.OptionPrice.ToString("C0")); return false; ">Add?</div>
+                <div id="AddButton_@(Model.Order.OrderRows.Single().idOrderRow)" class="btn btn-mini  btn-success emailInput" role="button" onclick="AddLocation(1,  '@(additionalLocations.RegTypePrice.ToString("C0")); return false; ">Add?</div>
             </div>
         }
         else
@@ -91,7 +91,7 @@
                     @for (var i = 1; i <= additionalLocations.AdditionalLocationsCount; i++)
                     {
                         showCount = (i) + ". ";
-                        showTotalCost = showTotalCost + additionalLocations.OptionPrice;
+                        showTotalCost = showTotalCost + additionalLocations.RegTypePrice;
                         <div class="line_@(i)">
 
                             @showCount
@@ -99,18 +99,18 @@
                             &nbsp;<a class="btn  btn-mini emailInput btn-danger" onclick="RemoveLocation('line_@(i)');">
                                 <i class="icon-trash icon-large"></i>Remove?
                             </a>
-                            &nbsp;&nbsp;@(additionalLocations.OptionPrice.ToString("C0"))<br />
+                            &nbsp;&nbsp;@(additionalLocations.RegTypePrice.ToString("C0"))<br />
                         </div>
                     }
                 </div>
-                <div id="AddButton_@(Model.Order.OrderRows.Single().idOrderRow)" class="btn btn-mini emailInput btn-success" role="button" onclick=" addlocation(@additionallocations.additionallocationscount + 1, '@(additionalLocations.OptionPrice.ToString("C0"))' ); return false; ">Add More?</div>
+                <div id="AddButton_@(Model.Order.OrderRows.Single().idOrderRow)" class="btn btn-mini emailInput btn-success" role="button" onclick=" addlocation(@additionallocations.additionallocationscount + 1, '@(additionalLocations.RegTypePrice.ToString("C0"))' ); return false; ">Add More?</div>
                 <div class="pull-right" id="ShowsAddLocTotalCost">Total cost of Additional Locations: @showTotalCost.ToString("C0")</div>
             }
             else
             {
                 <div class="line_1">
                     1. <input type="text" name="Email_1" value="@(additionalLocations.Emails[0])" />
-                    &nbsp;&nbsp;@(additionalLocations.OptionPrice.ToString("C0"))<br />
+                    &nbsp;&nbsp;@(additionalLocations.RegTypePrice.ToString("C0"))<br />
                 </div>
 
             }

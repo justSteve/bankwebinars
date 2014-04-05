@@ -2,7 +2,7 @@
 
 namespace CUWebinars.Business.Models.Mapping
 {
-    public class AdditionalLocationMap : EntityTypeConfiguration<AdditionalLocation>
+    public class AdditionalLocationMap : EntityTypeConfiguration<AdditionalEmails>
     {
         public AdditionalLocationMap()
         {
@@ -17,9 +17,9 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.idOrderRowOption).HasColumnName("idOrderRowOption").IsRequired();
 
             // Relationships
-            HasRequired(a => a.OrderRowOption)
-                .WithMany(o => o.AdditionalLocations)
-                .HasForeignKey(a => a.idOrderRowOption);
+            //HasRequired(a => a.AdditionalLocations)
+            //    .WithMany(o => o.A)
+            //    .HasForeignKey(a => a.idOrderRowOption);
         }
     }
 }

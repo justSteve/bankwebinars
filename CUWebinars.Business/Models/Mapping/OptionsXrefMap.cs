@@ -8,22 +8,22 @@ namespace CUWebinars.Business.Models.Mapping
         public OptionsXrefMap()
         {
             // Primary Key
-            this.HasKey(t => t.idOptionsXref);
+            this.HasKey(t => t.idRegTypesXref);
 
             // Properties
             // Table & Column Mappings
             this.ToTable("OptionsXref");
-            this.Property(t => t.idOptionsXref).HasColumnName("idOptionsXref");
-            this.Property(t => t.idOptionGroup).HasColumnName("idOptionGroup");
-            this.Property(t => t.idOption).HasColumnName("idOption");
+            this.Property(t => t.idRegTypesXref).HasColumnName("idRegTypesXref");
+            this.Property(t => t.idRegTypeGroup).HasColumnName("idRegTypeGroup");
+            this.Property(t => t.idRegType).HasColumnName("idRegType");
 
             // Relationships
-            this.HasRequired(t => t.Option)
+            this.HasRequired(t => t.RegType)
                 .WithMany(t => t.OptionsXrefs)
-                .HasForeignKey(d => d.idOption);
+                .HasForeignKey(d => d.idRegType);
             this.HasRequired(t => t.OptionsGroup)
                 .WithMany(t => t.OptionsXrefs)
-                .HasForeignKey(d => d.idOptionGroup);
+                .HasForeignKey(d => d.idRegTypeGroup);
 
         }
     }

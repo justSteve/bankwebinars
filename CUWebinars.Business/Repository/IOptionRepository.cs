@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace CUWebinars.Business.Repository
 {
-    public interface IOptionRepository
+    public interface IRegTypeRepository
     {
-        Option FindOption(int idOption);
-        IList<Option> FindOptionsByWebinarId(int id, bool detached);
+        RegType FindRegType(int idRegType);
+        //IList<RegType> FindRegTypesByWebinarId(int id, bool detached);
     }
 }

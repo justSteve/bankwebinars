@@ -620,7 +620,7 @@ $( document ).mouseup( function( e ) {
 
 $.widget("ui.mouse", {
 	options: {
-		cancel: ':input,option',
+		cancel: ':input,RegType',
 		distance: 1,
 		delay: 0
 	},
@@ -1353,7 +1353,7 @@ $.ui.plugin.add("draggable", "connectToSortable", {
 					//by cloning the list group item, appending it to the sortable and using it as inst.currentItem
 					//We can then fire the start event of the sortable with our passed browser event, and our own helper (so it doesn't create a new one)
 					this.instance.currentItem = $(self).clone().removeAttr('id').appendTo(this.instance.element).data("sortable-item", true);
-					this.instance.options._helper = this.instance.options.helper; //Store helper option to later restore it
+					this.instance.options._helper = this.instance.options.helper; //Store helper RegType to later restore it
 					this.instance.options.helper = function() { return ui.helper[0]; };
 
 					event.target = this.instance.currentItem[0];
@@ -1819,7 +1819,7 @@ $.ui.ddmanager = {
 	},
 	drag: function(draggable, event) {
 
-		//If you have a highly dynamic page, you might try this option. It renders positions every time you move the mouse.
+		//If you have a highly dynamic page, you might try this RegType. It renders positions every time you move the mouse.
 		if(draggable.options.refreshPositions) $.ui.ddmanager.prepareOffsets(draggable, event);
 
 		//Run through all droppables and check their positions based on specific tolerance options
@@ -2337,7 +2337,7 @@ $.widget("ui.resizable", $.ui.mouse, {
 				position: 'absolute',
 				left: this.elementOffset.left - ie6offset +'px',
 				top: this.elementOffset.top - ie6offset +'px',
-				zIndex: ++o.zIndex //TODO: Don't modify option
+				zIndex: ++o.zIndex //TODO: Don't modify RegType
 			});
 
 			this.helper
@@ -3101,17 +3101,17 @@ $.widget("ui.sortable", $.ui.mouse, {
 		if(o.containment)
 			this._setContainment();
 
-		if(o.cursor) { // cursor option
+		if(o.cursor) { // cursor RegType
 			if ($('body').css("cursor")) this._storedCursor = $('body').css("cursor");
 			$('body').css("cursor", o.cursor);
 		}
 
-		if(o.opacity) { // opacity option
+		if(o.opacity) { // opacity RegType
 			if (this.helper.css("opacity")) this._storedOpacity = this.helper.css("opacity");
 			this.helper.css("opacity", o.opacity);
 		}
 
-		if(o.zIndex) { // zIndex option
+		if(o.zIndex) { // zIndex RegType
 			if (this.helper.css("zIndex")) this._storedZIndex = this.helper.css("zIndex");
 			this.helper.css("zIndex", o.zIndex);
 		}
@@ -3588,8 +3588,8 @@ $.widget("ui.sortable", $.ui.mouse, {
 				},
 				update: function(container, p) {
 
-					// 1. If a className is set as 'placeholder option, we don't force sizes - the class is responsible for that
-					// 2. The option 'forcePlaceholderSize can be enabled to force it even if a class name is specified
+					// 1. If a className is set as 'placeholder RegType, we don't force sizes - the class is responsible for that
+					// 2. The RegType 'forcePlaceholderSize can be enabled to force it even if a class name is specified
 					if(className && !o.forcePlaceholderSize) return;
 
 					//If the element doesn't have a actual height by itself (without styles coming from a stylesheet), it receives the inline height from the dragged item
@@ -5060,7 +5060,7 @@ $.effects.scale = function(o) {
 		};
 		el.to = {height: original.height * factor.y, width: original.width * factor.x}; // Set to state
 
-		if (o.options.fade) { // Fade option to support puff
+		if (o.options.fade) { // Fade RegType to support puff
 			if (mode == 'show') {el.from.opacity = 0; el.to.opacity = 1;};
 			if (mode == 'hide') {el.from.opacity = 1; el.to.opacity = 0;};
 		};
@@ -5565,7 +5565,7 @@ $.widget( "ui.accordion", {
 	},
 
 	activate: function( index ) {
-		// TODO this gets called on init, changing the option without an explicit call for that
+		// TODO this gets called on init, changing the RegType without an explicit call for that
 		this.options.active = index;
 		// call clickHandler with custom event
 		var active = this._findActive( index )[ 0 ];
@@ -5620,7 +5620,7 @@ $.widget( "ui.accordion", {
 		var clicked = $( event.currentTarget || target ),
 			clickedIsActive = clicked[0] === this.active[0];
 
-		// TODO the option is changed, is that correct?
+		// TODO the RegType is changed, is that correct?
 		// TODO if it is correct, shouldn't that happen after determining that the click is valid?
 		options.active = options.collapsible && clickedIsActive ?
 			false :
@@ -6700,7 +6700,7 @@ $.widget( "ui.button", {
 			}
 		}
 
-		// TODO: pull out $.Widget's handling for the disabled option into
+		// TODO: pull out $.Widget's handling for the disabled RegType into
 		// $.Widget.prototype._setOptionDisabled so it's easy to proxy and can
 		// be overridden by individual plugins
 		this._setOption( "disabled", options.disabled );
@@ -6866,7 +6866,7 @@ $.widget( "ui.buttonset", {
 
 	_setOption: function( key, value ) {
 		if ( key === "disabled" ) {
-			this.buttons.button( "option", key, value );
+			this.buttons.button( "RegType", key, value );
 		}
 
 		$.Widget.prototype._setOption.apply( this, arguments );
@@ -7099,7 +7099,7 @@ $.extend(Datepicker.prototype, {
 			});
 		this._autoSize(inst);
 		$.data(target, PROP_NAME, inst);
-		//If disabled option is true, disable the datepicker once it has been attached to the input (see ticket #5665)
+		//If disabled RegType is true, disable the datepicker once it has been attached to the input (see ticket #5665)
 		if( inst.settings.disabled ) {
 			this._disableDatepicker( target );
 		}
@@ -7185,7 +7185,7 @@ $.extend(Datepicker.prototype, {
 		this._setDate(inst, this._getDefaultDate(inst), true);
 		this._updateDatepicker(inst);
 		this._updateAlternate(inst);
-		//If disabled option is true, disable the datepicker before showing it (see ticket #5665)
+		//If disabled RegType is true, disable the datepicker before showing it (see ticket #5665)
 		if( inst.settings.disabled ) {
 			this._disableDatepicker( target );
 		}
@@ -8527,9 +8527,9 @@ $.extend(Datepicker.prototype, {
 			for (var month = 0; month < 12; month++) {
 				if ((!inMinYear || month >= minDate.getMonth()) &&
 						(!inMaxYear || month <= maxDate.getMonth()))
-					monthHtml += '<option value="' + month + '"' +
+					monthHtml += '<RegType value="' + month + '"' +
 						(month == drawMonth ? ' selected="selected"' : '') +
-						'>' + monthNamesShort[month] + '</option>';
+						'>' + monthNamesShort[month] + '</RegType>';
 			}
 			monthHtml += '</select>';
 		}
@@ -8556,9 +8556,9 @@ $.extend(Datepicker.prototype, {
 				endYear = (maxDate ? Math.min(endYear, maxDate.getFullYear()) : endYear);
 				inst.yearshtml += '<select class="ui-datepicker-year" data-handler="selectYear" data-event="change">';
 				for (; year <= endYear; year++) {
-					inst.yearshtml += '<option value="' + year + '"' +
+					inst.yearshtml += '<RegType value="' + year + '"' +
 						(year == drawYear ? ' selected="selected"' : '') +
-						'>' + year + '</option>';
+						'>' + year + '</RegType>';
 				}
 				inst.yearshtml += '</select>';
 				
@@ -8732,7 +8732,7 @@ $.fn.datepicker = function(options){
 	if (typeof options == 'string' && (options == 'isDisabled' || options == 'getDate' || options == 'widget'))
 		return $.datepicker['_' + options + 'Datepicker'].
 			apply($.datepicker, [this[0]].concat(otherArgs));
-	if (options == 'option' && arguments.length == 2 && typeof arguments[1] == 'string')
+	if (options == 'RegType' && arguments.length == 2 && typeof arguments[1] == 'string')
 		return $.datepicker['_' + options + 'Datepicker'].
 			apply($.datepicker, [this[0]].concat(otherArgs));
 	return this.each(function() {
@@ -8908,7 +8908,7 @@ $.widget("ui.dialog", {
 				.html(title)
 				.prependTo(uiDialogTitlebar);
 
-		//handling of deprecated beforeclose (vs beforeClose) option
+		//handling of deprecated beforeclose (vs beforeClose) RegType
 		//Ticket #4669 http://dev.jqueryui.com/ticket/4669
 		//TODO: remove in 1.9pre
 		if ($.isFunction(options.beforeclose) && !$.isFunction(options.beforeClose)) {
@@ -9300,7 +9300,7 @@ $.widget("ui.dialog", {
 			this._size();
 		}
 		if ( this.uiDialog.is( ":data(resizable)" ) ) {
-			this.uiDialog.resizable( "option", resizableOptions );
+			this.uiDialog.resizable( "RegType", resizableOptions );
 		}
 	},
 
@@ -9309,7 +9309,7 @@ $.widget("ui.dialog", {
 			uiDialog = self.uiDialog;
 
 		switch (key) {
-			//handling of deprecated beforeclose (vs beforeClose) option
+			//handling of deprecated beforeclose (vs beforeClose) RegType
 			//Ticket #4669 http://dev.jqueryui.com/ticket/4669
 			//TODO: remove in 1.9pre
 			case "beforeclose":
@@ -9356,7 +9356,7 @@ $.widget("ui.dialog", {
 
 				// currently resizable, changing handles
 				if (isResizable && typeof value === 'string') {
-					uiDialog.resizable('option', 'handles', value);
+					uiDialog.resizable('RegType', 'handles', value);
 				}
 
 				// currently non-resizable, becoming resizable
@@ -9422,7 +9422,7 @@ $.widget("ui.dialog", {
 		}
 
 		if (this.uiDialog.is(':data(resizable)')) {
-			this.uiDialog.resizable('option', 'minHeight', this._minHeight());
+			this.uiDialog.resizable('RegType', 'minHeight', this._minHeight());
 		}
 	}
 });
@@ -9666,12 +9666,12 @@ $.fn.position = function( options ) {
 		options[ this ] = pos;
 	});
 
-	// normalize collision option
+	// normalize collision RegType
 	if ( collision.length === 1 ) {
 		collision[ 1 ] = collision[ 0 ];
 	}
 
-	// normalize offset option
+	// normalize offset RegType
 	offset[ 0 ] = parseInt( offset[0], 10 ) || 0;
 	if ( offset.length === 1 ) {
 		offset[ 1 ] = offset[ 0 ];
@@ -10801,7 +10801,7 @@ $.widget( "ui.tabs", {
 			this.panels.addClass( "ui-tabs-panel ui-widget-content ui-corner-bottom" );
 
 			// Selected tab
-			// use "selected" option or try to retrieve:
+			// use "selected" RegType or try to retrieve:
 			// 1. from fragment identifier in url
 			// 2. from cookie
 			// 3. from selected class attribute on <li>
@@ -10831,7 +10831,7 @@ $.widget( "ui.tabs", {
 				: 0;
 
 			// Take disabling tabs via class attribute from HTML
-			// into account and update option properly.
+			// into account and update RegType properly.
 			// A selected tab cannot become disabled.
 			o.disabled = $.unique( o.disabled.concat(
 				$.map( this.lis.filter( ".ui-state-disabled" ), function( n, i ) {
@@ -10892,7 +10892,7 @@ $.widget( "ui.tabs", {
 			this.anchors.removeData( "cache.tabs" );
 		}
 
-		// remove all handlers before, tabify may run on existing tabs after add or option change
+		// remove all handlers before, tabify may run on existing tabs after add or RegType change
 		this.lis.add( this.anchors ).unbind( ".tabs" );
 
 		if ( o.event !== "mouseover" ) {
@@ -11062,7 +11062,7 @@ $.widget( "ui.tabs", {
 	},
 
     _getIndex: function( index ) {
-		// meta-function to give users option to provide a href string instead of a numerical index.
+		// meta-function to give users RegType to provide a href string instead of a numerical index.
 		// also sanitizes numerical indexes to valid values.
 		if ( typeof index == "string" ) {
 			index = this.anchors.index( this.anchors.filter( "[href$='" + index + "']" ) );

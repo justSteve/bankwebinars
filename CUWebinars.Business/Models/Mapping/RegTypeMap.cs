@@ -3,12 +3,12 @@ using System.Data.Entity.ModelConfiguration;
 
 namespace CUWebinars.Business.Models.Mapping
 {
-    public class OptionMap : EntityTypeConfiguration<Option>
+    public class RegTypeMap : EntityTypeConfiguration<RegType>
     {
-        public OptionMap()
+        public RegTypeMap()
         {
             // Primary Key
-            this.HasKey(t => t.idOption);
+            this.HasKey(t => t.idRegType);
 
             // Properties
             this.Property(t => t.OptionLabel)
@@ -26,7 +26,7 @@ namespace CUWebinars.Business.Models.Mapping
 
             // Table & Column Mappings
             this.ToTable("Options");
-            this.Property(t => t.idOption).HasColumnName("idOption");
+            this.Property(t => t.idRegType).HasColumnName("idRegType");
             this.Property(t => t.OptionExplain).HasColumnName("OptionExplain");
             this.Property(t => t.OptionLabel).HasColumnName("OptionLabel");
             this.Property(t => t.PriceToAdd).HasColumnName("PriceToAdd");

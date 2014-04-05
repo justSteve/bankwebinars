@@ -15,12 +15,12 @@ namespace CUWebinars.Business.Models.Mapping
             this.ToTable("OptionsGroupsXref");
             this.Property(t => t.idWebinarOptionGroup).HasColumnName("idWebinarOptionGroup");
             this.Property(t => t.idWebinar).HasColumnName("idWebinar");
-            this.Property(t => t.idOptionGroup).HasColumnName("idOptionGroup");
+            this.Property(t => t.idRegTypeGroup).HasColumnName("idRegTypeGroup");
 
             // Relationships
             this.HasRequired(t => t.OptionsGroup)
                 .WithMany(t => t.OptionsGroupsXrefs)
-                .HasForeignKey(d => d.idOptionGroup);
+                .HasForeignKey(d => d.idRegTypeGroup);
             this.HasRequired(t => t.Webinar)
                 .WithMany(t => t.OptionsGroupsXrefs)
                 .HasForeignKey(d => d.idWebinar);

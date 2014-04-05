@@ -988,7 +988,7 @@ $.fn.position = function( options ) {
 		];
 	});
 
-	// normalize collision option
+	// normalize collision RegType
 	if ( collision.length === 1 ) {
 		collision[ 1 ] = collision[ 0 ];
 	}
@@ -1875,7 +1875,7 @@ $.extend( $.ui.autocomplete, {
 });
 
 
-// live region extension, adding a `messages` option
+// live region extension, adding a `messages` RegType
 // NOTE: This is an experimental API. We are still investigating
 // a full solution for string manipulation and internationalization.
 $.widget( "ui.autocomplete", $.ui.autocomplete, {
@@ -2232,7 +2232,7 @@ $.widget( "ui.menu", {
 	_itemRole: function() {
 		return {
 			menu: "menuitem",
-			listbox: "option"
+			listbox: "RegType"
 		}[ this.options.role ];
 	},
 

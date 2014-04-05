@@ -33,19 +33,19 @@ namespace CUWebinars.Web.Controllers
         private IMailService mail;
         public IMembershipService membershipService;
         private readonly IOrderRepository orderRepository;
-        private readonly IOptionRepository optionRepository;
+        private readonly IRegTypeRepository RegTypeRepository;
         private readonly IStateService stateService;
         private readonly IOrderManagementService orderManagementService;
 
         public ILogger Logger { get; set; }
         //public IOrderService orderService;
 
-        public AccountController(IMailService mail, 
-            ILogger logger, 
-            IMembershipService membershipService, 
-            IOrderRepository orderRepository, 
-            IOrderManagementService orderManagementService, 
-            IOptionRepository optionRepository,
+        public AccountController(IMailService mail,
+            ILogger logger,
+            IMembershipService membershipService,
+            IOrderRepository orderRepository,
+            IOrderManagementService orderManagementService,
+            IRegTypeRepository RegTypeRepository,
             IStateService stateService)
         {
             this.mail = mail;
@@ -53,15 +53,15 @@ namespace CUWebinars.Web.Controllers
             this.membershipService = membershipService;
             this.orderRepository = orderRepository;
             this.orderManagementService = orderManagementService;
-            this.optionRepository = optionRepository;
+            this.RegTypeRepository = RegTypeRepository;
             this.stateService = stateService;
         }
-        
+
         public ActionResult COC(int idWebinar, string displayName)
         {
             //if (User.Identity.IsAuthenticated)
             //{
-                
+
             //}
             //OrderRow row = orderManagementService.LoadOrderRow(id);
             ViewBag.Webinar = idWebinar;
@@ -100,7 +100,7 @@ namespace CUWebinars.Web.Controllers
         //{
         //    //var currentUser = GetWebUserFromIPrincipal();
         //    var refDataRepository = new RefDataRepository();
-        //    //var bla = refDataRepository.FindOptionsByWebinarId(435, false);
+        //    //var bla = refDataRepository.FindRegTypesByWebinarId(435, false);
 
         //    var identity = ClaimsPrincipal.Current;
 
@@ -126,33 +126,35 @@ namespace CUWebinars.Web.Controllers
         //}
 
         //
-        
+
         [System.Web.Mvc.AllowAnonymous]
         public string Get([FromUri] RegisterModel model)
         {
             if (ModelState.IsValid)
             {
+                var email = model.Email.Trim();
+                var firstName = model.FirstName.Trim();
+                var lastName = model.LastName.Trim();
+
                 //first check if email exists
-                var checkIfUsed = membershipService.GetUserByEmail(model.Email);
+                var checkIfUsed = membershipService.GetUserByEmail(email);
                 if (checkIfUsed != null)
                 {
-                    return checkIfUsed.idUser.ToString();
+                    Logger.Error("dupe email attempt: " + email);
+                    ModelState.AddModelError("Email", "That email already exists. Would you like to reset the password?");
+                    //var scriptSerializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+                    //var jsonString = scriptSerializer.Serialize(model);
+
+                    //return Json(jsonString, JsonRequestBehavior.AllowGet);
                 }
 
-                // Attempt to register the user
-                WebUserRepository repo = new WebUserRepository();
-                var myInstitution = membershipService.ProcessInstitutionForUser(model.Institution,
-                    model.Email,
+                var myInstitution = membershipService.ProcessInstitutionForUser(model.Institution.Trim(),
+                    email,
                     Request.QueryString["City"],
                     Request.QueryString["State"],
                     "N",
                     "New",
                     Request.QueryString["Zip"]);
-
-                //if (model.idWebUser == null)
-                //{
-                //    model.idWebUser = repo.FindHighestUserId();
-                //}
 
                 try
                 {
@@ -180,25 +182,46 @@ namespace CUWebinars.Web.Controllers
 
                     IList<Address> addresses = new List<Address> { billingAddress, shippingAddress };
 
-                    var result = membershipService.CreateWebUser(globalConfig.Tenant,
-                        model.FirstName
-                        , model.LastName
-                        , model.LastName.ToLower() // password
-                        , model.Email
+                    var webUser = membershipService.CreateWebUser(globalConfig.Tenant,
+                        firstName
+                        , lastName
+                        , model.Password
+                        , email
                         , USTimeZone.Central
-                        , model.UserType
+                        , UserType.Customer
                         , myInstitution.idInstitution
                         , addresses
-                        , model.Title
-                        , model.idWebUser
-                        , "A");
+                        , model.Title == null ? model.Title : model.Title.Trim()
+                        , null
+                        , "A"
+                        );
 
-                    return result.idUser.ToString();
+                    if (!stateService.HasValue(Constants.CurrentUser))
+                        stateService.SetValue<WebUser>(Constants.CurrentUser, webUser);
+
+                    var userAccount = membershipService.CreateUser(
+                        globalConfig.Tenant,
+                        firstName,
+                        lastName,
+                        string.Empty, //  Pass empty string for username because MembershipReboot assigns the email to the username field where emailIsUsername is true
+                        model.Password,
+                        email);
+
+                    if (userAccount != null)
+                    {
+                        var dataOperations = new DataOperations();
+                        dataOperations.SetNewAccountToVerified(userAccount.ID);
+                    }
+
+                    //membershipService.LogInUser(globalConfig.Tenant, model.Email, model.Password, true); // log the user in.
+                    Logger.Info("/Account/Register UserAdded: " + model.Email);
+                    return webUser.idUser.ToString();
                     //return model.idWebUser.ToString();
                 }
                 catch (MembershipCreateUserException e)
                 {
                     ModelState.AddModelError(string.Empty, e.StatusCode.ToString());
+                    Logger.Error("Importer Error: " + e.Message);
                 }
             }
 
@@ -223,19 +246,32 @@ namespace CUWebinars.Web.Controllers
             model.Recorded = orderRepository.SelectOrdersWithRecordedWebinars(currentUser.idUser);
             model.Archived = orderRepository.SelectOrdersWithArchivedWebinars(currentUser.idUser);
 
-            var optionAndOrderdictionary = model.Scheduled;
-            var optionAndOrderdictionarySortedByWebinarDate = optionAndOrderdictionary.OrderBy(f => f.Value.OrderRows.SingleOrDefault().Webinar.Date);
+            //if (model.Scheduled != null)
+            //{
+            //    var optionAndOrderdictionary = model.Scheduled;
+            //    var optionAndOrderdictionarySortedByWebinarDate =
+            //        optionAndOrderdictionary.OrderBy(f => f.Value.OrderRows.SingleOrDefault().Webinar.Date);
 
-            model.Scheduled = optionAndOrderdictionarySortedByWebinarDate
-                .ToDictionary<KeyValuePair<Option, Order>, Option, Order>(p => p.Key, p => p.Value);
+            //    model.Scheduled = optionAndOrderdictionarySortedByWebinarDate
+            //        .ToDictionary<KeyValuePair<RegType, Order>, RegType, Order>(p => p.Key, p => p.Value);
+            //}
 
-            var list = model.Recorded;
-            var sortedEnum = list.OrderBy(f => f.OrderRows.SingleOrDefault().Webinar.Date);
-            model.Recorded = sortedEnum.ToList();
+            //if (model.Recorded != null)
+            //{
+            //    //var optionAndOrderdictionary = model.Recorded;
+            //    //var optionAndOrderdictionarySortedByWebinarDate =
+            //    //    optionAndOrderdictionary.OrderBy(f => f.Value.OrderRows.SingleOrDefault().Webinar.Date);
 
-            list = model.Archived;
-            sortedEnum = list.OrderBy(f => f.OrderRows.SingleOrDefault().Webinar.Date);
-            model.Archived = sortedEnum.ToList();
+            //    //model.Recorded = optionAndOrderdictionarySortedByWebinarDate
+            //    //    .ToDictionary<KeyValuePair<RegType, Order>, RegType, Order>(p => p.Key, p => p.Value);
+            //    //model.Recorded = sortedEnum.ToList();
+            //    }
+            //if (model.Archived != null)
+            //{
+            //    var list = model.Archived;
+            //    var sortedEnum = list.OrderBy(f => f.OrderRows.SingleOrDefault().Webinar.Date);
+            //    model.Archived = sortedEnum.ToList();
+            //}
 
             return View("MyWebinars", model);
         }
@@ -249,7 +285,7 @@ namespace CUWebinars.Web.Controllers
 
                 if (account.HasPassword())
                 {
-                    var vm = new ChangeEmailFromKeyInputModel {Key = id};
+                    var vm = new ChangeEmailFromKeyInputModel { Key = id };
                     return View("Confirm", vm);
                 }
             }
@@ -577,17 +613,17 @@ namespace CUWebinars.Web.Controllers
             int numVal;
             var resultObject = new Dictionary<string, string>();
 
-                if (!int.TryParse(zip, out numVal))
-                {
-                    var zipToParse = zip.Split('-').FirstOrDefault();
+            if (!int.TryParse(zip, out numVal))
+            {
+                var zipToParse = zip.Split('-').FirstOrDefault();
 
-                    if (zipToParse == null || !int.TryParse(zipToParse, out numVal))
-                    {
-                        resultObject.Add("success", "invalid format");
-                        return Json(resultObject, JsonRequestBehavior.AllowGet);
-                    }
+                if (zipToParse == null || !int.TryParse(zipToParse, out numVal))
+                {
+                    resultObject.Add("success", "invalid format");
+                    return Json(resultObject, JsonRequestBehavior.AllowGet);
                 }
-            
+            }
+
             var zipAddress = AppHelper.GetCityStateFromZip(numVal);
 
             if (string.IsNullOrWhiteSpace(zipAddress))
@@ -643,7 +679,7 @@ namespace CUWebinars.Web.Controllers
             var domain = email.Split('@')[1];
             var institution = membershipService.GetInstitutionByDomain(domain);
 
-            if (institution == null) 
+            if (institution == null)
                 return Json(resultObject, JsonRequestBehavior.AllowGet);
 
             //  if we have a match between user's email (domain)
@@ -667,7 +703,7 @@ namespace CUWebinars.Web.Controllers
         {
             var errors = ModelState.Values.SelectMany(v => v.Errors);
 
-            
+
             foreach (var error in errors)
             {
                 Debug.WriteLine(error.ErrorMessage);
@@ -733,7 +769,7 @@ namespace CUWebinars.Web.Controllers
                             Zip = model.RegisterFields.ShippingAddress.Zip.Trim()
                         }
                     };
-                    
+
                     var webUser = membershipService.CreateWebUser(globalConfig.Tenant,
                         firstName
                         , lastName
@@ -767,7 +803,7 @@ namespace CUWebinars.Web.Controllers
 
                     membershipService.LogInUser(globalConfig.Tenant, model.RegisterFields.Email, model.RegisterFields.Password, true); // log the user in.
                     Logger.Info("/Account/Register UserAdded: " + model.RegisterFields.Email);
-                  return Json(new { Status = "Success" });
+                    return Json(new { Status = "Success" });
 
                 }
                 catch (MembershipCreateUserException e)
@@ -779,7 +815,7 @@ namespace CUWebinars.Web.Controllers
 
             // If we got this far, something failed, redisplay form
             return Json(new { Status = "Fail" });
-            
+
         }
 
         //
@@ -949,7 +985,7 @@ namespace CUWebinars.Web.Controllers
             //return PartialView("_RemoveExternalLoginsPartial", externalLogins);
             return null;
         }
-        
+
         #region Helpers
         private ActionResult RedirectToLocal(string returnUrl)
         {

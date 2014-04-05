@@ -11,7 +11,7 @@ namespace CUWebinars.Business.Models
             this.OptionsXrefs = new List<OptionsXref>();
         }
 
-        public int idOptionGroup { get; set; }
+        public int idRegTypeGroup { get; set; }
         public string OptionGroupDesc { get; set; }
         public string OptionType { get; set; }
         public Nullable<int> SortOrder { get; set; }

@@ -10,16 +10,16 @@ namespace CUWebinars.Business.Services
         void AssignUserToOrder(Order currentOrder);
         Order AssignWebUserToOrder(WebUser webUser, Order order);
         string BuildConnectionInfo(OrderRow orderRow);
-        OrderRow CreateOrderRow(Webinar webinar, OrderRowOption orderRowOption, string alternateEmail, int registrationType);
-        OrderRowOption CreateOrderRowOption(
-            Option option,
+        OrderRow CreateOrderRow(Webinar webinar, AdditionalLocations additionalLocations, string alternateEmail, int registrationType);
+        AdditionalLocations CreateOrderRowOption(
+            RegType regType,
             string optionDescription,
             decimal price,
             string[] additionalLocationsEmails);
         Affiliate GetAffiliateById(int id);
-        Option GetOptionById(int id);
-        IList<Option> GetOptionsByWebinarId(int id, bool detached);
-        IList<Option> GetOptionsByWebinarIdFromOptionsRepository(int id, bool detached);
+        RegType GetOptionById(int id);
+        IList<RegType> GetOptionsByWebinarId(int id, bool detached);
+        IList<RegType> GetOptionsByWebinarIdFromOptionsRepository(int id, bool detached);
         Order GetOrderById(int id);
         IList<Order> GetOrdersByUserId(int id);
         Webinar GetWebinar(int id);
@@ -35,6 +35,6 @@ namespace CUWebinars.Business.Services
 
 
         Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow);
-//        Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, IList<Option> options);
+//        Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, IList<RegType> options);
     }
 }

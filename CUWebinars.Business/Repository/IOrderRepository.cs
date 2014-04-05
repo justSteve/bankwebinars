@@ -6,10 +6,10 @@ namespace CUWebinars.Business.Repository
     public interface IOrderRepository
     {
         Order CreateOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow);
-        //Order CreateOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, IList<Option> options);
-        OrderRow CreateOrderRow(Webinar webinar, OrderRowOption orderRowOption, string alternateEmail, int registrationType);
-        OrderRowOption CreateOrderRowOption(
-            Option option,
+        //Order CreateOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, IList<RegType> options);
+        OrderRow CreateOrderRow(Webinar webinar, AdditionalLocations additionalLocations, string alternateEmail, int registrationType);
+        AdditionalLocations CreateOrderRowOption(
+            RegType regType,
             string optionDescription,
             decimal price,
             string[] additionalLocationsEmails);
@@ -17,8 +17,9 @@ namespace CUWebinars.Business.Repository
         Order AssignWebUserToOrder(WebUser webUser, Order order);
         Order FindOrderByIdWithOrderRows(int id);
         Order SaveOrderChanges(Order order);
-        IDictionary<Option, Order> SelectOrdersWithScheduledWebinars(int idUser);
+        //IDictionary<RegType, Order> SelectOrdersWithScheduledWebinars(int idUser);
         IList<Order> Test(int idUser);
+        IList<Order> SelectOrdersWithScheduledWebinars(int idUser);
         IList<Order> SelectOrdersWithRecordedWebinars(int idUser);
         IList<Order> SelectOrdersWithArchivedWebinars(int idUser);
     }

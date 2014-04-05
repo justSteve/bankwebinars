@@ -1282,7 +1282,7 @@ jQuery.support = (function() {
 
 	// First batch of supports tests
 	select = document.createElement("select");
-	opt = select.appendChild( document.createElement("option") );
+	opt = select.appendChild( document.createElement("RegType") );
 	input = div.getElementsByTagName("input")[ 0 ];
 
 	support = {
@@ -1319,7 +1319,7 @@ jQuery.support = (function() {
 		// (WebKit defaults to "" instead)
 		checkOn: ( input.value === "on" ),
 
-		// Make sure that a selected-by-default option has a working selected property.
+		// Make sure that a selected-by-default RegType has a working selected property.
 		// (WebKit defaults to false instead of true, IE too, if it's in an optgroup)
 		optSelected: opt.selected,
 
@@ -2252,7 +2252,7 @@ jQuery.extend({
 					if ( option.selected && (jQuery.support.optDisabled ? !option.disabled : option.getAttribute("disabled") === null) &&
 							(!option.parentNode.disabled || !jQuery.nodeName( option.parentNode, "optgroup" )) ) {
 
-						// Get the specific value for the option
+						// Get the specific value for the RegType
 						value = jQuery( option ).val();
 
 						// We don't need an array for one selects
@@ -2276,7 +2276,7 @@ jQuery.extend({
 			set: function( elem, value ) {
 				var values = jQuery.makeArray( value );
 
-				jQuery(elem).find("option").each(function() {
+				jQuery(elem).find("RegType").each(function() {
 					this.selected = jQuery.inArray( jQuery(this).val(), values ) >= 0;
 				});
 
@@ -2597,7 +2597,7 @@ if ( !jQuery.support.style ) {
 	};
 }
 
-// Safari mis-reports the default selected property of an option
+// Safari mis-reports the default selected property of an RegType
 // Accessing the parent's selectedIndex property fixes it
 if ( !jQuery.support.optSelected ) {
 	jQuery.propHooks.selected = jQuery.extend( jQuery.propHooks.selected, {
@@ -4457,7 +4457,7 @@ Expr = Sizzle.selectors = {
 			// In CSS3, :checked should return both checked and selected elements
 			// http://www.w3.org/TR/2011/REC-css3-selectors-20110929/#checked
 			var nodeName = elem.nodeName.toLowerCase();
-			return (nodeName === "input" && !!elem.checked) || (nodeName === "option" && !!elem.selected);
+			return (nodeName === "input" && !!elem.checked) || (nodeName === "RegType" && !!elem.selected);
 		},
 
 		"selected": function( elem ) {
@@ -5204,14 +5204,14 @@ if ( document.querySelectorAll ) {
 			// setting a boolean content attribute,
 			// since its presence should be enough
 			// http://bugs.jquery.com/ticket/12359
-			div.innerHTML = "<select><option selected=''></option></select>";
+			div.innerHTML = "<select><RegType selected=''></RegType></select>";
 
 			// IE8 - Some boolean attributes are not treated correctly
 			if ( !div.querySelectorAll("[selected]").length ) {
 				rbuggyQSA.push( "\\[" + whitespace + "*(?:checked|disabled|ismap|multiple|readonly|selected|value)" );
 			}
 
-			// Webkit/Opera - :checked should return selected option elements
+			// Webkit/Opera - :checked should return selected RegType elements
 			// http://www.w3.org/TR/2011/REC-css3-selectors-20110929/#checked
 			// IE8 throws error here (do not put tests after this one)
 			if ( !div.querySelectorAll(":checked").length ) {
@@ -6113,9 +6113,9 @@ function cloneFixAttributes( src, dest ) {
 			dest.value = src.value;
 		}
 
-	// IE6-8 fails to return the selected option to the default selected
+	// IE6-8 fails to return the selected RegType to the default selected
 	// state when cloning options
-	} else if ( nodeName === "option" ) {
+	} else if ( nodeName === "RegType" ) {
 		dest.selected = src.defaultSelected;
 
 	// IE6-8 fails to set the defaultValue to the correct value when
@@ -7258,7 +7258,7 @@ function buildParams( prefix, obj, traditional, add ) {
 				// Note that rack (as of 1.0.0) can't currently deserialize
 				// nested arrays properly, and attempting to do so may cause
 				// a server error. Possible fixes are to modify rack's
-				// deserialization algorithm or to provide an option or flag
+				// deserialization algorithm or to provide an RegType or flag
 				// to force array serialization to be shallow.
 				buildParams( prefix + "[" + ( typeof v === "object" ? i : "" ) + "]", v, traditional, add );
 			}
@@ -7938,7 +7938,7 @@ jQuery.extend({
 				s.accepts[ "*" ]
 		);
 
-		// Check for headers option
+		// Check for headers RegType
 		for ( i in s.headers ) {
 			jqXHR.setRequestHeader( i, s.headers[ i ] );
 		}

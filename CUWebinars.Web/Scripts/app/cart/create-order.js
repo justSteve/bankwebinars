@@ -234,7 +234,7 @@ $(document).ready(function () {
 
 
 function CheckIfAddLocShouldHide(optionID) {
-    //don't show AdditionalLocation when RegType
+    //don't show AdditionalEmails when RegType
     // can't support them. (ex: recorded only)
 
     $.ajax({

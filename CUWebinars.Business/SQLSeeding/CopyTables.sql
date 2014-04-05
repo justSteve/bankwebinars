@@ -2051,389 +2051,389 @@ GO
 SET IDENTITY_INSERT [dbo].[Options] ON 
 
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (79, N'Admission to all five events in this series.', N'Live Only - 5 Part Series', 1095, 0, 0, 1, N'Text', N'', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (79, N'Admission to all five events in this series.', N'Live Only - 5 Part Series', 1095, 0, 0, 1, N'Text', N'', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (80, N'Includes a weblink for unlimited viewing for 6 months after the date of the webinar as well as a link to handouts.  <i>Does not</i> include live session.', N'6-Month OnDemand Weblink - Series', 1095, 0, 0, 2, N'Text', N'', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (80, N'Includes a weblink for unlimited viewing for 6 months after the date of the webinar as well as a link to handouts.  <i>Does not</i> include live session.', N'6-Month OnDemand Weblink - Series', 1095, 0, 0, 2, N'Text', N'', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (81, N'CD-ROM plus Hardcopy Handouts.  <i>Does not</i> include live session.', N'CD-ROM and Hardcopy Handouts - Series', 1245, 0, 0, 3, N'Text', N'', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (81, N'CD-ROM plus Hardcopy Handouts.  <i>Does not</i> include live session.', N'CD-ROM and Hardcopy Handouts - Series', 1245, 0, 0, 3, N'Text', N'', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (82, N'Includes Live Session plus OnDemand Weblink - does not include CD-Rom or Hardcopy Handouts.', N'Live Plus OnDemand Weblinks - Series', 1495, 0, 0, 4, N'Text', N'', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (82, N'Includes Live Session plus OnDemand Weblink - does not include CD-Rom or Hardcopy Handouts.', N'Live Plus OnDemand Weblinks - Series', 1495, 0, 0, 4, N'Text', N'', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (83, N'Includes all the above. Live session, OnDemand Weblinks, and CD-Rom plus Hardcopy Handouts.', N'Premier Package - Series', 1745, 0, 0, 4, N'Text', N'', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (83, N'Includes all the above. Live session, OnDemand Weblinks, and CD-Rom plus Hardcopy Handouts.', N'Premier Package - Series', 1745, 0, 0, 4, N'Text', N'', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (84, N'Attend the live session with the opportunity to ask questions of the presenter.  You also receive handouts.', N'Live Session Only', 255, 0, 0, 1, N'Text', NULL, NULL, N'Yes', N'No', N'No', N'This order is for the live session only. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) we''ll notify you by email.', N'This order is for the live session only. The information required to connect to the event is summarized below. Detailed information has been sent to your email and is also available at http://www.BankWebinars.com/MyWebinars.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) you''ll receive another email with complete connection instructions.', N'Connection information is summerized below and is also available at http://www.BankWebinars.com.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (84, N'Attend the live session with the opportunity to ask questions of the presenter.  You also receive handouts.', N'Live Session Only', 255, 0, 0, 1, N'Text', NULL, NULL, N'Yes', N'No', N'No', N'This order is for the live session only. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) we''ll notify you by email.', N'This order is for the live session only. The information required to connect to the event is summarized below. Detailed information has been sent to your email and is also available at http://www.BankWebinars.com/MyWebinars.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) you''ll receive another email with complete connection instructions.', N'Connection information is summerized below and is also available at http://www.BankWebinars.com.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (85, N'If you are unable to attend the regularly scheduled event, but are interested in the topic, you can purchase the recorded version. 6-month playback & electronic materials. You will receive a web address for online viewing. Does not include live session.', N'OnDemand Recording Only', 255, 0, 0, 2, N'Text', N'', N'OnDemand_Recording_Only_2Hr_255_85', N'No', N'Yes', N'No', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (85, N'If you are unable to attend the regularly scheduled event, but are interested in the topic, you can purchase the recorded version. 6-month playback & electronic materials. You will receive a web address for online viewing. Does not include live session.', N'OnDemand Recording Only', 255, 0, 0, 2, N'Text', N'', N'OnDemand_Recording_Only_2Hr_255_85', N'No', N'Yes', N'No', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (86, N'CD-ROM plus Hardcopy Handouts. Also includes free 6-Month OnDemand Weblink.  Does not include live session. ', N'CD-ROM and Hardcopy Handouts', 295, 0, 0, 3, N'Text', N'', N'CD-ROM_and_Hardcopy_Handouts_2Hr_295_86', N'No', N'Yes', N'Yes', N'This order is for the CD-ROM and hardcopy of the presenter handouts and will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. ', N'The CD-ROM and hardcopy of the presenter handouts will be shipped within the next day or two. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution and can be access from MyWebinars.', N'The CD-ROM and hardcopy of the presenter handouts will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution.', N'The CD-ROM and hardcopy of the presenter handouts will be shipped within the next day or two. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution and can be access from MyWebinars.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (86, N'CD-ROM plus Hardcopy Handouts. Also includes free 6-Month OnDemand Weblink.  Does not include live session. ', N'CD-ROM and Hardcopy Handouts', 295, 0, 0, 3, N'Text', N'', N'CD-ROM_and_Hardcopy_Handouts_2Hr_295_86', N'No', N'Yes', N'Yes', N'This order is for the CD-ROM and hardcopy of the presenter handouts and will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. ', N'The CD-ROM and hardcopy of the presenter handouts will be shipped within the next day or two. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution and can be access from MyWebinars.', N'The CD-ROM and hardcopy of the presenter handouts will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution.', N'The CD-ROM and hardcopy of the presenter handouts will be shipped within the next day or two. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution and can be access from MyWebinars.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (87, N'Attend the live event plus receive unlimited, online playback for the next 6 months. In addition to the live program, you receive a web address for online viewing after the live event.', N'Live Plus OnDemand Weblinks', 355, 0, 0, 4, N'Text', N'', N'Live_Plus_OnDemand_Weblinks_2Hr_355_87', N'Yes', N'Yes', N'No', N'This order is for the live session plus OnDemand playback for six months. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a link to the recording soon after the completion of the event. ', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (87, N'Attend the live event plus receive unlimited, online playback for the next 6 months. In addition to the live program, you receive a web address for online viewing after the live event.', N'Live Plus OnDemand Weblinks', 355, 0, 0, 4, N'Text', N'', N'Live_Plus_OnDemand_Weblinks_2Hr_355_87', N'Yes', N'Yes', N'No', N'This order is for the live session plus OnDemand playback for six months. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a link to the recording soon after the completion of the event. ', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (88, N'Includes all three options above.  Live session, OnDemand Weblink, and CD-ROM plus Hardcopy Handouts.', N'Premier Package', 395, 0, 0, 5, N'Text', N'', N'Premier_Package_2Hr_395_88', N'Yes', N'Yes', N'Yes', N'This order is for the live session plus OnDemand playback for six months. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a link to the recording soon after the completion of the event. Watch your email or ', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation). ', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a CD-ROM plus handouts shipped shortly after the event. Additionally, you will receive a link for unlimited playback for 6 months following the date of the event.', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (88, N'Includes all three options above.  Live session, OnDemand Weblink, and CD-ROM plus Hardcopy Handouts.', N'Premier Package', 395, 0, 0, 5, N'Text', N'', N'Premier_Package_2Hr_395_88', N'Yes', N'Yes', N'Yes', N'This order is for the live session plus OnDemand playback for six months. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a link to the recording soon after the completion of the event. Watch your email or ', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation). ', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a CD-ROM plus handouts shipped shortly after the event. Additionally, you will receive a link for unlimited playback for 6 months following the date of the event.', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (89, N'Want your branches to participate?  Facilities within your organization will be able to participate without the travel costs of coming to one location.', N'Additional Location(s)', 150, 0, 0, 6, N'additional_location', N'', N'Additional_Location_2Hr_150_89', N'No', N'No', N'No', N' ', N' ', N' ', N' ')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (89, N'Want your branches to participate?  Facilities within your organization will be able to participate without the travel costs of coming to one location.', N'Additional Location(s)', 150, 0, 0, 6, N'additional_location', N'', N'Additional_Location_2Hr_150_89', N'No', N'No', N'No', N' ', N' ', N' ', N' ')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (91, N'CD-ROM plus Hardcopy Handouts. Also includes free 6-Month OnDemand Weblink.  Does not include live session. ', N'OnDemand Recording Only', 255, 0, 0, 1, N'Text', N'', N'OnDemand_Recording_Only_2Hr_255_91', N'No', N'Yes', N'No', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (91, N'CD-ROM plus Hardcopy Handouts. Also includes free 6-Month OnDemand Weblink.  Does not include live session. ', N'OnDemand Recording Only', 255, 0, 0, 1, N'Text', N'', N'OnDemand_Recording_Only_2Hr_255_91', N'No', N'Yes', N'No', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (92, N'CD-ROM plus Hardcopy Handouts. Also includes free 6-Month OnDemand Weblink.  Does not include live session. ', N'CD-ROM and Hardcopy Handouts', 295, 0, 0, 2, N'Text', N'', N'CD-ROM_and_Hardcopy_Handouts_2Hr_295_92', N'No', N'Yes', N'Yes', N'', N'The CD-ROM and hardcopy of the presenter handouts will be shipped within the next day or two. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution and can be access from MyWebinars.', N'The CD-ROM and hardcopy of the presenter handouts will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution.', N'The CD-ROM and hardcopy of the presenter handouts will be shipped within the next day or two. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution and can be access from MyWebinars.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (92, N'CD-ROM plus Hardcopy Handouts. Also includes free 6-Month OnDemand Weblink.  Does not include live session. ', N'CD-ROM and Hardcopy Handouts', 295, 0, 0, 2, N'Text', N'', N'CD-ROM_and_Hardcopy_Handouts_2Hr_295_92', N'No', N'Yes', N'Yes', N'', N'The CD-ROM and hardcopy of the presenter handouts will be shipped within the next day or two. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution and can be access from MyWebinars.', N'The CD-ROM and hardcopy of the presenter handouts will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution.', N'The CD-ROM and hardcopy of the presenter handouts will be shipped within the next day or two. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution and can be access from MyWebinars.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (93, N'Upgrade your registration with unlimited, online playback for the next 6 months. ', N'Upgrade to OnDemand Weblinks! (only displays to attendees)', 355, 0, 0, 3, N'Text', N'', N'Upgrade_to_OnDemand_Weblinks_2Hr_355_93', N'No', N'Yes', N'No', N'', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.', N'"', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (93, N'Upgrade your registration with unlimited, online playback for the next 6 months. ', N'Upgrade to OnDemand Weblinks! (only displays to attendees)', 355, 0, 0, 3, N'Text', N'', N'Upgrade_to_OnDemand_Weblinks_2Hr_355_93', N'No', N'Yes', N'No', N'', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.', N'"', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (95, N'This upgrade to your orginal Live Session Only registration adds the 6-month OnDemand Weblinks, and CD-ROM plus Hardcopy Handouts.', N'Upgrade to the Premier Package! (only displays to attendees)', 395, 0, 0, 4, N'Text', N'', N'Upgrade_to_the_Premier_Package_2Hr_395_95', N'No', N'Yes', N'Yes', N'', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.', N'"', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (95, N'This upgrade to your orginal Live Session Only registration adds the 6-month OnDemand Weblinks, and CD-ROM plus Hardcopy Handouts.', N'Upgrade to the Premier Package! (only displays to attendees)', 395, 0, 0, 4, N'Text', N'', N'Upgrade_to_the_Premier_Package_2Hr_395_95', N'No', N'Yes', N'Yes', N'', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.', N'"', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (97, N'Attend the live session with the opportunity to ask questions of the presenter.  You also receive handouts.', N'Live Session Only', 155, 0, 0, 1, N'Text', N'', N'Live_Session_Only_1Hr_155_97', N'Yes', N'No', N'No', N'This order is for the live session only. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email.', N'This order is for the live session only. The information required to connect to the event is summarized below. Detailed information has been sent to your email and is also available at http://www.BankWebinars.com/MyWebinars.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions.', N'Connection information is summerized below and is also available at http://www.BankWebinars.com.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (97, N'Attend the live session with the opportunity to ask questions of the presenter.  You also receive handouts.', N'Live Session Only', 155, 0, 0, 1, N'Text', N'', N'Live_Session_Only_1Hr_155_97', N'Yes', N'No', N'No', N'This order is for the live session only. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email.', N'This order is for the live session only. The information required to connect to the event is summarized below. Detailed information has been sent to your email and is also available at http://www.BankWebinars.com/MyWebinars.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions.', N'Connection information is summerized below and is also available at http://www.BankWebinars.com.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (98, N'If you are unable to attend the regularly scheduled event, but are interested in the topic, you can purchase  the recorded version. You will receive OnDemand playback for 6 months following date of the event.', N'OnDemand Recording Only', 155, 0, 0, 2, N'Text', N'', N'OnDemand_Recording_Only_1Hr_155_98', N'No', N'Yes', N'No', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (98, N'If you are unable to attend the regularly scheduled event, but are interested in the topic, you can purchase  the recorded version. You will receive OnDemand playback for 6 months following date of the event.', N'OnDemand Recording Only', 155, 0, 0, 2, N'Text', N'', N'OnDemand_Recording_Only_1Hr_155_98', N'No', N'Yes', N'No', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (99, N'CD-ROM plus Hardcopy Handouts. Also includes free 6-Month OnDemand Weblink.  Does not include live session. ', N'CD-ROM and Hardcopy Handouts', 195, 0, 0, 3, N'Text', N'', N'CD-ROM_and_Hardcopy_Handouts_1Hr_195_99', N'No', N'Yes', N'Yes', N'This order is for the CD-ROM and hardcopy of the presenter handouts and will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. ', N'The CD-ROM and hardcopy of the presenter handouts will be shipped within the next day or two. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution and can be access from MyWebinars.', N'The CD-ROM and hardcopy of the presenter handouts will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution.', N'The CD-ROM and hardcopy of the presenter handouts will be shipped within the next day or two. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution and can be access from MyWebinars.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (99, N'CD-ROM plus Hardcopy Handouts. Also includes free 6-Month OnDemand Weblink.  Does not include live session. ', N'CD-ROM and Hardcopy Handouts', 195, 0, 0, 3, N'Text', N'', N'CD-ROM_and_Hardcopy_Handouts_1Hr_195_99', N'No', N'Yes', N'Yes', N'This order is for the CD-ROM and hardcopy of the presenter handouts and will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. ', N'The CD-ROM and hardcopy of the presenter handouts will be shipped within the next day or two. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution and can be access from MyWebinars.', N'The CD-ROM and hardcopy of the presenter handouts will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution.', N'The CD-ROM and hardcopy of the presenter handouts will be shipped within the next day or two. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution and can be access from MyWebinars.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (100, N'Attend the live event plus receive 6-month OnDemand playback.  You also receive electronic handouts.', N'Live Plus OnDemand Weblinks', 225, 0, 0, 4, N'Text', N'', N'Live_Plus_OnDemand_Weblinks_1Hr_225_100', N'Yes', N'Yes', N'No', N'This order is for the live session plus OnDemand playback for six months. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a link to the recording soon after the completion of the event. ', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (100, N'Attend the live event plus receive 6-month OnDemand playback.  You also receive electronic handouts.', N'Live Plus OnDemand Weblinks', 225, 0, 0, 4, N'Text', N'', N'Live_Plus_OnDemand_Weblinks_1Hr_225_100', N'Yes', N'Yes', N'No', N'This order is for the live session plus OnDemand playback for six months. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a link to the recording soon after the completion of the event. ', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (101, N'Includes all three options above.  Live session, OnDemand Weblink, and CD-ROM plus Hardcopy Handouts.', N'Premier Package', 255, 0, 0, 5, N'Text', N'', N'Premier_Package_1Hr_255_101', N'Yes', N'Yes', N'Yes', N'Your order provides for attendance to the live event plus all our post event options. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a CD-ROM plus handouts shipped shortly after the event. Additionally, you will receive a link for unlimited playback for 6 months following the date of the event.', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a CD-ROM plus handouts shipped shortly after the event. Additionally, you will receive a link for unlimited playback for 6 months following the date of the event.', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (101, N'Includes all three options above.  Live session, OnDemand Weblink, and CD-ROM plus Hardcopy Handouts.', N'Premier Package', 255, 0, 0, 5, N'Text', N'', N'Premier_Package_1Hr_255_101', N'Yes', N'Yes', N'Yes', N'Your order provides for attendance to the live event plus all our post event options. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a CD-ROM plus handouts shipped shortly after the event. Additionally, you will receive a link for unlimited playback for 6 months following the date of the event.', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a CD-ROM plus handouts shipped shortly after the event. Additionally, you will receive a link for unlimited playback for 6 months following the date of the event.', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (102, N'Want your branches to participate?  Facilities within your organization will be able to participate without the travel costs of coming to one location.', N'Additional Location(s)', 100, 0, 0, 6, N'additional_location', N'', N'Additional_Location_1Hr_100_102', N'No', N'No', N'No', N'', N'', N'', N'')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (102, N'Want your branches to participate?  Facilities within your organization will be able to participate without the travel costs of coming to one location.', N'Additional Location(s)', 100, 0, 0, 6, N'additional_location', N'', N'Additional_Location_1Hr_100_102', N'No', N'No', N'No', N'', N'', N'', N'')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (103, N'Unlimited playback & materials of this previously recorded event. You will receive a web address for online viewing for 6 months following the event.', N'OnDemand Recording Only', 155, 0, 0, 1, N'Text', N'', N'OnDemand_Recording_Only_1Hr_155_103', N'No', N'Yes', N'No', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (103, N'Unlimited playback & materials of this previously recorded event. You will receive a web address for online viewing for 6 months following the event.', N'OnDemand Recording Only', 155, 0, 0, 1, N'Text', N'', N'OnDemand_Recording_Only_1Hr_155_103', N'No', N'Yes', N'No', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (104, N'CD-ROM plus Hardcopy Handouts. Also includes free 6-Month OnDemand Weblink.  Does not include live session. ', N'CD-ROM and Hardcopy Handouts', 195, 0, 0, 2, N'Text', N'', N'CD-ROM_and_Hardcopy_Handouts_1Hr_195_104', N'No', N'Yes', N'Yes', N'', N'The CD-ROM and hardcopy of the presenter handouts will be shipped within the next day or two. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution and can be accessed from MyWebinars.', N'The CD-ROM and hardcopy of the presenter handouts will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution.', N'')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (104, N'CD-ROM plus Hardcopy Handouts. Also includes free 6-Month OnDemand Weblink.  Does not include live session. ', N'CD-ROM and Hardcopy Handouts', 195, 0, 0, 2, N'Text', N'', N'CD-ROM_and_Hardcopy_Handouts_1Hr_195_104', N'No', N'Yes', N'Yes', N'', N'The CD-ROM and hardcopy of the presenter handouts will be shipped within the next day or two. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution and can be accessed from MyWebinars.', N'The CD-ROM and hardcopy of the presenter handouts will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution.', N'')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (105, N'Upgrade your registration with unlimited, online playback for 6 months following the event. ', N'Upgrade to OnDemand Weblinks! (only displays to attendees)', 225, 0, 0, 3, N'Text', N'', N'Upgrade_to_OnDemand_Weblinks_1Hr_225_105', N'No', N'Yes', N'No', N'', N'Your order is upgraded with a link for 6 months of unlimited OnDemand playback.', N'"', N'Your order is upgraded with a link for 6 months of unlimited OnDemand playback.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (105, N'Upgrade your registration with unlimited, online playback for 6 months following the event. ', N'Upgrade to OnDemand Weblinks! (only displays to attendees)', 225, 0, 0, 3, N'Text', N'', N'Upgrade_to_OnDemand_Weblinks_1Hr_225_105', N'No', N'Yes', N'No', N'', N'Your order is upgraded with a link for 6 months of unlimited OnDemand playback.', N'"', N'Your order is upgraded with a link for 6 months of unlimited OnDemand playback.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (107, N'This upgrade to your orginal Live Session Only registration adds the 6-month OnDemand Weblinks, and CD-ROM plus Hardcopy Handouts.', N'Upgrade to the Premier Package! (only displays to attendees)', 255, 0, 0, 4, N'Text', N'', N'Upgrade_to_the_Premier_Package_1Hr_255_107', N'No', N'Yes', N'Yes', N'', N'Your order is now upgraded with a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped shortly.  We are emailing a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.', N'"', N'Your order is now upgraded with a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped shortly.  We are emailing a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (107, N'This upgrade to your orginal Live Session Only registration adds the 6-month OnDemand Weblinks, and CD-ROM plus Hardcopy Handouts.', N'Upgrade to the Premier Package! (only displays to attendees)', 255, 0, 0, 4, N'Text', N'', N'Upgrade_to_the_Premier_Package_1Hr_255_107', N'No', N'Yes', N'Yes', N'', N'Your order is now upgraded with a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped shortly.  We are emailing a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.', N'"', N'Your order is now upgraded with a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped shortly.  We are emailing a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (109, N'Attend the live session with the opportunity to ask questions of the presenter.  You also receive handouts.', N'Live Sessions Only (Three)', 699, 0, 0, 1, N'Text', N'', N'Live_Sessions_Only_Series3_699_109', N'Yes', N'No', N'No', N'This order is for the live sessions (3) only. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email.', N'This order is for all three live sessions in this series. The information required to connect to the first session is summarized below - new connection information will be provided for each of the following sessions a couple days prior to the event. Detailed information has been sent to your email and is also available at http://www.BankWebinars.com/MyWebinars.', N'The webinar ID and password are distributed 2-3 days before each event.', N'Connection information is summerized below and is also available at http://www.BankWebinars.com.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (109, N'Attend the live session with the opportunity to ask questions of the presenter.  You also receive handouts.', N'Live Sessions Only (Three)', 699, 0, 0, 1, N'Text', N'', N'Live_Sessions_Only_Series3_699_109', N'Yes', N'No', N'No', N'This order is for the live sessions (3) only. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email.', N'This order is for all three live sessions in this series. The information required to connect to the first session is summarized below - new connection information will be provided for each of the following sessions a couple days prior to the event. Detailed information has been sent to your email and is also available at http://www.BankWebinars.com/MyWebinars.', N'The webinar ID and password are distributed 2-3 days before each event.', N'Connection information is summerized below and is also available at http://www.BankWebinars.com.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (110, N'Unlimited playback & materials only. If you are unable to attend the regularly scheduled events, but are interested in the topic, you can purchase  the recorded version. You will receive OnDemand playback for 6 months following date of the event.', N'OnDemand Recordings Only', 699, 0, 0, 2, N'Text', N'', N'OnDemand_Recordings_Only_Series3_699_110', N'No', N'Yes', N'No', N'Your order provides for unlimited, web-based playback of all 3 sessions for six months following the date for the event by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event. Watch your email or ', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (110, N'Unlimited playback & materials only. If you are unable to attend the regularly scheduled events, but are interested in the topic, you can purchase  the recorded version. You will receive OnDemand playback for 6 months following date of the event.', N'OnDemand Recordings Only', 699, 0, 0, 2, N'Text', N'', N'OnDemand_Recordings_Only_Series3_699_110', N'No', N'Yes', N'No', N'Your order provides for unlimited, web-based playback of all 3 sessions for six months following the date for the event by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event. Watch your email or ', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (111, N'CD-ROM plus Hardcopy Handouts. Also includes free 6-Month OnDemand Weblink.  Does not include live session. ', N'CD-ROMs and Hardcopy Handouts', 749, 0, 0, 3, N'Text', N'', N'CD-ROMs_and_Hardcopy_Handouts_Series3_749_111', N'No', N'Yes', N'Yes', N'This order is for the CD-ROM and hardcopy of the presenter handouts for all 3 sessions and will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. ', N'', N'The CD-ROM and hardcopy of the presenter handouts will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution.', N'')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (111, N'CD-ROM plus Hardcopy Handouts. Also includes free 6-Month OnDemand Weblink.  Does not include live session. ', N'CD-ROMs and Hardcopy Handouts', 749, 0, 0, 3, N'Text', N'', N'CD-ROMs_and_Hardcopy_Handouts_Series3_749_111', N'No', N'Yes', N'Yes', N'This order is for the CD-ROM and hardcopy of the presenter handouts for all 3 sessions and will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. ', N'', N'The CD-ROM and hardcopy of the presenter handouts will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution.', N'')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (112, N'Attend the live event plus receive 6-month OnDemand playback.  You also receive electronic handouts.', N'Live Plus OnDemand Weblinks', 895, 0, 0, 4, N'Text', N'', N'Live_Plus_OnDemand_Weblinks_Series3_895_112', N'Yes', N'Yes', N'No', N'This order is for all three live sessions plus OnDemand playback for six months. The connection information for each event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a link to the recording soon after the completion of the event. ', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (112, N'Attend the live event plus receive 6-month OnDemand playback.  You also receive electronic handouts.', N'Live Plus OnDemand Weblinks', 895, 0, 0, 4, N'Text', N'', N'Live_Plus_OnDemand_Weblinks_Series3_895_112', N'Yes', N'Yes', N'No', N'This order is for all three live sessions plus OnDemand playback for six months. The connection information for each event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a link to the recording soon after the completion of the event. ', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (113, N'Includes all three options above.  Live session, OnDemand Weblink, and CD-ROM plus Hardcopy Handouts.', N'Premier Package', 995, 0, 0, 5, N'Text', N'', N'Premier_Package_Series3_995_113', N'Yes', N'Yes', N'Yes', N'This order is for the live sessions (3) plus OnDemand playback for six months. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a link to the recording soon after the completion of the event. Watch your email or ', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a CD-ROM plus handouts shipped shortly after the event. Additionally, you will receive a link for unlimited playback for 6 months following the date of the event.', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (113, N'Includes all three options above.  Live session, OnDemand Weblink, and CD-ROM plus Hardcopy Handouts.', N'Premier Package', 995, 0, 0, 5, N'Text', N'', N'Premier_Package_Series3_995_113', N'Yes', N'Yes', N'Yes', N'This order is for the live sessions (3) plus OnDemand playback for six months. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a link to the recording soon after the completion of the event. Watch your email or ', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a CD-ROM plus handouts shipped shortly after the event. Additionally, you will receive a link for unlimited playback for 6 months following the date of the event.', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (114, N'Want your branches to participate?  Facilities within your organization will be able to participate without the travel costs of coming to one location.', N'Additional Location(s)', 475, 0, 0, 6, N'additional_location', N'', N'Additional_Location_Series3_475_114', N'No', N'No', N'No', N'', N'', N'', N'')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (114, N'Want your branches to participate?  Facilities within your organization will be able to participate without the travel costs of coming to one location.', N'Additional Location(s)', 475, 0, 0, 6, N'additional_location', N'', N'Additional_Location_Series3_475_114', N'No', N'No', N'No', N'', N'', N'', N'')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (115, N'CD-ROM plus Hardcopy Handouts. Also includes free 6-Month OnDemand Weblink.  Does not include live session. ', N'CD-ROM and Hardcopy Handouts', 749, 0, 0, 1, N'Text', N'', N'CD-ROM_and_Hardcopy_Handouts_Series3_749_115', N'No', N'Yes', N'Yes', N'', N'', N'The CD-ROM and hardcopy of the presenter handouts will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution.', N'')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (115, N'CD-ROM plus Hardcopy Handouts. Also includes free 6-Month OnDemand Weblink.  Does not include live session. ', N'CD-ROM and Hardcopy Handouts', 749, 0, 0, 1, N'Text', N'', N'CD-ROM_and_Hardcopy_Handouts_Series3_749_115', N'No', N'Yes', N'Yes', N'', N'', N'The CD-ROM and hardcopy of the presenter handouts will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution.', N'')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (116, N'Upgrade your registration with unlimited, online playback for the next 6 months. ', N'Upgrade to OnDemand Weblinks! (only displays to attendees)', 1249, 0, 0, 3, N'Text', N'', N'Upgrade_to_OnDemand_Weblinks_Series3_1249_116', N'No', N'Yes', N'No', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (116, N'Upgrade your registration with unlimited, online playback for the next 6 months. ', N'Upgrade to OnDemand Weblinks! (only displays to attendees)', 1249, 0, 0, 3, N'Text', N'', N'Upgrade_to_OnDemand_Weblinks_Series3_1249_116', N'No', N'Yes', N'No', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (117, N'This upgrade to your orginal Live Session Only registration adds the 6-month OnDemand Weblinks, and CD-ROM plus Hardcopy Handouts.', N'Upgrade to the Premier Package! (only displays to attendees)', 1399, 0, 0, 4, N'Text', N'', N'Upgrade_to_the_Premier_Package_Series3_1399_117', N'No', N'Yes', N'Yes', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a CD-ROM plus handouts shipped shortly after the event. Additionally, you will receive a link for unlimited playback for 6 months following the date of the event.', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a CD-ROM plus handouts shipped shortly after the event. Additionally, you will receive a link for unlimited playback for 6 months following the date of the event.', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (117, N'This upgrade to your orginal Live Session Only registration adds the 6-month OnDemand Weblinks, and CD-ROM plus Hardcopy Handouts.', N'Upgrade to the Premier Package! (only displays to attendees)', 1399, 0, 0, 4, N'Text', N'', N'Upgrade_to_the_Premier_Package_Series3_1399_117', N'No', N'Yes', N'Yes', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a CD-ROM plus handouts shipped shortly after the event. Additionally, you will receive a link for unlimited playback for 6 months following the date of the event.', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a CD-ROM plus handouts shipped shortly after the event. Additionally, you will receive a link for unlimited playback for 6 months following the date of the event.', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (118, N'One Month Trial for new users only.', N'1 month trial', 159, 0, 0, 1, N'Text', N'', N'One_Month_Trial_150_159_118', N'Yes', N'Yes', N'No', N'The webinar ID and password and presenter notes are distributed 2-3 days before each months event.', N'Connection information is summerized below. Detailed information has been sent to your email and is also available at http://www.bankwebinars.com. For future events, the webinar ID and password and presenter notes are distributed 2-3 days before each months event.', N'The webinar ID and password and presenter notes are distributed 2-3 days before each months event.', N'Connection information is summerized below and is also available at http://www.BankWebinars.com. For future events, the webinar ID and password and presenter notes are distributed 2-3 days before each months event.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (118, N'One Month Trial for new users only.', N'1 month trial', 159, 0, 0, 1, N'Text', N'', N'One_Month_Trial_150_159_118', N'Yes', N'Yes', N'No', N'The webinar ID and password and presenter notes are distributed 2-3 days before each months event.', N'Connection information is summerized below. Detailed information has been sent to your email and is also available at http://www.bankwebinars.com. For future events, the webinar ID and password and presenter notes are distributed 2-3 days before each months event.', N'The webinar ID and password and presenter notes are distributed 2-3 days before each months event.', N'Connection information is summerized below and is also available at http://www.BankWebinars.com. For future events, the webinar ID and password and presenter notes are distributed 2-3 days before each months event.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (119, N'Attend each month for the next six months!', N'6-Month Subscription', 954, 0, 0, 2, N'Text', N'', N'6-Month_Subscription_954_119', N'Yes', N'Yes', N'No', N'The webinar ID and password and presenter notes are distributed 2-3 days before each months event.', N'Connection information is summerized below. Detailed information has been sent to your email and is also available at http://www.bankwebinars.com. For future events, the webinar ID and password and presenter notes are distributed 2-3 days before each months event.', N'The webinar ID and password and presenter notes are distributed 2-3 days before each months event.', N'Connection information is summerized below and is also available at http://www.BankWebinars.com. For future events, the webinar ID and password and presenter notes are distributed 2-3 days before each months event.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (119, N'Attend each month for the next six months!', N'6-Month Subscription', 954, 0, 0, 2, N'Text', N'', N'6-Month_Subscription_954_119', N'Yes', N'Yes', N'No', N'The webinar ID and password and presenter notes are distributed 2-3 days before each months event.', N'Connection information is summerized below. Detailed information has been sent to your email and is also available at http://www.bankwebinars.com. For future events, the webinar ID and password and presenter notes are distributed 2-3 days before each months event.', N'The webinar ID and password and presenter notes are distributed 2-3 days before each months event.', N'Connection information is summerized below and is also available at http://www.BankWebinars.com. For future events, the webinar ID and password and presenter notes are distributed 2-3 days before each months event.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (120, N'Attend each month for the next 12 months!', N'12-Month Subscription', 1749, 0, 0, 3, N'Text', N'', N'12-Month_Subscription_1749_120', N'Yes', N'Yes', N'No', N'The webinar ID and password and presenter notes are distributed 2-3 days before each months event.', N'Connection information is summerized below. Detailed information has been sent to your email and is also available at http://www.bankwebinars.com. For future events, the webinar ID and password and presenter notes are distributed 2-3 days before each months event.', N'The webinar ID and password and presenter notes are distributed 2-3 days before each months event.', N'Connection information is summerized below and is also available at http://www.BankWebinars.com. For future events, the webinar ID and password and presenter notes are distributed 2-3 days before each months event.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (120, N'Attend each month for the next 12 months!', N'12-Month Subscription', 1749, 0, 0, 3, N'Text', N'', N'12-Month_Subscription_1749_120', N'Yes', N'Yes', N'No', N'The webinar ID and password and presenter notes are distributed 2-3 days before each months event.', N'Connection information is summerized below. Detailed information has been sent to your email and is also available at http://www.bankwebinars.com. For future events, the webinar ID and password and presenter notes are distributed 2-3 days before each months event.', N'The webinar ID and password and presenter notes are distributed 2-3 days before each months event.', N'Connection information is summerized below and is also available at http://www.BankWebinars.com. For future events, the webinar ID and password and presenter notes are distributed 2-3 days before each months event.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (121, N'Want your branches to participate?  Facilities within your organization will be able to participate without the travel costs of coming to one location. Base package includes 3 additional locations at no extra charge. Additional locations beyond the first 3 will add $150 per connection per month.', N'Additional Location(s)', 150, 0, 0, 4, N'additional_location', N'', N'Additional_Location_Subscription_150_121', N'No', N'No', N'No', N'', N'', N'', N'')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (121, N'Want your branches to participate?  Facilities within your organization will be able to participate without the travel costs of coming to one location. Base package includes 3 additional locations at no extra charge. Additional locations beyond the first 3 will add $150 per connection per month.', N'Additional Location(s)', 150, 0, 0, 4, N'additional_location', N'', N'Additional_Location_Subscription_150_121', N'No', N'No', N'No', N'', N'', N'', N'')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (123, N'Unlimited playback & materials only. If you are unable to attend the regularly scheduled events, but are interested in the topic, you can purchase  the recorded version. You will receive OnDemand playback for 6 months following date of the event.', N'OnDemand Recordings Only', 699, 0, 0, 2, N'Text', N'', N'OnDemand_Recordings_Only_Series3_699_123', N'No', N'Yes', N'No', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (123, N'Unlimited playback & materials only. If you are unable to attend the regularly scheduled events, but are interested in the topic, you can purchase  the recorded version. You will receive OnDemand playback for 6 months following date of the event.', N'OnDemand Recordings Only', 699, 0, 0, 2, N'Text', N'', N'OnDemand_Recordings_Only_Series3_699_123', N'No', N'Yes', N'No', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (124, N'Attend the live session with the opportunity to ask questions of the presenter.  You also receive handouts.', N'Live Sessions Only (Four)', 899, 0, 0, 1, N'Text', N'', N'Live_Sessions_Only_Series4_899_124', N'Yes', N'No', N'No', N'This order is for the live sessions (4) only. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email.', N'This order is for all four live sessions in this series. The information required to connect to the first session is summarized below - new connection information will be provided for each of the following sessions a couple days prior to the event. Detailed information has been sent to your email and is also available at http://www.BankWebinars.com/MyWebinars.', N'The webinar ID and password are distributed 2-3 days before each event.', N'Connection information is summerized below and is also available at http://www.BankWebinars.com.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (124, N'Attend the live session with the opportunity to ask questions of the presenter.  You also receive handouts.', N'Live Sessions Only (Four)', 899, 0, 0, 1, N'Text', N'', N'Live_Sessions_Only_Series4_899_124', N'Yes', N'No', N'No', N'This order is for the live sessions (4) only. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email.', N'This order is for all four live sessions in this series. The information required to connect to the first session is summarized below - new connection information will be provided for each of the following sessions a couple days prior to the event. Detailed information has been sent to your email and is also available at http://www.BankWebinars.com/MyWebinars.', N'The webinar ID and password are distributed 2-3 days before each event.', N'Connection information is summerized below and is also available at http://www.BankWebinars.com.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (125, N'Unlimited playback & materials only. If you are unable to attend the regularly scheduled events, but are interested in the topic, you can purchase  the recorded version. You will receive OnDemand playback for 6 months following date of the event.', N'OnDemand Recordings Only', 899, 0, 0, 2, N'Text', N'', N'OnDemand_Recordings_Only_Series4_899_125', N'No', N'Yes', N'No', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (125, N'Unlimited playback & materials only. If you are unable to attend the regularly scheduled events, but are interested in the topic, you can purchase  the recorded version. You will receive OnDemand playback for 6 months following date of the event.', N'OnDemand Recordings Only', 899, 0, 0, 2, N'Text', N'', N'OnDemand_Recordings_Only_Series4_899_125', N'No', N'Yes', N'No', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (126, N'CD-ROM plus Hardcopy Handouts. Also includes free 6-Month OnDemand Weblink.  Does not include live session. ', N'CD-ROMs and Hardcopy Handouts', 979, 0, 0, 3, N'Text', N'', N'CD-ROMs_and_Hardcopy_Handouts_Series4_979_126', N'No', N'Yes', N'Yes', N'This order is for the CD-ROMs and hardcopy of the presenter handouts for all 4 sessions and will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. ', N'The CD-ROM and hardcopy of the presenter handouts will be shipped within the next day or two. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution and can be access from MyWebinars.', N'The CD-ROM and hardcopy of the presenter handouts will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution.', N'The CD-ROM and hardcopy of the presenter handouts will be shipped within the next day or two. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution and can be access from MyWebinars.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (126, N'CD-ROM plus Hardcopy Handouts. Also includes free 6-Month OnDemand Weblink.  Does not include live session. ', N'CD-ROMs and Hardcopy Handouts', 979, 0, 0, 3, N'Text', N'', N'CD-ROMs_and_Hardcopy_Handouts_Series4_979_126', N'No', N'Yes', N'Yes', N'This order is for the CD-ROMs and hardcopy of the presenter handouts for all 4 sessions and will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. ', N'The CD-ROM and hardcopy of the presenter handouts will be shipped within the next day or two. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution and can be access from MyWebinars.', N'The CD-ROM and hardcopy of the presenter handouts will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution.', N'The CD-ROM and hardcopy of the presenter handouts will be shipped within the next day or two. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution and can be access from MyWebinars.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (127, N'Attend the live event plus receive 6-month OnDemand playback.  You also receive electronic handouts.', N'Live Plus OnDemand Weblinks', 1249, 0, 0, 4, N'Text', N'', N'Live_Plus_OnDemand_Weblinks_Series4_1249_127', N'Yes', N'Yes', N'No', N'This order is for all four live sessions plus OnDemand playback for six months. The connection information for each event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a link to the recording soon after the completion of the event.', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (127, N'Attend the live event plus receive 6-month OnDemand playback.  You also receive electronic handouts.', N'Live Plus OnDemand Weblinks', 1249, 0, 0, 4, N'Text', N'', N'Live_Plus_OnDemand_Weblinks_Series4_1249_127', N'Yes', N'Yes', N'No', N'This order is for all four live sessions plus OnDemand playback for six months. The connection information for each event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a link to the recording soon after the completion of the event.', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (128, N'Includes all three options above.  Live session, OnDemand Weblink, and CD-ROM plus Hardcopy Handouts.', N'Premier Package', 1399, 0, 0, 5, N'Text', N'', N'Premier_Package_Series4_1399_128', N'Yes', N'Yes', N'Yes', N'Your order provides for attendance to the live events (4) plus all our post event options. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a CD-ROM plus handouts shipped shortly after the event. Additionally, you will receive a link for unlimited playback for 6 months following the date of the event.', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a CD-ROM plus handouts shipped shortly after the event. Additionally, you will receive a link for unlimited playback for 6 months following the date of the event.', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (128, N'Includes all three options above.  Live session, OnDemand Weblink, and CD-ROM plus Hardcopy Handouts.', N'Premier Package', 1399, 0, 0, 5, N'Text', N'', N'Premier_Package_Series4_1399_128', N'Yes', N'Yes', N'Yes', N'Your order provides for attendance to the live events (4) plus all our post event options. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a CD-ROM plus handouts shipped shortly after the event. Additionally, you will receive a link for unlimited playback for 6 months following the date of the event.', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a CD-ROM plus handouts shipped shortly after the event. Additionally, you will receive a link for unlimited playback for 6 months following the date of the event.', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (129, N'Want your branches to participate?  Facilities within your organization will be able to participate without the travel costs of coming to one location.', N'Additional Location(s)', 600, 0, 0, 6, N'additional_location', N'', N'Additional_Location_Series4_600_129', N'No', N'No', N'No', N'', N'', N'', N'')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (129, N'Want your branches to participate?  Facilities within your organization will be able to participate without the travel costs of coming to one location.', N'Additional Location(s)', 600, 0, 0, 6, N'additional_location', N'', N'Additional_Location_Series4_600_129', N'No', N'No', N'No', N'', N'', N'', N'')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (130, N'CD-ROM plus Hardcopy Handouts. Also includes free 6-Month OnDemand Weblink.  Does not include live session. ', N'CD-ROM and Hardcopy Handouts', 979, 0, 0, 1, N'Text', N'', N'CD-ROM_and_Hardcopy_Handouts_Series4_979_130', N'No', N'Yes', N'Yes', N'', N'The CD-ROM and hardcopy of the presenter handouts will be shipped within the next day or two. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution and can be access from MyWebinars.', N'The CD-ROM and hardcopy of the presenter handouts will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution.', N'The CD-ROM and hardcopy of the presenter handouts will be shipped within the next day or two. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution and can be access from MyWebinars.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (130, N'CD-ROM plus Hardcopy Handouts. Also includes free 6-Month OnDemand Weblink.  Does not include live session. ', N'CD-ROM and Hardcopy Handouts', 979, 0, 0, 1, N'Text', N'', N'CD-ROM_and_Hardcopy_Handouts_Series4_979_130', N'No', N'Yes', N'Yes', N'', N'The CD-ROM and hardcopy of the presenter handouts will be shipped within the next day or two. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution and can be access from MyWebinars.', N'The CD-ROM and hardcopy of the presenter handouts will be shipped soon after the event. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution.', N'The CD-ROM and hardcopy of the presenter handouts will be shipped within the next day or two. In addition, your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution and can be access from MyWebinars.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (131, N'Unlimited playback & materials only. If you are unable to attend the regularly scheduled events, but are interested in the topic, you can purchase  the recorded version. You will receive OnDemand playback for 6 months following date of the event.', N'OnDemand Recordings Only', 899, 0, 0, 2, N'Text', N'', N'OnDemand_Recordings_Only_Series4_899_131', N'No', N'Yes', N'No', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (131, N'Unlimited playback & materials only. If you are unable to attend the regularly scheduled events, but are interested in the topic, you can purchase  the recorded version. You will receive OnDemand playback for 6 months following date of the event.', N'OnDemand Recordings Only', 899, 0, 0, 2, N'Text', N'', N'OnDemand_Recordings_Only_Series4_899_131', N'No', N'Yes', N'No', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. You will receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order provides for unlimited, web-based playback (for six months following the date for the event) by any associate within your institution. A link for playback can be found at http://www.BankWebinars.com/MyWebinars.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (132, N'Upgrade your registration with unlimited, online playback for the next 6 months. ', N'Upgrade to OnDemand Weblinks! (only displays to attendees)', 1249, 0, 0, 3, N'Text', N'', N'Upgrade_to_OnDemand_Weblinks_Series4_1249_132', N'No', N'Yes', N'No', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (132, N'Upgrade your registration with unlimited, online playback for the next 6 months. ', N'Upgrade to OnDemand Weblinks! (only displays to attendees)', 1249, 0, 0, 3, N'Text', N'', N'Upgrade_to_OnDemand_Weblinks_Series4_1249_132', N'No', N'Yes', N'No', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a link to the recording (plus all presenter handouts) soon after the completion of the event.', N'Your order includes the Live Webinar plus a link for 6 months of unlimited OnDemand playback. You will receive a link to the recording (plus all presenter handouts) shortly after the completion of the event.')
 GO
-INSERT [dbo].[Options] ([idOption], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (133, N'This upgrade to your orginal Live Session Only registration adds the 6-month OnDemand Weblinks, and CD-ROM plus Hardcopy Handouts.', N'Upgrade to the Premier Package! (only displays to attendees)', 1399, 0, 0, 4, N'Text', N'', N'Upgrade_to_the_Premier_Package_Series4_1399_133', N'No', N'Yes', N'Yes', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a CD-ROM plus handouts shipped shortly after the event. Additionally, you will receive a link for unlimited playback for 6 months following the date of the event.', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a CD-ROM plus handouts shipped shortly after the event. Additionally, you will receive a link for unlimited playback for 6 months following the date of the event.', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.')
+INSERT [dbo].[Options] ([idRegType], [OptionExplain], [OptionLabel], [PriceToAdd], [TaxExempt], [PercToAdd], [SortOrder], [Type], [MsgConfirm], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (133, N'This upgrade to your orginal Live Session Only registration adds the 6-month OnDemand Weblinks, and CD-ROM plus Hardcopy Handouts.', N'Upgrade to the Premier Package! (only displays to attendees)', 1399, 0, 0, 4, N'Text', N'', N'Upgrade_to_the_Premier_Package_Series4_1399_133', N'No', N'Yes', N'Yes', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email. You will also receive a CD-ROM plus handouts shipped shortly after the event. Additionally, you will receive a link for unlimited playback for 6 months following the date of the event.', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions. You will also receive a CD-ROM plus handouts shipped shortly after the event. Additionally, you will receive a link for unlimited playback for 6 months following the date of the event.', N'Your order includes the Live Webinar (Webinar ID and password below); a link for 6-Month OnDemand playback; and a CD-ROM plus hardcopy handouts (to be shipped soon after the presentation).  You will receive a link to the OnDemand Recording (plus electronic handouts) soon after the completion of the event.')
 GO
 SET IDENTITY_INSERT [dbo].[Options] OFF
 GO
 SET IDENTITY_INSERT [dbo].[OptionsGroups] ON 
 PRINT '-----------------------------------------------BEGINS OPTIONSGROUPS'
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (12, N'Additional Locations', N'T', 2)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (12, N'Additional Locations', N'T', 2)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (13, N'PreEvent_2Hr_v2', N'T', 1)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (13, N'PreEvent_2Hr_v2', N'T', 1)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (14, N'PostEvent_2Hr_v2', N'T', 3)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (14, N'PostEvent_2Hr_v2', N'T', 3)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (15, N'PreEvent_Subscription_v2', N'T', 4)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (15, N'PreEvent_Subscription_v2', N'T', 4)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (16, N'PostEvent_Subscription_v2', N'T', 5)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (16, N'PostEvent_Subscription_v2', N'T', 5)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (17, N'PostEvent_1Hr_v2', N'T', 6)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (17, N'PostEvent_1Hr_v2', N'T', 6)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (18, N'PreEvent_1Hr_v2', N'T', 7)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (18, N'PreEvent_1Hr_v2', N'T', 7)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (19, N'PreEvent_2Hr_v1', N'T', 8)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (19, N'PreEvent_2Hr_v1', N'T', 8)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (20, N'PostEvent_2Hr_v1', N'T', 9)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (20, N'PostEvent_2Hr_v1', N'T', 9)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (21, N'PostEvent_1Hr_v1', N'T', 10)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (21, N'PostEvent_1Hr_v1', N'T', 10)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (22, N'PreEvent_1Hr_v1', N'T', 11)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (22, N'PreEvent_1Hr_v1', N'T', 11)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (23, N'PreEvent_4PartSeries_899', N'T', 1)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (23, N'PreEvent_4PartSeries_899', N'T', 1)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (24, N'PostEvent_4PartSeries_899', N'T', 1)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (24, N'PostEvent_4PartSeries_899', N'T', 1)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (25, N'PostEvent_Series3', N'T', 16)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (25, N'PostEvent_Series3', N'T', 16)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (26, N'PreEvent_Series3', N'T', 15)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (26, N'PreEvent_Series3', N'T', 15)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (27, N'PreEvent_2Hr_2013', N'T', 1)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (27, N'PreEvent_2Hr_2013', N'T', 1)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (28, N'PostEvent_2Hr_2013', N'T', 2)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (28, N'PostEvent_2Hr_2013', N'T', 2)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (29, N'PreEvent_1Hr_2013', N'T', 3)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (29, N'PreEvent_1Hr_2013', N'T', 3)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (30, N'PostEvent_1Hr_2013', N'T', 4)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (30, N'PostEvent_1Hr_2013', N'T', 4)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (31, N'PromoCP', N't', 1)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (31, N'PromoCP', N't', 1)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (32, N'PreEvent_5PartSeries_2014', N't', 1)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (32, N'PreEvent_5PartSeries_2014', N't', 1)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (33, N'PostEvent_5PartSeries_2014', N't', 2)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (33, N'PostEvent_5PartSeries_2014', N't', 2)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (34, N'BW_13_PreEvent_2hr', N'T', 1)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (34, N'BW_13_PreEvent_2hr', N'T', 1)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (35, N'BW_13_PostEvent_2hr', N'T', 2)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (35, N'BW_13_PostEvent_2hr', N'T', 2)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (36, N'BW_13_PreEvent_1hr', N'T', 3)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (36, N'BW_13_PreEvent_1hr', N'T', 3)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (37, N'BW_13_PostEvent_1hr', N'T', 4)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (37, N'BW_13_PostEvent_1hr', N'T', 4)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (38, N'BW_13_Subscription', N'T', 5)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (38, N'BW_13_Subscription', N'T', 5)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (39, N'BW_13_PreEvent_Series3', N'T', 6)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (39, N'BW_13_PreEvent_Series3', N'T', 6)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (40, N'BW_13_PostEvent_Series3', N'T', 7)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (40, N'BW_13_PostEvent_Series3', N'T', 7)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (41, N'BW_13_PreEvent_Series4', N'T', 7)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (41, N'BW_13_PreEvent_Series4', N'T', 7)
 GO
-INSERT [dbo].[OptionsGroups] ([idOptionGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (42, N'BW_13_PostEvent_Series4', N'T', 7)
+INSERT [dbo].[OptionsGroups] ([idRegTypeGroup], [OptionGroupDesc], [OptionType], [SortOrder]) VALUES (42, N'BW_13_PostEvent_Series4', N'T', 7)
 GO
 SET IDENTITY_INSERT [dbo].[OptionsGroups] OFF
 GO
 SET IDENTITY_INSERT [dbo].[OptionsXref] ON 
 PRINT '_____________________________------------------------------------BEGINS OptionsXref'
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2434, 12, 9)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2434, 12, 9)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2435, 12, 14)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2435, 12, 14)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2436, 13, 1)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2436, 13, 1)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2437, 13, 16)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2437, 13, 16)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2438, 13, 54)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2438, 13, 54)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2439, 13, 18)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2439, 13, 18)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2440, 13, 9)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2440, 13, 9)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2441, 14, 16)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2441, 14, 16)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2442, 14, 54)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2442, 14, 54)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2443, 19, 1)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2443, 19, 1)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2444, 19, 2)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2444, 19, 2)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2445, 19, 3)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2445, 19, 3)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2446, 19, 9)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2446, 19, 9)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2447, 20, 2)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2447, 20, 2)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2448, 18, 27)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2448, 18, 27)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2449, 18, 34)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2449, 18, 34)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2450, 18, 35)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2450, 18, 35)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2451, 18, 36)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2451, 18, 36)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2452, 18, 14)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2452, 18, 14)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2453, 17, 34)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2453, 17, 34)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2454, 17, 35)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2454, 17, 35)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2455, 22, 27)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2455, 22, 27)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2456, 22, 32)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2456, 22, 32)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2457, 22, 14)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2457, 22, 14)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2458, 22, 33)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2458, 22, 33)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2459, 21, 32)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2459, 21, 32)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2460, 15, 9)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2460, 15, 9)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2461, 15, 78)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2461, 15, 78)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2462, 23, 39)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2462, 23, 39)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2463, 23, 40)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2463, 23, 40)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2464, 23, 41)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2464, 23, 41)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2465, 23, 42)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2465, 23, 42)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2466, 26, 52)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2466, 26, 52)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2467, 26, 51)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2467, 26, 51)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2468, 26, 50)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2468, 26, 50)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2469, 26, 48)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2469, 26, 48)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2470, 26, 49)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2470, 26, 49)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2471, 23, 43)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2471, 23, 43)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2472, 25, 41)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2472, 25, 41)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2473, 25, 40)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2473, 25, 40)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2474, 24, 41)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2474, 24, 41)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2475, 24, 40)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2475, 24, 40)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2476, 27, 1)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2476, 27, 1)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2477, 27, 16)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2477, 27, 16)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2478, 27, 17)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2478, 27, 17)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2479, 27, 3)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2479, 27, 3)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2480, 27, 18)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2480, 27, 18)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2481, 27, 9)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2481, 27, 9)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2482, 28, 16)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2482, 28, 16)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2483, 28, 17)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2483, 28, 17)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2484, 29, 27)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2484, 29, 27)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2485, 29, 32)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2485, 29, 32)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2486, 29, 35)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2486, 29, 35)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2487, 29, 33)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2487, 29, 33)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2488, 29, 36)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2488, 29, 36)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2489, 23, 71)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2489, 23, 71)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2490, 29, 14)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2490, 29, 14)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2491, 31, 78)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2491, 31, 78)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2492, 31, 9)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2492, 31, 9)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2493, 32, 79)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2493, 32, 79)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2494, 32, 81)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2494, 32, 81)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2495, 32, 83)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2495, 32, 83)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2496, 33, 80)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2496, 33, 80)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2497, 34, 84)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2497, 34, 84)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2498, 34, 85)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2498, 34, 85)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2499, 34, 86)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2499, 34, 86)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2500, 34, 87)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2500, 34, 87)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2501, 34, 88)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2501, 34, 88)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2502, 34, 89)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2502, 34, 89)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2503, 35, 91)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2503, 35, 91)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2504, 35, 92)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2504, 35, 92)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2505, 35, 93)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2505, 35, 93)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2506, 35, 95)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2506, 35, 95)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2507, 36, 97)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2507, 36, 97)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2508, 36, 98)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2508, 36, 98)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2509, 36, 99)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2509, 36, 99)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2510, 36, 100)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2510, 36, 100)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2511, 36, 101)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2511, 36, 101)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2512, 36, 102)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2512, 36, 102)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2513, 37, 103)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2513, 37, 103)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2514, 37, 104)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2514, 37, 104)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2515, 37, 105)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2515, 37, 105)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2516, 37, 107)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2516, 37, 107)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2517, 39, 109)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2517, 39, 109)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2518, 39, 110)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2518, 39, 110)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2519, 39, 111)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2519, 39, 111)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2520, 39, 112)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2520, 39, 112)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2521, 39, 113)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2521, 39, 113)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2522, 39, 114)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2522, 39, 114)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2523, 40, 115)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2523, 40, 115)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2524, 40, 116)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2524, 40, 116)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2525, 40, 117)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2525, 40, 117)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2526, 37, 123)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2526, 37, 123)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2527, 38, 118)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2527, 38, 118)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2528, 38, 119)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2528, 38, 119)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2529, 38, 120)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2529, 38, 120)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2530, 38, 121)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2530, 38, 121)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2531, 41, 124)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2531, 41, 124)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2532, 41, 125)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2532, 41, 125)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2533, 41, 126)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2533, 41, 126)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2534, 41, 127)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2534, 41, 127)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2535, 41, 128)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2535, 41, 128)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2536, 41, 129)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2536, 41, 129)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2537, 42, 130)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2537, 42, 130)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2538, 42, 131)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2538, 42, 131)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2539, 42, 132)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2539, 42, 132)
 GO
-INSERT [dbo].[OptionsXref] ([idOptionsXref], [idOptionGroup], [idOption]) VALUES (2540, 42, 133)
+INSERT [dbo].[OptionsXref] ([idRegTypesXref], [idRegTypeGroup], [idRegType]) VALUES (2540, 42, 133)
 GO
 SET IDENTITY_INSERT [dbo].[OptionsXref] OFF
 GO
@@ -4862,1949 +4862,1949 @@ GO
 SET IDENTITY_INSERT [dbo].[OptionsGroupsXref] ON 
 PRINT '_____________________________------------------------------------BEGINS OptionsGroupsXref'
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27154, 799, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27154, 799, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27155, 800, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27155, 800, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27156, 801, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27156, 801, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27157, 802, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27157, 802, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27158, 803, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27158, 803, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27159, 804, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27159, 804, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27160, 805, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27160, 805, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27161, 813, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27161, 813, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27162, 814, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27162, 814, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27163, 815, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27163, 815, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27164, 816, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27164, 816, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27165, 818, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27165, 818, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27166, 819, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27166, 819, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27167, 821, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27167, 821, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27168, 822, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27168, 822, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27169, 823, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27169, 823, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27170, 824, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27170, 824, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27171, 825, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27171, 825, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27172, 826, 19)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27172, 826, 19)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27173, 827, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27173, 827, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27174, 828, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27174, 828, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27175, 829, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27175, 829, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27176, 830, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27176, 830, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27177, 831, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27177, 831, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27178, 832, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27178, 832, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27179, 833, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27179, 833, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27180, 834, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27180, 834, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27181, 835, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27181, 835, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27182, 836, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27182, 836, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27183, 837, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27183, 837, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27184, 386, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27184, 386, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27185, 387, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27185, 387, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27186, 388, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27186, 388, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27188, 390, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27188, 390, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27189, 391, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27189, 391, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27190, 392, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27190, 392, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27191, 393, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27191, 393, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27192, 394, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27192, 394, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27193, 395, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27193, 395, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27194, 396, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27194, 396, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27195, 397, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27195, 397, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27196, 398, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27196, 398, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27197, 399, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27197, 399, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27198, 400, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27198, 400, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27199, 401, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27199, 401, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27200, 402, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27200, 402, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27201, 403, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27201, 403, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27202, 404, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27202, 404, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27203, 405, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27203, 405, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27204, 406, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27204, 406, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27205, 407, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27205, 407, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27206, 408, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27206, 408, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27207, 409, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27207, 409, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27208, 410, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27208, 410, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27209, 411, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27209, 411, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27210, 412, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27210, 412, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27211, 413, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27211, 413, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27212, 414, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27212, 414, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27213, 415, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27213, 415, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27214, 416, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27214, 416, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27215, 417, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27215, 417, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27216, 418, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27216, 418, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27217, 419, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27217, 419, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27218, 420, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27218, 420, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27219, 421, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27219, 421, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27220, 422, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27220, 422, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27221, 423, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27221, 423, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27222, 424, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27222, 424, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27223, 425, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27223, 425, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27224, 426, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27224, 426, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27225, 427, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27225, 427, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27226, 428, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27226, 428, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27227, 429, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27227, 429, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27228, 430, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27228, 430, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27229, 431, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27229, 431, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27230, 433, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27230, 433, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27231, 434, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27231, 434, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27232, 435, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27232, 435, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27233, 436, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27233, 436, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27234, 437, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27234, 437, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27235, 438, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27235, 438, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27236, 439, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27236, 439, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27237, 440, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27237, 440, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27238, 441, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27238, 441, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27239, 442, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27239, 442, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27240, 443, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27240, 443, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27241, 444, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27241, 444, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27242, 445, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27242, 445, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27243, 446, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27243, 446, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27244, 447, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27244, 447, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27245, 448, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27245, 448, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27246, 449, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27246, 449, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27247, 450, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27247, 450, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27248, 451, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27248, 451, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27249, 452, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27249, 452, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27250, 453, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27250, 453, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27251, 454, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27251, 454, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27252, 455, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27252, 455, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27253, 457, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27253, 457, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27254, 458, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27254, 458, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27255, 459, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27255, 459, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27256, 460, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27256, 460, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27257, 461, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27257, 461, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27258, 462, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27258, 462, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27259, 463, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27259, 463, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27260, 464, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27260, 464, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27261, 465, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27261, 465, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27262, 466, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27262, 466, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27263, 467, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27263, 467, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27264, 468, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27264, 468, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27265, 469, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27265, 469, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27266, 470, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27266, 470, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27267, 471, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27267, 471, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27268, 472, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27268, 472, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27269, 473, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27269, 473, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27270, 474, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27270, 474, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27271, 475, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27271, 475, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27272, 476, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27272, 476, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27273, 477, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27273, 477, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27274, 479, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27274, 479, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27275, 480, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27275, 480, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27276, 481, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27276, 481, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27277, 482, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27277, 482, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27278, 483, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27278, 483, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27279, 484, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27279, 484, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27280, 485, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27280, 485, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27281, 486, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27281, 486, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27282, 487, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27282, 487, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27283, 488, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27283, 488, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27284, 489, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27284, 489, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27285, 490, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27285, 490, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27286, 491, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27286, 491, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27287, 492, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27287, 492, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27288, 493, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27288, 493, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27289, 494, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27289, 494, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27290, 495, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27290, 495, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27291, 496, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27291, 496, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27292, 497, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27292, 497, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27293, 498, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27293, 498, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27294, 499, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27294, 499, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27295, 500, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27295, 500, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27296, 501, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27296, 501, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27297, 502, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27297, 502, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27298, 503, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27298, 503, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27299, 504, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27299, 504, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27300, 505, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27300, 505, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27301, 506, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27301, 506, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27302, 507, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27302, 507, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27303, 508, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27303, 508, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27304, 509, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27304, 509, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27305, 510, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27305, 510, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27306, 511, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27306, 511, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27307, 512, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27307, 512, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27308, 513, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27308, 513, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27309, 514, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27309, 514, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27310, 515, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27310, 515, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27311, 516, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27311, 516, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27312, 517, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27312, 517, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27313, 518, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27313, 518, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27314, 521, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27314, 521, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27315, 522, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27315, 522, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27316, 523, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27316, 523, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27317, 524, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27317, 524, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27318, 525, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27318, 525, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27319, 526, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27319, 526, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27320, 527, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27320, 527, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27321, 528, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27321, 528, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27322, 529, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27322, 529, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27323, 530, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27323, 530, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27324, 531, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27324, 531, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27325, 532, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27325, 532, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27326, 533, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27326, 533, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27327, 534, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27327, 534, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27328, 535, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27328, 535, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27329, 537, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27329, 537, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27330, 538, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27330, 538, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27331, 539, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27331, 539, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27332, 540, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27332, 540, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27333, 541, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27333, 541, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27334, 542, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27334, 542, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27335, 543, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27335, 543, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27336, 544, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27336, 544, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27337, 549, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27337, 549, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27338, 550, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27338, 550, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27339, 551, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27339, 551, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27340, 552, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27340, 552, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27341, 553, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27341, 553, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27342, 554, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27342, 554, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27343, 555, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27343, 555, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27344, 556, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27344, 556, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27345, 557, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27345, 557, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27346, 558, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27346, 558, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27347, 559, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27347, 559, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27348, 560, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27348, 560, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27349, 561, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27349, 561, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27350, 562, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27350, 562, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27351, 563, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27351, 563, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27352, 564, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27352, 564, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27353, 565, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27353, 565, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27354, 566, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27354, 566, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27355, 567, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27355, 567, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27356, 568, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27356, 568, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27357, 569, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27357, 569, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27358, 570, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27358, 570, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27359, 571, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27359, 571, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27360, 572, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27360, 572, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27361, 573, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27361, 573, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27362, 574, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27362, 574, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27363, 575, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27363, 575, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27364, 576, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27364, 576, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27365, 577, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27365, 577, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27366, 578, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27366, 578, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27367, 579, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27367, 579, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27368, 580, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27368, 580, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27369, 581, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27369, 581, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27370, 582, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27370, 582, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27371, 583, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27371, 583, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27372, 584, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27372, 584, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27373, 585, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27373, 585, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27374, 586, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27374, 586, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27375, 587, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27375, 587, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27376, 588, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27376, 588, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27377, 589, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27377, 589, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27378, 590, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27378, 590, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27379, 591, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27379, 591, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27380, 592, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27380, 592, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27381, 593, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27381, 593, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27382, 594, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27382, 594, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27383, 595, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27383, 595, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27384, 596, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27384, 596, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27385, 597, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27385, 597, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27386, 598, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27386, 598, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27387, 599, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27387, 599, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27388, 600, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27388, 600, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27389, 601, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27389, 601, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27390, 602, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27390, 602, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27391, 603, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27391, 603, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27392, 604, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27392, 604, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27393, 605, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27393, 605, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27394, 606, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27394, 606, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27395, 607, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27395, 607, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27396, 608, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27396, 608, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27397, 609, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27397, 609, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27398, 610, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27398, 610, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27399, 611, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27399, 611, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27400, 612, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27400, 612, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27401, 613, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27401, 613, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27402, 614, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27402, 614, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27403, 615, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27403, 615, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27404, 616, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27404, 616, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27405, 617, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27405, 617, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27406, 618, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27406, 618, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27407, 619, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27407, 619, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27408, 620, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27408, 620, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27409, 621, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27409, 621, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27410, 622, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27410, 622, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27411, 623, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27411, 623, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27412, 624, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27412, 624, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27413, 625, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27413, 625, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27414, 626, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27414, 626, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27415, 627, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27415, 627, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27416, 628, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27416, 628, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27417, 629, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27417, 629, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27418, 630, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27418, 630, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27419, 631, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27419, 631, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27420, 633, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27420, 633, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27421, 634, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27421, 634, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27422, 635, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27422, 635, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27423, 636, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27423, 636, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27424, 637, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27424, 637, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27425, 638, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27425, 638, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27426, 639, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27426, 639, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27427, 640, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27427, 640, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27428, 641, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27428, 641, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27429, 642, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27429, 642, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27430, 643, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27430, 643, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27431, 644, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27431, 644, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27432, 645, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27432, 645, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27433, 646, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27433, 646, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27434, 647, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27434, 647, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27435, 648, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27435, 648, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27436, 649, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27436, 649, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27437, 650, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27437, 650, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27438, 651, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27438, 651, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27439, 652, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27439, 652, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27440, 653, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27440, 653, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27441, 654, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27441, 654, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27442, 655, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27442, 655, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27443, 656, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27443, 656, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27444, 657, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27444, 657, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27445, 658, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27445, 658, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27446, 660, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27446, 660, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27447, 661, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27447, 661, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27448, 662, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27448, 662, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27449, 663, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27449, 663, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27450, 664, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27450, 664, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27451, 665, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27451, 665, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27452, 666, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27452, 666, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27453, 667, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27453, 667, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27454, 668, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27454, 668, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27455, 669, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27455, 669, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27456, 670, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27456, 670, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27457, 671, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27457, 671, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27458, 672, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27458, 672, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27459, 673, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27459, 673, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27460, 674, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27460, 674, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27461, 675, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27461, 675, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27462, 676, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27462, 676, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27463, 677, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27463, 677, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27464, 678, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27464, 678, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27465, 679, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27465, 679, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27466, 680, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27466, 680, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27467, 681, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27467, 681, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27468, 682, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27468, 682, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27469, 683, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27469, 683, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27470, 684, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27470, 684, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27471, 685, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27471, 685, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27472, 686, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27472, 686, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27473, 687, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27473, 687, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27474, 688, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27474, 688, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27475, 689, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27475, 689, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27476, 690, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27476, 690, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27477, 691, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27477, 691, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27478, 692, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27478, 692, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27479, 693, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27479, 693, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27480, 694, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27480, 694, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27481, 695, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27481, 695, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27482, 696, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27482, 696, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27483, 697, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27483, 697, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27484, 698, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27484, 698, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27485, 699, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27485, 699, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27486, 701, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27486, 701, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27487, 702, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27487, 702, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27488, 708, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27488, 708, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27489, 709, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27489, 709, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27490, 710, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27490, 710, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27491, 711, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27491, 711, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27492, 712, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27492, 712, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27493, 713, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27493, 713, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27494, 715, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27494, 715, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27495, 716, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27495, 716, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27496, 719, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27496, 719, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27497, 720, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27497, 720, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27498, 721, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27498, 721, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27499, 722, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27499, 722, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27500, 723, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27500, 723, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27501, 724, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27501, 724, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27502, 725, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27502, 725, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27503, 726, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27503, 726, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27504, 727, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27504, 727, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27505, 728, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27505, 728, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27506, 730, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27506, 730, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27507, 732, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27507, 732, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27508, 734, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27508, 734, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27509, 736, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27509, 736, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27510, 737, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27510, 737, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27511, 738, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27511, 738, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27512, 739, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27512, 739, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27513, 740, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27513, 740, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27514, 741, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27514, 741, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27515, 743, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27515, 743, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27516, 744, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27516, 744, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27517, 745, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27517, 745, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27518, 746, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27518, 746, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27519, 747, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27519, 747, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27520, 748, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27520, 748, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27521, 749, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27521, 749, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27522, 754, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27522, 754, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27523, 755, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27523, 755, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27524, 756, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27524, 756, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27525, 757, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27525, 757, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27526, 758, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27526, 758, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27527, 760, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27527, 760, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27528, 761, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27528, 761, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27529, 762, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27529, 762, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27530, 763, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27530, 763, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27531, 764, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27531, 764, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27532, 769, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27532, 769, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27533, 770, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27533, 770, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27534, 771, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27534, 771, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27535, 774, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27535, 774, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27536, 778, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27536, 778, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27537, 779, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27537, 779, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27538, 780, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27538, 780, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27539, 781, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27539, 781, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27540, 782, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27540, 782, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27541, 783, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27541, 783, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27542, 784, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27542, 784, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27543, 785, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27543, 785, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27544, 786, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27544, 786, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27545, 788, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27545, 788, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27546, 789, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27546, 789, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27547, 791, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27547, 791, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27548, 792, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27548, 792, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27549, 793, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27549, 793, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27550, 794, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27550, 794, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27551, 798, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27551, 798, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27552, 806, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27552, 806, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27553, 807, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27553, 807, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27554, 808, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27554, 808, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27555, 812, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27555, 812, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27556, 817, 20)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27556, 817, 20)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27560, 839, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27560, 839, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27561, 853, 27)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27561, 853, 27)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27562, 841, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27562, 841, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27563, 838, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27563, 838, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27566, 843, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27566, 843, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27568, 844, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27568, 844, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27569, 847, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27569, 847, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27570, 845, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27570, 845, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27571, 854, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27571, 854, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27572, 852, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27572, 852, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27573, 855, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27573, 855, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27574, 849, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27574, 849, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27575, 856, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27575, 856, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27576, 850, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27576, 850, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27577, 848, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27577, 848, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27578, 851, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27578, 851, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27579, 859, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27579, 859, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27580, 860, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27580, 860, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27581, 857, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27581, 857, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27582, 858, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27582, 858, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27583, 867, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27583, 867, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27604, 871, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27604, 871, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27605, 873, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27605, 873, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27606, 881, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27606, 881, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27607, 877, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27607, 877, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27608, 874, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27608, 874, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27609, 882, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27609, 882, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27610, 875, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27610, 875, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27611, 876, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27611, 876, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27612, 878, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27612, 878, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27613, 879, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27613, 879, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27615, 884, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27615, 884, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27616, 885, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27616, 885, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27617, 886, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27617, 886, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27618, 887, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27618, 887, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27620, 891, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27620, 891, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27621, 892, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27621, 892, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27622, 889, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27622, 889, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27623, 893, 27)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27623, 893, 27)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27624, 894, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27624, 894, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27625, 880, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27625, 880, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27626, 890, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27626, 890, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27627, 896, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27627, 896, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27632, 901, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27632, 901, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27633, 902, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27633, 902, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27634, 903, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27634, 903, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27635, 904, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27635, 904, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27636, 898, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27636, 898, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27637, 899, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27637, 899, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27638, 908, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27638, 908, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27639, 909, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27639, 909, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27640, 910, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27640, 910, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27641, 905, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27641, 905, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27642, 906, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27642, 906, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27643, 911, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27643, 911, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27649, 897, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27649, 897, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27650, 913, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27650, 913, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27651, 914, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27651, 914, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27652, 915, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27652, 915, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27654, 916, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27654, 916, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27655, 912, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27655, 912, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27656, 917, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27656, 917, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27657, 918, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27657, 918, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27658, 919, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27658, 919, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27659, 920, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27659, 920, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27660, 921, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27660, 921, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27661, 922, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27661, 922, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27662, 923, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27662, 923, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27664, 924, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27664, 924, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27665, 925, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27665, 925, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27668, 929, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27668, 929, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27671, 928, 42)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27671, 928, 42)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27673, 930, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27673, 930, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27674, 931, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27674, 931, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27676, 932, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27676, 932, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27678, 933, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27678, 933, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27679, 888, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27679, 888, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27681, 934, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27681, 934, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27682, 935, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27682, 935, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27683, 936, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27683, 936, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27684, 937, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27684, 937, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27685, 939, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27685, 939, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27687, 938, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27687, 938, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27689, 941, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27689, 941, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27690, 942, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27690, 942, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27691, 943, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27691, 943, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27692, 944, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27692, 944, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27695, 945, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27695, 945, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27696, 946, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27696, 946, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27697, 947, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27697, 947, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27698, 948, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27698, 948, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27699, 940, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27699, 940, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27700, 950, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27700, 950, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27701, 951, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27701, 951, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27702, 949, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27702, 949, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27703, 952, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27703, 952, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27704, 953, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27704, 953, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27705, 954, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27705, 954, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27706, 955, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27706, 955, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27707, 956, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27707, 956, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27709, 959, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27709, 959, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27710, 958, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27710, 958, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27711, 962, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27711, 962, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27712, 961, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27712, 961, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27713, 960, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27713, 960, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27714, 957, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27714, 957, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27718, 965, 42)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27718, 965, 42)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27719, 964, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27719, 964, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27725, 963, 42)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27725, 963, 42)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27727, 966, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27727, 966, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27728, 967, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27728, 967, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27729, 968, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27729, 968, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27730, 970, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27730, 970, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27732, 972, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27732, 972, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27734, 969, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27734, 969, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27736, 973, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27736, 973, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27737, 974, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27737, 974, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27738, 975, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27738, 975, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27739, 976, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27739, 976, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27740, 977, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27740, 977, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27741, 978, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27741, 978, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27744, 979, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27744, 979, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27745, 980, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27745, 980, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27746, 981, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27746, 981, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27747, 982, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27747, 982, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27748, 983, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27748, 983, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27749, 984, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27749, 984, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27750, 985, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27750, 985, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27751, 986, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27751, 986, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27752, 987, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27752, 987, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27753, 988, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27753, 988, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27755, 989, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27755, 989, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27756, 990, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27756, 990, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27757, 991, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27757, 991, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27758, 992, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27758, 992, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27759, 993, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27759, 993, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27760, 994, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27760, 994, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27761, 995, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27761, 995, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27765, 996, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27765, 996, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27766, 997, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27766, 997, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27767, 998, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27767, 998, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27768, 999, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27768, 999, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27769, 1000, 26)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27769, 1000, 26)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27770, 1001, 42)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27770, 1001, 42)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27771, 1002, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27771, 1002, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27779, 1008, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27779, 1008, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27780, 1009, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27780, 1009, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27781, 1010, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27781, 1010, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27782, 1011, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27782, 1011, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27783, 1012, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27783, 1012, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27784, 1013, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27784, 1013, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27785, 1014, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27785, 1014, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27786, 1015, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27786, 1015, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27787, 1016, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27787, 1016, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27788, 1017, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27788, 1017, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27789, 1018, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27789, 1018, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27790, 1019, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27790, 1019, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27791, 1020, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27791, 1020, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27792, 1021, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27792, 1021, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27793, 1022, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27793, 1022, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27794, 1023, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27794, 1023, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27795, 1024, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27795, 1024, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27796, 1025, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27796, 1025, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27797, 1026, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27797, 1026, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27798, 1027, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27798, 1027, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27799, 1028, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27799, 1028, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27800, 1029, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27800, 1029, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27801, 1030, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27801, 1030, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27802, 1031, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27802, 1031, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27803, 1032, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27803, 1032, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27805, 1033, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27805, 1033, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27806, 1034, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27806, 1034, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27807, 1035, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27807, 1035, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27812, 1003, 26)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27812, 1003, 26)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27813, 1004, 26)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27813, 1004, 26)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27814, 1005, 42)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27814, 1005, 42)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27815, 1006, 42)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27815, 1006, 42)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27816, 1007, 42)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27816, 1007, 42)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27817, 1036, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27817, 1036, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27818, 1037, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27818, 1037, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27819, 1038, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27819, 1038, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27820, 1039, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27820, 1039, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27821, 1040, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27821, 1040, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27822, 1041, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27822, 1041, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27823, 1042, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27823, 1042, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27824, 1043, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27824, 1043, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27825, 1044, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27825, 1044, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27826, 1045, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27826, 1045, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27829, 1047, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27829, 1047, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27830, 1048, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27830, 1048, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27831, 1049, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27831, 1049, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27832, 1050, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27832, 1050, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27833, 1051, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27833, 1051, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27834, 1052, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27834, 1052, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27835, 1053, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27835, 1053, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27836, 1054, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27836, 1054, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27837, 1055, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27837, 1055, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27891, 1111, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27891, 1111, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27893, 1113, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27893, 1113, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27894, 1114, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27894, 1114, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27895, 1115, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27895, 1115, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27896, 1116, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27896, 1116, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27897, 1117, 27)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27897, 1117, 27)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27898, 1118, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27898, 1118, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27899, 1119, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27899, 1119, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27900, 1120, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27900, 1120, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27901, 1121, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27901, 1121, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27902, 1122, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27902, 1122, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27903, 1123, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27903, 1123, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27904, 1124, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27904, 1124, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27905, 1125, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27905, 1125, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27906, 1126, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27906, 1126, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27907, 1127, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27907, 1127, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27908, 1128, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27908, 1128, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27909, 1129, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27909, 1129, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27910, 1130, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27910, 1130, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27911, 1131, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27911, 1131, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27913, 1133, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27913, 1133, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27914, 1134, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27914, 1134, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27915, 1135, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27915, 1135, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27916, 1136, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27916, 1136, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27919, 1139, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27919, 1139, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27920, 1140, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27920, 1140, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27921, 1141, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27921, 1141, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27922, 1142, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27922, 1142, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27923, 1143, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27923, 1143, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27924, 1144, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27924, 1144, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27925, 1145, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27925, 1145, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27926, 1146, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27926, 1146, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27927, 1147, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27927, 1147, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27928, 1148, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27928, 1148, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27929, 1149, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27929, 1149, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27930, 1150, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27930, 1150, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27931, 1151, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27931, 1151, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27932, 1152, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27932, 1152, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27933, 1153, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27933, 1153, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27934, 1154, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27934, 1154, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27935, 1155, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27935, 1155, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27936, 1156, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27936, 1156, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27937, 1157, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27937, 1157, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27938, 1158, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27938, 1158, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27939, 1159, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27939, 1159, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27941, 1046, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27941, 1046, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27944, 1161, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27944, 1161, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27945, 1162, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27945, 1162, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27946, 1163, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27946, 1163, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27947, 1164, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27947, 1164, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27949, 1166, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27949, 1166, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27950, 1167, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27950, 1167, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27951, 1168, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27951, 1168, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27952, 1169, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27952, 1169, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27954, 1171, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27954, 1171, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27955, 1172, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27955, 1172, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27956, 1173, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27956, 1173, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27957, 1174, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27957, 1174, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27958, 1175, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27958, 1175, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27959, 1176, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27959, 1176, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27960, 1177, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27960, 1177, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27961, 1178, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27961, 1178, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27962, 1179, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27962, 1179, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27963, 1180, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27963, 1180, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27964, 1181, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27964, 1181, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27965, 1182, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27965, 1182, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27966, 1183, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27966, 1183, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27968, 1184, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27968, 1184, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27969, 1185, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27969, 1185, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27970, 1186, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27970, 1186, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27971, 1187, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27971, 1187, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27972, 1188, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27972, 1188, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27973, 1189, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27973, 1189, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27974, 1190, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27974, 1190, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27977, 1193, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27977, 1193, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27978, 1194, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27978, 1194, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27979, 1195, 42)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27979, 1195, 42)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27980, 1196, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27980, 1196, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27981, 1197, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27981, 1197, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27982, 1198, 42)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27982, 1198, 42)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27983, 1199, 42)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27983, 1199, 42)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27984, 1200, 42)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27984, 1200, 42)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27985, 1201, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27985, 1201, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27987, 1202, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27987, 1202, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27988, 1203, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27988, 1203, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27989, 1204, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27989, 1204, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27991, 1205, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27991, 1205, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27994, 1207, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27994, 1207, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (27995, 1206, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (27995, 1206, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28002, 1209, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28002, 1209, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28004, 1210, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28004, 1210, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28006, 1211, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28006, 1211, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28007, 1212, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28007, 1212, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28010, 1214, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28010, 1214, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28015, 1217, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28015, 1217, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28016, 1218, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28016, 1218, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28018, 1208, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28018, 1208, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28021, 1219, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28021, 1219, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28022, 1220, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28022, 1220, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28023, 1213, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28023, 1213, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28024, 1216, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28024, 1216, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28025, 1215, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28025, 1215, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28027, 1221, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28027, 1221, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28029, 1222, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28029, 1222, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28030, 1191, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28030, 1191, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28031, 1192, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28031, 1192, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28034, 1223, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28034, 1223, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28042, 1226, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28042, 1226, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28043, 1225, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28043, 1225, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28044, 1227, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28044, 1227, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28045, 1228, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28045, 1228, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28047, 1229, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28047, 1229, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28050, 1230, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28050, 1230, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28051, 1231, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28051, 1231, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28056, 1236, 27)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28056, 1236, 27)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28058, 1238, 27)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28058, 1238, 27)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28059, 1239, 27)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28059, 1239, 27)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28062, 1242, 27)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28062, 1242, 27)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28063, 1243, 27)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28063, 1243, 27)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28079, 1259, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28079, 1259, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28080, 1260, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28080, 1260, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28081, 1261, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28081, 1261, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28082, 1262, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28082, 1262, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28083, 1263, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28083, 1263, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28085, 1265, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28085, 1265, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28086, 1266, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28086, 1266, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28087, 1267, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28087, 1267, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28154, 1224, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28154, 1224, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28156, 1245, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28156, 1245, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28157, 1247, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28157, 1247, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28158, 1248, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28158, 1248, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28159, 1249, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28159, 1249, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28160, 1250, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28160, 1250, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28161, 1251, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28161, 1251, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28162, 1252, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28162, 1252, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28163, 1253, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28163, 1253, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28164, 1254, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28164, 1254, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28165, 1255, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28165, 1255, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28166, 1256, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28166, 1256, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28167, 1257, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28167, 1257, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28168, 1258, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28168, 1258, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28170, 1264, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28170, 1264, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28171, 1268, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28171, 1268, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28174, 1271, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28174, 1271, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28175, 1272, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28175, 1272, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28176, 1273, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28176, 1273, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28177, 1274, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28177, 1274, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28179, 1276, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28179, 1276, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28180, 1277, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28180, 1277, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28181, 1278, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28181, 1278, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28182, 1279, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28182, 1279, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28184, 1283, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28184, 1283, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28185, 1284, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28185, 1284, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28186, 1285, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28186, 1285, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28188, 1287, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28188, 1287, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28189, 1288, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28189, 1288, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28190, 1289, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28190, 1289, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28191, 1290, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28191, 1290, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28192, 1291, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28192, 1291, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28193, 1292, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28193, 1292, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28194, 1293, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28194, 1293, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28195, 1294, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28195, 1294, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28196, 1295, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28196, 1295, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28197, 1296, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28197, 1296, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28198, 1297, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28198, 1297, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28199, 1298, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28199, 1298, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28200, 1299, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28200, 1299, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28201, 1300, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28201, 1300, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28202, 1301, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28202, 1301, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28203, 1302, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28203, 1302, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28204, 1303, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28204, 1303, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28206, 1305, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28206, 1305, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28207, 1306, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28207, 1306, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28213, 1313, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28213, 1313, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28214, 1314, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28214, 1314, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28215, 1315, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28215, 1315, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28216, 1316, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28216, 1316, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28217, 1317, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28217, 1317, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28218, 1318, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28218, 1318, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28219, 1319, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28219, 1319, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28220, 1320, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28220, 1320, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28221, 1321, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28221, 1321, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28222, 1322, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28222, 1322, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28223, 1323, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28223, 1323, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28224, 1324, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28224, 1324, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28225, 1325, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28225, 1325, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28226, 1326, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28226, 1326, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28227, 1327, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28227, 1327, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28229, 1329, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28229, 1329, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28232, 1332, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28232, 1332, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28239, 1334, 42)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28239, 1334, 42)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28241, 1336, 42)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28241, 1336, 42)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28243, 1338, 42)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28243, 1338, 42)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28245, 1340, 42)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28245, 1340, 42)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28247, 1342, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28247, 1342, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28248, 1343, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28248, 1343, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28254, 1345, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28254, 1345, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28255, 1344, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28255, 1344, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28275, 1346, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28275, 1346, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28276, 1347, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28276, 1347, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28277, 1350, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28277, 1350, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28278, 1348, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28278, 1348, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28279, 1349, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28279, 1349, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28285, 1351, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28285, 1351, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28286, 1352, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28286, 1352, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28287, 1353, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28287, 1353, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28288, 1354, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28288, 1354, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28290, 1355, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28290, 1355, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28300, 1359, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28300, 1359, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28301, 1360, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28301, 1360, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28302, 1361, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28302, 1361, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28303, 1356, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28303, 1356, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28304, 1357, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28304, 1357, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28305, 1358, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28305, 1358, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28315, 1362, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28315, 1362, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28317, 1363, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28317, 1363, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28323, 1367, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28323, 1367, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28325, 1368, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28325, 1368, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28329, 1364, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28329, 1364, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28331, 1369, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28331, 1369, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28335, 1372, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28335, 1372, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28336, 1370, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28336, 1370, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28338, 1373, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28338, 1373, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28344, 1374, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28344, 1374, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28347, 1376, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28347, 1376, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28348, 1375, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28348, 1375, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28351, 1378, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28351, 1378, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28352, 1377, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28352, 1377, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28360, 883, 27)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28360, 883, 27)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28365, 1379, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28365, 1379, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28366, 1381, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28366, 1381, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28367, 1380, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28367, 1380, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28373, 1384, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28373, 1384, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28379, 1383, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28379, 1383, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28380, 1366, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28380, 1366, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28385, 1385, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28385, 1385, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28386, 1386, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28386, 1386, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28387, 1387, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28387, 1387, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28390, 1388, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28390, 1388, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28391, 1389, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28391, 1389, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28395, 1390, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28395, 1390, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28401, 1395, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28401, 1395, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28403, 1391, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28403, 1391, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28404, 1396, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28404, 1396, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28405, 1269, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28405, 1269, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28413, 1411, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28413, 1411, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28414, 1412, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28414, 1412, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28418, 1413, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28418, 1413, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28419, 1414, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28419, 1414, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28420, 1415, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28420, 1415, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28424, 1416, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28424, 1416, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28425, 1417, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28425, 1417, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28426, 1418, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28426, 1418, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28428, 1410, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28428, 1410, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28432, 1420, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28432, 1420, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28434, 1421, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28434, 1421, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28437, 1423, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28437, 1423, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28439, 1422, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28439, 1422, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28444, 1426, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28444, 1426, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28445, 1427, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28445, 1427, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28446, 1428, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28446, 1428, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28449, 1429, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28449, 1429, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28451, 1430, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28451, 1430, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28453, 1425, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28453, 1425, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28455, 1432, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28455, 1432, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28457, 1433, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28457, 1433, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28459, 1434, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28459, 1434, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28461, 1435, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28461, 1435, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28463, 1436, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28463, 1436, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28466, 1438, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28466, 1438, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28473, 1439, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28473, 1439, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28474, 1440, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28474, 1440, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28475, 1441, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28475, 1441, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28476, 1442, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28476, 1442, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28477, 1443, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28477, 1443, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28478, 1444, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28478, 1444, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28479, 1437, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28479, 1437, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28483, 1446, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28483, 1446, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28484, 1445, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28484, 1445, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28485, 1335, 41)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28485, 1335, 41)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28486, 1337, 41)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28486, 1337, 41)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28487, 1339, 41)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28487, 1339, 41)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28488, 1341, 41)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28488, 1341, 41)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28490, 1447, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28490, 1447, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28492, 1448, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28492, 1448, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28494, 1449, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28494, 1449, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28496, 1450, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28496, 1450, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28500, 1451, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28500, 1451, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28501, 1452, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28501, 1452, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28502, 1453, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28502, 1453, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28504, 1454, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28504, 1454, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28506, 1455, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28506, 1455, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28509, 1456, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28509, 1456, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28510, 1457, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28510, 1457, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28512, 1458, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28512, 1458, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28515, 1459, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28515, 1459, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28521, 1462, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28521, 1462, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28522, 1463, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28522, 1463, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28528, 1465, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28528, 1465, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28536, 1466, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28536, 1466, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28537, 1467, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28537, 1467, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28538, 1468, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28538, 1468, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28539, 1464, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28539, 1464, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28541, 1460, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28541, 1460, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28543, 1469, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28543, 1469, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28547, 1470, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28547, 1470, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28548, 1471, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28548, 1471, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28549, 1472, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28549, 1472, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28552, 1474, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28552, 1474, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28554, 1473, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28554, 1473, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28556, 1475, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28556, 1475, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28559, 1476, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28559, 1476, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28560, 1477, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28560, 1477, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28564, 1479, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28564, 1479, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28565, 1478, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28565, 1478, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28568, 1480, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28568, 1480, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28569, 1481, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28569, 1481, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28572, 1482, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28572, 1482, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28573, 1483, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28573, 1483, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28574, 1270, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28574, 1270, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28576, 1484, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28576, 1484, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28584, 1485, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28584, 1485, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28585, 1491, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28585, 1491, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28586, 1487, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28586, 1487, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28587, 1488, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28587, 1488, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28588, 1489, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28588, 1489, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28591, 1490, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28591, 1490, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28593, 1486, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28593, 1486, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28598, 1493, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28598, 1493, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28599, 1496, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28599, 1496, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28602, 1494, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28602, 1494, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28603, 1495, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28603, 1495, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28604, 1497, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28604, 1497, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28606, 1492, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28606, 1492, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28608, 1498, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28608, 1498, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28611, 1500, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28611, 1500, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28612, 1499, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28612, 1499, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28615, 1502, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28615, 1502, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28619, 1503, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28619, 1503, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28621, 1501, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28621, 1501, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28635, 1504, 32)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28635, 1504, 32)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28636, 1505, 32)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28636, 1505, 32)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28637, 1506, 32)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28637, 1506, 32)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28638, 1507, 32)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28638, 1507, 32)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28639, 1508, 32)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28639, 1508, 32)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28642, 1509, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28642, 1509, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28644, 1510, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28644, 1510, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28646, 1511, 35)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28646, 1511, 35)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28648, 1512, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28648, 1512, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28650, 1513, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28650, 1513, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28652, 1138, 37)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28652, 1138, 37)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28654, 1514, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28654, 1514, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28659, 1517, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28659, 1517, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28660, 1515, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28660, 1515, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28661, 1516, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28661, 1516, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28668, 1518, 36)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28668, 1518, 36)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28669, 1519, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28669, 1519, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28671, 1520, 36)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28671, 1520, 36)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28672, 1521, 36)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28672, 1521, 36)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28675, 1522, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28675, 1522, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28676, 1523, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28676, 1523, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28677, 1524, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28677, 1524, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28689, 1525, 41)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28689, 1525, 41)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28692, 1526, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28692, 1526, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28693, 1527, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28693, 1527, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28699, 1528, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28699, 1528, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28700, 1531, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28700, 1531, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28705, 842, 27)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28705, 842, 27)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28706, 1529, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28706, 1529, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28707, 1530, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28707, 1530, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28708, 1532, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28708, 1532, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28709, 1533, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28709, 1533, 34)
 GO
-INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idOptionGroup]) VALUES (28710, 1534, 34)
+INSERT [dbo].[OptionsGroupsXref] ([idWebinarOptionGroup], [idWebinar], [idRegTypeGroup]) VALUES (28710, 1534, 34)
 GO
 SET IDENTITY_INSERT [dbo].[OptionsGroupsXref] OFF
 GO
@@ -14865,12 +14865,12 @@ GO
 -- =============================================
 CREATE PROCEDURE [dbo].[GetRegistrationType]
     -- Add the parameters for the stored procedure here
-    @idOption INT = 0
+    @idRegType INT = 0
 AS
 BEGIN
     SET NOCOUNT ON-- added to prevent extra result sets from
     -- interfering with SELECT statements.
-    SELECT  o.[idOption] ,
+    SELECT  o.[idRegType] ,
             o.[OptionExplain] ,
             o.[OptionLabel] ,
             o.[PriceToAdd] ,
@@ -14888,7 +14888,7 @@ BEGIN
             o.[Stage1EmailConfirmationMsg] ,
             o.[Stage2EmailConfirmationMsg]
     FROM    dbo.Options o
-    WHERE   o.idOption = @idOption
+    WHERE   o.idRegType = @idRegType
 END
 
 GO
@@ -14919,7 +14919,7 @@ BEGIN
     SET NOCOUNT ON-- added to prevent extra result sets from
     -- interfering with SELECT statements.
     SET NOCOUNT ON;
-    SELECT  o.[idOption] ,
+    SELECT  o.[idRegType] ,
             o.[OptionExplain] ,
             o.[OptionLabel] ,
             o.[PriceToAdd] ,
@@ -14937,12 +14937,12 @@ BEGIN
             o.[Stage1EmailConfirmationMsg] ,
             o.[Stage2EmailConfirmationMsg]
 
-        --oRef.idOptionsXref ,
-        --oRef.idOptionGroup ,
+        --oRef.idRegTypesXref ,
+        --oRef.idRegTypeGroup ,
         --ogRef.idWebinarOptionGroup
     FROM    dbo.Options o
-            INNER JOIN dbo.OptionsXref oRef ON oRef.idOption = o.idOption
-            INNER JOIN dbo.OptionsGroupsXref ogRef ON ogRef.idOptionGroup = oRef.idOptionGroup
+            INNER JOIN dbo.OptionsXref oRef ON oRef.idRegType = o.idRegType
+            INNER JOIN dbo.OptionsGroupsXref ogRef ON ogRef.idRegTypeGroup = oRef.idRegTypeGroup
             INNER JOIN dbo.Webinar w ON w.idWebinar = ogRef.idWebinar
     WHERE   w.idWebinar = @idWebinar
 END

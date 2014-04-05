@@ -52,7 +52,7 @@ function _fnAddData ( oSettings, aDataSupplied )
 				}
 				else if ( oCol.sType != sThisType && oCol.sType != "html" )
 				{
-					/* String is always the 'fallback' option */
+					/* String is always the 'fallback' RegType */
 					oCol.sType = 'string';
 				}
 			}
@@ -180,7 +180,7 @@ function _fnGatherData( oSettings )
 						else if ( oCol.sType != sThisType && 
 						          oCol.sType != "html" )
 						{
-							/* String is always the 'fallback' option */
+							/* String is always the 'fallback' RegType */
 							oCol.sType = 'string';
 						}
 					}

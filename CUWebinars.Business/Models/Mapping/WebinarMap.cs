@@ -61,6 +61,7 @@ namespace CUWebinars.Business.Models.Mapping
             this.Property(t => t.RecordingUrl).HasColumnName("RecordingUrl");
             this.Property(t => t.ConnectionInfo).HasColumnName("ConnectionInfo");
             this.Property(t => t.idPresenter).HasColumnName("idPresenter");
+            this.Property(t => t.idRegType).HasColumnName("idRegType");
             this.Property(t => t.AdditionalNotifications).HasColumnName("AdditionalNotifications");
             this.Property(t => t.ceu).HasColumnName("ceu");
             this.Property(t => t.DateCreated).HasColumnName("DateCreated");
@@ -70,6 +71,8 @@ namespace CUWebinars.Business.Models.Mapping
             this.HasRequired(t => t.Presenter)
                 .WithMany(t => t.Webinars)
                 .HasForeignKey(d => d.idPresenter);
+            //this.HasRequired(r => r.RegType)
+            //    .WithMany(t => t.)
 
         }
     }

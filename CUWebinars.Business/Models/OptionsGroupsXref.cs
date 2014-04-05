@@ -7,7 +7,7 @@ namespace CUWebinars.Business.Models
     {
         public int idWebinarOptionGroup { get; set; }
         public int idWebinar { get; set; }
-        public int idOptionGroup { get; set; }
+        public int idRegTypeGroup { get; set; }
         public virtual OptionsGroup OptionsGroup { get; set; }
         public virtual Webinar Webinar { get; set; }
     }

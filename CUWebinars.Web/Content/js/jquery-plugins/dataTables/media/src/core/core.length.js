@@ -24,14 +24,14 @@ function _fnFeatureHtmlLength ( oSettings )
 	{
 		for ( i=0, iLen=aLengthMenu[0].length ; i<iLen ; i++ )
 		{
-			sStdMenu += '<option value="'+aLengthMenu[0][i]+'">'+aLengthMenu[1][i]+'</option>';
+			sStdMenu += '<RegType value="'+aLengthMenu[0][i]+'">'+aLengthMenu[1][i]+'</RegType>';
 		}
 	}
 	else
 	{
 		for ( i=0, iLen=aLengthMenu.length ; i<iLen ; i++ )
 		{
-			sStdMenu += '<option value="'+aLengthMenu[i]+'">'+aLengthMenu[i]+'</option>';
+			sStdMenu += '<RegType value="'+aLengthMenu[i]+'">'+aLengthMenu[i]+'</RegType>';
 		}
 	}
 	sStdMenu += '</select>';
@@ -48,7 +48,7 @@ function _fnFeatureHtmlLength ( oSettings )
 	 * Set the length to the current display length - thanks to Andrea Pavlovic for this fix,
 	 * and Stefan Skopnik for fixing the fix!
 	 */
-	$('select option[value="'+oSettings._iDisplayLength+'"]', nLength).attr("selected", true);
+	$('select RegType[value="'+oSettings._iDisplayLength+'"]', nLength).attr("selected", true);
 	
 	$('select', nLength).bind( 'change.DT', function(e) {
 		var iVal = $(this).val();

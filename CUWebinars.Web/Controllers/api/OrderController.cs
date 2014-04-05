@@ -94,14 +94,14 @@ namespace CUWebinars.Web.Controllers.api
                     );
             }
 
-            OrderRowOption orderRowOption = null;
+            AdditionalLocations additionalLocations = null;
 
             if (model.AdditionalLocations.Any())
             {
                 var optionsForWebinar = _orderManagementService.GetOptionsByWebinarId(webinar.idWebinar, false);
                 var optionForAdditionalLocation = optionsForWebinar.First(o => o.Type == "additional_location");
 
-                orderRowOption = _orderManagementService.CreateOrderRowOption(optionForAdditionalLocation,
+                additionalLocations = _orderManagementService.CreateOrderRowOption(optionForAdditionalLocation,
                     optionForAdditionalLocation.OptionExplain,
                     Convert.ToDecimal(optionForAdditionalLocation.PriceToAdd ?? 0.0),
                     model.AdditionalLocations.ToArray()
@@ -110,9 +110,9 @@ namespace CUWebinars.Web.Controllers.api
 
             var orderRow = _orderManagementService.CreateOrderRow(
                 webinar,
-                orderRowOption,
+                additionalLocations,
                 model.AlternativeEmail,
-                model.idOption
+                model.idRegType
                 );
 
             orderRow.idDiscount = model.Discount;
