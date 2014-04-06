@@ -226,7 +226,7 @@ namespace CUWebinars.Web.Controllers
             //    additionalLocations = _orderManagementService.CreateOrderRowOption(
             //        option,
             //        option.OptionExplain,
-            //        Convert.ToDecimal(option.PriceToAdd),
+            //        Convert.ToDecimal(option.Price),
             //        emailAddresses.ToArray()
             //        );
 

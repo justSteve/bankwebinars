@@ -184,23 +184,7 @@
     <None Include="SQLSeeding\BACPACs\TTSDatabase-2014-2-7-0-53.bacpac" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="SQLSeeding\InitialSeeding\BuildTTSWebinarsSeeder.sql" />
-    <Content Include="SQLSeeding\InitialSeeding\MigrationNotes.txt" />
-    <Content Include="SQLSeeding\InitialSeeding\seeder1_ini.sql" />
-    <Content Include="SQLSeeding\InitialSeeding\seeder2_ImportPresenters.sql" />
-    <Content Include="SQLSeeding\InitialSeeding\seeder2_RestorePresenters.sql" />
-    <Content Include="SQLSeeding\InitialSeeding\seeder3_ImportAffiliates.sql" />
-    <Content Include="SQLSeeding\InitialSeeding\seeder3_RestoreAffiliates.sql" />
-    <Content Include="SQLSeeding\InitialSeeding\seeder4_CreateOptions.sql" />
-    <Content Include="SQLSeeding\InitialSeeding\seeder5_ImportWebinars.sql" />
-    <Content Include="SQLSeeding\InitialSeeding\seeder5_ImportWebinars__CU.sql" />
-    <Content Include="SQLSeeding\InitialSeeding\seeder6_post.sql" />
     <Content Include="SQLSeeding\MigrationNotes.txt" />
-    <Content Include="SQLSeeding\CopyTables.sql" />
-    <Content Include="SQLSeeding\VBA\CUWebinarImporter.bas" />
-    <Content Include="SQLSeeding\VBA\SetOrdersToShipped.bas" />
-    <Content Include="SQLSeeding\InitialSeeding\_buildSprocsAndErrorLog.sql" />
-    <Content Include="SQLSeeding\InitialSeeding\_scriptRunner.sql" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CUWebinars.NotificationSystem\CUWebinars.NotificationSystem.csproj">

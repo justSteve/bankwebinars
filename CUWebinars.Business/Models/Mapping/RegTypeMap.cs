@@ -26,7 +26,7 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.idRegType).HasColumnName("idRegType");
             Property(t => t.OptionExplain).HasColumnName("RegTypeExplain");
             Property(t => t.OptionLabel).HasColumnName("RegTypeLabel");
-            Property(t => t.PriceToAdd).HasColumnName("PriceToAdd");
+            Property(t => t.Price).HasColumnName("Price");
             Property(t => t.TaxExempt).HasColumnName("TaxExempt");
             Property(t => t.SortOrder).HasColumnName("SortOrder");
             Property(t => t.SKU).HasColumnName("SKU");

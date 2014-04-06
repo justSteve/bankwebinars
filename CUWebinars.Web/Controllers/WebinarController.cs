@@ -269,7 +269,7 @@ namespace CUWebinars.Web.Controllers
         //                    RegType = RegType,
         //                    OrderRow = orderRow,
         //                    OptionDescription = RegType.OptionExplain,
-        //                    RegTypePrice = Convert.ToDecimal(RegType.PriceToAdd),
+        //                    RegTypePrice = Convert.ToDecimal(RegType.Price),
         //                    Emails = addEmails.Select(e => e.Value).ToList()
         //                };
 

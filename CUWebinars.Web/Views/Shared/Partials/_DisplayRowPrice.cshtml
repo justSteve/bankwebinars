@@ -18,11 +18,11 @@
         StringBuilder rowAmount = new StringBuilder();
         if (row.DiscountFlatOff != 0.0M || row.DiscountPercentOff != 0.0M || optionsTotal != 0.0M)
         {
-            rowAmount.Append("Base Cost: " + OptionsFacade.Instance.Load((int)row.RegistrationType).PriceToAdd.ToString("c0") + "<br />");
+            rowAmount.Append("Base Cost: " + OptionsFacade.Instance.Load((int)row.RegistrationType).Price.ToString("c0") + "<br />");
         }
         else if (verbose == true)
         {
-            rowAmount.Append("Base Cost: " + OptionsFacade.Instance.Load((int)row.RegistrationType).PriceToAdd.ToString("c0") + "<br />");
+            rowAmount.Append("Base Cost: " + OptionsFacade.Instance.Load((int)row.RegistrationType).Price.ToString("c0") + "<br />");
         }
 
         if (row.DiscountFlatOff != 0.0M)

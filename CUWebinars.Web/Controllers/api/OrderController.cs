@@ -103,7 +103,7 @@ namespace CUWebinars.Web.Controllers.api
 
             //    additionalLocations = _orderManagementService.CreateOrderRowOption(optionForAdditionalLocation,
             //        optionForAdditionalLocation.OptionExplain,
-            //        Convert.ToDecimal(optionForAdditionalLocation.PriceToAdd ?? 0.0),
+            //        Convert.ToDecimal(optionForAdditionalLocation.Price ?? 0.0),
             //        model.AdditionalLocations.ToArray()
             //        );
             //}

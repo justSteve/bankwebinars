@@ -101,7 +101,7 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
             //            RegType = option,
             //            OrderRow = row,
             //            OptionDescription = option.OptionExplain,
-            //            RegTypePrice = Convert.ToDecimal(option.PriceToAdd)
+            //            RegTypePrice = Convert.ToDecimal(option.Price)
             //        };
             //        row.AdditionalLocations.Add(locations);
             //    }

@@ -209,8 +209,8 @@ namespace CUWebinars.Business.Services
             {
                 var option = _RegTypeRepository.FindRegType(row.RegistrationType);
 
-                if (option.PriceToAdd != null) row.UnitPrice = (decimal)option.PriceToAdd;
-                //(decimal)OptionsFacade.Instance.Load((int)row.RegistrationType).PriceToAdd;
+                if (option.Price != null) row.UnitPrice = (decimal)option.Price;
+                //(decimal)OptionsFacade.Instance.Load((int)row.RegistrationType).Price;
 
                 //Calculate options price
                 decimal optionsTotal = CalculateOptionsPrice(row);

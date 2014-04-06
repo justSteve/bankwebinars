@@ -34,7 +34,7 @@
                 var additionalLocationsOption = options.OfType<AdditionalLocationsOption>().SingleOrDefault();
                 if (additionalLocationsOption != null)
                 {
-                    optionCost = String.Format("{0:C0}", additionalLocationsOption.PriceToAdd.ToString());
+                    optionCost = String.Format("{0:C0}", additionalLocationsOption.Price.ToString());
                 }
             }
             var addLocCaption = "No Additional Locations have been recorded. ($" + optionCost + " per) <a href=\"#AddLocation_" + Model.OrderRow.Id + "\" role=\"button\" class=\"btn btn-mini\" data-toggle=\"modal\"> Add?</a> ";
