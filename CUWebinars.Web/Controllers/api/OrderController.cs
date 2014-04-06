@@ -80,10 +80,7 @@ namespace CUWebinars.Web.Controllers.api
                     , "A"
                     );
 
-                
-                if (!_stateService.HasValue(Constants.CurrentUser))
-                    _stateService.SetValue<WebUser>(Constants.CurrentUser, webUser); //  gets retrieved in TTSTokenizer
-
+                webUser.Institution = institutionForUser;
 
                 _membershipService.CreateUser(globalConfig.Tenant
                     , firstName

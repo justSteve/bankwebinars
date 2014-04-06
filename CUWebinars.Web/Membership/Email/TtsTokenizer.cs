@@ -1,27 +1,35 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using BrockAllen.MembershipReboot;
+﻿using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Models;
+using CUWebinars.Business.Repository;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Services;
 using RazorEngine.Templating;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Web;
 
 namespace CUWebinars.Web.Membership.Email
 {
     public class TtsTokenizer : EmailMessageFormatter.Tokenizer
     {
         private readonly IStateService _stateService;
+        private readonly IRefDataRepository _refDataRepository;
 
-        public TtsTokenizer(IStateService stateService)
+        public TtsTokenizer(IStateService stateService, IRefDataRepository refDataRepository)
         {
             _stateService = stateService;
+            _refDataRepository = refDataRepository;
         }
 
         const string VerificationKey = "VerificationKey";
         public override string Tokenize(UserAccountEvent<UserAccount> accountEvent, ApplicationInformation appInfo, string msg, IDictionary<string, string> values)
         {
-            var webUser = _stateService.GetValue<WebUser>(Constants.CurrentUser);
+            WebUser webUser = null;
+
+            webUser = ReferenceEquals(null, HttpContext.Current.Session) 
+                ? _refDataRepository.GetWebUserByEmail(accountEvent.Account.Email) 
+                : _stateService.GetValue<WebUser>(Constants.CurrentUser);
 
             var body = new TemplateService();
             var user = accountEvent.Account;
