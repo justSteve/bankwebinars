@@ -510,7 +510,6 @@ var stateManager = function () {
                     break;
                 case actions.SubmitRegister:
                     console.log('SubmitRegister hit');
-                    //TODO: provide an exitscreen confirming account creation.
                     stateManager.action = actions.PostCreateAccount;
                     if (pageObjects.createUserForm().valid() == '1') {
                         submitCreateUserForm();
@@ -577,7 +576,7 @@ function checkAndSubmitZip() {
 
 
 function submitCreateUserForm() {
-
+    
     var valid = pageObjects.createUserForm().valid();
 
     //on account creation default the shipping phone to be same as billing
@@ -880,51 +879,51 @@ $(function () {
     //    }
     //});
 
-    pageObjects.createUserForm().on('submit', function (e) {
-        e.preventDefault();
+    //pageObjects.createUserForm().on('submit', function (e) {
+    //    e.preventDefault();
 
-        if (stateManager.action !== actions.SubmitLogin) {
-            console.log('non-valid form');
-            return false;
-        }
+    //    if (stateManager.action !== actions.SubmitLogin) {
+    //        console.log('non-valid form');
+    //        return false;
+    //    }
 
-        if (pageObjects.createUserForm().valid() != '1') {
-            console.log('non-valid form');
-            return false;
-        }
+    //    if (pageObjects.createUserForm().valid() != '1') {
+    //        console.log('non-valid form');
+    //        return false;
+    //    }
 
-        var url = '/Account/Register';
-        console.log('Submitting Register Details');
-        alert("startSubmitting");
-        $.ajax({
-            type: 'POST',
-            contentType: constants.FormPostContentType,
-            cache: false,
-            url: url,
-            dataType: constants.JsonDataType,
-            data: $(this).serialize(),
-            beforeSend: function () {
-                console.log('beforeSend Register Details!!!');
-                // this is where we append a loading image
-                pageObjects.labelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
-            }
-        }).done(function (data) {
-            alert("datareturned");// never fires!
-            console.log('done Register Details');
-            if (data.Status == 'Success') {
-                console.log('success  Register Details');
-                stateManager.action = '';
-                pageObjects.labelEmail().html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
-                //location.assign(path + '/'); //TODO: we need to implement a pattern where if 'returnURL' (server-side origin) is populated, it's used. Otherwise return to home page.
-                location.href = '/Home';
-            } else if (data.Status === 'Fail') {
-                console.log('statusFail  Register Details');
-                pageObjects.labelEmail().html('<span class="label label-information">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
-            }
-        }).fail(function (data) {
-            console.log('failed: ' + data);
-        });
-    });
+    //    var url = '/Account/Register';
+    //    console.log('Submitting Register Details');
+    //    alert("startSubmitting");
+    //    $.ajax({
+    //        type: 'POST',
+    //        contentType: constants.FormPostContentType,
+    //        cache: false,
+    //        url: url,
+    //        dataType: constants.JsonDataType,
+    //        data: $(this).serialize(),
+    //        beforeSend: function () {
+    //            console.log('beforeSend Register Details!!!');
+    //            // this is where we append a loading image
+    //            pageObjects.labelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
+    //        }
+    //    }).done(function (data) {
+    //        alert("datareturned");// never fires!
+    //        console.log('done Register Details');
+    //        if (data.Status == 'Success') {
+    //            console.log('success  Register Details');
+    //            stateManager.action = '';
+    //            pageObjects.labelEmail().html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
+    //            //location.assign(path + '/'); //TODO: we need to implement a pattern where if 'returnURL' (server-side origin) is populated, it's used. Otherwise return to home page.
+    //            location.href = '/Home';
+    //        } else if (data.Status === 'Fail') {
+    //            console.log('statusFail  Register Details');
+    //            pageObjects.labelEmail().html('<span class="label label-information">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
+    //        }
+    //    }).fail(function (data) {
+    //        console.log('failed: ' + data);
+    //    });
+    //});
 
     $('form#checkEmail').submit(function (e) {
 

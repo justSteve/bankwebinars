@@ -153,7 +153,7 @@
                         <div class="span8">
                             @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Phone, new { style = "width: 100px;" })
                             Address: @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.StreetAddress, new { style = "width: 175px;" })
-
+                            &nbsp;&nbsp;<text>(2nd address optional)</text> @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.StreetAddress2, new { style = "width: 150px;" })
                         </div>
                     </div>
                 </div>
@@ -189,7 +189,7 @@
                 @Html.ValidationMessageFor(model => model.RegisterFields.LastName)
                 @Html.ValidationMessageFor(model => model.RegisterFields.Institution)
                 @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.Phone)
-                @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.StreetAddress)&nbsp;&nbsp;<text>(2nd address optional)</text> @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.StreetAddress2, new { style = "width: 150px;" })
+                @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.StreetAddress)
                 @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.City)
                 @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.State)
                 @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.Zip)
