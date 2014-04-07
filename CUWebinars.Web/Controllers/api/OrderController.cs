@@ -94,29 +94,30 @@ namespace CUWebinars.Web.Controllers.api
                     );
             }
 
-            AdditionalLocations additionalLocations = null;
+            AdditionalLocation AdditionalLocation = null;
 
-            //if (model.AdditionalLocations.Any())
+            //if (model.AdditionalLocation.Any())
             //{
             //    var optionsForWebinar = _orderManagementService.GetOptionsByWebinarId(webinar.idWebinar, false);
             //    var optionForAdditionalLocation = optionsForWebinar.First(o => o.Type == "additional_location");
 
-            //    additionalLocations = _orderManagementService.CreateOrderRowOption(optionForAdditionalLocation,
+            //    AdditionalLocation = _orderManagementService.CreateOrderRowOption(optionForAdditionalLocation,
             //        optionForAdditionalLocation.OptionExplain,
             //        Convert.ToDecimal(optionForAdditionalLocation.Price ?? 0.0),
-            //        model.AdditionalLocations.ToArray()
+            //        model.AdditionalLocation.ToArray()
             //        );
             //}
 
             var orderRow = _orderManagementService.CreateOrderRow(
                 webinar,
-                additionalLocations,
+                AdditionalLocation,
                 model.AlternativeEmail,
                 model.idRegType
                 );
 
             orderRow.Discount = model.Discount;
-            orderRow.RowStatus = model.Status;
+            //TODO: Ensure this status is updated after save.
+            orderRow.RowStatus = OrderRowStatus.InProcess;
 
             var importedOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
 

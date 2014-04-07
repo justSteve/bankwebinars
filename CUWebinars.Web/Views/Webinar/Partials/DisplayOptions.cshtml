@@ -9,7 +9,7 @@
 @{
 
 
-    var orderRowOption = new AdditionalLocations() { OptionDescription = "TODO: Change this is a temp description", RegTypePrice = 150.00M };
+    var orderRowOption = new AdditionalLocation() { OptionDescription = "TODO: Change this is a temp description", RegTypePrice = 150.00M };
     //  TODO: also, I hard-coded 150 for the RegTypePrice. Not sure where this should come from.
 
     //  Comment: I assume order will be null where there is no existing order for the User for that WebinarId
@@ -75,9 +75,9 @@
 
 
                     orderRowOption.RegType = myOption;
-                    Model.AdditionalLocationsViewModel = new AdditionalLocationsViewModel
+                    Model.AdditionalLocationViewModel = new AdditionalLocationViewModel
                     {
-                        AdditionalLocations = orderRowOption,
+                        AdditionalLocation = orderRowOption,
                         Webinar = Model.Webinar
                     };
                     //Model.AdditionalEmailssViewModel.OrderRowRegType = orderRowRegType;
@@ -91,7 +91,7 @@
             if (Model.Webinar.Status == WebinarStatus.Scheduled)
             {
                 <div id="displayAddLoc">
-                    @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationsView.cshtml", Model.AdditionalLocationsViewModel)
+                    @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationView.cshtml", Model.AdditionalLocationViewModel)
                 </div>
             }
         }

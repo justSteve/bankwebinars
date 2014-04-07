@@ -73,10 +73,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountService\IMembershipService.cs" />
-    <Compile Include="Models\AdditionalEmails.cs" />
     <Compile Include="Models\IObjectWithState.cs" />
     <Compile Include="Models\Mapping\AdditionalLocationMap.cs" />
-    <Compile Include="Models\Mapping\AddtionalEmailsMap.cs" />
     <Compile Include="Models\Mapping\RegTypeGroupsXrefMap.cs" />
     <Compile Include="Models\Mapping\RegTypesGroupMap.cs" />
     <Compile Include="Models\Mapping\RegTypesXrefMap.cs" />
@@ -144,7 +142,7 @@
     <Compile Include="Models\RegType.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderRow.cs" />
-    <Compile Include="Models\AdditionalLocations.cs" />
+    <Compile Include="Models\AdditionalLocation.cs" />
     <Compile Include="Models\OrderRowStatus.cs" />
     <Compile Include="Models\Presenter.cs" />
     <Compile Include="Models\USTimeZone.cs" />

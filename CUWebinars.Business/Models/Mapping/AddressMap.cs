@@ -12,7 +12,7 @@ namespace CUWebinars.Business.Models.Mapping
 
             // Properties
             // Table & Column Mappings
-            ToTable("Addresses");
+            ToTable("Address");
             Property(t => t.Id).HasColumnName("Id");
             Property(t => t.AddressType).HasColumnName("AddressType");
             Property(t => t.Name).HasColumnName("Name");
@@ -23,7 +23,6 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.Zip).HasColumnName("Zip");
             Property(t => t.State).HasColumnName("State");
             Property(t => t.Country).HasColumnName("Country");
-            //this.Property(t => t.WebUser_Id).HasColumnName("WebUser_Id");
             Property(t => t.idUser).HasColumnName("idUser");
 
             // Relationships

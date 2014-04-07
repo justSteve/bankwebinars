@@ -36,7 +36,7 @@ namespace CUWebinars.Business.Repository
             return newOrder;
         }
 
-        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocations additionalLocations, string alternateEmail, RegType registrationType)
+        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation AdditionalLocation, string alternateEmail, RegType registrationType)
         {
             var strongTypedContext = (TTSWebinarsContext) db;
             var entry = strongTypedContext.Entry(webinar);
@@ -49,8 +49,8 @@ namespace CUWebinars.Business.Repository
             
             var newOrderRow = strongTypedContext.OrderRows.Create();
 
-            //if (additionalLocations != null)
-            //    newOrderRow.AdditionalLocations.Add(additionalLocations);
+            //if (AdditionalLocation != null)
+            //    newOrderRow.AdditionalLocation.Add(AdditionalLocation);
 
             newOrderRow.Webinar = webinar;
             newOrderRow.RegistrationType = registrationType;
@@ -76,11 +76,11 @@ namespace CUWebinars.Business.Repository
             return newOrderRow;
         }
 
-        public AdditionalLocations CreateOrderRowOption(
+        public AdditionalLocation CreateOrderRowOption(
             RegType regType, 
             string optionDescription, 
             decimal price, 
-            string [] additionalLocationsEmails)
+            string [] AdditionalLocationEmails)
         {
             var strongTypedContext = (TTSWebinarsContext) db;
             //var entry = db.Entry(RegType);
@@ -91,22 +91,22 @@ namespace CUWebinars.Business.Repository
             //strongTypedContext.Options.Attach(RegType);
             //db.Entry(RegType).State = EntityState.Modified;
 
-            var additionalLocations = new List<AdditionalEmails>(additionalLocationsEmails.Length);
+            //var AdditionalLocation = new List<AdditionalEmails>(AdditionalLocationEmails.Length);
             
-            additionalLocations.AddRange(additionalLocationsEmails.Select(email => new AdditionalEmails
-            {
-                Email = email
-            }));
+            //AdditionalLocation.AddRange(AdditionalLocationEmails.Select(email => new AdditionalEmails
+            //{
+            //    Email = email
+            //}));
 
 
-            var newOrderRowOption = strongTypedContext.AdditionalLocations.Create();
+            var newOrderRowOption = strongTypedContext.AdditionalLocation.Create();
             //newOrderRowOption.
             //newOrderRowOption.idRegType = regType.idRegType;
             newOrderRowOption.DescriptionPromo = optionDescription;
             newOrderRowOption.Price = price;
             //newOrderRowOption.Type = "Additional Location"; // TODO: check this with Stephen.
-            //newOrderRowOption.AdditionalLocations = additionalLocations;
-            strongTypedContext.AdditionalLocations.Add(newOrderRowOption);
+            //newOrderRowOption.AdditionalLocation = AdditionalLocation;
+            strongTypedContext.AdditionalLocation.Add(newOrderRowOption);
 
             try
             {
@@ -129,7 +129,7 @@ namespace CUWebinars.Business.Repository
         public Order FindOrderByIdWithOrderRows(int id)
         {
             var item = items
-                //.Include(o => o.OrderRows.Select(or => or.AdditionalLocations))
+                //.Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
                 .Where(o => o.idOrder == id);
             return item.FirstOrDefault();
         }

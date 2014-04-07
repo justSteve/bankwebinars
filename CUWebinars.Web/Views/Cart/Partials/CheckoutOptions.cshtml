@@ -10,7 +10,7 @@
             int registrationType = orderRow.RegistrationType;
 
             //var orderRowRegType = orderRow.OrderRowRegTypes.FirstOrDefault(o => o.idRegType == registrationType);
-            var orderRowOption = Model.Order.OrderRows.FirstOrDefault().AdditionalLocations.Where(o => o.idRegType == registrationType).FirstOrDefault();
+            var orderRowOption = Model.Order.OrderRows.FirstOrDefault().AdditionalLocation.Where(o => o.idRegType == registrationType).FirstOrDefault();
             //recovered from history
             
             

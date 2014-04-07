@@ -35,24 +35,24 @@
         }
         if (optionsTotal != 0.0M)
         {
-            if (row.Options.OfType<AdditionalLocationsOrderRowOption>().Single().AdditionalLocationsCount == 1)
+            if (row.Options.OfType<AdditionalLocationOrderRowOption>().Single().AdditionalLocationCount == 1)
             {
                 rowAmount.Append("One Additional Location: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
             }
             else
             {
-                rowAmount.Append(row.Options.OfType<AdditionalLocationsOrderRowOption>().Single().AdditionalLocationsCount.ToString() + " Additional Locations: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
+                rowAmount.Append(row.Options.OfType<AdditionalLocationOrderRowOption>().Single().AdditionalLocationCount.ToString() + " Additional Locations: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
             }
         }
         else if (verbose == true)
         {
-            if (row.Options.OfType<AdditionalLocationsOrderRowOption>().Single().AdditionalLocationsCount == 1)
+            if (row.Options.OfType<AdditionalLocationOrderRowOption>().Single().AdditionalLocationCount == 1)
             {
                 rowAmount.Append("One Additional Location: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
             }
             else
             {
-                rowAmount.Append(row.Options.OfType<AdditionalLocationsOrderRowOption>().Single().AdditionalLocationsCount.ToString() + " Additional Locations: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
+                rowAmount.Append(row.Options.OfType<AdditionalLocationOrderRowOption>().Single().AdditionalLocationCount.ToString() + " Additional Locations: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
             }
         }
         rowAmount.Append("Total Cost: " + row.RowPrice.ToString("c").Replace(".00", ""));

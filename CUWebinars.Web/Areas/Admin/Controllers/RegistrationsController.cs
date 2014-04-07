@@ -42,7 +42,7 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
 
         //[Authorize(Roles = AppRoles.CustomerAffiliateAdmin)]
         [AcceptVerbs(HttpVerbs.Post)]
-        public JsonResult SetAdditionalLocations(FormCollection formValues)
+        public JsonResult SetAdditionalLocation(FormCollection formValues)
         {
             var ID = Convert.ToInt32(formValues["ID"]);
             var connectionsCount = Convert.ToInt32(formValues["connectionsCount"]);
@@ -51,12 +51,12 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
             int originalLocCount = 0;
             OrderRow row = _orderManagementService.LoadOrderRow(ID);
             
-            //AdditionalLocations RegType in row.AdditionalLocations
-            //var RegType = row.AdditionalLocations.SingleOrDefault(o => o.Type == "additional_location");
+            //AdditionalLocation RegType in row.AdditionalLocation
+            //var RegType = row.AdditionalLocation.SingleOrDefault(o => o.Type == "additional_location");
 
             //var locations =
-            //    row.AdditionalLocations.SingleOrDefault(o => o.Type == "additional_location");
-            //Options.OfType<AdditionalLocationsOrderRowOption>().SingleOrDefault();
+            //    row.AdditionalLocation.SingleOrDefault(o => o.Type == "additional_location");
+            //Options.OfType<AdditionalLocationOrderRowOption>().SingleOrDefault();
 
             IDictionary<string, string> addEmails = Request.Params.AllKeys
                 .Where(x => x.StartsWith("Email"))
@@ -70,18 +70,18 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
                 .Select(e => e.Value)
                 .ToList();
 
-            var additionalLocations = new List<AdditionalEmails>(emails.Count);
+            //var AdditionalLocation = new List<AdditionalEmails>(emails.Count);
 
-            emails.ForEach(email =>
-            {
-                var additionalLocation = new AdditionalEmails {Email = email};
-                additionalLocations.Add(additionalLocation);
-            });
+            //emails.ForEach(email =>
+            //{
+            //    var additionalLocation = new AdditionalEmails {Email = email};
+            //    AdditionalLocation.Add(additionalLocation);
+            //});
 
 
             //if (connectionsCount <= 0 && locations != null)
             //{
-            //    row.AdditionalLocations.Remove(locations);
+            //    row.AdditionalLocation.Remove(locations);
             //    msg = "There are no Additional Locations specified.";
             //}
 
@@ -89,30 +89,30 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
             //{
             //    var options = _orderManagementService.GetOptionsByWebinarId(row.Webinar.idWebinar, false);
             //    var option = options.SingleOrDefault(o => o.Type == "additional_location");
-            //    //                AdditionalLocationsOption RegType = options.OfType<AdditionalLocationsOption>().SingleOrDefault();
+            //    //                AdditionalLocationOption RegType = options.OfType<AdditionalLocationOption>().SingleOrDefault();
 
 
 
             //    if (option != null)
             //    {
-            //        locations = new AdditionalLocations
+            //        locations = new AdditionalLocation
             //        {
-            //            //AdditionalLocations = additionalLocations,
+            //            //AdditionalLocation = AdditionalLocation,
             //            RegType = option,
             //            OrderRow = row,
             //            OptionDescription = option.OptionExplain,
             //            RegTypePrice = Convert.ToDecimal(option.Price)
             //        };
-            //        row.AdditionalLocations.Add(locations);
+            //        row.AdditionalLocation.Add(locations);
             //    }
             //}
             //else
             //{
             //    if (locations != null)
             //    {
-            //        //originalLocCount = locations.AdditionalLocations.Count;
+            //        //originalLocCount = locations.AdditionalLocation.Count;
             //        ////locations.additional_locations_count = connectionsCount;
-            //        //locations.AdditionalLocations = additionalLocations;
+            //        //locations.AdditionalLocation = AdditionalLocation;
             //    }
             //}
 
@@ -140,7 +140,7 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
                 throw;
             }
 
-            if (originalCost != row.Order.Total && row.RowStatus != OrderStatus.InProcess)
+            if (originalCost != row.Order.Total && row.RowStatus != OrderRowStatus.InProcess)
             {
                 try
                 {

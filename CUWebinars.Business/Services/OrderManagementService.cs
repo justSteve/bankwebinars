@@ -62,28 +62,28 @@ namespace CUWebinars.Business.Services
             return string.Empty;
         }
 
-        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocations additionalLocations, string alternateEmail,
+        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation AdditionalLocation, string alternateEmail,
             int registrationType)
         {
             throw new NotImplementedException();
         }
 
-        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocations additionalLocations, string alternateEmail, RegType registrationType)
+        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation AdditionalLocation, string alternateEmail, RegType registrationType)
         {
-            return _orderRepository.CreateOrderRow(webinar, additionalLocations, alternateEmail, registrationType);
+            return _orderRepository.CreateOrderRow(webinar, AdditionalLocation, alternateEmail, registrationType);
         }
 
-        public AdditionalLocations CreateOrderRowOption(
+        public AdditionalLocation CreateOrderRowOption(
             RegType regType,
             string optionDescription,
             decimal price,
-            string[] additionalLocationsEmails)
+            string[] AdditionalLocationEmails)
         {
             return _orderRepository.CreateOrderRowOption(
                 regType,
                 optionDescription,
                 price,
-                additionalLocationsEmails
+                AdditionalLocationEmails
                 );
         }
 
@@ -247,14 +247,14 @@ namespace CUWebinars.Business.Services
             //}
 
             decimal optionsTotal = 0.0M;
-            //foreach (var option in row.AdditionalLocations)
+            //foreach (var option in row.AdditionalLocation)
             //{
-            //    var additionalLocations = option.AdditionalLocations;
+            //    var AdditionalLocation = option.AdditionalLocation;
 
-            //    if (additionalLocations == null) continue;
+            //    if (AdditionalLocation == null) continue;
                 
             //    if (row.Webinar.Title.Contains("Compliance Perspectives")//.IsSubscriptionWebinar
-            //        && additionalLocations.Count < 4)
+            //        && AdditionalLocation.Count < 4)
             //    {
             //        continue; //Subscription webinar with up to 3 additional locations. Do not charge.
             //    }
@@ -263,11 +263,11 @@ namespace CUWebinars.Business.Services
             //    {
 
             //        int subscriptionPeriod = 12;//row.RegistrationType == RegistrationType.Twelve_Month_Subscription ? 12 : 6;
-            //        optionsTotal += (additionalLocations.Count - 3) * option.RegTypePrice * subscriptionPeriod;
+            //        optionsTotal += (AdditionalLocation.Count - 3) * option.RegTypePrice * subscriptionPeriod;
             //    }
             //    else
             //    {
-            //        optionsTotal += additionalLocations.Count * option.RegTypePrice;
+            //        optionsTotal += AdditionalLocation.Count * option.RegTypePrice;
             //    }
             //}
             return optionsTotal;

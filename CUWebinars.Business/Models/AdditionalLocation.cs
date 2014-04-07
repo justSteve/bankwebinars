@@ -5,9 +5,9 @@ namespace CUWebinars.Business.Models
 {
     //
 
-    public partial class AdditionalLocations
+    public partial class AdditionalLocation
     {
-        public int Id { get; set; }
+        public int idAdditionalLocation { get; set; }
         public int idOrderRow { get; set; }
         public decimal Price { get; set; }
         //Description to use in Cart
@@ -16,5 +16,8 @@ namespace CUWebinars.Business.Models
         public string DescriptionConfirm { get; set; }
         public bool TaxExempt { get; set; }
         public virtual OrderRow OrderRow { get; set; }
+        public string Email { get; set; }
+        public string FullName { get; set; }
+        public bool Billable { get; set; }
     }
 }

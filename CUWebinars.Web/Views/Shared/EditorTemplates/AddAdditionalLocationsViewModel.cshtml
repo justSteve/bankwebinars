@@ -1,14 +1,14 @@
-﻿@model AddAdditionalLocationsViewModel
+﻿@model AddAdditionalLocationViewModel
     
 <blockquote style="margin-bottom: 0;color:red;font-weight:bold">
-    @Model.AdditionalLocations.OptionDescription
+    @Model.AdditionalLocation.OptionDescription
 </blockquote>
 <div style="padding-left: 50px;">
-    <b>Each additional location adds $@Model.AdditionalLocations.RegTypePrice.ToString() to your registration:</b>
-    <div id="AdditionalLocationsContainer">
+    <b>Each additional location adds $@Model.AdditionalLocation.RegTypePrice.ToString() to your registration:</b>
+    <div id="AdditionalLocationContainer">
         <button value="Add?" type="button" class="btn btn-success btn-small" name="AddLocationsButton" id="AddLocationsButton">Add?</button>
         <input type="text" value="1" id="NumberOfEmailAddresses" class="span1" />
         <div id="NewLocationsContainer"></div>
     </div> 
 </div>
-@Scripts.Render("~/bundles/additionalLocations")
+@Scripts.Render("~/bundles/AdditionalLocation")

@@ -22,7 +22,7 @@ namespace CUWebinars.Web.App_Start
                         "~/Scripts/jquery.unobtrusive*",
                         "~/Scripts/jquery.validate*"));
 
-            bundles.Add(new ScriptBundle("~/bundles/additionalLocations").Include(
+            bundles.Add(new ScriptBundle("~/bundles/AdditionalLocation").Include(
                 "~/Scripts/app/cart/add-additional-locations.js"
                 ));
 

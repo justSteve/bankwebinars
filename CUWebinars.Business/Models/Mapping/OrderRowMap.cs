@@ -16,7 +16,7 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.idOrder).HasColumnName("idOrder");
             Property(t => t.idWebinar).HasColumnName("idWebinar");
             Property(t => t.RowPrice).HasColumnName("RowPrice");
-            //this.Property(t => t.RowStatus).HasColumnName("RowStatus");
+            Property(t => t.RowStatus).HasColumnName("RowStatus");
             Property(t => t.ShipmentDate).HasColumnName("ShipmentDate");
             Property(t => t.AccessExpires).HasColumnName("AccessExpires");
             Property(t => t.Royalty).HasColumnName("Royalty");
@@ -28,8 +28,10 @@ namespace CUWebinars.Business.Models.Mapping
             HasRequired(t => t.Webinar)
                             .WithMany(t => t.OrderRows)
                             .HasForeignKey(d => d.idWebinar);
-            HasOptional(t => t.AdditionalLocation)
-                            .WithOptionalDependent(t => t.OrderRow);
+            //error after switching to 'ICollection' in orderRow.
+            //HasOptional(t => t.AdditionalLocation)
+            //                .WithOptionalDependent(t => t.OrderRow);
+            
         }
     }
 }

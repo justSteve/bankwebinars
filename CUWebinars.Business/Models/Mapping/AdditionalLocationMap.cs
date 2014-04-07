@@ -2,11 +2,15 @@
 
 namespace CUWebinars.Business.Models.Mapping
 {
-    public class AdditionalLocationMap : EntityTypeConfiguration<AdditionalEmails>
+    public class AdditionalLocationMap : EntityTypeConfiguration<AdditionalLocation>
     {
         public AdditionalLocationMap()
         {
+            // Primary Key
+            HasKey(t => t.idAdditionalLocation);
 
+            // Table & Column Mappings
+            ToTable("AdditionalLocation");
         //            public int Id { get; set; }
         //public int idOrderRow { get; set; }
         //public decimal Price { get; set; }
@@ -15,8 +19,9 @@ namespace CUWebinars.Business.Models.Mapping
         //public bool TaxExempt { get; set; }
         //public virtual OrderRow OrderRow { get; set; }
             // Relationships
-            //HasRequired(a => a.AdditionalLocations)
-            //    .WithMany(o => o.A)
+            //HasRequired(a => a.OrderRow)
+            //    .WithRequiredPrincipal(a => a.AdditionalLocation);
+
             //    .HasForeignKey(a => a.idOrderRow);
         }
     }

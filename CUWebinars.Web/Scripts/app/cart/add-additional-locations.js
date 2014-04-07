@@ -1,8 +1,8 @@
 ﻿//  Rename this file 'additional-locations' if we decide to be rid of additional-locations.js
 
-var additionalLocationsContainer,
+var AdditionalLocationContainer,
     addLocationsButton,
-    additionalLocationsSubmitButton,
+    AdditionalLocationSubmitButton,
     newLocationsContainer,
     numberOfEmailAddresses,
     signupForm;
@@ -21,11 +21,11 @@ function wireUpHandlers() {
     var modalFormOptions = {
         keyboard: true,
         show: true,
-        //remote: '/Webinar/GetAdditionalLocationsByOrderId'
+        //remote: '/Webinar/GetAdditionalLocationByOrderId'
     };
 
     $('#LoadAddLocationsModalButton').on('click', function () {
-        modalFormOptions.remote = '/Webinar/GetAdditionalLocationsByOrderId/' + $('#CheckoutOptionsViewModel_Order_idOrder').val();
+        modalFormOptions.remote = '/Webinar/GetAdditionalLocationByOrderId/' + $('#CheckoutOptionsViewModel_Order_idOrder').val();
         $('#SignupModal').modal(modalFormOptions);
     });
 
@@ -44,18 +44,18 @@ function wireUpHandlers() {
         newLocationsContainer.empty();
 
         for (var i = 0; i < numberOfInputsToAdd; i++) {
-            newLocationsContainer.append('<span id="' + locationsSpanPrefix + i + '"><input id="AdditionLocationEmail-' + i + '" name="AddAdditionalLocationsViewModel.Emails[' + i + ']" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + i + '-AdditionLocationEmail-delete"></i></span> <br id="' + i + breakSuffix + '">');
+            newLocationsContainer.append('<span id="' + locationsSpanPrefix + i + '"><input id="AdditionLocationEmail-' + i + '" name="AddAdditionalLocationViewModel.Emails[' + i + ']" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + i + '-AdditionLocationEmail-delete"></i></span> <br id="' + i + breakSuffix + '">');
         }
 
-        if (typeof additionalLocationsSubmitButton === 'undefined' && numberOfInputsToAdd > 0) {
-            additionalLocationsSubmitButton = $('<input>',
+        if (typeof AdditionalLocationSubmitButton === 'undefined' && numberOfInputsToAdd > 0) {
+            AdditionalLocationSubmitButton = $('<input>',
             {
-                id: 'AdditionalLocationsSubmitButton',
+                id: 'AdditionalLocationSubmitButton',
                 value: 'Submit Locations',
                 'class': 'btn btn-success btn-small',
                 type: 'submit'
             });
-            //additionalLocationsSubmitButton.on('click', function () {
+            //AdditionalLocationSubmitButton.on('click', function () {
             //    signupForm.submit();
             //});
         }
@@ -72,7 +72,7 @@ function wireUpHandlers() {
                 var inputsRemaining = newLocationsContainer.find('i');
 
                 if (inputsRemaining.length < 1) {
-                    additionalLocationsSubmitButton.hide(500, function() {
+                    AdditionalLocationSubmitButton.hide(500, function() {
                         $(this).remove();
                     });
                 }
@@ -80,13 +80,13 @@ function wireUpHandlers() {
             });
         });
 
-        newLocationsContainer.append(additionalLocationsSubmitButton);
+        newLocationsContainer.append(AdditionalLocationSubmitButton);
 
-        if (!additionalLocationsSubmitButton.is(':visible'))
-            additionalLocationsSubmitButton.show(500);
+        if (!AdditionalLocationSubmitButton.is(':visible'))
+            AdditionalLocationSubmitButton.show(500);
 
         if (numberOfInputsToAdd < 1)
-            additionalLocationsSubmitButton.remove();
+            AdditionalLocationSubmitButton.remove();
     });
 
     signupForm.on('submit', function (e) {
@@ -107,7 +107,7 @@ function wireUpHandlers() {
         });
 
         var payload = {
-            'CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationsViewModel.AddAdditionalLocationsViewModel.Emails': emailAddresses,
+            'CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationViewModel.AddAdditionalLocationViewModel.Emails': emailAddresses,
             'CheckoutOptionsViewModel.Order.idOrder': orderId.val(),
             'WebUser.idUser': webUserId.val(),
             'Webinar.idWebinar': webinarId.val(),
@@ -130,7 +130,7 @@ function wireUpHandlers() {
 };
 
 function primeDomVariables() {
-    additionalLocationsContainer = $('#AdditionalLocationsContainer');
+    AdditionalLocationContainer = $('#AdditionalLocationContainer');
     addLocationsButton = $('#AddLocationsButton');
     newLocationsContainer = $('#NewLocationsContainer');
     numberOfEmailAddresses = $('#NumberOfEmailAddresses');

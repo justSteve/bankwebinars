@@ -8,7 +8,7 @@ namespace CUWebinars.Business.Models
         public RegType()
         {
             //this.OptionsXrefs = new List<OptionsXref>();
-            //this.AdditionalLocations = new List<AdditionalLocations>();
+            //this.AdditionalLocation = new List<AdditionalLocation>();
         }
 
         public int idRegType { get; set; }
@@ -26,6 +26,6 @@ namespace CUWebinars.Business.Models
         public string Stage1EmailConfirmationMsg { get; set; }
         public string Stage2EmailConfirmationMsg { get; set; }
         //public virtual ICollection<OptionsXref> OptionsXrefs { get; set; }
-        //public virtual ICollection<AdditionalLocations> AdditionalLocations { get; set; }
+        //public virtual ICollection<AdditionalLocation> AdditionalLocation { get; set; }
     }
 }

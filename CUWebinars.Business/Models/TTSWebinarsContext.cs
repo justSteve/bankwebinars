@@ -24,7 +24,7 @@ namespace CUWebinars.Business.Models
         }
 
         public DbSet<Address> Addresses { get; set; }
-        public DbSet<AdditionalLocations> AdditionalLocations { get; set; }
+        public DbSet<AdditionalLocation> AdditionalLocation { get; set; }
         public DbSet<Affiliate> Affiliates { get; set; }
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Institution> Institutions { get; set; }

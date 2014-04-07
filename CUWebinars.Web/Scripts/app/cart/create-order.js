@@ -293,7 +293,7 @@ function SetCartState() {
         case "Step0":
             console.log("Step0");
             $("#connectionsCount").val(0);
-            $('#collectAdditionalLocations').html('');
+            $('#collectAdditionalLocation').html('');
             $("#confirmationTab").hide();
             $("#signUpTab").hide();
             $("#contactInfoTab").hide();

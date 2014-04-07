@@ -10,31 +10,31 @@
     var options = Model.Options;
     if (options != null)
     {
-        //var additionalLocationsOption = options.OfType<AdditionalLocationsOption>().SingleOrDefault();
-        var additionalLocationsOption = Model.Options.SingleOrDefault(o => o.Type == "additional_location");
+        //var AdditionalLocationOption = options.OfType<AdditionalLocationOption>().SingleOrDefault();
+        var AdditionalLocationOption = Model.Options.SingleOrDefault(o => o.Type == "additional_location");
 
-        if (additionalLocationsOption != null)
+        if (AdditionalLocationOption != null)
         {
-            optionCost = additionalLocationsOption.Price.Value;
+            optionCost = AdditionalLocationOption.Price.Value;
         }
     }
-    AdditionalLocationsOrderRowOption additionalLocations = Model.Options.OfType<AdditionalLocationsOrderRowOption>().SingleOrDefault();
-    if (additionalLocations == null)
+    AdditionalLocationOrderRowOption AdditionalLocation = Model.Options.OfType<AdditionalLocationOrderRowOption>().SingleOrDefault();
+    if (AdditionalLocation == null)
     {
-        additionalLocations = new AdditionalLocationsOrderRowOption
+        AdditionalLocation = new AdditionalLocationOrderRowOption
         {
-            AdditionalLocationsCount = 0,
+            AdditionalLocationCount = 0,
 
         };
         connCount = 1;
     }
     else
     {
-        connCount = additionalLocations.AdditionalLocationsCount;
+        connCount = AdditionalLocation.AdditionalLocationCount;
     }
 }
 
-@using (Html.BeginForm("SetAdditionalLocations", "Registrations", FormMethod.Post, new { id = "frmAddLocations_" + @Model.Order.OrderRows.Single().idOrderRow }))
+@using (Html.BeginForm("SetAdditionalLocation", "Registrations", FormMethod.Post, new { id = "frmAddLocations_" + @Model.Order.OrderRows.Single().idOrderRow }))
 {
 
     <input type="hidden" id="ConnectionsCount_@(Model.Order.OrderRows.Single().idOrderRow)" name="connectionsCount" value="@(connCount)" />
@@ -62,55 +62,55 @@
                 </blockquote>
             </div>
             <div id="AddButton" style="display: none;" class="AddButton btn btn-mini  btn-success" role="button" onclick="AddLocation(3, '@optionCost.ToString("C0")' ); return false; ">Add More?</div>
-            <div id="CollectAdditionalLocations_@(Model.Order.OrderRows.Single().idOrderRow)"></div>
+            <div id="CollectAdditionalLocation_@(Model.Order.OrderRows.Single().idOrderRow)"></div>
     }
     else
     {
-        if (additionalLocations.Emails.Count == 0)
+        if (AdditionalLocation.Emails.Count == 0)
         {
-            //additionalLocations = new AdditionalLocationsOrderRowOption { AdditionalLocationsCount = 0 };
-            <div id="CollectAdditionalLocations_@(Model.Order.OrderRows.Single().idOrderRow)"></div>
+            //AdditionalLocation = new AdditionalLocationOrderRowOption { AdditionalLocationCount = 0 };
+            <div id="CollectAdditionalLocation_@(Model.Order.OrderRows.Single().idOrderRow)"></div>
             <div>
                 <div id="line_1">
                     1.
                     <input type="text" onblur="CheckEmails();" id="Email_1" name="Email_1" class="emailInput" placeholder="email" size="30" />&nbsp; &nbsp;&nbsp;@(optionCost.ToString("C0"))
                 </div>
-                <div id="AddButton_@(Model.Order.OrderRows.Single().idOrderRow)" class="btn btn-mini  btn-success emailInput" role="button" onclick="AddLocation(1,  '@(additionalLocations.RegTypePrice.ToString("C0")); return false; ">Add?</div>
+                <div id="AddButton_@(Model.Order.OrderRows.Single().idOrderRow)" class="btn btn-mini  btn-success emailInput" role="button" onclick="AddLocation(1,  '@(AdditionalLocation.RegTypePrice.ToString("C0")); return false; ">Add?</div>
             </div>
         }
         else
         {
-            if (additionalLocations.AdditionalLocationsCount > 0)
+            if (AdditionalLocation.AdditionalLocationCount > 0)
             {
                 var showCount = "";
                 var showTotalCost = 0M;
-                <div id="CollectAdditionalLocations_@(Model.Order.OrderRows.Single().idOrderRow)">
+                <div id="CollectAdditionalLocation_@(Model.Order.OrderRows.Single().idOrderRow)">
                     <div id="NumLocationsMsg_@(Model.Order.OrderRows.Single().idOrderRow)">
-                        You have @additionalLocations.AdditionalLocationsCount Additional Locations.<br />
+                        You have @AdditionalLocation.AdditionalLocationCount Additional Locations.<br />
                     </div>
-                    @for (var i = 1; i <= additionalLocations.AdditionalLocationsCount; i++)
+                    @for (var i = 1; i <= AdditionalLocation.AdditionalLocationCount; i++)
                     {
                         showCount = (i) + ". ";
-                        showTotalCost = showTotalCost + additionalLocations.RegTypePrice;
+                        showTotalCost = showTotalCost + AdditionalLocation.RegTypePrice;
                         <div class="line_@(i)">
 
                             @showCount
-                            <input type="text" name="Email_@(i)" value="@(additionalLocations.Emails[i - 1])" />
+                            <input type="text" name="Email_@(i)" value="@(AdditionalLocation.Emails[i - 1])" />
                             &nbsp;<a class="btn  btn-mini emailInput btn-danger" onclick="RemoveLocation('line_@(i)');">
                                 <i class="icon-trash icon-large"></i>Remove?
                             </a>
-                            &nbsp;&nbsp;@(additionalLocations.RegTypePrice.ToString("C0"))<br />
+                            &nbsp;&nbsp;@(AdditionalLocation.RegTypePrice.ToString("C0"))<br />
                         </div>
                     }
                 </div>
-                <div id="AddButton_@(Model.Order.OrderRows.Single().idOrderRow)" class="btn btn-mini emailInput btn-success" role="button" onclick=" addlocation(@additionallocations.additionallocationscount + 1, '@(additionalLocations.RegTypePrice.ToString("C0"))' ); return false; ">Add More?</div>
+                <div id="AddButton_@(Model.Order.OrderRows.Single().idOrderRow)" class="btn btn-mini emailInput btn-success" role="button" onclick=" addlocation(@AdditionalLocation.AdditionalLocationcount + 1, '@(AdditionalLocation.RegTypePrice.ToString("C0"))' ); return false; ">Add More?</div>
                 <div class="pull-right" id="ShowsAddLocTotalCost">Total cost of Additional Locations: @showTotalCost.ToString("C0")</div>
             }
             else
             {
                 <div class="line_1">
-                    1. <input type="text" name="Email_1" value="@(additionalLocations.Emails[0])" />
-                    &nbsp;&nbsp;@(additionalLocations.RegTypePrice.ToString("C0"))<br />
+                    1. <input type="text" name="Email_1" value="@(AdditionalLocation.Emails[0])" />
+                    &nbsp;&nbsp;@(AdditionalLocation.RegTypePrice.ToString("C0"))<br />
                 </div>
 
             }

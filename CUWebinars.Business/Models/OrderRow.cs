@@ -7,7 +7,7 @@ namespace CUWebinars.Business.Models
     {
         public OrderRow()
         {
-            //this.AdditionalLocations = new List<AdditionalLocations>();
+            //this.AdditionalLocation = new List<AdditionalLocation>();
         }
 
         public int idOrderRow { get; set; }
@@ -19,11 +19,11 @@ namespace CUWebinars.Business.Models
         public decimal Royalty { get; set; }
         public Nullable<System.DateTime> ShipmentDate { get; set; }
         public Nullable<System.DateTime> AccessExpires { get; set; }
-        public OrderStatus RowStatus { get; set; }
+        public OrderRowStatus RowStatus { get; set; }
         public Discount Discount { get; set; }
         public RegType RegistrationType { get; set; }
         public virtual Order Order { get; set; }
         public virtual Webinar Webinar { get; set; }
-        public virtual AdditionalLocations AdditionalLocation { get; set; }
+        public virtual ICollection<AdditionalLocation> AdditionalLocation { get; set; }
     }
 }
