@@ -48,9 +48,9 @@
             break;
         }
         Debug.Assert(order != null, "order != null");
-        if (row.Status == OrderStatus.Billed ||
-            row.Status == OrderStatus.Paid ||
-            row.Status == OrderStatus.Submitted)
+        if (row.Order.OrderStatus == OrderStatus.Billed ||
+            row.Order.OrderStatus == OrderStatus.Paid ||
+            row.Order.OrderStatus == OrderStatus.Submitted)
         {
             //webinarFiles ="";
             <aside style="width: 100%" class="widget clearfix">
@@ -113,19 +113,17 @@
 
                     @foreach (var myOption in Model.Options)
                     {
-                        if (myOption.Type == "Text")
-                        {
-                            if (Model.CheckoutOptionsViewModel.Order == null
-                                //Model.Order.idOrder < 1
-                                //Model.Order.OrderRows.Single().Status == OrderStatus.InProcess
 
-                                && !myOption.SKU.Contains("Upgrade")
-                                )
-                            {
-                                <li>
-                                    <a onclick='javascript:exprsOrder("@myOption.idRegType");'>&nbsp;&nbsp;@myOption.OptionLabel - $@myOption.Price&nbsp;&nbsp;</a>
-                                </li>
-                            }
+                        if (Model.CheckoutOptionsViewModel.Order == null
+                            //Model.Order.idOrder < 1
+                            //Model.Order.OrderRows.Single().Status == OrderStatus.InProcess
+
+                            && !myOption.SKU.Contains("Upgrade")
+                            )
+                        {
+                            <li>
+                                <a onclick='javascript:exprsOrder("@myOption.idRegType");'>&nbsp;&nbsp;@myOption.OptionLabel - $@myOption.Price&nbsp;&nbsp;</a>
+                            </li>
                         }
                     }
                 </ul>

@@ -5,7 +5,7 @@ namespace CUWebinars.Business.Repository
 {
     public interface IRefDataRepository
     {
-        //IList<RegType> FindRegTypesByWebinarId(int id, bool detached);
+        IList<RegType> FindRegTypesByWebinarId(int id, bool detached);
         IEnumerable<Address> GetAddressesForUser(int id);
         IQueryable<Institution> GetInstitutions();
         WebUser GetWebUserByEmail(string email);        

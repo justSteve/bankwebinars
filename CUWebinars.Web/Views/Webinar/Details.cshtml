@@ -61,7 +61,7 @@
         rowID = Model.CheckoutOptionsViewModel.Order.OrderRows.FirstOrDefault().idOrderRow;
         orderID = Model.CheckoutOptionsViewModel.Order.idOrder;
 
-        if (Model.CheckoutOptionsViewModel.Order.OrderRows.FirstOrDefault().Status == OrderStatus.InProcess)
+        if (Model.CheckoutOptionsViewModel.Order.OrderRows.FirstOrDefault().RowStatus == OrderRowStatus.InProcess)
         {
             CheckoutInProcess = "true";
             msgOrderStatus = "<div align=\"center\" class=\"label-warning label\">Your order is InProcess and needs to be confirmed.</div>";

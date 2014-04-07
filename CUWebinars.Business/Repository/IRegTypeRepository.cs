@@ -6,6 +6,6 @@ namespace CUWebinars.Business.Repository
     public interface IRegTypeRepository
     {
         RegType FindRegType(RegType idRegType);
-        //IList<RegType> FindRegTypesByWebinarId(int id, bool detached);
+        IList<RegType> FindRegTypesByWebinarId(int id, bool detached);
     }
 }
