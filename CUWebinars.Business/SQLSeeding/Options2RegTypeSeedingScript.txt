@@ -1,0 +1,1953 @@
+﻿USE [Option2RegTypeMigrator]
+GO
+/****** Object:  StoredProcedure [dbo].[Migrate_Runner]    Script Date: 4/7/2014 4:10:14 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[Migrate_Runner]
+AS
+BEGIN
+
+    EXEC MigrateInstitution
+    PRINT 'ends: MigrateInstitution'
+    EXEC MigrateWebUser 
+    PRINT 'ends: MigrateWebUser'
+    EXEC MigrateAffiliate
+    PRINT 'ends: MigrateAffiliate'
+    EXEC MigrateRegTypes
+    PRINT 'ends: MigrateRegTypes'
+    EXEC [dbo].[MigrateRegTypesGroups]
+    PRINT 'ends: MigrateRegTypesGroups'
+    EXEC MigrateRegTypesXref 
+    PRINT 'ends: MigrateRegTypesXref'
+    EXEC MigratePresenter 
+    PRINT 'ends: MigratePresenter'
+    EXEC MigrateWebinar 
+    PRINT 'ends: MigrateWebinar'
+    EXEC MigrateRegTypesGroupsXref 
+    PRINT 'ends: MigrateOptionsGroupsXref'
+    EXEC MigrateTopic 
+    PRINT 'ends: MigrateTopic'
+    EXEC MigrateWebinarTopicXref 
+    PRINT 'ends: MigrateWebinarTopicXref'
+    EXEC MigrateWebinarFile 
+    PRINT 'ends: MigrateWebinarFile'
+    EXEC MigrateAddresses 
+    PRINT 'ends: MigrateAddresses'
+--EXEC MigrateOrders
+--PRINT 'ends: MigrateOrders'
+--EXEC MigrateOrderRow
+--PRINT 'ends: MigrateOrderRow'
+--EXEC dbo.MigrateAdditionalLocations
+--PRINT 'ends: MigrateAdditionalLocations'
+END
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[MigrateAdditionalLocations]    Script Date: 4/7/2014 4:10:14 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE Procedure [dbo].[MigrateAdditionalLocations]
+AS
+BEGIN
+
+INSERT  dbo.AdditionalLocations
+        ( Email, FullName, idOrderRowOption )
+VALUES  ( N'', -- Email - nvarchar(150)
+          N'', -- FullName - nvarchar(100)
+          0  -- idOrderRowOption - int
+          )
+end
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[MigrateAddresses]    Script Date: 4/7/2014 4:10:14 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE Procedure [dbo].[MigrateAddresses]
+AS
+BEGIN
+
+    PRINT '---------------------Starting MigrateAddresses'
+	SET NOCOUNT ON 
+    DECLARE @ErrorLogID INT
+    DECLARE @id2Insert INT
+    DECLARE @QueryString VARCHAR(MAX)
+	
+    SET IDENTITY_INSERT Option2RegType.dbo.[Address] on
+    DECLARE my_Cursor CURSOR
+    FOR
+    SELECT  id
+    FROM    CUWebinarsDev.dbo.Addresses
+    OPEN my_Cursor
+
+    SET @id2Insert = 1
+	
+    FETCH NEXT FROM my_Cursor INTO @id2Insert
+    WHILE @@FETCH_STATUS = 0
+        BEGIN    		
+            BEGIN TRY
+
+                INSERT  Option2RegType.dbo.[Address]
+                        (Id, AddressType ,
+                          Name ,
+                          Phone ,
+                          StreetAddress ,
+                          StreetAddress2 ,
+                          City ,
+                          Zip ,
+                          State ,
+                          Country ,
+                          idUser
+                        )
+
+                VALUES  ( @id2Insert ,
+                          ( SELECT  AddressType
+                            FROM    CUWebinarsDev.dbo.Addresses
+                            WHERE   id = @id2Insert
+                          ) ,
+                          ( SELECT  Name
+                            FROM    CUWebinarsDev.dbo.Addresses
+                            WHERE   id = @id2Insert
+                          ) ,
+                          ( SELECT  Phone
+                            FROM    CUWebinarsDev.dbo.Addresses
+                            WHERE   id = @id2Insert
+                          ) ,
+                          ( SELECT  StreetAddress
+                            FROM    CUWebinarsDev.dbo.Addresses
+                            WHERE   id = @id2Insert
+                          ) ,
+                          ( SELECT  StreetAddress2
+                            FROM    CUWebinarsDev.dbo.Addresses
+                            WHERE   id = @id2Insert
+                          ) ,
+                          ( SELECT  City
+                            FROM    CUWebinarsDev.dbo.Addresses
+                            WHERE   id = @id2Insert
+                          ) ,
+                          ( SELECT  Zip
+                            FROM    CUWebinarsDev.dbo.Addresses
+                            WHERE   id = @id2Insert
+                          ) ,
+                          ( SELECT  State
+                            FROM    CUWebinarsDev.dbo.Addresses
+                            WHERE   id = @id2Insert
+                          ) ,
+                          ( SELECT  Country
+                            FROM    CUWebinarsDev.dbo.Addresses
+                            WHERE   id = @id2Insert
+                          ) ,
+                          ( SELECT  idUser
+                            FROM    CUWebinarsDev.dbo.Addresses
+                            WHERE   id = @id2Insert
+                          )
+                        )
+
+            END TRY
+            BEGIN CATCH
+
+			-- Call procedure to print error information.
+                --EXECUTE dbo.uspPrintError;
+
+    -- Roll back any active or uncommittable transactions before
+    -- inserting information in the ErrorLog.
+                IF XACT_STATE() <> 0
+                    BEGIN
+                        ROLLBACK TRANSACTION;
+                    END
+
+                EXECUTE dbo.uspLogError @Msg = @id2Insert, @ErrorLogID = @ErrorLogID OUTPUT;
+
+                PRINT '--==========--'
+                PRINT 'Error idAddresses: ' + CAST(@id2Insert AS VARCHAR)
+                PRINT '--==========--'
+			
+                FETCH NEXT FROM my_Cursor INTO @id2Insert
+            END CATCH
+
+            FETCH NEXT FROM my_Cursor INTO @id2Insert
+        
+        END
+    CLOSE my_Cursor
+    DEALLOCATE my_Cursor
+    SET IDENTITY_INSERT Option2RegType.dbo.[Address] OFF
+
+END
+
+
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[MigrateAffiliate]    Script Date: 4/7/2014 4:10:14 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE Procedure [dbo].[MigrateAffiliate]
+AS
+BEGIN
+  
+    PRINT '---------------------Starting [MigrateAffiliate]'
+	SET NOCOUNT ON 
+	  DECLARE @ErrorLogID INT
+    DECLARE @id2Insert INT
+    DECLARE @QueryString VARCHAR(MAX)
+
+    DECLARE my_Cursor CURSOR
+    FOR
+    SELECT  idUserAff
+    FROM    CUWebinarsDev.dbo.Affiliate
+
+    OPEN my_Cursor
+
+    SET @id2Insert = 1
+	
+    FETCH NEXT FROM my_Cursor INTO @id2Insert
+    WHILE @@FETCH_STATUS = 0
+        BEGIN    		
+            BEGIN TRY
+                INSERT  Option2RegType.dbo.Affiliate
+                        ( idUserAff ,
+                          CommissionModel ,
+                          URL ,
+                          WebBanner ,
+                          WebFooter ,
+                          EmailBanner ,
+                          EmailFooter ,
+                          ttsDomain ,
+                          GAPass ,
+                          supportEmail ,
+                          DisplayTitle ,
+                          BillingModel ,
+                          Logo ,
+                          ContactPerson ,
+                          ContactPhone ,
+                          ContactEmail ,
+                          ContactFax ,
+                          ContactAddress ,
+                          TechEmail ,
+                          TechPhone ,
+                          TechName ,
+                          EmailPromo ,
+                          WebUser_Id
+                        )
+                VALUES  ( @id2Insert , -- idUserAff - int
+                          ( SELECT  CommissionModel
+                            FROM    CUWebinarsDev.dbo.Affiliate
+                            WHERE   idUserAff = @id2Insert
+                          ) ,
+                          ( SELECT  URL
+                            FROM    CUWebinarsDev.dbo.Affiliate
+                            WHERE   idUserAff = @id2Insert
+                          ) ,
+                          ( SELECT  WebBanner
+                            FROM    CUWebinarsDev.dbo.Affiliate
+                            WHERE   idUserAff = @id2Insert
+                          ) ,
+                          ( SELECT  WebFooter
+                            FROM    CUWebinarsDev.dbo.Affiliate
+                            WHERE   idUserAff = @id2Insert
+                          ) ,
+                          ( SELECT  EmailBanner
+                            FROM    CUWebinarsDev.dbo.Affiliate
+                            WHERE   idUserAff = @id2Insert
+                          ) ,
+                          ( SELECT  EmailBanner
+                            FROM    CUWebinarsDev.dbo.Affiliate
+                            WHERE   idUserAff = @id2Insert
+                          ) ,
+                          ( SELECT  ttsDomain
+                            FROM    CUWebinarsDev.dbo.Affiliate
+                            WHERE   idUserAff = @id2Insert
+                          ) ,
+                          ( SELECT  GAPass
+                            FROM    CUWebinarsDev.dbo.Affiliate
+                            WHERE   idUserAff = @id2Insert
+                          ) ,
+                          ( SELECT  supportEmail
+                            FROM    CUWebinarsDev.dbo.Affiliate
+                            WHERE   idUserAff = @id2Insert
+                          ) ,
+                          ( SELECT  DisplayTitle
+                            FROM    CUWebinarsDev.dbo.Affiliate
+                            WHERE   idUserAff = @id2Insert
+                          ) ,
+                          ( SELECT  BillingModel
+                            FROM    CUWebinarsDev.dbo.Affiliate
+                            WHERE   idUserAff = @id2Insert
+                          ) ,
+                          ( SELECT  Logo
+                            FROM    CUWebinarsDev.dbo.Affiliate
+                            WHERE   idUserAff = @id2Insert
+                          ) ,
+                          ( SELECT  ContactPerson
+                            FROM    CUWebinarsDev.dbo.Affiliate
+                            WHERE   idUserAff = @id2Insert
+                          ) ,
+                          ( SELECT  ContactPhone
+                            FROM    CUWebinarsDev.dbo.Affiliate
+                            WHERE   idUserAff = @id2Insert
+                          ) ,
+                          ( SELECT  ContactEmail
+                            FROM    CUWebinarsDev.dbo.Affiliate
+                            WHERE   idUserAff = @id2Insert
+                          ) ,
+                          ( SELECT  ContactFax
+                            FROM    CUWebinarsDev.dbo.Affiliate
+                            WHERE   idUserAff = @id2Insert
+                          ) ,
+                          ( SELECT  ContactAddress
+                            FROM    CUWebinarsDev.dbo.Affiliate
+                            WHERE   idUserAff = @id2Insert
+                          ) ,
+                          ( SELECT  TechEmail
+                            FROM    CUWebinarsDev.dbo.Affiliate
+                            WHERE   idUserAff = @id2Insert
+                          ) ,
+                          ( SELECT  TechPhone
+                            FROM    CUWebinarsDev.dbo.Affiliate
+                            WHERE   idUserAff = @id2Insert
+                          ) ,
+                          ( SELECT  TechName
+                            FROM    CUWebinarsDev.dbo.Affiliate
+                            WHERE   idUserAff = @id2Insert
+                          ) ,
+                          ( SELECT  EmailPromo
+                            FROM    CUWebinarsDev.dbo.Affiliate
+                            WHERE   idUserAff = @id2Insert
+                          ) ,
+                          ( SELECT  WebUser_Id
+                            FROM    CUWebinarsDev.dbo.Affiliate
+                            WHERE   idUserAff = @id2Insert
+                          )
+                        )
+
+            END TRY
+            BEGIN CATCH
+
+			-- Call procedure to print error information.
+                --EXECUTE dbo.uspPrintError;
+
+    -- Roll back any active or uncommittable transactions before
+    -- inserting information in the ErrorLog.
+                IF XACT_STATE() <> 0
+                    BEGIN
+                        ROLLBACK TRANSACTION;
+                    END
+
+                EXECUTE dbo.uspLogError @Msg = @id2Insert, @ErrorLogID = @ErrorLogID OUTPUT;
+
+                PRINT '--==========--'
+                PRINT 'Error AffiliateID: ' + CAST(@id2Insert AS VARCHAR)
+                PRINT '--==========--'
+			
+                FETCH NEXT FROM my_Cursor INTO @id2Insert
+            END CATCH
+
+            FETCH NEXT FROM my_Cursor INTO @id2Insert
+        
+        END
+    CLOSE my_Cursor
+    DEALLOCATE my_Cursor
+
+
+END
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[MigrateDiscounts]    Script Date: 4/7/2014 4:10:14 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE Procedure [dbo].[MigrateDiscounts]
+AS
+BEGIN
+
+INSERT  dbo.Discounts
+        ( discountType ,
+          code ,
+          percentOff ,
+          flatOff ,
+          usesNumber ,
+          dateValidFrom ,
+          dateValidTo ,
+          status ,
+          dateBilled ,
+          cost ,
+          Notes
+        )
+VALUES  ( 0 , -- discountType - tinyint
+          N'' , -- code - nvarchar(50)
+          NULL , -- percentOff - decimal
+          NULL , -- flatOff - decimal
+          0 , -- usesNumber - int
+          '2014-03-26 12:43:37' , -- dateValidFrom - datetime
+          '2014-03-26 12:43:37' , -- dateValidTo - datetime
+          N'' , -- status - nvarchar(50)
+          '2014-03-26 12:43:37' , -- dateBilled - datetime
+          NULL , -- cost - decimal
+          N''  -- Notes - nvarchar(max)
+        )
+
+
+end
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[MigrateInstitution]    Script Date: 4/7/2014 4:10:14 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE Procedure [dbo].[MigrateInstitution]
+AS
+BEGIN
+
+    PRINT '---------------------Starting MigrateInstitution'
+    SET NOCOUNT ON;
+    SET IDENTITY_INSERT Option2RegType.[dbo].[Institution] ON 
+
+    DECLARE @ErrorLogID INT
+    DECLARE @id2Insert INT
+    DECLARE @QueryString VARCHAR(MAX)
+
+    DECLARE my_Cursor CURSOR
+    FOR
+    SELECT  idInstitution
+    FROM    CUWebinarsDev.dbo.Institution
+
+    OPEN my_Cursor
+
+    SET @id2Insert = 1
+	
+    FETCH NEXT FROM my_Cursor INTO @id2Insert
+    WHILE @@FETCH_STATUS = 0
+        BEGIN    		
+            BEGIN TRY
+                INSERT  Option2RegType.dbo.Institution
+                        ( idInstitution ,
+                          InstitutionName ,
+                          InstitutionType ,
+                          domainName ,
+                          RegIdentifier ,
+                          Address ,
+                          City ,
+                          State ,
+                          Zip
+                        )
+                VALUES  ( @id2Insert ,
+                          ( SELECT  InstitutionName
+                            FROM    CUWebinarsDev.dbo.Institution
+                            WHERE   idInstitution = @id2Insert
+                          ) ,
+                          ( SELECT  InstitutionType
+                            FROM    CUWebinarsDev.dbo.Institution
+                            WHERE   idInstitution = @id2Insert
+                          ) ,
+                          ( SELECT  domainName
+                            FROM    CUWebinarsDev.dbo.Institution
+                            WHERE   idInstitution = @id2Insert
+                          ) ,
+                          ( SELECT  RegIdentifier
+                            FROM    CUWebinarsDev.dbo.Institution
+                            WHERE   idInstitution = @id2Insert
+                          ) ,
+                          ( SELECT  Address
+                            FROM    CUWebinarsDev.dbo.Institution
+                            WHERE   idInstitution = @id2Insert
+                          ) ,
+                          ( SELECT  City
+                            FROM    CUWebinarsDev.dbo.Institution
+                            WHERE   idInstitution = @id2Insert
+                          ) ,
+                          ( SELECT  State
+                            FROM    CUWebinarsDev.dbo.Institution
+                            WHERE   idInstitution = @id2Insert
+                          ) ,
+                          ( SELECT  Zip
+                            FROM    CUWebinarsDev.dbo.Institution
+                            WHERE   idInstitution = @id2Insert
+                          )
+                        )
+            END TRY
+            BEGIN CATCH
+
+			-- Call procedure to print error information.
+                EXECUTE dbo.uspPrintError;
+
+    -- Roll back any active or uncommittable transactions before
+    -- inserting information in the ErrorLog.
+                IF XACT_STATE() <> 0
+                    BEGIN
+                        ROLLBACK TRANSACTION;
+                    END
+
+                EXECUTE dbo.uspLogError @ErrorLogID = @ErrorLogID OUTPUT;
+
+                PRINT '--==========--'
+                PRINT 'Error InstitutionID: ' + CAST(@id2Insert AS VARCHAR)
+                PRINT '--==========--'
+			
+                FETCH NEXT FROM my_Cursor INTO @id2Insert
+            END CATCH
+
+            FETCH NEXT FROM my_Cursor INTO @id2Insert
+        
+        END
+    CLOSE my_Cursor
+    DEALLOCATE my_Cursor
+
+SET IDENTITY_INSERT Option2RegType.[dbo].[Institution] off
+END
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[MigrateOrderRow]    Script Date: 4/7/2014 4:10:14 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[MigrateOrderRow]
+AS
+BEGIN
+    SET NOCOUNT ON
+    PRINT '---------------------Starting MigrateOrderRow'
+    DECLARE @ErrorLogID INT
+    DECLARE @id2Insert INT
+    DECLARE @QueryString VARCHAR(MAX)
+
+    DECLARE my_Cursor CURSOR
+    FOR
+    SELECT  idOrderRow
+    FROM    CUWebinarsDev.dbo.OrderRow
+
+    OPEN my_Cursor
+
+    SET @id2Insert = 1
+	
+    SET IDENTITY_INSERT Option2RegType.dbo.OrderRow ON
+	
+    FETCH NEXT FROM my_Cursor INTO @id2Insert
+    WHILE @@FETCH_STATUS = 0
+        BEGIN    		
+            BEGIN TRY
+
+                INSERT  Option2RegType.dbo.OrderRow
+                        ( idOrder ,
+                          idWebinar ,
+                          idRegType ,
+                          UnitPrice ,
+                          RowPrice ,
+                          Royalty ,
+                          ShipmentDate ,
+                          AccessExpires ,
+                          RowStatus ,
+                          Discount_idDiscount
+                        )
+                VALUES  ( 0 , -- idOrder - int
+                          0 , -- idWebinar - int
+                          0 , -- idRegType - int
+                          NULL , -- UnitPrice - decimal
+                          NULL , -- RowPrice - decimal
+                          NULL , -- Royalty - decimal
+                          '2014-04-07 19:35:27' , -- ShipmentDate - datetime
+                          '2014-04-07 19:35:27' , -- AccessExpires - datetime
+                          0 , -- RowStatus - int
+                          0  -- Discount_idDiscount - int
+                        )
+                        
+            END TRY
+            BEGIN CATCH
+
+			-- Call procedure to print error information.
+                --EXECUTE dbo.uspPrintError;
+
+    -- Roll back any active or uncommittable transactions before
+    -- inserting information in the ErrorLog.
+                IF XACT_STATE() <> 0
+                    BEGIN
+                        ROLLBACK TRANSACTION;
+                    END
+
+                EXECUTE dbo.uspLogError @Msg = @id2Insert, @ErrorLogID = @ErrorLogID OUTPUT;
+
+                PRINT '--==========--'
+                PRINT 'Error OrderRowsID: ' + CAST(@id2Insert AS VARCHAR)
+                PRINT '--==========--'
+			
+                FETCH NEXT FROM my_Cursor INTO @id2Insert
+            END CATCH
+
+            FETCH NEXT FROM my_Cursor INTO @id2Insert
+        
+        END
+    CLOSE my_Cursor
+    DEALLOCATE my_Cursor
+
+
+
+    SET IDENTITY_INSERT Option2RegType.dbo.OrderRow OFF
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[MigrateOrders]    Script Date: 4/7/2014 4:10:14 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE Procedure [dbo].[MigrateOrders]
+AS
+BEGIN
+    SET NOCOUNT ON
+    PRINT '---------------------Starting MigrateOrders'
+    DECLARE @ErrorLogID INT
+    DECLARE @id2Insert INT
+    DECLARE @QueryString VARCHAR(MAX)
+
+    DECLARE my_Cursor CURSOR
+    FOR
+    SELECT  idOrder
+    FROM    CUWebinarsDev.dbo.Orders
+
+    OPEN my_Cursor
+
+    SET @id2Insert = 1
+	
+    SET IDENTITY_INSERT Option2RegType.dbo.Orders ON
+	
+    FETCH NEXT FROM my_Cursor INTO @id2Insert
+    WHILE @@FETCH_STATUS = 0
+        BEGIN    		
+            BEGIN TRY
+
+                INSERT  Option2RegType.dbo.Orders
+                        (idOrder, idUser ,
+                          idAffiliate ,
+                          OrderDate ,
+                          Total ,
+                          FirstName ,
+                          LastName ,
+                          Institution ,
+                          BillingPhone ,
+                          BillingEmail ,
+                          BillingAddress ,
+                          BillingAddress2 ,
+                          BillingCity ,
+                          BillingState ,
+                          BillingZip ,
+                          ShippingFirstName ,
+                          ShippingLastName ,
+                          ShippingPhone ,
+                          ShippingAddress ,
+                          ShippingAddress2 ,
+                          ShippingCity ,
+                          ShippingState ,
+                          ShippingZip ,
+                          PaymentType ,
+                          UserComments ,
+                          AuditInfo ,
+                          AffiliateComments ,
+                          AdminComments ,
+                          TaxExempt ,
+                          InitiatedBy ,
+                          PaidByCCNumber ,
+                          Origin
+                        )
+                VALUES  (@id2Insert, ( SELECT  idUser
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  idAffiliate
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  OrderDate
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  Total
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  FirstName
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  LastName
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  Institution
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  BillingPhone
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  BillingEmail
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  BillingAddress
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  BillingAddress2
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  BillingCity
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  BillingState
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  BillingZip
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  ShippingFirstName
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  ShippingLastName
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  ShippingPhone
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  ShippingAddress
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  ShippingAddress2
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  ShippingCity
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  ShippingState
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  ShippingZip
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  PaymentType
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  UserComments
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  AuditInfo
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  AffiliateComments
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  AdminComments
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  TaxExempt
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  InitiatedBy
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  PaidByCCNumber
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          ) ,
+                          ( SELECT  Origin
+                            FROM    CUWebinarsDev.dbo.Orders
+                            WHERE   idOrder = @id2Insert
+                          )
+                        )
+
+		
+
+            END TRY
+            BEGIN CATCH
+
+			-- Call procedure to print error information.
+                --EXECUTE dbo.uspPrintError;
+
+				-- Roll back any active or uncommittable transactions before
+				-- inserting information in the ErrorLog.
+                IF XACT_STATE() <> 0
+                    BEGIN
+                        ROLLBACK TRANSACTION;
+                    END
+
+                EXECUTE dbo.uspLogError @Msg = @id2Insert, @ErrorLogID = @ErrorLogID OUTPUT;
+
+                PRINT '--==========--'
+                PRINT 'Error OrderID: ' + CAST(@id2Insert AS VARCHAR)
+                PRINT '--==========--'
+			
+                FETCH NEXT FROM my_Cursor INTO @id2Insert
+            END CATCH
+
+            FETCH NEXT FROM my_Cursor INTO @id2Insert
+        
+        END
+    CLOSE my_Cursor
+    DEALLOCATE my_Cursor
+
+
+
+    SET IDENTITY_INSERT Option2RegType.dbo.Orders OFF
+END
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[MigratePresenter]    Script Date: 4/7/2014 4:10:14 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE Procedure [dbo].[MigratePresenter]
+AS
+BEGIN
+SET NOCOUNT ON 
+
+    PRINT '---------------------Starting MigratePresenter'
+    DECLARE @ErrorLogID INT
+    DECLARE @id2Insert INT
+    DECLARE @QueryString VARCHAR(MAX)
+
+    DECLARE my_Cursor CURSOR
+    FOR
+    SELECT  idUser
+    FROM    CUWebinarsDev.dbo.Presenter
+
+    OPEN my_Cursor
+
+    SET @id2Insert = 1
+	
+    
+    FETCH NEXT FROM my_Cursor INTO @id2Insert
+    WHILE @@FETCH_STATUS = 0
+        BEGIN    		
+            BEGIN TRY
+                INSERT  Option2RegType.dbo.Presenter
+                        ( idUser ,
+                          Biography ,
+                          BiographyLong ,
+                          PhotoFull ,
+                          PhotoThumb
+                        )
+                VALUES  ( @id2Insert , -- idUser - int
+                          ( SELECT  Biography
+                            FROM    CUWebinarsDev.dbo.Presenter
+                            WHERE   idUser = @id2Insert
+                          ) ,
+                          ( SELECT  BiographyLong
+                            FROM    CUWebinarsDev.dbo.Presenter
+                            WHERE   idUser = @id2Insert
+                          ) ,
+                          ( SELECT  PhotoFull
+                            FROM    CUWebinarsDev.dbo.Presenter
+                            WHERE   idUser = @id2Insert
+                          ) ,
+                          ( SELECT  PhotoThumb
+                            FROM    CUWebinarsDev.dbo.Presenter
+                            WHERE   idUser = @id2Insert
+                          )
+                        )
+
+
+            END TRY
+            BEGIN CATCH
+
+			-- Call procedure to print error information.
+                --EXECUTE dbo.uspPrintError;
+
+    -- Roll back any active or uncommittable transactions before
+    -- inserting information in the ErrorLog.
+                IF XACT_STATE() <> 0
+                    BEGIN
+                        ROLLBACK TRANSACTION;
+                    END
+
+                EXECUTE dbo.uspLogError @Msg = @id2Insert, @ErrorLogID = @ErrorLogID OUTPUT;
+
+                PRINT '--==========--'
+                PRINT 'Error PresenterID: ' + CAST(@id2Insert AS VARCHAR)
+                PRINT '--==========--'
+			
+                FETCH NEXT FROM my_Cursor INTO @id2Insert
+            END CATCH
+
+            FETCH NEXT FROM my_Cursor INTO @id2Insert
+        
+        END
+    CLOSE my_Cursor
+    DEALLOCATE my_Cursor
+
+
+END
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[MigrateRegTypes]    Script Date: 4/7/2014 4:10:14 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[MigrateRegTypes]
+AS
+BEGIN
+    SET NOCOUNT ON 
+    PRINT '---------------------Starting MigrateRegTypes'
+    DECLARE @ErrorLogID INT
+    DECLARE @id2Insert INT
+    DECLARE @QueryString VARCHAR(MAX)
+
+    DECLARE my_Cursor CURSOR
+    FOR
+    SELECT  idOption
+    FROM    CUWebinarsDev.dbo.Options
+
+    OPEN my_Cursor
+
+    SET @id2Insert = 1
+	
+    SET IDENTITY_INSERT Option2RegType.dbo.RegType ON
+	
+    FETCH NEXT FROM my_Cursor INTO @id2Insert
+    WHILE @@FETCH_STATUS = 0
+        BEGIN    		
+            BEGIN TRY
+
+                INSERT  Option2RegType.dbo.RegType
+                        ( idRegType ,
+                          RegTypeExplain ,
+                          RegTypeLabel ,
+                          Price ,
+                          TaxExempt ,
+                          SortOrder ,
+                          SKU ,
+                          ShowLiveNotifications ,
+                          ShowRecordingNotifications ,
+                          ShowShippedNotifications ,
+                          Stage1CheckoutConfirmationMsg ,
+                          Stage2CheckoutConfirmationMsg ,
+                          Stage1EmailConfirmationMsg ,
+                          Stage2EmailConfirmationMsg
+                        )
+                VALUES  ( @id2Insert ,
+                          ( SELECT  OptionExplain
+                            FROM    CUWebinarsDev.dbo.Options
+                            WHERE   idOption = @id2Insert
+                          ) , -- RegTypeExplain - nvarchar(max)
+                          ( SELECT  OptionLabel
+                            FROM    CUWebinarsDev.dbo.Options
+                            WHERE   idOption = @id2Insert
+                          ) , -- RegTypeLabel - nvarchar(max)
+                          ( SELECT  PriceToAdd
+                            FROM    CUWebinarsDev.dbo.Options
+                            WHERE   idOption = @id2Insert
+                          ) , -- Price - float
+                          NULL , -- TaxExempt - bit
+                          ( SELECT  SortOrder
+                            FROM    CUWebinarsDev.dbo.Options
+                            WHERE   idOption = @id2Insert
+                          ) ,   -- SortOrder - int
+                          ( SELECT  SKU
+                            FROM    CUWebinarsDev.dbo.Options
+                            WHERE   idOption = @id2Insert
+                          ) , -- SKU - nvarchar(max)
+                          ( SELECT  ShowLiveNotifications
+                            FROM    CUWebinarsDev.dbo.Options
+                            WHERE   idOption = @id2Insert
+                          ) , -- ShowLiveNotifications - nvarchar(max)
+                          ( SELECT  ShowRecordingNotifications
+                            FROM    CUWebinarsDev.dbo.Options
+                            WHERE   idOption = @id2Insert
+                          ) ,-- ShowRecordingNotifications - nvarchar(max)
+                          ( SELECT  ShowShippedNotifications
+                            FROM    CUWebinarsDev.dbo.Options
+                            WHERE   idOption = @id2Insert
+                          ) , -- ShowShippedNotifications - nvarchar(max)
+                          ( SELECT  Stage1CheckoutConfirmationMsg
+                            FROM    CUWebinarsDev.dbo.Options
+                            WHERE   idOption = @id2Insert
+                          ) ,-- Stage1CheckoutConfirmationMsg - nvarchar(max)
+                          ( SELECT  Stage2CheckoutConfirmationMsg
+                            FROM    CUWebinarsDev.dbo.Options
+                            WHERE   idOption = @id2Insert
+                          ) , -- Stage2CheckoutConfirmationMsg - nvarchar(max)
+                          ( SELECT  Stage1EmailConfirmationMsg
+                            FROM    CUWebinarsDev.dbo.Options
+                            WHERE   idOption = @id2Insert
+                          ) , -- Stage1EmailConfirmationMsg - nvarchar(max)
+                          ( SELECT  Stage2EmailConfirmationMsg
+                            FROM    CUWebinarsDev.dbo.Options
+                            WHERE   idOption = @id2Insert
+                          ) -- Stage2EmailConfirmationMsg - nvarchar(max)
+                        )
+
+            END TRY
+            BEGIN CATCH
+
+			-- Call procedure to print error information.
+                --EXECUTE dbo.uspPrintError;
+
+    -- Roll back any active or uncommittable transactions before
+    -- inserting information in the ErrorLog.
+                IF XACT_STATE() <> 0
+                    BEGIN
+                        ROLLBACK TRANSACTION;
+                    END
+
+                EXECUTE dbo.uspLogError @Msg = @id2Insert, @ErrorLogID = @ErrorLogID OUTPUT;
+
+                PRINT '--==========--'
+                PRINT 'Error OptionsID: ' + CAST(@id2Insert AS VARCHAR)
+                PRINT '--==========--'
+			
+                FETCH NEXT FROM my_Cursor INTO @id2Insert
+            END CATCH
+
+            FETCH NEXT FROM my_Cursor INTO @id2Insert
+        
+        END
+    CLOSE my_Cursor
+    DEALLOCATE my_Cursor
+
+
+
+    SET IDENTITY_INSERT Option2RegType.dbo.RegType OFF
+END
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[MigrateRegTypesGroups]    Script Date: 4/7/2014 4:10:14 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[MigrateRegTypesGroups]
+AS
+BEGIN
+    SET NOCOUNT ON
+    PRINT '---------------------Starting [MigrateRegTypesGroups]'
+    DECLARE @ErrorLogID INT
+    DECLARE @id2Insert INT
+    DECLARE @QueryString VARCHAR(MAX)
+
+    DECLARE my_Cursor CURSOR
+    FOR
+    SELECT  idOptionGroup
+    FROM    CUWebinarsDev.dbo.OptionsGroups
+
+    OPEN my_Cursor
+
+    SET @id2Insert = 1
+	
+    SET IDENTITY_INSERT Option2RegType.dbo.RegTypesGroups ON
+
+    FETCH NEXT FROM my_Cursor INTO @id2Insert
+    WHILE @@FETCH_STATUS = 0
+        BEGIN    		
+            BEGIN TRY
+                INSERT  Option2RegType.dbo.RegTypesGroups
+                        ( idRegTypeGroup ,
+                          RegTypeGroupDesc ,
+                          SortOrder
+                        )
+                VALUES  ( @id2Insert ,
+                          ( SELECT  OptionGroupDesc
+                            FROM    CUWebinarsDev.dbo.OptionsGroups
+                            WHERE   idOptionGroup = @id2Insert
+                          ) ,
+                          ( SELECT  SortOrder
+                            FROM    CUWebinarsDev.dbo.OptionsGroups
+                            WHERE   idOptionGroup = @id2Insert
+                          )
+                        )
+
+            END TRY
+            BEGIN CATCH
+
+			-- Call procedure to print error information.
+                --EXECUTE dbo.uspPrintError;
+
+    -- Roll back any active or uncommittable transactions before
+    -- inserting information in the ErrorLog.
+                IF XACT_STATE() <> 0
+                    BEGIN
+                        ROLLBACK TRANSACTION;
+                    END
+
+                EXECUTE dbo.uspLogError @Msg = @id2Insert, @ErrorLogID = @ErrorLogID OUTPUT;
+
+                PRINT '--==========--'
+                PRINT 'Error OptionsGroups: ' + CAST(@id2Insert AS VARCHAR)
+                PRINT '--==========--'
+			
+                FETCH NEXT FROM my_Cursor INTO @id2Insert
+            END CATCH
+
+            FETCH NEXT FROM my_Cursor INTO @id2Insert
+        
+        END
+    CLOSE my_Cursor
+    DEALLOCATE my_Cursor
+
+
+
+    SET IDENTITY_INSERT Option2RegType.dbo.RegTypesGroups OFF
+END
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[MigrateRegTypesGroupsXref]    Script Date: 4/7/2014 4:10:14 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE Procedure [dbo].[MigrateRegTypesGroupsXref]
+AS
+BEGIN
+SET NOCOUNT ON
+    PRINT '---------------------Starting [MigrateRegTypesGroupsXref]'
+    DECLARE @ErrorLogID INT
+    DECLARE @id2Insert INT
+    DECLARE @QueryString VARCHAR(MAX)
+	
+    SET IDENTITY_INSERT Option2RegType.dbo.RegTypesGroupsXref ON
+    DECLARE my_Cursor CURSOR
+    FOR
+    SELECT  idWebinarOptionGroup
+    FROM    CUWebinarsDev.dbo.OptionsGroupsXref
+    WHERE   idWebinar IN ( SELECT   idWebinar
+                           FROM     CUWebinarsDev.dbo.Webinar
+                           WHERE    Status > 1 )
+
+    OPEN my_Cursor
+
+    SET @id2Insert = 1
+	
+    FETCH NEXT FROM my_Cursor INTO @id2Insert
+    WHILE @@FETCH_STATUS = 0
+        BEGIN    		
+            BEGIN TRY
+
+
+                INSERT  Option2RegType.dbo.RegTypesGroupsXref
+                        ( idWebinarRegTypeGroup ,
+                          idWebinar ,
+                          idRegTypeGroup
+                        )
+                VALUES  ( @id2Insert ,
+                          ( SELECT  idWebinar
+                            FROM    CUWebinarsDev.dbo.OptionsGroupsXref
+                            WHERE   idWebinarOptionGroup = @id2Insert
+                          ) ,
+                          ( SELECT  idOptionGroup
+                            FROM    CUWebinarsDev.dbo.OptionsGroupsXref
+                            WHERE   idWebinarOptionGroup = @id2Insert
+                          )
+                        )
+
+            END TRY
+            BEGIN CATCH
+
+			-- Call procedure to print error information.
+                --EXECUTE dbo.uspPrintError;
+
+    -- Roll back any active or uncommittable transactions before
+    -- inserting information in the ErrorLog.
+                IF XACT_STATE() <> 0
+                    BEGIN
+                        ROLLBACK TRANSACTION;
+                    END
+
+                EXECUTE dbo.uspLogError @Msg = @id2Insert, @ErrorLogID = @ErrorLogID OUTPUT;
+
+                PRINT '--==========--'
+                PRINT 'Error idWebinarOptionGroup: ' + CAST(@id2Insert AS VARCHAR)
+                PRINT '--==========--'
+			
+                FETCH NEXT FROM my_Cursor INTO @id2Insert
+            END CATCH
+
+            FETCH NEXT FROM my_Cursor INTO @id2Insert
+        
+        END
+    CLOSE my_Cursor
+    DEALLOCATE my_Cursor
+    SET IDENTITY_INSERT Option2RegType.dbo.RegTypesGroupsXref OFF
+
+END
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[MigrateRegTypesXref]    Script Date: 4/7/2014 4:10:14 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[MigrateRegTypesXref]
+AS
+BEGIN
+
+    PRINT '---------------------Starting [MigrateRegTypesXref]'
+    SET NOCOUNT ON
+
+    DECLARE @ErrorLogID INT
+    DECLARE @id2Insert INT
+    DECLARE @QueryString VARCHAR(MAX)
+
+    DECLARE my_Cursor CURSOR
+    FOR
+    SELECT  idOptionsXref
+    FROM    CUWebinarsDev.dbo.OptionsXref
+
+    OPEN my_Cursor
+
+    SET @id2Insert = 1
+	
+    SET IDENTITY_INSERT Option2RegType.dbo.RegTypesXref ON
+	
+    FETCH NEXT FROM my_Cursor INTO @id2Insert
+    WHILE @@FETCH_STATUS = 0
+        BEGIN    		
+            BEGIN TRY
+
+                INSERT  Option2RegType.dbo.RegTypesXref
+                        ( idRegTypesXref ,
+                          idRegTypeGroup ,
+                          idRegType
+                        )
+                VALUES  ( @id2Insert ,
+                          ( SELECT  idOptionGroup
+                            FROM    CUWebinarsDev.dbo.OptionsXref
+                            WHERE   idOptionsXref = @id2Insert
+                          ) ,
+                          ( SELECT  idOption
+                            FROM    CUWebinarsDev.dbo.OptionsXref
+                            WHERE   idOptionsXref = @id2Insert
+                          )
+                        )
+            END TRY
+            BEGIN CATCH
+
+			-- Call procedure to print error information.
+                --EXECUTE dbo.uspPrintError;
+
+    -- Roll back any active or uncommittable transactions before
+    -- inserting information in the ErrorLog.
+                IF XACT_STATE() <> 0
+                    BEGIN
+                        ROLLBACK TRANSACTION;
+                    END
+
+                EXECUTE dbo.uspLogError @Msg = @id2Insert, @ErrorLogID = @ErrorLogID OUTPUT;
+
+                PRINT '--==========--'
+                PRINT 'Error OptionsXRefID: ' + CAST(@id2Insert AS VARCHAR)
+                PRINT '--==========--'
+			
+                FETCH NEXT FROM my_Cursor INTO @id2Insert
+            END CATCH
+
+            FETCH NEXT FROM my_Cursor INTO @id2Insert
+        
+        END
+    CLOSE my_Cursor
+    DEALLOCATE my_Cursor
+
+
+
+    SET IDENTITY_INSERT Option2RegType.dbo.RegTypesXref OFF
+
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[MigrateTopic]    Script Date: 4/7/2014 4:10:14 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE Procedure [dbo].[MigrateTopic]
+AS
+BEGIN
+
+    PRINT '---------------------Starting MigrateOrders'
+	SET NOCOUNT ON 
+
+    DECLARE @ErrorLogID INT
+    DECLARE @id2Insert INT
+    DECLARE @QueryString VARCHAR(MAX)
+	
+    SET IDENTITY_INSERT Option2RegType.dbo.Topic ON 
+    DECLARE my_Cursor CURSOR
+    FOR
+    SELECT  idTopic
+    FROM    CUWebinarsDev.dbo.Topic
+
+    OPEN my_Cursor
+
+    SET @id2Insert = 1
+	
+    FETCH NEXT FROM my_Cursor INTO @id2Insert
+    WHILE @@FETCH_STATUS = 0
+        BEGIN    		
+            BEGIN TRY
+
+                INSERT  Option2RegType.dbo.Topic
+                        ( idTopic ,
+                          topicDesc ,
+                          idParentTopic ,
+                          topicHTML ,
+                          sortOrder
+                        )
+                VALUES  ( @id2Insert ,
+                          ( SELECT  topicDesc
+                            FROM    CUWebinarsDev.dbo.Topic
+                            WHERE   idTopic = @id2Insert
+                          ) ,
+                          ( SELECT  idParentTopic
+                            FROM    CUWebinarsDev.dbo.Topic
+                            WHERE   idTopic = @id2Insert
+                          ) ,
+                          ( SELECT  topicHTML
+                            FROM    CUWebinarsDev.dbo.Topic
+                            WHERE   idTopic = @id2Insert
+                          ) ,
+                          ( SELECT  sortOrder
+                            FROM    CUWebinarsDev.dbo.Topic
+                            WHERE   idTopic = @id2Insert
+                          )
+                        )
+            END TRY
+            BEGIN CATCH
+
+			-- Call procedure to print error information.
+                --EXECUTE dbo.uspPrintError;
+
+    -- Roll back any active or uncommittable transactions before
+    -- inserting information in the ErrorLog.
+                IF XACT_STATE() <> 0
+                    BEGIN
+                        ROLLBACK TRANSACTION;
+                    END
+
+                EXECUTE dbo.uspLogError @Msg = @id2Insert, @ErrorLogID = @ErrorLogID OUTPUT;
+
+                PRINT '--==========--'
+                PRINT 'Error idTopic: ' + CAST(@id2Insert AS VARCHAR)
+                PRINT '--==========--'
+			
+                FETCH NEXT FROM my_Cursor INTO @id2Insert
+            END CATCH
+
+            FETCH NEXT FROM my_Cursor INTO @id2Insert
+        
+        END
+    CLOSE my_Cursor
+    DEALLOCATE my_Cursor
+    SET IDENTITY_INSERT Option2RegType.dbo.Topic OFF
+
+
+END
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[MigrateWebinar]    Script Date: 4/7/2014 4:10:14 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[MigrateWebinar]
+AS
+BEGIN
+    SET NOCOUNT ON 
+
+    PRINT '---------------------Starting MigrateWebinar'
+    DECLARE @ErrorLogID INT
+    DECLARE @id2Insert INT
+    DECLARE @QueryString VARCHAR(MAX)
+
+    DECLARE my_Cursor CURSOR
+    FOR
+    SELECT  idWebinar
+    FROM    CUWebinarsDev.dbo.Webinar
+    WHERE   idWebinar IN ( SELECT   idWebinar
+                           FROM     CUWebinarsDev.dbo.Webinar
+                           WHERE    Status > 1 )
+
+    OPEN my_Cursor
+
+    SET @id2Insert = 1
+	
+    SET IDENTITY_INSERT Option2RegType.dbo.Webinar ON
+	
+    FETCH NEXT FROM my_Cursor INTO @id2Insert
+    WHILE @@FETCH_STATUS = 0
+        BEGIN    		
+            BEGIN TRY
+                INSERT  Option2RegType.dbo.Webinar
+                        ( idWebinar ,
+                          Description ,
+                          DescriptionLong ,
+                          ImageUrl ,
+                          SmallImageUrl ,
+                          Status ,
+                          Title ,
+                          Date ,
+                          LearnCaption ,
+                          LearnBody ,
+                          WhoAttend ,
+                          Duration ,
+                          RecordingUrl ,
+                          idPresenter ,
+                          ceu ,
+                          ConnectionInfo ,
+                          DateCreated ,
+                          DateChanged ,
+                          --idWebinarRegTypeGroup ,
+                          WebinarKey ,
+                          OrganizerKey ,
+                          OrganizerOAuthKey
+                        )
+                VALUES  ( @id2Insert ,
+                          ( SELECT  Description
+                            FROM    CUWebinarsDev.dbo.Webinar
+                            WHERE   idWebinar = @id2Insert
+                          ) , -- Description - nvarchar(max)
+                          ( SELECT  DescriptionLong
+                            FROM    CUWebinarsDev.dbo.Webinar
+                            WHERE   idWebinar = @id2Insert
+                          ) , -- DescriptionLong - nvarchar(max)
+                          ( SELECT  ImageUrl
+                            FROM    CUWebinarsDev.dbo.Webinar
+                            WHERE   idWebinar = @id2Insert
+                          ) ,-- ImageUrl - nvarchar(50)
+                          ( SELECT  ImageUrl
+                            FROM    CUWebinarsDev.dbo.Webinar
+                            WHERE   idWebinar = @id2Insert
+                          ) ,-- SmallImageUrl - nvarchar(50)
+                          ( SELECT  Status
+                            FROM    CUWebinarsDev.dbo.Webinar
+                            WHERE   idWebinar = @id2Insert
+                          ) ,-- Status - int
+                          ( SELECT  Title
+                            FROM    CUWebinarsDev.dbo.Webinar
+                            WHERE   idWebinar = @id2Insert
+                          ) ,-- Title - nvarchar(125)
+                          ( SELECT  Date
+                            FROM    CUWebinarsDev.dbo.Webinar
+                            WHERE   idWebinar = @id2Insert
+                          ) , -- Date - datetime
+                          ( SELECT  LearnCaption
+                            FROM    CUWebinarsDev.dbo.Webinar
+                            WHERE   idWebinar = @id2Insert
+                          ) ,-- LearnCaption - nvarchar(255)
+                          ( SELECT  LearnBody
+                            FROM    CUWebinarsDev.dbo.Webinar
+                            WHERE   idWebinar = @id2Insert
+                          ) , -- LearnBody - nvarchar(max)
+                          ( SELECT  WhoAttend
+                            FROM    CUWebinarsDev.dbo.Webinar
+                            WHERE   idWebinar = @id2Insert
+                          ) , -- WhoAttend - nvarchar(max)
+                          ( SELECT  Duration
+                            FROM    CUWebinarsDev.dbo.Webinar
+                            WHERE   idWebinar = @id2Insert
+                          ) , -- Duration - decimal
+                          ( SELECT  RecordingUrl
+                            FROM    CUWebinarsDev.dbo.Webinar
+                            WHERE   idWebinar = @id2Insert
+                          ) , -- RecordingUrl - nvarchar(300)
+                          ( SELECT  idPresenter
+                            FROM    CUWebinarsDev.dbo.Webinar
+                            WHERE   idWebinar = @id2Insert
+                          ) ,-- idPresenter - int
+                          ( SELECT  ceu
+                            FROM    CUWebinarsDev.dbo.Webinar
+                            WHERE   idWebinar = @id2Insert
+                          ) ,-- ceu - nvarchar(1000)
+                          ( SELECT  ConnectionInfo
+                            FROM    CUWebinarsDev.dbo.Webinar
+                            WHERE   idWebinar = @id2Insert
+                          ) , -- ConnectionInfo - nvarchar(max)
+                          ( SELECT  DateCreated
+                            FROM    CUWebinarsDev.dbo.Webinar
+                            WHERE   idWebinar = @id2Insert
+                          ) , -- DateCreated - datetime
+                          ( SELECT  DateChanged
+                            FROM    CUWebinarsDev.dbo.Webinar
+                            WHERE   idWebinar = @id2Insert
+                          ) , -- DateChanged - datetime
+                          --0 , -- idWebinarRegTypeGroup - int
+                          0 , -- WebinarKey - int
+                          0 , -- OrganizerKey - int
+                          N''  -- OrganizerOAuthKey - nvarchar(max)
+                        )
+            END TRY
+            BEGIN CATCH
+
+			-- Call procedure to print error information.
+                --EXECUTE dbo.uspPrintError;
+
+    -- Roll back any active or uncommittable transactions before
+    -- inserting information in the ErrorLog.
+                IF XACT_STATE() <> 0
+                    BEGIN
+                        ROLLBACK TRANSACTION;
+                    END
+
+                EXECUTE dbo.uspLogError @Msg = @id2Insert, @ErrorLogID = @ErrorLogID OUTPUT;
+
+                PRINT '--==========--'
+                PRINT 'Error WebinarID: ' + CAST(@id2Insert AS VARCHAR)
+                PRINT '--==========--'
+			
+                FETCH NEXT FROM my_Cursor INTO @id2Insert
+            END CATCH
+
+            FETCH NEXT FROM my_Cursor INTO @id2Insert
+        
+        END
+    CLOSE my_Cursor
+    DEALLOCATE my_Cursor
+
+
+
+    SET IDENTITY_INSERT Option2RegType.dbo.Webinar OFF
+END
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[MigrateWebinarFile]    Script Date: 4/7/2014 4:10:14 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[MigrateWebinarFile]
+AS
+BEGIN
+    SET NOCOUNT ON 
+    PRINT '---------------------Starting [MigrateWebinarFile]'
+    DECLARE @ErrorLogID INT
+    DECLARE @id2Insert INT
+    DECLARE @QueryString VARCHAR(MAX)
+
+    DECLARE my_Cursor CURSOR
+    FOR
+    SELECT  idWebinarFile
+    FROM    CUWebinarsDev.dbo.WebinarFile
+
+    OPEN my_Cursor
+
+    SET @id2Insert = 1
+	
+    SET IDENTITY_INSERT Option2RegType.dbo.WebinarFile ON
+	
+    FETCH NEXT FROM my_Cursor INTO @id2Insert
+    WHILE @@FETCH_STATUS = 0
+        BEGIN    		
+            BEGIN TRY
+                INSERT  Option2RegType.dbo.WebinarFile
+                        ( idWebinarFile ,
+                          idWebinar ,
+                          fileLocation ,
+                          fileDesc
+                        )
+                VALUES  ( @id2Insert ,
+                          ( SELECT  idWebinar
+                            FROM    CUWebinarsDev.dbo.WebinarFile
+                            WHERE   idWebinarFile = @id2Insert
+                          ) ,
+                          ( SELECT  fileLocation
+                            FROM    CUWebinarsDev.dbo.WebinarFile
+                            WHERE   idWebinarFile = @id2Insert
+                          ) ,
+                          ( SELECT  fileDesc
+                            FROM    CUWebinarsDev.dbo.WebinarFile
+                            WHERE   idWebinarFile = @id2Insert
+                          )
+                        )
+
+            END TRY
+            BEGIN CATCH
+
+			-- Call procedure to print error information.
+                --EXECUTE dbo.uspPrintError;
+
+    -- Roll back any active or uncommittable transactions before
+    -- inserting information in the ErrorLog.
+                IF XACT_STATE() <> 0
+                    BEGIN
+                        ROLLBACK TRANSACTION;
+                    END
+
+                EXECUTE dbo.uspLogError @Msg = @id2Insert, @ErrorLogID = @ErrorLogID OUTPUT;
+
+                PRINT '--==========--'
+                PRINT 'Error WebinarFileID: ' + CAST(@id2Insert AS VARCHAR)
+                PRINT '--==========--'
+			
+                FETCH NEXT FROM my_Cursor INTO @id2Insert
+            END CATCH
+
+            FETCH NEXT FROM my_Cursor INTO @id2Insert
+        
+        END
+    CLOSE my_Cursor
+    DEALLOCATE my_Cursor
+
+
+
+    SET IDENTITY_INSERT Option2RegType.dbo.WebinarFile OFF
+END
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[MigrateWebinarTopicXref]    Script Date: 4/7/2014 4:10:14 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE Procedure [dbo].[MigrateWebinarTopicXref]
+AS
+BEGIN
+
+    PRINT '---------------------Starting [MigrateWebinarTopicXref]'
+	SET NOCOUNT ON 
+    DECLARE @ErrorLogID INT
+    DECLARE @id2Insert INT
+    DECLARE @QueryString VARCHAR(MAX)
+	
+    SET IDENTITY_INSERT Option2RegType.dbo.WebinarTopicXref ON 
+    DECLARE my_Cursor CURSOR
+    FOR
+    SELECT  idWebinarTopicXref
+    FROM    CUWebinarsDev.dbo.WebinarTopicXref
+    WHERE   idWebinar IN ( SELECT   idWebinar
+                           FROM     CUWebinarsDev.dbo.Webinar
+                           WHERE    Status > 1 )
+
+    OPEN my_Cursor
+
+    SET @id2Insert = 1
+	
+    FETCH NEXT FROM my_Cursor INTO @id2Insert
+    WHILE @@FETCH_STATUS = 0
+        BEGIN    		
+            BEGIN TRY
+
+                INSERT  Option2RegType.dbo.WebinarTopicXref
+                        ( idWebinarTopicXref ,
+                          idWebinar ,
+                          idTopic
+                        )
+                VALUES  ( @id2Insert ,
+                          ( SELECT  idWebinar
+                            FROM    CUWebinarsDev.dbo.WebinarTopicXref
+                            WHERE   idWebinarTopicXref = @id2Insert
+                          ) ,
+                          ( SELECT  idTopic
+                            FROM    CUWebinarsDev.dbo.WebinarTopicXref
+                            WHERE   idWebinarTopicXref = @id2Insert
+                          )
+                        )
+
+            END TRY
+            BEGIN CATCH
+
+			-- Call procedure to print error information.
+                --EXECUTE dbo.uspPrintError;
+
+    -- Roll back any active or uncommittable transactions before
+    -- inserting information in the ErrorLog.
+                IF XACT_STATE() <> 0
+                    BEGIN
+                        ROLLBACK TRANSACTION;
+                    END
+
+                EXECUTE dbo.uspLogError @Msg = @id2Insert, @ErrorLogID = @ErrorLogID OUTPUT;
+
+                PRINT '--==========--'
+                PRINT 'Error WebinarTopicXref: ' + CAST(@id2Insert AS VARCHAR)
+                PRINT '--==========--'
+			
+                FETCH NEXT FROM my_Cursor INTO @id2Insert
+            END CATCH
+
+            FETCH NEXT FROM my_Cursor INTO @id2Insert
+        
+        END
+    CLOSE my_Cursor
+    DEALLOCATE my_Cursor
+    SET IDENTITY_INSERT Option2RegType.dbo.WebinarTopicXref OFF
+
+
+
+END
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[MigrateWebUser]    Script Date: 4/7/2014 4:10:14 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE Procedure [dbo].[MigrateWebUser]
+AS
+BEGIN
+    SET nocount ON;
+	
+    PRINT '---------------------Starting MigrateWebUser'
+    SET NOCOUNT ON;
+
+    DECLARE @ErrorLogID INT
+    DECLARE @id2Insert INT
+    DECLARE @QueryString VARCHAR(MAX)
+
+    DECLARE my_Cursor CURSOR
+    FOR
+    SELECT  idUser
+    FROM    CUWebinarsDev.dbo.WebUser
+
+    OPEN my_Cursor
+
+    SET @id2Insert = 1
+	
+    FETCH NEXT FROM my_Cursor INTO @id2Insert
+    WHILE @@FETCH_STATUS = 0
+        BEGIN    		
+            BEGIN TRY
+                INSERT  Option2RegType.dbo.WebUser
+                        ( idUser ,
+                          UserType ,
+                          AcctStatus ,
+                          DateCreated ,
+                          FirstName ,
+                          LastName ,
+                          Initial ,
+                          idUserInstitution ,
+                          email ,
+                          futureMail ,
+                          generalComments ,
+                          taxExempt ,
+                          idSubscriptionDiscount ,
+                          timeZone ,
+                          Title
+                        )
+                VALUES  ( @id2Insert , -- idUser - int
+                          ( SELECT  UserType
+                            FROM    CUWebinarsDev.dbo.WebUser
+                            WHERE   idUser = @id2Insert
+                          ) ,
+                          ( SELECT  AcctStatus
+                            FROM    CUWebinarsDev.dbo.WebUser
+                            WHERE   idUser = @id2Insert
+                          ) ,
+                          ( SELECT  DateCreated
+                            FROM    CUWebinarsDev.dbo.WebUser
+                            WHERE   idUser = @id2Insert
+                          ) ,
+                          ( SELECT  FirstName
+                            FROM    CUWebinarsDev.dbo.WebUser
+                            WHERE   idUser = @id2Insert
+                          ) ,
+                          ( SELECT  LastName
+                            FROM    CUWebinarsDev.dbo.WebUser
+                            WHERE   idUser = @id2Insert
+                          ) ,
+                          ( SELECT  Initial
+                            FROM    CUWebinarsDev.dbo.WebUser
+                            WHERE   idUser = @id2Insert
+                          ) ,
+                          ( SELECT  idUserInstitution
+                            FROM    CUWebinarsDev.dbo.WebUser
+                            WHERE   idUser = @id2Insert
+                          ) ,
+                          ( SELECT  email
+                            FROM    CUWebinarsDev.dbo.WebUser
+                            WHERE   idUser = @id2Insert
+                          ) ,
+                          ( SELECT  futureMail
+                            FROM    CUWebinarsDev.dbo.WebUser
+                            WHERE   idUser = @id2Insert
+                          ) ,
+                          ( SELECT  generalComments
+                            FROM    CUWebinarsDev.dbo.WebUser
+                            WHERE   idUser = @id2Insert
+                          ) ,
+                          ( SELECT  taxExempt
+                            FROM    CUWebinarsDev.dbo.WebUser
+                            WHERE   idUser = @id2Insert
+                          ) ,
+                          ( SELECT  idSubscriptionDiscount
+                            FROM    CUWebinarsDev.dbo.WebUser
+                            WHERE   idUser = @id2Insert
+                          ) ,
+                          ( SELECT  timeZone
+                            FROM    CUWebinarsDev.dbo.WebUser
+                            WHERE   idUser = @id2Insert
+                          ) ,
+                          ( SELECT  Title
+                            FROM    CUWebinarsDev.dbo.WebUser
+                            WHERE   idUser = @id2Insert
+                          )
+                        )
+
+            END TRY
+            BEGIN CATCH
+
+			-- Call procedure to print error information.
+                --EXECUTE dbo.uspPrintError;
+
+    -- Roll back any active or uncommittable transactions before
+    -- inserting information in the ErrorLog.
+                IF XACT_STATE() <> 0
+                    BEGIN
+                        ROLLBACK TRANSACTION;
+                    END
+
+                EXECUTE dbo.uspLogError @Msg=@id2Insert, @ErrorLogID = @ErrorLogID OUTPUT;
+
+                PRINT '--==========--'
+                PRINT 'Error WebUserID: ' + CAST(@id2Insert AS VARCHAR)
+                PRINT '--==========--'
+			
+                FETCH NEXT FROM my_Cursor INTO @id2Insert
+            END CATCH
+
+            FETCH NEXT FROM my_Cursor INTO @id2Insert
+        
+        END
+    CLOSE my_Cursor
+    DEALLOCATE my_Cursor
+
+
+END
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[uspLogError]    Script Date: 4/7/2014 4:10:14 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- uspLogError logs error information in the ErrorLog table about the 
+-- error that caused execution to jump to the CATCH block of a 
+-- TRY...CATCH construct. This should be executed from within the scope 
+-- of a CATCH block otherwise it will return without inserting error 
+-- information. 
+CREATE Procedure [dbo].[uspLogError]
+    @Msg VARCHAR(MAX) = NULL ,
+    @ErrorLogID [int] = 0 OUTPUT -- contains the ErrorLogID of the row inserted
+AS -- by uspLogError in the ErrorLog table
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Output parameter value of 0 indicates that error 
+    -- information was not logged
+    SET @ErrorLogID = 0;
+
+    BEGIN TRY
+        -- Return if there is no error information to log
+        IF ERROR_NUMBER() IS NULL
+            RETURN;
+			
+        -- Return if inside an uncommittable transaction.
+        -- Data insertion/modification is not allowed when 
+        -- a transaction is in an uncommittable state.
+        IF XACT_STATE() = -1
+            BEGIN
+                PRINT 'Cannot log error since the current transaction is in an uncommittable state. '
+                    + 'Rollback the transaction before executing uspLogError in order to successfully log error information.';
+                RETURN;
+            END
+
+        SET @Msg = @Msg + ' : ' + ERROR_MESSAGE()
+        INSERT  [dbo].[ErrorLog]
+                ( [UserName] ,
+                  [ErrorNumber] ,
+                  [ErrorSeverity] ,
+                  [ErrorState] ,
+                  [ErrorProcedure] ,
+                  [ErrorLine] ,
+                  [ErrorMessage] ,
+                  ErrorTime
+                )
+        VALUES  ( CONVERT(SYSNAME, CURRENT_USER) ,
+                  ERROR_NUMBER() ,
+                  ERROR_SEVERITY() ,
+                  ERROR_STATE() ,
+                  ERROR_PROCEDURE() ,
+                  ERROR_LINE() ,
+                  @Msg ,
+                  GETDATE()
+                );
+
+        -- Pass back the ErrorLogID of the row inserted
+        SET @ErrorLogID = @@IDENTITY;
+    END TRY
+    BEGIN CATCH
+        PRINT 'An error occurred in stored procedure uspLogError: ';
+        EXECUTE [dbo].[uspPrintError];
+        RETURN -1;
+    END CATCH
+END;
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[uspPrintError]    Script Date: 4/7/2014 4:10:14 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- uspPrintError prints error information about the error that caused 
+-- execution to jump to the CATCH block of a TRY...CATCH construct. 
+-- Should be executed from within the scope of a CATCH block otherwise 
+-- it will return without printing any error information.
+CREATE Procedure [dbo].[uspPrintError]
+AS 
+    BEGIN
+        SET NOCOUNT ON;
+
+    -- Print error information. 
+        PRINT 'Error ' + CONVERT(VARCHAR(50), ERROR_NUMBER()) + ', Severity '
+            + CONVERT(VARCHAR(5), ERROR_SEVERITY()) + ', State '
+            + CONVERT(VARCHAR(5), ERROR_STATE()) + ', Procedure '
+            + ISNULL(ERROR_PROCEDURE(), '-') + ', Line '
+            + CONVERT(VARCHAR(5), ERROR_LINE());
+        PRINT ERROR_MESSAGE();
+    END;
+
+
+GO
