@@ -194,7 +194,7 @@ GO
 CREATE Procedure [dbo].[MigrateAffiliate]
 AS
 BEGIN
-  
+
     PRINT '---------------------Starting [MigrateAffiliate]'
 	SET NOCOUNT ON 
 	  DECLARE @ErrorLogID INT
@@ -236,8 +236,7 @@ BEGIN
                           TechEmail ,
                           TechPhone ,
                           TechName ,
-                          EmailPromo ,
-                          WebUser_Id
+                          EmailPromo
                         )
                 VALUES  ( @id2Insert , -- idUserAff - int
                           ( SELECT  CommissionModel
@@ -323,10 +322,6 @@ BEGIN
                           ( SELECT  EmailPromo
                             FROM    CUWebinarsDev.dbo.Affiliate
                             WHERE   idUserAff = @id2Insert
-                          ) ,
-                          ( SELECT  WebUser_Id
-                            FROM    CUWebinarsDev.dbo.Affiliate
-                            WHERE   idUserAff = @id2Insert
                           )
                         )
 
@@ -360,6 +355,7 @@ BEGIN
 
 
 END
+
 
 
 GO

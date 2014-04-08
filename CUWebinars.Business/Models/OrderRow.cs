@@ -14,6 +14,7 @@ namespace CUWebinars.Business.Models
         public int idOrder { get; set; }
         public int idWebinar { get; set; }
         public int idRegType { get; set; }
+        public int RegistrantKey { get; set; }
         public decimal UnitPrice { get; set; }
         public decimal RowPrice { get; set; }
         public decimal Royalty { get; set; }

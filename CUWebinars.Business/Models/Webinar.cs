@@ -37,7 +37,6 @@ namespace CUWebinars.Business.Models
         public System.DateTime DateCreated { get; set; }
         public System.DateTime DateChanged { get; set; }
         public virtual ICollection<RegTypesGroupsXref> RegTypesGroupsXref { get; set; }
-        //public virtual ICollection<RegType> RegTypes { get; set; }
         public virtual ICollection<OrderRow> OrderRows { get; set; }
         public virtual Presenter Presenter { get; set; }
         public virtual ICollection<WebinarFile> WebinarFiles { get; set; }
