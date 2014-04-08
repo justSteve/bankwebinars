@@ -39,11 +39,12 @@
 @*<script src="@Url.Content("~/Scripts/app/cart/additional-location-modal.js")"></script>*@
 <script>
 
-    var numberOfAdditionalLocations,
-        additionalLocationEmailWrapper,
+    var additionalLocationEmailWrapper,
+        breakSuffix = '-break',
         deleteItem,
         locationsSpanPrefix = 'LocationSpan-',
-        breakSuffix = '-break';
+        numberOfAdditionalLocations;
+        
 
     deleteItem = function (event) {
         numberOfAdditionalLocations--;
@@ -54,22 +55,21 @@
         $('#' + spanToRemove).hide(500, function () {
             $(this).remove();
             $('#' + idx + breakSuffix).remove();
-
-            var inputsRemaining = additionalLocationEmailWrapper.find('i');
-
-            //if (inputsRemaining.length < 1) {
-            //    AdditionalLocationSubmitButton.hide(500, function() {
-            //        $(this).remove();
-            //    });
-            //}
-
         });
+
+        if (numberOfAdditionalLocations < 1) {
+            $('#SumbitAdditionalLocationsForm').hide(300, function () {
+                $(this).remove();
+            });
+        }
     };
 
     $(function () {
-
+        
         console.log($('#WebUser_idUser').val().toString());
         numberOfAdditionalLocations = $('#AdditionalLocationEmailWrapper input[type="text"').length;
+        if (numberOfAdditionalLocations < 1)
+            $('#SumbitAdditionalLocationsForm').remove();
 
         wireUpHandlers();
     });
@@ -81,9 +81,19 @@
 
         $('#AddInputsButton').on('click', function () {
 
+            if (numberOfAdditionalLocations == 0) {
+                $('#AdditionalLocationEmailWrapper').after($('<button>',
+                {
+                    id: 'SumbitAdditionalLocationsForm',
+                    text: 'Submit',
+                    'class': 'btn btn-primary',
+                }));
+            }
+
             additionalLocationEmailWrapper.append('<span id="' + locationsSpanPrefix + numberOfAdditionalLocations + '"><input id="AdditionalLocationEmail_' + numberOfAdditionalLocations + '" name="AddAdditionalLocationViewModel.Emails[' + numberOfAdditionalLocations + ']" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + numberOfAdditionalLocations + '-AdditionLocationEmail-delete"></i></span> <br id="' + numberOfAdditionalLocations + breakSuffix + '">');
             additionalLocationEmailWrapper.find('i#' + numberOfAdditionalLocations + '-AdditionLocationEmail-delete').on('click', deleteItem);
             numberOfAdditionalLocations++;
+
         });
 
         additionalLocationEmailWrapper.find('i').on('click', deleteItem);

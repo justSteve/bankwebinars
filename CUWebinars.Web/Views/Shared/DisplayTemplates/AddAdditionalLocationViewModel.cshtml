@@ -6,10 +6,24 @@
 <div style="padding-left: 50px;">
     <b>Each additional location adds $150 to your registration:</b> @*TODO: this is hard coded. Need to change that.*@
     <div id="AdditionalLocationContainer">
-        <button value="Add?" type="button" class="btn btn-success btn-small" name="AddLocationsButton" id="AddLocationsButton">Add?</button>
-        @*<a href="#AdditionalLocationsModal" id="addlocationsbutton" role="button" class="btn" data-toggle="modal">Launch demo modal</a>*@        
-        @*<div id="NewLocationsContainer"></div>*@
-    </div> 
+        
+        <div class="row pull-right">
+            <button value="Add?" type="button" class="btn btn-success btn-small" name="AddLocationsButton" id="AddLocationsButton">Add?</button>
+        </div>
+
+        @{
+            
+            var emails = Model.AdditionalLocations.Select(al => al.Email).ToArray();
+
+            <ol>
+                @for (int i = 0; i < emails.Length; i++)
+                {
+                    <li>@emails[i]</li>
+                }
+            </ol>
+        }
+
+        </div> 
 </div>
 
 <!-- Button to trigger modal -->
