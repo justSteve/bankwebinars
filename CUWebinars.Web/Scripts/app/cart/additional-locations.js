@@ -1,16 +1,16 @@
 ﻿
 $(document).ready(function () {
 
-    var modalFormOptions = {
-        keyboard: true,
-        show: true,
-        remote: '/Webinar/GetAdditionalLocationsByOrderId'
-    };
+    //var modalFormOptions = {
+    //    keyboard: true,
+    //    show: true,
+    //    remote: '/Webinar/GetAdditionalLocationByOrderId'
+    //};
 
-    $('#LoadAddLocationsModalButton').on('click', function () {
-        modalFormOptions.remote = modalFormOptions.remote + '/' + $('#CheckoutOptionsViewModel_Order_idOrder').val();
-        $('#SignupModal').modal(modalFormOptions);
-    });
+    //$('#LoadAddLocationsModalButton').on('click', function () {
+    //    modalFormOptions.remote = modalFormOptions.remote + '/' + $('#CheckoutOptionsViewModel_Order_idOrder').val();
+    //    $('#SignupModal').modal(modalFormOptions);
+    //});
 
 function CheckEmails() {
     $('[name^="Email"]').each(function (nr) {
@@ -38,10 +38,10 @@ function AddLocation(countIterator, cost) {
 
     var inputNode = $(' <div id="line_' + (countIterator) + '">' + countIterator + '. <input type="text" onblur=CheckEmails(); id="Email_' + (countIterator) + '" name="Email_' + (countIterator) + '" class="emailInput"  placeholder="email" size="30"/>&nbsp;<a class="btn btn-mini btn-danger" onclick=RemoveLocation("line_' + (countIterator) + '"); href="#"><i class="icon-trash icon-large"></i> Remove?</a> ' + cost + '</div>');
     $("#" + parentForm + " .action").val("add");
-    $("#CollectAdditionalLocations_" + formID).append(inputNode);
+    $("#CollectAdditionalLocation_" + formID).append(inputNode);
     $("#" + parentForm + " [name=connectionsCount]").val((ConnCount) * 1);
-    $("#CollectAdditionalLocations_" + formID + " a").hide();
-    $("#CollectAdditionalLocations_" + formID + " input").focus();
+    $("#CollectAdditionalLocation_" + formID + " a").hide();
+    $("#CollectAdditionalLocation_" + formID + " input").focus();
     $("#" + parentForm).animate({ scrollTop: $("#" + parentForm).scrollHeight }, 1000);
 }
 
@@ -93,7 +93,7 @@ var timer; // external so it's value is held over all instances of the timer fun
             collectEmails = collectEmails + '<input type="text" id="Email_' + i + '" name="Email_' + i + '" class="emailInput"  size="30"   ><br>';
         }
 
-        $('#collectAdditionalLocations').html(collectEmails);
+        $('#collectAdditionalLocation').html(collectEmails);
         $('#Email_0').focus();
     });
 
@@ -118,7 +118,7 @@ var timer; // external so it's value is held over all instances of the timer fun
                 $("#NumLocationsMsg_" + formID).hide();
                 // $("#" + parentForm + " [name=connectionsCount]").val((result.numLocations) * 1);
                 //$("#[id^=SubmitAddLocations]").hide();
-                $("[id^=CollectAdditionalLocations] a").show();
+                $("[id^=CollectAdditionalLocation] a").show();
                 //$("[id^=ShowsAddLocTotalCost]").html(result.optionsCost);
                 $("#ProgressDialogBS").modal('hide');
             }

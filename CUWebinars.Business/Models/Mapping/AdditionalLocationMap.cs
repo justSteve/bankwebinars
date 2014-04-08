@@ -6,20 +6,23 @@ namespace CUWebinars.Business.Models.Mapping
     {
         public AdditionalLocationMap()
         {
-            //  Primary Key
-            HasKey(a => a.Id);
+            // Primary Key
+            HasKey(t => t.idAdditionalLocation);
 
-            // Properties
             // Table & Column Mappings
-            Property(t => t.Id).HasColumnName("Id");
-            Property(t => t.Email).HasColumnName("Email").IsRequired().IsVariableLength().HasMaxLength(150);
-            Property(t => t.FullName).HasColumnName("FullName").IsOptional().IsVariableLength().HasMaxLength(100);
-            Property(t => t.idOrderRowOption).HasColumnName("idOrderRowOption").IsRequired();
-
+            ToTable("AdditionalLocation");
+        //            public int Id { get; set; }
+        //public int idOrderRow { get; set; }
+        //public decimal Price { get; set; }
+        //public string DescriptionPromo { get; set; }
+        //public string DescriptionConfirm { get; set; }
+        //public bool TaxExempt { get; set; }
+        //public virtual OrderRow OrderRow { get; set; }
             // Relationships
-            HasRequired(a => a.OrderRowOption)
-                .WithMany(o => o.AdditionalLocations)
-                .HasForeignKey(a => a.idOrderRowOption);
+            //HasRequired(a => a.OrderRow)
+            //    .WithRequiredPrincipal(a => a.AdditionalLocation);
+
+            //    .HasForeignKey(a => a.idOrderRow);
         }
     }
 }

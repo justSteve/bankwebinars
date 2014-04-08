@@ -83,22 +83,14 @@ namespace CUWebinars.Web.App_Start
             const string webuserRepository = "WebUserRepository";
             const string orderRepository = "OrderRepository";
             const string refdataRepository = "RefDataRepository";
+            const string regTypeRepository = "RegTypeRepository";
             const string refDataRepositoryForTokenizer = "RefDataRepositoryForTokenizer";
             const string optionRepository = "OptionRepository";
 
             string baseUrl = HttpRuntime.AppDomainAppPath;
             kernel.Bind<IStateService>().To<StateService>();
 
-            kernel.Bind<IRefDataRepository>().To<RefDataRepository>().InRequestScope().Named(refdataRepository);
-            kernel.Bind<TTSWebinarsContext>().To<TTSWebinarsContext>().InTransientScope();
-
-            var config = MembershipRebootConfig.Create(baseUrl, 
-                kernel.Get<IStateService>(),
-                kernel.Get<IRefDataRepository>(
-                    refdataRepository, 
-                    new Parameter("contextForTokenizer", kernel.Get<TTSWebinarsContext>(), true)
-                    )
-                );
+            var config = MembershipRebootConfig.Create(baseUrl, kernel.Get<IStateService>());
             var ttsConfig = TtsConfig.Create(baseUrl);
 
             kernel.Bind<MembershipRebootConfiguration>().ToConstant(config);
@@ -113,7 +105,6 @@ namespace CUWebinars.Web.App_Start
             kernel.Bind<IInstitutionRepository>().To<InstitutionRepository>().InRequestScope();
             kernel.Bind<IUserAccountRepository>().To<DefaultUserAccountRepository>();
             kernel.Bind<IOptionRepository>().To<OptionRepository>().InRequestScope().Named(optionRepository);
-            //kernel.Bind<IRefDataRepository>().To<RefDataRepository>().InRequestScope().Named(refdataRepository);
             kernel.Bind<IOrderManagementService>().ToMethod(ctx =>
             {
                 var context = ctx.Kernel.Get<TTSWebinarsContext>();
@@ -121,7 +112,7 @@ namespace CUWebinars.Web.App_Start
 
                 var orderManagementService = new OrderManagementService(
                     ctx.Kernel.Get<IAffiliateRepository>(affiliateRepository, param),
-                    ctx.Kernel.Get<IOptionRepository>(optionRepository, param),
+                    ctx.Kernel.Get<IRegTypeRepository>(regTypeRepository, param),
                     ctx.Kernel.Get<IOrderRepository>(orderRepository, param),
                     ctx.Kernel.Get<IRefDataRepository>(refdataRepository, param),
                     ctx.Kernel.Get<IWebUserRepository>(webuserRepository, param),

@@ -52,7 +52,7 @@ DataTable.models.oSettings = {
 		/**
 		 * Enable filtering on the table or not. Note that if this is disabled
 		 * then there is no filtering at all on the table, including fnFilter.
-		 * To just remove the filtering input use sDom and remove the 'f' option.
+		 * To just remove the filtering input use sDom and remove the 'f' RegType.
 		 * Note that this parameter will be set by the initialisation routine. To
 		 * set a default use {@link DataTable.defaults}.
 		 *  @type boolean

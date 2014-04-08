@@ -26,7 +26,7 @@ namespace CUWebinars.Business.Repository
         public Webinar FindByIdLoaded(int id)
         {
             var webinar = items.Include(w => w.OrderRows)
-                .Include(w => w.OptionsGroupsXrefs)
+                //.Include(w => w.OptionsGroupsXrefs)
                 .Include(w => w.Presenter)
                 .Include(w => w.WebinarFiles)
                 .Include(w => w.WebinarTopicXrefs)
@@ -77,9 +77,9 @@ namespace CUWebinars.Business.Repository
         public IQueryable<Order> GetOrdersByWebinar(int webinarId)
         {
             return ((TTSWebinarsContext)db).Orders.Where(o => o.OrderRows.Single().Webinar.idWebinar == webinarId
-                    && (o.OrderRows.Single().Status == OrderRowStatus.Billed
-                        || o.OrderRows.Single().Status == OrderRowStatus.Paid
-                        || o.OrderRows.Single().Status == OrderRowStatus.Submitted));
+                    && (o.OrderStatus == OrderStatus.Billed
+                        || o.OrderStatus == OrderStatus.Paid
+                        || o.OrderStatus == OrderStatus.Submitted));
         }
 
         public IQueryable<Webinar> GetByTopic(int topicId)
@@ -94,20 +94,25 @@ namespace CUWebinars.Business.Repository
             return webinars;
         }
 
+        public List<RegType> GetCurrentOptions(int idWebinar)
+        {
+            throw new System.NotImplementedException();
+        }
+
         /// <summary>
         /// The act of getting the correct set of options to display is complex and spelled out
         /// </summary>
         /// <param name="idWebinar"></param>
-        /// <returns>List of Type Option</returns>
-        public List<Option> GetCurrentOptions(int idWebinar)
-        {
-            //resolves: Impediment 6:Implement GetCurrentOptions Method
-            var paramWebinarID = new SqlParameter("idWebinar", SqlDbType.Int) { Value = idWebinar };
-            List<Option> myOptions = ((TTSWebinarsContext)db).Options.SqlQuery(
-                "dbo.GetWebinarsOptions @idWebinar", paramWebinarID).ToList();
+        /// <returns>List of Type RegType</returns>
+        //public List<RegType> GetCurrentOptions(int idWebinar)
+        //{
+        //    //resolves: Impediment 6:Implement GetCurrentOptions Method
+        //    var paramWebinarID = new SqlParameter("idWebinar", SqlDbType.Int) { Value = idWebinar };
+        //    List<RegType> myOptions = ((TTSWebinarsContext)db).Options.SqlQuery(
+        //        "dbo.GetWebinarsOptions @idWebinar", paramWebinarID).ToList();
 
-            return myOptions;
-        }
+        //    return myOptions;
+        //}
 
         public IList<Order> GetOrdersByWebinarForConnectionInfo(int id)
         {
@@ -121,10 +126,11 @@ namespace CUWebinars.Business.Repository
                     //TODO: log this exception condition
                     continue;
                 }
-                if (((TTSWebinarsContext)db).Options.Find((int)row.RegistrationType).ShowLiveNotifications == "No"
-                    && row.Status == OrderRowStatus.Abandoned
-                    || row.Status == OrderRowStatus.InProcess
-                    || row.Status == OrderRowStatus.Canceled)
+                if (((TTSWebinarsContext)db).RegTypes.Find(row.RegistrationType).ShowLiveNotifications == "No"
+                    //&& Order.OrderStatus == OrderStatus.Abandoned
+                    //|| row.Status == OrderStatus.InProcess
+                    //|| row.Status == OrderStatus.Canceled
+                    )
                 {
                     continue;
                 }
@@ -134,9 +140,9 @@ namespace CUWebinars.Business.Repository
             //return (from order in orders let row = order.OrderRows.SingleOrDefault()
             //        where row != null 
             //        where (((TTSWebinarsContext)db).Options.Find((int) row.RegistrationType).ShowLiveNotifications != "No" 
-            //        || row.Status != OrderRowStatus.Abandoned) 
-            //        && row.Status != OrderRowStatus.InProcess 
-            //        && row.Status != OrderRowStatus.Canceled select order).ToList();
+            //        || row.Status != OrderStatus.Abandoned) 
+            //        && row.Status != OrderStatus.InProcess 
+            //        && row.Status != OrderStatus.Canceled select order).ToList();
         }
     }
 }

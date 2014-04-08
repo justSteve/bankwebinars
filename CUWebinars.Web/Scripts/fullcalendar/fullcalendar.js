@@ -4073,7 +4073,7 @@ function AgendaEventRenderer() {
 												snapMinutes
 										)
 									);
-									eventElement.draggable('option', 'grid', [colWidth, 1]);
+									eventElement.draggable('RegType', 'grid', [colWidth, 1]);
 									allDay = false;
 								}
 							}else{
@@ -4085,7 +4085,7 @@ function AgendaEventRenderer() {
 						resetElement();
 						revert = true;
 					}
-					eventElement.draggable('option', 'revert', revert);
+					eventElement.draggable('RegType', 'revert', revert);
 				}, ev, 'drag');
 			},
 			stop: function(ev, ui) {
@@ -4115,7 +4115,7 @@ function AgendaEventRenderer() {
 				eventElement
 					.width(origWidth)
 					.height('')
-					.draggable('option', 'grid', null);
+					.draggable('RegType', 'grid', null);
 				allDay = true;
 			}
 		}
@@ -4214,7 +4214,7 @@ function AgendaEventRenderer() {
 				}
 
 				// if out-of-bounds, revert when done, and vice versa.
-				eventElement.draggable('option', 'revert', !isInBounds);
+				eventElement.draggable('RegType', 'revert', !isInBounds);
 
 			},
 			stop: function(ev, ui) {
@@ -4252,7 +4252,7 @@ function AgendaEventRenderer() {
 			if (isInBounds) {
 				if (isAllDay) {
 					timeElement.hide();
-					eventElement.draggable('option', 'grid', null); // disable grid snapping
+					eventElement.draggable('RegType', 'grid', null); // disable grid snapping
 					renderDayOverlay(
 						addDays(cloneDate(event.start), dayDelta),
 						addDays(exclEndDay(event), dayDelta)
@@ -4261,7 +4261,7 @@ function AgendaEventRenderer() {
 				else {
 					updateTimeText(minuteDelta);
 					timeElement.css('display', ''); // show() was causing display=inline
-					eventElement.draggable('option', 'grid', [colWidth, snapHeight]); // re-enable grid snapping
+					eventElement.draggable('RegType', 'grid', [colWidth, snapHeight]); // re-enable grid snapping
 				}
 			}
 		}
@@ -5656,7 +5656,7 @@ function DayEventRenderer() {
 				trigger('eventDragStart', eventElement, event, ev, ui);
 				hideEvents(event, eventElement);
 				hoverListener.start(function(cell, origCell, rowDelta, colDelta) {
-					eventElement.draggable('option', 'revert', !cell || !rowDelta && !colDelta);
+					eventElement.draggable('RegType', 'revert', !cell || !rowDelta && !colDelta);
 					clearOverlays();
 					if (cell) {
 						var origDate = cellToDate(origCell);

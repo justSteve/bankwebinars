@@ -82,29 +82,29 @@ namespace CUWebinars.Business.Repository
             }
         }
 
-        public IList<Option> FindOptionsByWebinarId(int id, bool detached)
+        public IList<RegType> FindRegTypesByWebinarId(int id, bool detached)
         {
             using (var context = new TTSWebinarsContext())
             {
                 context.Configuration.ProxyCreationEnabled = false;
 
                 var webinars = context.Webinars
-                    .Include(w => w.OptionsGroupsXrefs.Select(o => o.OptionsGroup.OptionsXrefs.Select(ox => ox.Option)))
+                    .Include(w => w.RegTypesGroupsXref.Select(o => o.RegTypesGroup.RegTypesXrefs.Select(ox => ox.RegType)))
                     .Where(w => w.idWebinar == id)
                     .ToList();
 
                 // There can be only one OptionsGroupsXrefs per webinar at any one time
-                var optionsGroupsXrefs = webinars.SelectMany(w => w.OptionsGroupsXrefs);
+                var optionsGroupsXrefs = webinars.SelectMany(w => w.RegTypesGroupsXref);
 
                 //  For each of those OptionsGroupsXrefs, get the relevant OptionGroup
-                var optionsGroups = optionsGroupsXrefs.Select(o => o.OptionsGroup);
+                var optionsGroups = optionsGroupsXrefs.Select(o => o.RegTypesGroup);
 
                 //  Get all OptionsXrefs for those OptionGroups
                 var optionsXrefs = optionsGroups
-                    .SelectMany(opt => opt.OptionsXrefs);
+                    .SelectMany(opt => opt.RegTypesXrefs);
 
                 //  Finally, get the options
-                var options = optionsXrefs.Select(o => o.Option).ToList();
+                var options = optionsXrefs.Select(o => o.RegType).ToList();
 
                 if (!detached)
                     return options;

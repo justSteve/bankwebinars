@@ -36,7 +36,7 @@ namespace CUWebinars.Business.Repository
             return newOrder;
         }
 
-        public OrderRow CreateOrderRow(Webinar webinar, OrderRowOption orderRowOption, string alternateEmail, int registrationType)
+        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation AdditionalLocation, string alternateEmail, RegType registrationType)
         {
             var strongTypedContext = (TTSWebinarsContext) db;
             var entry = strongTypedContext.Entry(webinar);
@@ -49,12 +49,12 @@ namespace CUWebinars.Business.Repository
             
             var newOrderRow = strongTypedContext.OrderRows.Create();
 
-            if (orderRowOption != null)
-                newOrderRow.OrderRowOptions.Add(orderRowOption);
+            //if (AdditionalLocation != null)
+            //    newOrderRow.AdditionalLocation.Add(AdditionalLocation);
 
             newOrderRow.Webinar = webinar;
             newOrderRow.RegistrationType = registrationType;
-            newOrderRow.AlternateEmail = alternateEmail;
+            //newOrderRow.AlternateEmail = alternateEmail;
             
             strongTypedContext.OrderRows.Add(newOrderRow);
 
@@ -76,37 +76,37 @@ namespace CUWebinars.Business.Repository
             return newOrderRow;
         }
 
-        public OrderRowOption CreateOrderRowOption(
-            Option option, 
+        public AdditionalLocation CreateOrderRowOption(
+            RegType regType, 
             string optionDescription, 
             decimal price, 
-            string [] additionalLocationsEmails)
+            string [] AdditionalLocationEmails)
         {
             var strongTypedContext = (TTSWebinarsContext) db;
-            //var entry = db.Entry(option);
+            //var entry = db.Entry(RegType);
 
             //if (entry.State != EntityState.Detached)
             //    throw new Exception("Webinar must be detached from its original DbContext");
 
-            //strongTypedContext.Options.Attach(option);
-            //db.Entry(option).State = EntityState.Modified;
+            //strongTypedContext.Options.Attach(RegType);
+            //db.Entry(RegType).State = EntityState.Modified;
 
-            var additionalLocations = new List<AdditionalLocation>(additionalLocationsEmails.Length);
+            //var AdditionalLocation = new List<AdditionalEmails>(AdditionalLocationEmails.Length);
             
-            additionalLocations.AddRange(additionalLocationsEmails.Select(email => new AdditionalLocation
-            {
-                Email = email
-            }));
+            //AdditionalLocation.AddRange(AdditionalLocationEmails.Select(email => new AdditionalEmails
+            //{
+            //    Email = email
+            //}));
 
 
-            var newOrderRowOption = strongTypedContext.OrderRowOptions.Create();
-            newOrderRowOption.Option = option;
-            newOrderRowOption.idOption = option.idOption;
-            newOrderRowOption.OptionDescription = optionDescription;
-            newOrderRowOption.OptionPrice = price;
-            newOrderRowOption.Type = "Additional Location"; // TODO: check this with Stephen.
-            newOrderRowOption.AdditionalLocations = additionalLocations;
-            strongTypedContext.OrderRowOptions.Add(newOrderRowOption);
+            var newOrderRowOption = strongTypedContext.AdditionalLocation.Create();
+            //newOrderRowOption.
+            //newOrderRowOption.idRegType = regType.idRegType;
+            newOrderRowOption.DescriptionPromo = optionDescription;
+            newOrderRowOption.Price = price;
+            //newOrderRowOption.Type = "Additional Location"; // TODO: check this with Stephen.
+            //newOrderRowOption.AdditionalLocation = AdditionalLocation;
+            strongTypedContext.AdditionalLocation.Add(newOrderRowOption);
 
             try
             {
@@ -128,7 +128,9 @@ namespace CUWebinars.Business.Repository
 
         public Order FindOrderByIdWithOrderRows(int id)
         {
-            var item = items.Include(o => o.OrderRows.Select(or => or.OrderRowOptions)).Where(o => o.idOrder == id);
+            var item = items
+                //.Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+                .Where(o => o.idOrder == id);
             return item.FirstOrDefault();
         }
 
@@ -172,33 +174,33 @@ namespace CUWebinars.Business.Repository
             throw new Exception(""); // TODO: come up with meaningful exception and msg
         }
 
-        public virtual IDictionary<Option, Order> SelectOrdersWithScheduledWebinars(int idUser)
-        {
-            var optionAndOrder = new Dictionary<Option, Order>();
+        //public virtual IDictionary<RegType, Order> SelectOrdersWithScheduledWebinars(int idUser)
+        //{
+        //    var optionAndOrder = new Dictionary<RegType, Order>();
 
-            items.Where(o => o.idUser == idUser
-                                          && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Scheduled
-                                          &&
-                                          (o.OrderRows.FirstOrDefault().Status == OrderRowStatus.Submitted ||
-                                           o.OrderRows.FirstOrDefault().Status == OrderRowStatus.Paid)
-                )
-                .ToList()
-                .ForEach(o =>
-                {
-                    var row = o.OrderRows.Single();
-                    var paramWebinarID = new SqlParameter("idOption", SqlDbType.Int) { Value = (int)row.RegistrationType };
-                    var registrationType = ((TTSWebinarsContext)db).Options.SqlQuery("dbo.GetRegistrationType @idOption", paramWebinarID).Single();
+        //    items.Where(o => o.idUser == idUser
+        //                                  && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Scheduled
+        //                                  &&
+        //                                  (o.OrderStatus == OrderStatus.Submitted ||
+        //                                   o.OrderStatus == OrderStatus.Paid)
+        //        )
+        //        .ToList()
+        //        .ForEach(o =>
+        //        {
+        //            var row = o.OrderRows.Single();
+        //            var paramWebinarID = new SqlParameter("idRegType", SqlDbType.Int) { Value = (int)row.RegistrationType };
+        //            var registrationType = ((TTSWebinarsContext)db).Options.SqlQuery("dbo.GetRegistrationType @idRegType", paramWebinarID).Single();
 
-                    optionAndOrder.Add(registrationType, o);
-                }
-               );
+        //            optionAndOrder.Add(registrationType, o);
+        //        }
+        //       );
 
-            return optionAndOrder;
-        }
+        //    return optionAndOrder;
+        //}
 
         public virtual IList<Order> Test(int idUser)
         {
-            var optionAndOrder = new Dictionary<Option, Order>();
+            var optionAndOrder = new Dictionary<RegType, Order>();
 
             var list = items.Include("OrderRows")
                         .Where(o => o.idUser == idUser)
@@ -212,8 +214,19 @@ namespace CUWebinars.Business.Repository
             return items.Where(o => o.idUser == idUser
                                           && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Recorded
                                           &&
-                                          (o.OrderRows.FirstOrDefault().Status == OrderRowStatus.Submitted ||
-                                           o.OrderRows.FirstOrDefault().Status == OrderRowStatus.Paid)
+                                          (o.OrderStatus == OrderStatus.Submitted ||
+                                           o.OrderStatus == OrderStatus.Paid
+                                           )
+                )
+                .ToList();
+        }
+        public virtual IList<Order> SelectOrdersWithScheduledWebinars(int idUser)
+        {
+            return items.Where(o => o.idUser == idUser
+                                          && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Scheduled
+                                          &&
+                                          (o.OrderStatus == OrderStatus.Submitted ||
+                                           o.OrderStatus == OrderStatus.Paid)
                 )
                 .ToList();
         }
@@ -223,8 +236,8 @@ namespace CUWebinars.Business.Repository
             return items.Where(o => o.idUser == idUser
                                           && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Archived
                                           &&
-                                          (o.OrderRows.FirstOrDefault().Status == OrderRowStatus.Submitted ||
-                                           o.OrderRows.FirstOrDefault().Status == OrderRowStatus.Paid)
+                                          (o.OrderStatus == OrderStatus.Submitted ||
+                                           o.OrderStatus == OrderStatus.Paid)
                 )
                 .ToList();
 

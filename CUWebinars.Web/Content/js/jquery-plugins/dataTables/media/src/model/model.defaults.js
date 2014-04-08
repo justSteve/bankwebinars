@@ -13,7 +13,7 @@ DataTable.defaults = {
 	 * example with a custom Ajax call.
 	 *  @type array
 	 *  @default null
-	 *  @dtopt Option
+	 *  @dtopt RegType
 	 * 
 	 *  @example
 	 *    // Using a 2D array data source
@@ -74,7 +74,7 @@ DataTable.defaults = {
 	 * column's index and a direction string ('asc' or 'desc').
 	 *  @type array
 	 *  @default [[0,'asc']]
-	 *  @dtopt Option
+	 *  @dtopt RegType
 	 * 
 	 *  @example
 	 *    // Sort by 3rd column first, and then 4th column
@@ -103,7 +103,7 @@ DataTable.defaults = {
 	 * together.
 	 *  @type array
 	 *  @default null
-	 *  @dtopt Option
+	 *  @dtopt RegType
 	 * 
 	 *  @example
 	 *    $(document).ready( function() {
@@ -119,12 +119,12 @@ DataTable.defaults = {
 	 * This parameter allows you to readily specify the entries in the length drop
 	 * down menu that DataTables shows when pagination is enabled. It can be 
 	 * either a 1D array of options which will be used for both the displayed 
-	 * option and the value, or a 2D array which will use the array in the first 
+	 * RegType and the value, or a 2D array which will use the array in the first 
 	 * position as the value, and the array in the second position as the 
 	 * displayed options (useful for language strings such as 'All').
 	 *  @type array
 	 *  @default [ 10, 25, 50, 100 ]
-	 *  @dtopt Option
+	 *  @dtopt RegType
 	 * 
 	 *  @example
 	 *    $(document).ready( function() {
@@ -135,7 +135,7 @@ DataTable.defaults = {
 	 *  
 	 *  @example
 	 *    // Setting the default display length as well as length menu
-	 *    // This is likely to be wanted if you remove the '10' option which
+	 *    // This is likely to be wanted if you remove the '10' RegType which
 	 *    // is the iDisplayLength default.
 	 *    $(document).ready( function() {
 	 *      $('#example').dataTable( {
@@ -148,7 +148,7 @@ DataTable.defaults = {
 
 
 	/**
-	 * The aoColumns option in the initialisation parameter allows you to define
+	 * The aoColumns RegType in the initialisation parameter allows you to define
 	 * details about the way individual columns behave. For a full list of
 	 * column options that can be set, please see 
 	 * {@link DataTable.defaults.columns}. Note that if you use aoColumns to
@@ -187,7 +187,7 @@ DataTable.defaults = {
 	 * accepted and the default will be used.
 	 *  @type array
 	 *  @default []
-	 *  @dtopt Option
+	 *  @dtopt RegType
 	 * 
 	 *  @example
 	 *    $(document).ready( function() {
@@ -211,7 +211,7 @@ DataTable.defaults = {
 	 *  @type array
 	 *  @default null <i>Will take the values determined by the oClasses.sStripe*
 	 *    options</i>
-	 *  @dtopt Option
+	 *  @dtopt RegType
 	 * 
 	 *  @example
 	 *    $(document).ready( function() {
@@ -243,7 +243,7 @@ DataTable.defaults = {
 
 	/**
 	 * Deferred rendering can provide DataTables with a huge speed boost when you
-	 * are using an Ajax or JS data source for the table. This option, when set to
+	 * are using an Ajax or JS data source for the table. This RegType, when set to
 	 * true, will cause DataTables to defer the creation of the table elements for
 	 * each row until they are needed for a draw - saving a significant amount of
 	 * time.
@@ -481,7 +481,7 @@ DataTable.defaults = {
 	 * data as a user scrolls through a table, which is very useful for large
 	 * dataset. This cannot be used with pagination, which is automatically
 	 * disabled. Note - the Scroller extra for DataTables is recommended in
-	 * in preference to this option.
+	 * in preference to this RegType.
 	 *  @type boolean
 	 *  @default false
 	 *  @dtopt Features
@@ -520,7 +520,7 @@ DataTable.defaults = {
 
 	/**
 	 * Enable or disable sorting of columns. Sorting of individual columns can be
-	 * disabled by the "bSortable" option for each column.
+	 * disabled by the "bSortable" RegType for each column.
 	 *  @type boolean
 	 *  @default true
 	 *  @dtopt Features
@@ -1550,7 +1550,7 @@ DataTable.defaults = {
 	
 		/**
 		 * Detail the action that will be taken when the drop down menu for the
-		 * pagination length option is changed. The '_MENU_' variable is replaced
+		 * pagination length RegType is changed. The '_MENU_' variable is replaced
 		 * with a default select list of 10, 25, 50 and 100, and can be replaced
 		 * with a custom select box if required.
 		 *  @type string
@@ -1573,12 +1573,12 @@ DataTable.defaults = {
 		 *      $('#example').dataTable( {
 		 *        "oLanguage": {
 		 *          "sLengthMenu": 'Display <select>'+
-		 *            '<option value="10">10</option>'+
-		 *            '<option value="20">20</option>'+
-		 *            '<option value="30">30</option>'+
-		 *            '<option value="40">40</option>'+
-		 *            '<option value="50">50</option>'+
-		 *            '<option value="-1">All</option>'+
+		 *            '<RegType value="10">10</RegType>'+
+		 *            '<RegType value="20">20</RegType>'+
+		 *            '<RegType value="30">30</RegType>'+
+		 *            '<RegType value="40">40</RegType>'+
+		 *            '<RegType value="50">50</RegType>'+
+		 *            '<RegType value="-1">All</RegType>'+
 		 *            '</select> records'
 		 *        }
 		 *      } );

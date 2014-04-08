@@ -19,7 +19,7 @@ namespace CUWebinars.Web.ViewModel
 
         public WebUser WebUser { get; set; }
         public Webinar Webinar { get; set; }
-        public IList<Option> Options { get; set; }
+        public IList<RegType> Options { get; set; }
         public Affiliate Affiliate { get; set; }
         public CheckoutOptionsViewModel CheckoutOptionsViewModel { get; set; }
         //public OrderRow OrderRow { get; set; }

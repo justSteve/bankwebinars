@@ -3,11 +3,14 @@ using System.Collections.Generic;
 
 namespace CUWebinars.Web.ViewModel
 {
-    public class AdditionalLocationsViewModel
+    public class AdditionalLocationViewModel
     {
-        public AddAdditionalLocationsViewModel AddAdditionalLocationsViewModel { get; set; }
-        public OrderRowOption OrderRowOption { get; set; }
-        public IList<AdditionalLocation> Locations { get; set; }
+        public AddAdditionalLocationViewModel AddAdditionalLocationViewModel { get; set; }
+        public IList<AdditionalLocation> AdditionalLocations { get; set; }
+
+        public Order Order { get; set; }
         public Webinar Webinar { get; set; }
+        public WebUser WebUser { get; set; }
+
     }
 }

@@ -57,11 +57,11 @@
                 $("#SignUpFormContainer").hide();
             });
         </script>
-    
+
         rowID = Model.CheckoutOptionsViewModel.Order.OrderRows.FirstOrDefault().idOrderRow;
         orderID = Model.CheckoutOptionsViewModel.Order.idOrder;
 
-        if (Model.CheckoutOptionsViewModel.Order.OrderRows.FirstOrDefault().Status == OrderRowStatus.InProcess)
+        if (Model.CheckoutOptionsViewModel.Order.OrderRows.FirstOrDefault().RowStatus == OrderRowStatus.InProcess)
         {
             CheckoutInProcess = "true";
             msgOrderStatus = "<div align=\"center\" class=\"label-warning label\">Your order is InProcess and needs to be confirmed.</div>";
@@ -213,67 +213,23 @@
             <div id="SignUpFormContainer" class="row-fluid">
                 <div class="content offset2 span8 well">
 
-                        <ul class="nav nav-tabs" id="regTabs">
-                            <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@signUpCaption</a></li>
-                            <li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
-                            <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@ConfirmationCaption</a></li>
-                        </ul>
+                    <ul class="nav nav-tabs" id="regTabs">
+                        <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@signUpCaption</a></li>
+                        <li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
+                        <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@ConfirmationCaption</a></li>
+                    </ul>
 
-                        <div class="tab-content">
-
-                            <div class="tab-pane active" id="signUp">
-                              
-                                
-                                @using (Html.BeginForm("Signup2", "Cart", null, FormMethod.Post, new { id = "Signup2" }))
-                                {
-                                    <input type="hidden" name="stage_of_checkout" id="Stage_of_checkout" value="step0" />
-                                    @Html.HiddenFor(m => m.Webinar.idWebinar)
-                                    @Html.HiddenFor(m => m.WebUser.idUser)
-                                    @Html.HiddenFor(m => m.CheckoutOptionsViewModel.Order.idOrder)
-
-                                    <input type="hidden" name="mode" id="Mode" />
-                                    <input type="button" onclick=" signUp(); " class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
-                                    <button value="Add?" type="button" class="btn btn-success btn-small" name="AddLocationsButton" id="LoadAddLocationsModalButton">Add?</button>
-                                    @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)
-                                }
-
-                                <!-- Button to trigger modal -->
-                                <a id="LaunchSignupModalLink" role="button" class="btn">Launch demo modal</a>                                
-                                <!-- Modal -->
-                                <div id="SignupModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                        <h3 id="myModalLabel">Signup</h3>
-                                    </div>
-                                    <div class="modal-body">
-                                        @using (Html.BeginForm("Signup2", "Cart", null, FormMethod.Post, new { id = "Signup2" }))
-                                        {
-                                            <input type="hidden" name="stage_of_checkout" id="Stage_of_checkout" value="step0" />
-                                            @Html.HiddenFor(m => m.Webinar.idWebinar)
-                                            @Html.HiddenFor(m => m.WebUser.idUser)
-                                            @Html.HiddenFor(m => m.CheckoutOptionsViewModel.Order.idOrder)
-
-                                            <input type="hidden" name="mode" id="Mode" />
-                                            <input type="button" onclick=" signUp(); " class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
-                                            @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)
-                                        }
-
-                                    </div>
-                                    <div class="modal-footer">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane active" id="signUp">
-                                <input type="button" onclick=" signUp(); " class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
-                                @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)
-                            </div>
-                            <div class="tab-pane" id="contactInfo">
-                                @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutContact.cshtml", model: Model)
-
-                            </div>
-                            <div class="tab-pane" id="confirmation">
-                                @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutConfirm.cshtml", model: Model)
-                            </div>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="signUp">
+                            <input type="button" onclick=" signUp(); " class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
+                            @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)
+                        </div>
+                        <div class="tab-pane" id="contactInfo">
+                            @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutContact.cshtml", model: Model)
+                        </div>
+                        <div class="tab-pane" id="confirmation">
+                            @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutConfirm.cshtml", model: Model)
+                        </div>
                     </div>
                 </div>
             </div>

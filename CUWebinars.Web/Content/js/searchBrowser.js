@@ -133,7 +133,7 @@ function fillPresenters() {
 
     for (var presenterName in presenters) {
         $("#filterPresenterName")
-            .append("<option value='" + presenterName + "'>" + presenterName + "</option>");
+            .append("<RegType value='" + presenterName + "'>" + presenterName + "</RegType>");
     }
 }
 

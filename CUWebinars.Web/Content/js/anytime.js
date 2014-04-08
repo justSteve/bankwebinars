@@ -203,14 +203,14 @@ var AnyTime =
 //    dayAbbreviations - an array of seven strings, indexed 0-6, to be used
 //      as ABBREVIATED day names.  If not specified, the following are used:
 //      ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
-//      Note that if the firstDOW option is passed to AnyTime.picker() (see
+//      Note that if the firstDOW RegType is passed to AnyTime.picker() (see
 //      AnyTime.picker()), this array should nonetheless begin with the 
 //      desired abbreviation for Sunday.
 //
 //    dayNames - an array of seven strings, indexed 0-6, to be used as
 //      day names.  If not specified, the following are used: ['Sunday',
 //        'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
-//      Note that if the firstDOW option is passed to AnyTime.picker() (see
+//      Note that if the firstDOW RegType is passed to AnyTime.picker() (see
 //      AnyTime.picker()), this array should nonetheless begin with the
 //      desired name for Sunday.
 //
@@ -317,7 +317,7 @@ var AnyTime =
 //      a Date object represents during formatting, even though it is formatted
 //      using local time. Unlike utcFormatOffsetImposed, which actually
 //      converts the Date object to the specified different time zone, this
-//      option merely reports the alleged offset when a timezone specifier
+//      RegType merely reports the alleged offset when a timezone specifier
 //      (%#, %+, %-, %:, %; %@) is encountered in the format string.
 //      This primarily exists so AnyTime.picker can edit the time as specified
 //      (without conversion to local time) and then convert the edited time to
@@ -621,7 +621,7 @@ AnyTime.Converter = function(options)
 	//  AnyTime.Converter.getUtcParseOffsetCaptured() returns the UTC offset
 	//  last captured by a parsed string (or assumed by utcParseOffsetAssumed).
 	//  It returns Number.MIN_VALUE if this object was not constructed with
-	//  the utcParseOffsetCapture option set to true, or if an offset was not
+	//  the utcParseOffsetCapture RegType set to true, or if an offset was not
 	//  specified by the last parsed string or utcParseOffsetAssumed.
 	//-------------------------------------------------------------------------
 	
@@ -634,7 +634,7 @@ AnyTime.Converter = function(options)
 	//  AnyTime.Converter.getUtcParseOffsetCaptured() returns the UTC offset
 	//  last captured by a parsed string (or assumed by utcParseOffsetAssumed).
 	//  It returns Number.MIN_VALUE if this object was not constructed with
-	//  the utcParseOffsetCapture option set to true, or if an offset was not
+	//  the utcParseOffsetCapture RegType set to true, or if an offset was not
 	//  specified by the last parsed string or utcParseOffsetAssumed.
 	//-------------------------------------------------------------------------
 	
@@ -1023,11 +1023,11 @@ AnyTime.Converter = function(options)
 	//  can edit the time as specified (without conversion to local time) and
 	//  then convert the edited time to a different time zone (as selected
 	//  using the picker).  This method returns the previous value, if any,
-	//  set by the utcFormatOffsetAlleged option, or a previous call to
+	//  set by the utcFormatOffsetAlleged RegType, or a previous call to
 	//  setUtcFormatOffsetAlleged(), or Number.MIN_VALUE if no offset was
 	//  previously-alleged.  Call this method with Number.MIN_VALUE to cancel
 	//  any prior value.  Note that if a format offset is alleged, any offset
-	//  specified by option utcFormatOffsetImposed is ignored.
+	//  specified by RegType utcFormatOffsetImposed is ignored.
 	//-------------------------------------------------------------------------
 	
 	this.setUtcFormatOffsetAlleged = function( offset )
@@ -1040,11 +1040,11 @@ AnyTime.Converter = function(options)
 	//-------------------------------------------------------------------------
 	//  AnyTime.Converter.setUtcFormatOffsetSubIndex() sets the sub-index
 	//  to choose from the AnyTime.utcLabel array of arrays when formatting
-	//  a Date using the %@ specifier.  For more information, see option
+	//  a Date using the %@ specifier.  For more information, see RegType
 	//  AnyTime.Converter.utcFormatOffsetSubIndex.  This primarily exists so
 	//  AnyTime.picker can specify the Time Zone label selected using the
 	//  picker).  This method returns the previous value, if any, set by the
-	//  utcFormatOffsetSubIndex option, or a previous call to
+	//  utcFormatOffsetSubIndex RegType, or a previous call to
 	//  setUtcFormatOffsetAlleged(), or (-1) if no sub-index was previously-
 	//  chosen.  Call this method with (-1) to cancel any prior value.
 	//-------------------------------------------------------------------------
@@ -1246,7 +1246,7 @@ AnyTime.noPicker = function( id )
 //
 //    labelSecond - the label for the second "buttons".
 //      Can be any HTML!  If not specified, "Second" is assumed.
-//      This option is ignored if askSecond is false!
+//      This RegType is ignored if askSecond is false!
 //
 //    labelTitle - the label for the "title bar".  Can be any HTML!
 //      If not specified, then whichever of the following is most
@@ -1772,7 +1772,7 @@ AnyTime.picker = function( id, options )
 		      
 		    } // if ( askTime )
 
-		    //  Set the title.  If a title option has been specified, use it.
+		    //  Set the title.  If a title RegType has been specified, use it.
 		    //  Otherwise, determine a worthy title based on which (and how many)
 		    //  format fields have been specified.
 

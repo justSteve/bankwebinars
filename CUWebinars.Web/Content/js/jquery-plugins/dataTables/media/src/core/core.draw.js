@@ -540,7 +540,7 @@ function _fnAddOptionsHtml ( oSettings )
 	oSettings.nTableWrapper = $('<div id="'+oSettings.sTableId+'_wrapper" class="'+oSettings.oClasses.sWrapper+'" role="grid"></div>')[0];
 	oSettings.nTableReinsertBefore = oSettings.nTable.nextSibling;
 
-	/* Track where we want to insert the option */
+	/* Track where we want to insert the RegType */
 	var nInsertNode = oSettings.nTableWrapper;
 	
 	/* Loop over the user set positioning and place the elements as needed */

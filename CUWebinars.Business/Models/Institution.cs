@@ -7,7 +7,7 @@ namespace CUWebinars.Business.Models
     {
         public Institution()
         {
-            this.WebUsers = new List<WebUser>();
+WebUsers = new List<WebUser>();
         }
 
         public int idInstitution { get; set; }

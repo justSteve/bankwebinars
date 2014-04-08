@@ -308,7 +308,7 @@ $.extend($.validator, {
 			// click on selects, radiobuttons and checkboxes
 			if ( element.name in this.submitted )
 				this.element(element);
-			// or option elements, check parent select in that case
+			// or RegType elements, check parent select in that case
 			else if (element.parentNode.name in this.submitted)
 				this.element(element.parentNode);
 		},
@@ -386,7 +386,7 @@ $.extend($.validator, {
 			}
 			$(this.currentForm)
 				.validateDelegate(":text, :password, :file, select, textarea", "focusin focusout keyup", delegate)
-				.validateDelegate(":radio, :checkbox, select, option", "click", delegate);
+				.validateDelegate(":radio, :checkbox, select, RegType", "click", delegate);
 
 			if (this.settings.invalidHandler)
 				$(this.currentForm).bind("invalid-form.validate", this.settings.invalidHandler);
@@ -498,7 +498,7 @@ $.extend($.validator, {
 			/// This depends on the internal validator state. It covers all fields only after
 			/// validating the complete form (on submit or via $("form").valid()). After validating
 			/// a single element, only that element is counted. Most useful in combination with the
-			/// invalidHandler-option.
+			/// invalidHandler-RegType.
 			/// </summary>
 			/// <returns type="Number" />
 
@@ -796,7 +796,7 @@ $.extend($.validator, {
 		getLength: function(value, element) {
 			switch( element.nodeName.toLowerCase() ) {
 			case 'select':
-				return $("option:selected", element).length;
+				return $("RegType:selected", element).length;
 			case 'input':
 				if( this.checkable( element) )
 					return this.findByName(element.name).filter(':checked').length;

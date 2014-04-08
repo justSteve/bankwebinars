@@ -1,5 +1,4 @@
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using CUWebinars.Business.Models.Mapping;
 
 namespace CUWebinars.Business.Models
@@ -25,17 +24,15 @@ namespace CUWebinars.Business.Models
         }
 
         public DbSet<Address> Addresses { get; set; }
+        public DbSet<AdditionalLocation> AdditionalLocation { get; set; }
         public DbSet<Affiliate> Affiliates { get; set; }
         public DbSet<Discount> Discounts { get; set; }
-        //public DbSet<HostProperty> HostProperties { get; set; }
-        //public DbSet<HostPropertyValue> HostPropertyValues { get; set; }
         public DbSet<Institution> Institutions { get; set; }
-        public DbSet<Option> Options { get; set; }
-        public DbSet<OptionsGroup> OptionsGroups { get; set; }
-        public DbSet<OptionsGroupsXref> OptionsGroupsXrefs { get; set; }
-        public DbSet<OptionsXref> OptionsXrefs { get; set; }
+        public DbSet<RegType> RegTypes { get; set; }
+        public DbSet<RegTypesGroup> RegTypesGroups { get; set; }
+        public DbSet<RegTypesGroupsXref> RegTypesGroupsXrefs { get; set; }
+        public DbSet<RegTypesXref> RegTypesXrefs { get; set; }
         public DbSet<OrderRow> OrderRows { get; set; }
-        public DbSet<OrderRowOption> OrderRowOptions { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Presenter> Presenters { get; set; }
         public DbSet<Topic> Topics { get; set; }
@@ -50,15 +47,12 @@ namespace CUWebinars.Business.Models
             modelBuilder.Configurations.Add(new AdditionalLocationMap());
             modelBuilder.Configurations.Add(new AffiliateMap());
             modelBuilder.Configurations.Add(new DiscountMap());
-            //modelBuilder.Configurations.Add(new HostPropertyMap());
-            //modelBuilder.Configurations.Add(new HostPropertyValueMap());
             modelBuilder.Configurations.Add(new InstitutionMap());
-            modelBuilder.Configurations.Add(new OptionMap());
-            modelBuilder.Configurations.Add(new OptionsGroupMap());
-            modelBuilder.Configurations.Add(new OptionsGroupsXrefMap());
-            modelBuilder.Configurations.Add(new OptionsXrefMap());
+            modelBuilder.Configurations.Add(new RegTypeMap());
+            modelBuilder.Configurations.Add(new RegTypesGroupMap());
+            modelBuilder.Configurations.Add(new RegTypesGroupsXrefMap());
+            modelBuilder.Configurations.Add(new RegTypesXrefMap());
             modelBuilder.Configurations.Add(new OrderRowMap());
-            modelBuilder.Configurations.Add(new OrderRowOptionMap());
             modelBuilder.Configurations.Add(new OrderMap());
             modelBuilder.Configurations.Add(new PresenterMap());
             modelBuilder.Configurations.Add(new TopicMap());
@@ -66,7 +60,7 @@ namespace CUWebinars.Business.Models
             modelBuilder.Configurations.Add(new WebinarFileMap());
             modelBuilder.Configurations.Add(new WebinarTopicXrefMap());
             modelBuilder.Configurations.Add(new WebUserMap());
-            //modelBuilder.Configurations.Add(new AdditionalLocationsOptionMap());
+
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿@model CUWebinars.Web.Core.MyWebinarsDTO
 @using System.Data
+@using CUWebinars.Business.Repository
 @using System.Data.SqlClient
 @using CUWebinars.Web.Helpers
 @using CUWebinars.Business.Models
@@ -27,8 +28,8 @@
                     {
                         <li class="s-wrap">
                             @{
-                        var row = scheduled.Value.Single();
-
+                        var row = scheduled.OrderRows.Single();
+                        var regType = CUWebinars.Business.Repository.RegTypeRepository.
                             }
                             <h4 class="trigger" id="upcoming-@row.idWebinar"><a href="#">@row.Webinar.Title<i class="icon-plus-sign"></i></a></h4>
                             <div class="s-content">
@@ -40,19 +41,19 @@
                                     Presented by @row.Webinar.Presenter.WebUser.FullName<br />
                                     <i>@Html.DisplayDate(row.Webinar.Date)</i> @Html.DisplayTime(row.Webinar.Date, timeZ, false) - @Html.DisplayTime(row.Webinar.Date, row.Webinar.Duration, timeZ)<br />
                                     <span id="showRegType_@(row.idWebinar)" class="regType">
-                                        Registration Type: @scheduled.Key.OptionLabel.Replace(" Only", " ") &nbsp;&nbsp;
+                                        Registration Type: @scheduled..OptionLabel.Replace(" Only", " ") &nbsp;&nbsp;
 
                                     </span>
                                 </p>
-                                @if (row.Webinar.HasConnectionInformation)
+                                @if (row.Webinar.ConnectionInfo != null || row.Webinar.ConnectionInfo != "")
                                 {
 
-                                    var eventID = row.Webinar.HostPropertyValues.ElementAt(0).value;
-                                    var eventPass = row.Webinar.HostPropertyValues.ElementAt(1).value;
-                                    var teleconf = row.Webinar.HostPropertyValues.ElementAt(2).value;
-                                    var accessCode = row.Webinar.HostPropertyValues.ElementAt(3).value;
+                                    var eventID = "eID";
+                                    var eventPass = "Pass";
+                                    var teleconf = "phone";
+                                    var accessCode = "areaCode";
 
-                                    if (scheduled.Key.ShowLiveNotifications == "Yes")
+                                    if (scheduled.ShowLiveNotifications == "Yes")
                                     {
                                         <div class="ReverseHead">&nbsp;&nbsp;Connection Summary</div>
                                         <div id="showConnectionInfo">

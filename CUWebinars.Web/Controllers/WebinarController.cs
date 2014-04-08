@@ -124,16 +124,17 @@ namespace CUWebinars.Web.Controllers
             return View(webinars);
         }
 
-        public PartialViewResult GetAdditionalLocationsByOrderId(int? id = null)
+        public PartialViewResult GetAdditionalLocationByOrderId(int webUserId, int webinarId)
         {
-            var order = _orderManagementService.GetOrderById(id.Value);
-            var addAdditionalLocationsViewModel = new AddAdditionalLocationsViewModel
+            //var order = _orderManagementService.GetOrderById(id);
+
+            var addAdditionalLocationViewModel = new AddAdditionalLocationViewModel
             {
-                Emails = null,
-                OrderRowOption = order.OrderRows.First().OrderRowOptions.First()
+                //AdditionalLocations = order.OrderRows.First().AdditionalLocation.ToList()
+                AdditionalLocations = new AdditionalLocation[] { new AdditionalLocation { Email = "dave@dave.com" }, new AdditionalLocation { Email = "monty@python.com" } }
             };
 
-            return PartialView(addAdditionalLocationsViewModel);
+            return PartialView("~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml", addAdditionalLocationViewModel);
         }
 
         public ActionResult AllActive(string eventsToShow)
@@ -174,25 +175,25 @@ namespace CUWebinars.Web.Controllers
         //            )
         //        {
 
-        //            //        IDictionary<int, int> additionalLocations = Request.Params.AllKeys
-        //            //.Where(x => x.StartsWith("ChooseOptions.AdditionalLocationsCount"))
+        //            //        IDictionary<int, int> AdditionalLocation = Request.Params.AllKeys
+        //            //.Where(x => x.StartsWith("ChooseOptions.AdditionalLocationCount"))
         //            //.Where(x => Request.Params[x] != null && Request.Params[x].ToString().Length > 0)
-        //            //.Select(x => new { key = x.Replace(@"ChooseOptions.AdditionalLocationsCount", ""), value = Request.Params[x] })
+        //            //.Select(x => new { key = x.Replace(@"ChooseOptions.AdditionalLocationCount", ""), value = Request.Params[x] })
         //            //.ToDictionary(x => int.Parse(x.key), x => int.Parse(x.value));
         //            IDictionary<string, string> addEmails = Request.Params.AllKeys
         //                .Where(x => x.StartsWith("Email"))
         //                .Where(x => Request.Params[x] != null && Request.Params[x].ToString().Length > 0)
         //                .Select(x => new { key = x, value = Request.Params[x] })
         //                .ToDictionary(x => (x.key), x => (x.value));
-        //            //IDictionary<int, int> sixMonthPaidAdditionalLocationsCount = Request.Params.AllKeys
-        //            //    .Where(x => x.StartsWith("ChooseOptions.SixMonthPaidAdditionalLocationsCount"))
+        //            //IDictionary<int, int> sixMonthPaidAdditionalLocationCount = Request.Params.AllKeys
+        //            //    .Where(x => x.StartsWith("ChooseOptions.SixMonthPaidAdditionalLocationCount"))
         //            //    .Where(x => Request.Params[x] != null && Request.Params[x].ToString().Length > 0)
-        //            //    .Select(x => new { key = x.Replace(@"ChooseOptions.SixMonthPaidAdditionalLocationsCount", ""), value = Request.Params[x] })
+        //            //    .Select(x => new { key = x.Replace(@"ChooseOptions.SixMonthPaidAdditionalLocationCount", ""), value = Request.Params[x] })
         //            //    .ToDictionary(x => int.Parse(x.key), x => int.Parse(x.value));
-        //            //IDictionary<int, int> twelveMonthPaidAdditionalLocationsCount = Request.Params.AllKeys
-        //            //    .Where(x => x.StartsWith("ChooseOptions.TwelveMonthPaidAdditionalLocationsCount"))
+        //            //IDictionary<int, int> twelveMonthPaidAdditionalLocationCount = Request.Params.AllKeys
+        //            //    .Where(x => x.StartsWith("ChooseOptions.TwelveMonthPaidAdditionalLocationCount"))
         //            //    .Where(x => Request.Params[x] != null && Request.Params[x].ToString().Length > 0)
-        //            //    .Select(x => new { key = x.Replace(@"ChooseOptions.TwelveMonthPaidAdditionalLocationsCount", ""), value = Request.Params[x] })
+        //            //    .Select(x => new { key = x.Replace(@"ChooseOptions.TwelveMonthPaidAdditionalLocationCount", ""), value = Request.Params[x] })
         //            //    .ToDictionary(x => int.Parse(x.key), x => int.Parse(x.value));
 
         ////            var checkoutSessionHelper = new CheckoutWorkflowHelper(ControllerContext);
@@ -215,7 +216,7 @@ namespace CUWebinars.Web.Controllers
 
         //            _orderManagementService.AssignUserToOrder(currentOrder, user);
         //                currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
-        //                currentOrder.InitiatedBy = _orderManagementService.GetOrderInitiator();
+        //                currentOrder.Origin= _orderManagementService.GetOrderInitiator();
         //                //currentOrder.InitiatedBy2 = UserFacade.Instance.GetOrderInitiatorUser();
 
         //            var webinar = db.Webinars.Find(id);
@@ -242,34 +243,34 @@ namespace CUWebinars.Web.Controllers
         //            //        throw;
         //            //    }
         //            //}
-        //            var additionalLocationsOrderRowOptions = orderRow.OrderRowOptions.OfType<AdditionalLocationsOrderRowOption>();
-        //            if (additionalLocationsOrderRowOptions.Count() > 0)
+        //            var AdditionalLocationAdditionalLocation = orderRow.AdditionalLocation.OfType<AdditionalLocationOrderRowOption>();
+        //            if (AdditionalLocationAdditionalLocation.Count() > 0)
         //            {
-        //                int additionalLocationsCount;
-        //                if (int.TryParse(Request["AdditionalLocationsCount" + orderRow.idOrderRow], out additionalLocationsCount))
+        //                int AdditionalLocationCount;
+        //                if (int.TryParse(Request["AdditionalLocationCount" + orderRow.idOrderRow], out AdditionalLocationCount))
         //                {
-        //                    additionalLocationsOrderRowOptions.Single().AdditionalLocationsCount = additionalLocationsCount;
+        //                    AdditionalLocationAdditionalLocation.Single().AdditionalLocationCount = AdditionalLocationCount;
         //                }
-        //                else if (Request["AdditionalLocationsCount" + orderRow.idOrderRow] == "")
+        //                else if (Request["AdditionalLocationCount" + orderRow.idOrderRow] == "")
         //                {
-        //                    additionalLocationsOrderRowOptions.Single().AdditionalLocationsCount = 0;
+        //                    AdditionalLocationAdditionalLocation.Single().AdditionalLocationCount = 0;
         //                }
         //            }
 
         //            var options = _orderManagementService.GetOptionsByWebinarId(webinar.idWebinar);
 
-        //            //var option = options.OfType<AdditionalLocationsOption>().SingleOrDefault();
-        //            var option = options.SingleOrDefault(o => o.Type == "additional_location");
+        //            //var RegType = options.OfType<AdditionalLocationOption>().SingleOrDefault();
+        //            var RegType = options.SingleOrDefault(o => o.Type == "additional_location");
 
-        //            if (option != null)
+        //            if (RegType != null)
         //            {
-        //                var orderRowOption = new AdditionalLocationsOrderRowOption
+        //                var AdditionalLocation = new AdditionalLocationOrderRowOption
         //                {
-        //                    AdditionalLocationsCount = connectionsCount.HasValue ? connectionsCount.Value : 0,
-        //                    Option = option,
+        //                    AdditionalLocationCount = connectionsCount.HasValue ? connectionsCount.Value : 0,
+        //                    RegType = RegType,
         //                    OrderRow = orderRow,
-        //                    OptionDescription = option.OptionExplain,
-        //                    OptionPrice = Convert.ToDecimal(option.PriceToAdd),
+        //                    OptionDescription = RegType.OptionExplain,
+        //                    RegTypePrice = Convert.ToDecimal(RegType.Price),
         //                    Emails = addEmails.Select(e => e.Value).ToList()
         //                };
 
@@ -286,25 +287,25 @@ namespace CUWebinars.Web.Controllers
         //                    //    freeConnectionsCount = addEmails.Split(',').Count();
         //                    //}
         //                    ////int freeConnectionsCount = 0;
-        //                    //orderRowOption.AdditionalLocationsCount = freeConnectionsCount;
-        //                    //if (orderRowOption.AdditionalLocationsCount > 3)
+        //                    //AdditionalLocation.AdditionalLocationCount = freeConnectionsCount;
+        //                    //if (AdditionalLocation.AdditionalLocationCount > 3)
         //                    //{
-        //                    //    orderRowOption.AdditionalLocationsCount = 3;
+        //                    //    AdditionalLocation.AdditionalLocationCount = 3;
         //                    //}
 
 
         //                    //if ((RegistrationType)mode == RegistrationType.Twelve_Month_Subscription)
         //                    //{
-        //                    //    orderRowOption.AdditionalLocationsCount += twelveMonthPaidConnectionsCount.HasValue ? twelveMonthPaidConnectionsCount.Value : 0;
+        //                    //    AdditionalLocation.AdditionalLocationCount += twelveMonthPaidConnectionsCount.HasValue ? twelveMonthPaidConnectionsCount.Value : 0;
         //                    //}
         //                    //else
         //                    //{
-        //                    //    orderRowOption.AdditionalLocationsCount += sixMonthPaidConnectionsCount.HasValue ? sixMonthPaidConnectionsCount.Value : 0;
+        //                    //    AdditionalLocation.AdditionalLocationCount += sixMonthPaidConnectionsCount.HasValue ? sixMonthPaidConnectionsCount.Value : 0;
         //                    //}
         //                }
 
-        //                orderRow.OrderRowOptions.Add(orderRowOption);
-        //                //orderRow.Options.Add(orderRowOption);
+        //                orderRow.AdditionalLocation.Add(AdditionalLocation);
+        //                //orderRow.Options.Add(AdditionalLocation);
         //            }
 
         //            //try
@@ -383,7 +384,9 @@ namespace CUWebinars.Web.Controllers
                     DisplayOptionsViewModel = new DisplayOptionsViewModel
                     {
                       Options = options.ToList(),
-                      Webinar = webinar  
+                      Order = null,
+                      Webinar = webinar,
+                      WebUser = user
                     },
                     Order = null, //    new order?
                     Webinar = webinar
@@ -398,12 +401,12 @@ namespace CUWebinars.Web.Controllers
                     {
                         var singleOrDefaultRow = checkOrder.OrderRows.SingleOrDefault();
                         if (singleOrDefaultRow != null)
-                            ViewBag.orderMessages = db.Options.Find(singleOrDefaultRow.RegistrationType);
+                            ViewBag.orderMessages = db.RegTypes.Find(singleOrDefaultRow.RegistrationType);
                         var webinarFiles = db.WebinarFiles.Where(f => f.idWebinar == id).Select(f => f.fileDesc +"|"+ f.fileLocation ).ToArray();
                         ViewBag.WebinarFiles = webinarFiles;
 
                         ViewBag.userOwnsThisEvent = checkOrder.idOrder;
-                        model.CheckoutOptionsViewModel.Order = checkOrder;
+                        model.CheckoutOptionsViewModel.Order = model.CheckoutOptionsViewModel.DisplayOptionsViewModel.Order = checkOrder;
 
                         var connectionText = new StringBuilder("<p>");
                         connectionText.Append(ViewBag.orderMessages.Stage2EmailConfirmationMsg.Replace(" and is also available at http://www.BankWebinars.com", "</p><p>"));
@@ -415,7 +418,7 @@ namespace CUWebinars.Web.Controllers
                         ViewBag.connectionText = connectionText;
   
                     }
-                    if (checkOrder.OrderRows.Single().Status == OrderRowStatus.InProcess
+                    if (checkOrder.OrderStatus == OrderStatus.InProcess
                         && checkOrder.OrderRows.Single().idWebinar != id)
                     {
                         ViewBag.userHasOpenOrder = checkOrder.idOrder;

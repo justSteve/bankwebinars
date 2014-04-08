@@ -63,7 +63,7 @@
         UserDetails += "<br><font color='red'>Mismatched Affiliate! Order Affiliate = " + Model.OrderRow.Order.Affiliate.LastName + " </font>";
     }
     string DeleteOrderLabel = "Delete This Order?";
-    if (Model.OrderRow.Status == OrderRowStatus.Canceled
+    if (Model.OrderRow.Status == OrderStatus.Canceled
         )
     {
         DeleteOrderLabel = "UnDelete This Order?";
@@ -130,7 +130,7 @@
             <br />
             @*@{
                 var UserIni = "";
-                if (Model.OrderRow.Order.InitiatedBy == UserType.Admin)
+                if (Model.OrderRow.Order.Origin== UserType.Admin)
                 {
                     UserIni = Model.OrderRow.Order.InitiatedBy2.LastName;
                 }
@@ -175,7 +175,7 @@
             {
                 <form name="changeOrderStatusForm" action="/Admin/Registrations/EditStatus/@Model.OrderRow.ID" method="post">
                     <b>Status:</b>
-                    @Html.DropDownList("registrationStatus", AppHelper.GetuEditableOrderRowStatuses(Model.OrderRow.Status),
+                    @Html.DropDownList("registrationStatus", AppHelper.GetuEditableOrderStatuses(Model.OrderRow.Status),
                                            new { onchange = "document.changeOrderStatusForm.submit();" })
                 </form>
             }
@@ -399,7 +399,7 @@
     </div>
     <div class="modal-body">
         @{
-            if (Model.OrderRow.Status == OrderRowStatus.Canceled
+            if (Model.OrderRow.Status == OrderStatus.Canceled
                 )
             {
             <form name="registrationUnDeleteForm" action="/Admin/Registrations/UnDelete/@Model.OrderRow.ID"

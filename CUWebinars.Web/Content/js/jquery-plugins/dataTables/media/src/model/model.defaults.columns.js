@@ -147,7 +147,7 @@ DataTable.defaults.columns = {
 	 * (the default is to used the rendered data that the user can see). This 
 	 * may be useful for dates etc.
 	 * 
-	 * Please note that this option has now been deprecated and will be removed
+	 * Please note that this RegType has now been deprecated and will be removed
 	 * in the next version of DataTables. Please use mRender / mData rather than
 	 * fnRender.
 	 *  @type boolean
@@ -223,7 +223,7 @@ DataTable.defaults.columns = {
 	 * <code>Deprecated</code> Custom display function that will be called for the 
 	 * display of each cell in this column.
 	 *
-	 * Please note that this option has now been deprecated and will be removed
+	 * Please note that this RegType has now been deprecated and will be removed
 	 * in the next version of DataTables. Please use mRender / mData rather than
 	 * fnRender.
 	 *  @type function
@@ -279,7 +279,7 @@ DataTable.defaults.columns = {
 	/**
 	 * This parameter has been replaced by mData in DataTables to ensure naming
 	 * consistency. mDataProp can still be used, as there is backwards compatibility
-	 * in DataTables for this option, but it is strongly recommended that you use
+	 * in DataTables for this RegType, but it is strongly recommended that you use
 	 * mData in preference to mDataProp.
 	 *  @name DataTable.defaults.columns.mDataProp
 	 */
@@ -295,7 +295,7 @@ DataTable.defaults.columns = {
 	 *     <li>string - read an object property from the data source. Note that you can
 	 *       use Javascript dotted notation to read deep properties / arrays from the
 	 *       data source.</li>
-	 *     <li>null - the sDefaultContent option will be used for the cell (null
+	 *     <li>null - the sDefaultContent RegType will be used for the cell (null
 	 *       by default, so you will need to specify the default content you want -
 	 *       typically an empty string). This can be useful on generated columns such 
 	 *       as edit / delete action columns.</li>
@@ -374,7 +374,7 @@ DataTable.defaults.columns = {
 	 * when you want to manipulate data for display (including filtering, sorting etc)
 	 * but not altering the underlying data for the table, use this property. mData
 	 * can actually do everything this property can and more, but this parameter is
-	 * easier to use since there is no 'set' option. Like mData is can be given
+	 * easier to use since there is no 'set' RegType. Like mData is can be given
 	 * in a number of different ways to effect its behaviour, with the addition of 
 	 * supporting array syntax for easy outputting of arrays (including arrays of
 	 * objects):
@@ -499,7 +499,7 @@ DataTable.defaults.columns = {
 	 * is that "mmm" is much wider then "iiii", but the latter is a longer 
 	 * string - thus the calculation can go wrong (doing it properly and putting
 	 * it into an DOM object and measuring that is horribly(!) slow). Thus as
-	 * a "work around" we provide this option. It will append its value to the
+	 * a "work around" we provide this RegType. It will append its value to the
 	 * text that is found to be the longest string for the column - i.e. padding.
 	 * Generally you shouldn't need this, and it is not documented on the 
 	 * general DataTables.net documentation

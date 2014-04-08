@@ -42,7 +42,7 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
 
         //[Authorize(Roles = AppRoles.CustomerAffiliateAdmin)]
         [AcceptVerbs(HttpVerbs.Post)]
-        public JsonResult SetAdditionalLocations(FormCollection formValues)
+        public JsonResult SetAdditionalLocation(FormCollection formValues)
         {
             var ID = Convert.ToInt32(formValues["ID"]);
             var connectionsCount = Convert.ToInt32(formValues["connectionsCount"]);
@@ -50,14 +50,13 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
             var originalCost = _orderManagementService.LoadOrderRow(ID).Order.Total;
             int originalLocCount = 0;
             OrderRow row = _orderManagementService.LoadOrderRow(ID);
-            //TODO: Help me with 'row.Options' reference?
+            
+            //AdditionalLocation RegType in row.AdditionalLocation
+            //var RegType = row.AdditionalLocation.SingleOrDefault(o => o.Type == "additional_location");
 
-            //OrderRowOption option in row.OrderRowOptions
-            //var option = row.OrderRowOptions.SingleOrDefault(o => o.Type == "additional_location");
-
-            var locations =
-                row.OrderRowOptions.SingleOrDefault(o => o.Type == "additional_location");
-            //Options.OfType<AdditionalLocationsOrderRowOption>().SingleOrDefault();
+            //var locations =
+            //    row.AdditionalLocation.SingleOrDefault(o => o.Type == "additional_location");
+            //Options.OfType<AdditionalLocationOrderRowOption>().SingleOrDefault();
 
             IDictionary<string, string> addEmails = Request.Params.AllKeys
                 .Where(x => x.StartsWith("Email"))
@@ -71,65 +70,65 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
                 .Select(e => e.Value)
                 .ToList();
 
-            var additionalLocations = new List<AdditionalLocation>(emails.Count);
+            //var AdditionalLocation = new List<AdditionalEmails>(emails.Count);
 
-            emails.ForEach(email =>
-            {
-                var additionalLocation = new AdditionalLocation {Email = email};
-                additionalLocations.Add(additionalLocation);
-            });
-
-
-            if (connectionsCount <= 0 && locations != null)
-            {
-                row.OrderRowOptions.Remove(locations);
-                msg = "There are no Additional Locations specified.";
-            }
-
-            if (connectionsCount > 0 && locations == null)
-            {
-                var options = _orderManagementService.GetOptionsByWebinarId(row.Webinar.idWebinar, false);
-                var option = options.SingleOrDefault(o => o.Type == "additional_location");
-                //                AdditionalLocationsOption option = options.OfType<AdditionalLocationsOption>().SingleOrDefault();
+            //emails.ForEach(email =>
+            //{
+            //    var additionalLocation = new AdditionalEmails {Email = email};
+            //    AdditionalLocation.Add(additionalLocation);
+            //});
 
 
+            //if (connectionsCount <= 0 && locations != null)
+            //{
+            //    row.AdditionalLocation.Remove(locations);
+            //    msg = "There are no Additional Locations specified.";
+            //}
 
-                if (option != null)
-                {
-                    locations = new OrderRowOption
-                    {
-                        AdditionalLocations = additionalLocations,
-                        Option = option,
-                        OrderRow = row,
-                        OptionDescription = option.OptionExplain,
-                        OptionPrice = Convert.ToDecimal(option.PriceToAdd)
-                    };
-                    row.OrderRowOptions.Add(locations);
-                }
-            }
-            else
-            {
-                if (locations != null)
-                {
-                    originalLocCount = locations.AdditionalLocations.Count;
-                    //locations.additional_locations_count = connectionsCount;
-                    locations.AdditionalLocations = additionalLocations;
-                }
-            }
+            //if (connectionsCount > 0 && locations == null)
+            //{
+            //    var options = _orderManagementService.GetOptionsByWebinarId(row.Webinar.idWebinar, false);
+            //    var option = options.SingleOrDefault(o => o.Type == "additional_location");
+            //    //                AdditionalLocationOption RegType = options.OfType<AdditionalLocationOption>().SingleOrDefault();
+
+
+
+            //    if (option != null)
+            //    {
+            //        locations = new AdditionalLocation
+            //        {
+            //            //AdditionalLocation = AdditionalLocation,
+            //            RegType = option,
+            //            OrderRow = row,
+            //            OptionDescription = option.OptionExplain,
+            //            RegTypePrice = Convert.ToDecimal(option.Price)
+            //        };
+            //        row.AdditionalLocation.Add(locations);
+            //    }
+            //}
+            //else
+            //{
+            //    if (locations != null)
+            //    {
+            //        //originalLocCount = locations.AdditionalLocation.Count;
+            //        ////locations.additional_locations_count = connectionsCount;
+            //        //locations.AdditionalLocation = AdditionalLocation;
+            //    }
+            //}
 
             var optionsCost = string.Empty;
-            if (connectionsCount == 1)
-            {
-                msg = "One Additional Location.<br>";
+            //if (connectionsCount == 1)
+            //{
+            //    msg = "One Additional Location.<br>";
 
-                optionsCost = "Total cost of Additional Locations: " +
-                              (locations.OptionPrice*connectionsCount).ToString("C0");
+            //    optionsCost = "Total cost of Additional Locations: " +
+            //                  (locations.RegTypePrice*connectionsCount).ToString("C0");
 
-            }
-            if (connectionsCount > 1)
-            {
-                msg = "This order carries " + connectionsCount + " Additional Locations.";
-            }
+            //}
+            //if (connectionsCount > 1)
+            //{
+            //    msg = "This order carries " + connectionsCount + " Additional Locations.";
+            //}
 
             try
             {
@@ -141,7 +140,7 @@ namespace CUWebinars.Web.Areas.Admin.Controllers
                 throw;
             }
 
-            if (originalCost != row.Order.Total && row.Status != OrderRowStatus.InProcess)
+            if (originalCost != row.Order.Total && row.RowStatus != OrderRowStatus.InProcess)
             {
                 try
                 {

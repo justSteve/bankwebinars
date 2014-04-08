@@ -7,8 +7,8 @@ namespace CUWebinars.Business.Models
     {
         public WebUser()
         {
-            this.Addresses = new List<Address>();
-            this.Orders = new List<Order>();
+Addresses = new List<Address>();
+Orders = new List<Order>();
         }
 
         public int idUser { get; set; }

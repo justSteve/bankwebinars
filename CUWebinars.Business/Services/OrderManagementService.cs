@@ -16,7 +16,7 @@ namespace CUWebinars.Business.Services
     public class OrderManagementService : IOrderManagementService, IEventSource
     {
         private readonly IAffiliateRepository _affiliateRepository;
-        private readonly IOptionRepository _optionRepository;
+        private readonly IRegTypeRepository _RegTypeRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly IRefDataRepository _refDataRepository;
         private readonly IWebinarRepository _webinarRepository;
@@ -26,7 +26,7 @@ namespace CUWebinars.Business.Services
 
         public OrderManagementService(
             IAffiliateRepository affiliateRepository,
-            IOptionRepository optionRepository,
+            IRegTypeRepository RegTypeRepository,
             IOrderRepository orderRepository,
             IRefDataRepository refDataRepository,
             IWebUserRepository webUserRepository,
@@ -34,7 +34,7 @@ namespace CUWebinars.Business.Services
             TtsConfiguration ttsConfig)
         {
             _affiliateRepository = affiliateRepository;
-            _optionRepository = optionRepository;
+            _RegTypeRepository = RegTypeRepository;
             _orderRepository = orderRepository;
             _refDataRepository = refDataRepository;
             _ttsConfig = ttsConfig;
@@ -57,27 +57,33 @@ namespace CUWebinars.Business.Services
         {
             // add code here to build string
 
-            var option = _optionRepository.FindOption((int)orderRow.RegistrationType);
+            var option = _RegTypeRepository.FindRegType(orderRow.RegistrationType);
 
             return string.Empty;
         }
 
-        public OrderRow CreateOrderRow(Webinar webinar, OrderRowOption orderRowOption, string alternateEmail, int registrationType)
+        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation AdditionalLocation, string alternateEmail,
+            int registrationType)
         {
-            return _orderRepository.CreateOrderRow(webinar, orderRowOption, alternateEmail, registrationType);
+            throw new NotImplementedException();
         }
 
-        public OrderRowOption CreateOrderRowOption(
-            Option option,
+        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation AdditionalLocation, string alternateEmail, RegType registrationType)
+        {
+            return _orderRepository.CreateOrderRow(webinar, AdditionalLocation, alternateEmail, registrationType);
+        }
+
+        public AdditionalLocation CreateOrderRowOption(
+            RegType regType,
             string optionDescription,
             decimal price,
-            string[] additionalLocationsEmails)
+            string[] AdditionalLocationEmails)
         {
             return _orderRepository.CreateOrderRowOption(
-                option,
+                regType,
                 optionDescription,
                 price,
-                additionalLocationsEmails
+                AdditionalLocationEmails
                 );
         }
 
@@ -86,18 +92,20 @@ namespace CUWebinars.Business.Services
             return _affiliateRepository.FindById(id);
         }
 
-        public Option GetOptionById(int id)
+        public RegType GetOptionById(RegType id)
         {
-            return _optionRepository.FindOption(id);
+            return _RegTypeRepository.FindRegType(id);
         }
 
-        public IList<Option> GetOptionsByWebinarId(int id, bool detached)
+        public IList<RegType> GetOptionsByWebinarId(int id, bool detached)
         {
-            return _refDataRepository.FindOptionsByWebinarId(id, false);
+            return _refDataRepository.FindRegTypesByWebinarId(id, false);
+            //return null;
         }
-        public IList<Option> GetOptionsByWebinarIdFromOptionsRepository(int id, bool detached)
+        public IList<RegType> GetOptionsByWebinarIdFromOptionsRepository(int id, bool detached)
         {
-            return _optionRepository.FindOptionsByWebinarId(id, false);
+            return _RegTypeRepository.FindRegTypesByWebinarId(id, false);
+            return null;
         }
 
         public Order GetOrderById(int id)
@@ -174,9 +182,9 @@ namespace CUWebinars.Business.Services
         //    return GetAuthenticatedUser(userFacadeInstance);
         //}
 
-        public byte GetOrderInitiator()
+        public string GetOrderInitiator()
         {
-            return 0;
+            return "0";
         }
 
         public IEnumerable<IEvent> GetEvents()
@@ -199,10 +207,10 @@ namespace CUWebinars.Business.Services
 
             foreach (OrderRow row in order.OrderRows)
             {
-                var option = _optionRepository.FindOption((int)row.RegistrationType);
+                var option = _RegTypeRepository.FindRegType(row.RegistrationType);
 
-                if (option.PriceToAdd != null) row.UnitPrice = (decimal)option.PriceToAdd;
-                //(decimal)OptionsFacade.Instance.Load((int)row.RegistrationType).PriceToAdd;
+                if (option.Price != null) row.UnitPrice = (decimal)option.Price;
+                //(decimal)OptionsFacade.Instance.Load((int)row.RegistrationType).Price;
 
                 //Calculate options price
                 decimal optionsTotal = CalculateOptionsPrice(row);
@@ -239,29 +247,29 @@ namespace CUWebinars.Business.Services
             //}
 
             decimal optionsTotal = 0.0M;
-            foreach (var option in row.OrderRowOptions)
-            {
-                var additionalLocations = option.AdditionalLocations;
+            //foreach (var option in row.AdditionalLocation)
+            //{
+            //    var AdditionalLocation = option.AdditionalLocation;
 
-                if (additionalLocations == null) continue;
+            //    if (AdditionalLocation == null) continue;
                 
-                if (row.Webinar.Title.Contains("Compliance Perspectives")//.IsSubscriptionWebinar
-                    && additionalLocations.Count < 4)
-                {
-                    continue; //Subscription webinar with up to 3 additional locations. Do not charge.
-                }
+            //    if (row.Webinar.Title.Contains("Compliance Perspectives")//.IsSubscriptionWebinar
+            //        && AdditionalLocation.Count < 4)
+            //    {
+            //        continue; //Subscription webinar with up to 3 additional locations. Do not charge.
+            //    }
 
-                if (row.Webinar.Title.Contains("Compliance Perspectives"))
-                {
+            //    if (row.Webinar.Title.Contains("Compliance Perspectives"))
+            //    {
 
-                    int subscriptionPeriod = 12;//row.RegistrationType == RegistrationType.Twelve_Month_Subscription ? 12 : 6;
-                    optionsTotal += (additionalLocations.Count - 3) * option.OptionPrice * subscriptionPeriod;
-                }
-                else
-                {
-                    optionsTotal += additionalLocations.Count * option.OptionPrice;
-                }
-            }
+            //        int subscriptionPeriod = 12;//row.RegistrationType == RegistrationType.Twelve_Month_Subscription ? 12 : 6;
+            //        optionsTotal += (AdditionalLocation.Count - 3) * option.RegTypePrice * subscriptionPeriod;
+            //    }
+            //    else
+            //    {
+            //        optionsTotal += AdditionalLocation.Count * option.RegTypePrice;
+            //    }
+            //}
             return optionsTotal;
         }
         public virtual void AssignUserToOrder(Order order)

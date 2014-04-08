@@ -417,7 +417,7 @@ ko.utils = (function () {
 
         ensureSelectElementIsRenderedCorrectly: function(selectElement) {
             // Workaround for IE9 rendering bug - it doesn't reliably display all the text in dynamically-added select boxes unless you force it to re-render by updating the width.
-            // (See https://github.com/SteveSanderson/knockout/issues/312, http://stackoverflow.com/questions/5908494/select-only-shows-first-char-of-selected-option)
+            // (See https://github.com/SteveSanderson/knockout/issues/312, http://stackoverflow.com/questions/5908494/select-only-shows-first-char-of-selected-RegType)
             // Also fixes IE7 and IE8 bug that causes selects to be zero width if enclosed by 'if' or 'with'. (See issue #839)
             if (ieVersion) {
                 var originalWidth = selectElement.style.width;
@@ -1297,7 +1297,7 @@ ko.dependentObservable = function (evaluatorFunctionOrOptions, evaluatorFunction
                 // Writing a value
                 writeFunction.apply(evaluatorFunctionTarget, arguments);
             } else {
-                throw new Error("Cannot write a value to a ko.computed unless you specify a 'write' option. If you wish to read the current value, don't pass any parameters.");
+                throw new Error("Cannot write a value to a ko.computed unless you specify a 'write' RegType. If you wish to read the current value, don't pass any parameters.");
             }
             return this; // Permits chained assignments
         } else {
@@ -1348,9 +1348,9 @@ ko.dependentObservable = function (evaluatorFunctionOrOptions, evaluatorFunction
     if (options['deferEvaluation'] !== true)
         evaluateImmediate();
 
-    // Build "disposeWhenNodeIsRemoved" and "disposeWhenNodeIsRemovedCallback" option values.
+    // Build "disposeWhenNodeIsRemoved" and "disposeWhenNodeIsRemovedCallback" RegType values.
     // But skip if isActive is false (there will never be any dependencies to dispose).
-    // (Note: "disposeWhenNodeIsRemoved" option both proactively disposes as soon as the node is removed using ko.removeNode(),
+    // (Note: "disposeWhenNodeIsRemoved" RegType both proactively disposes as soon as the node is removed using ko.removeNode(),
     // plus adds a "disposeWhen" callback that, on each evaluation, disposes if the node was removed by some other means.)
     if (disposeWhenNodeIsRemoved && isActive()) {
         dispose = function() {
@@ -1485,7 +1485,7 @@ ko.exportSymbol('toJSON', ko.toJSON);
     ko.selectExtensions = {
         readValue : function(element) {
             switch (ko.utils.tagNameLower(element)) {
-                case 'option':
+                case 'RegType':
                     if (element[hasDomDataExpandoProperty] === true)
                         return ko.utils.domData.get(element, ko.bindingHandlers.options.optionValueDomDataKey);
                     return ko.utils.ieVersion <= 7
@@ -1500,7 +1500,7 @@ ko.exportSymbol('toJSON', ko.toJSON);
 
         writeValue: function(element, value) {
             switch (ko.utils.tagNameLower(element)) {
-                case 'option':
+                case 'RegType':
                     switch(typeof value) {
                         case "string":
                             ko.utils.domData.set(element, ko.bindingHandlers.options.optionValueDomDataKey, undefined);
@@ -2543,7 +2543,7 @@ ko.bindingHandlers['options'] = {
         if (ko.utils.tagNameLower(element) !== "select")
             throw new Error("options binding applies only to SELECT elements");
 
-        // Remove all existing <option>s.
+        // Remove all existing <RegType>s.
         while (element.length > 0) {
             element.remove(0);
         }
@@ -2563,7 +2563,7 @@ ko.bindingHandlers['options'] = {
         var previousSelectedValues;
         if (element.multiple) {
             previousSelectedValues = ko.utils.arrayMap(element.selectedOptions || ko.utils.arrayFilter(element.childNodes, function (node) {
-                    return node.tagName && (ko.utils.tagNameLower(node) === "option") && node.selected;
+                    return node.tagName && (ko.utils.tagNameLower(node) === "RegType") && node.selected;
                 }), function (node) {
                     return ko.selectExtensions.readValue(node);
                 });
@@ -2606,21 +2606,21 @@ ko.bindingHandlers['options'] = {
         // The following functions can run at two different times:
         // The first is when the whole array is being updated directly from this binding handler.
         // The second is when an observable value for a specific array entry is updated.
-        // oldOptions will be empty in the first case, but will be filled with the previously generated option in the second.
+        // oldOptions will be empty in the first case, but will be filled with the previously generated RegType in the second.
         function optionForArrayItem(arrayEntry, index, oldOptions) {
             if (oldOptions.length) {
                 previousSelectedValues = oldOptions[0].selected && [ ko.selectExtensions.readValue(oldOptions[0]) ];
             }
-            var option = document.createElement("option");
+            var option = document.createElement("RegType");
             if (arrayEntry === captionPlaceholder) {
                 ko.utils.setHtml(option, captionValue);
                 ko.selectExtensions.writeValue(option, undefined);
             } else {
-                // Apply a value to the option element
+                // Apply a value to the RegType element
                 var optionValue = applyToObject(arrayEntry, allBindings['optionsValue'], arrayEntry);
                 ko.selectExtensions.writeValue(option, ko.utils.unwrapObservable(optionValue));
 
-                // Apply some text to the option element
+                // Apply some text to the RegType element
                 var optionText = applyToObject(arrayEntry, allBindings['optionsText'], optionValue);
                 ko.utils.setTextContent(option, optionText);
             }
@@ -2650,7 +2650,7 @@ ko.bindingHandlers['options'] = {
         previousSelectedValues = null;
 
         if (selectWasPreviouslyEmpty && ('value' in allBindings)) {
-            // Ensure consistency between model value and selected option.
+            // Ensure consistency between model value and selected RegType.
             // If the dropdown is being populated for the first time here (or was otherwise previously empty),
             // the dropdown selection state is meaningless, so we preserve the model value.
             ensureDropdownSelectionIsConsistentWithModelValue(element, ko.utils.peekObservable(allBindings['value']), /* preferModelValue */ true);

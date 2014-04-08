@@ -10,16 +10,16 @@ namespace CUWebinars.Business.Services
         void AssignUserToOrder(Order currentOrder);
         Order AssignWebUserToOrder(WebUser webUser, Order order);
         string BuildConnectionInfo(OrderRow orderRow);
-        OrderRow CreateOrderRow(Webinar webinar, OrderRowOption orderRowOption, string alternateEmail, int registrationType);
-        OrderRowOption CreateOrderRowOption(
-            Option option,
+        OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation AdditionalLocation, string alternateEmail, int registrationType);
+        AdditionalLocation CreateOrderRowOption(
+            RegType regType,
             string optionDescription,
             decimal price,
-            string[] additionalLocationsEmails);
+            string[] AdditionalLocationEmails);
         Affiliate GetAffiliateById(int id);
-        Option GetOptionById(int id);
-        IList<Option> GetOptionsByWebinarId(int id, bool detached);
-        IList<Option> GetOptionsByWebinarIdFromOptionsRepository(int id, bool detached);
+        RegType GetOptionById(RegType id);
+        IList<RegType> GetOptionsByWebinarId(int id, bool detached);
+        IList<RegType> GetOptionsByWebinarIdFromOptionsRepository(int id, bool detached);
         Order GetOrderById(int id);
         IList<Order> GetOrdersByUserId(int id);
         Webinar GetWebinar(int id);
@@ -27,7 +27,7 @@ namespace CUWebinars.Business.Services
         void CreateOrderEvent(Order order, UserAccount userAccount);
         void DispatchDummyOrder();
         OrderRow LoadOrderRow(int id);
-        byte GetOrderInitiator();
+        string GetOrderInitiator();
         void CreateCPSubscription(OrderRow orderRow);
         //void Save(Order currentOrder);
         Order SaveOrderChanges(Order currentOrder);
@@ -35,6 +35,6 @@ namespace CUWebinars.Business.Services
 
 
         Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow);
-//        Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, IList<Option> options);
+//        Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, IList<RegType> options);
     }
 }

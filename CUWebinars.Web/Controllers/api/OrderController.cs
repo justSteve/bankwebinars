@@ -91,29 +91,30 @@ namespace CUWebinars.Web.Controllers.api
                     );
             }
 
-            OrderRowOption orderRowOption = null;
+            AdditionalLocation AdditionalLocation = null;
 
-            if (model.AdditionalLocations.Any())
-            {
-                var optionsForWebinar = _orderManagementService.GetOptionsByWebinarId(webinar.idWebinar, false);
-                var optionForAdditionalLocation = optionsForWebinar.First(o => o.Type == "additional_location");
+            //if (model.AdditionalLocation.Any())
+            //{
+            //    var optionsForWebinar = _orderManagementService.GetOptionsByWebinarId(webinar.idWebinar, false);
+            //    var optionForAdditionalLocation = optionsForWebinar.First(o => o.Type == "additional_location");
 
-                orderRowOption = _orderManagementService.CreateOrderRowOption(optionForAdditionalLocation,
-                    optionForAdditionalLocation.OptionExplain,
-                    Convert.ToDecimal(optionForAdditionalLocation.PriceToAdd ?? 0.0),
-                    model.AdditionalLocations.ToArray()
-                    );
-            }
+            //    AdditionalLocation = _orderManagementService.CreateOrderRowOption(optionForAdditionalLocation,
+            //        optionForAdditionalLocation.OptionExplain,
+            //        Convert.ToDecimal(optionForAdditionalLocation.Price ?? 0.0),
+            //        model.AdditionalLocation.ToArray()
+            //        );
+            //}
 
             var orderRow = _orderManagementService.CreateOrderRow(
                 webinar,
-                orderRowOption,
+                AdditionalLocation,
                 model.AlternativeEmail,
-                model.idOption
+                model.idRegType
                 );
 
-            orderRow.idDiscount = model.Discount;
-            orderRow.Status = model.Status;
+            orderRow.Discount = model.Discount;
+            //TODO: Ensure this status is updated after save.
+            orderRow.RowStatus = OrderRowStatus.InProcess;
 
             var importedOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
 

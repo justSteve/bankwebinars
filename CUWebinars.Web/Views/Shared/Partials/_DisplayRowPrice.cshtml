@@ -18,11 +18,11 @@
         StringBuilder rowAmount = new StringBuilder();
         if (row.DiscountFlatOff != 0.0M || row.DiscountPercentOff != 0.0M || optionsTotal != 0.0M)
         {
-            rowAmount.Append("Base Cost: " + OptionsFacade.Instance.Load((int)row.RegistrationType).PriceToAdd.ToString("c0") + "<br />");
+            rowAmount.Append("Base Cost: " + OptionsFacade.Instance.Load((int)row.RegistrationType).Price.ToString("c0") + "<br />");
         }
         else if (verbose == true)
         {
-            rowAmount.Append("Base Cost: " + OptionsFacade.Instance.Load((int)row.RegistrationType).PriceToAdd.ToString("c0") + "<br />");
+            rowAmount.Append("Base Cost: " + OptionsFacade.Instance.Load((int)row.RegistrationType).Price.ToString("c0") + "<br />");
         }
 
         if (row.DiscountFlatOff != 0.0M)
@@ -35,24 +35,24 @@
         }
         if (optionsTotal != 0.0M)
         {
-            if (row.Options.OfType<AdditionalLocationsOrderRowOption>().Single().AdditionalLocationsCount == 1)
+            if (row.Options.OfType<AdditionalLocationOrderRowOption>().Single().AdditionalLocationCount == 1)
             {
                 rowAmount.Append("One Additional Location: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
             }
             else
             {
-                rowAmount.Append(row.Options.OfType<AdditionalLocationsOrderRowOption>().Single().AdditionalLocationsCount.ToString() + " Additional Locations: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
+                rowAmount.Append(row.Options.OfType<AdditionalLocationOrderRowOption>().Single().AdditionalLocationCount.ToString() + " Additional Locations: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
             }
         }
         else if (verbose == true)
         {
-            if (row.Options.OfType<AdditionalLocationsOrderRowOption>().Single().AdditionalLocationsCount == 1)
+            if (row.Options.OfType<AdditionalLocationOrderRowOption>().Single().AdditionalLocationCount == 1)
             {
                 rowAmount.Append("One Additional Location: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
             }
             else
             {
-                rowAmount.Append(row.Options.OfType<AdditionalLocationsOrderRowOption>().Single().AdditionalLocationsCount.ToString() + " Additional Locations: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
+                rowAmount.Append(row.Options.OfType<AdditionalLocationOrderRowOption>().Single().AdditionalLocationCount.ToString() + " Additional Locations: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
             }
         }
         rowAmount.Append("Total Cost: " + row.RowPrice.ToString("c").Replace(".00", ""));
@@ -64,20 +64,20 @@
         var statusLabel = "";
         switch (row.Status)
         {
-            case OrderRowStatus.InProcess:
-                <span class="label label-warning">@OrderRowStatus.InProcess</span>
+            case OrderStatus.InProcess:
+                <span class="label label-warning">@OrderStatus.InProcess</span>
                 break;
 
-            case OrderRowStatus.Submitted:
-            <span class="label label-info">@OrderRowStatus.Submitted</span>
+            case OrderStatus.Submitted:
+            <span class="label label-info">@OrderStatus.Submitted</span>
                 break;
 
-            case OrderRowStatus.Paid:
-            <span class="label label-success">@OrderRowStatus.Paid</span>
+            case OrderStatus.Paid:
+            <span class="label label-success">@OrderStatus.Paid</span>
                 break;
 
-            case OrderRowStatus.PendingAuth:
-            <span class="label label-warning">@OrderRowStatus.PendingAuth</span>
+            case OrderStatus.PendingAuth:
+            <span class="label label-warning">@OrderStatus.PendingAuth</span>
                 break;
         }
         }

@@ -3,12 +3,12 @@
 @model WebinarDetailsViewModel
 @{
     <script language="javascript">
-        function exprsOrder(idOption) {
-            alert(idOption);
+        function exprsOrder(idRegType) {
+            alert(idRegType);
 
         };
-        function upgrade(idOption) {
-            alert(idOption);
+        function upgrade(idRegType) {
+            alert(idRegType);
 
         };
     </script>
@@ -16,7 +16,7 @@
     OrderRow row = null;
     if (ViewBag.userOwnsThisEvent > 0)
     {
-        Option orderMsgs = ViewBag.orderMessages;
+        RegType orderMsgs = ViewBag.orderMessages;
         string[] webinarFiles = ViewBag.WebinarFiles;
         var recording = "<a href='" + Model.Webinar.RecordingUrl + "' target=_blank /> Recording Playback</a>"; ;
         var showShipped = "";
@@ -29,7 +29,7 @@
         foreach (OrderRow itemRow in Model.CheckoutOptionsViewModel.Order.OrderRows)
         {
             <script language="javascript">
-                var idOption = @orderMsgs.idOption;
+                var idRegType = @orderMsgs.idRegType;
             </script>
             order = itemRow.Order;
             row = itemRow;
@@ -48,9 +48,9 @@
             break;
         }
         Debug.Assert(order != null, "order != null");
-        if (row.Status == OrderRowStatus.Billed ||
-            row.Status == OrderRowStatus.Paid ||
-            row.Status == OrderRowStatus.Submitted)
+        if (row.Order.OrderStatus == OrderStatus.Billed ||
+            row.Order.OrderStatus == OrderStatus.Paid ||
+            row.Order.OrderStatus == OrderStatus.Submitted)
         {
             //webinarFiles ="";
             <aside style="width: 100%" class="widget clearfix">
@@ -61,7 +61,7 @@
                         <li>@orderMsgs.OptionLabel</li>
                         <li>$@order.Total</li>
                         @Html.Raw(@showShipped)
-                        <li><a href='#' onclick='upgrade(idOption);'>Upgrade order?</a></li>
+                        <li><a href='#' onclick='upgrade(idRegType);'>Upgrade order?</a></li>
                     </ul>
                 </div>
             </aside>
@@ -88,7 +88,7 @@
                 {
                     <aside style="width: 100%; text-align: center;" class="widget clearfix">
                         Your order is currently <br />not configured for <b>Live</b> attendance.
-                        <br /><a class="btn btn-mini btn-success" href='#' onclick='upgrade(idOption);'>Upgrade order?</a>
+                        <br /><a class="btn btn-mini btn-success" href='#' onclick='upgrade(idRegType);'>Upgrade order?</a>
                     </aside>
                 }
             }
@@ -113,19 +113,17 @@
 
                     @foreach (var myOption in Model.Options)
                     {
-                        if (myOption.Type == "Text")
-                        {
-                            if (Model.CheckoutOptionsViewModel.Order == null
-                                //Model.Order.idOrder < 1
-                                //Model.Order.OrderRows.Single().Status == OrderRowStatus.InProcess
 
-                                && !myOption.SKU.Contains("Upgrade")
-                                )
-                            {
-                                <li>
-                                    <a onclick='javascript:exprsOrder("@myOption.idOption");'>&nbsp;&nbsp;@myOption.OptionLabel - $@myOption.PriceToAdd&nbsp;&nbsp;</a>
-                                </li>
-                            }
+                        if (Model.CheckoutOptionsViewModel.Order == null
+                            //Model.Order.idOrder < 1
+                            //Model.Order.OrderRows.Single().Status == OrderStatus.InProcess
+
+                            && !myOption.SKU.Contains("Upgrade")
+                            )
+                        {
+                            <li>
+                                <a onclick='javascript:exprsOrder("@myOption.idRegType");'>&nbsp;&nbsp;@myOption.OptionLabel - $@myOption.Price&nbsp;&nbsp;</a>
+                            </li>
                         }
                     }
                 </ul>

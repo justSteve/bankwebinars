@@ -40,7 +40,7 @@
             <div class="span4">
                 Billing:
                 @{
-            if (row.Status != OrderRowStatus.InProcess)
+            if (row.Order.OrderStatus != OrderStatus.InProcess)
             {
                 <a role="button" href='/account/edit/@Model.WebUser.idUser' class="btn btn-mini" target='new'>Edit?</a>
             }

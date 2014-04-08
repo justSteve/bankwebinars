@@ -3,9 +3,13 @@ using CUWebinars.Business.Models;
 
 namespace CUWebinars.Web.ViewModel
 {
-    public class AddAdditionalLocationsViewModel
+    public class AddAdditionalLocationViewModel
     {
-        public IList<string> Emails { get; set; }
-        public OrderRowOption OrderRowOption { get; set; }
+        //public IList<string> Emails { get; set; }
+        public IList<AdditionalLocation> AdditionalLocations { get; set; }
+        public Order Order { get; set; }
+        public Webinar Webinar { get; set; }
+        public WebUser WebUser { get; set; }
+
     }
 }

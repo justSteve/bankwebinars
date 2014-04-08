@@ -32,11 +32,11 @@
 
                     //TODO: re-code this so that the registration type can be obtained without
                     //a hit to the db on each record.
-                    Option registrationType = new Option();
+                    RegType registrationType = new RegType();
                     using (var context = new TTSWebinarsContext())
                     {
-                        var paramWebinarID = new SqlParameter("idOption", SqlDbType.Int) { Value = (int)row.RegistrationType };
-                        registrationType = context.Options.SqlQuery("dbo.GetRegistrationType @idOption", paramWebinarID).Single();
+                        var paramWebinarID = new SqlParameter("idRegType", SqlDbType.Int) { Value = (int)row.RegistrationType };
+                        registrationType = context.Options.SqlQuery("dbo.GetRegistrationType @idRegType", paramWebinarID).Single();
                     }
                         }
                         <h4 class="trigger" id="upcoming-@row.idWebinar"><a href="#">@row.Webinar.Title<i class="icon-plus-sign"></i></a></h4>

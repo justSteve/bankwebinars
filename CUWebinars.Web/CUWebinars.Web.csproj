@@ -911,6 +911,7 @@
     <Content Include="Properties\PublishProfiles\BankWebinars - Web Deploy %284%29.pubxml.user" />
     <Content Include="Properties\PublishProfiles\CUWebinars - Web Deploy.pubxml.user" />
     <Content Include="Scripts\app\cart\add-additional-locations.js" />
+    <Content Include="Scripts\app\cart\additional-location-modal.js" />
     <Content Include="Scripts\app\cart\additional-locations.js" />
     <Content Include="Scripts\app\cart\create-order.js" />
     <Content Include="Scripts\app\constants.js" />
@@ -1139,6 +1140,8 @@
     <Content Include="Views\MembershipNotificationOps\_RegisterPartial.cshtml" />
     <Content Include="Views\MembershipNotificationOps\_ResetPasswordPartial.cshtml" />
     <Content Include="Views\MembershipNotificationOps\_PasswordResetConfirm.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\AddAdditionalLocationViewModel.cshtml" />
+    <Content Include="Views\Webinar\Partials\_AdditionalLocationsModal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\Admin\Models\" />

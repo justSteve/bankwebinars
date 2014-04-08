@@ -74,9 +74,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountService\IMembershipService.cs" />
-    <Compile Include="Models\AdditionalLocation.cs" />
     <Compile Include="Models\IObjectWithState.cs" />
     <Compile Include="Models\Mapping\AdditionalLocationMap.cs" />
+    <Compile Include="Models\Mapping\RegTypeGroupsXrefMap.cs" />
+    <Compile Include="Models\Mapping\RegTypesGroupMap.cs" />
+    <Compile Include="Models\Mapping\RegTypesXrefMap.cs" />
+    <Compile Include="Models\RegTypesGroup.cs" />
+    <Compile Include="Models\RegTypeGroupsXref.cs" />
+    <Compile Include="Models\RegTypesXref.cs" />
+    <Compile Include="Models\OrderStatus.cs" />
     <Compile Include="Notification\Email\NotificationMessage.cs" />
     <Compile Include="Notification\Email\SmtpMessageDelivery.cs" />
     <Compile Include="Notification\Events\OrderSubmittedEvent.cs" />
@@ -121,31 +127,23 @@
     <Compile Include="Models\Affiliate.cs" />
     <Compile Include="Models\Discount.cs" />
     <Compile Include="Models\Institution.cs" />
-    <Compile Include="Models\Mapping\AdditionalLocationsOptionMap.cs" />
     <Compile Include="Models\Mapping\AddressMap.cs" />
     <Compile Include="Models\Mapping\AffiliateMap.cs" />
     <Compile Include="Models\Mapping\DiscountMap.cs" />
     <Compile Include="Models\Mapping\InstitutionMap.cs" />
-    <Compile Include="Models\Mapping\OptionMap.cs" />
-    <Compile Include="Models\Mapping\OptionsGroupMap.cs" />
-    <Compile Include="Models\Mapping\OptionsGroupsXrefMap.cs" />
-    <Compile Include="Models\Mapping\OptionsXrefMap.cs" />
+    <Compile Include="Models\Mapping\RegTypeMap.cs" />
     <Compile Include="Models\Mapping\OrderMap.cs" />
     <Compile Include="Models\Mapping\OrderRowMap.cs" />
-    <Compile Include="Models\Mapping\OrderRowOptionMap.cs" />
     <Compile Include="Models\Mapping\PresenterMap.cs" />
     <Compile Include="Models\Mapping\TopicMap.cs" />
     <Compile Include="Models\Mapping\WebinarFileMap.cs" />
     <Compile Include="Models\Mapping\WebinarMap.cs" />
     <Compile Include="Models\Mapping\WebinarTopicXrefMap.cs" />
     <Compile Include="Models\Mapping\WebUserMap.cs" />
-    <Compile Include="Models\Option.cs" />
-    <Compile Include="Models\OptionsGroup.cs" />
-    <Compile Include="Models\OptionsGroupsXref.cs" />
-    <Compile Include="Models\OptionsXref.cs" />
+    <Compile Include="Models\RegType.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderRow.cs" />
-    <Compile Include="Models\OrderRowOption.cs" />
+    <Compile Include="Models\AdditionalLocation.cs" />
     <Compile Include="Models\OrderRowStatus.cs" />
     <Compile Include="Models\Presenter.cs" />
     <Compile Include="Models\USTimeZone.cs" />
@@ -160,7 +158,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\IInstitutionRepository.cs" />
     <Compile Include="Repository\InstitutionRepository.cs" />
-    <Compile Include="Repository\IOptionRepository.cs" />
+    <Compile Include="Repository\IRegTypeRepository.cs" />
     <Compile Include="Repository\IOrderRepository.cs" />
     <Compile Include="Repository\IRefDataRepository.cs" />
     <Compile Include="Repository\IWebUserRepository.cs" />
@@ -178,30 +176,13 @@
     <None Include="packages.config" />
     <None Include="SQLSeeding\BACPACs\BankWebinars.bacpac" />
     <None Include="SQLSeeding\BACPACs\BankWebinars2.bacpac" />
-    <None Include="SQLSeeding\BACPACs\BankWebinarsSeeder.bacpac" />
     <None Include="SQLSeeding\BACPACs\CUWebinarsV3.bacpac" />
     <None Include="SQLSeeding\BACPACs\MembershipReboot.bacpac" />
-    <None Include="SQLSeeding\BACPACs\MembershipReboot.old" />
-    <None Include="SQLSeeding\BACPACs\TTSDatabase-2014-2-7-0-53.bacpac" />
+    <None Include="SQLSeeding\BACPACs\Options2RegType.bacpac" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="SQLSeeding\InitialSeeding\BuildTTSWebinarsSeeder.sql" />
-    <Content Include="SQLSeeding\InitialSeeding\MigrationNotes.txt" />
-    <Content Include="SQLSeeding\InitialSeeding\seeder1_ini.sql" />
-    <Content Include="SQLSeeding\InitialSeeding\seeder2_ImportPresenters.sql" />
-    <Content Include="SQLSeeding\InitialSeeding\seeder2_RestorePresenters.sql" />
-    <Content Include="SQLSeeding\InitialSeeding\seeder3_ImportAffiliates.sql" />
-    <Content Include="SQLSeeding\InitialSeeding\seeder3_RestoreAffiliates.sql" />
-    <Content Include="SQLSeeding\InitialSeeding\seeder4_CreateOptions.sql" />
-    <Content Include="SQLSeeding\InitialSeeding\seeder5_ImportWebinars.sql" />
-    <Content Include="SQLSeeding\InitialSeeding\seeder5_ImportWebinars__CU.sql" />
-    <Content Include="SQLSeeding\InitialSeeding\seeder6_post.sql" />
     <Content Include="SQLSeeding\MigrationNotes.txt" />
-    <Content Include="SQLSeeding\CopyTables.sql" />
-    <Content Include="SQLSeeding\VBA\CUWebinarImporter.bas" />
-    <Content Include="SQLSeeding\VBA\SetOrdersToShipped.bas" />
-    <Content Include="SQLSeeding\InitialSeeding\_buildSprocsAndErrorLog.sql" />
-    <Content Include="SQLSeeding\InitialSeeding\_scriptRunner.sql" />
+    <Content Include="SQLSeeding\Options2RegTypeSeedingScript.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CUWebinars.NotificationSystem\CUWebinars.NotificationSystem.csproj">

@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations.Schema;
+
 using System.Data.Entity.ModelConfiguration;
 
 namespace CUWebinars.Business.Models.Mapping
@@ -8,22 +8,22 @@ namespace CUWebinars.Business.Models.Mapping
         public WebinarTopicXrefMap()
         {
             // Primary Key
-            this.HasKey(t => t.idWebinarTopicXref);
+            HasKey(t => t.idWebinarTopicXref);
 
             // Properties
             // Table & Column Mappings
-            this.ToTable("WebinarTopicXref");
-            this.Property(t => t.idWebinarTopicXref).HasColumnName("idWebinarTopicXref");
-            this.Property(t => t.idWebinar).HasColumnName("idWebinar");
-            this.Property(t => t.idTopic).HasColumnName("idTopic");
+            ToTable("WebinarTopicXref");
+            Property(t => t.idWebinarTopicXref).HasColumnName("idWebinarTopicXref");
+            Property(t => t.idWebinar).HasColumnName("idWebinar");
+            Property(t => t.idTopic).HasColumnName("idTopic");
 
             // Relationships
-            this.HasRequired(t => t.Topic)
-                .WithMany(t => t.WebinarTopicXrefs)
-                .HasForeignKey(d => d.idTopic);
-            this.HasRequired(t => t.Webinar)
-                .WithMany(t => t.WebinarTopicXrefs)
-                .HasForeignKey(d => d.idWebinar);
+            HasRequired(t => t.Topic)
+                            .WithMany(t => t.WebinarTopicXrefs)
+                            .HasForeignKey(d => d.idTopic);
+            HasRequired(t => t.Webinar)
+                            .WithMany(t => t.WebinarTopicXrefs)
+                            .HasForeignKey(d => d.idWebinar);
 
         }
     }

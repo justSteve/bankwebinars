@@ -53,7 +53,7 @@ DataTable.models.oColumn = {
 	 * can have the sorting and filtering use the rendered value (true - default), 
 	 * or you can have the sorting and filtering us the original value (false).
 	 *
-	 * Please note that this option has now been deprecated and will be removed
+	 * Please note that this RegType has now been deprecated and will be removed
 	 * in the next version of DataTables. Please use mRender / mData rather than
 	 * fnRender.
 	 *  @type boolean
@@ -110,7 +110,7 @@ DataTable.models.oColumn = {
 	 * <code>Deprecated</code> Custom display function that will be called for the 
 	 * display of each cell in this column.
 	 *
-	 * Please note that this option has now been deprecated and will be removed
+	 * Please note that this RegType has now been deprecated and will be removed
 	 * in the next version of DataTables. Please use mRender / mData rather than
 	 * fnRender.
 	 *  @type function
@@ -150,7 +150,7 @@ DataTable.models.oColumn = {
 	/**
 	 * Partner property to mData which is used (only when defined) to get
 	 * the data - i.e. it is basically the same as mData, but without the
-	 * 'set' option, and also the data fed to it is the result from mData.
+	 * 'set' RegType, and also the data fed to it is the result from mData.
 	 * This is the rendering method to match the data method of mData.
 	 *  @type function|int|string|null
 	 *  @default null
@@ -188,7 +188,7 @@ DataTable.models.oColumn = {
 	 * is that "mmm" is much wider then "iiii", but the latter is a longer 
 	 * string - thus the calculation can go wrong (doing it properly and putting
 	 * it into an DOM object and measuring that is horribly(!) slow). Thus as
-	 * a "work around" we provide this option. It will append its value to the
+	 * a "work around" we provide this RegType. It will append its value to the
 	 * text that is found to be the longest string for the column - i.e. padding.
 	 *  @type string
 	 */

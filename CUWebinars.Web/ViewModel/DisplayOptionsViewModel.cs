@@ -5,8 +5,11 @@ namespace CUWebinars.Web.ViewModel
 {
     public class DisplayOptionsViewModel
     {
-        public AdditionalLocationsViewModel AdditionalLocationsViewModel { get; set; }
-        public List<Option> Options { get; set; }
+        public AdditionalLocationViewModel AdditionalLocationViewModel { get; set; }
+        public List<RegType> Options { get; set; }
+
+        public Order Order { get; set; }
         public Webinar Webinar { get; set; }
+        public WebUser WebUser { get; set; }
     }
 }

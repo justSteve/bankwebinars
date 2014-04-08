@@ -1,3 +1,4 @@
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.ModelConfiguration;
 
@@ -8,36 +9,36 @@ namespace CUWebinars.Business.Models.Mapping
         public PresenterMap()
         {
             // Primary Key
-            this.HasKey(t => t.idUser);
+            HasKey(t => t.idUser);
 
             // Properties
-            this.Property(t => t.idUser)
-                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
+            Property(t => t.idUser)
+                            .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
 
-            this.Property(t => t.Biography)
-                .HasMaxLength(2500);
+            Property(t => t.Biography)
+                            .HasMaxLength(2500);
 
-            this.Property(t => t.BiographyLong)
-                .IsRequired()
-                .HasMaxLength(2500);
+            Property(t => t.BiographyLong)
+                            .IsRequired()
+                            .HasMaxLength(2500);
 
-            this.Property(t => t.PhotoFull)
-                .HasMaxLength(200);
+            Property(t => t.PhotoFull)
+                            .HasMaxLength(200);
 
-            this.Property(t => t.PhotoThumb)
-                .HasMaxLength(200);
+            Property(t => t.PhotoThumb)
+                            .HasMaxLength(200);
 
             // Table & Column Mappings
-            this.ToTable("Presenter");
-            this.Property(t => t.idUser).HasColumnName("idUser");
-            this.Property(t => t.Biography).HasColumnName("Biography");
-            this.Property(t => t.BiographyLong).HasColumnName("BiographyLong");
-            this.Property(t => t.PhotoFull).HasColumnName("PhotoFull");
-            this.Property(t => t.PhotoThumb).HasColumnName("PhotoThumb");
+            ToTable("Presenter");
+            Property(t => t.idUser).HasColumnName("idUser");
+            Property(t => t.Biography).HasColumnName("Biography");
+            Property(t => t.BiographyLong).HasColumnName("BiographyLong");
+            Property(t => t.PhotoFull).HasColumnName("PhotoFull");
+            Property(t => t.PhotoThumb).HasColumnName("PhotoThumb");
 
             // Relationships
-            this.HasRequired(t => t.WebUser)
-                .WithOptional(t => t.Presenter);
+            HasRequired(t => t.WebUser)
+                            .WithOptional(t => t.Presenter);
 
         }
     }

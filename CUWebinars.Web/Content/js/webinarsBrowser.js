@@ -99,7 +99,7 @@ function initRegistrationsTable(webinarID) {
                 "sWidth": "10%",
                 "fnRender": function (obj) {
                     var orderData = obj.aData[obj.IdataColumn];
-                    return "<small>" + orderData.orderId + " <br>via: " + orderData.initiatedBy + "</small>";
+                    return "<small>" + orderData.orderId + " <br>via: " + orderData.Origin+ "</small>";
                 }
             },
 

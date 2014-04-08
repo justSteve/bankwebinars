@@ -983,7 +983,7 @@ function createOptions( options ) {
  * Create a callback list using the following parameters:
  *
  *	options: an optional list of space-separated options that will change how
- *			the callback list behaves or a more traditional option object
+ *			the callback list behaves or a more traditional RegType object
  *
  * By default a callback list will act like an event callback list and can be
  * "fired" multiple times.
@@ -1324,7 +1324,7 @@ jQuery.support = (function() {
 
 	// First batch of tests
 	select = document.createElement("select");
-	opt = select.appendChild( document.createElement("option") );
+	opt = select.appendChild( document.createElement("RegType") );
 	input = div.getElementsByTagName("input")[ 0 ];
 
 	a.style.cssText = "top:1px;float:left;opacity:.5";
@@ -1363,7 +1363,7 @@ jQuery.support = (function() {
 		// Check the default checkbox/radio value ("" on WebKit; "on" elsewhere)
 		checkOn: !!input.value,
 
-		// Make sure that a selected-by-default option has a working selected property.
+		// Make sure that a selected-by-default RegType has a working selected property.
 		// (WebKit defaults to false instead of true, IE too, if it's in an optgroup)
 		optSelected: opt.selected,
 
@@ -2292,7 +2292,7 @@ jQuery.extend({
 							( jQuery.support.optDisabled ? !option.disabled : option.getAttribute("disabled") === null ) &&
 							( !option.parentNode.disabled || !jQuery.nodeName( option.parentNode, "optgroup" ) ) ) {
 
-						// Get the specific value for the option
+						// Get the specific value for the RegType
 						value = jQuery( option ).val();
 
 						// We don't need an array for one selects
@@ -2311,7 +2311,7 @@ jQuery.extend({
 			set: function( elem, value ) {
 				var values = jQuery.makeArray( value );
 
-				jQuery(elem).find("option").each(function() {
+				jQuery(elem).find("RegType").each(function() {
 					this.selected = jQuery.inArray( jQuery(this).val(), values ) >= 0;
 				});
 
@@ -2648,7 +2648,7 @@ if ( !jQuery.support.style ) {
 	};
 }
 
-// Safari mis-reports the default selected property of an option
+// Safari mis-reports the default selected property of an RegType
 // Accessing the parent's selectedIndex property fixes it
 if ( !jQuery.support.optSelected ) {
 	jQuery.propHooks.selected = jQuery.extend( jQuery.propHooks.selected, {
@@ -4190,14 +4190,14 @@ setDocument = Sizzle.setDocument = function( node ) {
 			// setting a boolean content attribute,
 			// since its presence should be enough
 			// http://bugs.jquery.com/ticket/12359
-			div.innerHTML = "<select><option selected=''></option></select>";
+			div.innerHTML = "<select><RegType selected=''></RegType></select>";
 
 			// IE8 - Some boolean attributes are not treated correctly
 			if ( !div.querySelectorAll("[selected]").length ) {
 				rbuggyQSA.push( "\\[" + whitespace + "*(?:checked|disabled|ismap|multiple|readonly|selected|value)" );
 			}
 
-			// Webkit/Opera - :checked should return selected option elements
+			// Webkit/Opera - :checked should return selected RegType elements
 			// http://www.w3.org/TR/2011/REC-css3-selectors-20110929/#checked
 			// IE8 throws error here and will not see later tests
 			if ( !div.querySelectorAll(":checked").length ) {
@@ -4901,7 +4901,7 @@ Expr = Sizzle.selectors = {
 			// In CSS3, :checked should return both checked and selected elements
 			// http://www.w3.org/TR/2011/REC-css3-selectors-20110929/#checked
 			var nodeName = elem.nodeName.toLowerCase();
-			return (nodeName === "input" && !!elem.checked) || (nodeName === "option" && !!elem.selected);
+			return (nodeName === "input" && !!elem.checked) || (nodeName === "RegType" && !!elem.selected);
 		},
 
 		"selected": function( elem ) {
@@ -6311,9 +6311,9 @@ function fixCloneNodeIssues( src, dest ) {
 			dest.value = src.value;
 		}
 
-	// IE6-8 fails to return the selected option to the default selected
+	// IE6-8 fails to return the selected RegType to the default selected
 	// state when cloning options
-	} else if ( nodeName === "option" ) {
+	} else if ( nodeName === "RegType" ) {
 		dest.defaultSelected = dest.selected = src.defaultSelected;
 
 	// IE6-8 fails to set the defaultValue to the correct value when
@@ -7842,7 +7842,7 @@ jQuery.extend({
 		// We also use the url parameter if available
 		s.url = ( ( url || s.url || ajaxLocation ) + "" ).replace( rhash, "" ).replace( rprotocol, ajaxLocParts[ 1 ] + "//" );
 
-		// Alias method option to type as per ticket #12004
+		// Alias method RegType to type as per ticket #12004
 		s.type = options.method || options.type || s.method || s.type;
 
 		// Extract dataTypes list
@@ -7934,7 +7934,7 @@ jQuery.extend({
 				s.accepts[ "*" ]
 		);
 
-		// Check for headers option
+		// Check for headers RegType
 		for ( i in s.headers ) {
 			jqXHR.setRequestHeader( i, s.headers[ i ] );
 		}

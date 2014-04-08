@@ -504,7 +504,7 @@
 						}
 						else if ( oCol.sType != sThisType && oCol.sType != "html" )
 						{
-							/* String is always the 'fallback' option */
+							/* String is always the 'fallback' RegType */
 							oCol.sType = 'string';
 						}
 					}
@@ -632,7 +632,7 @@
 								else if ( oCol.sType != sThisType && 
 								          oCol.sType != "html" )
 								{
-									/* String is always the 'fallback' option */
+									/* String is always the 'fallback' RegType */
 									oCol.sType = 'string';
 								}
 							}
@@ -1626,7 +1626,7 @@
 			oSettings.nTableWrapper = $('<div id="'+oSettings.sTableId+'_wrapper" class="'+oSettings.oClasses.sWrapper+'" role="grid"></div>')[0];
 			oSettings.nTableReinsertBefore = oSettings.nTable.nextSibling;
 		
-			/* Track where we want to insert the option */
+			/* Track where we want to insert the RegType */
 			var nInsertNode = oSettings.nTableWrapper;
 			
 			/* Loop over the user set positioning and place the elements as needed */
@@ -2750,14 +2750,14 @@
 			{
 				for ( i=0, iLen=aLengthMenu[0].length ; i<iLen ; i++ )
 				{
-					sStdMenu += '<option value="'+aLengthMenu[0][i]+'">'+aLengthMenu[1][i]+'</option>';
+					sStdMenu += '<RegType value="'+aLengthMenu[0][i]+'">'+aLengthMenu[1][i]+'</RegType>';
 				}
 			}
 			else
 			{
 				for ( i=0, iLen=aLengthMenu.length ; i<iLen ; i++ )
 				{
-					sStdMenu += '<option value="'+aLengthMenu[i]+'">'+aLengthMenu[i]+'</option>';
+					sStdMenu += '<RegType value="'+aLengthMenu[i]+'">'+aLengthMenu[i]+'</RegType>';
 				}
 			}
 			sStdMenu += '</select>';
@@ -2774,7 +2774,7 @@
 			 * Set the length to the current display length - thanks to Andrea Pavlovic for this fix,
 			 * and Stefan Skopnik for fixing the fix!
 			 */
-			$('select option[value="'+oSettings._iDisplayLength+'"]', nLength).attr("selected", true);
+			$('select RegType[value="'+oSettings._iDisplayLength+'"]', nLength).attr("selected", true);
 			
 			$('select', nLength).bind( 'change.DT', function(e) {
 				var iVal = $(this).val();
@@ -4064,7 +4064,7 @@
 				nTh.removeAttribute('aria-sort');
 				nTh.removeAttribute('aria-label');
 				
-				/* In ARIA only the first sorting column can be marked as sorting - no multi-sort option */
+				/* In ARIA only the first sorting column can be marked as sorting - no multi-sort RegType */
 				if ( aoColumns[i].bSortable )
 				{
 					if ( aaSort.length > 0 && aaSort[0][0] == i )
@@ -7045,7 +7045,7 @@
 		/**
 		 * Feature plug-ins - This is an array of objects which describe the feature plug-ins that are
 		 * available to DataTables. These feature plug-ins are accessible through the sDom initialisation
-		 * option. As such, each feature plug-in must describe a function that is used to initialise
+		 * RegType. As such, each feature plug-in must describe a function that is used to initialise
 		 * itself (fnInit), a character so the feature can be enabled by sDom (cFeature) and the name
 		 * of the feature (sFeature). Thus the objects attached to this method must provide:
 		 *   <ul>
@@ -7613,7 +7613,7 @@
 		 * can have the sorting and filtering use the rendered value (true - default), 
 		 * or you can have the sorting and filtering us the original value (false).
 		 *
-		 * Please note that this option has now been deprecated and will be removed
+		 * Please note that this RegType has now been deprecated and will be removed
 		 * in the next version of DataTables. Please use mRender / mData rather than
 		 * fnRender.
 		 *  @type boolean
@@ -7670,7 +7670,7 @@
 		 * <code>Deprecated</code> Custom display function that will be called for the 
 		 * display of each cell in this column.
 		 *
-		 * Please note that this option has now been deprecated and will be removed
+		 * Please note that this RegType has now been deprecated and will be removed
 		 * in the next version of DataTables. Please use mRender / mData rather than
 		 * fnRender.
 		 *  @type function
@@ -7710,7 +7710,7 @@
 		/**
 		 * Partner property to mData which is used (only when defined) to get
 		 * the data - i.e. it is basically the same as mData, but without the
-		 * 'set' option, and also the data fed to it is the result from mData.
+		 * 'set' RegType, and also the data fed to it is the result from mData.
 		 * This is the rendering method to match the data method of mData.
 		 *  @type function|int|string|null
 		 *  @default null
@@ -7748,7 +7748,7 @@
 		 * is that "mmm" is much wider then "iiii", but the latter is a longer 
 		 * string - thus the calculation can go wrong (doing it properly and putting
 		 * it into an DOM object and measuring that is horribly(!) slow). Thus as
-		 * a "work around" we provide this option. It will append its value to the
+		 * a "work around" we provide this RegType. It will append its value to the
 		 * text that is found to be the longest string for the column - i.e. padding.
 		 *  @type string
 		 */
@@ -7836,7 +7836,7 @@
 		 * example with a custom Ajax call.
 		 *  @type array
 		 *  @default null
-		 *  @dtopt Option
+		 *  @dtopt RegType
 		 * 
 		 *  @example
 		 *    // Using a 2D array data source
@@ -7897,7 +7897,7 @@
 		 * column's index and a direction string ('asc' or 'desc').
 		 *  @type array
 		 *  @default [[0,'asc']]
-		 *  @dtopt Option
+		 *  @dtopt RegType
 		 * 
 		 *  @example
 		 *    // Sort by 3rd column first, and then 4th column
@@ -7926,7 +7926,7 @@
 		 * together.
 		 *  @type array
 		 *  @default null
-		 *  @dtopt Option
+		 *  @dtopt RegType
 		 * 
 		 *  @example
 		 *    $(document).ready( function() {
@@ -7942,12 +7942,12 @@
 		 * This parameter allows you to readily specify the entries in the length drop
 		 * down menu that DataTables shows when pagination is enabled. It can be 
 		 * either a 1D array of options which will be used for both the displayed 
-		 * option and the value, or a 2D array which will use the array in the first 
+		 * RegType and the value, or a 2D array which will use the array in the first 
 		 * position as the value, and the array in the second position as the 
 		 * displayed options (useful for language strings such as 'All').
 		 *  @type array
 		 *  @default [ 10, 25, 50, 100 ]
-		 *  @dtopt Option
+		 *  @dtopt RegType
 		 * 
 		 *  @example
 		 *    $(document).ready( function() {
@@ -7958,7 +7958,7 @@
 		 *  
 		 *  @example
 		 *    // Setting the default display length as well as length menu
-		 *    // This is likely to be wanted if you remove the '10' option which
+		 *    // This is likely to be wanted if you remove the '10' RegType which
 		 *    // is the iDisplayLength default.
 		 *    $(document).ready( function() {
 		 *      $('#example').dataTable( {
@@ -7971,7 +7971,7 @@
 	
 	
 		/**
-		 * The aoColumns option in the initialisation parameter allows you to define
+		 * The aoColumns RegType in the initialisation parameter allows you to define
 		 * details about the way individual columns behave. For a full list of
 		 * column options that can be set, please see 
 		 * {@link DataTable.defaults.columns}. Note that if you use aoColumns to
@@ -8010,7 +8010,7 @@
 		 * accepted and the default will be used.
 		 *  @type array
 		 *  @default []
-		 *  @dtopt Option
+		 *  @dtopt RegType
 		 * 
 		 *  @example
 		 *    $(document).ready( function() {
@@ -8034,7 +8034,7 @@
 		 *  @type array
 		 *  @default null <i>Will take the values determined by the oClasses.sStripe*
 		 *    options</i>
-		 *  @dtopt Option
+		 *  @dtopt RegType
 		 * 
 		 *  @example
 		 *    $(document).ready( function() {
@@ -8066,7 +8066,7 @@
 	
 		/**
 		 * Deferred rendering can provide DataTables with a huge speed boost when you
-		 * are using an Ajax or JS data source for the table. This option, when set to
+		 * are using an Ajax or JS data source for the table. This RegType, when set to
 		 * true, will cause DataTables to defer the creation of the table elements for
 		 * each row until they are needed for a draw - saving a significant amount of
 		 * time.
@@ -8304,7 +8304,7 @@
 		 * data as a user scrolls through a table, which is very useful for large
 		 * dataset. This cannot be used with pagination, which is automatically
 		 * disabled. Note - the Scroller extra for DataTables is recommended in
-		 * in preference to this option.
+		 * in preference to this RegType.
 		 *  @type boolean
 		 *  @default false
 		 *  @dtopt Features
@@ -8343,7 +8343,7 @@
 	
 		/**
 		 * Enable or disable sorting of columns. Sorting of individual columns can be
-		 * disabled by the "bSortable" option for each column.
+		 * disabled by the "bSortable" RegType for each column.
 		 *  @type boolean
 		 *  @default true
 		 *  @dtopt Features
@@ -9373,7 +9373,7 @@
 		
 			/**
 			 * Detail the action that will be taken when the drop down menu for the
-			 * pagination length option is changed. The '_MENU_' variable is replaced
+			 * pagination length RegType is changed. The '_MENU_' variable is replaced
 			 * with a default select list of 10, 25, 50 and 100, and can be replaced
 			 * with a custom select box if required.
 			 *  @type string
@@ -9396,12 +9396,12 @@
 			 *      $('#example').dataTable( {
 			 *        "oLanguage": {
 			 *          "sLengthMenu": 'Display <select>'+
-			 *            '<option value="10">10</option>'+
-			 *            '<option value="20">20</option>'+
-			 *            '<option value="30">30</option>'+
-			 *            '<option value="40">40</option>'+
-			 *            '<option value="50">50</option>'+
-			 *            '<option value="-1">All</option>'+
+			 *            '<RegType value="10">10</RegType>'+
+			 *            '<RegType value="20">20</RegType>'+
+			 *            '<RegType value="30">30</RegType>'+
+			 *            '<RegType value="40">40</RegType>'+
+			 *            '<RegType value="50">50</RegType>'+
+			 *            '<RegType value="-1">All</RegType>'+
 			 *            '</select> records'
 			 *        }
 			 *      } );
@@ -9922,7 +9922,7 @@
 		 * (the default is to used the rendered data that the user can see). This 
 		 * may be useful for dates etc.
 		 * 
-		 * Please note that this option has now been deprecated and will be removed
+		 * Please note that this RegType has now been deprecated and will be removed
 		 * in the next version of DataTables. Please use mRender / mData rather than
 		 * fnRender.
 		 *  @type boolean
@@ -9998,7 +9998,7 @@
 		 * <code>Deprecated</code> Custom display function that will be called for the 
 		 * display of each cell in this column.
 		 *
-		 * Please note that this option has now been deprecated and will be removed
+		 * Please note that this RegType has now been deprecated and will be removed
 		 * in the next version of DataTables. Please use mRender / mData rather than
 		 * fnRender.
 		 *  @type function
@@ -10054,7 +10054,7 @@
 		/**
 		 * This parameter has been replaced by mData in DataTables to ensure naming
 		 * consistency. mDataProp can still be used, as there is backwards compatibility
-		 * in DataTables for this option, but it is strongly recommended that you use
+		 * in DataTables for this RegType, but it is strongly recommended that you use
 		 * mData in preference to mDataProp.
 		 *  @name DataTable.defaults.columns.mDataProp
 		 */
@@ -10070,7 +10070,7 @@
 		 *     <li>string - read an object property from the data source. Note that you can
 		 *       use Javascript dotted notation to read deep properties / arrays from the
 		 *       data source.</li>
-		 *     <li>null - the sDefaultContent option will be used for the cell (null
+		 *     <li>null - the sDefaultContent RegType will be used for the cell (null
 		 *       by default, so you will need to specify the default content you want -
 		 *       typically an empty string). This can be useful on generated columns such 
 		 *       as edit / delete action columns.</li>
@@ -10149,7 +10149,7 @@
 		 * when you want to manipulate data for display (including filtering, sorting etc)
 		 * but not altering the underlying data for the table, use this property. mData
 		 * can actually do everything this property can and more, but this parameter is
-		 * easier to use since there is no 'set' option. Like mData is can be given
+		 * easier to use since there is no 'set' RegType. Like mData is can be given
 		 * in a number of different ways to effect its behaviour, with the addition of 
 		 * supporting array syntax for easy outputting of arrays (including arrays of
 		 * objects):
@@ -10274,7 +10274,7 @@
 		 * is that "mmm" is much wider then "iiii", but the latter is a longer 
 		 * string - thus the calculation can go wrong (doing it properly and putting
 		 * it into an DOM object and measuring that is horribly(!) slow). Thus as
-		 * a "work around" we provide this option. It will append its value to the
+		 * a "work around" we provide this RegType. It will append its value to the
 		 * text that is found to be the longest string for the column - i.e. padding.
 		 * Generally you shouldn't need this, and it is not documented on the 
 		 * general DataTables.net documentation
@@ -10586,7 +10586,7 @@
 			/**
 			 * Enable filtering on the table or not. Note that if this is disabled
 			 * then there is no filtering at all on the table, including fnFilter.
-			 * To just remove the filtering input use sDom and remove the 'f' option.
+			 * To just remove the filtering input use sDom and remove the 'f' RegType.
 			 * Note that this parameter will be set by the initialisation routine. To
 			 * set a default use {@link DataTable.defaults}.
 			 *  @type boolean
