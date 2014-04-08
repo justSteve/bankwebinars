@@ -173,202 +173,203 @@ namespace CUWebinars.Web.Controllers
 
             )
         {
-            var isPreReg = stageOfCheckout;
-            ViewData["CheckoutInProcess"] = "true";
-            var IsUserLogged = false;
-            var model = formModel;
+            return Json(new object {});
+            //var isPreReg = stageOfCheckout;
+            //ViewData["CheckoutInProcess"] = "true";
+            //var IsUserLogged = false;
+            //var model = formModel;
 
-            var currentOrder = stateService.GetValue<Order>("CurrentOrder");
-            // Will we be putting this in Session at some point?
+            //var currentOrder = stateService.GetValue<Order>("CurrentOrder");
+            //// Will we be putting this in Session at some point?
 
-            //  i think we need a way to persist 'non-completed orders'
-            // in interest of minimizing - perhaps just storing the orderID and then 
-            // hydrating it as needed.
-            var currentAffiliate = stateService.GetValue<Affiliate>("CurrentAffiliate");
+            ////  i think we need a way to persist 'non-completed orders'
+            //// in interest of minimizing - perhaps just storing the orderID and then 
+            //// hydrating it as needed.
+            //var currentAffiliate = stateService.GetValue<Affiliate>("CurrentAffiliate");
 
-            model.CheckoutOptionsViewModel.Order = currentOrder;
-            model.Affiliate = currentAffiliate;
-            model.Webinar = _orderManagementService.GetWebinar(formModel.Webinar.idWebinar);
+            //model.CheckoutOptionsViewModel.Order = currentOrder;
+            //model.Affiliate = currentAffiliate;
+            //model.Webinar = _orderManagementService.GetWebinar(formModel.Webinar.idWebinar);
 
-            try
-            {
-                model.WebUser = _orderManagementService.GetWebUser(formModel.WebUser.idUser);
-                // hardcode in the currentUser - steve@juststeve.com
-                //model.WebUser = _orderManagementService.GetWebUser(26357);
-            }
-            catch
-            {
-
-            }
-
-            if (model.Webinar.Title.Contains("Compliance Perspectives")) // TODO: Clarify the reason for this.
-            {
-                model.Webinar = _orderManagementService.GetWebinar(883);
-            }
-
-            var options = _orderManagementService.GetOptionsByWebinarIdFromOptionsRepository(model.Webinar.idWebinar, true);
-            model.Options = options;
-
-            //var option = options.SingleOrDefault(o => o.Type == "additional_location");
-            var option = new AdditionalLocation();
-
-            AdditionalLocation AdditionalLocation = null;
-
-            var emailAddresses =
-                model.
-                CheckoutOptionsViewModel.
-                DisplayOptionsViewModel.
-                AdditionalLocationViewModel.
-                AddAdditionalLocationViewModel.Emails;
-
-            //if (emailAddresses.Any())
+            //try
             //{
-            //    AdditionalLocation = _orderManagementService.CreateOrderRowOption(
-            //        option,
-            //        option.OptionExplain,
-            //        Convert.ToDecimal(option.Price),
-            //        emailAddresses.ToArray()
+            //    model.WebUser = _orderManagementService.GetWebUser(formModel.WebUser.idUser);
+            //    // hardcode in the currentUser - steve@juststeve.com
+            //    //model.WebUser = _orderManagementService.GetWebUser(26357);
+            //}
+            //catch
+            //{
+
+            //}
+
+            //if (model.Webinar.Title.Contains("Compliance Perspectives")) // TODO: Clarify the reason for this.
+            //{
+            //    model.Webinar = _orderManagementService.GetWebinar(883);
+            //}
+
+            //var options = _orderManagementService.GetOptionsByWebinarIdFromOptionsRepository(model.Webinar.idWebinar, true);
+            //model.Options = options;
+
+            ////var option = options.SingleOrDefault(o => o.Type == "additional_location");
+            //var option = new AdditionalLocation();
+
+            //AdditionalLocation AdditionalLocation = null;
+
+            //var emailAddresses =
+            //    model.
+            //    CheckoutOptionsViewModel.
+            //    DisplayOptionsViewModel.
+            //    AdditionalLocationViewModel.
+            //    AddAdditionalLocationViewModel.AdditionalLocations.Select(al => al.Email);
+
+            ////if (emailAddresses.Any())
+            ////{
+            ////    AdditionalLocation = _orderManagementService.CreateOrderRowOption(
+            ////        option,
+            ////        option.OptionExplain,
+            ////        Convert.ToDecimal(option.Price),
+            ////        emailAddresses.ToArray()
+            ////        );
+
+            ////    if (model.Webinar.idWebinar == 842 && model.Webinar.Status == WebinarStatus.Scheduled)
+            ////    {
+            ////        ////CreateCPSubscription()
+            ////        //int freeConnectionsCount;
+            ////        //if (addEmails == "")
+            ////        //{
+            ////        //    freeConnectionsCount = 0;
+            ////        //}
+            ////        //else
+            ////        //{
+            ////        //    freeConnectionsCount = addEmails.Split(',').Count();
+            ////        //}
+            ////        ////int freeConnectionsCount = 0;
+            ////        //AdditionalLocation.AdditionalLocationCount = freeConnectionsCount;
+            ////        //if (AdditionalLocation.AdditionalLocationCount > 3)
+            ////        //{
+            ////        //    AdditionalLocation.AdditionalLocationCount = 3;
+            ////        //}
+
+
+            ////        //if ((RegistrationType)mode == RegistrationType.Twelve_Month_Subscription)
+            ////        //{
+            ////        //    AdditionalLocation.AdditionalLocationCount += twelveMonthPaidConnectionsCount.HasValue ? twelveMonthPaidConnectionsCount.Value : 0;
+            ////        //}
+            ////        //else
+            ////        //{
+            ////        //    AdditionalLocation.AdditionalLocationCount += sixMonthPaidConnectionsCount.HasValue ? sixMonthPaidConnectionsCount.Value : 0;
+            ////        //}
+            ////    }
+
+            ////}
+
+            //var orderRow = _orderManagementService.CreateOrderRow(model.Webinar, AdditionalLocation, string.Empty, mode);
+            //// populate the ViewBag with the RegistrationType (aka RegType)
+            ////ViewBag.RegistrationType = options.SingleOrDefault(o => o.idRegType == orderRow.RegistrationType);
+
+
+            //if (currentOrder == null)
+            //{
+            //    currentOrder = _orderManagementService.CreateNewOrder(
+            //        model.Affiliate,
+            //        model.WebUser,
+            //        model.Webinar,
+            //        orderRow
+            //        //,model.Options
             //        );
-
-            //    if (model.Webinar.idWebinar == 842 && model.Webinar.Status == WebinarStatus.Scheduled)
-            //    {
-            //        ////CreateCPSubscription()
-            //        //int freeConnectionsCount;
-            //        //if (addEmails == "")
-            //        //{
-            //        //    freeConnectionsCount = 0;
-            //        //}
-            //        //else
-            //        //{
-            //        //    freeConnectionsCount = addEmails.Split(',').Count();
-            //        //}
-            //        ////int freeConnectionsCount = 0;
-            //        //AdditionalLocation.AdditionalLocationCount = freeConnectionsCount;
-            //        //if (AdditionalLocation.AdditionalLocationCount > 3)
-            //        //{
-            //        //    AdditionalLocation.AdditionalLocationCount = 3;
-            //        //}
-
-
-            //        //if ((RegistrationType)mode == RegistrationType.Twelve_Month_Subscription)
-            //        //{
-            //        //    AdditionalLocation.AdditionalLocationCount += twelveMonthPaidConnectionsCount.HasValue ? twelveMonthPaidConnectionsCount.Value : 0;
-            //        //}
-            //        //else
-            //        //{
-            //        //    AdditionalLocation.AdditionalLocationCount += sixMonthPaidConnectionsCount.HasValue ? sixMonthPaidConnectionsCount.Value : 0;
-            //        //}
-            //    }
-
+            //    //StateService.SetValue("CurrentOrder", string.Empty);
             //}
 
-            var orderRow = _orderManagementService.CreateOrderRow(model.Webinar, AdditionalLocation, string.Empty, mode);
-            // populate the ViewBag with the RegistrationType (aka RegType)
-            //ViewBag.RegistrationType = options.SingleOrDefault(o => o.idRegType == orderRow.RegistrationType);
+            //currentOrder.Origin = "<p>InitialPage: " + stateService.GetValue<String>("FirstPage") + "</p><p>" +
+            //           " InitialReferrer: " + stateService.GetValue<String>("InitialQueryString") + "</p><p>" +
+            //           " InitialCookies: " + stateService.GetValue<String>("FirstCookies") + "</p><p>" +
+            //           " SessionID: " + stateService.GetValue<String>("SessionID") + "</p>";
 
 
-            if (currentOrder == null)
-            {
-                currentOrder = _orderManagementService.CreateNewOrder(
-                    model.Affiliate,
-                    model.WebUser,
-                    model.Webinar,
-                    orderRow
-                    //,model.Options
-                    );
-                //StateService.SetValue("CurrentOrder", string.Empty);
-            }
+            ////var AdditionalLocation = orderRow.AdditionalLocation.OfType<AdditionalLocationOrderRowOption>();
+            ////var AdditionalLocationOption = AdditionalLocation as AdditionalLocationOrderRowOption[] ?? AdditionalLocation.ToArray();
 
-            currentOrder.Origin = "<p>InitialPage: " + stateService.GetValue<String>("FirstPage") + "</p><p>" +
-                       " InitialReferrer: " + stateService.GetValue<String>("InitialQueryString") + "</p><p>" +
-                       " InitialCookies: " + stateService.GetValue<String>("FirstCookies") + "</p><p>" +
-                       " SessionID: " + stateService.GetValue<String>("SessionID") + "</p>";
+            ////int count = AdditionalLocationOption.Count();
 
+            ////if (count > 0)
+            ////{
+            ////    int AdditionalLocationCount;
 
-            //var AdditionalLocation = orderRow.AdditionalLocation.OfType<AdditionalLocationOrderRowOption>();
-            //var AdditionalLocationOption = AdditionalLocation as AdditionalLocationOrderRowOption[] ?? AdditionalLocation.ToArray();
+            ////    if (int.TryParse(Request["AdditionalLocationCount" + orderRow.idOrderRow], out AdditionalLocationCount))
+            ////    {
+            ////        AdditionalLocationOption.Single().AdditionalLocationCount = AdditionalLocationCount;
+            ////    }
+            ////    else if (Request["AdditionalLocationCount" + orderRow.idOrderRow] == "")
+            ////    {
+            ////        AdditionalLocationOption.Single().AdditionalLocationCount = 0;
+            ////    }
+            ////}
 
-            //int count = AdditionalLocationOption.Count();
-
-            //if (count > 0)
+            //if (Request.IsAuthenticated)
             //{
-            //    int AdditionalLocationCount;
+            //    IsUserLogged = true;
+            //    _orderManagementService.AssignUserToOrder(currentOrder);
+            //    currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
+            //    currentOrder.Origin= _orderManagementService.GetOrderInitiator();
 
-            //    if (int.TryParse(Request["AdditionalLocationCount" + orderRow.idOrderRow], out AdditionalLocationCount))
+            //}
+            //else
+            //{
+            //    IsUserLogged = false;
+            //    //_orderManagementService.AssignUserToOrder(currentOrder);
+            //    currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
+            //    currentOrder.Origin= _orderManagementService.GetOrderInitiator();
+            //    Logger.Error("ERROR: CartController | Signup - currentUser is null" + currentOrder.idOrder);
+            //    //TODO: assign appropriate ModelError and error logging/handling
+            //}
+
+
+            //currentOrder = _orderManagementService.SaveOrderChanges(currentOrder);
+
+            //if (model.Webinar.idWebinar == 883 && model.Webinar.Status == WebinarStatus.Scheduled)
+            //{
+            //    try
             //    {
-            //        AdditionalLocationOption.Single().AdditionalLocationCount = AdditionalLocationCount;
+            //        _orderManagementService.CreateCPSubscription(orderRow);
             //    }
-            //    else if (Request["AdditionalLocationCount" + orderRow.idOrderRow] == "")
+            //    catch (Exception)
             //    {
-            //        AdditionalLocationOption.Single().AdditionalLocationCount = 0;
+            //        throw;
             //    }
             //}
 
-            if (Request.IsAuthenticated)
-            {
-                IsUserLogged = true;
-                _orderManagementService.AssignUserToOrder(currentOrder);
-                currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
-                currentOrder.Origin= _orderManagementService.GetOrderInitiator();
+            //try
+            //{
+            //    if (stageOfCheckout == "preReg")
+            //    {
+            //        return PartialView("_DisplayRowPrice", model.CheckoutOptionsViewModel.Order.OrderRows.Single());
+            //    }
+            //    else
+            //    {
+            //        //_orderManagementService.Save(currentOrder);
 
-            }
-            else
-            {
-                IsUserLogged = false;
-                //_orderManagementService.AssignUserToOrder(currentOrder);
-                currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
-                currentOrder.Origin= _orderManagementService.GetOrderInitiator();
-                Logger.Error("ERROR: CartController | Signup - currentUser is null" + currentOrder.idOrder);
-                //TODO: assign appropriate ModelError and error logging/handling
-            }
+            //        //_orderManagementService.AddOrderRow(currentOrder, orderRow);
 
+            //        Session["CurrentOrderId"] = currentOrder.idOrder;
+            //        //_checkoutWorkflow.AddOrder(currentOrder);
+            //        //model.Order.OrderRows.Add(orderRow);
+            //        model.CheckoutOptionsViewModel.Order = currentOrder;
 
-            currentOrder = _orderManagementService.SaveOrderChanges(currentOrder);
-
-            if (model.Webinar.idWebinar == 883 && model.Webinar.Status == WebinarStatus.Scheduled)
-            {
-                try
-                {
-                    _orderManagementService.CreateCPSubscription(orderRow);
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-            }
-
-            try
-            {
-                if (stageOfCheckout == "preReg")
-                {
-                    return PartialView("_DisplayRowPrice", model.CheckoutOptionsViewModel.Order.OrderRows.Single());
-                }
-                else
-                {
-                    //_orderManagementService.Save(currentOrder);
-
-                    //_orderManagementService.AddOrderRow(currentOrder, orderRow);
-
-                    Session["CurrentOrderId"] = currentOrder.idOrder;
-                    //_checkoutWorkflow.AddOrder(currentOrder);
-                    //model.Order.OrderRows.Add(orderRow);
-                    model.CheckoutOptionsViewModel.Order = currentOrder;
-
-                    //db.SaveChanges();
-                    ViewData["WhichStep"] = IsUserLogged ? "Step2" : "Step1";
-                    return Json(new
-                                    {
-                                        success = "success",
-                                        whichStep = "Step1",
-                                        orderRowID = model.CheckoutOptionsViewModel.Order.OrderRows.Single().idOrderRow
-                                    }, JsonRequestBehavior.AllowGet);
-                    //return View("~/Views/Webinar/Details2.cshtml", model);
-                }
-            }
-            catch
-            {
-                throw;
-            }
+            //        //db.SaveChanges();
+            //        ViewData["WhichStep"] = IsUserLogged ? "Step2" : "Step1";
+            //        return Json(new
+            //                        {
+            //                            success = "success",
+            //                            whichStep = "Step1",
+            //                            orderRowID = model.CheckoutOptionsViewModel.Order.OrderRows.Single().idOrderRow
+            //                        }, JsonRequestBehavior.AllowGet);
+            //        //return View("~/Views/Webinar/Details2.cshtml", model);
+            //    }
+            //}
+            //catch
+            //{
+            //    throw;
+            //}
         }
 
         [AcceptVerbs(HttpVerbs.Post)]

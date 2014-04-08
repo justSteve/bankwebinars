@@ -4,8 +4,10 @@
     {
         Model.AddAdditionalLocationViewModel = new AddAdditionalLocationViewModel
         {
-            Emails = new List<string>{ "dave@dave.com", "pakka@pat.com"},
-            AdditionalLocation = Model.AdditionalLocation
+            AdditionalLocations = Model.AdditionalLocations,
+            Order = Model.Order,
+            Webinar = Model.Webinar,
+            WebUser = Model.WebUser
         };
         
         <div id="AdditionalLocationContainer" class="well" style="margin-right: 50px;margin-left: 50px;">
@@ -33,7 +35,15 @@
             }
             else
             {
-                @Html.EditorFor(m => m.AddAdditionalLocationViewModel)
+                @Html.HiddenFor(m => m.WebUser.idUser)
+                @Html.HiddenFor(m => m.Webinar.idWebinar)
+                
+                if (Model.Order != null)
+                {
+                    Html.HiddenFor(m => m.Order.idOrder);
+                }
+
+                @Html.DisplayFor(m => m.AddAdditionalLocationViewModel)
             }
         </div>
     }

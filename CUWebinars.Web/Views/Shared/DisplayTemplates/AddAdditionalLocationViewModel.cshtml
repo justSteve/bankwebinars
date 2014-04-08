@@ -1,0 +1,26 @@
+﻿@model AddAdditionalLocationViewModel
+    
+<blockquote style="margin-bottom: 0;color:red;font-weight:bold">
+    TODO: replace with dynamic text!!! @*@Model.AdditionalLocation.DescriptionConfirm*@
+</blockquote>
+<div style="padding-left: 50px;">
+    <b>Each additional location adds $150 to your registration:</b> @*TODO: this is hard coded. Need to change that.*@
+    <div id="AdditionalLocationContainer">
+        <button value="Add?" type="button" class="btn btn-success btn-small" name="AddLocationsButton" id="AddLocationsButton">Add?</button>
+        @*<a href="#AdditionalLocationsModal" id="addlocationsbutton" role="button" class="btn" data-toggle="modal">Launch demo modal</a>*@        
+        @*<div id="NewLocationsContainer"></div>*@
+    </div> 
+</div>
+
+<!-- Button to trigger modal -->
+
+
+<!-- Modal -->
+<div id="AdditionalLocationsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-body">
+        @* modal content goes here *@
+    </div><!-- /.modal-content -->
+</div>
+
+
+@Scripts.Render("~/bundles/AdditionalLocation")

@@ -1,6 +1,6 @@
 ﻿//  Rename this file 'additional-locations' if we decide to be rid of additional-locations.js
 
-var AdditionalLocationContainer,
+var additionalLocationContainer,
     addLocationsButton,
     AdditionalLocationSubmitButton,
     newLocationsContainer,
@@ -21,73 +21,75 @@ function wireUpHandlers() {
     var modalFormOptions = {
         keyboard: true,
         show: true,
-        //remote: '/Webinar/GetAdditionalLocationByOrderId'
+        remote: '/Webinar/GetAdditionalLocationByOrderId/1/dave'
     };
 
-    $('#LoadAddLocationsModalButton').on('click', function () {
-        modalFormOptions.remote = '/Webinar/GetAdditionalLocationByOrderId/' + $('#CheckoutOptionsViewModel_Order_idOrder').val();
-        $('#SignupModal').modal(modalFormOptions);
+
+    $('#AddLocationsButton').on('click', function () {
+        
+        modalFormOptions.remote = '/Webinar/GetAdditionalLocationByOrderId/' + $('#WebUser_idUser').val() + '/' + $('#Webinar_idWebinar').val();
+        $('#AdditionalLocationsModal').modal(modalFormOptions);
     });
 
     
-    $('#myModal').on('show', function() {
-        // show load div
-        var oi = 'l';
-    });
+    //$('#myModal').on('show', function() {
+    //    // show load div
+    //    var oi = 'l';
+    //});
 
     //$('#LoadAddLocationsModalButton').on('click', function(e) {
         
     //});
 
-    addLocationsButton.on('click', function(e) {
-        var numberOfInputsToAdd = numberOfEmailAddresses.val();
-        newLocationsContainer.empty();
+    //addLocationsButton.on('click', function(e) {
+    //    var numberOfInputsToAdd = numberOfEmailAddresses.val();
+    //    newLocationsContainer.empty();
 
-        for (var i = 0; i < numberOfInputsToAdd; i++) {
-            newLocationsContainer.append('<span id="' + locationsSpanPrefix + i + '"><input id="AdditionLocationEmail-' + i + '" name="AddAdditionalLocationViewModel.Emails[' + i + ']" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + i + '-AdditionLocationEmail-delete"></i></span> <br id="' + i + breakSuffix + '">');
-        }
+    //    for (var i = 0; i < numberOfInputsToAdd; i++) {
+    //        newLocationsContainer.append('<span id="' + locationsSpanPrefix + i + '"><input id="AdditionLocationEmail-' + i + '" name="AddAdditionalLocationViewModel.Emails[' + i + ']" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + i + '-AdditionLocationEmail-delete"></i></span> <br id="' + i + breakSuffix + '">');
+    //    }
 
-        if (typeof AdditionalLocationSubmitButton === 'undefined' && numberOfInputsToAdd > 0) {
-            AdditionalLocationSubmitButton = $('<input>',
-            {
-                id: 'AdditionalLocationSubmitButton',
-                value: 'Submit Locations',
-                'class': 'btn btn-success btn-small',
-                type: 'submit'
-            });
-            //AdditionalLocationSubmitButton.on('click', function () {
-            //    signupForm.submit();
-            //});
-        }
+    //    if (typeof AdditionalLocationSubmitButton === 'undefined' && numberOfInputsToAdd > 0) {
+    //        AdditionalLocationSubmitButton = $('<input>',
+    //        {
+    //            id: 'AdditionalLocationSubmitButton',
+    //            value: 'Submit Locations',
+    //            'class': 'btn btn-success btn-small',
+    //            type: 'submit'
+    //        });
+    //        //AdditionalLocationSubmitButton.on('click', function () {
+    //        //    signupForm.submit();
+    //        //});
+    //    }
 
-        newLocationsContainer.find('i').on('click', function (event) {
-            var trashClicked = event.currentTarget.id;
-            var idx = trashClicked.substring(0, 1);
-            var spanToRemove = locationsSpanPrefix + idx;
+    //    newLocationsContainer.find('i').on('click', function (event) {
+    //        var trashClicked = event.currentTarget.id;
+    //        var idx = trashClicked.substring(0, 1);
+    //        var spanToRemove = locationsSpanPrefix + idx;
             
-            $('#' + spanToRemove).hide(500, function() {
-                $(this).remove();
-                $('#' + idx + breakSuffix).remove();
+    //        $('#' + spanToRemove).hide(500, function() {
+    //            $(this).remove();
+    //            $('#' + idx + breakSuffix).remove();
 
-                var inputsRemaining = newLocationsContainer.find('i');
+    //            var inputsRemaining = newLocationsContainer.find('i');
 
-                if (inputsRemaining.length < 1) {
-                    AdditionalLocationSubmitButton.hide(500, function() {
-                        $(this).remove();
-                    });
-                }
+    //            if (inputsRemaining.length < 1) {
+    //                AdditionalLocationSubmitButton.hide(500, function() {
+    //                    $(this).remove();
+    //                });
+    //            }
 
-            });
-        });
+    //        });
+    //    });
 
-        newLocationsContainer.append(AdditionalLocationSubmitButton);
+    //    newLocationsContainer.append(AdditionalLocationSubmitButton);
 
-        if (!AdditionalLocationSubmitButton.is(':visible'))
-            AdditionalLocationSubmitButton.show(500);
+    //    if (!AdditionalLocationSubmitButton.is(':visible'))
+    //        AdditionalLocationSubmitButton.show(500);
 
-        if (numberOfInputsToAdd < 1)
-            AdditionalLocationSubmitButton.remove();
-    });
+    //    if (numberOfInputsToAdd < 1)
+    //        AdditionalLocationSubmitButton.remove();
+    //});
 
     signupForm.on('submit', function (e) {
         e.preventDefault();
@@ -100,7 +102,7 @@ function wireUpHandlers() {
 
         var emailAddresses = Object(); 
 
-        var emailNodes = newLocationsContainer.find('input[type=email]');
+        var emailNodes = newLocationsContainer.find('input[type=text]');
 
         $.each(emailNodes, function (idx, input) {
             emailAddresses[idx] = $(input).val();
@@ -126,13 +128,15 @@ function wireUpHandlers() {
         }).done(function (msg) {
             var bla = msg;
         });
+
+        return false;
     });
 };
 
 function primeDomVariables() {
-    AdditionalLocationContainer = $('#AdditionalLocationContainer');
+    additionalLocationContainer = $('#AdditionalLocationContainer'); // not used
     addLocationsButton = $('#AddLocationsButton');
-    newLocationsContainer = $('#NewLocationsContainer');
-    numberOfEmailAddresses = $('#NumberOfEmailAddresses');
-    signupForm = $('#Signup2');
+    newLocationsContainer = $('#NewLocationsContainer'); // commented out in razor
+    numberOfEmailAddresses = $('#NumberOfEmailAddresses'); // not used
+    signupForm = $('#RegisterAdditionalLocationsForm');
 }

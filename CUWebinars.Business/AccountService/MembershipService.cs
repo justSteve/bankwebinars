@@ -11,11 +11,11 @@ namespace CUWebinars.Business.AccountService
 {
     public class MembershipService : IMembershipService
     {
-        private readonly IInstitutionRepository institutionRepository;
-        private readonly IRefDataRepository refDataRepository;
-        private readonly AuthenticationService samAuthenticationService;
-        private readonly UserAccountService userAccountService;
-        private readonly IWebUserRepository webUserRepository;
+        private readonly IInstitutionRepository _institutionRepository;
+        private readonly IRefDataRepository _refDataRepository;
+        private readonly AuthenticationService _samAuthenticationService;
+        private readonly UserAccountService _userAccountService;
+        private readonly IWebUserRepository _webUserRepository;
 
 
         public MembershipService(IInstitutionRepository institutionRepository,
@@ -24,22 +24,21 @@ namespace CUWebinars.Business.AccountService
             UserAccountService userAccountService,
             IWebUserRepository webUserRepository)
         {
-
-            institutionRepository = institutionRepository;
-            refDataRepository = refDataRepository;
-            samAuthenticationService = samAuthenticationService;
-            userAccountService = userAccountService;
-            webUserRepository = webUserRepository;
+            _institutionRepository = institutionRepository;
+            _refDataRepository = refDataRepository;
+            _samAuthenticationService = samAuthenticationService;
+            _userAccountService = userAccountService;
+            _webUserRepository = webUserRepository;
         }
 
         public UserAccount GetByVerificationKey(string id)
         {
-            return userAccountService.GetByVerificationKey(id);
+            return _userAccountService.GetByVerificationKey(id);
         }
 
         public WebUser GetDetailsOfUser(string email)
         {
-            var webUser = refDataRepository.GetWebUserByEmail(email);
+            var webUser = _refDataRepository.GetWebUserByEmail(email);
             return webUser;
         }
 
@@ -50,19 +49,19 @@ namespace CUWebinars.Business.AccountService
         /// <returns></returns>
         public WebUser GetUserByEmail(string email)
         {
-            var webUser = refDataRepository.GetWebUserByEmail(email);
+            var webUser = _refDataRepository.GetWebUserByEmail(email);
             return webUser;
         }
 
         public Institution GetInstitutionByDomain(string domain)
         {
-            var institution = institutionRepository.GetAll().FirstOrDefault(i => i.domainName == domain);
+            var institution = _institutionRepository.GetAll().FirstOrDefault(i => i.domainName == domain);
             return institution;
         }
 
         public bool HasPassword(string tenant, string emailAddress)
         {
-            var userAccount = userAccountService.GetByEmail(tenant, emailAddress);
+            var userAccount = _userAccountService.GetByEmail(tenant, emailAddress);
 
             if (ReferenceEquals(null, userAccount))
             {
@@ -84,10 +83,10 @@ namespace CUWebinars.Business.AccountService
             //TODO: Needs another change for email in use condition
             //   or a bulletproof method of ensuring that for every Membership UserAccount created
             //   a WebUser account as also been created.
-            var account = userAccountService.CreateAccount(tenant, userName, password, email);
-            userAccountService.AddClaim(account.ID, ClaimTypes.FullName, string.Format("{0} {1}", firstName, lastName));
-            userAccountService.AddClaim(account.ID, System.Security.Claims.ClaimTypes.Role, "WebUser");
-            userAccountService.AddClaim(account.ID, ClaimTypes.HasNotVerified, "true");
+            var account = _userAccountService.CreateAccount(tenant, userName, password, email);
+            _userAccountService.AddClaim(account.ID, ClaimTypes.FullName, string.Format("{0} {1}", firstName, lastName));
+            _userAccountService.AddClaim(account.ID, System.Security.Claims.ClaimTypes.Role, "WebUser");
+            _userAccountService.AddClaim(account.ID, ClaimTypes.HasNotVerified, "true");
 
             return account;
         }
@@ -110,7 +109,7 @@ namespace CUWebinars.Business.AccountService
 
             var webUser = new WebUser
             {
-                idUser = idUserImported.HasValue ? idUserImported.Value : refDataRepository.GetMaxWebUserId() + 1,
+                idUser = idUserImported.HasValue ? idUserImported.Value : _refDataRepository.GetMaxWebUserId() + 1,
                 // Check what default should be for nun-nullable field
                 AcctStatus = accountStatus ?? "A",
                 DateCreated = DateTime.Now,
@@ -124,7 +123,7 @@ namespace CUWebinars.Business.AccountService
                 UserType = UserType.Customer,
             };
 
-            webUserRepository.Add(webUser);
+            _webUserRepository.Add(webUser);
 
             return webUser;
         }
@@ -133,9 +132,9 @@ namespace CUWebinars.Business.AccountService
         {
             UserAccount userAccount = null;
 
-            if (userAccountService.AuthenticateWithEmail(tenant, emailAddress, password, out userAccount))
+            if (_userAccountService.AuthenticateWithEmail(tenant, emailAddress, password, out userAccount))
             {
-                samAuthenticationService.SignIn(userAccount, persistent);
+                _samAuthenticationService.SignIn(userAccount, persistent);
                 return true;
             }
             return false;
@@ -143,7 +142,7 @@ namespace CUWebinars.Business.AccountService
 
         public bool LogOutUser()
         {
-            samAuthenticationService.SignOut();
+            _samAuthenticationService.SignOut();
             return true;
         }
 
@@ -157,7 +156,7 @@ namespace CUWebinars.Business.AccountService
             string zip)
         {
             var institution =
-                institutionRepository.GetAll().Where(c => c.InstitutionName == institutionName && c.Zip == zip).ToList();
+                _institutionRepository.GetAll().Where(c => c.InstitutionName == institutionName && c.Zip == zip).ToList();
 
             if (institution.Count == 1)
             {
@@ -175,7 +174,7 @@ namespace CUWebinars.Business.AccountService
                 domainName = new string(email.SkipWhile(ltr => ltr != '@').Skip(1).ToArray())
             };
 
-            institutionRepository.Add(newInstitution);
+            _institutionRepository.Add(newInstitution);
 
             return newInstitution;
         }
@@ -185,7 +184,7 @@ namespace CUWebinars.Business.AccountService
             //TODO: are calls to this method logged?
             try
             {
-                userAccountService.ResetPassword(tenant, email);
+                _userAccountService.ResetPassword(tenant, email);
             }
             catch (Exception exception)
             {
@@ -196,14 +195,14 @@ namespace CUWebinars.Business.AccountService
 
         public void SignIn(UserAccount userAccount, bool persistant)
         {
-            samAuthenticationService.SignIn(userAccount, persistant);
+            _samAuthenticationService.SignIn(userAccount, persistant);
         }
 
         public bool ChangePasswordFromResetKey(string key, string newPassword)
         {
-            var userAccount = userAccountService.GetByVerificationKey(key);
-            //userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.HasNotVerified);
-            return userAccountService.ChangePasswordFromResetKey(key, newPassword);
+            var userAccount = _userAccountService.GetByVerificationKey(key);
+            //_userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.HasNotVerified);
+            return _userAccountService.ChangePasswordFromResetKey(key, newPassword);
         }
 
         public void UpdateUserDetails(
@@ -218,7 +217,7 @@ namespace CUWebinars.Business.AccountService
             string title
             )
         {
-            if (userAccountService.AuthenticateWithEmail(tenant, email, password))
+            if (_userAccountService.AuthenticateWithEmail(tenant, email, password))
             {
                 var webUser = GetDetailsOfUser(email);
 
@@ -243,7 +242,7 @@ namespace CUWebinars.Business.AccountService
 
                 //  ** Important ** update this address object before grabbing the next one from the context.
                 //  Doing so is important as the entity.state of the object needs to be either detached or modified, but NOT unchanged. 
-                webUserRepository.UpdateAddresses(billingAddressFromDb);
+                _webUserRepository.UpdateAddresses(billingAddressFromDb);
 
                 var shippingAddressFromDb = webUser.Addresses.Where(a => a.AddressType == DomainConstants.ShippingAddress).Single();
                 shippingAddressFromDb.City = shippingAddress.City;
@@ -263,28 +262,28 @@ namespace CUWebinars.Business.AccountService
                 webUser.LastName = lastName;
                 webUser.Title = title;
 
-                webUserRepository.UpdateAddresses(shippingAddressFromDb);
-                webUserRepository.Update(webUser);
+                _webUserRepository.UpdateAddresses(shippingAddressFromDb);
+                _webUserRepository.Update(webUser);
             }
         }
 
         public UserAccount VerifyEmailFromKey(string key, string password)
         {
             UserAccount userAccount;
-            userAccountService.VerifyEmailFromKey(key, password, out userAccount);
-            userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.HasNotVerified);
+            _userAccountService.VerifyEmailFromKey(key, password, out userAccount);
+            _userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.HasNotVerified);
 
             return userAccount;
         }
 
         public IEnumerable<Address> GetAddressesForUser(int id)
         {
-            return refDataRepository.GetAddressesForUser(id);
+            return _refDataRepository.GetAddressesForUser(id);
         }
 
         public UserAccount GetUserAccountByUserId(Guid userId)
         {
-            return userAccountService.GetByID(userId);
+            return _userAccountService.GetByID(userId);
         }
     }
 }

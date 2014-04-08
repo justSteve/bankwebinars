@@ -124,16 +124,17 @@ namespace CUWebinars.Web.Controllers
             return View(webinars);
         }
 
-        public PartialViewResult GetAdditionalLocationByOrderId(int? id = null)
+        public PartialViewResult GetAdditionalLocationByOrderId(int webUserId, int webinarId)
         {
-            var order = _orderManagementService.GetOrderById(id.Value);
+            //var order = _orderManagementService.GetOrderById(id);
+
             var addAdditionalLocationViewModel = new AddAdditionalLocationViewModel
             {
-                Emails = null,
-                //AdditionalLocation = order.OrderRows.First().AdditionalLocation.First()
+                //AdditionalLocations = order.OrderRows.First().AdditionalLocation.ToList()
+                AdditionalLocations = new AdditionalLocation[] { new AdditionalLocation { Email = "dave@dave.com" } }
             };
 
-            return PartialView(addAdditionalLocationViewModel);
+            return PartialView("~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml", addAdditionalLocationViewModel);
         }
 
         public ActionResult AllActive(string eventsToShow)
@@ -383,7 +384,9 @@ namespace CUWebinars.Web.Controllers
                     DisplayOptionsViewModel = new DisplayOptionsViewModel
                     {
                       Options = options.ToList(),
-                      Webinar = webinar  
+                      Order = null,
+                      Webinar = webinar,
+                      WebUser = user
                     },
                     Order = null, //    new order?
                     Webinar = webinar
@@ -403,7 +406,7 @@ namespace CUWebinars.Web.Controllers
                         ViewBag.WebinarFiles = webinarFiles;
 
                         ViewBag.userOwnsThisEvent = checkOrder.idOrder;
-                        model.CheckoutOptionsViewModel.Order = checkOrder;
+                        model.CheckoutOptionsViewModel.Order = model.CheckoutOptionsViewModel.DisplayOptionsViewModel.Order = checkOrder;
 
                         var connectionText = new StringBuilder("<p>");
                         connectionText.Append(ViewBag.orderMessages.Stage2EmailConfirmationMsg.Replace(" and is also available at http://www.BankWebinars.com", "</p><p>"));

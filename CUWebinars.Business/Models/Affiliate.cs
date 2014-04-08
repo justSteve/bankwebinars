@@ -7,7 +7,7 @@ namespace CUWebinars.Business.Models
     {
         public Affiliate()
         {
-Orders = new List<Order>();
+            Orders = new List<Order>();
         }
 
         public int idUserAff { get; set; }
@@ -32,7 +32,7 @@ Orders = new List<Order>();
         public string TechPhone { get; set; }
         public string TechName { get; set; }
         public string EmailPromo { get; set; }
-        public Nullable<int> WebUser_Id { get; set; }
+        //public Nullable<int> WebUser_Id { get; set; }
         public virtual WebUser WebUser { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public State State { get; set; }

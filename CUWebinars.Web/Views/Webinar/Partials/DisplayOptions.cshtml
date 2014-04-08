@@ -75,8 +75,9 @@
                 //orderRowOption.OrderRow = myOption;
                 Model.AdditionalLocationViewModel = new AdditionalLocationViewModel
                 {
-                    AdditionalLocation = orderRowOption,
-                    Webinar = Model.Webinar
+                    AdditionalLocations = new List<AdditionalLocation>{ orderRowOption} ,
+                    Webinar = Model.Webinar,
+                    WebUser = Model.WebUser
                 };
                 //Model.AdditionalEmailssViewModel.OrderRowRegType = orderRowRegType;
                 //TODO: ERROR HERE. How to correctly populate the AdditionalEmails value
@@ -89,7 +90,7 @@
             if (Model.Webinar.Status == WebinarStatus.Scheduled)
             {
                 <div id="displayAddLoc">
-                    @*@Html.Partial("~/Views/Webinar/Partials/AdditionalLocationView.cshtml", Model.AdditionalLocationViewModel)*@
+                    @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationsView.cshtml", Model.AdditionalLocationViewModel)
                 </div>
             }
         }
