@@ -131,7 +131,7 @@ namespace CUWebinars.Web.Controllers
             var addAdditionalLocationViewModel = new AddAdditionalLocationViewModel
             {
                 //AdditionalLocations = order.OrderRows.First().AdditionalLocation.ToList()
-                AdditionalLocations = new AdditionalLocation[] { new AdditionalLocation { Email = "dave@dave.com" } }
+                AdditionalLocations = new AdditionalLocation[] { new AdditionalLocation { Email = "dave@dave.com" }, new AdditionalLocation { Email = "monty@python.com" } }
             };
 
             return PartialView("~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml", addAdditionalLocationViewModel);
