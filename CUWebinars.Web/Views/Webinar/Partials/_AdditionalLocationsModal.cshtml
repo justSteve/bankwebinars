@@ -9,8 +9,7 @@
     
     <p><button id="AddInputsButton" class="btn btn-success">Click to Add More</button></p>
     
-    @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new {id = "RegisterAdditionalLocationsForm"}))
-    {
+
         <input type="hidden" name="stage_of_checkout" id="Stage_of_checkout" value="step0" />
         <input type="hidden" name="mode" id="Mode" />
         
@@ -28,7 +27,6 @@
         }
         </div>
         <button id="SumbitAdditionalLocationsForm" class="btn btn-primary">Submit</button>
-    }
 </div>
 <div class="modal-footer">
     <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>

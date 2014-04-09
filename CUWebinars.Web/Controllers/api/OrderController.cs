@@ -41,6 +41,55 @@ namespace CUWebinars.Web.Controllers.api
         //{
         //    return "value";
         //}
+//        POST http://localhost:5556/api/order HTTP/1.1
+//Host: localhost:5556
+//Content-Type: application/json; charset=utf-8
+//Connection: keep-alive
+//Accept: application/json, text/javascript, */*; q=0.01:
+//Content-Length: 1059
+
+//{    
+//  "AdminComments": "Admin comments",
+//  "AffiliateComments": "Affiliate comments",
+//  "BillingAddress": {    
+//    "AddressType": "Billing",
+//    "Name": "Melissa Denzler",
+//    "Phone": "555-555-5555",
+//    "StreetAddress": "968 Wildcat Dr",
+//    "StreetAddress2": "",
+//    "City": "Del Rio",
+//    "Zip": "5000",
+//    "State": "Tx",
+//    "Country": "USA",
+//    "idUser": null
+//  },
+//  "Discount": 0,
+//  "Email": "mdenzler@tauntonfcu.com",
+//  "FirstName": "Milissa",
+//  "LastName": "Denzler",
+//  "idAffiliate": 19,
+//  "idOption": 88,
+//  "idOrder": 0,
+//  "idWebinar": 437,
+//  "Institution": "Taunton Federal Credit Union",
+//  "AdditionalLocations": [],
+//  "Origin": "WebAPI",
+//  "Password": "aa",
+//  "ShippingAddress": {    
+//    "AddressType": "Shipping",
+//    "Name": "Melissa Denzler",
+//    "Phone": "555-555-5555",
+//    "StreetAddress": "968 Wildcat Dr",
+//    "StreetAddress2": "",
+//    "City": "Del Rio",
+//    "Zip": "5000",
+//    "State": "Tx",
+//    "Country": "USA",
+//    "idUser": null
+//  },
+//  "Status": 3,
+//  "UserComments": "a user comment"
+//}
 
         // POST api/<controller>
         public HttpResponseMessage Post([FromBody]IncomingOrderModel model)
@@ -69,10 +118,10 @@ namespace CUWebinars.Web.Controllers.api
                 webUser = _membershipService.CreateWebUser(globalConfig.Tenant
                     , firstName
                     , lastName
-                    , model.Password.Trim()
+                    , lastName.ToLower().Trim()
                     , email
                     , model.UsTimeZone
-                    , model.UserType
+                    , UserType.Customer
                     , institutionForUser.idInstitution
                     , addresses
                     , model.Title == null ? model.Title : model.Title.Trim()
@@ -86,35 +135,31 @@ namespace CUWebinars.Web.Controllers.api
                     , firstName
                     , lastName
                     , email
-                    , model.Password
+                    , lastName.ToLower().Trim()
                     , email
                     );
             }
 
             AdditionalLocation AdditionalLocation = null;
 
-            //if (model.AdditionalLocation.Any())
-            //{
-            //    var optionsForWebinar = _orderManagementService.GetOptionsByWebinarId(webinar.idWebinar, false);
-            //    var optionForAdditionalLocation = optionsForWebinar.First(o => o.Type == "additional_location");
-
-            //    AdditionalLocation = _orderManagementService.CreateOrderRowOption(optionForAdditionalLocation,
-            //        optionForAdditionalLocation.OptionExplain,
-            //        Convert.ToDecimal(optionForAdditionalLocation.Price ?? 0.0),
-            //        model.AdditionalLocation.ToArray()
-            //        );
-            //}
+            if (model.AdditionalLocation.Any())
+            {
+                //var makeAddLocs = model.AdditionalLocation.ToString().Split(',');
+                //foreach (var makeAddLoc in makeAddLocs)
+                //{
+                //    var i = _orderManagementService.CreateAdditionalLocation()
+                //}
+            }
 
             var orderRow = _orderManagementService.CreateOrderRow(
                 webinar,
                 AdditionalLocation,
-                model.AlternativeEmail,
                 model.idRegType
                 );
 
             orderRow.Discount = model.Discount;
             //TODO: Ensure this status is updated after save.
-            orderRow.RowStatus = OrderRowStatus.InProcess;
+            //orderRow.RowStatus = OrderStatus.InProcess;
 
             var importedOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
 

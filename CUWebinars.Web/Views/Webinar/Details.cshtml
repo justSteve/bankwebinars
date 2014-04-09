@@ -211,27 +211,30 @@
         if ((int)Model.Webinar.Status < 4)
         {
             <div id="SignUpFormContainer" class="row-fluid">
-                <div class="content offset2 span8 well">
+                @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new {id = "RegisterAdditionalLocationsForm"}))
+                {
+                    <div class="content offset2 span8 well">
 
-                    <ul class="nav nav-tabs" id="regTabs">
-                        <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@signUpCaption</a></li>
-                        <li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
-                        <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@ConfirmationCaption</a></li>
-                    </ul>
+                        <ul class="nav nav-tabs" id="regTabs">
+                            <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@signUpCaption</a></li>
+                            <li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
+                            <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@ConfirmationCaption</a></li>
+                        </ul>
 
-                    <div class="tab-content">
-                        <div class="tab-pane active" id="signUp">
-                            <input type="button" onclick=" signUp(); " class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
-                            @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)
-                        </div>
-                        <div class="tab-pane" id="contactInfo">
-                            @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutContact.cshtml", model: Model)
-                        </div>
-                        <div class="tab-pane" id="confirmation">
-                            @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutConfirm.cshtml", model: Model)
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="signUp">
+                                <input type="button" onclick=" signUp(); " class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
+                                @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)
+                            </div>
+                            <div class="tab-pane" id="contactInfo">
+                                @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutContact.cshtml", model: Model)
+                            </div>
+                            <div class="tab-pane" id="confirmation">
+                                @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutConfirm.cshtml", model: Model)
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
             </div>
         }
     }

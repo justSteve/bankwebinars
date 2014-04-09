@@ -62,8 +62,12 @@ namespace CUWebinars.Business.Services
             return string.Empty;
         }
 
-        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation AdditionalLocation, string alternateEmail,
-            int registrationType)
+        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation AdditionalLocation, int registrationType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public AdditionalLocation CreateAdditionalLocation(string email, decimal price, string name)
         {
             throw new NotImplementedException();
         }
@@ -73,7 +77,7 @@ namespace CUWebinars.Business.Services
             return _orderRepository.CreateOrderRow(webinar, AdditionalLocation, alternateEmail, registrationType);
         }
 
-        public AdditionalLocation CreateOrderRowOption(
+        public AdditionalLocation CreateAdditionalLocation(
             RegType regType,
             string optionDescription,
             decimal price,
