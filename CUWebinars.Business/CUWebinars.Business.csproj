@@ -162,7 +162,7 @@
     <Compile Include="Repository\IOrderRepository.cs" />
     <Compile Include="Repository\IRefDataRepository.cs" />
     <Compile Include="Repository\IWebUserRepository.cs" />
-    <Compile Include="Repository\OptionRepository.cs" />
+    <Compile Include="Repository\RegTypeRepository.cs" />
     <Compile Include="Repository\OrderRepository.cs" />
     <Compile Include="Repository\RefDataRepository.cs" />
     <Compile Include="Repository\TTSWebinarsRepository.cs" />
