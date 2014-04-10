@@ -36,12 +36,14 @@ namespace CUWebinars.Business.Repository
             
             //Add(newOrder);
             _disconnectedPropertyChangeHelper.ApplyChanges(newOrder);
+            
             //db.SaveChanges();
 
             //  Best to load these from the database
             //db.Entry(newOrder).Reference(no => no.Affiliate).Load();
             //db.Entry(newOrder).Reference(no => no.WebUser).Load();
             _disconnectedPropertyChangeHelper.MaterializeObject(newOrder);
+            _disconnectedPropertyChangeHelper.MaterializeObject(newOrder.OrderRows.First());
 
             return newOrder;
         }
@@ -49,13 +51,13 @@ namespace CUWebinars.Business.Repository
         public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation additionalLocation, RegType registrationType)
         {
             var strongTypedContext = (TTSWebinarsContext) db;
-            var entry = strongTypedContext.Entry(webinar);
+            //var entry = strongTypedContext.Entry(webinar);
 
-            if (entry.State != EntityState.Detached)
-                throw new Exception("Webinar cannot be attached to this context yet. It has to have been retrieved and previously detached.");
+            //if (entry.State != EntityState.Detached)
+            //    throw new Exception("Webinar cannot be attached to this context yet. It has to have been retrieved and previously detached.");
 
-            strongTypedContext.Webinars.Attach(webinar);
-            entry.State = EntityState.Modified;
+            //strongTypedContext.Webinars.Attach(webinar);
+            //entry.State = EntityState.Modified;
             
             var newOrderRow = strongTypedContext.OrderRows.Create();
 
@@ -66,7 +68,7 @@ namespace CUWebinars.Business.Repository
             newOrderRow.RegistrationType = registrationType;
             newOrderRow.RowStatus = OrderRowStatus.Active;
             
-            strongTypedContext.OrderRows.Add(newOrderRow);
+            //strongTypedContext.OrderRows.Add(newOrderRow);
 
             try
             {
