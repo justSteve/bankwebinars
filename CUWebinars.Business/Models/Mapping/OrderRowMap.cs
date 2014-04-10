@@ -21,6 +21,10 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.AccessExpires).HasColumnName("AccessExpires");
             Property(t => t.Royalty).HasColumnName("Royalty");
 
+            Ignore(t => t.EntityState);
+            Ignore(t => t.OriginalValues);
+
+
             // Relationships
             HasRequired(t => t.Order)
                             .WithMany(t => t.OrderRows)

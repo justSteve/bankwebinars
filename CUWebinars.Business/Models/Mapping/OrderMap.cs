@@ -64,6 +64,10 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.ShippingPhone).HasColumnName("ShippingPhone");
             Property(t => t.Origin).HasColumnName("Origin");
 
+            Ignore(t => t.EntityState);
+            Ignore(t => t.OriginalValues);
+
+
             // Relationships
             HasRequired(t => t.Affiliate).WithMany(t => t.Orders).HasForeignKey(d => d.idAffiliate);
             HasRequired(t => t.WebUser).WithMany(t => t.Orders).HasForeignKey(d => d.idUser);

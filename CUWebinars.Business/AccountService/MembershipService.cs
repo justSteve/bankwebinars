@@ -49,7 +49,7 @@ namespace CUWebinars.Business.AccountService
         /// <returns></returns>
         public WebUser GetUserByEmail(string email)
         {
-            var webUser = _refDataRepository.GetWebUserByEmail(email);
+            var webUser = _webUserRepository.GetWebUserByEmail(email);
             return webUser;
         }
 

@@ -36,6 +36,10 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.City).HasColumnName("City");
             Property(t => t.State).HasColumnName("State");
             Property(t => t.Zip).HasColumnName("Zip");
+
+            Ignore(t => t.EntityState);
+            Ignore(t => t.OriginalValues);
+
         }
     }
 }

@@ -36,6 +36,10 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.PhotoFull).HasColumnName("PhotoFull");
             Property(t => t.PhotoThumb).HasColumnName("PhotoThumb");
 
+            Ignore(t => t.EntityState);
+            Ignore(t => t.OriginalValues);
+
+
             // Relationships
             HasRequired(t => t.WebUser)
                             .WithOptional(t => t.Presenter);

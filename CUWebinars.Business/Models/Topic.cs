@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace CUWebinars.Business.Models
 {
-    public partial class Topic
+    public partial class Topic : IObjectWithState
     {
         public Topic()
         {
-Topic1 = new List<Topic>();
-WebinarTopicXrefs = new List<WebinarTopicXref>();
+            Topic1 = new List<Topic>();
+            WebinarTopicXrefs = new List<WebinarTopicXref>();
         }
 
         public int idTopic { get; set; }
@@ -19,5 +19,7 @@ WebinarTopicXrefs = new List<WebinarTopicXref>();
         public virtual ICollection<Topic> Topic1 { get; set; }
         public virtual Topic Topic2 { get; set; }
         public virtual ICollection<WebinarTopicXref> WebinarTopicXrefs { get; set; }
+        public State EntityState { get; set; }
+        public Dictionary<string, object> OriginalValues { get; set; }
     }
 }

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace CUWebinars.Business.Models
 {
-    public partial class WebUser
+    public partial class WebUser : IObjectWithState
     {
         public WebUser()
         {
-Addresses = new List<Address>();
-Orders = new List<Order>();
+            Addresses = new List<Address>();
+            Orders = new List<Order>();
         }
 
         public int idUser { get; set; }
@@ -35,5 +35,7 @@ Orders = new List<Order>();
         public virtual Institution Institution { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual Presenter Presenter { get; set; }
+        public State EntityState { get; set; }
+        public Dictionary<string, object> OriginalValues { get; set; }
     }
 }

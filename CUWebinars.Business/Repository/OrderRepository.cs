@@ -6,12 +6,19 @@ using System.Data.Entity.Validation;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.Repository
 {
     public class OrderRepository : TTSWebinarsRepository<TTSWebinarsContext, Order>, IOrderRepository
     {
+        readonly DisconnectedPropertyChangeHelper _disconnectedPropertyChangeHelper;
+        public OrderRepository()
+        {
+            _disconnectedPropertyChangeHelper = new DisconnectedPropertyChangeHelper(db);
+        }
+
         public Order CreateOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow)
         {
             var newOrder = items.Create();
@@ -27,7 +34,8 @@ namespace CUWebinars.Business.Repository
             newOrder.OrderRows = new List<OrderRow>();
             newOrder.OrderRows.Add(orderRow);
             
-            Add(newOrder);
+            //Add(newOrder);
+            _disconnectedPropertyChangeHelper.ApplyChanges(newOrder);
             db.SaveChanges();
 
             //  Best to load these from the database

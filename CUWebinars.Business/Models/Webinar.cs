@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CUWebinars.Business.Models
 {
-    public partial class Webinar
+    public partial class Webinar : IObjectWithState
     {
         public Webinar()
         {
@@ -41,5 +41,7 @@ namespace CUWebinars.Business.Models
         public virtual Presenter Presenter { get; set; }
         public virtual ICollection<WebinarFile> WebinarFiles { get; set; }
         public virtual ICollection<WebinarTopicXref> WebinarTopicXrefs { get; set; }
+        public State EntityState { get; set; }
+        public Dictionary<string, object> OriginalValues { get; set; }
     }
 }

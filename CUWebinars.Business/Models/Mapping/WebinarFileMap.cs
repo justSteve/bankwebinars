@@ -26,6 +26,10 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.fileLocation).HasColumnName("fileLocation");
             Property(t => t.fileDesc).HasColumnName("fileDesc");
 
+            Ignore(t => t.EntityState);
+            Ignore(t => t.OriginalValues);
+
+
             // Relationships
             HasRequired(t => t.Webinar)
                             .WithMany(t => t.WebinarFiles)

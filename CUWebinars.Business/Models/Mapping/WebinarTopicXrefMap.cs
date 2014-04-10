@@ -17,6 +17,9 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.idWebinar).HasColumnName("idWebinar");
             Property(t => t.idTopic).HasColumnName("idTopic");
 
+            Ignore(t => t.EntityState);
+            Ignore(t => t.OriginalValues);
+
             // Relationships
             HasRequired(t => t.Topic)
                             .WithMany(t => t.WebinarTopicXrefs)

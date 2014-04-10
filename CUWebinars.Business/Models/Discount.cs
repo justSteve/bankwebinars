@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CUWebinars.Business.Models
 {
-    public partial class Discount
+    public partial class Discount : IObjectWithState
     {
         public int idDiscount { get; set; }
         public byte discountType { get; set; }
@@ -17,5 +17,7 @@ namespace CUWebinars.Business.Models
         public Nullable<System.DateTime> dateBilled { get; set; }
         public Nullable<decimal> cost { get; set; }
         public string Notes { get; set; }
+        public State EntityState { get; set; }
+        public Dictionary<string, object> OriginalValues { get; set; }
     }
 }

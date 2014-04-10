@@ -74,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountService\IMembershipService.cs" />
+    <Compile Include="Core\DisconnectedPropertyChangeHelper.cs" />
     <Compile Include="Models\IObjectWithState.cs" />
     <Compile Include="Models\Mapping\AdditionalLocationMap.cs" />
     <Compile Include="Models\Mapping\RegTypeGroupsXrefMap.cs" />

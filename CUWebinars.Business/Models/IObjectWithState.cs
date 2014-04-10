@@ -1,9 +1,12 @@
 ﻿
+using System.Collections.Generic;
+
 namespace CUWebinars.Business.Models
 {
     public interface IObjectWithState
     {
-        State State { get; set; }
+        State EntityState { get; set; }
+        Dictionary<string, object> OriginalValues { get; set; }
     }
 
 

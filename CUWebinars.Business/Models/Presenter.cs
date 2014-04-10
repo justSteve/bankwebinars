@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace CUWebinars.Business.Models
 {
-    public partial class Presenter
+    public partial class Presenter : IObjectWithState
     {
         public Presenter()
         {
-Webinars = new List<Webinar>();
+            Webinars = new List<Webinar>();
         }
 
         public int idUser { get; set; }
@@ -17,5 +17,7 @@ Webinars = new List<Webinar>();
         public string PhotoThumb { get; set; }
         public virtual WebUser WebUser { get; set; }
         public virtual ICollection<Webinar> Webinars { get; set; }
+        public State EntityState { get; set; }
+        public Dictionary<string, object> OriginalValues { get; set; }
     }
 }

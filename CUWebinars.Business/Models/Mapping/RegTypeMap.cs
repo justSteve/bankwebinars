@@ -37,6 +37,10 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.Stage2CheckoutConfirmationMsg).HasColumnName("Stage2CheckoutConfirmationMsg");
             Property(t => t.Stage1EmailConfirmationMsg).HasColumnName("Stage1EmailConfirmationMsg");
             Property(t => t.Stage2EmailConfirmationMsg).HasColumnName("Stage2EmailConfirmationMsg");
+
+            Ignore(t => t.EntityState);
+            Ignore(t => t.OriginalValues);
+
         }
     }
 }

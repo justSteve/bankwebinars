@@ -19,6 +19,10 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.idRegTypeGroup).HasColumnName("idRegTypeGroup");
             Property(t => t.RegTypeGroupDesc).HasColumnName("RegTypeGroupDesc");
             Property(t => t.SortOrder).HasColumnName("SortOrder");
+
+            Ignore(t => t.EntityState);
+            Ignore(t => t.OriginalValues);
+
         }
     }
 }

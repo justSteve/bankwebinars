@@ -33,6 +33,10 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.dateBilled).HasColumnName("dateBilled");
             Property(t => t.cost).HasColumnName("cost");
             Property(t => t.Notes).HasColumnName("Notes");
+
+            Ignore(t => t.EntityState);
+            Ignore(t => t.OriginalValues);
+
         }
     }
 }

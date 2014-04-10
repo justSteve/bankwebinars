@@ -17,6 +17,10 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.idWebinar).HasColumnName("idWebinar");
             Property(t => t.idRegTypeGroup).HasColumnName("idRegTypeGroup");
 
+            Ignore(t => t.EntityState);
+            Ignore(t => t.OriginalValues);
+
+
             // Relationships
             HasRequired(t => t.RegTypesGroup)
                             .WithMany(t => t.RegTypesGroupsXrefs)

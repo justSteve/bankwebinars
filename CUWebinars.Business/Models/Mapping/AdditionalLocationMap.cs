@@ -9,6 +9,9 @@ namespace CUWebinars.Business.Models.Mapping
             // Primary Key
             HasKey(t => t.idAdditionalLocation);
 
+            Ignore(t => t.EntityState);
+            Ignore(t => t.OriginalValues);
+
             // Table & Column Mappings
             ToTable("AdditionalLocation");
         //            public int Id { get; set; }

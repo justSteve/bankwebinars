@@ -50,6 +50,14 @@ namespace CUWebinars.Business.Repository
             return webUser.FirstOrDefault();
         }
 
+        public WebUser GetWebUserByEmail(string email)
+        {
+            return items
+                .Include("Addresses")
+                .Include("Institution")
+                .Where(w => w.email == email).SingleOrDefault();
+        }
+
         public void UpdateAddresses(Address address)
         {
             var entry = db.Entry(address);

@@ -27,6 +27,10 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.topicHTML).HasColumnName("topicHTML");
             Property(t => t.sortOrder).HasColumnName("sortOrder");
 
+            Ignore(t => t.EntityState);
+            Ignore(t => t.OriginalValues);
+
+            
             // Relationships
             HasOptional(t => t.Topic2)
                             .WithMany(t => t.Topic1)

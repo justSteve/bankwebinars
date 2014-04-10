@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CUWebinars.Business.Models
 {
-    public partial class RegTypesGroup
+    public partial class RegTypesGroup : IObjectWithState
     {
         public RegTypesGroup()
         {
@@ -16,5 +16,7 @@ namespace CUWebinars.Business.Models
         public Nullable<int> SortOrder { get; set; }
         public virtual ICollection<RegTypesGroupsXref> RegTypesGroupsXrefs { get; set; }
         public virtual ICollection<RegTypesXref> RegTypesXrefs { get; set; }
+        public State EntityState { get; set; }
+        public Dictionary<string, object> OriginalValues { get; set; }
     }
 }
