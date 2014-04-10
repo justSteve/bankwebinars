@@ -1132,7 +1132,6 @@
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
     <Content Include="Views\Webinar\Calendar.cshtml" />
     <Content Include="Views\Cart\GTWRegistration.cshtml" />
-    <Content Include="Views\Shared\EditorTemplates\AddAdditionalLocationsViewModel.cshtml" />
     <Content Include="Views\Shared\_LayoutCertificate.cshtml" />
     <Content Include="Views\Home\Calendar.cshtml" />
     <Content Include="Views\Home\COC.cshtml" />

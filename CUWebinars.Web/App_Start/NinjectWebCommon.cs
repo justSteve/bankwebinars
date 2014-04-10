@@ -1,5 +1,3 @@
-using System.Web.Http;
-using System.Web.Mvc;
 using BrockAllen.MembershipReboot;
 using BrockAllen.MembershipReboot.Ef;
 using BrockAllen.MembershipReboot.WebHost;
@@ -10,20 +8,18 @@ using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Services;
 using Ninject.Parameters;
-using Ninject.Web.Mvc;
+using System.Web.Http;
 
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(CUWebinars.Web.App_Start.NinjectWebCommon), "Start")]
 [assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(CUWebinars.Web.App_Start.NinjectWebCommon), "Stop")]
 
 namespace CUWebinars.Web.App_Start
 {
-    using System;
-    using System.Web;
-
     using Microsoft.Web.Infrastructure.DynamicModuleHelper;
-
     using Ninject;
     using Ninject.Web.Common;
+    using System;
+    using System.Web;
 
     public static class NinjectWebCommon 
     {
@@ -82,15 +78,17 @@ namespace CUWebinars.Web.App_Start
             const string webinarRepository = "WebinarRepository";
             const string webuserRepository = "WebUserRepository";
             const string orderRepository = "OrderRepository";
-            const string refdataRepository = "RefDataRepository";
             const string regTypeRepository = "RegTypeRepository";
-            const string refDataRepositoryForTokenizer = "RefDataRepositoryForTokenizer";
-            const string optionRepository = "OptionRepository";
 
             string baseUrl = HttpRuntime.AppDomainAppPath;
             kernel.Bind<IStateService>().To<StateService>();
+            kernel.Bind<TTSWebinarsContext>().ToSelf();
 
-            var config = MembershipRebootConfig.Create(baseUrl, kernel.Get<IStateService>());
+            kernel.Bind<IRefDataRepository>()
+                .To<RefDataRepository>()
+                .InRequestScope();
+
+            var config = MembershipRebootConfig.Create(baseUrl, kernel.Get<IStateService>(), kernel.Get<IRefDataRepository>());
             var ttsConfig = TtsConfig.Create(baseUrl);
 
             kernel.Bind<MembershipRebootConfiguration>().ToConstant(config);
@@ -98,13 +96,12 @@ namespace CUWebinars.Web.App_Start
 
             kernel.Bind<IAffiliateRepository>().To<AffiliateRepository>().InRequestScope().Named(affiliateRepository);
             kernel.Bind<IWebinarRepository>().To<WebinarRepository>().InRequestScope().Named(webinarRepository);
-            //kernel.Bind<IAccountRepository>().To<AccountRepository>().InRequestScope();
-            //kernel.Bind<IPresenterRepository>().To<PresenterRepository>();
             kernel.Bind<IWebUserRepository>().To<WebUserRepository>().InRequestScope().Named(webuserRepository);
             kernel.Bind<IOrderRepository>().To<OrderRepository>().InRequestScope().Named(orderRepository);
             kernel.Bind<IInstitutionRepository>().To<InstitutionRepository>().InRequestScope();
-            kernel.Bind<IUserAccountRepository>().To<DefaultUserAccountRepository>();
-            kernel.Bind<IOptionRepository>().To<OptionRepository>().InRequestScope().Named(optionRepository);
+            kernel.Bind<IUserAccountRepository>().To<DefaultUserAccountRepository>().InRequestScope();
+            kernel.Bind<IRegTypeRepository>().To<RegTypeRepository>().InRequestScope().Named(regTypeRepository);
+
             kernel.Bind<IOrderManagementService>().ToMethod(ctx =>
             {
                 var context = ctx.Kernel.Get<TTSWebinarsContext>();
@@ -114,7 +111,7 @@ namespace CUWebinars.Web.App_Start
                     ctx.Kernel.Get<IAffiliateRepository>(affiliateRepository, param),
                     ctx.Kernel.Get<IRegTypeRepository>(regTypeRepository, param),
                     ctx.Kernel.Get<IOrderRepository>(orderRepository, param),
-                    ctx.Kernel.Get<IRefDataRepository>(refdataRepository, param),
+                    ctx.Kernel.Get<IRefDataRepository>(),
                     ctx.Kernel.Get<IWebUserRepository>(webuserRepository, param),
                     ctx.Kernel.Get<IWebinarRepository>(webinarRepository, param),
                     ttsConfig

@@ -9,12 +9,9 @@
     
     <p><button id="AddInputsButton" class="btn btn-success">Click to Add More</button></p>
     
-    @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new {id = "RegisterAdditionalLocationsForm"}))
-    {
-        <input type="hidden" name="stage_of_checkout" id="Stage_of_checkout" value="step0" />
-        <input type="hidden" name="mode" id="Mode" />
-        
-        var emails = Model.AdditionalLocations.Select(al => al.Email).ToArray();
+        @{
+            var emails = Model.AdditionalLocations.Select(al => al.Email).ToArray();
+        }
 
         <div id="AdditionalLocationEmailWrapper">
         @{
@@ -27,18 +24,18 @@
             }
         }
         </div>
-        <button id="SumbitAdditionalLocationsForm" class="btn btn-primary">Submit</button>
-    }
+    
+    <button id="SumbitAdditionalLocationsForm" class="btn btn-primary">Submit</button>
+    
 </div>
 <div class="modal-footer">
     <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-    
 </div>
 
 
 @*<script src="@Url.Content("~/Scripts/app/cart/additional-location-modal.js")"></script>*@
 <script>
-
+    //  This will be refactored to a script. 
     var additionalLocationEmailWrapper,
         breakSuffix = '-break',
         deleteItem,
@@ -47,6 +44,7 @@
         
 
     deleteItem = function (event) {
+        debugger; 
         numberOfAdditionalLocations--;
         var trashClicked = event.currentTarget.id;
         var idx = trashClicked.substring(0, 1);
@@ -98,48 +96,48 @@
 
         additionalLocationEmailWrapper.find('i').on('click', deleteItem);
 
-        $('#RegisterAdditionalLocationsForm').on('submit', function (e) {
-            console.log('hi dave');
-            debugger;
-            e.preventDefault();
+        //$('#RegisterAdditionalLocationsForm').on('submit', function (e) {
+        //    console.log('hi dave');
+        //    debugger;
+        //    e.preventDefault();
 
-            var mode = $('#Mode').val();
-            var stageOfCheckout = $('#Stage_of_checkout').val();
-            var orderId = $('[name="CheckoutOptionsViewModel.Order.idOrder"]');
-            var webUserId = $('[name="WebUser.idUser"]') || $('#WebUser_idUser').val();
-            var webinarId = $('[name="Webinar.idWebinar"]');
+        //    var mode = $('#Mode').val();
+        //    var stageOfCheckout = $('#Stage_of_checkout').val();
+        //    var orderId = $('[name="CheckoutOptionsViewModel.Order.idOrder"]');
+        //    var webUserId = $('[name="WebUser.idUser"]') || $('#WebUser_idUser').val();
+        //    var webinarId = $('[name="Webinar.idWebinar"]');
 
-            var emailAddresses = Object();
+        //    var emailAddresses = Object();
 
-            var emailNodes = newLocationsContainer.find('input[type=text]');
+        //    var emailNodes = newLocationsContainer.find('input[type=text]');
 
-            $.each(emailNodes, function (idx, input) {
-                emailAddresses[idx] = $(input).val();
-            });
+        //    $.each(emailNodes, function (idx, input) {
+        //        emailAddresses[idx] = $(input).val();
+        //    });
 
-            var payload = {
-                'CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationViewModel.AddAdditionalLocationViewModel.Emails': emailAddresses,
-                'CheckoutOptionsViewModel.Order.idOrder': orderId.val(),
-                'WebUser.idUser': webUserId.val(),
-                'Webinar.idWebinar': webinarId.val(),
-                mode: 0,
-                stageOfCheckout: stageOfCheckout,
-                sixMonthPaidConnectionsCount: '',
-                twelveMonthPaidConnectionsCount: ''
-            };
+        //    var payload = {
+        //        'CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationViewModel.AddAdditionalLocationViewModel.Emails': emailAddresses,
+        //        'CheckoutOptionsViewModel.Order.idOrder': orderId.val(),
+        //        'WebUser.idUser': webUserId.val(),
+        //        'Webinar.idWebinar': webinarId.val(),
+        //        mode: 0,
+        //        stageOfCheckout: stageOfCheckout,
+        //        sixMonthPaidConnectionsCount: '',
+        //        twelveMonthPaidConnectionsCount: ''
+        //    };
 
-            $.ajax({
-                url: '/Cart/Signup2',
-                type: 'POST',
-                data: payload,
-                dataType: 'json',
-                contentType: 'application/x-www-form-urlencoded; charset=UTF-8'
-            }).done(function (msg) {
-                var bla = msg;
-            });
+        //    $.ajax({
+        //        url: '/Cart/Signup2',
+        //        type: 'POST',
+        //        data: payload,
+        //        dataType: 'json',
+        //        contentType: 'application/x-www-form-urlencoded; charset=UTF-8'
+        //    }).done(function (msg) {
+        //        var bla = msg;
+        //    });
 
-            return false;
-        });
+        //    return false;
+        //});
     };
 
 </script>

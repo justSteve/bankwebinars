@@ -1,27 +1,71 @@
-﻿$(function () {
-    //primeDomVariables();
-    wireUpHandlers();
+﻿var additionalLocationEmailWrapper,
+    breakSuffix = '-break',
+    deleteItem,
+    locationsSpanPrefix = 'LocationSpan-',
+    numberOfAdditionalLocations;
 
+
+deleteItem = function (event) {
+    numberOfAdditionalLocations--;
+    var trashClicked = event.currentTarget.id;
+    var idx = trashClicked.substring(0, 1);
+    var spanToRemove = locationsSpanPrefix + idx;
+
+    $('#' + spanToRemove).hide(500, function () {
+        $(this).remove();
+        $('#' + idx + breakSuffix).remove();
+    });
+
+    if (numberOfAdditionalLocations < 1) {
+        $('#SumbitAdditionalLocationsForm').hide(300, function () {
+            $(this).remove();
+        });
+    }
+};
+
+$(function () {
+
+    console.log($('#WebUser_idUser').val().toString());
+    numberOfAdditionalLocations = $('#AdditionalLocationEmailWrapper input[type="text"').length;
+    if (numberOfAdditionalLocations < 1)
+        $('#SumbitAdditionalLocationsForm').remove();
+
+    wireUpHandlers();
 });
 
 
 function wireUpHandlers() {
 
-    var locationsSpanPrefix = 'LocationSpan-',
-        breakSuffix = '-break';
-    $('#SumbitAdditionalLocationsForm').on('click', function() {
-        alert('hi');
+    additionalLocationEmailWrapper = $('#AdditionalLocationEmailWrapper');
+
+    $('#AddInputsButton').on('click', function () {
+
+        if (numberOfAdditionalLocations == 0) {
+            $('#AdditionalLocationEmailWrapper').after($('<button>',
+            {
+                id: 'SumbitAdditionalLocationsForm',
+                text: 'Submit',
+                'class': 'btn btn-primary',
+            }));
+        }
+
+        additionalLocationEmailWrapper.append('<span id="' + locationsSpanPrefix + numberOfAdditionalLocations + '"><input id="AdditionalLocationEmail_' + numberOfAdditionalLocations + '" name="AddAdditionalLocationViewModel.Emails[' + numberOfAdditionalLocations + ']" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + numberOfAdditionalLocations + '-AdditionLocationEmail-delete"></i></span> <br id="' + numberOfAdditionalLocations + breakSuffix + '">');
+        additionalLocationEmailWrapper.find('i#' + numberOfAdditionalLocations + '-AdditionLocationEmail-delete').on('click', deleteItem);
+        numberOfAdditionalLocations++;
+
     });
 
+    additionalLocationEmailWrapper.find('i').on('click', deleteItem);
+
     $('#RegisterAdditionalLocationsForm').on('submit', function (e) {
-        alert('hi dave');
+        console.log('hi dave');
         debugger;
         e.preventDefault();
 
         var mode = $('#Mode').val();
         var stageOfCheckout = $('#Stage_of_checkout').val();
         var orderId = $('[name="CheckoutOptionsViewModel.Order.idOrder"]');
-        var webUserId = $('[name="WebUser.idUser"]');
+        var webUserId = $('[name="WebUser.idUser"]') || $('#WebUser_idUser').val();
         var webinarId = $('[name="Webinar.idWebinar"]');
 
         var emailAddresses = Object();
