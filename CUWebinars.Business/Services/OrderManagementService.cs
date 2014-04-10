@@ -347,6 +347,11 @@ namespace CUWebinars.Business.Services
             return order;
         }
 
+        public Discount GetDiscount(string email)
+        {
+            return null;
+        }
+
         public void Clear()
         {
             _events.Clear();

@@ -63,5 +63,6 @@ namespace CUWebinars.Business.AccountService
             );
 
         UserAccount VerifyEmailFromKey(string key, string password);
+        USTimeZone GetTimeZoneByZip();
     }
 }

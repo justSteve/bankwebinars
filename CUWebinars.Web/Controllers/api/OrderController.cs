@@ -126,12 +126,13 @@ namespace CUWebinars.Web.Controllers.api
 
                 IList<Address> addresses = new List<Address> { model.BillingAddress, model.ShippingAddress };
 
+                USTimeZone userTimeZone = _membershipService.GetTimeZoneByZip();
                 webUser = _membershipService.CreateWebUser(globalConfig.Tenant
                     , firstName
                     , lastName
                     , lastName.ToLower().Trim()
                     , email
-                    , model.UsTimeZone
+                    , userTimeZone
                     , UserType.Customer
                     , institutionForUser.idInstitution
                     , addresses
@@ -168,16 +169,16 @@ namespace CUWebinars.Web.Controllers.api
                 model.idRegType
                 );
 
-            orderRow.Discount = model.Discount;
+            orderRow.Discount = _orderManagementService.GetDiscount(model.Email);
             //TODO: Ensure this status is updated after save.
             //orderRow.RowStatus = OrderStatus.InProcess;
 
             var importedOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
 
-            importedOrder.AdminComments = model.AdminComments;
+            importedOrder.AdminComments = "model.AdminComments";
             importedOrder.AffiliateComments = model.AffiliateComments;
-            importedOrder.UserComments = model.UserComments;
-            importedOrder.Origin = model.Origin;
+            importedOrder.UserComments = "model.UserComments";
+            importedOrder.Origin = "model.Origin";
             importedOrder.FirstName = webUser.FirstName;
             importedOrder.LastName = webUser.LastName;
             importedOrder.Institution = webUser.Institution.InstitutionName;
