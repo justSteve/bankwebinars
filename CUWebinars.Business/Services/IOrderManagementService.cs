@@ -34,5 +34,6 @@ namespace CUWebinars.Business.Services
 
         Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow);
 //        Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, IList<RegType> options);
+        Discount GetDiscount(string email);
     }
 }

@@ -171,7 +171,8 @@ namespace CUWebinars.Business.Repository
         public Order SaveOrderChanges(Order order)
         {
             var error = db.GetValidationErrors();
-            
+            Debug.WriteLine("#######################Call to SaveOrderChanges");
+                
             _disconnectedPropertyChangeHelper.ApplyChanges(order);
 
             return order;

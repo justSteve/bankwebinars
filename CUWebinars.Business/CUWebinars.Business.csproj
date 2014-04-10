@@ -175,8 +175,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-    <None Include="SQLSeeding\BACPACs\BankWebinars.bacpac" />
-    <None Include="SQLSeeding\BACPACs\BankWebinars2.bacpac" />
+    <None Include="SQLSeeding\BACPACs\CUWebinars.bacpac" />
     <None Include="SQLSeeding\BACPACs\CUWebinarsClean.bacpac" />
     <None Include="SQLSeeding\BACPACs\CUWebinarsV3.bacpac" />
     <None Include="SQLSeeding\BACPACs\MembershipReboot.bacpac" />

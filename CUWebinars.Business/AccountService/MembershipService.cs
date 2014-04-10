@@ -285,6 +285,11 @@ namespace CUWebinars.Business.AccountService
             return userAccount;
         }
 
+        public USTimeZone GetTimeZoneByZip()
+        {
+            return USTimeZone.Central;
+        }
+
         public IEnumerable<Address> GetAddressesForUser(int id)
         {
             return _refDataRepository.GetAddressesForUser(id);

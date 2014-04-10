@@ -325,7 +325,7 @@ namespace CUWebinars.Business.Services
         {
             ProcessDiscountCodes(currentOrder);
             CalculateOrderPrices(currentOrder);
-
+            //TODO: Find why a second OrderRow is being persisted after this statement executes.
             return _orderRepository.SaveOrderChanges(currentOrder);
         }
 
@@ -345,6 +345,11 @@ namespace CUWebinars.Business.Services
             var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow);
 
             return order;
+        }
+
+        public Discount GetDiscount(string email)
+        {
+            return null;
         }
 
         public void Clear()

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Diagnostics;
 using System.Linq;
 using CUWebinars.Business.Models;
 
@@ -21,16 +22,27 @@ namespace CUWebinars.Business.Core
         {
             _context.Set<TEntity>().Add(root);
             CheckForEntitiesWithoutStateInterface(_context);
-
+            Debug.WriteLine("-----------------");
+            Debug.WriteLine("-----------------");
+            Debug.WriteLine("-----------------");
+            Debug.WriteLine("#######################Start Looper on " + root.ToString());
+                
             foreach (var entry in _context.ChangeTracker.Entries<IObjectWithState>())
             {
+                //It appears that at this point every orderRow Record is iterated thru
                 IObjectWithState entityWithStateInfo = entry.Entity;
                 entry.State = ConvertState(entityWithStateInfo.DomainEntityState);
+                Debug.WriteLine("Entity: " + entry.Entity.ToString() + " has state=" + entry.State);
                 if (entityWithStateInfo.DomainEntityState == State.Unchanged)
                 {
+                    Debug.WriteLine("       ApplyPropertyChanges on: " + entry.Entity.ToString());
                     ApplyPropertyChanges(entry.OriginalValues, entityWithStateInfo.OriginalValues);
                 }
             }
+            Debug.WriteLine("####################Exit Looper on " + root.ToString());
+            Debug.WriteLine("-----------------");
+            Debug.WriteLine("-----------------");
+            Debug.WriteLine("-----------------"); 
             _context.SaveChanges();
         }
 
