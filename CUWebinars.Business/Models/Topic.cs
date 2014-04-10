@@ -19,7 +19,7 @@ namespace CUWebinars.Business.Models
         public virtual ICollection<Topic> Topic1 { get; set; }
         public virtual Topic Topic2 { get; set; }
         public virtual ICollection<WebinarTopicXref> WebinarTopicXrefs { get; set; }
-        public State EntityState { get; set; }
+        public State DomainEntityState { get; set; }
         public Dictionary<string, object> OriginalValues { get; set; }
     }
 }

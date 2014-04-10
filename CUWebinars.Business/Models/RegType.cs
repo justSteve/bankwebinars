@@ -27,7 +27,7 @@ namespace CUWebinars.Business.Models
         public string Stage2EmailConfirmationMsg { get; set; }
         //public virtual ICollection<OptionsXref> OptionsXrefs { get; set; }
         //public virtual ICollection<AdditionalLocation> AdditionalLocation { get; set; }
-        public State EntityState { get; set; }
+        public State DomainEntityState { get; set; }
         public Dictionary<string, object> OriginalValues { get; set; }
     }
 }

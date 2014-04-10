@@ -19,7 +19,7 @@ namespace CUWebinars.Business.Models
         public string Email { get; set; }
         public string FullName { get; set; }
         public bool Billable { get; set; }
-        public State EntityState { get; set; }
+        public State DomainEntityState { get; set; }
         public Dictionary<string, object> OriginalValues { get; set; }
     }
 }

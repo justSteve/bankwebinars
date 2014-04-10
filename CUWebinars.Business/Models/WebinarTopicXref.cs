@@ -10,7 +10,7 @@ namespace CUWebinars.Business.Models
         public int idTopic { get; set; }
         public virtual Topic Topic { get; set; }
         public virtual Webinar Webinar { get; set; }
-        public State EntityState { get; set; }
+        public State DomainEntityState { get; set; }
         public Dictionary<string, object> OriginalValues { get; set; }
     }
 }

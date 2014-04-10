@@ -20,7 +20,7 @@ namespace CUWebinars.Business.Models
         public string State { get; set; }
         public string Zip { get; set; }
         public virtual ICollection<WebUser> WebUsers { get; set; }
-        public State EntityState { get; set; }
+        public State DomainEntityState { get; set; }
         public Dictionary<string, object> OriginalValues { get; set; }
     }
 }

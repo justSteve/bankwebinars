@@ -41,7 +41,7 @@ namespace CUWebinars.Business.Models
         public virtual Presenter Presenter { get; set; }
         public virtual ICollection<WebinarFile> WebinarFiles { get; set; }
         public virtual ICollection<WebinarTopicXref> WebinarTopicXrefs { get; set; }
-        public State EntityState { get; set; }
+        public State DomainEntityState { get; set; }
         public Dictionary<string, object> OriginalValues { get; set; }
     }
 }

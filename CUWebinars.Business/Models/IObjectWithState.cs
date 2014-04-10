@@ -5,7 +5,7 @@ namespace CUWebinars.Business.Models
 {
     public interface IObjectWithState
     {
-        State EntityState { get; set; }
+        State DomainEntityState { get; set; }
         Dictionary<string, object> OriginalValues { get; set; }
     }
 

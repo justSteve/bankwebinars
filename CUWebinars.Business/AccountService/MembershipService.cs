@@ -155,8 +155,17 @@ namespace CUWebinars.Business.AccountService
             string institutionType,
             string zip)
         {
-            var institution =
-                _institutionRepository.GetAll().Where(c => c.InstitutionName == institutionName && c.Zip == zip).ToList();
+            List<Institution> institution = null;
+
+            try
+            {
+                var i = _institutionRepository.GetByNameAndZipCode(institutionName, zip);
+                institution = i.ToList();
+            }
+            catch (Exception exception)
+            {
+                string bla = exception.Message;
+            }
 
             if (institution.Count == 1)
             {

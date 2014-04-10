@@ -17,7 +17,7 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.idRegTypeGroup).HasColumnName("idRegTypeGroup");
             Property(t => t.idRegType).HasColumnName("idRegType");
 
-            Ignore(t => t.EntityState);
+            Ignore(t => t.DomainEntityState);
             Ignore(t => t.OriginalValues);
 
 

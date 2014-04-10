@@ -25,7 +25,7 @@ namespace CUWebinars.Business.Repository
             newOrder.OrderDate = DateTime.Now;
 
             newOrder.idAffiliate = affiliate.idUserAff;
-            newOrder.idUser = webUser.idUser;
+            newOrder.WebUser = webUser;
 
             //  Cannot load this from the database, as the Addresses collection of
             //  WebUser cannot be loaded. Get the WebUser populated via the WebUserRepository.
@@ -36,11 +36,12 @@ namespace CUWebinars.Business.Repository
             
             //Add(newOrder);
             _disconnectedPropertyChangeHelper.ApplyChanges(newOrder);
-            db.SaveChanges();
+            //db.SaveChanges();
 
             //  Best to load these from the database
-            db.Entry(newOrder).Reference(no => no.Affiliate).Load();
-            db.Entry(newOrder).Reference(no => no.WebUser).Load();
+            //db.Entry(newOrder).Reference(no => no.Affiliate).Load();
+            //db.Entry(newOrder).Reference(no => no.WebUser).Load();
+            _disconnectedPropertyChangeHelper.MaterializeObject(newOrder);
 
             return newOrder;
         }
@@ -168,15 +169,10 @@ namespace CUWebinars.Business.Repository
         public Order SaveOrderChanges(Order order)
         {
             var error = db.GetValidationErrors();
-            //db.ChangeTracker.
-            if (db.SaveChanges() > 0)
-            {
-                
-                //db.Entry(order).Reference(o => o.WebUser).Load();
-                return order;
-            }
+            
+            _disconnectedPropertyChangeHelper.ApplyChanges(order);
 
-            throw new Exception(""); // TODO: come up with meaningful exception and msg
+            return order;
         }
 
         //public virtual IDictionary<RegType, Order> SelectOrdersWithScheduledWebinars(int idUser)

@@ -17,7 +17,7 @@ namespace CUWebinars.Business.Models
         public Nullable<System.DateTime> dateBilled { get; set; }
         public Nullable<decimal> cost { get; set; }
         public string Notes { get; set; }
-        public State EntityState { get; set; }
+        public State DomainEntityState { get; set; }
         public Dictionary<string, object> OriginalValues { get; set; }
     }
 }

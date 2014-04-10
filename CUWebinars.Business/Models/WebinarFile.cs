@@ -10,7 +10,7 @@ namespace CUWebinars.Business.Models
         public string fileLocation { get; set; }
         public string fileDesc { get; set; }
         public virtual Webinar Webinar { get; set; }
-        public State EntityState { get; set; }
+        public State DomainEntityState { get; set; }
         public Dictionary<string, object> OriginalValues { get; set; }
     }
 }

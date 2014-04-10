@@ -10,7 +10,7 @@ namespace CUWebinars.Business.Models
         public int idRegType { get; set; }
         public virtual RegType RegType { get; set; }
         public virtual RegTypesGroup RegTypesGroup { get; set; }
-        public State EntityState { get; set; }
+        public State DomainEntityState { get; set; }
         public Dictionary<string, object> OriginalValues { get; set; }
     }
 }

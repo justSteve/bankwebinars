@@ -31,7 +31,7 @@ namespace CUWebinars.Business.Models
             var entity = objectMaterializedEventArgs.Entity as IObjectWithState;
 
             if (ReferenceEquals(entity, null)) return;
-            entity.EntityState = State.Unchanged;
+            entity.DomainEntityState = State.Unchanged;
             entity.OriginalValues = BuildOriginalValues(Entry(entity).OriginalValues);
         }
 

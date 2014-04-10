@@ -106,7 +106,7 @@ namespace CUWebinars.Business.Models.Mapping
             //Property(t => t.WebUser_Id).HasColumnName("WebUser_Id");
             
 
-            Ignore(t => t.EntityState);
+            Ignore(t => t.DomainEntityState);
             Ignore(t => t.OriginalValues);
 
 

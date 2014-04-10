@@ -35,7 +35,7 @@ namespace CUWebinars.Business.Models
         public virtual Institution Institution { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual Presenter Presenter { get; set; }
-        public State EntityState { get; set; }
+        public State DomainEntityState { get; set; }
         public Dictionary<string, object> OriginalValues { get; set; }
     }
 }

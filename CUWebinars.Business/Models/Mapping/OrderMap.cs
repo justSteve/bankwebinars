@@ -64,7 +64,7 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.ShippingPhone).HasColumnName("ShippingPhone");
             Property(t => t.Origin).HasColumnName("Origin");
 
-            Ignore(t => t.EntityState);
+            Ignore(t => t.DomainEntityState);
             Ignore(t => t.OriginalValues);
 
 

@@ -17,7 +17,7 @@ namespace CUWebinars.Business.Models
         public string PhotoThumb { get; set; }
         public virtual WebUser WebUser { get; set; }
         public virtual ICollection<Webinar> Webinars { get; set; }
-        public State EntityState { get; set; }
+        public State DomainEntityState { get; set; }
         public Dictionary<string, object> OriginalValues { get; set; }
     }
 }

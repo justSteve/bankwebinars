@@ -25,7 +25,7 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.Country).HasColumnName("Country");
             Property(t => t.idUser).HasColumnName("idUser");
 
-            Ignore(t => t.EntityState);
+            Ignore(t => t.DomainEntityState);
             Ignore(t => t.OriginalValues);
 
 

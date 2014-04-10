@@ -21,7 +21,7 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.AccessExpires).HasColumnName("AccessExpires");
             Property(t => t.Royalty).HasColumnName("Royalty");
 
-            Ignore(t => t.EntityState);
+            Ignore(t => t.DomainEntityState);
             Ignore(t => t.OriginalValues);
 
 

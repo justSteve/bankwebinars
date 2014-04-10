@@ -25,8 +25,8 @@ namespace CUWebinars.Business.Core
             foreach (var entry in _context.ChangeTracker.Entries<IObjectWithState>())
             {
                 IObjectWithState entityWithStateInfo = entry.Entity;
-                entry.State = ConvertState(entityWithStateInfo.EntityState);
-                if (entityWithStateInfo.EntityState == State.Unchanged)
+                entry.State = ConvertState(entityWithStateInfo.DomainEntityState);
+                if (entityWithStateInfo.DomainEntityState == State.Unchanged)
                 {
                     ApplyPropertyChanges(entry.OriginalValues, entityWithStateInfo.OriginalValues);
                 }
@@ -75,6 +75,33 @@ namespace CUWebinars.Business.Core
             {
                 throw new NotSupportedException("All entities must implement IObjectWithState");
             }
+        }
+
+        public void MaterializeObject(IObjectWithState objectWithState)
+        {
+            if (ReferenceEquals(objectWithState, null)) return;
+            objectWithState.DomainEntityState = State.Unchanged;
+            objectWithState.OriginalValues = BuildOriginalValues(_context.Entry(objectWithState).OriginalValues);            
+        }
+
+        private Dictionary<string, object> BuildOriginalValues(DbPropertyValues originalValues)
+        {
+            var result = new Dictionary<string, object>();
+
+            foreach (var propertyName in originalValues.PropertyNames)
+            {
+                var value = originalValues[propertyName];
+
+                if (value is DbPropertyValues)
+                {
+                    result[propertyName] = BuildOriginalValues((DbPropertyValues)value);
+                }
+                else
+                {
+                    result[propertyName] = value;
+                }
+            }
+            return result;
         }
     }
 }
