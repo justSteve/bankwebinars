@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -41,58 +42,69 @@ namespace CUWebinars.Web.Controllers.api
         //{
         //    return "value";
         //}
-//        POST http://localhost:5556/api/order HTTP/1.1
-//Host: localhost:5556
-//Content-Type: application/json; charset=utf-8
-//Connection: keep-alive
-//Accept: application/json, text/javascript, */*; q=0.01:
-//Content-Length: 1059
+        //        POST http://localhost:5556/api/order HTTP/1.1
+        //Host: localhost:5556
+        //Content-Type: application/json; charset=utf-8
+        //Connection: keep-alive
+        //Accept: application/json, text/javascript, */*; q=0.01:
+        //Content-Length: 1059
 
-//{    
-//  "AdminComments": "Admin comments",
-//  "AffiliateComments": "Affiliate comments",
-//  "BillingAddress": {    
-//    "AddressType": "Billing",
-//    "Name": "Melissa Denzler",
-//    "Phone": "555-555-5555",
-//    "StreetAddress": "968 Wildcat Dr",
-//    "StreetAddress2": "",
-//    "City": "Del Rio",
-//    "Zip": "5000",
-//    "State": "Tx",
-//    "Country": "USA",
-//    "idUser": null
-//  },
-//  "Discount": 20,
-//  "Email": "mdenzler@tauntonfcu.com",
-//  "FirstName": "Milissa",
-//  "LastName": "Denzler",
-//  "idAffiliate": 19,
-//  "idRegType": 88,
-//  "idOrder": 0,
-//  "idWebinar": 437,
-//  "Institution": "Taunton Federal Credit Union",
-//  "AdditionalLocation": [],
-//  "Origin": "WebAPI",
-//  "ShippingAddress": {    
-//    "AddressType": "Shipping",
-//    "Name": "Melissa Denzler",
-//    "Phone": "555-555-5555",
-//    "StreetAddress": "968 Wildcat Dr",
-//    "StreetAddress2": "",
-//    "City": "Del Rio",
-//    "Zip": "5000",
-//    "State": "Tx",
-//    "Country": "USA",
-//    "idUser": null
-//  },
-//  "Status": 3,
-//  "UserComments": "a user comment"
-//}
 
+        /*
+
+        {
+          "AdditionalLocations": [    
+            "dave@turing.com",
+            "jed@turing.com"
+            ],
+          "AdminComments": "Admin comments",
+          "AffiliateComments": "Affiliate comments",
+          "AlternativeEmail": "alt@altemail.com",
+          "BillingAddress": {    
+            "AddressType": "Billing",
+            "Name": "Alan Turing",
+            "Phone": "555-555-5555",
+            "StreetAddress": "968 Wildcat Dr",
+            "StreetAddress2": "",
+            "City": "Del Rio",
+            "Zip": "5000",
+            "State": "Tx",
+            "Country": "USA",    
+          },
+          "Discount": 20,
+          "Email": "alanbturingt@turing.com",
+          "FirstName": "Alan",
+          "LastName": "Turing",
+          "idAffiliate": 19,
+          "idRegType": 88,  
+          "idWebinar": 437,
+          "Institution": "Some Institution",
+          "Origin": "WebAPI",  
+          "Password": "decodethis",
+          "ShippingAddress": {    
+            "AddressType": "Shipping",
+            "Name": "Alan Turing",
+            "Phone": "555-555-5555",
+            "StreetAddress": "968 Wildcat Dr",
+            "StreetAddress2": "",
+            "City": "Del Rio",
+            "Zip": "5000",
+            "State": "Tx",
+            "Country": "USA",    
+          },
+          "SendNotification": "true",
+          "Status": 0,
+          "Title": "Mr",
+          "UserComments": "a user comment",
+          "UserType": "1",
+          "UsTimeZone": "3"
+        }
+                 * 
+                 * */
         // POST api/<controller>
         public HttpResponseMessage Post([FromBody]IncomingOrderModel model)
         {
+            Debug.WriteLine("Starts Order Import: " + model.Email);
             var email = model.Email.Trim();
             var firstName = model.FirstName.Trim();
             var lastName = model.LastName.Trim();
@@ -174,16 +186,16 @@ namespace CUWebinars.Web.Controllers.api
             importedOrder.BillingAddress2 = model.BillingAddress.StreetAddress2;
             importedOrder.BillingPhone = model.BillingAddress.Phone;
             importedOrder.BillingEmail = model.Email;
-            importedOrder.BillingCity= model.BillingAddress.City;
+            importedOrder.BillingCity = model.BillingAddress.City;
             importedOrder.BillingState = model.BillingAddress.State;
-            importedOrder.BillingZip= model.BillingAddress.Zip;
-            
+            importedOrder.BillingZip = model.BillingAddress.Zip;
+
             importedOrder.ShippingAddress = model.ShippingAddress.StreetAddress;
             importedOrder.ShippingAddress2 = model.ShippingAddress.StreetAddress2;
             importedOrder.ShippingPhone = model.ShippingAddress.Phone;
-            importedOrder.ShippingCity= model.ShippingAddress.City;
+            importedOrder.ShippingCity = model.ShippingAddress.City;
             importedOrder.ShippingState = model.ShippingAddress.State;
-            importedOrder.ShippingZip= model.ShippingAddress.Zip;
+            importedOrder.ShippingZip = model.ShippingAddress.Zip;
             importedOrder.ShippingFirstName = firstName;
             importedOrder.ShippingLastName = lastName;
 
