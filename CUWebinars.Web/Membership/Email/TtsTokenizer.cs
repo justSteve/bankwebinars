@@ -26,7 +26,8 @@ namespace CUWebinars.Web.Membership.Email
         public override string Tokenize(UserAccountEvent<UserAccount> accountEvent, ApplicationInformation appInfo, string msg, IDictionary<string, string> values)
         {
             WebUser webUser = null;
-
+            //TODO: Must account for possibility that user was created by WebAPI and
+            // session doesn't exist.
             webUser = ReferenceEquals(null, HttpContext.Current.Session) 
                 ? _refDataRepository.GetWebUserByEmail(accountEvent.Account.Email) 
                 : _stateService.GetValue<WebUser>(Constants.CurrentUser);
