@@ -1,3 +1,4 @@
+using System.Web.Http;
 using BrockAllen.MembershipReboot;
 using BrockAllen.MembershipReboot.Ef;
 using BrockAllen.MembershipReboot.WebHost;
@@ -81,19 +82,14 @@ namespace CUWebinars.Web.App_Start
 
             string baseUrl = HttpRuntime.AppDomainAppPath;
             kernel.Bind<IStateService>().To<StateService>();
-            kernel.Bind<TTSWebinarsContext>().ToSelf();
 
-            kernel.Bind<IRefDataRepository>()
-                .To<RefDataRepository>()
-                .InRequestScope();
+            kernel.Bind<IRefDataRepository>().To<RefDataRepository>();
 
             var config = MembershipRebootConfig.Create(baseUrl, kernel.Get<IStateService>(), kernel.Get<IRefDataRepository>());
             var ttsConfig = TtsConfig.Create(baseUrl);
 
             kernel.Bind<MembershipRebootConfiguration>().ToConstant(config);
             kernel.Bind<TtsConfiguration>().ToConstant(ttsConfig);
-            kernel.Bind<TTSWebinarsContext>().To<TTSWebinarsContext>().InTransientScope();
-
 
             kernel.Bind<IAffiliateRepository>().To<AffiliateRepository>().InRequestScope().Named(affiliateRepository);
             kernel.Bind<IWebinarRepository>().To<WebinarRepository>().InRequestScope().Named(webinarRepository);

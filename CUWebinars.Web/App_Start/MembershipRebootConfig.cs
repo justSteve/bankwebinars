@@ -8,7 +8,7 @@ namespace CUWebinars.Web.App_Start
 {
     public class MembershipRebootConfig
     {
-        public static MembershipRebootConfiguration Create(string pathToRootDirectory, IStateService stateService)
+        public static MembershipRebootConfiguration Create(string pathToRootDirectory, IStateService stateService, IRefDataRepository refDataRepository)
         {
             var settings = SecuritySettings.FromConfiguration();
             var config = new MembershipRebootConfiguration(settings);
@@ -23,7 +23,7 @@ namespace CUWebinars.Web.App_Start
                 "Account/PasswordResetConfirm/");
 
             var delivery = new TtsSmtpMessageDelivery();
-            var emailFormatter = new TtsEmailFormatter(appinfo, stateService) { PathToRoot = pathToRootDirectory };
+            var emailFormatter = new TtsEmailFormatter(appinfo, stateService, refDataRepository) { PathToRoot = pathToRootDirectory };
 
             // uncomment if you want email notifications -- also update smtp settings in web.config
             config.AddEventHandler(new EmailAccountEventsHandler(emailFormatter, delivery));

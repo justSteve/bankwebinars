@@ -141,7 +141,7 @@ namespace CUWebinars.Web.Controllers.api
 
             AdditionalLocation AdditionalLocation = null;
 
-            if (model.AdditionalLocation.Any())
+            if (model.AdditionalLocation != null && model.AdditionalLocation.Any())
             {
                 //var makeAddLocs = model.AdditionalLocation.ToString().Split(',');
                 //foreach (var makeAddLoc in makeAddLocs)

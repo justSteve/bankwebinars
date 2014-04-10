@@ -22,8 +22,9 @@ namespace CUWebinars.Business.Repository
 
             //  Cannot load this from the database, as the Addresses collection of
             //  WebUser cannot be loaded. Get the WebUser populated via the WebUserRepository.
-            newOrder.WebUser = webUser;
+            //newOrder.WebUser = webUser;
             //newOrder.OrderRows.
+            newOrder.OrderRows = new List<OrderRow>();
             newOrder.OrderRows.Add(orderRow);
             
             Add(newOrder);
