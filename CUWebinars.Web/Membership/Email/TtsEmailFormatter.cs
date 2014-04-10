@@ -14,11 +14,10 @@ namespace CUWebinars.Web.Membership.Email
 // ReSharper disable once InconsistentNaming
         private string pathToTemplates;
 
-        public TtsEmailFormatter(ApplicationInformation appInfo, IStateService stateService, IRefDataRepository refDataRepository)
+        public TtsEmailFormatter(ApplicationInformation appInfo, IStateService stateService)
             : base(appInfo)
         {
             _stateService = stateService;
-            _refDataRepository = refDataRepository;
         }
 
         public string PathToRoot 

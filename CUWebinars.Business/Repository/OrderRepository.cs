@@ -22,8 +22,8 @@ namespace CUWebinars.Business.Repository
 
             //  Cannot load this from the database, as the Addresses collection of
             //  WebUser cannot be loaded. Get the WebUser populated via the WebUserRepository.
-            //newOrder.WebUser = webUser;
-
+            newOrder.WebUser = webUser;
+            //newOrder.OrderRows.
             newOrder.OrderRows.Add(orderRow);
             
             Add(newOrder);
@@ -36,7 +36,7 @@ namespace CUWebinars.Business.Repository
             return newOrder;
         }
 
-        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation AdditionalLocation, string alternateEmail, RegType registrationType)
+        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation additionalLocation, RegType registrationType)
         {
             var strongTypedContext = (TTSWebinarsContext) db;
             var entry = strongTypedContext.Entry(webinar);
@@ -49,12 +49,12 @@ namespace CUWebinars.Business.Repository
             
             var newOrderRow = strongTypedContext.OrderRows.Create();
 
-            //if (AdditionalLocation != null)
-            //    newOrderRow.AdditionalLocation.Add(AdditionalLocation);
+            if (additionalLocation != null)
+                newOrderRow.AdditionalLocation.Add(additionalLocation);
 
             newOrderRow.Webinar = webinar;
             newOrderRow.RegistrationType = registrationType;
-            //newOrderRow.AlternateEmail = alternateEmail;
+            newOrderRow.RowStatus = OrderRowStatus.Active;
             
             strongTypedContext.OrderRows.Add(newOrderRow);
 
@@ -76,11 +76,8 @@ namespace CUWebinars.Business.Repository
             return newOrderRow;
         }
 
-        public AdditionalLocation CreateOrderRowOption(
-            RegType regType, 
-            string optionDescription, 
-            decimal price, 
-            string [] AdditionalLocationEmails)
+        public AdditionalLocation CreateAdditionalLocation(decimal price, string fullName, string email)
+
         {
             var strongTypedContext = (TTSWebinarsContext) db;
             //var entry = db.Entry(RegType);
@@ -99,14 +96,13 @@ namespace CUWebinars.Business.Repository
             //}));
 
 
-            var newOrderRowOption = strongTypedContext.AdditionalLocation.Create();
-            //newOrderRowOption.
-            //newOrderRowOption.idRegType = regType.idRegType;
-            newOrderRowOption.DescriptionPromo = optionDescription;
-            newOrderRowOption.Price = price;
-            //newOrderRowOption.Type = "Additional Location"; // TODO: check this with Stephen.
-            //newOrderRowOption.AdditionalLocation = AdditionalLocation;
-            strongTypedContext.AdditionalLocation.Add(newOrderRowOption);
+            var additionalLocation = strongTypedContext.AdditionalLocation.Create();
+            
+            additionalLocation.Price = price;
+            additionalLocation.Email= email;
+            additionalLocation.FullName = fullName;
+            
+            strongTypedContext.AdditionalLocation.Add(additionalLocation);
 
             try
             {
@@ -123,7 +119,7 @@ namespace CUWebinars.Business.Repository
                 }
             }
             
-            return newOrderRowOption;
+            return additionalLocation;
         }
 
         public Order FindOrderByIdWithOrderRows(int id)

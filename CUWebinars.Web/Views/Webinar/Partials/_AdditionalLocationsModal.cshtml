@@ -10,7 +10,7 @@
     <p><button id="AddInputsButton" class="btn btn-success">Click to Add More</button></p>
     
         @{
-            var emails = Model.AdditionalLocations.Select(al => al.Email).ToArray();
+        var emails = Model.AdditionalLocations.Select(al => al.Email).ToArray();
         }
 
         <div id="AdditionalLocationEmailWrapper">
@@ -25,8 +25,7 @@
         }
         </div>
     
-    <button id="SumbitAdditionalLocationsForm" class="btn btn-primary">Submit</button>
-    
+        <button id="SumbitAdditionalLocationsForm" class="btn btn-primary">Submit</button>
 </div>
 <div class="modal-footer">
     <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>

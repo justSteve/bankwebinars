@@ -8,7 +8,6 @@ using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Services;
 using Ninject.Parameters;
-using System.Web.Http;
 
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(CUWebinars.Web.App_Start.NinjectWebCommon), "Start")]
 [assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(CUWebinars.Web.App_Start.NinjectWebCommon), "Stop")]
@@ -93,6 +92,8 @@ namespace CUWebinars.Web.App_Start
 
             kernel.Bind<MembershipRebootConfiguration>().ToConstant(config);
             kernel.Bind<TtsConfiguration>().ToConstant(ttsConfig);
+            kernel.Bind<TTSWebinarsContext>().To<TTSWebinarsContext>().InTransientScope();
+
 
             kernel.Bind<IAffiliateRepository>().To<AffiliateRepository>().InRequestScope().Named(affiliateRepository);
             kernel.Bind<IWebinarRepository>().To<WebinarRepository>().InRequestScope().Named(webinarRepository);

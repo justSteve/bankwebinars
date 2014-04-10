@@ -166,7 +166,7 @@ namespace CUWebinars.Web.Controllers
 
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Signup2(WebinarDetailsViewModel formModel
-                , int mode
+                //, int mode
                 , string stageOfCheckout
                 , int? sixMonthPaidConnectionsCount
                 , int? twelveMonthPaidConnectionsCount

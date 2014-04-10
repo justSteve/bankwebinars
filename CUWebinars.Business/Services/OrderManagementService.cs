@@ -57,34 +57,26 @@ namespace CUWebinars.Business.Services
         {
             // add code here to build string
 
-            var option = _RegTypeRepository.FindRegType(orderRow.RegistrationType);
+            //var option = _RegTypeRepository.FindRegType(orderRow.RegistrationType);
 
             return string.Empty;
         }
 
-        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation AdditionalLocation, string alternateEmail,
-            int registrationType)
+        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation AdditionalLocation, int registrationType)
+        {
+            var regType = _RegTypeRepository.FindRegType(registrationType);
+            return _orderRepository.CreateOrderRow(webinar, AdditionalLocation, regType);
+        }
+
+        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation AdditionalLocation, RegType registrationType)
+        {
+            return _orderRepository.CreateOrderRow(webinar, AdditionalLocation, registrationType);
+        }
+
+
+        public AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullname)
         {
             throw new NotImplementedException();
-        }
-
-        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation AdditionalLocation, string alternateEmail, RegType registrationType)
-        {
-            return _orderRepository.CreateOrderRow(webinar, AdditionalLocation, alternateEmail, registrationType);
-        }
-
-        public AdditionalLocation CreateOrderRowOption(
-            RegType regType,
-            string optionDescription,
-            decimal price,
-            string[] AdditionalLocationEmails)
-        {
-            return _orderRepository.CreateOrderRowOption(
-                regType,
-                optionDescription,
-                price,
-                AdditionalLocationEmails
-                );
         }
 
         public Affiliate GetAffiliateById(int id)
@@ -92,10 +84,10 @@ namespace CUWebinars.Business.Services
             return _affiliateRepository.FindById(id);
         }
 
-        public RegType GetOptionById(RegType id)
-        {
-            return _RegTypeRepository.FindRegType(id);
-        }
+        //public RegType GetOptionById(RegType id)
+        //{
+        //    return _RegTypeRepository.FindRegType(id);
+        //}
 
         public IList<RegType> GetOptionsByWebinarId(int id, bool detached)
         {
@@ -207,9 +199,9 @@ namespace CUWebinars.Business.Services
 
             foreach (OrderRow row in order.OrderRows)
             {
-                var option = _RegTypeRepository.FindRegType(row.RegistrationType);
+                //var option = _RegTypeRepository.FindRegType(row.RegistrationType);
 
-                if (option.Price != null) row.UnitPrice = (decimal)option.Price;
+                //if (option.Price != null) row.UnitPrice = (decimal)option.Price;
                 //(decimal)OptionsFacade.Instance.Load((int)row.RegistrationType).Price;
 
                 //Calculate options price
@@ -221,7 +213,7 @@ namespace CUWebinars.Business.Services
                 //Calculate discount. Discount is not valid for subscription webinars.
                 if (row.Webinar.Title.Contains("Compliance Perspectives") == false)
                 {
-                    
+
                     //decimal discountTotal = row.
                     //if (row.DiscountPercentOff != 0.0M)
                     //{
@@ -252,7 +244,7 @@ namespace CUWebinars.Business.Services
             //    var AdditionalLocation = option.AdditionalLocation;
 
             //    if (AdditionalLocation == null) continue;
-                
+
             //    if (row.Webinar.Title.Contains("Compliance Perspectives")//.IsSubscriptionWebinar
             //        && AdditionalLocation.Count < 4)
             //    {
@@ -349,14 +341,9 @@ namespace CUWebinars.Business.Services
 
         public Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow)
         {
-            
-            //var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow , options);
+
             var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow);
-            //order.Affiliate = affiliate;
-            //order.WebUser = webUser;
-            // this is the point where I think it makes sense to 
-            //  define Row and (if needed) RowOption 
-            //??
+
             return order;
         }
 

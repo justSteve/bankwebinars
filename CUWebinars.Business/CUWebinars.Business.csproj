@@ -162,7 +162,7 @@
     <Compile Include="Repository\IOrderRepository.cs" />
     <Compile Include="Repository\IRefDataRepository.cs" />
     <Compile Include="Repository\IWebUserRepository.cs" />
-    <Compile Include="Repository\OptionRepository.cs" />
+    <Compile Include="Repository\RegTypeRepository.cs" />
     <Compile Include="Repository\OrderRepository.cs" />
     <Compile Include="Repository\RefDataRepository.cs" />
     <Compile Include="Repository\TTSWebinarsRepository.cs" />
@@ -176,8 +176,10 @@
     <None Include="packages.config" />
     <None Include="SQLSeeding\BACPACs\BankWebinars.bacpac" />
     <None Include="SQLSeeding\BACPACs\BankWebinars2.bacpac" />
+    <None Include="SQLSeeding\BACPACs\CUWebinarsClean.bacpac" />
     <None Include="SQLSeeding\BACPACs\CUWebinarsV3.bacpac" />
     <None Include="SQLSeeding\BACPACs\MembershipReboot.bacpac" />
+    <None Include="SQLSeeding\BACPACs\MembershipRebootClean.bacpac" />
     <None Include="SQLSeeding\BACPACs\Options2RegType.bacpac" />
   </ItemGroup>
   <ItemGroup>
