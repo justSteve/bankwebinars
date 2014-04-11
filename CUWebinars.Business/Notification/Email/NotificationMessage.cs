@@ -1,6 +1,4 @@
-﻿using CUWebinars.Web.Notification;
-
-namespace CUWebinars.Business.Notification.Email
+﻿namespace CUWebinars.Business.Notification.Email
 {
     public class NotificationMessage : INotificationMessage
     {

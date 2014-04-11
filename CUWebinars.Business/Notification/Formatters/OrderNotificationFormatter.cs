@@ -1,31 +1,31 @@
-﻿using System;
+using CUWebinars.Business.Constants;
+using CUWebinars.Business.Models;
+using CUWebinars.Business.Notification.Email;
+using CUWebinars.Business.Notification.Renderers;
+using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
-using BrockAllen.MembershipReboot;
-using CUWebinars.Business.Constants;
-using CUWebinars.Business.Notification.Email;
-using CUWebinars.Web.Notification;
 
-namespace CUWebinars.Business.Notification
+namespace CUWebinars.Business.Notification.Formatters
 {
-    public class NotificationFormatter<TAccount> : INotificationFormatter<TAccount>
-        where TAccount : UserAccount
+    public class OrderNotificationFormatter<TOrder> : IOrderNotificationFormatter<TOrder>
+        where TOrder : Order
     {
         private readonly Lazy<EnvironmentInformation> _environmentInformation;
-        private const string RazorExtension = ".cshtml";
+
         private string _emailSubject;
         private string _emailBody;
 
         #region Constructors
 
-        public NotificationFormatter(EnvironmentInformation environmentInformation)
+        public OrderNotificationFormatter(EnvironmentInformation environmentInformation)
         {
             if (environmentInformation == null) throw new ArgumentNullException("environmentInformation");
             _environmentInformation = new Lazy<EnvironmentInformation>(() => environmentInformation);
         }
 
-        public NotificationFormatter(Lazy<EnvironmentInformation> environmentInformation)
+        public OrderNotificationFormatter(Lazy<EnvironmentInformation> environmentInformation)
         {
             if (environmentInformation == null) throw new ArgumentNullException("environmentInformation");
             _environmentInformation = environmentInformation;
@@ -41,14 +41,14 @@ namespace CUWebinars.Business.Notification
             }
         }
 
-        public INotificationMessage Format<TBody>(Business.Notification.Events.UserAccountEvent<TAccount> userAccountEvent, TBody objectOfMessage)
+        public INotificationMessage Format<TBody>(Events.OrderSubmittedEvent<TOrder> orderSubmittedEvent, TBody objectOfMessage)
         {
-            if (userAccountEvent == null) throw new ArgumentNullException("userAccountEvent");
+            if (orderSubmittedEvent == null) throw new ArgumentNullException("orderSubmittedEvent");
 
             //  This void method populated the _emailSubject and _emailBody variables which are used further up the stack
-            LoadBodyTemplate(userAccountEvent);
+            LoadBodyTemplate(orderSubmittedEvent);
 
-            return CreateMessage(GetSubject(userAccountEvent, objectOfMessage), GetBody(userAccountEvent, objectOfMessage));
+            return CreateMessage(GetSubject(orderSubmittedEvent, objectOfMessage), GetBody(orderSubmittedEvent, objectOfMessage));
         }
 
         protected INotificationMessage CreateMessage(string subject, string body)
@@ -58,32 +58,32 @@ namespace CUWebinars.Business.Notification
             return new NotificationMessage { Subject = subject.Trim(), Body = body };
         }
 
-        protected virtual string GetSubject<TBody>(Business.Notification.Events.UserAccountEvent<TAccount> userAccountEvent, TBody subjectOfMessage)
+        protected virtual string GetSubject<TBody>(Events.OrderSubmittedEvent<TOrder> orderSubmittedEvent, TBody subjectOfMessage)
         {
-            return FormatValue(userAccountEvent, _emailSubject, subjectOfMessage);
+            return FormatValue(orderSubmittedEvent, _emailSubject, subjectOfMessage);
         }
 
-        protected virtual string GetBody<T>(Business.Notification.Events.UserAccountEvent<TAccount> userAccountEvent, T bodyOfMessage)
+        protected virtual string GetBody<T>(Events.OrderSubmittedEvent<TOrder> userAccountEvent, T bodyOfMessage)
         {
             return FormatValue(userAccountEvent, _emailBody, bodyOfMessage);
         }
 
-        protected string FormatValue<T>(Business.Notification.Events.UserAccountEvent<TAccount> userAccountEvent, string templatedText, T objectOfMessage)
+        protected string FormatValue<T>(Events.OrderSubmittedEvent<TOrder> orderSubmittedEvent, string templatedText, T objectOfMessage)
         {
-            var renderer = GetRenderer(userAccountEvent);
-            return renderer.ConstructMessage(userAccountEvent, EnvironmentInformation, templatedText, objectOfMessage);
+            var renderer = GetRenderer(orderSubmittedEvent);
+            return renderer.ConstructMessage(orderSubmittedEvent, EnvironmentInformation, templatedText, objectOfMessage);
         }
 
-        protected virtual IRazorRenderer<TAccount> GetRenderer(Business.Notification.Events.UserAccountEvent<TAccount> userAccountEvent)
+        protected virtual IOrderRazorRenderer<TOrder> GetRenderer(Events.OrderSubmittedEvent<TOrder> userAccountEvent)
         {
-            return new RazorRenderer<TAccount>();
+            return new OrderRazorRenderer<TOrder>();
         }
 
         #region Template Utility Helpers
 
-        protected virtual void LoadBodyTemplate(Business.Notification.Events.UserAccountEvent<TAccount> userAccountEvent)
+        protected virtual void LoadBodyTemplate(Events.OrderSubmittedEvent<TOrder> userAccountEvent)
         {
-            LoadTemplate(CleanGenericName(userAccountEvent.GetType()) + RazorExtension);
+            LoadTemplate(CleanGenericName(userAccountEvent.GetType()) + DomainConstants.RazorExtension);
         }
 
         private string CleanGenericName(Type type)
@@ -133,25 +133,18 @@ namespace CUWebinars.Business.Notification
 
     #region Non-Generic Derived Class
 
-    public class NotificationFormatter : NotificationFormatter<UserAccount>
+    public class OrderNotificationFormatter : OrderNotificationFormatter<Order>
     {
-        public NotificationFormatter(EnvironmentInformation  environmentInformation)
+        public OrderNotificationFormatter(EnvironmentInformation environmentInformation)
             : base(environmentInformation)
         {
         }
 
-        public NotificationFormatter(Lazy<EnvironmentInformation> environmentInformation)
+        public OrderNotificationFormatter(Lazy<EnvironmentInformation> environmentInformation)
             : base(environmentInformation)
         {
         }
-    }
-
-    public class EnvironmentInformation
-    {
-        public string BaseUrl { get; set; }
     }
 
     #endregion
-
-    
 }

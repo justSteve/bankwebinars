@@ -1146,6 +1146,7 @@
     <Folder Include="Areas\Admin\Models\" />
     <Folder Include="Areas\Admin\Views\Registrations\" />
     <Folder Include="Images\" />
+    <Folder Include="Notification\Delivery\" />
     <Folder Include="Utils\" />
   </ItemGroup>
   <ItemGroup>

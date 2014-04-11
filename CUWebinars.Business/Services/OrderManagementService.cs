@@ -124,7 +124,7 @@ namespace CUWebinars.Business.Services
 
         public void CreateOrderEvent(Order order, UserAccount userAccount)
         {
-            AddEvent(new OrderSubmittedEvent<UserAccount> { Account = userAccount, Order = order });
+            //AddEvent(new OrderSubmittedEvent<UserAccount> { Account = userAccount, Order = order });
         }
 
 
@@ -326,7 +326,14 @@ namespace CUWebinars.Business.Services
             ProcessDiscountCodes(currentOrder);
             CalculateOrderPrices(currentOrder);
             //TODO: Find why a second OrderRow is being persisted after this statement executes.
-            return _orderRepository.SaveOrderChanges(currentOrder);
+            var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder);
+
+            foreach (var evt in GetEvents())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            return updatedOrder;
         }
 
         private void ProcessDiscountCodes(object instance)
@@ -343,6 +350,8 @@ namespace CUWebinars.Business.Services
         {
 
             var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow);
+
+            AddEvent(new OrderSubmittedEvent<Order> { Order = order });
 
             return order;
         }

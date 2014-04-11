@@ -87,6 +87,7 @@ namespace CUWebinars.Web.App_Start
 
             var config = MembershipRebootConfig.Create(baseUrl, kernel.Get<IStateService>(), kernel.Get<IRefDataRepository>());
             var ttsConfig = TtsConfig.Create(baseUrl);
+            
 
             kernel.Bind<MembershipRebootConfiguration>().ToConstant(config);
             kernel.Bind<TtsConfiguration>().ToConstant(ttsConfig);
