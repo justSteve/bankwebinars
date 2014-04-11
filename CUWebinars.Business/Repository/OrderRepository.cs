@@ -24,7 +24,7 @@ namespace CUWebinars.Business.Repository
             var newOrder = items.Create();
             newOrder.OrderDate = DateTime.Now;
 
-            newOrder.idAffiliate = affiliate.idUserAff;
+            newOrder.Affiliate = affiliate;
             newOrder.WebUser = webUser;
 
             //  Cannot load this from the database, as the Addresses collection of
@@ -42,8 +42,8 @@ namespace CUWebinars.Business.Repository
             //  Best to load these from the database
             //db.Entry(newOrder).Reference(no => no.Affiliate).Load();
             //db.Entry(newOrder).Reference(no => no.WebUser).Load();
-            _disconnectedPropertyChangeHelper.MaterializeObject(newOrder);
-            _disconnectedPropertyChangeHelper.MaterializeObject(newOrder.OrderRows.First());
+            //_disconnectedPropertyChangeHelper.MaterializeObject(newOrder);
+            //_disconnectedPropertyChangeHelper.MaterializeObject(newOrder.OrderRows.First());
 
             return newOrder;
         }
@@ -173,7 +173,9 @@ namespace CUWebinars.Business.Repository
             var error = db.GetValidationErrors();
             Debug.WriteLine("#######################Call to SaveOrderChanges");
                 
-            _disconnectedPropertyChangeHelper.ApplyChanges(order);
+            //_disconnectedPropertyChangeHelper.ApplyChanges(order);
+
+            db.SaveChanges();
 
             return order;
         }

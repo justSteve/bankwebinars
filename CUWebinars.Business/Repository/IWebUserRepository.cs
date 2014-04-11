@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Models;
+﻿using System.Data.Entity;
+using CUWebinars.Business.Models;
 using System.Collections.Generic;
 
 namespace CUWebinars.Business.Repository
@@ -12,5 +13,7 @@ namespace CUWebinars.Business.Repository
         IEnumerable<WebUser> GetAll();
         void UpdateAddresses(Address address);
         void Update(WebUser webUser);
+
+        DbContext DbContext { get; }
     }
 }

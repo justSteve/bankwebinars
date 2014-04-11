@@ -83,5 +83,10 @@ namespace CUWebinars.Business.Repository
             }
             db.SaveChanges();
         }
+
+        public DbContext DbContext
+        {
+            get { return db; }
+        }
     }
 }
