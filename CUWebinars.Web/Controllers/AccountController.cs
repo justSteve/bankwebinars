@@ -258,14 +258,14 @@ namespace CUWebinars.Web.Controllers
 
             //if (model.Recorded != null)
             //{
-            //    //var optionAndOrderdictionary = model.Recorded;
-            //    //var optionAndOrderdictionarySortedByWebinarDate =
-            //    //    optionAndOrderdictionary.OrderBy(f => f.Value.OrderRows.SingleOrDefault().Webinar.Date);
+            //    var optionAndOrderdictionary = model.Recorded;
+            //    var optionAndOrderdictionarySortedByWebinarDate =
+            //        orderRepository.SelectOrdersWithRecordedWebinars(currentUser.idUser);
 
-            //    //model.Recorded = optionAndOrderdictionarySortedByWebinarDate
-            //    //    .ToDictionary<KeyValuePair<RegType, Order>, RegType, Order>(p => p.Key, p => p.Value);
-            //    //model.Recorded = sortedEnum.ToList();
-            //    }
+            //    model.Recorded = optionAndOrderdictionarySortedByWebinarDate
+            //        .ToDictionary<KeyValuePair<RegType, Order>, RegType, Order>(p => p.Key, p => p.Value);
+            //    model.Recorded = sortedEnum.ToList();
+            //}
             //if (model.Archived != null)
             //{
             //    var list = model.Archived;

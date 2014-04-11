@@ -28,16 +28,7 @@
                 {
                     <li class="s-wrap">
                         @{
-                    var row = recorded.OrderRows.Single();
-
-                    //TODO: re-code this so that the registration type can be obtained without
-                    //a hit to the db on each record.
-                    RegType registrationType = new RegType();
-                    using (var context = new TTSWebinarsContext())
-                    {
-                        var paramWebinarID = new SqlParameter("idRegType", SqlDbType.Int) { Value = (int)row.RegistrationType };
-                        registrationType = context.Options.SqlQuery("dbo.GetRegistrationType @idRegType", paramWebinarID).Single();
-                    }
+                    var row = recorded.OrderRows.FirstOrDefault();
                         }
                         <h4 class="trigger" id="upcoming-@row.idWebinar"><a href="#">@row.Webinar.Title<i class="icon-plus-sign"></i></a></h4>
                         <div class="s-content">
@@ -47,8 +38,7 @@
                                 Order ID: @row.Order.idOrder<br />Date Ordered: @row.Order.OrderDate.ToShortDateString()
                             </span>
 
-                            @if (registrationType.OptionLabel != RegistrationType.Live_Session_Only.ToString() &&
-                                registrationType.OptionLabel != RegistrationType.FourPart_Series.ToString())
+                            @if (recorded.OrderRows.SingleOrDefault().RegistrationType.OptionLabel != "Live_Session_Only")
                             {
                                 if (row.Webinar.RecordingUrl != "")
                                 {
