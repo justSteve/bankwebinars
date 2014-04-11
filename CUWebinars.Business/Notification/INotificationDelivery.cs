@@ -1,6 +1,4 @@
-﻿using CUWebinars.Web.Notification;
-
-namespace CUWebinars.Business.Notification
+﻿namespace CUWebinars.Business.Notification
 {
     public interface INotificationDelivery
     {

@@ -1,6 +1,6 @@
-﻿using BrockAllen.MembershipReboot.WebHost;
-using CUWebinars.Business.Notification;
+﻿using CUWebinars.Business.Notification;
 using CUWebinars.Business.Notification.Email;
+using CUWebinars.Business.Notification.Formatters;
 
 namespace CUWebinars.Business.Core
 {
@@ -11,9 +11,9 @@ namespace CUWebinars.Business.Core
             var config = new TtsConfiguration();
 
             var notificationDelivery = new SmtpMessageDelivery();
-            var notificationFormatter = new NotificationFormatter(new EnvironmentInformation{ BaseUrl = baseUrl });
+            var orderNotificationFormatter = new OrderNotificationFormatter(new EnvironmentInformation{ BaseUrl = baseUrl });
 
-            config.AddEventHandler(new NotificationOrderHandler(notificationFormatter, notificationDelivery));
+            config.AddEventHandler(new CUWebinars.Business.Notification.Handlers.NotificationOrderHandler(orderNotificationFormatter, notificationDelivery));
 
             return config;
         }

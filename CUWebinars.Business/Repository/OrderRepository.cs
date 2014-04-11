@@ -24,7 +24,7 @@ namespace CUWebinars.Business.Repository
             var newOrder = items.Create();
             newOrder.OrderDate = DateTime.Now;
 
-            newOrder.idAffiliate = affiliate.idUserAff;
+            newOrder.Affiliate = affiliate;
             newOrder.WebUser = webUser;
 
             //  Cannot load this from the database, as the Addresses collection of
@@ -33,17 +33,17 @@ namespace CUWebinars.Business.Repository
             //newOrder.OrderRows.
             newOrder.OrderRows = new List<OrderRow>();
             newOrder.OrderRows.Add(orderRow);
-
+            
             //Add(newOrder);
             _disconnectedPropertyChangeHelper.ApplyChanges(newOrder);
-
+            
             //db.SaveChanges();
 
             //  Best to load these from the database
             //db.Entry(newOrder).Reference(no => no.Affiliate).Load();
             //db.Entry(newOrder).Reference(no => no.WebUser).Load();
-            _disconnectedPropertyChangeHelper.MaterializeObject(newOrder);
-            _disconnectedPropertyChangeHelper.MaterializeObject(newOrder.OrderRows.First());
+            //_disconnectedPropertyChangeHelper.MaterializeObject(newOrder);
+            //_disconnectedPropertyChangeHelper.MaterializeObject(newOrder.OrderRows.First());
 
             return newOrder;
         }
@@ -58,7 +58,7 @@ namespace CUWebinars.Business.Repository
 
             //strongTypedContext.Webinars.Attach(webinar);
             //entry.State = EntityState.Modified;
-
+            
             var newOrderRow = strongTypedContext.OrderRows.Create();
 
             if (additionalLocation != null)
@@ -67,7 +67,7 @@ namespace CUWebinars.Business.Repository
             newOrderRow.Webinar = webinar;
             newOrderRow.RegistrationType = registrationType;
             newOrderRow.RowStatus = OrderRowStatus.Active;
-
+            
             //strongTypedContext.OrderRows.Add(newOrderRow);
 
             try
@@ -100,7 +100,7 @@ namespace CUWebinars.Business.Repository
             //db.Entry(RegType).State = EntityState.Modified;
 
             //var AdditionalLocation = new List<AdditionalEmails>(AdditionalLocationEmails.Length);
-
+            
             //AdditionalLocation.AddRange(AdditionalLocationEmails.Select(email => new AdditionalEmails
             //{
             //    Email = email
@@ -108,11 +108,11 @@ namespace CUWebinars.Business.Repository
 
 
             var additionalLocation = strongTypedContext.AdditionalLocation.Create();
-
+            
             additionalLocation.Price = price;
             additionalLocation.Email = email;
             additionalLocation.FullName = fullName;
-
+            
             strongTypedContext.AdditionalLocation.Add(additionalLocation);
 
             try
@@ -129,7 +129,7 @@ namespace CUWebinars.Business.Repository
                     }
                 }
             }
-
+            
             return additionalLocation;
         }
 
@@ -171,8 +171,10 @@ namespace CUWebinars.Business.Repository
         {
             var error = db.GetValidationErrors();
             Debug.WriteLine("#######################Call to SaveOrderChanges");
+                
+            //_disconnectedPropertyChangeHelper.ApplyChanges(order);
 
-            _disconnectedPropertyChangeHelper.ApplyChanges(order);
+            db.SaveChanges();
 
             return order;
         }
@@ -223,7 +225,7 @@ namespace CUWebinars.Business.Repository
                                            )
                 )
                 .Include(o=>o.OrderRows)
-                .Include(o=>o.OrderRows.SingleOrDefault().Webinar)
+                .Include(o => o.OrderRows.SingleOrDefault().Webinar).Where(o => o.OrderRows.SingleOrDefault().Webinar.idWebinar == o.OrderRows.SingleOrDefault().idWebinar)
                 .ToList();
             return a;
         }

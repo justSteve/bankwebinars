@@ -1,14 +1,14 @@
-﻿using BrockAllen.MembershipReboot;
-using CUWebinars.Business.Notification;
+﻿using CUWebinars.Business.Models;
+using CUWebinars.Business.Notification.Events;
 using RazorEngine;
 using RazorEngine.Configuration;
 using RazorEngine.Templating;
 
-namespace CUWebinars.Web.Notification
+namespace CUWebinars.Business.Notification.Renderers
 {
-    public class RazorRenderer<TAccount> : IRazorRenderer<TAccount> where TAccount : UserAccount
+    public class OrderRazorRenderer<TOrder> : IOrderRazorRenderer<TOrder> where TOrder : Order
     {
-        public string ConstructMessage<T>(Business.Notification.Events.UserAccountEvent<TAccount> accountEvent,
+        public string ConstructMessage<T>(OrderSubmittedEvent<TOrder> orderSubmittedEvent,
             EnvironmentInformation applicationInformation,
             string templatedText,
             T objectOfMessage
@@ -21,7 +21,7 @@ namespace CUWebinars.Web.Notification
                 c.ResolveUsing<TemplateResolver>();
             });
 
-            var user = accountEvent.Account;
+            var order = orderSubmittedEvent.Order;
 
             // create a new TemplateService and pass in the configuration to the constructor
             var myConfiguredTemplateService = new TemplateService(config);
