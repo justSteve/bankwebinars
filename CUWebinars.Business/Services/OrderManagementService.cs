@@ -373,17 +373,17 @@ namespace CUWebinars.Business.Services
             string access_token = "5jxY3KZL48HWknOaOEP2eIzVmOTS";//steve's
             //string access_token = "JIOHRkkCvmIKDY8QO0S4msbYH48N";//mark's
 
-            string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/268855442/registrants";
+            string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/739905466/registrants";
             //string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/" + idWebinar + "/registrants";
 
 
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
-            httpWebRequest.ContentType = "application/x-www-form-urlencoded";
-            //httpWebRequest.Headers.Add("Accept", "application/json");
-            httpWebRequest.Accept = "application/json";
+            //httpWebRequest.ContentType = "application/x-www-form-urlencoded";
+            httpWebRequest.ContentType = "application/json";
+            //httpWebRequest.Accept = "application/json";
             httpWebRequest.Accept = "application/vnd.citrix.g2wapi-v1.1+json";
-            //httpWebRequest.Headers.Add("Accept", "application/vnd.citrix.g2wapi-v1.1+json");
             httpWebRequest.Headers.Add("Authorization", "OAuth oauth_token=" + access_token);
+            
             httpWebRequest.Method = "POST";
 
             object sendVars = new { firstName = firstName, lastName = lastName, email  = billingEmail };
@@ -409,7 +409,7 @@ namespace CUWebinars.Business.Services
             StreamReader readStream = new StreamReader(receiveStream, Encoding.UTF8);
 
             Console.WriteLine("Response stream received.");
-            Console.WriteLine(readStream.ReadToEnd());
+            var myResponse = readStream.ReadToEnd();
             response.Close();
             readStream.Close();
 
