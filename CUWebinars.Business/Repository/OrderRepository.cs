@@ -50,7 +50,7 @@ namespace CUWebinars.Business.Repository
 
             strongTypedContext.Webinars.Attach(webinar);
             entry.State = EntityState.Modified;
-            
+
             var newOrderRow = strongTypedContext.OrderRows.Create();
 
             if (additionalLocation != null)
@@ -163,7 +163,7 @@ namespace CUWebinars.Business.Repository
         {
             var error = db.GetValidationErrors();
             Debug.WriteLine("#######################Call to SaveOrderChanges");
-                
+
             //_disconnectedPropertyChangeHelper.ApplyChanges(order);
 
             db.SaveChanges();
@@ -208,21 +208,16 @@ namespace CUWebinars.Business.Repository
 
         public virtual IList<Order> SelectOrdersWithRecordedWebinars(int idUser)
         {
-
-            var a = items.Where(o => o.idUser == idUser
+            return items.Include(o => o.OrderRows.Select(w => w.Webinar))
+                .Where(o => o.idUser == idUser
                                           && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Recorded
-                                          &&
-                                          (o.OrderStatus == OrderStatus.Submitted ||
-                                          o.OrderStatus == OrderStatus.Billed ||
-                                           o.OrderStatus == OrderStatus.Paid
-                                           )
-                )
-                .Include(o => o.OrderRows)
-                //.Include(o => o.OrderRows.SingleOrDefault().Webinar).Where(o => o.OrderRows.SingleOrDefault().Webinar.idWebinar == o.OrderRows.SingleOrDefault().idWebinar)
+                    && (o.OrderStatus == OrderStatus.Submitted 
+                    || o.OrderStatus == OrderStatus.Paid))
                 .ToList();
             return a;
 
         }
+
         public virtual IList<Order> SelectOrdersWithScheduledWebinars(int idUser)
         {
             return items.Where(o => o.idUser == idUser
