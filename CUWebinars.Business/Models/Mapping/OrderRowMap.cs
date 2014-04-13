@@ -15,6 +15,7 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.idOrderRow).HasColumnName("idOrderRow");
             Property(t => t.idOrder).HasColumnName("idOrder");
             Property(t => t.idWebinar).HasColumnName("idWebinar");
+            Property(t => t.RegistrantKey).HasColumnName("RegistrantKey");
             Property(t => t.RowPrice).HasColumnName("RowPrice");
             Property(t => t.RowStatus).HasColumnName("RowStatus");
             Property(t => t.ShipmentDate).HasColumnName("ShipmentDate");

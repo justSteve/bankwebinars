@@ -33,10 +33,10 @@ namespace CUWebinars.Business.Repository
             //newOrder.OrderRows.
             newOrder.OrderRows = new List<OrderRow>();
             newOrder.OrderRows.Add(orderRow);
-            
+
             //Add(newOrder);
             _disconnectedPropertyChangeHelper.ApplyChanges(newOrder);
-            
+
             //db.SaveChanges();
 
             //  Best to load these from the database
@@ -58,7 +58,7 @@ namespace CUWebinars.Business.Repository
 
             //strongTypedContext.Webinars.Attach(webinar);
             //entry.State = EntityState.Modified;
-            
+
             var newOrderRow = strongTypedContext.OrderRows.Create();
 
             if (additionalLocation != null)
@@ -67,7 +67,7 @@ namespace CUWebinars.Business.Repository
             newOrderRow.Webinar = webinar;
             newOrderRow.RegistrationType = registrationType;
             newOrderRow.RowStatus = OrderRowStatus.Active;
-            
+
             //strongTypedContext.OrderRows.Add(newOrderRow);
 
             try
@@ -100,7 +100,7 @@ namespace CUWebinars.Business.Repository
             //db.Entry(RegType).State = EntityState.Modified;
 
             //var AdditionalLocation = new List<AdditionalEmails>(AdditionalLocationEmails.Length);
-            
+
             //AdditionalLocation.AddRange(AdditionalLocationEmails.Select(email => new AdditionalEmails
             //{
             //    Email = email
@@ -108,11 +108,11 @@ namespace CUWebinars.Business.Repository
 
 
             var additionalLocation = strongTypedContext.AdditionalLocation.Create();
-            
+
             additionalLocation.Price = price;
             additionalLocation.Email = email;
             additionalLocation.FullName = fullName;
-            
+
             strongTypedContext.AdditionalLocation.Add(additionalLocation);
 
             try
@@ -129,7 +129,7 @@ namespace CUWebinars.Business.Repository
                     }
                 }
             }
-            
+
             return additionalLocation;
         }
 
@@ -171,7 +171,8 @@ namespace CUWebinars.Business.Repository
         {
             var error = db.GetValidationErrors();
             Debug.WriteLine("#######################Call to SaveOrderChanges");
-                
+
+
             //_disconnectedPropertyChangeHelper.ApplyChanges(order);
 
             db.SaveChanges();
@@ -216,6 +217,7 @@ namespace CUWebinars.Business.Repository
 
         public virtual IList<Order> SelectOrdersWithRecordedWebinars(int idUser)
         {
+
             var a = items.Where(o => o.idUser == idUser
                                           && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Recorded
                                           &&
@@ -224,10 +226,11 @@ namespace CUWebinars.Business.Repository
                                            o.OrderStatus == OrderStatus.Paid
                                            )
                 )
-                .Include(o=>o.OrderRows)
-                .Include(o => o.OrderRows.SingleOrDefault().Webinar).Where(o => o.OrderRows.SingleOrDefault().Webinar.idWebinar == o.OrderRows.SingleOrDefault().idWebinar)
+                .Include(o => o.OrderRows)
+                //.Include(o => o.OrderRows.SingleOrDefault().Webinar).Where(o => o.OrderRows.SingleOrDefault().Webinar.idWebinar == o.OrderRows.SingleOrDefault().idWebinar)
                 .ToList();
             return a;
+
         }
         public virtual IList<Order> SelectOrdersWithScheduledWebinars(int idUser)
         {

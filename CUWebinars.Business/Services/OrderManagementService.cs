@@ -1,4 +1,7 @@
-﻿using BrockAllen.MembershipReboot;
+﻿using System.IO;
+using System.Net;
+using System.Text;
+using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Exceptions;
 using CUWebinars.Business.Models;
@@ -8,6 +11,7 @@ using CUWebinars.NotificationSystem.Event;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using IEvent = CUWebinars.NotificationSystem.Event.IEvent;
 using IEventSource = CUWebinars.NotificationSystem.Event.IEventSource;
 
@@ -23,7 +27,7 @@ namespace CUWebinars.Business.Services
         private readonly IWebUserRepository _webUserRepository;
         private readonly TtsConfiguration _ttsConfig;
         readonly List<IEvent> _events = new List<IEvent>();
-
+        
         public OrderManagementService(
             IAffiliateRepository affiliateRepository,
             IRegTypeRepository RegTypeRepository,
@@ -325,7 +329,7 @@ namespace CUWebinars.Business.Services
         {
             ProcessDiscountCodes(currentOrder);
             CalculateOrderPrices(currentOrder);
-            //TODO: Find why a second OrderRow is being persisted after this statement executes.
+
             var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder);
 
             foreach (var evt in GetEvents())
@@ -359,6 +363,58 @@ namespace CUWebinars.Business.Services
         public Discount GetDiscount(string email)
         {
             return null;
+        }
+
+        public int CreateRegistrantKey(string firstName, string lastName, string billingEmail, int idWebinar, int webinarKey)
+        {
+
+            string orgKey = "922930";//steve's
+            //string orgKey = "901873";//marks
+            string access_token = "5jxY3KZL48HWknOaOEP2eIzVmOTS";//steve's
+            //string access_token = "JIOHRkkCvmIKDY8QO0S4msbYH48N";//mark's
+
+            string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/268855442/registrants";
+            //string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/" + idWebinar + "/registrants";
+
+
+            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+            httpWebRequest.ContentType = "application/x-www-form-urlencoded";
+            //httpWebRequest.Headers.Add("Accept", "application/json");
+            httpWebRequest.Accept = "application/json";
+            httpWebRequest.Accept = "application/vnd.citrix.g2wapi-v1.1+json";
+            //httpWebRequest.Headers.Add("Accept", "application/vnd.citrix.g2wapi-v1.1+json");
+            httpWebRequest.Headers.Add("Authorization", "OAuth oauth_token=" + access_token);
+            httpWebRequest.Method = "POST";
+
+            object sendVars = new { firstName = firstName, lastName = lastName, email  = billingEmail };
+
+            string postData = JsonConvert.SerializeObject(sendVars); 
+            ;
+
+            byte[] requestBytes = Encoding.UTF8.GetBytes(postData);
+
+            httpWebRequest.ContentLength = requestBytes.Length;
+
+            using (Stream requestStream = httpWebRequest.GetRequestStream())
+            {
+                requestStream.Write(requestBytes, 0, requestBytes.Length);
+                requestStream.Close();
+            }
+
+            HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse();
+            // Get the stream associated with the response.
+            Stream receiveStream = response.GetResponseStream();
+
+            // Pipes the stream to a higher level stream reader with the required encoding format. 
+            StreamReader readStream = new StreamReader(receiveStream, Encoding.UTF8);
+
+            Console.WriteLine("Response stream received.");
+            Console.WriteLine(readStream.ReadToEnd());
+            response.Close();
+            readStream.Close();
+
+            return 0;
+
         }
 
         public void Clear()

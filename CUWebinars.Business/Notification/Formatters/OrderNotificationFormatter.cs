@@ -117,7 +117,7 @@ namespace CUWebinars.Business.Notification.Formatters
 
                 while (reader.Read())
                 {
-                    if (!reader.Name.Equals("div", StringComparison.OrdinalIgnoreCase)) continue;
+                    if (!reader.Name.Equals("html", StringComparison.OrdinalIgnoreCase)) continue;
                     var div = XNode.ReadFrom(reader) as XElement;
 
                     if (div != null)

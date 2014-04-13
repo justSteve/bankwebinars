@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Web.Controllers.api
 {
@@ -22,12 +23,16 @@ namespace CUWebinars.Web.Controllers.api
         private readonly IOrderManagementService _orderManagementService;
         private readonly IStateService _stateService;
 
+        public ILogger Logger { get; set; }
+        
 
-        public OrderController(IMembershipService membershipService, IOrderManagementService orderManagementService, IStateService stateService)
+        public OrderController(IMembershipService membershipService, IOrderManagementService orderManagementService, IStateService stateService, ILogger logger)
         {
             _membershipService = membershipService;
             _orderManagementService = orderManagementService;
             _stateService = stateService;
+            this.Logger = logger;
+
         }
 
         // GET api/<controller>
@@ -41,24 +46,22 @@ namespace CUWebinars.Web.Controllers.api
         //{
         //    return "value";
         //}
-        //        POST http://localhost:5556/api/order HTTP/1.1
-        //Host: localhost:5556
-        //Content-Type: application/json; charset=utf-8
-        //Connection: keep-alive
-        //Accept: application/json, text/javascript, */*; q=0.01:
-        //Content-Length: 1059
-
+        //   
+                
+//http://localhost:5556/api/order
+//Host: localhost:5556
+//Content-Type: application/json; charset=utf-8
+//Connection: keep-alive
+//Accept: application/json, text/javascript, */*; q=0.01:
+//Content-Length: 1059
 
         /*
-
         {
           "AdditionalLocations": [    
             "dave@turing.com",
             "jed@turing.com"
             ],
-          "AdminComments": "Admin comments",
           "AffiliateComments": "Affiliate comments",
-          "AlternativeEmail": "alt@altemail.com",
           "BillingAddress": {    
             "AddressType": "Billing",
             "Name": "Alan Turing",
@@ -70,7 +73,6 @@ namespace CUWebinars.Web.Controllers.api
             "State": "Tx",
             "Country": "USA",    
           },
-          "Discount": 20,
           "Email": "alanbturingt@turing.com",
           "FirstName": "Alan",
           "LastName": "Turing",
@@ -78,8 +80,6 @@ namespace CUWebinars.Web.Controllers.api
           "idRegType": 88,  
           "idWebinar": 437,
           "Institution": "Some Institution",
-          "Origin": "WebAPI",  
-          "Password": "decodethis",
           "ShippingAddress": {    
             "AddressType": "Shipping",
             "Name": "Alan Turing",
@@ -92,18 +92,14 @@ namespace CUWebinars.Web.Controllers.api
             "Country": "USA",    
           },
           "SendNotification": "true",
-          "Status": 0,
           "Title": "Mr",
-          "UserComments": "a user comment",
-          "UserType": "1",
-          "UsTimeZone": "3"
         }
+         * 
                  * 
                  * */
         // POST api/<controller>
         public HttpResponseMessage Post([FromBody]IncomingOrderModel model)
         {
-            Debug.WriteLine("Starts Order Import: " + model.Email);
             var email = model.Email.Trim();
             var firstName = model.FirstName.Trim();
             var lastName = model.LastName.Trim();
@@ -169,9 +165,7 @@ namespace CUWebinars.Web.Controllers.api
                 );
 
             orderRow.Discount = _orderManagementService.GetDiscount(model.Email);
-            //TODO: Ensure this status is updated after save.
-            //orderRow.RowStatus = OrderStatus.InProcess;
-
+            
             var importedOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
 
             importedOrder.AdminComments = "model.AdminComments";
@@ -198,6 +192,11 @@ namespace CUWebinars.Web.Controllers.api
             importedOrder.ShippingZip = model.ShippingAddress.Zip;
             importedOrder.ShippingFirstName = firstName;
             importedOrder.ShippingLastName = lastName;
+
+            if (orderRow.Webinar.WebinarKey > 0)
+            {
+                orderRow.RegistrantKey = _orderManagementService.CreateRegistrantKey(importedOrder.FirstName, importedOrder.LastName, importedOrder.BillingEmail, orderRow.idWebinar, orderRow.Webinar.WebinarKey);
+            }
 
             _orderManagementService.SaveOrderChanges(importedOrder);
 
