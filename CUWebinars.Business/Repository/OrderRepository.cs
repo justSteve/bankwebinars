@@ -207,15 +207,14 @@ namespace CUWebinars.Business.Repository
 
         public virtual IList<Order> SelectOrdersWithRecordedWebinars(int idUser)
         {
-            return items.Where(o => o.idUser == idUser
-                                          && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Recorded
-                                          &&
-                                          (o.OrderStatus == OrderStatus.Submitted ||
-                                           o.OrderStatus == OrderStatus.Paid
-                                           )
-                )
+            return items.Include(o => o.OrderRows.Select(w => w.Webinar))
+                .Where(o => o.idUser == idUser
+                    && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Recorded
+                    && (o.OrderStatus == OrderStatus.Submitted 
+                    || o.OrderStatus == OrderStatus.Paid))
                 .ToList();
         }
+
         public virtual IList<Order> SelectOrdersWithScheduledWebinars(int idUser)
         {
             return items.Where(o => o.idUser == idUser
