@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CUWebinars.Business.Models
 {
-    public partial class Order : IObjectWithState
+    public partial class Order
     {
         //public Order()
         //{
@@ -44,7 +44,7 @@ namespace CUWebinars.Business.Models
         public virtual Affiliate Affiliate { get; set; }
         public virtual ICollection<OrderRow> OrderRows { get; set; }
         public virtual WebUser WebUser { get; set; }
-        public State DomainEntityState { get; set; }
-        public Dictionary<string, object> OriginalValues { get; set; }
+        
+        
     }
 }

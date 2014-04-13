@@ -13,10 +13,9 @@ namespace CUWebinars.Business.Repository
 {
     public class OrderRepository : TTSWebinarsRepository<TTSWebinarsContext, Order>, IOrderRepository
     {
-        readonly DisconnectedPropertyChangeHelper _disconnectedPropertyChangeHelper;
         public OrderRepository()
         {
-            _disconnectedPropertyChangeHelper = new DisconnectedPropertyChangeHelper(db);
+
         }
 
         public Order CreateOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow)
@@ -24,41 +23,34 @@ namespace CUWebinars.Business.Repository
             var newOrder = items.Create();
             newOrder.OrderDate = DateTime.Now;
 
-            newOrder.Affiliate = affiliate;
-            newOrder.WebUser = webUser;
+            newOrder.idAffiliate = affiliate.idUserAff;
+            newOrder.idUser = webUser.idUser;
 
-            //  Cannot load this from the database, as the Addresses collection of
-            //  WebUser cannot be loaded. Get the WebUser populated via the WebUserRepository.
-            //newOrder.WebUser = webUser;
-            //newOrder.OrderRows.
             newOrder.OrderRows = new List<OrderRow>();
             newOrder.OrderRows.Add(orderRow);
-
-            //Add(newOrder);
-            _disconnectedPropertyChangeHelper.ApplyChanges(newOrder);
-
-            //db.SaveChanges();
+            
+            Add(newOrder);
+            
+            db.SaveChanges();
 
             //  Best to load these from the database
-            //db.Entry(newOrder).Reference(no => no.Affiliate).Load();
-            //db.Entry(newOrder).Reference(no => no.WebUser).Load();
-            //_disconnectedPropertyChangeHelper.MaterializeObject(newOrder);
-            //_disconnectedPropertyChangeHelper.MaterializeObject(newOrder.OrderRows.First());
+            db.Entry(newOrder).Reference(no => no.Affiliate).Load();
+            db.Entry(newOrder).Reference(no => no.WebUser).Load();
 
             return newOrder;
         }
 
         public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation additionalLocation, RegType registrationType)
         {
-            var strongTypedContext = (TTSWebinarsContext)db;
-            //var entry = strongTypedContext.Entry(webinar);
+            var strongTypedContext = (TTSWebinarsContext) db;
+            var entry = strongTypedContext.Entry(webinar);
 
-            //if (entry.State != EntityState.Detached)
-            //    throw new Exception("Webinar cannot be attached to this context yet. It has to have been retrieved and previously detached.");
+            if (entry.State != EntityState.Detached)
+                throw new Exception("Webinar cannot be attached to this context yet. It has to have been retrieved and previously detached.");
 
-            //strongTypedContext.Webinars.Attach(webinar);
-            //entry.State = EntityState.Modified;
-
+            strongTypedContext.Webinars.Attach(webinar);
+            entry.State = EntityState.Modified;
+            
             var newOrderRow = strongTypedContext.OrderRows.Create();
 
             if (additionalLocation != null)
@@ -67,7 +59,7 @@ namespace CUWebinars.Business.Repository
             newOrderRow.Webinar = webinar;
             newOrderRow.RegistrationType = registrationType;
             newOrderRow.RowStatus = OrderRowStatus.Active;
-
+            
             //strongTypedContext.OrderRows.Add(newOrderRow);
 
             try
@@ -100,7 +92,7 @@ namespace CUWebinars.Business.Repository
             //db.Entry(RegType).State = EntityState.Modified;
 
             //var AdditionalLocation = new List<AdditionalEmails>(AdditionalLocationEmails.Length);
-
+            
             //AdditionalLocation.AddRange(AdditionalLocationEmails.Select(email => new AdditionalEmails
             //{
             //    Email = email
@@ -108,11 +100,11 @@ namespace CUWebinars.Business.Repository
 
 
             var additionalLocation = strongTypedContext.AdditionalLocation.Create();
-
+            
             additionalLocation.Price = price;
             additionalLocation.Email = email;
             additionalLocation.FullName = fullName;
-
+            
             strongTypedContext.AdditionalLocation.Add(additionalLocation);
 
             try
@@ -129,7 +121,7 @@ namespace CUWebinars.Business.Repository
                     }
                 }
             }
-
+            
             return additionalLocation;
         }
 
@@ -171,8 +163,7 @@ namespace CUWebinars.Business.Repository
         {
             var error = db.GetValidationErrors();
             Debug.WriteLine("#######################Call to SaveOrderChanges");
-
-
+                
             //_disconnectedPropertyChangeHelper.ApplyChanges(order);
 
             db.SaveChanges();

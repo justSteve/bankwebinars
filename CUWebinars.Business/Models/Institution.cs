@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CUWebinars.Business.Models
 {
-    public partial class Institution : IObjectWithState
+    public partial class Institution
     {
         public Institution()
         {
@@ -20,7 +20,7 @@ namespace CUWebinars.Business.Models
         public string State { get; set; }
         public string Zip { get; set; }
         public virtual ICollection<WebUser> WebUsers { get; set; }
-        public State DomainEntityState { get; set; }
-        public Dictionary<string, object> OriginalValues { get; set; }
+        
+        
     }
 }

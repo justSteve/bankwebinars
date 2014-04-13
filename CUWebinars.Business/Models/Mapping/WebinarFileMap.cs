@@ -26,8 +26,8 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.fileLocation).HasColumnName("fileLocation");
             Property(t => t.fileDesc).HasColumnName("fileDesc");
 
-            Ignore(t => t.DomainEntityState);
-            Ignore(t => t.OriginalValues);
+            
+            
 
 
             // Relationships
