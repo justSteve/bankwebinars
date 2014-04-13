@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CUWebinars.Business.Models
 {
-    public partial class Address : IObjectWithState
+    public partial class Address
     {
         public int Id { get; set; }
         public string AddressType { get; set; }
@@ -18,7 +18,7 @@ namespace CUWebinars.Business.Models
         //public Nullable<int> WebUser_Id { get; set; }
         public int idUser { get; set; }
         public virtual WebUser WebUser { get; set; }
-        public State DomainEntityState { get; set; }
-        public Dictionary<string, object> OriginalValues { get; set; }
+        
+        
     }
 }

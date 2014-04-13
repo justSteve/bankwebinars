@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CUWebinars.Business.Models
 {
-    public partial class OrderRow : IObjectWithState
+    public partial class OrderRow
     {
         public OrderRow()
         {
@@ -26,7 +26,7 @@ namespace CUWebinars.Business.Models
         public virtual Order Order { get; set; }
         public virtual Webinar Webinar { get; set; }
         public virtual ICollection<AdditionalLocation> AdditionalLocation { get; set; }
-        public State DomainEntityState { get; set; }
-        public Dictionary<string, object> OriginalValues { get; set; }
+        
+        
     }
 }

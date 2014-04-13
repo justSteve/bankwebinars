@@ -57,8 +57,8 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.timeZone).HasColumnName("timeZone");
             Property(t => t.Title).HasColumnName("Title");
 
-            Ignore(t => t.DomainEntityState);
-            Ignore(t => t.OriginalValues);
+            
+            
 
 
             // Relationships

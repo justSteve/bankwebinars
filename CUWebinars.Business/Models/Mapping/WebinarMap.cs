@@ -66,8 +66,8 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.DateCreated).HasColumnName("DateCreated");
             Property(t => t.DateChanged).HasColumnName("DateChanged");
 
-            Ignore(t => t.DomainEntityState);
-            Ignore(t => t.OriginalValues);
+            
+            
 
 
             // Relationships

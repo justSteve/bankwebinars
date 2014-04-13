@@ -1,8 +1,5 @@
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.Core.Objects;
-using System.Data.Entity.Infrastructure;
 using CUWebinars.Business.Models.Mapping;
+using System.Data.Entity;
 
 namespace CUWebinars.Business.Models
 {
@@ -16,7 +13,7 @@ namespace CUWebinars.Business.Models
         public TTSWebinarsContext()
             : this("DefaultConnection")
         {
-            ((IObjectContextAdapter)this).ObjectContext.ObjectMaterialized += ObjectContextObjectMaterialized;
+            
         }
 
         public TTSWebinarsContext(string name)
@@ -24,35 +21,6 @@ namespace CUWebinars.Business.Models
         {
             //this.Configuration.ProxyCreationEnabled = false;
             //this.Configuration.LazyLoadingEnabled = false;
-        }
-
-        private void ObjectContextObjectMaterialized(object sender, ObjectMaterializedEventArgs objectMaterializedEventArgs)
-        {
-            var entity = objectMaterializedEventArgs.Entity as IObjectWithState;
-
-            if (ReferenceEquals(entity, null)) return;
-            entity.DomainEntityState = State.Unchanged;
-            entity.OriginalValues = BuildOriginalValues(Entry(entity).OriginalValues);
-        }
-
-        private Dictionary<string, object> BuildOriginalValues(DbPropertyValues originalValues)
-        {
-            var result = new Dictionary<string, object>();
-
-            foreach (var propertyName in originalValues.PropertyNames)
-            {
-                var value = originalValues[propertyName];
-
-                if (value is DbPropertyValues)
-                {
-                    result[propertyName] = BuildOriginalValues((DbPropertyValues)value);
-                }
-                else
-                {
-                    result[propertyName] = value;
-                }
-            }
-            return result;
         }
 
         public DbSet<Address> Addresses { get; set; }
