@@ -41,7 +41,7 @@ namespace CUWebinars.Web.Controllers
         //public IOrderService orderService;
 
         public AccountController(IMailService mail,
-            ILogger logger,
+            //ILogger logger,
             IMembershipService membershipService,
             IOrderRepository orderRepository,
             IOrderManagementService orderManagementService,
@@ -49,7 +49,7 @@ namespace CUWebinars.Web.Controllers
             IStateService stateService)
         {
             this.mail = mail;
-            this.Logger = logger;
+            //this.Logger = logger;
             this.membershipService = membershipService;
             this.orderRepository = orderRepository;
             this.orderManagementService = orderManagementService;

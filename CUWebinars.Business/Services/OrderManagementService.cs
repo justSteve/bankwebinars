@@ -327,17 +327,26 @@ namespace CUWebinars.Business.Services
 
         public Order SaveOrderChanges(Order currentOrder)
         {
-            ProcessDiscountCodes(currentOrder);
-            CalculateOrderPrices(currentOrder);
-
-            var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder);
-
-            foreach (var evt in GetEvents())
+            try
             {
-                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
-            }
+                ProcessDiscountCodes(currentOrder);
+                CalculateOrderPrices(currentOrder);
 
-            return updatedOrder;
+                var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder);
+
+                foreach (var evt in GetEvents())
+                {
+                    _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+                }
+
+                return updatedOrder;
+
+            }
+            catch (Exception exception)
+            {
+                var msg = exception.Message;
+            }
+            return null;
         }
 
         private void ProcessDiscountCodes(object instance)
@@ -366,7 +375,7 @@ namespace CUWebinars.Business.Services
         }
 
         public int CreateRegistrantKey(string firstName, string lastName, string billingEmail, int idWebinar, int webinarKey)
-        {
+        {/*
 
             string orgKey = "922930";//steve's
             //string orgKey = "901873";//marks
@@ -412,7 +421,7 @@ namespace CUWebinars.Business.Services
             var myResponse = readStream.ReadToEnd();
             response.Close();
             readStream.Close();
-
+            */
             return 0;
 
         }

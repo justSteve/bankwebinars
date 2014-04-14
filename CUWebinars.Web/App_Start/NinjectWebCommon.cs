@@ -7,6 +7,7 @@ using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
+using CUWebinars.Web.Controllers;
 using CUWebinars.Web.Controllers.api;
 using CUWebinars.Web.Services;
 using Ninject.Extensions.Logging;
@@ -127,36 +128,107 @@ namespace CUWebinars.Web.App_Start
                     new RefDataRepository(),
                     new SamAuthenticationService(userAccountService),
                     userAccountService,
-                    new WebUserRepository(sharedContext));
+                    new WebUserRepository(sharedContext)
+                    //ctx.Kernel.Get<ILogger>(),
+                    );
 
                 return new OrderController(membershipService, orderManagementService, kernel.Get<IStateService>());
 
             }).InRequestScope();
 
-            //kernel.Bind<IOrderManagementService>().ToMethod(ctx =>
-            //{
-            //    var orderManagementService = new OrderManagementService(
-            //        new AffiliateRepository(sharedContext),
-            //        new RegTypeRepository(sharedContext),
-            //        new OrderRepository(sharedContext),
-            //        new RefDataRepository(),
-            //        new WebUserRepository(sharedContext),
-            //        new WebinarRepository(sharedContext),
-            //        ttsConfig
-            //        );
-            //    return orderManagementService;
-
-            //}).InRequestScope();
-
-
-
-            kernel.Bind<AuthenticationService>().To<SamAuthenticationService>();
-            kernel.Bind<IMembershipService>().To<MembershipService>();
 #if DEBUG
             kernel.Bind<IMailService>().To<MailServiceMock>();
 #else
       kernel.Bind<IMailService>().To<MailService>().InRequestScope();
 #endif
+
+            kernel.Bind<AccountController>().ToMethod(ctx =>
+            {
+                var sharedContext = new TTSWebinarsContext();
+                var userAccountService = kernel.Get<UserAccountService>();
+
+                var orderManagementService = new OrderManagementService(
+                    new AffiliateRepository(sharedContext),
+                    new RegTypeRepository(sharedContext),
+                    new OrderRepository(sharedContext),
+                    new RefDataRepository(),
+                    new WebUserRepository(sharedContext),
+                    new WebinarRepository(sharedContext),
+                    ttsConfig
+                    );
+
+                var membershipService = new MembershipService(
+                    new InstitutionRepository(sharedContext),
+                    new RefDataRepository(),
+                    new SamAuthenticationService(userAccountService),
+                    userAccountService,
+                    new WebUserRepository(sharedContext));
+
+                return new AccountController(
+                    ctx.Kernel.Get<IMailService>(),
+                    //ctx.Kernel.Get<ILogger>(),
+                    membershipService,
+                    new OrderRepository(sharedContext),
+                    orderManagementService,
+                    new RegTypeRepository(sharedContext),
+                    ctx.Kernel.Get<IStateService>()
+                    );
+
+            }).InRequestScope();
+
+            kernel.Bind<WebinarController>().ToMethod(ctx =>
+            {
+                var sharedContext = new TTSWebinarsContext();
+                var userAccountService = kernel.Get<UserAccountService>();
+
+                var orderManagementService = new OrderManagementService(
+                    new AffiliateRepository(sharedContext),
+                    new RegTypeRepository(sharedContext),
+                    new OrderRepository(sharedContext),
+                    new RefDataRepository(),
+                    new WebUserRepository(sharedContext),
+                    new WebinarRepository(sharedContext),
+                    ttsConfig
+                    );
+
+                var membershipService = new MembershipService(
+                    new InstitutionRepository(sharedContext),
+                    new RefDataRepository(),
+                    new SamAuthenticationService(userAccountService),
+                    userAccountService,
+                    new WebUserRepository(sharedContext));
+
+                return new WebinarController(
+                    membershipService, 
+                    ctx.Kernel.Get<IMailService>(),
+                    new WebinarRepository(sharedContext),
+                    //ctx.Kernel.Get<ILogger>(),
+                    orderManagementService
+                    );
+
+            }).InRequestScope();
+
+            kernel.Bind<MembershipNotificationOpsController>().ToMethod(ctx =>
+            {
+                var sharedContext = new TTSWebinarsContext();
+                var userAccountService = kernel.Get<UserAccountService>();
+                
+                var membershipService = new MembershipService(
+                    new InstitutionRepository(sharedContext),
+                    new RefDataRepository(),
+                    new SamAuthenticationService(userAccountService),
+                    userAccountService,
+                    new WebUserRepository(sharedContext));
+
+                return new MembershipNotificationOpsController(membershipService);
+
+            }).InRequestScope();
+
+
+
+            kernel.Bind<AuthenticationService>().To<SamAuthenticationService>();
+            kernel.Bind<IMembershipService>().To<MembershipService>();
+
         }
     }
 }

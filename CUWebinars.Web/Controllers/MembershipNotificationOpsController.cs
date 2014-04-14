@@ -200,6 +200,53 @@ namespace CUWebinars.Web.Controllers
             return Json(model);
         }
 
+        public PartialViewResult GetJsonTextArea()
+        {
+            var importOrderViaDashboardViewModel = new ImportOrderViaDashboardViewModel
+            {
+                JsonPayload = @"{ 
+                                  ""AdditionalLocations"": [
+                                    ""dave@turing.com"",
+                                    ""jed@turing.com""
+                                    ],
+                                  ""AffiliateComments"": ""Affiliate comments"",
+                                  ""BillingAddress"": {
+                                    ""AddressType"": ""Billing"",
+                                    ""Name"": ""Alan Turing"",
+                                    ""Phone"": ""555-555-5555"",
+                                    ""StreetAddress"": ""968 Wildcat Dr"",
+                                    ""StreetAddress2"": """",
+                                    ""City"": ""Del Rio"",
+                                    ""Zip"": ""5000"",
+                                    ""State"": ""Tx"",
+                                    ""Country"": ""USA"",
+                                  },
+                                  ""Email"": ""alanbturingy@turing.com"",
+                                  ""FirstName"": ""Alan"",
+                                  ""LastName"": ""Turing"",
+                                  ""idAffiliate"": 19,
+                                  ""idRegType"": 88,
+                                  ""idWebinar"": 437,
+                                  ""Institution"": ""Some Institution"",
+                                  ""ShippingAddress"": {
+                                    ""AddressType"": ""Shipping"",
+                                    ""Name"": ""Alan Turing"",
+                                    ""Phone"": ""555-555-5555"",
+                                    ""StreetAddress"": ""968 Wildcat Dr"",
+                                    ""StreetAddress2"": """",
+                                    ""City"": ""Del Rio"",
+                                    ""Zip"": ""5000"",
+                                    ""State"": ""Tx"",
+                                    ""Country"": ""USA"",
+                                  },
+                                  ""SendNotification"": ""true"",
+                                  ""Title"": ""Mr"",
+                                } "
+            };
+
+            return PartialView("~/Views/MembershipNotificationOps/_ImportOrder.cshtml", importOrderViaDashboardViewModel);
+        } 
+
         private List<Address> ProcessAddresses(RegisterViewModel registerViewModel)
         {
             var billingAddress = new Address

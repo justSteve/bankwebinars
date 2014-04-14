@@ -450,6 +450,7 @@
     <Compile Include="ViewModel\ConnectionInfoViewModel.cs" />
     <Compile Include="ViewModel\DisplayOptionsViewModel.cs" />
     <Compile Include="ViewModel\GTWRegistrantViewModel.cs" />
+    <Compile Include="ViewModel\ImportOrderViaDashboardViewModel.cs" />
     <Compile Include="ViewModel\RegisterViewModel.cs" />
     <Compile Include="ViewModel\WebinarDetailsViewModel.cs" />
     <Compile Include="ViewModel\WebUserInfoViewModel.cs" />
@@ -1145,6 +1146,7 @@
     <Content Include="Views\MembershipNotificationOps\_PasswordResetConfirm.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\AddAdditionalLocationViewModel.cshtml" />
     <Content Include="Views\Webinar\Partials\_AdditionalLocationsModal.cshtml" />
+    <Content Include="Views\MembershipNotificationOps\_ImportOrder.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\Admin\Models\" />

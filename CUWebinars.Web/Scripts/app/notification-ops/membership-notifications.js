@@ -69,6 +69,55 @@ $(function () {
             $('#WaitIndicator').hide();
         });
     });
+    
+    $('#GetImportOrderFieldsButton').on('click', function () {
+        $.ajax({
+            type: 'GET',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: '/MembershipNotificationOps/GetJsonTextArea',
+            dataType: constants.HtmlDataType,
+            data: null,
+            beforeSend: function () {
+                // this is where we append a loading image
+                if ($('#ImportOrderButton').length > 0)
+                    $('#ImportOrderButton').off('click');
+                $('#WaitIndicator').show();
+            }
+        }).done(function (result) {
+
+            $('#InputFormFields').html(result);
+
+            $('#ImportOrderButton').on('click', function () {
+
+                var jsonPayload = $('#JsonPayload').text();
+
+                $.ajax({
+                    type: 'POST',
+                    contentType: constants.JsonContentType,
+                    cache: false,
+                    url: '/Api/Order',
+                    dataType: constants.HtmlDataType,
+                    data: jsonPayload,
+                    beforeSend: function () {
+                        // this is where we append a loading image
+                        $('#WaitIndicator').show();
+                    }
+                }).done(function (result) {
+
+                    var resultAsJson = JSON.parse(result);
+
+                    $('#InputFormFields').html('<span class="label label-success">' + resultAsJson.Result + '</span>');
+
+                }).always(function () {
+                    $('#WaitIndicator').hide();
+                });
+            });
+            
+        }).always(function () {
+            $('#WaitIndicator').hide();
+        });
+    });
 });
 
 function InitializeCreateUserFields()

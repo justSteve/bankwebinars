@@ -34,13 +34,13 @@ namespace CUWebinars.Web.Controllers
         private readonly IOrderManagementService _orderManagementService;
         public ILogger Logger { get; set; }
 
-        public WebinarController(MembershipService membershipService, IMailService mail, IWebinarRepository webinarRepository, ILogger logger, IOrderManagementService orderManagementService)
+        public WebinarController(IMembershipService membershipService, IMailService mail, IWebinarRepository webinarRepository, IOrderManagementService orderManagementService)
         {
             db.Configuration.ProxyCreationEnabled = false;
             this.membershipService = membershipService;
             _mail = mail;
             _webinarRepository = webinarRepository;
-            Logger = logger;
+            //Logger = logger;
             _orderManagementService = orderManagementService;
         }
         //
