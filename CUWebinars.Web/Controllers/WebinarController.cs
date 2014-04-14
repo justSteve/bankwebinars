@@ -25,7 +25,7 @@ namespace CUWebinars.Web.Controllers
     public class WebinarController : Controller
     {
         private TTSWebinarsContext db = new TTSWebinarsContext();
-        private IMailService _mail;
+        
         IStateService stateService = new StateService();
 
         //Steve added MembershipService dependancy to allow for 'currentUser' in Details.
@@ -34,11 +34,11 @@ namespace CUWebinars.Web.Controllers
         private readonly IOrderManagementService _orderManagementService;
         public ILogger Logger { get; set; }
 
-        public WebinarController(IMembershipService membershipService, IMailService mail, IWebinarRepository webinarRepository, IOrderManagementService orderManagementService)
+        public WebinarController(IMembershipService membershipService, IWebinarRepository webinarRepository, IOrderManagementService orderManagementService)
         {
             db.Configuration.ProxyCreationEnabled = false;
             this.membershipService = membershipService;
-            _mail = mail;
+            
             _webinarRepository = webinarRepository;
             //Logger = logger;
             _orderManagementService = orderManagementService;

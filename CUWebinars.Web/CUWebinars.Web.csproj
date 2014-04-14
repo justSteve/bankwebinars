@@ -116,12 +116,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Glimpse.Mvc4.1.5.1\lib\net40\Glimpse.Mvc4.dll</HintPath>
     </Reference>
-    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="log4net.Appender.Azure">
-      <HintPath>..\packages\log4net.Appender.Azure.1.1.0.0\lib\net45\log4net.Appender.Azure.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.ApplicationServer.Caching.Client, Version=101.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -189,8 +185,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Ninject.Extensions.Logging.3.2.0.0\lib\net45-full\Ninject.Extensions.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Ninject.Extensions.Logging.Log4Net, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Ninject.Extensions.Logging.Log4Net">
       <HintPath>..\packages\Ninject.Extensions.Logging.Log4net.3.2.0.0\lib\net45-full\Ninject.Extensions.Logging.Log4Net.dll</HintPath>
     </Reference>
     <Reference Include="Ninject.Web.Common, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
@@ -351,11 +346,6 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
-    <Compile Include="Areas\Admin\Controllers\AcctAPIController.cs" />
-    <Compile Include="Areas\Admin\Controllers\NotificationsController.cs" />
-    <Compile Include="Areas\Admin\Controllers\RegistrationsController.cs" />
-    <Compile Include="Areas\Admin\Controllers\WebinarsController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\api\AddressesController.cs" />
     <Compile Include="Models\IncomingOrderModel.cs" />
@@ -416,13 +406,9 @@
     <Compile Include="Membership\Email\TtsSmtpMessageDelivery.cs" />
     <Compile Include="Membership\Email\TtsTokenizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\IMailService.cs" />
     <Compile Include="Services\IStateService.cs" />
-    <Compile Include="Services\MailService.cs" />
-    <Compile Include="Services\MailServiceMock.cs" />
     <Compile Include="Services\StateService.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="Core\AzureTableAppender.cs" />
     <Compile Include="ViewModel\AddAdditionalLocationsViewModel.cs" />
     <Compile Include="ViewModel\AdditionalLocationsViewModel.cs" />
     <Compile Include="ViewModel\CheckoutOptionsViewModel.cs" />
@@ -881,7 +867,6 @@
     <Content Include="Membership\Email\EmailTemplates\AccountCreatedEvent_Subject.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailChangedEvent_Body.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailChangedEvent_Subject.cshtml" />
-    <Content Include="Areas\Admin\Views\Notifications\Index.cshtml" />
     <None Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Body.cshtml" />
     <None Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Subject.cshtml" />
     <Content Include="favicon.ico" />
@@ -953,22 +938,9 @@
     <Content Include="Content\css\font\zocial.ttf" />
     <Content Include="Content\css\font\zocial.woff" />
     <Content Include="Content\site.less" />
-    <Content Include="Areas\Admin\Views\Notifications\ConnectionInfo.html.txt.cshtml" />
-    <Content Include="Areas\Admin\Views\Web.config">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Areas\Admin\Views\Webinars\Create.cshtml" />
-    <Content Include="Areas\Admin\Views\Webinars\Delete.cshtml" />
-    <Content Include="Areas\Admin\Views\Webinars\Details.cshtml" />
-    <Content Include="Areas\Admin\Views\Webinars\Edit.cshtml" />
-    <Content Include="Areas\Admin\Views\Webinars\Index.cshtml" />
-    <Content Include="Areas\Admin\Views\Webinars\Partials\_WebinarLister.cshtml" />
     <Content Include="Scripts\bootstrap.min.js.map">
       <DependentUpon>bootstrap.js</DependentUpon>
     </Content>
-    <Content Include="Areas\Admin\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\Admin\Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\Admin\Views\Shared\ShowAdminMenu.cshtml" />
     <Content Include="Content\site.css.map">
       <DependentUpon>Site.css</DependentUpon>
     </Content>
@@ -1126,8 +1098,6 @@
     <Content Include="Views\MembershipNotificationOps\_ImportOrder.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Areas\Admin\Models\" />
-    <Folder Include="Areas\Admin\Views\Registrations\" />
     <Folder Include="Images\" />
     <Folder Include="Notification\Delivery\" />
     <Folder Include="Utils\" />

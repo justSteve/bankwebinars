@@ -11,13 +11,13 @@ namespace CUWebinars.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private IMailService _mail;
+        
         private readonly IWebinarRepository webinarRepository;
         public ILogger Logger { get; set; }
 
-        public HomeController(IMailService mail, IWebinarRepository webinarRepository, ILogger logger)
+        public HomeController(IWebinarRepository webinarRepository, ILogger logger)
         {
-            _mail = mail;
+            
             this.webinarRepository = webinarRepository;
             Logger = logger;
         }

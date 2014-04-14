@@ -30,7 +30,7 @@ namespace CUWebinars.Web.Controllers
     {
         private readonly GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
         private TTSWebinarsContext db = new TTSWebinarsContext();
-        private IMailService mail;
+        
         public IMembershipService membershipService;
         private readonly IOrderRepository orderRepository;
         private readonly IRegTypeRepository RegTypeRepository;
@@ -40,7 +40,7 @@ namespace CUWebinars.Web.Controllers
         public ILogger Logger { get; set; }
         //public IOrderService orderService;
 
-        public AccountController(IMailService mail,
+        public AccountController(
             //ILogger logger,
             IMembershipService membershipService,
             IOrderRepository orderRepository,
@@ -48,7 +48,7 @@ namespace CUWebinars.Web.Controllers
             IRegTypeRepository RegTypeRepository,
             IStateService stateService)
         {
-            this.mail = mail;
+            
             //this.Logger = logger;
             this.membershipService = membershipService;
             this.orderRepository = orderRepository;

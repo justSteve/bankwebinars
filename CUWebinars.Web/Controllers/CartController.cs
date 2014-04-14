@@ -18,7 +18,7 @@ namespace CUWebinars.Web.Controllers
     public class CartController : Controller
     {
         private TTSWebinarsContext db = new TTSWebinarsContext();
-        private IMailService _mail;
+        
         IStateService stateService = new StateService();
 
         //Steve added MembershipService dependancy to allow for 'currentUser' in Details.
@@ -27,10 +27,10 @@ namespace CUWebinars.Web.Controllers
         private readonly IOrderManagementService _orderManagementService;
         public ILogger Logger { get; set; }
 
-        public CartController(MembershipService membershipService, IMailService mail, IWebinarRepository webinarRepository, ILogger logger, IOrderManagementService orderManagementService)
+        public CartController(MembershipService membershipService, IWebinarRepository webinarRepository, ILogger logger, IOrderManagementService orderManagementService)
         {
             this.membershipService = membershipService;
-            _mail = mail;
+            
             _webinarRepository = webinarRepository;
             Logger = logger;
             _orderManagementService = orderManagementService;

@@ -136,11 +136,7 @@ namespace CUWebinars.Web.App_Start
 
             }).InRequestScope();
 
-#if DEBUG
-            kernel.Bind<IMailService>().To<MailServiceMock>();
-#else
-      kernel.Bind<IMailService>().To<MailService>().InRequestScope();
-#endif
+
 
             kernel.Bind<AccountController>().ToMethod(ctx =>
             {
@@ -165,7 +161,7 @@ namespace CUWebinars.Web.App_Start
                     new WebUserRepository(sharedContext));
 
                 return new AccountController(
-                    ctx.Kernel.Get<IMailService>(),
+                    //ctx.Kernel.Get<IMailService>(),
                     //ctx.Kernel.Get<ILogger>(),
                     membershipService,
                     new OrderRepository(sharedContext),
@@ -200,7 +196,7 @@ namespace CUWebinars.Web.App_Start
 
                 return new WebinarController(
                     membershipService, 
-                    ctx.Kernel.Get<IMailService>(),
+ 
                     new WebinarRepository(sharedContext),
                     //ctx.Kernel.Get<ILogger>(),
                     orderManagementService
