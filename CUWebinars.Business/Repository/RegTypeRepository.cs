@@ -7,6 +7,12 @@ namespace CUWebinars.Business.Repository
 {
     public class RegTypeRepository : TTSWebinarsRepository<TTSWebinarsContext, RegType>, IRegTypeRepository
     {
+        public RegTypeRepository(TTSWebinarsContext ctx)
+            : base(ctx)
+        {
+            
+        }
+
         public RegType FindRegType(int id)
         {
             var i = items.FirstOrDefault(o => o.idRegType == id);

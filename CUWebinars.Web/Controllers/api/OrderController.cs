@@ -26,12 +26,12 @@ namespace CUWebinars.Web.Controllers.api
         public ILogger Logger { get; set; }
         
 
-        public OrderController(IMembershipService membershipService, IOrderManagementService orderManagementService, IStateService stateService, ILogger logger)
+        public OrderController(IMembershipService membershipService, IOrderManagementService orderManagementService, IStateService stateService)
         {
             _membershipService = membershipService;
             _orderManagementService = orderManagementService;
             _stateService = stateService;
-            this.Logger = logger;
+            //this.Logger = logger;
 
         }
 

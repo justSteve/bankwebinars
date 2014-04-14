@@ -13,6 +13,12 @@ namespace CUWebinars.Business.Repository
             RefContext = new RefDataRepository();
         }
 
+        public WebUserRepository(TTSWebinarsContext ctx)
+            : base(ctx)
+        {
+            RefContext = new RefDataRepository();
+        }
+
         /// <summary>
         /// Finds the Highest Id currently in use so newly created WebUser objects have an Id.
         /// Id value is not db-generated so that objects created by the seed method 

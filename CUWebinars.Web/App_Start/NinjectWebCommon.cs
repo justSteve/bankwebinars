@@ -7,7 +7,9 @@ using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
+using CUWebinars.Web.Controllers.api;
 using CUWebinars.Web.Services;
+using Ninject.Extensions.Logging;
 using Ninject.Parameters;
 
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(CUWebinars.Web.App_Start.NinjectWebCommon), "Start")]
@@ -87,7 +89,6 @@ namespace CUWebinars.Web.App_Start
 
             var config = MembershipRebootConfig.Create(baseUrl, kernel.Get<IStateService>(), kernel.Get<IRefDataRepository>());
             var ttsConfig = TtsConfig.Create(baseUrl);
-            
 
             kernel.Bind<MembershipRebootConfiguration>().ToConstant(config);
             kernel.Bind<TtsConfiguration>().ToConstant(ttsConfig);
@@ -100,29 +101,54 @@ namespace CUWebinars.Web.App_Start
             kernel.Bind<IUserAccountRepository>().To<DefaultUserAccountRepository>().InRequestScope();
             kernel.Bind<IRegTypeRepository>().To<RegTypeRepository>().InRequestScope().Named(regTypeRepository);
 
-            kernel.Bind<IOrderManagementService>().ToMethod(ctx =>
-            {
-                var context = ctx.Kernel.Get<TTSWebinarsContext>();
-                var param = new Parameter("context", context, true);
-
-                var orderManagementService = new OrderManagementService(
-                    ctx.Kernel.Get<IAffiliateRepository>(affiliateRepository, param),
-                    ctx.Kernel.Get<IRegTypeRepository>(regTypeRepository, param),
-                    ctx.Kernel.Get<IOrderRepository>(orderRepository, param),
-                    ctx.Kernel.Get<IRefDataRepository>(),
-                    ctx.Kernel.Get<IWebUserRepository>(webuserRepository, param),
-                    ctx.Kernel.Get<IWebinarRepository>(webinarRepository, param),
-                    ttsConfig
-                    );
-                return orderManagementService;
-
-            }).InRequestScope();
-
-            kernel.Bind<UserAccountService>().ToMethod(ctx =>
+                        kernel.Bind<UserAccountService>().ToMethod(ctx =>
             {
                 var userAccountService = new UserAccountService(config, ctx.Kernel.Get<IUserAccountRepository>());
                 return userAccountService;
             });
+
+            kernel.Bind<OrderController>().ToMethod(ctx =>
+            {
+                var sharedContext = new TTSWebinarsContext();
+                var userAccountService = kernel.Get<UserAccountService>();
+
+                var orderManagementService = new OrderManagementService(
+                    new AffiliateRepository(sharedContext),
+                    new RegTypeRepository(sharedContext),
+                    new OrderRepository(sharedContext),
+                    new RefDataRepository(),
+                    new WebUserRepository(sharedContext),
+                    new WebinarRepository(sharedContext),
+                    ttsConfig
+                    );
+
+                var membershipService = new MembershipService(
+                    new InstitutionRepository(sharedContext),
+                    new RefDataRepository(),
+                    new SamAuthenticationService(userAccountService),
+                    userAccountService,
+                    new WebUserRepository(sharedContext));
+
+                return new OrderController(membershipService, orderManagementService, kernel.Get<IStateService>());
+
+            }).InRequestScope();
+
+            //kernel.Bind<IOrderManagementService>().ToMethod(ctx =>
+            //{
+            //    var orderManagementService = new OrderManagementService(
+            //        new AffiliateRepository(sharedContext),
+            //        new RegTypeRepository(sharedContext),
+            //        new OrderRepository(sharedContext),
+            //        new RefDataRepository(),
+            //        new WebUserRepository(sharedContext),
+            //        new WebinarRepository(sharedContext),
+            //        ttsConfig
+            //        );
+            //    return orderManagementService;
+
+            //}).InRequestScope();
+
+
 
             kernel.Bind<AuthenticationService>().To<SamAuthenticationService>();
             kernel.Bind<IMembershipService>().To<MembershipService>();

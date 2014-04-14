@@ -13,7 +13,8 @@ namespace CUWebinars.Business.Repository
 {
     public class OrderRepository : TTSWebinarsRepository<TTSWebinarsContext, Order>, IOrderRepository
     {
-        public OrderRepository()
+        public OrderRepository(TTSWebinarsContext ctx)
+            : base(ctx)
         {
 
         }

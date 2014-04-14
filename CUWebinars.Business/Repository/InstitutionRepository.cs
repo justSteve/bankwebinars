@@ -6,7 +6,8 @@ namespace CUWebinars.Business.Repository
 {
     public class InstitutionRepository : TTSWebinarsRepository<TTSWebinarsContext, Institution>, IInstitutionRepository
     {
-        public InstitutionRepository()
+        public InstitutionRepository(TTSWebinarsContext ctx)
+            : base(ctx)
         {
 
         }
