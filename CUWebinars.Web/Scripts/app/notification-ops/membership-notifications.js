@@ -1,5 +1,6 @@
 var passwordResetInitialized = false;
 var passwordConfirmResetInitialized = false;
+var jsonDataForImportedOrder;
 
 $(function () {
 
@@ -71,54 +72,68 @@ $(function () {
     });
     
     $('#GetImportOrderFieldsButton').on('click', function () {
+
+        if (jsonDataForImportedOrder) {
+            $('#OrderSucceeded').remove();
+            $('#InputFormFields').append('<button id="ImportOrderButton" class =" btn btn-success">Import Order</button>');
+            $('#InputFormFields').append('<textarea id="JsonPayloadTextArea" rows="40" cols="100" style="width:100%;margin-top:10px"></textarea>');
+            $('#JsonPayloadTextArea').val(jsonDataForImportedOrder);
+            addImportOrderButtonClick();
+        } else {
+            $.ajax({
+                type: 'GET',
+                contentType: constants.JsonContentType,
+                cache: false,
+                url: '/MembershipNotificationOps/GetJsonTextArea',
+                dataType: constants.HtmlDataType,
+                data: null,
+                beforeSend: function () {
+                    // this is where we append a loading image
+                    if ($('#ImportOrderButton').length > 0)
+                        $('#ImportOrderButton').off('click');
+                    $('#WaitIndicator').show();
+                }
+            }).done(function (result) {
+
+                $('#InputFormFields').html(result);
+
+                addImportOrderButtonClick();
+
+            }).always(function () {
+                $('#WaitIndicator').hide();
+            });
+        }
+    });
+});
+
+function addImportOrderButtonClick() {
+    $('#ImportOrderButton').on('click', function () {
+
+        var jsonPayload = $('#JsonPayloadTextArea').val();
+        jsonDataForImportedOrder = jsonPayload;
+
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             contentType: constants.JsonContentType,
             cache: false,
-            url: '/MembershipNotificationOps/GetJsonTextArea',
+            url: '/Api/Order',
             dataType: constants.HtmlDataType,
-            data: null,
+            data: jsonPayload,
             beforeSend: function () {
                 // this is where we append a loading image
-                if ($('#ImportOrderButton').length > 0)
-                    $('#ImportOrderButton').off('click');
                 $('#WaitIndicator').show();
             }
         }).done(function (result) {
 
-            $('#InputFormFields').html(result);
+            var resultAsJson = JSON.parse(result);
 
-            $('#ImportOrderButton').on('click', function () {
+            $('#InputFormFields').html('<span id="OrderSucceeded" class="label label-success">' + resultAsJson.Result + '</span>');
 
-                var jsonPayload = $('#JsonPayload').text();
-
-                $.ajax({
-                    type: 'POST',
-                    contentType: constants.JsonContentType,
-                    cache: false,
-                    url: '/Api/Order',
-                    dataType: constants.HtmlDataType,
-                    data: jsonPayload,
-                    beforeSend: function () {
-                        // this is where we append a loading image
-                        $('#WaitIndicator').show();
-                    }
-                }).done(function (result) {
-
-                    var resultAsJson = JSON.parse(result);
-
-                    $('#InputFormFields').html('<span class="label label-success">' + resultAsJson.Result + '</span>');
-
-                }).always(function () {
-                    $('#WaitIndicator').hide();
-                });
-            });
-            
         }).always(function () {
             $('#WaitIndicator').hide();
         });
-    });
-});
+    });    
+};
 
 function InitializeCreateUserFields()
 {
