@@ -19,21 +19,25 @@ namespace CUWebinars.Web.Controllers
     {
         private TTSWebinarsContext db = new TTSWebinarsContext();
         
-        IStateService stateService = new StateService();
+        IStateService _stateService = new StateService();
 
         //Steve added MembershipService dependancy to allow for 'currentUser' in Details.
-        public IMembershipService membershipService;
+        private readonly IMembershipService _membershipService;
         private readonly IWebinarRepository _webinarRepository;
+        private readonly ILogger _logger;
         private readonly IOrderManagementService _orderManagementService;
-        public ILogger Logger { get; set; }
 
-        public CartController(MembershipService membershipService, IWebinarRepository webinarRepository, ILogger logger, IOrderManagementService orderManagementService)
+        public CartController(IMembershipService membershipService, 
+            IWebinarRepository webinarRepository, 
+            IOrderManagementService orderManagementService, 
+            IStateService stateService, 
+            ILogger logger)
         {
-            this.membershipService = membershipService;
-            
+            _membershipService = membershipService;
             _webinarRepository = webinarRepository;
-            Logger = logger;
+            _logger = logger;
             _orderManagementService = orderManagementService;
+            _stateService = stateService;
         }
 
         //
@@ -97,7 +101,7 @@ namespace CUWebinars.Web.Controllers
             //OrderFacade.Instance.Submit(order);
             Session["IsOrderPaid"] = true;
 
-            Logger.Info("User Submits order: " + order.idOrder);
+            _logger.Info("User Submits order: " + order.idOrder);
             Session.Add("LastOrderId", Session["CurrentOrderId"]);
             Session.Remove("CurrentOrderId");
             Session.Remove("IsOrderPaid");
@@ -120,7 +124,7 @@ namespace CUWebinars.Web.Controllers
         {
             //var order = _checkoutWorkflow.CurrentOrder;
 
-            //Logger.Info("User Cancels order: " + order.ID);
+            //_logger.Info("User Cancels order: " + order.ID);
 
             //OrderFacade.Instance.DeleteOrderRow(order, id);
 
@@ -319,7 +323,7 @@ namespace CUWebinars.Web.Controllers
             //    //_orderManagementService.AssignUserToOrder(currentOrder);
             //    currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
             //    currentOrder.Origin= _orderManagementService.GetOrderInitiator();
-            //    Logger.Error("ERROR: CartController | Signup - currentUser is null" + currentOrder.idOrder);
+            //    _logger.Error("ERROR: CartController | Signup - currentUser is null" + currentOrder.idOrder);
             //    //TODO: assign appropriate ModelError and error logging/handling
             //}
 
@@ -402,7 +406,7 @@ namespace CUWebinars.Web.Controllers
             //}
             //else
             //{
-            //    Logger.Instance.LogMessage("non-authenticated user at Checkout|Step1_Register: " + AppHelper.GetUserAuditInfo());
+            //    _logger.Instance.LogMessage("non-authenticated user at Checkout|Step1_Register: " + AppHelper.GetUserAuditInfo());
             //}
 
 
@@ -428,7 +432,7 @@ namespace CUWebinars.Web.Controllers
                 //if (OptionsFacade.Instance.Load(optionID).ShowLiveNotifications == "No") shouldShow = "false";
                 if (shouldShow == "Yes")
                 {
-                    Logger.Info(shouldShow);
+                    _logger.Info(shouldShow);
                 }
 
             }

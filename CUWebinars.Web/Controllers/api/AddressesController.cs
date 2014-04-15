@@ -2,16 +2,19 @@
 using Newtonsoft.Json;
 using System.Linq;
 using System.Web.Mvc;
+using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Web.Controllers.api
 {
     public class AddressesController : ParentApiController
     {
         private readonly IMembershipService _membershipService;
+        private readonly ILogger _logger;
 
-        public AddressesController(IMembershipService membershipService) : base()
+        public AddressesController(IMembershipService membershipService, ILogger logger) : base()
         {
             _membershipService = membershipService;
+            _logger = logger;
         }
 
         [HttpGet]

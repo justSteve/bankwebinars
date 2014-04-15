@@ -12,16 +12,19 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Web.Mvc;
+using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Web.Controllers
 {
     public class MembershipNotificationOpsController : Controller
     {
         private readonly IMembershipService _membershipService;
+        private readonly ILogger _logger;
 
-        public MembershipNotificationOpsController(IMembershipService membershipService)
+        public MembershipNotificationOpsController(IMembershipService membershipService, ILogger logger)
         {
             _membershipService = membershipService;
+            _logger = logger;
         }
 
         public ViewResult MembershipNotifications()

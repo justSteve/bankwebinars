@@ -24,24 +24,28 @@ namespace CUWebinars.Web.Controllers
 {
     public class WebinarController : Controller
     {
-        private TTSWebinarsContext db = new TTSWebinarsContext();
+        private readonly TTSWebinarsContext _db;
         
         IStateService stateService = new StateService();
 
         //Steve added MembershipService dependancy to allow for 'currentUser' in Details.
-        public IMembershipService membershipService;
+        private readonly IMembershipService _membershipService;
         private readonly IWebinarRepository _webinarRepository;
         private readonly IOrderManagementService _orderManagementService;
-        public ILogger Logger { get; set; }
+        private readonly ILogger _logger;
 
-        public WebinarController(IMembershipService membershipService, IWebinarRepository webinarRepository, IOrderManagementService orderManagementService)
+        public WebinarController(
+            IMembershipService membershipService, 
+            IWebinarRepository webinarRepository, 
+            IOrderManagementService orderManagementService, 
+            ILogger logger,
+            TTSWebinarsContext context)
         {
-            db.Configuration.ProxyCreationEnabled = false;
-            this.membershipService = membershipService;
-            
+            _db = context;
+            _membershipService = membershipService;
             _webinarRepository = webinarRepository;
-            //Logger = logger;
             _orderManagementService = orderManagementService;
+            _logger = logger;
         }
         //
         // GET: /Webinar/
@@ -360,12 +364,12 @@ namespace CUWebinars.Web.Controllers
             ;
             ViewBag.PageStyleType = "holy-grail-three-columns";
             //
-            WebUser user = Request.IsAuthenticated ? membershipService.GetUserByEmail(User.Identity.Name) : new WebUser();
+            WebUser user = Request.IsAuthenticated ? _membershipService.GetUserByEmail(User.Identity.Name) : new WebUser();
 
             var usersOrders = _orderManagementService.GetOrdersByUserId(user.idUser);
 
             var options = _orderManagementService.GetOptionsByWebinarId(id, false);
-            var webinar = db.Webinars.Include(w => w.Presenter.WebUser).First(w => w.idWebinar == id);
+            var webinar = _db.Webinars.Include(w => w.Presenter.WebUser).First(w => w.idWebinar == id);
             ViewBag.topics = _webinarRepository.GetTopicsPerWebinar(webinar.idWebinar);
 
 
@@ -401,8 +405,8 @@ namespace CUWebinars.Web.Controllers
                     {
                         var singleOrDefaultRow = checkOrder.OrderRows.SingleOrDefault();
                         if (singleOrDefaultRow != null)
-                            ViewBag.orderMessages = db.RegTypes.Find(singleOrDefaultRow.RegistrationType);
-                        var webinarFiles = db.WebinarFiles.Where(f => f.idWebinar == id).Select(f => f.fileDesc +"|"+ f.fileLocation ).ToArray();
+                            ViewBag.orderMessages = _db.RegTypes.Find(singleOrDefaultRow.RegistrationType);
+                        var webinarFiles = _db.WebinarFiles.Where(f => f.idWebinar == id).Select(f => f.fileDesc +"|"+ f.fileLocation ).ToArray();
                         ViewBag.WebinarFiles = webinarFiles;
 
                         ViewBag.userOwnsThisEvent = checkOrder.idOrder;
@@ -458,7 +462,7 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Create()
         {
-            ViewBag.PresenterId = new SelectList(db.Presenters, "Id", "Biography");
+            ViewBag.PresenterId = new SelectList(_db.Presenters, "Id", "Biography");
             return View();
         }
 
@@ -471,12 +475,12 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Webinars.Add(webinar);
-                db.SaveChanges();
+                _db.Webinars.Add(webinar);
+                _db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.PresenterId = new SelectList(db.Presenters, "Id", "Biography", webinar.idPresenter);
+            ViewBag.PresenterId = new SelectList(_db.Presenters, "Id", "Biography", webinar.idPresenter);
             return View(webinar);
         }
 
@@ -485,12 +489,12 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Edit(int id = 0)
         {
-            Webinar webinar = db.Webinars.Find(id);
+            Webinar webinar = _db.Webinars.Find(id);
             if (webinar == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.PresenterId = new SelectList(db.Presenters, "Id", "Biography", webinar.idPresenter);
+            ViewBag.PresenterId = new SelectList(_db.Presenters, "Id", "Biography", webinar.idPresenter);
             return View(webinar);
         }
 
@@ -503,11 +507,11 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(webinar).State = EntityState.Modified;
-                db.SaveChanges();
+                _db.Entry(webinar).State = EntityState.Modified;
+                _db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.PresenterId = new SelectList(db.Presenters, "Id", "Biography", webinar.idPresenter);
+            ViewBag.PresenterId = new SelectList(_db.Presenters, "Id", "Biography", webinar.idPresenter);
             return View(webinar);
         }
 
@@ -516,7 +520,7 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Delete(int id = 0)
         {
-            Webinar webinar = db.Webinars.Find(id);
+            Webinar webinar = _db.Webinars.Find(id);
             if (webinar == null)
             {
                 return HttpNotFound();
@@ -531,15 +535,15 @@ namespace CUWebinars.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Webinar webinar = db.Webinars.Find(id);
-            db.Webinars.Remove(webinar);
-            db.SaveChanges();
+            Webinar webinar = _db.Webinars.Find(id);
+            _db.Webinars.Remove(webinar);
+            _db.SaveChanges();
             return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)
         {
-            db.Dispose();
+            _db.Dispose();
             base.Dispose(disposing);
         }
     }

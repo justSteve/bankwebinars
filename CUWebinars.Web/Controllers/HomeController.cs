@@ -1,25 +1,22 @@
-﻿using System.Linq;
+﻿using CUWebinars.Business.Repository;
+using Ninject.Extensions.Logging;
+using System.Linq;
 using System.ServiceModel.Syndication;
 using System.Web.Mvc;
 using System.Xml;
-using CUWebinars.Business.Repository;
-using CUWebinars.Web.Data.Repositories.Interfaces;
-using CUWebinars.Web.Services;
-using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Web.Controllers
 {
     public class HomeController : Controller
     {
         
-        private readonly IWebinarRepository webinarRepository;
-        public ILogger Logger { get; set; }
+        private readonly IWebinarRepository _webinarRepository;
+        private readonly ILogger _logger;
 
         public HomeController(IWebinarRepository webinarRepository, ILogger logger)
         {
-            
-            this.webinarRepository = webinarRepository;
-            Logger = logger;
+            _webinarRepository = webinarRepository;
+            _logger = logger;
         }
 
 
@@ -62,7 +59,7 @@ namespace CUWebinars.Web.Controllers
         public ActionResult Index()
         {
             ViewBag.PageStyleType = "index-flex-dark";
-            var lWebinars = webinarRepository.GetUpcoming().OrderByDescending(w => w.Date).Take(15).ToList();
+            var lWebinars = _webinarRepository.GetUpcoming().OrderByDescending(w => w.Date).Take(15).ToList();
             return View(lWebinars);
         }
 

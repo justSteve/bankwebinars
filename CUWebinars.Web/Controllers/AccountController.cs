@@ -30,31 +30,28 @@ namespace CUWebinars.Web.Controllers
     {
         private readonly GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
         private TTSWebinarsContext db = new TTSWebinarsContext();
-        
-        public IMembershipService membershipService;
-        private readonly IOrderRepository orderRepository;
-        private readonly IRegTypeRepository RegTypeRepository;
-        private readonly IStateService stateService;
-        private readonly IOrderManagementService orderManagementService;
 
-        public ILogger Logger { get; set; }
-        //public IOrderService orderService;
+        private readonly ILogger _logger;
+        public IMembershipService _membershipService;
+        private readonly IOrderRepository _orderRepository;
+        private readonly IRegTypeRepository _regTypeRepository;
+        private readonly IStateService _stateService;
+        private readonly IOrderManagementService _orderManagementService;
 
         public AccountController(
-            //ILogger logger,
+            ILogger logger,
             IMembershipService membershipService,
             IOrderRepository orderRepository,
             IOrderManagementService orderManagementService,
-            IRegTypeRepository RegTypeRepository,
+            IRegTypeRepository regTypeRepository,
             IStateService stateService)
         {
-            
-            //this.Logger = logger;
-            this.membershipService = membershipService;
-            this.orderRepository = orderRepository;
-            this.orderManagementService = orderManagementService;
-            this.RegTypeRepository = RegTypeRepository;
-            this.stateService = stateService;
+            _logger = logger;
+            _membershipService = membershipService;
+            _orderRepository = orderRepository;
+            _orderManagementService = orderManagementService;
+            _regTypeRepository = regTypeRepository;
+            _stateService = stateService;
         }
 
         public ActionResult COC(int idWebinar, string displayName)
@@ -137,10 +134,10 @@ namespace CUWebinars.Web.Controllers
                 var lastName = model.LastName.Trim();
 
                 //first check if email exists
-                var checkIfUsed = membershipService.GetUserByEmail(email);
+                var checkIfUsed = _membershipService.GetUserByEmail(email);
                 if (checkIfUsed != null)
                 {
-                    Logger.Error("dupe email attempt: " + email);
+                    _logger.Error("dupe email attempt: " + email);
                     ModelState.AddModelError("Email", "That email already exists. Would you like to reset the password?");
                     //var scriptSerializer = new System.Web.Script.Serialization.JavaScriptSerializer();
                     //var jsonString = scriptSerializer.Serialize(model);
@@ -148,7 +145,7 @@ namespace CUWebinars.Web.Controllers
                     //return Json(jsonString, JsonRequestBehavior.AllowGet);
                 }
 
-                var myInstitution = membershipService.ProcessInstitutionForUser(model.Institution.Trim(),
+                var myInstitution = _membershipService.ProcessInstitutionForUser(model.Institution.Trim(),
                     email,
                     Request.QueryString["City"],
                     Request.QueryString["State"],
@@ -182,7 +179,7 @@ namespace CUWebinars.Web.Controllers
 
                     IList<Address> addresses = new List<Address> { billingAddress, shippingAddress };
 
-                    var webUser = membershipService.CreateWebUser(globalConfig.Tenant,
+                    var webUser = _membershipService.CreateWebUser(globalConfig.Tenant,
                         firstName
                         , lastName
                         , model.Password
@@ -196,10 +193,10 @@ namespace CUWebinars.Web.Controllers
                         , "A"
                         );
 
-                    if (!stateService.HasValue(Constants.CurrentUser))
-                        stateService.SetValue<WebUser>(Constants.CurrentUser, webUser);
+                    if (!_stateService.HasValue(Constants.CurrentUser))
+                        _stateService.SetValue<WebUser>(Constants.CurrentUser, webUser);
 
-                    var userAccount = membershipService.CreateUser(
+                    var userAccount = _membershipService.CreateUser(
                         globalConfig.Tenant,
                         firstName,
                         lastName,
@@ -214,14 +211,14 @@ namespace CUWebinars.Web.Controllers
                     }
 
                     //membershipService.LogInUser(globalConfig.Tenant, model.Email, model.Password, true); // log the user in.
-                    Logger.Info("/Account/Register UserAdded: " + model.Email);
+                    _logger.Info("/Account/Register UserAdded: " + model.Email);
                     return webUser.idUser.ToString();
                     //return model.idWebUser.ToString();
                 }
                 catch (MembershipCreateUserException e)
                 {
                     ModelState.AddModelError(string.Empty, e.StatusCode.ToString());
-                    Logger.Error("Importer Error: " + e.Message);
+                    _logger.Error("Importer Error: " + e.Message);
                 }
             }
 
@@ -242,9 +239,9 @@ namespace CUWebinars.Web.Controllers
 
             ViewData["DiscountMsg"] = string.Empty;
 
-            model.Scheduled = orderRepository.SelectOrdersWithScheduledWebinars(currentUser.idUser);
-            model.Recorded = orderRepository.SelectOrdersWithRecordedWebinars(currentUser.idUser);
-            model.Archived = orderRepository.SelectOrdersWithArchivedWebinars(currentUser.idUser);
+            model.Scheduled = _orderRepository.SelectOrdersWithScheduledWebinars(currentUser.idUser);
+            model.Recorded = _orderRepository.SelectOrdersWithRecordedWebinars(currentUser.idUser);
+            model.Archived = _orderRepository.SelectOrdersWithArchivedWebinars(currentUser.idUser);
 
             //if (model.Scheduled != null)
             //{
@@ -281,7 +278,7 @@ namespace CUWebinars.Web.Controllers
         {
             try
             {
-                var account = membershipService.GetByVerificationKey(id);
+                var account = _membershipService.GetByVerificationKey(id);
 
                 if (account.HasPassword())
                 {
@@ -306,11 +303,11 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
-                    BrockAllen.MembershipReboot.UserAccount account = membershipService.VerifyEmailFromKey(model.Key, model.Password);
+                    BrockAllen.MembershipReboot.UserAccount account = _membershipService.VerifyEmailFromKey(model.Key, model.Password);
 
                     // since we've changed the email, we need to re-issue the cookie that
                     // contains the claims.
-                    membershipService.SignIn(account, true);
+                    _membershipService.SignIn(account, true);
                     return RedirectToLocal(null);
                 }
                 catch (ValidationException ex)
@@ -408,7 +405,7 @@ namespace CUWebinars.Web.Controllers
                 AddressType = Enum.GetName(typeof(AddressType), shippingAddressFields.TypeOfAddress)
             };
 
-            membershipService.UpdateUserDetails(globalConfig.Tenant,
+            _membershipService.UpdateUserDetails(globalConfig.Tenant,
                 updateFields.FirstName.Trim(),
                 updateFields.LastName.Trim(),
                 updateFields.Password,
@@ -473,7 +470,7 @@ namespace CUWebinars.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SignIn(SignInModel model)
         {
-            if (ModelState.IsValid && membershipService.LogInUser(globalConfig.Tenant, model.Email, model.Password, model.RememberMe))
+            if (ModelState.IsValid && _membershipService.LogInUser(globalConfig.Tenant, model.Email, model.Password, model.RememberMe))
             {
                 var retURL = model.ReturnUrl.Replace("http://localhost:5556", "");
 
@@ -506,7 +503,7 @@ namespace CUWebinars.Web.Controllers
 
             try
             {
-                membershipService.ResetPassword(globalConfig.Tenant, email);
+                _membershipService.ResetPassword(globalConfig.Tenant, email);
                 cResult.Add(WebUiConstants.OpStatus, "Success");
             }
             catch (Exception)
@@ -551,7 +548,7 @@ namespace CUWebinars.Web.Controllers
                     }
                     else
                     {
-                        if (membershipService.ChangePasswordFromResetKey(model.Key, model.Password))
+                        if (_membershipService.ChangePasswordFromResetKey(model.Key, model.Password))
                             model.ChangePasswordSucceeded = true;
                     }
 
@@ -575,7 +572,7 @@ namespace CUWebinars.Web.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                membershipService.LogOutUser();
+                _membershipService.LogOutUser();
 
                 return RedirectToAction("Index", "Home");
             }
@@ -660,10 +657,10 @@ namespace CUWebinars.Web.Controllers
         //[ValidateAntiForgeryToken]
         public JsonResult CheckEmail(string email, bool disregardIntitutionDomain)
         {
-            Logger.Info("CheckEmail called: " + email);
+            _logger.Info("CheckEmail called: " + email);
             var resultObject = new Dictionary<string, string>();
 
-            var user = membershipService.GetUserByEmail(email);
+            var user = _membershipService.GetUserByEmail(email);
 
             if (user != null)
             {//email exists and view is notified.
@@ -677,7 +674,7 @@ namespace CUWebinars.Web.Controllers
                 return Json(resultObject, JsonRequestBehavior.AllowGet);
 
             var domain = email.Split('@')[1];
-            var institution = membershipService.GetInstitutionByDomain(domain);
+            var institution = _membershipService.GetInstitutionByDomain(domain);
 
             if (institution == null)
                 return Json(resultObject, JsonRequestBehavior.AllowGet);
@@ -691,7 +688,7 @@ namespace CUWebinars.Web.Controllers
             resultObject.Add("City", institution.City);
             resultObject.Add("State", institution.State);
             resultObject.Add("Zip", institution.Zip);
-            Logger.Info("CheckEmailResult: " + resultObject);
+            _logger.Info("CheckEmailResult: " + resultObject);
             return Json(resultObject, JsonRequestBehavior.AllowGet);
         }
 
@@ -707,7 +704,7 @@ namespace CUWebinars.Web.Controllers
             foreach (var error in errors)
             {
                 Debug.WriteLine(error.ErrorMessage);
-                Logger.Error("Account/Register: " + error.ErrorMessage);
+                _logger.Error("Account/Register: " + error.ErrorMessage);
             }
 
             if (ModelState.IsValid)
@@ -717,10 +714,10 @@ namespace CUWebinars.Web.Controllers
                 var lastName = model.RegisterFields.LastName.Trim();
 
                 //first check if email exists
-                var checkIfUsed = membershipService.GetUserByEmail(email);
+                var checkIfUsed = _membershipService.GetUserByEmail(email);
                 if (checkIfUsed != null)
                 {
-                    Logger.Error("dupe email attempt: " + email);
+                    _logger.Error("dupe email attempt: " + email);
                     ModelState.AddModelError("Email", "That email already exists. Would you like to reset the password?");
                     //var scriptSerializer = new System.Web.Script.Serialization.JavaScriptSerializer();
                     //var jsonString = scriptSerializer.Serialize(model);
@@ -728,7 +725,7 @@ namespace CUWebinars.Web.Controllers
                     //return Json(jsonString, JsonRequestBehavior.AllowGet);
                 }
 
-                var myInstitution = membershipService.ProcessInstitutionForUser(model.RegisterFields.Institution.Trim(),
+                var myInstitution = _membershipService.ProcessInstitutionForUser(model.RegisterFields.Institution.Trim(),
                     email,
                     model.RegisterFields.BillingAddress.City.Trim(),
                     model.RegisterFields.BillingAddress.State.Trim(),
@@ -770,7 +767,7 @@ namespace CUWebinars.Web.Controllers
                         }
                     };
 
-                    var webUser = membershipService.CreateWebUser(globalConfig.Tenant,
+                    var webUser = _membershipService.CreateWebUser(globalConfig.Tenant,
                         firstName
                         , lastName
                         , model.RegisterFields.Password
@@ -784,10 +781,10 @@ namespace CUWebinars.Web.Controllers
                         , "A"
                         );
 
-                    if (!stateService.HasValue(Constants.CurrentUser))
-                        stateService.SetValue<WebUser>(Constants.CurrentUser, webUser);
+                    if (!_stateService.HasValue(Constants.CurrentUser))
+                        _stateService.SetValue<WebUser>(Constants.CurrentUser, webUser);
 
-                    var userAccount = membershipService.CreateUser(
+                    var userAccount = _membershipService.CreateUser(
                         globalConfig.Tenant,
                         firstName,
                         lastName,
@@ -801,15 +798,15 @@ namespace CUWebinars.Web.Controllers
                         dataOperations.SetNewAccountToVerified(userAccount.ID);
                     }
 
-                    membershipService.LogInUser(globalConfig.Tenant, model.RegisterFields.Email, model.RegisterFields.Password, true); // log the user in.
-                    Logger.Info("/Account/Register UserAdded: " + model.RegisterFields.Email);
+                    _membershipService.LogInUser(globalConfig.Tenant, model.RegisterFields.Email, model.RegisterFields.Password, true); // log the user in.
+                    _logger.Info("/Account/Register UserAdded: " + model.RegisterFields.Email);
                     return Json(new { Status = "Success" });
 
                 }
                 catch (MembershipCreateUserException e)
                 {
                     ModelState.AddModelError(string.Empty, ErrorCodeToString(e.StatusCode)); //TODO: add error message here and handle in razor
-                    Logger.Error("/Account/Register: " + e.Message);
+                    _logger.Error("/Account/Register: " + e.Message);
                 }
             }
 
@@ -1069,9 +1066,9 @@ namespace CUWebinars.Web.Controllers
         {
             var identity = ClaimsPrincipal.Current;
 
-            var userAccount = membershipService.GetUserAccountByUserId(identity.GetUserID());
+            var userAccount = _membershipService.GetUserAccountByUserId(identity.GetUserID());
 
-            var user = membershipService.GetUserByEmail(userAccount.Email);
+            var user = _membershipService.GetUserByEmail(userAccount.Email);
             return user;
         }
 
