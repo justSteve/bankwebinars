@@ -59,6 +59,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\BrockAllen.MembershipReboot.WebHost.5.0.0\lib\net45\BrockAllen.MembershipReboot.WebHost.dll</HintPath>
     </Reference>
+    <Reference Include="Common.Logging">
+      <HintPath>..\packages\Common.Logging.2.2.0\lib\net40\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Logging.Core">
+      <HintPath>..\packages\Common.Logging.Core.2.2.0\lib\net40\Common.Logging.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Logging.Log4Net1211">
+      <HintPath>..\packages\Common.Logging.Log4Net1211.2.2.0\lib\net40\Common.Logging.Log4Net1211.dll</HintPath>
+    </Reference>
     <Reference Include="DotNetOpenAuth.AspNet">
       <HintPath>..\packages\DotNetOpenAuth.AspNet.4.3.1.13153\lib\net45-full\DotNetOpenAuth.AspNet.dll</HintPath>
     </Reference>
@@ -107,6 +116,9 @@
     <Reference Include="Glimpse.Mvc4, Version=1.5.3.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Glimpse.Mvc4.1.5.3\lib\net40\Glimpse.Mvc4.dll</HintPath>
+    </Reference>
+    <Reference Include="JSNLog">
+      <HintPath>..\packages\JSNLog.2.6.5.0\lib\net40\JSNLog.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
@@ -336,6 +348,7 @@
   <ItemGroup>
     <Compile Include="App_Start\AuthConfig.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\JSNLogConfig.cs" />
     <Compile Include="App_Start\MembershipRebootConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\NinjectResolver.cs" />
@@ -872,6 +885,7 @@
     <Content Include="Content\Site.css">
       <DependentUpon>site.less</DependentUpon>
     </Content>
+    <Content Include="NuGet\readme.txt" />
     <Content Include="Properties\PublishProfiles\BankWebinars - Web Deploy %284%29.pubxml.user" />
     <Content Include="Properties\PublishProfiles\CUWebinars - Web Deploy.pubxml.user" />
     <Content Include="Scripts\app\cart\add-additional-locations.js" />
@@ -990,6 +1004,8 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\jsnlog.js" />
+    <Content Include="Scripts\jsnlog.min.js" />
     <Content Include="Scripts\knockout-2.3.0.debug.js" />
     <Content Include="Scripts\knockout-2.3.0.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />

@@ -29,9 +29,9 @@ namespace CUWebinars.Business.Repository
 
             newOrder.OrderRows = new List<OrderRow>();
             newOrder.OrderRows.Add(orderRow);
-            
+
             Add(newOrder);
-            
+
             db.SaveChanges();
 
             //  Best to load these from the database
@@ -41,9 +41,9 @@ namespace CUWebinars.Business.Repository
             return newOrder;
         }
 
-        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation additionalLocation, RegType registrationType)
+        public OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, RegType registrationType)
         {
-            var strongTypedContext = (TTSWebinarsContext) db;
+            var strongTypedContext = (TTSWebinarsContext)db;
             var entry = strongTypedContext.Entry(webinar);
 
             //if (entry.State != EntityState.Detached)
@@ -53,14 +53,21 @@ namespace CUWebinars.Business.Repository
             //entry.State = EntityState.Modified;
 
             var newOrderRow = strongTypedContext.OrderRows.Create();
-
             if (additionalLocation != null)
-                newOrderRow.AdditionalLocation.Add(additionalLocation);
+            {
+                foreach (var addLoc in additionalLocation)
+                {
+                    //OrderRow is instantiated but has lots of null properties...
+                    // ... including 'Order'.
+                    // addLoc is instantiated.
+                    newOrderRow.AdditionalLocation.Add(addLoc);
+                }
+            }
 
             newOrderRow.Webinar = webinar;
             newOrderRow.RegistrationType = registrationType;
             newOrderRow.RowStatus = OrderRowStatus.Active;
-            
+
             //strongTypedContext.OrderRows.Add(newOrderRow);
 
             try
@@ -81,31 +88,16 @@ namespace CUWebinars.Business.Repository
             return newOrderRow;
         }
 
-        public AdditionalLocation CreateAdditionalLocation(decimal price, string fullName, string email)
+        public AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullName)
         {
             var strongTypedContext = (TTSWebinarsContext)db;
-            //var entry = db.Entry(RegType);
-
-            //if (entry.State != EntityState.Detached)
-            //    throw new Exception("Webinar must be detached from its original DbContext");
-
-            //strongTypedContext.Options.Attach(RegType);
-            //db.Entry(RegType).State = EntityState.Modified;
-
-            //var AdditionalLocation = new List<AdditionalEmails>(AdditionalLocationEmails.Length);
-            
-            //AdditionalLocation.AddRange(AdditionalLocationEmails.Select(email => new AdditionalEmails
-            //{
-            //    Email = email
-            //}));
-
 
             var additionalLocation = strongTypedContext.AdditionalLocation.Create();
-            
+
             additionalLocation.Price = price;
             additionalLocation.Email = email;
             additionalLocation.FullName = fullName;
-            
+
             strongTypedContext.AdditionalLocation.Add(additionalLocation);
 
             try
@@ -122,7 +114,7 @@ namespace CUWebinars.Business.Repository
                     }
                 }
             }
-            
+
             return additionalLocation;
         }
 
@@ -212,8 +204,8 @@ namespace CUWebinars.Business.Repository
             var a = items.Include(o => o.OrderRows.Select(w => w.Webinar))
                 .Where(o => o.idUser == idUser
                                           && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Recorded
-                    //&& (o.OrderStatus == OrderStatus.Submitted 
-                    //|| o.OrderStatus == OrderStatus.Paid)
+                //&& (o.OrderStatus == OrderStatus.Submitted 
+                //|| o.OrderStatus == OrderStatus.Paid)
                     )
                 .ToList();
             return a;

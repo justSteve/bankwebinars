@@ -5,7 +5,7 @@ namespace CUWebinars.Web.Models
 {
     public class IncomingOrderModel
     {
-        public IList<string> AdditionalLocation { get; set; }
+        public string AdditionalLocation { get; set; }
 
         //public string AdminComments { get; set; }
         public string AffiliateComments { get; set; }

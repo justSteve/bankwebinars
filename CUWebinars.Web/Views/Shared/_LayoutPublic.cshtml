@@ -117,7 +117,17 @@
                 }
             })();
         </script>*@
-    @*@Html.Raw(JSNLog.JavascriptLogging.Configure())*@
+    @*@Html.Raw(JSNLog.JavascriptLogging.Configure())
+
+
+    <script type="text/javascript">
+        // "mylogger" logs to just the console
+        var consoleAppender = JL.createConsoleAppender('consoleAppender');
+        JL("mylogger").setOptions({ "appenders": [consoleAppender] });
+    </script>*@
+    @*<script language="javascript">
+        JL().fatal("log message");
+    </script>*@
 
     <title>@ViewBag.Title</title>
     <!-- Meta Data ================ -->
@@ -197,7 +207,7 @@
 
         <!--this is the login for the user-->
         @Html.Partial("_LoginPartial")
-        @*@Html.ActionLink("Membership Notifications", "MembershipNotifications", "MembershipNotificationOps")*@
+        @Html.ActionLink("Membership Notifications", "MembershipNotifications", "MembershipNotificationOps")
 
 
         <!--close user nav

@@ -144,20 +144,28 @@ namespace CUWebinars.Web.Controllers.api
                     );
             }
 
-            AdditionalLocation AdditionalLocation = null;
+            IList<AdditionalLocation> addLocation = new List<AdditionalLocation>();
+
 
             if (model.AdditionalLocation != null && model.AdditionalLocation.Any())
             {
-                //var makeAddLocs = model.AdditionalLocation.ToString().Split(',');
-                //foreach (var makeAddLoc in makeAddLocs)
-                //{
-                //    var i = _orderManagementService.CreateAdditionalLocation()
-                //}
+                var price = 150;
+                //string email,decimal price,string fullname
+                var makeAddLocs = model.AdditionalLocation.ToString().Split(',');
+                var i = 0;
+                foreach (var makeAddLoc in makeAddLocs)
+                {
+                    var AEmail = makeAddLocs[i];
+                    var AFirstName = email.Split('@')[0].ToString();
+                    var ALastName = email.Split('@')[1].ToString();
+                    addLocation.Add(_orderManagementService.CreateAdditionalLocation(AEmail, price, AFirstName + ' ' + ALastName));
+                    i++;
+                }
             }
 
             var orderRow = _orderManagementService.CreateOrderRow(
                 webinar,
-                AdditionalLocation,
+                addLocation,
                 model.idRegType
                 );
 

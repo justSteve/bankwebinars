@@ -10,8 +10,8 @@ namespace CUWebinars.Business.Services
         void AssignUserToOrder(Order currentOrder);
         Order AssignWebUserToOrder(WebUser webUser, Order order);
         string BuildConnectionInfo(OrderRow orderRow);
-        OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation AdditionalLocation, RegType registrationType);
-        OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation AdditionalLocation, int registrationType);
+        //OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation AdditionalLocation, RegType registrationType);
+        OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, int registrationType);
 
         AdditionalLocation CreateAdditionalLocation(string email,decimal price,string fullname);
         Affiliate GetAffiliateById(int id);

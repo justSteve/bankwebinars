@@ -71,7 +71,7 @@ $(function () {
     });
     
     $('#GetImportOrderFieldsButton').on('click', function () {
-        $.ajax({
+         $.ajax({
             type: 'GET',
             contentType: constants.JsonContentType,
             cache: false,
@@ -82,6 +82,7 @@ $(function () {
                 // this is where we append a loading image
                 if ($('#ImportOrderButton').length > 0)
                     $('#ImportOrderButton').off('click');
+                jsonPayload = $('#JsonPayload').text();
                 $('#WaitIndicator').show();
             }
         }).done(function (result) {
@@ -89,8 +90,7 @@ $(function () {
             $('#InputFormFields').html(result);
 
             $('#ImportOrderButton').on('click', function () {
-
-                var jsonPayload = $('#JsonPayload').text();
+                jsonPayload = $('#JsonPayload').text();
 
                 $.ajax({
                     type: 'POST',
@@ -98,7 +98,7 @@ $(function () {
                     cache: false,
                     url: '/Api/Order',
                     dataType: constants.HtmlDataType,
-                    data: jsonPayload,
+                    data:  $('#JsonPayload').text(),
                     beforeSend: function () {
                         // this is where we append a loading image
                         $('#WaitIndicator').show();

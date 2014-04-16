@@ -66,21 +66,21 @@ namespace CUWebinars.Business.Services
             return string.Empty;
         }
 
-        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation AdditionalLocation, int registrationType)
+        public OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, int registrationType)
         {
             var regType = _RegTypeRepository.FindRegType(registrationType);
-            return _orderRepository.CreateOrderRow(webinar, AdditionalLocation, regType);
+            return _orderRepository.CreateOrderRow(webinar, additionalLocation, regType);
         }
 
-        public OrderRow CreateOrderRow(Webinar webinar, AdditionalLocation AdditionalLocation, RegType registrationType)
+        public OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, RegType registrationType)
         {
-            return _orderRepository.CreateOrderRow(webinar, AdditionalLocation, registrationType);
+            return _orderRepository.CreateOrderRow(webinar, additionalLocation, registrationType);
         }
 
 
         public AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullname)
         {
-            throw new NotImplementedException();
+           return  _orderRepository.CreateAdditionalLocation(email, price, fullname);
         }
 
         public Affiliate GetAffiliateById(int id)

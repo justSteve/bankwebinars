@@ -208,10 +208,7 @@ namespace CUWebinars.Web.Controllers
             var importOrderViaDashboardViewModel = new ImportOrderViaDashboardViewModel
             {
                 JsonPayload = @"{ 
-                                  ""AdditionalLocations"": [
-                                    ""dave@turing.com"",
-                                    ""jed@turing.com""
-                                    ],
+                                  ""AdditionalLocation"": ""dave@turing.com,jed@turing.com"",
                                   ""AffiliateComments"": ""Affiliate comments"",
                                   ""BillingAddress"": {
                                     ""AddressType"": ""Billing"",
