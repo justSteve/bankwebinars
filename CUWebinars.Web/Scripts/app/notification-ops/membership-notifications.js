@@ -1,5 +1,6 @@
 var passwordResetInitialized = false;
 var passwordConfirmResetInitialized = false;
+var jsonDataForImportedOrder;
 
 $(function () {
 
@@ -71,7 +72,15 @@ $(function () {
     });
     
     $('#GetImportOrderFieldsButton').on('click', function () {
-         $.ajax({
+
+        if (jsonDataForImportedOrder) {
+            $('#OrderSucceeded').remove();
+            $('#InputFormFields').append('<button id="ImportOrderButton" class =" btn btn-success">Import Order</button>');
+            $('#InputFormFields').append('<textarea id="JsonPayloadTextArea" rows="40" cols="100" style="width:100%;margin-top:10px"></textarea>');
+            $('#JsonPayloadTextArea').val(jsonDataForImportedOrder);
+            addImportOrderButtonClick();
+        } else {
+        $.ajax({
             type: 'GET',
             contentType: constants.JsonContentType,
             cache: false,
@@ -89,8 +98,20 @@ $(function () {
 
             $('#InputFormFields').html(result);
 
+                addImportOrderButtonClick();
+
+            }).always(function () {
+                $('#WaitIndicator').hide();
+            });
+        }
+    });
+});
+
+function addImportOrderButtonClick() {
             $('#ImportOrderButton').on('click', function () {
-                jsonPayload = $('#JsonPayload').text();
+
+        var jsonPayload = $('#JsonPayloadTextArea').val();
+        jsonDataForImportedOrder = jsonPayload;
 
                 $.ajax({
                     type: 'POST',
@@ -107,18 +128,13 @@ $(function () {
 
                     var resultAsJson = JSON.parse(result);
 
-                    $('#InputFormFields').html('<span class="label label-success">' + resultAsJson.Result + '</span>');
-
-                }).always(function () {
-                    $('#WaitIndicator').hide();
-                });
-            });
+            $('#InputFormFields').html('<span id="OrderSucceeded" class="label label-success">' + resultAsJson.Result + '</span>');
             
         }).always(function () {
             $('#WaitIndicator').hide();
         });
     });
-});
+};
 
 function InitializeCreateUserFields()
 {

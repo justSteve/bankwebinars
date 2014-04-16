@@ -203,12 +203,13 @@ namespace CUWebinars.Web.Controllers
             return Json(model);
         }
 
+        
         public PartialViewResult GetJsonTextArea()
         {
-            var importOrderViaDashboardViewModel = new ImportOrderViaDashboardViewModel
-            {
-                JsonPayload = @"{ 
-                                  ""AdditionalLocation"": ""dave@turing.com,jed@turing.com"",
+            const string importOrderViaDashboardViewModel = @"{""AdditionalLocations"": [
+                                    ""dave@turing.com"",
+                                    ""jed@turing.com""
+                                    ],
                                   ""AffiliateComments"": ""Affiliate comments"",
                                   ""BillingAddress"": {
                                     ""AddressType"": ""Billing"",
@@ -219,7 +220,7 @@ namespace CUWebinars.Web.Controllers
                                     ""City"": ""Del Rio"",
                                     ""Zip"": ""5000"",
                                     ""State"": ""Tx"",
-                                    ""Country"": ""USA"",
+                                    ""Country"": ""USA""
                                   },
                                   ""Email"": ""alanbturingy@turing.com"",
                                   ""FirstName"": ""Alan"",
@@ -237,12 +238,12 @@ namespace CUWebinars.Web.Controllers
                                     ""City"": ""Del Rio"",
                                     ""Zip"": ""5000"",
                                     ""State"": ""Tx"",
-                                    ""Country"": ""USA"",
+                                    ""Country"": ""USA""
                                   },
                                   ""SendNotification"": ""true"",
-                                  ""Title"": ""Mr"",
-                                } "
-            };
+                                  ""Title"": ""Mr""}";
+
+            ViewBag.Payload = importOrderViaDashboardViewModel;
 
             return PartialView("~/Views/MembershipNotificationOps/_ImportOrder.cshtml", importOrderViaDashboardViewModel);
         } 
