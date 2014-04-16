@@ -1,4 +1,6 @@
-﻿using System.Web.UI.WebControls.WebParts;
+﻿using System.IO;
+using System.Web;
+using System.Web.UI.WebControls.WebParts;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
@@ -12,6 +14,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Web.Controllers
@@ -246,7 +249,24 @@ namespace CUWebinars.Web.Controllers
             ViewBag.Payload = importOrderViaDashboardViewModel;
 
             return PartialView("~/Views/MembershipNotificationOps/_ImportOrder.cshtml", importOrderViaDashboardViewModel);
-        } 
+        }
+
+        public JsonResult ReadCsvAndReturnJson()
+        {
+            IncomingOrderModel incomingOrderModel = null;
+
+            using (var fileStream =
+                    System.IO.File.OpenRead(
+                    Path.Combine(HttpRuntime.AppDomainAppPath, @"App_Data/Orders", "sampleorder.csv"))
+                    )
+            {
+                incomingOrderModel = CsvParseOps.ParseCsvForIncomingOrderModel(fileStream);
+            }
+
+            var returnPayload = JsonConvert.SerializeObject(incomingOrderModel);
+
+            return Json(returnPayload, JsonRequestBehavior.AllowGet);
+        }
 
         private List<Address> ProcessAddresses(RegisterViewModel registerViewModel)
         {

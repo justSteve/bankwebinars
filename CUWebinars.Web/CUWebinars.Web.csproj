@@ -359,6 +359,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\api\AddressesController.cs" />
+    <Compile Include="Core\CsvParseOps.cs" />
     <Compile Include="Models\IncomingOrderModel.cs" />
     <Compile Include="Controllers\api\OrderController.cs" />
     <Compile Include="Controllers\api\ParentApiController.cs" />
@@ -878,6 +879,7 @@
     <Content Include="Membership\Email\EmailTemplates\AccountCreatedEvent_Subject.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailChangedEvent_Body.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailChangedEvent_Subject.cshtml" />
+    <Content Include="App_Data\Orders\sampleorder.csv" />
     <None Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Body.cshtml" />
     <None Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Subject.cshtml" />
     <Content Include="favicon.ico" />

@@ -5,7 +5,7 @@ namespace CUWebinars.Web.Models
 {
     public class IncomingOrderModel
     {
-        public string AdditionalLocation { get; set; }
+        public IList<IncomingAdditionalLocation> AdditionalLocation { get; set; }
 
         //public string AdminComments { get; set; }
         public string AffiliateComments { get; set; }
@@ -28,5 +28,12 @@ namespace CUWebinars.Web.Models
         //public UserType UserType { get; set; }
         //public USTimeZone UsTimeZone { get; set; }
         //public string UserComments { get; set; }
+    }
+
+    public class IncomingAdditionalLocation
+    {
+        public string Email { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
     }
 }

@@ -105,6 +105,51 @@ $(function () {
             });
         }
     });
+
+    $('#GetImportOrderFieldsFromCsvButton').on('click', function () {
+        
+        $.ajax({
+            type: 'GET',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: '/MembershipNotificationOps/ReadCsvAndReturnJson',
+            dataType: constants.HtmlDataType,
+            data: null,
+            beforeSend: function () {
+                // this is where we append a loading image
+                if ($('#ImportOrderButton').length > 0)
+                    $('#ImportOrderButton').off('click');
+                $('#WaitIndicator').show();
+            }
+        }).done(function (result) {
+
+            var bla = JSON.parse(result);
+
+            $.ajax({
+                type: 'POST',
+                contentType: constants.JsonContentType,
+                cache: false,
+                url: '/Api/Order',
+                dataType: constants.HtmlDataType,
+                data: bla,
+                beforeSend: function () {
+                    // this is where we append a loading image
+                    $('#WaitIndicator').show();
+                }
+            }).done(function (result) {
+
+                var resultAsJson = JSON.parse(result);
+
+                $('#InputFormFields').html('<span id="OrderSucceeded" class="label label-success">' + resultAsJson.Result + '</span>');
+
+            }).always(function () {
+                $('#WaitIndicator').hide();
+            });
+
+            //addImportOrderButtonClick();
+
+        });
+    });
 });
 
 function addImportOrderButtonClick() {
