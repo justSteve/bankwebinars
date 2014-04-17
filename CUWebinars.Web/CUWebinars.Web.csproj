@@ -880,6 +880,7 @@
     <Content Include="Membership\Email\EmailTemplates\EmailChangedEvent_Body.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailChangedEvent_Subject.cshtml" />
     <Content Include="App_Data\Orders\sampleorder.csv" />
+    <Content Include="App_Data\Orders\sampleorderFromExcel.csv" />
     <None Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Body.cshtml" />
     <None Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Subject.cshtml" />
     <Content Include="favicon.ico" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -10,59 +11,65 @@ namespace CUWebinars.Web.Core
 {
     public static class CsvParseOps
     {
+        private static readonly IDictionary<string,string> DataDictionary = new Dictionary<string, string>();
+
         public static IncomingOrderModel ParseCsvForIncomingOrderModel(Stream stream)
         {
-            var incomingOrderModel = new IncomingOrderModel();
-            string allData = string.Empty;
+            var incomingOrderModel = new IncomingOrderModel
+            {
+                BillingAddress = new Address(),
+                ShippingAddress = new Address()
+            };
+            string line = string.Empty;
             string remainingData = string.Empty;
 
             using (var sr = new StreamReader(stream))
             {
-                sr.ReadLine();//discard header
-                allData = sr.ReadLine();
+                string[] keys, values;
+                keys = values = null;
+
+                line = sr.ReadLine();
+
+                if (line != null)
+                    keys = line.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                else
+                    throw new NullReferenceException("The header section of the csv file is missing.");
+
+
+                line = sr.ReadLine();
+                if (line != null)
+                {
+                    values = line.Split(',');
+                    DataDictionary.Clear();
+
+                    for (int i = 0; i < keys.Length; i++)
+                    {
+                        DataDictionary.Add(keys[i].Trim(), values[i].Trim());
+                    }
+                }
+                else
+                    throw new NullReferenceException("The values section of the csv file is missing.");
+
+                incomingOrderModel.Title = DataDictionary[keys[1]];
+                incomingOrderModel.idWebinar = int.Parse(DataDictionary[keys[2]]);
+                incomingOrderModel.idRegType = int.Parse(DataDictionary[keys[3]]);
+                incomingOrderModel.idAffiliate = int.Parse(DataDictionary[keys[4]]);
+                incomingOrderModel.FirstName = DataDictionary[keys[5]];
+                incomingOrderModel.LastName = DataDictionary[keys[6]];
+                incomingOrderModel.Institution = DataDictionary[keys[7]];
+                incomingOrderModel.Title = DataDictionary[keys[8]]; ;
+                incomingOrderModel.Email = DataDictionary[keys[9]];
+                incomingOrderModel.BillingAddress.Phone = DataDictionary[keys[10]];
+                incomingOrderModel.BillingAddress.StreetAddress = DataDictionary[keys[11]];
+                incomingOrderModel.BillingAddress.StreetAddress2 = DataDictionary[keys[12]];
+                incomingOrderModel.BillingAddress.City = DataDictionary[keys[13]];
+                incomingOrderModel.BillingAddress.State = DataDictionary[keys[14]];
+                incomingOrderModel.BillingAddress.Zip = DataDictionary[keys[15]];
+                incomingOrderModel.BillingAddress.Country = DataDictionary[keys[16]];
+
+                return incomingOrderModel;
             }
 
-            incomingOrderModel.AdditionalLocation = GetAdditionaLocationsFromData(allData).AsQueryable().ToList();
-            remainingData = allData.Substring(allData.IndexOf(']'));
-            incomingOrderModel.AffiliateComments =
-                remainingData.SubstringFromNthToMth(remainingData.GetIndexOfNthChar((0), ','),
-                    remainingData.GetIndexOfNthChar((1), ',')).Replace(",", string.Empty);
-
-            remainingData = remainingData.Substring(remainingData.GetIndexOfNthChar(1, ','));
-            incomingOrderModel.BillingAddress = GetAddressFromData(remainingData);
-            remainingData = remainingData.Substring(remainingData.IndexOf("}"));
-
-            incomingOrderModel.Email = remainingData.SubstringFromNthToMth(remainingData.GetIndexOfNthChar((0), ','),
-                    remainingData.GetIndexOfNthChar((1), ',')).Replace(",", string.Empty).Trim();
-
-            incomingOrderModel.FirstName = remainingData.SubstringFromNthToMth(remainingData.GetIndexOfNthChar((1), ','),
-                    remainingData.GetIndexOfNthChar((2), ',')).Replace(",", string.Empty).Trim();
-            incomingOrderModel.idAffiliate = int.Parse(remainingData.SubstringFromNthToMth(remainingData.GetIndexOfNthChar((2), ','),
-                    remainingData.GetIndexOfNthChar((3), ',')).Replace(",", string.Empty));
-
-            incomingOrderModel.idRegType = int.Parse(remainingData.SubstringFromNthToMth(remainingData.GetIndexOfNthChar((3), ','),
-                    remainingData.GetIndexOfNthChar((4), ',')).Replace(",", string.Empty));
-
-            incomingOrderModel.idWebinar = int.Parse(remainingData.SubstringFromNthToMth(remainingData.GetIndexOfNthChar((4), ','),
-                    remainingData.GetIndexOfNthChar((5), ',')).Replace(",", string.Empty));
-
-            incomingOrderModel.Institution = remainingData.SubstringFromNthToMth(remainingData.GetIndexOfNthChar((5), ','),
-                    remainingData.GetIndexOfNthChar((6), ',')).Replace(",", string.Empty).Replace(";", ",").Trim();
-
-            incomingOrderModel.LastName = remainingData.SubstringFromNthToMth(remainingData.GetIndexOfNthChar((6), ','),
-                    remainingData.GetIndexOfNthChar((7), ',')).Replace(",", string.Empty).Trim();
-
-            incomingOrderModel.SendNotification = bool.Parse(remainingData.SubstringFromNthToMth(remainingData.GetIndexOfNthChar((7), ','),
-                    remainingData.GetIndexOfNthChar((8), ',')).Replace(",", string.Empty));
-
-            remainingData = remainingData.Substring(remainingData.LastIndexOf('{'));
-            incomingOrderModel.ShippingAddress = GetAddressFromData(remainingData);
-
-            remainingData = remainingData.Substring(remainingData.LastIndexOf('}'));
-            incomingOrderModel.Title = remainingData.Substring(remainingData.IndexOf(",") + 1).Trim();
-
-
-            return incomingOrderModel;
         }
 
 
