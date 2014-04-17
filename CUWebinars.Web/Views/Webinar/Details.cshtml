@@ -198,12 +198,12 @@
             </aside>
             <!--close aside .widget -->
 
-            <aside class="widget">
+            @*<aside class="widget">
                 <h5 class="short_headline"><span>Search</span></h5>
                 <form class="searchform" method="get">
                     <input type="search" class="span12" value="type and hit enter" onfocus="this.value=''" onblur="this.value='type and hit enter'" />
                 </form>
-            </aside>
+            </aside>*@
             <!--close aside widget-->
         </section>
         <!--close section tertiary-column sidebar span3-->
@@ -223,7 +223,7 @@
 
                         <div class="tab-content">
                             <div class="tab-pane active" id="signUp">
-                                <input type="button" onclick=" signUp(); " class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
+                                <input type="button" onclick=" signUpv1(); " class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
                                 @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)
                             </div>
                             <div class="tab-pane" id="contactInfo">

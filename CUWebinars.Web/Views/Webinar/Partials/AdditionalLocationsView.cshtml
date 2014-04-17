@@ -2,49 +2,58 @@
 @{
     if (Model.Webinar.Status == WebinarStatus.Scheduled)
     {
-        Model.AddAdditionalLocationViewModel = new AddAdditionalLocationViewModel
-        {
-            AdditionalLocations = Model.AdditionalLocations,
-            Order = Model.Order,
-            Webinar = Model.Webinar,
-            WebUser = Model.WebUser
-        };
-        
+        //Model.AddAdditionalLocationViewModel = new AddAdditionalLocationViewModel
+        //{
+        //    AdditionalLocations = Model.AdditionalLocations,
+        //    Order = Model.Order,
+        //    Webinar = Model.Webinar,
+        //    WebUser = Model.WebUser
+        //};
+
         <div id="AdditionalLocationContainer" class="well" style="margin-right: 50px;margin-left: 50px;">
             <h5>Additional Locations</h5>
+            <div>
+                <blockquote style="margin-bottom: 0px;">Want your branches to participate? Facilities within your organization will be able to participate without the travel costs of coming to one location.</blockquote><div style="padding-left: 50px;">
+                    <span>
+                        <b>Each additional location adds $100 to your registration.</b>
+                        <br /> Call 800-831-0678 ext. 7 to add an address to your order!
+                    </span>
+                    @*<div id="collectAdditionalLocations"> </div>*@
+                </div>
+            </div>
 
-            @if (Model.Webinar.Title.Contains("Compliance Perspectives"))
-            {
-                <div style="display: none" id="trial">
-                    <p>Additional locations are not included in the trial subscription.</p>
-                </div>
-                <div id="first3" style="padding-left: 50px;">
-                    Subscribers to the <b>Compliance Perspectives Series</b> receive the first three locations
-                    <br />
-                    at no additional charge ($150 per connection after those first three):
-                    <br />
-                    <div style="padding-left: 50px;">
-                        <input type="text" name="Email_0" id="Email_0" value="Email for Additional Location" class="{email: true}" /><br />
-                        <input type="text" name="Email_1" id="Email_1" value="2nd Location" disabled="disabled" class="{email: true}" /><br />
-                        <input type="text" name="Email_2" id="Email_2" value="3rd Location" disabled="disabled" class="{email: true}" /><br />
-                    </div>
-                </div>
-                <div style="display: none" id="addLoc4Cost">
-                    <button value="Add?" name="showAddLocModal" id="showAddLocModal">Add?</button>
-                </div>
-            }
-            else
-            {
-                @Html.HiddenFor(m => m.WebUser.idUser)
-                @Html.HiddenFor(m => m.Webinar.idWebinar)
-                
-                if (Model.Order != null)
+            @*@if (Model.Webinar.Title.Contains("Compliance Perspectives"))
                 {
-                    Html.HiddenFor(m => m.Order.idOrder);
+                    <div style="display: none" id="trial">
+                        <p>Additional locations are not included in the trial subscription.</p>
+                    </div>
+                    <div id="first3" style="padding-left: 50px;">
+                        Subscribers to the <b>Compliance Perspectives Series</b> receive the first three locations
+                        <br />
+                        at no additional charge ($150 per connection after those first three):
+                        <br />
+                        <div style="padding-left: 50px;">
+                            <input type="text" name="Email_0" id="Email_0" value="Email for Additional Location" class="{email: true}" /><br />
+                            <input type="text" name="Email_1" id="Email_1" value="2nd Location" disabled="disabled" class="{email: true}" /><br />
+                            <input type="text" name="Email_2" id="Email_2" value="3rd Location" disabled="disabled" class="{email: true}" /><br />
+                        </div>
+                    </div>
+                    <div style="display: none" id="addLoc4Cost">
+                        <button value="Add?" name="showAddLocModal" id="showAddLocModal">Add?</button>
+                    </div>
                 }
+                else
+                {
+                    @Html.HiddenFor(m => m.WebUser.idUser)
+                    @Html.HiddenFor(m => m.Webinar.idWebinar)
 
-                @Html.DisplayFor(m => m.AddAdditionalLocationViewModel)
-            }
+                    if (Model.Order != null)
+                    {
+                        Html.HiddenFor(m => m.Order.idOrder);
+                    }
+
+                    @Html.DisplayFor(m => m.AddAdditionalLocationViewModel)
+                }*@
         </div>
     }
 }

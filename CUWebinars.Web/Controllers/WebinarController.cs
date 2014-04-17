@@ -362,6 +362,11 @@ namespace CUWebinars.Web.Controllers
             ViewBag.userHasOpenOrder = 0;
             ViewBag.userOwnsThisEvent = 0;
             ;
+            ViewBag.upList = null;
+            ViewBag.regList = null;
+
+
+
             ViewBag.PageStyleType = "holy-grail-three-columns";
             //
             WebUser user = Request.IsAuthenticated ? _membershipService.GetUserByEmail(User.Identity.Name) : new WebUser();

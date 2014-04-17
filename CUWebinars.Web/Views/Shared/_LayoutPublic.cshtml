@@ -263,7 +263,7 @@
                         <ul>@Html.Raw(sessionRecorded)</ul>
                         @*<ul></ul>*@
                     </li>
-                    @*<li>
+                    <li>
                             <a href="javascript:void(0)">About Us<i></i></a>
                             <ul>
                                 <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/WhatIsAWebinar">What Is A Webinar?</a></li>
@@ -271,8 +271,8 @@
                                 <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/DetailedConnectionInstructions">Connecting to Your Webinar</a></li>
                                 <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/contactus">Contact Us</a></li>
                             </ul>
-                        </li>*@
-                    <li class="parent">
+                        </li>
+                    @*<li class="parent">
                         @{
                             if (Request.IsAuthenticated)
                             {
@@ -292,9 +292,7 @@
                                 //}
                             }
                         }
-
-
-                    </li>
+                    </li>*@
 
                     @*@if (Request.IsAuthenticated)
                         {
@@ -336,9 +334,11 @@
 
             <div class="row-fluid">
                 <div class="span4">
-                    <h4>
+                    <section>
+                        <h4>Stay Updated</h4>
                         @{Html.RenderPartial("Partials/_AddToMailingBox");}
-                    </h4>
+
+                    </section>
                 </div>
                 <!-- close .span4 -->
                 <!--section containing newsletter signup and recent images-->
@@ -368,7 +368,7 @@
                         </ul>
                     </section>
 
-                    <section>
+                    @*<section>
                         <h4>Latest Blog Posts</h4>
                         <ul class="footerPosts">
                             <li><a href="blog-single.html">We will amplify our power to benchmark</a> <span class="meta">December 10, 2012</span> </li>
@@ -378,7 +378,7 @@
                             <li><a href="blog-single.html">It is stunning to you!</a> <span class="meta">September 10, 2012</span> </li>
                             <li><a href="blog-single.html">We will increase our aptitude to evolve </a> <span class="meta">November 15, 2012</span> </li>
                         </ul>
-                    </section>
+                    </section>*@
                 </div>
                 <!-- close .span4 -->
             </div>

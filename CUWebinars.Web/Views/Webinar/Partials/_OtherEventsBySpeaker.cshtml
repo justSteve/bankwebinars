@@ -4,48 +4,56 @@
 @{
 
     var idPresenter = Model.Webinar.Presenter.idUser;
-
-
-
+    
     IList<Webinar> upList = Model.Webinar.Presenter
-        .Webinars.Where(w => w.Status == WebinarStatus.Scheduled && w.idPresenter == idPresenter).ToList();
+        .Webinars.Where(w => w.Status == WebinarStatus.Scheduled && w.idPresenter == idPresenter
+         && w.idWebinar != Model.Webinar.idWebinar).ToList();
     IList<Webinar> recList = Model.Webinar.Presenter
-        .Webinars.Where(w => w.Status == WebinarStatus.Recorded && w.idPresenter == idPresenter).ToList();
+        .Webinars.Where(w => w.Status == WebinarStatus.Recorded && w.idPresenter == idPresenter
+        ).ToList();
+    if (upList.Count > 1 || recList.Count > 0)
+    {
+        <aside class="widget clearfix">
+            <h5 class="short_headline"><span>@Model.Webinar.Presenter.WebUser.FirstName's Other Events</span></h5>
+            <div>
+                @if (upList.Count > 0)
+                {
+                    <h4>Upcoming</h4>
+                    <ul class="navigation small">
+
+
+                        @foreach (var title in upList)
+                        {
+                            if (title.idWebinar != Model.Webinar.idWebinar)
+                            {
+                                <li>@Html.ActionLink(@title.Title, "Details", "Webinar", new {target = "_new"})</li>
+                            }
+                            else
+                            {
+                                <span>This Event</span>
+                            }
+                        }
+                    </ul>
+                }
+                @if (recList.Count > 0)
+                {
+                    <h4>OnDemand</h4>
+                    <ul class="navigation small">
+
+                        @foreach (var title in recList)
+                        {
+                            if (title.idWebinar != Model.Webinar.idWebinar)
+                            {
+                                <li>@Html.ActionLink(@title.Title, "Details", "Webinar", new {target = "_new"})</li>
+                            }
+                            else
+                            {
+                                <span>This Event</span>
+                            }
+                        }
+                    </ul>
+                }
+            </div>
+        </aside>
+    }
 }
-<aside class="widget clearfix">
-    <h5 class="short_headline"><span>@Model.Webinar.Presenter.WebUser.FirstName's Other Events</span></h5>
-    <div>
-        @if (upList.Count > 0)
-        {
-            <h4>Upcoming</h4>
-            <ul class="navigation small">
-
-
-                @foreach (var title in upList)
-                {
-                    if (title.idWebinar != Model.Webinar.idWebinar)
-                    {
-                        <li>@Html.ActionLink(@title.Title, "Details", "Webinar", new { target = "_new" })</li>
-                    }
-                    else
-                    {
-                        <span>This Event</span>}
-                }
-            </ul>}
-        @if (recList.Count > 0)
-        {
-            <h4>OnDemand</h4><ul class="navigation small">
-
-                @foreach (var title in recList)
-                {
-                    if (title.idWebinar != Model.Webinar.idWebinar)
-                    {
-                        <li>@Html.ActionLink(@title.Title, "Details", "Webinar", new { target = "_new" })</li>
-                    }
-                    else
-                    {
-                        <span>This Event</span>}
-                }
-            </ul>}
-    </div>
-</aside>

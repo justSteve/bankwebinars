@@ -186,8 +186,9 @@
     <None Include="SQLSeeding\BACPACs\Options2RegType.bacpac" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="SQLSeeding\ExecutesTheMigrationsScripts.sql" />
     <Content Include="SQLSeeding\MigrationNotes.txt" />
-    <Content Include="SQLSeeding\Options2RegTypeSeedingScript.txt" />
+    <Content Include="SQLSeeding\Options2RegTypeSeedingScript.sql" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CUWebinars.NotificationSystem\CUWebinars.NotificationSystem.csproj">

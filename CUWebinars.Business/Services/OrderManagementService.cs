@@ -374,8 +374,8 @@ namespace CUWebinars.Business.Services
             return null;
         }
 
-        public int CreateRegistrantKey(string firstName, string lastName, string billingEmail, int idWebinar, int webinarKey)
-        {/*
+        public string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int idWebinar, int webinarKey)
+        {
 
             string orgKey = "922930";//steve's
             //string orgKey = "901873";//marks
@@ -410,6 +410,8 @@ namespace CUWebinars.Business.Services
                 requestStream.Close();
             }
 
+            try
+            {
             HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse();
             // Get the stream associated with the response.
             Stream receiveStream = response.GetResponseStream();
@@ -421,8 +423,15 @@ namespace CUWebinars.Business.Services
             var myResponse = readStream.ReadToEnd();
             response.Close();
             readStream.Close();
-            */
-            return 0;
+         
+            return myResponse;
+
+            }
+            catch (Exception ex)
+            {
+                return "error";
+            }
+
 
         }
 

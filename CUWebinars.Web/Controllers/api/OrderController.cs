@@ -12,6 +12,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Web.Controllers.api
@@ -44,13 +46,13 @@ namespace CUWebinars.Web.Controllers.api
         //    return "value";
         //}
         //   
-                
-//http://localhost:5556/api/order
-//Host: localhost:5556
-//Content-Type: application/json; charset=utf-8
-//Connection: keep-alive
-//Accept: application/json, text/javascript, */*; q=0.01:
-//Content-Length: 1059
+
+        //http://localhost:5556/api/order
+        //Host: localhost:5556
+        //Content-Type: application/json; charset=utf-8
+        //Connection: keep-alive
+        //Accept: application/json, text/javascript, */*; q=0.01:
+        //Content-Length: 1059
 
         /*
         {
@@ -170,7 +172,7 @@ namespace CUWebinars.Web.Controllers.api
                 );
 
             orderRow.Discount = _orderManagementService.GetDiscount(model.Email);
-            
+
             var importedOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
 
             importedOrder.AdminComments = "model.AdminComments";
@@ -200,7 +202,21 @@ namespace CUWebinars.Web.Controllers.api
 
             if (orderRow.Webinar.WebinarKey > 0)
             {
-                orderRow.RegistrantKey = _orderManagementService.CreateRegistrantKey(importedOrder.FirstName, importedOrder.LastName, importedOrder.BillingEmail, orderRow.idWebinar, orderRow.Webinar.WebinarKey);
+                var regKeyResponse = _orderManagementService.CreateRegistrantKey(importedOrder.FirstName, importedOrder.LastName, importedOrder.BillingEmail, orderRow.idWebinar, orderRow.Webinar.WebinarKey);
+                //"{\"registrantKey\":106033865,\"joinUrl\":\"https://www2.gotomeeting.com/join/739905466/106033865\"}"
+                //http://stackoverflow.com/questions/13588185/deserialize-json-string-using-json-net
+
+                if (regKeyResponse.Contains("registrantKey"))
+                {
+                    var regKey = regKeyResponse.Split(',')[0].Split(':')[1];
+                    orderRow.RegistrantKey = regKey;
+                }
+                if (regKeyResponse.Contains("joinUrl"))
+                {
+                    var joinURL = regKeyResponse.Split(',')[0].Split(':')[1];
+                    orderRow.JoinURL = joinURL;
+                }
+
             }
 
             _orderManagementService.SaveOrderChanges(importedOrder);

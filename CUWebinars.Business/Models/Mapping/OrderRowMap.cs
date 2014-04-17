@@ -9,6 +9,14 @@ namespace CUWebinars.Business.Models.Mapping
         {
             // Primary Key
             HasKey(t => t.idOrderRow);
+            
+            Property(o => o.RegistrantKey).HasMaxLength(25);
+            Property(o => o.JoinURL).HasMaxLength(25);
+            Property(o => o.Royalty).HasPrecision(8,2);
+            Property(o => o.UnitPrice).HasPrecision(8,2);
+            Property(o => o.RowPrice).HasPrecision(8,2);
+            
+
 
             // Table & Column Mappings
             ToTable("OrderRow");
@@ -22,10 +30,6 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.AccessExpires).HasColumnName("AccessExpires");
             Property(t => t.Royalty).HasColumnName("Royalty");
 
-            
-            
-
-
             // Relationships
             HasRequired(t => t.Order)
                             .WithMany(t => t.OrderRows)
@@ -33,10 +37,6 @@ namespace CUWebinars.Business.Models.Mapping
             HasRequired(t => t.Webinar)
                             .WithMany(t => t.OrderRows)
                             .HasForeignKey(d => d.idWebinar);
-            //error after switching to 'ICollection' in orderRow.
-            //HasOptional(t => t.AdditionalLocation)
-            //                .WithOptionalDependent(t => t.OrderRow);
-            
         }
     }
 }

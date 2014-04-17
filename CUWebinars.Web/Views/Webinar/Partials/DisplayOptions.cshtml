@@ -3,8 +3,16 @@
     var defaultCheck = "checked";
 }
 <script type="text/javascript">
-    // these js functions (all supporting the StateCart) moved to
-    // create-order.js
+    $(document).ready(function() {
+            $("[id^='mode_']").on("click", function(oEvent) {
+
+                signUpv1();
+                //$("#stage_of_checkout").val("preReg");
+                //BuildPreRegPrice(oEvent);
+                //CheckIfAddLocShouldHide(oEvent.currentTarget.value);
+
+            });
+    });
 </script>
 @{
 
@@ -29,7 +37,36 @@
 
     //}
 
+    <script language="javascript">
+        function signUpv1() {
 
+            @{
+                if (Model.Webinar.Duration > 1)
+                {
+                    if (Model.Webinar.Status == WebinarStatus.Scheduled)
+                    {
+                        <text>window.open('http://form.jotform.us/form/32525417714149?webinarid=@Model.Webinar.idWebinar&webinarTitle=@Model.Webinar.Title', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
+                    }
+                    else
+                    {
+                        <text>window.open('http://form.jotform.us/form/32525008495151?webinarid=@Model.Webinar.idWebinar&webinarTitle=@Model.Webinar.Title', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
+                    }
+                }
+                if (Model.Webinar.Duration < 2)
+                {
+                    if (Model.Webinar.Status == WebinarStatus.Scheduled)
+                    {
+                        <text>window.open('http://form.jotform.us/form/32525511772148?webinarid=@Model.Webinar.idWebinar&webinarTitle=@Model.Webinar.Title', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
+                    }
+                    else
+                    {
+                        <text>window.open('http://form.jotform.us/form/32525522499156?webinarid=@Model.Webinar.idWebinar&webinarTitle=@Model.Webinar.Title', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
+                    }
+                }
+            }
+        }
+    </script>
+    
 
     <span>
         Choose the attendance RegType that's right for you! <a href="#AttendRegTypes" data-toggle="modal">(learn more)</a>
