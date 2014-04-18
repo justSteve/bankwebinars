@@ -220,11 +220,18 @@ namespace CUWebinars.Web.Controllers.api
             }
 
             _orderManagementService.SaveOrderChanges(importedOrder);
+            try
+            {
+                var httpResponseMessage = Request.CreateResponse(HttpStatusCode.Created, new { Result = "Order successfully submitted" });
+                httpResponseMessage.Headers.Location = new Uri(Path.Combine(Request.RequestUri.ToString(), importedOrder.idOrder.ToString()));
 
-            var httpResponseMessage = Request.CreateResponse(HttpStatusCode.Created, new { Result = "Order successfully submitted" });
-            httpResponseMessage.Headers.Location = new Uri(Path.Combine(Request.RequestUri.ToString(), importedOrder.idOrder.ToString()));
-
-            return httpResponseMessage;
+                return httpResponseMessage;
+            }
+            catch (Exception ex)
+            {
+                _logger.Fatal(ex.Message);
+            }
+            return null;
         }
 
         // PUT api/<controller>/5
