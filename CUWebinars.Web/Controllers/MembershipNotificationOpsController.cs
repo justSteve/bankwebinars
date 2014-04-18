@@ -253,17 +253,17 @@ namespace CUWebinars.Web.Controllers
 
         public JsonResult ReadCsvAndReturnJson()
         {
-            IncomingOrderModel incomingOrderModel = null;
+            IList<IncomingOrderModel> incomingOrderModels = null;
 
             using (var fileStream =
                     System.IO.File.OpenRead(
                     Path.Combine(HttpRuntime.AppDomainAppPath, @"App_Data/Orders", "sampleorderFromExcel.csv"))
                     )
             {
-                incomingOrderModel = CsvParseOps.ParseCsvForIncomingOrderModel(fileStream);
+                incomingOrderModels = CsvParseOps.ParseCsvForIncomingOrderModel(fileStream);
             }
 
-            var returnPayload = JsonConvert.SerializeObject(incomingOrderModel);
+            var returnPayload = JsonConvert.SerializeObject(incomingOrderModels);
 
             return Json(returnPayload, JsonRequestBehavior.AllowGet);
         }

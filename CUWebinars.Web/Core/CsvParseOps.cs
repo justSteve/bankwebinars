@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -11,15 +12,11 @@ namespace CUWebinars.Web.Core
 {
     public static class CsvParseOps
     {
-        private static readonly IDictionary<string,string> DataDictionary = new Dictionary<string, string>();
-
-        public static IncomingOrderModel ParseCsvForIncomingOrderModel(Stream stream)
+        public static IList<IncomingOrderModel> ParseCsvForIncomingOrderModel(Stream stream)
         {
-            var incomingOrderModel = new IncomingOrderModel
-            {
-                BillingAddress = new Address(),
-                ShippingAddress = new Address()
-            };
+            IList<IDictionary<string,string>> dataDictionaries = new List<IDictionary<string,string>>();
+            IList<IncomingOrderModel> incomingOrderModels = new List<IncomingOrderModel>();
+
             string line = string.Empty;
             string remainingData = string.Empty;
 
@@ -36,38 +33,43 @@ namespace CUWebinars.Web.Core
                     throw new NullReferenceException("The header section of the csv file is missing.");
 
 
-                line = sr.ReadLine();
-                if (line != null)
+                while((line = sr.ReadLine()) != null)
                 {
+                    var incomingOrderModel = new IncomingOrderModel
+                    {
+                        BillingAddress = new Address(),
+                        ShippingAddress = new Address()
+                    };
+                    var dataDictionary = new Dictionary<string, string>(keys.Length);
+
                     values = line.Split(',');
-                    DataDictionary.Clear();
 
                     for (int i = 0; i < keys.Length; i++)
                     {
-                        DataDictionary.Add(keys[i].Trim(), values[i].Trim());
+                        dataDictionary.Add(keys[i].Trim(), values[i].Trim());
                     }
+
+                    incomingOrderModel.Title = dataDictionary[keys[1]];
+                    incomingOrderModel.idWebinar = int.Parse(dataDictionary[keys[2]]);
+                    incomingOrderModel.idRegType = int.Parse(dataDictionary[keys[3]]);
+                    incomingOrderModel.idAffiliate = int.Parse(dataDictionary[keys[4]]);
+                    incomingOrderModel.FirstName = dataDictionary[keys[5]];
+                    incomingOrderModel.LastName = dataDictionary[keys[6]];
+                    incomingOrderModel.Institution = dataDictionary[keys[7]];
+                    incomingOrderModel.Title = dataDictionary[keys[8]]; ;
+                    incomingOrderModel.Email = dataDictionary[keys[9]];
+                    incomingOrderModel.BillingAddress.Phone = dataDictionary[keys[10]];
+                    incomingOrderModel.BillingAddress.StreetAddress = dataDictionary[keys[11]];
+                    incomingOrderModel.BillingAddress.StreetAddress2 = dataDictionary[keys[12]];
+                    incomingOrderModel.BillingAddress.City = dataDictionary[keys[13]];
+                    incomingOrderModel.BillingAddress.State = dataDictionary[keys[14]];
+                    incomingOrderModel.BillingAddress.Zip = dataDictionary[keys[15]];
+                    incomingOrderModel.BillingAddress.Country = dataDictionary[keys[16]];
+
+                    incomingOrderModels.Add(incomingOrderModel);
                 }
-                else
-                    throw new NullReferenceException("The values section of the csv file is missing.");
 
-                incomingOrderModel.Title = DataDictionary[keys[1]];
-                incomingOrderModel.idWebinar = int.Parse(DataDictionary[keys[2]]);
-                incomingOrderModel.idRegType = int.Parse(DataDictionary[keys[3]]);
-                incomingOrderModel.idAffiliate = int.Parse(DataDictionary[keys[4]]);
-                incomingOrderModel.FirstName = DataDictionary[keys[5]];
-                incomingOrderModel.LastName = DataDictionary[keys[6]];
-                incomingOrderModel.Institution = DataDictionary[keys[7]];
-                incomingOrderModel.Title = DataDictionary[keys[8]]; ;
-                incomingOrderModel.Email = DataDictionary[keys[9]];
-                incomingOrderModel.BillingAddress.Phone = DataDictionary[keys[10]];
-                incomingOrderModel.BillingAddress.StreetAddress = DataDictionary[keys[11]];
-                incomingOrderModel.BillingAddress.StreetAddress2 = DataDictionary[keys[12]];
-                incomingOrderModel.BillingAddress.City = DataDictionary[keys[13]];
-                incomingOrderModel.BillingAddress.State = DataDictionary[keys[14]];
-                incomingOrderModel.BillingAddress.Zip = DataDictionary[keys[15]];
-                incomingOrderModel.BillingAddress.Country = DataDictionary[keys[16]];
-
-                return incomingOrderModel;
+                return incomingOrderModels;
             }
 
         }
