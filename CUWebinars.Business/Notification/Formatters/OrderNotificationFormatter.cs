@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
+using RazorEngine.Templating;
 
 namespace CUWebinars.Business.Notification.Formatters
 {
@@ -44,11 +45,31 @@ namespace CUWebinars.Business.Notification.Formatters
         public INotificationMessage Format<TBody>(Events.OrderSubmittedEvent<TOrder> orderSubmittedEvent, TBody objectOfMessage)
         {
             if (orderSubmittedEvent == null) throw new ArgumentNullException("orderSubmittedEvent");
+            
+            INotificationMessage message = null;
 
-            //  This void method populated the _emailSubject and _emailBody variables which are used further up the stack
-            LoadBodyTemplate(orderSubmittedEvent);
+            try
+            {
+                //  This void method populated the _emailSubject and _emailBody variables which are used further up the stack
+                LoadBodyTemplate(orderSubmittedEvent);
 
-            return CreateMessage(GetSubject(orderSubmittedEvent, objectOfMessage), GetBody(orderSubmittedEvent, objectOfMessage));
+                message = CreateMessage(GetSubject(orderSubmittedEvent, objectOfMessage),
+                    GetBody(orderSubmittedEvent, objectOfMessage));
+            }
+            catch (TemplateCompilationException templateCompilationException)
+            {
+
+            }
+            catch (TemplateParsingException templateParsingException)
+            {
+
+            }
+            catch (Exception exception)
+            {
+                
+            }
+            
+            return message;
         }
 
         protected INotificationMessage CreateMessage(string subject, string body)

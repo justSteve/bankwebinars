@@ -164,7 +164,7 @@ function addImportOrderButtonClick() {
                     cache: false,
                     url: '/Api/Order',
                     dataType: constants.HtmlDataType,
-                    data:  $('#JsonPayload').text(),
+                    data: $('#JsonPayloadTextArea').val(),
                     beforeSend: function () {
                         // this is where we append a loading image
                         $('#WaitIndicator').show();
