@@ -1,4 +1,5 @@
-﻿@using CUWebinars.Business.Models
+﻿@using System.Web.Mvc.Html
+@using CUWebinars.Business.Notification
 @model CUWebinars.Business.Models.Order
 
 <title>Confirmation of Registration - CU-@Model.idOrder</title>
@@ -10,84 +11,84 @@
     {
         joinURL = "https://www2.gotomeeting.com/join/" + row.Webinar.WebinarKey;
     }
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Confirmation of Registration - CU-@Model.idOrder</title>
-        <style type="text/css">
-            .auto-style1 {
-                height: 10px;
-            }
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Confirmation of Registration - CU-@Model.idOrder</title>
+    <style type="text/css">
+        .auto-style1 {
+            height: 10px;
+        }
 
-            .auto-style2 {
-                height: 50px;
-            }
-        </style>
-    </head>
-    <body style="font-family: Verdana, Arial, Helvetica, sans-serif">
+        .auto-style2 {
+            height: 50px;
+        }
+    </style>
+</head>
+<body style="font-family: Verdana, Arial, Helvetica, sans-serif">
         <table style="table-layout: fixed; width: 660px; white-space: nowrap; " border="0" cellspacing="0" cellpadding="0">
-            <tbody>
+        <tbody>
                 <tr style="background-color: #344a58; display: table-row;">
                     <td colspan="3">
                         @*<img alt="top_shadow.jpg" border="0" height="6" margin="0px 0px 0px 0px" src="https://ttseast.blob.core.windows.net/images/vrLocal/top_shadow.jpg" style="height: 6px; display: block;" width="660" />*@
-                    </td>
-                </tr>
+                </td>
+            </tr>
                 <tr style="background-color: #344a58; margin-bottom: 5px; margin-top: 5px;">
-                    <td>
+                <td>
                         <table align="center" border="0" cellpadding="0" cellspacing="0" height="215">
-                            <tbody>
-                                <tr>
+                        <tbody>
+                            <tr>
                                     <td bgcolor="#01232a">
                                         @*<img alt="https://ttseast.blob.core.windows.net/images/vrLocal/hardware_2_header_1.jpg" border="0" height="36" margin="0px 0px 0px 0px" src="https://ttseast.blob.core.windows.net/images/vrLocal/hardware_2_header_1.jpg" style="width: 374px; height: 36px; display: block;" width="374" />*@
-                                    </td>
-                                    <td align="right" bgcolor="#01232a" style="padding-right: 15px; border-top-color: rgb(52, 74, 88); border-right-color: rgb(52, 74, 88); border-top-width: 1px; border-right-width: 1px; border-top-style: solid; border-right-style: solid;" width="286">
+                                </td>
+                                <td align="right" bgcolor="#01232a" style="padding-right: 15px; border-top-color: rgb(52, 74, 88); border-right-color: rgb(52, 74, 88); border-top-width: 1px; border-right-width: 1px; border-top-style: solid; border-right-style: solid;" width="286">
                                         <div style="color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold;">Order Confirmation</div>
-                                    </td>
-                                </tr>
-                                <tr>
+                                </td>
+                            </tr>
+                            <tr>
                                     <td bgcolor="#344a58" valign="top">
                                         <p>
                                             <br />
                                             <img align="middle" alt="CUwebinars.com" border="0" hspace="25" margin="0px 0px 0px 0px" src="https://ttseast.blob.core.windows.net/images/vrLocal/logo.png" style="width: 332px; height: 50px; display: block;" title="CUwebinars.com" vspace="25" width="332" />
                                         </p>
-                                    </td>
-                                    <td align="left" bgcolor="#344a58" style="padding: 0px 15px 0px 0px; border-right-color: rgb(52, 74, 88); border-right-width: 1px; border-right-style: solid;">
-                                        <p style="text-align: center; color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
-                                        </p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
+                                </td>
+                                <td align="left" bgcolor="#344a58" style="padding: 0px 15px 0px 0px; border-right-color: rgb(52, 74, 88); border-right-width: 1px; border-right-style: solid;">
+                                    <p style="text-align: center; color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                    </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
 
-                <tr style="background-color: #B4D1EC">
-                    <td style="padding: 15px 0px; border-right-color: rgb(52, 74, 88); border-left-color: rgb(52, 74, 88); border-right-width: 1px; border-left-width: 1px; border-right-style: solid; border-left-style: solid;">
+            <tr style="background-color: #B4D1EC">
+                <td style="padding: 15px 0px; border-right-color: rgb(52, 74, 88); border-left-color: rgb(52, 74, 88); border-right-width: 1px; border-left-width: 1px; border-right-style: solid; border-left-style: solid;">
                         <table style="table-layout: fixed; width: 350px; white-space: nowrap; " align="center" cellpadding="0" cellspacing="0">
-                            <tbody>
+                        <tbody>
                                 @*<tr style="background-color: #344a58">
-                                        <td colspan="2" height="6">
-                                            <img alt="large_box_top.gif" border="0" height="6" margin="0px 0px 0px 0px" src="https://ttseast.blob.core.windows.net/images/vrLocal/large_box_top.gif" style="width: 630px; height: 6px; display: block;" />
-                                        </td>
+                                <td colspan="2" height="6">
+                                    <img alt="large_box_top.gif" border="0" height="6" margin="0px 0px 0px 0px" src="https://ttseast.blob.core.windows.net/images/vrLocal/large_box_top.gif" style="width: 630px; height: 6px; display: block;" />
+                                </td>
                                     </tr>*@
 
-                                <tr style="background-color: #344a58">
-                                    <td colspan="2">
-                                        <img alt="spacer.gif" height="10" src="https://ttseast.blob.core.windows.net/images/vrLocal/spacer.gif" style="width: 1px; height: 10px; display: block;" width="1" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2" style="background-color: #344a58">
-                                        <table width="630px" border="0" align="center" cellpadding="0" cellspacing="0">
-                                            <tr>
-                                                <td colspan="2">
-                                                    <table width="550px" border="0" align="center" cellpadding="0" cellspacing="0">
-                                                        <tr>
+                            <tr style="background-color: #344a58">
+                                <td colspan="2">
+                                    <img alt="spacer.gif" height="10" src="https://ttseast.blob.core.windows.net/images/vrLocal/spacer.gif" style="width: 1px; height: 10px; display: block;" width="1" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="background-color: #344a58">
+                                    <table width="630px" border="0" align="center" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td colspan="2">
+                                                <table width="550px" border="0" align="center" cellpadding="0" cellspacing="0">
+                                                    <tr>
                                                             <td width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller"> </td>
-                                                            <td width="400px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;"> </td>
-                                                        </tr>
+                                                        <td width="400px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;"> </td>
+                                                    </tr>
 
 
-                                                        <tr>
+                                                    <tr>
                                                             <td width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller"> </td>
                                                             <td width="400px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
                                                                 <p style="color: rgb(0,0,0); font-family: Arial, Helvetica, sans-serif; font-size: 12px; ">
@@ -133,63 +134,63 @@
                                                                 </p>
                                                                 <p style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
                                                                     If your workstation is equipped with audio, the sound will stream directly via your internet connection. Optionally, you can connect to the conference call with this information:<br /><br />
-
+                                                            
                                                                     Toll-free: 1 866 952 8437<br />
                                                                     Access Code: 196-042-186<br />
                                                                     Audio PIN: Shown after joining the Webinar<br /><br />
                                                                 </p>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="text-align: right; width: 130px; background-color: #CCCCCC; padding-right: 6px; font-size: smaller"></td>
-                                                            <td style="text-align: left; background-color: #B4D1EC; padding-left: 6px;"></td>
-                                                        </tr>
-                                                    </table>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="text-align: right; width: 130px; background-color: #CCCCCC; padding-right: 6px; font-size: smaller"></td>
+                                                        <td style="text-align: left; background-color: #B4D1EC; padding-left: 6px;"></td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
 
-                                <tr>
+                            <tr>
                                     <td style="background-color: #344a58; color: #FFFFCC; padding: 10px;" colspan="2">
                                         <div style="color: rgb(255, 255, 255); text-align: right; font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold;">For Technical Support call 800-831-0678 ext. 6</div> 
                                     </td>
-                                </tr>
-                                <tr style="background-color: #344a58">
-                                    <td colspan="2" height="6">
+                            </tr>
+                            <tr style="background-color: #344a58">
+                                <td colspan="2" height="6">
                                         <img alt="large_box_bottom.gif" border="0" height="6" margin="0px 0px 0px 0px" src="https://ttseast.blob.core.windows.net/images/vrLocal/large_box_bottom.gif" style=" height: 6px; display: block;" />
-                                    </td>
-                                </tr>
+                                </td>
+                            </tr>
 
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td bgcolor="#344a58">
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td bgcolor="#344a58">
                         <table align="center" cellpadding="0" cellspacing="0" width="660">
-                            <tbody>
-                                <tr>
-                                    <td align="right" style="padding-top: 10px;">
-                                        <div style="color: rgb(255, 255, 255); font-size: 11px;">
-                                            <img align="none" alt="footer" border="0" height="59" hspace="0" src="https://ttseast.blob.core.windows.net/images/vrLocal/footer.gif" style="width: 274px; height: 59px;" title="footer" vspace="0" width="274" />
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="3" height="23">
+                        <tbody>
+                            <tr>
+                                <td align="right" style="padding-top: 10px;">
+                                    <div style="color: rgb(255, 255, 255); font-size: 11px;">
+                                        <img align="none" alt="footer" border="0" height="59" hspace="0" src="https://ttseast.blob.core.windows.net/images/vrLocal/footer.gif" style="width: 274px; height: 59px;" title="footer" vspace="0" width="274" />
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3" height="23">
                         <img alt="hardware_2_footer.jpg" border="0" height="23" margin="0px 0px 0px 0px" src="https://ttseast.blob.core.windows.net/images/vrLocal/hardware_2_footer.jpg" style="width: 890px; height: 23px; display: block;" width="890" />
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
-    </body>
+</body>
 }
 </html>
 

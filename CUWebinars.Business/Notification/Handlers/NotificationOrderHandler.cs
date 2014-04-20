@@ -18,7 +18,7 @@ namespace CUWebinars.Business.Notification.Handlers
         }
 
         public NotificationOrderHandler(IOrderNotificationFormatter<T> notificationFormatter, INotificationDelivery notificationDelivery)
-            : base(notificationFormatter, notificationDelivery)
+            : base(notificationFormatter, notificationDelivery, new FileBasedNotificationPersister())
         {
         }
 

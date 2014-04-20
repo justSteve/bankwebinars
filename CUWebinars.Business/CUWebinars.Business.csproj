@@ -100,6 +100,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountService\IMembershipService.cs" />
+    <Compile Include="Core\Helpers\DateTimeHelper.cs" />
+    <Compile Include="Notification\TtsTemplateHelper.cs" />
+    <Compile Include="Notification\TtsHtmlTemplateBase.cs" />
+    <Compile Include="Notification\NotificationPersister.cs" />
     <Compile Include="Models\Mapping\AdditionalLocationMap.cs" />
     <Compile Include="Models\Mapping\RegTypeGroupsXrefMap.cs" />
     <Compile Include="Models\Mapping\RegTypesGroupMap.cs" />

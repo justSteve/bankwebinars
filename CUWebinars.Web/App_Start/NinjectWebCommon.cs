@@ -118,9 +118,11 @@ namespace CUWebinars.Web.App_Start
 
         private static void RegisterControllers(IKernel kernel, TtsConfiguration ttsConfig)
         {
+            kernel.Bind<TTSWebinarsContext>().ToSelf().InRequestScope();
+
             kernel.Bind<HomeController>().ToMethod(ctx =>
             {
-                var sharedContext = new TTSWebinarsContext();
+                var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
                 ILogger logger = new Log4NetLogger(typeof (HomeController));
 
                 return new HomeController(new WebinarRepository(sharedContext), logger);
@@ -128,7 +130,7 @@ namespace CUWebinars.Web.App_Start
 
             kernel.Bind<OrderController>().ToMethod(ctx =>
             {
-                var sharedContext = new TTSWebinarsContext();
+                var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
                 var userAccountService = kernel.Get<UserAccountService>();
                 ILogger logger = new Log4NetLogger(typeof (OrderController));
 
@@ -155,7 +157,7 @@ namespace CUWebinars.Web.App_Start
 
             kernel.Bind<AccountController>().ToMethod(ctx =>
             {
-                var sharedContext = new TTSWebinarsContext();
+                var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
                 var userAccountService = kernel.Get<UserAccountService>();
                 ILogger logger = new Log4NetLogger(typeof (AccountController));
 
@@ -188,7 +190,7 @@ namespace CUWebinars.Web.App_Start
 
             kernel.Bind<WebinarController>().ToMethod(ctx =>
             {
-                var sharedContext = new TTSWebinarsContext();
+                var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
                 var userAccountService = kernel.Get<UserAccountService>();
                 ILogger logger = new Log4NetLogger(typeof (WebinarController));
 
@@ -220,7 +222,7 @@ namespace CUWebinars.Web.App_Start
 
             kernel.Bind<MembershipNotificationOpsController>().ToMethod(ctx =>
             {
-                var sharedContext = new TTSWebinarsContext();
+                var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
                 var userAccountService = kernel.Get<UserAccountService>();
                 ILogger logger = new Log4NetLogger(typeof (MembershipNotificationOpsController));
 
@@ -236,7 +238,7 @@ namespace CUWebinars.Web.App_Start
 
             kernel.Bind<AddressesController>().ToMethod(ctx =>
             {
-                var sharedContext = new TTSWebinarsContext();
+                var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
                 var userAccountService = kernel.Get<UserAccountService>();
                 ILogger logger = new Log4NetLogger(typeof(AddressesController));
 
@@ -252,7 +254,7 @@ namespace CUWebinars.Web.App_Start
 
             kernel.Bind<CartController>().ToMethod(ctx =>
             {
-                var sharedContext = new TTSWebinarsContext();
+                var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
                 var userAccountService = kernel.Get<UserAccountService>();
                 ILogger logger = new Log4NetLogger(typeof(CartController));
 
