@@ -209,11 +209,7 @@ namespace CUWebinars.Web.Controllers
         
         public PartialViewResult GetJsonTextArea()
         {
-            const string importOrderViaDashboardViewModel = @"{""AdditionalLocations"": [
-                                    ""dave@turing.com"",
-                                    ""jed@turing.com""
-                                    ],
-                                  ""AffiliateComments"": ""Affiliate comments"",
+            const string importOrderViaDashboardViewModel = @"{""AffiliateComments"": ""Affiliate comments"",
                                   ""BillingAddress"": {
                                     ""AddressType"": ""Billing"",
                                     ""Name"": ""Alan Turing"",

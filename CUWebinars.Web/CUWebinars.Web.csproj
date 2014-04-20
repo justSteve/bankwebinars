@@ -1115,6 +1115,7 @@
     <Content Include="Views\MembershipNotificationOps\_ImportOrder.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Data\Notifications\" />
     <Folder Include="Images\" />
     <Folder Include="Notification\Delivery\" />
     <Folder Include="Utils\" />

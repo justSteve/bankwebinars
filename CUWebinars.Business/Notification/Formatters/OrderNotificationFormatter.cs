@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification.Email;
@@ -42,7 +43,7 @@ namespace CUWebinars.Business.Notification.Formatters
             }
         }
 
-        public INotificationMessage Format<TBody>(Events.OrderSubmittedEvent<TOrder> orderSubmittedEvent, TBody objectOfMessage)
+        public INotificationMessage Format<TBody>(Events.OrderSubmittedEvent<TOrder> orderSubmittedEvent, TBody objectOfMessage, INotificationPersister notificationPersister)
         {
             if (orderSubmittedEvent == null) throw new ArgumentNullException("orderSubmittedEvent");
             
@@ -55,18 +56,23 @@ namespace CUWebinars.Business.Notification.Formatters
 
                 message = CreateMessage(GetSubject(orderSubmittedEvent, objectOfMessage),
                     GetBody(orderSubmittedEvent, objectOfMessage));
+                
+                notificationPersister.PersistNotification(
+                    message.Body,
+                    Path.Combine(EnvironmentInformation.BaseUrl, "App_Data", "Notifications", "OrderNotification" + DateTime.Now.ToString("yyyy-MM-dd-tt") + ".htm")
+                    );
             }
             catch (TemplateCompilationException templateCompilationException)
             {
-
+                Debug.WriteLine(string.Format("{0} - {1}", templateCompilationException.GetType().Name,templateCompilationException.Message));
             }
             catch (TemplateParsingException templateParsingException)
             {
-
+                Debug.WriteLine(string.Format("{0} - {1}", templateParsingException.GetType().Name, templateParsingException.Message));
             }
             catch (Exception exception)
             {
-                
+                Debug.WriteLine(string.Format("{0} - {1}", exception.GetType().Name, exception.Message));
             }
             
             return message;

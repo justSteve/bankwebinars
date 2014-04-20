@@ -19,6 +19,7 @@ namespace CUWebinars.Business.Notification.Renderers
             {
                 c.WithEncoding(Encoding.Html);
                 c.ResolveUsing<TemplateResolver>();
+                c.WithBaseTemplateType(typeof(TtsHtmlTemplateBase<>)); 
             });
 
             var order = orderSubmittedEvent.Order;
