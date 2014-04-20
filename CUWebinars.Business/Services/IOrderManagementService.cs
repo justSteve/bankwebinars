@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Models;
 
@@ -35,6 +36,9 @@ namespace CUWebinars.Business.Services
         Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow);
 //        Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, IList<RegType> options);
         Discount GetDiscount(string email);
-        string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int idWebinar, int webinarKey);
+        string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int idWebinar, string webinarKey);
+
+        string CreateCalendarEvent(string title, string body, DateTime startDate, double duration, string location,
+            string organizer, string eventId, bool allDayEvent);
     }
 }

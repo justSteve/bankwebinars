@@ -11,6 +11,8 @@ using CUWebinars.NotificationSystem.Event;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DDay.iCal;
+using DDay.iCal.Serialization.iCalendar;
 using Newtonsoft.Json;
 using IEvent = CUWebinars.NotificationSystem.Event.IEvent;
 using IEventSource = CUWebinars.NotificationSystem.Event.IEventSource;
@@ -27,7 +29,7 @@ namespace CUWebinars.Business.Services
         private readonly IWebUserRepository _webUserRepository;
         private readonly TtsConfiguration _ttsConfig;
         readonly List<IEvent> _events = new List<IEvent>();
-        
+
         public OrderManagementService(
             IAffiliateRepository affiliateRepository,
             IRegTypeRepository RegTypeRepository,
@@ -80,7 +82,7 @@ namespace CUWebinars.Business.Services
 
         public AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullname)
         {
-           return  _orderRepository.CreateAdditionalLocation(email, price, fullname);
+            return _orderRepository.CreateAdditionalLocation(email, price, fullname);
         }
 
         public Affiliate GetAffiliateById(int id)
@@ -353,7 +355,7 @@ namespace CUWebinars.Business.Services
         {
             var a = 1;
         }
-         
+
         public void AddOrderRow(Order currentOrder, OrderRow orderRow)
         {
             throw new NotImplementedException();
@@ -374,16 +376,20 @@ namespace CUWebinars.Business.Services
             return null;
         }
 
-        public string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int idWebinar, int webinarKey)
+        public string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int idWebinar, string webinarKey)
         {
+            //https://www2.gotomeeting.com/en_US/island/webinar/audio/organizers/conferenceInfo.tmpl?webinarId=495203178&role=0
+            //0 = attendee
+            //2 = panelist
+            //1 = organizer
 
             string orgKey = "922930";//steve's
             //string orgKey = "901873";//marks
             string access_token = "5jxY3KZL48HWknOaOEP2eIzVmOTS";//steve's
             //string access_token = "JIOHRkkCvmIKDY8QO0S4msbYH48N";//mark's
 
-            string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/739905466/registrants";
-            //string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/" + idWebinar + "/registrants";
+            //string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/495203178/registrants";
+            string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/" + idWebinar + "/registrants";
 
 
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
@@ -392,12 +398,12 @@ namespace CUWebinars.Business.Services
             //httpWebRequest.Accept = "application/json";
             httpWebRequest.Accept = "application/vnd.citrix.g2wapi-v1.1+json";
             httpWebRequest.Headers.Add("Authorization", "OAuth oauth_token=" + access_token);
-            
+
             httpWebRequest.Method = "POST";
 
-            object sendVars = new { firstName = firstName, lastName = lastName, email  = billingEmail };
+            object sendVars = new { firstName = firstName, lastName = lastName, email = billingEmail };
 
-            string postData = JsonConvert.SerializeObject(sendVars); 
+            string postData = JsonConvert.SerializeObject(sendVars);
             ;
 
             byte[] requestBytes = Encoding.UTF8.GetBytes(postData);
@@ -412,19 +418,19 @@ namespace CUWebinars.Business.Services
 
             try
             {
-            HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse();
-            // Get the stream associated with the response.
-            Stream receiveStream = response.GetResponseStream();
+                HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse();
+                // Get the stream associated with the response.
+                Stream receiveStream = response.GetResponseStream();
 
-            // Pipes the stream to a higher level stream reader with the required encoding format. 
-            StreamReader readStream = new StreamReader(receiveStream, Encoding.UTF8);
+                // Pipes the stream to a higher level stream reader with the required encoding format. 
+                StreamReader readStream = new StreamReader(receiveStream, Encoding.UTF8);
 
-            Console.WriteLine("Response stream received.");
-            var myResponse = readStream.ReadToEnd();
-            response.Close();
-            readStream.Close();
-         
-            return myResponse;
+                Console.WriteLine("Response stream received.");
+                var myResponse = readStream.ReadToEnd();
+                response.Close();
+                readStream.Close();
+
+                return myResponse;
 
             }
             catch (Exception ex)
@@ -435,9 +441,52 @@ namespace CUWebinars.Business.Services
 
         }
 
+        string IOrderManagementService.CreateCalendarEvent(string title, string body, DateTime startDate, double duration, string location,
+            string organizer, string eventId, bool allDayEvent)
+        {
+            return CreateCalendarEvent(title, body, startDate, duration, location, organizer, eventId, allDayEvent);
+        }
+
         public void Clear()
         {
             _events.Clear();
+        }
+        public static string CreateCalendarEvent(string title, string body, DateTime startDate, double duration, string location, string organizer, string eventId, bool allDayEvent)
+        {
+            // mandatory for outlook 2007
+            if (String.IsNullOrEmpty(organizer))
+                throw new Exception("Organizer provided was null");
+
+            var iCal = new iCalendar
+            {
+                Method = "PUBLISH",
+                Version = "2.0"
+            };
+
+            // "REQUEST" will update an existing event with the same UID (Unique ID) and a newer time stamp.
+            //if (updatePreviousEvent)
+            //{
+            //    iCal.Method = "REQUEST";
+            //}
+
+            var evt = iCal.Create<Event>();
+            evt.Summary = title;
+            evt.Start = new iCalDateTime(startDate);
+            evt.Duration = TimeSpan.FromHours(duration);
+            evt.Description = body;
+            evt.Location = location;
+            evt.IsAllDay = allDayEvent;
+            evt.UID = String.IsNullOrEmpty(eventId) ? new Guid().ToString() : eventId;
+            evt.Organizer = new Organizer(organizer);
+            evt.Alarms.Add(new Alarm
+            {
+                Duration = new TimeSpan(0, 15, 0),
+                Trigger = new Trigger(new TimeSpan(0, 15, 0)),
+                Action = AlarmAction.Display,
+                Description = "Reminder"
+            });
+
+            return new iCalendarSerializer().SerializeToString(iCal);
         }
     }
 }

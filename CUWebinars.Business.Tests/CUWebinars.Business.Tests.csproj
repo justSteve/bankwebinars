@@ -47,6 +47,9 @@
     <Reference Include="BrockAllen.MembershipReboot.WebHost">
       <HintPath>..\packages\BrockAllen.MembershipReboot.WebHost.5.0.0\lib\net45\BrockAllen.MembershipReboot.WebHost.dll</HintPath>
     </Reference>
+    <Reference Include="DDay.iCal">
+      <HintPath>..\packages\DDay.iCal.1.0.2.575\lib\DDay.iCal.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.dll</HintPath>

@@ -13,10 +13,10 @@ namespace CUWebinars.Web.App_Start
             var settings = SecuritySettings.FromConfiguration();
             var config = new MembershipRebootConfiguration(settings);
 
-            //  TODO: get proper signature from Stephen
+            //  
             var appinfo = new AspNetApplicationInformation(
                 "CUWebinars",
-                "Test Email Signature",
+                "TTS Staff",
                 "Account/Login",
                 "Account/Confirm/",
                 "Account/RegisterCancel/",

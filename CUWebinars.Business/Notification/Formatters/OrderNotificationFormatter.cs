@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
+using RazorEngine.Templating;
 
 namespace CUWebinars.Business.Notification.Formatters
 {
@@ -45,10 +46,30 @@ namespace CUWebinars.Business.Notification.Formatters
         {
             if (orderSubmittedEvent == null) throw new ArgumentNullException("orderSubmittedEvent");
 
-            //  This void method populated the _emailSubject and _emailBody variables which are used further up the stack
-            LoadBodyTemplate(orderSubmittedEvent);
+            INotificationMessage message = null;
 
-            return CreateMessage(GetSubject(orderSubmittedEvent, objectOfMessage), GetBody(orderSubmittedEvent, objectOfMessage));
+            try
+            {
+                //  This void method populated the _emailSubject and _emailBody variables which are used further up the stack
+                LoadBodyTemplate(orderSubmittedEvent);
+
+                message = CreateMessage(GetSubject(orderSubmittedEvent, objectOfMessage),
+                    GetBody(orderSubmittedEvent, objectOfMessage));
+            }
+            catch (TemplateCompilationException templateCompilationException)
+            {
+
+            }
+            catch (TemplateParsingException templateParsingException)
+            {
+
+            }
+            catch (Exception exception)
+            {
+
+            }
+
+            return message;
         }
 
         protected INotificationMessage CreateMessage(string subject, string body)
@@ -102,7 +123,7 @@ namespace CUWebinars.Business.Notification.Formatters
         private void LoadTemplate(string name)
         {
             var templatePath = Path.Combine(EnvironmentInformation.BaseUrl, DomainConstants.ResourcePathTemplate, name);
-            var settings = new XmlReaderSettings{ ConformanceLevel = ConformanceLevel.Fragment };
+            var settings = new XmlReaderSettings { ConformanceLevel = ConformanceLevel.Fragment };
 
             using (XmlReader reader = XmlReader.Create(templatePath, settings))
             {

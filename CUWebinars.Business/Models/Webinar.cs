@@ -29,8 +29,8 @@ namespace CUWebinars.Business.Models
         public string RecordingUrl { get; set; }
         //public int idWebinarRegTypeGroup { get; set; }
         public int idPresenter { get; set; }
-        public int WebinarKey { get; set; }
-        public int OrganizerKey { get; set; }
+        public string WebinarKey { get; set; }
+        public string OrganizerKey { get; set; }
         public string OrganizerOAuthKey { get; set; }
         public string ceu { get; set; }
         public string ConnectionInfo { get; set; }

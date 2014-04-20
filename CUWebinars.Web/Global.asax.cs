@@ -99,18 +99,6 @@ namespace CUWebinars.Web
                 StateService.SetValue("IncludeUpcoming", true);
                 StateService.SetValue("searchExtent", "Upcoming");
 
-                //stateService.SetValue("CurrentAffiliate", affiliateRepository.GetCurrentAffiliate());
-
-
-                // as we started this project, this method's name (GetCurrentAffiliate) simply carried over from the legacy project.
-                // however, 'GetCurrentAffiliate' doesn't convey it's role here and, I think the new method
-                // 'SetCurrentAffiliate' would render the idea of 'GetCurrentAffiliate' moot because the 'CurrentAffiliate'
-                //  ...aka: SessionAffiliate... can always be determined by examining the value of 
-                //  stateService.SetValue("CurrentAffiliate". I _think this is correct reasoning - 
-                // TODO: would appreciate a sanity check
-                //  
-                // unless otherwise advised - this statement effectively establishes the default affiliate
-                // something that subsequent code may over-ride. 
                 StateService.SetValue("CurrentAffiliate", affiliateRepository.FindByIdWithIncluding(19, a => a.WebUser));
 
                 //This session var lets us understand the origin of the Affiliate session - 
@@ -139,7 +127,7 @@ namespace CUWebinars.Web
                         try
                         {
                             StateService.SetValue("AffiliateSessionSource", AffiliateId + Pipe + loadAff);
-                            //TODO ... unit test required of this method of loading affiliate by id
+                            //TODO 4BW unit test required of this method of loading affiliate by id
                             // determine the current affiliate
                             StateService.SetValue("CurrentAffiliate", affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser));
                         }
@@ -170,7 +158,7 @@ namespace CUWebinars.Web
                         try
                         {
                             StateService.SetValue("AffiliateSessionSource", "Sub" + Pipe + affilliateDomain);
-                            //todo: unit test required 
+                            //todo: 4BW - unit test required 
                             //   the name of the property 'ttsDomain' is the abbreviated name chosen
                             //   for use (as a shortcut or nicname) by us to refer to a given affiliate. It may or may not
                             //   be literally the Domain Name used by the given affiliate.

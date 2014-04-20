@@ -226,7 +226,6 @@ namespace CUWebinars.Web.Controllers
             return "error";
         }
 
-        //  TODO: fix 
         public ActionResult MyWebinars()
         {
             var currentUser = GetWebUserFromIPrincipal();
@@ -805,7 +804,8 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (MembershipCreateUserException e)
                 {
-                    ModelState.AddModelError(string.Empty, ErrorCodeToString(e.StatusCode)); //TODO: add error message here and handle in razor
+                    ModelState.AddModelError(string.Empty, ErrorCodeToString(e.StatusCode)); 
+                    //TODO: add error message here and handle in razor
                     _logger.Error("/Account/Register: " + e.Message);
                 }
             }

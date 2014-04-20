@@ -80,7 +80,7 @@ namespace CUWebinars.Business.AccountService
             string email
             )
         {
-            //TODO: Needs another change for email in use condition
+            //TODO: Needs another check for email in use condition
             //   or a bulletproof method of ensuring that for every Membership UserAccount created
             //   a WebUser account as also been created.
             var account = _userAccountService.CreateAccount(tenant, userName, password, email);
@@ -190,7 +190,7 @@ namespace CUWebinars.Business.AccountService
 
         public void ResetPassword(string tenant, string email)
         {
-            //TODO: are calls to this method logged?
+            //TODO: are calls to this method logged my Membership Reboot?
             try
             {
                 _userAccountService.ResetPassword(tenant, email);

@@ -408,9 +408,13 @@ namespace CUWebinars.Web.Controllers
                 {
                     if (checkOrder.OrderRows.Single().idWebinar == id)
                     {
-                        var singleOrDefaultRow = checkOrder.OrderRows.SingleOrDefault();
-                        if (singleOrDefaultRow != null)
-                            ViewBag.orderMessages = _db.RegTypes.Find(singleOrDefaultRow.RegistrationType);
+
+                        // OrderRow has a idRegType (the FK)
+                        // but does not have an instantiated RegType object.
+
+                        var row = checkOrder.OrderRows.SingleOrDefault();
+                        if (row != null)
+                            ViewBag.orderMessages = _db.RegTypes.Find(row.RegistrationType);
                         var webinarFiles = _db.WebinarFiles.Where(f => f.idWebinar == id).Select(f => f.fileDesc +"|"+ f.fileLocation ).ToArray();
                         ViewBag.WebinarFiles = webinarFiles;
 
@@ -418,7 +422,8 @@ namespace CUWebinars.Web.Controllers
                         model.CheckoutOptionsViewModel.Order = model.CheckoutOptionsViewModel.DisplayOptionsViewModel.Order = checkOrder;
 
                         var connectionText = new StringBuilder("<p>");
-                        connectionText.Append(ViewBag.orderMessages.Stage2EmailConfirmationMsg.Replace(" and is also available at http://www.BankWebinars.com", "</p><p>"));
+                        connectionText.Append(row.RegistrationType.Stage2EmailConfirmationMsg.Replace(" and is also available at http://www.BankWebinars.com", "</p><p>"));
+                        //connectionText.Append(ViewBag.orderMessages.Stage2EmailConfirmationMsg.Replace(" and is also available at http://www.BankWebinars.com", "</p><p>"));
                         //var conn = 
 
                         connectionText.Append(webinar.ConnectionInfo.Replace(Environment.NewLine,"<br>"));

@@ -118,14 +118,17 @@ namespace CUWebinars.Web.Controllers.api
                     model.BillingAddress.Zip
                     );
 
+                model.BillingAddress.AddressType = "Billing";
+                model.ShippingAddress.AddressType = "Shipping";
+
                 IList<Address> addresses = new List<Address> { model.BillingAddress, model.ShippingAddress };
 
                 USTimeZone userTimeZone = _membershipService.GetTimeZoneByZip();
                 webUser = _membershipService.CreateWebUser(globalConfig.Tenant
-                    , firstName
-                    , lastName
+                    , firstName.Trim()
+                    , lastName.Trim()
                     , lastName.ToLower().Trim()
-                    , email
+                    , email.Trim()
                     , userTimeZone
                     , UserType.Customer
                     , institutionForUser.idInstitution
@@ -147,7 +150,6 @@ namespace CUWebinars.Web.Controllers.api
             }
 
             IList<AdditionalLocation> addLocation = new List<AdditionalLocation>();
-
 
             if (model.AdditionalLocation != null && model.AdditionalLocation.Any())
             {
@@ -182,25 +184,26 @@ namespace CUWebinars.Web.Controllers.api
             importedOrder.FirstName = webUser.FirstName;
             importedOrder.LastName = webUser.LastName;
             importedOrder.Institution = webUser.Institution.InstitutionName;
-
+            importedOrder.BillingEmail = model.Email;
+            
             importedOrder.BillingAddress = model.BillingAddress.StreetAddress;
             importedOrder.BillingAddress2 = model.BillingAddress.StreetAddress2;
             importedOrder.BillingPhone = model.BillingAddress.Phone;
-            importedOrder.BillingEmail = model.Email;
             importedOrder.BillingCity = model.BillingAddress.City;
             importedOrder.BillingState = model.BillingAddress.State;
             importedOrder.BillingZip = model.BillingAddress.Zip;
 
-            importedOrder.ShippingAddress = model.ShippingAddress.StreetAddress;
-            importedOrder.ShippingAddress2 = model.ShippingAddress.StreetAddress2;
-            importedOrder.ShippingPhone = model.ShippingAddress.Phone;
-            importedOrder.ShippingCity = model.ShippingAddress.City;
-            importedOrder.ShippingState = model.ShippingAddress.State;
-            importedOrder.ShippingZip = model.ShippingAddress.Zip;
+            //convention is that shipping is not pass via spreadsheet
+            importedOrder.ShippingAddress = model.BillingAddress.StreetAddress;
+            importedOrder.ShippingAddress2 = model.BillingAddress.StreetAddress2;
+            importedOrder.ShippingPhone = model.BillingAddress.Phone;
+            importedOrder.ShippingCity = model.BillingAddress.City;
+            importedOrder.ShippingState = model.BillingAddress.State;
+            importedOrder.ShippingZip = model.BillingAddress.Zip;
             importedOrder.ShippingFirstName = firstName;
             importedOrder.ShippingLastName = lastName;
 
-            if (orderRow.Webinar.WebinarKey > 0)
+            if (orderRow.Webinar.WebinarKey != "0")
             {
                 var regKeyResponse = _orderManagementService.CreateRegistrantKey(importedOrder.FirstName, importedOrder.LastName, importedOrder.BillingEmail, orderRow.idWebinar, orderRow.Webinar.WebinarKey);
                 //"{\"registrantKey\":106033865,\"joinUrl\":\"https://www2.gotomeeting.com/join/739905466/106033865\"}"
@@ -213,11 +216,13 @@ namespace CUWebinars.Web.Controllers.api
                 }
                 if (regKeyResponse.Contains("joinUrl"))
                 {
-                    var joinURL = regKeyResponse.Split(',')[0].Split(':')[1];
-                    orderRow.JoinURL = joinURL;
+                    var joinURL = regKeyResponse.Split(',')[1].Split(':')[2].Split('\\')[0];
+                    orderRow.JoinURL = "https:" +joinURL;
                 }
 
             }
+
+
 
             _orderManagementService.SaveOrderChanges(importedOrder);
             try

@@ -44,8 +44,8 @@ namespace CUWebinars.Web.Controllers
                 RegisterFields = new RegisterModel
                 {
                     AccountDetailsTitle = WebUiConstants.Register,
-                    BillingAddress = new AddressModel {TypeOfAddress = AddressType.Billing},
-                    ShippingAddress = new AddressModel {TypeOfAddress = AddressType.Shipping}
+                    BillingAddress = new AddressModel { TypeOfAddress = AddressType.Billing },
+                    ShippingAddress = new AddressModel { TypeOfAddress = AddressType.Shipping }
                 }
             };
 
@@ -90,7 +90,7 @@ namespace CUWebinars.Web.Controllers
                     userAccount = _membershipService.CreateUser(globals.Tenant, model.RegisterFields.FirstName,
                         model.RegisterFields.LastName, string.Empty, model.RegisterFields.Password,
                         model.RegisterFields.Email);
-                    
+
                     dataOperations.SetNewAccountToVerified(userAccount.ID);
                 }
                 else
@@ -139,7 +139,7 @@ namespace CUWebinars.Web.Controllers
 
                     //_membershipService.AddAddressesForWebUser(addresses);
 
-                    userAccount =_membershipService.CreateUser(globals.Tenant, "John", "Hancock", string.Empty, newPassword, newEmail);
+                    userAccount = _membershipService.CreateUser(globals.Tenant, "John", "Hancock", string.Empty, newPassword, newEmail);
                     dataOperations.SetNewAccountToVerified(userAccount.ID);
 
                     return Json(new { result = "success", email = newEmail, password = newPassword });
@@ -206,7 +206,7 @@ namespace CUWebinars.Web.Controllers
             return Json(model);
         }
 
-        
+
         public PartialViewResult GetJsonTextArea()
         {
             const string importOrderViaDashboardViewModel = @"{""AdditionalLocations"": [
@@ -273,7 +273,7 @@ namespace CUWebinars.Web.Controllers
             var billingAddress = new Address
             {
                 AddressType =
-                    Enum.GetName(typeof (AddressType), registerViewModel.RegisterFields.BillingAddress.TypeOfAddress),
+                    Enum.GetName(typeof(AddressType), registerViewModel.RegisterFields.BillingAddress.TypeOfAddress),
                 City = registerViewModel.RegisterFields.BillingAddress.City.Trim(),
                 Country = registerViewModel.RegisterFields.BillingAddress.Country.Trim(),
                 Name =
@@ -292,7 +292,7 @@ namespace CUWebinars.Web.Controllers
             var shippingAddress = new Address
             {
                 AddressType =
-                    Enum.GetName(typeof (AddressType), registerViewModel.RegisterFields.ShippingAddress.TypeOfAddress),
+                    Enum.GetName(typeof(AddressType), registerViewModel.RegisterFields.ShippingAddress.TypeOfAddress),
                 City = registerViewModel.RegisterFields.ShippingAddress.City.Trim(),
                 Country = registerViewModel.RegisterFields.ShippingAddress.Country.Trim(),
                 Name =
@@ -308,7 +308,7 @@ namespace CUWebinars.Web.Controllers
                 Zip = registerViewModel.RegisterFields.ShippingAddress.Zip.Trim()
             };
 
-            return new List<Address> { billingAddress, shippingAddress };            
+            return new List<Address> { billingAddress, shippingAddress };
         }
 
         internal static class Helpers
@@ -328,7 +328,7 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 return builder.ToString();
-            }            
+            }
         }
     }
 }

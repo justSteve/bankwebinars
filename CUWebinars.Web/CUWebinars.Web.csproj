@@ -68,6 +68,9 @@
     <Reference Include="Common.Logging.Log4Net1211">
       <HintPath>..\packages\Common.Logging.Log4Net1211.2.2.0\lib\net40\Common.Logging.Log4Net1211.dll</HintPath>
     </Reference>
+    <Reference Include="DDay.iCal">
+      <HintPath>..\packages\DDay.iCal.1.0.2.575\lib\DDay.iCal.dll</HintPath>
+    </Reference>
     <Reference Include="DotNetOpenAuth.AspNet">
       <HintPath>..\packages\DotNetOpenAuth.AspNet.4.3.1.13153\lib\net45-full\DotNetOpenAuth.AspNet.dll</HintPath>
     </Reference>
@@ -168,9 +171,9 @@
       <HintPath>..\packages\Microsoft.WindowsAzure.ConfigurationManager.2.0.3\lib\net40\Microsoft.WindowsAzure.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.ServiceRuntime, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.WindowsAzure.Storage, Version=2.1.0.3, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.WindowsAzure.Storage, Version=2.1.0.4, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\WindowsAzure.Storage.2.1.0.3\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
+      <HintPath>..\packages\WindowsAzure.Storage.2.1.0.4\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.StorageClient, Version=1.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.WindowsFabric.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -431,13 +434,13 @@
     <Compile Include="ViewModel\RegisterViewModel.cs" />
     <Compile Include="ViewModel\WebinarDetailsViewModel.cs" />
     <Compile Include="ViewModel\WebUserInfoViewModel.cs" />
-    <Compile Include="WebUserFacadeExtender.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\packages\Selenium.WebDriver.ChromeDriver.2.9.0.0\content\chromedriver.exe">
       <Link>chromedriver.exe</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="App_Data\Calendar\iCalFromCitrix.txt" />
     <Content Include="App_Data\Deploy\New-AzureSql.ps1" />
     <Content Include="App_Data\Deploy\New-AzureStorage.ps1" />
     <Content Include="App_Data\Deploy\New-AzureWebsiteEnv.ps1" />
@@ -879,7 +882,6 @@
     <Content Include="Membership\Email\EmailTemplates\AccountCreatedEvent_Subject.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailChangedEvent_Body.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailChangedEvent_Subject.cshtml" />
-    <Content Include="App_Data\Orders\sampleorder.csv" />
     <Content Include="App_Data\Orders\OrderWithAddLocations.csv" />
     <Content Include="App_Data\Orders\sampleorderFromExcel.csv" />
     <None Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Body.cshtml" />
@@ -979,6 +981,7 @@
     <None Include="Properties\PublishProfiles\CUWebinars - Web Deploy.pubxml" />
     <Content Include="Scripts\Autocomplete\css\ui-lightness\images\Thumbs.db" />
     <Content Include="App_Data\Deploy\DeployScript.ps1" />
+    <None Include="Properties\PublishProfiles\cuwebinars1.pubxml" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Scripts\cleditor\images\buttons.gif" />

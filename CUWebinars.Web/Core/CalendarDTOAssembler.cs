@@ -40,7 +40,7 @@ namespace CUWebinars.Web.Core
             throw new NotImplementedException();
         }
 
-        //TODO: Move this to base method
+        //
         public IList<CalendarDTO> Entities2DTOs(IList<Webinar> entities)
         {
             var dtos = new List<CalendarDTO>();

@@ -1,0 +1,37 @@
+﻿BEGIN:VCALENDAR
+VERSION:2.0
+METHOD:PUBLISH
+BEGIN:VTIMEZONE
+TZID:Pacific Time (US & Canada)
+BEGIN:STANDARD
+DTSTART:20061105T020000
+RRULE:FREQ=YEARLY;BYDAY=1SU;BYMONTH=11
+TZOFFSETFROM:-0700
+TZOFFSETTO:-0800
+END:STANDARD
+BEGIN:DAYLIGHT
+DTSTART:20070311T020000
+RRULE:FREQ=YEARLY;BYDAY=2SU;BYMONTH=3
+TZOFFSETFROM:-0800 
+TZOFFSETTO:-0700
+TZNAME:Daylight Savings Time
+END:DAYLIGHT
+END:VTIMEZONE
+BEGIN:VEVENT
+DTSTART;TZID="Pacific Time (US & Canada)":20140422T080000
+DTEND;TZID="Pacific Time (US & Canada)":20140422T090000
+LOCATION;ENCODING=QUOTED-PRINTABLE:Webinar - See conference call information below
+UID:100000000062155521
+DTSTAMP:20140418T171759Z
+DESCRIPTION:1. Click this link to start or to join the Webinar:\n\n   https://www2.gotomeeting.com/ojoin/831061458/901873\n\n\n2. Choose one of the following audio options:\n\n   TO USE YOUR COMPUTER'S AUDIO:\n   When the Webinar begins, you will be connected to audio using your computer's microphone and speakers (VoIP). A headset is recommended.\n\n\n   TO USE YOUR TELEPHONE:\n   If you prefer to use your phone, you must select "Use Telephone" after joining the Webinar and call in using the numbers below.\n\n\n   Toll-free: 1 866 952 8437\n   Access Code: 703-997-409\n   Audio PIN: Shown after joining the meeting\n\n\nGoToWebinar®\nWebinars Made Easy™\n
+SUMMARY;ENCODING=QUOTED-PRINTABLE:Vendor Management Best Practices: How to Address the New Challenges & Increased Regulatory Scrutiny
+BEGIN:VALARM
+TRIGGER:-PT15M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+END:VCALENDAR
+
+
+//http://stackoverflow.com/questions/12112323/how-do-i-create-an-outlook-appointment-with-dday-ical

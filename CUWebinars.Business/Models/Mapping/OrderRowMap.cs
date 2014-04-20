@@ -11,7 +11,7 @@ namespace CUWebinars.Business.Models.Mapping
             HasKey(t => t.idOrderRow);
             
             Property(o => o.RegistrantKey).HasMaxLength(25);
-            Property(o => o.JoinURL).HasMaxLength(25);
+            Property(o => o.JoinURL).HasMaxLength(125);
             Property(o => o.Royalty).HasPrecision(8,2);
             Property(o => o.UnitPrice).HasPrecision(8,2);
             Property(o => o.RowPrice).HasPrecision(8,2);

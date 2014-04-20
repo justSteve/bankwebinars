@@ -31,8 +31,11 @@ namespace CUWebinars.Web.Core.Browsers.Webinars
                 string buildTitle = "";
                 buildTitle = entry.Webinar.Title + "<br/>&nbsp;<a href='/Admin/Webinars/ViewFiles/" +
                                         entry.Webinar.idWebinar + "' target='_blank'>[Links]</a>";
-                //TODO: Now that we use Claims for typing a current user what is the correct way to 
-                //  determine usertype?
+
+
+                //TODO: Usertype needs to be determined by Claims
+
+                //deprecated method of determining usertype
                 //if (CurrentSession.Instance.CurrentWebUser.UserType == UserType.Affiliate)
                 //{
                 //    buildTitle += "<a href='/Admin/Reports/AffiliateRevenue/" + entry.Webinar.idWebinar +

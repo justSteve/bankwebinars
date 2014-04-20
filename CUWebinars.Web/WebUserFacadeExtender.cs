@@ -6,7 +6,7 @@ using System.Web;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
-//TODO: Review these methods from the legacy site and decide best way to implement
+//
 namespace CUWebinars.Web
 {
     public static class WebUserFacadeExtender
