@@ -1,12 +1,10 @@
-﻿using System;
+﻿using CUWebinars.Business.Models;
+using CUWebinars.Web.Models;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Web;
-using CUWebinars.Business.Models;
-using CUWebinars.Web.Models;
 
 namespace CUWebinars.Web.Core
 {
@@ -33,34 +31,44 @@ namespace CUWebinars.Web.Core
                     throw new NullReferenceException("The header section of the csv file is missing.");
 
 
-            incomingOrderModel.FirstName = remainingData.SubstringFromNthToMth(remainingData.GetIndexOfNthChar((1), ','),
-                    remainingData.GetIndexOfNthChar((2), ',')).Replace(",", string.Empty).Trim();
-            incomingOrderModel.idAffiliate = int.Parse(remainingData.SubstringFromNthToMth(remainingData.GetIndexOfNthChar((2), ','),
-                    remainingData.GetIndexOfNthChar((3), ',')).Replace(",", string.Empty));
+                while((line = sr.ReadLine()) != null)
+                {
+                    var incomingOrderModel = new IncomingOrderModel
+                    {
+                        BillingAddress = new Address(),
+                        ShippingAddress = new Address()
+                    };
+                    var dataDictionary = new Dictionary<string, string>(keys.Length);
 
-            incomingOrderModel.idRegType = int.Parse(remainingData.SubstringFromNthToMth(remainingData.GetIndexOfNthChar((3), ','),
-                    remainingData.GetIndexOfNthChar((4), ',')).Replace(",", string.Empty));
+                    values = line.Split(',');
 
-            incomingOrderModel.idWebinar = int.Parse(remainingData.SubstringFromNthToMth(remainingData.GetIndexOfNthChar((4), ','),
-                    remainingData.GetIndexOfNthChar((5), ',')).Replace(",", string.Empty));
+                    for (int i = 0; i < keys.Length; i++)
+                    {
+                        dataDictionary.Add(keys[i].Trim(), values[i].Trim());
+                    }
 
-            incomingOrderModel.Institution = remainingData.SubstringFromNthToMth(remainingData.GetIndexOfNthChar((5), ','),
-                    remainingData.GetIndexOfNthChar((6), ',')).Replace(",", string.Empty).Replace(";", ",").Trim();
+                    incomingOrderModel.Title = dataDictionary[keys[1]];
+                    incomingOrderModel.idWebinar = int.Parse(dataDictionary[keys[2]]);
+                    incomingOrderModel.idRegType = int.Parse(dataDictionary[keys[3]]);
+                    incomingOrderModel.idAffiliate = int.Parse(dataDictionary[keys[4]]);
+                    incomingOrderModel.FirstName = dataDictionary[keys[5]];
+                    incomingOrderModel.LastName = dataDictionary[keys[6]];
+                    incomingOrderModel.Institution = dataDictionary[keys[7]];
+                    incomingOrderModel.Title = dataDictionary[keys[8]]; ;
+                    incomingOrderModel.Email = dataDictionary[keys[9]];
+                    incomingOrderModel.BillingAddress.Phone = dataDictionary[keys[10]];
+                    incomingOrderModel.BillingAddress.StreetAddress = dataDictionary[keys[11]];
+                    incomingOrderModel.BillingAddress.StreetAddress2 = dataDictionary[keys[12]];
+                    incomingOrderModel.BillingAddress.City = dataDictionary[keys[13]];
+                    incomingOrderModel.BillingAddress.State = dataDictionary[keys[14]];
+                    incomingOrderModel.BillingAddress.Zip = dataDictionary[keys[15]];
+                    incomingOrderModel.BillingAddress.Country = dataDictionary[keys[16]];
 
-            incomingOrderModel.LastName = remainingData.SubstringFromNthToMth(remainingData.GetIndexOfNthChar((6), ','),
-                    remainingData.GetIndexOfNthChar((7), ',')).Replace(",", string.Empty).Trim();
+                    incomingOrderModels.Add(incomingOrderModel);
+                }
 
-            incomingOrderModel.SendNotification = bool.Parse(remainingData.SubstringFromNthToMth(remainingData.GetIndexOfNthChar((7), ','),
-                    remainingData.GetIndexOfNthChar((8), ',')).Replace(",", string.Empty));
-
-            remainingData = remainingData.Substring(remainingData.LastIndexOf('{'));
-            incomingOrderModel.ShippingAddress = GetAddressFromData(remainingData);
-
-            remainingData = remainingData.Substring(remainingData.LastIndexOf('}'));
-            incomingOrderModel.Title = remainingData.Substring(remainingData.IndexOf(",") + 1).Trim();
-
-
-        }
+                return incomingOrderModels;
+            }
 
         }
 
