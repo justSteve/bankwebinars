@@ -135,9 +135,15 @@ namespace CUWebinars.Business.Services
 
         public IList<Order> GetOrdersByUserId(int id)
         {
-            var sendback = _refDataRepository.FindOrdersByUserId(id);
-
-            return sendback;
+            try
+            {
+                return _orderRepository.FindOrdersByUserIdWithOrderRows(id);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("GetOrdersByUserId", exception);
+                throw;
+            }
         }
 
         public Webinar GetWebinar(int id)

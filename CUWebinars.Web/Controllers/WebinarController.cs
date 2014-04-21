@@ -414,7 +414,7 @@ namespace CUWebinars.Web.Controllers
 
                         var row = checkOrder.OrderRows.SingleOrDefault();
                         if (row != null)
-                            ViewBag.orderMessages = _db.RegTypes.Find(row.RegistrationType);
+                            ViewBag.orderMessages = row.RegistrationType;
                         var webinarFiles = _db.WebinarFiles.Where(f => f.idWebinar == id).Select(f => f.fileDesc +"|"+ f.fileLocation ).ToArray();
                         ViewBag.WebinarFiles = webinarFiles;
 

@@ -12,6 +12,7 @@ namespace CUWebinars.Business.Repository
         Order AssignAffiliate(Affiliate affiliate, Order order);
         Order AssignWebUserToOrder(WebUser webUser, Order order);
         Order FindOrderByIdWithOrderRows(int id);
+        IList<Order> FindOrdersByUserIdWithOrderRows(int userId);
         Order SaveOrderChanges(Order order);
         //IDictionary<RegType, Order> SelectOrdersWithScheduledWebinars(int idUser);
         IList<Order> Test(int idUser);
