@@ -41,38 +41,39 @@ namespace CUWebinars.Business.Repository
             return newOrder;
         }
 
-        public OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, RegType registrationType)
+        public OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation,
+            RegType registrationType)
         {
-            var strongTypedContext = (TTSWebinarsContext)db;
-            var entry = strongTypedContext.Entry(webinar);
-
-            //if (entry.State != EntityState.Detached)
-            //    throw new Exception("Webinar cannot be attached to this context yet. It has to have been retrieved and previously detached.");
-
-            //strongTypedContext.Webinars.Attach(webinar);
-            //entry.State = EntityState.Modified;
-
-            var newOrderRow = strongTypedContext.OrderRows.Create();
-            if (additionalLocation != null)
-            {
-                foreach (var addLoc in additionalLocation)
-                {
-                    //OrderRow is instantiated but has lots of null properties...
-                    // ... including 'Order'.
-                    // addLoc is instantiated.
-                    newOrderRow.AdditionalLocation.Add(addLoc);
-                }
-            }
-
-            newOrderRow.Webinar = webinar;
-            newOrderRow.RegistrationType = registrationType;
-            newOrderRow.RowStatus = OrderRowStatus.Active;
-
-            //strongTypedContext.OrderRows.Add(newOrderRow);
-
             try
             {
-                //db.SaveChanges();
+                var strongTypedContext = (TTSWebinarsContext) db;
+                var entry = strongTypedContext.Entry(webinar);
+
+                //if (entry.State != EntityState.Detached)
+                //    throw new Exception("Webinar cannot be attached to this context yet. It has to have been retrieved and previously detached.");
+
+                //strongTypedContext.Webinars.Attach(webinar);
+                //entry.State = EntityState.Modified;
+
+                var newOrderRow = strongTypedContext.OrderRows.Create();
+
+                if (additionalLocation != null)
+                {
+                    foreach (var addLoc in additionalLocation)
+                    {
+                        //OrderRow is instantiated but has lots of null properties...
+                        // ... including 'Order'.
+                        // addLoc is instantiated.
+                        newOrderRow.AdditionalLocation.Add(addLoc);
+                    }
+                }
+
+                newOrderRow.Webinar = webinar;
+                newOrderRow.RegistrationType = registrationType;
+                newOrderRow.RowStatus = OrderRowStatus.Active;
+
+                return newOrderRow;
+
             }
             catch (DbEntityValidationException dbEx)
             {
@@ -80,29 +81,29 @@ namespace CUWebinars.Business.Repository
                 {
                     foreach (var validationError in validationErrors.ValidationErrors)
                     {
-                        Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
+                        Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
+                            validationError.ErrorMessage);
                     }
                 }
+                throw;
             }
-
-            return newOrderRow;
         }
 
         public AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullName)
         {
-            var strongTypedContext = (TTSWebinarsContext)db;
-
-            var additionalLocation = strongTypedContext.AdditionalLocation.Create();
-
-            additionalLocation.Price = price;
-            additionalLocation.Email = email;
-            additionalLocation.FullName = fullName;
-
-            strongTypedContext.AdditionalLocation.Add(additionalLocation);
-
             try
             {
-                //db.SaveChanges();
+                var strongTypedContext = (TTSWebinarsContext) db;
+
+                var additionalLocation = strongTypedContext.AdditionalLocation.Create();
+
+                additionalLocation.Price = price;
+                additionalLocation.Email = email;
+                additionalLocation.FullName = fullName;
+
+                strongTypedContext.AdditionalLocation.Add(additionalLocation);
+
+                return additionalLocation;
             }
             catch (DbEntityValidationException dbEx)
             {
@@ -110,12 +111,13 @@ namespace CUWebinars.Business.Repository
                 {
                     foreach (var validationError in validationErrors.ValidationErrors)
                     {
-                        Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
+                        Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
+                            validationError.ErrorMessage);
+                        
                     }
                 }
+                throw;
             }
-
-            return additionalLocation;
         }
 
         public Order FindOrderByIdWithOrderRows(int id)
@@ -124,6 +126,16 @@ namespace CUWebinars.Business.Repository
                 //.Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
                 .Where(o => o.idOrder == id);
             return item.FirstOrDefault();
+        }
+
+        public IList<Order> FindOrdersByUserIdWithOrderRows(int userId)
+        {
+            var userOrders = items.Include(o => o.OrderRows.Select(or => or.Webinar))
+                .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                .Where(o => o.WebUser.idUser == userId);
+
+            return ReferenceEquals(null, userOrders) ? null : userOrders.ToList();
+
         }
 
         public Order AssignAffiliate(Affiliate affiliate, Order order)

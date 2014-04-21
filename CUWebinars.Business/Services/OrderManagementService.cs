@@ -76,9 +76,9 @@ namespace CUWebinars.Business.Services
         {
             try
             {
-                var regType = _RegTypeRepository.FindRegType(registrationType);
-                return _orderRepository.CreateOrderRow(webinar, additionalLocation, regType);
-            }
+            var regType = _RegTypeRepository.FindRegType(registrationType);
+            return _orderRepository.CreateOrderRow(webinar, additionalLocation, regType);
+        }
             catch (Exception exception)
             {
                 _logger.ErrorException("CreateOrderRow", exception);
@@ -91,7 +91,7 @@ namespace CUWebinars.Business.Services
             try
             {
                 _orderRepository.CreateOrderRow(webinar, additionalLocation, registrationType);
-            }
+        }
             catch (Exception exception)
             {
                 _logger.ErrorException("CreateOrderRow", exception);
@@ -135,9 +135,15 @@ namespace CUWebinars.Business.Services
 
         public IList<Order> GetOrdersByUserId(int id)
         {
-            var sendback = _refDataRepository.FindOrdersByUserId(id);
-
-            return sendback;
+            try
+            {
+                return _orderRepository.FindOrdersByUserIdWithOrderRows(id);
+        }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("GetOrdersByUserId", exception);
+                throw;
+            }
         }
 
         public Webinar GetWebinar(int id)
@@ -397,23 +403,25 @@ namespace CUWebinars.Business.Services
             return null;
         }
 
-        public string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int idWebinar, string webinarKey)
+        public string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int idWebinar,
+            string webinarKey)
         {
             //https://www2.gotomeeting.com/en_US/island/webinar/audio/organizers/conferenceInfo.tmpl?webinarId=495203178&role=0
             //0 = attendee
             //2 = panelist
             //1 = organizer
 
-            string orgKey = "922930";//steve's
+            string orgKey = "922930"; //steve's
             //string orgKey = "901873";//marks
-            string access_token = "5jxY3KZL48HWknOaOEP2eIzVmOTS";//steve's
+            string access_token = "5jxY3KZL48HWknOaOEP2eIzVmOTS"; //steve's
             //string access_token = "JIOHRkkCvmIKDY8QO0S4msbYH48N";//mark's
 
             //string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/495203178/registrants";
-            string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/" + idWebinar + "/registrants";
+            string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/" + idWebinar +
+                         "/registrants";
 
 
-            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+            HttpWebRequest httpWebRequest = (HttpWebRequest) WebRequest.Create(url);
             //httpWebRequest.ContentType = "application/x-www-form-urlencoded";
             httpWebRequest.ContentType = "application/json";
             //httpWebRequest.Accept = "application/json";
@@ -422,7 +430,7 @@ namespace CUWebinars.Business.Services
 
             httpWebRequest.Method = "POST";
 
-            object sendVars = new { firstName = firstName, lastName = lastName, email = billingEmail };
+            object sendVars = new {firstName = firstName, lastName = lastName, email = billingEmail};
 
             string postData = JsonConvert.SerializeObject(sendVars);
             ;
@@ -439,7 +447,7 @@ namespace CUWebinars.Business.Services
 
             try
             {
-                HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse();
+                HttpWebResponse response = (HttpWebResponse) httpWebRequest.GetResponse();
                 // Get the stream associated with the response.
                 Stream receiveStream = response.GetResponseStream();
 
@@ -452,11 +460,27 @@ namespace CUWebinars.Business.Services
                 readStream.Close();
 
                 return myResponse;
+            }
+            catch (WebException webException)
+            {
+                var httpWebResponse = webException.Response as HttpWebResponse;
 
+                if (httpWebResponse != null &&
+                    (httpWebResponse.StatusCode == HttpStatusCode.Conflict ||
+                     httpWebResponse.StatusCode == HttpStatusCode.NotFound))
+                {
+                    string responsePayload = string.Empty;
+
+                    using (var responsStream = new StreamReader(httpWebResponse.GetResponseStream()))
+                    {
+                        responsePayload = responsStream.ReadToEnd();
+                    }
+                    return responsePayload;
+                }
             }
             catch (Exception ex)
             {
-                _logger.ErrorException("CreateRegistrantKey", ex);
+                return "error";
             }
             return null;
         }
