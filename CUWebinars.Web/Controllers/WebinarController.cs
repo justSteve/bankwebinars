@@ -371,7 +371,7 @@ namespace CUWebinars.Web.Controllers
             //
             WebUser user = Request.IsAuthenticated ? _membershipService.GetUserByEmail(User.Identity.Name) : new WebUser();
 
-            var usersOrders = _orderManagementService.GetOrdersByUserId(user.idUser);
+            var usersOrders = _orderManagementService.GetOrdersByUserId(user.idUser).Where(o => o.OrderRows.First().idWebinar == id);
 
             var options = _orderManagementService.GetOptionsByWebinarId(id, false);
             var webinar = _db.Webinars.Include(w => w.Presenter.WebUser).First(w => w.idWebinar == id);
@@ -402,11 +402,11 @@ namespace CUWebinars.Web.Controllers
                 }
             };
 
-            if (usersOrders != null && usersOrders.Count > 0)
+            if (usersOrders != null && usersOrders.Any())
             {
                 foreach (var checkOrder in usersOrders)
                 {
-                    if (checkOrder.OrderRows.Single().idWebinar == id)
+                    //if (checkOrder.OrderRows.Single().idWebinar == id)
                     {
 
                         // OrderRow has a idRegType (the FK)
