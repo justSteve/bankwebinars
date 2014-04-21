@@ -14,6 +14,7 @@ using System.Linq;
 using DDay.iCal;
 using DDay.iCal.Serialization.iCalendar;
 using Newtonsoft.Json;
+using Ninject.Extensions.Logging;
 using IEvent = CUWebinars.NotificationSystem.Event.IEvent;
 using IEventSource = CUWebinars.NotificationSystem.Event.IEventSource;
 
@@ -26,6 +27,7 @@ namespace CUWebinars.Business.Services
         private readonly IOrderRepository _orderRepository;
         private readonly IRefDataRepository _refDataRepository;
         private readonly IWebinarRepository _webinarRepository;
+        private readonly ILogger _logger;
         private readonly IWebUserRepository _webUserRepository;
         private readonly TtsConfiguration _ttsConfig;
         readonly List<IEvent> _events = new List<IEvent>();
@@ -37,6 +39,7 @@ namespace CUWebinars.Business.Services
             IRefDataRepository refDataRepository,
             IWebUserRepository webUserRepository,
             IWebinarRepository webinarRepository,
+            ILogger logger,
             TtsConfiguration ttsConfig)
         {
             _affiliateRepository = affiliateRepository;
@@ -45,6 +48,7 @@ namespace CUWebinars.Business.Services
             _refDataRepository = refDataRepository;
             _ttsConfig = ttsConfig;
             _webinarRepository = webinarRepository;
+            _logger = logger;
             _webUserRepository = webUserRepository;
         }
 
@@ -70,13 +74,30 @@ namespace CUWebinars.Business.Services
 
         public OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, int registrationType)
         {
-            var regType = _RegTypeRepository.FindRegType(registrationType);
-            return _orderRepository.CreateOrderRow(webinar, additionalLocation, regType);
+            try
+            {
+                var regType = _RegTypeRepository.FindRegType(registrationType);
+                return _orderRepository.CreateOrderRow(webinar, additionalLocation, regType);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("CreateOrderRow", exception);
+                throw;
+            }
         }
 
         public OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, RegType registrationType)
         {
-            return _orderRepository.CreateOrderRow(webinar, additionalLocation, registrationType);
+            try
+            {
+                _orderRepository.CreateOrderRow(webinar, additionalLocation, registrationType);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("CreateOrderRow", exception);
+            }
+
+            return null;
         }
 
 
@@ -435,10 +456,9 @@ namespace CUWebinars.Business.Services
             }
             catch (Exception ex)
             {
-                return "error";
+                _logger.ErrorException("CreateRegistrantKey", ex);
             }
-
-
+            return null;
         }
 
         string IOrderManagementService.CreateCalendarEvent(string title, string body, DateTime startDate, double duration, string location,

@@ -163,3 +163,10 @@ $RECYCLE.BIN/
 # =========================
 CUWebinars.Selenium.Core/*.exe
 CUWebinars.WebUi.Tests/*.exe
+
+# =========================
+# Persisted Notifications
+# =========================
+CUWebinars.Web/App_Data/Notifications/
+
+

@@ -133,6 +133,8 @@ namespace CUWebinars.Web.App_Start
                 var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
                 var userAccountService = kernel.Get<UserAccountService>();
                 ILogger logger = new Log4NetLogger(typeof (OrderController));
+                ILogger loggerForOrderManagementService = new Log4NetLogger(typeof(OrderManagementService));
+
 
                 var orderManagementService = new OrderManagementService(
                     new AffiliateRepository(sharedContext),
@@ -141,6 +143,7 @@ namespace CUWebinars.Web.App_Start
                     new RefDataRepository(),
                     new WebUserRepository(sharedContext),
                     new WebinarRepository(sharedContext),
+                    loggerForOrderManagementService,
                     ttsConfig
                     );
 
@@ -160,6 +163,7 @@ namespace CUWebinars.Web.App_Start
                 var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
                 var userAccountService = kernel.Get<UserAccountService>();
                 ILogger logger = new Log4NetLogger(typeof (AccountController));
+                ILogger loggerForOrderManagementService = new Log4NetLogger(typeof(OrderManagementService));
 
                 var orderManagementService = new OrderManagementService(
                     new AffiliateRepository(sharedContext),
@@ -168,6 +172,7 @@ namespace CUWebinars.Web.App_Start
                     new RefDataRepository(),
                     new WebUserRepository(sharedContext),
                     new WebinarRepository(sharedContext),
+                    loggerForOrderManagementService,
                     ttsConfig
                     );
 
@@ -193,6 +198,7 @@ namespace CUWebinars.Web.App_Start
                 var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
                 var userAccountService = kernel.Get<UserAccountService>();
                 ILogger logger = new Log4NetLogger(typeof (WebinarController));
+                ILogger loggerForOrderManagementService = new Log4NetLogger(typeof(OrderManagementService));
 
                 var orderManagementService = new OrderManagementService(
                     new AffiliateRepository(sharedContext),
@@ -201,6 +207,7 @@ namespace CUWebinars.Web.App_Start
                     new RefDataRepository(),
                     new WebUserRepository(sharedContext),
                     new WebinarRepository(sharedContext),
+                    loggerForOrderManagementService,
                     ttsConfig
                     );
 
@@ -257,6 +264,7 @@ namespace CUWebinars.Web.App_Start
                 var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
                 var userAccountService = kernel.Get<UserAccountService>();
                 ILogger logger = new Log4NetLogger(typeof(CartController));
+                ILogger loggerForOrderManagementService = new Log4NetLogger(typeof(OrderManagementService));
 
                 var orderManagementService = new OrderManagementService(
                     new AffiliateRepository(sharedContext),
@@ -265,6 +273,7 @@ namespace CUWebinars.Web.App_Start
                     new RefDataRepository(),
                     new WebUserRepository(sharedContext),
                     new WebinarRepository(sharedContext),
+                    loggerForOrderManagementService,
                     ttsConfig
                     );
 
