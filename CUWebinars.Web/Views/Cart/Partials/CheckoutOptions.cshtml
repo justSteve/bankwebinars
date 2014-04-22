@@ -10,7 +10,8 @@
             int registrationType = orderRow.idRegType;
 
             var addLocations = Model.Order.OrderRows.FirstOrDefault().AdditionalLocation
-                .Where(o => o.idOrderRow == orderRow.idOrderRow).FirstOrDefault();
+                .Where(o => o.idOrderRow == orderRow.idOrderRow)
+                .FirstOrDefault();
 
 
             //if (addLocations != null)

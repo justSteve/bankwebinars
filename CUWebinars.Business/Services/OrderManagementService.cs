@@ -121,7 +121,7 @@ namespace CUWebinars.Business.Services
             return _regTypeRepository.FindRegTypesByWebinarId(id, false);
             //return null;
         }
-        public IList<RegType> GetOptionsByWebinarIdFromOptionsRepository(int id, bool detached)
+        public IList<RegType> GetRegTypesByWebinarIdFrom(int id, bool detached)
         {
             return _regTypeRepository.FindRegTypesByWebinarId(id, false);
             return null;
