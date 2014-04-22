@@ -10,7 +10,9 @@ namespace CUWebinars.Web.Core
 {
     public static class CsvParseOps
     {
-        public static IList<IncomingOrderModel> ParseCsvForIncomingOrderModel(Stream stream)
+//PaymentStatus	AddtionaLocations	WebinarId	Registration Type	AffiliateId	FirstName	LastName	Institution	Title	Email	PhoneNumber	StreetAddress	StreetAddressLine2	City	State	ZipCode	Country
+
+    public static IList<IncomingOrderModel> ParseCsvForIncomingOrderModel(Stream stream)
         {
             IList<IDictionary<string,string>> dataDictionaries = new List<IDictionary<string,string>>();
             IList<IncomingOrderModel> incomingOrderModels = new List<IncomingOrderModel>();

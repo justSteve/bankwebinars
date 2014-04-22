@@ -413,8 +413,8 @@ namespace CUWebinars.Web.Controllers
                         // but does not have an instantiated RegType object.
 
                         var row = checkOrder.OrderRows.SingleOrDefault();
-                        if (row != null)
-                            ViewBag.orderMessages = row.RegistrationType;
+                        //if (row != null)
+                        //    ViewBag.orderMessages = row.RegistrationType;
                         var webinarFiles = _db.WebinarFiles.Where(f => f.idWebinar == id).Select(f => f.fileDesc +"|"+ f.fileLocation ).ToArray();
                         ViewBag.WebinarFiles = webinarFiles;
 
