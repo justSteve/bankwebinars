@@ -35,7 +35,7 @@
         if (Model.CheckoutOptionsViewModel.Order != null && Model.CheckoutOptionsViewModel.Order.idOrder > 0)
         {
             OrderRow row = new OrderRow();
-            row = Model.CheckoutOptionsViewModel.Order.OrderRows.SingleOrDefault();
+            row = Model.CheckoutOptionsViewModel.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
 
             <div class="span4">
                 Billing:

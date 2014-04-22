@@ -407,33 +407,38 @@ namespace CUWebinars.Web.Controllers
                 foreach (var checkOrder in usersOrders)
                 {
                     //if (checkOrder.OrderRows.Single().idWebinar == id)
-                    {
 
-                        // OrderRow has a idRegType (the FK)
-                        // but does not have an instantiated RegType object.
 
-                        var row = checkOrder.OrderRows.SingleOrDefault();
-                        //if (row != null)
-                        //    ViewBag.orderMessages = row.RegistrationType;
-                        var webinarFiles = _db.WebinarFiles.Where(f => f.idWebinar == id).Select(f => f.fileDesc +"|"+ f.fileLocation ).ToArray();
-                        ViewBag.WebinarFiles = webinarFiles;
+                    // OrderRow has a idRegType (the FK)
+                    // but does not have an instantiated RegType object.
 
-                        ViewBag.userOwnsThisEvent = checkOrder.idOrder;
-                        model.CheckoutOptionsViewModel.Order = model.CheckoutOptionsViewModel.DisplayOptionsViewModel.Order = checkOrder;
+                    var row = checkOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+                    //if (row != null)
+                    //    ViewBag.orderMessages = row.RegistrationType;
+                    var webinarFiles =
+                        _db.WebinarFiles.Where(f => f.idWebinar == id)
+                            .Select(f => f.fileDesc + "|" + f.fileLocation)
+                            .ToArray();
+                    ViewBag.WebinarFiles = webinarFiles;
 
-                        var connectionText = new StringBuilder("<p>");
-                        connectionText.Append(row.RegistrationType.Stage2EmailConfirmationMsg.Replace(" and is also available at http://www.BankWebinars.com", "</p><p>"));
-                        //connectionText.Append(ViewBag.orderMessages.Stage2EmailConfirmationMsg.Replace(" and is also available at http://www.BankWebinars.com", "</p><p>"));
-                        //var conn = 
+                    ViewBag.userOwnsThisEvent = checkOrder.idOrder;
+                    model.CheckoutOptionsViewModel.Order =
+                        model.CheckoutOptionsViewModel.DisplayOptionsViewModel.Order = checkOrder;
 
-                        connectionText.Append(webinar.ConnectionInfo.Replace(Environment.NewLine,"<br>"));
-                        connectionText.Append("</p>");
+                    var connectionText = new StringBuilder("<p>");
+                    connectionText.Append(
+                        row.RegistrationType.Stage2EmailConfirmationMsg.Replace(
+                            " and is also available at http://www.BankWebinars.com", "</p><p>"));
+                    //connectionText.Append(ViewBag.orderMessages.Stage2EmailConfirmationMsg.Replace(" and is also available at http://www.BankWebinars.com", "</p><p>"));
+                    //var conn = 
 
-                        ViewBag.connectionText = connectionText;
-  
-                    }
-                    if (checkOrder.OrderStatus == OrderStatus.InProcess
-                        && checkOrder.OrderRows.Single().idWebinar != id)
+                    connectionText.Append(webinar.ConnectionInfo.Replace(Environment.NewLine, "<br>"));
+                    connectionText.Append("</p>");
+
+                    ViewBag.connectionText = connectionText;
+
+
+                    if (checkOrder.OrderStatus == OrderStatus.InProcess && row.idWebinar != id)
                     {
                         ViewBag.userHasOpenOrder = checkOrder.idOrder;
                         model.CheckoutOptionsViewModel.Order = checkOrder;

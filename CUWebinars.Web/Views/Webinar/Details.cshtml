@@ -58,7 +58,7 @@
             });
         </script>
 
-        rowID = Model.CheckoutOptionsViewModel.Order.OrderRows.FirstOrDefault().idOrderRow;
+        rowID = Model.CheckoutOptionsViewModel.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
         orderID = Model.CheckoutOptionsViewModel.Order.idOrder;
 
         if (Model.CheckoutOptionsViewModel.Order.OrderStatus == OrderStatus.InProcess)
