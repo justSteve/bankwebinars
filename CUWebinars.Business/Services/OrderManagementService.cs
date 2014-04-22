@@ -23,7 +23,7 @@ namespace CUWebinars.Business.Services
     public class OrderManagementService : IOrderManagementService, IEventSource
     {
         private readonly IAffiliateRepository _affiliateRepository;
-        private readonly IRegTypeRepository _RegTypeRepository;
+        private readonly IRegTypeRepository _regTypeRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly IRefDataRepository _refDataRepository;
         private readonly IWebinarRepository _webinarRepository;
@@ -34,7 +34,7 @@ namespace CUWebinars.Business.Services
 
         public OrderManagementService(
             IAffiliateRepository affiliateRepository,
-            IRegTypeRepository RegTypeRepository,
+            IRegTypeRepository regTypeRepository,
             IOrderRepository orderRepository,
             IRefDataRepository refDataRepository,
             IWebUserRepository webUserRepository,
@@ -43,7 +43,7 @@ namespace CUWebinars.Business.Services
             TtsConfiguration ttsConfig)
         {
             _affiliateRepository = affiliateRepository;
-            _RegTypeRepository = RegTypeRepository;
+            _regTypeRepository = regTypeRepository;
             _orderRepository = orderRepository;
             _refDataRepository = refDataRepository;
             _ttsConfig = ttsConfig;
@@ -76,7 +76,7 @@ namespace CUWebinars.Business.Services
         {
             try
             {
-                var regType = _RegTypeRepository.FindRegType(registrationType);
+                var regType = _regTypeRepository.FindRegType(registrationType);
                 return _orderRepository.CreateOrderRow(webinar, additionalLocation, regType);
             }
             catch (Exception exception)
@@ -111,20 +111,13 @@ namespace CUWebinars.Business.Services
             return _affiliateRepository.FindById(id);
         }
 
-        //public RegType GetOptionById(RegType id)
-        //{
-        //    return _RegTypeRepository.FindRegType(id);
-        //}
-
         public IList<RegType> GetOptionsByWebinarId(int id, bool detached)
         {
-            return _refDataRepository.FindRegTypesByWebinarId(id, false);
-            //return null;
+            return _regTypeRepository.FindRegTypesByWebinarId(id, false);
         }
         public IList<RegType> GetOptionsByWebinarIdFromOptionsRepository(int id, bool detached)
         {
-            return _RegTypeRepository.FindRegTypesByWebinarId(id, false);
-            return null;
+            return _regTypeRepository.FindRegTypesByWebinarId(id, false);
         }
 
         public Order GetOrderById(int id)

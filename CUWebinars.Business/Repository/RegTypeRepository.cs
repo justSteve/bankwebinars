@@ -24,30 +24,26 @@ namespace CUWebinars.Business.Repository
             var stronglyTypedContext = (TTSWebinarsContext)db;
 
             var webinars = stronglyTypedContext.Webinars
-                //.Include(w => w.OptionsGroupsXrefs)
                 .Where(w => w.idWebinar == id);
 
-            // There can be only one OptionsGroupsXrefs per webinar at any one time
-            var optionsGroupsXrefs = webinars.SelectMany(w => w.RegTypesGroupsXref );
-            //var a = optionsGroupsXrefs.ToList();
+            // There can be only one RegTypesGroupsXrefs per webinar at any one time
+            var regTypesGroupsXrefs = webinars.SelectMany(w => w.RegTypesGroupsXref );
 
-            //  For each of those OptionsGroupsXrefs, get the relevant OptionGroup
-            var optionsGroups = optionsGroupsXrefs.Include(o => o.RegTypesGroup).Select(o => o.RegTypesGroup);
-            //var b = optionsGroups.ToList();
+            //  For each of those RegTypesGroupsXrefs, get the relevant OptionGroup
+            var regtypesGroups = regTypesGroupsXrefs.Include(o => o.RegTypesGroup).Select(o => o.RegTypesGroup);
 
-            //  Get all OptionsXrefs for those OptionGroups
-            var optionsXrefs = optionsGroups.Include(o => o.RegTypesXrefs).SelectMany(opt => opt.RegTypesXrefs);
-            //var c = optionsXrefs.ToList();
+            //  Get all OptionsXrefs for those RegTypesGroups
+            var regtypesXrefs = regtypesGroups.Include(o => o.RegTypesXrefs).SelectMany(opt => opt.RegTypesXrefs);
 
-            //  Finally, get the options
-            var options = optionsXrefs.Include(o => o.RegType).Select(o => o.RegType).ToList();
+            //  Finally, get the RegTypes
+            var regTypes = regtypesXrefs.Include(o => o.RegType).Select(o => o.RegType).ToList();
 
             if (!detached)
-                return options;
+                return regTypes;
 
-            options.ForEach(o => stronglyTypedContext.Entry(o).State = EntityState.Detached);
+            regTypes.ForEach(o => stronglyTypedContext.Entry(o).State = EntityState.Detached);
 
-            return options;
+            return regTypes;
         }
 
     }

@@ -47,13 +47,6 @@ namespace CUWebinars.Business.Repository
             try
             {
                 var strongTypedContext = (TTSWebinarsContext) db;
-                var entry = strongTypedContext.Entry(webinar);
-
-                //if (entry.State != EntityState.Detached)
-                //    throw new Exception("Webinar cannot be attached to this context yet. It has to have been retrieved and previously detached.");
-
-                //strongTypedContext.Webinars.Attach(webinar);
-                //entry.State = EntityState.Modified;
 
                 var newOrderRow = strongTypedContext.OrderRows.Create();
 
