@@ -29,7 +29,7 @@
         foreach (OrderRow itemRow in Model.CheckoutOptionsViewModel.Order.OrderRows)
         {
             <script language="javascript">
-                var idRegType = @orderMsgs.idRegType;
+                var idRegType = @itemRow.idRegType;
             </script>
             order = itemRow.Order;
             row = itemRow;

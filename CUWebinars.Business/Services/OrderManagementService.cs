@@ -416,9 +416,9 @@ namespace CUWebinars.Business.Services
             string access_token = "5jxY3KZL48HWknOaOEP2eIzVmOTS"; //steve's
             //string access_token = "JIOHRkkCvmIKDY8QO0S4msbYH48N";//mark's
 
-            //string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/495203178/registrants";
-            string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/" + idWebinar +
-                         "/registrants";
+            string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/495203178/registrants";
+            //string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/" + idWebinar +
+            //             "/registrants";
 
 
             HttpWebRequest httpWebRequest = (HttpWebRequest) WebRequest.Create(url);
