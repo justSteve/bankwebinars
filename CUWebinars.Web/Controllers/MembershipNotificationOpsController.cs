@@ -87,9 +87,13 @@ namespace CUWebinars.Web.Controllers
                         null
                         );
 
-                    userAccount = _membershipService.CreateUser(globals.Tenant, model.RegisterFields.FirstName,
-                        model.RegisterFields.LastName, string.Empty, model.RegisterFields.Password,
-                        model.RegisterFields.Email);
+                    userAccount = _membershipService.CreateUser(globals.Tenant, 
+                        model.RegisterFields.FirstName,
+                        model.RegisterFields.LastName, 
+                        string.Empty, 
+                        model.RegisterFields.Password,
+                        model.RegisterFields.Email
+                        );
 
                     dataOperations.SetNewAccountToVerified(userAccount.ID);
                 }
@@ -137,8 +141,6 @@ namespace CUWebinars.Web.Controllers
                         null
                         );
 
-                    //_membershipService.AddAddressesForWebUser(addresses);
-
                     userAccount = _membershipService.CreateUser(globals.Tenant, "John", "Hancock", string.Empty, newPassword, newEmail);
                     dataOperations.SetNewAccountToVerified(userAccount.ID);
 
@@ -159,7 +161,7 @@ namespace CUWebinars.Web.Controllers
         {
             var resetPasswordModel = new ResetPasswordModel
             {
-                Email = "",
+                Email = string.Empty,
                 EmailSent = false
             };
 
