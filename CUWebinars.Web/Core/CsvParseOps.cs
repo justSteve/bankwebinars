@@ -11,6 +11,11 @@ namespace CUWebinars.Web.Core
     public static class CsvParseOps
     {
 //PaymentStatus	AddtionaLocations	WebinarId	Registration Type	AffiliateId	FirstName	LastName	Institution	Title	Email	PhoneNumber	StreetAddress	StreetAddressLine2	City	State	ZipCode	Country
+// some csv | json resources:
+        //http://www.codeproject.com/Articles/14254/Converting-CSV-Data-to-Objects
+        //http://www.codeproject.com/Articles/9258/A-Fast-CSV-Reader
+        //http://stackoverflow.com/questions/3268622/regex-to-split-line-csv-file
+        //http://staceyw1.wordpress.com/2008/11/13/back-to-csv-convert-csv-text-to-objects-via-json/
 
     public static IList<IncomingOrderModel> ParseCsvForIncomingOrderModel(Stream stream)
         {

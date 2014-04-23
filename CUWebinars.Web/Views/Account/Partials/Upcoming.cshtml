@@ -29,7 +29,6 @@
                         <li class="s-wrap">
                             @{
                         var row = scheduled.OrderRows.Single();
-                        var regType = CUWebinars.Business.Repository.RegTypeRepository.
                             }
                             <h4 class="trigger" id="upcoming-@row.idWebinar"><a href="#">@row.Webinar.Title<i class="icon-plus-sign"></i></a></h4>
                             <div class="s-content">
@@ -38,7 +37,7 @@
                                     Cost: @row.Order.Total.ToString()<br />
                                 </div>
                                 <p style="font-weight: normal; padding-left: 25px; padding-top: 0; margin-top: 0;">
-                                    Presented by @row.Webinar.Presenter.WebUser.FullName<br />
+                                    @*Presented by @row.Webinar.Presenter.WebUser.FullName<br />*@
                                     <i>@Html.DisplayDate(row.Webinar.Date)</i> @Html.DisplayTime(row.Webinar.Date, timeZ, false) - @Html.DisplayTime(row.Webinar.Date, row.Webinar.Duration, timeZ)<br />
                                     <span id="showRegType_@(row.idWebinar)" class="regType">
                                         Registration Type: @scheduled..OptionLabel.Replace(" Only", " ") &nbsp;&nbsp;
@@ -53,7 +52,7 @@
                                     var teleconf = "phone";
                                     var accessCode = "areaCode";
 
-                                    if (scheduled.ShowLiveNotifications == "Yes")
+                                    if (scheduled.OrderRows.SingleOrDefault().RegistrationType.ShowLiveNotifications == "Yes")
                                     {
                                         <div class="ReverseHead">&nbsp;&nbsp;Connection Summary</div>
                                         <div id="showConnectionInfo">

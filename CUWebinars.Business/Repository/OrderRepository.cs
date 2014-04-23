@@ -213,7 +213,9 @@ namespace CUWebinars.Business.Repository
 
         public virtual IList<Order> SelectOrdersWithRecordedWebinars(int idUser)
         {
-            var a = items.Include(o => o.OrderRows.Select(w => w.Webinar))
+            var a = items
+                .Include(o => o.OrderRows.Select(w => w.RegistrationType))
+                .Include(o => o.OrderRows.Select(w => w.Webinar))
                 .Where(o => o.idUser == idUser
                                           && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Recorded
                 //&& (o.OrderStatus == OrderStatus.Submitted 
@@ -226,7 +228,9 @@ namespace CUWebinars.Business.Repository
 
         public virtual IList<Order> SelectOrdersWithScheduledWebinars(int idUser)
         {
-            var i  = items.Include(o => o.OrderRows.Select(w => w.Webinar))
+            var i  = items
+                .Include(o => o.OrderRows.Select(w => w.RegistrationType))
+                .Include(o => o.OrderRows.Select(w => w.Webinar))
                 .Where(o => o.idUser == idUser
                                           && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Scheduled
                                           &&

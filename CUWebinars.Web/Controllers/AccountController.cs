@@ -242,15 +242,7 @@ namespace CUWebinars.Web.Controllers
             model.Recorded = _orderRepository.SelectOrdersWithRecordedWebinars(currentUser.idUser);
             model.Archived = _orderRepository.SelectOrdersWithArchivedWebinars(currentUser.idUser);
 
-            //if (model.Scheduled != null)
-            //{
-            //    var optionAndOrderdictionary = model.Scheduled;
-            //    var optionAndOrderdictionarySortedByWebinarDate =
-            //        optionAndOrderdictionary.OrderBy(f => f.Value.OrderRows.SingleOrDefault().Webinar.Date);
 
-            //    model.Scheduled = optionAndOrderdictionarySortedByWebinarDate
-            //        .ToDictionary<KeyValuePair<RegType, Order>, RegType, Order>(p => p.Key, p => p.Value);
-            //}
 
             //if (model.Recorded != null)
             //{
