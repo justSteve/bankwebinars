@@ -125,6 +125,7 @@ namespace CUWebinars.Business.Repository
         {
             var userOrders = items.Include(o => o.OrderRows.Select(or => or.Webinar))
                 .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
                 .Where(o => o.WebUser.idUser == userId);
 
             return ReferenceEquals(null, userOrders) ? null : userOrders.ToList();

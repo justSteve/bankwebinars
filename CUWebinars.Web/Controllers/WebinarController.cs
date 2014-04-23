@@ -371,7 +371,7 @@ namespace CUWebinars.Web.Controllers
             //
             WebUser user = Request.IsAuthenticated ? _membershipService.GetUserByEmail(User.Identity.Name) : new WebUser();
 
-            var usersOrders = _orderManagementService.GetOrdersByUserId(user.idUser).Where(o => o.OrderRows.First().idWebinar == id);
+            var usersOrders = _orderManagementService.GetOrdersByUserId(user.idUser).Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id) != null);
 
             var options = _orderManagementService.GetOptionsByWebinarId(id, false);
             var webinar = _orderManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id);
