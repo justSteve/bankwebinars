@@ -155,6 +155,21 @@ namespace CUWebinars.Business.Services
             return _webUserRepository.FindByIdLoaded(id);
         }
 
+        public Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id)
+        {
+            try
+            {
+                var webinar = _webinarRepository.GetWebinarByIdIncludingAllWebinarsByPresenter(id);
+                return webinar;
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("GetWebinarByIdIncludingAllWebinarsByPresenter", exception);
+                throw;
+            }
+
+        }
+
         public void CreateOrderEvent(Order order, UserAccount userAccount)
         {
             //AddEvent(new OrderSubmittedEvent<UserAccount> { Account = userAccount, Order = order });

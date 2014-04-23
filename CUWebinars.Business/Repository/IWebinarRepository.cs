@@ -16,7 +16,7 @@ namespace CUWebinars.Business.Repository
         IQueryable<Webinar> GetByTopic(int topicId);
         List<RegType> GetCurrentOptions(int idWebinar);
         IList<Order> GetOrdersByWebinarForConnectionInfo(int id);
-
+        Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id);
         IQueryable<Topic>  GetTopicsPerWebinar(int idWebinar);
     }
 }

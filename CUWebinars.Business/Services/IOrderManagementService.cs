@@ -22,6 +22,7 @@ namespace CUWebinars.Business.Services
         IList<Order> GetOrdersByUserId(int id);
         Webinar GetWebinar(int id);
         WebUser GetWebUser(int id);
+        Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id);
         void CreateOrderEvent(Order order, UserAccount userAccount);
         void DispatchDummyOrder();
         OrderRow LoadOrderRow(int id);

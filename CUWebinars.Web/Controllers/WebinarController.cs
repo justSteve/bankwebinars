@@ -374,9 +374,8 @@ namespace CUWebinars.Web.Controllers
             var usersOrders = _orderManagementService.GetOrdersByUserId(user.idUser).Where(o => o.OrderRows.First().idWebinar == id);
 
             var options = _orderManagementService.GetOptionsByWebinarId(id, false);
-            var webinar = _db.Webinars.Include(w => w.Presenter.WebUser).First(w => w.idWebinar == id);
+            var webinar = _orderManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id);
             ViewBag.topics = _webinarRepository.GetTopicsPerWebinar(webinar.idWebinar);
-
 
             var model = new WebinarDetailsViewModel()
             {
