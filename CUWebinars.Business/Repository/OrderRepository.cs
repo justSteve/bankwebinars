@@ -41,7 +41,7 @@ namespace CUWebinars.Business.Repository
             return newOrder;
         }
 
-        public OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation,
+        public OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocations,
             RegType registrationType)
         {
             try
@@ -50,16 +50,8 @@ namespace CUWebinars.Business.Repository
 
                 var newOrderRow = strongTypedContext.OrderRows.Create();
 
-                if (additionalLocation != null)
-                {
-                    foreach (var addLoc in additionalLocation)
-                    {
-                        //OrderRow is instantiated but has lots of null properties...
-                        // ... including 'Order'.
-                        // addLoc is instantiated.
-                        newOrderRow.AdditionalLocation.Add(addLoc);
-                    }
-                }
+                if (additionalLocations != null)
+                    newOrderRow.AdditionalLocation = additionalLocations;
 
                 newOrderRow.Webinar = webinar;
                 newOrderRow.RegistrationType = registrationType;
