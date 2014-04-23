@@ -41,7 +41,8 @@ namespace CUWebinars.Business.Repository
             return newOrder;
         }
 
-        public OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocations,
+        public OrderRow CreateOrderRow(Webinar webinar, 
+            IList<AdditionalLocation> additionalLocations, 
             RegType registrationType)
         {
             try

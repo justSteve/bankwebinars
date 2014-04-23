@@ -1,4 +1,5 @@
 ﻿using CUWebinars.Business.AccountService;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
@@ -146,7 +147,7 @@ namespace CUWebinars.Web.Controllers.api
                         , addresses
                         , incomingOrderModel.Title == null ? incomingOrderModel.Title : incomingOrderModel.Title.Trim()
                         , null
-                        , "A"
+                        , DomainConstants.Active
                         );
 
                     webUser.Institution = institutionForUser;
