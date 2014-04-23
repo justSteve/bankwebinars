@@ -50,6 +50,15 @@ namespace CUWebinars.Business.Repository
                 .OrderByDescending(w => w.Date);
         }
 
+        public Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id)
+        {
+            var webinar = items.Include(w => w.Presenter.WebUser)
+                .Include(w => w.Presenter.Webinars)
+                .First(w => w.idWebinar == id);
+
+            return webinar;
+        }
+
         public IQueryable<Topic> GetTopicsPerWebinar(int idWebinar)
         {
             return ((TTSWebinarsContext)db).WebinarTopicXrefs

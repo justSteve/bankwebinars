@@ -16,9 +16,7 @@
     OrderRow row = null;
     if (ViewBag.userOwnsThisEvent > 0)
     {
-        row = Model.CheckoutOptionsViewModel.Order.OrderRows.SingleOrDefault();
-        order = row.Order;
-        var orderMsgs = row.RegistrationType;
+        RegType orderMsgs = Model.CheckoutOptionsViewModel.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType;
         string[] webinarFiles = ViewBag.WebinarFiles;
         var recording = "<a href='" + Model.Webinar.RecordingUrl + "' target=_blank /> Recording Playback</a>"; ;
         var showShipped = "";
@@ -29,23 +27,23 @@
         var wf = new StringBuilder();
 
 
-        <script language="javascript">
+            <script language="javascript">
             var idRegType = @orderMsgs.idRegType;
-        </script>
+            </script>
 
 
-        //webinarFiles
-        for (var i = 0; i < webinarFiles.Count(); i++)
-        {
-            string itemDesc = webinarFiles[i].Split('|')[0];
-            string itemPath = webinarFiles[i].Split('|')[1];
-            wf.Append("<a href='" + itemPath + "' target=_blank >" + itemDesc + "</a><br>");
-        }
+            //webinarFiles
+            for (var i = 0; i < webinarFiles.Count(); i++)
+            {
+                string itemDesc = webinarFiles[i].Split('|')[0];
+                string itemPath = webinarFiles[i].Split('|')[1];
+                wf.Append("<a href='" + itemPath + "' target=_blank >" + itemDesc + "</a><br>");
+            }
 
-        if (orderMsgs.ShowShippedNotifications == "Yes" && row.ShipmentDate != null)
-        {
-            showShipped = "<li>Shipped on: " + row.ShipmentDate.Value.ToShortDateString() + "</li>";
-        }
+            if (row.RegistrationType.ShowShippedNotifications == "Yes" && row.ShipmentDate != null)
+            {
+                showShipped = "<li>Shipped on: " + row.ShipmentDate.Value.ToShortDateString() + "</li>";
+            }
         <div id="OrderSummary" class="well">
             @{
 
@@ -114,34 +112,34 @@
             }
 
         }
-            }
+        }
         </div>
     }
     @*else
-        {// not owned state
+    {// not owned state
 
-            <aside style="width: 100%" class="widget clearfix">
-                <div class="dropdown">
-                    <a class="dropdown-toggle btn btn-success" data-toggle="dropdown" href="#">Express SignUp!</a>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+        <aside style="width: 100%" class="widget clearfix">
+            <div class="dropdown">
+                <a class="dropdown-toggle btn btn-success" data-toggle="dropdown" href="#">Express SignUp!</a>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 
-                        @foreach (var myOption in Model.Options)
+                    @foreach (var myOption in Model.Options)
+                    {
+
+                        if (Model.CheckoutOptionsViewModel.Order == null
+                            //Model.Order.idOrder < 1
+                            //Model.Order.OrderRows.Single().Status == OrderStatus.InProcess
+
+                            && !myOption.SKU.Contains("Upgrade")
+                            )
                         {
-
-                            if (Model.CheckoutOptionsViewModel.Order == null
-                                //Model.Order.idOrder < 1
-                                //Model.Order.OrderRows.Single().Status == OrderStatus.InProcess
-
-                                && !myOption.SKU.Contains("Upgrade")
-                                )
-                            {
-                                <li>
-                                    <a onclick='javascript:exprsOrder("@myOption.idRegType");'>&nbsp;&nbsp;@myOption.OptionLabel - $@myOption.Price&nbsp;&nbsp;</a>
-                                </li>
-                            }
+                            <li>
+                                <a onclick='javascript:exprsOrder("@myOption.idRegType");'>&nbsp;&nbsp;@myOption.OptionLabel - $@myOption.Price&nbsp;&nbsp;</a>
+                            </li>
                         }
-                    </ul>
-                </div>
-            </aside>
-        }*@
+                    }
+                </ul>
+            </div>
+        </aside>
+    }*@
 }

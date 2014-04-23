@@ -2,6 +2,7 @@
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
+using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using System;
@@ -124,8 +125,8 @@ namespace CUWebinars.Web.Controllers.api
                             incomingOrderModel.BillingAddress.Zip
                             );
 
-                    incomingOrderModel.BillingAddress.AddressType = "Billing";
-                    incomingOrderModel.ShippingAddress.AddressType = "Shipping";
+                    incomingOrderModel.BillingAddress.AddressType = WebUiConstants.BillingAddress;
+                    incomingOrderModel.ShippingAddress.AddressType = WebUiConstants.ShippingAddress;
 
                     IList<Address> addresses = new List<Address>
                     {

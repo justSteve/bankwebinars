@@ -37,14 +37,14 @@
 @using (Html.BeginForm("SetAdditionalLocation", "Registrations", FormMethod.Post, new { id = "frmAddLocations_" + @Model.Order.OrderRows.Single().idOrderRow }))
 {
 
-    <input type="hidden" id="ConnectionsCount_@(Model.Order.OrderRows.Single().idOrderRow)" name="connectionsCount" value="@(connCount)" />
-    <input type="hidden" name="ID" value="@Model.Order.OrderRows.Single().idOrderRow" />
+    <input type="hidden" id="ConnectionsCount_@(Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow)" name="connectionsCount" value="@(connCount)" />
+    <input type="hidden" name="ID" value="@Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow" />
     <input type="hidden" name="action" value="add" />
-    <div id="AddLocModal_@(Model.Order.OrderRows.Single().idOrderRow)" class="modal-header">
+    <div id="AddLocModal_@(Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow)" class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h3>Additional Locations</h3>
     </div>
-    <div id="AdditionalLocationContainer_@(Model.Order.OrderRows.Single().idOrderRow)" class="modal-body">
+    <div id="AdditionalLocationContainer_@(Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow)" class="modal-body">
         @{
     if (Model.Webinar.IsSubscriptionWebinar && Model.Webinar.Status == WebinarStatus.Scheduled)
     {
@@ -62,20 +62,20 @@
                 </blockquote>
             </div>
             <div id="AddButton" style="display: none;" class="AddButton btn btn-mini  btn-success" role="button" onclick="AddLocation(3, '@optionCost.ToString("C0")' ); return false; ">Add More?</div>
-            <div id="CollectAdditionalLocation_@(Model.Order.OrderRows.Single().idOrderRow)"></div>
+            <div id="CollectAdditionalLocation_@(Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow)"></div>
     }
     else
     {
         if (AdditionalLocation.Emails.Count == 0)
         {
             //AdditionalLocation = new AdditionalLocationOrderRowOption { AdditionalLocationCount = 0 };
-            <div id="CollectAdditionalLocation_@(Model.Order.OrderRows.Single().idOrderRow)"></div>
+            <div id="CollectAdditionalLocation_@(Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow)"></div>
             <div>
                 <div id="line_1">
                     1.
                     <input type="text" onblur="CheckEmails();" id="Email_1" name="Email_1" class="emailInput" placeholder="email" size="30" />&nbsp; &nbsp;&nbsp;@(optionCost.ToString("C0"))
                 </div>
-                <div id="AddButton_@(Model.Order.OrderRows.Single().idOrderRow)" class="btn btn-mini  btn-success emailInput" role="button" onclick="AddLocation(1,  '@(AdditionalLocation.RegTypePrice.ToString("C0")); return false; ">Add?</div>
+                <div id="AddButton_@(Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow)" class="btn btn-mini  btn-success emailInput" role="button" onclick="AddLocation(1,  '@(AdditionalLocation.RegTypePrice.ToString("C0")); return false; ">Add?</div>
             </div>
         }
         else
@@ -84,8 +84,8 @@
             {
                 var showCount = "";
                 var showTotalCost = 0M;
-                <div id="CollectAdditionalLocation_@(Model.Order.OrderRows.Single().idOrderRow)">
-                    <div id="NumLocationsMsg_@(Model.Order.OrderRows.Single().idOrderRow)">
+                <div id="CollectAdditionalLocation_@(Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow)">
+                    <div id="NumLocationsMsg_@(Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow)">
                         You have @AdditionalLocation.AdditionalLocationCount Additional Locations.<br />
                     </div>
                     @for (var i = 1; i <= AdditionalLocation.AdditionalLocationCount; i++)
@@ -103,7 +103,7 @@
                         </div>
                     }
                 </div>
-                <div id="AddButton_@(Model.Order.OrderRows.Single().idOrderRow)" class="btn btn-mini emailInput btn-success" role="button" onclick=" addlocation(@AdditionalLocation.AdditionalLocationcount + 1, '@(AdditionalLocation.RegTypePrice.ToString("C0"))' ); return false; ">Add More?</div>
+                <div id="AddButton_@(Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow)" class="btn btn-mini emailInput btn-success" role="button" onclick=" addlocation(@AdditionalLocation.AdditionalLocationcount + 1, '@(AdditionalLocation.RegTypePrice.ToString("C0"))' ); return false; ">Add More?</div>
                 <div class="pull-right" id="ShowsAddLocTotalCost">Total cost of Additional Locations: @showTotalCost.ToString("C0")</div>
             }
             else
@@ -117,7 +117,7 @@
         }
         <div class="modal-footer">
             <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-            <input type="button" name="submitAddLocations" id="SubmitAddLocations_@(Model.Order.OrderRows.Single().idOrderRow)" class="btn btn-primary" value="Waiting for valid email" />
+            <input type="button" name="submitAddLocations" id="SubmitAddLocations_@(Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow)" class="btn btn-primary" value="Waiting for valid email" />
         </div>
     }
 

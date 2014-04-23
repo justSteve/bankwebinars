@@ -41,32 +41,17 @@ namespace CUWebinars.Business.Repository
             return newOrder;
         }
 
-        public OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation,
+        public OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocations,
             RegType registrationType)
         {
             try
             {
                 var strongTypedContext = (TTSWebinarsContext) db;
-                var entry = strongTypedContext.Entry(webinar);
-
-                //if (entry.State != EntityState.Detached)
-                //    throw new Exception("Webinar cannot be attached to this context yet. It has to have been retrieved and previously detached.");
-
-                //strongTypedContext.Webinars.Attach(webinar);
-                //entry.State = EntityState.Modified;
 
                 var newOrderRow = strongTypedContext.OrderRows.Create();
 
-                if (additionalLocation != null)
-                {
-                    foreach (var addLoc in additionalLocation)
-                    {
-                        //OrderRow is instantiated but has lots of null properties...
-                        // ... including 'Order'.
-                        // addLoc is instantiated.
-                        newOrderRow.AdditionalLocation.Add(addLoc);
-                    }
-                }
+                if (additionalLocations != null)
+                    newOrderRow.AdditionalLocation = additionalLocations;
 
                 newOrderRow.Webinar = webinar;
                 newOrderRow.RegistrationType = registrationType;
@@ -132,6 +117,7 @@ namespace CUWebinars.Business.Repository
         {
             var userOrders = items.Include(o => o.OrderRows.Select(or => or.Webinar))
                 .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
                 .Where(o => o.WebUser.idUser == userId);
 
             return ReferenceEquals(null, userOrders) ? null : userOrders.ToList();

@@ -5,12 +5,12 @@
     @{
         if (Model.Order != null && Model.Order.idOrder > 0)
         {
-            var orderRow = Model.Order.OrderRows.First();
+            var orderRow = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             var breakDownRegType = orderRow.ToString().Split('_');
             int registrationType = orderRow.idRegType;
 
-            //var addLocations = Model.Order.OrderRows.FirstOrDefault().AdditionalLocation
-            //    .Where(o => o.idOrderRow == orderRow.idOrderRow).FirstOrDefault();
+            var addLocations = Model.Order.OrderRows.FirstOrDefault().AdditionalLocation
+                .Where(o => o.idOrderRow == orderRow.idOrderRow).FirstOrDefault();
 
 
             //if (addLocations != null)

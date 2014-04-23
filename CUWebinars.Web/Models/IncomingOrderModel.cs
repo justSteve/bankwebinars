@@ -23,7 +23,7 @@ namespace CUWebinars.Web.Models
         //public string Password { get; set; }
         public bool SendNotification { get; set; }
         public Address ShippingAddress { get; set; }
-        //public OrderStatus Status { get; set; }
+        public OrderStatus Status { get; set; }
         public string Title { get; set; }
         //public UserType UserType { get; set; }
         //public USTimeZone UsTimeZone { get; set; }
