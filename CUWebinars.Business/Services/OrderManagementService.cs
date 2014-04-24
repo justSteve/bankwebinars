@@ -418,7 +418,7 @@ namespace CUWebinars.Business.Services
             return null;
         }
 
-        public string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int idWebinar,
+        public string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int webinarKey,
             string webinarKey)
         {
             //https://www2.gotomeeting.com/en_US/island/webinar/audio/organizers/conferenceInfo.tmpl?webinarId=495203178&role=0
@@ -431,10 +431,7 @@ namespace CUWebinars.Business.Services
             string access_token = "5jxY3KZL48HWknOaOEP2eIzVmOTS"; //steve's
             //string access_token = "JIOHRkkCvmIKDY8QO0S4msbYH48N";//mark's
 
-            string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/495203178/registrants";
-            //string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/" + idWebinar +
-            //             "/registrants";
-
+            string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/" + webinarKey + "registrants";
 
             HttpWebRequest httpWebRequest = (HttpWebRequest) WebRequest.Create(url);
             //httpWebRequest.ContentType = "application/x-www-form-urlencoded";
@@ -451,7 +448,6 @@ namespace CUWebinars.Business.Services
             ;
 
             byte[] requestBytes = Encoding.UTF8.GetBytes(postData);
-
             httpWebRequest.ContentLength = requestBytes.Length;
 
             using (Stream requestStream = httpWebRequest.GetRequestStream())
