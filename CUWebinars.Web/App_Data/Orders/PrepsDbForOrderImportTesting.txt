@@ -1,0 +1,57 @@
+﻿USE CUWebinars
+GO
+
+UPDATE  dbo.Webinar
+SET     title = 'Upcoming_NoConnInfo_' + CAST(idWebinar AS VARCHAR) ,
+        ConnectionInfo = '' ,
+        RecordingUrl = '' ,
+        WebinarKey = NULL
+WHERE   Status = 2
+
+  
+UPDATE  dbo.Webinar
+SET     title = 'Upcoming_HasConnInfo_' + CAST(idWebinar AS VARCHAR) ,
+        ConnectionInfo = '"Toll-free": "1 877 309 2071","Access Code": "911-178-334"' ,
+        RecordingUrl = '' ,
+        WebinarKey = 461412962
+WHERE   idWebinar = 701
+UPDATE  dbo.Webinar
+
+SET     title = 'Recorded_' + CAST(idWebinar AS VARCHAR) ,
+        ConnectionInfo = '' ,
+        RecordingUrl = '' ,
+        WebinarKey = NULL
+WHERE   Status = 3
+
+
+--updates lookup table for recorded events.
+UPDATE  dbo.RegTypesGroupsXref
+SET     idRegTypeGroup = 35
+WHERE   idWebinar IN ( SELECT   idWebinar
+                       FROM     dbo.Webinar
+                       WHERE    Status = 3 )
+  
+  --updates lookup table for upcoming
+UPDATE  dbo.RegTypesGroupsXref
+SET     idRegTypeGroup = 34
+WHERE   idWebinar IN ( SELECT   idWebinar
+                       FROM     dbo.Webinar
+                       WHERE    Status = 2 )
+
+					   
+--displays idRegtypes that can be ordered when event is still in future (upcoming)
+SELECT  *
+FROM    dbo.RegType r
+WHERE   idRegType IN ( SELECT   idRegType
+                       FROM     dbo.RegTypesXref
+                       WHERE    idRegTypeGroup = 34 )
+
+
+--displays idRegtypes that can be ordered when event is in past (recorded)
+SELECT  *
+FROM    dbo.RegType r
+WHERE   idRegType IN ( SELECT   idRegType
+                       FROM     dbo.RegTypesXref
+                       WHERE    idRegTypeGroup = 35 )
+					   AND  RegTypeLabel NOT LIKE 'up%')
+

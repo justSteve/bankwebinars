@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Helpers;
@@ -190,7 +191,7 @@ namespace CUWebinars.Web.Controllers
                         , addresses
                         , model.Title == null ? model.Title : model.Title.Trim()
                         , null
-                        , "A"
+                        , DomainConstants.Active
                         );
 
                     if (!_stateService.HasValue(Constants.CurrentUser))
@@ -769,7 +770,7 @@ namespace CUWebinars.Web.Controllers
                         , addresses
                         , model.RegisterFields.Title == null ? model.RegisterFields.Title : model.RegisterFields.Title.Trim()
                         , null
-                        , "A"
+                        , DomainConstants.Active
                         );
 
                     if (!_stateService.HasValue(Constants.CurrentUser))
