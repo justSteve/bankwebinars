@@ -205,14 +205,13 @@ namespace CUWebinars.Web.Controllers.api
                 importedOrder.BillingCity = incomingOrderModel.BillingAddress.City;
                 importedOrder.BillingState = incomingOrderModel.BillingAddress.State;
                 importedOrder.BillingZip = incomingOrderModel.BillingAddress.Zip;
-
-                //convention is that shipping is not pass via spreadsheet
-                importedOrder.ShippingAddress = incomingOrderModel.BillingAddress.StreetAddress;
-                importedOrder.ShippingAddress2 = incomingOrderModel.BillingAddress.StreetAddress2;
-                importedOrder.ShippingPhone = incomingOrderModel.BillingAddress.Phone;
-                importedOrder.ShippingCity = incomingOrderModel.BillingAddress.City;
-                importedOrder.ShippingState = incomingOrderModel.BillingAddress.State;
-                importedOrder.ShippingZip = incomingOrderModel.BillingAddress.Zip;
+                
+                importedOrder.ShippingAddress = incomingOrderModel.ShippingAddress.StreetAddress;
+                importedOrder.ShippingAddress2 = incomingOrderModel.ShippingAddress.StreetAddress2;
+                importedOrder.ShippingPhone = incomingOrderModel.ShippingAddress.Phone;
+                importedOrder.ShippingCity = incomingOrderModel.ShippingAddress.City;
+                importedOrder.ShippingState = incomingOrderModel.ShippingAddress.State;
+                importedOrder.ShippingZip = incomingOrderModel.ShippingAddress.Zip;
                 importedOrder.ShippingFirstName = firstName;
                 importedOrder.ShippingLastName = lastName;
 
