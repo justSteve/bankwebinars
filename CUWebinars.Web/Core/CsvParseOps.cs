@@ -71,6 +71,7 @@ namespace CUWebinars.Web.Core
 
                     if (string.IsNullOrWhiteSpace(name))
                     {
+                        CopyBillingAddressToShippingAddress(ref incomingOrderModel);
                         incomingOrderModels.Add(incomingOrderModel);
                     }
                     else
@@ -90,6 +91,19 @@ namespace CUWebinars.Web.Core
                 return incomingOrderModels;
             }
 
+        }
+
+        private static void CopyBillingAddressToShippingAddress(ref IncomingOrderModel incomingOrderModel)
+        {
+            incomingOrderModel.ShippingAddress.AddressType = WebUiConstants.ShippingAddress;
+            incomingOrderModel.ShippingAddress.City = incomingOrderModel.BillingAddress.City;
+            incomingOrderModel.ShippingAddress.Country = incomingOrderModel.BillingAddress.Country;
+            incomingOrderModel.ShippingAddress.Name = incomingOrderModel.BillingAddress.Name;
+            incomingOrderModel.ShippingAddress.Phone = incomingOrderModel.BillingAddress.Phone;
+            incomingOrderModel.ShippingAddress.State = incomingOrderModel.BillingAddress.State;
+            incomingOrderModel.ShippingAddress.StreetAddress = incomingOrderModel.BillingAddress.StreetAddress;
+            incomingOrderModel.ShippingAddress.StreetAddress2 = incomingOrderModel.BillingAddress.StreetAddress2;
+            incomingOrderModel.ShippingAddress.Zip = incomingOrderModel.BillingAddress.Zip;
         }
     }
 }

@@ -81,38 +81,5 @@ namespace CUWebinars.Business.Repository
                     .Addresses;
             }
         }
-
-        public IList<RegType> FindRegTypesByWebinarId(int id, bool detached)
-        {
-            using (var context = new TTSWebinarsContext())
-            {
-                context.Configuration.ProxyCreationEnabled = false;
-
-                var webinars = context.Webinars
-                    .Include(w => w.RegTypesGroupsXref.Select(o => o.RegTypesGroup.RegTypesXrefs.Select(ox => ox.RegType)))
-                    .Where(w => w.idWebinar == id)
-                    .ToList();
-
-                // There can be only one OptionsGroupsXrefs per webinar at any one time
-                var optionsGroupsXrefs = webinars.SelectMany(w => w.RegTypesGroupsXref);
-
-                //  For each of those OptionsGroupsXrefs, get the relevant OptionGroup
-                var optionsGroups = optionsGroupsXrefs.Select(o => o.RegTypesGroup);
-
-                //  Get all OptionsXrefs for those OptionGroups
-                var optionsXrefs = optionsGroups
-                    .SelectMany(opt => opt.RegTypesXrefs);
-
-                //  Finally, get the options
-                var options = optionsXrefs.Select(o => o.RegType).ToList();
-
-                if (!detached)
-                    return options;
-
-                options.ForEach(o => context.Entry(o).State = EntityState.Detached);
-
-                return options;
-            }
-        }
     }
 }
