@@ -21,6 +21,7 @@ namespace CUWebinars.Web.Core
             {
                 textFieldParser.TextFieldType = FieldType.Delimited;
                 textFieldParser.SetDelimiters(",");
+                textFieldParser.HasFieldsEnclosedInQuotes = false;
                 textFieldParser.CommentTokens = new[] { "PaymentStatus" }; //  Discard header - PaymentStatus is first cell at A,1
 
                 var lines = new List<string[]>();
@@ -29,10 +30,14 @@ namespace CUWebinars.Web.Core
                 while(!textFieldParser.EndOfData)
                 {
                     var lineAsSeparatedFields = textFieldParser.ReadFields();
+
+                    //  First field is mandatory. If blank, the whole line must be blank.
+                    if (string.IsNullOrWhiteSpace(lineAsSeparatedFields[0])) continue;
+
                     lines.Add(lineAsSeparatedFields);
                 }
 
-                lines.ForEach((fields) =>
+                 lines.ForEach((fields) =>
                 {
                     var incomingOrderModel = new IncomingOrderModel
                     {

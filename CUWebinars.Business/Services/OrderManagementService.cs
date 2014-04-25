@@ -418,7 +418,7 @@ namespace CUWebinars.Business.Services
             return null;
         }
 
-        public string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int webinarKey,
+        public string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int webinarId,
             string webinarKey)
         {
             //https://www2.gotomeeting.com/en_US/island/webinar/audio/organizers/conferenceInfo.tmpl?webinarId=495203178&role=0
