@@ -9,9 +9,8 @@
             var breakDownRegType = orderRow.ToString().Split('_');
             int registrationType = orderRow.idRegType;
 
-            var addLocations = Model.Order.OrderRows
-                .Single(or => or.RowStatus == OrderRowStatus.Active)
-                .AdditionalLocation.FirstOrDefault(o => o.idOrderRow == orderRow.idOrderRow);
+            var addLocations = Model.Order.OrderRows.FirstOrDefault().AdditionalLocation
+                .Where(o => o.idOrderRow == orderRow.idOrderRow).FirstOrDefault();
 
 
             //if (addLocations != null)

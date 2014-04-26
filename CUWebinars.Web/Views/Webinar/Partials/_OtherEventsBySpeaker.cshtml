@@ -6,7 +6,8 @@
     var idPresenter = Model.Webinar.Presenter.idUser;
     
     IList<Webinar> upList = Model.Webinar.Presenter
-        .Webinars.Where(w => w.Status == WebinarStatus.Scheduled && w.idPresenter == idPresenter
+        .Webinars
+        .Where(w => w.Status == WebinarStatus.Scheduled && w.idPresenter == idPresenter
          && w.idWebinar != Model.Webinar.idWebinar).ToList();
     IList<Webinar> recList = Model.Webinar.Presenter
         .Webinars.Where(w => w.Status == WebinarStatus.Recorded && w.idPresenter == idPresenter
