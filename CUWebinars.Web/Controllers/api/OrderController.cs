@@ -175,16 +175,18 @@ namespace CUWebinars.Web.Controllers.api
                     {
                         var price = 150;
                         //string email,decimal price,string fullname
-                        var makeAddLocs = incomingOrderModel.AdditionalLocation.ToString().Split(',');
-                        var i = 0;
-                        foreach (var makeAddLoc in makeAddLocs)
+                        var additionalLocations = incomingOrderModel.AdditionalLocation;
+
+                        foreach (var additionalLocation in additionalLocations)
                         {
-                            var AEmail = makeAddLocs[i];
-                            var AFirstName = email.Split('@')[0].ToString();
-                            var ALastName = email.Split('@')[1].ToString();
-                            addLocation.Add(_orderManagementService.CreateAdditionalLocation(AEmail, price,
-                                AFirstName + ' ' + ALastName));
-                            i++;
+                            var additionalLocationEmail = additionalLocation.Email;
+                            var additionalLocationFirstName = email.Split('@')[0].ToString(); // additionalLocation.FirstName
+                            var additionalLocationLastName = email.Split('@')[1].ToString(); // additionalLocation.LastName
+                            addLocation.Add(_orderManagementService.CreateAdditionalLocation(
+                                additionalLocationEmail, 
+                                price,
+                                additionalLocationFirstName + ' ' + additionalLocationLastName)
+                                );
                         }
                     }
 

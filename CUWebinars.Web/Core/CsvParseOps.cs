@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Models;
+﻿using System.Threading.Tasks;
+using CUWebinars.Business.Models;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Models;
 using System;
@@ -18,7 +19,7 @@ namespace CUWebinars.Web.Core
         //http://stackoverflow.com/questions/3268622/regex-to-split-line-csv-file
         //http://staceyw1.wordpress.com/2008/11/13/back-to-csv-convert-csv-text-to-objects-via-json/
 
-    public static IList<IncomingOrderModel> ParseCsvForIncomingOrderModel(Stream stream)
+        public static IList<IncomingOrderModel> ParseCsvForIncomingOrderModel(Stream stream)
         {
             IList<IncomingOrderModel> incomingOrderModels = new List<IncomingOrderModel>();
 
@@ -27,12 +28,13 @@ namespace CUWebinars.Web.Core
                 textFieldParser.TextFieldType = FieldType.Delimited;
                 textFieldParser.SetDelimiters(",");
                 textFieldParser.HasFieldsEnclosedInQuotes = false;
-                textFieldParser.CommentTokens = new[] { "PaymentStatus" }; //  Discard header - PaymentStatus is first cell at A,1
+                textFieldParser.CommentTokens = new[] {"PaymentStatus"};
+                    //  Discard header - PaymentStatus is first cell at A,1
 
                 var lines = new List<string[]>();
 
 
-                while(!textFieldParser.EndOfData)
+                while (!textFieldParser.EndOfData)
                 {
                     var lineAsSeparatedFields = textFieldParser.ReadFields();
 
@@ -42,7 +44,7 @@ namespace CUWebinars.Web.Core
                     lines.Add(lineAsSeparatedFields);
                 }
 
-                 lines.ForEach((fields) =>
+                lines.ForEach((fields) =>
                 {
                     var incomingOrderModel = new IncomingOrderModel
                     {
@@ -50,12 +52,13 @@ namespace CUWebinars.Web.Core
                         ShippingAddress = new Address()
                     };
 
-                    incomingOrderModel.Status = (OrderStatus)Enum.Parse(typeof(OrderStatus), fields[0], true);
+                    incomingOrderModel.Status = (OrderStatus) Enum.Parse(typeof (OrderStatus), fields[0], true);
 
                     //  Additional Locations are at index 1
                     var addresses = fields[1].Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
                     var additionalLocations = new List<IncomingAdditionalLocation>(addresses.Length);
-                    additionalLocations.AddRange(addresses.Select(address => new IncomingAdditionalLocation { Email = address }));
+                    additionalLocations.AddRange(
+                        addresses.Select(address => new IncomingAdditionalLocation {Email = address}));
                     incomingOrderModel.AdditionalLocation = additionalLocations;
 
                     incomingOrderModel.idWebinar = int.Parse(fields[2]);
@@ -64,9 +67,11 @@ namespace CUWebinars.Web.Core
                     incomingOrderModel.FirstName = fields[5];
                     incomingOrderModel.LastName = fields[6];
                     incomingOrderModel.Institution = fields[7];
-                    incomingOrderModel.Title = fields[8]; ;
+                    incomingOrderModel.Title = fields[8];
+                    ;
                     incomingOrderModel.Email = fields[9];
-                    incomingOrderModel.BillingAddress.Name = string.Concat(incomingOrderModel.FirstName, " ", incomingOrderModel.LastName);
+                    incomingOrderModel.BillingAddress.Name = 
+                        string.Concat(incomingOrderModel.FirstName, " ", incomingOrderModel.LastName);
                     incomingOrderModel.BillingAddress.Phone = fields[10];
                     incomingOrderModel.BillingAddress.StreetAddress = fields[11];
                     incomingOrderModel.BillingAddress.StreetAddress2 = fields[12];
@@ -82,7 +87,6 @@ namespace CUWebinars.Web.Core
                     if (string.IsNullOrWhiteSpace(name))
                     {
                         CopyBillingAddressToShippingAddress(ref incomingOrderModel);
-                        incomingOrderModels.Add(incomingOrderModel);
                     }
                     else
                     {
@@ -95,7 +99,10 @@ namespace CUWebinars.Web.Core
                         incomingOrderModel.ShippingAddress.Zip = fields[23];
                         incomingOrderModel.ShippingAddress.Country = fields[24];
                         incomingOrderModel.ShippingAddress.AddressType = WebUiConstants.ShippingAddress;
-                    }                    
+                    }
+
+                    incomingOrderModels.Add(incomingOrderModel);
+
                 });
 
                 return incomingOrderModels;
