@@ -102,7 +102,15 @@ namespace CUWebinars.Web.Controllers.api
         public HttpResponseMessage Post([FromBody] IList<IncomingOrderModel> model)
         {
             int idOfLastOrder = default(int);
+            HttpResponseMessage httpResponseMessage = null;
 
+            if (!ModelState.IsValid)
+            {
+                return Request.CreateResponse(HttpStatusCode.Found, new { Result = "Problem with payload" });                
+            }
+
+            try
+            {
             foreach (var incomingOrderModel in model)
             {
                 var email = incomingOrderModel.Email.Trim();
@@ -247,20 +255,20 @@ namespace CUWebinars.Web.Controllers.api
                 idOfLastOrder = importedOrder.idOrder;
             }
 
-            try
-            {
-                var httpResponseMessage = Request.CreateResponse(HttpStatusCode.Created,
+                httpResponseMessage = Request.CreateResponse(HttpStatusCode.Created,
                     new { Result = "Order successfully submitted" });
                 httpResponseMessage.Headers.Location =
                     new Uri(Path.Combine(Request.RequestUri.ToString(), idOfLastOrder.ToString()));
 
-                return httpResponseMessage;
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                _logger.Fatal(ex.Message);
-                throw;
+                httpResponseMessage = Request.CreateResponse(HttpStatusCode.InternalServerError,
+                                    new { Result = "Not all orders were created successfully" });
+                _logger.Fatal(exception.Message);                
             }
+            return httpResponseMessage;
+            
         }
 
         // PUT api/<controller>/5

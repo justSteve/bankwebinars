@@ -142,7 +142,10 @@ $(function () {
 
                 $('#InputFormFields').html('<span id="OrderSucceeded" class="label label-success">' + resultAsJson.Result + '</span>');
 
-            }).always(function () {
+            }).fail(function (result) {
+                var resultAsJson = JSON.parse(result.responseText);
+                $('#InputFormFields').html('<span id="OrderSucceeded" class="label label-important">' + resultAsJson.Result + '</span>');
+            }).always(function (result) {
                 $('#WaitIndicator').hide();
             });
 
@@ -158,22 +161,22 @@ function addImportOrderButtonClick() {
         var jsonPayload = $('#JsonPayloadTextArea').val();
         jsonDataForImportedOrder = jsonPayload;
 
-                $.ajax({
-                    type: 'POST',
-                    contentType: constants.JsonContentType,
-                    cache: false,
-                    url: '/Api/Order',
-                    dataType: constants.HtmlDataType,
-                    data: $('#JsonPayloadTextArea').val(),
-                    beforeSend: function () {
-                        // this is where we append a loading image
-                        $('#WaitIndicator').show();
-                    }
-                }).done(function (result) {
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: '/Api/Order',
+            dataType: constants.HtmlDataType,
+            data: $('#JsonPayloadTextArea').val(),
+            beforeSend: function () {
+                // this is where we append a loading image
+                $('#WaitIndicator').show();
+            }
+        }).done(function (result) {
 
-                    var resultAsJson = JSON.parse(result);
+            var resultAsJson = JSON.parse(result);
 
-            $('#InputFormFields').html('<span id="OrderSucceeded" class="label label-success">' + resultAsJson.Result + '</span>');
+        $('#InputFormFields').html('<span id="OrderSucceeded" class="label label-success">' + resultAsJson.Result + '</span>');
             
         }).always(function () {
             $('#WaitIndicator').hide();
