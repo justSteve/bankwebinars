@@ -974,7 +974,6 @@
     <Content Include="Notification\Templates\OrderSubmittedEvent.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailVerifiedEvent_Subject.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailVerifiedEvent_Body.cshtml" />
-    <Content Include="Notification\Templates\_ConnectionInfo.cshtml" />
     <Content Include="Notification\Templates\RecordingPostedEventBody.cshtml">
       <SubType>Code</SubType>
     </Content>

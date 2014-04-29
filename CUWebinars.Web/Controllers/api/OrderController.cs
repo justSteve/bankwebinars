@@ -138,10 +138,10 @@ namespace CUWebinars.Web.Controllers.api
                         incomingOrderModel.ShippingAddress.AddressType = WebUiConstants.ShippingAddress;
 
                         IList<Address> addresses = new List<Address>
-                    {
-                        incomingOrderModel.BillingAddress,
-                        incomingOrderModel.ShippingAddress
-                    };
+                        {
+                            incomingOrderModel.BillingAddress,
+                            incomingOrderModel.ShippingAddress
+                        };
 
                         USTimeZone userTimeZone = _membershipService.GetTimeZoneByZip();
                         webUser = _membershipService.CreateWebUser(globalConfig.Tenant
@@ -225,34 +225,40 @@ namespace CUWebinars.Web.Controllers.api
                     importedOrder.ShippingFirstName = firstName;
                     importedOrder.ShippingLastName = lastName;
 
-                if (orderRow.Webinar.WebinarKey != null)
+                    if (orderRow.Webinar.WebinarKey != "0")
                     {
-                        var regKeyResponse = _orderManagementService.CreateRegistrantKey(importedOrder.FirstName,
-                            importedOrder.LastName, importedOrder.BillingEmail, orderRow.idWebinar,
-                            orderRow.Webinar.WebinarKey);
-                        //"{\"registrantKey\":106033865,\"joinUrl\":\"https://www2.gotomeeting.com/join/739905466/106033865\"}"
-                        //http://stackoverflow.com/questions/13588185/deserialize-json-string-using-json-net
+                        
+                        //var regKeyResponse = _orderManagementService.CreateRegistrantKey(importedOrder.FirstName,
+                        //    importedOrder.LastName, importedOrder.BillingEmail, orderRow.idWebinar,
+                        //    orderRow.Webinar.WebinarKey);
+                        ////"{\"registrantKey\":106033865,\"joinUrl\":\"https://www2.gotomeeting.com/join/739905466/106033865\"}"
+                        ////http://stackoverflow.com/questions/13588185/deserialize-json-string-using-json-net
 
-                        JObject parsedJsonObject = JObject.Parse(regKeyResponse);
+                        //if(ReferenceEquals(null, regKeyResponse))
+                        //    throw new NullReferenceException("The Registration Key Response from the Citrix API resulted in a null response.");
+                        
+                        //JObject parsedJsonObject = JObject.Parse(regKeyResponse);
 
-                        if (parsedJsonObject["registrantKey"] != null)
-                        {
-                            var registrantKey = parsedJsonObject["registrantKey"].ToString();
-                            var joinUrl = parsedJsonObject["joinUrl"].ToString();
+                        //if (parsedJsonObject["registrantKey"] != null)
+                        //{
+                        //    var registrantKey = parsedJsonObject["registrantKey"].ToString();
+                        //    var joinUrl = parsedJsonObject["joinUrl"].ToString();
 
-                            orderRow.RegistrantKey = registrantKey;
-                            orderRow.JoinURL = joinUrl;
-                        }
-                        else
-                        {
-                            /*  *************** 404 error condition *************** 
-                             * json payload will look like:
-                             *      {"description":"The webinar does not exist.","incident":3984078431536134144}
-                             * which is not usable
-                             */
-                        }
+                        //    orderRow.RegistrantKey = registrantKey;
+                        //    orderRow.JoinURL = joinUrl;
+                        //}
+                        //else
+                        //{
+                        //    /*  *************** 404 error condition *************** 
+                        //     * json payload will look like:
+                        //     *      {"description":"The webinar does not exist.","incident":3984078431536134144}
+                        //     * which is not usable
+                        //     */
+                        //}
                     }
 
+                        orderRow.RegistrantKey = "SomeKey";
+                        orderRow.JoinURL = "https://www2.gotomeeting.com/join/739905466/106033865";
                     _orderManagementService.SaveOrderChanges(importedOrder);
                     idOfLastOrder = importedOrder.idOrder;
                 }

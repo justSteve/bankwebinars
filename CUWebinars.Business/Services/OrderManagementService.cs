@@ -376,10 +376,14 @@ namespace CUWebinars.Business.Services
 
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder);
 
+                AddEvent(new OrderSubmittedEvent<Order> { Order = updatedOrder });
+
                 foreach (var evt in GetEvents())
                 {
                     _ttsConfig.NotificationEventBus.RaiseEvent(evt);
                 }
+
+                Clear();
 
                 return updatedOrder;
 
@@ -406,9 +410,6 @@ namespace CUWebinars.Business.Services
 
             var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow);
 
-            AddEvent(new OrderSubmittedEvent<Order> { Order = order });
-            //1st BreakPoint here and query intermediate window
-            // ? order.idOrder
             return order;
         }
 
