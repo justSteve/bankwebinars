@@ -87,6 +87,9 @@ namespace CUWebinars.Business.Notification.Formatters
 
         protected virtual string GetSubject<TBody>(Events.OrderSubmittedEvent<TOrder> orderSubmittedEvent, TBody subjectOfMessage)
         {
+            //Breakpoint #2 here and query intermediate window
+            // ? orderSubmittedEvent.Order.idOrder 
+            // it never increments. The idOrder isn't matching the 1st breakpoint.
             return FormatValue(orderSubmittedEvent, _emailSubject, subjectOfMessage);
         }
 

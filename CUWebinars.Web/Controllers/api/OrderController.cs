@@ -225,7 +225,7 @@ namespace CUWebinars.Web.Controllers.api
                     importedOrder.ShippingFirstName = firstName;
                     importedOrder.ShippingLastName = lastName;
 
-                    if (orderRow.Webinar.WebinarKey != "0")
+                if (orderRow.Webinar.WebinarKey != null)
                     {
                         var regKeyResponse = _orderManagementService.CreateRegistrantKey(importedOrder.FirstName,
                             importedOrder.LastName, importedOrder.BillingEmail, orderRow.idWebinar,

@@ -76,9 +76,9 @@ namespace CUWebinars.Business.Services
         {
             try
             {
-            var regType = _regTypeRepository.FindRegType(registrationType);
-            return _orderRepository.CreateOrderRow(webinar, additionalLocation, regType);
-        }
+                var regType = _regTypeRepository.FindRegType(registrationType);
+                return _orderRepository.CreateOrderRow(webinar, additionalLocation, regType);
+            }
             catch (Exception exception)
             {
                 _logger.ErrorException("CreateOrderRow", exception);
@@ -91,7 +91,7 @@ namespace CUWebinars.Business.Services
             try
             {
                 _orderRepository.CreateOrderRow(webinar, additionalLocation, registrationType);
-        }
+            }
             catch (Exception exception)
             {
                 _logger.ErrorException("CreateOrderRow", exception);
@@ -138,7 +138,7 @@ namespace CUWebinars.Business.Services
             try
             {
                 return _orderRepository.FindOrdersByUserIdWithOrderRows(id);
-        }
+            }
             catch (Exception exception)
             {
                 _logger.ErrorException("GetOrdersByUserId", exception);
@@ -245,38 +245,35 @@ namespace CUWebinars.Business.Services
         {
             order.Total = 0.0M;
 
-            foreach (OrderRow row in order.OrderRows)
+            var row = order.OrderRows.Single();
+
+            if (row.RegistrationType.Price != null) row.UnitPrice = (decimal)row.RegistrationType.Price;
+            //
+            //Calculate options price
+            decimal optionsTotal = CalculateOptionsPrice(row);
+
+            //Calculate row price before discount
+            row.RowPrice = row.UnitPrice + optionsTotal;
+
+            //Calculate discount. Discount is not valid for subscription webinars.
+            if (row.Webinar.Title.Contains("Compliance Perspectives") == false)
             {
-                //var option = _RegTypeRepository.FindRegType(row.RegistrationType);
 
-                //if (option.Price != null) row.UnitPrice = (decimal)option.Price;
-                //(decimal)OptionsFacade.Instance.Load((int)row.RegistrationType).Price;
-
-                //Calculate options price
-                decimal optionsTotal = CalculateOptionsPrice(row);
-
-                //Calculate row price before discount
-                row.RowPrice = row.UnitPrice + optionsTotal;
-
-                //Calculate discount. Discount is not valid for subscription webinars.
-                if (row.Webinar.Title.Contains("Compliance Perspectives") == false)
-                {
-
-                    //decimal discountTotal = row.
-                    //if (row.DiscountPercentOff != 0.0M)
-                    //{
-                    //    discountTotal = row.RowPrice * row.DiscountPercentOff / 100;
-                    //}
-                    //if (discountTotal > row.RowPrice)
-                    //{
-                    //    discountTotal = row.RowPrice;
-                    //}
-                    //row.RowPrice = row.RowPrice - discountTotal;
-                }
-
-                //Calculate order total
-                order.Total += row.RowPrice;
+                //decimal discountTotal = row.
+                //if (row.DiscountPercentOff != 0.0M)
+                //{
+                //    discountTotal = row.RowPrice * row.DiscountPercentOff / 100;
+                //}
+                //if (discountTotal > row.RowPrice)
+                //{
+                //    discountTotal = row.RowPrice;
+                //}
+                //row.RowPrice = row.RowPrice - discountTotal;
             }
+
+            //Calculate order total
+            order.Total += row.RowPrice;
+
         }
 
         public virtual decimal CalculateOptionsPrice(OrderRow row)
@@ -287,29 +284,30 @@ namespace CUWebinars.Business.Services
             //}
 
             decimal optionsTotal = 0.0M;
-            //foreach (var option in row.AdditionalLocation)
-            //{
-            //    var AdditionalLocation = option.AdditionalLocation;
+            foreach (var option in row.AdditionalLocation)
+            {
+                //var AdditionalLocation = option.AdditionalLocation;
 
-            //    if (AdditionalLocation == null) continue;
+                //if (AdditionalLocation == null) continue;
 
-            //    if (row.Webinar.Title.Contains("Compliance Perspectives")//.IsSubscriptionWebinar
-            //        && AdditionalLocation.Count < 4)
-            //    {
-            //        continue; //Subscription webinar with up to 3 additional locations. Do not charge.
-            //    }
+                //if (row.Webinar.Title.Contains("Compliance Perspectives")//.IsSubscriptionWebinar
+                //    && AdditionalLocation.Count < 4)
+                //{
+                //    continue; //Subscription webinar with up to 3 additional locations. Do not charge.
+                //}
 
-            //    if (row.Webinar.Title.Contains("Compliance Perspectives"))
-            //    {
+                //if (row.Webinar.Title.Contains("Compliance Perspectives"))
+                //{
 
-            //        int subscriptionPeriod = 12;//row.RegistrationType == RegistrationType.Twelve_Month_Subscription ? 12 : 6;
-            //        optionsTotal += (AdditionalLocation.Count - 3) * option.RegTypePrice * subscriptionPeriod;
-            //    }
-            //    else
-            //    {
-            //        optionsTotal += AdditionalLocation.Count * option.RegTypePrice;
-            //    }
-            //}
+                //    int subscriptionPeriod = 12;//row.RegistrationType == RegistrationType.Twelve_Month_Subscription ? 12 : 6;
+                //    optionsTotal += (AdditionalLocation.Count - 3) * option.RegTypePrice * subscriptionPeriod;
+                //}
+                //else
+                //{
+                //    optionsTotal += AdditionalLocation.Count * option.RegTypePrice;
+                //}
+                var a = 1;
+            }
             return optionsTotal;
         }
         public virtual void AssignUserToOrder(Order order)
@@ -409,7 +407,8 @@ namespace CUWebinars.Business.Services
             var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow);
 
             AddEvent(new OrderSubmittedEvent<Order> { Order = order });
-
+            //1st BreakPoint here and query intermediate window
+            // ? order.idOrder
             return order;
         }
 
@@ -431,9 +430,9 @@ namespace CUWebinars.Business.Services
             string access_token = "5jxY3KZL48HWknOaOEP2eIzVmOTS"; //steve's
             //string access_token = "JIOHRkkCvmIKDY8QO0S4msbYH48N";//mark's
 
-            string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/" + webinarKey + "registrants";
+            string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/" + webinarKey + "/registrants";
 
-            HttpWebRequest httpWebRequest = (HttpWebRequest) WebRequest.Create(url);
+            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
             //httpWebRequest.ContentType = "application/x-www-form-urlencoded";
             httpWebRequest.ContentType = "application/json";
             //httpWebRequest.Accept = "application/json";
@@ -442,7 +441,7 @@ namespace CUWebinars.Business.Services
 
             httpWebRequest.Method = "POST";
 
-            object sendVars = new {firstName = firstName, lastName = lastName, email = billingEmail};
+            object sendVars = new { firstName = firstName, lastName = lastName, email = billingEmail };
 
             string postData = JsonConvert.SerializeObject(sendVars);
             ;
@@ -458,7 +457,7 @@ namespace CUWebinars.Business.Services
 
             try
             {
-                HttpWebResponse response = (HttpWebResponse) httpWebRequest.GetResponse();
+                HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse();
                 // Get the stream associated with the response.
                 Stream receiveStream = response.GetResponseStream();
 
