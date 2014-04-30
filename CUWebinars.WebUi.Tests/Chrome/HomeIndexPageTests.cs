@@ -21,7 +21,7 @@ namespace CUWebinars.WebUi.Tests.Chrome
         {
             var home = NavigateToHomeIndexPage();
             home.ClickLoginLink();
-            home.LogInToSite(Constants.DenzlerEmailAddress, Constants.DenzlerPassword);
+            home.LogInToSite(Constants.SitTestEmailAddress, Constants.SitTestPassword);
             
             Assert.IsTrue(home.LogoutLinkIsPresentOnPage);
         }
@@ -33,8 +33,8 @@ namespace CUWebinars.WebUi.Tests.Chrome
             var home = NavigateToHomeIndexPage();
             home.ClickLoginLink();
             home.ClickRegisterLinkOnLoginView();
-            home.EnterEmailAddressAndEnter(Constants.DenzlerEmailAddress);
-            home.EnterPasswordWhereUserExists(Constants.DenzlerPassword);
+            home.EnterEmailAddressAndEnter(Constants.SitTestEmailAddress);
+            home.EnterPasswordWhereUserExists(Constants.SitTestPassword);
 
             Assert.IsTrue(home.LogoutLinkIsPresentOnPage);
         }
