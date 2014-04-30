@@ -57,6 +57,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="FluentValidation">
+      <HintPath>..\packages\FluentValidation.5.1.0.0\lib\Net40\FluentValidation.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Data.Edm, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Data.Edm.5.2.0\lib\net40\Microsoft.Data.Edm.dll</HintPath>
     </Reference>
@@ -209,6 +212,7 @@
     <Compile Include="Services\OrderManagementService.cs" />
     <Compile Include="Core\TtsConfiguration.cs" />
     <Compile Include="Core\TtsConfig.cs" />
+    <Compile Include="Validation\Order\CreateOrderValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -90,6 +90,11 @@ namespace CUWebinars.Business.Repository
                         || o.OrderStatus == OrderStatus.Paid
                         || o.OrderStatus == OrderStatus.Submitted));
         }
+        public IQueryable<Order> GetAllOrdersByWebinarForUser(int webinarId, int userId)
+        {
+            return ((TTSWebinarsContext)db).Orders
+                .Where(o => o.OrderRows.FirstOrDefault().Webinar.idWebinar == webinarId && o.idUser == userId);
+        }
 
         public IQueryable<Webinar> GetByTopic(int topicId)
         {

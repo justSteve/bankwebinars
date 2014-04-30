@@ -134,7 +134,7 @@ namespace CUWebinars.Web.App_Start
                 var userAccountService = kernel.Get<UserAccountService>();
                 ILogger logger = new Log4NetLogger(typeof (OrderController));
                 ILogger loggerForOrderManagementService = new Log4NetLogger(typeof(OrderManagementService));
-
+                
 
                 var orderManagementService = new OrderManagementService(
                     new AffiliateRepository(sharedContext),

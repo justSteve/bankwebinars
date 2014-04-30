@@ -8,15 +8,19 @@ using System.Diagnostics;
 using System.Linq;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
+using CUWebinars.Business.Validation.Order;
+using FluentValidation;
 
 namespace CUWebinars.Business.Repository
 {
     public class OrderRepository : TTSWebinarsRepository<TTSWebinarsContext, Order>, IOrderRepository
     {
+        private readonly IValidator<Order> _orderValidator;
+
         public OrderRepository(TTSWebinarsContext ctx)
             : base(ctx)
         {
-
+            _orderValidator = new CreateOrderValidator(new WebinarRepository((TTSWebinarsContext)db));
         }
 
         public Order CreateOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow)
@@ -32,6 +36,8 @@ namespace CUWebinars.Business.Repository
             newOrder.OrderRows.Add(orderRow);
 
             Add(newOrder);
+
+            //_orderValidator.ValidateAndThrow(newOrder);
 
             db.SaveChanges();
 
