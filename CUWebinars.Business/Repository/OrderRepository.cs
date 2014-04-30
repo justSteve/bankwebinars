@@ -23,6 +23,7 @@ namespace CUWebinars.Business.Repository
         {
             var newOrder = items.Create();
             newOrder.OrderDate = DateTime.Now;
+            newOrder.OrderStatus = OrderStatus.InProcess;
 
             newOrder.idAffiliate = affiliate.idUserAff;
             newOrder.idUser = webUser.idUser;
