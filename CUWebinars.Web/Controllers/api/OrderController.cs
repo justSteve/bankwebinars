@@ -258,8 +258,8 @@ namespace CUWebinars.Web.Controllers.api
                         }
                     }
 
-                        orderRow.RegistrantKey = "SomeKey";
-                        orderRow.JoinURL = "https://www2.gotomeeting.com/join/739905466/106033865";
+                        //orderRow.RegistrantKey = "SomeKey";
+                        //orderRow.JoinURL = "https://www2.gotomeeting.com/join/739905466/106033865";
                     _orderManagementService.SaveOrderChanges(importedOrder);
                     idOfLastOrder = importedOrder.idOrder;
                 }
@@ -289,5 +289,6 @@ namespace CUWebinars.Web.Controllers.api
         //public void Delete(int id)
         //{
         //}
+
     }
 }
