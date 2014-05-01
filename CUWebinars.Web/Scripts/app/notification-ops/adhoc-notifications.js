@@ -91,7 +91,9 @@ $(function () {
 
                     recipientsEmailAddresses = recipientsEmailAddresses.substring(0, recipientsEmailAddresses.length - 1);
 
-                    pageObjects.RegTypesCheckBoxesDiv().append('<input type="Text" id="RecipientsInput" style="width:100%;margin-top:10px;clear:left" value=' + recipientsEmailAddresses + ' />');
+                    pageObjects.RegTypesCheckBoxesDiv().append('<br /><input type="Text" id="SubjectInput" class="input-xxlarge" style="margin-top:10px;" placeholder="Enter Subject" />');
+                    pageObjects.RegTypesCheckBoxesDiv().append('<input type="Text" id="RecipientsInput" style="width:100%;margin-top:10px;clear:left" value="' + recipientsEmailAddresses + '" />');
+                    pageObjects.RegTypesCheckBoxesDiv().append('<button id="SendNotificationButton" class="btn btn-primary" style="margin-top:10px;">Send Notification</button>');
                 });
 
             });

@@ -38,14 +38,23 @@ namespace CUWebinars.Business.Repository
             Add(newOrder);
 
             //_orderValidator.ValidateAndThrow(newOrder);
+            var validationResult = _orderValidator.Validate(newOrder);
 
-            db.SaveChanges();
+            if (validationResult.IsValid)
+            {
+                db.SaveChanges();
 
-            //  Best to load these from the database
-            db.Entry(newOrder).Reference(no => no.Affiliate).Load();
-            db.Entry(newOrder).Reference(no => no.WebUser).Load();
+                //  Best to load these from the database
+                db.Entry(newOrder).Reference(no => no.Affiliate).Load();
+                db.Entry(newOrder).Reference(no => no.WebUser).Load();
 
-            return newOrder;
+                return newOrder;
+            }
+            else
+            {
+                throw new Exception("");
+                //  and do whatever else we come up with here
+            }
         }
 
         public OrderRow CreateOrderRow(Webinar webinar, 
