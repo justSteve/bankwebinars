@@ -13,8 +13,11 @@ namespace CUWebinars.Business.Validation.Order
         {
             _webinarRepository = webinarRepository;
 
-            RuleFor(o => o.idUser).GreaterThanOrEqualTo(1);
-            RuleFor(o => o.idUser).Must(UserHasExistingWebinarInNonCancelledState);
+            RuleFor(o => o.idUser).GreaterThanOrEqualTo(1).WithMessage("The WebUserId was less than 1.");
+
+            RuleFor(o => o.idUser)
+                .Must(UserHasExistingWebinarInNonCancelledState)
+                .WithMessage("The WebUser already has at least 1 order which is in a non-cancelled state");
         }
 
         private bool UserHasExistingWebinarInNonCancelledState(Models.Order order, int userId)

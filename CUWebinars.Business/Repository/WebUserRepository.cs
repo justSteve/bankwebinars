@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Models;
+﻿using System.Collections.Generic;
+using CUWebinars.Business.Models;
 using System.Data.Entity;
 using System.Linq;
 
@@ -75,6 +76,18 @@ namespace CUWebinars.Business.Repository
             }
 
             db.SaveChanges();
+        }
+
+        public IEnumerable<WebUser> GetWebusersForWebinarWithRegtypes(int idWebinar, IEnumerable<int> regTypeIds)
+        {
+            var webUsers = ((TTSWebinarsContext)db).OrderRows
+                .Include(or => or.Order)
+                .Where(or => or.idWebinar == idWebinar)
+                .Where(or => regTypeIds.Contains(or.idRegType))
+                .Select(o => o.Order)
+                .Select(o => o.WebUser);
+
+            return webUsers;
         }
 
         public void Update(WebUser webUser)
