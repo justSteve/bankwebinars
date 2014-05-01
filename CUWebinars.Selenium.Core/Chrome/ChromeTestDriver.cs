@@ -25,7 +25,8 @@ namespace CUWebinars.Selenium.Core.Chrome
         {
             if (string.IsNullOrEmpty(url))
             {
-                url = ConfigurationManager.AppSettings["HomeUrl"];
+                //url = ConfigurationManager.AppSettings["HomeUrl"];
+                url = "http://127.0.0.1:5556/";
             }
 
             INavigation navigation = webDriver.Navigate();

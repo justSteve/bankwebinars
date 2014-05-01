@@ -362,6 +362,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdhocNotificationController.cs" />
     <Compile Include="Controllers\api\AddressesController.cs" />
     <Compile Include="Core\CsvParseOps.cs" />
     <Compile Include="Models\IncomingOrderModel.cs" />
@@ -426,6 +427,7 @@
     <Compile Include="Services\StateService.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModel\AddAdditionalLocationsViewModel.cs" />
+    <Compile Include="ViewModel\AddhocNotificationViewModel.cs" />
     <Compile Include="ViewModel\AdditionalLocationsViewModel.cs" />
     <Compile Include="ViewModel\CheckoutOptionsViewModel.cs" />
     <Compile Include="ViewModel\ConnectionInfoViewModel.cs" />
@@ -905,6 +907,7 @@
     <Content Include="Scripts\app\cart\edit-order.js" />
     <Content Include="Scripts\app\GTW\registrationForm.js" />
     <Content Include="Scripts\app\GTW\utils.js" />
+    <Content Include="Scripts\app\notification-ops\adhoc-notifications.js" />
     <Content Include="Scripts\app\notification-ops\membership-notifications.js" />
     <Content Include="Scripts\app\passwordReset\password-reset.js" />
     <Content Include="Scripts\app\register\create-user.js" />
@@ -1119,6 +1122,7 @@
     <Content Include="Views\Shared\DisplayTemplates\AddAdditionalLocationViewModel.cshtml" />
     <Content Include="Views\Webinar\Partials\_AdditionalLocationsModal.cshtml" />
     <Content Include="Views\MembershipNotificationOps\_ImportOrder.cshtml" />
+    <Content Include="Views\AdhocNotification\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Notifications\" />

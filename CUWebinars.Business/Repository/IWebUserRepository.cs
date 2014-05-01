@@ -9,6 +9,7 @@ namespace CUWebinars.Business.Repository
         WebUser FindById(int id);
         WebUser FindByIdLoaded(int id);
         WebUser GetWebUserByEmail(string email);
+        IEnumerable<WebUser> GetWebusersForWebinarWithRegtypes(int idWebinar, IEnumerable<int> regTypeIds);
         void Add(WebUser webUser);
         IEnumerable<WebUser> GetAll();
         void UpdateAddresses(Address address);
