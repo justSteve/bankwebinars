@@ -125,7 +125,7 @@ namespace CUWebinars.Business.Repository
         public Order FindOrderByIdWithOrderRows(int id)
         {
             var item = items
-                //.Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+                .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
                 .Where(o => o.idOrder == id);
             return item.FirstOrDefault();
         }

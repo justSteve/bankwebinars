@@ -364,6 +364,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdhocNotificationController.cs" />
     <Compile Include="Controllers\api\AddressesController.cs" />
+    <Compile Include="Controllers\OrderEventFiringOpsController.cs" />
     <Compile Include="Core\CsvParseOps.cs" />
     <Compile Include="Models\IncomingOrderModel.cs" />
     <Compile Include="Controllers\api\OrderController.cs" />
@@ -908,6 +909,7 @@
     <Content Include="Scripts\app\GTW\utils.js" />
     <Content Include="Scripts\app\notification-ops\adhoc-notifications.js" />
     <Content Include="Scripts\app\notification-ops\membership-notifications.js" />
+    <Content Include="Scripts\app\notification-ops\order-event-notifications.js" />
     <Content Include="Scripts\app\passwordReset\password-reset.js" />
     <Content Include="Scripts\app\register\create-user.js" />
     <Content Include="Scripts\app\waitButton.js" />
@@ -980,7 +982,7 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="Notification\Templates\_RecordingInfo.cshtml" />
-    <Content Include="Notification\Templates\_ConnectionInfo.cshtml" />
+    <Content Include="Notification\Templates\SendShippedOrder.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars - Web Deploy.pubxml" />
@@ -1123,6 +1125,7 @@
     <Content Include="Views\Webinar\Partials\_AdditionalLocationsModal.cshtml" />
     <Content Include="Views\MembershipNotificationOps\_ImportOrder.cshtml" />
     <Content Include="Views\AdhocNotification\Index.cshtml" />
+    <Content Include="Views\OrderEventFiringOps\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Notifications\" />

@@ -110,8 +110,12 @@
   <ItemGroup>
     <Compile Include="AccountService\IMembershipService.cs" />
     <Compile Include="Core\Helpers\DateTimeHelper.cs" />
+    <Compile Include="Core\Helpers\GenericHelpers.cs" />
+    <Compile Include="Notification\Events\SendShippedOrderEvent.cs" />
+    <Compile Include="Notification\Events\TtsBusEvent.cs" />
     <Compile Include="Notification\Formatters\Formatter.cs" />
     <Compile Include="Notification\Formatters\IFormatter.cs" />
+    <Compile Include="Notification\Handlers\SendShippedOrderHandler.cs" />
     <Compile Include="Notification\Renderers\IRenderer.cs" />
     <Compile Include="Notification\Renderers\Renderer.cs" />
     <Compile Include="Notification\TtsTemplateHelper.cs" />
@@ -215,7 +219,9 @@
     <Compile Include="Validation\Order\CreateOrderValidator.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="SQLSeeding\BACPACs\CUWebinars.bacpac" />
     <None Include="SQLSeeding\BACPACs\CUWebinarsClean.bacpac" />
@@ -230,6 +236,10 @@
     <Content Include="SQLSeeding\Options2RegTypeSeedingScript.sql" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CUWebinars.Html\CUWebinars.Html.csproj">
+      <Project>{317a3851-f3c8-49d2-8b34-53f1a140d653}</Project>
+      <Name>CUWebinars.Html</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CUWebinars.NotificationSystem\CUWebinars.NotificationSystem.csproj">
       <Project>{281c6443-2348-4578-9704-2f953cd3af87}</Project>
       <Name>CUWebinars.NotificationSystem</Name>

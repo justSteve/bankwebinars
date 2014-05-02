@@ -11,19 +11,19 @@ namespace CUWebinars.Business.Notification
             return "hi!";
         }
 
-        public static string DisplayDate(DateTime date)
+        public string DisplayDate(DateTime date)
         {
             return DateTimeHelper.FormatDate(date);
         }
 
-        public static string DisplayTime( DateTime time, USTimeZone timeZone,
+        public string DisplayTime( DateTime time, USTimeZone timeZone,
             bool displayTimezone)
         {
             return DateTimeHelper.FormatTime(time, timeZone, displayTimezone);
         }
 
 
-        public static string DisplayDateShort( DateTime date)
+        public string DisplayDateShort(DateTime date)
         {
             return DateTimeHelper.FormatDateShort(date);
         }

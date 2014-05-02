@@ -1,7 +1,4 @@
-﻿using System.IO;
-using System.Web;
-using System.Web.UI.WebControls.WebParts;
-using BrockAllen.MembershipReboot;
+﻿using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
 using CUWebinars.Web.Core;
@@ -9,13 +6,15 @@ using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Membership;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.ViewModel;
+using Newtonsoft.Json;
+using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
+using System.Web;
 using System.Web.Mvc;
-using Newtonsoft.Json;
-using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Web.Controllers
 {

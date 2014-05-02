@@ -12,8 +12,9 @@ namespace CUWebinars.Business.Notification.Renderers
             //  create a configuration file for the template service
             var config = new FluentTemplateServiceConfiguration(c =>
             {
-                c.WithEncoding(Encoding.Html);
+                c.WithEncoding(Encoding.Raw);
                 c.ResolveUsing<TemplateResolver>();
+                c.WithBaseTemplateType(typeof(TtsHtmlTemplateBase<>)); 
             });
 
             // create a new TemplateService and pass in the configuration to the constructor

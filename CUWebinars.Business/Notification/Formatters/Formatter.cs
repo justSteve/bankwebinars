@@ -34,9 +34,9 @@ namespace CUWebinars.Business.Notification.Formatters
             }
         }
 
-        public INotificationMessage Format<T>(T underPinningObject)
+        public INotificationMessage Format<T>(T underPinningObject, string templateName)
         {
-            LoadBodyTemplate(underPinningObject);
+            LoadBodyTemplate(templateName);
 
             return CreateMessage(GetSubject(underPinningObject), GetBody(underPinningObject));
         }
@@ -69,9 +69,9 @@ namespace CUWebinars.Business.Notification.Formatters
             return new Renderer();
         }
 
-        protected virtual void LoadBodyTemplate<T>(T evt)
+        protected virtual void LoadBodyTemplate(string templateName)
         {
-            LoadTemplate(CleanGenericName(evt.GetType()) + DomainConstants.RazorExtension);
+            LoadTemplate(templateName + DomainConstants.RazorExtension);
         }
 
         private void LoadTemplate(string name)
@@ -92,7 +92,7 @@ namespace CUWebinars.Business.Notification.Formatters
 
                 while (reader.Read())
                 {
-                    if (!reader.Name.Equals("div", StringComparison.OrdinalIgnoreCase)) continue;
+                    if (!reader.Name.Equals("html", StringComparison.OrdinalIgnoreCase)) continue;
                     var div = XNode.ReadFrom(reader) as XElement;
 
                     if (div != null)
@@ -100,19 +100,5 @@ namespace CUWebinars.Business.Notification.Formatters
                 }
             } 
         }
-
-        private string CleanGenericName(Type type)
-        {
-            var name = type.Name;
-            var index = name.IndexOf('`');
-
-            if (index > 0)
-            {
-                return name.Substring(0, index);
-            }
-
-            return name;
-        }
-
     }
 }

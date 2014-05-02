@@ -5,6 +5,6 @@
     public interface IEventHandler<in T> : IEventHandler
         where T : IEvent
     {
-        void Handle(T orderSubmittedEvent);
+        void Handle(T sendShippedOrderSubmittedEvent);
     }
 }
