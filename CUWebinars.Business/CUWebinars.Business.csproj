@@ -234,6 +234,10 @@
     <Content Include="SQLSeeding\Options2RegTypeSeedingScript.sql" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CUWebinars.Html\CUWebinars.Html.csproj">
+      <Project>{317a3851-f3c8-49d2-8b34-53f1a140d653}</Project>
+      <Name>CUWebinars.Html</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CUWebinars.NotificationSystem\CUWebinars.NotificationSystem.csproj">
       <Project>{281c6443-2348-4578-9704-2f953cd3af87}</Project>
       <Name>CUWebinars.NotificationSystem</Name>
