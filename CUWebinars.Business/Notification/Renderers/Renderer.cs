@@ -14,6 +14,7 @@ namespace CUWebinars.Business.Notification.Renderers
             {
                 c.WithEncoding(Encoding.Html);
                 c.ResolveUsing<TemplateResolver>();
+                c.WithBaseTemplateType(typeof(TtsHtmlTemplateBase<>)); 
             });
 
             // create a new TemplateService and pass in the configuration to the constructor

@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<section>
+    <div style="width: 1100px; margin: 30px auto">
+        <h2>Order-Related Notifications</h2>
+
+        <div class="row">
+            <div class="span1"><button id="SendShippedOrderNotificationButton" class="btn btn-primary">Send Shipped Order Notification</button></div>
+            <div class="span1"><button id="GetImportOrderFieldsFromCsvButton" class="btn btn-primary">Import an Order From Csv File</button></div>
+            <div class="span8"><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>
+        </div>
+        
+        <div class="row">
+            <div id="InputFormFieldsDiv" style="margin-top: 20px;"></div>
+        </div>
+
+    </div>
+</section>
+
+
+@section Scripts {
+    <script src="@Url.Content("~/Scripts/app/notification-ops/order-event-notifications.js")"></script>
+
+}
+

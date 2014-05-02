@@ -286,7 +286,26 @@ namespace CUWebinars.Web.App_Start
 
                 return new CartController(membershipService, new WebinarRepository(sharedContext), orderManagementService, ctx.Kernel.Get<IStateService>(), logger);
             }).InRequestScope();
-        
+
+            kernel.Bind<OrderEventFiringOpsController>().ToMethod(ctx =>
+            {
+                var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
+                ILogger logger = new Log4NetLogger(typeof(OrderEventFiringOpsController));
+                ILogger loggerForOrderManagementService = new Log4NetLogger(typeof(OrderManagementService));
+
+                var orderManagementService = new OrderManagementService(
+                    new AffiliateRepository(sharedContext),
+                    new RegTypeRepository(sharedContext),
+                    new OrderRepository(sharedContext),
+                    new RefDataRepository(),
+                    new WebUserRepository(sharedContext),
+                    new WebinarRepository(sharedContext),
+                    loggerForOrderManagementService,
+                    ttsConfig
+                    );
+
+                return new OrderEventFiringOpsController(orderManagementService, logger);
+            }).InRequestScope();
         
         }
     }

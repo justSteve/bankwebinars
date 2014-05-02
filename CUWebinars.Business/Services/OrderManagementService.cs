@@ -366,6 +366,19 @@ namespace CUWebinars.Business.Services
             throw new NotImplementedException();
         }
 
+        public void FireSendOrderShippedNotificationEvent(int orderId)
+        {
+            var order = _orderRepository.FindOrderByIdWithOrderRows(orderId);
+
+            AddEvent(new SendShippedOrderEvent<Order> { EventObject = order});
+
+            foreach (var evt in GetEvents())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            Clear();
+        }
 
         public Order SaveOrderChanges(Order currentOrder)
         {

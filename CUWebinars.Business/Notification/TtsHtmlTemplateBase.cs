@@ -11,10 +11,8 @@ using RazorEngine.Templating;
 
 namespace CUWebinars.Business.Notification
 {
-    [RequireNamespaces("System.Web.Mvc.Html")]
     public class TtsHtmlTemplateBase<t>:TemplateBase<t>
     {
-        private System.Dynamic.DynamicObject viewbag = null;
         private TtsTemplateHelper _ttsTemplateHelper;
 
         public TtsTemplateHelper TtsTemplateHelperObj
