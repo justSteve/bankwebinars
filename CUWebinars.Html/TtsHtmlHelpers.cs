@@ -55,6 +55,7 @@ namespace CUWebinars.Html
             // Render tag.
             return MvcHtmlString.Create(builder.ToString(TagRenderMode.Normal));
         }
+
         public IHtmlString Span(string spanText, object htmlAttributes = null)
         {
             var builder = new TagBuilder(UiConstants.Span);
