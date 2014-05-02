@@ -58,7 +58,7 @@ $(function () {
             getRecipientsButton.on('click', function (evtArgs) {
                 evtArgs.preventDefault();
 
-                var checkboxes = $("[id^=inlineCheckbox_");
+                var checkboxes = $("[id^=inlineCheckbox_]");
                 var regTypes = checkboxes.map(function () {
                     if($(this).is(':checked'))
                         return $(this).val();

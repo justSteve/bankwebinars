@@ -51,26 +51,26 @@
                     </tr>*@
                 <tr style="background-color: #344a58; margin-bottom: 5px; margin-top: 5px;">
                     <td>
-                        <table align="center" border="0" cellpadding="0" cellspacing="0" height="150px">
+                        <table align="center" border="0" cellpadding="0" cellspacing="0" width="660px" height="100px">
                             <tbody>
                                 <tr>
-                                    <td align="right" bgcolor="#01232a">
+                                    @*<td align="right" bgcolor="#01232a">
                                         <img alt="https://ttseast.blob.core.windows.net/images/vrLocal/hardware_2_header_1.jpg" border="0" height="36" margin="0px 0px 0px 0px" src="https://ttseast.blob.core.windows.net/images/vrLocal/hardware_2_header_1.jpg" style="width: 374px; height: 36px; display: block;" width="374" />
-                                    </td>
-                                    <td align="right" bgcolor="#01232a" style="padding-right: 15px; border-top-color: rgb(52, 74, 88); border-right-color: rgb(52, 74, 88); border-top-width: 1px; border-right-width: 1px; border-top-style: solid; border-right-style: solid;" width="286">
+                                    </td>*@
+                                    <td colspan="2" align="right" bgcolor="#01232a" style="padding-right: 15px; border-top-color: rgb(52, 74, 88); border-right-color: rgb(52, 74, 88); border-top-width: 1px; border-right-width: 1px; border-top-style: solid; border-right-style: solid;" >
                                         <div style="color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold;">Order Confirmation</div>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td bgcolor="#344a58" valign="top">
+                                    <td width="320px" bgcolor="#344a58" valign="top" style="width: 332px; height: 50px; padding: 15px; display: block;">
                                         <p>
-                                            <img align="middle" alt="CUwebinars.com" border="0" hspace="25" margin="0px 0px 0px 0px" src="https://ttseast.blob.core.windows.net/images/vrLocal/logo.png" style="width: 332px; height: 50px; display: block;" title="CUwebinars.com" vspace="25" width="332" />
+                                            <img align="middle" alt="CUwebinars.com" border="0" hspace="25" margin="0px 0px 0px 0px" src="https://ttseast.blob.core.windows.net/images/vrLocal/logo.png" title="CUwebinars.com" vspace="25" />
                                         </p>
                                     </td>
-                                    <td align="left" bgcolor="#344a58" style="padding: 0px 15px 0px 0px; border-right-color: rgb(52, 74, 88); border-right-width: 1px; border-right-style: solid;">
+                                    <td width="328px" align="left" bgcolor="#344a58" style="padding: 0px 15px 0px 0px; width: 328px; border-right-color: rgb(52, 74, 88); border-right-width: 1px; border-right-style: solid;">
                                         <p style="text-align: right; color: #fff; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
                                             Order Number: @Model.idOrder<br />
-                                            SKU: @row.RegistrationType.SKU
+                                            @row.RegistrationType.OptionLabel
                                         </p>
                                     </td>
                                 </tr>
@@ -80,9 +80,9 @@
                 </tr>
 
                 <tr style="background-color: #B4D1EC">
-                    <td style="padding: 15px 0px; border-right-color: #344a58; border-left-color: #344a58; border-right-width: 1px; border-left-width: 1px; border-right-style: solid; border-left-style: solid;">
+                    <td colspan="2" style="padding: 15px 0px; border-right-color: #344a58; border-left-color: #344a58; border-right-width: 1px; border-left-width: 1px; border-right-style: solid; border-left-style: solid;">
 
-                        <table style="table-layout: fixed; width: 350px; white-space: nowrap; " align="center" cellpadding="0" cellspacing="0">
+                        <table style="table-layout: fixed; width: 550px; white-space: nowrap; " align="center" cellpadding="0" cellspacing="0">
                             <tbody>
                                 @*<tr style="background-color: #344a58">
                                         <td colspan="2" height="6">
@@ -92,7 +92,7 @@
 
                                 <tr style="background-color: #344a58">
                                     <td colspan="2">
-                                        <img alt="spacer.gif" height="10" src="https://ttseast.blob.core.windows.net/images/vrLocal/spacer.gif" style="width: 1px; height: 10px; display: block;" width="1" />
+                                        <img alt="spacer.gif" height="6" src="https://ttseast.blob.core.windows.net/images/vrLocal/spacer.gif" style="width: 1px; height: 6px; display: block;" width="1" />
                                     </td>
                                 </tr>
 
@@ -104,8 +104,7 @@
                                                 <td width="400px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;"> </td>
                                             </tr>
                                             <tr>
-                                                <td width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller"> </td>
-                                                <td width="400px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
+                                                <td colspan="2" style="text-align: left; margin-left: 6px; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller">
                                                     <p style="color: black; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
                                                         <br />Dear @Model.FirstName,<br />
                                                         Thank you for your recent order.<br /><br />
@@ -176,9 +175,10 @@
                                                         </tr>
 
                                                         <tr>
-                                                            <td colspan="2" style="text-align: left; background-color: #B4D1EC; padding-left: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller">
+                                                            <td colspan="2" style="text-align: left; background-color: #B4D1EC; padding-left: 6px; padding-top: 6px; padding-bottom: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller">
                                                                 <p align="center" style="vert-align: top; font-family: Arial, Helvetica, sans-serif; font-size: smaller; ">
-                                                                    The event's audio will stream via your internet connection. Alternatively, you may use this phone number and access code to listen over your phone line.
+                                                                    The event's audio will stream via your internet connection. <br />
+                                                                    Alternatively, you may use this phone number and access code to listen over your phone line.
                                                                 </p>
                                                             </td>
                                                         </tr>
@@ -217,15 +217,15 @@
                                                             <td style="text-align: left; background-color: #B4D1EC; padding-left: 6px;"></td>
                                                         </tr>
                                                         <tr>
-                                                            <td valign="top" colspan="2" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller">
+                                                            <td valign="top" colspan="2" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; padding-top: 6px; padding-bottom: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller;  ">
                                                                 <p align="center" style="vert-align: top; font-size: smaller; font-family: Arial, Helvetica, sans-serif;">
-                                                                    The connection information is not yet generated. Watch your email or visit \MyWebinars for detailed instructions.
+                                                                    The connection information is not yet generated. <br />Watch your email or visit \MyWebinars for detailed instructions.
                                                                 </p>
                                                             </td>
                                                         </tr>
                                                         <tr>
                                                             <td style="text-align: right; width: 130px; background-color: #CCCCCC; padding-right: 6px; font-size: smaller"></td>
-                                                            <td style="text-align: left; background-color: #B4D1EC; padding-left: 6px;"></td>
+                                                            <td style="text-align: left; width: 400px; background-color: #B4D1EC; padding-left: 6px;"></td>
                                                         </tr>
                                                     }
                                                 }
@@ -255,12 +255,12 @@
                                                         <tr>
                                                             <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller;">
                                                                 <p align="right" style="vert-align: top; font-size: smaller; ">
-                                                                    CD-ROM and<br /> OnDemand Recording:
+                                                                    CD-ROM:
                                                                 </p>
                                                             </td>
-                                                            <td width="400px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
+                                                            <td style="width: 400px;  text-align: left; font-size: smaller; background-color: #B4D1EC; padding-left: 6px;">
                                                                 <p align="center" style="vert-align: top; font-size: smaller; font-family: Arial, Helvetica, sans-serif; ">
-                                                                    The CD-ROM and handouts will ship a few days following the event.
+                                                                    The CD-ROM and handouts will ship a few days following the event.<br />
                                                                     Your order also includes six months access to the OnDemand Recording.
                                                                 </p>
                                                             </td>
@@ -275,19 +275,19 @@
                                                         <tr>
                                                             <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller">
                                                                 <p align="right" style="vert-align: top; font-size: smaller; font-family: Arial, Helvetica, sans-serif; ">
-                                                                    CD-ROM and <br />OnDemand Recording:
+                                                                    CD-ROM:
                                                                 </p>
                                                             </td>
-                                                            <td width="400px" style="text-align: left; font-size: smaller; background-color: #B4D1EC; padding-left: 6px;">
+                                                            <td style="width: 400px; text-align: left; font-size: smaller; background-color: #B4D1EC; padding-left: 6px;">
                                                                 <p align="center" style="vert-align: top; font-size: smaller; font-family: Arial, Helvetica, sans-serif; ">
-                                                                    The CD-ROM and handouts will ship within a few days.
+                                                                    The CD-ROM and handouts will ship within a few days.<br/>
                                                                     Your order also includes six months access to the OnDemand Recording.
                                                                 </p>
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <td style="text-align: right; width: 130px; background-color: #CCCCCC; padding-right: 6px; font-size: smaller"></td>
-                                                            <td style="text-align: left; background-color: #B4D1EC; padding-left: 6px;"></td>
+                                                            <td style="text-align: right; width: 130px; background-color: #CCCCCC; padding: 6px; font-size: smaller"></td>
+                                                            <td style="text-align: left; width: 400px; background-color: #B4D1EC; padding: 6px;"></td>
                                                         </tr>
                                                     }
                                                 }
@@ -311,10 +311,14 @@
                                                     if (row.Webinar.RecordingUrl == "")
                                                     {
                                                         <tr>
-                                                            <td style="text-align: right; width: 130px; background-color: #CCCCCC; padding-right: 6px; font-size: smaller"></td>
-                                                            <td style="text-align: left; background-color: #B4D1EC; padding-left: 6px; font-size: smaller;">
+                                                            <td valign="top" style="text-align: right; width: 130px; background-color: #CCCCCC; padding: 6px; font-size: smaller">
+                                                                <p align="right" style="vert-align: top; font-size: smaller; font-family: Arial, Helvetica, sans-serif; ">
+                                                                    OnDemand Recording:
+                                                                </p>
+                                                            </td>
+                                                            <td style="table-layout: fixed; width: 400px; white-space: nowrap; text-align: left; background-color: #B4D1EC; padding: 6px; font-size: smaller;">
                                                                 <p align="center" style="vert-align: top; font-size: smaller; font-family: Arial, Helvetica, sans-serif; ">
-                                                                    Recordings are posted within 24 hours following the event.
+                                                                    Recordings are posted within 24 hours following the event.<br />
                                                                     Watch your email (or visit MyWebinars) for more information.
                                                                 </p>
                                                             </td>
@@ -323,8 +327,12 @@
                                                     else
                                                     {
                                                         <tr>
-                                                            <td style="text-align: right; width: 130px; background-color: #CCCCCC; padding-right: 6px; font-size: smaller"></td>
-                                                            <td style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
+                                                            <td valign="top" style="text-align: right; vert-align: top; width: 130px; background-color: #CCCCCC; padding: 6px; font-size: smaller">
+                                                                <p align="right" style=" font-size: smaller; font-family: Arial, Helvetica, sans-serif; ">
+                                                                    OnDemand Recording:
+                                                                </p>
+                                                            </td>
+                                                            <td style="table-layout: fixed; width: 400px; white-space: nowrap; text-align: left; background-color: #B4D1EC; padding: 6px;">
                                                                 <p align="center" style="vert-align: top; font-size: smaller; font-family: Arial, Helvetica, sans-serif; ">
                                                                     Your OnDemand Recording is ready to view. Visit \MyWebinars for complete details.
                                                                 </p>
@@ -333,6 +341,11 @@
                                                     }
                                                 }
                                             }
+                                            <tr style="background-color: #344a58">
+                                                <td colspan="2">
+                                                    <img alt="spacer.gif" height="6" src="https://ttseast.blob.core.windows.net/images/vrLocal/spacer.gif" style="width: 1px; height: 10px; display: block;" width="1" />
+                                                </td>
+                                            </tr>
                                         </table>
                                     </td>
                                 </tr>
@@ -343,34 +356,35 @@
                 <tr>
                     <td style="background-color: #344a58; color: #FFFFCC; padding: 10px;" colspan="2">
                         <div style="color: rgb(255, 255, 255); text-align: right; font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold;">For Technical Support call 800-831-0678 ext. 6</div>
+                        <div style="color: rgb(255, 255, 255); text-align: right; font-family: Arial, Helvetica, sans-serif; font-size: 8px; ">SKU: @row.RegistrationType.SKU.Replace("_", " ")</div>
                     </td>
                 </tr>
                 <tr style="background-color: #344a58">
                     <td colspan="2" height="6">
-                        <img alt="large_box_bottom.gif" border="0" height="6" margin="0px 0px 0px 0px" src="https://ttseast.blob.core.windows.net/images/vrLocal/large_box_bottom.gif" style=" height: 6px; display: block;" />
+                        <img alt="large_box_bottom.gif" border="0" height="6" margin="0px 0px 0px 0px" src="https://ttseast.blob.core.windows.net/images/vrLocal/spacer.gif" style=" height: 6px; display: block;" />
                     </td>
                 </tr>
 
+                @*<tr>
+                        <td colspan="2" bgcolor="#344a58">
+                            <table align="center" cellpadding="0" cellspacing="0" width="660">
+                                <tbody>
+                                    <tr>
+                                        <td align="right" style="padding-top: 10px;">
+                                            <div style="color: rgb(255, 255, 255); font-size: 11px;">
+                                                <img align="none" alt="footer" border="0" height="59" hspace="0" src="https://ttseast.blob.core.windows.net/images/vrLocal/footer.gif" style="width: 274px; height: 59px;" title="footer" vspace="0" width="274" />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>*@
                 <tr>
-                    <td colspan="2" bgcolor="#344a58">
-                        <table align="center" cellpadding="0" cellspacing="0" width="660">
-                            <tbody>
-                                <tr>
-                                    <td align="right" style="padding-top: 10px;">
-                                        <div style="color: rgb(255, 255, 255); font-size: 11px;">
-                                            <img align="none" alt="footer" border="0" height="59" hspace="0" src="https://ttseast.blob.core.windows.net/images/vrLocal/footer.gif" style="width: 274px; height: 59px;" title="footer" vspace="0" width="274" />
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2" height="23">
-                        <img alt="hardware_2_footer.jpg" border="0" height="23" margin="0px 0px 0px 0px" src="https://ttseast.blob.core.windows.net/images/vrLocal/hardware_2_footer.jpg" style=" height: 23px; display: block;" />
-                    </td>
-                </tr>
+                    @*<td colspan="2" height="23">
+                                <img alt="hardware_2_footer.jpg" border="0" height="23" margin="0px 0px 0px 0px" src="https://ttseast.blob.core.windows.net/images/vrLocal/hardware_2_footer.jpg" style=" height: 23px; display: block;" />
+                            </td>
+                        </tr>*@
             </tbody>
         </table>
     </body>
