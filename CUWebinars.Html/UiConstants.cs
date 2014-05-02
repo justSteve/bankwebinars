@@ -8,10 +8,6 @@ namespace CUWebinars.Html
 {
     public sealed class UiConstants
     {
-        public const string Action = "action";
-        public const string Controller = "controller";
-        public const string JsonMimeType = "application/json";
-
 
         //  HTML Related
         public const string AltAttribute = "alt";
@@ -26,20 +22,9 @@ namespace CUWebinars.Html
         public const string SourceAttribute = "src";
         public const string ScriptAttribute = "script";
         public const string ScriptsDirectory = "~/Scripts/";
+        public const string Span = "span";
         public const string Submit = "submit";
         public const string TypeAttribute = "type";
 
-        //  Views
-        public const string PageNotFound = "PageNotFound";
-        public const string StaticContent = "StaticContent";
-
-        //  Validation/Messages
-        public const string FutureDateValidationMsg = "Date cannot be a future date";
-        public const string NoFutureDates = "nofuturedates";
-        public const string NoSessionStateExceptionMsg = "NoSessionState";
-        public const string RequiredDateValidationMsg = "This field must be a valid date";
-        public const string ServerErrorPage = "ServerError";
-        public const string SessionNotAvailable = "SessionNotAvailable";
-        public const string ValidDate = "validdate";
     }
 }

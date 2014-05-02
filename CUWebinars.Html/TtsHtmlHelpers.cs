@@ -41,15 +41,30 @@ namespace CUWebinars.Html
             return new MvcHtmlString(builder.ToString(TagRenderMode.SelfClosing));
         }
 
-        public IHtmlString Label(string labelText)
+        public IHtmlString Label(string labelText, object htmlAttributes = null)
         {
             var builder = new TagBuilder(UiConstants.Label);
 
-            // Add attributes
-            //builder.MergeAttribute(UiConstants.TypeAttribute, UiConstants.JavascriptTypeText);
-
-
             builder.InnerHtml = labelText;
+
+            if (!ReferenceEquals(null, htmlAttributes))
+            {
+                builder.MergeAttributes(new RouteValueDictionary(htmlAttributes));
+            }
+
+            // Render tag.
+            return MvcHtmlString.Create(builder.ToString(TagRenderMode.Normal));
+        }
+        public IHtmlString Span(string spanText, object htmlAttributes = null)
+        {
+            var builder = new TagBuilder(UiConstants.Span);
+
+            builder.InnerHtml = spanText;
+
+            if (!ReferenceEquals(null, htmlAttributes))
+            {
+                builder.MergeAttributes(new RouteValueDictionary(htmlAttributes));
+            }
 
             // Render tag.
             return MvcHtmlString.Create(builder.ToString(TagRenderMode.Normal));

@@ -9,7 +9,9 @@
     <text>hello world!</text>
 
     @TtsHtmlObj.Image("Dave", "http://davidrogers.id.au/Content/Images/AngularJS-small.png", "hi")
-    @TtsHtmlObj.Label("OrderId")
+    @TtsHtmlObj.Label("OrderId"):
+    @TtsHtmlObj.Span(Model.idOrder.ToString(), new { style="color: blue" })
+
 
     <table style="table-layout: fixed; width: 660px; white-space: nowrap; " border="0" cellspacing="0" cellpadding="0">
         <tbody>
