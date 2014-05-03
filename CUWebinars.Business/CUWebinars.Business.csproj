@@ -111,10 +111,16 @@
     <Compile Include="AccountService\IMembershipService.cs" />
     <Compile Include="Core\Helpers\DateTimeHelper.cs" />
     <Compile Include="Core\Helpers\GenericHelpers.cs" />
+    <Compile Include="Notification\Events\SendConnectionInfoEvent.cs" />
+    <Compile Include="Notification\Events\SendRecordingPostedEvent.cs" />
+    <Compile Include="Notification\Events\SendReminderEvent.cs" />
     <Compile Include="Notification\Events\SendShippedOrderEvent.cs" />
     <Compile Include="Notification\Events\TtsBusEvent.cs" />
     <Compile Include="Notification\Formatters\Formatter.cs" />
     <Compile Include="Notification\Formatters\IFormatter.cs" />
+    <Compile Include="Notification\Handlers\SendConnectionInfoHandler.cs" />
+    <Compile Include="Notification\Handlers\SendRecordingPostedHandler.cs" />
+    <Compile Include="Notification\Handlers\SendReminderHandler.cs" />
     <Compile Include="Notification\Handlers\SendShippedOrderHandler.cs" />
     <Compile Include="Notification\Renderers\IRenderer.cs" />
     <Compile Include="Notification\Renderers\Renderer.cs" />

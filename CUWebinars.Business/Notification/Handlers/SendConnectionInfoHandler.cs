@@ -6,18 +6,18 @@ using CUWebinars.NotificationSystem.Event;
 
 namespace CUWebinars.Business.Notification.Handlers
 {
-    public class SendShippedOrderHandler<T> : IEventHandler<SendShippedOrderEvent<T>> 
+    public class SendConnectionInfoHandler<T> : IEventHandler<SendConnectionInfoEvent<T>> 
         where T : Order
     {
         private readonly IFormatter _generalFormatter;
         private readonly INotificationDelivery _notificationDelivery;
 
-        public SendShippedOrderHandler(IFormatter generalFormatter)
+        public SendConnectionInfoHandler(IFormatter generalFormatter)
             : this(generalFormatter, new SmtpMessageDelivery())
         {
 
         }
-        public SendShippedOrderHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery)
+        public SendConnectionInfoHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery)
         {
             _generalFormatter = generalFormatter;
             _notificationDelivery = notificationDelivery;
@@ -25,28 +25,30 @@ namespace CUWebinars.Business.Notification.Handlers
 
         public virtual void Process<TObject>(TObject objectOfMessage)
         {
-            var notificationMessage = _generalFormatter.Format(objectOfMessage, "SendShippedOrder");
+            var notificationMessage = _generalFormatter.Format(objectOfMessage, "SendConnectionInfo");
 
             _notificationDelivery.Notify(notificationMessage);
         }
 
-        public void Handle(SendShippedOrderEvent<T> sendShippedOrderSubmittedEvent)
+
+        public void Handle(SendConnectionInfoEvent<T> sendShippedOrderSubmittedEvent)
         {
             Process(sendShippedOrderSubmittedEvent.EventObject);
         }
     }
 
-    public class SendShippedOrderHandler : SendShippedOrderHandler<Order>
+    public class SendConnectionInfoHandler : SendConnectionInfoHandler<Order>
     {
-        public SendShippedOrderHandler(IFormatter generalFormatter)
+        public SendConnectionInfoHandler(IFormatter generalFormatter)
             : base(generalFormatter)
         {
+            
         }
 
-        public SendShippedOrderHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery)
+        public SendConnectionInfoHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery)
             : base(generalFormatter, notificationDelivery)
         {
         }
-    }
 
+    }
 }

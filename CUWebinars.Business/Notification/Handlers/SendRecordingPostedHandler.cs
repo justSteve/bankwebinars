@@ -6,47 +6,51 @@ using CUWebinars.NotificationSystem.Event;
 
 namespace CUWebinars.Business.Notification.Handlers
 {
-    public class SendShippedOrderHandler<T> : IEventHandler<SendShippedOrderEvent<T>> 
+    public class SendRecordingPostedHandler<T> : IEventHandler<SendRecordingPostedEvent<T>>
         where T : Order
     {
         private readonly IFormatter _generalFormatter;
         private readonly INotificationDelivery _notificationDelivery;
 
-        public SendShippedOrderHandler(IFormatter generalFormatter)
+        public SendRecordingPostedHandler(IFormatter generalFormatter)
             : this(generalFormatter, new SmtpMessageDelivery())
         {
 
         }
-        public SendShippedOrderHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery)
+
+        public SendRecordingPostedHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery)
         {
             _generalFormatter = generalFormatter;
             _notificationDelivery = notificationDelivery;
         }
 
+
+        public void Handle(SendRecordingPostedEvent<T> sendShippedOrderSubmittedEvent)
+        {
+            Process(sendShippedOrderSubmittedEvent.EventObject);
+        }
+
         public virtual void Process<TObject>(TObject objectOfMessage)
         {
-            var notificationMessage = _generalFormatter.Format(objectOfMessage, "SendShippedOrder");
+            var notificationMessage = _generalFormatter.Format(objectOfMessage, "SendRecordingPosted");
 
             _notificationDelivery.Notify(notificationMessage);
         }
 
-        public void Handle(SendShippedOrderEvent<T> sendShippedOrderSubmittedEvent)
-        {
-            Process(sendShippedOrderSubmittedEvent.EventObject);
-        }
     }
 
-    public class SendShippedOrderHandler : SendShippedOrderHandler<Order>
+    public class SendRecordingPostedHandler : SendRecordingPostedHandler<Order>
     {
-        public SendShippedOrderHandler(IFormatter generalFormatter)
+        public SendRecordingPostedHandler(IFormatter generalFormatter)
             : base(generalFormatter)
         {
+            
         }
 
-        public SendShippedOrderHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery)
+        public SendRecordingPostedHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery)
             : base(generalFormatter, notificationDelivery)
         {
         }
+        
     }
-
 }
