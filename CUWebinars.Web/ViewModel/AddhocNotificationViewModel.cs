@@ -8,6 +8,7 @@ namespace CUWebinars.Web.ViewModel
     {
         public IEnumerable<SelectListItem> RegTypes { get; set; }
         public int SelectedUpcomingWebinarId { get; set; }
+        public IEnumerable<Order> Orders { get; set; }
         public IEnumerable<SelectListItem> Webinars { get; set; }
 
     }

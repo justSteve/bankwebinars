@@ -15,16 +15,28 @@ namespace CUWebinars.Business.Notification.Email
             {
                 var smtp = ConfigurationManager.GetSection("system.net/mailSettings/smtp") as SmtpSection;
                 notificationMessage.From = smtp.From;
-                notificationMessage.To = "david@dave.com";
             }
 
             using (var smtp = new SmtpClient())
             {
                 smtp.Timeout = 5000;
+
+                if (notificationMessage.Addresses != null)
+                {
+                    foreach (var address in notificationMessage.Addresses)
+                    {
+                        mailMessage.To.Add(new MailAddress(address));
+                    }
+                }
+                else
+                {
+                    mailMessage.To.Add(new MailAddress(notificationMessage.To));
+                }
+
                 try
                 {
                     mailMessage.From = new MailAddress(notificationMessage.From);
-                    mailMessage.To.Add(new MailAddress(notificationMessage.To));
+                    
                     mailMessage.Subject = notificationMessage.Subject;
                     mailMessage.Body = notificationMessage.Body;
                     mailMessage.IsBodyHtml = true;

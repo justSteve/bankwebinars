@@ -13,6 +13,7 @@ namespace CUWebinars.Business.Repository
         Order AssignWebUserToOrder(WebUser webUser, Order order);
         Order FindOrderByIdWithOrderRows(int id);
         IList<Order> FindOrdersByUserIdWithOrderRows(int userId);
+        IList<Order> GetOrdersForLiveNotifications(int idWebianr);
         Order SaveOrderChanges(Order order);
         //IDictionary<RegType, Order> SelectOrdersWithScheduledWebinars(int idUser);
         IList<Order> Test(int idUser);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -13,6 +14,24 @@ namespace CUWebinars.Html
     public class TtsHtmlHelpers
     {
         private const string ImageParameters = "{0} {1}";
+        private readonly ControllerContext _controllerContext;
+        private readonly HtmlHelper _htmlHelper;
+
+        //public TtsHtmlHelpers(ControllerContext controllerContext)
+        public TtsHtmlHelpers()
+        {
+            //_controllerContext = controllerContext;
+            //_htmlHelper = new HtmlHelper(
+            //    new ViewContext(
+            //        controllerContext, 
+            //        new WebFormView(controllerContext, "omg"), 
+            //        new ViewDataDictionary(), 
+            //        new TempDataDictionary(),
+            //        controllerContext.HttpContext.Response.Output
+            //        ), 
+            //    new ViewPage()
+            //    );
+        }
 
         public IHtmlString Image(string id, string url, string alternateText, object htmlAttributes = null)
         {

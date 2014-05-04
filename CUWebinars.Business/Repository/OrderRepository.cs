@@ -141,6 +141,16 @@ namespace CUWebinars.Business.Repository
 
         }
 
+        public IList<Order> GetOrdersForLiveNotifications(int idWebinar)
+        {
+            var orders = ((TTSWebinarsContext) db).OrderRows
+                .Include(or => or.Order)
+                .Where(or => or.idWebinar == idWebinar)
+                .Where(or => or.RegistrationType.ShowRecordingNotifications == "Yes")
+                .Select(o => o.Order);
+            return orders.Include(o => o.WebUser).ToList();
+        }
+
         public Order AssignAffiliate(Affiliate affiliate, Order order)
         {
             order.idAffiliate = affiliate.idUserAff;

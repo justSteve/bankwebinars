@@ -17,6 +17,9 @@ namespace CUWebinars.Business.Core
 
             config.AddEventHandler(new NotificationOrderHandler(orderNotificationFormatter, notificationDelivery));
             config.AddEventHandler(new SendShippedOrderHandler(genericFormatter, notificationDelivery));
+            config.AddEventHandler(new SendConnectionInfoHandler(genericFormatter, notificationDelivery));
+            config.AddEventHandler(new SendReminderHandler(genericFormatter, notificationDelivery));
+            config.AddEventHandler(new SendRecordingPostedHandler(genericFormatter, notificationDelivery));
 
             return config;
         }

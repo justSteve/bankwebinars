@@ -7,6 +7,7 @@ using CUWebinars.Business.Core.Exceptions;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Repository;
+using CUWebinars.Html;
 using CUWebinars.NotificationSystem.Event;
 using System;
 using System.Collections.Generic;
@@ -121,10 +122,21 @@ namespace CUWebinars.Business.Services
             return _regTypeRepository.FindRegTypesByWebinarId(id, false);
             //return null;
         }
+
+        public IList<Order> GetOrdersForLiveNotifications(int idWebinar)
+        {
+            return _orderRepository.GetOrdersForLiveNotifications(idWebinar);
+        }
+
         public IList<RegType> GetRegTypesByWebinarIdFrom(int id, bool detached)
         {
             return _regTypeRepository.FindRegTypesByWebinarId(id, false);
             return null;
+        }
+
+        public IEnumerable<Webinar> GetUpcomingWebinars()
+        {
+            return _webinarRepository.GetUpcoming().ToList();
         }
 
         public Order GetOrderById(int id)
@@ -153,6 +165,11 @@ namespace CUWebinars.Business.Services
         public WebUser GetWebUser(int id)
         {
             return _webUserRepository.FindByIdLoaded(id);
+        }
+
+        public IEnumerable<WebUser> GetWebusersForLiveNotifications(int idWebinar)
+        {
+            return _webUserRepository.GetWebusersForLiveNotifications(idWebinar);
         }
 
         public Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id)
@@ -366,11 +383,44 @@ namespace CUWebinars.Business.Services
             throw new NotImplementedException();
         }
 
-        public void FireSendOrderShippedNotificationEvent(int orderId)
+        public void FireSendReminderNotificationEvent(IList<Order> orders)
         {
-            var order = _orderRepository.FindOrderByIdWithOrderRows(orderId);
+            foreach (var order in orders)
+            {
+                AddEvent(new SendReminderEvent<Order> { EventObject = order });
+            }
 
-            AddEvent(new SendShippedOrderEvent<Order> { EventObject = order});
+            foreach (var evt in GetEvents())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            Clear();
+        }
+        
+        public void FireSendConnectionInfoNotificationEvent(IList<Order> orders)
+        {
+            foreach (var order in orders)
+            {
+                AddEvent(new SendConnectionInfoEvent<Order> { EventObject = order });
+            }
+
+
+            foreach (var evt in GetEvents())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            Clear();
+        }
+        
+        public void FireSendOrderShippedNotificationEvent(IList<Order> orders)
+        {
+            foreach (var order in orders)
+            {
+                AddEvent(new SendShippedOrderEvent<Order> { EventObject = order });
+            }
+
 
             foreach (var evt in GetEvents())
             {
@@ -389,6 +439,8 @@ namespace CUWebinars.Business.Services
 
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder);
 
+                
+
                 AddEvent(new OrderSubmittedEvent<Order> { Order = updatedOrder });
 
                 foreach (var evt in GetEvents())
@@ -406,6 +458,29 @@ namespace CUWebinars.Business.Services
                 var msg = exception.Message;
             }
             return null;
+        }
+
+        public void SendConnectionInfo(Order currentOrder)
+        {
+            //try
+            //{
+            //    AddEvent(new OrderSubmittedEvent<Order> { Order =  });
+
+            //    foreach (var evt in GetEvents())
+            //    {
+            //        _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            //    }
+
+            //    Clear();
+
+            //    return updatedOrder;
+
+            //}
+            //catch (Exception exception)
+            //{
+            //    var msg = exception.Message;
+            //}
+            //return null;
         }
 
         private void ProcessDiscountCodes(object instance)

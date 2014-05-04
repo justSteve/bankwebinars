@@ -1,4 +1,6 @@
-﻿namespace CUWebinars.Business.Notification.Email
+﻿using System.Collections.Generic;
+
+namespace CUWebinars.Business.Notification.Email
 {
     public class NotificationMessage : INotificationMessage
     {
@@ -6,6 +8,6 @@
         public string To { get; set; }
         public string Subject { get; set; }
         public string Body { get; set; }
-
+        public IList<string> Addresses { get; set; }
     }
 }

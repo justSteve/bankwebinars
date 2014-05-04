@@ -365,6 +365,7 @@
     <Compile Include="Controllers\AdhocNotificationController.cs" />
     <Compile Include="Controllers\api\AddressesController.cs" />
     <Compile Include="Controllers\OrderEventFiringOpsController.cs" />
+    <Compile Include="ViewModel\UsersForOrdersViewModel.cs" />
     <Compile Include="Core\CsvParseOps.cs" />
     <Compile Include="Models\IncomingOrderModel.cs" />
     <Compile Include="Controllers\api\OrderController.cs" />
@@ -984,6 +985,9 @@
     </Content>
     <Content Include="Notification\Templates\_RecordingInfo.cshtml" />
     <Content Include="Notification\Templates\SendShippedOrder.cshtml" />
+    <Content Include="Notification\Templates\SendRecordingPosted.cshtml" />
+    <Content Include="Notification\Templates\SendConnectionInfo.cshtml" />
+    <Content Include="Notification\Templates\SendReminder.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars - Web Deploy.pubxml" />
@@ -1127,6 +1131,9 @@
     <Content Include="Views\MembershipNotificationOps\_ImportOrder.cshtml" />
     <Content Include="Views\AdhocNotification\Index.cshtml" />
     <Content Include="Views\OrderEventFiringOps\Index.cshtml" />
+    <Content Include="Views\OrderEventFiringOps\_SendReminder.cshtml" />
+    <Content Include="Views\OrderEventFiringOps\_SendConnectionInfo.cshtml" />
+    <Content Include="Views\OrderEventFiringOps\_UsersAndSubmitButton.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Notifications\" />
