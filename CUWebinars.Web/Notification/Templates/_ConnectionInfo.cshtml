@@ -1,0 +1,38 @@
+﻿@using System.Web.Mvc.Html
+@model CUWebinars.Business.Models.Order
+
+<table border="0" align="center" cellpadding="0" cellspacing="0">
+    @{
+        var row = Model.OrderRows.SingleOrDefault();
+        var joinURL = row.JoinURL;
+        if (joinURL == null)
+        {
+            joinURL = "https://www2.gotomeeting.com/join/" + row.Webinar.WebinarKey;
+        }
+
+
+                    <tr>
+                        <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller"><p align="right" style="vert-align: top; font-size: smaller">Connection Information:</p></td>
+                        <td width="400px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
+                            <p style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                This link will connect you directly to your event:<br />
+                                @joinURL<br /><br />
+                            </p>
+                            <p style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                If this is the first time your workstation has connected to a GoToWebinar.com event you'll be prompted to install the required software - it only takes a couple seconds.
+                            </p>
+                            <p style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                If your workstation is equipped with audio, the sound will stream directly via your internet connection. Optionally, you can connect to the conference call with this information:<br /><br />
+
+                                Toll-free: 1 866 952 8437<br />
+                                Access Code: 196-042-186<br />
+                                Audio PIN: Shown after joining the Webinar<br /><br />
+                            </p>
+                        </td>
+                    </tr>
+                    @*<tr>
+                        <td style="text-align: right; width: 130px; background-color: #CCCCCC; padding-right: 6px; font-size: smaller"></td>
+                        <td style="text-align: left; background-color: #B4D1EC; padding-left: 6px;"></td>
+                    </tr>*@
+                }
+</table>

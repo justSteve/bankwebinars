@@ -40,7 +40,7 @@ namespace CUWebinars.Business.Repository
             //_orderValidator.ValidateAndThrow(newOrder);
             var validationResult = _orderValidator.Validate(newOrder);
 
-            if (validationResult.IsValid)
+            if (!validationResult.IsValid)
             {
                 db.SaveChanges();
 

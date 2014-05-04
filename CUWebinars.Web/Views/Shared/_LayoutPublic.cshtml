@@ -17,16 +17,7 @@
 
     var currentUserID = 0;
 
-    //var currentUser = CurrentSession.Instance.CurrentUser;
-
-    //if (currentUser != null)
-    //{
-    //    currentUserID = currentUser.ID;
-    //    currentUserAffiliateFullName = currentUser.Affiliate.FullName;
-    //}
-
     StringBuilder sessionRecorded = new StringBuilder();
-
     StringBuilder sessionUpcoming = new StringBuilder();
 
     var upcomingSessions = stateService.GetValue<StringBuilder>("upcoming");
@@ -45,14 +36,6 @@
     var firstPage = stateService.GetValue<string>("FirstPage");
     var sessionID = stateService.GetValue<string>("SessionID");
     var affiliateSessionSource = stateService.GetValue<string>("AffiliateSessionSource");
-
-
-    //var initialQueryString = stateService.GetValue<string>("InitialQueryString");
-    //TODO: Why's this?
-    // System.InvalidCastException was unhandled by user code
-    //HResult=-2147467262
-    //Message=Unable to cast object of type 'System.Web.HttpValueCollection' to type 'System.String'.
-
 
     var includeUpcoming = stateService.GetValue<bool>("IncludeUpcoming");
 
@@ -120,14 +103,14 @@
     @*@Html.Raw(JSNLog.JavascriptLogging.Configure())
 
 
-    <script type="text/javascript">
-        // "mylogger" logs to just the console
-        var consoleAppender = JL.createConsoleAppender('consoleAppender');
-        JL("mylogger").setOptions({ "appenders": [consoleAppender] });
-    </script>*@
+        <script type="text/javascript">
+            // "mylogger" logs to just the console
+            var consoleAppender = JL.createConsoleAppender('consoleAppender');
+            JL("mylogger").setOptions({ "appenders": [consoleAppender] });
+        </script>*@
     @*<script language="javascript">
-        JL().fatal("log message");
-    </script>*@
+            JL().fatal("log message");
+        </script>*@
 
     <title>@ViewBag.Title</title>
     <!-- Meta Data ================ -->
@@ -264,35 +247,35 @@
                         @*<ul></ul>*@
                     </li>
                     <li>
-                            <a href="javascript:void(0)">About Us<i></i></a>
-                            <ul>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/WhatIsAWebinar">What Is A Webinar?</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/CommonQuestions">Commonly Asked Questions</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/DetailedConnectionInstructions">Connecting to Your Webinar</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/contactus">Contact Us</a></li>
-                            </ul>
-                        </li>
+                        <a href="javascript:void(0)">About Us<i></i></a>
+                        <ul>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/WhatIsAWebinar">What Is A Webinar?</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/CommonQuestions">Commonly Asked Questions</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/DetailedConnectionInstructions">Connecting to Your Webinar</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/contactus">Contact Us</a></li>
+                        </ul>
+                    </li>
                     @*<li class="parent">
-                        @{
-                            if (Request.IsAuthenticated)
-                            {
-                                //if (Model.WebUser.UserType == UserType.Affiliate || Model.WebUser.UserType == UserType.Admin)
-                                //{
-                                <div id="AdminBox" style=" border: medium none; color: #D8DFE5; display: block; font-size: 110%; height: 95px; line-height: 95px; margin: 0 !important; padding: 0 12px; text-decoration: none;" class="span1 align_right">
-                                    @{
-                                        <div class="btn-group" data-toggle="buttons-radio">
-                                            <button type="button" id="btnLogs" class="btn">Logs</button>
-                                            <button type="button" id="btnOrders" class="btn">Orders</button>
-                                            <button type="button" id="btnSettings" class="btn">Settings</button>
-                                        </div>
+                            @{
+                                if (Request.IsAuthenticated)
+                                {
+                                    //if (Model.WebUser.UserType == UserType.Affiliate || Model.WebUser.UserType == UserType.Admin)
+                                    //{
+                                    <div id="AdminBox" style=" border: medium none; color: #D8DFE5; display: block; font-size: 110%; height: 95px; line-height: 95px; margin: 0 !important; padding: 0 12px; text-decoration: none;" class="span1 align_right">
+                                        @{
+                                            <div class="btn-group" data-toggle="buttons-radio">
+                                                <button type="button" id="btnLogs" class="btn">Logs</button>
+                                                <button type="button" id="btnOrders" class="btn">Orders</button>
+                                                <button type="button" id="btnSettings" class="btn">Settings</button>
+                                            </div>
 
-                                    }
+                                        }
 
-                                </div>
-                                //}
+                                    </div>
+                                    //}
+                                }
                             }
-                        }
-                    </li>*@
+                        </li>*@
 
                     @*@if (Request.IsAuthenticated)
                         {
@@ -369,16 +352,16 @@
                     </section>
 
                     @*<section>
-                        <h4>Latest Blog Posts</h4>
-                        <ul class="footerPosts">
-                            <li><a href="blog-single.html">We will amplify our power to benchmark</a> <span class="meta">December 10, 2012</span> </li>
-                            <li><a href="blog-single.html">Crisp has revolutionized the conceptualization of structuring</a> <span class="meta">September 10, 2012</span> </li>
-                            <li><a href="blog-single.html">A company that can implement correctly</a> <span class="meta">September 10, 2012</span> </li>
-                            <li><a href="blog-single.html">Claritas est etiam processus dynamicus</a> <span class="meta">September 10, 2012</span> </li>
-                            <li><a href="blog-single.html">It is stunning to you!</a> <span class="meta">September 10, 2012</span> </li>
-                            <li><a href="blog-single.html">We will increase our aptitude to evolve </a> <span class="meta">November 15, 2012</span> </li>
-                        </ul>
-                    </section>*@
+                            <h4>Latest Blog Posts</h4>
+                            <ul class="footerPosts">
+                                <li><a href="blog-single.html">We will amplify our power to benchmark</a> <span class="meta">December 10, 2012</span> </li>
+                                <li><a href="blog-single.html">Crisp has revolutionized the conceptualization of structuring</a> <span class="meta">September 10, 2012</span> </li>
+                                <li><a href="blog-single.html">A company that can implement correctly</a> <span class="meta">September 10, 2012</span> </li>
+                                <li><a href="blog-single.html">Claritas est etiam processus dynamicus</a> <span class="meta">September 10, 2012</span> </li>
+                                <li><a href="blog-single.html">It is stunning to you!</a> <span class="meta">September 10, 2012</span> </li>
+                                <li><a href="blog-single.html">We will increase our aptitude to evolve </a> <span class="meta">November 15, 2012</span> </li>
+                            </ul>
+                        </section>*@
                 </div>
                 <!-- close .span4 -->
             </div>

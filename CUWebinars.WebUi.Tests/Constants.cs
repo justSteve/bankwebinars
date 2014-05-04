@@ -3,8 +3,8 @@
     internal sealed class Constants
     {
         //  Sample Data
-        internal const string SitTestEmailAddress = "davidrogersau@yahoo.com.au";
-        internal const string SitTestPassword = "Password1";
+        internal const string SitTestEmailAddress = "Mark_Bennett@ttstrain.com";
+        internal const string SitTestPassword = "bennett";
 
 
         //  HTML elements

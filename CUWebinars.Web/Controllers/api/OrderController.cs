@@ -180,12 +180,13 @@ namespace CUWebinars.Web.Controllers.api
                         foreach (var additionalLocation in additionalLocations)
                         {
                             var additionalLocationEmail = additionalLocation.Email;
-                            var additionalLocationFirstName = email.Split('@')[0].ToString(); // additionalLocation.FirstName
-                            var additionalLocationLastName = email.Split('@')[1].ToString(); // additionalLocation.LastName
+                            //var additionalLocationFirstName = email.Split('@')[0].ToString(); // additionalLocation.FirstName
+                            //var additionalLocationLastName = email.Split('@')[1].ToString(); // additionalLocation.LastName
                             addLocation.Add(_orderManagementService.CreateAdditionalLocation(
                                 additionalLocationEmail, 
                                 price,
-                                additionalLocationFirstName + ' ' + additionalLocationLastName)
+                                null) //field for FullName
+                                //additionalLocationFirstName + ' ' + additionalLocationLastName)
                                 );
                         }
                     }
@@ -225,40 +226,40 @@ namespace CUWebinars.Web.Controllers.api
                     importedOrder.ShippingFirstName = firstName;
                     importedOrder.ShippingLastName = lastName;
 
-                    if (orderRow.Webinar.WebinarKey != "0")
+                    if (orderRow.Webinar.WebinarKey != null)
                     {
-                        
-                        //var regKeyResponse = _orderManagementService.CreateRegistrantKey(importedOrder.FirstName,
-                        //    importedOrder.LastName, importedOrder.BillingEmail, orderRow.idWebinar,
-                        //    orderRow.Webinar.WebinarKey);
-                        ////"{\"registrantKey\":106033865,\"joinUrl\":\"https://www2.gotomeeting.com/join/739905466/106033865\"}"
-                        ////http://stackoverflow.com/questions/13588185/deserialize-json-string-using-json-net
 
-                        //if(ReferenceEquals(null, regKeyResponse))
-                        //    throw new NullReferenceException("The Registration Key Response from the Citrix API resulted in a null response.");
-                        
-                        //JObject parsedJsonObject = JObject.Parse(regKeyResponse);
+                        var regKeyResponse = _orderManagementService.CreateRegistrantKey(importedOrder.FirstName,
+                            importedOrder.LastName, importedOrder.BillingEmail, orderRow.idWebinar,
+                            orderRow.Webinar.WebinarKey);
+                        //"{\"registrantKey\":106033865,\"joinUrl\":\"https://www2.gotomeeting.com/join/739905466/106033865\"}"
+                        //http://stackoverflow.com/questions/13588185/deserialize-json-string-using-json-net
 
-                        //if (parsedJsonObject["registrantKey"] != null)
-                        //{
-                        //    var registrantKey = parsedJsonObject["registrantKey"].ToString();
-                        //    var joinUrl = parsedJsonObject["joinUrl"].ToString();
+                        if (ReferenceEquals(null, regKeyResponse))
+                            throw new NullReferenceException("The Registration Key Response from the Citrix API resulted in a null response.");
 
-                        //    orderRow.RegistrantKey = registrantKey;
-                        //    orderRow.JoinURL = joinUrl;
-                        //}
-                        //else
-                        //{
-                        //    /*  *************** 404 error condition *************** 
-                        //     * json payload will look like:
-                        //     *      {"description":"The webinar does not exist.","incident":3984078431536134144}
-                        //     * which is not usable
-                        //     */
-                        //}
+                        JObject parsedJsonObject = JObject.Parse(regKeyResponse);
+
+                        if (parsedJsonObject["registrantKey"] != null)
+                        {
+                            var registrantKey = parsedJsonObject["registrantKey"].ToString();
+                            var joinUrl = parsedJsonObject["joinUrl"].ToString();
+
+                            orderRow.RegistrantKey = registrantKey;
+                            orderRow.JoinURL = joinUrl;
+                        }
+                        else
+                        {
+                            /*  *************** 404 error condition *************** 
+                             * json payload will look like:
+                             *      {"description":"The webinar does not exist.","incident":3984078431536134144}
+                             * which is not usable
+                             */
+                        }
                     }
 
-                        orderRow.RegistrantKey = "SomeKey";
-                        orderRow.JoinURL = "https://www2.gotomeeting.com/join/739905466/106033865";
+                        //orderRow.RegistrantKey = "SomeKey";
+                        //orderRow.JoinURL = "https://www2.gotomeeting.com/join/739905466/106033865";
                     _orderManagementService.SaveOrderChanges(importedOrder);
                     idOfLastOrder = importedOrder.idOrder;
                 }
@@ -288,5 +289,6 @@ namespace CUWebinars.Web.Controllers.api
         //public void Delete(int id)
         //{
         //}
+
     }
 }
