@@ -49,55 +49,6 @@ namespace CUWebinars.Web.Controllers.api
         //}
         //   
 
-        //http://localhost:5556/api/order
-        //Host: localhost:5556
-        //Content-Type: application/json; charset=utf-8
-        //Connection: keep-alive
-        //Accept: application/json, text/javascript, */*; q=0.01:
-        //Content-Length: 1059
-
-        /*
-        {
-          "AdditionalLocations": [    
-            "dave@turing.com",
-            "jed@turing.com"
-            ],
-          "AffiliateComments": "Affiliate comments",
-          "BillingAddress": {    
-            "AddressType": "Billing",
-            "Name": "Alan Turing",
-            "Phone": "555-555-5555",
-            "StreetAddress": "968 Wildcat Dr",
-            "StreetAddress2": "",
-            "City": "Del Rio",
-            "Zip": "5000",
-            "State": "Tx",
-            "Country": "USA",    
-          },
-          "Email": "alanbturingt@turing.com",
-          "FirstName": "Alan",
-          "LastName": "Turing",
-          "idAffiliate": 19,
-          "idRegType": 88,  
-          "idWebinar": 437,
-          "Institution": "Some Institution",
-          "ShippingAddress": {    
-            "AddressType": "Shipping",
-            "Name": "Alan Turing",
-            "Phone": "555-555-5555",
-            "StreetAddress": "968 Wildcat Dr",
-            "StreetAddress2": "",
-            "City": "Del Rio",
-            "Zip": "5000",
-            "State": "Tx",
-            "Country": "USA",    
-          },
-          "SendNotification": "true",
-          "Title": "Mr",
-        }
-         * 
-                 * 
-                 * */
         // POST api/<controller>
         public HttpResponseMessage Post([FromBody] IList<IncomingOrderModel> model)
         {
