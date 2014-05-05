@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI.WebControls.WebParts;
+using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
+using CUWebinars.Web.Helpers;
 using CUWebinars.Web.ViewModel;
 using Ninject.Extensions.Logging;
 using System;
@@ -44,7 +46,7 @@ namespace CUWebinars.Web.Controllers
 
             _orderManagementService.FireSendReminderNotificationEvent(orders);
 
-            return Json(new { Result = "Success" });
+            return Json(new { Result = WebUiConstants.Success });
         }
 
         public PartialViewResult SendConnectionInfo()
@@ -64,38 +66,73 @@ namespace CUWebinars.Web.Controllers
 
             _orderManagementService.FireSendConnectionInfoNotificationEvent(orders);
 
-            return Json(new { Result = "Success" });
+            return Json(new { Result = WebUiConstants.Success });
         }
 
-        [HttpPost]
-        public JsonResult FireSendConnectionInfo(IList<string> webUsers)
+        public PartialViewResult SendRecordingPosted()
         {
+            var model = new AdhocNotificationViewModel
+            {
+                Webinars = GetRecordedWebinarsAsSelectListItems()
+            };
 
-            return null;
-
-
-
+            return PartialView("_SendRecordingPosted", model);
         }
         
         [HttpPost]
-        public JsonResult FireSendOrderShippedEvent(int orderId)
+        public JsonResult SendRecordingPosted(int webinarId)
         {
-            try
-            {
-               // _orderManagementService.FireSendOrderShippedNotificationEvent(orderId);
+            var orders = _orderManagementService.GetOrdersForRecordedNotifications(webinarId);
 
-                return Json(new {Result = "Success"});
-            }
-            catch (Exception exception)
+            if (orders.Any())
             {
-                _logger.ErrorException(exception.Message, exception);
-                return Json(new { Result = "Fail" });
+                _orderManagementService.FireSendOrderShippedNotificationEvent(orders);
+
+                return Json(new {Result = WebUiConstants.Success});
             }
+
+            return Json(new { Result = WebUiConstants.NoOrdersForWebinar });
         }
+
+       
+        public PartialViewResult SendShippedOrder()
+        {
+            var ordersShipped = GetShippedWebinarsAsSelectListItems();
+
+            var model = new AdhocNotificationViewModel
+            {
+                OrdersList = ordersShipped
+            };
+
+            return PartialView("_SendShippedOrder", model);
+        }
+
+        [HttpPost]
+        public JsonResult SendShippedOrder(int orderId)
+        {
+            var order = _orderManagementService.GetOrderById(orderId);
+            
+            _orderManagementService.FireSendOrderShippedNotificationEvent(new Order[] { order });
+
+            return Json(new {Result = WebUiConstants.Success});
+        }
+
+
+
 
         private IEnumerable<SelectListItem> GetUpcomingWebinarsAsSelectListItems()
         {
             return _orderManagementService.GetUpcomingWebinars().Select(w => new SelectListItem { Text = w.Title, Value = w.idWebinar.ToString() });
+        }
+
+        private IEnumerable<SelectListItem> GetRecordedWebinarsAsSelectListItems()
+        {
+            return _orderManagementService.GetRecordedWebinars().Select(w => new SelectListItem { Text = w.Title, Value = w.idWebinar.ToString() });
+        }
+
+        private IEnumerable<SelectListItem> GetShippedWebinarsAsSelectListItems()
+        {
+            return _orderManagementService.GetOrdersForShippedNotification().Select(w => new SelectListItem { Text = w.idOrder.ToString(), Value = w.idOrder.ToString() });
         }
 
     }

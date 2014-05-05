@@ -26,7 +26,7 @@ namespace CUWebinars.Business.Notification.Handlers
         public virtual void Process(SendConnectionInfoEvent<T> objectOfMessage)
         {
             var notificationMessage = _generalFormatter.Format(objectOfMessage.EventObject, "SendConnectionInfo");
-            notificationMessage.To = objectOfMessage.EventObject.BillingEmail;
+            notificationMessage.To = objectOfMessage.EventObject.WebUser.email;
             _notificationDelivery.Notify(notificationMessage);
         }
 

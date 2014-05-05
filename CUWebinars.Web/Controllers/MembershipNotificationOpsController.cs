@@ -177,7 +177,7 @@ namespace CUWebinars.Web.Controllers
             try
             {
                 _membershipService.ResetPassword(globals.Tenant, email);
-                cResult.Add(WebUiConstants.OpStatus, "Success");
+                cResult.Add(WebUiConstants.OpStatus, WebUiConstants.Success);
             }
             catch (Exception exception)
             {

@@ -496,7 +496,7 @@ namespace CUWebinars.Web.Controllers
             try
             {
                 _membershipService.ResetPassword(globalConfig.Tenant, email);
-                cResult.Add(WebUiConstants.OpStatus, "Success");
+                cResult.Add(WebUiConstants.OpStatus, WebUiConstants.Success);
             }
             catch (Exception)
             {
@@ -792,7 +792,7 @@ namespace CUWebinars.Web.Controllers
 
                     _membershipService.LogInUser(globalConfig.Tenant, model.RegisterFields.Email, model.RegisterFields.Password, true); // log the user in.
                     _logger.Info("/Account/Register UserAdded: " + model.RegisterFields.Email);
-                    return Json(new { Status = "Success" });
+                    return Json(new { Status = WebUiConstants.Success });
 
                 }
                 catch (MembershipCreateUserException e)

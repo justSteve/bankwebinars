@@ -1,27 +1,26 @@
-﻿using System.IO;
-using System.Net;
-using System.Text;
-using BrockAllen.MembershipReboot;
+﻿using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Exceptions;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Repository;
-using CUWebinars.Html;
 using CUWebinars.NotificationSystem.Event;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using DDay.iCal;
 using DDay.iCal.Serialization.iCalendar;
 using Newtonsoft.Json;
 using Ninject.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text;
 using IEvent = CUWebinars.NotificationSystem.Event.IEvent;
 using IEventSource = CUWebinars.NotificationSystem.Event.IEventSource;
 
 namespace CUWebinars.Business.Services
 {
-    public class OrderManagementService : IOrderManagementService, IEventSource
+    public class OrderManagementService : IEventSource, IOrderManagementService
     {
         private readonly IAffiliateRepository _affiliateRepository;
         private readonly IRegTypeRepository _regTypeRepository;
@@ -125,8 +124,23 @@ namespace CUWebinars.Business.Services
 
         public IList<Order> GetOrdersForLiveNotifications(int idWebinar)
         {
-            return _orderRepository.GetOrdersForLiveNotifications(idWebinar);
+            return _orderRepository.GetOrdersForLiveEventNotifications(idWebinar);
         }
+
+        public IList<Order> GetOrdersForRecordedNotifications(int idWebinar)
+        {
+            return _orderRepository.GetOrdersForRecordedEventNotifications(idWebinar);
+        }
+
+        public IList<RegType> GetShowRecordingNotificationsForWebinar(int idWebinar)
+        {
+            return null;
+        }
+
+        //public IList<Order> GetOrdersForPostedRecordingsNotifications()
+        //{
+                
+        //}
 
         public IList<RegType> GetRegTypesByWebinarIdFrom(int id, bool detached)
         {
@@ -134,9 +148,18 @@ namespace CUWebinars.Business.Services
             return null;
         }
 
+        public IEnumerable<Webinar> GetRecordedWebinars()
+        {
+            return _webinarRepository.GetRecorded().ToList();
+        }
         public IEnumerable<Webinar> GetUpcomingWebinars()
         {
             return _webinarRepository.GetUpcoming().ToList();
+        }
+
+        public IEnumerable<Order> GetOrdersForShippedNotification()
+        {
+            return _orderRepository.GetOrdersForShippedEventNotifications();
         }
 
         public Order GetOrderById(int id)
@@ -419,6 +442,22 @@ namespace CUWebinars.Business.Services
             foreach (var order in orders)
             {
                 AddEvent(new SendShippedOrderEvent<Order> { EventObject = order });
+            }
+
+
+            foreach (var evt in GetEvents())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            Clear();
+        }
+
+        public void FireSendRecordingPostedNotificationEvent(IList<Order> orders)
+        {
+            foreach (var order in orders)
+            {
+                AddEvent(new SendRecordingPostedEvent<Order> { EventObject = order });
             }
 
 

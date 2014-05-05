@@ -23,16 +23,17 @@ namespace CUWebinars.Business.Notification.Handlers
             _notificationDelivery = notificationDelivery;
         }
 
-        public virtual void Process<TObject>(TObject objectOfMessage)
+        public virtual void Process(SendShippedOrderEvent<T> objectOfMessage)
         {
-            var notificationMessage = _generalFormatter.Format(objectOfMessage, "SendShippedOrder");
+            var notificationMessage = _generalFormatter.Format(objectOfMessage.EventObject, "SendShippedOrder");
+            notificationMessage.To = objectOfMessage.EventObject.WebUser.email;
 
             _notificationDelivery.Notify(notificationMessage);
         }
 
         public void Handle(SendShippedOrderEvent<T> sendShippedOrderSubmittedEvent)
         {
-            Process(sendShippedOrderSubmittedEvent.EventObject);
+            Process(sendShippedOrderSubmittedEvent);
         }
     }
 
