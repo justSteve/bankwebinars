@@ -15,7 +15,7 @@ var pageObjects = {
         return regTypesCheckBoxesDiv || $('#RegTypesCheckBoxes').find('.controls');
     },
     SelectedUpcomingWebinarIdDropDown: function () {
-        return selectedUpcomingWebinarIdDropDown || $('#SelectedUpcomingWebinarId');
+        return selectedUpcomingWebinarIdDropDown || $('#SelectedWebinarId');
     }
 };
 
@@ -23,7 +23,7 @@ $(function () {
 
     adhocNotificationForm = $('#AdhocNotificationForm');
     regTypesCheckBoxesDiv = $('#RegTypesCheckBoxes').find('.controls');
-    selectedUpcomingWebinarIdDropDown = $('#SelectedUpcomingWebinarId');
+    selectedUpcomingWebinarIdDropDown = $('#SelectedWebinarId');
 
     $('#RegTypesCheckBoxes').hide();
 

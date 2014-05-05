@@ -126,6 +126,7 @@ namespace CUWebinars.Business.Repository
         {
             var item = items
                 .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+                .Include(o => o.WebUser)
                 .Where(o => o.idOrder == id);
             return item.FirstOrDefault();
         }
@@ -141,12 +142,30 @@ namespace CUWebinars.Business.Repository
 
         }
 
-        public IList<Order> GetOrdersForLiveNotifications(int idWebinar)
+        public IList<Order> GetOrdersForLiveEventNotifications(int idWebinar)
+        {
+            var orders = ((TTSWebinarsContext) db).OrderRows
+                .Include(or => or.Order)
+                .Where(or => or.idWebinar == idWebinar)
+                .Where(or => or.RegistrationType.ShowLiveNotifications == "Yes")
+                .Select(o => o.Order);
+            return orders.Include(o => o.WebUser).ToList();
+        }
+        
+        public IList<Order> GetOrdersForRecordedEventNotifications(int idWebinar)
         {
             var orders = ((TTSWebinarsContext) db).OrderRows
                 .Include(or => or.Order)
                 .Where(or => or.idWebinar == idWebinar)
                 .Where(or => or.RegistrationType.ShowRecordingNotifications == "Yes")
+                .Select(o => o.Order);
+            return orders.Include(o => o.WebUser).ToList();
+        }        
+        public IList<Order> GetOrdersForShippedEventNotifications()
+        {
+            var orders = ((TTSWebinarsContext) db).OrderRows
+                .Include(or => or.Order)
+                .Where(or => or.RegistrationType.ShowShippedNotifications == "Yes")
                 .Select(o => o.Order);
             return orders.Include(o => o.WebUser).ToList();
         }

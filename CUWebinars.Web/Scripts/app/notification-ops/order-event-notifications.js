@@ -1,16 +1,26 @@
 ﻿var inputFormFieldsDiv,
+    failedScreenMessage,
     getSendConnectionInfoEventHtmlButton,
+    getSendRecordingPostedEventHtmlButton,
     getSendReminderEventHtmlButton,
+    noOrdersScreenMessage,
+    sendConnectionInfoUrl,
+    sendOrderShippedUrl,
+    sendRecordingPostedUrl,
+    sendReminderUrl,
     sendShippedOrderNotificationButton,
+    successScreenMessage,
     waitIndicator;
 
 
 //  Create a namespace. PageObjects is getting polluted across js files.
 var OENS = {
     PageObjects: {
-
         GetSendConnectionInfoEventHtmlButton: function () {
             return getSendConnectionInfoEventHtmlButton || $('#GetSendConnectionInfoEventHtmlButton');
+        },
+        GetSendRecordingPostedEventHtmlButton: function () {
+            return getSendRecordingPostedEventHtmlButton || $('#GetSendRecordingPostedEventHtmlButton');
         },
         GetSendReminderEventHtmlButton: function () {
             return getSendReminderEventHtmlButton || $('#GetSendReminderEventHtmlButton');
@@ -27,8 +37,17 @@ var OENS = {
     }
 };
 
-$(function() {
+$(function () {
+    failedScreenMessage = '<br /><span id="ScreenMessageSpan" class="label label-information">&nbsp;&nbsp;Event Firing Has Failed</span>';
+    noOrdersScreenMessage = '<br /><span id="ScreenMessageSpan" class="label label-information">&nbsp;&nbsp;There were no orders for that webinar</span>';
+    successScreenMessage = '<br /><span id="ScreenMessageSpan" class="label label-success">&nbsp;The Orders have been sent.</span>';
+    sendConnectionInfoUrl = '/OrderEventFiringOps/SendConnectionInfo';
+    sendReminderUrl = '/OrderEventFiringOps/SendReminder';
+    sendRecordingPostedUrl = '/OrderEventFiringOps/SendRecordingPosted';
+    sendOrderShippedUrl = '/OrderEventFiringOps/SendShippedOrder';
+
     getSendConnectionInfoEventHtmlButton = $('#GetSendConnectionInfoEventHtmlButton');
+    getSendRecordingPostedEventHtmlButton = $('#GetSendRecordingPostedEventHtmlButton');
     getSendReminderEventHtmlButton = $('#GetSendReminderEventHtmlButton');
     sendShippedOrderNotificationButton = $('#SendShippedOrderNotificationButton');
     inputFormFieldsDiv = $('#InputFormFieldsDiv');
@@ -38,38 +57,38 @@ $(function() {
     sendShippedOrderNotificationButton.on('click', function(evtArgs) {
 
         OENS.PageObjects.InputFormFieldsDiv().empty();
+        OENS.PageObjects.InputFormFieldsDiv().load(sendOrderShippedUrl, function () {
 
-        OENS.PageObjects.InputFormFieldsDiv().append('<input id="OrderIdInput" class="input input-large" type="Text" />');
-        OENS.PageObjects.InputFormFieldsDiv().append('<br /><button id="OrderIdSubmitButton" class="btn" style="margin-top:10px;">Fire Event</button>');
+            $('#GetSendShippedOrderNotificationButton').on('click', function (eventArgs) {
 
-        $('#OrderIdSubmitButton').on('click', function(evtArgs) {
-            var orderId = $.trim($('#OrderIdInput').val());
-            var url = '/OrderEventFiringOps/FireSendOrderShippedEvent';
+                var payload = $('#SelectedOrderId').val();
 
-            $.ajax({
-                type: 'POST',
-                contentType: constants.JsonContentType,
-                cache: false,
-                url: url,
-                dataType: constants.JsonDataType,
-                data: JSON.stringify({ orderId: orderId }),
-                beforeSend: function() {
-                    // this is where we append a loading image
-                    OENS.PageObjects.WaitIndicator().show();
-                }
-            }).done(function(returnData) {
-                // successful request; do something with the returnData
-                if (returnData.Result === 'Success') {
-                    OENS.PageObjects.InputFormFieldsDiv().append('<br /><span class="label label-success">&nbsp;&nbsp;Event Fired Successfully</span>');
-                } else if (returnData.Result === 'Fail') {
-                    OENS.PageObjects.InputFormFieldsDiv().append('<br /><span class="label label-important">&nbsp;&nbsp;Event Firing Has Failed</span>');
-                }
-            }).fail(function() {
-                OENS.PageObjects.InputFormFieldsDiv().append('<br /><span class="label label-important">&nbsp;&nbsp;Event Firing Has Failed</span>');
-            }).always(function() {
-                OENS.PageObjects.WaitIndicator().hide();
+                $.ajax({
+                    type: 'POST',
+                    contentType: constants.JsonContentType,
+                    cache: false,
+                    url: sendOrderShippedUrl,
+                    dataType: constants.JsonDataType,
+                    data: JSON.stringify({ orderId: payload }),
+                    beforeSend: function () {
+                        OENS.PageObjects.WaitIndicator().show();
+                    }
+                }).done(function (result) {
+
+                    labelCheckRemove();
+
+                    if (result.Result === 'Success') {
+                        OENS.PageObjects.InputFormFieldsDiv().append(successScreenMessage);
+                    } else if (result.Result === 'No Orders to send for that webinar') {
+                        OENS.PageObjects.InputFormFieldsDiv().append(noOrdersScreenMessage);
+                    }
+                }).fail(function () {
+                    labelCheckRemove();
+                    OENS.PageObjects.InputFormFieldsDiv().append(failedScreenMessage);
+                }).always(function () {
+                    OENS.PageObjects.WaitIndicator().hide();
+                });;
             });
-
         });
 
     });
@@ -77,26 +96,37 @@ $(function() {
     getSendReminderEventHtmlButton.on('click', function(eventArgs) {
         OENS.PageObjects.InputFormFieldsDiv().empty();
 
-        OENS.PageObjects.InputFormFieldsDiv().load('/OrderEventFiringOps/SendReminder', function() {
+        OENS.PageObjects.InputFormFieldsDiv().load(sendReminderUrl, function() {
 
             $('#FireSendReminderEventButton').on('click', function (eventArgs) {
-                var url = '/OrderEventFiringOps/SendReminder';
-                var payload = $('#SelectedUpcomingWebinarId').val();
+                
+                var payload = $('#SelectedWebinarId').val();
 
                 $.ajax({
                     type: 'POST',
                     contentType: constants.JsonContentType,
                     cache: false,
-                    url: url,
+                    url: sendReminderUrl,
                     dataType: constants.JsonDataType,
                     data: JSON.stringify({ webinarId: payload }),
                     beforeSend: function() {
-                        // this is where we append a loading image
-                        //pageObjects.labelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</span>');
+                        OENS.PageObjects.WaitIndicator().show();
                     }
-                }).done(function(result) {
-                    OENS.PageObjects.InputFormFieldsDiv().append('<br /><span class="label label-success">&nbsp;The Orders are being sent.</span>');
-                });
+                }).done(function (result) {
+
+                    labelCheckRemove();
+
+                    if (result.Result === 'Success') {
+                        OENS.PageObjects.InputFormFieldsDiv().append(successScreenMessage);
+                    } else if (result.Result === 'No Orders to send for that webinar') {
+                        OENS.PageObjects.InputFormFieldsDiv().append(noOrdersScreenMessage);
+                    }
+                }).fail(function () {
+                    labelCheckRemove();
+                    OENS.PageObjects.InputFormFieldsDiv().append(failedScreenMessage);
+                }).always(function () {
+                    OENS.PageObjects.WaitIndicator().hide();
+                });;
             });
         });
     });
@@ -105,27 +135,90 @@ $(function() {
         OENS.PageObjects.InputFormFieldsDiv().empty();
 
         
-        OENS.PageObjects.InputFormFieldsDiv().load('/OrderEventFiringOps/SendConnectionInfo', function () {
+        OENS.PageObjects.InputFormFieldsDiv().load(sendConnectionInfoUrl, function () {
             
             $('#GetSendConnectionInfoRecipientsButton').on('click', function (eventArgs) {
-                var url = '/OrderEventFiringOps/SendConnectionInfo';
-                var payload = $('#SelectedUpcomingWebinarId').val();
+                
+                var payload = $('#SelectedWebinarId').val();
 
                 $.ajax({
                     type: 'POST',
                     contentType: constants.JsonContentType,
                     cache: false,
-                    url: url,
+                    url: sendConnectionInfoUrl,
                     dataType: constants.JsonDataType,
                     data: JSON.stringify({ webinarId: payload }),
                     beforeSend: function () {
-                        // this is where we append a loading image
-                        //pageObjects.labelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</span>');
+                        OENS.PageObjects.WaitIndicator().show();
                     }
                 }).done(function (result) {
-                    OENS.PageObjects.InputFormFieldsDiv().append('<br /><span class="label label-success">&nbsp;The Orders are being sent.</span>');
+
+                    labelCheckRemove();
+
+                    if (result.Result === 'Success') {
+                        OENS.PageObjects.InputFormFieldsDiv().append(successScreenMessage);
+                    } else if (result.Result === 'No Orders to send for that webinar') {
+                        OENS.PageObjects.InputFormFieldsDiv().append(noOrdersScreenMessage);
+                    }
+
+                }).fail(function () {
+
+                    labelCheckRemove();
+
+                    OENS.PageObjects.InputFormFieldsDiv().append(failedScreenMessage);
+                }).always(function () {
+                    OENS.PageObjects.WaitIndicator().hide();
+                });;
+            });
+        });
+    });
+
+    getSendRecordingPostedEventHtmlButton.on('click', function (eventArgs) {
+        eventArgs.preventDefault();
+        OENS.PageObjects.InputFormFieldsDiv().empty();
+
+        
+        OENS.PageObjects.InputFormFieldsDiv().load(sendRecordingPostedUrl, function () {
+            
+            $('#GetSendRecordingPostedRecipientsButton').on('click', function (eventArgs) {
+                
+                var payload = $('#SelectedWebinarId').val();
+
+                $.ajax({
+                    type: 'POST',
+                    contentType: constants.JsonContentType,
+                    cache: false,
+                    url: sendRecordingPostedUrl,
+                    dataType: constants.JsonDataType,
+                    data: JSON.stringify({ webinarId: payload }),
+                    beforeSend: function () {
+                        OENS.PageObjects.WaitIndicator().show();
+                    }
+                }).done(function (result) {
+
+                    labelCheckRemove();
+
+                    if (result.Result === 'Success') {
+                        OENS.PageObjects.InputFormFieldsDiv().append(successScreenMessage);
+                    } else if (result.Result === 'No Orders to send for that webinar') {
+                        OENS.PageObjects.InputFormFieldsDiv().append(noOrdersScreenMessage);
+                    }
+
+                }).fail(function () {
+                    labelCheckRemove();
+
+                    OENS.PageObjects.InputFormFieldsDiv().append(failedScreenMessage);
+                }).always(function () {
+                    OENS.PageObjects.WaitIndicator().hide();
                 });
             });
         });
     });
+
+    var labelCheckRemove = function() {
+        if ($('#ScreenMessageSpan').length > 0) {
+            $('#ScreenMessageSpan').siblings('br').remove();
+            $('#ScreenMessageSpan').remove();
+        }
+    };
 });

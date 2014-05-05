@@ -31,7 +31,7 @@ namespace CUWebinars.Business.Notification.Handlers
         public virtual void Process(SendReminderEvent<T> sendShippedOrderSubmittedEvent)
         {
             var notificationMessage = _generalFormatter.Format(sendShippedOrderSubmittedEvent.EventObject, "SendReminder");
-            notificationMessage.To = sendShippedOrderSubmittedEvent.EventObject.BillingEmail;
+            notificationMessage.To = sendShippedOrderSubmittedEvent.EventObject.WebUser.email;
 
             _notificationDelivery.Notify(notificationMessage);
         }

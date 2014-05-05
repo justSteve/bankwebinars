@@ -16,5 +16,7 @@ namespace CUWebinars.Web.Helpers
         public const string Register = "Register";
 
         public const string OpStatus = "Status";
+        public const string NoOrdersForWebinar = "No Orders to send for that webinar";
+        public const string Success = "Success";
     }
 }

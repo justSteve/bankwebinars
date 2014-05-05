@@ -429,7 +429,7 @@
     <Compile Include="Services\StateService.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModel\AddAdditionalLocationsViewModel.cs" />
-    <Compile Include="ViewModel\AddhocNotificationViewModel.cs" />
+    <Compile Include="ViewModel\AdhocNotificationViewModel.cs" />
     <Compile Include="ViewModel\AdditionalLocationsViewModel.cs" />
     <Compile Include="ViewModel\CheckoutOptionsViewModel.cs" />
     <Compile Include="ViewModel\ConnectionInfoViewModel.cs" />
@@ -1135,6 +1135,8 @@
     <Content Include="Views\OrderEventFiringOps\_SendReminder.cshtml" />
     <Content Include="Views\OrderEventFiringOps\_SendConnectionInfo.cshtml" />
     <Content Include="Views\OrderEventFiringOps\_UsersAndSubmitButton.cshtml" />
+    <Content Include="Views\OrderEventFiringOps\_SendRecordingPosted.cshtml" />
+    <Content Include="Views\OrderEventFiringOps\_SendShippedOrder.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Notifications\" />
