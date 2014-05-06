@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Entity.ModelConfiguration;
 
 namespace CUWebinars.Business.Models.Mapping
 {
@@ -13,7 +8,7 @@ namespace CUWebinars.Business.Models.Mapping
         {
             //  Need to make decisions above field sizes etc.
 
-
+            ToTable("CitrixWebinar");
 
         }
     }

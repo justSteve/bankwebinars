@@ -112,6 +112,7 @@
     <Compile Include="Core\Helpers\DateTimeHelper.cs" />
     <Compile Include="Core\Helpers\GenericHelpers.cs" />
     <Compile Include="Models\CitrixWebinar.cs" />
+    <Compile Include="Models\Mapping\CitrixWebinarMap.cs" />
     <Compile Include="Notification\Events\SendConnectionInfoEvent.cs" />
     <Compile Include="Notification\Events\SendRecordingPostedEvent.cs" />
     <Compile Include="Notification\Events\SendReminderEvent.cs" />
@@ -223,6 +224,7 @@
     <Compile Include="Services\OrderManagementService.cs" />
     <Compile Include="Core\TtsConfiguration.cs" />
     <Compile Include="Core\TtsConfig.cs" />
+    <Compile Include="Services\WebinarService.cs" />
     <Compile Include="Validation\Order\CreateOrderValidator.cs" />
   </ItemGroup>
   <ItemGroup>
