@@ -46,6 +46,7 @@ namespace CUWebinars.Business.Models
             modelBuilder.Configurations.Add(new AddressMap());
             modelBuilder.Configurations.Add(new AdditionalLocationMap());
             modelBuilder.Configurations.Add(new AffiliateMap());
+            modelBuilder.Configurations.Add(new CitrixWebinarMap());
             modelBuilder.Configurations.Add(new DiscountMap());
             modelBuilder.Configurations.Add(new InstitutionMap());
             modelBuilder.Configurations.Add(new RegTypeMap());

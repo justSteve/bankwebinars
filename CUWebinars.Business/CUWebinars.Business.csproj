@@ -111,6 +111,7 @@
     <Compile Include="AccountService\IMembershipService.cs" />
     <Compile Include="Core\Helpers\DateTimeHelper.cs" />
     <Compile Include="Core\Helpers\GenericHelpers.cs" />
+    <Compile Include="Models\CitrixWebinar.cs" />
     <Compile Include="Notification\Events\SendConnectionInfoEvent.cs" />
     <Compile Include="Notification\Events\SendRecordingPostedEvent.cs" />
     <Compile Include="Notification\Events\SendReminderEvent.cs" />

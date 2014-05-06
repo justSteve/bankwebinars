@@ -41,7 +41,8 @@ namespace CUWebinars.WebUi.Tests.Page.Ie
 
         public void ClickLoginLink()
         {
-            SeleniumTestDriver.FindByXPathClick(@"/html/body/section/nav/a");
+            //SeleniumTestDriver.FindByXPathClick(@"/html/body/section/nav/a");
+            SeleniumTestDriver.FindByIdClick("btnLogin");
         }
 
         public void LogInToSite(string email, string password)
