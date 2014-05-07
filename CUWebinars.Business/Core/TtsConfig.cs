@@ -2,6 +2,7 @@
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Formatters;
 using CUWebinars.Business.Notification.Handlers;
+using Ninject.Extensions.Logging.Log4net.Infrastructure;
 
 namespace CUWebinars.Business.Core
 {
@@ -15,11 +16,17 @@ namespace CUWebinars.Business.Core
             var orderNotificationFormatter = new OrderNotificationFormatter(new EnvironmentInformation{ BaseUrl = baseUrl });
             var genericFormatter = new Formatter(new EnvironmentInformation {BaseUrl = baseUrl});
 
-            config.AddEventHandler(new NotificationOrderHandler(orderNotificationFormatter, notificationDelivery));
-            config.AddEventHandler(new SendShippedOrderHandler(genericFormatter, notificationDelivery));
-            config.AddEventHandler(new SendConnectionInfoHandler(genericFormatter, notificationDelivery));
-            config.AddEventHandler(new SendReminderHandler(genericFormatter, notificationDelivery));
-            config.AddEventHandler(new SendRecordingPostedHandler(genericFormatter, notificationDelivery));
+            var notificationOrderHandlerLogger = new Log4NetLogger(typeof(NotificationOrderHandler));
+            var sendShippedOrderHandlerLogger = new Log4NetLogger(typeof(SendShippedOrderHandler));
+            var sendConnectionInfoHandlerLogger = new Log4NetLogger(typeof(SendConnectionInfoHandler));
+            var sendReminderHandlerLogger = new Log4NetLogger(typeof(SendReminderHandler));
+            var sendRecordingPostedHandlerLogger = new Log4NetLogger(typeof(SendRecordingPostedHandler));
+
+            config.AddEventHandler(new NotificationOrderHandler(orderNotificationFormatter, notificationDelivery, notificationOrderHandlerLogger));
+            config.AddEventHandler(new SendShippedOrderHandler(genericFormatter, notificationDelivery, sendShippedOrderHandlerLogger));
+            config.AddEventHandler(new SendConnectionInfoHandler(genericFormatter, notificationDelivery, sendConnectionInfoHandlerLogger));
+            config.AddEventHandler(new SendReminderHandler(genericFormatter, notificationDelivery, sendReminderHandlerLogger));
+            config.AddEventHandler(new SendRecordingPostedHandler(genericFormatter, notificationDelivery, sendRecordingPostedHandlerLogger));
 
             return config;
         }
