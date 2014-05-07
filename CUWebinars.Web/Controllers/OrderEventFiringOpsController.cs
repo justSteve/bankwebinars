@@ -29,6 +29,24 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
+        public PartialViewResult SendAdhocEvent()
+        {
+            var model = new AdhocNotificationViewModel
+            {
+                Webinars = GetUpcomingWebinarsAsSelectListItems()
+            };
+
+            return PartialView("_adHocNotification", model);
+        }
+
+        [HttpPost]
+        public ActionResult SendAdhocEvent(int webinarId)
+        {
+            var regTypes = GetRegTypesForWebinarAsSelectListItems(webinarId);
+
+            return Json(regTypes);
+        }
+
         public PartialViewResult SendReminder()
         {
             var model = new AdhocNotificationViewModel
@@ -118,6 +136,10 @@ namespace CUWebinars.Web.Controllers
         }
 
 
+        private IEnumerable<SelectListItem> GetRegTypesForWebinarAsSelectListItems(int idWebinar)
+        {
+            return _orderManagementService.FindRegTypesByWebinarId(idWebinar).Select(r => new SelectListItem { Text = r.OptionLabel, Value = r.idRegType.ToString() });
+        }
 
 
         private IEnumerable<SelectListItem> GetUpcomingWebinarsAsSelectListItems()

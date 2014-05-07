@@ -21,6 +21,7 @@ namespace CUWebinars.Business.Services
         OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, int registrationType);
         string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int idWebinar, string webinarKey);
         void DispatchDummyOrder();
+        IEnumerable<RegType> FindRegTypesByWebinarId(int webinarId);
         void FireSendConnectionInfoNotificationEvent(IList<Order> orders);
         void FireSendOrderShippedNotificationEvent(IList<Order> orders);
         void FireSendReminderNotificationEvent(IList<Order> orders);

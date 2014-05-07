@@ -20,7 +20,8 @@ namespace CUWebinars.WebUi.Tests.Page.Chrome
         public void ClickLoginLink()
         {
             SeleniumTestDriver.Wait(1000);
-            SeleniumTestDriver.FindByXPathClick(Constants.LoginLinkPath);
+            //SeleniumTestDriver.FindByXPathClick(Constants.LoginLinkPath);
+            SeleniumTestDriver.FindByIdClick("btnLogin");
         }
 
         public void LogInToSite(string email, string password)
