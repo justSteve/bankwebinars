@@ -12,6 +12,7 @@ namespace CUWebinars.WebUi.Tests.Ie
         {
             GlobalTestConfig = Global.GlobalConfigSingleton;
             var port = int.Parse(GlobalTestConfig.IeWebDriverPort, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite);
+            
             var pathToDriver = GlobalTestConfig.IeWebDriverPath;
             TestDriver = new IeTestDriver { DriverPort = port, DriverPath = pathToDriver };
 

@@ -1135,6 +1135,7 @@
     <Content Include="Views\OrderEventFiringOps\_UsersAndSubmitButton.cshtml" />
     <Content Include="Views\OrderEventFiringOps\_SendRecordingPosted.cshtml" />
     <Content Include="Views\OrderEventFiringOps\_SendShippedOrder.cshtml" />
+    <Content Include="Views\OrderEventFiringOps\_adHocNotification.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Notifications\" />

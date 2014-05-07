@@ -27,7 +27,7 @@ $(function () {
 
     $('#RegTypesCheckBoxes').hide();
 
-    pageObjects.SelectedUpcomingWebinarIdDropDown().on('change', function (args) {
+    selectedUpcomingWebinarIdDropDown.on('change', function (args) {
         selectedUpcomingWebinarId = $(this).val();
         $('#RegTypesCheckBoxes').show(100);
 

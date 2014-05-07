@@ -406,6 +406,11 @@ namespace CUWebinars.Business.Services
             throw new NotImplementedException();
         }
 
+        public IEnumerable<RegType> FindRegTypesByWebinarId(int webinarId)
+        {
+            return _regTypeRepository.FindRegTypesByWebinarId(webinarId, false);
+        }
+
         public void FireSendReminderNotificationEvent(IList<Order> orders)
         {
             foreach (var order in orders)
