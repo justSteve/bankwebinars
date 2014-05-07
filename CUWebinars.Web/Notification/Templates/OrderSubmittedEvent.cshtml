@@ -8,25 +8,20 @@
 @{
     var row = Model.OrderRows.SingleOrDefault();
     var joinURL = row.JoinURL;
-    var phone = "1 877 309 2071";//parsedJsonObject["Toll-free"].ToString();
-    var code = "AccessCode"; //parsedJsonObject["Access Code"].ToString();
+    var phone = "TBA";
+    var code = "TBA"; 
 
     if (joinURL == null)
     {
         joinURL = "https://www2.gotomeeting.com/join/" + row.Webinar.WebinarKey;
     }
-    if (row.Webinar.ConnectionInfo != null)
+    if (row.Webinar.AccessCode != null)
     {
-
-
-        //JObject parsedJsonObject = JObject.Parse(row.Webinar.ConnectionInfo);
-
-        //if (parsedJsonObject["registrantKey"] != null)
-        //{
-        //"Toll-free": "1 877 309 2071","Access Code": "911-178-334"
-        phone = "1 877 309 2071";//parsedJsonObject["Toll-free"].ToString();
-        code = "AccessCode"; //parsedJsonObject["Access Code"].ToString();
-
+        code = row.Webinar.AccessCode;
+    }
+    if (row.Webinar.AccessPhone != null)
+    {
+        code = row.Webinar.AccessPhone;
     }
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -55,9 +50,9 @@
                             <tbody>
                                 <tr>
                                     @*<td align="right" bgcolor="#01232a">
-                                        <img alt="https://ttseast.blob.core.windows.net/images/vrLocal/hardware_2_header_1.jpg" border="0" height="36" margin="0px 0px 0px 0px" src="https://ttseast.blob.core.windows.net/images/vrLocal/hardware_2_header_1.jpg" style="width: 374px; height: 36px; display: block;" width="374" />
-                                    </td>*@
-                                    <td colspan="2" align="right" bgcolor="#01232a" style="padding-right: 15px; border-top-color: rgb(52, 74, 88); border-right-color: rgb(52, 74, 88); border-top-width: 1px; border-right-width: 1px; border-top-style: solid; border-right-style: solid;" >
+                                            <img alt="https://ttseast.blob.core.windows.net/images/vrLocal/hardware_2_header_1.jpg" border="0" height="36" margin="0px 0px 0px 0px" src="https://ttseast.blob.core.windows.net/images/vrLocal/hardware_2_header_1.jpg" style="width: 374px; height: 36px; display: block;" width="374" />
+                                        </td>*@
+                                    <td colspan="2" align="right" bgcolor="#01232a" style="padding-right: 15px; border-top-color: rgb(52, 74, 88); border-right-color: rgb(52, 74, 88); border-top-width: 1px; border-right-width: 1px; border-top-style: solid; border-right-style: solid;">
                                         <div style="color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold;">Order Confirmation</div>
                                     </td>
                                 </tr>
@@ -147,7 +142,7 @@
                                                             {
                                                                 foreach (var i in row.Webinar.WebinarFiles)
                                                                 {
-                                                                    <a href="@i.fileLocation">@i.fileDesc</a>
+                                                                    <a href="@i.fileLocation">@i.fileDesc</a><br/>
                                                                 }
                                                             }
                                                         }
@@ -169,7 +164,7 @@
                                                             </td>
                                                             <td width="400px" style="font-size: smaller; text-align: left; background-color: #B4D1EC; padding-left: 6px;">
                                                                 <p style="vert-align: top; font-size: smaller; font-family: Arial, Helvetica, sans-serif;">
-                                                                    <a href="@row.JoinURL">Click this link 10-15 minutes prior to the scheduled start time.</a>
+                                                                    <a href="@joinURL">Click this link 10-15 minutes prior to the scheduled start time.</a>
                                                                 </p>
                                                             </td>
                                                         </tr>
@@ -280,7 +275,7 @@
                                                             </td>
                                                             <td style="width: 400px; text-align: left; font-size: smaller; background-color: #B4D1EC; padding-left: 6px;">
                                                                 <p align="center" style="vert-align: top; font-size: smaller; font-family: Arial, Helvetica, sans-serif; ">
-                                                                    The CD-ROM and handouts will ship within a few days.<br/>
+                                                                    The CD-ROM and handouts will ship within a few days.<br />
                                                                     Your order also includes six months access to the OnDemand Recording.
                                                                 </p>
                                                             </td>

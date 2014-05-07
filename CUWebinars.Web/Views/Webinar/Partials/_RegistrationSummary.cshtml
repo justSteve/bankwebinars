@@ -17,6 +17,8 @@
     if (ViewBag.userOwnsThisEvent > 0)
     {
         RegType orderMsgs = Model.CheckoutOptionsViewModel.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType;
+        row = Model.CheckoutOptionsViewModel.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+        order = row.Order;
         string[] webinarFiles = ViewBag.WebinarFiles;
         var recording = "<a href='" + Model.Webinar.RecordingUrl + "' target=_blank /> Recording Playback</a>"; ;
         var showShipped = "";

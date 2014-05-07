@@ -561,9 +561,9 @@ namespace CUWebinars.Business.Services
             string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/" + webinarKey + "/registrants";
 
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
-            //httpWebRequest.ContentType = "application/x-www-form-urlencoded";
+            
             httpWebRequest.ContentType = "application/json";
-            //httpWebRequest.Accept = "application/json";
+            
             httpWebRequest.Accept = "application/vnd.citrix.g2wapi-v1.1+json";
             httpWebRequest.Headers.Add("Authorization", "OAuth oauth_token=" + access_token);
 

@@ -428,10 +428,8 @@ namespace CUWebinars.Web.Controllers
                     connectionText.Append(
                         row.RegistrationType.Stage2EmailConfirmationMsg.Replace(
                             " and is also available at http://www.BankWebinars.com", "</p><p>"));
-                    //connectionText.Append(ViewBag.orderMessages.Stage2EmailConfirmationMsg.Replace(" and is also available at http://www.BankWebinars.com", "</p><p>"));
-                    //var conn = 
-
-                    connectionText.Append(webinar.ConnectionInfo.Replace(Environment.NewLine, "<br>"));
+                    
+                    //connectionText.Append(webinar.ConnectionInfo.Replace(Environment.NewLine, "<br>"));
                     connectionText.Append("</p>");
 
                     ViewBag.connectionText = connectionText;

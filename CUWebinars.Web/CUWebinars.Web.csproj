@@ -451,6 +451,7 @@
     <Content Include="App_Data\Deploy\New-AzureWebsiteEnv.ps1" />
     <None Include="App_Data\Deploy\Publish-AzureWebsite.ps1" />
     <Content Include="App_Data\Orders\PrepsDbForOrderImportTesting.txt" />
+    <Content Include="App_Data\Orders\ProblemRows.txt" />
     <Content Include="Content\css\affiliateCheckout.css" />
     <Content Include="Content\css\affStyling.css" />
     <Content Include="Content\css\anytime.css" />

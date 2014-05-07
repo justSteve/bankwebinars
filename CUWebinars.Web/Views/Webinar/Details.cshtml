@@ -176,7 +176,6 @@
                         @Html.Raw(ceuShort)
                     </a>
                 </div>
-
             </aside>
             @Html.Partial("Partials/_RegistrationSummary")
             <!-- close .widget -->
@@ -197,21 +196,20 @@
                 @{Html.RenderPartial("Partials/_AddToMailingBox");}
             </aside>
             <!--close aside .widget -->
-
             @*<aside class="widget">
-                <h5 class="short_headline"><span>Search</span></h5>
-                <form class="searchform" method="get">
-                    <input type="search" class="span12" value="type and hit enter" onfocus="this.value=''" onblur="this.value='type and hit enter'" />
-                </form>
-            </aside>*@
+                    <h5 class="short_headline"><span>Search</span></h5>
+                    <form class="searchform" method="get">
+                        <input type="search" class="span12" value="type and hit enter" onfocus="this.value=''" onblur="this.value='type and hit enter'" />
+                    </form>
+                </aside>*@
             <!--close aside widget-->
         </section>
         <!--close section tertiary-column sidebar span3-->
     </div>@{
-        if ((int)Model.Webinar.Status < 4)
+        if ((int)Model.Webinar.Status < 4 && ViewBag.userOwnsThisEvent < 1)
         {
             <div id="SignUpFormContainer" class="row-fluid">
-                @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new {id = "RegisterAdditionalLocationsForm"}))
+                @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new { id = "RegisterAdditionalLocationsForm" }))
                 {
                     <div class="content offset2 span8 well">
 
