@@ -1,0 +1,90 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30110.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUWebinars.Web", "CUWebinars.Web\CUWebinars.Web.csproj", "{9AAA6BF1-DC7A-4900-AC20-ACD6ADDDF54C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{45BEE1BF-6AEB-4B89-B885-01DEB81F1782}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUWebinars.Web.Tests", "CUWebinars.Web.Tests\CUWebinars.Web.Tests.csproj", "{507B2709-E583-459D-AC56-215A2B09A69C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUWebinars.Business.Tests", "CUWebinars.Business.Tests\CUWebinars.Business.Tests.csproj", "{67ADE7C7-0AE7-410B-8B18-58598EE41C01}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUWebinars.Business", "CUWebinars.Business\CUWebinars.Business.csproj", "{D4250C01-6EE8-4D3C-AE39-9CD038422210}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F26EF846-7CFB-420E-B75A-C961F811992A}"
+	ProjectSection(SolutionItems) = preProject
+		WebEssentials-Settings.json = WebEssentials-Settings.json
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUWebinars.NotificationSystem", "CUWebinars.NotificationSystem\CUWebinars.NotificationSystem.csproj", "{281C6443-2348-4578-9704-2F953CD3AF87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUWebinars.Selenium.Core", "CUWebinars.Selenium.Core\CUWebinars.Selenium.Core.csproj", "{12062741-74AD-4A12-A5C8-E520DC4CC118}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{ABA220A0-4DDC-47E3-AA3C-10A4F1B48538}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUWebinars.WebUi.Tests", "CUWebinars.WebUi.Tests\CUWebinars.WebUi.Tests.csproj", "{A1915773-9140-4E5A-A6BA-9828AA462719}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUWebinars.Html", "CUWebinars.Html\CUWebinars.Html.csproj", "{317A3851-F3C8-49D2-8B34-53F1A140D653}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUWebinars.CitrixDriver", "CUWebinars.CitrixDriver\CUWebinars.CitrixDriver.csproj", "{2861DD86-EFF8-4B4B-B8DA-AFC825CCD9DA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9AAA6BF1-DC7A-4900-AC20-ACD6ADDDF54C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AAA6BF1-DC7A-4900-AC20-ACD6ADDDF54C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AAA6BF1-DC7A-4900-AC20-ACD6ADDDF54C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AAA6BF1-DC7A-4900-AC20-ACD6ADDDF54C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{507B2709-E583-459D-AC56-215A2B09A69C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{507B2709-E583-459D-AC56-215A2B09A69C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{507B2709-E583-459D-AC56-215A2B09A69C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{507B2709-E583-459D-AC56-215A2B09A69C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67ADE7C7-0AE7-410B-8B18-58598EE41C01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67ADE7C7-0AE7-410B-8B18-58598EE41C01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67ADE7C7-0AE7-410B-8B18-58598EE41C01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67ADE7C7-0AE7-410B-8B18-58598EE41C01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4250C01-6EE8-4D3C-AE39-9CD038422210}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4250C01-6EE8-4D3C-AE39-9CD038422210}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4250C01-6EE8-4D3C-AE39-9CD038422210}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4250C01-6EE8-4D3C-AE39-9CD038422210}.Release|Any CPU.Build.0 = Release|Any CPU
+		{281C6443-2348-4578-9704-2F953CD3AF87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{281C6443-2348-4578-9704-2F953CD3AF87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{281C6443-2348-4578-9704-2F953CD3AF87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{281C6443-2348-4578-9704-2F953CD3AF87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12062741-74AD-4A12-A5C8-E520DC4CC118}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12062741-74AD-4A12-A5C8-E520DC4CC118}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12062741-74AD-4A12-A5C8-E520DC4CC118}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12062741-74AD-4A12-A5C8-E520DC4CC118}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1915773-9140-4E5A-A6BA-9828AA462719}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1915773-9140-4E5A-A6BA-9828AA462719}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1915773-9140-4E5A-A6BA-9828AA462719}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1915773-9140-4E5A-A6BA-9828AA462719}.Release|Any CPU.Build.0 = Release|Any CPU
+		{317A3851-F3C8-49D2-8B34-53F1A140D653}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{317A3851-F3C8-49D2-8B34-53F1A140D653}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{317A3851-F3C8-49D2-8B34-53F1A140D653}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{317A3851-F3C8-49D2-8B34-53F1A140D653}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2861DD86-EFF8-4B4B-B8DA-AFC825CCD9DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2861DD86-EFF8-4B4B-B8DA-AFC825CCD9DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2861DD86-EFF8-4B4B-B8DA-AFC825CCD9DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2861DD86-EFF8-4B4B-B8DA-AFC825CCD9DA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{67ADE7C7-0AE7-410B-8B18-58598EE41C01} = {ABA220A0-4DDC-47E3-AA3C-10A4F1B48538}
+		{12062741-74AD-4A12-A5C8-E520DC4CC118} = {ABA220A0-4DDC-47E3-AA3C-10A4F1B48538}
+		{507B2709-E583-459D-AC56-215A2B09A69C} = {ABA220A0-4DDC-47E3-AA3C-10A4F1B48538}
+		{A1915773-9140-4E5A-A6BA-9828AA462719} = {ABA220A0-4DDC-47E3-AA3C-10A4F1B48538}
+	EndGlobalSection
+EndGlobal
