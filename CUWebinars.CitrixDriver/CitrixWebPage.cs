@@ -106,6 +106,17 @@ namespace CUWebinars.CitrixDriver
             SeleniumTestDriver.FindByCssSelectorClick("img.next");
 
             var dateWidget = SeleniumTestDriver.FindByCssSelectorClick("div#floatcal table");
+            var month = SeleniumTestDriver.FindByCssSelectorClick("div#floatcal div.head");
+            var nextButton = SeleniumTestDriver.FindByCssSelectorClick("div#floatcal div.head img.next");
+            var prevButton = SeleniumTestDriver.FindByCssSelectorClick("div#floatcal div.head img.prev");
+
+            int count = 0;
+            while (month.Text != "September 2014")
+            {
+                count++;
+                nextButton.Click();
+            }
+
             ReadOnlyCollection<IWebElement> rows = dateWidget.FindElements(By.TagName("tr"));
             ReadOnlyCollection<IWebElement> cols = dateWidget.FindElements(By.TagName("td"));
 
@@ -129,7 +140,46 @@ namespace CUWebinars.CitrixDriver
             endMeridian.SelectByText("PM");
 
             var timeZoneKey = new SelectElement(SeleniumTestDriver.FindById("TimeZoneKey"));
-            timeZoneKey.SelectByValue("64");
+            timeZoneKey.SelectByValue("68");
+
+            var recursDropList = new SelectElement(SeleniumTestDriver.FindById("Recurs"));
+            recursDropList.SelectByText("Monthly");
+
+            SeleniumTestDriver.FindByIdClick("monthly_enddate");
+            SeleniumTestDriver.FindByCssSelectorClick("img.next");
+
+            //dateWidget = SeleniumTestDriver.FindByCssSelectorClick("div#floatcal table");
+            //month = SeleniumTestDriver.FindByCssSelectorClick("div#floatcal div.head");
+
+            while (count > 0)
+            {
+                count--;
+                prevButton.Click();
+            }
+
+            while (month.Text != "December 2014")
+            {
+                count++;
+                nextButton.Click();
+            }
+
+            //rows = dateWidget.FindElements(By.TagName("tr"));
+            cols = dateWidget.FindElements(By.TagName("td"));
+
+            //  Lets choose the 28th of the current month
+            foreach (IWebElement webElement in cols)
+            {
+                if (webElement.Text.Equals("22"))
+                {
+                    webElement.Click();
+                    break;
+                }
+            }
+
+            SeleniumTestDriver.FindByIdClick("attendee_type_1");
+
+            SeleniumTestDriver.FindByCssSelectorClick("div.submit_bar input[type=submit]");
+
         }
     }
 }
