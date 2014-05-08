@@ -29,7 +29,7 @@ namespace CUWebinars.Business.Repository
                 //.Include(w => w.OptionsGroupsXrefs)
                 .Include(w => w.Presenter)
                 .Include(w => w.WebinarFiles)
-                .Include(w => w.WebinarTopicXrefs)
+                .Include(w => w.WebinarTopicXrefs.Select(wt => wt.Topic))
                 .Where(w => w.idWebinar == id);
 
             return webinar.FirstOrDefault();

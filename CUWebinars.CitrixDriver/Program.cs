@@ -17,7 +17,8 @@ namespace CUWebinars.CitrixDriver
             
             citrixWebPage.Open();
             Login();
-            ScheduleAWebinar();
+            ScheduleASimilarWebinar();
+            //ScheduleAWebinar();
 
             citrixWebPage.Close();
             Console.ReadLine(); 
@@ -34,6 +35,13 @@ namespace CUWebinars.CitrixDriver
             citrixWebPage.ClickSubmit();
         }
 
+        private static void ScheduleASimilarWebinar()
+        {
+            citrixWebPage.GoToWebinarsPage();
+            citrixWebPage.ScheduleASimilarWebinar();
+
+        }
+        
         private static void ScheduleAWebinar()
         {
             citrixWebPage.GoToWebinarsPage();

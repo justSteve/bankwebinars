@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-using CUWebinars.Selenium.Core;
+﻿using CUWebinars.Selenium.Core;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using System;
+using System.Collections.ObjectModel;
 
 namespace CUWebinars.CitrixDriver
 {
@@ -44,12 +39,7 @@ namespace CUWebinars.CitrixDriver
         {
             SeleniumTestDriver.ClearCookies();
         }
-
-        public void ClickLoginLink()
-        {
-            SeleniumTestDriver.FindByIdClick("btnLogin");
-        }
-
+        
         public void GotToLoginPage()
         {
             SeleniumTestDriver.FindByLinkTextClick("Log In");
@@ -180,6 +170,58 @@ namespace CUWebinars.CitrixDriver
 
             SeleniumTestDriver.FindByCssSelectorClick("div.submit_bar input[type=submit]");
 
+        }
+
+        public void ScheduleASimilarWebinar()
+        {
+            var div = SeleniumTestDriver.FindByXPath(@"//span/b[contains(text(), 'Testing No Confirmations')]/parent::span/parent::p/parent::div/parent::div/parent::div");
+            var footer = div.FindElement(By.XPath(@"/self::node()/descendant::div[@class='scheduleAnotherFooter']"));
+            var scheduleSimilarLink = footer.FindElement(By.XPath(@"/self::node()/descendant::p/descendant::span/descendant::a[contains(text(), 'Schedule Similar Webinar')]"));
+            scheduleSimilarLink.Click();
+
+            //SeleniumTestDriver.Wait(500);
+            var wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(5));
+
+            var confCallRadio = wait.Until(d =>
+            {
+                var confCallRadioButton = SeleniumTestDriver.FindByIdClick("confCallRadio");
+                return confCallRadioButton;
+            });
+
+            confCallRadio.Click();
+            
+            SeleniumTestDriver.FindByIdClick("pstn");
+            SeleniumTestDriver.FindByIdClick("pstnTF");
+
+            SeleniumTestDriver.FindByCssSelectorClick("div.submit_bar input[type=submit]");
+
+
+            //  Second tab - wait a bit
+            wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(1));
+
+            var submitButtonContinue = wait.Until(d =>
+            {
+                var submitButton = SeleniumTestDriver.FindByXPath(@"//input[@value='Save and Continue >']");
+                return submitButton;
+            });
+
+            submitButtonContinue.Click();
+
+            SeleniumTestDriver.FindByLinkTextClick("Clear All");
+
+            //  Third tab - wait a bit
+            wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(1));
+
+            var commitButton = wait.Until(d =>
+            {
+                var commitInput = SeleniumTestDriver.FindByXPath(@"//input[@value='Save and Email me the Invitation']");
+                return commitInput;
+            });
+
+            SeleniumTestDriver.FindByXPathClick(@"//input[@name='ApprovalRequired'][2]"); // index starts at 1, not 0
+
+            commitButton.Click();
+            
         }
     }
 }
