@@ -1,0 +1,142 @@
+﻿@model  Webinar
+@using System.Configuration
+@using System.Text
+@using CUWebinars.Web.Core;
+@using CUWebinars.Business.Models
+
+
+@{
+    string ceuShort = String.Empty;
+    string ceuStmt = String.Empty;
+    if (String.IsNullOrEmpty(Model.ceu) == false)
+    {
+        string[] ceu = Model.ceu.Split('|');
+        ceuShort = ceu[0];
+        ceuStmt = ceu[1];
+    }
+    ViewBag.Title = "My Webinars";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+
+    //WebUser currentUser = Model.WebUser;
+    var EditResult = "<span>&nbsp;</span>";
+
+
+    if (@Html.ValidationMessage("GeneralError") != null)
+    {
+        EditResult = "ERROR: " + @Html.ValidationMessage("GeneralError").ToHtmlString();
+    }
+}
+<div class="hero-unit">
+    <div id="webinarTitle" class="container">
+        <div class="span10">
+            <h1>@Model.Title</h1>
+        </div>    <!--close container-->
+    </div>
+
+</div>
+<!--close hero-unit-->
+<!--begin main content-->
+<div id="webinarContent" class="row-fluid holy-grail">
+    <!--begin row-fluid-->
+    <section class="span3 sidebar">
+        <aside class="widget well-large">
+            <h5 class="short_headline"><span>@ViewBag.Presenter.WebUser.FullName</span></h5>
+            @Html.Raw(ViewBag.Presenter.BiographyLong)
+            @*@Html.Partial("Partials/_OtherEventsBySpeaker")*@
+        </aside>
+        <!--close aside widget-->
+    </section>
+    <!--*** add class "holy-grail" to row-fluid class to make a three column skinny, fat, skinny layout ***-->
+    <div class="span6">
+
+        <p style="text-align: center; font-family: arial, helvetica, sans-serif; font-size: larger;">
+            <b>
+                <a target="_blank" href="@ConfigurationManager.AppSettings["wmvrepository"]@Model.RecordingUrl">
+                    Click here to view this OnDemand Recording
+                </a>
+            </b>
+            <br />
+        </p>
+        <p>
+            Download Materials:
+        </p>
+        <table>
+            @{
+                //begin file/handout listing
+                StringBuilder filesList = new StringBuilder();
+                var handLoc = ConfigurationManager.AppSettings["wmvrepository"];
+                foreach (string file in ViewBag.webinarFiles)
+                {
+                    string fileLocation = file.Split('|')[1];
+                    string fileDesc = file.Split('|')[0];
+                    filesList.AppendFormat("<tr><td colspan='2'><a href=\"{0}{1}\" target='_blank'>{2} </a>",handLoc, fileLocation, fileDesc);
+                    filesList.Append("</td></tr>");
+                } // end of files loop
+                @Html.Raw(filesList)
+            }
+        </table>
+        <div class="description">
+            @Html.Raw(Model.DescriptionLong)
+        </div>
+        <div class="description">
+            <h2 class="short_headline">
+                <span>
+                    @Html.Raw(Model.LearnCaption)
+                </span>
+            </h2>
+            @Html.Raw(Model.LearnBody)
+        </div>
+        <div class="description">
+            <h2 class="short_headline">
+                <span>
+                    Who Should Attend?
+                </span>
+            </h2>
+            @Html.Raw(Model.WhoAttend)
+        </div>
+
+        <hr />
+
+    </div>
+    <section class="span3">
+        <aside class="widget">
+
+            <h5 class="short_headline"><span>Date/Time</span></h5>
+
+            <b>@Html.DisplayDate(Model.Date)</b><br />
+            <div id="ceu">
+                <a href="#" title="@ceuStmt ">
+                    @Html.Raw(ceuShort)
+                </a>
+            </div>
+        </aside>
+        @*@Html.Partial("Partials/_RegistrationSummary")*@
+        <!-- close .widget -->
+        <aside class="widget">
+            <h5 class="short_headline"><span>Topics</span></h5>
+            @*<ul>
+                    @foreach (var webinarTopic in ViewBag.topics)
+                        {
+                        <li>
+                            @webinarTopic.topicDesc
+                        </li>
+                        }
+                </ul>*@
+        </aside>
+        <!--close aside .widget -->
+        <aside class="widget">
+            <h5 class="short_headline"><span>Stay Updated</span></h5>
+            @{Html.RenderPartial("Partials/_AddToMailingBox");}
+        </aside>
+        <!--close aside .widget -->
+        @*<aside class="widget">
+                <h5 class="short_headline"><span>Search</span></h5>
+                <form class="searchform" method="get">
+                    <input type="search" class="span12" value="type and hit enter" onfocus="this.value=''" onblur="this.value='type and hit enter'" />
+                </form>
+            </aside>*@
+        <!--close aside widget-->
+    </section>
+    <!--close section tertiary-column sidebar span3-->
+
+</div>

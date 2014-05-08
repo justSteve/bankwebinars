@@ -26,6 +26,8 @@ namespace CUWebinars.Business.Notification.Handlers
         public virtual void Process<TBody>(Events.OrderSubmittedEvent<TOrder> evt, TBody objectOfMessage)
         {
             var notificationMessage = _orderNotificationFormatter.Format(evt, objectOfMessage, _notificationPersister);
+            notificationMessage.To = "steve@ttstrain.com";
+            //notificationMessage.To = evt.Order.BillingEmail;
             _notificationDelivery.Notify(notificationMessage);
         }
     }

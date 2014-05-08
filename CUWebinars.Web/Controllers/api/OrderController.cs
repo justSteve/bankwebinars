@@ -57,13 +57,15 @@ namespace CUWebinars.Web.Controllers.api
 
             if (!ModelState.IsValid)
             {
-                return Request.CreateResponse(HttpStatusCode.Found, new { Result = "Problem with payload" });                
+                _logger.Error("Post found problem with Payload"); 
+                return Request.CreateResponse(HttpStatusCode.Found, new { Result = "Problem with payload" });
             }
 
             try
             {
                 foreach (var incomingOrderModel in model)
                 {
+                    _logger.Info("Begin import: " + incomingOrderModel.Email.Trim());
                     var email = incomingOrderModel.Email.Trim();
 
                     var firstName = incomingOrderModel.FirstName.Trim();
@@ -213,6 +215,7 @@ namespace CUWebinars.Web.Controllers.api
                         //orderRow.JoinURL = "https://www2.gotomeeting.com/join/739905466/106033865";
                     _orderManagementService.SaveOrderChanges(importedOrder);
                     idOfLastOrder = importedOrder.idOrder;
+                    _logger.Info("Posted idOrder=" + idOfLastOrder);
                 }
 
                 httpResponseMessage = Request.CreateResponse(HttpStatusCode.Created,

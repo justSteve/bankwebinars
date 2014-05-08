@@ -450,6 +450,7 @@
     <Content Include="App_Data\Deploy\New-AzureStorage.ps1" />
     <Content Include="App_Data\Deploy\New-AzureWebsiteEnv.ps1" />
     <None Include="App_Data\Deploy\Publish-AzureWebsite.ps1" />
+    <Content Include="App_Data\Orders\OrderEntry.csv" />
     <Content Include="App_Data\Orders\PrepsDbForOrderImportTesting.txt" />
     <Content Include="App_Data\Orders\ProblemRows.txt" />
     <Content Include="Content\css\affiliateCheckout.css" />
@@ -891,7 +892,6 @@
     <Content Include="Membership\Email\EmailTemplates\EmailChangedEvent_Subject.cshtml" />
     <Content Include="App_Data\Orders\SampleData.csv" />
     <Content Include="App_Data\Orders\SampleData.xlsx" />
-    <Content Include="App_Data\Orders\OrderEntry.csv" />
     <None Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Body.cshtml" />
     <None Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Subject.cshtml" />
     <Content Include="favicon.ico" />
@@ -1139,6 +1139,8 @@
     <Content Include="Views\OrderEventFiringOps\_SendRecordingPosted.cshtml" />
     <Content Include="Views\OrderEventFiringOps\_SendShippedOrder.cshtml" />
     <Content Include="Views\OrderEventFiringOps\_adHocNotification.cshtml" />
+    <Content Include="Views\Webinar\Play.cshtml" />
+    <Content Include="Views\Webinar\Partials\_ConnectionSummary.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Notifications\" />

@@ -45,6 +45,7 @@ namespace CUWebinars.Business.Notification.Email
                 }
                 catch (SmtpException e)
                 {
+                    
                     //Tracing.Error("[SmtpMessageDelivery.Send] SmtpException: " + e.Message);
                 }
                 catch (Exception e)

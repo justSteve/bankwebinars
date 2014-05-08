@@ -25,7 +25,7 @@ namespace CUWebinars.Web.Controllers
     public class WebinarController : Controller
     {
         private readonly TTSWebinarsContext _db;
-        
+
         IStateService stateService = new StateService();
 
         //Steve added MembershipService dependancy to allow for 'currentUser' in Details.
@@ -35,9 +35,9 @@ namespace CUWebinars.Web.Controllers
         private readonly ILogger _logger;
 
         public WebinarController(
-            IMembershipService membershipService, 
-            IWebinarRepository webinarRepository, 
-            IOrderManagementService orderManagementService, 
+            IMembershipService membershipService,
+            IWebinarRepository webinarRepository,
+            IOrderManagementService orderManagementService,
             ILogger logger,
             TTSWebinarsContext context)
         {
@@ -355,7 +355,29 @@ namespace CUWebinars.Web.Controllers
             var data = new WebinarsSearchDTOAssembler(webinarsBrowserRequest.EchoId).Entity2DTO(searchResult);
             return Json(data, JsonRequestBehavior.AllowGet);
         }
+        //[AcceptVerbs(HttpVerbs.Get)]
+        public ActionResult Play(int w, int u)
+        {
+            if (_orderManagementService.CheckUserForRecordingAccess(u, w) > 0 || u == 19)
+            {
+                //how do I ensure that all child objects are included?
+                var webinarFiles =
+                _db.WebinarFiles.Where(f => f.idWebinar == w)
+                    .Select(f => f.fileDesc + "|" + f.fileLocation)
+                    .ToArray();
+                ViewBag.WebinarFiles = webinarFiles;
 
+                Webinar webinar = _webinarRepository.FindById(w);
+
+                Presenter presenter = _db.Presenters.Include(wu => wu.WebUser).SingleOrDefault(p => p.idUser == webinar.idPresenter);
+                //Presenter presenter = _db.Presenters.Where(p => p.idUser == webinar.idPresenter).SingleOrDefault();
+                ViewBag.Presenter = presenter;
+                return View(webinar);
+            }
+
+            ViewData["Expired"] = "This recording has expired. ";
+            return View();
+        }
         public ActionResult Details(int id)
         {
             //_orderManagementService.GetOrderById(1162);
@@ -391,10 +413,10 @@ namespace CUWebinars.Web.Controllers
                 {
                     DisplayOptionsViewModel = new DisplayOptionsViewModel
                     {
-                      Options = options.ToList(),
-                      Order = null,
-                      Webinar = webinar,
-                      WebUser = user
+                        Options = options.ToList(),
+                        Order = null,
+                        Webinar = webinar,
+                        WebUser = user
                     },
                     Order = null, //    new order?
                     Webinar = webinar
@@ -428,7 +450,7 @@ namespace CUWebinars.Web.Controllers
                     connectionText.Append(
                         row.RegistrationType.Stage2EmailConfirmationMsg.Replace(
                             " and is also available at http://www.BankWebinars.com", "</p><p>"));
-                    
+
                     //connectionText.Append(webinar.ConnectionInfo.Replace(Environment.NewLine, "<br>"));
                     connectionText.Append("</p>");
 
