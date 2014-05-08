@@ -44,12 +44,7 @@ namespace CUWebinars.CitrixDriver
         {
             SeleniumTestDriver.ClearCookies();
         }
-
-        public void ClickLoginLink()
-        {
-            SeleniumTestDriver.FindByIdClick("btnLogin");
-        }
-
+        
         public void GotToLoginPage()
         {
             SeleniumTestDriver.FindByLinkTextClick("Log In");
