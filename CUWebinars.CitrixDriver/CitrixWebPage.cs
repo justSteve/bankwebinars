@@ -1,4 +1,7 @@
-﻿using CUWebinars.Selenium.Core;
+﻿using System.Globalization;
+using System.Linq;
+using CUWebinars.Business.Models;
+using CUWebinars.Selenium.Core;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System;
@@ -8,6 +11,8 @@ namespace CUWebinars.CitrixDriver
 {
     public class CitrixWebPage : BasePage
     {
+        private int count = 0;
+
         public CitrixWebPage(ITestDriver seleniumTestDriver, string url)
         {
             Url = url;
@@ -89,19 +94,26 @@ namespace CUWebinars.CitrixDriver
             SeleniumTestDriver.FindByCssSelectorClick("option[value=\"563748522|wid\"]");
         }
 
-        public void CompleteDetails()
+        public void PickDate(DateTime date, bool firstRun)
         {
-            SeleniumTestDriver.FindByIdClick("privateConfCallRadio");
-            SeleniumTestDriver.FindByIdClick("StartDate_Cal_0");
-            SeleniumTestDriver.FindByCssSelectorClick("img.next");
-
             var dateWidget = SeleniumTestDriver.FindByCssSelectorClick("div#floatcal table");
-            var month = SeleniumTestDriver.FindByCssSelectorClick("div#floatcal div.head");
+            var monthHeader = SeleniumTestDriver.FindByCssSelectorClick("div#floatcal div.head");
             var nextButton = SeleniumTestDriver.FindByCssSelectorClick("div#floatcal div.head img.next");
             var prevButton = SeleniumTestDriver.FindByCssSelectorClick("div#floatcal div.head img.prev");
+            var month = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(date.Month);
+            var year = date.Year;
+            var day = date.Day;
 
-            int count = 0;
-            while (month.Text != "September 2014")
+            if (!firstRun)
+            {
+                while (count > 0)
+                {
+                    count--;
+                    prevButton.Click();
+                }
+            }
+
+            while (monthHeader.Text != string.Format("{0} {1}", month, year))
             {
                 count++;
                 nextButton.Click();
@@ -111,75 +123,51 @@ namespace CUWebinars.CitrixDriver
             ReadOnlyCollection<IWebElement> cols = dateWidget.FindElements(By.TagName("td"));
 
             //  Lets choose the 28th of the current month
-            foreach (IWebElement webElement in cols)
+            foreach (IWebElement colWebElement in cols.Where(colWebElement => colWebElement.Text.Equals(day.ToString())))
             {
-                if (webElement.Text.Equals("28"))
-                {
-                    webElement.Click();
-                    break;
-                }
+                colWebElement.Click();
+                break;
             }
-            
-            SeleniumTestDriver.TypeText("StartHour_0", "06:00");
-            
-            var startMeridian = new SelectElement(SeleniumTestDriver.FindById("StartAMPM_0"));
-            startMeridian.SelectByText("PM");
-            SeleniumTestDriver.TypeText("EndHour_0", "11:00");
-
-            var endMeridian = new SelectElement(SeleniumTestDriver.FindById("EndAMPM_0"));
-            endMeridian.SelectByText("PM");
-
-            var timeZoneKey = new SelectElement(SeleniumTestDriver.FindById("TimeZoneKey"));
-            timeZoneKey.SelectByValue("68");
-
-            var recursDropList = new SelectElement(SeleniumTestDriver.FindById("Recurs"));
-            recursDropList.SelectByText("Monthly");
-
-            SeleniumTestDriver.FindByIdClick("monthly_enddate");
-            SeleniumTestDriver.FindByCssSelectorClick("img.next");
-
-            //dateWidget = SeleniumTestDriver.FindByCssSelectorClick("div#floatcal table");
-            //month = SeleniumTestDriver.FindByCssSelectorClick("div#floatcal div.head");
-
-            while (count > 0)
-            {
-                count--;
-                prevButton.Click();
-            }
-
-            while (month.Text != "December 2014")
-            {
-                count++;
-                nextButton.Click();
-            }
-
-            //rows = dateWidget.FindElements(By.TagName("tr"));
-            cols = dateWidget.FindElements(By.TagName("td"));
-
-            //  Lets choose the 28th of the current month
-            foreach (IWebElement webElement in cols)
-            {
-                if (webElement.Text.Equals("22"))
-                {
-                    webElement.Click();
-                    break;
-                }
-            }
-
-            SeleniumTestDriver.FindByIdClick("attendee_type_1");
-
-            SeleniumTestDriver.FindByCssSelectorClick("div.submit_bar input[type=submit]");
-
         }
 
-        public void ScheduleASimilarWebinar()
+        //public void CompleteDetails()
+        //{
+        //    SeleniumTestDriver.FindByIdClick("privateConfCallRadio");
+        //    SeleniumTestDriver.FindByIdClick("StartDate_Cal_0");
+        //    SeleniumTestDriver.FindByCssSelectorClick("img.next");
+
+            
+        //    SeleniumTestDriver.TypeText("StartHour_0", "06:00");
+            
+        //    var startMeridian = new SelectElement(SeleniumTestDriver.FindById("StartAMPM_0"));
+        //    startMeridian.SelectByText("PM");
+        //    SeleniumTestDriver.TypeText("EndHour_0", "11:00");
+
+        //    var endMeridian = new SelectElement(SeleniumTestDriver.FindById("EndAMPM_0"));
+        //    endMeridian.SelectByText("PM");
+
+        //    var timeZoneKey = new SelectElement(SeleniumTestDriver.FindById("TimeZoneKey"));
+        //    timeZoneKey.SelectByValue("68");
+
+        //    var recursDropList = new SelectElement(SeleniumTestDriver.FindById("Recurs"));
+        //    recursDropList.SelectByText("Monthly");
+
+        //    SeleniumTestDriver.FindByIdClick("monthly_enddate");
+        //    SeleniumTestDriver.FindByCssSelectorClick("img.next");
+
+        //    SeleniumTestDriver.FindByIdClick("attendee_type_1");
+
+        //    SeleniumTestDriver.FindByCssSelectorClick("div.submit_bar input[type=submit]");
+
+        //}
+
+        public string ScheduleASimilarWebinar(CitrixWebinar webinar)
         {
-            var div = SeleniumTestDriver.FindByXPath(@"//span/b[contains(text(), 'Testing No Confirmations')]/parent::span/parent::p/parent::div/parent::div/parent::div");
+            var div = SeleniumTestDriver.FindByXPath(@"//span/b[contains(text(), '" + webinar.TemplateTitle + "')]/parent::span/parent::p/parent::div/parent::div/parent::div");
             var footer = div.FindElement(By.XPath(@"/self::node()/descendant::div[@class='scheduleAnotherFooter']"));
             var scheduleSimilarLink = footer.FindElement(By.XPath(@"/self::node()/descendant::p/descendant::span/descendant::a[contains(text(), 'Schedule Similar Webinar')]"));
             scheduleSimilarLink.Click();
 
-            //SeleniumTestDriver.Wait(500);
             var wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(5));
 
             var confCallRadio = wait.Until(d =>
@@ -189,22 +177,44 @@ namespace CUWebinars.CitrixDriver
             });
 
             confCallRadio.Click();
+
+            SeleniumTestDriver.FindByIdClick("StartDate_Cal_0");
+            SeleniumTestDriver.FindByCssSelectorClick("img.next");
+
+            PickDate(webinar.StartDate, true);
+
+            //  Start hour
+            SeleniumTestDriver.TypeText("StartHour_0", webinar.StartHour);
+            var startMeridian = new SelectElement(SeleniumTestDriver.FindById("StartAMPM_0"));
+            startMeridian.SelectByText(webinar.StartMeridian);
+
+            //  End hour
+            SeleniumTestDriver.TypeText("EndHour_0", webinar.EndHour);
+            var endMeridian = new SelectElement(SeleniumTestDriver.FindById("EndAMPM_0"));
+            endMeridian.SelectByText(webinar.EndMeridian);
+
+            var timeZoneKey = new SelectElement(SeleniumTestDriver.FindById("TimeZoneKey"));
+            timeZoneKey.SelectByValue(webinar.TimeZoneKey.ToString());
+
             
             SeleniumTestDriver.FindByIdClick("pstn");
             SeleniumTestDriver.FindByIdClick("pstnTF");
 
             SeleniumTestDriver.FindByCssSelectorClick("div.submit_bar input[type=submit]");
 
-
             //  Second tab - wait a bit
             wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(1));
+            IWebElement webinarKeyHiddenInput = null;
+            string webinarKey = null;
 
             var submitButtonContinue = wait.Until(d =>
             {
                 var submitButton = SeleniumTestDriver.FindByXPath(@"//input[@value='Save and Continue >']");
+                webinarKeyHiddenInput = SeleniumTestDriver.FindByXPath(@"//input[@name='WebinarKey']");
                 return submitButton;
             });
 
+            webinarKey = webinarKeyHiddenInput.GetAttribute("value");
             submitButtonContinue.Click();
 
             SeleniumTestDriver.FindByLinkTextClick("Clear All");
@@ -221,7 +231,8 @@ namespace CUWebinars.CitrixDriver
             SeleniumTestDriver.FindByXPathClick(@"//input[@name='ApprovalRequired'][2]"); // index starts at 1, not 0
 
             commitButton.Click();
-            
+
+            return webinarKey;
         }
     }
 }

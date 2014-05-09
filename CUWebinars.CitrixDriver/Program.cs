@@ -1,4 +1,5 @@
-﻿using CUWebinars.Selenium.Core;
+﻿using CUWebinars.Business.Models;
+using CUWebinars.Selenium.Core;
 using System;
 using System.Configuration;
 
@@ -17,11 +18,30 @@ namespace CUWebinars.CitrixDriver
             
             citrixWebPage.Open();
             Login();
-            ScheduleASimilarWebinar();
+
+            var webinar = GetWebinarMock();
+
+            var newWebinarKey = ScheduleASimilarWebinar(webinar);
             //ScheduleAWebinar();
 
             citrixWebPage.Close();
             Console.ReadLine(); 
+        }
+
+        private static CitrixWebinar GetWebinarMock()
+        {
+            var citrixWebinar = new CitrixWebinar
+            {
+                StartDate = DateTime.Today.AddMonths(1),
+                StartHour = "08:30",
+                StartMeridian = "PM",
+                EndHour = "10:30",
+                EndMeridian = "PM",
+                TemplateTitle = "Testing No Confirmations",
+                TimeZoneKey = 68 // central
+            };
+
+            return citrixWebinar;
         }
 
         private static void Login()
@@ -35,19 +55,19 @@ namespace CUWebinars.CitrixDriver
             citrixWebPage.ClickSubmit();
         }
 
-        private static void ScheduleASimilarWebinar()
+        private static string ScheduleASimilarWebinar(CitrixWebinar webinar)
         {
             citrixWebPage.GoToWebinarsPage();
-            citrixWebPage.ScheduleASimilarWebinar();
+            return citrixWebPage.ScheduleASimilarWebinar(webinar);
 
         }
         
-        private static void ScheduleAWebinar()
-        {
-            citrixWebPage.GoToWebinarsPage();
-            citrixWebPage.ScheduleAWebinar();
-            citrixWebPage.ChooseWebinarTemplate();
-            citrixWebPage.CompleteDetails();
-        }
+        //private static void ScheduleAWebinar()
+        //{
+        //    citrixWebPage.GoToWebinarsPage();
+        //    citrixWebPage.ScheduleAWebinar();
+        //    citrixWebPage.ChooseWebinarTemplate();
+        //    citrixWebPage.CompleteDetails();
+        //}
     }
 }
