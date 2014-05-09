@@ -9,6 +9,7 @@ using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using DotNetOpenAuth.AspNet;
 using Microsoft.Web.WebPages.OAuth;
+using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -243,24 +244,36 @@ namespace CUWebinars.Web.Controllers
             model.Recorded = _orderRepository.SelectOrdersWithRecordedWebinars(currentUser.idUser);
             model.Archived = _orderRepository.SelectOrdersWithArchivedWebinars(currentUser.idUser);
 
+            foreach (var order in model.Scheduled)
+            {
+                var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+                if (row.Webinar.Status == WebinarStatus.Active)
+                {
+                    if (row.JoinURL == null && row.RegistrationType.ShowLiveNotifications == "Yes")
+                    {
+                        //string firstName, string lastName, string billingEmail, int webinarId,string webinarKey
+                        var regKeyResponse = _orderManagementService.CreateRegistrantKey(order.FirstName, order.LastName
+                            , order.BillingEmail, row.Webinar.idWebinar, row.Webinar.WebinarKey);
 
 
-            //if (model.Recorded != null)
-            //{
-            //    var optionAndOrderdictionary = model.Recorded;
-            //    var optionAndOrderdictionarySortedByWebinarDate =
-            //        orderRepository.SelectOrdersWithRecordedWebinars(currentUser.idUser);
+                        if (ReferenceEquals(null, regKeyResponse))
+                            throw new NullReferenceException("The Registration Key Response from the Citrix API resulted in a null response.");
 
-            //    model.Recorded = optionAndOrderdictionarySortedByWebinarDate
-            //        .ToDictionary<KeyValuePair<RegType, Order>, RegType, Order>(p => p.Key, p => p.Value);
-            //    model.Recorded = sortedEnum.ToList();
-            //}
-            //if (model.Archived != null)
-            //{
-            //    var list = model.Archived;
-            //    var sortedEnum = list.OrderBy(f => f.OrderRows.SingleOrDefault().Webinar.Date);
-            //    model.Archived = sortedEnum.ToList();
-            //}
+                        JObject parsedJsonObject = JObject.Parse(regKeyResponse);
+
+                        if (parsedJsonObject["registrantKey"] != null)
+                        {
+                            var registrantKey = parsedJsonObject["registrantKey"].ToString();
+                            var joinUrl = parsedJsonObject["joinUrl"].ToString();
+
+                            row.RegistrantKey = registrantKey;
+                            row.JoinURL = joinUrl;
+                        }
+                    }
+                }
+
+            }
+
 
             return View("MyWebinars", model);
         }
@@ -797,7 +810,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (MembershipCreateUserException e)
                 {
-                    ModelState.AddModelError(string.Empty, ErrorCodeToString(e.StatusCode)); 
+                    ModelState.AddModelError(string.Empty, ErrorCodeToString(e.StatusCode));
                     //TODO: add error message here and handle in razor
                     _logger.Error("/Account/Register: " + e.Message);
                 }

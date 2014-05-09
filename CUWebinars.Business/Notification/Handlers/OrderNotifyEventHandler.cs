@@ -32,19 +32,21 @@ namespace CUWebinars.Business.Notification.Handlers
 
         public virtual void Process<TBody>(Events.OrderSubmittedEvent<TOrder> evt, TBody objectOfMessage)
         {
-            var notificationMessage = _orderNotificationFormatter.Format(evt, objectOfMessage, _notificationPersister);
-            notificationMessage.To = "steve@ttstrain.com";
-            //notificationMessage.To = evt.Order.BillingEmail;
-            _notificationDelivery.Notify(notificationMessage);
-        }
+            try
+            {
+                var notificationMessage = _orderNotificationFormatter.Format(evt, objectOfMessage,
+                    _notificationPersister);
+                notificationMessage.To = evt.Order.BillingEmail;
+                _notificationDelivery.Notify(notificationMessage);
+            }
             catch (NullReferenceException nullReferenceException)
             {
                 _logger.Error(string.Format("Event processing failed. Check that BillingEmail has a value for OrderId {0}", evt.Order.idOrder)
-                    , nullReferenceException);                
+                    , nullReferenceException);
             }
             catch (Exception exception)
             {
-                _logger.Error(string.Format("Event processing failed for OrderId {0}", evt.Order.idOrder), exception);                
+                _logger.Error(string.Format("Event processing failed for OrderId {0}", evt.Order.idOrder), exception);
             }
         }
     }

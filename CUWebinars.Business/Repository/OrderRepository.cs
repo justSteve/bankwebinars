@@ -199,38 +199,10 @@ namespace CUWebinars.Business.Repository
         public Order SaveOrderChanges(Order order)
         {
             var error = db.GetValidationErrors();
-            Debug.WriteLine("#######################Call to SaveOrderChanges");
-
-            //_disconnectedPropertyChangeHelper.ApplyChanges(order);
-
             db.SaveChanges();
 
             return order;
         }
-
-        //public virtual IDictionary<RegType, Order> SelectOrdersWithScheduledWebinars(int idUser)
-        //{
-        //    var optionAndOrder = new Dictionary<RegType, Order>();
-
-        //    items.Where(o => o.idUser == idUser
-        //                                  && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Scheduled
-        //                                  &&
-        //                                  (o.OrderStatus == OrderStatus.Submitted ||
-        //                                   o.OrderStatus == OrderStatus.Paid)
-        //        )
-        //        .ToList()
-        //        .ForEach(o =>
-        //        {
-        //            var row = o.OrderRows.Single();
-        //            var paramWebinarID = new SqlParameter("idRegType", SqlDbType.Int) { Value = (int)row.RegistrationType };
-        //            var registrationType = ((TTSWebinarsContext)db).Options.SqlQuery("dbo.GetRegistrationType @idRegType", paramWebinarID).Single();
-
-        //            optionAndOrder.Add(registrationType, o);
-        //        }
-        //       );
-
-        //    return optionAndOrder;
-        //}
 
         public virtual IList<Order> Test(int idUser)
         {
@@ -281,7 +253,9 @@ namespace CUWebinars.Business.Repository
                 .Include(o => o.OrderRows.Select(w => w.RegistrationType))
                 .Include(o => o.OrderRows.Select(w => w.Webinar))
                 .Where(o => o.idUser == idUser
-                                          && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Scheduled
+                                          && (o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Scheduled
+                                                || o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.InProgress
+                                                || o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Active)
                                           &&
                                           (o.OrderStatus == OrderStatus.Submitted ||
                                            o.OrderStatus == OrderStatus.Paid ||

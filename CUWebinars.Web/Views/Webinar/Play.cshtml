@@ -48,18 +48,9 @@
     </section>
     <!--*** add class "holy-grail" to row-fluid class to make a three column skinny, fat, skinny layout ***-->
     <div class="span6">
-
-        <p style="text-align: center; font-family: arial, helvetica, sans-serif; font-size: larger;">
-            <b>
-                <a target="_blank" href="@ConfigurationManager.AppSettings["wmvrepository"]@Model.RecordingUrl">
-                    Click here to view this OnDemand Recording
-                </a>
-            </b>
-            <br />
-        </p>
-        <p>
+        <h3 class="short_headline">
             Download Materials:
-        </p>
+        </h3>
         <table>
             @{
                 //begin file/handout listing
@@ -69,12 +60,18 @@
                 {
                     string fileLocation = file.Split('|')[1];
                     string fileDesc = file.Split('|')[0];
-                    filesList.AppendFormat("<tr><td colspan='2'><a href=\"{0}{1}\" target='_blank'>{2} </a>",handLoc, fileLocation, fileDesc);
+                    filesList.AppendFormat("<tr><td colspan='2'><a href=\"{0}{1}\" target='_blank'>{2} </a>", handLoc, fileLocation, fileDesc);
                     filesList.Append("</td></tr>");
                 } // end of files loop
                 @Html.Raw(filesList)
             }
         </table>
+        <h3 class="short_headline"> OnDemand Recording</h3>
+        <p style="text-align: center; font-family: arial, helvetica, sans-serif; font-size: larger;">
+            <a target="_blank" href="@ConfigurationManager.AppSettings["wmvrepository"]@Model.RecordingUrl">Click here to view the Webinar.</a>
+            <br />
+        </p>
+
         <div class="description">
             @Html.Raw(Model.DescriptionLong)
         </div>

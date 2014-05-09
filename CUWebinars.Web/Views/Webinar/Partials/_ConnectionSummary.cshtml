@@ -2,4 +2,32 @@
 @using System.Text
 @model OrderRow
 
+@{
 
+    var eventID = Model.Webinar.WebinarKey;
+    eventID = eventID.Insert(6, "-").Insert(3, "-");
+    //var eventPass = "Pass";
+    var teleconf = Model.Webinar.AccessPhone;
+    var accessCode = Model.Webinar.AccessCode;
+}
+ 	
+<div id="showConnectionInfo">
+    <table style="font-size: smaller;" width="250px">
+        <tr>
+            <td colspan="2" >
+                <p>This link will become active 15-20 minutes prior to the scehuled start time of the event and connect you directly into the webinar.<br/> <a href="@Model.JoinURL" target="_JoinWebinar">@Model.JoinURL</a></p>
+            </td>
+        </tr>
+        <tr>
+            <td class="audio" colspan="2"><font size="-2">Audio is delivered directly to your workstation. Or use the information below to connect via your telephone.</font></td>
+        </tr>
+        <tr>
+            <td class="propLabel side_td1">Teleconference:</td>
+            <td class="propValue side_td2">@teleconf</td>
+        </tr>
+        <tr>
+            <td class="propLabel bottom_td1">Access Code:</td>
+            <td class="propValue bottom_td2">@accessCode</td>
+        </tr>
+    </table>
+</div>

@@ -17,8 +17,7 @@
         <div class="span9 primary-column">
             <h3>
                 Upcoming Events <span style="font-weight: normal; font-size: small; color: Green;">
-                    (found
-                    @Model.Scheduled.Count.ToString())
+                    (found @Model.Scheduled.Count.ToString())
                 </span>
             </h3>
             <ul class="s-accordion faq fancy">
@@ -28,7 +27,8 @@
                     {
                         <li class="s-wrap">
                             @{
-                        var row = scheduled.OrderRows.Single();
+                                
+                        var row = scheduled.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
                             }
                             <h4 class="trigger" id="upcoming-@row.idWebinar"><a href="#">@row.Webinar.Title<i class="icon-plus-sign"></i></a></h4>
                             <div class="s-content">
@@ -40,19 +40,19 @@
                                     @*Presented by @row.Webinar.Presenter.WebUser.FullName<br />*@
                                     <i>@Html.DisplayDate(row.Webinar.Date)</i> @Html.DisplayTime(row.Webinar.Date, timeZ, false) - @Html.DisplayTime(row.Webinar.Date, row.Webinar.Duration, timeZ)<br />
                                     <span id="showRegType_@(row.idWebinar)" class="regType">
-                                        Registration Type: @scheduled..OptionLabel.Replace(" Only", " ") &nbsp;&nbsp;
-
+                                        Registration Type: @row.RegistrationType.OptionLabel.Replace(" Only", " ") &nbsp;&nbsp;
                                     </span>
                                 </p>
-                                @if (row.Webinar.ConnectionInfo != null || row.Webinar.ConnectionInfo != "")
+                                @if (row.Webinar.Status == WebinarStatus.Active)
                                 {
 
-                                    var eventID = "eID";
-                                    var eventPass = "Pass";
-                                    var teleconf = "phone";
-                                    var accessCode = "areaCode";
+                                    var eventID = row.Webinar.WebinarKey;
+                                    eventID = eventID.Insert(6, "-").Insert(3, "-");
+                                    //var eventPass = "Pass";
+                                    var teleconf = row.Webinar.AccessPhone;
+                                    var accessCode = row.Webinar.AccessCode;
 
-                                    if (scheduled.OrderRows.SingleOrDefault().RegistrationType.ShowLiveNotifications == "Yes")
+                                    if (row.RegistrationType.ShowLiveNotifications == "Yes")
                                     {
                                         <div class="ReverseHead">&nbsp;&nbsp;Connection Summary</div>
                                         <div id="showConnectionInfo">
@@ -60,15 +60,11 @@
                                                 <table width="400px">
                                                     <tr>
                                                         <td class="propLabel top_td1">URL:</td>
-                                                        <td class="propValue top_td2"><a href="http://www.JoinWebinar.com" target="_JoinWebinar">http://www.JoinWebinar.com</a></td>
+                                                        <td class="propValue top_td2"><a href="@row.JoinURL" target="_JoinWebinar">@row.JoinURL</a></td>
                                                     </tr>
                                                     <tr>
                                                         <td class="side_td1 propLabel">Webinar ID:</td>
                                                         <td class="propValue side_td2">@eventID</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="propLabel side_td1">Password:</td>
-                                                        <td class="propValue side_td2">@eventPass</td>
                                                     </tr>
                                                     <tr>
                                                         <td class="audio" colspan="2"><font size="-2">Audio is delivered directly to your workstation (sound-card and speakers required). Or use the information below to connect via your telephone.</font></td>

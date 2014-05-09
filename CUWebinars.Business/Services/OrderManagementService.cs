@@ -563,10 +563,14 @@ namespace CUWebinars.Business.Services
             //0 = attendee
             //2 = panelist
             //1 = organizer
-            string orgKey = "922930"; //steve's
-            //string orgKey = "901873";//marks
-            string access_token = "5jxY3KZL48HWknOaOEP2eIzVmOTS"; //steve's
-            //string access_token = "JIOHRkkCvmIKDY8QO0S4msbYH48N";//mark's
+            var webinar = _webinarRepository.FindById(webinarId);
+            string orgKey = webinar.OrganizerKey;
+            //string orgKey = "922930"; //steve's
+            ////string orgKey = "901873";//marks
+            string access_token = webinar.OrganizerOAuthKey;
+            //string access_token = "5jxY3KZL48HWknOaOEP2eIzVmOTS"; //steve's
+            ////string access_token = "JIOHRkkCvmIKDY8QO0S4msbYH48N";//mark's
+            
 
             string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/" + webinarKey + "/registrants";
 
@@ -595,10 +599,10 @@ namespace CUWebinars.Business.Services
 
             try
             {
+                _logger.Info("CreateRegistrantKey starts: " + billingEmail + ", " + webinarKey);
                 HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse();
                 // Get the stream associated with the response.
                 Stream receiveStream = response.GetResponseStream();
-                _logger.Info("CreateRegistrantKey: " + billingEmail + ", " + webinarKey);
 
                 // Pipes the stream to a higher level stream reader with the required encoding format. 
                 StreamReader readStream = new StreamReader(receiveStream, Encoding.UTF8);
@@ -608,11 +612,12 @@ namespace CUWebinars.Business.Services
                 response.Close();
                 readStream.Close();
 
-                _logger.Info("CreateRegistrantKey: " + billingEmail + ", " + webinarKey + " - Response = " + myResponse);
+                _logger.Info("CreateRegistrantKey returns: " + billingEmail + ", " + webinarKey + " - Response = " + myResponse);
                 return myResponse;
             }
             catch (WebException webException)
             {
+                _logger.Error("CreateRegistrantKey WebException: " + billingEmail + ", " + webinarKey + ". ExceptionMsg = " + webException.Message);
                 var httpWebResponse = webException.Response as HttpWebResponse;
 
                 if (httpWebResponse != null &&
@@ -625,8 +630,7 @@ namespace CUWebinars.Business.Services
                     {
                         responsePayload = responsStream.ReadToEnd();
                     }
-                    _logger.Error("CreateRegistrantKey WebException: " + billingEmail + ", " + webinarKey + ". Payload = " + responsePayload);
-
+                    
                     return responsePayload;
                 }
             }

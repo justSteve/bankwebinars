@@ -140,7 +140,6 @@
         </section>
         <!--*** add class "holy-grail" to row-fluid class to make a three column skinny, fat, skinny layout ***-->
         <div class="span6">
-
             <div class="description">
                 @Html.Raw(Model.Webinar.DescriptionLong)
             </div>
@@ -160,15 +159,13 @@
                 </h2>
                 @Html.Raw(Model.Webinar.WhoAttend)
             </div>
-
             <hr />
         </div>
 
+
         <section class="span3">
             <aside class="widget">
-
                 <h5 class="short_headline"><span>Date/Time</span></h5>
-
                 <b>@Html.DisplayDate(Model.Webinar.Date)</b><br />
                 <span>@Html.Raw(showUsersTimeFormat)</span>
                 <div id="ceu">
@@ -180,7 +177,9 @@
             @Html.Partial("Partials/_RegistrationSummary")
             <!-- close .widget -->
             <aside class="widget">
-                <h5 class="short_headline"><span>Topics</span></h5>
+                <h5 class="short_headline">
+                    <span>Topics</span>
+                </h5>
                 <ul>
                     @foreach (var webinarTopic in ViewBag.topics)
                     {

@@ -126,6 +126,12 @@
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="LogentriesCore">
+      <HintPath>..\packages\logentries.core.2.4.4\lib\net40\LogentriesCore.dll</HintPath>
+    </Reference>
+    <Reference Include="LogentriesNLog">
+      <HintPath>..\packages\logentries.nlog.2.2.0\lib\net40\LogentriesNLog.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.ApplicationServer.Caching.Client, Version=101.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\WindowsAzure.Caching.1.7.0.0\lib\net35-full\Microsoft.ApplicationServer.Caching.Client.dll</HintPath>
@@ -205,6 +211,9 @@
     <Reference Include="Ninject.Web.Mvc, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Ninject.MVC3.3.2.0.0\lib\net45-full\Ninject.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog">
+      <HintPath>..\packages\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
     </Reference>
     <Reference Include="RazorEngine">
       <HintPath>..\packages\RazorEngine.3.4.1\lib\net45\RazorEngine.dll</HintPath>
@@ -452,7 +461,8 @@
     <None Include="App_Data\Deploy\Publish-AzureWebsite.ps1" />
     <Content Include="App_Data\Orders\OrderEntry.csv" />
     <Content Include="App_Data\Orders\PrepsDbForOrderImportTesting.txt" />
-    <Content Include="App_Data\Orders\ProblemRows.txt" />
+    <Content Include="App_Data\Orders\RegistrationTypeMapping.txt" />
+    <Content Include="App_Data\Orders\ResetsDb.sql" />
     <Content Include="Content\css\affiliateCheckout.css" />
     <Content Include="Content\css\affStyling.css" />
     <Content Include="Content\css\anytime.css" />
@@ -892,6 +902,7 @@
     <Content Include="Membership\Email\EmailTemplates\EmailChangedEvent_Subject.cshtml" />
     <Content Include="App_Data\Orders\SampleData.csv" />
     <Content Include="App_Data\Orders\SampleData.xlsx" />
+    <Content Include="App_Data\Orders\newCUOrders.xls" />
     <None Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Body.cshtml" />
     <None Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Subject.cshtml" />
     <Content Include="favicon.ico" />
