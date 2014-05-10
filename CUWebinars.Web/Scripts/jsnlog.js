@@ -67,7 +67,16 @@ var JL;
     JL.enabled;
     JL.maxMessages;
     JL.clientIP;
-    JL.requestId;
+
+    // Initialise requestId to empty string. If you don't do this and the user
+    // does not set it via setOptions, then the JSNLog-RequestId header will
+    // have value "undefined", which doesn't look good in a log.
+    //
+    // Note that you always want to send a requestId as part of log requests,
+    // otherwise the server side component doesn't know this is a log request
+    // and may create a new request id for the log request, causing confusion
+    // in the log.
+    JL.requestId = '';
 
     /**
     Copies the value of a property from one object to the other.
@@ -425,6 +434,7 @@ var JL;
                 xhr.open('POST', this.url);
 
                 xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.setRequestHeader('JSNLog-RequestId', JL.requestId);
                 xhr.send(json);
             } catch (e) {
             }
@@ -645,6 +655,16 @@ var JL;
     })();
     JL.Logger = Logger;
 
+    function createAjaxAppender(appenderName) {
+        return new AjaxAppender(appenderName);
+    }
+    JL.createAjaxAppender = createAjaxAppender;
+
+    function createConsoleAppender(appenderName) {
+        return new ConsoleAppender(appenderName);
+    }
+    JL.createConsoleAppender = createConsoleAppender;
+
     // -----------------------
     var defaultAppender = new AjaxAppender("");
 
@@ -660,16 +680,6 @@ var JL;
         level: JL.getDebugLevel(),
         appenders: [defaultAppender]
     });
-
-    function createAjaxAppender(appenderName) {
-        return new AjaxAppender(appenderName);
-    }
-    JL.createAjaxAppender = createAjaxAppender;
-
-    function createConsoleAppender(appenderName) {
-        return new ConsoleAppender(appenderName);
-    }
-    JL.createConsoleAppender = createConsoleAppender;
 })(JL || (JL = {}));
 
 // Support CommonJS module format
@@ -684,5 +694,13 @@ if (typeof define == 'function' && define.amd) {
     define(function () {
         return JL;
     });
+}
+
+// If the __jsnlog_configure global function has been
+// created, call it now. This allows you to create a global function
+// setting logger options etc. inline in the page before jsnlog.js
+// has been loaded.
+if (typeof __jsnlog_configure == 'function') {
+    __jsnlog_configure();
 }
 //# sourceMappingURL=jsnlog.js.map

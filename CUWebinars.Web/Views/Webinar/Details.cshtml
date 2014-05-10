@@ -53,8 +53,10 @@
     if (ViewBag.userOwnsThisEvent > 0)
     {
         <script language="javascript">
-            $(document).ready(function() {
+
+            $(document).ready(function () {
                 $("#SignUpFormContainer").hide();
+
             });
         </script>
 
@@ -72,16 +74,18 @@
 
 <script type="text/javascript">
 
-    CheckoutInProcess = "@(CheckoutInProcess)";
-    whichStep = "@(whichStep)";
-    orderRowID = @rowID;
-    isUserLogged = @isUserLogged;
+        CheckoutInProcess = "@(CheckoutInProcess)";
+        whichStep = "@(whichStep)";
+        orderRowID = @rowID;
+        isUserLogged = @isUserLogged;
 
-    $(document).ready(function() {
+        $(document).ready(function() {
+            JL().info({
+                "msg": "Details loaded @Model.Webinar.idWebinar for idUser @idUser."
+            });
+        });
 
-    });
-
-</script>
+    </script>
 
 <style>
     .icon-question-sign {
@@ -163,7 +167,7 @@
         </div>
 
 
-        <section class="span3">
+        <div class="span3">
             <aside class="widget">
                 <h5 class="short_headline"><span>Date/Time</span></h5>
                 <b>@Html.DisplayDate(Model.Webinar.Date)</b><br />
@@ -202,9 +206,10 @@
                     </form>
                 </aside>*@
             <!--close aside widget-->
-        </section>
+        </div>
         <!--close section tertiary-column sidebar span3-->
-    </div>@{
+    </div>
+    @{
         if ((int)Model.Webinar.Status < 4 && ViewBag.userOwnsThisEvent < 1)
         {
             <div id="SignUpFormContainer" class="row-fluid">

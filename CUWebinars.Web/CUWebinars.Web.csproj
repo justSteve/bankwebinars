@@ -120,8 +120,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Glimpse.Mvc4.1.5.3\lib\net40\Glimpse.Mvc4.dll</HintPath>
     </Reference>
-    <Reference Include="JSNLog">
-      <HintPath>..\packages\JSNLog.2.6.5.0\lib\net40\JSNLog.dll</HintPath>
+    <Reference Include="JSNLog, Version=2.6.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\JSNLog.2.6.11.0\lib\net40\JSNLog.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
@@ -129,8 +130,8 @@
     <Reference Include="LogentriesCore">
       <HintPath>..\packages\logentries.core.2.4.4\lib\net40\LogentriesCore.dll</HintPath>
     </Reference>
-    <Reference Include="LogentriesNLog">
-      <HintPath>..\packages\logentries.nlog.2.2.0\lib\net40\LogentriesNLog.dll</HintPath>
+    <Reference Include="LogentriesLog4net">
+      <HintPath>..\packages\logentries.log4net.2.4.2\lib\net40\LogentriesLog4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.ApplicationServer.Caching.Client, Version=101.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -1006,6 +1007,7 @@
     <None Include="Properties\PublishProfiles\CUWebinars - Web Deploy.pubxml" />
     <Content Include="Scripts\Autocomplete\css\ui-lightness\images\Thumbs.db" />
     <Content Include="App_Data\Deploy\DeployScript.ps1" />
+    <None Include="Properties\PublishProfiles\cuwebinars1 %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\cuwebinars1.pubxml" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
