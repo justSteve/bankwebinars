@@ -1,6 +1,6 @@
 @model AdditionalLocationViewModel
 @{
-    if (Model.Webinar.Status == WebinarStatus.Scheduled)
+    if (Model.Webinar.Status == WebinarStatus.Scheduled || Model.Webinar.Status == WebinarStatus.Active || Model.Webinar.Status == WebinarStatus.InProgress)
     {
         //Model.AddAdditionalLocationViewModel = new AddAdditionalLocationViewModel
         //{

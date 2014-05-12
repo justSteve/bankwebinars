@@ -85,36 +85,36 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-        [AcceptVerbs(HttpVerbs.Post)]
-        //[Authorize(Roles = AppRoles.CustomerAffiliateAdmin)]
-        public ActionResult ConfirmOrder(int ID)
-        {
-            var model = CheckOutViewModel(ID);
+        //[AcceptVerbs(HttpVerbs.Post)]
+        ////[Authorize(Roles = AppRoles.CustomerAffiliateAdmin)]
+        //public ActionResult ConfirmOrder(int ID)
+        //{
+        //    var model = CheckOutViewModel(ID);
 
-            var order = model.CheckoutOptionsViewModel.Order;
+        //    var order = model.CheckoutOptionsViewModel.Order;
 
-            if (Request["referred"] != null && WebUtility.HtmlDecode(Request["referred"]) != "How did you hear about this webinar?")
-            {
-                order.Origin = Request["referred"] + Environment.NewLine + order.Origin;
-                //ViewData["referred"] = Request["referred"];
-            }
-            //OrderFacade.Instance.Submit(order);
-            Session["IsOrderPaid"] = true;
+        //    if (Request["referred"] != null && WebUtility.HtmlDecode(Request["referred"]) != "How did you hear about this webinar?")
+        //    {
+        //        order.Origin = Request["referred"] + Environment.NewLine + order.Origin;
+        //        //ViewData["referred"] = Request["referred"];
+        //    }
+        //    //OrderFacade.Instance.Submit(order);
+        //    Session["IsOrderPaid"] = true;
 
-            _logger.Info("User Submits order: " + order.idOrder);
-            Session.Add("LastOrderId", Session["CurrentOrderId"]);
-            Session.Remove("CurrentOrderId");
-            Session.Remove("IsOrderPaid");
+        //    _logger.Info("User Submits order: " + order.idOrder);
+        //    Session.Add("LastOrderId", Session["CurrentOrderId"]);
+        //    Session.Remove("CurrentOrderId");
+        //    Session.Remove("IsOrderPaid");
 
-            //new MailController().OrderConfirmationEmail(row).Deliver();
+        //    //new MailController().OrderConfirmationEmail(row).Deliver();
 
-            return Json(new
-            {
-                success = "success",
-                orderRowID = order.OrderRows.SingleOrDefault().idOrderRow,
-                msg = "OrderFacade.Instance.BuildConnectionInfo(order.Rows.SingleOrDefault())"
-            }, JsonRequestBehavior.AllowGet);
-        }
+        //    return Json(new
+        //    {
+        //        success = "success",
+        //        orderRowID = order.OrderRows.SingleOrDefault().idOrderRow,
+        //        msg = "OrderFacade.Instance.BuildConnectionInfo(order.Rows.SingleOrDefault())"
+        //    }, JsonRequestBehavior.AllowGet);
+        //}
 
 
 

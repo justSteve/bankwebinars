@@ -67,20 +67,18 @@
 <!--<![endif]-->
 <head>
 
-
-
-    <!--Start of Zopim Live Chat Script
-            <script type="text/javascript">
-        window.$zopim || (function (d, s) {
-            var z = $zopim = function (c) { z._.push(c) }, $ = z.s =
-            d.createElement(s), e = d.getElementsByTagName(s)[0]; z.set = function (o) {
-                z.set.
-                _.push(o)
-            }; z._ = []; z.set._ = []; $.async = !0; $.setAttribute('charset', 'utf-8');
-            $.src = '//cdn.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU'; z.t = +new Date; $.
-            type = 'text/javascript'; e.parentNode.insertBefore($, e)
-        })(document, 'script');
-    </script>-->
+    <!--Start of Zopim Live Chat Script-->
+    @*<script type="text/javascript">
+            window.$zopim || (function (d, s) {
+                var z = $zopim = function (c) { z._.push(c) }, $ = z.s =
+                d.createElement(s), e = d.getElementsByTagName(s)[0]; z.set = function (o) {
+                    z.set.
+                    _.push(o)
+                }; z._ = []; z.set._ = []; $.async = !0; $.setAttribute('charset', 'utf-8');
+                $.src = '//cdn.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU'; z.t = +new Date; $.
+                type = 'text/javascript'; e.parentNode.insertBefore($, e)
+            })(document, 'script');
+        </script>*@
     <!--End of Zopim Live Chat Script-->
     @*<script type='text/javascript'>
             window.Muscula = {
@@ -100,17 +98,14 @@
                 }
             })();
         </script>*@
-    @*@Html.Raw(JSNLog.JavascriptLogging.Configure())
+    @Html.Raw(JSNLog.JavascriptLogging.Configure())
 
 
-        <script type="text/javascript">
-            // "mylogger" logs to just the console
-            var consoleAppender = JL.createConsoleAppender('consoleAppender');
-            JL("mylogger").setOptions({ "appenders": [consoleAppender] });
-        </script>*@
-    @*<script language="javascript">
-            JL().fatal("log message");
-        </script>*@
+    <script type="text/javascript">
+        // "mylogger" logs to just the console
+        var consoleAppender = JL.createConsoleAppender('consoleAppender');
+        JL("mylogger").setOptions({ "appenders": [consoleAppender] });
+    </script>
 
     <title>@ViewBag.Title</title>
     <!-- Meta Data ================ -->
@@ -190,7 +185,7 @@
 
         <!--this is the login for the user-->
         @Html.Partial("_LoginPartial")
-        @Html.ActionLink("Membership Notifications", "MembershipNotifications", "MembershipNotificationOps")
+        @*@Html.ActionLink("Membership Notifications", "MembershipNotifications", "MembershipNotificationOps")*@
 
 
         <!--close user nav
@@ -277,10 +272,10 @@
                             }
                         </li>*@
 
-                    @*@if (Request.IsAuthenticated)
-                        {
-                            <li><a href="/Account/MyWebinars">My Webinars</a></li>
-                        }*@
+                    @if (Request.IsAuthenticated)
+                    {
+                        <li><a href="/Account/MyWebinars">My Webinars</a></li>
+                    }
                 </ul>
             </nav>
             <!-- close / #main_menu -->
@@ -417,5 +412,6 @@
 
 
     @RenderSection("scripts", required: false)
+
 </body>
 </html>

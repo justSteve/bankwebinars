@@ -49,55 +49,6 @@ namespace CUWebinars.Web.Controllers.api
         //}
         //   
 
-        //http://localhost:5556/api/order
-        //Host: localhost:5556
-        //Content-Type: application/json; charset=utf-8
-        //Connection: keep-alive
-        //Accept: application/json, text/javascript, */*; q=0.01:
-        //Content-Length: 1059
-
-        /*
-        {
-          "AdditionalLocations": [    
-            "dave@turing.com",
-            "jed@turing.com"
-            ],
-          "AffiliateComments": "Affiliate comments",
-          "BillingAddress": {    
-            "AddressType": "Billing",
-            "Name": "Alan Turing",
-            "Phone": "555-555-5555",
-            "StreetAddress": "968 Wildcat Dr",
-            "StreetAddress2": "",
-            "City": "Del Rio",
-            "Zip": "5000",
-            "State": "Tx",
-            "Country": "USA",    
-          },
-          "Email": "alanbturingt@turing.com",
-          "FirstName": "Alan",
-          "LastName": "Turing",
-          "idAffiliate": 19,
-          "idRegType": 88,  
-          "idWebinar": 437,
-          "Institution": "Some Institution",
-          "ShippingAddress": {    
-            "AddressType": "Shipping",
-            "Name": "Alan Turing",
-            "Phone": "555-555-5555",
-            "StreetAddress": "968 Wildcat Dr",
-            "StreetAddress2": "",
-            "City": "Del Rio",
-            "Zip": "5000",
-            "State": "Tx",
-            "Country": "USA",    
-          },
-          "SendNotification": "true",
-          "Title": "Mr",
-        }
-         * 
-                 * 
-                 * */
         // POST api/<controller>
         public HttpResponseMessage Post([FromBody] IList<IncomingOrderModel> model)
         {
@@ -106,13 +57,15 @@ namespace CUWebinars.Web.Controllers.api
 
             if (!ModelState.IsValid)
             {
-                return Request.CreateResponse(HttpStatusCode.Found, new { Result = "Problem with payload" });                
+                _logger.Error("Post found problem with Payload"); 
+                return Request.CreateResponse(HttpStatusCode.Found, new { Result = "Problem with payload" });
             }
 
             try
             {
                 foreach (var incomingOrderModel in model)
                 {
+                    _logger.Info("Begin import: " + incomingOrderModel.Email.Trim());
                     var email = incomingOrderModel.Email.Trim();
 
                     var firstName = incomingOrderModel.FirstName.Trim();
@@ -262,6 +215,7 @@ namespace CUWebinars.Web.Controllers.api
                         //orderRow.JoinURL = "https://www2.gotomeeting.com/join/739905466/106033865";
                     _orderManagementService.SaveOrderChanges(importedOrder);
                     idOfLastOrder = importedOrder.idOrder;
+                    _logger.Info("Posted idOrder=" + idOfLastOrder);
                 }
 
                 httpResponseMessage = Request.CreateResponse(HttpStatusCode.Created,

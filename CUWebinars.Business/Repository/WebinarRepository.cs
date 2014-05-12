@@ -9,17 +9,17 @@ using System.Linq;
 
 namespace CUWebinars.Business.Repository
 {
-    public class WebinarRepository : TTSWebinarsRepository<TTSWebinarsContext, Webinar>,  IWebinarRepository
+    public class WebinarRepository : TTSWebinarsRepository<TTSWebinarsContext, Webinar>, IWebinarRepository
     {
         public WebinarRepository()
         {
-            
+
         }
 
         public WebinarRepository(TTSWebinarsContext context)
             : base(context)
         {
-            
+
         }
 
         //public static ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -28,7 +28,8 @@ namespace CUWebinars.Business.Repository
             var webinar = items.Include(w => w.OrderRows)
                 //.Include(w => w.OptionsGroupsXrefs)
                 .Include(w => w.Presenter)
-                .Include(w => w.WebinarFiles)
+                //.Include(w => w.WebinarFiles)
+                .Include(w => w.WebinarFiles.Select(wf => wf.Webinar))
                 .Include(w => w.WebinarTopicXrefs.Select(wt => wt.Topic))
                 .Where(w => w.idWebinar == id);
 
@@ -46,7 +47,7 @@ namespace CUWebinars.Business.Repository
         {
             return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
                 .Include(w => w.Presenter.WebUser)
-                .Where(w => w.Status == WebinarStatus.Scheduled)
+                .Where(w => (w.Status == WebinarStatus.Scheduled || w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress))
                 .OrderByDescending(w => w.Date);
         }
 
@@ -71,7 +72,7 @@ namespace CUWebinars.Business.Repository
         {
             return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
                 .Include(w => w.Presenter.WebUser)
-                .Where(w => w.Status == WebinarStatus.Scheduled || w.Status == WebinarStatus.Recorded);
+                .Where(w => w.Status == WebinarStatus.Scheduled || w.Status == WebinarStatus.Recorded || w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress);
         }
 
 
@@ -102,7 +103,7 @@ namespace CUWebinars.Business.Repository
                 .Include(i => i.Presenter.WebUser)
                 .Where(w => w.WebinarTopicXrefs
                 .Any(t => t.idTopic == topicId)
-                    && (w.Status == WebinarStatus.Recorded || w.Status == WebinarStatus.Scheduled));
+                    && (w.Status == WebinarStatus.Recorded || w.Status == WebinarStatus.Scheduled || w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress));
             //Logger.Debug("TopicId=" + topicId); 
 
             return webinars;

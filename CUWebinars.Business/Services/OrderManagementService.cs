@@ -139,7 +139,7 @@ namespace CUWebinars.Business.Services
 
         //public IList<Order> GetOrdersForPostedRecordingsNotifications()
         //{
-                
+
         //}
 
         public IList<RegType> GetRegTypesByWebinarIdFrom(int id, bool detached)
@@ -425,7 +425,7 @@ namespace CUWebinars.Business.Services
 
             Clear();
         }
-        
+
         public void FireSendConnectionInfoNotificationEvent(IList<Order> orders)
         {
             foreach (var order in orders)
@@ -441,7 +441,7 @@ namespace CUWebinars.Business.Services
 
             Clear();
         }
-        
+
         public void FireSendOrderShippedNotificationEvent(IList<Order> orders)
         {
             foreach (var order in orders)
@@ -483,7 +483,7 @@ namespace CUWebinars.Business.Services
 
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder);
 
-                
+
 
                 AddEvent(new OrderSubmittedEvent<Order> { Order = updatedOrder });
 
@@ -499,9 +499,15 @@ namespace CUWebinars.Business.Services
             }
             catch (Exception exception)
             {
+                _logger.ErrorException("SaveOrderChanges", exception);
                 var msg = exception.Message;
             }
             return null;
+        }
+
+        public int CheckUserForRecordingAccess(int w, int u)
+        {
+            return _orderRepository.CheckUserForRecordingAccess(w, u);
         }
 
         public void SendConnectionInfo(Order currentOrder)
@@ -541,7 +547,7 @@ namespace CUWebinars.Business.Services
         {
 
             var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow);
-
+            _logger.Info("CreateNewOrder: " + webUser.email + "| " + orderRow.Webinar.Title + "| " + orderRow.RegistrationType.OptionLabel);
             return order;
         }
 
@@ -557,18 +563,21 @@ namespace CUWebinars.Business.Services
             //0 = attendee
             //2 = panelist
             //1 = organizer
-
-            string orgKey = "922930"; //steve's
-            //string orgKey = "901873";//marks
-            string access_token = "5jxY3KZL48HWknOaOEP2eIzVmOTS"; //steve's
-            //string access_token = "JIOHRkkCvmIKDY8QO0S4msbYH48N";//mark's
+            var webinar = _webinarRepository.FindById(webinarId);
+            string orgKey = webinar.OrganizerKey;
+            //string orgKey = "922930"; //steve's
+            ////string orgKey = "901873";//marks
+            string access_token = webinar.OrganizerOAuthKey;
+            //string access_token = "5jxY3KZL48HWknOaOEP2eIzVmOTS"; //steve's
+            ////string access_token = "JIOHRkkCvmIKDY8QO0S4msbYH48N";//mark's
+            
 
             string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/" + webinarKey + "/registrants";
 
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
-            //httpWebRequest.ContentType = "application/x-www-form-urlencoded";
+
             httpWebRequest.ContentType = "application/json";
-            //httpWebRequest.Accept = "application/json";
+
             httpWebRequest.Accept = "application/vnd.citrix.g2wapi-v1.1+json";
             httpWebRequest.Headers.Add("Authorization", "OAuth oauth_token=" + access_token);
 
@@ -590,6 +599,7 @@ namespace CUWebinars.Business.Services
 
             try
             {
+                _logger.Info("CreateRegistrantKey starts: " + billingEmail + ", " + webinarKey);
                 HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse();
                 // Get the stream associated with the response.
                 Stream receiveStream = response.GetResponseStream();
@@ -602,10 +612,12 @@ namespace CUWebinars.Business.Services
                 response.Close();
                 readStream.Close();
 
+                _logger.Info("CreateRegistrantKey returns: " + billingEmail + ", " + webinarKey + " - Response = " + myResponse);
                 return myResponse;
             }
             catch (WebException webException)
             {
+                _logger.Error("CreateRegistrantKey WebException: " + billingEmail + ", " + webinarKey + ". ExceptionMsg = " + webException.Message);
                 var httpWebResponse = webException.Response as HttpWebResponse;
 
                 if (httpWebResponse != null &&
@@ -618,11 +630,13 @@ namespace CUWebinars.Business.Services
                     {
                         responsePayload = responsStream.ReadToEnd();
                     }
+                    
                     return responsePayload;
                 }
             }
             catch (Exception ex)
             {
+                _logger.ErrorException("CreateRegistrantKey WebException: " + billingEmail + ", " + webinarKey, ex);
                 return "error";
             }
             return null;

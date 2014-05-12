@@ -1,4 +1,5 @@
-﻿@using System.Diagnostics
+﻿@using System.Configuration
+@using System.Diagnostics
 @using System.Text
 @model WebinarDetailsViewModel
 @{
@@ -17,7 +18,10 @@
     if (ViewBag.userOwnsThisEvent > 0)
     {
         RegType orderMsgs = Model.CheckoutOptionsViewModel.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType;
+        row = Model.CheckoutOptionsViewModel.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+        order = row.Order;
         string[] webinarFiles = ViewBag.WebinarFiles;
+        //ICollection<WebinarFile> webinarFiles = row.Webinar.WebinarFiles;
         var recording = "<a href='" + Model.Webinar.RecordingUrl + "' target=_blank /> Recording Playback</a>"; ;
         var showShipped = "";
         if (Model.Webinar.Status != WebinarStatus.Recorded)
@@ -31,14 +35,21 @@
             var idRegType = @orderMsgs.idRegType;
             </script>
 
-
+        foreach (var webinarFile in webinarFiles)
+        {
+            string itemDesc = webinarFile.ToString().Split('|')[0];
+            string itemPath = ConfigurationManager.AppSettings["wmvrepository"]+webinarFile.ToString().Split('|')[1];
+            //string itemDesc = webinarFile.fileDesc;
+            //string itemPath = webinarFile.fileLocation;
+            wf.Append("<a href='" + itemPath + "' target=_blank >" + itemDesc + "</a><br>");
+        }
             //webinarFiles
-            for (var i = 0; i < webinarFiles.Count(); i++)
-            {
-                string itemDesc = webinarFiles[i].Split('|')[0];
-                string itemPath = webinarFiles[i].Split('|')[1];
-                wf.Append("<a href='" + itemPath + "' target=_blank >" + itemDesc + "</a><br>");
-            }
+        //for (var i = 0; i < webinarFiles.Count(); i++)
+        //{
+        //    string itemDesc = webinarFiles[i].Split('|')[0];
+        //    string itemPath = webinarFiles[i].Split('|')[1];
+        //    wf.Append("<a href='" + itemPath + "' target=_blank >" + itemDesc + "</a><br>");
+        //}
 
             if (row.RegistrationType.ShowShippedNotifications == "Yes" && row.ShipmentDate != null)
             {
@@ -66,16 +77,15 @@
                     </ul>
                 </div>
             </aside>
-            if (Model.Webinar.Status == WebinarStatus.Scheduled)
+            if (Model.Webinar.Status == WebinarStatus.Scheduled || Model.Webinar.Status == WebinarStatus.Active || Model.Webinar.Status == WebinarStatus.InProgress)
             {
                 <h5 class="short_headline"><span>Connection Information</span></h5>
                 if (orderMsgs.ShowLiveNotifications == "Yes")
                 {
-
-                    if (Model.Webinar.ConnectionInfo != null)
+                    if (Model.Webinar.Status == WebinarStatus.Active || Model.Webinar.Status == WebinarStatus.InProgress)
                     {
                         <aside style="width: 100%" class="widget clearfix">
-                            <div>@Html.Raw(ViewBag.connectionText)</div>
+                            @Html.Partial("Partials/_ConnectionSummary", row)
                         </aside>
                     }
                     else

@@ -43,7 +43,7 @@
             @{
                 if (Model.Webinar.Duration > 1)
                 {
-                    if (Model.Webinar.Status == WebinarStatus.Scheduled)
+                    if (Model.Webinar.Status == WebinarStatus.Scheduled ||Model.Webinar.Status == WebinarStatus.Active ||Model.Webinar.Status == WebinarStatus.InProgress)
                     {
                         <text>window.open('http://form.jotform.us/form/32525417714149?webinarid=@Model.Webinar.idWebinar&webinarTitle=@Model.Webinar.Title', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
                     }
@@ -54,7 +54,7 @@
                 }
                 if (Model.Webinar.Duration < 2)
                 {
-                    if (Model.Webinar.Status == WebinarStatus.Scheduled)
+                    if (Model.Webinar.Status == WebinarStatus.Scheduled || Model.Webinar.Status == WebinarStatus.Active || Model.Webinar.Status == WebinarStatus.InProgress)
                     {
                         <text>window.open('http://form.jotform.us/form/32525511772148?webinarid=@Model.Webinar.idWebinar&webinarTitle=@Model.Webinar.Title', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
                     }
@@ -69,12 +69,12 @@
     
 
     <span>
-        Choose the attendance RegType that's right for you! <a href="#AttendRegTypes" data-toggle="modal">(learn more)</a>
+        Choose the attendance option that's right for you! <a href="#AttendRegTypes" data-toggle="modal">(learn more)</a>
     </span>
 
     <div class="pull-right">
         @*@Html.Partial("_DisplayRowPrice", new ViewDataDictionary(row))
-            @Html.Raw(TTSTrain.Webinars.WebEntry.Support.DisplayRowPrice.BuildRowPrice(workingRow))*@
+            @Html.Raw(TTSTr6ain.Webinars.WebEntry.Support.DisplayRowPrice.BuildRowPrice(workingRow))*@
     </div>
     <div id="ModeOptions">
         <dl>
@@ -124,7 +124,7 @@
 
         </dl>
         @{
-            if (Model.Webinar.Status == WebinarStatus.Scheduled)
+            if (Model.Webinar.Status == WebinarStatus.Scheduled || Model.Webinar.Status == WebinarStatus.Active || Model.Webinar.Status == WebinarStatus.InProgress)
             {
                 <div id="displayAddLoc">
                     @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationsView.cshtml", Model.AdditionalLocationViewModel)

@@ -21,17 +21,18 @@ namespace CUWebinars.Business.Notification.Email
             {
                 smtp.Timeout = 5000;
 
-                if (notificationMessage.Addresses != null)
-                {
-                    foreach (var address in notificationMessage.Addresses)
-                    {
-                        mailMessage.To.Add(new MailAddress(address));
-                    }
-                }
-                else
-                {
-                    mailMessage.To.Add(new MailAddress(notificationMessage.To));
-                }
+                mailMessage.To.Add(new MailAddress("steve@ttstrain.com"));
+                //if (notificationMessage.Addresses != null)
+                //{
+                //    foreach (var address in notificationMessage.Addresses)
+                //    {
+                //        mailMessage.To.Add(new MailAddress(address));
+                //    }
+                //}
+                //else
+                //{
+                //    mailMessage.To.Add(new MailAddress(notificationMessage.To));
+                //}
 
                 try
                 {
@@ -44,6 +45,7 @@ namespace CUWebinars.Business.Notification.Email
                 }
                 catch (SmtpException e)
                 {
+                    
                     //Tracing.Error("[SmtpMessageDelivery.Send] SmtpException: " + e.Message);
                 }
                 catch (Exception e)

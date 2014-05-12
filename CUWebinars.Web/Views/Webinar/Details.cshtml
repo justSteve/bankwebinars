@@ -53,8 +53,10 @@
     if (ViewBag.userOwnsThisEvent > 0)
     {
         <script language="javascript">
-            $(document).ready(function() {
+
+            $(document).ready(function () {
                 $("#SignUpFormContainer").hide();
+
             });
         </script>
 
@@ -72,16 +74,18 @@
 
 <script type="text/javascript">
 
-    CheckoutInProcess = "@(CheckoutInProcess)";
-    whichStep = "@(whichStep)";
-    orderRowID = @rowID;
-    isUserLogged = @isUserLogged;
+        CheckoutInProcess = "@(CheckoutInProcess)";
+        whichStep = "@(whichStep)";
+        orderRowID = @rowID;
+        isUserLogged = @isUserLogged;
 
-    $(document).ready(function() {
+        $(document).ready(function() {
+            JL().info({
+                "msg": "Details loaded @Model.Webinar.idWebinar for idUser @idUser."
+            });
+        });
 
-    });
-
-</script>
+    </script>
 
 <style>
     .icon-question-sign {
@@ -140,7 +144,6 @@
         </section>
         <!--*** add class "holy-grail" to row-fluid class to make a three column skinny, fat, skinny layout ***-->
         <div class="span6">
-
             <div class="description">
                 @Html.Raw(Model.Webinar.DescriptionLong)
             </div>
@@ -160,15 +163,13 @@
                 </h2>
                 @Html.Raw(Model.Webinar.WhoAttend)
             </div>
-
             <hr />
         </div>
 
-        <section class="span3">
+
+        <div class="span3">
             <aside class="widget">
-
                 <h5 class="short_headline"><span>Date/Time</span></h5>
-
                 <b>@Html.DisplayDate(Model.Webinar.Date)</b><br />
                 <span>@Html.Raw(showUsersTimeFormat)</span>
                 <div id="ceu">
@@ -176,12 +177,13 @@
                         @Html.Raw(ceuShort)
                     </a>
                 </div>
-
             </aside>
             @Html.Partial("Partials/_RegistrationSummary")
             <!-- close .widget -->
             <aside class="widget">
-                <h5 class="short_headline"><span>Topics</span></h5>
+                <h5 class="short_headline">
+                    <span>Topics</span>
+                </h5>
                 <ul>
                     @foreach (var webinarTopic in ViewBag.topics)
                     {
@@ -197,21 +199,21 @@
                 @{Html.RenderPartial("Partials/_AddToMailingBox");}
             </aside>
             <!--close aside .widget -->
-
             @*<aside class="widget">
-                <h5 class="short_headline"><span>Search</span></h5>
-                <form class="searchform" method="get">
-                    <input type="search" class="span12" value="type and hit enter" onfocus="this.value=''" onblur="this.value='type and hit enter'" />
-                </form>
-            </aside>*@
+                    <h5 class="short_headline"><span>Search</span></h5>
+                    <form class="searchform" method="get">
+                        <input type="search" class="span12" value="type and hit enter" onfocus="this.value=''" onblur="this.value='type and hit enter'" />
+                    </form>
+                </aside>*@
             <!--close aside widget-->
-        </section>
+        </div>
         <!--close section tertiary-column sidebar span3-->
-    </div>@{
-        if ((int)Model.Webinar.Status < 4)
+    </div>
+    @{
+        if ((int)Model.Webinar.Status < 4 && ViewBag.userOwnsThisEvent < 1)
         {
             <div id="SignUpFormContainer" class="row-fluid">
-                @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new {id = "RegisterAdditionalLocationsForm"}))
+                @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new { id = "RegisterAdditionalLocationsForm" }))
                 {
                     <div class="content offset2 span8 well">
 

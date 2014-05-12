@@ -186,38 +186,38 @@ $(document).ready(function () {
 /*================================================================*/
 /*	SEARCH
 /*================================================================*/
-if (document.documentElement.clientWidth < 767) {
-    $(document).ready(function () {
-        $('.search input').hide();
-        $('#search-trigger').click(function () {
-            $('.search input').slideToggle('fast').focus();
-            $('.preheader .user, .preheader .phone').slideToggle('fast');
-            $(this).toggleClass('active');
-        });
-    });
-}
+//if (document.documentElement.clientWidth < 767) {
+//    $(document).ready(function () {
+//        $('.search input').hide();
+//        $('#search-trigger').click(function () {
+//            $('.search input').slideToggle('fast').focus();
+//            $('.preheader .user, .preheader .phone').slideToggle('fast');
+//            $(this).toggleClass('active');
+//        });
+//    });
+//}
 
-if (document.documentElement.clientWidth > 767) {
-    $(document).ready(function () {
-        $('.search input').hide();
-        $('#search-trigger').click(function () {
-            $('.search input').slideToggle('fast').focus();
-            $(this).toggleClass('active');
-        });
-    });
-}
+//if (document.documentElement.clientWidth > 767) {
+//    $(document).ready(function () {
+//        $('.search input').hide();
+//        $('#search-trigger').click(function () {
+//            $('.search input').slideToggle('fast').focus();
+//            $(this).toggleClass('active');
+//        });
+//    });
+//}
 
 /*================================================================*/
 /*	FORGOT PASSWORD (on login page)
 /*================================================================*/
 
-$(document).ready(function () {
+//$(document).ready(function () {
 
-    $('.forgot-password').hide();
-    $('.forgotpw, .forgot-password .closeforgot').click(function () {
-        $('.forgot-password').slideToggle('fast').focus();
-    });
-});
+//    $('.forgot-password').hide();
+//    $('.forgotpw, .forgot-password .closeforgot').click(function () {
+//        $('.forgot-password').slideToggle('fast').focus();
+//    });
+//});
 
 
 /*================================================================*/

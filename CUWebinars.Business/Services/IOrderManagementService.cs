@@ -43,5 +43,6 @@ namespace CUWebinars.Business.Services
         Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id);
         OrderRow LoadOrderRow(int id);
         Order SaveOrderChanges(Order currentOrder);
+        int CheckUserForRecordingAccess(int i, int i1);
     }
 }

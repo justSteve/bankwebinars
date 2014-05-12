@@ -4,10 +4,10 @@
 @{
 
     var idPresenter = Model.Webinar.Presenter.idUser;
-    
+
     IList<Webinar> upList = Model.Webinar.Presenter
         .Webinars
-        .Where(w => w.Status == WebinarStatus.Scheduled && w.idPresenter == idPresenter
+        .Where(w => (w.Status == WebinarStatus.Scheduled || w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress) && w.idPresenter == idPresenter
          && w.idWebinar != Model.Webinar.idWebinar).ToList();
     IList<Webinar> recList = Model.Webinar.Presenter
         .Webinars.Where(w => w.Status == WebinarStatus.Recorded && w.idPresenter == idPresenter
@@ -19,36 +19,30 @@
             <div>
                 @if (upList.Count > 0)
                 {
+
                     <h4>Upcoming</h4>
                     <ul class="navigation small">
-
 
                         @foreach (var title in upList)
                         {
                             if (title.idWebinar != Model.Webinar.idWebinar)
                             {
-                                <li>@Html.ActionLink(@title.Title, "Details", "Webinar", new {target = "_new"})</li>
-                            }
-                            else
-                            {
-                                <span>This Event</span>
+                                <li>@Html.ActionLink(@title.Title, "Details", "Webinar", new { target = "_new" })</li>
                             }
                         }
                     </ul>
                 }
                 @if (recList.Count > 0)
                 {
+                    var i = 0;
                     <h4>OnDemand</h4>
                     <ul class="navigation small">
                         @foreach (var title in recList)
                         {
-                            if (title.idWebinar != Model.Webinar.idWebinar)
+                            i++;
+                            if (title.idWebinar != Model.Webinar.idWebinar && i < 7)
                             {
-                                <li>@Html.ActionLink(@title.Title, "Details", "Webinar", new {target = "_new"})</li>
-                            }
-                            else
-                            {
-                                <span>This Event</span>
+                                <li>@Html.ActionLink(@title.Title, "Details", "Webinar", new { target = "_new" })</li>
                             }
                         }
                     </ul>

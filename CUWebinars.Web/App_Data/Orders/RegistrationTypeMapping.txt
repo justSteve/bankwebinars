@@ -1,0 +1,5 @@
+﻿          WHEN 'Live Session Only - $155' THEN '97'
+          WHEN 'OnDemand Recording Only - $155' THEN '98'
+          WHEN 'CD-ROM and Hardcopy Handouts - $195' THEN '99'
+          WHEN 'Live Plus OnDemand Weblinks - $225' THEN '100'
+          WHEN 'Premier Package - $255' THEN '101'

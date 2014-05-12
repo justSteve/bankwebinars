@@ -42,11 +42,11 @@ namespace CUWebinars.Business.Notification.Handlers
             catch (NullReferenceException nullReferenceException)
             {
                 _logger.Error(string.Format("Event processing failed. Check that BillingEmail has a value for OrderId {0}", evt.Order.idOrder)
-                    , nullReferenceException);                
+                    , nullReferenceException);
             }
             catch (Exception exception)
             {
-                _logger.Error(string.Format("Event processing failed for OrderId {0}", evt.Order.idOrder), exception);                
+                _logger.Error(string.Format("Event processing failed for OrderId {0}", evt.Order.idOrder), exception);
             }
         }
     }

@@ -27,7 +27,7 @@ namespace CUWebinars.Web.Core
             {
                 textFieldParser.TextFieldType = FieldType.Delimited;
                 textFieldParser.SetDelimiters(",");
-                textFieldParser.HasFieldsEnclosedInQuotes = false;
+                textFieldParser.HasFieldsEnclosedInQuotes = true;
                 textFieldParser.CommentTokens = new[] {"PaymentStatus"};
                     //  Discard header - PaymentStatus is first cell at A,1
 

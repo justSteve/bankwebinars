@@ -57,13 +57,13 @@ namespace CUWebinars.Business.Repository
             }
         }
 
-        public OrderRow CreateOrderRow(Webinar webinar, 
-            IList<AdditionalLocation> additionalLocations, 
+        public OrderRow CreateOrderRow(Webinar webinar,
+            IList<AdditionalLocation> additionalLocations,
             RegType registrationType)
         {
             try
             {
-                var strongTypedContext = (TTSWebinarsContext) db;
+                var strongTypedContext = (TTSWebinarsContext)db;
 
                 var newOrderRow = strongTypedContext.OrderRows.Create();
 
@@ -95,7 +95,7 @@ namespace CUWebinars.Business.Repository
         {
             try
             {
-                var strongTypedContext = (TTSWebinarsContext) db;
+                var strongTypedContext = (TTSWebinarsContext)db;
 
                 var additionalLocation = strongTypedContext.AdditionalLocation.Create();
 
@@ -115,7 +115,7 @@ namespace CUWebinars.Business.Repository
                     {
                         Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
                             validationError.ErrorMessage);
-                        
+
                     }
                 }
                 throw;
@@ -144,26 +144,26 @@ namespace CUWebinars.Business.Repository
 
         public IList<Order> GetOrdersForLiveEventNotifications(int idWebinar)
         {
-            var orders = ((TTSWebinarsContext) db).OrderRows
+            var orders = ((TTSWebinarsContext)db).OrderRows
                 .Include(or => or.Order)
                 .Where(or => or.idWebinar == idWebinar)
                 .Where(or => or.RegistrationType.ShowLiveNotifications == "Yes")
                 .Select(o => o.Order);
             return orders.Include(o => o.WebUser).ToList();
         }
-        
+
         public IList<Order> GetOrdersForRecordedEventNotifications(int idWebinar)
         {
-            var orders = ((TTSWebinarsContext) db).OrderRows
+            var orders = ((TTSWebinarsContext)db).OrderRows
                 .Include(or => or.Order)
                 .Where(or => or.idWebinar == idWebinar)
                 .Where(or => or.RegistrationType.ShowRecordingNotifications == "Yes")
                 .Select(o => o.Order);
             return orders.Include(o => o.WebUser).ToList();
-        }        
+        }
         public IList<Order> GetOrdersForShippedEventNotifications()
         {
-            var orders = ((TTSWebinarsContext) db).OrderRows
+            var orders = ((TTSWebinarsContext)db).OrderRows
                 .Include(or => or.Order)
                 .Where(or => or.RegistrationType.ShowShippedNotifications == "Yes")
                 .Select(o => o.Order);
@@ -199,38 +199,10 @@ namespace CUWebinars.Business.Repository
         public Order SaveOrderChanges(Order order)
         {
             var error = db.GetValidationErrors();
-            Debug.WriteLine("#######################Call to SaveOrderChanges");
-
-            //_disconnectedPropertyChangeHelper.ApplyChanges(order);
-
             db.SaveChanges();
 
             return order;
         }
-
-        //public virtual IDictionary<RegType, Order> SelectOrdersWithScheduledWebinars(int idUser)
-        //{
-        //    var optionAndOrder = new Dictionary<RegType, Order>();
-
-        //    items.Where(o => o.idUser == idUser
-        //                                  && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Scheduled
-        //                                  &&
-        //                                  (o.OrderStatus == OrderStatus.Submitted ||
-        //                                   o.OrderStatus == OrderStatus.Paid)
-        //        )
-        //        .ToList()
-        //        .ForEach(o =>
-        //        {
-        //            var row = o.OrderRows.Single();
-        //            var paramWebinarID = new SqlParameter("idRegType", SqlDbType.Int) { Value = (int)row.RegistrationType };
-        //            var registrationType = ((TTSWebinarsContext)db).Options.SqlQuery("dbo.GetRegistrationType @idRegType", paramWebinarID).Single();
-
-        //            optionAndOrder.Add(registrationType, o);
-        //        }
-        //       );
-
-        //    return optionAndOrder;
-        //}
 
         public virtual IList<Order> Test(int idUser)
         {
@@ -243,6 +215,21 @@ namespace CUWebinars.Business.Repository
             return list;
         }
 
+        public int CheckUserForRecordingAccess(int webinar, int user)
+        {
+            var a = items
+                    .Where(o => o.idUser == user
+                        && o.OrderRows.FirstOrDefault().idWebinar == webinar
+                        && (o.OrderStatus == OrderStatus.Submitted
+                            || o.OrderStatus == OrderStatus.Paid
+                            || o.OrderStatus == OrderStatus.Billed
+                            )
+                        && o.OrderRows.FirstOrDefault().RegistrationType.ShowRecordingNotifications == "Yes"
+                        )
+                    .ToList();
+            return !items.Any() ? 0 : 1;
+        }
+
         public virtual IList<Order> SelectOrdersWithRecordedWebinars(int idUser)
         {
             var a = items
@@ -250,8 +237,10 @@ namespace CUWebinars.Business.Repository
                 .Include(o => o.OrderRows.Select(w => w.Webinar))
                 .Where(o => o.idUser == idUser
                                           && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Recorded
-                //&& (o.OrderStatus == OrderStatus.Submitted 
-                //|| o.OrderStatus == OrderStatus.Paid)
+                && (o.OrderStatus == OrderStatus.Submitted
+                || o.OrderStatus == OrderStatus.Paid
+                || o.OrderStatus == OrderStatus.Billed
+                )
                     )
                 .ToList();
             return a;
@@ -260,14 +249,18 @@ namespace CUWebinars.Business.Repository
 
         public virtual IList<Order> SelectOrdersWithScheduledWebinars(int idUser)
         {
-            var i  = items
+            var i = items
                 .Include(o => o.OrderRows.Select(w => w.RegistrationType))
                 .Include(o => o.OrderRows.Select(w => w.Webinar))
                 .Where(o => o.idUser == idUser
-                                          && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Scheduled
+                                          && (o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Scheduled
+                                                || o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.InProgress
+                                                || o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Active)
                                           &&
                                           (o.OrderStatus == OrderStatus.Submitted ||
-                                           o.OrderStatus == OrderStatus.Paid)
+                                           o.OrderStatus == OrderStatus.Paid ||
+                                           o.OrderStatus == OrderStatus.Billed
+                                           )
                 )
                 .ToList();
             return i;
@@ -275,14 +268,19 @@ namespace CUWebinars.Business.Repository
 
         public virtual IList<Order> SelectOrdersWithArchivedWebinars(int idUser)
         {
-            return items.Where(o => o.idUser == idUser
+            var i = items
+                .Include(o => o.OrderRows.Select(w => w.RegistrationType))
+                .Include(o => o.OrderRows.Select(w => w.Webinar))
+                .Where(o => o.idUser == idUser
                                           && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Archived
                                           &&
                                           (o.OrderStatus == OrderStatus.Submitted ||
-                                           o.OrderStatus == OrderStatus.Paid)
+                                           o.OrderStatus == OrderStatus.Paid ||
+                                           o.OrderStatus == OrderStatus.Billed
+                                           )
                 )
                 .ToList();
-
+            return i;
         }
     }
 }

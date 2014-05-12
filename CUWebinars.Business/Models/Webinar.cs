@@ -32,6 +32,10 @@ namespace CUWebinars.Business.Models
         public string WebinarKey { get; set; }
         public string OrganizerKey { get; set; }
         public string OrganizerOAuthKey { get; set; }
+        public string AccessPhone { get; set; }
+        public string AccessCode { get; set; }
+        
+
         public string ceu { get; set; }
         public string ConnectionInfo { get; set; }
         public System.DateTime DateCreated { get; set; }
