@@ -148,8 +148,11 @@ namespace CUWebinars.Business.Repository
                 .Include(or => or.Order)
                 .Where(or => or.idWebinar == idWebinar)
                 .Where(or => or.RegistrationType.ShowLiveNotifications == "Yes")
+                .Where(or => or.RowStatus == OrderRowStatus.Active)
                 .Select(o => o.Order);
-            return orders.Include(o => o.WebUser).ToList();
+            return orders.Include(o => o.WebUser)
+                .Include(o => o.OrderRows)
+                .ToList();
         }
 
         public IList<Order> GetOrdersForRecordedEventNotifications(int idWebinar)
