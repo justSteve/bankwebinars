@@ -2,10 +2,41 @@
 @using CUWebinars.Html
 @model CUWebinars.Business.Models.Order
 
-<title>Confirmation of Registration - CU-@Model.idOrder</title>
+<title>Connection Information for @Model.OrderRows.Single().Webinar.Title</title>
 <html xmlns="http://www.w3.org/1999/xhtml">
+@{
+    var row = Model.OrderRows.SingleOrDefault();
+    var joinURL = row.JoinURL;
+    var phone = "TBA";
+    var code = "TBA";
 
-<body>
-    <text>hello world!</text>
-</body>
+    if (joinURL == null)
+    {
+        joinURL = "https://www2.gotomeeting.com/join/" + row.Webinar.WebinarKey;
+    }
+    if (row.Webinar.AccessCode != null)
+    {
+        code = row.Webinar.AccessCode;
+    }
+    if (row.Webinar.AccessPhone != null)
+    {
+        code = row.Webinar.AccessPhone;
+    }
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Confirmation of Registration - CU-@Model.idOrder</title>
+        <style type="text/css">
+            .auto-style1 {
+                height: 10px;
+            }
+
+            .auto-style2 {
+                height: 50px;
+            }
+        </style>
+    </head>
+    <body style="font-family: Verdana, Arial, Helvetica, sans-serif">
+        <p>test @row.Webinar.Title</p>
+    </body>
+}
 </html>

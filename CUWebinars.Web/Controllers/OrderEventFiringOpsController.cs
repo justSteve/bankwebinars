@@ -144,7 +144,9 @@ namespace CUWebinars.Web.Controllers
 
         private IEnumerable<SelectListItem> GetUpcomingWebinarsAsSelectListItems()
         {
-            return _orderManagementService.GetUpcomingWebinars().Select(w => new SelectListItem { Text = w.Title, Value = w.idWebinar.ToString() });
+            return _orderManagementService.GetUpcomingWebinars()
+                .OrderBy(w => w.Date)
+                .Select(w => new SelectListItem { Text = w.Title, Value = w.idWebinar.ToString() });
         }
 
         private IEnumerable<SelectListItem> GetRecordedWebinarsAsSelectListItems()

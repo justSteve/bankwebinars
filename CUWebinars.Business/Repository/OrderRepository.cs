@@ -146,10 +146,14 @@ namespace CUWebinars.Business.Repository
         {
             var orders = ((TTSWebinarsContext)db).OrderRows
                 .Include(or => or.Order)
+                .Include(row => row.Webinar)
                 .Where(or => or.idWebinar == idWebinar)
                 .Where(or => or.RegistrationType.ShowLiveNotifications == "Yes")
                 .Select(o => o.Order);
-            return orders.Include(o => o.WebUser).ToList();
+            return orders.Include(o => o.WebUser)
+                //.Include(r => r.OrderRows)
+                .Include(r => r.OrderRows.Select(rw => rw.RowStatus == OrderRowStatus.Active))
+                .ToList();
         }
 
         public IList<Order> GetOrdersForRecordedEventNotifications(int idWebinar)

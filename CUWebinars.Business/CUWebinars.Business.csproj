@@ -115,6 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountService\IMembershipService.cs" />
+    <Compile Include="Class1.cs" />
     <Compile Include="Core\Helpers\DateTimeHelper.cs" />
     <Compile Include="Core\Helpers\GenericHelpers.cs" />
     <Compile Include="Models\CitrixWebinar.cs" />
@@ -231,6 +232,7 @@
     <Compile Include="Core\TtsConfiguration.cs" />
     <Compile Include="Core\TtsConfig.cs" />
     <Compile Include="Services\WebinarService.cs" />
+    <Compile Include="TTSLogger.cs" />
     <Compile Include="Validation\Order\CreateOrderValidator.cs" />
   </ItemGroup>
   <ItemGroup>

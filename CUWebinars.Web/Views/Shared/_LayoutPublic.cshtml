@@ -80,24 +80,7 @@
             })(document, 'script');
         </script>*@
     <!--End of Zopim Live Chat Script-->
-    @*<script type='text/javascript'>
-            window.Muscula = {
-                settings: {
-                    logId: "8d7f689c-7075-47f0-ae3d-1349f9fc4266", suppressErrors: false
-                }
-            };
-            (function () {
-                var m = document.createElement('script'); m.type = 'text/javascript'; m.async = true;
-                m.src = (window.location.protocol == 'https:' ? 'https:' : 'http:') +
-                    '//musculahq.appspot.com/Muscula6.js';
-                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(m, s);
-                window.Muscula.run = function () { var a; eval(arguments[0]); window.Muscula.run = function () { }; };
-                window.Muscula.errors = []; window.onerror = function () {
-                    window.Muscula.errors.push(arguments);
-                    return window.Muscula.settings.suppressErrors === undefined;
-                }
-            })();
-        </script>*@
+
     @Html.Raw(JSNLog.JavascriptLogging.Configure())
 
 
@@ -206,7 +189,6 @@
     </section>
     <!-- begin .header-->
     <header class="header  clearfix" style="margin-bottom: 0px; padding-bottom: 0; ">
-        <img src="https://ttseast.blob.core.windows.net/images/BankWebinars/print-logo.png" class="print logo" alt="CUWebinars is a production of TTSTrain.com" />
         <div class="container">
 
             <!-- begin #main_menu -->

@@ -23,10 +23,12 @@ using CUWebinars.Business.Repository;
 using CUWebinars.Web.ViewModel;
 using System.Security.Claims;
 using Thinktecture.IdentityModel.Authorization.Mvc;
+using Elmah;
 
 
 namespace CUWebinars.Web.Controllers
 {
+    [ElmahHandleError]
     [System.Web.Mvc.Authorize]
     public class AccountController : Controller
     {
