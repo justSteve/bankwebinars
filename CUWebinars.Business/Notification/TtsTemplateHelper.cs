@@ -19,7 +19,7 @@ namespace CUWebinars.Business.Notification
         public string DisplayTime( DateTime time, USTimeZone timeZone,
             bool displayTimezone)
         {
-            return DateTimeHelper.FormatTime(time, timeZone, displayTimezone);
+            return "";
         }
 
 
