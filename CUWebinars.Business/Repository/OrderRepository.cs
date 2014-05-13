@@ -138,7 +138,7 @@ namespace CUWebinars.Business.Repository
                 .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
                 .Where(o => o.WebUser.idUser == userId);
 
-            return ReferenceEquals(null, userOrders) ? null : userOrders.ToList();
+            return ReferenceEquals(null, userOrders) ? null : GetLoadedEntitiesForOrder(userOrders);
 
         }
 
@@ -151,10 +151,8 @@ namespace CUWebinars.Business.Repository
                 .Where(or => or.RegistrationType.ShowLiveNotifications == "Yes")
                 .Where(or => or.RowStatus == OrderRowStatus.Active)
                 .Select(o => o.Order);
-            return orders.Include(o => o.WebUser)
-                .Include(o => o.OrderRows)
-                .Include(w => w.OrderRows.SingleOrDefault().Webinar)
-                .ToList();
+
+            return GetLoadedEntitiesForOrder(orders);
         }
 
         public IList<Order> GetOrdersForRecordedEventNotifications(int idWebinar)
@@ -164,7 +162,7 @@ namespace CUWebinars.Business.Repository
                 .Where(or => or.idWebinar == idWebinar)
                 .Where(or => or.RegistrationType.ShowRecordingNotifications == "Yes")
                 .Select(o => o.Order);
-            return orders.Include(o => o.WebUser).ToList();
+            return GetLoadedEntitiesForOrder(orders);
         }
         public IList<Order> GetOrdersForShippedEventNotifications()
         {
@@ -172,7 +170,7 @@ namespace CUWebinars.Business.Repository
                 .Include(or => or.Order)
                 .Where(or => or.RegistrationType.ShowShippedNotifications == "Yes")
                 .Select(o => o.Order);
-            return orders.Include(o => o.WebUser).ToList();
+            return GetLoadedEntitiesForOrder(orders);
         }
 
         public Order AssignAffiliate(Affiliate affiliate, Order order)
@@ -237,7 +235,7 @@ namespace CUWebinars.Business.Repository
 
         public virtual IList<Order> SelectOrdersWithRecordedWebinars(int idUser)
         {
-            var a = items
+            var orders = items
                 .Include(o => o.OrderRows.Select(w => w.RegistrationType))
                 .Include(o => o.OrderRows.Select(w => w.Webinar))
                 .Where(o => o.idUser == idUser
@@ -246,15 +244,14 @@ namespace CUWebinars.Business.Repository
                 || o.OrderStatus == OrderStatus.Paid
                 || o.OrderStatus == OrderStatus.Billed
                 )
-                    )
-                .ToList();
-            return a;
+                    );
+            return GetLoadedEntitiesForOrder(orders);
 
         }
 
         public virtual IList<Order> SelectOrdersWithScheduledWebinars(int idUser)
         {
-            var i = items
+            var orders = items
                 .Include(o => o.OrderRows.Select(w => w.RegistrationType))
                 .Include(o => o.OrderRows.Select(w => w.Webinar))
                 .Where(o => o.idUser == idUser
@@ -266,26 +263,33 @@ namespace CUWebinars.Business.Repository
                                            o.OrderStatus == OrderStatus.Paid ||
                                            o.OrderStatus == OrderStatus.Billed
                                            )
-                )
-                .ToList();
-            return i;
+                );
+            return GetLoadedEntitiesForOrder(orders);
         }
 
         public virtual IList<Order> SelectOrdersWithArchivedWebinars(int idUser)
         {
-            var i = items
+            var orders = items
                 .Include(o => o.OrderRows.Select(w => w.RegistrationType))
                 .Include(o => o.OrderRows.Select(w => w.Webinar))
                 .Where(o => o.idUser == idUser
                                           && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Archived
-                                          &&
-                                          (o.OrderStatus == OrderStatus.Submitted ||
+                                          && (o.OrderStatus == OrderStatus.Submitted ||
                                            o.OrderStatus == OrderStatus.Paid ||
                                            o.OrderStatus == OrderStatus.Billed
                                            )
-                )
+                );
+            return GetLoadedEntitiesForOrder(orders);
+        }
+
+        public virtual IList<Order> GetLoadedEntitiesForOrder(IQueryable<Order> orders)
+        {
+            return orders.Include(o => o.WebUser)
+                .Include(o => o.OrderRows.Select(or => or.Webinar.Presenter))
+                .Include(o => o.OrderRows.Select(or => or.Webinar.WebinarFiles))
+                .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                .Include(o => o.OrderRows.Select(or => or.Discount))
                 .ToList();
-            return i;
         }
     }
 }
