@@ -1,4 +1,5 @@
-﻿using CUWebinars.Html;
+﻿using CUWebinars.Business.Core.Helpers;
+using CUWebinars.Html;
 using RazorEngine.Templating;
 
 namespace CUWebinars.Business.Notification

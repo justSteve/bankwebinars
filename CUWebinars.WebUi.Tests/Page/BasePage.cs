@@ -1,4 +1,6 @@
-﻿using CUWebinars.Selenium.Core;
+﻿using System;
+using CUWebinars.Selenium.Core;
+using OpenQA.Selenium.Support.UI;
 
 namespace CUWebinars.WebUi.Tests.Page
 {
@@ -27,7 +29,7 @@ namespace CUWebinars.WebUi.Tests.Page
         {
             get
             {
-                return SeleniumTestDriver.FindByXPath(Constants.LoginLinkPath) != null;
+                return SeleniumTestDriver.FindByPartialLinkText(Constants.LoginLinkText) != null;
 
             }
         }
@@ -36,8 +38,11 @@ namespace CUWebinars.WebUi.Tests.Page
         {
             get
             {
-                return SeleniumTestDriver.FindByXPath(Constants.LogoffLinkPath) != null;
+                var logoutLinkWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(15));
 
+                var logoutLink = logoutLinkWait.Until(d => SeleniumTestDriver.FindByPartialLinkText(Constants.LogoffLinkText));
+
+                return logoutLink != null;
             }
         }
 
