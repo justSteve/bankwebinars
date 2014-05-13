@@ -149,10 +149,11 @@ namespace CUWebinars.Business.Repository
                 .Include(row => row.Webinar)
                 .Where(or => or.idWebinar == idWebinar)
                 .Where(or => or.RegistrationType.ShowLiveNotifications == "Yes")
+                .Where(or => or.RowStatus == OrderRowStatus.Active)
                 .Select(o => o.Order);
             return orders.Include(o => o.WebUser)
-                //.Include(r => r.OrderRows)
-                .Include(r => r.OrderRows.Select(rw => rw.RowStatus == OrderRowStatus.Active))
+                .Include(o => o.OrderRows)
+                .Include(w => w.OrderRows.SingleOrDefault().Webinar)
                 .ToList();
         }
 
