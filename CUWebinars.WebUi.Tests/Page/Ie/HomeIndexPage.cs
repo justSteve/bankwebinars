@@ -36,12 +36,11 @@ namespace CUWebinars.WebUi.Tests.Page.Ie
 
         public void ClearCookies()
         {
-            SeleniumTestDriver.ClearCookies();
+            SeleniumTestDriver.ClearFederatedCookies();
         }
 
         public void ClickLoginLink()
         {
-            //SeleniumTestDriver.FindByXPathClick(@"/html/body/section/nav/a");
             SeleniumTestDriver.FindByIdClick("btnLogin");
         }
 
@@ -65,14 +64,37 @@ namespace CUWebinars.WebUi.Tests.Page.Ie
 
         public void EnterPasswordWhereUserExists(string password)
         {
-            SeleniumTestDriver.Wait(500);
-            SeleniumTestDriver.TypeTextAndTabAway("Password1", password);
-            SeleniumTestDriver.FindByIdClick("TheSubmitButton");
+            var password1Wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(15));
+
+            var password1 = password1Wait.Until(d =>
+            {
+                try
+                {
+                    SeleniumTestDriver.TypeTextAndTabAway("Password1", password);
+                    return SeleniumTestDriver.FindByName("Password1");
+                }
+                catch (Exception e)
+                {
+                }
+                return null;
+            });
+
+//            SeleniumTestDriver.FindByIdClick("TheSubmitButton");
+
+            var wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(5));
+
+            var theSubmitButton = wait.Until(d =>
+            {
+                var submitButton = SeleniumTestDriver.FindById("TheSubmitButton");
+                return submitButton;
+            });
+
+            theSubmitButton.Click();
         }
 
         public void LogOff()
         {
-            SeleniumTestDriver.FindByXPathClick(Constants.LogoffLinkPath);
+            SeleniumTestDriver.FindByLinkTextClick(Constants.LogoffLinkText);
         }
 
         public bool NoNotceExistsErrorTextIsPresent

@@ -3,14 +3,14 @@ using System;
 
 namespace CUWebinars.Business.Core.Helpers
 {
-    public static class DateTimeHelper
+    public class DateTimeHelper
     {
-        public static string FormatTime(DateTime time)
+        public string FormatTime(DateTime time)
         {
             return FormatTime(time, USTimeZone.Central, false);
         }
 
-        public static string FormatTime(DateTime time, USTimeZone timeZone, bool displayTimezone)
+        public string FormatTime(DateTime time, USTimeZone timeZone, bool displayTimezone)
         {
             //This method assumes that the time is following Central time zone
 
@@ -103,7 +103,7 @@ namespace CUWebinars.Business.Core.Helpers
 
         }
 
-        public static DateTime ToDateTime(this decimal value)
+        public static DateTime ToDateTime(decimal value)
         {
             string[] parts = value.ToString().Split(new char[] { '.' });
 

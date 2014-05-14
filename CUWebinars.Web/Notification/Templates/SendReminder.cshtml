@@ -1,4 +1,5 @@
-﻿@using CUWebinars.Business.Notification
+﻿@using CUWebinars.Business.Core.Helpers
+@using CUWebinars.Business.Notification
 @using CUWebinars.Html
 @model CUWebinars.Business.Models.Order
 
@@ -8,6 +9,7 @@
 <body>
     <text>hello world!</text>
     <text>@Model.OrderRows.First().RegistrationType.OptionLabel</text>
+    <text>Date: @TtsTemplateHelperObject.DisplayDate(Model.OrderDate)</text>
 
 </body>
 </html>

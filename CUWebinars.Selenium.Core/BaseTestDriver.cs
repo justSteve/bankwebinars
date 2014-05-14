@@ -21,7 +21,7 @@ namespace CUWebinars.Selenium.Core
 
         public abstract void Initialize();
 
-        public void ClearCookies()
+        public void ClearFederatedCookies()
         {
             webDriver.Manage().Cookies.DeleteCookieNamed("FedAuth");
             webDriver.Manage().Cookies.DeleteCookieNamed("FedAuth1");
@@ -53,7 +53,7 @@ namespace CUWebinars.Selenium.Core
         {
             if (string.IsNullOrEmpty(url))
             {
-                url = string.Format("http://localhost:{0}/webphotorequest", port);
+                url = string.Format("http://localhost:{0}", port);
             }
 
             INavigation navigation = webDriver.Navigate();
@@ -111,6 +111,16 @@ namespace CUWebinars.Selenium.Core
             }
 
             return element;
+        }
+
+        public IWebElement FindByLinkText(string linkTextToFind)
+        {
+            return webDriver.FindElement(By.LinkText(linkTextToFind));
+        }
+
+        public IWebElement FindByPartialLinkText(string linkTextToFind)
+        {
+            return webDriver.FindElement(By.PartialLinkText(linkTextToFind));
         }
 
         public virtual IWebElement FindByLinkTextClick(string linkTextToFind)
@@ -326,6 +336,7 @@ namespace CUWebinars.Selenium.Core
         public virtual void Quit()
         {
             webDriver.Quit();
+            webDriver.Dispose();
         }
 
         public virtual string GetAlertText()

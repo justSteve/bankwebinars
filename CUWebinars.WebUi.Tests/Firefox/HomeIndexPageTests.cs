@@ -20,7 +20,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
         public void LoginToSite()
         {
             var home = NavigateToHomeIndexPage();
-            home.ClickLoginLink();
+            home.ClickLoginLink( );
             home.LogInToSite(Constants.SitTestEmailAddress, Constants.SitTestPassword);
 
             Assert.IsTrue(home.LogoutLinkIsPresentOnPage);

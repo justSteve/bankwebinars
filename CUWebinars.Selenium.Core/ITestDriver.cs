@@ -7,8 +7,9 @@ namespace CUWebinars.Selenium.Core
     {
         string DriverPath { set; }
         int DriverPort { set; }
+
+        void ClearFederatedCookies();
         void ClearTextFromInput(string nameOfInputElement);
-        void ClearCookies();
         void CloseWindow();
         bool DoesElementContainText(string nameToFind, string text);
         ReadOnlyCollection<IWebElement> FindByClassName(string classNameToFind);
@@ -17,7 +18,9 @@ namespace CUWebinars.Selenium.Core
         IWebElement FindByCssSelector(string cssSelectorToFind);
         IWebElement FindById(string idToFind);
         IWebElement FindByIdClick(string idToFind);
+        IWebElement FindByLinkText(string linkTextToFind);
         IWebElement FindByLinkTextClick(string linkTextToFind);
+        IWebElement FindByPartialLinkText(string linkTextToFind);
         IWebElement FindByXPath(string xpathToFind);
         IWebElement FindByXPathClick(string xpathToFind);
         IWebElement FindByName(string nameToFind);

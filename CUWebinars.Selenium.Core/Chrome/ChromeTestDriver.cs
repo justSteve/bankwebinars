@@ -16,8 +16,7 @@ namespace CUWebinars.Selenium.Core.Chrome
 
             chromeDriverService.Port = DriverPort; // this is the port for the driver, not the webpage
             
-            //webDriver = new ChromeDriver(chromeDriverService, chromeOptions);
-            webDriver = new ChromeDriver(DriverPath);
+            webDriver = new ChromeDriver(chromeDriverService, chromeOptions);
 
             webDriver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(10));
             webDriver.Manage().Timeouts().SetScriptTimeout(TimeSpan.FromSeconds(10));            
