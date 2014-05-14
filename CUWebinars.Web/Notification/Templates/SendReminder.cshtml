@@ -1,4 +1,5 @@
 ﻿@using CUWebinars.Business.Core.Helpers
+@using CUWebinars.Business.Models
 @using CUWebinars.Business.Notification
 @using CUWebinars.Html
 @model CUWebinars.Business.Models.Order
@@ -9,7 +10,15 @@
 <body>
     <text>hello world!</text>
     <text>@Model.OrderRows.First().RegistrationType.OptionLabel</text>
-    <text>Date: @TtsTemplateHelperObject.DisplayDate(Model.OrderDate)</text>
+    <text>Date: @TtsDateTimeTemplateHelperObject.FormatDate(Model.OrderDate)</text>
+    <text>Date: @TtsDateTimeTemplateHelperObject.FormatTime(Model.OrderDate)</text><br />
+    @{
+        var row = from orderRow in Model.OrderRows
+            where orderRow.RowStatus == OrderRowStatus.Active
+            select orderRow;
+    }
+    
+    <text>Price: @row.Single().RowPrice.ToString()</text><br />
 
 </body>
 </html>
