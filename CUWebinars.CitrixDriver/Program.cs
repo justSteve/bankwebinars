@@ -37,7 +37,8 @@ namespace CUWebinars.CitrixDriver
                 StartMeridian = "PM",
                 EndHour = "10:30",
                 EndMeridian = "PM",
-                TemplateTitle = "Testing No Confirmations",
+                RequirePassword = true,
+                TemplateTitle = "BaseLive Event",
                 TimeZoneKey = 68 // central
             };
 
