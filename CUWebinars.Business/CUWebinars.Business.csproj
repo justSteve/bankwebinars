@@ -148,7 +148,6 @@
     <Compile Include="Notification\Email\SmtpMessageDelivery.cs" />
     <Compile Include="Notification\EnvironmentInformation.cs" />
     <Compile Include="Notification\Events\OrderSubmittedEvent.cs" />
-    <Compile Include="Notification\Handlers\OrderNotifyEventHandler.cs" />
     <Compile Include="Notification\INotificationDelivery.cs" />
     <Compile Include="Notification\INotificationMessage.cs" />
     <Compile Include="Notification\TemplateResolver.cs" />

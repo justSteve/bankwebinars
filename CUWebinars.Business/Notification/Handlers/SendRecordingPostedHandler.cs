@@ -40,9 +40,19 @@ namespace CUWebinars.Business.Notification.Handlers
             }
             catch (NullReferenceException nullReferenceException)
             {
-                _logger.Error(
-                    string.Format("Event processing failed. Check that BillingEmail has a value for OrderId {0}",
-                        sendRecordingPostedEvent.EventObject.idOrder), nullReferenceException);
+                if (ReferenceEquals(null, sendRecordingPostedEvent.EventObject))
+                {
+                    _logger.Error(string.Format("ExceptionMessage: {0}", nullReferenceException.Message), nullReferenceException);
+                }
+                else
+                {
+                    _logger.Error(
+                        string.Format("Event processing failed for OrderId {0}. ExceptionMessage: {1}",
+                            sendRecordingPostedEvent.EventObject.idOrder,
+                            nullReferenceException.Message)
+                        , nullReferenceException);
+                }
+
             }
             catch (Exception exception)
             {
