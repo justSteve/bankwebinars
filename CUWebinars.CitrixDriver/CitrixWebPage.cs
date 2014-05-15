@@ -180,7 +180,7 @@ namespace CUWebinars.CitrixDriver
             SeleniumTestDriver.TypeText("Panelist1Email", "amSteve@gmail.com");
         }
 
-        public string ScheduleASimilarWebinar(CitrixWebinar webinar)
+        public string ScheduleASimilarWebinar(GTWebinar webinar)
         {
             var div = SeleniumTestDriver.FindByXPath(@"//span/b[contains(text(), '" + webinar.TemplateTitle + "')]/parent::span/parent::p/parent::div/parent::div/parent::div");
             var footer = div.FindElement(By.XPath(@"/self::node()/descendant::div[@class='scheduleAnotherFooter']"));

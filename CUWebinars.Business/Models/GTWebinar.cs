@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 namespace CUWebinars.Business.Models
 {
-    public partial class CitrixWebinar
+    public partial class GTWebinar
     {
+        public int Id { get; set; }
         public string Description { get; set; }
         public int DescriptionMaxCharLimit { get; set; }
         public string EndHour { get; set; }

@@ -2,13 +2,13 @@
 
 namespace CUWebinars.Business.Models.Mapping
 {
-    public class CitrixWebinarMap : EntityTypeConfiguration<CitrixWebinar>
+    public class GTWebinarMap : EntityTypeConfiguration<GTWebinar>
     {
-        public CitrixWebinarMap()
+        public GTWebinarMap()
         {
             //  Need to make decisions above field sizes etc.
-
-            ToTable("CitrixWebinar");
+            //HasKey(t => t.idUserAff);
+            ToTable("GTWebinar");
 
         }
     }

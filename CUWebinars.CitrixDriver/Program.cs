@@ -28,9 +28,9 @@ namespace CUWebinars.CitrixDriver
             Console.ReadLine(); 
         }
 
-        private static CitrixWebinar GetWebinarMock()
+        private static GTWebinar GetWebinarMock()
         {
-            var citrixWebinar = new CitrixWebinar
+            var GTWebinar = new GTWebinar
             {
                 StartDate = DateTime.Today.AddMonths(1),
                 StartHour = "08:30",
@@ -44,7 +44,7 @@ namespace CUWebinars.CitrixDriver
                 //presenter.webuser.email
             };
 
-            return citrixWebinar;
+            return GTWebinar;
         }
 
         private static void Login()
@@ -58,7 +58,7 @@ namespace CUWebinars.CitrixDriver
             citrixWebPage.ClickSubmit();
         }
 
-        private static string ScheduleASimilarWebinar(CitrixWebinar webinar)
+        private static string ScheduleASimilarWebinar(GTWebinar webinar)
         {
             citrixWebPage.GoToWebinarsPage();
             return citrixWebPage.ScheduleASimilarWebinar(webinar);
