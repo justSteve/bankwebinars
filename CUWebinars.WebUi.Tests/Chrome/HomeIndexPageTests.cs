@@ -24,6 +24,8 @@ namespace CUWebinars.WebUi.Tests.Chrome
             home.LogInToSite(Constants.SitTestEmailAddress, Constants.SitTestPassword);
             
             Assert.IsTrue(home.LogoutLinkIsPresentOnPage);
+
+            home.LogOff();
         }
 
         [TestMethod]
@@ -37,6 +39,8 @@ namespace CUWebinars.WebUi.Tests.Chrome
             home.EnterPasswordWhereUserExists(Constants.SitTestPassword);
 
             Assert.IsTrue(home.LogoutLinkIsPresentOnPage);
+
+            home.LogOff();
         }
 
         public HomeIndexPage NavigateToHomeIndexPage()

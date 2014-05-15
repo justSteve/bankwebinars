@@ -22,7 +22,8 @@ namespace CUWebinars.Selenium.Core.Ie
 
             internetExplorerDriverService.Port = DriverPort; // this is the port for the driver, not the webpage
 
-            webDriver = new InternetExplorerDriver(internetExplorerDriverService, internetExplorerOptions);
+            //webDriver = new InternetExplorerDriver(internetExplorerDriverService, internetExplorerOptions);
+            webDriver = new InternetExplorerDriver(DriverPath);
             
             webDriver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(10));
             webDriver.Manage().Timeouts().SetScriptTimeout(TimeSpan.FromSeconds(10));            
