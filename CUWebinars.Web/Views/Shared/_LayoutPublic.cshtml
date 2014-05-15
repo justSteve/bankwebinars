@@ -68,7 +68,7 @@
 <head>
 
     <!--Start of Zopim Live Chat Script-->
-    @*<script type="text/javascript">
+    <script type="text/javascript">
             window.$zopim || (function (d, s) {
                 var z = $zopim = function (c) { z._.push(c) }, $ = z.s =
                 d.createElement(s), e = d.getElementsByTagName(s)[0]; z.set = function (o) {
@@ -78,7 +78,7 @@
                 $.src = '//cdn.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU'; z.t = +new Date; $.
                 type = 'text/javascript'; e.parentNode.insertBefore($, e)
             })(document, 'script');
-        </script>*@
+        </script>
     <!--End of Zopim Live Chat Script-->
 
     @Html.Raw(JSNLog.JavascriptLogging.Configure())
