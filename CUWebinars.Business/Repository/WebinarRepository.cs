@@ -39,7 +39,7 @@ namespace CUWebinars.Business.Repository
         public Webinar FindByIdAndDetach(int id)
         {
             var webinar = FindById(id);
-            db.Entry(webinar).State = EntityState.Detached;
+            db.Entry(webinar).State = System.Data.Entity.EntityState.Detached;
             return webinar;
         }
 

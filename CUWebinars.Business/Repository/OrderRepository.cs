@@ -125,8 +125,12 @@ namespace CUWebinars.Business.Repository
         public Order FindOrderByIdWithOrderRows(int id)
         {
             var item = items
-                .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
                 .Include(o => o.WebUser)
+                .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+                .Include(o => o.OrderRows.Select(or => or.Webinar.Presenter.WebUser))
+                .Include(o => o.OrderRows.Select(or => or.Webinar.WebinarFiles))
+                .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                .Include(o => o.OrderRows.Select(or => or.Discount))
                 .Where(o => o.idOrder == id);
             return item.FirstOrDefault();
         }
@@ -284,6 +288,7 @@ namespace CUWebinars.Business.Repository
         public virtual IList<Order> GetLoadedEntitiesForOrder(IQueryable<Order> orders)
         {
             return orders.Include(o => o.WebUser)
+                .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
                 .Include(o => o.OrderRows.Select(or => or.Webinar.Presenter.WebUser))
                 .Include(o => o.OrderRows.Select(or => or.Webinar.WebinarFiles))
                 .Include(o => o.OrderRows.Select(or => or.RegistrationType))
