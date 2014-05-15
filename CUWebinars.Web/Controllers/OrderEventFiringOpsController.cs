@@ -104,7 +104,7 @@ namespace CUWebinars.Web.Controllers
 
             if (orders.Any())
             {
-                _orderManagementService.FireSendOrderShippedNotificationEvent(orders);
+                _orderManagementService.FireSendRecordingIsPostedEvent(orders);
 
                 return Json(new {Result = WebUiConstants.Success});
             }

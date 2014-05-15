@@ -96,37 +96,6 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-        //[System.Web.Mvc.HttpGet]
-        //public ActionResult CreateOrder()
-        //{
-        //    //var currentUser = GetWebUserFromIPrincipal();
-        //    var refDataRepository = new RefDataRepository();
-        //    //var bla = refDataRepository.FindRegTypesByWebinarId(435, false);
-
-        //    var identity = ClaimsPrincipal.Current;
-
-        //    var order = new Order
-        //    {
-        //        FirstName = "Birgit",
-        //        LastName = "Roby",
-        //        idOrder = 1114,
-        //        OrderDate = DateTime.Parse("2014-02-05 21:32:53.000"),
-        //        Affiliate = new Affiliate
-        //        {
-        //            ContactEmail = "affiliate@with.com",
-        //            URL = "http://microsoft.com"
-        //        }
-        //    };
-
-        //    orderManagementService.CreateOrderEvent(order, membershipService.GetUserAccountByUserId(identity.GetUserID()));
-
-
-        //    orderManagementService.DispatchDummyOrder();
-
-        //    return RedirectToLocal(null);
-        //}
-
-        //
 
         [System.Web.Mvc.AllowAnonymous]
         public string Get([FromUri] RegisterModel model)
@@ -235,11 +204,6 @@ namespace CUWebinars.Web.Controllers
             var currentUser = GetWebUserFromIPrincipal();
             var model = new MyWebinarsDTO { WebUser = currentUser };
 
-            //IList<Discount> discountsList = DiscountFacade.Instance.LoadList();
-            //IList<OrderRow> rowsWithDiscount = OrderFacade.Instance.SelectOrderRowsWithDiscountByUser(currentUser);
-            //IList<DiscountDTO> discountDto = new DiscountDTOAssembler().Entities2DTOs(
-            //    discountsList, rowsWithDiscount);
-
             ViewData["DiscountMsg"] = string.Empty;
 
             model.Scheduled = _orderRepository.SelectOrdersWithScheduledWebinars(currentUser.idUser);
@@ -256,7 +220,6 @@ namespace CUWebinars.Web.Controllers
                         //string firstName, string lastName, string billingEmail, int webinarId,string webinarKey
                         var regKeyResponse = _orderManagementService.CreateRegistrantKey(order.FirstName, order.LastName
                             , order.BillingEmail, row.Webinar.idWebinar, row.Webinar.WebinarKey);
-
 
                         if (ReferenceEquals(null, regKeyResponse))
                             throw new NullReferenceException("The Registration Key Response from the Citrix API resulted in a null response.");
@@ -480,7 +443,6 @@ namespace CUWebinars.Web.Controllers
             if (ModelState.IsValid && _membershipService.LogInUser(globalConfig.Tenant, model.Email, model.Password, model.RememberMe))
             {
                 var retURL = model.ReturnUrl.Replace("http://localhost:5556", "");
-
                 return RedirectToLocal(retURL);
             }
 
@@ -664,7 +626,7 @@ namespace CUWebinars.Web.Controllers
         //[ValidateAntiForgeryToken]
         public JsonResult CheckEmail(string email, bool disregardIntitutionDomain)
         {
-            _logger.Info("CheckEmail called: " + email);
+            _logger.Info("CheckEmail called: " + email + "| Session=" + AppHelper.GetUserAuditInfo());
             var resultObject = new Dictionary<string, string>();
 
             var user = _membershipService.GetUserByEmail(email);
@@ -711,11 +673,13 @@ namespace CUWebinars.Web.Controllers
             foreach (var error in errors)
             {
                 Debug.WriteLine(error.ErrorMessage);
-                _logger.Error("Account/Register: " + error.ErrorMessage);
+                _logger.Error("Account/Register: " + error.ErrorMessage + "| Session=" + AppHelper.GetUserAuditInfo());
             }
 
             if (ModelState.IsValid)
             {
+                _logger.Info("Account.Register: " + model.RegisterFields.Email.Trim() + "| Session=" + AppHelper.GetUserAuditInfo());
+            
                 var email = model.RegisterFields.Email.Trim();
                 var firstName = model.RegisterFields.FirstName.Trim();
                 var lastName = model.RegisterFields.LastName.Trim();
@@ -806,7 +770,7 @@ namespace CUWebinars.Web.Controllers
                     }
 
                     _membershipService.LogInUser(globalConfig.Tenant, model.RegisterFields.Email, model.RegisterFields.Password, true); // log the user in.
-                    _logger.Info("/Account/Register UserAdded: " + model.RegisterFields.Email);
+                    _logger.Info("Account.Register UserAdded: " + model.RegisterFields.Email);
                     return Json(new { Status = WebUiConstants.Success });
 
                 }
@@ -814,7 +778,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     ModelState.AddModelError(string.Empty, ErrorCodeToString(e.StatusCode));
                     //TODO: add error message here and handle in razor
-                    _logger.Error("/Account/Register: " + e.Message);
+                    _logger.Error("/Account/Register Catch block: " + e.Message + "| Session=" + AppHelper.GetUserAuditInfo());
                 }
             }
 

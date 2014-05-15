@@ -69,7 +69,6 @@
             msgOrderStatus = "<div align=\"center\" class=\"label-warning label\">Your order is InProcess and needs to be confirmed.</div>";
         }
     }
-
 }
 
 <script type="text/javascript">
@@ -80,9 +79,7 @@
         isUserLogged = @isUserLogged;
 
         $(document).ready(function() {
-            JL().info({
-                "msg": "Details loaded @Model.Webinar.idWebinar for idUser @idUser."
-            });
+            JL().info("Details loaded @Model.Webinar.idWebinar for idUser @idUser.");
         });
 
     </script>
@@ -219,8 +216,8 @@
 
                         <ul class="nav nav-tabs" id="regTabs">
                             <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@signUpCaption</a></li>
-                            <li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
-                            <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@ConfirmationCaption</a></li>
+                            @*<li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
+                            <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@ConfirmationCaption</a></li>*@
                         </ul>
 
                         <div class="tab-content">
@@ -228,12 +225,12 @@
                                 <input type="button" onclick=" signUpv1(); " class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
                                 @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)
                             </div>
-                            <div class="tab-pane" id="contactInfo">
+                            @*<div class="tab-pane" id="contactInfo">
                                 @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutContact.cshtml", model: Model)
                             </div>
                             <div class="tab-pane" id="confirmation">
                                 @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutConfirm.cshtml", model: Model)
-                            </div>
+                            </div>*@
                         </div>
                     </div>
                 }

@@ -38,7 +38,7 @@ namespace CUWebinars.Business.Notification.Handlers
         {
             try
             {
-                var notificationMessage = _generalFormatter.Format(sendRecordingPostedEvent, "SendRecordingPosted");
+                var notificationMessage = _generalFormatter.Format(sendRecordingPostedEvent.EventObject, "SendRecordingPosted");
                 notificationMessage.To = sendRecordingPostedEvent.EventObject.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);
             }
@@ -50,11 +50,9 @@ namespace CUWebinars.Business.Notification.Handlers
             }
             catch (Exception exception)
             {
-                _logger.Error(string.Format("Event processing failed for OrderId {0}", sendRecordingPostedEvent.EventObject.idOrder), exception);
+                _logger.Error(string.Format("Event processing failed for OrderId {0}.", sendRecordingPostedEvent.EventObject.idOrder), exception);
             }
-
         }
-
     }
 
     public class SendRecordingPostedHandler : SendRecordingPostedHandler<Order>

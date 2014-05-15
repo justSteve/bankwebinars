@@ -24,6 +24,7 @@ namespace CUWebinars.Business.Services
         IEnumerable<RegType> FindRegTypesByWebinarId(int webinarId);
         void FireSendConnectionInfoNotificationEvent(IList<Order> orders);
         void FireSendOrderShippedNotificationEvent(IList<Order> orders);
+        void FireSendRecordingIsPostedEvent(IList<Order> orders);
         void FireSendReminderNotificationEvent(IList<Order> orders);
         Affiliate GetAffiliateById(int id);
         Discount GetDiscount(string email);

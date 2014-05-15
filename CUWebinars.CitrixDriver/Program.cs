@@ -39,6 +39,8 @@ namespace CUWebinars.CitrixDriver
                 EndMeridian = "PM",
                 TemplateTitle = "Testing No Confirmations",
                 TimeZoneKey = 68 // central
+                //presenter.webuser.fullname
+                //presenter.webuser.email
             };
 
             return citrixWebinar;

@@ -96,6 +96,14 @@ UPDATE  CUWebinars.dbo.Webinar
 SET     WebinarKey = 495203178,
 Status = 3, RecordingUrl = 'VendorMgmtBestPractice042214.wmv'
 WHERE   idWebinar = 701
+	
+UPDATE  CUWebinars.dbo.Webinar
+SET     WebinarKey = 495203178,
+Status = 3, RecordingUrl = 'MotivateSalesTM0514.wmv'
+WHERE   idWebinar = 1558
+
+
+UPDATE dbo.RegTypesGroupsXref SET idRegTypeGroup = 35 WHERE idWebinar = 1558
 
 INSERT  CUWebinars.dbo.WebinarFile
         ( idWebinar ,

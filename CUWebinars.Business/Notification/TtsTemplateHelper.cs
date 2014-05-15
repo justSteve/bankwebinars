@@ -27,5 +27,14 @@ namespace CUWebinars.Business.Notification
         {
             return DateTimeHelper.FormatDateShort(date);
         }
+
+        //DateTime time
+        //    , USTimeZone timeZone
+        //    , bool displayTimezone
+        //    ,decimal duration
+        public string FormatTimeWithDuration(DateTime date, USTimeZone timeZone, bool displayTZ, decimal duration)
+        {
+            return DateTimeHelper.FormatTimeWithDuration(date, timeZone, displayTZ, duration);
+        }
     }
 }

@@ -51,8 +51,10 @@ namespace CUWebinars.Business.Core.Helpers
             return timeToDisplay.ToString("h:mm tt").ToLower() + " " + timeZoneSuffix;
         }
 
-        public static string FormatTimeWithDuration(DateTime time, USTimeZone timeZone, bool displayTimezone,
-                                                    decimal duration)
+        public static string FormatTimeWithDuration(DateTime time
+            , USTimeZone timeZone
+            , bool displayTimezone
+            ,decimal duration)
         {
             //This function should build a string that diplays 
             //an event's time in beginning/ending format:
