@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web.UI.WebControls.WebParts;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
+using CUWebinars.Html;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.ViewModel;
 using Ninject.Extensions.Logging;

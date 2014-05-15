@@ -14,21 +14,20 @@ namespace CUWebinars.Html
     public class TtsHtmlHelpers
     {
         private const string ImageParameters = "{0} {1}";
-        private readonly ControllerContext _controllerContext;
+        public static ControllerContext _controllerContext;
         private readonly HtmlHelper _htmlHelper;
 
         //public TtsHtmlHelpers(ControllerContext controllerContext)
         public TtsHtmlHelpers()
         {
-            //_controllerContext = controllerContext;
             //_htmlHelper = new HtmlHelper(
             //    new ViewContext(
-            //        controllerContext, 
-            //        new WebFormView(controllerContext, "omg"), 
-            //        new ViewDataDictionary(), 
+            //        _controllerContext,
+            //        new WebFormView(_controllerContext, "omg"),
+            //        new ViewDataDictionary(),
             //        new TempDataDictionary(),
-            //        controllerContext.HttpContext.Response.Output
-            //        ), 
+            //        _controllerContext.HttpContext.Response.Output
+            //        ),
             //    new ViewPage()
             //    );
         }

@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using CUWebinars.Business.Models;
 using CUWebinars.Selenium.Core;
@@ -42,7 +43,7 @@ namespace CUWebinars.CitrixDriver
 
         public void ClearCookies()
         {
-            SeleniumTestDriver.ClearCookies();
+            SeleniumTestDriver.ClearFederatedCookies();
         }
         
         public void GotToLoginPage()
@@ -161,6 +162,24 @@ namespace CUWebinars.CitrixDriver
 
         //}
 
+        private void AddPanelists(IList<Presenter> presenters)
+        {/*
+            var nrOfPresenters = presenters.Count();
+
+            if (nrOfPresenters > 3)
+                SeleniumTestDriver.FindByIdClick("addPanelistsLink"); 
+
+
+            for (int i = 0; i < nrOfPresenters; i++)
+            {
+                SeleniumTestDriver.TypeText("Panelist" + i + "Name_Full", presenters[i].WebUser.FullName);
+                SeleniumTestDriver.TypeText("Panelist" + i + "Email", presenters[i].WebUser.email);
+            }
+           */
+            SeleniumTestDriver.TypeText("Panelist1Name_Full", "Steve Presenter");
+            SeleniumTestDriver.TypeText("Panelist1Email", "amSteve@gmail.com");
+        }
+
         public string ScheduleASimilarWebinar(CitrixWebinar webinar)
         {
             var div = SeleniumTestDriver.FindByXPath(@"//span/b[contains(text(), '" + webinar.TemplateTitle + "')]/parent::span/parent::p/parent::div/parent::div/parent::div");
@@ -199,6 +218,8 @@ namespace CUWebinars.CitrixDriver
             
             SeleniumTestDriver.FindByIdClick("pstn");
             SeleniumTestDriver.FindByIdClick("pstnTF");
+
+            AddPanelists(null);
 
             SeleniumTestDriver.FindByCssSelectorClick("div.submit_bar input[type=submit]");
 

@@ -25,10 +25,10 @@ namespace CUWebinars.CitrixDriver
 
         public abstract void Initialize();
 
-        public virtual void ClearCookies()
+        public void ClearFederatedCookies()
         {
-            //webDriver.Manage().Cookies.DeleteCookieNamed("FedAuth");
-            //webDriver.Manage().Cookies.DeleteCookieNamed("FedAuth1");
+            webDriver.Manage().Cookies.DeleteCookieNamed("FedAuth");
+            webDriver.Manage().Cookies.DeleteCookieNamed("FedAuth1");
         }
 
         public virtual void CloseWindow()
@@ -57,7 +57,7 @@ namespace CUWebinars.CitrixDriver
         {
             if (string.IsNullOrEmpty(url))
             {
-                url = "http://www.gotomeeting.com/online/";
+                url = string.Format("http://localhost:{0}", port);
             }
 
             INavigation navigation = webDriver.Navigate();
@@ -115,6 +115,16 @@ namespace CUWebinars.CitrixDriver
             }
 
             return element;
+        }
+
+        public IWebElement FindByLinkText(string linkTextToFind)
+        {
+            return webDriver.FindElement(By.LinkText(linkTextToFind));
+        }
+
+        public IWebElement FindByPartialLinkText(string linkTextToFind)
+        {
+            return webDriver.FindElement(By.PartialLinkText(linkTextToFind));
         }
 
         public virtual IWebElement FindByLinkTextClick(string linkTextToFind)
@@ -330,6 +340,7 @@ namespace CUWebinars.CitrixDriver
         public virtual void Quit()
         {
             webDriver.Quit();
+            webDriver.Dispose();
         }
 
         public virtual string GetAlertText()
@@ -394,5 +405,6 @@ namespace CUWebinars.CitrixDriver
             get { return webDriver; }
         }
     }
+
 
 }

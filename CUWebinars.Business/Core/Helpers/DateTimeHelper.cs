@@ -5,12 +5,12 @@ namespace CUWebinars.Business.Core.Helpers
 {
     public class DateTimeHelper
     {
-        public string FormatTime(DateTime time)
+        public static string FormatTime(DateTime time)
         {
             return FormatTime(time, USTimeZone.Central, false);
         }
 
-        public string FormatTime(DateTime time, USTimeZone timeZone, bool displayTimezone)
+        public static string FormatTime(DateTime time, USTimeZone timeZone, bool displayTimezone)
         {
             //This method assumes that the time is following Central time zone
 
