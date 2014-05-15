@@ -40,6 +40,8 @@ namespace CUWebinars.CitrixDriver
                 RequirePassword = true,
                 TemplateTitle = "BaseLive Event",
                 TimeZoneKey = 68 // central
+                //presenter.webuser.fullname
+                //presenter.webuser.email
             };
 
             return citrixWebinar;

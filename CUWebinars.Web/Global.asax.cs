@@ -56,7 +56,7 @@ namespace CUWebinars.Web
 
             AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.Email;
         }
-
+        //https://www.simple-talk.com/dotnet/asp.net/handling-errors-effectively-in-asp.net-mvc/
         //protected void Application_Error(object sender, EventArgs e)
         //{
         //    var ex = Server.GetLastError().GetBaseException();

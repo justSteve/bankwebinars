@@ -115,6 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountService\IMembershipService.cs" />
+    <Compile Include="Class1.cs" />
     <Compile Include="Core\Helpers\DateTimeHelper.cs" />
     <Compile Include="Core\Helpers\GenericHelpers.cs" />
     <Compile Include="Models\CitrixWebinar.cs" />
@@ -151,6 +152,7 @@
     <Compile Include="Notification\INotificationDelivery.cs" />
     <Compile Include="Notification\INotificationMessage.cs" />
     <Compile Include="Notification\TemplateResolver.cs" />
+    <Compile Include="Notification\TtsTemplateHelper.cs" />
     <Compile Include="Repository\IAccountRepository.cs" />
     <Compile Include="Repository\IAffiliateRepository.cs" />
     <Compile Include="Repository\AffiliateRepository.cs" />
@@ -226,6 +228,7 @@
     <Compile Include="Core\TtsConfiguration.cs" />
     <Compile Include="Core\TtsConfig.cs" />
     <Compile Include="Services\WebinarService.cs" />
+    <Compile Include="TTSLogger.cs" />
     <Compile Include="Validation\Order\CreateOrderValidator.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -235,10 +238,10 @@
     <None Include="packages.config" />
     <None Include="SQLSeeding\BACPACs\CUWebinars.bacpac" />
     <None Include="SQLSeeding\BACPACs\CUWebinarsClean.bacpac" />
-    <None Include="SQLSeeding\BACPACs\CUWebinarsV3.bacpac" />
+    <None Include="SQLSeeding\BACPACs\CUWebinarsMigrator.bak" />
     <None Include="SQLSeeding\BACPACs\MembershipReboot.bacpac" />
     <None Include="SQLSeeding\BACPACs\MembershipRebootClean.bacpac" />
-    <None Include="SQLSeeding\BACPACs\Options2RegType.bacpac" />
+    <None Include="SQLSeeding\BACPACs\TTSDatabase-2014-5-4-20-7.bacpac" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="SQLSeeding\ExecutesTheMigrationsScripts.sql" />

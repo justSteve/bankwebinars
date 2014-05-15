@@ -150,6 +150,7 @@ namespace CUWebinars.Business.Repository
         {
             var orders = ((TTSWebinarsContext)db).OrderRows
                 .Include(or => or.Order)
+                .Include(row => row.Webinar)
                 .Where(or => or.idWebinar == idWebinar)
                 .Where(or => or.RegistrationType.ShowLiveNotifications == "Yes")
                 .Where(or => or.RowStatus == OrderRowStatus.Active)
@@ -243,10 +244,10 @@ namespace CUWebinars.Business.Repository
                 .Include(o => o.OrderRows.Select(w => w.Webinar))
                 .Where(o => o.idUser == idUser
                                           && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Recorded
-                                            && (o.OrderStatus == OrderStatus.Submitted
-                                                || o.OrderStatus == OrderStatus.Paid
-                                                || o.OrderStatus == OrderStatus.Billed
-                                            )
+                && (o.OrderStatus == OrderStatus.Submitted
+                || o.OrderStatus == OrderStatus.Paid
+                || o.OrderStatus == OrderStatus.Billed
+                )
                     );
             return GetLoadedEntitiesForOrder(orders);
 

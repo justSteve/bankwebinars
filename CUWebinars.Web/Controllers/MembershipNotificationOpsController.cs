@@ -255,7 +255,8 @@ namespace CUWebinars.Web.Controllers
             using (var fileStream =
                     System.IO.File.OpenRead(
                     //Path.Combine(HttpRuntime.AppDomainAppPath, @"App_Data/Orders", "SampleData.csv"))
-                    Path.Combine(HttpRuntime.AppDomainAppPath, @"App_Data/Orders", "OrderEntry.csv"))
+                    //Path.Combine(HttpRuntime.AppDomainAppPath, @"App_Data/Orders", "OrderEntry.csv"))
+                    Path.Combine(HttpRuntime.AppDomainAppPath, @"App_Data/Orders", "newCUOrders.csv"))
                     )
             {
                 incomingOrderModels = CsvParseOps.ParseCsvForIncomingOrderModel(fileStream);

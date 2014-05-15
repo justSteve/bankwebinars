@@ -411,6 +411,21 @@ namespace CUWebinars.Business.Services
             return _regTypeRepository.FindRegTypesByWebinarId(webinarId, false);
         }
 
+        public void FireSendRecordingIsPostedEvent(IList<Order> orders)
+        {
+            foreach (var order in orders)
+            {
+                AddEvent(new SendRecordingPostedEvent<Order> { EventObject = order });
+            }
+
+            foreach (var evt in GetEvents())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            Clear();
+        }
+
         public void FireSendReminderNotificationEvent(IList<Order> orders)
         {
             foreach (var order in orders)

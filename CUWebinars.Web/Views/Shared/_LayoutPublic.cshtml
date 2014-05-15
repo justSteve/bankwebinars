@@ -68,7 +68,7 @@
 <head>
 
     <!--Start of Zopim Live Chat Script-->
-    @*<script type="text/javascript">
+    <script type="text/javascript">
             window.$zopim || (function (d, s) {
                 var z = $zopim = function (c) { z._.push(c) }, $ = z.s =
                 d.createElement(s), e = d.getElementsByTagName(s)[0]; z.set = function (o) {
@@ -78,26 +78,9 @@
                 $.src = '//cdn.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU'; z.t = +new Date; $.
                 type = 'text/javascript'; e.parentNode.insertBefore($, e)
             })(document, 'script');
-        </script>*@
+        </script>
     <!--End of Zopim Live Chat Script-->
-    @*<script type='text/javascript'>
-            window.Muscula = {
-                settings: {
-                    logId: "8d7f689c-7075-47f0-ae3d-1349f9fc4266", suppressErrors: false
-                }
-            };
-            (function () {
-                var m = document.createElement('script'); m.type = 'text/javascript'; m.async = true;
-                m.src = (window.location.protocol == 'https:' ? 'https:' : 'http:') +
-                    '//musculahq.appspot.com/Muscula6.js';
-                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(m, s);
-                window.Muscula.run = function () { var a; eval(arguments[0]); window.Muscula.run = function () { }; };
-                window.Muscula.errors = []; window.onerror = function () {
-                    window.Muscula.errors.push(arguments);
-                    return window.Muscula.settings.suppressErrors === undefined;
-                }
-            })();
-        </script>*@
+
     @Html.Raw(JSNLog.JavascriptLogging.Configure())
 
 
@@ -200,13 +183,12 @@
             @*<li><a class="socicon small rss" href="#" data-placement="bottom" title="Subscribe to our RSS feed"></a></li>*@
             <li><a class="socicon small facebook" href="http://www.facebook.com/home.php#!/pages/Total-Training-Solutions/300546163412" target="_blank" data-placement="bottom" title="Follow us on Facebook"></a></li>
             <li><a class="socicon small twitterbird" href="http://twitter.com/#!/ttstrain" target="_blank" data-placement="bottom" title="Follow us on Twitter"></a></li>
-            <li><a class="socicon small linkedin" href="http://www.linkedin.com/profile/view?id=12319801&locale=en_US&trk=tyah&trkInfo=tas%3Akyle" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
+            <li><a class="socicon small linkedin" href="https://www.linkedin.com/company/bankwebinars.com" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
         </ul>
 
     </section>
     <!-- begin .header-->
     <header class="header  clearfix" style="margin-bottom: 0px; padding-bottom: 0; ">
-        <img src="https://ttseast.blob.core.windows.net/images/BankWebinars/print-logo.png" class="print logo" alt="CUWebinars is a production of TTSTrain.com" />
         <div class="container">
 
             <!-- begin #main_menu -->
@@ -342,7 +324,7 @@
                             @*<li><a class="socicon small rss" href="#" data-placement="bottom" title="Subscribe to our RSS feed"></a></li>*@
                             <li><a class="socicon small facebook" href="http://www.facebook.com/home.php#!/pages/Total-Training-Solutions/300546163412" target="_blank" data-placement="bottom" title="Follow us on Facebook"></a></li>
                             <li><a class="socicon small twitterbird" href="http://twitter.com/#!/ttstrain" target="_blank" data-placement="bottom" title="Follow us on Twitter"></a></li>
-                            <li><a class="socicon small linkedin" href="http://www.linkedin.com/profile/view?id=12319801&locale=en_US&trk=tyah&trkInfo=tas%3Akyle" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
+                            <li><a class="socicon small linkedin" href="https://www.linkedin.com/company/bankwebinars.com" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
                         </ul>
                     </section>
 

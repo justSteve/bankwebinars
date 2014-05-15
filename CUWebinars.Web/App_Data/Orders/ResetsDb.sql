@@ -96,6 +96,14 @@ UPDATE  CUWebinars.dbo.Webinar
 SET     WebinarKey = 495203178,
 Status = 3, RecordingUrl = 'VendorMgmtBestPractice042214.wmv'
 WHERE   idWebinar = 701
+	
+UPDATE  CUWebinars.dbo.Webinar
+SET     WebinarKey = 495203178,
+Status = 3, RecordingUrl = 'MotivateSalesTM0514.wmv'
+WHERE   idWebinar = 1558
+
+
+UPDATE dbo.RegTypesGroupsXref SET idRegTypeGroup = 35 WHERE idWebinar = 1558
 
 INSERT  CUWebinars.dbo.WebinarFile
         ( idWebinar ,
@@ -158,7 +166,7 @@ WHERE   idWebinar = 1558
 INSERT dbo.WebinarFile
         ( idWebinar, fileLocation, fileDesc )
 VALUES  ( 1558, -- idWebinar - int
-          N'h14/MotivateSales0514.pdf', -- fileLocation - nvarchar(255)
+          N'MotivateSales0514.pdf', -- fileLocation - nvarchar(255)
           N'Handouts'  -- fileDesc - nvarchar(1000)
           )
 
@@ -171,7 +179,7 @@ INSERT  dbo.WebinarFile
           fileDesc
         )
 VALUES  ( 802 ,
-          'h14/bsafrontlinecu0114.pdf' ,
+          'bsafrontlinecu0114.pdf' ,
           'Handouts'
         )
 INSERT  dbo.WebinarFile
@@ -180,7 +188,7 @@ INSERT  dbo.WebinarFile
           fileDesc
         )
 VALUES  ( 400 ,
-          'h14/AcctCardsCU0214.pdf' ,
+          'AcctCardsCU0214.pdf' ,
           'Handouts'
         )
 UPDATE  dbo.Webinar
@@ -195,7 +203,7 @@ INSERT  dbo.WebinarFile
           fileDesc
         )
 VALUES  ( 435 ,
-          'h14/IRAUpdateCU0214.pdf' ,
+          'IRAUpdateCU0214.pdf' ,
           'Handouts - Color'
         )
 INSERT  dbo.WebinarFile
@@ -204,7 +212,7 @@ INSERT  dbo.WebinarFile
           fileDesc
         )
 VALUES  ( 435 ,
-          'h14/IRAUpdateCUB0214.pdf' ,
+          'IRAUpdateCUB0214.pdf' ,
           'Handouts'
         )
 UPDATE  dbo.Webinar
@@ -216,7 +224,7 @@ INSERT  dbo.WebinarFile
           fileDesc
         )
 VALUES  ( 401 ,
-          'h14/TrustCUC0314.pdf' ,
+          'TrustCUC0314.pdf' ,
           'Handouts - Color'
         )
 INSERT  dbo.WebinarFile
@@ -225,7 +233,7 @@ INSERT  dbo.WebinarFile
           fileDesc
         )
 VALUES  ( 401 ,
-          'h14/TrustCUB0314.pdf' ,
+          'TrustCUB0314.pdf' ,
           'Handouts'
         )
 UPDATE  dbo.Webinar
@@ -237,7 +245,7 @@ INSERT  dbo.WebinarFile
           fileDesc
         )
 VALUES  ( 402 ,
-          'h14/AnnualTrainingCU0314.pdf' ,
+          'AnnualTrainingCU0314.pdf' ,
           'Handouts'
         )
 UPDATE  dbo.Webinar
@@ -249,7 +257,7 @@ INSERT  dbo.WebinarFile
           fileDesc
         )
 VALUES  ( 467 ,
-          'h14/IRATradRothCUC0314.pdf' ,
+          'IRATradRothCUC0314.pdf' ,
           'Handouts - Color'
         )
 INSERT  dbo.WebinarFile
@@ -258,7 +266,7 @@ INSERT  dbo.WebinarFile
           fileDesc
         )
 VALUES  ( 467 ,
-          'h14/IRATradRothCUB0314.pdf' ,
+          'IRATradRothCUB0314.pdf' ,
           'Handouts'
         )
 UPDATE  dbo.Webinar
@@ -270,7 +278,7 @@ INSERT  dbo.WebinarFile
           fileDesc
         )
 VALUES  ( 403 ,
-          'h14/BusinessCU0414.pdf' ,
+          'BusinessCU0414.pdf' ,
           'Handouts'
         )
 UPDATE  dbo.Webinar
@@ -282,7 +290,7 @@ INSERT  dbo.WebinarFile
           fileDesc
         )
 VALUES  ( 825 ,
-          'h14/ECOACU0414.pdf' ,
+          'ECOACU0414.pdf' ,
           'Handouts'
         )
 UPDATE  dbo.Webinar
@@ -294,7 +302,7 @@ INSERT  dbo.WebinarFile
           fileDesc
         )
 VALUES  ( 437 ,
-          'h14/IRADistCUC0314.pdf' ,
+          'IRADistCUC0314.pdf' ,
           'Handouts - Color'
         )
 INSERT  dbo.WebinarFile
@@ -303,7 +311,7 @@ INSERT  dbo.WebinarFile
           fileDesc
         )
 VALUES  ( 437 ,
-          'h14/IRADistCUB0314.pdf' ,
+          'IRADistCUB0314.pdf' ,
           'Handouts'
         )
 		
@@ -317,7 +325,7 @@ INSERT  dbo.WebinarFile
           fileDesc
         )
 VALUES  ( 803 ,
-          'h13/CUMinors1213.pdf' ,
+          'CUMinors1213.pdf' ,
           'Handouts'
         )
 
@@ -331,7 +339,7 @@ INSERT  dbo.WebinarFile
           fileDesc
         )
 VALUES  ( 407 ,
-          'h13/CUMembership1013.pdf' ,
+          'CUMembership1013.pdf' ,
           'Handouts'
         )
 
@@ -345,7 +353,7 @@ INSERT  dbo.WebinarFile
           fileDesc
         )
 VALUES  ( 407 ,
-          'h14/IRARolloverCUC0314.pdf' ,
+          'IRARolloverCUC0314.pdf' ,
           'Handouts - Color'
         )
 INSERT  dbo.WebinarFile
@@ -354,7 +362,7 @@ INSERT  dbo.WebinarFile
           fileDesc
         )
 VALUES  ( 407 ,
-          'h14/IRARolloverCUB0314.pdf' ,
+          'IRARolloverCUB0314.pdf' ,
           'Handouts'
         )
 
@@ -368,7 +376,7 @@ INSERT  dbo.WebinarFile
           fileDesc
         )
 VALUES  ( 435 ,
-          'h14/IRAUpdateCU0214.pdf' ,
+          'IRAUpdateCU0214.pdf' ,
           'Handouts - Color'
         )
 INSERT  dbo.WebinarFile
@@ -377,7 +385,7 @@ INSERT  dbo.WebinarFile
           fileDesc
         )
 VALUES  ( 435 ,
-          'h14/IRAUpdateCUB0214.pdf' ,
+          'IRAUpdateCUB0214.pdf' ,
           'Handouts'
         )
 
@@ -392,7 +400,7 @@ INSERT  dbo.WebinarFile
           fileDesc
         )
 VALUES  ( 834 ,
-          'h14/bsafrontlinecu0114.pdf' ,
+          'bsafrontlinecu0114.pdf' ,
           'Handouts'
         )
 --For Sales Leaders: Precision Coaching
@@ -405,7 +413,7 @@ INSERT  dbo.WebinarFile
           fileDesc
         )
 VALUES  ( 1471 ,
-          'h13/PrecisionCoaching1113.pdf' ,
+          'PrecisionCoaching1113.pdf' ,
           'Handouts'
         )
 ----How to Build a Personal & Business Work Plan
@@ -418,7 +426,7 @@ VALUES  ( 1471 ,
 --          fileDesc
 --        )
 --VALUES  ( 1472,
---          'h13/CUMinors1213.pdf' ,
+--          'CUMinors1213.pdf' ,
 --          'Handouts'
 --        )
 
