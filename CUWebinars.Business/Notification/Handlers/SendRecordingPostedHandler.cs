@@ -29,10 +29,6 @@ namespace CUWebinars.Business.Notification.Handlers
         }
 
 
-        public void Handle(SendRecordingPostedEvent<T> sendRecordingPostedEvent)
-        {
-            Process(sendRecordingPostedEvent);
-        }
 
         public virtual void Process(SendRecordingPostedEvent<T> sendRecordingPostedEvent)
         {
@@ -55,6 +51,10 @@ namespace CUWebinars.Business.Notification.Handlers
 
         }
 
+        public void Handle(SendRecordingPostedEvent<T> @event)
+        {
+            Process(@event);
+        }
     }
 
     public class SendRecordingPostedHandler : SendRecordingPostedHandler<Order>

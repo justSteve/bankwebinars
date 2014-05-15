@@ -991,7 +991,7 @@
     <Content Include="Membership\Email\EmailTemplates\PasswordChangedEvent_Body.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\PasswordChangedEvent_Subject.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\PasswordResetRequestedEvent_Subject.cshtml" />
-    <Content Include="Notification\Templates\OrderSubmittedEvent.cshtml" />
+    <Content Include="Notification\Templates\OrderSubmitted.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailVerifiedEvent_Subject.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailVerifiedEvent_Body.cshtml" />
     <Content Include="Notification\Templates\RecordingPostedEventBody.cshtml">

@@ -27,10 +27,6 @@ namespace CUWebinars.Business.Notification.Handlers
             _logger = logger;
         }
 
-        public void Handle(SendReminderEvent<T> sendShippedOrderSubmittedEvent)
-        {
-            Process(sendShippedOrderSubmittedEvent);
-        }
 
         public virtual void Process(SendReminderEvent<T> sendReminderEvent)
         {
@@ -52,6 +48,11 @@ namespace CUWebinars.Business.Notification.Handlers
             {
                 _logger.Error(string.Format("Event processing failed for OrderId {0}", sendReminderEvent.EventObject.idOrder), exception);
             }
+        }
+
+        public void Handle(SendReminderEvent<T> @event)
+        {
+            Process(@event);
         }
     }
 

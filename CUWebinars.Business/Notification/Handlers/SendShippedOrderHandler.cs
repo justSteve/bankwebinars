@@ -49,9 +49,9 @@ namespace CUWebinars.Business.Notification.Handlers
             }
         }
 
-        public void Handle(SendShippedOrderEvent<T> sendShippedOrderSubmittedEvent)
+        public void Handle(SendShippedOrderEvent<T> @event)
         {
-            Process(sendShippedOrderSubmittedEvent);
+            Process(@event);
         }
     }
 

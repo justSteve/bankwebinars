@@ -1,0 +1,79 @@
+﻿using System;
+using CUWebinars.Business.Models;
+using CUWebinars.Business.Notification.Email;
+using CUWebinars.Business.Notification.Events;
+using CUWebinars.Business.Notification.Formatters;
+using CUWebinars.NotificationSystem.Event;
+using Ninject.Extensions.Logging;
+
+namespace CUWebinars.Business.Notification.Handlers
+{
+    public class OrderSubmittedHandler<T> : IEventHandler<OrderSubmittedEvent<T>> 
+        where T : Order
+    {
+        private readonly IFormatter _generalFormatter;
+        private readonly INotificationDelivery _notificationDelivery;
+        private readonly ILogger _logger;
+
+        public OrderSubmittedHandler(IFormatter generalFormatter, ILogger logger)
+            : this(generalFormatter, new SmtpMessageDelivery(), logger)
+        {
+
+        }
+        public OrderSubmittedHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger)
+        {
+            _generalFormatter = generalFormatter;
+            _notificationDelivery = notificationDelivery;
+            _logger = logger;
+        }
+        
+        public virtual void Process(OrderSubmittedEvent<T> orderSubmittedEvent)
+        {
+            try
+            {
+                var notificationMessage = _generalFormatter.Format(orderSubmittedEvent.EventObject, "OrderSubmitted");
+                notificationMessage.To = orderSubmittedEvent.EventObject.BillingEmail;
+                _notificationDelivery.Notify(notificationMessage);
+            }
+            catch (NullReferenceException nullReferenceException)
+            {
+                if (ReferenceEquals(null, orderSubmittedEvent.EventObject))
+                {
+                    _logger.Error(string.Format("ExceptionMessage: {0}", nullReferenceException.Message), nullReferenceException);
+                }
+                else
+                {
+                    _logger.Error(
+                        string.Format("Event processing failed for OrderId {0}. ExceptionMessage: {1}",
+                            orderSubmittedEvent.EventObject.idOrder,
+                            nullReferenceException.Message)
+                        , nullReferenceException);
+                }
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(string.Format("ExceptionMessage: {0}", exception.Message), exception);
+            }
+        }
+
+        public void Handle(OrderSubmittedEvent<T> @event)
+        {
+            Process(@event);
+        }
+    }
+
+    public class OrderSubmittedHandler : OrderSubmittedHandler<Order>
+    {
+        public OrderSubmittedHandler(IFormatter generalFormatter, ILogger logger)
+            : base(generalFormatter, logger)
+        {
+
+        }
+
+        public OrderSubmittedHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger)
+            : base(generalFormatter, notificationDelivery, logger)
+        {
+        }
+
+    }
+}

@@ -483,9 +483,7 @@ namespace CUWebinars.Business.Services
 
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder);
 
-
-
-                AddEvent(new OrderSubmittedEvent<Order> { Order = updatedOrder });
+                AddEvent(new OrderSubmittedEvent<Order> { EventObject = updatedOrder });
 
                 foreach (var evt in GetEvents())
                 {
