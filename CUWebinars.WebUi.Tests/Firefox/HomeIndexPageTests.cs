@@ -24,6 +24,8 @@ namespace CUWebinars.WebUi.Tests.Firefox
             home.LogInToSite(Constants.SitTestEmailAddress, Constants.SitTestPassword);
 
             Assert.IsTrue(home.LogoutLinkIsPresentOnPage);
+            
+            home.LogOff();
         }
 
         [TestMethod]
@@ -37,13 +39,14 @@ namespace CUWebinars.WebUi.Tests.Firefox
             home.EnterPasswordWhereUserExists(Constants.SitTestPassword);
 
             Assert.IsTrue(home.LogoutLinkIsPresentOnPage);
+
+            home.LogOff();
         }
 
 
         public HomeIndexPage NavigateToHomeIndexPage()
         {
             var homeIndexPage = new HomeIndexPage(TestDriver);
-            
 
             homeIndexPage.Open();
 

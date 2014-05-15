@@ -73,6 +73,23 @@ namespace CUWebinars.Html
             // Render tag.
             return MvcHtmlString.Create(builder.ToString(TagRenderMode.Normal));
         }
+        
+        public IHtmlString Link(string linkText, string src, object htmlAttributes = null)
+        {
+            var builder = new TagBuilder(UiConstants.Anchor);
+
+            builder.InnerHtml = linkText;
+
+            builder.MergeAttribute(UiConstants.SourceAttribute, src);
+
+            if (!ReferenceEquals(null, htmlAttributes))
+            {
+                builder.MergeAttributes(new RouteValueDictionary(htmlAttributes));
+            }
+
+            // Render tag.
+            return MvcHtmlString.Create(builder.ToString(TagRenderMode.Normal));
+        }
 
         public IHtmlString Span(string spanText, object htmlAttributes = null)
         {

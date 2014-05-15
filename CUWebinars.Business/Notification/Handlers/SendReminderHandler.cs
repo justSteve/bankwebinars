@@ -27,10 +27,6 @@ namespace CUWebinars.Business.Notification.Handlers
             _logger = logger;
         }
 
-        public void Handle(SendReminderEvent<T> sendShippedOrderSubmittedEvent)
-        {
-            Process(sendShippedOrderSubmittedEvent);
-        }
 
         public virtual void Process(SendReminderEvent<T> sendReminderEvent)
         {
@@ -44,14 +40,28 @@ namespace CUWebinars.Business.Notification.Handlers
             }
             catch (NullReferenceException nullReferenceException)
             {
-                _logger.Error(
-                    string.Format("Event processing failed. Check that BillingEmail has a value for OrderId {0}",
-                        sendReminderEvent.EventObject.idOrder), nullReferenceException);
+                if (ReferenceEquals(null, sendReminderEvent.EventObject))
+                {
+                    _logger.Error(string.Format("ExceptionMessage: {0}", nullReferenceException.Message), nullReferenceException);
+                }
+                else
+                {
+                    _logger.Error(
+                        string.Format("Event processing failed for OrderId {0}. ExceptionMessage: {1}",
+                            sendReminderEvent.EventObject.idOrder,
+                            nullReferenceException.Message)
+                        , nullReferenceException);
+                }
             }
             catch (Exception exception)
             {
                 _logger.Error(string.Format("Event processing failed for OrderId {0}", sendReminderEvent.EventObject.idOrder), exception);
             }
+        }
+
+        public void Handle(SendReminderEvent<T> @event)
+        {
+            Process(@event);
         }
     }
 

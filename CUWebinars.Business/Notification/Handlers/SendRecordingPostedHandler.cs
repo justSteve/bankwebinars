@@ -29,29 +29,41 @@ namespace CUWebinars.Business.Notification.Handlers
         }
 
 
-        public void Handle(SendRecordingPostedEvent<T> sendRecordingPostedEvent)
-        {
-            Process(sendRecordingPostedEvent);
-        }
 
         public virtual void Process(SendRecordingPostedEvent<T> sendRecordingPostedEvent)
         {
             try
             {
-                var notificationMessage = _generalFormatter.Format(sendRecordingPostedEvent.EventObject, "SendRecordingPosted");
+                var notificationMessage = _generalFormatter.Format(sendRecordingPostedEvent, "SendRecordingPosted");
                 notificationMessage.To = sendRecordingPostedEvent.EventObject.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);
             }
             catch (NullReferenceException nullReferenceException)
             {
-                _logger.Error(
-                    string.Format("Event processing failed. Check that BillingEmail has a value for OrderId {0}",
-                        sendRecordingPostedEvent.EventObject.idOrder), nullReferenceException);
+                if (ReferenceEquals(null, sendRecordingPostedEvent.EventObject))
+                {
+                    _logger.Error(string.Format("ExceptionMessage: {0}", nullReferenceException.Message), nullReferenceException);
+                }
+                else
+                {
+                    _logger.Error(
+                        string.Format("Event processing failed for OrderId {0}. ExceptionMessage: {1}",
+                            sendRecordingPostedEvent.EventObject.idOrder,
+                            nullReferenceException.Message)
+                        , nullReferenceException);
+                }
+
             }
             catch (Exception exception)
             {
-                _logger.Error(string.Format("Event processing failed for OrderId {0}.", sendRecordingPostedEvent.EventObject.idOrder), exception);
+                _logger.Error(string.Format("Event processing failed for OrderId {0}", sendRecordingPostedEvent.EventObject.idOrder), exception);
             }
+
+        }
+
+        public void Handle(SendRecordingPostedEvent<T> @event)
+        {
+            Process(@event);
         }
     }
 

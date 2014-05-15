@@ -27,7 +27,7 @@
                         {
                             if (title.idWebinar != Model.Webinar.idWebinar)
                             {
-                                <li>@Html.ActionLink(@title.Title, "Details", "Webinar", new { target = "_new" })</li>
+                                <li>@Html.ActionLink(title.Title, "Details", "Webinar", new { id=title.idWebinar }, new { target = "_new" })</li>
                             }
                         }
                     </ul>
@@ -42,7 +42,7 @@
                             i++;
                             if (title.idWebinar != Model.Webinar.idWebinar && i < 7)
                             {
-                                <li>@Html.ActionLink(@title.Title, "Details", "Webinar", new { target = "_new" })</li>
+                                <li>@Html.ActionLink(title.Title, "Details", "Webinar", new { id = title.idWebinar }, new { target = "_new" })</li>
                             }
                         }
                     </ul>

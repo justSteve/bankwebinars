@@ -8,36 +8,36 @@ using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Business.Notification.Handlers
 {
-    public class SendConnectionInfoHandler<T> : IEventHandler<SendConnectionInfoEvent<T>> 
+    public class OrderSubmittedHandler<T> : IEventHandler<OrderSubmittedEvent<T>> 
         where T : Order
     {
         private readonly IFormatter _generalFormatter;
         private readonly INotificationDelivery _notificationDelivery;
         private readonly ILogger _logger;
 
-        public SendConnectionInfoHandler(IFormatter generalFormatter, ILogger logger)
+        public OrderSubmittedHandler(IFormatter generalFormatter, ILogger logger)
             : this(generalFormatter, new SmtpMessageDelivery(), logger)
         {
 
         }
-        public SendConnectionInfoHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger)
+        public OrderSubmittedHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger)
         {
             _generalFormatter = generalFormatter;
             _notificationDelivery = notificationDelivery;
             _logger = logger;
         }
-
-        public virtual void Process(SendConnectionInfoEvent<T> sendConnectionInfoEvent)
+        
+        public virtual void Process(OrderSubmittedEvent<T> orderSubmittedEvent)
         {
             try
             {
-                var notificationMessage = _generalFormatter.Format(sendConnectionInfoEvent.EventObject, "SendConnectionInfo");
-                notificationMessage.To = sendConnectionInfoEvent.EventObject.BillingEmail;
+                var notificationMessage = _generalFormatter.Format(orderSubmittedEvent.EventObject, "OrderSubmitted");
+                notificationMessage.To = orderSubmittedEvent.EventObject.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);
             }
             catch (NullReferenceException nullReferenceException)
             {
-                if (ReferenceEquals(null, sendConnectionInfoEvent.EventObject))
+                if (ReferenceEquals(null, orderSubmittedEvent.EventObject))
                 {
                     _logger.Error(string.Format("ExceptionMessage: {0}", nullReferenceException.Message), nullReferenceException);
                 }
@@ -45,33 +45,32 @@ namespace CUWebinars.Business.Notification.Handlers
                 {
                     _logger.Error(
                         string.Format("Event processing failed for OrderId {0}. ExceptionMessage: {1}",
-                            sendConnectionInfoEvent.EventObject.idOrder,
+                            orderSubmittedEvent.EventObject.idOrder,
                             nullReferenceException.Message)
                         , nullReferenceException);
                 }
             }
             catch (Exception exception)
             {
-                _logger.Error(string.Format("Event processing failed for OrderId {0}", sendConnectionInfoEvent.EventObject.idOrder), exception);
+                _logger.Error(string.Format("ExceptionMessage: {0}", exception.Message), exception);
             }
         }
 
-
-        public void Handle(SendConnectionInfoEvent<T> @event)
+        public void Handle(OrderSubmittedEvent<T> @event)
         {
             Process(@event);
         }
     }
 
-    public class SendConnectionInfoHandler : SendConnectionInfoHandler<Order>
+    public class OrderSubmittedHandler : OrderSubmittedHandler<Order>
     {
-        public SendConnectionInfoHandler(IFormatter generalFormatter, ILogger logger)
+        public OrderSubmittedHandler(IFormatter generalFormatter, ILogger logger)
             : base(generalFormatter, logger)
         {
-            
+
         }
 
-        public SendConnectionInfoHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger)
+        public OrderSubmittedHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger)
             : base(generalFormatter, notificationDelivery, logger)
         {
         }

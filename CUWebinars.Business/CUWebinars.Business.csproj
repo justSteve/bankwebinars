@@ -97,6 +97,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Data.Services.Client" />
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.IdentityModel.Services" />
@@ -110,7 +111,6 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -127,6 +127,7 @@
     <Compile Include="Notification\Events\TtsBusEvent.cs" />
     <Compile Include="Notification\Formatters\Formatter.cs" />
     <Compile Include="Notification\Formatters\IFormatter.cs" />
+    <Compile Include="Notification\Handlers\OrderSubmittedHandler.cs" />
     <Compile Include="Notification\Handlers\SendConnectionInfoHandler.cs" />
     <Compile Include="Notification\Handlers\SendRecordingPostedHandler.cs" />
     <Compile Include="Notification\Handlers\SendReminderHandler.cs" />
@@ -148,14 +149,8 @@
     <Compile Include="Notification\Email\SmtpMessageDelivery.cs" />
     <Compile Include="Notification\EnvironmentInformation.cs" />
     <Compile Include="Notification\Events\OrderSubmittedEvent.cs" />
-    <Compile Include="Notification\Formatters\IOrderNotificationFormatter.cs" />
-    <Compile Include="Notification\Formatters\OrderNotificationFormatter.cs" />
-    <Compile Include="Notification\Handlers\NotificationOrderHandler.cs" />
-    <Compile Include="Notification\Handlers\OrderNotifyEventHandler.cs" />
     <Compile Include="Notification\INotificationDelivery.cs" />
     <Compile Include="Notification\INotificationMessage.cs" />
-    <Compile Include="Notification\Renderers\IOrderRazorRenderer.cs" />
-    <Compile Include="Notification\Renderers\OrderRazorRenderer.cs" />
     <Compile Include="Notification\TemplateResolver.cs" />
     <Compile Include="Notification\TtsTemplateHelper.cs" />
     <Compile Include="Repository\IAccountRepository.cs" />
@@ -263,7 +258,9 @@
       <Name>CUWebinars.NotificationSystem</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

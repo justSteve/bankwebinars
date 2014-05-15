@@ -82,7 +82,7 @@ namespace CUWebinars.WebUi.Tests.Page.Firefox
 
        public void LogOff()
        {
-           SeleniumTestDriver.FindByLinkTextClick(Constants.LogoffLinkText);
+           SeleniumTestDriver.FindByPartialLinkText(Constants.LogoffLinkText);
        }
 
 

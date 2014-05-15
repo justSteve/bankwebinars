@@ -38,6 +38,7 @@ namespace CUWebinars.WebUi.Tests.Page
         {
             get
             {
+                SeleniumTestDriver.Wait(1000);
                 var logoutLinkWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(15));
 
                 var logoutLink = logoutLinkWait.Until(d => SeleniumTestDriver.FindByPartialLinkText(Constants.LogoffLinkText));
