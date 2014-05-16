@@ -34,6 +34,8 @@ namespace CUWebinars.Business.Models
         public string OrganizerOAuthKey { get; set; }
         public string AccessPhone { get; set; }
         public string AccessCode { get; set; }
+        //public int idGTWebinar { get; set; }
+        
         
 
         public string ceu { get; set; }
@@ -43,6 +45,7 @@ namespace CUWebinars.Business.Models
         public virtual ICollection<RegTypesGroupsXref> RegTypesGroupsXref { get; set; }
         public virtual ICollection<OrderRow> OrderRows { get; set; }
         public virtual Presenter Presenter { get; set; }
+        //public virtual GTWebinar GTWebinar { get; set; }
         public virtual ICollection<WebinarFile> WebinarFiles { get; set; }
         public virtual ICollection<WebinarTopicXref> WebinarTopicXrefs { get; set; }
         

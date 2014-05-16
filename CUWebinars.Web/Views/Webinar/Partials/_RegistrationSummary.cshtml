@@ -22,7 +22,7 @@
         order = row.Order;
         string[] webinarFiles = ViewBag.WebinarFiles;
         //ICollection<WebinarFile> webinarFiles = row.Webinar.WebinarFiles;
-        var recording = "<a href='" + Model.Webinar.RecordingUrl + "' target=_blank /> Recording Playback</a>"; ;
+        var recording = "<a href='" + ConfigurationManager.AppSettings["wmvrepository"]+ Model.Webinar.RecordingUrl + "' target=_blank /> Recording Playback</a>"; ;
         var showShipped = "";
         if (Model.Webinar.Status != WebinarStatus.Recorded)
         {

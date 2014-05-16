@@ -39,12 +39,12 @@ namespace CUWebinars.Business.Notification.Handlers
             {
                 if (ReferenceEquals(null, orderSubmittedEvent.EventObject))
                 {
-                    _logger.Error(string.Format("ExceptionMessage: {0}", nullReferenceException.Message), nullReferenceException);
+                    _logger.Error(string.Format("ExceptionMessage orderSubmittedEvent: {0}", nullReferenceException.Message), nullReferenceException);
                 }
                 else
                 {
                     _logger.Error(
-                        string.Format("Event processing failed for OrderId {0}. ExceptionMessage: {1}",
+                        string.Format("Event processing failed for orderSubmittedEvent - OrderId {0}. ExceptionMessage: {1}",
                             orderSubmittedEvent.EventObject.idOrder,
                             nullReferenceException.Message)
                         , nullReferenceException);
@@ -52,7 +52,7 @@ namespace CUWebinars.Business.Notification.Handlers
             }
             catch (Exception exception)
             {
-                _logger.Error(string.Format("ExceptionMessage: {0}", exception.Message), exception);
+                _logger.Error(string.Format("orderSubmittedEvent ExceptionMessage: {0}", exception.Message), exception);
             }
         }
 

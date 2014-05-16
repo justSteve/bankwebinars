@@ -21,5 +21,7 @@ namespace CUWebinars.Business.Models
         public DateTime StartTime { get; set; }
         public string TemplateTitle { get; set; }
         public int TimeZoneKey { get; set; }
+        public Webinar Webinar { get; set; }
+        public int idWebinar { get; set; }
     }
 }
