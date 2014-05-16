@@ -24,7 +24,6 @@
         EditResult = "ERROR: " + @Html.ValidationMessage("GeneralError").ToHtmlString();
     }
 }
-<script src="/Scripts/app/EditOrder.js"></script>
 <style>
     .ReverseHead {
         font-family: Verdana, BitStream vera Sans, Helvetica,Sans-serif;
@@ -54,11 +53,11 @@
 </style>
 
 <link href="/Content/css/home_index.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript">
-    function resendConfirmation(form) {
-        form.parent.submit();
-    }
-</script>
+@*<script type="text/javascript">
+        function resendConfirmation(form) {
+            form.parent.submit();
+        }
+    </script>*@
 
 <div style="width: 90%; margin-left: auto; margin-right: auto;">
     <h2>My Webinars</h2>
@@ -66,14 +65,16 @@
     //var thisDiscount = PageData["thisUser"].SubscriptionDiscount;
 
     }
-    <a href="/account/manage/@currentUser.idUser?returnUrl=/Account/MyWebinars/@currentUser.idUser">
-        <span style="color: black;" class="pull-right btn btn-success">
-            @*<button class="btn btn-success">*@
-            Edit My Account Profile
-            @*</button>*@
-        </span>
-    </a>
-
+    @*<a href="/account/manage/@currentUser.idUser?returnUrl=/Account/MyWebinars/@currentUser.idUser">
+            <span style="color: black;" class="pull-right btn btn-success">
+                Edit My Account Profile
+            </span>
+        </a>*@
+    @using (Html.BeginForm("ResetPassword", "Account", FormMethod.Post, new { id = "ResetPasswordForm" }))
+    {
+        <input type="hidden" name="email" value="@currentUser.email" />
+    <input id="NormalResetPasswordButton" class="pull-right btn btn-success" type="submit" value="Reset Password" />
+    }
     @*@if (thisDiscount != null)
         {
             <span>Discount found with @thisDiscount.UsesNumber credits remaining.</span>
