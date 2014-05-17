@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Models;
+﻿using CUWebinars.Business.Core.Helpers;
+using CUWebinars.Business.Models;
 using CUWebinars.Selenium.Core;
 using System;
 using System.Configuration;
@@ -9,39 +10,51 @@ namespace CUWebinars.CitrixDriver
     {
         private static ITestDriver webDriver;
         private static CitrixWebPage citrixWebPage;
+        private static TTSWebinarsContext context = new TTSWebinarsContext();
+        private static DateTimeHelper dateTimeHelper = new DateTimeHelper();
         static void Main(string[] args)
         {
-            webDriver = new IeTestDriver{ DriverPath=@"E:\", DriverPort=8889 };
+            var ttsWebinar = GetWebinar();
+            var webinar = GetGTWebinar(ttsWebinar);
+
+            webDriver = new IeTestDriver { DriverPath = @"E:\", DriverPort = 8889 };
             webDriver.Initialize();
+
 
             citrixWebPage = new CitrixWebPage(webDriver, ConfigurationManager.AppSettings["HomeUrl"]);
             
             citrixWebPage.Open();
             Login();
 
-            var webinar = GetWebinarMock();
 
             var newWebinarKey = ScheduleASimilarWebinar(webinar);
-            //ScheduleAWebinar();
 
             citrixWebPage.Close();
+
             Console.ReadLine(); 
         }
 
-        private static GTWebinar GetWebinarMock()
+        private static Webinar GetWebinar()
+        {
+            var webinarId = int.Parse(ConfigurationManager.AppSettings["WebinarId"]);
+            var webinar = context.Webinars.Find(webinarId);
+            return webinar;
+        }
+
+        private static GTWebinar GetGTWebinar(Webinar webinar)
         {
             var GTWebinar = new GTWebinar
             {
-                StartDate = DateTime.Today.AddMonths(1),
-                StartHour = "08:30",
-                StartMeridian = "PM",
-                EndHour = "10:30",
-                EndMeridian = "PM",
+                StartTime = webinar.Date,
+                StartHour = webinar.Date.ToString("hh:mm").ToLower(),
+                StartMeridian = webinar.Date.ToString("tt"),
+                EndHour = webinar.Date.AddHours((double)webinar.Duration).ToString("hh:mm"),
+                EndMeridian = webinar.Date.ToString("tt"),
+                PresenterFirstName =  webinar.Presenter.WebUser.FirstName,
+                PresenterLastName=  webinar.Presenter.WebUser.LastName,
                 RequirePassword = true,
-                TemplateTitle = "BaseLive Event",
+                TemplateTitle = ConfigurationManager.AppSettings["TemplateTitle"],
                 TimeZoneKey = 68 // central
-                //presenter.webuser.fullname
-                //presenter.webuser.email
             };
 
             return GTWebinar;
