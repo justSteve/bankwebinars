@@ -27,7 +27,7 @@
         code = row.Webinar.AccessCode;
     }
 
-    string DateTimeString = TtsTemplateHelperObject.FormatTimeWithDuration(row.Webinar.Date, Model.WebUser.timeZone, true, row.Webinar.Duration);
+    string DateTimeString = TtsDateTimeTemplateHelperObject.FormatTimeWithDuration(row.Webinar.Date, Model.WebUser.timeZone, true, row.Webinar.Duration);
     
     if (row.Webinar.AccessPhone != null)
     {
