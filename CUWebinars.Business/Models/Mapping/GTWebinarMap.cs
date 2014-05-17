@@ -8,8 +8,12 @@ namespace CUWebinars.Business.Models.Mapping
         {
             //  Need to make decisions above field sizes etc.
             //HasKey(t => t.idUserAff);
-            ToTable("GTWebinar");
 
+
+            ToTable("GTWebinar");
+            //HasRequired(t => t.Webinar)
+            //    .WithRequiredDependent(t => t.GTWebinar);
+            //.HasForeignKey(d => d.);
         }
     }
 }

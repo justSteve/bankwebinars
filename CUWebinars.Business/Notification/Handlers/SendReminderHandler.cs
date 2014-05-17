@@ -42,12 +42,12 @@ namespace CUWebinars.Business.Notification.Handlers
             {
                 if (ReferenceEquals(null, sendReminderEvent.EventObject))
                 {
-                    _logger.Error(string.Format("ExceptionMessage: {0}", nullReferenceException.Message), nullReferenceException);
+                    _logger.Error(string.Format("sendReminderEvent ExceptionMessage: {0}", nullReferenceException.Message), nullReferenceException);
                 }
                 else
                 {
                     _logger.Error(
-                        string.Format("Event processing failed for OrderId {0}. ExceptionMessage: {1}",
+                        string.Format("Event processing failed for sendReminderEvent - OrderId {0}. ExceptionMessage: {1}",
                             sendReminderEvent.EventObject.idOrder,
                             nullReferenceException.Message)
                         , nullReferenceException);
@@ -55,7 +55,9 @@ namespace CUWebinars.Business.Notification.Handlers
             }
             catch (Exception exception)
             {
-                _logger.Error(string.Format("Event processing failed for OrderId {0}", sendReminderEvent.EventObject.idOrder), exception);
+                _logger.Error(string.Format("Event processing (outer) failed for sendReminderEvent - OrderId {0}. ExceptionMessage: {1}"
+                    , sendReminderEvent.EventObject.idOrder,
+                    exception.Message), exception);
             }
         }
 

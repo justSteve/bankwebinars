@@ -10,6 +10,13 @@
     USTimeZone timeZ = currentUser.timeZone;
     string email = Model.WebUser.email;
 }
+<style type="text/css">
+    .audio {
+        font-size: smaller;
+        line-height: 98%;
+        padding: 10px;
+    }
+</style>
 <div class="container clearfix" id="main-content">
     <!--begin main content-->
     <div class="row-fluid sidebar-right">
@@ -20,101 +27,100 @@
                     (found @Model.Scheduled.Count.ToString())
                 </span>
             </h3>
-            <ul class="s-accordion faq fancy">
-                @if (Model.Scheduled.Count > 0)
+            @*<ul class="s-accordion faq fancy">*@
+            @if (Model.Scheduled.Count > 0)
+            {
+                foreach (var scheduled in Model.Scheduled)
                 {
-                    foreach (var scheduled in Model.Scheduled)
-                    {
-                        <li class="s-wrap">
-                            @{
-                                
-                        var row = scheduled.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-                            }
-                            <h4 class="trigger" id="upcoming-@row.idWebinar"><a href="#">@row.Webinar.Title<i class="icon-plus-sign"></i></a></h4>
-                            <div class="s-content">
-                                <div style="text-align: right;" class="pull-right alignright">
-                                    Order#: @row.idOrder<br />
-                                    Cost: @row.Order.Total.ToString()<br />
-                                </div>
-                                <p style="font-weight: normal; padding-left: 25px; padding-top: 0; margin-top: 0;">
-                                    @*Presented by @row.Webinar.Presenter.WebUser.FullName<br />*@
-                                    <i>@Html.DisplayDate(row.Webinar.Date)</i> @Html.DisplayTime(row.Webinar.Date, timeZ, false) - @Html.DisplayTime(row.Webinar.Date, row.Webinar.Duration, timeZ)<br />
-                                    <span id="showRegType_@(row.idWebinar)" class="regType">
-                                        Registration Type: @row.RegistrationType.OptionLabel.Replace(" Only", " ") &nbsp;&nbsp;
-                                    </span>
-                                </p>
-                                @if (row.Webinar.Status == WebinarStatus.Active)
+                    <div>
+                        @*<li class="s-wrap">*@
+                        @{
+
+                    var row = scheduled.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+                        }
+                        <h4 id="upcoming-@row.idWebinar">@row.Webinar.Title</h4>
+                        @*<h4 class="trigger" id="upcoming-@row.idWebinar"><a href="#">@row.Webinar.Title<i class="icon-plus-sign"></i></a></h4>*@
+                        <div class="s-content">
+                            <div style="text-align: right;" class="pull-right alignright">
+                                Order#: @row.idOrder<br />
+                                Cost: @row.Order.Total.ToString()<br />
+                            </div>
+                            <p style="font-weight: normal; padding-left: 25px; padding-top: 0; margin-top: 0;">
+                                @*Presented by @row.Webinar.Presenter.WebUser.FullName<br />*@
+                                <i>@Html.DisplayDate(row.Webinar.Date)</i> @Html.DisplayTime(row.Webinar.Date, timeZ, false) - @Html.DisplayTime(row.Webinar.Date, row.Webinar.Duration, timeZ)<br />
+                                <span id="showRegType_@(row.idWebinar)" class="regType">
+                                    Registration Type: @row.RegistrationType.OptionLabel.Replace(" Only", " ") &nbsp;&nbsp;
+                                </span>
+                            </p>
+                            @if (row.Webinar.Status == WebinarStatus.Active)
+                            {
+
+                                var eventID = row.Webinar.WebinarKey;
+                                eventID = eventID.Insert(6, "-").Insert(3, "-");
+                                //var eventPass = "Pass";
+                                var teleconf = row.Webinar.AccessPhone;
+                                var accessCode = row.Webinar.AccessCode;
+
+                                if (row.RegistrationType.ShowLiveNotifications == "Yes")
                                 {
-
-                                    var eventID = row.Webinar.WebinarKey;
-                                    eventID = eventID.Insert(6, "-").Insert(3, "-");
-                                    //var eventPass = "Pass";
-                                    var teleconf = row.Webinar.AccessPhone;
-                                    var accessCode = row.Webinar.AccessCode;
-
-                                    if (row.RegistrationType.ShowLiveNotifications == "Yes")
-                                    {
-                                        <div class="ReverseHead">&nbsp;&nbsp;Connection Summary</div>
-                                        <div id="showConnectionInfo">
-                                            <div id="showConnectionInfo">
-                                                <table width="400px">
-                                                    <tr>
-                                                        <td class="propLabel top_td1">URL:</td>
-                                                        <td class="propValue top_td2"><a href="@row.JoinURL" target="_JoinWebinar">@row.JoinURL</a></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="side_td1 propLabel">Webinar ID:</td>
-                                                        <td class="propValue side_td2">@eventID</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="audio" colspan="2"><font size="-2">Audio is delivered directly to your workstation (sound-card and speakers required). Or use the information below to connect via your telephone.</font></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="propLabel side_td1">Teleconference:</td>
-                                                        <td class="propValue side_td2">@teleconf</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="propLabel bottom_td1">Access Code:</td>
-                                                        <td class="propValue bottom_td2">@accessCode</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                            <br />
-                                            <div class="FrontPageSubHead">
-                                                <div class="ReverseHead">
-                                                    &nbsp;&nbsp;Event Materials
-                                                </div>
-                                            </div>
-                                            @{ Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar); }
+                                    <div>
+                                        <div class="FrontPageSubHead">
+                                            <div class="ReverseHead ">&nbsp;&nbsp;Connection Summary</div>
                                         </div>
-                                    }
-                                    else
-                                    {
-                                        <div class="myWebinarscaption">
-                                            The CD and handouts are typically shipped within 3-5 days following the event. Shipping
-                                            status will be displayed here. Check back here for links to the OnDemand recording
-                                            - typically posted within 1-2 days following the event.
+                                        <table width="400px">
+                                            <tr>
+                                                <td >Click-To-Join:</td>
+                                                <td ><a href="@row.JoinURL" target="_JoinWebinar">This link will become active 15-20 minutes prior to the scehuled start time of the event and connect you directly into the webinar.</a></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="audio" colspan="2">Audio is delivered directly to your workstation (sound-card and speakers required). Or use the information below to connect via your telephone.</td>
+                                            </tr>
+                                            <tr>
+                                                <td >Teleconference:</td>
+                                                <td >@teleconf</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="align_right">Access Code:</td>
+                                                <td >@accessCode</td>
+                                            </tr>
+                                        </table>
+
+                                        <br />
+                                        <div class="FrontPageSubHead">
+                                            <div class="ReverseHead">
+                                                &nbsp;&nbsp;Event Materials
+                                            </div>
                                         </div>
-                                        <div>Change order to Live?</div>
-                                    }
+                                        @{ Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar); }
+                                    </div>
                                 }
                                 else
                                 {
                                     <div class="myWebinarscaption">
-                                        <p>
-                                            The Webinar ID and password have not yet been generated for this event. Watch your
-                                            email or check back here ('<b>My Webinars</b>') to review the current status of
-                                            this event. You may wish to review this general guide to connecting to our events
-                                            <a href="/Home/DetailedConnectionInstructions" target="_blank">http://www.BankWebinars.com/Home/DetailedConnectionInstructions</a>.
-                                        </p>
+                                        The CD and handouts are typically shipped within 3-5 days following the event. Shipping
+                                        status will be displayed here. Check back here for links to the OnDemand recording
+                                        - typically posted within 1-2 days following the event.
                                     </div>
+                                    <div>Change order to Live?</div>
                                 }
-                            </div>
-                        </li>
-                    }
+                            }
+                            else
+                            {
+                                <div class="myWebinarscaption">
+                                    <p>
+                                        The Webinar ID and password have not yet been generated for this event. Watch your
+                                        email or check back here ('<b>My Webinars</b>') to review the current status of
+                                        this event. You may wish to review this general guide to connecting to our events
+                                        <a href="/Home/DetailedConnectionInstructions" target="_blank">http://www.BankWebinars.com/Home/DetailedConnectionInstructions</a>.
+                                    </p>
+                                </div>
+                            }
+                        </div>
+                        @*</li>*@
+                    </div>
                 }
-            </ul>
-
+            }
+            @*</ul>*@
         </div>
     </div>
 </div>

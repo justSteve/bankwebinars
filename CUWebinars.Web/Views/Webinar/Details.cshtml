@@ -207,7 +207,11 @@
         <!--close section tertiary-column sidebar span3-->
     </div>
     @{
-        if ((int)Model.Webinar.Status < 4 && ViewBag.userOwnsThisEvent < 1)
+        if ((
+            Model.Webinar.Status != WebinarStatus.Archived &&
+            Model.Webinar.Status != WebinarStatus.Deleted &&
+            Model.Webinar.Status != WebinarStatus.Pending
+            ) && ViewBag.userOwnsThisEvent < 1)
         {
             <div id="SignUpFormContainer" class="row-fluid">
                 @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new { id = "RegisterAdditionalLocationsForm" }))
