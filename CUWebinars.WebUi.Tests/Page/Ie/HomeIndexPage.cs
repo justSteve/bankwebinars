@@ -79,22 +79,16 @@ namespace CUWebinars.WebUi.Tests.Page.Ie
                 return null;
             });
 
-//            SeleniumTestDriver.FindByIdClick("TheSubmitButton");
-
             var wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(5));
 
-            var theSubmitButton = wait.Until(d =>
-            {
-                var submitButton = SeleniumTestDriver.FindById("TheSubmitButton");
-                return submitButton;
-            });
+            var theSubmitButton = wait.Until(ExpectedConditions.ElementExists(By.Id("TheSubmitButton")));
 
             theSubmitButton.Click();
         }
 
         public void LogOff()
         {
-            SeleniumTestDriver.FindByLinkTextClick(Constants.LogoffLinkText);
+            SeleniumTestDriver.FindByPartialLinkText(Constants.LogoffLinkText).Click();
         }
 
         public bool NoNotceExistsErrorTextIsPresent

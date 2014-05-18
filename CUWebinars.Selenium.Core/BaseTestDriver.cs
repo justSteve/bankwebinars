@@ -120,7 +120,7 @@ namespace CUWebinars.Selenium.Core
 
         public IWebElement FindByPartialLinkText(string linkTextToFind)
         {
-            return webDriver.FindElement(By.PartialLinkText(linkTextToFind));
+            return RetryingFind(By.PartialLinkText(linkTextToFind));
         }
 
         public virtual IWebElement FindByLinkTextClick(string linkTextToFind)
@@ -393,6 +393,45 @@ namespace CUWebinars.Selenium.Core
             IWebElement element = FindById(idOfInput);
 
             element.SendKeys(Keys.Tab);
+        }
+
+        private IWebElement RetryingFind(By by)
+        {
+            IWebElement element = null;
+            int attempts = 0;
+            while (attempts < 20)
+            {
+                try
+                {
+                    element = webDriver.FindElement(by);
+                    break;
+                }
+                catch (Exception e)
+                {
+                }
+                attempts++;
+            }
+            return element;
+        }
+
+        private bool RetryingFindClick(By by)
+        {
+            bool result = false;
+            int attempts = 0;
+            while (attempts < 20)
+            {
+                try
+                {
+                    webDriver.FindElement(by).Click();
+                    result = true;
+                    break;
+                }
+                catch (Exception e)
+                {
+                }
+                attempts++;
+            }
+            return result;
         }
 
 

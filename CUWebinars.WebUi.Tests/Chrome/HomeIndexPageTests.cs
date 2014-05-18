@@ -7,7 +7,8 @@ namespace CUWebinars.WebUi.Tests.Chrome
     public class HomeIndexPageTests : ChromeBaseTest
     {
         [TestMethod]
-        [TestCategory("GUI Tests")]
+        [Ignore]
+        //[TestCategory("GUI Tests")]
         public void LoadHomePage()
         {
             var home = NavigateToHomeIndexPage();
@@ -16,7 +17,8 @@ namespace CUWebinars.WebUi.Tests.Chrome
         }
 
         [TestMethod]
-        [TestCategory("GUI Tests")]
+        [Ignore]
+        //[TestCategory("GUI Tests")]
         public void LoginToSite()
         {
             var home = NavigateToHomeIndexPage();
@@ -29,7 +31,8 @@ namespace CUWebinars.WebUi.Tests.Chrome
         }
 
         [TestMethod]
-        [TestCategory("GUI Tests")]
+        [Ignore]
+        //[TestCategory("GUI Tests")]
         public void ClickRegisterUserLinkWithExistingEmailAndLogIn()
         {
             var home = NavigateToHomeIndexPage();
