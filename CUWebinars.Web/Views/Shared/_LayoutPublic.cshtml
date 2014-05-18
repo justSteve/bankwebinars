@@ -69,25 +69,24 @@
 
     <!--Start of Zopim Live Chat Script-->
     <script type="text/javascript">
-            window.$zopim || (function (d, s) {
-                var z = $zopim = function (c) { z._.push(c) }, $ = z.s =
-                d.createElement(s), e = d.getElementsByTagName(s)[0]; z.set = function (o) {
-                    z.set.
-                    _.push(o)
-                }; z._ = []; z.set._ = []; $.async = !0; $.setAttribute('charset', 'utf-8');
-                $.src = '//cdn.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU'; z.t = +new Date; $.
+        window.$zopim || (function (d, s) {
+            var z = $zopim = function (c) { z._.push(c) }, $ = z.s =
+                                                               d.createElement(s), e = d.getElementsByTagName(s)[0]; z.set = function (o) {
+                                                                   z.set.
+                                                                       _.push(o)
+                                                               }; z._ = []; z.set._ = []; $.async = !0; $.setAttribute('charset', 'utf-8');
+            $.src = '//cdn.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU'; z.t = +new Date; $.
                 type = 'text/javascript'; e.parentNode.insertBefore($, e)
-            })(document, 'script');
-        </script>
+        })(document, 'script');
+    </script>
     <!--End of Zopim Live Chat Script-->
-
     @Html.Raw(JSNLog.JavascriptLogging.Configure())
 
 
     <script type="text/javascript">
-        // "mylogger" logs to just the console
+        var ajaxAppender = JL.createAjaxAppender('ajaxAppender');
         var consoleAppender = JL.createConsoleAppender('consoleAppender');
-        JL("mylogger").setOptions({ "appenders": [consoleAppender] });
+        JL("myLogger").setOptions({ "appenders": [ajaxAppender, consoleAppender] });
     </script>
 
     <title>@ViewBag.Title</title>
@@ -104,12 +103,14 @@
                 (i[r].q = i[r].q || []).push(arguments)
             }, i[r].l = 1 * new Date(); a = s.createElement(o),
                 m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
-        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+        })
+        (window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
         ga('create', 'UA-44361719-1', 'cuwebinars.com');
         ga('send', 'pageview');
 
     </script>
+
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/myApp")
@@ -394,6 +395,20 @@
 
 
     @RenderSection("scripts", required: false)
+    <script>
+        window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
+        // Send object with all data to server side log, using severity fatal,
+            // from logger "onerrorLogger"
+            JL("mylogger").fatalException({
+                "msg": "Exception!",
+                "errorMsg": errorMsg, "url": url,
+                "line number": lineNumber, "column": column
+            }, errorObj);
 
+            // Tell browser to run its own error handler as well
+            return false;
+        }
+
+    </script>
 </body>
 </html>

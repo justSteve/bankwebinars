@@ -57,9 +57,18 @@ $(function () {
                     crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;Error. Please retry...</span>');
                 }
 
-            }).fail(function() {
+            }).fail(function (jqXHR, textStatus, errorThrown) {
                 // failed request; give feedback to user
                 crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;<strong>Oops!</strong> Try that again in a few moments.</span>');
+                    // Request failed. Show error message to user. 
+                    // errorThrown has error message, or "timeout" in case of timeout.
+                    JL().fatal({
+                        "msg": "AJAX error response",
+                        "errorThrown": errorThrown,
+                        "url": url,
+                        "requestData": requestData
+                    });
+                
             });
         }
         return false;

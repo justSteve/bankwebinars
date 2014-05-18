@@ -258,7 +258,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception exception)
             {
-                //  TODO: Meaningful error handling/logging and feedback   
+                _logger.Fatal("Account.Confirm Exception On GET: "+exception.Message+" Session=" + AppHelper.GetUserAuditInfo());
             }
 
             return null;
@@ -282,6 +282,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (ValidationException ex)
                 {
+                    _logger.Fatal("Account.Confirm Exception On POST: " + ex.Message + " Session=" + AppHelper.GetUserAuditInfo());
                     ModelState.AddModelError(string.Empty, ex.Message);
                 }
             }
@@ -385,8 +386,7 @@ namespace CUWebinars.Web.Controllers
                 shippingAddress,
                 updateFields.Title == null ? "na" : updateFields.Title.Trim()
                 );
-
-
+            _logger.Fatal("Account.Manage Post. Session=" + AppHelper.GetUserAuditInfo());
             // If we got this far, something failed, redisplay form
             return View(model);
         }
@@ -417,6 +417,7 @@ namespace CUWebinars.Web.Controllers
             if (string.IsNullOrEmpty(returnUrl) && Request.UrlReferrer != null)
             {
                 returnUrl = Server.UrlDecode(Request.UrlReferrer.PathAndQuery);
+                _logger.Info("Login|returnURL was: "+returnUrl +" Session=" + AppHelper.GetUserAuditInfo());
             }
 
             if (Url.IsLocalUrl(returnUrl) && !string.IsNullOrEmpty(returnUrl))
@@ -443,10 +444,15 @@ namespace CUWebinars.Web.Controllers
             if (ModelState.IsValid && _membershipService.LogInUser(globalConfig.Tenant, model.Email, model.Password, model.RememberMe))
             {
                 var retURL = model.ReturnUrl.Replace("http://localhost:5556", "");
+
+                _logger.Info("Account.SignIn Post Success. Session=" + AppHelper.GetUserAuditInfo());
                 return RedirectToLocal(retURL);
+
             }
 
             // If we got this far, something failed, redisplay form
+            _logger.Warn("Account.SignIn Failed. "+model.Email + "|" + model.Password +" Session=" + AppHelper.GetUserAuditInfo());
+
             ModelState.AddModelError(string.Empty, "The user name or password provided is incorrect.");
             return View("Login", new LoginModel
             {
@@ -469,14 +475,17 @@ namespace CUWebinars.Web.Controllers
         public JsonResult ResetPassword(string email)
         {
             var cResult = new Dictionary<string, string>(1);
+            _logger.Info("Account.ResetPassword GET. Session=" + AppHelper.GetUserAuditInfo());
 
             try
             {
                 _membershipService.ResetPassword(globalConfig.Tenant, email);
                 cResult.Add(WebUiConstants.OpStatus, WebUiConstants.Success);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.Fatal("Account.ResetPassword GET Failed. "+ex.Message+" Session=" + AppHelper.GetUserAuditInfo());
+
                 cResult.Add(WebUiConstants.OpStatus, "Fail");
             }
 
@@ -490,6 +499,7 @@ namespace CUWebinars.Web.Controllers
         {
             if (string.IsNullOrWhiteSpace(id))
             {
+                _logger.Warn("Account.. Session=PasswordResetConfirm. " + AppHelper.GetUserAuditInfo());
                 ModelState.AddModelError("EmptyKey", "There appears to have been a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again.");
             }
 
@@ -520,12 +530,15 @@ namespace CUWebinars.Web.Controllers
                         if (_membershipService.ChangePasswordFromResetKey(model.Key, model.Password))
                             model.ChangePasswordSucceeded = true;
                     }
+                    _logger.Info("Account.PasswordResetConfirm Post. Session=" + AppHelper.GetUserAuditInfo());
 
                     return View(model);
                 }
             }
             catch (ValidationException validationException)
             {
+
+                _logger.Fatal("Account.ResetPassword. "+validationException.Message +" Session=" + AppHelper.GetUserAuditInfo());
                 ModelState.AddModelError("InvalidPassword", "The new password must be different than the old password.");
             }
 
@@ -541,21 +554,24 @@ namespace CUWebinars.Web.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
+
+                _logger.Info("Account.LogOff. Session=" + AppHelper.GetUserAuditInfo());
                 _membershipService.LogOutUser();
 
                 return RedirectToAction("Index", "Home");
             }
+            _logger.Fatal("Account.LogOff at Unauthenticated User. Session=" + AppHelper.GetUserAuditInfo());
 
             return View();
         }
 
 
-        [System.Web.Mvc.HttpGet]
-        [System.Web.Mvc.AllowAnonymous]
-        public ActionResult test()
-        {
-            return View();
-        }
+        //[System.Web.Mvc.HttpGet]
+        //[System.Web.Mvc.AllowAnonymous]
+        //public ActionResult test()
+        //{
+        //    return View();
+        //}
 
         // POST: /Account/Register
         [System.Web.Mvc.HttpGet]
@@ -673,7 +689,7 @@ namespace CUWebinars.Web.Controllers
             foreach (var error in errors)
             {
                 Debug.WriteLine(error.ErrorMessage);
-                _logger.Error("Account/Register: " + error.ErrorMessage + "| Session=" + AppHelper.GetUserAuditInfo());
+                _logger.Error("Account.Register ModelError: " + error.ErrorMessage + "| Session=" + AppHelper.GetUserAuditInfo());
             }
 
             if (ModelState.IsValid)
@@ -778,10 +794,10 @@ namespace CUWebinars.Web.Controllers
                 {
                     ModelState.AddModelError(string.Empty, ErrorCodeToString(e.StatusCode));
                     //TODO: add error message here and handle in razor
-                    _logger.Error("/Account/Register Catch block: " + e.Message + "| Session=" + AppHelper.GetUserAuditInfo());
+                    _logger.Error("Account.Register Catch block: " + e.Message + "| Session=" + AppHelper.GetUserAuditInfo());
                 }
             }
-
+            _logger.Fatal("Account.Register failed! Session=" + AppHelper.GetUserAuditInfo());
             // If we got this far, something failed, redisplay form
             return Json(new { Status = "Fail" });
 
@@ -816,15 +832,6 @@ namespace CUWebinars.Web.Controllers
             //return RedirectToAction("Manage", new { Message = message });
             return null;
         }
-
-        //public ActionResult MyWebinars(ManageMessageId? message)
-        //{
-        //    var Id = 0;
-        //    var webinars = _repos.GetOrdersByUser(Id);
-        //    //var dtos = new WebinarDTOAssembler().Entities2DTOs(webinars);
-        //    //return View(dtos);
-        //    return View(webinars);
-        //}
 
         //
         // POST: /Account/ExternalLogin

@@ -70,11 +70,12 @@
                 Edit My Account Profile
             </span>
         </a>*@
-    @using (Html.BeginForm("ResetPassword", "Account", FormMethod.Post, new { id = "ResetPasswordForm" }))
-    {
-        <input type="hidden" name="email" value="@currentUser.email" />
-    <input id="NormalResetPasswordButton" class="pull-right btn btn-success" type="submit" value="Reset Password" />
-    }
+    @{var pModel = new ResetPasswordModel
+      {
+          Email = currentUser.email,
+          EmailSent = false
+      };}
+    @Html.Partial("~/Views/MembershipNotificationOps/_ResetPasswordPartial.cshtml", pModel)
     @*@if (thisDiscount != null)
         {
             <span>Discount found with @thisDiscount.UsesNumber credits remaining.</span>
@@ -82,7 +83,9 @@
     <div class="row-fluid">
         @{Html.RenderPartial("Partials/Upcoming");}
     </div>
-    @{Html.RenderPartial("Partials/Recorded");}
+    <div class="row-fluid">
+        @{Html.RenderPartial("Partials/Recorded");}
+    </div>
     <br />
     <div class="clear" />
     @*@{Html.RenderPartial("Partials/Archived");}*@

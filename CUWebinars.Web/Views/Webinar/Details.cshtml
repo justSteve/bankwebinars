@@ -53,7 +53,7 @@
     if (ViewBag.userOwnsThisEvent > 0)
     {
         <script language="javascript">
-
+            
             $(document).ready(function () {
                 $("#SignUpFormContainer").hide();
 
@@ -79,7 +79,7 @@
     isUserLogged = @isUserLogged;
 
     $(document).ready(function() {
-        JL().info("Details loaded @Model.Webinar.idWebinar for idUser @idUser.");
+        JL("myLogger").info("Details loaded @Model.Webinar.idWebinar for idUser @idUser.");
     });
 
 </script>
