@@ -1,5 +1,6 @@
 ﻿using System;
 using CUWebinars.Selenium.Core;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
 namespace CUWebinars.WebUi.Tests.Page.Firefox
@@ -70,19 +71,14 @@ namespace CUWebinars.WebUi.Tests.Page.Firefox
 
            var wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(5));
 
-           var theSubmitButton = wait.Until(d =>
-           {
-               var submitButton = SeleniumTestDriver.FindByIdClick("TheSubmitButton");
-               return submitButton;
-           });
-           //SeleniumTestDriver.Wait(2000);
-           //var submitButton = SeleniumTestDriver.FindByIdClick("TheSubmitButton");
+           var theSubmitButton = wait.Until(ExpectedConditions.ElementExists(By.Id("TheSubmitButton")));
+
            theSubmitButton.Click();
        }
 
        public void LogOff()
        {
-           SeleniumTestDriver.FindByPartialLinkText(Constants.LogoffLinkText);
+           SeleniumTestDriver.FindByPartialLinkText(Constants.LogoffLinkText).Click();
        }
 
 
