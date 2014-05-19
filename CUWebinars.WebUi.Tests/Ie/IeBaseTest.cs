@@ -18,6 +18,5 @@ namespace CUWebinars.WebUi.Tests.Ie
 
             TestDriver.Initialize();
         }
-                
     }
 }

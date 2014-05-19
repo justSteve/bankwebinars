@@ -36,6 +36,9 @@ namespace CUWebinars.WebUi.Tests.Ie
             home.ClickLoginLink();
             home.ClickRegisterLinkOnLoginView();
             home.EnterEmailAddressAndEnter(Constants.SitTestEmailAddress);
+
+            home.Wait(3000);
+
             home.EnterPasswordWhereUserExists(Constants.SitTestPassword);
 
             Assert.IsTrue(home.LogoutLinkIsPresentOnPage);

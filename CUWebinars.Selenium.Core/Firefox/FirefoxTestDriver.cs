@@ -7,23 +7,18 @@ namespace CUWebinars.Selenium.Core.Firefox
 {
    public class FirefoxTestDriver : BaseTestDriver
     {
-       public FirefoxTestDriver(string port)
-        {
-            this.port = port;
-            var firefoxBinaryPath = ConfigurationManager.AppSettings["FirefoxExePath"]; 
-
-            var firefoxBinary = new FirefoxBinary(firefoxBinaryPath);
-            var firefoxProfile = new FirefoxProfile();
-
-            webDriver = new FirefoxDriver(firefoxBinary, firefoxProfile);
-            webDriver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(10));
-            webDriver.Manage().Timeouts().SetScriptTimeout(TimeSpan.FromSeconds(10));
-            
-        }
-
        public override void Initialize()
        {
            //   do nothing intentionally.
+           var firefoxBinaryPath = DriverPath;
+
+           var firefoxBinary = new FirefoxBinary(firefoxBinaryPath);
+           var firefoxProfile = new FirefoxProfile();
+
+           webDriver = new FirefoxDriver(firefoxBinary, firefoxProfile);
+           webDriver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(10));
+           webDriver.Manage().Timeouts().SetScriptTimeout(TimeSpan.FromSeconds(10));
+
        }
 
         public override void GoToUrl(string url)

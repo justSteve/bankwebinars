@@ -15,15 +15,11 @@ namespace CUWebinars.Selenium.Core.Ie
         public override void Initialize()
         {
             var internetExplorerDriverService = InternetExplorerDriverService.CreateDefaultService(DriverPath);
-            var internetExplorerOptions = new InternetExplorerOptions
-            {
-                InitialBrowserUrl = "http://localhost:5556",
-            };
+            var internetExplorerOptions = new InternetExplorerOptions();
 
             internetExplorerDriverService.Port = DriverPort; // this is the port for the driver, not the webpage
 
-            //webDriver = new InternetExplorerDriver(internetExplorerDriverService, internetExplorerOptions);
-            webDriver = new InternetExplorerDriver(DriverPath);
+            webDriver = new InternetExplorerDriver(internetExplorerDriverService, internetExplorerOptions);
             
             webDriver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(10));
             webDriver.Manage().Timeouts().SetScriptTimeout(TimeSpan.FromSeconds(10));            

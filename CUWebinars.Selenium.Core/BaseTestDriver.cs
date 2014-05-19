@@ -372,7 +372,7 @@ namespace CUWebinars.Selenium.Core
         
         public void TypeTextAndTabAway(string nameToFind, string text)
         {
-            IWebElement element = FindByName(nameToFind);
+            IWebElement element = FindByNameClick(nameToFind);
 
             if (!ReferenceEquals(null, element))
             {
