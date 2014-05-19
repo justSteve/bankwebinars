@@ -995,16 +995,18 @@
     <Content Include="Notification\Templates\OrderSubmitted.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailVerifiedEvent_Subject.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailVerifiedEvent_Body.cshtml" />
-    <Content Include="Notification\Templates\RecordingPostedEventBody.cshtml">
+    <Content Include="Notification\Templates\SendRecordingPostedHOLDER.cshtml">
       <SubType>Code</SubType>
     </Content>
     <Content Include="Notification\Templates\_RecordingInfo.cshtml" />
     <Content Include="Notification\Templates\SendShippedOrder.cshtml" />
     <Content Include="Notification\Templates\SendRecordingPosted.cshtml" />
-    <Content Include="Notification\Templates\SendConnectionInfo.cshtml" />
     <Content Include="Notification\Templates\SendReminder.cshtml" />
     <Content Include="Scripts\Autocomplete\css\ui-lightness\images\Thumbs.db" />
     <Content Include="App_Data\Deploy\DeployScript.ps1" />
+    <Content Include="Notification\Templates\RecordingPostedEventBody.cshtml" />
+    <Content Include="Notification\Templates\SendConnectionInfo.cshtml" />
+    <Content Include="Notification\Templates\_ConnectionInfo.cshtml" />
     <None Include="Properties\PublishProfiles\CUStaging.pubxml" />
     <None Include="Properties\PublishProfiles\cuwebinars1 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\cuwebinars1 - Web Deploy.pubxml" />

@@ -1,80 +1,90 @@
-USE CUWebinarsMigrator
-GO
+--USE CUWebinarsMigrator
+--GO
 
-DELETE  CUWebinarsClean.dbo.Options
-WHERE   Type = 'additional_location'
-DELETE  CUWebinars.dbo.AdditionalLocation
-DELETE  CUWebinars.dbo.OrderRow
-DELETE  CUWebinars.dbo.[ORDER]
-DELETE  CUWebinars.dbo.Affiliate
-DELETE  CUWebinars.dbo.Presenter
+--DELETE  CUWebinarsClean.dbo.Options
+--WHERE   Type = 'additional_location'
+--DELETE  CUWebinars.dbo.AdditionalLocation
+--DELETE  CUWebinars.dbo.OrderRow
+--DELETE  CUWebinars.dbo.[ORDER]
+--DELETE  CUWebinars.dbo.Affiliate
+--DELETE  CUWebinars.dbo.Presenter
 
-DELETE  CUWebinars.dbo.WebUser
+--DELETE  CUWebinars.dbo.WebUser
 
-DELETE  CUWebinars.dbo.Institution
-DELETE  CUWebinars.dbo.RegTypesXref
+--DELETE  CUWebinars.dbo.Institution
+--DELETE  CUWebinars.dbo.RegTypesXref
 
-DELETE  CUWebinars.dbo.RegTypesGroupsXref
+--DELETE  CUWebinars.dbo.RegTypesGroupsXref
 
-DELETE  CUWebinars.dbo.RegTypesGroups
+--DELETE  CUWebinars.dbo.RegTypesGroups
 
-DELETE  CUWebinars.dbo.RegType
+--DELETE  CUWebinars.dbo.RegType
 
-DELETE  CUWebinars.dbo.WebinarTopicXref
+--DELETE  CUWebinars.dbo.WebinarTopicXref
 
-DELETE  CUWebinars.dbo.Topic
+--DELETE  CUWebinars.dbo.Topic
 
-DELETE  CUWebinars.dbo.WebinarFile
+--DELETE  CUWebinars.dbo.WebinarFile
 
-DELETE  CUWebinars.dbo.Webinar
-DELETE  CUWebinars.dbo.[Address]
+--DELETE  CUWebinars.dbo.Webinar
+--DELETE  CUWebinars.dbo.[Address]
 
 
---SELECT * FROM CUWebinars.dbo.RegType 
-DELETE  CUWebinars.dbo.RegType
-WHERE   RegTypeLabel = 'Additional Location(s)'
-USE CUWebinarsClean
-GO
+----SELECT * FROM CUWebinars.dbo.RegType 
+--DELETE  CUWebinars.dbo.RegType
+--WHERE   RegTypeLabel = 'Additional Location(s)'
+--USE CUWebinarsClean
+--GO
 
-UPDATE  dbo.Webinar
-SET     DescriptionLong = '<p>Your member passed away yesterday and the family is grieving. Yet, in the midst of all the remembering and honoring of a life, the legal and compliance clock is ticking. In most states, checks can be paid for 10 days after the date of death.</p><p>When your account holder dies, many issues and questions arise. Who can have information on the account? Who owns the account? Who has access to the account? What happens with powers of attorney and authorized signers on account? Can the spouse of the sole proprietor continue to access the account? What about that last tax refund check? Is the account still insured? Can a check be written to a funeral home? What about the checks coming in to pay funeral expense? Learn about checks, IRAs, deposit ownership, trusts, UTMA, affidavits of heirship and other complex issues that can occur when a member dies. </p>' ,
-        Description = '<p>Your member passed away yesterday and the family is grieving. Yet, in the midst of all the remembering and honoring of a life, the legal and compliance clock is ticking. In most states, checks can be paid for 10 days after the date of death.</p><p>When your account holder dies, many issues and questions arise. Who can have information on the account? Who owns the account? Who has access to the account? What happens with powers of attorney and authorized signers on account? Can the spouse of the sole proprietor continue to access the account? What about that last tax refund check? Is the account still insured? Can a check be written to a funeral home? What about the checks coming in to pay funeral expense? Learn about checks, IRAs, deposit ownership, trusts, UTMA, affidavits of heirship and other complex issues that can occur when a member dies. </p>' ,
-        LearnCaption = 'Covered Topics' ,
-        LearnBody = '<ul><li>Probate versus non-probate transfers</li><li>When does the will govern and when does the signature card?</li><li>What bypasses a will? PODs, IRAs, JTWROS?</li><li>Living trusts and successor trustees</li><li>When do we know that a customer is deceased?</li><li>When can we use small estate affidavits?</li><li>What happens to powers of attorney, authorized signers, etc.</li><li>How are IRAs, HSAs and UTMAs affected?</li><li>Do sole proprietorships cease at death?</li><li>NCUSIF insurance issues</li></ul>' ,
-        WhoAttend = 'This informative session is designed for customer service representatives, branch administration, branch managers, tellers, training and development staff, compliance personnel, and anyone who handles customer accounts.'
-WHERE   idWebinar = 404
-USE CUWebinarsMigrator
-GO
+--UPDATE  dbo.Webinar
+--SET     DescriptionLong = '<p>Your member passed away yesterday and the family is grieving. Yet, in the midst of all the remembering and honoring of a life, the legal and compliance clock is ticking. In most states, checks can be paid for 10 days after the date of death.</p><p>When your account holder dies, many issues and questions arise. Who can have information on the account? Who owns the account? Who has access to the account? What happens with powers of attorney and authorized signers on account? Can the spouse of the sole proprietor continue to access the account? What about that last tax refund check? Is the account still insured? Can a check be written to a funeral home? What about the checks coming in to pay funeral expense? Learn about checks, IRAs, deposit ownership, trusts, UTMA, affidavits of heirship and other complex issues that can occur when a member dies. </p>' ,
+--        Description = '<p>Your member passed away yesterday and the family is grieving. Yet, in the midst of all the remembering and honoring of a life, the legal and compliance clock is ticking. In most states, checks can be paid for 10 days after the date of death.</p><p>When your account holder dies, many issues and questions arise. Who can have information on the account? Who owns the account? Who has access to the account? What happens with powers of attorney and authorized signers on account? Can the spouse of the sole proprietor continue to access the account? What about that last tax refund check? Is the account still insured? Can a check be written to a funeral home? What about the checks coming in to pay funeral expense? Learn about checks, IRAs, deposit ownership, trusts, UTMA, affidavits of heirship and other complex issues that can occur when a member dies. </p>' ,
+--        LearnCaption = 'Covered Topics' ,
+--        LearnBody = '<ul><li>Probate versus non-probate transfers</li><li>When does the will govern and when does the signature card?</li><li>What bypasses a will? PODs, IRAs, JTWROS?</li><li>Living trusts and successor trustees</li><li>When do we know that a customer is deceased?</li><li>When can we use small estate affidavits?</li><li>What happens to powers of attorney, authorized signers, etc.</li><li>How are IRAs, HSAs and UTMAs affected?</li><li>Do sole proprietorships cease at death?</li><li>NCUSIF insurance issues</li></ul>' ,
+--        WhoAttend = 'This informative session is designed for customer service representatives, branch administration, branch managers, tellers, training and development staff, compliance personnel, and anyone who handles customer accounts.'
+--WHERE   idWebinar = 404
+--USE CUWebinarsMigrator
+--GO
 
-EXEC MigrateInstitution
-PRINT 'ends: MigrateInstitution'
-EXEC MigrateWebUser 
-PRINT 'ends: MigrateWebUser'
-EXEC MigrateAffiliate
-PRINT 'ends: MigrateAffiliate'
-EXEC MigrateRegTypes
-PRINT 'ends: MigrateRegTypes'
-EXEC [dbo].[MigrateRegTypesGroups]
-PRINT 'ends: MigrateRegTypesGroups'
-EXEC MigrateRegTypesXref 
-PRINT 'ends: MigrateRegTypesXref'
-EXEC MigratePresenter 
-PRINT 'ends: MigratePresenter'
-EXEC MigrateWebinar 
-PRINT 'ends: MigrateWebinar'
-EXEC MigrateRegTypesGroupsXref 
-PRINT 'ends: MigrateOptionsGroupsXref'
-EXEC MigrateTopic 
-PRINT 'ends: MigrateTopic'
-EXEC MigrateWebinarTopicXref 
-PRINT 'ends: MigrateWebinarTopicXref'
-EXEC MigrateWebinarFile 
-PRINT 'ends: MigrateWebinarFile'
-EXEC MigrateAddresses 
-PRINT 'ends: MigrateAddresses'
-PRINT '____________________________________________________________Finished Migrations'
+--EXEC MigrateInstitution
+--PRINT 'ends: MigrateInstitution'
+--EXEC MigrateWebUser 
+--PRINT 'ends: MigrateWebUser'
+--EXEC MigrateAffiliate
+--PRINT 'ends: MigrateAffiliate'
+--EXEC MigrateRegTypes
+--PRINT 'ends: MigrateRegTypes'
+--EXEC [dbo].[MigrateRegTypesGroups]
+--PRINT 'ends: MigrateRegTypesGroups'
+--EXEC MigrateRegTypesXref 
+--PRINT 'ends: MigrateRegTypesXref'
+--EXEC MigratePresenter 
+--PRINT 'ends: MigratePresenter'
+--EXEC MigrateWebinar 
+--PRINT 'ends: MigrateWebinar'
+--EXEC MigrateRegTypesGroupsXref 
+--PRINT 'ends: MigrateOptionsGroupsXref'
+--EXEC MigrateTopic 
+--PRINT 'ends: MigrateTopic'
+--EXEC MigrateWebinarTopicXref 
+--PRINT 'ends: MigrateWebinarTopicXref'
+--EXEC MigrateWebinarFile 
+--PRINT 'ends: MigrateWebinarFile'
+--EXEC MigrateAddresses 
+--PRINT 'ends: MigrateAddresses'
+--PRINT '____________________________________________________________Finished Migrations'
 USE CUWebinars
 GO
+
+UPDATE dbo.[Order] SET OrderStatus = 3
+
+
+	UPDATE  dbo.Webinar
+SET     RecordingUrl = 'MotivateSalesTM0514.wmv' ,
+        Status = 3
+WHERE   idWebinar = 1558
+UPDATE dbo.RegTypesGroupsXref SET idRegTypeGroup = 35 WHERE idWebinar = 1558
+
 PRINT 'inserting xref for 3558'
 INSERT  dbo.RegTypesGroupsXref
         ( idWebinar, idRegTypeGroup )
@@ -92,6 +102,9 @@ WHERE   idWebinar = 3558
 		  --SELECT * FROM dbo.Webinar WHERE idWebinar = 3558
 		  --SELECT * FROM dbo.WebinarTopicXref WHERE idWebinar = 3558
 	
+
+
+
 UPDATE  CUWebinars.dbo.Webinar
 SET     WebinarKey = 495203178,
 Status = 3, RecordingUrl = 'VendorMgmtBestPractice042214.wmv'

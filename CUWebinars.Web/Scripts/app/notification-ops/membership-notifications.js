@@ -6,7 +6,7 @@ $(function () {
 
     $('#WaitIndicator').hide();
 
-    $('#CreateUserButton').on('click', function() {
+    $('#CreateUserButton').on('click', function () {
 
         $.ajax({
             type: 'GET',
@@ -18,17 +18,25 @@ $(function () {
             beforeSend: function () {
                 // this is where we append a loading image
                 $('#WaitIndicator').show();
-            }        
-        }).done(function(result) {
-
+            }
+        }).done(function (result) {
             $('#InputFormFields').html(result);
             InitializeCreateUserFields();
-        }).always(function() {
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            // Request failed. Show error message to user. 
+            // errorThrown has error message, or "timeout" in case of timeout.
+            JL("mylogger").fatal({
+                "msg": "AJAX error response",
+                "errorThrown": errorThrown,
+                "url": url,
+                "requestData": requestData
+            });
+        }).always(function () {
             $('#WaitIndicator').hide();
         });
     });
 
-    $('#ResetPasswordButton').on('click', function() {
+    $('#ResetPasswordButton').on('click', function () {
 
         $.ajax({
             type: 'GET',
@@ -70,7 +78,7 @@ $(function () {
             $('#WaitIndicator').hide();
         });
     });
-    
+
     $('#GetImportOrderFieldsButton').on('click', function () {
 
         if (jsonDataForImportedOrder) {
@@ -80,23 +88,23 @@ $(function () {
             $('#JsonPayloadTextArea').val(jsonDataForImportedOrder);
             addImportOrderButtonClick();
         } else {
-        $.ajax({
-            type: 'GET',
-            contentType: constants.JsonContentType,
-            cache: false,
-            url: '/MembershipNotificationOps/GetJsonTextArea',
-            dataType: constants.HtmlDataType,
-            data: null,
-            beforeSend: function () {
-                // this is where we append a loading image
-                if ($('#ImportOrderButton').length > 0)
-                    $('#ImportOrderButton').off('click');
-                jsonPayload = $('#JsonPayload').text();
-                $('#WaitIndicator').show();
-            }
-        }).done(function (result) {
+            $.ajax({
+                type: 'GET',
+                contentType: constants.JsonContentType,
+                cache: false,
+                url: '/MembershipNotificationOps/GetJsonTextArea',
+                dataType: constants.HtmlDataType,
+                data: null,
+                beforeSend: function () {
+                    // this is where we append a loading image
+                    if ($('#ImportOrderButton').length > 0)
+                        $('#ImportOrderButton').off('click');
+                    jsonPayload = $('#JsonPayload').text();
+                    $('#WaitIndicator').show();
+                }
+            }).done(function (result) {
 
-            $('#InputFormFields').html(result);
+                $('#InputFormFields').html(result);
 
                 addImportOrderButtonClick();
 
@@ -107,7 +115,7 @@ $(function () {
     });
 
     $('#GetImportOrderFieldsFromCsvButton').on('click', function () {
-        
+
         $.ajax({
             type: 'GET',
             contentType: constants.JsonContentType,
@@ -156,7 +164,7 @@ $(function () {
 });
 
 function addImportOrderButtonClick() {
-            $('#ImportOrderButton').on('click', function () {
+    $('#ImportOrderButton').on('click', function () {
 
         var jsonPayload = $('#JsonPayloadTextArea').val();
         jsonDataForImportedOrder = jsonPayload;
@@ -176,16 +184,15 @@ function addImportOrderButtonClick() {
 
             var resultAsJson = JSON.parse(result);
 
-        $('#InputFormFields').html('<span id="OrderSucceeded" class="label label-success">' + resultAsJson.Result + '</span>');
-            
+            $('#InputFormFields').html('<span id="OrderSucceeded" class="label label-success">' + resultAsJson.Result + '</span>');
+
         }).always(function () {
             $('#WaitIndicator').hide();
         });
     });
 };
 
-function InitializeCreateUserFields()
-{
+function InitializeCreateUserFields() {
     var shippingAddressContainer = $(constants.ShippingAddressContainer);
     var addShippingAddressLink = $(constants.AddShippingAddressLink);
     var hideAddShippingAddressLink = $(constants.HideAddShippingAddressLink);
@@ -256,7 +263,7 @@ function InitializeCreateUserFields()
             if (response.result === 'success') {
                 $('#OperationMessage').html('&nbsp;The new user has been added with username: <strong>' + response.email + '</strong> and password: <strong>' + response.password + '</strong>');
             }
-            
+
         }).always(function (data) {
             $('#WaitIndicator').hide();
         });
@@ -268,11 +275,11 @@ function InitializePasswordResetFields() {
     $('#PasswordResetStatus').text('');
 
     if (!passwordResetInitialized) {
-        $('#ResetPasswordForm').submit(function(e) {
+        $('#ResetPasswordForm').submit(function (e) {
             e.preventDefault();
         });
 
-        $('#NormalResetPasswordButton').on('click', function() {
+        $('#NormalResetPasswordButton').on('click', function () {
 
             var model = {
                 email: $.trim($('#ResetPassEmail').val())
@@ -285,17 +292,17 @@ function InitializePasswordResetFields() {
                 url: '/MembershipNotificationOps/ResetPassword',
                 dataType: constants.JsonDataType,
                 data: JSON.stringify(model),
-                beforeSend: function() {
+                beforeSend: function () {
                     // this is where we append a loading image
                     $('#WaitIndicator').show();
                 }
-            }).done(function(data) {
-                
+            }).done(function (data) {
+
                 if (data.Status === 'Success') {
                     $('#PasswordResetStatus').text('   Operation Succeeded');
                 }
 
-            }).always(function(data) {
+            }).always(function (data) {
                 $('#WaitIndicator').hide();
             });
         });
