@@ -262,8 +262,9 @@ function InitializeCreateUserFields() {
             var response = JSON.parse(data);
             if (response.result === 'success') {
                 $('#OperationMessage').html('&nbsp;The new user has been added with username: <strong>' + response.email + '</strong> and password: <strong>' + response.password + '</strong>');
+            } else if (response.result === 'failed') {
+                $('#OperationMessage').html('<span class="label label-important"><strong>&nbsp;&nbsp;There was an error at the server. The new user has not been created.</strong></span>');
             }
-
         }).always(function (data) {
             $('#WaitIndicator').hide();
         });

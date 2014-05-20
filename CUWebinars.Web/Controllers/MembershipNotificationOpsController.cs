@@ -5,6 +5,7 @@ using CUWebinars.Web.Core;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Membership;
 using CUWebinars.Web.Models;
+using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Newtonsoft.Json;
 using Ninject.Extensions.Logging;
@@ -22,11 +23,13 @@ namespace CUWebinars.Web.Controllers
     {
         private readonly IMembershipService _membershipService;
         private readonly ILogger _logger;
+        private readonly IStateService _stateService;
 
-        public MembershipNotificationOpsController(IMembershipService membershipService, ILogger logger)
+        public MembershipNotificationOpsController(IMembershipService membershipService, ILogger logger, IStateService stateService)
         {
             _membershipService = membershipService;
             _logger = logger;
+            _stateService = stateService;
         }
 
         public ViewResult MembershipNotifications()
@@ -94,6 +97,13 @@ namespace CUWebinars.Web.Controllers
                         model.RegisterFields.Email
                         );
 
+                    userAccount =_membershipService.VerifyEmailFromKey(
+                            _stateService.GetValue<string>("VerificationKey"),
+                            model.RegisterFields.Password
+                            );
+
+                    _stateService.ClearValue("VerificationKey");
+
                     dataOperations.SetNewAccountToVerified(userAccount.ID);
                 }
                 else
@@ -141,7 +151,13 @@ namespace CUWebinars.Web.Controllers
                         );
 
                     userAccount = _membershipService.CreateUser(globals.Tenant, "John", "Hancock", string.Empty, newPassword, newEmail);
-                    dataOperations.SetNewAccountToVerified(userAccount.ID);
+                    //dataOperations.SetNewAccountToVerified(userAccount.ID);
+                    userAccount = _membershipService.VerifyEmailFromKey(
+                                        _stateService.GetValue<string>("VerificationKey"),
+                                        newPassword
+                                    );
+
+                    _stateService.ClearValue("VerificationKey");
 
                     return Json(new { result = "success", email = newEmail, password = newPassword });
                 }

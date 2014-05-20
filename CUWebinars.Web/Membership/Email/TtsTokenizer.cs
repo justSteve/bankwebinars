@@ -54,6 +54,10 @@ namespace CUWebinars.Web.Membership.Email
                     if (values.ContainsKey(VerificationKey))
                     {
                         var verificationKey = values[VerificationKey];
+                        
+                        if (!_stateService.HasValue("VerificationKey"))
+                            _stateService.SetValue("VerificationKey", verificationKey);
+
                         notification.ConfirmPasswordResetUrl = Path.Combine(notification.ConfirmPasswordResetUrl,
                             verificationKey);
                         notification.ConfirmChangeEmailUrl = Path.Combine(notification.ConfirmChangeEmailUrl,

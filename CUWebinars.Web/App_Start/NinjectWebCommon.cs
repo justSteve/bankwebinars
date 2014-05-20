@@ -240,7 +240,7 @@ namespace CUWebinars.Web.App_Start
                     userAccountService,
                     new WebUserRepository(sharedContext));
 
-                return new MembershipNotificationOpsController(membershipService, logger);
+                return new MembershipNotificationOpsController(membershipService, logger, ctx.Kernel.Get<IStateService>());
             }).InRequestScope();
 
             kernel.Bind<AddressesController>().ToMethod(ctx =>
