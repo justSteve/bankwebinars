@@ -63,6 +63,8 @@ namespace CUWebinars.Web.Controllers.api
 
             try
             {
+//remove foreach because
+// you are sending one row at a time - 
                 foreach (var incomingOrderModel in model)
                 {
                     _logger.Info("Begin import: " + incomingOrderModel.Email.Trim());
@@ -217,6 +219,14 @@ namespace CUWebinars.Web.Controllers.api
                     idOfLastOrder = importedOrder.idOrder;
                     _logger.Info("Posted idOrder=" + idOfLastOrder);
                 }
+
+                //after order is created it the row that was imported has a new ID value.
+                // .idOrder
+
+                // that value needs to be returned to the first column of the spreadsheet.
+                // and....
+                // in case of error .... the error message needs to be returned.
+                // 
 
                 httpResponseMessage = Request.CreateResponse(HttpStatusCode.Created,
                     new { Result = "Order successfully submitted" });

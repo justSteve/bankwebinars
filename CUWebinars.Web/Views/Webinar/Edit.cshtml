@@ -13,9 +13,9 @@
 <script language="javascript">
     $(document).ready(function () {
         //$("#ta_description").val();
-        $('#ta_description').cleditor({
-
-        });
+        $('#ta_description').cleditor({});
+        $('#ta_DescriptionLong').cleditor({});
+        $('#ta_LearnBody').cleditor({});
         $(".textarea").each(function () {
             alert("hit");
             var cledDesc = $(this).cleditor()[0];
@@ -64,7 +64,7 @@
         @Html.ValidationSummary(true)
 
         <fieldset>
-            <legend>@Html.EditorFor(model => model.Title, new{size})</legend>
+            <legend>@Html.EditorFor(model => model.Title)</legend>
 
             @Html.HiddenFor(model => model.idWebinar)
 
@@ -105,8 +105,9 @@
                 @Html.LabelFor(model => model.DescriptionLong)
             </div>
             <div class="editor-field">
-                @Html.EditorFor(model => model.DescriptionLong)
-                @Html.ValidationMessageFor(model => model.DescriptionLong)
+                <textarea id="ta_DescriptionLong" rows="10" cols="40">@Html.Raw(Model.DescriptionLong)</textarea>
+                @*@Html.EditorFor(model => model.DescriptionLong)
+                @Html.ValidationMessageFor(model => model.DescriptionLong)*@
             </div>
 
 
@@ -122,15 +123,16 @@
                 @Html.LabelFor(model => model.LearnBody)
             </div>
             <div class="editor-field">
-                @Html.EditorFor(model => model.LearnBody)
-                @Html.ValidationMessageFor(model => model.LearnBody)
+                <textarea id="ta_LearnBody" rows="10" cols="40">@Html.Raw(Model.LearnBody)</textarea>
+                @*@Html.EditorFor(model => model.LearnBody)
+                @Html.ValidationMessageFor(model => model.LearnBody)*@
             </div>
 
             <div class="editor-label">
                 @Html.LabelFor(model => model.WhoAttend)
             </div>
             <div class="editor-field">
-                @Html.EditorFor(model => model.WhoAttend)
+                @Html.TextAreaFor(model => model.WhoAttend)
                 @Html.ValidationMessageFor(model => model.WhoAttend)
             </div>
 
@@ -147,8 +149,8 @@
             </div>
             <div class="editor-field">
                 <input type="text" name="idPresenter" value="@Model.idPresenter" />
-                @*@Html.DropDownList("PresenterId", String.Empty)
-                    @Html.ValidationMessageFor(model => model.PresenterId)*@
+                @*@Html.DropDownList("idPresenter", String.Empty)*@
+                    @*@Html.ValidationMessageFor(model => model.PresenterId)*@
             </div>
 
             <div class="editor-label">

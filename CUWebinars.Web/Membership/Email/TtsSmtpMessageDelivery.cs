@@ -24,7 +24,7 @@ namespace CUWebinars.Web.Membership.Email
 
                 mailMessage.From = new MailAddress(msg.From);
                 //mailMessage.To.Add(new MailAddress(msg.To));
-                mailMessage.To.Add(new MailAddress("steve@ttstrain.com"));
+                mailMessage.To.Add(new MailAddress("all.of.us@ttstrain.com"));
                 mailMessage.Subject = msg.Subject;
                 mailMessage.Body = msg.Body;
                 mailMessage.IsBodyHtml = true;

@@ -902,18 +902,15 @@
     <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
     <Content Include="Membership\Email\EmailTemplates\AccountCreatedEvent_Body.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\AccountCreatedEvent_Subject.cshtml" />
-    <Content Include="Membership\Email\EmailTemplates\EmailChangedEvent_Body.cshtml" />
-    <Content Include="Membership\Email\EmailTemplates\EmailChangedEvent_Subject.cshtml" />
     <Content Include="App_Data\Orders\SampleData.csv" />
     <Content Include="App_Data\Orders\SampleData.xlsx" />
     <Content Include="App_Data\Orders\newCUOrders.xls" />
-    <None Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Body.cshtml" />
-    <None Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Subject.cshtml" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css">
       <DependentUpon>site.less</DependentUpon>
     </Content>
+    <Content Include="Membership\Email\EmailTemplates\_BaseTemplate.html" />
     <Content Include="NuGet\readme.txt" />
     <Content Include="Scripts\app\cart\add-additional-locations.js" />
     <Content Include="Scripts\app\cart\additional-location-modal.js" />

@@ -258,7 +258,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception exception)
             {
-                _logger.Fatal("Account.Confirm Exception On GET: "+exception.Message+" Session=" + AppHelper.GetUserAuditInfo());
+                _logger.Fatal("Account.Confirm Exception On GET: " + exception.Message + " Session=" + AppHelper.GetUserAuditInfo());
             }
 
             return null;
@@ -417,7 +417,7 @@ namespace CUWebinars.Web.Controllers
             if (string.IsNullOrEmpty(returnUrl) && Request.UrlReferrer != null)
             {
                 returnUrl = Server.UrlDecode(Request.UrlReferrer.PathAndQuery);
-                _logger.Info("Login|returnURL was: "+returnUrl +" Session=" + AppHelper.GetUserAuditInfo());
+                _logger.Info("Login|returnURL was: " + returnUrl + " Session=" + AppHelper.GetUserAuditInfo());
             }
 
             if (Url.IsLocalUrl(returnUrl) && !string.IsNullOrEmpty(returnUrl))
@@ -451,7 +451,7 @@ namespace CUWebinars.Web.Controllers
             }
 
             // If we got this far, something failed, redisplay form
-            _logger.Warn("Account.SignIn Failed. "+model.Email + "|" + model.Password +" Session=" + AppHelper.GetUserAuditInfo());
+            _logger.Warn("Account.SignIn Failed. " + model.Email + "|" + model.Password + " Session=" + AppHelper.GetUserAuditInfo());
 
             ModelState.AddModelError(string.Empty, "The user name or password provided is incorrect.");
             return View("Login", new LoginModel
@@ -482,9 +482,9 @@ namespace CUWebinars.Web.Controllers
                 _membershipService.ResetPassword(globalConfig.Tenant, email);
                 cResult.Add(WebUiConstants.OpStatus, WebUiConstants.Success);
             }
-            catch (Exception ex)
+            catch (Exception ex)    
             {
-                _logger.Fatal("Account.ResetPassword GET Failed. "+ex.Message+" Session=" + AppHelper.GetUserAuditInfo());
+                _logger.Fatal("Account.ResetPassword GET Failed. " + ex.Message + " Session=" + AppHelper.GetUserAuditInfo());
 
                 cResult.Add(WebUiConstants.OpStatus, "Fail");
             }
@@ -499,7 +499,7 @@ namespace CUWebinars.Web.Controllers
         {
             if (string.IsNullOrWhiteSpace(id))
             {
-                _logger.Warn("Account.. Session=PasswordResetConfirm. " + AppHelper.GetUserAuditInfo());
+                _logger.Warn("Account.PasswordResetConfirm.GET was passed empty or null ID. Session=PasswordResetConfirm. " + AppHelper.GetUserAuditInfo());
                 ModelState.AddModelError("EmptyKey", "There appears to have been a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again.");
             }
 
@@ -523,6 +523,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     if (string.IsNullOrWhiteSpace(model.Key))
                     {
+                        _logger.Warn("Account.PasswordResetConfirm.POST was passed empty or null ID. Session=PasswordResetConfirm. " + AppHelper.GetUserAuditInfo());
                         ModelState.AddModelError("EmptyKey", "There appears to have been a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again.");
                     }
                     else
@@ -538,10 +539,10 @@ namespace CUWebinars.Web.Controllers
             catch (ValidationException validationException)
             {
 
-                _logger.Fatal("Account.ResetPassword. "+validationException.Message +" Session=" + AppHelper.GetUserAuditInfo());
+                _logger.Fatal("Account.ResetPassword. " + validationException.Message + " Session=" + AppHelper.GetUserAuditInfo());
                 ModelState.AddModelError("InvalidPassword", "The new password must be different than the old password.");
             }
-
+            
             return View(model);
         }
 
@@ -695,7 +696,7 @@ namespace CUWebinars.Web.Controllers
             if (ModelState.IsValid)
             {
                 _logger.Info("Account.Register: " + model.RegisterFields.Email.Trim() + "| Session=" + AppHelper.GetUserAuditInfo());
-            
+
                 var email = model.RegisterFields.Email.Trim();
                 var firstName = model.RegisterFields.FirstName.Trim();
                 var lastName = model.RegisterFields.LastName.Trim();
