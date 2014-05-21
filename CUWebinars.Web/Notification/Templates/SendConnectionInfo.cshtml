@@ -4,7 +4,13 @@
 @model Order
 
 <title>
-    Connection Information for @Model.OrderRows.SingleOrDefault().Webinar.Title
+    @{
+        var orderRows = from orderRow in Model.OrderRows
+                  where orderRow.RowStatus == OrderRowStatus.Active
+                  select orderRow;
+        var thisWebinar = orderRows.Single().Webinar;        
+    }
+    Connection Information for @thisWebinar.Title
 </title>
 
 <html xmlns="http://www.w3.org/1999/xhtml">

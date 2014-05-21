@@ -1,5 +1,6 @@
 ﻿using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Helpers;
@@ -98,13 +99,11 @@ namespace CUWebinars.Web.Controllers
                         );
 
                     userAccount =_membershipService.VerifyEmailFromKey(
-                            _stateService.GetValue<string>("VerificationKey"),
+                            _stateService.GetValue<string>(DomainConstants.VerificationKey),
                             model.RegisterFields.Password
                             );
 
-                    _stateService.ClearValue("VerificationKey");
-
-                    dataOperations.SetNewAccountToVerified(userAccount.ID);
+                    _stateService.ClearValue(DomainConstants.VerificationKey);
                 }
                 else
                 {
@@ -151,13 +150,13 @@ namespace CUWebinars.Web.Controllers
                         );
 
                     userAccount = _membershipService.CreateUser(globals.Tenant, "John", "Hancock", string.Empty, newPassword, newEmail);
-                    //dataOperations.SetNewAccountToVerified(userAccount.ID);
+                    
                     userAccount = _membershipService.VerifyEmailFromKey(
-                                        _stateService.GetValue<string>("VerificationKey"),
+                                        _stateService.GetValue<string>(DomainConstants.VerificationKey),
                                         newPassword
                                     );
 
-                    _stateService.ClearValue("VerificationKey");
+                    _stateService.ClearValue(DomainConstants.VerificationKey);
 
                     return Json(new { result = "success", email = newEmail, password = newPassword });
                 }

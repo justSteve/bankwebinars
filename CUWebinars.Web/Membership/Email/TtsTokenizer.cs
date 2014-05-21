@@ -1,4 +1,5 @@
 ﻿using BrockAllen.MembershipReboot;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Web.Helpers;
@@ -22,11 +23,8 @@ namespace CUWebinars.Web.Membership.Email
             _refDataRepository = refDataRepository;
         }
 
-        const string VerificationKey = "VerificationKey";
         public override string Tokenize(UserAccountEvent<UserAccount> accountEvent, ApplicationInformation appInfo, string msg, IDictionary<string, string> values)
         {
-            
-
             //  If there's no session, we know this has been kicked off by a WepAPI controller. 
             if (!ReferenceEquals(null, HttpContext.Current.Session))
             {
@@ -51,12 +49,12 @@ namespace CUWebinars.Web.Membership.Email
                 {
                     var notificationType = notification.GetType();
 
-                    if (values.ContainsKey(VerificationKey))
+                    if (values.ContainsKey(DomainConstants.VerificationKey))
                     {
-                        var verificationKey = values[VerificationKey];
-                        
-                        if (!_stateService.HasValue("VerificationKey"))
-                            _stateService.SetValue("VerificationKey", verificationKey);
+                        var verificationKey = values[DomainConstants.VerificationKey];
+
+                        if (!_stateService.HasValue(DomainConstants.VerificationKey))
+                            _stateService.SetValue(DomainConstants.VerificationKey, verificationKey);
 
                         notification.ConfirmPasswordResetUrl = Path.Combine(notification.ConfirmPasswordResetUrl,
                             verificationKey);
