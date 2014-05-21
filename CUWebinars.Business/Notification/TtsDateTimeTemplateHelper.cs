@@ -1,5 +1,7 @@
 using System;
+using System.Diagnostics;
 using CUWebinars.Business.Core.Helpers;
+using CUWebinars.Business.Core.Tracing;
 using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.Notification
@@ -29,6 +31,8 @@ namespace CUWebinars.Business.Notification
 
         public string FormatTimeWithDuration(DateTime time, USTimeZone timeZone, bool displayTimezone, decimal duration)
         {
+            Tracer.Verbose("Formatting time with duration.");
+
             return DateTimeHelper.FormatTimeWithDuration(time, timeZone, displayTimezone, duration);
         }
 

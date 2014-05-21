@@ -118,6 +118,7 @@
     <Compile Include="Class1.cs" />
     <Compile Include="Core\Helpers\DateTimeHelper.cs" />
     <Compile Include="Core\Helpers\GenericHelpers.cs" />
+    <Compile Include="Core\Tracing\Tracer.cs" />
     <Compile Include="Models\GTWebinar.cs" />
     <Compile Include="Models\Mapping\GTWebinarMap.cs" />
     <Compile Include="Notification\Events\SendConnectionInfoEvent.cs" />
@@ -152,7 +153,6 @@
     <Compile Include="Notification\INotificationDelivery.cs" />
     <Compile Include="Notification\INotificationMessage.cs" />
     <Compile Include="Notification\TemplateResolver.cs" />
-    <Compile Include="Notification\TtsTemplateHelper.cs" />
     <Compile Include="Repository\IAccountRepository.cs" />
     <Compile Include="Repository\IAffiliateRepository.cs" />
     <Compile Include="Repository\AffiliateRepository.cs" />
