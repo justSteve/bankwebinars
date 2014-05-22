@@ -36,19 +36,6 @@ namespace CUWebinars.Web.Controllers.api
             _logger = logger;
         }
 
-        // GET api/<controller>
-        //public IEnumerable<string> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
-
-        //// GET api/<controller>/5
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-        //   
-
         // POST api/<controller>
         public HttpResponseMessage Post([FromBody] IList<IncomingOrderModel> model)
         {

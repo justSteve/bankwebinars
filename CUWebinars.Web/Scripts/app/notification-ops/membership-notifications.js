@@ -167,15 +167,19 @@ function addImportOrderButtonClick() {
     $('#ImportOrderButton').on('click', function () {
 
         var jsonPayload = $('#JsonPayloadTextArea').val();
-        jsonDataForImportedOrder = jsonPayload;
-
+        var queryString = '?';
+        
+        $.each($.parseJSON(jsonPayload), function (idx, value) {
+            queryString += idx + '=' + value + '&';
+        });
+        
         $.ajax({
-            type: 'POST',
-            contentType: constants.JsonContentType,
+            type: 'GET',
+            contentType: constants.FormPostContentType,
             cache: false,
-            url: '/Api/Order',
-            dataType: constants.HtmlDataType,
-            data: $('#JsonPayloadTextArea').val(),
+            url: '/Order/CreateOrder' + queryString,
+            dataType: constants.JsonDataType,
+            //data: $('#JsonPayloadTextArea').val(),
             beforeSend: function () {
                 // this is where we append a loading image
                 $('#WaitIndicator').show();

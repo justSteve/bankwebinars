@@ -1,0 +1,220 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web;
+using System.Web.Mvc;
+using CUWebinars.Business.AccountService;
+using CUWebinars.Business.Constants;
+using CUWebinars.Business.Models;
+using CUWebinars.Business.Services;
+using CUWebinars.Web.Core;
+using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Models;
+using CUWebinars.Web.Services;
+using Newtonsoft.Json.Linq;
+using Ninject.Extensions.Logging;
+
+namespace CUWebinars.Web.Controllers
+{
+    public class OrderController : Controller
+    {
+        private readonly GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+        private readonly IMembershipService _membershipService;
+        private readonly IOrderManagementService _orderManagementService;
+        private readonly IStateService _stateService;
+        private readonly ILogger _logger;
+
+        public OrderController(IMembershipService membershipService, IOrderManagementService orderManagementService,
+            IStateService stateService, ILogger logger)
+        {
+            _membershipService = membershipService;
+            _orderManagementService = orderManagementService;
+            _stateService = stateService;
+            _logger = logger;
+        }
+
+        /// <summary>
+        /// For us to use a query string, this has to be a GET request.
+        /// </summary>
+        /// <param name="incomingOrderModel"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public JsonResult CreateOrder(IncomingOrderModel incomingOrderModel)
+        {
+            int idOfLastOrder = default(int);
+
+            if (!ModelState.IsValid)
+            {
+                _logger.Error("Post found problem with Payload");
+                return Json(new {Result = "Fail"});
+            }
+
+            try
+            {
+                var email = incomingOrderModel.Email.Trim();
+
+                _logger.Info("Begin import: " + email);
+
+                var firstName = incomingOrderModel.FirstName.Trim();
+                var lastName = incomingOrderModel.LastName.Trim();
+
+                var webinar = _orderManagementService.GetWebinar(incomingOrderModel.idWebinar);
+                var webUser = _membershipService.GetUserByEmail(email);
+                var affiliate = _orderManagementService.GetAffiliateById(incomingOrderModel.idAffiliate);
+
+                if (webUser == null)
+                {
+                    var institutionForUser =
+                        _membershipService.ProcessInstitutionForUser(incomingOrderModel.Institution.Trim(),
+                            incomingOrderModel.Email,
+                            incomingOrderModel.BillingAddress.City,
+                            incomingOrderModel.BillingAddress.State,
+                            "N",
+                            "New",
+                            incomingOrderModel.BillingAddress.Zip
+                            );
+
+                    incomingOrderModel.BillingAddress.AddressType = WebUiConstants.BillingAddress;
+                    incomingOrderModel.ShippingAddress.AddressType = WebUiConstants.ShippingAddress;
+
+                    IList<Address> addresses = new List<Address>
+                    {
+                        incomingOrderModel.BillingAddress,
+                        incomingOrderModel.ShippingAddress
+                    };
+
+                    USTimeZone userTimeZone = _membershipService.GetTimeZoneByZip();
+                    webUser = _membershipService.CreateWebUser(globalConfig.Tenant
+                        , firstName.Trim()
+                        , lastName.Trim()
+                        , lastName.ToLower().Trim()
+                        , email.Trim()
+                        , userTimeZone
+                        , UserType.Customer
+                        , institutionForUser.idInstitution
+                        , addresses
+                        , incomingOrderModel.Title == null ? incomingOrderModel.Title : incomingOrderModel.Title.Trim()
+                        , null
+                        , DomainConstants.Active
+                        );
+
+                    webUser.Institution = institutionForUser;
+
+                    _membershipService.CreateUser(globalConfig.Tenant
+                        , firstName
+                        , lastName
+                        , email
+                        , lastName.ToLower().Trim()
+                        , email
+                        );
+                }
+
+                IList<AdditionalLocation> addLocation = new List<AdditionalLocation>();
+
+                if (incomingOrderModel.AdditionalLocation != null && incomingOrderModel.AdditionalLocation.Any())
+                {
+                    var price = 150;
+                    //string email,decimal price,string fullname
+                    var additionalLocations = incomingOrderModel.AdditionalLocation;
+
+                    foreach (var additionalLocation in additionalLocations)
+                    {
+                        var additionalLocationEmail = additionalLocation.Email;
+                        //var additionalLocationFirstName = email.Split('@')[0].ToString(); // additionalLocation.FirstName
+                        //var additionalLocationLastName = email.Split('@')[1].ToString(); // additionalLocation.LastName
+                        addLocation.Add(_orderManagementService.CreateAdditionalLocation(
+                            additionalLocationEmail,
+                            price,
+                            null) //field for FullName
+                            //additionalLocationFirstName + ' ' + additionalLocationLastName)
+                            );
+                    }
+                }
+
+                var orderRow = _orderManagementService.CreateOrderRow(
+                    webinar,
+                    addLocation,
+                    incomingOrderModel.idRegType
+                    );
+
+                orderRow.Discount = _orderManagementService.GetDiscount(incomingOrderModel.Email);
+
+                var importedOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
+
+                importedOrder.AdminComments = "incomingOrderModel.AdminComments";
+                importedOrder.AffiliateComments = incomingOrderModel.AffiliateComments;
+                importedOrder.UserComments = "incomingOrderModel.UserComments";
+                importedOrder.Origin = "incomingOrderModel.Origin";
+                importedOrder.FirstName = webUser.FirstName;
+                importedOrder.LastName = webUser.LastName;
+                importedOrder.Institution = webUser.Institution.InstitutionName;
+                importedOrder.BillingEmail = incomingOrderModel.Email;
+
+                importedOrder.BillingAddress = incomingOrderModel.BillingAddress.StreetAddress;
+                importedOrder.BillingAddress2 = incomingOrderModel.BillingAddress.StreetAddress2;
+                importedOrder.BillingPhone = incomingOrderModel.BillingAddress.Phone;
+                importedOrder.BillingCity = incomingOrderModel.BillingAddress.City;
+                importedOrder.BillingState = incomingOrderModel.BillingAddress.State;
+                importedOrder.BillingZip = incomingOrderModel.BillingAddress.Zip;
+
+                importedOrder.ShippingAddress = incomingOrderModel.ShippingAddress.StreetAddress;
+                importedOrder.ShippingAddress2 = incomingOrderModel.ShippingAddress.StreetAddress2;
+                importedOrder.ShippingPhone = incomingOrderModel.ShippingAddress.Phone;
+                importedOrder.ShippingCity = incomingOrderModel.ShippingAddress.City;
+                importedOrder.ShippingState = incomingOrderModel.ShippingAddress.State;
+                importedOrder.ShippingZip = incomingOrderModel.ShippingAddress.Zip;
+                importedOrder.ShippingFirstName = firstName;
+                importedOrder.ShippingLastName = lastName;
+
+                if (orderRow.Webinar.WebinarKey != null)
+                {
+                    var regKeyResponse = _orderManagementService.CreateRegistrantKey(importedOrder.FirstName,
+                        importedOrder.LastName, importedOrder.BillingEmail, orderRow.idWebinar,
+                        orderRow.Webinar.WebinarKey);
+                    //"{\"registrantKey\":106033865,\"joinUrl\":\"https://www2.gotomeeting.com/join/739905466/106033865\"}"
+                    //http://stackoverflow.com/questions/13588185/deserialize-json-string-using-json-net
+
+                    if (ReferenceEquals(null, regKeyResponse))
+                        throw new NullReferenceException(
+                            "The Registration Key Response from the Citrix API resulted in a null response.");
+
+                    JObject parsedJsonObject = JObject.Parse(regKeyResponse);
+
+                    if (parsedJsonObject["registrantKey"] != null)
+                    {
+                        var registrantKey = parsedJsonObject["registrantKey"].ToString();
+                        var joinUrl = parsedJsonObject["joinUrl"].ToString();
+
+                        orderRow.RegistrantKey = registrantKey;
+                        orderRow.JoinURL = joinUrl;
+                    }
+                    else
+                    {
+                        /*  *************** 404 error condition *************** 
+                             * json payload will look like:
+                             *      {"description":"The webinar does not exist.","incident":3984078431536134144}
+                             * which is not usable
+                             */
+                    }
+                }
+
+                //orderRow.RegistrantKey = "SomeKey";
+                //orderRow.JoinURL = "https://www2.gotomeeting.com/join/739905466/106033865";
+                
+                _orderManagementService.SaveOrderChanges(importedOrder);
+                idOfLastOrder = importedOrder.idOrder;
+                _logger.Info("Posted idOrder=" + idOfLastOrder);
+
+                return Json(new {Result = WebUiConstants.Success});
+            }
+            catch (Exception exception)
+            {
+                _logger.Error("Order creation failed");
+            }
+
+            return Json(new { Result = WebUiConstants.Fail });
+        }
+    }
+}

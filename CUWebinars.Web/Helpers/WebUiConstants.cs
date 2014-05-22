@@ -15,6 +15,7 @@ namespace CUWebinars.Web.Helpers
         public const string PasswordReset = "Password Reset";
         public const string Register = "Register";
 
+        public const string Fail = "Fail";
         public const string OpStatus = "Status";
         public const string NoOrdersForWebinar = "No Orders to send for that webinar";
         public const string Success = "Success";

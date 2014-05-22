@@ -226,17 +226,15 @@ namespace CUWebinars.Web.Controllers
         public PartialViewResult GetJsonTextArea()
         {
             const string importOrderViaDashboardViewModel = @"{""AffiliateComments"": ""Affiliate comments"",
-                                  ""BillingAddress"": {
-                                    ""AddressType"": ""Billing"",
-                                    ""Name"": ""Alan Turing"",
-                                    ""Phone"": ""555-555-5555"",
-                                    ""StreetAddress"": ""968 Wildcat Dr"",
-                                    ""StreetAddress2"": """",
-                                    ""City"": ""Del Rio"",
-                                    ""Zip"": ""5000"",
-                                    ""State"": ""Tx"",
-                                    ""Country"": ""USA""
-                                  },
+                                  ""BillingAddress.AddressType"": ""Billing"",
+                                  ""BillingAddress.Name"": ""Alan Turing"",
+                                  ""BillingAddress.Phone"": ""555-555-5555"",
+                                  ""BillingAddress.StreetAddress"": ""968 Wildcat Dr"",
+                                  ""BillingAddress.StreetAddress2"": """",
+                                  ""BillingAddress.City"": ""Del Rio"",
+                                  ""BillingAddress.Zip"": ""5000"",
+                                  ""BillingAddress.State"": ""Tx"",
+                                  ""BillingAddress.Country"": ""USA"",
                                   ""Email"": ""alanbturingy@turing.com"",
                                   ""FirstName"": ""Alan"",
                                   ""LastName"": ""Turing"",
@@ -244,17 +242,15 @@ namespace CUWebinars.Web.Controllers
                                   ""idRegType"": 88,
                                   ""idWebinar"": 437,
                                   ""Institution"": ""Some Institution"",
-                                  ""ShippingAddress"": {
-                                    ""AddressType"": ""Shipping"",
-                                    ""Name"": ""Alan Turing"",
-                                    ""Phone"": ""555-555-5555"",
-                                    ""StreetAddress"": ""968 Wildcat Dr"",
-                                    ""StreetAddress2"": """",
-                                    ""City"": ""Del Rio"",
-                                    ""Zip"": ""5000"",
-                                    ""State"": ""Tx"",
-                                    ""Country"": ""USA""
-                                  },
+                                  ""ShippingAddress.AddressType"": ""Shipping"",
+                                  ""ShippingAddress.Name"": ""Alan Turing"",
+                                  ""ShippingAddress.Phone"": ""555-555-5555"",
+                                  ""ShippingAddress.StreetAddress"": ""968 Wildcat Dr"",
+                                  ""ShippingAddress.StreetAddress2"": """",
+                                  ""ShippingAddress.City"": ""Del Rio"",
+                                  ""ShippingAddress.Zip"": ""5000"",
+                                  ""ShippingAddress.State"": ""Tx"",
+                                  ""ShippingAddress.Country"": ""USA"",
                                   ""SendNotification"": ""true"",
                                   ""Title"": ""Mr""}";
 
