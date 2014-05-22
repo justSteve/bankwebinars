@@ -464,7 +464,7 @@
     <Content Include="App_Data\Deploy\New-AzureWebsiteEnv.ps1" />
     <None Include="App_Data\Deploy\Publish-AzureWebsite.ps1" />
     <Content Include="App_Data\Orders\OrderEntry.csv" />
-    <Content Include="App_Data\Orders\PrepsDbForOrderImportTesting.txt" />
+    <Content Include="App_Data\Orders\ResetsDbForTesting.sql" />
     <Content Include="App_Data\Orders\RegistrationTypeMapping.txt" />
     <Content Include="App_Data\Orders\ResetsDb.sql" />
     <Content Include="Content\css\affiliateCheckout.css" />
@@ -992,10 +992,6 @@
     <Content Include="Notification\Templates\OrderSubmitted.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailVerifiedEvent_Subject.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailVerifiedEvent_Body.cshtml" />
-    <Content Include="Notification\Templates\SendRecordingPostedHOLDER.cshtml">
-      <SubType>Code</SubType>
-    </Content>
-    <Content Include="Notification\Templates\_RecordingInfo.cshtml" />
     <Content Include="Notification\Templates\SendShippedOrder.cshtml" />
     <Content Include="Notification\Templates\SendRecordingPosted.cshtml" />
     <Content Include="Notification\Templates\SendReminder.cshtml" />
@@ -1003,7 +999,9 @@
     <Content Include="App_Data\Deploy\DeployScript.ps1" />
     <Content Include="Notification\Templates\RecordingPostedEventBody.cshtml" />
     <Content Include="Notification\Templates\SendConnectionInfo.cshtml" />
-    <Content Include="Notification\Templates\_ConnectionInfo.cshtml" />
+    <Content Include="Membership\Email\EmailTemplates\EmailChangedEvent_Subject.cshtml" />
+    <Content Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Body.cshtml" />
+    <Content Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Subject.cshtml" />
     <None Include="Properties\PublishProfiles\CUStaging.pubxml" />
     <None Include="Properties\PublishProfiles\cuwebinars1 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\cuwebinars1 - Web Deploy.pubxml" />
