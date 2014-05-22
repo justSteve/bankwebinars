@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
+using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
@@ -44,6 +46,8 @@ namespace CUWebinars.Web.Controllers
         public JsonResult CreateOrder(IncomingOrderModel incomingOrderModel)
         {
             int idOfLastOrder = default(int);
+            int idOfLastOrderOrderRow = default(int);
+            string verificationKey = string.Empty;
 
             if (!ModelState.IsValid)
             {
@@ -53,12 +57,14 @@ namespace CUWebinars.Web.Controllers
 
             try
             {
+                UserAccount userAccount;
                 var email = incomingOrderModel.Email.Trim();
 
                 _logger.Info("Begin import: " + email);
 
                 var firstName = incomingOrderModel.FirstName.Trim();
                 var lastName = incomingOrderModel.LastName.Trim();
+                var tempPassword = lastName.ToLower();
 
                 var webinar = _orderManagementService.GetWebinar(incomingOrderModel.idWebinar);
                 var webUser = _membershipService.GetUserByEmail(email);
@@ -68,7 +74,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     var institutionForUser =
                         _membershipService.ProcessInstitutionForUser(incomingOrderModel.Institution.Trim(),
-                            incomingOrderModel.Email,
+                            email,
                             incomingOrderModel.BillingAddress.City,
                             incomingOrderModel.BillingAddress.State,
                             "N",
@@ -87,28 +93,40 @@ namespace CUWebinars.Web.Controllers
 
                     USTimeZone userTimeZone = _membershipService.GetTimeZoneByZip();
                     webUser = _membershipService.CreateWebUser(globalConfig.Tenant
-                        , firstName.Trim()
-                        , lastName.Trim()
-                        , lastName.ToLower().Trim()
-                        , email.Trim()
+                        , firstName
+                        , lastName
+                        , tempPassword
+                        , email
                         , userTimeZone
                         , UserType.Customer
                         , institutionForUser.idInstitution
                         , addresses
-                        , incomingOrderModel.Title == null ? incomingOrderModel.Title : incomingOrderModel.Title.Trim()
+                        , incomingOrderModel.Title == null ? null : incomingOrderModel.Title.Trim()
                         , null
                         , DomainConstants.Active
                         );
 
                     webUser.Institution = institutionForUser;
 
-                    _membershipService.CreateUser(globalConfig.Tenant
+                    userAccount = _membershipService.CreateUser(globalConfig.Tenant
                         , firstName
                         , lastName
                         , email
-                        , lastName.ToLower().Trim()
+                        , tempPassword
                         , email
                         );
+
+                    Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey), "There's no reason session should not have a value for the VerificationKey at this point ");
+
+                    verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
+                    _stateService.ClearValue(DomainConstants.VerificationKey);
+
+                    userAccount = _membershipService.VerifyEmailFromKey(
+                        verificationKey,
+                        tempPassword
+                        );
+
+
                 }
 
                 IList<AdditionalLocation> addLocation = new List<AdditionalLocation>();
@@ -203,11 +221,19 @@ namespace CUWebinars.Web.Controllers
                 //orderRow.RegistrantKey = "SomeKey";
                 //orderRow.JoinURL = "https://www2.gotomeeting.com/join/739905466/106033865";
                 
-                _orderManagementService.SaveOrderChanges(importedOrder);
+                _orderManagementService.SaveOrderChanges(importedOrder, verificationKey);
                 idOfLastOrder = importedOrder.idOrder;
+                idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
                 _logger.Info("Posted idOrder=" + idOfLastOrder);
 
-                return Json(new {Result = WebUiConstants.Success});
+                return Json(
+                    new
+                    {
+                        Result = WebUiConstants.Success, 
+                        OrderId = idOfLastOrder.ToString(), 
+                        OrderRowId = idOfLastOrderOrderRow .ToString()
+                    }, 
+                    JsonRequestBehavior.AllowGet);
             }
             catch (Exception exception)
             {

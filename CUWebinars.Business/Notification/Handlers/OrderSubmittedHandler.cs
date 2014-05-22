@@ -3,13 +3,14 @@ using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Notification.Formatters;
+using CUWebinars.Business.Notification.ViewModel;
 using CUWebinars.NotificationSystem.Event;
 using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Business.Notification.Handlers
 {
-    public class OrderSubmittedHandler<T> : IEventHandler<OrderSubmittedEvent<T>> 
-        where T : Order
+    public class OrderSubmittedHandler<T> : IEventHandler<OrderSubmittedEvent<T>>
+        where T : OrderSubmittedViewModel
     {
         private readonly IFormatter _generalFormatter;
         private readonly INotificationDelivery _notificationDelivery;
@@ -32,7 +33,7 @@ namespace CUWebinars.Business.Notification.Handlers
             try
             {
                 var notificationMessage = _generalFormatter.Format(orderSubmittedEvent.EventObject, "OrderSubmitted");
-                notificationMessage.To = orderSubmittedEvent.EventObject.BillingEmail;
+                notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);
             }
             catch (NullReferenceException nullReferenceException)
@@ -45,7 +46,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 {
                     _logger.Error(
                         string.Format("Event processing failed for orderSubmittedEvent - OrderId {0}. ExceptionMessage: {1}",
-                            orderSubmittedEvent.EventObject.idOrder,
+                            orderSubmittedEvent.EventObject.Order.idOrder,
                             nullReferenceException.Message)
                         , nullReferenceException);
                 }
@@ -62,7 +63,7 @@ namespace CUWebinars.Business.Notification.Handlers
         }
     }
 
-    public class OrderSubmittedHandler : OrderSubmittedHandler<Order>
+    public class OrderSubmittedHandler : OrderSubmittedHandler<OrderSubmittedViewModel>
     {
         public OrderSubmittedHandler(IFormatter generalFormatter, ILogger logger)
             : base(generalFormatter, logger)

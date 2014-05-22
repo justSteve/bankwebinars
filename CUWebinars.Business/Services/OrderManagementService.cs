@@ -3,6 +3,7 @@ using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Exceptions;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification.Events;
+using CUWebinars.Business.Notification.ViewModel;
 using CUWebinars.Business.Repository;
 using CUWebinars.NotificationSystem.Event;
 using DDay.iCal;
@@ -489,7 +490,7 @@ namespace CUWebinars.Business.Services
             Clear();
         }
 
-        public Order SaveOrderChanges(Order currentOrder)
+        public Order SaveOrderChanges(Order currentOrder, string verificationKey)
         {
             try
             {
@@ -497,8 +498,14 @@ namespace CUWebinars.Business.Services
                 CalculateOrderPrices(currentOrder);
 
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder);
+                
+                var orderSubmittedViewModel = new OrderSubmittedViewModel
+                {
+                    Order = updatedOrder,
+                    VerificationKey = verificationKey
+                };
 
-                AddEvent(new OrderSubmittedEvent<Order> { EventObject = updatedOrder });
+                AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel> { EventObject = orderSubmittedViewModel });
 
                 foreach (var evt in GetEvents())
                 {

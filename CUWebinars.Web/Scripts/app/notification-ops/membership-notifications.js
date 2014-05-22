@@ -186,9 +186,13 @@ function addImportOrderButtonClick() {
             }
         }).done(function (result) {
 
-            var resultAsJson = JSON.parse(result);
+            //var resultAsJson = JSON.parse(result);
 
-            $('#InputFormFields').html('<span id="OrderSucceeded" class="label label-success">' + resultAsJson.Result + '</span>');
+            if (result.Result === 'Success') {
+                $('#InputFormFields').html('<span id="OrderSucceeded" class="label label-success">Success! Order Id: ' + result.OrderId + ' OrderRow Id: ' + result.OrderRowId + '</span>');
+            }
+
+            
 
         }).always(function () {
             $('#WaitIndicator').hide();

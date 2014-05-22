@@ -448,7 +448,7 @@ namespace CUWebinars.Web.Controllers
         {
             OrderRow row = _orderManagementService.LoadOrderRow(orderRowID);
             row.Order.OrderStatus = status;
-            _orderManagementService.SaveOrderChanges(row.Order);
+            _orderManagementService.SaveOrderChanges(row.Order, null);
 
             return Json(row.Order.OrderStatus.ToString());
         }
