@@ -289,6 +289,7 @@ namespace CUWebinars.Business.Repository
         public virtual IList<Order> GetLoadedEntitiesForOrder(IQueryable<Order> orders)
         {
             return orders.Include(o => o.WebUser)
+                .Include(o => o.Affiliate)
                 .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
                 .Include(o => o.OrderRows.Select(or => or.Webinar.Presenter.WebUser))
                 .Include(o => o.OrderRows.Select(or => or.Webinar.WebinarFiles))
