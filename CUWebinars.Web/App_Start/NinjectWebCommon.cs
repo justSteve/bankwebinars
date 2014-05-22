@@ -1,3 +1,5 @@
+using Api = CUWebinars.Web.Controllers.api;
+using Nml = CUWebinars.Web.Controllers;
 using System.Web.Http;
 using BrockAllen.MembershipReboot;
 using BrockAllen.MembershipReboot.Ef;
@@ -128,11 +130,11 @@ namespace CUWebinars.Web.App_Start
                 return new HomeController(new WebinarRepository(sharedContext), logger);
             }).InRequestScope();
 
-            kernel.Bind<OrderController>().ToMethod(ctx =>
+            kernel.Bind<Api.OrderController>().ToMethod(ctx =>
             {
                 var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
                 var userAccountService = kernel.Get<UserAccountService>();
-                ILogger logger = new Log4NetLogger(typeof (OrderController));
+                ILogger logger = new Log4NetLogger(typeof (Api.OrderController));
                 ILogger loggerForOrderManagementService = new Log4NetLogger(typeof(OrderManagementService));
                 
 
@@ -155,7 +157,37 @@ namespace CUWebinars.Web.App_Start
                     new WebUserRepository(sharedContext)
                     );
 
-                return new OrderController(membershipService, orderManagementService, kernel.Get<IStateService>(), logger);
+                return new Api.OrderController(membershipService, orderManagementService, kernel.Get<IStateService>(), logger);
+            }).InRequestScope();
+
+            kernel.Bind<Nml.OrderController>().ToMethod(ctx =>
+            {
+                var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
+                var userAccountService = kernel.Get<UserAccountService>();
+                ILogger logger = new Log4NetLogger(typeof(Nml.OrderController));
+                ILogger loggerForOrderManagementService = new Log4NetLogger(typeof(OrderManagementService));
+                
+
+                var orderManagementService = new OrderManagementService(
+                    new AffiliateRepository(sharedContext),
+                    new RegTypeRepository(sharedContext),
+                    new OrderRepository(sharedContext),
+                    new RefDataRepository(),
+                    new WebUserRepository(sharedContext),
+                    new WebinarRepository(sharedContext),
+                    loggerForOrderManagementService,
+                    ttsConfig
+                    );
+
+                var membershipService = new MembershipService(
+                    new InstitutionRepository(sharedContext),
+                    new RefDataRepository(),
+                    new SamAuthenticationService(userAccountService),
+                    userAccountService,
+                    new WebUserRepository(sharedContext)
+                    );
+
+                return new Nml.OrderController(membershipService, orderManagementService, kernel.Get<IStateService>(), logger);
             }).InRequestScope();
 
             kernel.Bind<AccountController>().ToMethod(ctx =>

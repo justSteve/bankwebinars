@@ -23,61 +23,57 @@ namespace CUWebinars.Web.Membership.Email
             _refDataRepository = refDataRepository;
         }
 
-        public override string Tokenize(UserAccountEvent<UserAccount> accountEvent, ApplicationInformation appInfo, string msg, IDictionary<string, string> values)
+        public override string Tokenize(UserAccountEvent<UserAccount> accountEvent, ApplicationInformation appInfo,
+            string msg, IDictionary<string, string> values)
         {
-            //  If there's no session, we know this has been kicked off by a WepAPI controller. 
-            if (!ReferenceEquals(null, HttpContext.Current.Session))
+            WebUser webUser = _stateService.GetValue<WebUser>(Constants.CurrentUser);
+
+            var body = new TemplateService();
+            var user = accountEvent.Account;
+
+            var notification = new Notification
             {
-                WebUser webUser = _stateService.GetValue<WebUser>(Constants.CurrentUser);
+                ApplicationName = appInfo.ApplicationName,
+                CancelVerificationUrl = appInfo.CancelVerificationUrl,
+                ConfirmChangeEmailUrl = appInfo.ConfirmChangeEmailUrl,
+                ConfirmPasswordResetUrl = appInfo.ConfirmPasswordResetUrl,
+                Email = user.Email,
+                EmailSignature = appInfo.EmailSignature,
+                LoginUrl = appInfo.LoginUrl,
+                Username = user.Username
+            };
 
-                var body = new TemplateService();
-                var user = accountEvent.Account;
+            if (values.Any())
+            {
+                var notificationType = notification.GetType();
 
-                var notification = new Notification
+                if (values.ContainsKey(DomainConstants.VerificationKey))
                 {
-                    ApplicationName = appInfo.ApplicationName,
-                    CancelVerificationUrl = appInfo.CancelVerificationUrl,
-                    ConfirmChangeEmailUrl = appInfo.ConfirmChangeEmailUrl,
-                    ConfirmPasswordResetUrl = appInfo.ConfirmPasswordResetUrl,
-                    Email = user.Email,
-                    EmailSignature = appInfo.EmailSignature,
-                    LoginUrl = appInfo.LoginUrl,
-                    Username = user.Username
-                };
+                    var verificationKey = values[DomainConstants.VerificationKey];
 
-                if (values.Any())
-                {
-                    var notificationType = notification.GetType();
+                    if (!_stateService.HasValue(DomainConstants.VerificationKey))
+                        _stateService.SetValue(DomainConstants.VerificationKey, verificationKey);
 
-                    if (values.ContainsKey(DomainConstants.VerificationKey))
-                    {
-                        var verificationKey = values[DomainConstants.VerificationKey];
-
-                        if (!_stateService.HasValue(DomainConstants.VerificationKey))
-                            _stateService.SetValue(DomainConstants.VerificationKey, verificationKey);
-
-                        notification.ConfirmPasswordResetUrl = Path.Combine(notification.ConfirmPasswordResetUrl,
-                            verificationKey);
-                        notification.ConfirmChangeEmailUrl = Path.Combine(notification.ConfirmChangeEmailUrl,
-                            verificationKey);
-                        notification.CancelVerificationUrl = Path.Combine(notification.CancelVerificationUrl,
-                            verificationKey);
-                    }
-
-                    foreach (var keyValuePair in values)
-                    {
-                        var property = notificationType.GetProperty(keyValuePair.Key);
-
-                        if (property != null)
-                            property.SetValue(notification, keyValuePair.Value);
-                    }
+                    notification.ConfirmPasswordResetUrl = Path.Combine(notification.ConfirmPasswordResetUrl,
+                        verificationKey);
+                    notification.ConfirmChangeEmailUrl = Path.Combine(notification.ConfirmChangeEmailUrl,
+                        verificationKey);
+                    notification.CancelVerificationUrl = Path.Combine(notification.CancelVerificationUrl,
+                        verificationKey);
                 }
 
-                var b = body.Parse(msg, notification, null, null);
+                foreach (var keyValuePair in values)
+                {
+                    var property = notificationType.GetProperty(keyValuePair.Key);
 
-                return b.Trim();
+                    if (property != null)
+                        property.SetValue(notification, keyValuePair.Value);
+                }
             }
-            return null;
+
+            var b = body.Parse(msg, notification, null, null);
+
+            return b.Trim();
         }
     }
 }

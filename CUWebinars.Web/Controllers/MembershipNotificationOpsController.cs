@@ -98,12 +98,17 @@ namespace CUWebinars.Web.Controllers
                         model.RegisterFields.Email
                         );
 
+                    Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey), "There's no reason session should not have a value for the VerificationKey at this point ");
+
+                    var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
+                    _stateService.ClearValue(DomainConstants.VerificationKey);
+
+
                     userAccount =_membershipService.VerifyEmailFromKey(
-                            _stateService.GetValue<string>(DomainConstants.VerificationKey),
+                            verificationKey,
                             model.RegisterFields.Password
                             );
-
-                    _stateService.ClearValue(DomainConstants.VerificationKey);
+                    
                 }
                 else
                 {
@@ -150,13 +155,17 @@ namespace CUWebinars.Web.Controllers
                         );
 
                     userAccount = _membershipService.CreateUser(globals.Tenant, "John", "Hancock", string.Empty, newPassword, newEmail);
-                    
+
+                    Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey), "There's no reason session should not have a value for the VerificationKey at this point ");
+
+                    var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
+                    _stateService.ClearValue(DomainConstants.VerificationKey);
+
+
                     userAccount = _membershipService.VerifyEmailFromKey(
-                                        _stateService.GetValue<string>(DomainConstants.VerificationKey),
+                                        verificationKey,
                                         newPassword
                                     );
-
-                    _stateService.ClearValue(DomainConstants.VerificationKey);
 
                     return Json(new { result = "success", email = newEmail, password = newPassword });
                 }
@@ -226,17 +235,15 @@ namespace CUWebinars.Web.Controllers
         public PartialViewResult GetJsonTextArea()
         {
             const string importOrderViaDashboardViewModel = @"{""AffiliateComments"": ""Affiliate comments"",
-                                  ""BillingAddress"": {
-                                    ""AddressType"": ""Billing"",
-                                    ""Name"": ""Alan Turing"",
-                                    ""Phone"": ""555-555-5555"",
-                                    ""StreetAddress"": ""968 Wildcat Dr"",
-                                    ""StreetAddress2"": """",
-                                    ""City"": ""Del Rio"",
-                                    ""Zip"": ""5000"",
-                                    ""State"": ""Tx"",
-                                    ""Country"": ""USA""
-                                  },
+                                  ""BillingAddress.AddressType"": ""Billing"",
+                                  ""BillingAddress.Name"": ""Alan Turing"",
+                                  ""BillingAddress.Phone"": ""555-555-5555"",
+                                  ""BillingAddress.StreetAddress"": ""968 Wildcat Dr"",
+                                  ""BillingAddress.StreetAddress2"": """",
+                                  ""BillingAddress.City"": ""Del Rio"",
+                                  ""BillingAddress.Zip"": ""5000"",
+                                  ""BillingAddress.State"": ""Tx"",
+                                  ""BillingAddress.Country"": ""USA"",
                                   ""Email"": ""alanbturingy@turing.com"",
                                   ""FirstName"": ""Alan"",
                                   ""LastName"": ""Turing"",
@@ -244,17 +251,15 @@ namespace CUWebinars.Web.Controllers
                                   ""idRegType"": 88,
                                   ""idWebinar"": 437,
                                   ""Institution"": ""Some Institution"",
-                                  ""ShippingAddress"": {
-                                    ""AddressType"": ""Shipping"",
-                                    ""Name"": ""Alan Turing"",
-                                    ""Phone"": ""555-555-5555"",
-                                    ""StreetAddress"": ""968 Wildcat Dr"",
-                                    ""StreetAddress2"": """",
-                                    ""City"": ""Del Rio"",
-                                    ""Zip"": ""5000"",
-                                    ""State"": ""Tx"",
-                                    ""Country"": ""USA""
-                                  },
+                                  ""ShippingAddress.AddressType"": ""Shipping"",
+                                  ""ShippingAddress.Name"": ""Alan Turing"",
+                                  ""ShippingAddress.Phone"": ""555-555-5555"",
+                                  ""ShippingAddress.StreetAddress"": ""968 Wildcat Dr"",
+                                  ""ShippingAddress.StreetAddress2"": """",
+                                  ""ShippingAddress.City"": ""Del Rio"",
+                                  ""ShippingAddress.Zip"": ""5000"",
+                                  ""ShippingAddress.State"": ""Tx"",
+                                  ""ShippingAddress.Country"": ""USA"",
                                   ""SendNotification"": ""true"",
                                   ""Title"": ""Mr""}";
 

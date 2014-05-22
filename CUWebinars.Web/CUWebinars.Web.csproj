@@ -375,6 +375,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdhocNotificationController.cs" />
     <Compile Include="Controllers\api\AddressesController.cs" />
+    <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\OrderEventFiringOpsController.cs" />
     <Compile Include="Core\Exceptions.cs" />
     <Compile Include="ElmahHandleErrorAttribute.cs" />

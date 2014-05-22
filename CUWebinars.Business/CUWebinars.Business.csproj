@@ -153,6 +153,7 @@
     <Compile Include="Notification\INotificationDelivery.cs" />
     <Compile Include="Notification\INotificationMessage.cs" />
     <Compile Include="Notification\TemplateResolver.cs" />
+    <Compile Include="Notification\ViewModel\OrderSubmittedViewModel.cs" />
     <Compile Include="Repository\IAccountRepository.cs" />
     <Compile Include="Repository\IAffiliateRepository.cs" />
     <Compile Include="Repository\AffiliateRepository.cs" />

@@ -1,14 +1,20 @@
 ﻿@using System.Web.Mvc.Html
 @using CUWebinars.Business.Models
-@model Order
+@model CUWebinars.Business.Notification.ViewModel.OrderSubmittedViewModel
 
 <title>
-    [CUWebinars]: Confirmation of Registration for @Model.OrderRows.SingleOrDefault().Webinar.Title
+    @{
+        var orderRows = from orderRow in Model.Order.OrderRows
+                        where orderRow.RowStatus == OrderRowStatus.Active
+                        select orderRow;
+        var thisWebinar = orderRows.Single().Webinar;
+    }
+    Connection Information for @thisWebinar.Title
 </title>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 @{
-    var row = from orderRow in Model.OrderRows
+    var row = from orderRow in Model.Order.OrderRows
               where orderRow.RowStatus == OrderRowStatus.Active
               select orderRow;
     var webinar = row.Single().Webinar;
@@ -26,14 +32,14 @@
         code = webinar.AccessCode;
     }
 
-    string DateTimeString = TtsDateTimeTemplateHelperObject.FormatTimeWithDuration(webinar.Date, Model.WebUser.timeZone, true, webinar.Duration);
+    string DateTimeString = TtsDateTimeTemplateHelperObject.FormatTimeWithDuration(webinar.Date, Model.Order.WebUser.timeZone, true, webinar.Duration);
 
     if (webinar.AccessPhone != null)
     {
         phone = webinar.AccessPhone;
     }
     var HeaderText = "Your Order Confirmation " + webinar.Title + "-" + @webinar.Status;
-    var BannerText = "Order Number: CU-" + Model.idOrder + "<br />Type: " + row.Single().RegistrationType.OptionLabel;
+    var BannerText = "Order Number: CU-" + Model.Order.idOrder + "<br />Type: " + row.Single().RegistrationType.OptionLabel;
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>[CUWebinars]: Confirmation of Registration for @webinar.Title</title>
@@ -130,7 +136,7 @@
                                                                                 <tr>
                                                                                     <td colspan="2" style="text-align: left; margin-left: 6px; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: small">
                                                                                         <span style="color: black; font-family: Arial, Helvetica, sans-serif; padding: 5px; font-size: 12px;">
-                                                                                            <br />Dear @Model.FirstName,<br />
+                                                                                            <br />Dear @Model.Order.FirstName,<br />
                                                                                             Thank you for your recent order.<br />
                                                                                         </span>
                                                                                     </td>

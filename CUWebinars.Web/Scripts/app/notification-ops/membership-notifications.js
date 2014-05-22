@@ -167,24 +167,32 @@ function addImportOrderButtonClick() {
     $('#ImportOrderButton').on('click', function () {
 
         var jsonPayload = $('#JsonPayloadTextArea').val();
-        jsonDataForImportedOrder = jsonPayload;
-
+        var queryString = '?';
+        
+        $.each($.parseJSON(jsonPayload), function (idx, value) {
+            queryString += idx + '=' + value + '&';
+        });
+        
         $.ajax({
-            type: 'POST',
-            contentType: constants.JsonContentType,
+            type: 'GET',
+            contentType: constants.FormPostContentType,
             cache: false,
-            url: '/Api/Order',
-            dataType: constants.HtmlDataType,
-            data: $('#JsonPayloadTextArea').val(),
+            url: '/Order/CreateOrder' + queryString,
+            dataType: constants.JsonDataType,
+            //data: $('#JsonPayloadTextArea').val(),
             beforeSend: function () {
                 // this is where we append a loading image
                 $('#WaitIndicator').show();
             }
         }).done(function (result) {
 
-            var resultAsJson = JSON.parse(result);
+            //var resultAsJson = JSON.parse(result);
 
-            $('#InputFormFields').html('<span id="OrderSucceeded" class="label label-success">' + resultAsJson.Result + '</span>');
+            if (result.Result === 'Success') {
+                $('#InputFormFields').html('<span id="OrderSucceeded" class="label label-success">Success! Order Id: ' + result.OrderId + ' OrderRow Id: ' + result.OrderRowId + '</span>');
+            }
+
+            
 
         }).always(function () {
             $('#WaitIndicator').hide();

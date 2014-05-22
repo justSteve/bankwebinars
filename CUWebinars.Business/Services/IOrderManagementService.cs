@@ -12,6 +12,7 @@ namespace CUWebinars.Business.Services
         void AssignUserToOrder(Order currentOrder);
         Order AssignWebUserToOrder(WebUser webUser, Order order);
         string BuildConnectionInfo(OrderRow orderRow);
+        int CheckUserForRecordingAccess(int i, int i1);
         AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullname);
         string CreateCalendarEvent(string title, string body, DateTime startDate, double duration, string location,
             string organizer, string eventId, bool allDayEvent);
@@ -43,7 +44,6 @@ namespace CUWebinars.Business.Services
         IEnumerable<WebUser> GetWebusersForLiveNotifications(int idWebinar);
         Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id);
         OrderRow LoadOrderRow(int id);
-        Order SaveOrderChanges(Order currentOrder);
-        int CheckUserForRecordingAccess(int i, int i1);
+        Order SaveOrderChanges(Order currentOrder, string verificationKey);
     }
 }
