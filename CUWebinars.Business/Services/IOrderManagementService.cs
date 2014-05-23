@@ -44,6 +44,6 @@ namespace CUWebinars.Business.Services
         IEnumerable<WebUser> GetWebusersForLiveNotifications(int idWebinar);
         Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id);
         OrderRow LoadOrderRow(int id);
-        Order SaveOrderChanges(Order currentOrder, string verificationKey);
+        Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink);
     }
 }

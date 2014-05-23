@@ -60,6 +60,9 @@ namespace CUWebinars.Web.Membership.Email
                         verificationKey);
                     notification.CancelVerificationUrl = Path.Combine(notification.CancelVerificationUrl,
                         verificationKey);
+
+                    if (!_stateService.HasValue(DomainConstants.ConfirmChangeEmailLink))
+                        _stateService.SetValue(DomainConstants.ConfirmChangeEmailLink, notification.ConfirmChangeEmailUrl);
                 }
 
                 foreach (var keyValuePair in values)

@@ -48,6 +48,7 @@ namespace CUWebinars.Web.Controllers
             int idOfLastOrder = default(int);
             int idOfLastOrderOrderRow = default(int);
             string verificationKey = string.Empty;
+            string confirmChangeEmailUrl = string.Empty;
 
             if (!ModelState.IsValid)
             {
@@ -108,6 +109,11 @@ namespace CUWebinars.Web.Controllers
 
                     webUser.Institution = institutionForUser;
 
+                    //  Here, we set a value which indicates to the TtsSmtpMessageDelivery object that the user was created while importing an order.
+                    //  This will be checked in TtsSmtpMessageDelivery and the notification will not be sent if this value is present.
+                    //  The idea being that the Order Submitted notification will contain the info nomrally in the User Registered email.
+                    _stateService.SetValue(DomainConstants.UserCreatedViaNewOrder, true);
+
                     userAccount = _membershipService.CreateUser(globalConfig.Tenant
                         , firstName
                         , lastName
@@ -119,13 +125,17 @@ namespace CUWebinars.Web.Controllers
                     Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey), "There's no reason session should not have a value for the VerificationKey at this point ");
 
                     verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
+                    confirmChangeEmailUrl = _stateService.GetValue<string>(DomainConstants.ConfirmChangeEmailLink);
                     _stateService.ClearValue(DomainConstants.VerificationKey);
+                    _stateService.ClearValue(DomainConstants.ConfirmChangeEmailLink);
 
                     userAccount = _membershipService.VerifyEmailFromKey(
                         verificationKey,
                         tempPassword
                         );
 
+                    //  Now we clear the value, so TtsSmtpMessageDelivery can go back to business as usual.
+                    _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
 
                 }
 
@@ -221,7 +231,7 @@ namespace CUWebinars.Web.Controllers
                 //orderRow.RegistrantKey = "SomeKey";
                 //orderRow.JoinURL = "https://www2.gotomeeting.com/join/739905466/106033865";
                 
-                _orderManagementService.SaveOrderChanges(importedOrder, verificationKey);
+                _orderManagementService.SaveOrderChanges(importedOrder, verificationKey, confirmChangeEmailUrl);
                 idOfLastOrder = importedOrder.idOrder;
                 idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
                 _logger.Info("Posted idOrder=" + idOfLastOrder);
