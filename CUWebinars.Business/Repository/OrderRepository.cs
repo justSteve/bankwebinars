@@ -205,22 +205,30 @@ namespace CUWebinars.Business.Repository
 
         public Order SaveOrderChanges(Order order)
         {
+            
             var error = db.GetValidationErrors();
+            //is this statement waiting for additional code to
+            // trap any remaining errors?
+            
+            // is the following 
+            if (error.Any())
+            {
+                foreach (var err in error)
+                {
+                    order.AdminComments += err.Entry.ToString();
+                }
+                
+            }
+            else
+            {
+                order.OrderStatus = OrderStatus.Submitted;
+            }
+
             db.SaveChanges();
 
             return order;
         }
 
-        public virtual IList<Order> Test(int idUser)
-        {
-            var optionAndOrder = new Dictionary<RegType, Order>();
-
-            var list = items.Include("OrderRows")
-                        .Where(o => o.idUser == idUser)
-                        .ToList();
-
-            return list;
-        }
 
         public int CheckUserForRecordingAccess(int webinar, int user)
         {

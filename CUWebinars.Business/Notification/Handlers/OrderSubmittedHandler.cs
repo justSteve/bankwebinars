@@ -53,7 +53,7 @@ namespace CUWebinars.Business.Notification.Handlers
             }
             catch (Exception exception)
             {
-                _logger.Error(string.Format("orderSubmittedEvent ExceptionMessage: {0}", exception.Message), exception);
+                _logger.Error(string.Format("orderSubmittedEvent (outer) ExceptionMessage: {0}", exception.Message), exception);
             }
         }
 

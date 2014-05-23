@@ -19,7 +19,7 @@ namespace CUWebinars.Business.Repository
         IList<Order> SelectOrdersWithArchivedWebinars(int idUser);
         IList<Order> SelectOrdersWithRecordedWebinars(int idUser);
         IList<Order> SelectOrdersWithScheduledWebinars(int idUser);
-        IList<Order> Test(int idUser);
+        
         int CheckUserForRecordingAccess(int i, int i1);
     }
 }

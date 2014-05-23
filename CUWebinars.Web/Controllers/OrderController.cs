@@ -51,8 +51,21 @@ namespace CUWebinars.Web.Controllers
 
             if (!ModelState.IsValid)
             {
-                _logger.Error("Post found problem with Payload");
-                return Json(new {Result = "Fail"});
+                var myErr = "";
+                foreach (ModelState modelState in ViewData.ModelState.Values)
+                {
+                    foreach (ModelError error in modelState.Errors)
+                    {
+                        myErr += modelState.Value.ToString();
+                    }
+                }
+                //var allErrors = ModelState.Values.SelectMany(v => v.Errors);
+                //allErrors is of type IEnumerable<ModelError>
+                //http://stackoverflow.com/questions/1352948/how-to-get-all-errors-from-asp-net-mvc-modelstate
+
+
+                _logger.Error(myErr);
+                return Json(new { Result = "Fail" });
             }
 
             try
@@ -140,8 +153,7 @@ namespace CUWebinars.Web.Controllers
                     foreach (var additionalLocation in additionalLocations)
                     {
                         var additionalLocationEmail = additionalLocation.Email;
-                        //var additionalLocationFirstName = email.Split('@')[0].ToString(); // additionalLocation.FirstName
-                        //var additionalLocationLastName = email.Split('@')[1].ToString(); // additionalLocation.LastName
+
                         addLocation.Add(_orderManagementService.CreateAdditionalLocation(
                             additionalLocationEmail,
                             price,
@@ -186,13 +198,13 @@ namespace CUWebinars.Web.Controllers
                 importedOrder.ShippingFirstName = firstName;
                 importedOrder.ShippingLastName = lastName;
 
-                if (orderRow.Webinar.WebinarKey != null)
+                if (orderRow.Webinar.WebinarKey != null
+                    && orderRow.RegistrationType.ShowLiveNotifications == "Yes"
+                    )
                 {
                     var regKeyResponse = _orderManagementService.CreateRegistrantKey(importedOrder.FirstName,
                         importedOrder.LastName, importedOrder.BillingEmail, orderRow.idWebinar,
                         orderRow.Webinar.WebinarKey);
-                    //"{\"registrantKey\":106033865,\"joinUrl\":\"https://www2.gotomeeting.com/join/739905466/106033865\"}"
-                    //http://stackoverflow.com/questions/13588185/deserialize-json-string-using-json-net
 
                     if (ReferenceEquals(null, regKeyResponse))
                         throw new NullReferenceException(
@@ -218,9 +230,7 @@ namespace CUWebinars.Web.Controllers
                     }
                 }
 
-                //orderRow.RegistrantKey = "SomeKey";
-                //orderRow.JoinURL = "https://www2.gotomeeting.com/join/739905466/106033865";
-                
+
                 _orderManagementService.SaveOrderChanges(importedOrder, verificationKey);
                 idOfLastOrder = importedOrder.idOrder;
                 idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
@@ -229,10 +239,8 @@ namespace CUWebinars.Web.Controllers
                 return Json(
                     new
                     {
-                        Result = WebUiConstants.Success, 
-                        OrderId = idOfLastOrder.ToString(), 
-                        OrderRowId = idOfLastOrderOrderRow .ToString()
-                    }, 
+                        Result = idOfLastOrder.ToString()
+                    },
                     JsonRequestBehavior.AllowGet);
             }
             catch (Exception exception)
