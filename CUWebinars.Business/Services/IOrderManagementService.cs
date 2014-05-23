@@ -36,6 +36,7 @@ namespace CUWebinars.Business.Services
         IList<Order> GetOrdersForLiveNotifications(int idWebinar);
         IList<Order> GetOrdersForRecordedNotifications(int idWebinar);
         IEnumerable<Order> GetOrdersForShippedNotification();
+        OrderRow GetOrderRowById(int idOrderRow);
         IEnumerable<Webinar> GetRecordedWebinars();
         IList<RegType> GetRegTypesByWebinarIdFrom(int id, bool detached);
         IEnumerable<Webinar> GetUpcomingWebinars();

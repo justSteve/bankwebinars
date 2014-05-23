@@ -1153,6 +1153,7 @@
     <Content Include="Views\OrderEventFiringOps\_adHocNotification.cshtml" />
     <Content Include="Views\Webinar\Play.cshtml" />
     <Content Include="Views\Webinar\Partials\_ConnectionSummary.cshtml" />
+    <Content Include="Views\Webinar\Partials\_AdminEventButtons.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Notifications\" />

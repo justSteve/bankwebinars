@@ -149,6 +149,11 @@ namespace CUWebinars.Business.Services
             return null;
         }
 
+        public OrderRow GetOrderRowById(int idOrderRow)
+        {
+            return _orderRepository.GetOrderRowById(idOrderRow);
+        }
+
         public IEnumerable<Webinar> GetRecordedWebinars()
         {
             return _webinarRepository.GetRecorded().ToList();

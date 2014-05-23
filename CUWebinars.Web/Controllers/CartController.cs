@@ -63,25 +63,63 @@ namespace CUWebinars.Web.Controllers
         //    base.OnActionExecuting(filterContext);
         //}
 
-        public WebinarDetailsViewModel CheckOutViewModel(int? orderRowID)
+        public WebinarDetailsViewModel CheckOutViewModel(int? idOrderRow)
         {
-            if (orderRowID != null && orderRowID > 0)
-            {
-                var thisModel = new WebinarDetailsViewModel();
-                int rowID = Convert.ToInt32(orderRowID);
-                //thisModel.Order.OrderRow = OrderFacade.Instance.LoadOrderRow(rowID);
-                //{
-                //    if (thisrow != null)
-                //    {
-                //        thisModel.User = thisrow.Order.User;
-                //        thisModel.Webinar = thisrow.Webinar;
-                //        thisModel.Affiliate = thisrow.Order.Affiliate;
-                //        thisModel.ConnectionInfo = OrderFacade.Instance.BuildConnectionInfo(thisrow);
-                //    }
-                //}
-                return thisModel;
-            }
-            return null;
+            if (idOrderRow.HasValue && idOrderRow.Value > 0)
+                {
+                    var orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
+                    var order = orderRow.Order;
+                    var additionalLocations = orderRow.AdditionalLocation.ToList();
+                    var webUser = order.WebUser;
+                    var webinar = orderRow.Webinar;
+
+                    var webinarDetailsViewModel = new WebinarDetailsViewModel
+                    {
+                        Affiliate = order.Affiliate,
+                        CheckoutOptionsViewModel = new CheckoutOptionsViewModel
+                        {
+                            DisplayOptionsViewModel = new DisplayOptionsViewModel
+                            {
+                                AdditionalLocationViewModel = new AdditionalLocationViewModel
+                                {
+                                    AddAdditionalLocationViewModel = new AddAdditionalLocationViewModel
+                                    {
+                                        AdditionalLocations = additionalLocations,
+                                        Order = order,
+                                        WebUser = webUser,
+                                        Webinar = webinar
+                                    },
+                                    AdditionalLocations = additionalLocations,
+                                    Order = order,
+                                    WebUser = webUser,
+                                    Webinar = webinar
+                                },
+                                //Options = additionalLocations,
+                                Order = order,
+                                Webinar = webinar,
+                                WebUser = webUser
+                            },
+                            Order = order,
+                            Webinar = webinar,
+                            WebUser = webUser
+                        },
+                        Webinar = webinar,
+                        WebUser = webUser
+                    };
+
+                    //thisModel.Order.OrderRow = OrderFacade.Instance.LoadOrderRow(rowID);
+                    //{
+                    //    if (thisrow != null)
+                    //    {
+                    //        thisModel.User = thisrow.Order.User;
+                    //        thisModel.Webinar = thisrow.Webinar;
+                    //        thisModel.Affiliate = thisrow.Order.Affiliate;
+                    //        thisModel.ConnectionInfo = OrderFacade.Instance.BuildConnectionInfo(thisrow);
+                    //    }
+                    //}
+                    return webinarDetailsViewModel;
+                }
+            throw new ArgumentException("The idOrderRow is either null or 0", "idOrderRow");
         }
 
 

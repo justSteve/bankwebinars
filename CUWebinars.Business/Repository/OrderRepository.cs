@@ -177,6 +177,18 @@ namespace CUWebinars.Business.Repository
             return GetLoadedEntitiesForOrder(orders);
         }
 
+        public OrderRow GetOrderRowById(int idOrderRow)
+        {
+            return ((TTSWebinarsContext) db).OrderRows.Include(or => or.Webinar)
+                .Include(or => or.Order.WebUser.Institution)
+                .Include(or => or.Order.WebUser.Presenter)
+                .Include(or => or.Order.WebUser.Addresses)
+                .Include(or => or.Order.Affiliate)
+                .Include(or => or.RegistrationType)
+                .Include(or => or.AdditionalLocation)
+                .SingleOrDefault(or => or.idOrderRow == idOrderRow);
+        }
+
         public Order AssignAffiliate(Affiliate affiliate, Order order)
         {
             order.idAffiliate = affiliate.idUserAff;
