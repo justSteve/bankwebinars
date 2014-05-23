@@ -1,17 +1,27 @@
-﻿@{
-    Layout = null;
+﻿@model WebinarDetailsViewModel
+    
+@{
+    ViewBag.Title = "Index";
 }
 
-<!DOCTYPE html>
+<section>
+    <div style="width: 100%; margin: 10px auto; padding: 0">
+        <div id="ButtonsContainer">
+            <div style="display:inline-block"><button id="GetSendConnectionInfoEventHtmlButton" class="btn btn-primary btn-small">Send Connection </button></div>
+            <div style="display:inline-block"><button id=" getsendrecordingpostedeventhtmlbutton" class="btn btn-primary btn-small">Send Recording </button></div>
+        </div>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title></title>
-</head>
-<body>
-    <div>
-    
+        @*<div class="row">
+            <div id="InputFormFieldsDiv" style="margin-top: 20px;">
+            </div>
+        </div>*@
+
     </div>
-</body>
-</html>
+</section>
+
+
+@section Scripts {
+    
+
+}
+
