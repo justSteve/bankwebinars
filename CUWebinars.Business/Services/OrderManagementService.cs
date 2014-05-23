@@ -149,6 +149,11 @@ namespace CUWebinars.Business.Services
             return null;
         }
 
+        public OrderRow GetOrderRowById(int idOrderRow)
+        {
+            return _orderRepository.GetOrderRowById(idOrderRow);
+        }
+
         public IEnumerable<Webinar> GetRecordedWebinars()
         {
             return _webinarRepository.GetRecorded().ToList();
@@ -490,7 +495,7 @@ namespace CUWebinars.Business.Services
             Clear();
         }
 
-        public Order SaveOrderChanges(Order currentOrder, string verificationKey)
+        public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink)
         {
             try
             {
@@ -501,6 +506,7 @@ namespace CUWebinars.Business.Services
                 
                 var orderSubmittedViewModel = new OrderSubmittedViewModel
                 {
+                    ConfirmChangeEmailUrl = confirmChangeEmailLink,
                     Order = updatedOrder,
                     VerificationKey = verificationKey
                 };

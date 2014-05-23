@@ -1,0 +1,25 @@
+﻿@model WebinarDetailsViewModel
+    
+@{
+    ViewBag.Title = "Index";
+}
+
+<section>
+    <div style="width: 100%; margin: 10px auto; padding: 0">
+        <div><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>
+        <div id="ButtonsContainer">
+            <div style="display:inline-block"><button id="GetSendConnectionInfoEventHtmlButton" class="btn btn-primary btn-small">Send Connection </button></div>
+            <div style="display:inline-block"><button id="Getsendrecordingpostedeventhtmlbutton" class="btn btn-primary btn-small">Send Recording </button></div>
+        </div>
+
+        <div id="InputFormFieldsDiv">
+        </div>
+
+    </div>
+</section>
+
+
+
+    <script src="@Url.Content("~/Scripts/app/notification-ops/details-event-webpart.js")"></script>
+
+

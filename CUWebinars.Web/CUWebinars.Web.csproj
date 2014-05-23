@@ -379,6 +379,7 @@
     <Compile Include="Controllers\OrderEventFiringOpsController.cs" />
     <Compile Include="Core\Exceptions.cs" />
     <Compile Include="ElmahHandleErrorAttribute.cs" />
+    <Compile Include="Helpers\EventInvokerHelpers.cs" />
     <Compile Include="ViewModel\UsersForOrdersViewModel.cs" />
     <Compile Include="Core\CsvParseOps.cs" />
     <Compile Include="Models\IncomingOrderModel.cs" />
@@ -924,6 +925,7 @@
     <Content Include="Scripts\app\GTW\utils.js" />
     <Content Include="Scripts\app\notification-ops\adhoc-notifications.js" />
     <Content Include="Scripts\app\notification-ops\membership-notifications.js" />
+    <Content Include="Scripts\app\notification-ops\details-event-webpart.js" />
     <Content Include="Scripts\app\notification-ops\order-event-notifications.js" />
     <Content Include="Scripts\app\passwordReset\password-reset.js" />
     <Content Include="Scripts\app\register\create-user.js" />
@@ -1151,6 +1153,8 @@
     <Content Include="Views\OrderEventFiringOps\_adHocNotification.cshtml" />
     <Content Include="Views\Webinar\Play.cshtml" />
     <Content Include="Views\Webinar\Partials\_ConnectionSummary.cshtml" />
+    <Content Include="Views\Webinar\Partials\_AdminEventButtons.cshtml" />
+    <Content Include="Views\Webinar\Partials\_SendConnectionInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Notifications\" />

@@ -22,7 +22,7 @@ namespace CUWebinars.Web.App_Start
                 "Account/RegisterCancel/",
                 "Account/PasswordResetConfirm/");
 
-            var delivery = new TtsSmtpMessageDelivery();
+            var delivery = new TtsSmtpMessageDelivery(stateService);
             var emailFormatter = new TtsEmailFormatter(appinfo, stateService, refDataRepository) { PathToRoot = pathToRootDirectory };
 
             // uncomment if you want email notifications -- also update smtp settings in web.config

@@ -1,6 +1,7 @@
 ﻿@using System.Configuration
 @using System.Diagnostics
 @using System.Text
+@using CUWebinars.Business.Constants
 @model WebinarDetailsViewModel
 @{
     <script language="javascript">
@@ -32,7 +33,7 @@
 
 
             <script language="javascript">
-            var idRegType = @orderMsgs.idRegType;
+                var idRegType = @orderMsgs.idRegType;
             </script>
 
         foreach (var webinarFile in webinarFiles)
@@ -55,74 +56,84 @@
             {
                 showShipped = "<li>Shipped on: " + row.ShipmentDate.Value.ToShortDateString() + "</li>";
             }
-        <div id="OrderSummary" class="well">
+        <div id="OrderSummary" class="well well-small">
             @{
 
-        Debug.Assert(order != null, "order != null");
-        if (row.Order.OrderStatus == OrderStatus.Billed ||
-            row.Order.OrderStatus == OrderStatus.Paid ||
-            row.Order.OrderStatus == OrderStatus.Submitted)
-        {
-            //webinarFiles ="";
+            Debug.Assert(order != null, "order != null");
+            var loggedInUserIdentity = ((ClaimsIdentity)User.Identity);
 
-            <aside style="width: 100%" class="widget clearfix">
-                <div class="dropdown">
-                    <a class="dropdown-toggle btn btn-success" data-toggle="dropdown" href="#">Your Order# <b>CU-@order.idOrder</b> Summary</a>
-                    <ul style="width: 100%; padding-left: 10px;" class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                        <li>Ordered on: @order.OrderDate.ToShortDateString()</li>
-                        <li>@orderMsgs.OptionLabel</li>
-                        <li>$@order.Total</li>
-                        @Html.Raw(@showShipped)
-                        <li><a href='#' onclick=' upgrade(idRegType); '>Upgrade order?</a></li>
-                    </ul>
-                </div>
-            </aside>
-            if (Model.Webinar.Status == WebinarStatus.Scheduled || Model.Webinar.Status == WebinarStatus.Active || Model.Webinar.Status == WebinarStatus.InProgress)
+            if (loggedInUserIdentity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.CuWebinarsAbsoluteAdmin))
             {
-                <h5 class="short_headline"><span>Connection Information</span></h5>
-                if (orderMsgs.ShowLiveNotifications == "Yes")
+                @Html.Partial(@"Partials/_AdminEventButtons", Model)
+            }
+            else
+            {
+                if (row.Order.OrderStatus == OrderStatus.Billed ||
+                    row.Order.OrderStatus == OrderStatus.Paid ||
+                    row.Order.OrderStatus == OrderStatus.Submitted)
                 {
-                    if (Model.Webinar.Status == WebinarStatus.Active || Model.Webinar.Status == WebinarStatus.InProgress)
-                    {
-                        <aside style="width: 100%" class="widget clearfix">
-                            @Html.Partial("Partials/_ConnectionSummary", row)
-                        </aside>
-                    }
-                    else
-                    {
-                        <aside style="width: 100%" class="widget clearfix">
-                            [not yet generated]
-                        </aside>
-                    }
-                }
-                else
-                {
-                    <aside style="width: 100%; text-align: center;" class="widget clearfix">
-                        Your order currently configured as:
-                        <b><i>@orderMsgs.OptionLabel</i></b>. You'll be notified as soon as the recording is posted.
-                        @{
-                    if (orderMsgs.ShowShippedNotifications == "Yes")
-                    {
-                        <span>CD-ROMs and handouts are shipped 2-3 days following the event.</span>
-                    }
-                        }
-                        <span><br /><i>There's still time to upgrade your order!</i></span>
-                        <br /><a class="btn btn-mini btn-success" href='#' onclick=' upgrade(idRegType); '>Attend the Live Webinar?</a>
+                    //webinarFiles ="";
+
+                    <aside style="width: 100%" class="widget clearfix">
+                        <div class="dropdown">
+                            <a class="dropdown-toggle btn btn-success" data-toggle="dropdown" href="#">Your Order# <b>CU-@order.idOrder</b> Summary</a>
+                            <ul style="width: 100%; padding-left: 10px;" class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                <li>Ordered on: @order.OrderDate.ToShortDateString()</li>
+                                <li>@orderMsgs.OptionLabel</li>
+                                <li>$@order.Total</li>
+                                @Html.Raw(@showShipped)
+                                <li><a href='#' onclick=' upgrade(idRegType); '>Upgrade order?</a></li>
+                            </ul>
+                        </div>
                     </aside>
+                    if (Model.Webinar.Status == WebinarStatus.Scheduled || Model.Webinar.Status == WebinarStatus.Active || Model.Webinar.Status == WebinarStatus.InProgress)
+                    {
+                        <h5 class="short_headline"><span>Connection Information</span></h5>
+                        if (orderMsgs.ShowLiveNotifications == "Yes")
+                        {
+                            if (Model.Webinar.Status == WebinarStatus.Active || Model.Webinar.Status == WebinarStatus.InProgress)
+                            {
+                                <aside style="width: 100%" class="widget clearfix">
+                                    @Html.Partial("Partials/_ConnectionSummary", row)
+                                </aside>
+                            }
+                            else
+                            {
+                                <aside style="width: 100%" class="widget clearfix">
+                                    [not yet generated]
+                                </aside>
+                            }
+                        }
+                        else
+                        {
+                            <aside style="width: 100%; text-align: center;" class="widget clearfix">
+                                Your order currently configured as:
+                                <b><i>@orderMsgs.OptionLabel</i></b>. You'll be notified as soon as the recording is posted.
+                                @{
+                            if (orderMsgs.ShowShippedNotifications == "Yes")
+                            {
+                                <span>CD-ROMs and handouts are shipped 2-3 days following the event.</span>
+                            }
+                                }
+                                <span><br /><i>There's still time to upgrade your order!</i></span>
+                                <br /><a class="btn btn-mini btn-success" href='#' onclick=' upgrade(idRegType); '>Attend the Live Webinar?</a>
+                            </aside>
+                        }
+                    }
+                    //webinarFiles ="";
+                    if (webinarFiles.Count() > 0)
+                    {
+                        <aside style="width: 100%" class="widget clearfix">
+                            <h5 class="short_headline"><span>Event Materials</span></h5>
+                            @Html.Raw(wf.ToString())
+                            @Html.Raw(@recording)
+                        </aside>
+                    }
+
                 }
             }
-            //webinarFiles ="";
-            if (webinarFiles.Count() > 0)
-            {
-                <aside style="width: 100%" class="widget clearfix">
-                    <h5 class="short_headline"><span>Event Materials</span></h5>
-                    @Html.Raw(wf.ToString())
-                    @Html.Raw(@recording)
-                </aside>
-            }
 
-        }
-        }
+            }
         </div>
     }
     @*else

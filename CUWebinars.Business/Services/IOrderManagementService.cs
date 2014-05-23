@@ -36,6 +36,7 @@ namespace CUWebinars.Business.Services
         IList<Order> GetOrdersForLiveNotifications(int idWebinar);
         IList<Order> GetOrdersForRecordedNotifications(int idWebinar);
         IEnumerable<Order> GetOrdersForShippedNotification();
+        OrderRow GetOrderRowById(int idOrderRow);
         IEnumerable<Webinar> GetRecordedWebinars();
         IList<RegType> GetRegTypesByWebinarIdFrom(int id, bool detached);
         IEnumerable<Webinar> GetUpcomingWebinars();
@@ -44,6 +45,6 @@ namespace CUWebinars.Business.Services
         IEnumerable<WebUser> GetWebusersForLiveNotifications(int idWebinar);
         Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id);
         OrderRow LoadOrderRow(int id);
-        Order SaveOrderChanges(Order currentOrder, string verificationKey);
+        Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink);
     }
 }
