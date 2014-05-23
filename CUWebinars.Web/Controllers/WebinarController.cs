@@ -169,6 +169,33 @@ namespace CUWebinars.Web.Controllers
             return View("~/Views/Webinar/SearchWebinars.cshtml");
         }
 
+        public PartialViewResult SendConnectionInfo()
+        {
+            var model = new AdhocNotificationViewModel
+            {
+                Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_orderManagementService)
+            };
+
+            return PartialView(@"Partials/_SendConnectionInfo", model);
+        }
+
+        [System.Web.Mvc.HttpPost]
+        public JsonResult SendConnectionInfo(int webinarId)
+        {
+            try
+            {
+                var orders = _orderManagementService.GetOrdersForLiveNotifications(webinarId);
+
+                _orderManagementService.FireSendConnectionInfoNotificationEvent(orders);
+                return Json(new { Result = WebUiConstants.Success });
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(string.Format("SendConnectionInfo Action: {0}", exception.Message), exception);
+            }
+            return Json(new { Result = WebUiConstants.Fail });
+        }
+
         //        [AcceptVerbs(HttpVerbs.Post)]
         //        public ActionResult Signup(int id
         //                                    , int mode
