@@ -96,10 +96,6 @@
                                                 <td colspan="2">
                                                     <table width="550px" border="0" align="center" cellpadding="0" cellspacing="0">
                                                         <tr>
-                                                            <td width="50px" style="text-align: right; background-color: #000000; padding-right: 6px; font-size: smaller"> </td>
-                                                            <td width="500px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;"> </td>
-                                                        </tr>
-                                                        <tr>
                                                             <td style="text-align: right; width: 50px; background-color: #000000; padding-right: 6px; font-size: smaller"></td>
                                                             <td width="500px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
                                                                 <table border="0" cellpadding="0" cellspacing="0" style="width: 500px;">
@@ -107,17 +103,16 @@
                                                                         <td colspan="2" style="background-color: #344a58">
                                                                             <table border="0" align="center" cellpadding="0" cellspacing="0">
                                                                                 <tr>
-                                                                                    <td width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller"> </td>
-                                                                                    <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;"> </td>
-                                                                                </tr>
-                                                                                <tr>
                                                                                     <td colspan="2" style="text-align: left; margin-left: 6px; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
                                                                                         <p style="color: black; font-family: Arial, Helvetica, sans-serif; padding: 5px; font-size: 12px;">
                                                                                             <br />Dear @Model.FirstName,<br />
-                                                                                            We've shipped your CD-ROM and other event materials via United States Postal Serivce to:
+                                                                                            We've shipped your CD-ROM and other event materials (for <i>@webinar.Title</i>) via United States Postal Serivce to:
                                                                                             <blockquote>
+                                                                                                
+                                                                                                @Model.Institution<br />
                                                                                                 @Model.ShippingAddress<br />
-                                                                                                @if (@Model.ShippingAddress2 != null){
+                                                                                                @if (@Model.ShippingAddress2 != null || @Model.ShippingAddress2 != "" || @Model.ShippingAddress2 != " ")
+                                                                                                {
                                                                                                     @Model.ShippingAddress2<br />
                                                                                                 }
                                                                                                 @Model.ShippingCity, @Model.ShippingState @Model.ShippingZip<br /><br />

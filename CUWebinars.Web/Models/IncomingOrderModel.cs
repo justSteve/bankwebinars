@@ -15,6 +15,7 @@ namespace CUWebinars.Web.Models
         public int idRegType { get; set; }
         public int idWebinar { get; set; }
         public string Institution  { get; set; }
+        public string Origin  { get; set; }
         public string LastName { get; set; }
         public bool SendNotification { get; set; }
         public Address ShippingAddress { get; set; }

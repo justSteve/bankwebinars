@@ -46,7 +46,6 @@ namespace CUWebinars.Web.Controllers
         public JsonResult CreateOrder(IncomingOrderModel incomingOrderModel)
         {
             int idOfLastOrder = default(int);
-            int idOfLastOrderOrderRow = default(int);
             string verificationKey = string.Empty;
             string confirmChangeEmailUrl = string.Empty;
 
@@ -60,10 +59,12 @@ namespace CUWebinars.Web.Controllers
                         myErr += modelState.Value.ToString();
                     }
                 }
-                //var allErrors = ModelState.Values.SelectMany(v => v.Errors);
-                //allErrors is of type IEnumerable<ModelError>
-                //http://stackoverflow.com/questions/1352948/how-to-get-all-errors-from-asp-net-mvc-modelstate
-
+                //a better implementation:
+                //http://stackoverflow.com/questions/2845852/asp-net-mvc-how-to-convert-modelstate-errors-to-json
+                //var errorList = ModelState.ToDictionary(
+                //    kvp => kvp.Key,
+                //    kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                //);
 
                 _logger.Error(myErr);
                 return Json(new { Result = "Fail" });
@@ -240,22 +241,22 @@ namespace CUWebinars.Web.Controllers
                     }
                 }
 
-                
+
                 _orderManagementService.SaveOrderChanges(importedOrder, verificationKey, confirmChangeEmailUrl);
                 idOfLastOrder = importedOrder.idOrder;
-                idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
+                //idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
                 _logger.Info("Posted idOrder=" + idOfLastOrder);
 
                 return Json(
                     new
                     {
-                        Result = idOfLastOrder.ToString()
-                    }, 
+                        Result = idOfLastOrder
+                    },
                     JsonRequestBehavior.AllowGet);
             }
             catch (Exception exception)
             {
-                _logger.Error("Order creation failed");
+                _logger.Error("Order creation failed: "+ exception.Message);
             }
 
             return Json(new { Result = WebUiConstants.Fail });
