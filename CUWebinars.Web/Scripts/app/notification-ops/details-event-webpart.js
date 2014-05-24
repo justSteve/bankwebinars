@@ -23,7 +23,7 @@ var DEW = {
             return getSendConnectionInfoEventHtmlButton || $('#GetSendConnectionInfoEventHtmlButton');
         },
         GetSendRecordingPostedEventHtmlButton: function () {
-            return getSendRecordingPostedEventHtmlButton || $('#GetSendRecordingPostedEventHtmlButton');
+            return getSendRecordingPostedEventHtmlButton || $('#GetSendRecordingPostedEventhtmlButton');
         },
         InputFormFieldsDiv: function() {
             return inputFormFieldsDiv || $('#InputFormFieldsDiv');
@@ -50,18 +50,18 @@ $(function () {
     noOrdersScreenMessage = '<br /><span id="ScreenMessageSpan" class="label label-information">&nbsp;&nbsp;There were no orders for that webinar</span>';
     successScreenMessage = '<br /><span id="ScreenMessageSpan" class="label label-success">&nbsp;The Orders have been sent.</span>';
     sendConnectionInfoUrl = '/Webinar/SendConnectionInfo';
-    sendRecordingPostedUrl = '/OrderEventFiringOps/SendRecordingPosted';
+    sendRecordingPostedUrl = '/Webinar/SendRecordingPosted';
 
     getSendConnectionInfoEventHtmlButton = $('#GetSendConnectionInfoEventHtmlButton');
-    getSendRecordingPostedEventHtmlButton = $('#GetSendRecordingPostedEventHtmlButton');
+    getSendRecordingPostedEventHtmlButton = $('#GetSendRecordingPostedEventhtmlButton');
     waitIndicator = $('#WaitIndicator');
     waitIndicator.hide();
 
     getSendConnectionInfoEventHtmlButton.on('click', function(eventArgs) {
         DEW.PageObjects.InputFormFieldsDiv().empty();
-        DEW.PageObjects.ButtonsContainer().fadeOut(500);
-
-        DEW.PageObjects.InputFormFieldsDiv().fadeIn(500);
+        DEW.PageObjects.ButtonsContainer().fadeOut(500, function() {
+            DEW.PageObjects.InputFormFieldsDiv().fadeIn(500);
+        });
 
         DEW.PageObjects.InputFormFieldsDiv().load(sendConnectionInfoUrl, function () {
 
@@ -104,8 +104,7 @@ $(function () {
             });
 
             DEW.PageObjects.ResetButton().on('click', function (eventArgs) {
-                DEW.PageObjects.ButtonsContainer().fadeIn(500);
-                DEW.PageObjects.InputFormFieldsDiv().fadeOut(500);
+                DEW.PageObjects.InputFormFieldsDiv().fadeOut(500, resetEventFirePanel);
             });
 
         });
@@ -113,13 +112,19 @@ $(function () {
 
     getSendRecordingPostedEventHtmlButton.on('click', function (eventArgs) {
         eventArgs.preventDefault();
-        DEW.PageObjects.InputFormFieldsDiv().empty();
 
+        DEW.PageObjects.InputFormFieldsDiv().empty();
+        DEW.PageObjects.ButtonsContainer().fadeOut(500, function () {
+            DEW.PageObjects.InputFormFieldsDiv().fadeIn(500);
+        });
         
         DEW.PageObjects.InputFormFieldsDiv().load(sendRecordingPostedUrl, function () {
             
-            $('#GetSendRecordingPostedRecipientsButton').on('click', function (eventArgs) {
+            $('#FireSendRecordedWebinarButton').on('click', function (eventArgs) {
                 
+                resetButton = $('#ResetButton');
+                resetButton.hide();
+
                 var payload = $('#SelectedWebinarId').val();
 
                 $.ajax({
@@ -148,7 +153,13 @@ $(function () {
                     DEW.PageObjects.InputFormFieldsDiv().append(failedScreenMessage);
                 }).always(function () {
                     DEW.PageObjects.WaitIndicator().hide();
+                    DEW.PageObjects.ResetButton().show();
+
                 });
+            });
+
+            DEW.PageObjects.ResetButton().on('click', function (eventArgs) {
+                DEW.PageObjects.InputFormFieldsDiv().fadeOut(500, resetEventFirePanel);
             });
         });
     });
@@ -158,5 +169,9 @@ $(function () {
             $('#ScreenMessageSpan').siblings('br').remove();
             $('#ScreenMessageSpan').remove();
         }
+    };
+
+    var resetEventFirePanel = function() {
+        DEW.PageObjects.ButtonsContainer().fadeIn(500);
     };
 });

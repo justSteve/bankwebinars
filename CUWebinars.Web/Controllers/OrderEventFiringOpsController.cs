@@ -1,13 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Web.UI.WebControls.WebParts;
-using CUWebinars.Business.Models;
+﻿using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
-using CUWebinars.Html;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.ViewModel;
 using Ninject.Extensions.Logging;
-using System;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace CUWebinars.Web.Controllers
@@ -34,7 +30,7 @@ namespace CUWebinars.Web.Controllers
         {
             var model = new AdhocNotificationViewModel
             {
-                Webinars = GetUpcomingWebinarsAsSelectListItems()
+                Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_orderManagementService)
             };
 
             return PartialView("_adHocNotification", model);
@@ -43,7 +39,7 @@ namespace CUWebinars.Web.Controllers
         [HttpPost]
         public ActionResult SendAdhocEvent(int webinarId)
         {
-            var regTypes = GetRegTypesForWebinarAsSelectListItems(webinarId);
+            var regTypes = EventInvokerHelpers.GetRegTypesForWebinarAsSelectListItems(webinarId, _orderManagementService);
 
             return Json(regTypes);
         }
@@ -52,7 +48,7 @@ namespace CUWebinars.Web.Controllers
         {
             var model = new AdhocNotificationViewModel
             {
-                Webinars = GetUpcomingWebinarsAsSelectListItems()
+                Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_orderManagementService)
             };
 
             return PartialView("_SendReminder", model);
@@ -72,7 +68,7 @@ namespace CUWebinars.Web.Controllers
         {
             var model = new AdhocNotificationViewModel
             {
-                Webinars = GetUpcomingWebinarsAsSelectListItems()
+                Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_orderManagementService)
             };
 
             return PartialView("_SendConnectionInfo", model);
@@ -92,7 +88,7 @@ namespace CUWebinars.Web.Controllers
         {
             var model = new AdhocNotificationViewModel
             {
-                Webinars = GetRecordedWebinarsAsSelectListItems()
+                Webinars = EventInvokerHelpers.GetRecordedWebinarsAsSelectListItems(_orderManagementService)
             };
 
             return PartialView("_SendRecordingPosted", model);
@@ -116,7 +112,7 @@ namespace CUWebinars.Web.Controllers
        
         public PartialViewResult SendShippedOrder()
         {
-            var ordersShipped = GetShippedWebinarsAsSelectListItems();
+            var ordersShipped = EventInvokerHelpers.GetShippedWebinarsAsSelectListItems(_orderManagementService);
 
             var model = new AdhocNotificationViewModel
             {
@@ -135,30 +131,6 @@ namespace CUWebinars.Web.Controllers
 
             return Json(new {Result = WebUiConstants.Success});
         }
-
-
-        private IEnumerable<SelectListItem> GetRegTypesForWebinarAsSelectListItems(int idWebinar)
-        {
-            return _orderManagementService.FindRegTypesByWebinarId(idWebinar).Select(r => new SelectListItem { Text = r.OptionLabel, Value = r.idRegType.ToString() });
-        }
-
-
-        private IEnumerable<SelectListItem> GetUpcomingWebinarsAsSelectListItems()
-        {
-            return _orderManagementService.GetUpcomingWebinars()
-                .OrderBy(w => w.Date)
-                .Select(w => new SelectListItem { Text = w.Title, Value = w.idWebinar.ToString() });
-        }
-
-        private IEnumerable<SelectListItem> GetRecordedWebinarsAsSelectListItems()
-        {
-            return _orderManagementService.GetRecordedWebinars().Select(w => new SelectListItem { Text = w.Title, Value = w.idWebinar.ToString() });
-        }
-
-        private IEnumerable<SelectListItem> GetShippedWebinarsAsSelectListItems()
-        {
-            return _orderManagementService.GetOrdersForShippedNotification().Select(w => new SelectListItem { Text = w.idOrder.ToString(), Value = w.idOrder.ToString() });
-        }
-
+        
     }
 }

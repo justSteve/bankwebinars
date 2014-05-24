@@ -1,23 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading;
-using System.Web.Http;
-using System.Web.Mvc;
-using CUWebinars.Business.AccountService;
+﻿using CUWebinars.Business.AccountService;
+using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
-using CUWebinars.Web.Data.Repositories.Interfaces;
 using CUWebinars.Web.Core.Browsers.Webinars;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Ninject.Extensions.Logging;
-using CUWebinars.Business.Models;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Text;
+using System.Web.Mvc;
 
 
 namespace CUWebinars.Web.Controllers
@@ -195,6 +191,40 @@ namespace CUWebinars.Web.Controllers
             }
             return Json(new { Result = WebUiConstants.Fail });
         }
+
+        public PartialViewResult SendRecordingPosted()
+        {
+            var model = new AdhocNotificationViewModel
+            {
+                Webinars = EventInvokerHelpers.GetRecordedWebinarsAsSelectListItems(_orderManagementService)
+            };
+
+            return PartialView(@"Partials/_SendRecordingPosted", model);
+        }
+
+        [System.Web.Mvc.HttpPost]
+        public JsonResult SendRecordingPosted(int webinarId)
+        {
+            try
+            {
+                var orders = _orderManagementService.GetOrdersForRecordedNotifications(webinarId);
+
+                if (orders.Any())
+                {
+                    _orderManagementService.FireSendRecordingIsPostedEvent(orders);
+
+                    return Json(new {Result = WebUiConstants.Success});
+                }
+
+                return Json(new {Result = WebUiConstants.NoOrdersForWebinar});
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(string.Format("SendRecordingPosted Action: {0}", exception.Message), exception);
+            }
+            return Json(new { Result = WebUiConstants.Fail });
+        }
+
 
         //        [AcceptVerbs(HttpVerbs.Post)]
         //        public ActionResult Signup(int id
