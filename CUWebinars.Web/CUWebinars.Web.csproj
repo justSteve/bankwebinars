@@ -1160,6 +1160,7 @@
     <Content Include="Views\Webinar\Partials\_ConnectionSummary.cshtml" />
     <Content Include="Views\Webinar\Partials\_AdminEventButtons.cshtml" />
     <Content Include="Views\Webinar\Partials\_SendConnectionInfo.cshtml" />
+    <Content Include="Views\Webinar\Partials\_SendRecordingPosted.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Notifications\" />
