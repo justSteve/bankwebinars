@@ -1,0 +1,1802 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="GMailModel.Store" Provider="System.Data.RSSBus.Google" ProviderManifestToken="Google" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="CalendarEvents">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="string" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CalendarId" Type="string" />
+          <Property Name="Summary" Type="string" />
+          <Property Name="Description" Type="string" />
+          <Property Name="Location" Type="string" />
+          <Property Name="AllDayEvent" Type="boolean" />
+          <Property Name="StartDateTime" Type="datetime" />
+          <Property Name="EndDateTime" Type="datetime" />
+          <Property Name="OriginalStartTimeDateTime" Type="datetime" />
+          <Property Name="SendNotification" Type="boolean" />
+          <Property Name="Kind" Type="string" />
+          <Property Name="ETag" Type="string" />
+          <Property Name="Status" Type="string" />
+          <Property Name="HTMLLink" Type="string" />
+          <Property Name="Created" Type="datetime" />
+          <Property Name="Updated" Type="datetime" />
+          <Property Name="ColorId" Type="integer" />
+          <Property Name="CreatorEmail" Type="string" />
+          <Property Name="CreatorDisplayName" Type="string" />
+          <Property Name="OrganizerEmail" Type="string" />
+          <Property Name="OrganizerDisplayName" Type="string" />
+          <Property Name="Recurrences" Type="string" />
+          <Property Name="RecurringEventId" Type="string" />
+          <Property Name="Transparency" Type="string" />
+          <Property Name="Visibility" Type="string" />
+          <Property Name="iCalUid" Type="string" />
+          <Property Name="Sequence" Type="string" />
+          <Property Name="AttendeesAggregate" Type="string" />
+          <Property Name="AttendeesEmails" Type="string" />
+          <Property Name="AttendeesDisplayNames" Type="string" />
+          <Property Name="AttendeesOmitted" Type="boolean" />
+          <Property Name="ExtendedPropPrivateKey" Type="string" />
+          <Property Name="ExtendedPropPrivateVal" Type="string" />
+          <Property Name="ExtendedPropSharedKey" Type="string" />
+          <Property Name="ExtendedPropSharedVal" Type="string" />
+          <Property Name="GadgetAggregate" Type="string" />
+          <Property Name="AnyoneCanAddSelf" Type="boolean" />
+          <Property Name="GuestsCanInviteOthers" Type="boolean" />
+          <Property Name="GuestsCanSeeOtherGuests" Type="boolean" />
+          <Property Name="PrivateCopy" Type="boolean" />
+          <Property Name="RemindersUseDefault" Type="boolean" />
+          <Property Name="ReminderOverrideMethods" Type="string" />
+          <Property Name="ReminderOverrideMinutes" Type="string" />
+        </EntityType>
+        <EntityType Name="Calendars">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="string" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Summary" Type="string" />
+          <Property Name="Description" Type="string" />
+          <Property Name="Kind" Type="string" />
+          <Property Name="ETag" Type="string" />
+          <Property Name="Location" Type="string" />
+          <Property Name="Timezone" Type="string" />
+          <Property Name="SummaryOverride" Type="string" />
+          <Property Name="ColorId" Type="integer" />
+          <Property Name="Hidden" Type="boolean" />
+          <Property Name="Selected" Type="boolean" />
+          <Property Name="AccessRole" Type="string" />
+          <Property Name="ReminderMethods" Type="string" />
+          <Property Name="ReminderMinutes" Type="string" />
+        </EntityType>
+        <EntityType Name="ContactGroups">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="string" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Group" Type="string" />
+          <Property Name="SystemGroup" Type="string" />
+          <Property Name="ETag" Type="string" />
+          <Property Name="Updated" Type="datetime" />
+          <Property Name="SelfLink" Type="string" />
+        </EntityType>
+        <EntityType Name="Contacts">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="string" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Fullname" Type="string" />
+          <Property Name="NamePrefix" Type="string" />
+          <Property Name="FirstName" Type="string" />
+          <Property Name="MiddleName" Type="string" />
+          <Property Name="LastName" Type="string" />
+          <Property Name="NameSuffix" Type="string" />
+          <Property Name="Nickname" Type="string" />
+          <Property Name="Birthday" Type="datetime" />
+          <Property Name="Anniversaries" Type="string" />
+          <Property Name="CustomEventTypes" Type="string" />
+          <Property Name="CustomEvents" Type="string" />
+          <Property Name="Gender" Type="string" />
+          <Property Name="Groups" Type="string" />
+          <Property Name="OrganizationName" Type="string" />
+          <Property Name="OrganizationTitle" Type="string" />
+          <Property Name="Photo" Type="string" />
+          <Property Name="Notes" Type="string" />
+          <Property Name="HomeEmailAddresses" Type="string" />
+          <Property Name="WorkEmailAddresses" Type="string" />
+          <Property Name="CustomEmailAddressTypes" Type="string" />
+          <Property Name="CustomEmailAddresses" Type="string" />
+          <Property Name="HomePhoneNumbers" Type="string" />
+          <Property Name="WorkPhoneNumbers" Type="string" />
+          <Property Name="MobilePhoneNumbers" Type="string" />
+          <Property Name="GoogleVoicePhoneNumbers" Type="string" />
+          <Property Name="HomeFaxes" Type="string" />
+          <Property Name="WorkFaxes" Type="string" />
+          <Property Name="Pagers" Type="string" />
+          <Property Name="CustomPhoneNumberTypes" Type="string" />
+          <Property Name="CustomPhoneNumbers" Type="string" />
+          <Property Name="HomeAddresses" Type="string" />
+          <Property Name="WorkAddresses" Type="string" />
+          <Property Name="CustomAddressTypes" Type="string" />
+          <Property Name="CustomAddresses" Type="string" />
+          <Property Name="BillingInfo" Type="string" />
+          <Property Name="RelationTypes" Type="string" />
+          <Property Name="RelationValues" Type="string" />
+          <Property Name="IMTypes" Type="string" />
+          <Property Name="IMValues" Type="string" />
+          <Property Name="WebsiteTypes" Type="string" />
+          <Property Name="WebsiteValues" Type="string" />
+          <Property Name="ETag" Type="string" />
+          <Property Name="Updated" Type="datetime" />
+          <Property Name="SelfLink" Type="string" />
+          <Property Name="EditLink" Type="string" />
+        </EntityType>
+        <EntityType Name="Documents">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="string" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ETag" Type="string" />
+          <Property Name="Title" Type="string" />
+          <Property Name="AuthorName" Type="string" />
+          <Property Name="AuthorEmail" Type="string" />
+          <Property Name="DocumentType" Type="string" />
+          <Property Name="Labels" Type="string" />
+          <Property Name="Updated" Type="datetime" />
+          <Property Name="LastModifiedByEmail" Type="string" />
+          <Property Name="LastModifiedByName" Type="string" />
+          <Property Name="LastViewed" Type="datetime" />
+          <Property Name="Published" Type="datetime" />
+          <Property Name="PDFLink" Type="string" />
+          <Property Name="WebLink" Type="string" />
+          <Property Name="ACLLink" Type="string" />
+          <Property Name="FolderId" Type="string" />
+          <Property Name="FolderName" Type="string" />
+        </EntityType>
+        <EntityType Name="DocumentsACL">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="string" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DocumentId" Type="string" />
+          <Property Name="Title" Type="string" />
+          <Property Name="Role" Type="string" />
+          <Property Name="Scope" Type="string" />
+          <Property Name="Type" Type="string" />
+          <Property Name="Updated" Type="datetime" />
+        </EntityType>
+        <EntityType Name="GDrive">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="string" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title" Type="string" />
+          <Property Name="Description" Type="string" />
+          <Property Name="Formats" Type="string" />
+          <Property Name="Extension" Type="string" />
+          <Property Name="MIMEType" Type="string" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="ModifiedDate" Type="datetime" />
+          <Property Name="Size" Type="long" />
+          <Property Name="Owners" Type="string" />
+          <Property Name="Folder" Type="boolean" />
+          <Property Name="Starred" Type="boolean" />
+          <Property Name="Restricted" Type="boolean" />
+          <Property Name="Hidden" Type="boolean" />
+          <Property Name="Trashed" Type="boolean" />
+          <Property Name="Viewed" Type="boolean" />
+          <Property Name="ETag" Type="string" />
+          <Property Name="ParentIds" Type="string" />
+          <Property Name="ParentIsRoot" Type="string" />
+          <Property Name="ChildIds" Type="string" />
+          <Property Name="ChildLinks" Type="string" />
+        </EntityType>
+        <EntityType Name="GDriveACL">
+          <Key>
+            <PropertyRef Name="PermissionId" />
+            <PropertyRef Name="ResourceId" />
+          </Key>
+          <Property Name="PermissionId" Type="string" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ResourceId" Type="string" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Role" Type="string" />
+          <Property Name="Type" Type="string" />
+          <Property Name="Value" Type="string" />
+          <Property Name="AdditionalRoles" Type="string" />
+          <Property Name="ETag" Type="string" />
+        </EntityType>
+        <EntityType Name="Mailboxes">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="string" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Mailbox" Type="string" />
+          <Property Name="MessagesCount" Type="string" />
+          <Property Name="RecentMessagesCount" Type="string" />
+          <Property Name="Flags" Type="string" />
+        </EntityType>
+        <EntityType Name="MailMessages">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="string" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Mailbox" Type="string" />
+          <Property Name="Subject" Type="string" />
+          <Property Name="From" Type="string" />
+          <Property Name="To" Type="string" />
+          <Property Name="CC" Type="string" />
+          <Property Name="BCC" Type="string" />
+          <Property Name="Date" Type="string" />
+          <Property Name="MessageBody" Type="string" />
+          <Property Name="Attachments" Type="string" />
+          <Property Name="AttachmentData" Type="string" />
+          <Property Name="Size" Type="string" />
+          <Property Name="Flags" Type="string" />
+          <Property Name="Labels" Type="string" />
+          <Property Name="ThreadId" Type="string" />
+          <Property Name="MsgId" Type="string" />
+          <Property Name="PartIds" Type="string" />
+          <Property Name="PartFilenames" Type="string" />
+          <Property Name="PartContentTypes" Type="string" />
+          <Property Name="PartSizes" Type="string" />
+          <Property Name="Headers" Type="string" />
+        </EntityType>
+        <EntityType Name="AdGroupAds">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="string" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ad_id" Type="string" />
+          <Property Name="ad_url" Type="string" />
+          <Property Name="ad_displayUrl" Type="string" />
+          <Property Name="ad_disapprovalReasons" Type="string" />
+          <Property Name="ad_name" Type="string" />
+          <Property Name="ad_type" Type="string" />
+          <Property Name="ad_description1" Type="string" />
+          <Property Name="ad_description2" Type="string" />
+          <Property Name="ad_image_mediaId" Type="string" />
+          <Property Name="ad_image_type" Type="string" />
+          <Property Name="ad_image_data" Type="string" />
+          <Property Name="ad_adToCopyImageFrom" Type="string" />
+          <Property Name="ad_headline" Type="string" />
+          <Property Name="ad_description" Type="string" />
+          <Property Name="ad_markupLanguages" Type="string" />
+          <Property Name="ad_mobileCarriers" Type="string" />
+          <Property Name="ad_businessName" Type="string" />
+          <Property Name="ad_countryCode" Type="string" />
+          <Property Name="ad_phoneNumber" Type="string" />
+          <Property Name="ad_promotionLine" Type="string" />
+          <Property Name="ad_snippet" Type="string" />
+          <Property Name="ad_impressionBeaconUrl" Type="string" />
+          <Property Name="ad_adDuration" Type="int" />
+          <Property Name="ad_certifiedVendorFormatId" Type="string" />
+          <Property Name="ad_sourceUrl" Type="string" />
+          <Property Name="ad_richMediaAdType" Type="string" />
+          <Property Name="ad_templateid" Type="string" />
+          <Property Name="ad_templateelements" Type="string" />
+          <Property Name="ad_duration" Type="int" />
+          <Property Name="experimentdata_experimentId" Type="string" />
+          <Property Name="experimentdata_experimentDeltaStatus" Type="string" />
+          <Property Name="experimentdata_experimentDataStatus" Type="string" />
+          <Property Name="experimentdata_experimentBidMultipliers_AdGroupExperimentBidMultipliersType" Type="string" />
+          <Property Name="experimentdata_experimentBidMultipliers_maxCpcMultiplier" Type="string" />
+          <Property Name="experimentdata_experimentBidMultipliers_maxContentCpcMultiplier" Type="string" />
+          <Property Name="experimentdata_experimentBidMultipliers_maxContentCpmMultiplier" Type="string" />
+          <Property Name="status" Type="string" />
+          <Property Name="approvalStatus" Type="string" />
+          <Property Name="trademarkDisapproved" Type="boolean" />
+          <Property Name="stats_startDate" Type="string" />
+          <Property Name="stats_endDate" Type="string" />
+          <Property Name="stats_network" Type="string" />
+          <Property Name="stats_clicks" Type="int" />
+          <Property Name="stats_impressions" Type="int" />
+          <Property Name="stats_cost_comparablevaluetype" Type="string" />
+          <Property Name="stats_cost_microamount" Type="int" />
+          <Property Name="stats_averageposition" Type="double" Precision="18" Scale="6" />
+          <Property Name="stats_averagecpc_comparablevaluetype" Type="string" />
+          <Property Name="stats_averagecpc_microamount" Type="int" />
+          <Property Name="stats_averagecpm_comparablevaluetype" Type="string" />
+          <Property Name="stats_averagecpm_microamount" Type="int" />
+          <Property Name="stats_ctr" Type="double" Precision="18" Scale="6" />
+          <Property Name="stats_conversions" Type="int" />
+          <Property Name="stats_viewthroughconversions" Type="int" />
+          <Property Name="stats_statstype" Type="string" />
+          <Property Name="stats_percentServed" Type="double" Precision="18" Scale="6" />
+        </EntityType>
+        <EntityType Name="AdGroupCriterion">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="string" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="adGroupId" Type="string" />
+          <Property Name="criterionUse" Type="string" />
+          <Property Name="criterion_id" Type="string" />
+          <Property Name="criterion_type" Type="string" />
+          <Property Name="criterion_ageRangeType" Type="string" />
+          <Property Name="criterion_genderType" Type="string" />
+          <Property Name="criterion_text" Type="string" />
+          <Property Name="criterion_matchType" Type="string" />
+          <Property Name="criterion_mobileAppCategoryId" Type="string" />
+          <Property Name="criterion_displayName" Type="string" />
+          <Property Name="criterion_appid" Type="string" />
+          <Property Name="criterion_URL" Type="string" />
+          <Property Name="criterion_conditions_argument" Type="string" />
+          <Property Name="criterion_conditions_operand" Type="string" />
+          <Property Name="criterion_userInterestId" Type="string" />
+          <Property Name="criterion_userInterestName" Type="string" />
+          <Property Name="criterion_userListId" Type="string" />
+          <Property Name="criterion_userListName" Type="string" />
+          <Property Name="criterion_userListMembershipStatus" Type="string" />
+          <Property Name="criterion_verticalid" Type="string" />
+          <Property Name="criterion_verticalparentid" Type="string" />
+          <Property Name="criterion_path" Type="string" />
+          <Property Name="criterion_criteriaCoverage" Type="double" Precision="18" Scale="6" />
+          <Property Name="criterion_criteriaSamples" Type="string" />
+        </EntityType>
+        <EntityType Name="AdGroups">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="string" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="string" />
+          <Property Name="campaignid" Type="string" />
+          <Property Name="campaignname" Type="string" />
+          <Property Name="status" Type="string" />
+          <Property Name="setting_settingtype" Type="string" />
+          <Property Name="setting_details_criterionTypeGroup" Type="string" />
+          <Property Name="setting_details_targetAll" Type="boolean" />
+          <Property Name="bids_AdGroupBidsType" Type="string" />
+          <Property Name="bids_proxyKeywordMaxCpc_amount_comparablevaluetype" Type="string" />
+          <Property Name="bids_proxyKeywordMaxCpc_amount_microamount" Type="int" />
+          <Property Name="bids_enhancedCpcEnabled" Type="boolean" />
+          <Property Name="bids_targetCpa_amount_comparablevaluetype" Type="string" />
+          <Property Name="bids_targetCpa_amount_microamount" Type="int" />
+          <Property Name="bids_conversionOptimizerBidType" Type="string" />
+          <Property Name="bids_keywordMaxCpc_amount_comparablevaluetype" Type="string" />
+          <Property Name="bids_keywordMaxCpc_amount_microamount" Type="int" />
+          <Property Name="bids_keywordContentMaxCpc_amount_comparablevaluetype" Type="string" />
+          <Property Name="bids_keywordContentMaxCpc_amount_microamount" Type="int" />
+          <Property Name="bids_maxCpm_amount_comparablevaluetype" Type="string" />
+          <Property Name="bids_maxCpm_amount_microamount" Type="int" />
+          <Property Name="bids_percentCpa_amount_comparablevaluetype" Type="string" />
+          <Property Name="bids_percentCpa_amount_microamount" Type="int" />
+          <Property Name="experimentdata_experimentId" Type="string" />
+          <Property Name="experimentdata_experimentDeltaStatus" Type="string" />
+          <Property Name="experimentdata_experimentDataStatus" Type="string" />
+          <Property Name="experimentdata_experimentBidMultipliers_AdGroupExperimentBidMultipliersType" Type="string" />
+          <Property Name="experimentdata_experimentBidMultipliers_maxCpcMultiplier" Type="string" />
+          <Property Name="experimentdata_experimentBidMultipliers_maxContentCpcMultiplier" Type="string" />
+          <Property Name="experimentdata_experimentBidMultipliers_maxContentCpmMultiplier" Type="string" />
+          <Property Name="stats_startDate" Type="string" />
+          <Property Name="stats_endDate" Type="string" />
+          <Property Name="stats_network" Type="string" />
+          <Property Name="stats_clicks" Type="int" />
+          <Property Name="stats_impressions" Type="int" />
+          <Property Name="stats_cost_comparablevaluetype" Type="string" />
+          <Property Name="stats_cost_microamount" Type="int" />
+          <Property Name="stats_averageposition" Type="double" Precision="18" Scale="6" />
+          <Property Name="stats_averagecpc_comparablevaluetype" Type="string" />
+          <Property Name="stats_averagecpc_microamount" Type="int" />
+          <Property Name="stats_averagecpm_comparablevaluetype" Type="string" />
+          <Property Name="stats_averagecpm_microamount" Type="int" />
+          <Property Name="stats_ctr" Type="double" Precision="18" Scale="6" />
+          <Property Name="stats_conversions" Type="int" />
+          <Property Name="stats_viewthroughconversions" Type="int" />
+          <Property Name="stats_statstype" Type="string" />
+        </EntityType>
+        <EntityType Name="CampaignCriterion">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="string" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="adGroupId" Type="string" />
+          <Property Name="criterionUse" Type="string" />
+          <Property Name="criterion_id" Type="string" />
+          <Property Name="criterion_type" Type="string" />
+          <Property Name="criterion_dayofweek" Type="string" />
+          <Property Name="criterion_starthour" Type="int" />
+          <Property Name="criterion_startminute" Type="string" />
+          <Property Name="criterion_endhour" Type="int" />
+          <Property Name="criterion_endminute" Type="string" />
+          <Property Name="criterion_ageRangeType" Type="string" />
+          <Property Name="criterion_name" Type="string" />
+          <Property Name="criterion_countrycode" Type="string" />
+          <Property Name="criterion_contentLabelType" Type="string" />
+          <Property Name="criterion_genderType" Type="string" />
+          <Property Name="criterion_text" Type="string" />
+          <Property Name="criterion_matchType" Type="string" />
+          <Property Name="criterion_code" Type="string" />
+          <Property Name="criterion_locationname" Type="string" />
+          <Property Name="criterion_displayname" Type="string" />
+          <Property Name="criterion_targetingstatus" Type="string" />
+          <Property Name="criterion_mobileAppCategoryId" Type="string" />
+          <Property Name="criterion_appid" Type="string" />
+          <Property Name="criterion_deviceName" Type="string" />
+          <Property Name="criterion_manufacturerName" Type="string" />
+          <Property Name="criterion_deviceType" Type="string" />
+          <Property Name="criterion_operatingSystemName" Type="string" />
+          <Property Name="criterion_osMajorVersion" Type="int" />
+          <Property Name="criterion_osMinorVersion" Type="int" />
+          <Property Name="criterion_operatorType" Type="string" />
+          <Property Name="criterion_URL" Type="string" />
+          <Property Name="criterion_platformName" Type="string" />
+          <Property Name="criterion_conditions_argument" Type="string" />
+          <Property Name="criterion_conditions_operand" Type="string" />
+          <Property Name="criterion_radiusDistanceUnits" Type="int" />
+          <Property Name="criterion_radiusInUnits" Type="double" Precision="18" Scale="6" />
+          <Property Name="criterion_userInterestId" Type="string" />
+          <Property Name="criterion_userInterestName" Type="string" />
+          <Property Name="criterion_userListId" Type="string" />
+          <Property Name="criterion_userListName" Type="string" />
+          <Property Name="criterion_userListMembershipStatus" Type="string" />
+          <Property Name="criterion_verticalid" Type="string" />
+          <Property Name="criterion_verticalparentid" Type="string" />
+          <Property Name="criterion_path" Type="string" />
+          <Property Name="criterion_criteriaCoverage" Type="double" Precision="18" Scale="6" />
+          <Property Name="criterion_criteriaSamples" Type="string" />
+          <Property Name="criterion_address_streetaddress" Type="string" />
+          <Property Name="criterion_address_streetaddress2" Type="string" />
+          <Property Name="criterion_address_cityname" Type="string" />
+          <Property Name="criterion_address_provincecode" Type="string" />
+          <Property Name="criterion_address_provincename" Type="string" />
+          <Property Name="criterion_address_postalcode" Type="string" />
+          <Property Name="criterion_address_countrycode" Type="string" />
+          <Property Name="criterion_geopoint_latitudeinmicrodegrees" Type="int" />
+          <Property Name="criterion_geopoint_longitudeinmicrodegrees" Type="int" />
+          <Property Name="criterion_verticies_latitudeinmicrodegrees" Type="int" />
+          <Property Name="criterion_verticies_longitudeinmicrodegrees" Type="int" />
+          <Property Name="totalNumEntries" Type="string" />
+        </EntityType>
+        <EntityType Name="Campaigns">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="string" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="string" />
+          <Property Name="status" Type="string" />
+          <Property Name="servingstatus" Type="string" />
+          <Property Name="startdate" Type="string" />
+          <Property Name="enddate" Type="string" />
+          <Property Name="totalnumentries" Type="int" />
+          <Property Name="adservingoptimizationstatus" Type="string" />
+          <Property Name="biddingstrategy_biddingstrategytype" Type="string" />
+          <Property Name="biddingstrategy_pricingModel" Type="string" />
+          <Property Name="biddingstrategy_conversionOptimizerBidType" Type="string" />
+          <Property Name="biddingstrategy_enhancedcpcenabled" Type="string" />
+          <Property Name="biddingstrategy_bidCeiling_comparablevaluetype" Type="string" />
+          <Property Name="biddingstrategy_bidCeiling_microamount" Type="string" />
+          <Property Name="budget_budgetid" Type="string" />
+          <Property Name="budget_name" Type="string" />
+          <Property Name="budget_period" Type="string" />
+          <Property Name="budget_amount_comparablevaluetype" Type="string" />
+          <Property Name="budget_amount_microamount" Type="int" />
+          <Property Name="budget_deliverymethod" Type="string" />
+          <Property Name="budget_referencecount" Type="int" />
+          <Property Name="budget_status" Type="string" />
+          <Property Name="campaignstats_startDate" Type="string" />
+          <Property Name="campaignstats_endDate" Type="string" />
+          <Property Name="campaignstats_network" Type="string" />
+          <Property Name="campaignstats_clicks" Type="int" />
+          <Property Name="campaignstats_impressions" Type="int" />
+          <Property Name="campaignstats_cost_comparablevaluetype" Type="string" />
+          <Property Name="campaignstats_cost_microamount" Type="int" />
+          <Property Name="campaignstats_averageposition" Type="double" Precision="18" Scale="6" />
+          <Property Name="campaignstats_averagecpc_comparablevaluetype" Type="string" />
+          <Property Name="campaignstats_averagecpc_microamount" Type="int" />
+          <Property Name="campaignstats_averagecpm_comparablevaluetype" Type="string" />
+          <Property Name="campaignstats_averagecpm_microamount" Type="int" />
+          <Property Name="campaignstats_ctr" Type="double" Precision="18" Scale="6" />
+          <Property Name="campaignstats_conversions" Type="int" />
+          <Property Name="campaignstats_viewthroughconversions" Type="int" />
+          <Property Name="campaignstats_statstype" Type="string" />
+          <Property Name="conversionoptimizereligibility_eligible" Type="boolean" />
+          <Property Name="conversionoptimizereligibility_rejectionreasons" Type="string" />
+          <Property Name="frequencycap_impressions" Type="int" />
+          <Property Name="frequencycap_level" Type="string" />
+          <Property Name="frequencycap_timeunit" Type="string" />
+          <Property Name="settings_settingtype" Type="string" />
+          <Property Name="settings_optin" Type="boolean" />
+          <Property Name="settings_useAdGroup" Type="boolean" />
+          <Property Name="settings_trackingUrl" Type="string" />
+          <Property Name="settings_positivegeotargettype" Type="string" />
+          <Property Name="settings_negativegeotargettype" Type="string" />
+          <Property Name="networksetting_targetgooglesearch" Type="boolean" />
+          <Property Name="networksetting_targetsearchnetwork" Type="boolean" />
+          <Property Name="networksetting_targetcontentnetwork" Type="boolean" />
+          <Property Name="networksetting_targetpartnersearchnetwork" Type="boolean" />
+          <Property Name="totalbudget_budgetid" Type="string" />
+          <Property Name="totalbudget_name" Type="string" />
+          <Property Name="totalbudget_period" Type="string" />
+          <Property Name="totalbudget_amount_comparablevaluetype" Type="string" />
+          <Property Name="totalbudget_amount_microamount" Type="int" />
+          <Property Name="totalbudget_deliverymethod" Type="string" />
+          <Property Name="totalbudget_referencecount" Type="int" />
+          <Property Name="totalbudget_status" Type="string" />
+        </EntityType>
+        <EntityType Name="Directions">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="string" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StartAddress" Type="string" />
+          <Property Name="EndAddress" Type="string" />
+          <Property Name="Duration" Type="string" />
+          <Property Name="Distance" Type="string" />
+          <Property Name="StartLocation" Type="string" />
+          <Property Name="EndLocation" Type="string" />
+          <Property Name="TravelMode" Type="string" />
+          <Property Name="StepHTMLInstructions" Type="string" />
+          <Property Name="StepDistance" Type="string" />
+          <Property Name="StepDuration" Type="string" />
+          <Property Name="StepStartLocation" Type="string" />
+          <Property Name="StepEndLocation" Type="string" />
+        </EntityType>
+        <Function Name="AddGoogleData" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="">
+          <Parameter Name="p_Service" Type="string" Mode="In" />
+          <Parameter Name="p_URL" Type="string" Mode="In" />
+          <Parameter Name="p_Title" Type="string" Mode="In" />
+          <Parameter Name="p_Content" Type="string" Mode="In" />
+          <Parameter Name="p_ContentType" Type="string" Mode="In" />
+          <Parameter Name="p_AuthorName" Type="string" Mode="In" />
+          <Parameter Name="p_AuthorEmail" Type="string" Mode="In" />
+          <Parameter Name="p_Subtitle" Type="string" Mode="In" />
+          <Parameter Name="p_Entry" Type="string" Mode="In" />
+        </Function>
+        <Function Name="Authenticate" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="">
+          <Parameter Name="p_User" Type="string" Mode="In" />
+          <Parameter Name="p_Password" Type="string" Mode="In" />
+          <Parameter Name="p_Service" Type="string" Mode="In" />
+        </Function>
+        <Function Name="DeleteGoogleData" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="">
+          <Parameter Name="p_Service" Type="string" Mode="In" />
+          <Parameter Name="p_Editlink" Type="string" Mode="In" />
+        </Function>
+        <Function Name="DownloadDocument" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="">
+          <Parameter Name="p_Id" Type="string" Mode="In" />
+          <Parameter Name="p_FileFormat" Type="string" Mode="In" />
+          <Parameter Name="p_LocalFile" Type="string" Mode="In" />
+          <Parameter Name="p_Encoding" Type="string" Mode="In" />
+        </Function>
+        <Function Name="GetDistance" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="">
+          <Parameter Name="p_Origins" Type="string" Mode="In" />
+          <Parameter Name="p_Destinations" Type="string" Mode="In" />
+          <Parameter Name="p_Mode" Type="string" Mode="In" />
+          <Parameter Name="p_Avoid" Type="string" Mode="In" />
+          <Parameter Name="p_Units" Type="string" Mode="In" />
+          <Parameter Name="p_Language" Type="string" Mode="In" />
+        </Function>
+        <Function Name="GetGeocode" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="">
+          <Parameter Name="p_Address" Type="string" Mode="In" />
+        </Function>
+        <Function Name="GetOAuthAccessToken" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="">
+          <Parameter Name="p_AuthMode" Type="string" Mode="In" />
+          <Parameter Name="p_Verifier" Type="string" Mode="In" />
+          <Parameter Name="p_Scope" Type="string" Mode="In" />
+          <Parameter Name="p_CallbackURL" Type="string" Mode="In" />
+          <Parameter Name="p_ApprovalPrompt" Type="string" Mode="In" />
+          <Parameter Name="p_AccessType" Type="string" Mode="In" />
+          <Parameter Name="p_State" Type="string" Mode="In" />
+        </Function>
+        <Function Name="GetOAuthAuthorizationURL" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="">
+          <Parameter Name="p_Scope" Type="string" Mode="In" />
+          <Parameter Name="p_CallbackURL" Type="string" Mode="In" />
+          <Parameter Name="p_ApprovalPrompt" Type="string" Mode="In" />
+          <Parameter Name="p_AccessType" Type="string" Mode="In" />
+          <Parameter Name="p_State" Type="string" Mode="In" />
+        </Function>
+        <Function Name="GetPart" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="">
+          <Parameter Name="p_Id" Type="string" Mode="In" />
+          <Parameter Name="p_LocalFile" Type="string" Mode="In" />
+          <Parameter Name="p_Mailbox" Type="string" Mode="In" />
+          <Parameter Name="p_PartFileName" Type="string" Mode="In" />
+          <Parameter Name="p_PartId" Type="string" Mode="In" />
+          <Parameter Name="p_UIDMode" Type="string" Mode="In" />
+        </Function>
+        <Function Name="ListBuddies" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="">
+          <Parameter Name="p_Domain" Type="string" Mode="In" />
+        </Function>
+        <Function Name="RefreshOAuthAccessToken" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="">
+          <Parameter Name="p_OAuthRefreshToken" Type="string" Mode="In" />
+        </Function>
+        <Function Name="Search" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="">
+          <Parameter Name="p_Search" Type="string" Mode="In" />
+          <Parameter Name="p_APIkey" Type="string" Mode="In" />
+          <Parameter Name="p_Referer" Type="string" Mode="In" />
+          <Parameter Name="p_Safesearch" Type="string" Mode="In" />
+          <Parameter Name="p_Start" Type="string" Mode="In" />
+        </Function>
+        <Function Name="SearchGoogleData" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="">
+          <Parameter Name="p_Query" Type="string" Mode="In" />
+          <Parameter Name="p_Service" Type="string" Mode="In" />
+          <Parameter Name="p_URL" Type="string" Mode="In" />
+        </Function>
+        <Function Name="SendIM" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="">
+          <Parameter Name="p_BuddyId" Type="string" Mode="In" />
+          <Parameter Name="p_Domain" Type="string" Mode="In" />
+          <Parameter Name="p_Message" Type="string" Mode="In" />
+        </Function>
+        <Function Name="SendMailMessage" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="">
+          <Parameter Name="p_To" Type="string" Mode="In" />
+          <Parameter Name="p_Subject" Type="string" Mode="In" />
+          <Parameter Name="p_From" Type="string" Mode="In" />
+          <Parameter Name="p_MessageBody" Type="string" Mode="In" />
+          <Parameter Name="p_CC" Type="string" Mode="In" />
+          <Parameter Name="p_BCC" Type="string" Mode="In" />
+          <Parameter Name="p_Attachment_" Type="string" Mode="In" />
+          <Parameter Name="p_AttachmentData_" Type="string" Mode="In" />
+          <Parameter Name="p_IsHTML" Type="string" Mode="In" />
+          <Parameter Name="p_Importance" Type="string" Mode="In" />
+          <Parameter Name="p_Priority" Type="string" Mode="In" />
+          <Parameter Name="p_Sensitivity" Type="string" Mode="In" />
+          <Parameter Name="p_DeliveryNotification" Type="string" Mode="In" />
+          <Parameter Name="p_ReadReceipt" Type="string" Mode="In" />
+          <Parameter Name="p_Charset" Type="string" Mode="In" />
+        </Function>
+        <Function Name="UpdateGoogleData" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="">
+          <Parameter Name="p_AuthorEmail" Type="string" Mode="In" />
+          <Parameter Name="p_AuthorName" Type="string" Mode="In" />
+          <Parameter Name="p_Content" Type="string" Mode="In" />
+          <Parameter Name="p_ContentType" Type="string" Mode="In" />
+          <Parameter Name="p_EditLink" Type="string" Mode="In" />
+          <Parameter Name="p_Entry" Type="string" Mode="In" />
+          <Parameter Name="p_Service" Type="string" Mode="In" />
+          <Parameter Name="p_Subtitle" Type="string" Mode="In" />
+          <Parameter Name="p_Title" Type="string" Mode="In" />
+        </Function>
+        <Function Name="UploadDocument" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="">
+          <Parameter Name="p_Title" Type="string" Mode="In" />
+          <Parameter Name="p_Description" Type="string" Mode="In" />
+          <Parameter Name="p_Hidden" Type="string" Mode="In" />
+          <Parameter Name="p_Restricted" Type="string" Mode="In" />
+          <Parameter Name="p_Starred" Type="string" Mode="In" />
+          <Parameter Name="p_MIMEType" Type="string" Mode="In" />
+          <Parameter Name="p_Parents" Type="string" Mode="In" />
+          <Parameter Name="p_LocalFile" Type="string" Mode="In" />
+          <Parameter Name="p_FileData" Type="string" Mode="In" />
+          <Parameter Name="p_Encoding" Type="string" Mode="In" />
+          <Parameter Name="p_ConvertDocument" Type="string" Mode="In" />
+        </Function>
+        <EntityContainer Name="GMailModelStoreContainer">
+          <EntitySet Name="CalendarEvents" EntityType="Self.CalendarEvents" Schema="Google" store:Type="Tables" />
+          <EntitySet Name="Calendars" EntityType="Self.Calendars" Schema="Google" store:Type="Tables" />
+          <EntitySet Name="ContactGroups" EntityType="Self.ContactGroups" Schema="Google" store:Type="Tables" />
+          <EntitySet Name="Contacts" EntityType="Self.Contacts" Schema="Google" store:Type="Tables" />
+          <EntitySet Name="Documents" EntityType="Self.Documents" Schema="Google" store:Type="Tables" />
+          <EntitySet Name="DocumentsACL" EntityType="Self.DocumentsACL" Schema="Google" store:Type="Tables" />
+          <EntitySet Name="GDrive" EntityType="Self.GDrive" Schema="Google" store:Type="Tables" />
+          <EntitySet Name="GDriveACL" EntityType="Self.GDriveACL" Schema="Google" store:Type="Tables" />
+          <EntitySet Name="Mailboxes" EntityType="Self.Mailboxes" Schema="Google" store:Type="Tables" />
+          <EntitySet Name="MailMessages" EntityType="Self.MailMessages" Schema="Google" store:Type="Tables" />
+          <EntitySet Name="AdGroupAds" EntityType="Self.AdGroupAds" Schema="Google" store:Type="Views" />
+          <EntitySet Name="AdGroupCriterion" EntityType="Self.AdGroupCriterion" Schema="Google" store:Type="Views" />
+          <EntitySet Name="AdGroups" EntityType="Self.AdGroups" Schema="Google" store:Type="Views" />
+          <EntitySet Name="CampaignCriterion" EntityType="Self.CampaignCriterion" Schema="Google" store:Type="Views" />
+          <EntitySet Name="Campaigns" EntityType="Self.Campaigns" Schema="Google" store:Type="Views" />
+          <EntitySet Name="Directions" EntityType="Self.Directions" Schema="Google" store:Type="Views" />
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="GMailModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="CalendarEvent">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CalendarId" Type="String" />
+          <Property Name="Summary" Type="String" />
+          <Property Name="Description" Type="String" />
+          <Property Name="Location" Type="String" />
+          <Property Name="AllDayEvent" Type="Boolean" />
+          <Property Name="StartDateTime" Type="DateTime" />
+          <Property Name="EndDateTime" Type="DateTime" />
+          <Property Name="OriginalStartTimeDateTime" Type="DateTime" />
+          <Property Name="SendNotification" Type="Boolean" />
+          <Property Name="Kind" Type="String" />
+          <Property Name="ETag" Type="String" />
+          <Property Name="Status" Type="String" />
+          <Property Name="HTMLLink" Type="String" />
+          <Property Name="Created" Type="DateTime" />
+          <Property Name="Updated" Type="DateTime" />
+          <Property Name="ColorId" Type="Int32" />
+          <Property Name="CreatorEmail" Type="String" />
+          <Property Name="CreatorDisplayName" Type="String" />
+          <Property Name="OrganizerEmail" Type="String" />
+          <Property Name="OrganizerDisplayName" Type="String" />
+          <Property Name="Recurrences" Type="String" />
+          <Property Name="RecurringEventId" Type="String" />
+          <Property Name="Transparency" Type="String" />
+          <Property Name="Visibility" Type="String" />
+          <Property Name="iCalUid" Type="String" />
+          <Property Name="Sequence" Type="String" />
+          <Property Name="AttendeesAggregate" Type="String" />
+          <Property Name="AttendeesEmails" Type="String" />
+          <Property Name="AttendeesDisplayNames" Type="String" />
+          <Property Name="AttendeesOmitted" Type="Boolean" />
+          <Property Name="ExtendedPropPrivateKey" Type="String" />
+          <Property Name="ExtendedPropPrivateVal" Type="String" />
+          <Property Name="ExtendedPropSharedKey" Type="String" />
+          <Property Name="ExtendedPropSharedVal" Type="String" />
+          <Property Name="GadgetAggregate" Type="String" />
+          <Property Name="AnyoneCanAddSelf" Type="Boolean" />
+          <Property Name="GuestsCanInviteOthers" Type="Boolean" />
+          <Property Name="GuestsCanSeeOtherGuests" Type="Boolean" />
+          <Property Name="PrivateCopy" Type="Boolean" />
+          <Property Name="RemindersUseDefault" Type="Boolean" />
+          <Property Name="ReminderOverrideMethods" Type="String" />
+          <Property Name="ReminderOverrideMinutes" Type="String" />
+        </EntityType>
+        <EntityType Name="Calendar">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Summary" Type="String" />
+          <Property Name="Description" Type="String" />
+          <Property Name="Kind" Type="String" />
+          <Property Name="ETag" Type="String" />
+          <Property Name="Location" Type="String" />
+          <Property Name="Timezone" Type="String" />
+          <Property Name="SummaryOverride" Type="String" />
+          <Property Name="ColorId" Type="Int32" />
+          <Property Name="Hidden" Type="Boolean" />
+          <Property Name="Selected" Type="Boolean" />
+          <Property Name="AccessRole" Type="String" />
+          <Property Name="ReminderMethods" Type="String" />
+          <Property Name="ReminderMinutes" Type="String" />
+        </EntityType>
+        <EntityType Name="ContactGroup">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Group" Type="String" />
+          <Property Name="SystemGroup" Type="String" />
+          <Property Name="ETag" Type="String" />
+          <Property Name="Updated" Type="DateTime" />
+          <Property Name="SelfLink" Type="String" />
+        </EntityType>
+        <EntityType Name="Contact">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Fullname" Type="String" />
+          <Property Name="NamePrefix" Type="String" />
+          <Property Name="FirstName" Type="String" />
+          <Property Name="MiddleName" Type="String" />
+          <Property Name="LastName" Type="String" />
+          <Property Name="NameSuffix" Type="String" />
+          <Property Name="Nickname" Type="String" />
+          <Property Name="Birthday" Type="DateTime" />
+          <Property Name="Anniversaries" Type="String" />
+          <Property Name="CustomEventTypes" Type="String" />
+          <Property Name="CustomEvents" Type="String" />
+          <Property Name="Gender" Type="String" />
+          <Property Name="Groups" Type="String" />
+          <Property Name="OrganizationName" Type="String" />
+          <Property Name="OrganizationTitle" Type="String" />
+          <Property Name="Photo" Type="String" />
+          <Property Name="Notes" Type="String" />
+          <Property Name="HomeEmailAddresses" Type="String" />
+          <Property Name="WorkEmailAddresses" Type="String" />
+          <Property Name="CustomEmailAddressTypes" Type="String" />
+          <Property Name="CustomEmailAddresses" Type="String" />
+          <Property Name="HomePhoneNumbers" Type="String" />
+          <Property Name="WorkPhoneNumbers" Type="String" />
+          <Property Name="MobilePhoneNumbers" Type="String" />
+          <Property Name="GoogleVoicePhoneNumbers" Type="String" />
+          <Property Name="HomeFaxes" Type="String" />
+          <Property Name="WorkFaxes" Type="String" />
+          <Property Name="Pagers" Type="String" />
+          <Property Name="CustomPhoneNumberTypes" Type="String" />
+          <Property Name="CustomPhoneNumbers" Type="String" />
+          <Property Name="HomeAddresses" Type="String" />
+          <Property Name="WorkAddresses" Type="String" />
+          <Property Name="CustomAddressTypes" Type="String" />
+          <Property Name="CustomAddresses" Type="String" />
+          <Property Name="BillingInfo" Type="String" />
+          <Property Name="RelationTypes" Type="String" />
+          <Property Name="RelationValues" Type="String" />
+          <Property Name="IMTypes" Type="String" />
+          <Property Name="IMValues" Type="String" />
+          <Property Name="WebsiteTypes" Type="String" />
+          <Property Name="WebsiteValues" Type="String" />
+          <Property Name="ETag" Type="String" />
+          <Property Name="Updated" Type="DateTime" />
+          <Property Name="SelfLink" Type="String" />
+          <Property Name="EditLink" Type="String" />
+        </EntityType>
+        <EntityType Name="Document">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ETag" Type="String" />
+          <Property Name="Title" Type="String" />
+          <Property Name="AuthorName" Type="String" />
+          <Property Name="AuthorEmail" Type="String" />
+          <Property Name="DocumentType" Type="String" />
+          <Property Name="Labels" Type="String" />
+          <Property Name="Updated" Type="DateTime" />
+          <Property Name="LastModifiedByEmail" Type="String" />
+          <Property Name="LastModifiedByName" Type="String" />
+          <Property Name="LastViewed" Type="DateTime" />
+          <Property Name="Published" Type="DateTime" />
+          <Property Name="PDFLink" Type="String" />
+          <Property Name="WebLink" Type="String" />
+          <Property Name="ACLLink" Type="String" />
+          <Property Name="FolderId" Type="String" />
+          <Property Name="FolderName" Type="String" />
+        </EntityType>
+        <EntityType Name="DocumentsACL">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DocumentId" Type="String" />
+          <Property Name="Title" Type="String" />
+          <Property Name="Role" Type="String" />
+          <Property Name="Scope" Type="String" />
+          <Property Name="Type" Type="String" />
+          <Property Name="Updated" Type="DateTime" />
+        </EntityType>
+        <EntityType Name="GDrive">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" />
+          <Property Name="Description" Type="String" />
+          <Property Name="Formats" Type="String" />
+          <Property Name="Extension" Type="String" />
+          <Property Name="MIMEType" Type="String" />
+          <Property Name="CreatedDate" Type="DateTime" />
+          <Property Name="ModifiedDate" Type="DateTime" />
+          <Property Name="Size" Type="Int64" />
+          <Property Name="Owners" Type="String" />
+          <Property Name="Folder" Type="Boolean" />
+          <Property Name="Starred" Type="Boolean" />
+          <Property Name="Restricted" Type="Boolean" />
+          <Property Name="Hidden" Type="Boolean" />
+          <Property Name="Trashed" Type="Boolean" />
+          <Property Name="Viewed" Type="Boolean" />
+          <Property Name="ETag" Type="String" />
+          <Property Name="ParentIds" Type="String" />
+          <Property Name="ParentIsRoot" Type="String" />
+          <Property Name="ChildIds" Type="String" />
+          <Property Name="ChildLinks" Type="String" />
+        </EntityType>
+        <EntityType Name="GDriveACL">
+          <Key>
+            <PropertyRef Name="PermissionId" />
+            <PropertyRef Name="ResourceId" />
+          </Key>
+          <Property Name="PermissionId" Type="String" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ResourceId" Type="String" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Role" Type="String" />
+          <Property Name="Type" Type="String" />
+          <Property Name="Value" Type="String" />
+          <Property Name="AdditionalRoles" Type="String" />
+          <Property Name="ETag" Type="String" />
+        </EntityType>
+        <EntityType Name="Mailbox">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Mailbox1" Type="String" />
+          <Property Name="MessagesCount" Type="String" />
+          <Property Name="RecentMessagesCount" Type="String" />
+          <Property Name="Flags" Type="String" />
+        </EntityType>
+        <EntityType Name="MailMessage">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Mailbox" Type="String" />
+          <Property Name="Subject" Type="String" />
+          <Property Name="From" Type="String" />
+          <Property Name="To" Type="String" />
+          <Property Name="CC" Type="String" />
+          <Property Name="BCC" Type="String" />
+          <Property Name="Date" Type="String" />
+          <Property Name="MessageBody" Type="String" />
+          <Property Name="Attachments" Type="String" />
+          <Property Name="AttachmentData" Type="String" />
+          <Property Name="Size" Type="String" />
+          <Property Name="Flags" Type="String" />
+          <Property Name="Labels" Type="String" />
+          <Property Name="ThreadId" Type="String" />
+          <Property Name="MsgId" Type="String" />
+          <Property Name="PartIds" Type="String" />
+          <Property Name="PartFilenames" Type="String" />
+          <Property Name="PartContentTypes" Type="String" />
+          <Property Name="PartSizes" Type="String" />
+          <Property Name="Headers" Type="String" />
+        </EntityType>
+        <EntityType Name="AdGroupAd">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ad_id" Type="String" />
+          <Property Name="ad_url" Type="String" />
+          <Property Name="ad_displayUrl" Type="String" />
+          <Property Name="ad_disapprovalReasons" Type="String" />
+          <Property Name="ad_name" Type="String" />
+          <Property Name="ad_type" Type="String" />
+          <Property Name="ad_description1" Type="String" />
+          <Property Name="ad_description2" Type="String" />
+          <Property Name="ad_image_mediaId" Type="String" />
+          <Property Name="ad_image_type" Type="String" />
+          <Property Name="ad_image_data" Type="String" />
+          <Property Name="ad_adToCopyImageFrom" Type="String" />
+          <Property Name="ad_headline" Type="String" />
+          <Property Name="ad_description" Type="String" />
+          <Property Name="ad_markupLanguages" Type="String" />
+          <Property Name="ad_mobileCarriers" Type="String" />
+          <Property Name="ad_businessName" Type="String" />
+          <Property Name="ad_countryCode" Type="String" />
+          <Property Name="ad_phoneNumber" Type="String" />
+          <Property Name="ad_promotionLine" Type="String" />
+          <Property Name="ad_snippet" Type="String" />
+          <Property Name="ad_impressionBeaconUrl" Type="String" />
+          <Property Name="ad_adDuration" Type="Int32" />
+          <Property Name="ad_certifiedVendorFormatId" Type="String" />
+          <Property Name="ad_sourceUrl" Type="String" />
+          <Property Name="ad_richMediaAdType" Type="String" />
+          <Property Name="ad_templateid" Type="String" />
+          <Property Name="ad_templateelements" Type="String" />
+          <Property Name="ad_duration" Type="Int32" />
+          <Property Name="experimentdata_experimentId" Type="String" />
+          <Property Name="experimentdata_experimentDeltaStatus" Type="String" />
+          <Property Name="experimentdata_experimentDataStatus" Type="String" />
+          <Property Name="experimentdata_experimentBidMultipliers_AdGroupExperimentBidMultipliersType" Type="String" />
+          <Property Name="experimentdata_experimentBidMultipliers_maxCpcMultiplier" Type="String" />
+          <Property Name="experimentdata_experimentBidMultipliers_maxContentCpcMultiplier" Type="String" />
+          <Property Name="experimentdata_experimentBidMultipliers_maxContentCpmMultiplier" Type="String" />
+          <Property Name="status" Type="String" />
+          <Property Name="approvalStatus" Type="String" />
+          <Property Name="trademarkDisapproved" Type="Boolean" />
+          <Property Name="stats_startDate" Type="String" />
+          <Property Name="stats_endDate" Type="String" />
+          <Property Name="stats_network" Type="String" />
+          <Property Name="stats_clicks" Type="Int32" />
+          <Property Name="stats_impressions" Type="Int32" />
+          <Property Name="stats_cost_comparablevaluetype" Type="String" />
+          <Property Name="stats_cost_microamount" Type="Int32" />
+          <Property Name="stats_averageposition" Type="Decimal" />
+          <Property Name="stats_averagecpc_comparablevaluetype" Type="String" />
+          <Property Name="stats_averagecpc_microamount" Type="Int32" />
+          <Property Name="stats_averagecpm_comparablevaluetype" Type="String" />
+          <Property Name="stats_averagecpm_microamount" Type="Int32" />
+          <Property Name="stats_ctr" Type="Decimal" />
+          <Property Name="stats_conversions" Type="Int32" />
+          <Property Name="stats_viewthroughconversions" Type="Int32" />
+          <Property Name="stats_statstype" Type="String" />
+          <Property Name="stats_percentServed" Type="Decimal" />
+        </EntityType>
+        <EntityType Name="AdGroupCriterion">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="adGroupId" Type="String" />
+          <Property Name="criterionUse" Type="String" />
+          <Property Name="criterion_id" Type="String" />
+          <Property Name="criterion_type" Type="String" />
+          <Property Name="criterion_ageRangeType" Type="String" />
+          <Property Name="criterion_genderType" Type="String" />
+          <Property Name="criterion_text" Type="String" />
+          <Property Name="criterion_matchType" Type="String" />
+          <Property Name="criterion_mobileAppCategoryId" Type="String" />
+          <Property Name="criterion_displayName" Type="String" />
+          <Property Name="criterion_appid" Type="String" />
+          <Property Name="criterion_URL" Type="String" />
+          <Property Name="criterion_conditions_argument" Type="String" />
+          <Property Name="criterion_conditions_operand" Type="String" />
+          <Property Name="criterion_userInterestId" Type="String" />
+          <Property Name="criterion_userInterestName" Type="String" />
+          <Property Name="criterion_userListId" Type="String" />
+          <Property Name="criterion_userListName" Type="String" />
+          <Property Name="criterion_userListMembershipStatus" Type="String" />
+          <Property Name="criterion_verticalid" Type="String" />
+          <Property Name="criterion_verticalparentid" Type="String" />
+          <Property Name="criterion_path" Type="String" />
+          <Property Name="criterion_criteriaCoverage" Type="Decimal" />
+          <Property Name="criterion_criteriaSamples" Type="String" />
+        </EntityType>
+        <EntityType Name="AdGroup">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" />
+          <Property Name="campaignid" Type="String" />
+          <Property Name="campaignname" Type="String" />
+          <Property Name="status" Type="String" />
+          <Property Name="setting_settingtype" Type="String" />
+          <Property Name="setting_details_criterionTypeGroup" Type="String" />
+          <Property Name="setting_details_targetAll" Type="Boolean" />
+          <Property Name="bids_AdGroupBidsType" Type="String" />
+          <Property Name="bids_proxyKeywordMaxCpc_amount_comparablevaluetype" Type="String" />
+          <Property Name="bids_proxyKeywordMaxCpc_amount_microamount" Type="Int32" />
+          <Property Name="bids_enhancedCpcEnabled" Type="Boolean" />
+          <Property Name="bids_targetCpa_amount_comparablevaluetype" Type="String" />
+          <Property Name="bids_targetCpa_amount_microamount" Type="Int32" />
+          <Property Name="bids_conversionOptimizerBidType" Type="String" />
+          <Property Name="bids_keywordMaxCpc_amount_comparablevaluetype" Type="String" />
+          <Property Name="bids_keywordMaxCpc_amount_microamount" Type="Int32" />
+          <Property Name="bids_keywordContentMaxCpc_amount_comparablevaluetype" Type="String" />
+          <Property Name="bids_keywordContentMaxCpc_amount_microamount" Type="Int32" />
+          <Property Name="bids_maxCpm_amount_comparablevaluetype" Type="String" />
+          <Property Name="bids_maxCpm_amount_microamount" Type="Int32" />
+          <Property Name="bids_percentCpa_amount_comparablevaluetype" Type="String" />
+          <Property Name="bids_percentCpa_amount_microamount" Type="Int32" />
+          <Property Name="experimentdata_experimentId" Type="String" />
+          <Property Name="experimentdata_experimentDeltaStatus" Type="String" />
+          <Property Name="experimentdata_experimentDataStatus" Type="String" />
+          <Property Name="experimentdata_experimentBidMultipliers_AdGroupExperimentBidMultipliersType" Type="String" />
+          <Property Name="experimentdata_experimentBidMultipliers_maxCpcMultiplier" Type="String" />
+          <Property Name="experimentdata_experimentBidMultipliers_maxContentCpcMultiplier" Type="String" />
+          <Property Name="experimentdata_experimentBidMultipliers_maxContentCpmMultiplier" Type="String" />
+          <Property Name="stats_startDate" Type="String" />
+          <Property Name="stats_endDate" Type="String" />
+          <Property Name="stats_network" Type="String" />
+          <Property Name="stats_clicks" Type="Int32" />
+          <Property Name="stats_impressions" Type="Int32" />
+          <Property Name="stats_cost_comparablevaluetype" Type="String" />
+          <Property Name="stats_cost_microamount" Type="Int32" />
+          <Property Name="stats_averageposition" Type="Decimal" />
+          <Property Name="stats_averagecpc_comparablevaluetype" Type="String" />
+          <Property Name="stats_averagecpc_microamount" Type="Int32" />
+          <Property Name="stats_averagecpm_comparablevaluetype" Type="String" />
+          <Property Name="stats_averagecpm_microamount" Type="Int32" />
+          <Property Name="stats_ctr" Type="Decimal" />
+          <Property Name="stats_conversions" Type="Int32" />
+          <Property Name="stats_viewthroughconversions" Type="Int32" />
+          <Property Name="stats_statstype" Type="String" />
+        </EntityType>
+        <EntityType Name="CampaignCriterion">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="adGroupId" Type="String" />
+          <Property Name="criterionUse" Type="String" />
+          <Property Name="criterion_id" Type="String" />
+          <Property Name="criterion_type" Type="String" />
+          <Property Name="criterion_dayofweek" Type="String" />
+          <Property Name="criterion_starthour" Type="Int32" />
+          <Property Name="criterion_startminute" Type="String" />
+          <Property Name="criterion_endhour" Type="Int32" />
+          <Property Name="criterion_endminute" Type="String" />
+          <Property Name="criterion_ageRangeType" Type="String" />
+          <Property Name="criterion_name" Type="String" />
+          <Property Name="criterion_countrycode" Type="String" />
+          <Property Name="criterion_contentLabelType" Type="String" />
+          <Property Name="criterion_genderType" Type="String" />
+          <Property Name="criterion_text" Type="String" />
+          <Property Name="criterion_matchType" Type="String" />
+          <Property Name="criterion_code" Type="String" />
+          <Property Name="criterion_locationname" Type="String" />
+          <Property Name="criterion_displayname" Type="String" />
+          <Property Name="criterion_targetingstatus" Type="String" />
+          <Property Name="criterion_mobileAppCategoryId" Type="String" />
+          <Property Name="criterion_appid" Type="String" />
+          <Property Name="criterion_deviceName" Type="String" />
+          <Property Name="criterion_manufacturerName" Type="String" />
+          <Property Name="criterion_deviceType" Type="String" />
+          <Property Name="criterion_operatingSystemName" Type="String" />
+          <Property Name="criterion_osMajorVersion" Type="Int32" />
+          <Property Name="criterion_osMinorVersion" Type="Int32" />
+          <Property Name="criterion_operatorType" Type="String" />
+          <Property Name="criterion_URL" Type="String" />
+          <Property Name="criterion_platformName" Type="String" />
+          <Property Name="criterion_conditions_argument" Type="String" />
+          <Property Name="criterion_conditions_operand" Type="String" />
+          <Property Name="criterion_radiusDistanceUnits" Type="Int32" />
+          <Property Name="criterion_radiusInUnits" Type="Decimal" />
+          <Property Name="criterion_userInterestId" Type="String" />
+          <Property Name="criterion_userInterestName" Type="String" />
+          <Property Name="criterion_userListId" Type="String" />
+          <Property Name="criterion_userListName" Type="String" />
+          <Property Name="criterion_userListMembershipStatus" Type="String" />
+          <Property Name="criterion_verticalid" Type="String" />
+          <Property Name="criterion_verticalparentid" Type="String" />
+          <Property Name="criterion_path" Type="String" />
+          <Property Name="criterion_criteriaCoverage" Type="Decimal" />
+          <Property Name="criterion_criteriaSamples" Type="String" />
+          <Property Name="criterion_address_streetaddress" Type="String" />
+          <Property Name="criterion_address_streetaddress2" Type="String" />
+          <Property Name="criterion_address_cityname" Type="String" />
+          <Property Name="criterion_address_provincecode" Type="String" />
+          <Property Name="criterion_address_provincename" Type="String" />
+          <Property Name="criterion_address_postalcode" Type="String" />
+          <Property Name="criterion_address_countrycode" Type="String" />
+          <Property Name="criterion_geopoint_latitudeinmicrodegrees" Type="Int32" />
+          <Property Name="criterion_geopoint_longitudeinmicrodegrees" Type="Int32" />
+          <Property Name="criterion_verticies_latitudeinmicrodegrees" Type="Int32" />
+          <Property Name="criterion_verticies_longitudeinmicrodegrees" Type="Int32" />
+          <Property Name="totalNumEntries" Type="String" />
+        </EntityType>
+        <EntityType Name="Campaign">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" />
+          <Property Name="status" Type="String" />
+          <Property Name="servingstatus" Type="String" />
+          <Property Name="startdate" Type="String" />
+          <Property Name="enddate" Type="String" />
+          <Property Name="totalnumentries" Type="Int32" />
+          <Property Name="adservingoptimizationstatus" Type="String" />
+          <Property Name="biddingstrategy_biddingstrategytype" Type="String" />
+          <Property Name="biddingstrategy_pricingModel" Type="String" />
+          <Property Name="biddingstrategy_conversionOptimizerBidType" Type="String" />
+          <Property Name="biddingstrategy_enhancedcpcenabled" Type="String" />
+          <Property Name="biddingstrategy_bidCeiling_comparablevaluetype" Type="String" />
+          <Property Name="biddingstrategy_bidCeiling_microamount" Type="String" />
+          <Property Name="budget_budgetid" Type="String" />
+          <Property Name="budget_name" Type="String" />
+          <Property Name="budget_period" Type="String" />
+          <Property Name="budget_amount_comparablevaluetype" Type="String" />
+          <Property Name="budget_amount_microamount" Type="Int32" />
+          <Property Name="budget_deliverymethod" Type="String" />
+          <Property Name="budget_referencecount" Type="Int32" />
+          <Property Name="budget_status" Type="String" />
+          <Property Name="campaignstats_startDate" Type="String" />
+          <Property Name="campaignstats_endDate" Type="String" />
+          <Property Name="campaignstats_network" Type="String" />
+          <Property Name="campaignstats_clicks" Type="Int32" />
+          <Property Name="campaignstats_impressions" Type="Int32" />
+          <Property Name="campaignstats_cost_comparablevaluetype" Type="String" />
+          <Property Name="campaignstats_cost_microamount" Type="Int32" />
+          <Property Name="campaignstats_averageposition" Type="Decimal" />
+          <Property Name="campaignstats_averagecpc_comparablevaluetype" Type="String" />
+          <Property Name="campaignstats_averagecpc_microamount" Type="Int32" />
+          <Property Name="campaignstats_averagecpm_comparablevaluetype" Type="String" />
+          <Property Name="campaignstats_averagecpm_microamount" Type="Int32" />
+          <Property Name="campaignstats_ctr" Type="Decimal" />
+          <Property Name="campaignstats_conversions" Type="Int32" />
+          <Property Name="campaignstats_viewthroughconversions" Type="Int32" />
+          <Property Name="campaignstats_statstype" Type="String" />
+          <Property Name="conversionoptimizereligibility_eligible" Type="Boolean" />
+          <Property Name="conversionoptimizereligibility_rejectionreasons" Type="String" />
+          <Property Name="frequencycap_impressions" Type="Int32" />
+          <Property Name="frequencycap_level" Type="String" />
+          <Property Name="frequencycap_timeunit" Type="String" />
+          <Property Name="settings_settingtype" Type="String" />
+          <Property Name="settings_optin" Type="Boolean" />
+          <Property Name="settings_useAdGroup" Type="Boolean" />
+          <Property Name="settings_trackingUrl" Type="String" />
+          <Property Name="settings_positivegeotargettype" Type="String" />
+          <Property Name="settings_negativegeotargettype" Type="String" />
+          <Property Name="networksetting_targetgooglesearch" Type="Boolean" />
+          <Property Name="networksetting_targetsearchnetwork" Type="Boolean" />
+          <Property Name="networksetting_targetcontentnetwork" Type="Boolean" />
+          <Property Name="networksetting_targetpartnersearchnetwork" Type="Boolean" />
+          <Property Name="totalbudget_budgetid" Type="String" />
+          <Property Name="totalbudget_name" Type="String" />
+          <Property Name="totalbudget_period" Type="String" />
+          <Property Name="totalbudget_amount_comparablevaluetype" Type="String" />
+          <Property Name="totalbudget_amount_microamount" Type="Int32" />
+          <Property Name="totalbudget_deliverymethod" Type="String" />
+          <Property Name="totalbudget_referencecount" Type="Int32" />
+          <Property Name="totalbudget_status" Type="String" />
+        </EntityType>
+        <EntityType Name="Direction">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="StartAddress" Type="String" />
+          <Property Name="EndAddress" Type="String" />
+          <Property Name="Duration" Type="String" />
+          <Property Name="Distance" Type="String" />
+          <Property Name="StartLocation" Type="String" />
+          <Property Name="EndLocation" Type="String" />
+          <Property Name="TravelMode" Type="String" />
+          <Property Name="StepHTMLInstructions" Type="String" />
+          <Property Name="StepDistance" Type="String" />
+          <Property Name="StepDuration" Type="String" />
+          <Property Name="StepStartLocation" Type="String" />
+          <Property Name="StepEndLocation" Type="String" />
+        </EntityType>
+        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="CalendarEvents" EntityType="Self.CalendarEvent" />
+          <EntitySet Name="Calendars" EntityType="Self.Calendar" />
+          <EntitySet Name="ContactGroups" EntityType="Self.ContactGroup" />
+          <EntitySet Name="Contacts" EntityType="Self.Contact" />
+          <EntitySet Name="Documents" EntityType="Self.Document" />
+          <EntitySet Name="DocumentsACLs" EntityType="Self.DocumentsACL" />
+          <EntitySet Name="GDrives" EntityType="Self.GDrive" />
+          <EntitySet Name="GDriveACLs" EntityType="Self.GDriveACL" />
+          <EntitySet Name="Mailboxes" EntityType="Self.Mailbox" />
+          <EntitySet Name="MailMessages" EntityType="Self.MailMessage" />
+          <EntitySet Name="AdGroupAds" EntityType="Self.AdGroupAd" />
+          <EntitySet Name="AdGroupCriterions" EntityType="Self.AdGroupCriterion" />
+          <EntitySet Name="AdGroups" EntityType="Self.AdGroup" />
+          <EntitySet Name="CampaignCriterions" EntityType="Self.CampaignCriterion" />
+          <EntitySet Name="Campaigns" EntityType="Self.Campaign" />
+          <EntitySet Name="Directions" EntityType="Self.Direction" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="GMailModelStoreContainer" CdmEntityContainer="Entities">
+          <EntitySetMapping Name="CalendarEvents">
+            <EntityTypeMapping TypeName="GMailModel.CalendarEvent">
+              <MappingFragment StoreEntitySet="CalendarEvents">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="CalendarId" ColumnName="CalendarId" />
+                <ScalarProperty Name="Summary" ColumnName="Summary" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="AllDayEvent" ColumnName="AllDayEvent" />
+                <ScalarProperty Name="StartDateTime" ColumnName="StartDateTime" />
+                <ScalarProperty Name="EndDateTime" ColumnName="EndDateTime" />
+                <ScalarProperty Name="OriginalStartTimeDateTime" ColumnName="OriginalStartTimeDateTime" />
+                <ScalarProperty Name="SendNotification" ColumnName="SendNotification" />
+                <ScalarProperty Name="Kind" ColumnName="Kind" />
+                <ScalarProperty Name="ETag" ColumnName="ETag" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="HTMLLink" ColumnName="HTMLLink" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="Updated" ColumnName="Updated" />
+                <ScalarProperty Name="ColorId" ColumnName="ColorId" />
+                <ScalarProperty Name="CreatorEmail" ColumnName="CreatorEmail" />
+                <ScalarProperty Name="CreatorDisplayName" ColumnName="CreatorDisplayName" />
+                <ScalarProperty Name="OrganizerEmail" ColumnName="OrganizerEmail" />
+                <ScalarProperty Name="OrganizerDisplayName" ColumnName="OrganizerDisplayName" />
+                <ScalarProperty Name="Recurrences" ColumnName="Recurrences" />
+                <ScalarProperty Name="RecurringEventId" ColumnName="RecurringEventId" />
+                <ScalarProperty Name="Transparency" ColumnName="Transparency" />
+                <ScalarProperty Name="Visibility" ColumnName="Visibility" />
+                <ScalarProperty Name="iCalUid" ColumnName="iCalUid" />
+                <ScalarProperty Name="Sequence" ColumnName="Sequence" />
+                <ScalarProperty Name="AttendeesAggregate" ColumnName="AttendeesAggregate" />
+                <ScalarProperty Name="AttendeesEmails" ColumnName="AttendeesEmails" />
+                <ScalarProperty Name="AttendeesDisplayNames" ColumnName="AttendeesDisplayNames" />
+                <ScalarProperty Name="AttendeesOmitted" ColumnName="AttendeesOmitted" />
+                <ScalarProperty Name="ExtendedPropPrivateKey" ColumnName="ExtendedPropPrivateKey" />
+                <ScalarProperty Name="ExtendedPropPrivateVal" ColumnName="ExtendedPropPrivateVal" />
+                <ScalarProperty Name="ExtendedPropSharedKey" ColumnName="ExtendedPropSharedKey" />
+                <ScalarProperty Name="ExtendedPropSharedVal" ColumnName="ExtendedPropSharedVal" />
+                <ScalarProperty Name="GadgetAggregate" ColumnName="GadgetAggregate" />
+                <ScalarProperty Name="AnyoneCanAddSelf" ColumnName="AnyoneCanAddSelf" />
+                <ScalarProperty Name="GuestsCanInviteOthers" ColumnName="GuestsCanInviteOthers" />
+                <ScalarProperty Name="GuestsCanSeeOtherGuests" ColumnName="GuestsCanSeeOtherGuests" />
+                <ScalarProperty Name="PrivateCopy" ColumnName="PrivateCopy" />
+                <ScalarProperty Name="RemindersUseDefault" ColumnName="RemindersUseDefault" />
+                <ScalarProperty Name="ReminderOverrideMethods" ColumnName="ReminderOverrideMethods" />
+                <ScalarProperty Name="ReminderOverrideMinutes" ColumnName="ReminderOverrideMinutes" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Calendars">
+            <EntityTypeMapping TypeName="GMailModel.Calendar">
+              <MappingFragment StoreEntitySet="Calendars">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Summary" ColumnName="Summary" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Kind" ColumnName="Kind" />
+                <ScalarProperty Name="ETag" ColumnName="ETag" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="Timezone" ColumnName="Timezone" />
+                <ScalarProperty Name="SummaryOverride" ColumnName="SummaryOverride" />
+                <ScalarProperty Name="ColorId" ColumnName="ColorId" />
+                <ScalarProperty Name="Hidden" ColumnName="Hidden" />
+                <ScalarProperty Name="Selected" ColumnName="Selected" />
+                <ScalarProperty Name="AccessRole" ColumnName="AccessRole" />
+                <ScalarProperty Name="ReminderMethods" ColumnName="ReminderMethods" />
+                <ScalarProperty Name="ReminderMinutes" ColumnName="ReminderMinutes" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ContactGroups">
+            <EntityTypeMapping TypeName="GMailModel.ContactGroup">
+              <MappingFragment StoreEntitySet="ContactGroups">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Group" ColumnName="Group" />
+                <ScalarProperty Name="SystemGroup" ColumnName="SystemGroup" />
+                <ScalarProperty Name="ETag" ColumnName="ETag" />
+                <ScalarProperty Name="Updated" ColumnName="Updated" />
+                <ScalarProperty Name="SelfLink" ColumnName="SelfLink" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Contacts">
+            <EntityTypeMapping TypeName="GMailModel.Contact">
+              <MappingFragment StoreEntitySet="Contacts">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Fullname" ColumnName="Fullname" />
+                <ScalarProperty Name="NamePrefix" ColumnName="NamePrefix" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="MiddleName" ColumnName="MiddleName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="NameSuffix" ColumnName="NameSuffix" />
+                <ScalarProperty Name="Nickname" ColumnName="Nickname" />
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="Anniversaries" ColumnName="Anniversaries" />
+                <ScalarProperty Name="CustomEventTypes" ColumnName="CustomEventTypes" />
+                <ScalarProperty Name="CustomEvents" ColumnName="CustomEvents" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="Groups" ColumnName="Groups" />
+                <ScalarProperty Name="OrganizationName" ColumnName="OrganizationName" />
+                <ScalarProperty Name="OrganizationTitle" ColumnName="OrganizationTitle" />
+                <ScalarProperty Name="Photo" ColumnName="Photo" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="HomeEmailAddresses" ColumnName="HomeEmailAddresses" />
+                <ScalarProperty Name="WorkEmailAddresses" ColumnName="WorkEmailAddresses" />
+                <ScalarProperty Name="CustomEmailAddressTypes" ColumnName="CustomEmailAddressTypes" />
+                <ScalarProperty Name="CustomEmailAddresses" ColumnName="CustomEmailAddresses" />
+                <ScalarProperty Name="HomePhoneNumbers" ColumnName="HomePhoneNumbers" />
+                <ScalarProperty Name="WorkPhoneNumbers" ColumnName="WorkPhoneNumbers" />
+                <ScalarProperty Name="MobilePhoneNumbers" ColumnName="MobilePhoneNumbers" />
+                <ScalarProperty Name="GoogleVoicePhoneNumbers" ColumnName="GoogleVoicePhoneNumbers" />
+                <ScalarProperty Name="HomeFaxes" ColumnName="HomeFaxes" />
+                <ScalarProperty Name="WorkFaxes" ColumnName="WorkFaxes" />
+                <ScalarProperty Name="Pagers" ColumnName="Pagers" />
+                <ScalarProperty Name="CustomPhoneNumberTypes" ColumnName="CustomPhoneNumberTypes" />
+                <ScalarProperty Name="CustomPhoneNumbers" ColumnName="CustomPhoneNumbers" />
+                <ScalarProperty Name="HomeAddresses" ColumnName="HomeAddresses" />
+                <ScalarProperty Name="WorkAddresses" ColumnName="WorkAddresses" />
+                <ScalarProperty Name="CustomAddressTypes" ColumnName="CustomAddressTypes" />
+                <ScalarProperty Name="CustomAddresses" ColumnName="CustomAddresses" />
+                <ScalarProperty Name="BillingInfo" ColumnName="BillingInfo" />
+                <ScalarProperty Name="RelationTypes" ColumnName="RelationTypes" />
+                <ScalarProperty Name="RelationValues" ColumnName="RelationValues" />
+                <ScalarProperty Name="IMTypes" ColumnName="IMTypes" />
+                <ScalarProperty Name="IMValues" ColumnName="IMValues" />
+                <ScalarProperty Name="WebsiteTypes" ColumnName="WebsiteTypes" />
+                <ScalarProperty Name="WebsiteValues" ColumnName="WebsiteValues" />
+                <ScalarProperty Name="ETag" ColumnName="ETag" />
+                <ScalarProperty Name="Updated" ColumnName="Updated" />
+                <ScalarProperty Name="SelfLink" ColumnName="SelfLink" />
+                <ScalarProperty Name="EditLink" ColumnName="EditLink" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Documents">
+            <EntityTypeMapping TypeName="GMailModel.Document">
+              <MappingFragment StoreEntitySet="Documents">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ETag" ColumnName="ETag" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="AuthorName" ColumnName="AuthorName" />
+                <ScalarProperty Name="AuthorEmail" ColumnName="AuthorEmail" />
+                <ScalarProperty Name="DocumentType" ColumnName="DocumentType" />
+                <ScalarProperty Name="Labels" ColumnName="Labels" />
+                <ScalarProperty Name="Updated" ColumnName="Updated" />
+                <ScalarProperty Name="LastModifiedByEmail" ColumnName="LastModifiedByEmail" />
+                <ScalarProperty Name="LastModifiedByName" ColumnName="LastModifiedByName" />
+                <ScalarProperty Name="LastViewed" ColumnName="LastViewed" />
+                <ScalarProperty Name="Published" ColumnName="Published" />
+                <ScalarProperty Name="PDFLink" ColumnName="PDFLink" />
+                <ScalarProperty Name="WebLink" ColumnName="WebLink" />
+                <ScalarProperty Name="ACLLink" ColumnName="ACLLink" />
+                <ScalarProperty Name="FolderId" ColumnName="FolderId" />
+                <ScalarProperty Name="FolderName" ColumnName="FolderName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DocumentsACLs">
+            <EntityTypeMapping TypeName="GMailModel.DocumentsACL">
+              <MappingFragment StoreEntitySet="DocumentsACL">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="DocumentId" ColumnName="DocumentId" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Role" ColumnName="Role" />
+                <ScalarProperty Name="Scope" ColumnName="Scope" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Updated" ColumnName="Updated" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GDrives">
+            <EntityTypeMapping TypeName="GMailModel.GDrive">
+              <MappingFragment StoreEntitySet="GDrive">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Formats" ColumnName="Formats" />
+                <ScalarProperty Name="Extension" ColumnName="Extension" />
+                <ScalarProperty Name="MIMEType" ColumnName="MIMEType" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="Size" ColumnName="Size" />
+                <ScalarProperty Name="Owners" ColumnName="Owners" />
+                <ScalarProperty Name="Folder" ColumnName="Folder" />
+                <ScalarProperty Name="Starred" ColumnName="Starred" />
+                <ScalarProperty Name="Restricted" ColumnName="Restricted" />
+                <ScalarProperty Name="Hidden" ColumnName="Hidden" />
+                <ScalarProperty Name="Trashed" ColumnName="Trashed" />
+                <ScalarProperty Name="Viewed" ColumnName="Viewed" />
+                <ScalarProperty Name="ETag" ColumnName="ETag" />
+                <ScalarProperty Name="ParentIds" ColumnName="ParentIds" />
+                <ScalarProperty Name="ParentIsRoot" ColumnName="ParentIsRoot" />
+                <ScalarProperty Name="ChildIds" ColumnName="ChildIds" />
+                <ScalarProperty Name="ChildLinks" ColumnName="ChildLinks" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GDriveACLs">
+            <EntityTypeMapping TypeName="GMailModel.GDriveACL">
+              <MappingFragment StoreEntitySet="GDriveACL">
+                <ScalarProperty Name="PermissionId" ColumnName="PermissionId" />
+                <ScalarProperty Name="ResourceId" ColumnName="ResourceId" />
+                <ScalarProperty Name="Role" ColumnName="Role" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="AdditionalRoles" ColumnName="AdditionalRoles" />
+                <ScalarProperty Name="ETag" ColumnName="ETag" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Mailboxes">
+            <EntityTypeMapping TypeName="GMailModel.Mailbox">
+              <MappingFragment StoreEntitySet="Mailboxes">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Mailbox1" ColumnName="Mailbox" />
+                <ScalarProperty Name="MessagesCount" ColumnName="MessagesCount" />
+                <ScalarProperty Name="RecentMessagesCount" ColumnName="RecentMessagesCount" />
+                <ScalarProperty Name="Flags" ColumnName="Flags" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MailMessages">
+            <EntityTypeMapping TypeName="GMailModel.MailMessage">
+              <MappingFragment StoreEntitySet="MailMessages">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Mailbox" ColumnName="Mailbox" />
+                <ScalarProperty Name="Subject" ColumnName="Subject" />
+                <ScalarProperty Name="From" ColumnName="From" />
+                <ScalarProperty Name="To" ColumnName="To" />
+                <ScalarProperty Name="CC" ColumnName="CC" />
+                <ScalarProperty Name="BCC" ColumnName="BCC" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="MessageBody" ColumnName="MessageBody" />
+                <ScalarProperty Name="Attachments" ColumnName="Attachments" />
+                <ScalarProperty Name="AttachmentData" ColumnName="AttachmentData" />
+                <ScalarProperty Name="Size" ColumnName="Size" />
+                <ScalarProperty Name="Flags" ColumnName="Flags" />
+                <ScalarProperty Name="Labels" ColumnName="Labels" />
+                <ScalarProperty Name="ThreadId" ColumnName="ThreadId" />
+                <ScalarProperty Name="MsgId" ColumnName="MsgId" />
+                <ScalarProperty Name="PartIds" ColumnName="PartIds" />
+                <ScalarProperty Name="PartFilenames" ColumnName="PartFilenames" />
+                <ScalarProperty Name="PartContentTypes" ColumnName="PartContentTypes" />
+                <ScalarProperty Name="PartSizes" ColumnName="PartSizes" />
+                <ScalarProperty Name="Headers" ColumnName="Headers" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AdGroupAds">
+            <EntityTypeMapping TypeName="GMailModel.AdGroupAd">
+              <MappingFragment StoreEntitySet="AdGroupAds">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ad_id" ColumnName="ad_id" />
+                <ScalarProperty Name="ad_url" ColumnName="ad_url" />
+                <ScalarProperty Name="ad_displayUrl" ColumnName="ad_displayUrl" />
+                <ScalarProperty Name="ad_disapprovalReasons" ColumnName="ad_disapprovalReasons" />
+                <ScalarProperty Name="ad_name" ColumnName="ad_name" />
+                <ScalarProperty Name="ad_type" ColumnName="ad_type" />
+                <ScalarProperty Name="ad_description1" ColumnName="ad_description1" />
+                <ScalarProperty Name="ad_description2" ColumnName="ad_description2" />
+                <ScalarProperty Name="ad_image_mediaId" ColumnName="ad_image_mediaId" />
+                <ScalarProperty Name="ad_image_type" ColumnName="ad_image_type" />
+                <ScalarProperty Name="ad_image_data" ColumnName="ad_image_data" />
+                <ScalarProperty Name="ad_adToCopyImageFrom" ColumnName="ad_adToCopyImageFrom" />
+                <ScalarProperty Name="ad_headline" ColumnName="ad_headline" />
+                <ScalarProperty Name="ad_description" ColumnName="ad_description" />
+                <ScalarProperty Name="ad_markupLanguages" ColumnName="ad_markupLanguages" />
+                <ScalarProperty Name="ad_mobileCarriers" ColumnName="ad_mobileCarriers" />
+                <ScalarProperty Name="ad_businessName" ColumnName="ad_businessName" />
+                <ScalarProperty Name="ad_countryCode" ColumnName="ad_countryCode" />
+                <ScalarProperty Name="ad_phoneNumber" ColumnName="ad_phoneNumber" />
+                <ScalarProperty Name="ad_promotionLine" ColumnName="ad_promotionLine" />
+                <ScalarProperty Name="ad_snippet" ColumnName="ad_snippet" />
+                <ScalarProperty Name="ad_impressionBeaconUrl" ColumnName="ad_impressionBeaconUrl" />
+                <ScalarProperty Name="ad_adDuration" ColumnName="ad_adDuration" />
+                <ScalarProperty Name="ad_certifiedVendorFormatId" ColumnName="ad_certifiedVendorFormatId" />
+                <ScalarProperty Name="ad_sourceUrl" ColumnName="ad_sourceUrl" />
+                <ScalarProperty Name="ad_richMediaAdType" ColumnName="ad_richMediaAdType" />
+                <ScalarProperty Name="ad_templateid" ColumnName="ad_templateid" />
+                <ScalarProperty Name="ad_templateelements" ColumnName="ad_templateelements" />
+                <ScalarProperty Name="ad_duration" ColumnName="ad_duration" />
+                <ScalarProperty Name="experimentdata_experimentId" ColumnName="experimentdata_experimentId" />
+                <ScalarProperty Name="experimentdata_experimentDeltaStatus" ColumnName="experimentdata_experimentDeltaStatus" />
+                <ScalarProperty Name="experimentdata_experimentDataStatus" ColumnName="experimentdata_experimentDataStatus" />
+                <ScalarProperty Name="experimentdata_experimentBidMultipliers_AdGroupExperimentBidMultipliersType" ColumnName="experimentdata_experimentBidMultipliers_AdGroupExperimentBidMultipliersType" />
+                <ScalarProperty Name="experimentdata_experimentBidMultipliers_maxCpcMultiplier" ColumnName="experimentdata_experimentBidMultipliers_maxCpcMultiplier" />
+                <ScalarProperty Name="experimentdata_experimentBidMultipliers_maxContentCpcMultiplier" ColumnName="experimentdata_experimentBidMultipliers_maxContentCpcMultiplier" />
+                <ScalarProperty Name="experimentdata_experimentBidMultipliers_maxContentCpmMultiplier" ColumnName="experimentdata_experimentBidMultipliers_maxContentCpmMultiplier" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="approvalStatus" ColumnName="approvalStatus" />
+                <ScalarProperty Name="trademarkDisapproved" ColumnName="trademarkDisapproved" />
+                <ScalarProperty Name="stats_startDate" ColumnName="stats_startDate" />
+                <ScalarProperty Name="stats_endDate" ColumnName="stats_endDate" />
+                <ScalarProperty Name="stats_network" ColumnName="stats_network" />
+                <ScalarProperty Name="stats_clicks" ColumnName="stats_clicks" />
+                <ScalarProperty Name="stats_impressions" ColumnName="stats_impressions" />
+                <ScalarProperty Name="stats_cost_comparablevaluetype" ColumnName="stats_cost_comparablevaluetype" />
+                <ScalarProperty Name="stats_cost_microamount" ColumnName="stats_cost_microamount" />
+                <ScalarProperty Name="stats_averageposition" ColumnName="stats_averageposition" />
+                <ScalarProperty Name="stats_averagecpc_comparablevaluetype" ColumnName="stats_averagecpc_comparablevaluetype" />
+                <ScalarProperty Name="stats_averagecpc_microamount" ColumnName="stats_averagecpc_microamount" />
+                <ScalarProperty Name="stats_averagecpm_comparablevaluetype" ColumnName="stats_averagecpm_comparablevaluetype" />
+                <ScalarProperty Name="stats_averagecpm_microamount" ColumnName="stats_averagecpm_microamount" />
+                <ScalarProperty Name="stats_ctr" ColumnName="stats_ctr" />
+                <ScalarProperty Name="stats_conversions" ColumnName="stats_conversions" />
+                <ScalarProperty Name="stats_viewthroughconversions" ColumnName="stats_viewthroughconversions" />
+                <ScalarProperty Name="stats_statstype" ColumnName="stats_statstype" />
+                <ScalarProperty Name="stats_percentServed" ColumnName="stats_percentServed" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AdGroupCriterions">
+            <EntityTypeMapping TypeName="GMailModel.AdGroupCriterion">
+              <MappingFragment StoreEntitySet="AdGroupCriterion">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="adGroupId" ColumnName="adGroupId" />
+                <ScalarProperty Name="criterionUse" ColumnName="criterionUse" />
+                <ScalarProperty Name="criterion_id" ColumnName="criterion_id" />
+                <ScalarProperty Name="criterion_type" ColumnName="criterion_type" />
+                <ScalarProperty Name="criterion_ageRangeType" ColumnName="criterion_ageRangeType" />
+                <ScalarProperty Name="criterion_genderType" ColumnName="criterion_genderType" />
+                <ScalarProperty Name="criterion_text" ColumnName="criterion_text" />
+                <ScalarProperty Name="criterion_matchType" ColumnName="criterion_matchType" />
+                <ScalarProperty Name="criterion_mobileAppCategoryId" ColumnName="criterion_mobileAppCategoryId" />
+                <ScalarProperty Name="criterion_displayName" ColumnName="criterion_displayName" />
+                <ScalarProperty Name="criterion_appid" ColumnName="criterion_appid" />
+                <ScalarProperty Name="criterion_URL" ColumnName="criterion_URL" />
+                <ScalarProperty Name="criterion_conditions_argument" ColumnName="criterion_conditions_argument" />
+                <ScalarProperty Name="criterion_conditions_operand" ColumnName="criterion_conditions_operand" />
+                <ScalarProperty Name="criterion_userInterestId" ColumnName="criterion_userInterestId" />
+                <ScalarProperty Name="criterion_userInterestName" ColumnName="criterion_userInterestName" />
+                <ScalarProperty Name="criterion_userListId" ColumnName="criterion_userListId" />
+                <ScalarProperty Name="criterion_userListName" ColumnName="criterion_userListName" />
+                <ScalarProperty Name="criterion_userListMembershipStatus" ColumnName="criterion_userListMembershipStatus" />
+                <ScalarProperty Name="criterion_verticalid" ColumnName="criterion_verticalid" />
+                <ScalarProperty Name="criterion_verticalparentid" ColumnName="criterion_verticalparentid" />
+                <ScalarProperty Name="criterion_path" ColumnName="criterion_path" />
+                <ScalarProperty Name="criterion_criteriaCoverage" ColumnName="criterion_criteriaCoverage" />
+                <ScalarProperty Name="criterion_criteriaSamples" ColumnName="criterion_criteriaSamples" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AdGroups">
+            <EntityTypeMapping TypeName="GMailModel.AdGroup">
+              <MappingFragment StoreEntitySet="AdGroups">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="campaignid" ColumnName="campaignid" />
+                <ScalarProperty Name="campaignname" ColumnName="campaignname" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="setting_settingtype" ColumnName="setting_settingtype" />
+                <ScalarProperty Name="setting_details_criterionTypeGroup" ColumnName="setting_details_criterionTypeGroup" />
+                <ScalarProperty Name="setting_details_targetAll" ColumnName="setting_details_targetAll" />
+                <ScalarProperty Name="bids_AdGroupBidsType" ColumnName="bids_AdGroupBidsType" />
+                <ScalarProperty Name="bids_proxyKeywordMaxCpc_amount_comparablevaluetype" ColumnName="bids_proxyKeywordMaxCpc_amount_comparablevaluetype" />
+                <ScalarProperty Name="bids_proxyKeywordMaxCpc_amount_microamount" ColumnName="bids_proxyKeywordMaxCpc_amount_microamount" />
+                <ScalarProperty Name="bids_enhancedCpcEnabled" ColumnName="bids_enhancedCpcEnabled" />
+                <ScalarProperty Name="bids_targetCpa_amount_comparablevaluetype" ColumnName="bids_targetCpa_amount_comparablevaluetype" />
+                <ScalarProperty Name="bids_targetCpa_amount_microamount" ColumnName="bids_targetCpa_amount_microamount" />
+                <ScalarProperty Name="bids_conversionOptimizerBidType" ColumnName="bids_conversionOptimizerBidType" />
+                <ScalarProperty Name="bids_keywordMaxCpc_amount_comparablevaluetype" ColumnName="bids_keywordMaxCpc_amount_comparablevaluetype" />
+                <ScalarProperty Name="bids_keywordMaxCpc_amount_microamount" ColumnName="bids_keywordMaxCpc_amount_microamount" />
+                <ScalarProperty Name="bids_keywordContentMaxCpc_amount_comparablevaluetype" ColumnName="bids_keywordContentMaxCpc_amount_comparablevaluetype" />
+                <ScalarProperty Name="bids_keywordContentMaxCpc_amount_microamount" ColumnName="bids_keywordContentMaxCpc_amount_microamount" />
+                <ScalarProperty Name="bids_maxCpm_amount_comparablevaluetype" ColumnName="bids_maxCpm_amount_comparablevaluetype" />
+                <ScalarProperty Name="bids_maxCpm_amount_microamount" ColumnName="bids_maxCpm_amount_microamount" />
+                <ScalarProperty Name="bids_percentCpa_amount_comparablevaluetype" ColumnName="bids_percentCpa_amount_comparablevaluetype" />
+                <ScalarProperty Name="bids_percentCpa_amount_microamount" ColumnName="bids_percentCpa_amount_microamount" />
+                <ScalarProperty Name="experimentdata_experimentId" ColumnName="experimentdata_experimentId" />
+                <ScalarProperty Name="experimentdata_experimentDeltaStatus" ColumnName="experimentdata_experimentDeltaStatus" />
+                <ScalarProperty Name="experimentdata_experimentDataStatus" ColumnName="experimentdata_experimentDataStatus" />
+                <ScalarProperty Name="experimentdata_experimentBidMultipliers_AdGroupExperimentBidMultipliersType" ColumnName="experimentdata_experimentBidMultipliers_AdGroupExperimentBidMultipliersType" />
+                <ScalarProperty Name="experimentdata_experimentBidMultipliers_maxCpcMultiplier" ColumnName="experimentdata_experimentBidMultipliers_maxCpcMultiplier" />
+                <ScalarProperty Name="experimentdata_experimentBidMultipliers_maxContentCpcMultiplier" ColumnName="experimentdata_experimentBidMultipliers_maxContentCpcMultiplier" />
+                <ScalarProperty Name="experimentdata_experimentBidMultipliers_maxContentCpmMultiplier" ColumnName="experimentdata_experimentBidMultipliers_maxContentCpmMultiplier" />
+                <ScalarProperty Name="stats_startDate" ColumnName="stats_startDate" />
+                <ScalarProperty Name="stats_endDate" ColumnName="stats_endDate" />
+                <ScalarProperty Name="stats_network" ColumnName="stats_network" />
+                <ScalarProperty Name="stats_clicks" ColumnName="stats_clicks" />
+                <ScalarProperty Name="stats_impressions" ColumnName="stats_impressions" />
+                <ScalarProperty Name="stats_cost_comparablevaluetype" ColumnName="stats_cost_comparablevaluetype" />
+                <ScalarProperty Name="stats_cost_microamount" ColumnName="stats_cost_microamount" />
+                <ScalarProperty Name="stats_averageposition" ColumnName="stats_averageposition" />
+                <ScalarProperty Name="stats_averagecpc_comparablevaluetype" ColumnName="stats_averagecpc_comparablevaluetype" />
+                <ScalarProperty Name="stats_averagecpc_microamount" ColumnName="stats_averagecpc_microamount" />
+                <ScalarProperty Name="stats_averagecpm_comparablevaluetype" ColumnName="stats_averagecpm_comparablevaluetype" />
+                <ScalarProperty Name="stats_averagecpm_microamount" ColumnName="stats_averagecpm_microamount" />
+                <ScalarProperty Name="stats_ctr" ColumnName="stats_ctr" />
+                <ScalarProperty Name="stats_conversions" ColumnName="stats_conversions" />
+                <ScalarProperty Name="stats_viewthroughconversions" ColumnName="stats_viewthroughconversions" />
+                <ScalarProperty Name="stats_statstype" ColumnName="stats_statstype" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CampaignCriterions">
+            <EntityTypeMapping TypeName="GMailModel.CampaignCriterion">
+              <MappingFragment StoreEntitySet="CampaignCriterion">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="adGroupId" ColumnName="adGroupId" />
+                <ScalarProperty Name="criterionUse" ColumnName="criterionUse" />
+                <ScalarProperty Name="criterion_id" ColumnName="criterion_id" />
+                <ScalarProperty Name="criterion_type" ColumnName="criterion_type" />
+                <ScalarProperty Name="criterion_dayofweek" ColumnName="criterion_dayofweek" />
+                <ScalarProperty Name="criterion_starthour" ColumnName="criterion_starthour" />
+                <ScalarProperty Name="criterion_startminute" ColumnName="criterion_startminute" />
+                <ScalarProperty Name="criterion_endhour" ColumnName="criterion_endhour" />
+                <ScalarProperty Name="criterion_endminute" ColumnName="criterion_endminute" />
+                <ScalarProperty Name="criterion_ageRangeType" ColumnName="criterion_ageRangeType" />
+                <ScalarProperty Name="criterion_name" ColumnName="criterion_name" />
+                <ScalarProperty Name="criterion_countrycode" ColumnName="criterion_countrycode" />
+                <ScalarProperty Name="criterion_contentLabelType" ColumnName="criterion_contentLabelType" />
+                <ScalarProperty Name="criterion_genderType" ColumnName="criterion_genderType" />
+                <ScalarProperty Name="criterion_text" ColumnName="criterion_text" />
+                <ScalarProperty Name="criterion_matchType" ColumnName="criterion_matchType" />
+                <ScalarProperty Name="criterion_code" ColumnName="criterion_code" />
+                <ScalarProperty Name="criterion_locationname" ColumnName="criterion_locationname" />
+                <ScalarProperty Name="criterion_displayname" ColumnName="criterion_displayname" />
+                <ScalarProperty Name="criterion_targetingstatus" ColumnName="criterion_targetingstatus" />
+                <ScalarProperty Name="criterion_mobileAppCategoryId" ColumnName="criterion_mobileAppCategoryId" />
+                <ScalarProperty Name="criterion_appid" ColumnName="criterion_appid" />
+                <ScalarProperty Name="criterion_deviceName" ColumnName="criterion_deviceName" />
+                <ScalarProperty Name="criterion_manufacturerName" ColumnName="criterion_manufacturerName" />
+                <ScalarProperty Name="criterion_deviceType" ColumnName="criterion_deviceType" />
+                <ScalarProperty Name="criterion_operatingSystemName" ColumnName="criterion_operatingSystemName" />
+                <ScalarProperty Name="criterion_osMajorVersion" ColumnName="criterion_osMajorVersion" />
+                <ScalarProperty Name="criterion_osMinorVersion" ColumnName="criterion_osMinorVersion" />
+                <ScalarProperty Name="criterion_operatorType" ColumnName="criterion_operatorType" />
+                <ScalarProperty Name="criterion_URL" ColumnName="criterion_URL" />
+                <ScalarProperty Name="criterion_platformName" ColumnName="criterion_platformName" />
+                <ScalarProperty Name="criterion_conditions_argument" ColumnName="criterion_conditions_argument" />
+                <ScalarProperty Name="criterion_conditions_operand" ColumnName="criterion_conditions_operand" />
+                <ScalarProperty Name="criterion_radiusDistanceUnits" ColumnName="criterion_radiusDistanceUnits" />
+                <ScalarProperty Name="criterion_radiusInUnits" ColumnName="criterion_radiusInUnits" />
+                <ScalarProperty Name="criterion_userInterestId" ColumnName="criterion_userInterestId" />
+                <ScalarProperty Name="criterion_userInterestName" ColumnName="criterion_userInterestName" />
+                <ScalarProperty Name="criterion_userListId" ColumnName="criterion_userListId" />
+                <ScalarProperty Name="criterion_userListName" ColumnName="criterion_userListName" />
+                <ScalarProperty Name="criterion_userListMembershipStatus" ColumnName="criterion_userListMembershipStatus" />
+                <ScalarProperty Name="criterion_verticalid" ColumnName="criterion_verticalid" />
+                <ScalarProperty Name="criterion_verticalparentid" ColumnName="criterion_verticalparentid" />
+                <ScalarProperty Name="criterion_path" ColumnName="criterion_path" />
+                <ScalarProperty Name="criterion_criteriaCoverage" ColumnName="criterion_criteriaCoverage" />
+                <ScalarProperty Name="criterion_criteriaSamples" ColumnName="criterion_criteriaSamples" />
+                <ScalarProperty Name="criterion_address_streetaddress" ColumnName="criterion_address_streetaddress" />
+                <ScalarProperty Name="criterion_address_streetaddress2" ColumnName="criterion_address_streetaddress2" />
+                <ScalarProperty Name="criterion_address_cityname" ColumnName="criterion_address_cityname" />
+                <ScalarProperty Name="criterion_address_provincecode" ColumnName="criterion_address_provincecode" />
+                <ScalarProperty Name="criterion_address_provincename" ColumnName="criterion_address_provincename" />
+                <ScalarProperty Name="criterion_address_postalcode" ColumnName="criterion_address_postalcode" />
+                <ScalarProperty Name="criterion_address_countrycode" ColumnName="criterion_address_countrycode" />
+                <ScalarProperty Name="criterion_geopoint_latitudeinmicrodegrees" ColumnName="criterion_geopoint_latitudeinmicrodegrees" />
+                <ScalarProperty Name="criterion_geopoint_longitudeinmicrodegrees" ColumnName="criterion_geopoint_longitudeinmicrodegrees" />
+                <ScalarProperty Name="criterion_verticies_latitudeinmicrodegrees" ColumnName="criterion_verticies_latitudeinmicrodegrees" />
+                <ScalarProperty Name="criterion_verticies_longitudeinmicrodegrees" ColumnName="criterion_verticies_longitudeinmicrodegrees" />
+                <ScalarProperty Name="totalNumEntries" ColumnName="totalNumEntries" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Campaigns">
+            <EntityTypeMapping TypeName="GMailModel.Campaign">
+              <MappingFragment StoreEntitySet="Campaigns">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="servingstatus" ColumnName="servingstatus" />
+                <ScalarProperty Name="startdate" ColumnName="startdate" />
+                <ScalarProperty Name="enddate" ColumnName="enddate" />
+                <ScalarProperty Name="totalnumentries" ColumnName="totalnumentries" />
+                <ScalarProperty Name="adservingoptimizationstatus" ColumnName="adservingoptimizationstatus" />
+                <ScalarProperty Name="biddingstrategy_biddingstrategytype" ColumnName="biddingstrategy_biddingstrategytype" />
+                <ScalarProperty Name="biddingstrategy_pricingModel" ColumnName="biddingstrategy_pricingModel" />
+                <ScalarProperty Name="biddingstrategy_conversionOptimizerBidType" ColumnName="biddingstrategy_conversionOptimizerBidType" />
+                <ScalarProperty Name="biddingstrategy_enhancedcpcenabled" ColumnName="biddingstrategy_enhancedcpcenabled" />
+                <ScalarProperty Name="biddingstrategy_bidCeiling_comparablevaluetype" ColumnName="biddingstrategy_bidCeiling_comparablevaluetype" />
+                <ScalarProperty Name="biddingstrategy_bidCeiling_microamount" ColumnName="biddingstrategy_bidCeiling_microamount" />
+                <ScalarProperty Name="budget_budgetid" ColumnName="budget_budgetid" />
+                <ScalarProperty Name="budget_name" ColumnName="budget_name" />
+                <ScalarProperty Name="budget_period" ColumnName="budget_period" />
+                <ScalarProperty Name="budget_amount_comparablevaluetype" ColumnName="budget_amount_comparablevaluetype" />
+                <ScalarProperty Name="budget_amount_microamount" ColumnName="budget_amount_microamount" />
+                <ScalarProperty Name="budget_deliverymethod" ColumnName="budget_deliverymethod" />
+                <ScalarProperty Name="budget_referencecount" ColumnName="budget_referencecount" />
+                <ScalarProperty Name="budget_status" ColumnName="budget_status" />
+                <ScalarProperty Name="campaignstats_startDate" ColumnName="campaignstats_startDate" />
+                <ScalarProperty Name="campaignstats_endDate" ColumnName="campaignstats_endDate" />
+                <ScalarProperty Name="campaignstats_network" ColumnName="campaignstats_network" />
+                <ScalarProperty Name="campaignstats_clicks" ColumnName="campaignstats_clicks" />
+                <ScalarProperty Name="campaignstats_impressions" ColumnName="campaignstats_impressions" />
+                <ScalarProperty Name="campaignstats_cost_comparablevaluetype" ColumnName="campaignstats_cost_comparablevaluetype" />
+                <ScalarProperty Name="campaignstats_cost_microamount" ColumnName="campaignstats_cost_microamount" />
+                <ScalarProperty Name="campaignstats_averageposition" ColumnName="campaignstats_averageposition" />
+                <ScalarProperty Name="campaignstats_averagecpc_comparablevaluetype" ColumnName="campaignstats_averagecpc_comparablevaluetype" />
+                <ScalarProperty Name="campaignstats_averagecpc_microamount" ColumnName="campaignstats_averagecpc_microamount" />
+                <ScalarProperty Name="campaignstats_averagecpm_comparablevaluetype" ColumnName="campaignstats_averagecpm_comparablevaluetype" />
+                <ScalarProperty Name="campaignstats_averagecpm_microamount" ColumnName="campaignstats_averagecpm_microamount" />
+                <ScalarProperty Name="campaignstats_ctr" ColumnName="campaignstats_ctr" />
+                <ScalarProperty Name="campaignstats_conversions" ColumnName="campaignstats_conversions" />
+                <ScalarProperty Name="campaignstats_viewthroughconversions" ColumnName="campaignstats_viewthroughconversions" />
+                <ScalarProperty Name="campaignstats_statstype" ColumnName="campaignstats_statstype" />
+                <ScalarProperty Name="conversionoptimizereligibility_eligible" ColumnName="conversionoptimizereligibility_eligible" />
+                <ScalarProperty Name="conversionoptimizereligibility_rejectionreasons" ColumnName="conversionoptimizereligibility_rejectionreasons" />
+                <ScalarProperty Name="frequencycap_impressions" ColumnName="frequencycap_impressions" />
+                <ScalarProperty Name="frequencycap_level" ColumnName="frequencycap_level" />
+                <ScalarProperty Name="frequencycap_timeunit" ColumnName="frequencycap_timeunit" />
+                <ScalarProperty Name="settings_settingtype" ColumnName="settings_settingtype" />
+                <ScalarProperty Name="settings_optin" ColumnName="settings_optin" />
+                <ScalarProperty Name="settings_useAdGroup" ColumnName="settings_useAdGroup" />
+                <ScalarProperty Name="settings_trackingUrl" ColumnName="settings_trackingUrl" />
+                <ScalarProperty Name="settings_positivegeotargettype" ColumnName="settings_positivegeotargettype" />
+                <ScalarProperty Name="settings_negativegeotargettype" ColumnName="settings_negativegeotargettype" />
+                <ScalarProperty Name="networksetting_targetgooglesearch" ColumnName="networksetting_targetgooglesearch" />
+                <ScalarProperty Name="networksetting_targetsearchnetwork" ColumnName="networksetting_targetsearchnetwork" />
+                <ScalarProperty Name="networksetting_targetcontentnetwork" ColumnName="networksetting_targetcontentnetwork" />
+                <ScalarProperty Name="networksetting_targetpartnersearchnetwork" ColumnName="networksetting_targetpartnersearchnetwork" />
+                <ScalarProperty Name="totalbudget_budgetid" ColumnName="totalbudget_budgetid" />
+                <ScalarProperty Name="totalbudget_name" ColumnName="totalbudget_name" />
+                <ScalarProperty Name="totalbudget_period" ColumnName="totalbudget_period" />
+                <ScalarProperty Name="totalbudget_amount_comparablevaluetype" ColumnName="totalbudget_amount_comparablevaluetype" />
+                <ScalarProperty Name="totalbudget_amount_microamount" ColumnName="totalbudget_amount_microamount" />
+                <ScalarProperty Name="totalbudget_deliverymethod" ColumnName="totalbudget_deliverymethod" />
+                <ScalarProperty Name="totalbudget_referencecount" ColumnName="totalbudget_referencecount" />
+                <ScalarProperty Name="totalbudget_status" ColumnName="totalbudget_status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Directions">
+            <EntityTypeMapping TypeName="GMailModel.Direction">
+              <MappingFragment StoreEntitySet="Directions">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="StartAddress" ColumnName="StartAddress" />
+                <ScalarProperty Name="EndAddress" ColumnName="EndAddress" />
+                <ScalarProperty Name="Duration" ColumnName="Duration" />
+                <ScalarProperty Name="Distance" ColumnName="Distance" />
+                <ScalarProperty Name="StartLocation" ColumnName="StartLocation" />
+                <ScalarProperty Name="EndLocation" ColumnName="EndLocation" />
+                <ScalarProperty Name="TravelMode" ColumnName="TravelMode" />
+                <ScalarProperty Name="StepHTMLInstructions" ColumnName="StepHTMLInstructions" />
+                <ScalarProperty Name="StepDistance" ColumnName="StepDistance" />
+                <ScalarProperty Name="StepDuration" ColumnName="StepDuration" />
+                <ScalarProperty Name="StepStartLocation" ColumnName="StepStartLocation" />
+                <ScalarProperty Name="StepEndLocation" ColumnName="StepEndLocation" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
