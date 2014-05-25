@@ -33,6 +33,8 @@ namespace CUWebinars.Business.Notification.Handlers
             try
             {
                 var notificationMessage = _generalFormatter.Format(orderSubmittedEvent.EventObject, "OrderSubmitted");
+
+                notificationMessage.ReplyTo = "registrations+verify@bankwebinars.com";
                 notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);
             }

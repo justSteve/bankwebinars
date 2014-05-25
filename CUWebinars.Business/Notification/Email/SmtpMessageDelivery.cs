@@ -22,6 +22,7 @@ namespace CUWebinars.Business.Notification.Email
                 smtp.Timeout = 5000;
 
                 mailMessage.To.Add(new MailAddress("all.of.us@ttstrain.com"));
+                mailMessage.ReplyToList.Add(new MailAddress(notificationMessage.ReplyTo));
                 //if (notificationMessage.Addresses != null)
                 //{
                 //    foreach (var address in notificationMessage.Addresses)
