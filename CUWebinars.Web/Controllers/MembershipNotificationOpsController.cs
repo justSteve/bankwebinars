@@ -167,16 +167,16 @@ namespace CUWebinars.Web.Controllers
                                         newPassword
                                     );
 
-                    return Json(new { result = "success", email = newEmail, password = newPassword });
+                    return Json(new { Result = WebUiConstants.Success, email = newEmail, password = newPassword });
                 }
             }
             catch (Exception exception)
             {
                 //  don't swallow exception over long term. 
-                return Json(new { result = "failed" });
+                _logger.Error("CreateAUser: {0}", exception.Message);
             }
 
-            return View("MembershipNotifications");
+            return Json(new { Result = WebUiConstants.Fail });
         }
 
         [AllowAnonymous]
@@ -196,20 +196,18 @@ namespace CUWebinars.Web.Controllers
         public JsonResult ResetPassword(string email)
         {
             var globals = GlobalConfig.GlobalConfigSingleton;
-            var cResult = new Dictionary<string, string>(1);
 
             try
             {
                 _membershipService.ResetPassword(globals.Tenant, email);
-                cResult.Add(WebUiConstants.OpStatus, WebUiConstants.Success);
+                return Json(new { Result = WebUiConstants.Success });
             }
             catch (Exception exception)
             {
-                cResult.Add(WebUiConstants.OpStatus, "Fail");
+                _logger.Error("ResetPassword : {0}", exception.Message);
             }
 
-
-            return Json(cResult, JsonRequestBehavior.AllowGet);
+            return Json(new { Result = WebUiConstants.Fail });
         }
 
         public PartialViewResult GetPasswordResetConfirmFields()

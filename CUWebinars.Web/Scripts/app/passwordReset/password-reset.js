@@ -48,7 +48,7 @@ $(function () {
                 }
             }).done(function(data) {
 
-                if (data.Status === 'Success') {
+                if (data.Result === 'Success') {
                     crunchingLabel.html('<span class="label label-success">&nbsp; Reset Instructions sent!</span>');
                     $('#wrapReset div.container').hide("slow");
                     $('#sent2Address').html(email);

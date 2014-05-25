@@ -177,11 +177,15 @@ namespace CUWebinars.Web.Controllers
                         model.Password,
                         email);
 
-                    if (userAccount != null)
-                    {
-                        var dataOperations = new DataOperations();
-                        dataOperations.SetNewAccountToVerified(userAccount.ID);
-                    }
+                    Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey), "There's no reason session should not have a value for the VerificationKey at this point ");
+
+                    var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
+                    _stateService.ClearValue(DomainConstants.VerificationKey);
+
+                    userAccount = _membershipService.VerifyEmailFromKey(
+                            verificationKey,
+                            model.Password
+                            );
 
                     //membershipService.LogInUser(globalConfig.Tenant, model.Email, model.Password, true); // log the user in.
                     _logger.Info("/Account/Register UserAdded: " + model.Email);
@@ -310,35 +314,35 @@ namespace CUWebinars.Web.Controllers
             var shippingAddress = addresses.Where(a => a.AddressType == WebUiConstants.ShippingAddress).First();
 
             manageModel.RegisterFields = new RegisterModel
-                    {
-                        BillingAddress = new AddressModel
-                        {
-                            City = billingAddress.City,
-                            Country = billingAddress.Country,
-                            StreetAddress = billingAddress.StreetAddress,
-                            StreetAddress2 = billingAddress.StreetAddress2,
-                            State = billingAddress.State,
-                            Zip = billingAddress.Zip,
-                            Phone = billingAddress.Phone,
-                            TypeOfAddress = AddressType.Billing
-                        },
-                        ShippingAddress = new AddressModel
-                        {
-                            City = shippingAddress.City,
-                            Country = shippingAddress.Country,
-                            StreetAddress = shippingAddress.StreetAddress,
-                            StreetAddress2 = shippingAddress.StreetAddress2,
-                            State = shippingAddress.State,
-                            Zip = shippingAddress.Zip,
-                            Phone = shippingAddress.Phone,
-                            TypeOfAddress = AddressType.Shipping
-                        },
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Institution = user.Institution.InstitutionName,
-                        Email = user.email,
-                        AccountDetailsTitle = WebUiConstants.ManageUser
-                    };
+            {
+                BillingAddress = new AddressModel
+                {
+                    City = billingAddress.City,
+                    Country = billingAddress.Country,
+                    StreetAddress = billingAddress.StreetAddress,
+                    StreetAddress2 = billingAddress.StreetAddress2,
+                    State = billingAddress.State,
+                    Zip = billingAddress.Zip,
+                    Phone = billingAddress.Phone,
+                    TypeOfAddress = AddressType.Billing
+                },
+                ShippingAddress = new AddressModel
+                {
+                    City = shippingAddress.City,
+                    Country = shippingAddress.Country,
+                    StreetAddress = shippingAddress.StreetAddress,
+                    StreetAddress2 = shippingAddress.StreetAddress2,
+                    State = shippingAddress.State,
+                    Zip = shippingAddress.Zip,
+                    Phone = shippingAddress.Phone,
+                    TypeOfAddress = AddressType.Shipping
+                },
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Institution = user.Institution.InstitutionName,
+                Email = user.email,
+                AccountDetailsTitle = WebUiConstants.ManageUser
+            };
 
             return View(manageModel);
             //return null;
@@ -399,19 +403,19 @@ namespace CUWebinars.Web.Controllers
         public ActionResult Login(string returnUrl)
         {
             var loginModel = new LoginModel
+            {
+                SignIn = new SignInModel(),
+                ResetPassword = new ResetPasswordModel(),
+                Register = new RegisterViewModel
                 {
-                    SignIn = new SignInModel(),
-                    ResetPassword = new ResetPasswordModel(),
-                    Register = new RegisterViewModel
+                    RegisterFields = new RegisterModel
                     {
-                        RegisterFields = new RegisterModel
-                        {
-                            AccountDetailsTitle = WebUiConstants.Register,
-                            BillingAddress = new AddressModel { TypeOfAddress = AddressType.Billing },
-                            ShippingAddress = new AddressModel { TypeOfAddress = AddressType.Shipping }
-                        }
+                        AccountDetailsTitle = WebUiConstants.Register,
+                        BillingAddress = new AddressModel { TypeOfAddress = AddressType.Billing },
+                        ShippingAddress = new AddressModel { TypeOfAddress = AddressType.Shipping }
                     }
-                };
+                }
+            };
 
             //So that the user can be referred back to where they were when they click logon
             if (string.IsNullOrEmpty(returnUrl) && Request.UrlReferrer != null)
@@ -474,23 +478,20 @@ namespace CUWebinars.Web.Controllers
         //[ValidateAntiForgeryToken]
         public JsonResult ResetPassword(string email)
         {
-            var cResult = new Dictionary<string, string>(1);
             _logger.Info("Account.ResetPassword GET. Session=" + AppHelper.GetUserAuditInfo());
 
             try
             {
                 _membershipService.ResetPassword(globalConfig.Tenant, email);
-                cResult.Add(WebUiConstants.OpStatus, WebUiConstants.Success);
+                return Json(new { Result = WebUiConstants.Success });
             }
-            catch (Exception ex)    
+            catch (Exception ex)
             {
                 _logger.Fatal("Account.ResetPassword GET Failed. " + ex.Message + " Session=" + AppHelper.GetUserAuditInfo());
-
-                cResult.Add(WebUiConstants.OpStatus, "Fail");
             }
 
 
-            return Json(cResult, JsonRequestBehavior.AllowGet);
+            return Json(new { Result = WebUiConstants.Fail });
         }
 
         [System.Web.Mvc.AllowAnonymous]
@@ -542,7 +543,7 @@ namespace CUWebinars.Web.Controllers
                 _logger.Fatal("Account.ResetPassword. " + validationException.Message + " Session=" + AppHelper.GetUserAuditInfo());
                 ModelState.AddModelError("InvalidPassword", "The new password must be different than the old password.");
             }
-            
+
             return View(model);
         }
 
@@ -580,12 +581,9 @@ namespace CUWebinars.Web.Controllers
         //[ValidateAntiForgeryToken]
         public JsonResult CheckInstitution(string institution)
         {
-            Dictionary<string, string> cResult = new Dictionary<string, string>();
-            cResult.Add("success", "steve@juststeve.com");
-
-            return Json(cResult, JsonRequestBehavior.AllowGet);
-
+            return Json(new { Result = WebUiConstants.Success }, JsonRequestBehavior.AllowGet);
         }
+
         // POST: /Account/Register
         [System.Web.Mvc.HttpGet]
         [System.Web.Mvc.AllowAnonymous]
@@ -609,18 +607,22 @@ namespace CUWebinars.Web.Controllers
 
             var zipAddress = AppHelper.GetCityStateFromZip(numVal);
 
+            var zipCentricFields = zipAddress.Split(fieldDelimiter);
+
             if (string.IsNullOrWhiteSpace(zipAddress))
             {
                 resultObject.Add("success", "false");
                 return Json(resultObject, JsonRequestBehavior.AllowGet);
             }
 
-            var myCity = new string(AppHelper.CharsToTitleCase(zipAddress.Split(fieldDelimiter).First()).ToArray());
+            Debug.Assert(zipCentricFields.Length == 3, "There must be 3 fields in zipCentricFields, otherwise we have bad data.");
+
+            var myCity = new string(AppHelper.CharsToTitleCase(zipCentricFields[0]).ToArray());
 
             resultObject.Add("success", "true");
             resultObject.Add("City", myCity);
-            resultObject.Add("State", zipAddress.Split(fieldDelimiter)[1]);
-            resultObject.Add("TimeZone", ((int)Enum.Parse(typeof(USTimeZone), zipAddress.Split(fieldDelimiter)[2])).ToString());
+            resultObject.Add("State", zipCentricFields[1]);
+            resultObject.Add("TimeZone", ((int)Enum.Parse(typeof(USTimeZone), zipCentricFields[2])).ToString());
             //resultObject.Add("TimeZone", 3.ToString());
 
             return Json(resultObject, JsonRequestBehavior.AllowGet);
@@ -780,15 +782,20 @@ namespace CUWebinars.Web.Controllers
                         model.RegisterFields.Password,
                         email);
 
-                    if (userAccount != null)
-                    {
-                        var dataOperations = new DataOperations();
-                        dataOperations.SetNewAccountToVerified(userAccount.ID);
-                    }
+                    Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey), "There's no reason session should not have a value for the VerificationKey at this point ");
+
+                    var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
+                    _stateService.ClearValue(DomainConstants.VerificationKey);
+
+                    userAccount = _membershipService.VerifyEmailFromKey(
+                            verificationKey,
+                            model.RegisterFields.Password
+                            );
 
                     _membershipService.LogInUser(globalConfig.Tenant, model.RegisterFields.Email, model.RegisterFields.Password, true); // log the user in.
                     _logger.Info("Account.Register UserAdded: " + model.RegisterFields.Email);
-                    return Json(new { Status = WebUiConstants.Success });
+
+                    return Json(new { Result = WebUiConstants.Success });
 
                 }
                 catch (MembershipCreateUserException e)
@@ -800,7 +807,7 @@ namespace CUWebinars.Web.Controllers
             }
             _logger.Fatal("Account.Register failed! Session=" + AppHelper.GetUserAuditInfo());
             // If we got this far, something failed, redisplay form
-            return Json(new { Status = "Fail" });
+            return Json(new { Result = WebUiConstants.Fail });
 
         }
 

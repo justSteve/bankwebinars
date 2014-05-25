@@ -918,13 +918,13 @@ $(function () {
     //    }).done(function (data) {
     //        alert("datareturned");// never fires!
     //        console.log('done Register Details');
-    //        if (data.Status == 'Success') {
+    //        if (data.Result == 'Success') {
     //            console.log('success  Register Details');
     //            stateManager.action = '';
     //            pageObjects.labelEmail().html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
     //            //location.assign(path + '/'); //TODO: we need to implement a pattern where if 'returnURL' (server-side origin) is populated, it's used. Otherwise return to home page.
     //            location.href = '/Home';
-    //        } else if (data.Status === 'Fail') {
+    //        } else if (data.Result === 'Fail') {
     //            console.log('statusFail  Register Details');
     //            pageObjects.labelEmail().html('<span class="label label-information">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
     //        }
