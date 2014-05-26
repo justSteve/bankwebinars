@@ -8,12 +8,13 @@ namespace CUWebinars.Business.AccountService
     public interface IMembershipService
     {
         bool ChangePasswordFromResetKey(string key, string newPassword);
+
         UserAccount CreateUser(
             string tenant,
-            string firstName, 
-            string lastName, 
-            string userName, 
-            string password, 
+            string firstName,
+            string lastName,
+            string userName,
+            string password,
             string email
             );
 
@@ -41,6 +42,7 @@ namespace CUWebinars.Business.AccountService
         bool HasPassword(string tenant, string emailAddress);
         bool LogInUser(string tenant, string emailAddress, string password, bool persistent);
         bool LogOutUser();
+
         Institution ProcessInstitutionForUser(string institutionName,
             string email,
             string city,
@@ -48,10 +50,12 @@ namespace CUWebinars.Business.AccountService
             string regIdentifier,
             string institutionType,
             string zip);
+
         void ResetPassword(string tenant, string email);
 
         void SignIn(UserAccount userAccount, bool persistant);
-        void UpdateUserDetails(string tenant, 
+
+        void UpdateUserDetails(string tenant,
             string firstName,
             string lastName,
             string password,
@@ -63,6 +67,7 @@ namespace CUWebinars.Business.AccountService
             );
 
         UserAccount VerifyEmailFromKey(string key, string password);
+        bool VerifyUserByEmail(string tenant, string email);
         USTimeZone GetTimeZoneByZip();
     }
 }
