@@ -1,7 +1,7 @@
 ﻿@model ChangeEmailFromKeyInputModel
            
 @{
-    ViewBag.Title = "Manage Account";
+    ViewBag.Title = "Account Verified";
     var identity = ((ClaimsIdentity)User.Identity)
         .Claims.FirstOrDefault(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName);
 
@@ -15,30 +15,13 @@
     <div class="flat-form">
 
         <div id="myTabContent" class="tab-content">
-
-            @using (Html.BeginForm("Confirm", "Account", "Post"))
-            {
-                @Html.AntiForgeryToken()
                 
                 <fieldset>
-                    <legend>Verify Account</legend>
+                    <legend>Account Verfied</legend>
                     <div>
-                        <p>Enter your password and click the confirm button.</p>
-
-                        <p>@Html.LabelFor(m => m.Password, new { style="display:inline-block"})<text>: </text></p>
-                        @Html.PasswordFor(m => m.Password)
-
-                        @Html.HiddenFor(m => m.Key)
-
-                        <div class="form-inline">
-
-                            <div class="btn-group">
-                                <input type="submit" value="Confirm" class="btn btn-default" />
-                            </div>
-                        </div>
+                        <p><span>@Model.ScreenMessage</span></p>
                     </div>
                 </fieldset>
-            }
 
         </div>
     </div>

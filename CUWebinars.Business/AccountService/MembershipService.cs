@@ -86,6 +86,7 @@ namespace CUWebinars.Business.AccountService
             var account = _userAccountService.CreateAccount(tenant, userName, password, email);
             _userAccountService.AddClaim(account.ID, ClaimTypes.FullName, string.Format("{0} {1}", firstName, lastName));
             _userAccountService.AddClaim(account.ID, System.Security.Claims.ClaimTypes.Role, "WebUser");
+            _userAccountService.AddClaim(account.ID, ClaimTypes.HasNotVerified, "true");
 
             return account;
         }
@@ -296,6 +297,18 @@ namespace CUWebinars.Business.AccountService
         public UserAccount GetUserAccountByUserId(Guid userId)
         {
             return _userAccountService.GetByID(userId);
+        }
+        public bool VerifyUserByEmail(string tenant, string email)
+        {
+            var account = _userAccountService.GetByEmail(tenant, email);
+
+            if (account.HasClaim(ClaimTypes.HasNotVerified))
+            {
+                _userAccountService.RemoveClaim(account.ID, ClaimTypes.HasNotVerified);
+                return true;
+            }
+
+            return false;
         }
     }
 }

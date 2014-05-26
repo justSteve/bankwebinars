@@ -252,48 +252,27 @@ namespace CUWebinars.Web.Controllers
         {
             try
             {
-                var account = _membershipService.GetByVerificationKey(id);
+                var changeEmailFromKeyInputModel = new ChangeEmailFromKeyInputModel();
 
-                if (account.HasPassword())
-                {
-                    var vm = new ChangeEmailFromKeyInputModel { Key = id };
-                    return View("Confirm", vm);
-                }
+                //  Note: I have left the signature as "id" and not "email" so I did not have to create a new route.
+                //  If you want the signaturee to be email (because it is an email address), add a route to RouteConfig for this.
+                changeEmailFromKeyInputModel.ScreenMessage = _membershipService.VerifyUserByEmail(globalConfig.Tenant, id)
+                    ? "Thank you. Your email address has been successfully verified in our system."
+                    : "Your email address has already been successfully verified in our system.";
+
+                return View("Confirm", changeEmailFromKeyInputModel);
             }
             catch (Exception exception)
             {
-                _logger.Fatal("Account.Confirm Exception On GET: " + exception.Message + " Session=" + AppHelper.GetUserAuditInfo());
+                _logger.Fatal(
+                    "Account.Confirm Exception On GET: {0} Session={1}",
+                    exception.Message,
+                    AppHelper.GetUserAuditInfo()
+                    );
+                throw;
             }
-
-            return null;
         }
-
-        [System.Web.Mvc.AllowAnonymous]
-        [System.Web.Mvc.HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Confirm(ChangeEmailFromKeyInputModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    BrockAllen.MembershipReboot.UserAccount account = _membershipService.VerifyEmailFromKey(model.Key, model.Password);
-
-                    // since we've changed the email, we need to re-issue the cookie that
-                    // contains the claims.
-                    _membershipService.SignIn(account, true);
-                    return RedirectToLocal(null);
-                }
-                catch (ValidationException ex)
-                {
-                    _logger.Fatal("Account.Confirm Exception On POST: " + ex.Message + " Session=" + AppHelper.GetUserAuditInfo());
-                    ModelState.AddModelError(string.Empty, ex.Message);
-                }
-            }
-
-            return View("Confirm", model);
-        }
-
+        
         [ClaimsAuthorize(Roles = "Admin")]
         public ActionResult Manage(ManageMessageId? message)
         {

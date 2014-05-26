@@ -126,12 +126,14 @@ namespace CUWebinars.Web.Controllers
 
         public PartialViewResult GetAdditionalLocationByOrderId(int webUserId, int webinarId)
         {
-            //var order = _orderManagementService.GetOrderById(id);
+            //  TODO: Implement
 
-            var addAdditionalLocationViewModel = new AddAdditionalLocationViewModel
+            //var order = _orderManagementService.GetOrdersByUserId()
+
+            var addAdditionalLocationViewModel = new WebinarDetailsViewModel
             {
                 //AdditionalLocations = order.OrderRows.First().AdditionalLocation.ToList()
-                AdditionalLocations = new AdditionalLocation[] { new AdditionalLocation { Email = "dave@dave.com" }, new AdditionalLocation { Email = "monty@python.com" } }
+                //AdditionalLocations = new AdditionalLocation[] { new AdditionalLocation { Email = "dave@dave.com" }, new AdditionalLocation { Email = "monty@python.com" } }
             };
 
             return PartialView("~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml", addAdditionalLocationViewModel);
@@ -466,18 +468,7 @@ namespace CUWebinars.Web.Controllers
                 ,
                 Options = options
                 ,
-                CheckoutOptionsViewModel = new CheckoutOptionsViewModel
-                {
-                    DisplayOptionsViewModel = new DisplayOptionsViewModel
-                    {
-                        Options = options.ToList(),
-                        Order = null,
-                        Webinar = webinar,
-                        WebUser = user
-                    },
-                    Order = null, //    new order?
-                    Webinar = webinar
-                }
+                Order = null
             };
 
             if (usersOrders != null && usersOrders.Any())
@@ -500,8 +491,7 @@ namespace CUWebinars.Web.Controllers
                     ViewBag.WebinarFiles = webinarFiles;
 
                     ViewBag.userOwnsThisEvent = checkOrder.idOrder;
-                    model.CheckoutOptionsViewModel.Order =
-                        model.CheckoutOptionsViewModel.DisplayOptionsViewModel.Order = checkOrder;
+                    model.Order = checkOrder;
 
                     var connectionText = new StringBuilder("<p>");
                     connectionText.Append(
@@ -517,7 +507,7 @@ namespace CUWebinars.Web.Controllers
                     if (checkOrder.OrderStatus == OrderStatus.InProcess && row.idWebinar != id)
                     {
                         ViewBag.userHasOpenOrder = checkOrder.idOrder;
-                        model.CheckoutOptionsViewModel.Order = checkOrder;
+                        model.Order = checkOrder;
                     }
                 }
             }
