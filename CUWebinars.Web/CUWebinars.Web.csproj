@@ -448,12 +448,8 @@
     <Compile Include="Services\IStateService.cs" />
     <Compile Include="Services\StateService.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="ViewModel\AddAdditionalLocationsViewModel.cs" />
     <Compile Include="ViewModel\AdhocNotificationViewModel.cs" />
-    <Compile Include="ViewModel\AdditionalLocationsViewModel.cs" />
-    <Compile Include="ViewModel\CheckoutOptionsViewModel.cs" />
     <Compile Include="ViewModel\ConnectionInfoViewModel.cs" />
-    <Compile Include="ViewModel\DisplayOptionsViewModel.cs" />
     <Compile Include="ViewModel\GTWRegistrantViewModel.cs" />
     <Compile Include="ViewModel\ImportOrderViaDashboardViewModel.cs" />
     <Compile Include="ViewModel\RegisterViewModel.cs" />

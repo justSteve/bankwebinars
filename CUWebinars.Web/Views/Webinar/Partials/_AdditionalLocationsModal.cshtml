@@ -1,4 +1,4 @@
-﻿@model AddAdditionalLocationViewModel
+﻿@model WebinarDetailsViewModel
 
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -10,7 +10,7 @@
     <p><button id="AddInputsButton" class="btn btn-success">Click to Add More</button></p>
     
         @{
-        var emails = Model.AdditionalLocations.Select(al => al.Email).ToArray();
+            var emails = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Select(al => al.Email).ToArray();
         }
 
         <div id="AdditionalLocationEmailWrapper">

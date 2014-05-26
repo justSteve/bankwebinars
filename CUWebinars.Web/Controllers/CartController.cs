@@ -76,33 +76,7 @@ namespace CUWebinars.Web.Controllers
                     var webinarDetailsViewModel = new WebinarDetailsViewModel
                     {
                         Affiliate = order.Affiliate,
-                        CheckoutOptionsViewModel = new CheckoutOptionsViewModel
-                        {
-                            DisplayOptionsViewModel = new DisplayOptionsViewModel
-                            {
-                                AdditionalLocationViewModel = new AdditionalLocationViewModel
-                                {
-                                    AddAdditionalLocationViewModel = new AddAdditionalLocationViewModel
-                                    {
-                                        AdditionalLocations = additionalLocations,
-                                        Order = order,
-                                        WebUser = webUser,
-                                        Webinar = webinar
-                                    },
-                                    AdditionalLocations = additionalLocations,
-                                    Order = order,
-                                    WebUser = webUser,
-                                    Webinar = webinar
-                                },
-                                //Options = additionalLocations,
-                                Order = order,
-                                Webinar = webinar,
-                                WebUser = webUser
-                            },
-                            Order = order,
-                            Webinar = webinar,
-                            WebUser = webUser
-                        },
+                        Order = order,
                         Webinar = webinar,
                         WebUser = webUser
                     };

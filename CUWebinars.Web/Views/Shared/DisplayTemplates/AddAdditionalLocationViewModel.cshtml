@@ -1,4 +1,4 @@
-﻿@model AddAdditionalLocationViewModel
+﻿@model WebinarDetailsViewModel
     
 <blockquote style="margin-bottom: 0;color:red;font-weight:bold">
     TODO: replace with dynamic text!!! @*@Model.AdditionalLocation.DescriptionConfirm*@
@@ -13,7 +13,7 @@
 
         @{
             
-            var emails = Model.AdditionalLocations.Select(al => al.Email).ToArray();
+            var emails = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Select(al => al.Email).ToArray();
 
             <ol>
                 @for (int i = 0; i < emails.Length; i++)
