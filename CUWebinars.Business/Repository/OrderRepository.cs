@@ -35,18 +35,17 @@ namespace CUWebinars.Business.Repository
             newOrder.OrderRows = new List<OrderRow>();
             newOrder.OrderRows.Add(orderRow);
 
-            Add(newOrder);
-
             //_orderValidator.ValidateAndThrow(newOrder);
             var validationResult = _orderValidator.Validate(newOrder);
 
             if (!validationResult.IsValid)
             {
-                db.SaveChanges();
+                Add(newOrder); // save changes is called in here.
 
                 //  Best to load these from the database
-                db.Entry(newOrder).Reference(no => no.Affiliate).Load();
-                db.Entry(newOrder).Reference(no => no.WebUser).Load();
+                //db.Entry(newOrder).Reference(no => no.Affiliate).Load();
+                //db.Entry(newOrder).Reference(no => no.WebUser).Load();
+                //db.ChangeTracker.DetectChanges();
 
                 return newOrder;
             }

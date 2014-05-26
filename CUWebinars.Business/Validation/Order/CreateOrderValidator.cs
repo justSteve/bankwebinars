@@ -22,7 +22,7 @@ namespace CUWebinars.Business.Validation.Order
 
         private bool UserHasExistingWebinarInNonCancelledState(Models.Order order, int userId)
         {
-            var webinarId = order.OrderRows.Single().idWebinar;
+            var webinarId = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Webinar.idWebinar;
 
             var webinar = _webinarRepository
                 .GetAllOrdersByWebinarForUser(webinarId, userId)
