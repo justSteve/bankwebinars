@@ -2,7 +2,7 @@
 GO
 
 DECLARE @WebinarKey NVARCHAR(20)
-SET @WebinarKey = '133202538'
+SET @WebinarKey = '901345658'
 
 
 DELETE  CUWebinarsClean.dbo.Options

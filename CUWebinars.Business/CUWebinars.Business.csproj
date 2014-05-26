@@ -240,7 +240,7 @@
     <None Include="packages.config" />
     <None Include="SQLSeeding\BACPACs\CUWebinars.bacpac" />
     <None Include="SQLSeeding\BACPACs\CUWebinarsClean.bacpac" />
-    <None Include="SQLSeeding\BACPACs\CUWebinarsMigrator.bak" />
+    <None Include="SQLSeeding\BACPACs\CUWebinarsMigratorV2.bak" />
     <None Include="SQLSeeding\BACPACs\MembershipReboot.bacpac" />
     <None Include="SQLSeeding\BACPACs\MembershipRebootClean.bacpac" />
     <None Include="SQLSeeding\BACPACs\TTSDatabase-2014-5-4-20-7.bacpac" />

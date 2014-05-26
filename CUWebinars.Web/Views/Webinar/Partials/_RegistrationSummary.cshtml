@@ -18,8 +18,8 @@
     OrderRow row = null;
     if (ViewBag.userOwnsThisEvent > 0)
     {
-        RegType orderMsgs = Model.CheckoutOptionsViewModel.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType;
-        row = Model.CheckoutOptionsViewModel.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+        RegType orderMsgs = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType;
+        row = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
         order = row.Order;
         string[] webinarFiles = ViewBag.WebinarFiles;
         //ICollection<WebinarFile> webinarFiles = row.Webinar.WebinarFiles;
@@ -60,14 +60,6 @@
             @{
 
             Debug.Assert(order != null, "order != null");
-            var loggedInUserIdentity = ((ClaimsIdentity)User.Identity);
-
-            if (loggedInUserIdentity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.CuWebinarsAbsoluteAdmin))
-            {
-                @Html.Partial(@"Partials/_AdminEventButtons", Model)
-            }
-            else
-            {
                 if (row.Order.OrderStatus == OrderStatus.Billed ||
                     row.Order.OrderStatus == OrderStatus.Paid ||
                     row.Order.OrderStatus == OrderStatus.Submitted)
@@ -133,7 +125,6 @@
                 }
             }
 
-            }
         </div>
     }
     @*else
