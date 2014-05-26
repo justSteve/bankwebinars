@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Data.RSSBus.Google;
 using System.IO;
 using System.Linq;
-
+using AE.Net.Mail;
+using AE.Net.Mail.Imap;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Jobs;
@@ -13,15 +14,39 @@ namespace TTSWorker
 {
     class Program
     {
-        static void Main()
+        private static void Main()
         {
-            JobHost host = new JobHost();
-            host.RunAndBlock();
+            var host = "imap.gmail.com";
+            var username = "registrations@bankwebinars.com";
+            var password = "azza123A";
+            var port = 993;
+            var isSSL = true;
+
+            //using (var imap = new ImapClient(host, username, password, AE.Net.Mail.Imap.Mailbox., port, isSSL))
+            //{
+            //    //var msgs = imap.SearchMessages(
+            //    //  SearchCondition.Undeleted().And(
+            //    //    SearchCondition.From("david"),
+            //    //    SearchCondition.SentSince(new DateTime(2000, 1, 1))
+            //    //  ).Or(SearchCondition.To("andy"))
+            //    //);
+
+            //    //Assert.AreEqual(msgs[0].Value.Subject, "This is cool!");
+                
+            //    imap.NewMessage += (sender, e) =>
+            //    {
+            //        var msg = imap.GetMessage(e.MessageCount - 1);
+            //        Console.WriteLine("here");
+            //        //Assert.AreEqual(msg.Subject, "IDLE support?  Yes, please!");
+            //    };
+            //}
+
         }
 
-        public static void ProcessQueueMessage([QueueInput("webjobsqueue")] string inputText,
-                                              [BlobOutput("containername/blobname")]TextWriter writer)
+        static void Main4RSSBus()
         {
+            //JobHost host = new JobHost();
+            //host.RunAndBlock();
             string connectionString = "user=registrations@bankwebinars.com;password=azza123A;Offline=false;";
 
 
@@ -30,7 +55,7 @@ namespace TTSWorker
                 GoogleDataAdapter gda = new GoogleDataAdapter
                 {
                     SelectCommand = new GoogleCommand(
-                        "SELECT id from MailMessages where SEARCHCRITERIA " +
+                        "SELECT id from MailMessages where [To] = 'registrations+verify@bankwebinars.com' and  SEARCHCRITERIA " +
                         "= 'UNSEEN' ",
                         connection)
                 };
@@ -52,10 +77,8 @@ namespace TTSWorker
                         {
                             break;
                         }
-                        GoogleCommand cmd = new GoogleCommand("SELECT * FROM MailMessages WHERE Id="+ readerID, connection);
+                        GoogleCommand cmd = new GoogleCommand("SELECT * FROM MailMessages WHERE Id=" + readerID, connection);
                         cmd.CommandType = System.Data.CommandType.Text;
-                        //cmd.Parameters.Clear();
-                        //cmd.Parameters.Add(new GoogleParameter("@id", readerID));
                         GoogleDataReader mReader = cmd.ExecuteReader();
 
                         while (mReader.Read())
@@ -63,9 +86,8 @@ namespace TTSWorker
 
                             try
                             {
-                                msgThreadID = mReader["ThreadID"].ToString();
-                                msgDate = mReader["Date"].ToString();
-                                GoogleCommand cmd2Unseen = new GoogleCommand("UPDATE MailMessages SET Flags='\\Unseen' WHERE Id=" + readerID, connection);
+                                //GoogleCommand cmd2Unseen = new GoogleCommand("UPDATE MailMessages SET Flags='UNSEEN' WHERE Id=" + readerID, connection);
+                                GoogleCommand cmd2Unseen = new GoogleCommand("UPDATE MailMessages SET DestinationMailbox='Errors' WHERE Id=" + readerID, connection);
                                 cmd.CommandType = System.Data.CommandType.Text;
                                 GoogleDataReader mReader2Unseen = cmd.ExecuteReader();
                             }
@@ -80,8 +102,14 @@ namespace TTSWorker
                 {
                     throw;
                 }
-                writer.WriteLine(inputText);
+                //writer.WriteLine(inputText);
             }
+
+        }
+
+        public static void ProcessQueueMessage([QueueInput("webjobsqueue")] string inputText,
+                                              [BlobOutput("containername/blobname")]TextWriter writer)
+        {
         }
         public static void ProcessEmailConfirm()
         {

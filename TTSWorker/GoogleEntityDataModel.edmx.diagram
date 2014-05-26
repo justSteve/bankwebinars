@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="abdc46bd36b14222bec146cdb3abb811" Name="Diagram1">
+      <Diagram DiagramId="abdc46bd36b14222bec146cdb3abb811" Name="Diagram1" ZoomLevel="34">
         <EntityTypeShape EntityType="GMailModel.CalendarEvent" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="GMailModel.Calendar" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="GMailModel.ContactGroup" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
