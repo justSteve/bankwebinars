@@ -36,5 +36,28 @@ namespace CUWebinars.Business.Tests
             }
         }
 
+        internal void UninstallDatabase()
+        {
+            this.UninstallDatabase(connStr);
+        }
+
+        internal void UninstallDatabase(string connectionString)
+        {
+            var builder = new SqlConnectionStringBuilder(connectionString);
+            builder.InitialCatalog = "Master";
+            using (var conn = new SqlConnection(builder.ConnectionString))
+            {
+                conn.Open();
+
+                const string dropCmd = @"
+                    IF EXISTS (SELECT name
+                               FROM master.dbo.sysdatabases
+                               WHERE name = N'CUWebinars')
+                    DROP DATABASE [CUWebinars];";
+
+                using (var cmd = new SqlCommand(dropCmd, conn))
+                    cmd.ExecuteNonQuery();
+            }
+        }
     }
 }

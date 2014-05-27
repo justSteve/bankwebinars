@@ -512,3 +512,64 @@ GO
 ALTER DATABASE [CUWebinars] SET  READ_WRITE 
 GO
 USE [CUWebinars]
+
+SET IDENTITY_INSERT [dbo].[Webinar] ON
+INSERT [dbo].[Webinar] ([idWebinar], [Description], [DescriptionLong], [ImageUrl], [SmallImageUrl], [Status], [Title], [Date], [LearnCaption], [LearnBody], [WhoAttend], [Duration], [RecordingUrl], [idPresenter], [WebinarKey], [OrganizerKey], [OrganizerOAuthKey], [AccessPhone], [AccessCode], [ceu], [ConnectionInfo], [DateCreated], [DateChanged]) VALUES (404, N'<p>Your member passed away yesterday and the family is grieving. Yet, in the midst of all the remembering and honoring of a life, the legal and compliance clock is ticking. In most states, checks can be paid for 10 days after the date of death.</p><p>When your account holder dies, many issues and questions arise. Who can have information on the account? Who owns the account? Who has access to the account? What happens with powers of attorney and authorized signers on account? Can the spouse of the sole proprietor continue to access the account? What about that last tax refund check? Is the account still insured? Can a check be written to a funeral home? What about the checks coming in to pay funeral expense? Learn about checks, IRAs, deposit ownership, trusts, UTMA, affidavits of heirship and other complex issues that can occur when a member dies. </p>', N'<p>Your member passed away yesterday and the family is grieving. Yet, in the midst of all the remembering and honoring of a life, the legal and compliance clock is ticking. In most states, checks can be paid for 10 days after the date of death.</p><p>When your account holder dies, many issues and questions arise. Who can have information on the account? Who owns the account? Who has access to the account? What happens with powers of attorney and authorized signers on account? Can the spouse of the sole proprietor continue to access the account? What about that last tax refund check? Is the account still insured? Can a check be written to a funeral home? What about the checks coming in to pay funeral expense? Learn about checks, IRAs, deposit ownership, trusts, UTMA, affidavits of heirship and other complex issues that can occur when a member dies. </p>', N'', N'', 2, N'10 Lessons Learned When Your Member Dies', CAST(0x0000A34800A4CB80 AS DateTime), N'Covered Topics', N'<ul><li>Probate versus non-probate transfers</li><li>When does the will govern and when does the signature card?</li><li>What bypasses a will? PODs, IRAs, JTWROS?</li><li>Living trusts and successor trustees</li><li>When do we know that a customer is deceased?</li><li>When can we use small estate affidavits?</li><li>What happens to powers of attorney, authorized signers, etc.</li><li>How are IRAs, HSAs and UTMAs affected?</li><li>Do sole proprietorships cease at death?</li><li>NCUSIF insurance issues</li></ul>', N'This informative session is designed for customer service representatives, branch administration, branch managers, tellers, training and development staff, compliance personnel, and anyone who handles customer accounts.', CAST(1.00 AS Decimal(18, 2)), N'', 10568, NULL, N'922930', N'5jxY3KZL48HWknOaOEP2eIzVmOTS', NULL, NULL, N'1.25 CE Credits|Recommended for 1.25 CE Credit Hours. After attending this webinar, each attendee can receive a Certificate of Attendance for self-reporting of CE Credits.', NULL, CAST(0x0000A2EB01477614 AS DateTime), CAST(0x0000A2EB01477614 AS DateTime))
+
+SET IDENTITY_INSERT [dbo].[Webinar] OFF
+
+
+
+INSERT [dbo].[Affiliate] ([idUserAff], [CommissionModel], [URL], [WebBanner], [WebFooter], [EmailBanner], [EmailFooter], [ttsDomain], [GAPass], [supportEmail], [DisplayTitle], [BillingModel], [Logo], [ContactPerson], [ContactPhone], [ContactEmail], [ContactFax], [ContactAddress], [TechEmail], [TechPhone], [TechName], [EmailPromo]) VALUES (19, 1, N'http://www.ttstrain.com/', N'
+		<div class="container" id="header" style="margin-bottom: 0;">
+			<table cellpadding="0" cellspacing="0">
+				<tr>
+					<td style="height: 77px; width: 550px; background-image: url(/Content/images/BWBannerLeft.jpg);"></td>
+					<td style="height: 77px; width: 620px; background-image: url(/Content/images/BannerGradientBack.jpg);">
+						<div class="bannerRight aligncenter">
+							<p align="center" style="font-size: larger; color: #1F5B93;">
+								<b><i>Providing premier web-based seminars featuring<br />
+									the best speakers in the financial industry since 2002. </i></b>
+							</p>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+', N'        <div class="container">
+	<div class="row" style="background-color: #E7F1FA; color: lightsteelblue; margin-left: 2px; background-repeat: repeat-x; background-image: url(/Content/images/BannerGradientBottomBack.jpg);">
+		<div class="span3">
+			<h4 align="center" style="color: #1F5B93; margin-bottom: 0px;">Find us</h4>
+			<p align="center">
+				<a href="http://www.linkedin.com/company/bankwebinars.com" style="text-decoration: underline" target="_blank">
+					<img alt="LinkedIn" style="padding: 0px 0px 5px; vertical-align: middle" src="http://images.wisestamp.com/linkedin.png" height="16" width="16"></a>
+				<a href="http://www.facebook.com/home.php#%21/pages/Total-Training-Solutions/300546163412" style="text-decoration: underline" target="_blank">
+					<img alt="Facebook" style="padding: 0px 0px 5px; vertical-align: middle" src="http://images.wisestamp.com/facebook.png" height="16" width="16"></a>
+				<a href="https://twitter.com/ttstrain" style="text-decoration: underline" target="_blank">
+					<img alt="Twitter" style="padding: 0px 0px 5px; vertical-align: middle" src="http://images.wisestamp.com/twitter.png" height="16" width="16"></a>
+			</p>
+		</div>
+		<div class="span6">
+			<h4 align="center" style="color: #1F5B93; margin-bottom: 0px;">Powered by Total Training Solutions Inc.</h4>
+			<p align="center" style="color: lightsteelblue; margin-bottom: 0px;">
+				<a href="http://www.TTSTrain.com">(800) 831-0678 | www.TTSTrain.com </a>
+				<br />
+				<br />
+				@*<a href="/Home/PrivacyStatement">Privacy Statement</a>&nbsp;&nbsp; &nbsp;  &nbsp; <a href="javascript:void( window.open(''http://form.jotform.us/form/21224022479143'', ''blank'',''scrollbars=yes,toolbar=no,width=700,height=500''))">Technical Support</a>*@
+			</p>
+		</div>
+		<div class="span2">
+			<h4 style="color: #1F5B93; margin-bottom: 0px;" align="center">Mailing List</h4>
+			<p style="text-align: center; line-height: 110%"><a href="/Home/Mailing">Subscribe to our mailing list and be the first to know about our news and special deals!</a></p>
+		</div>
+	</div>
+	<!-- end .row -->
+</div>', N'', N'', N'Bennett', NULL, NULL, N'Total Training Solutions', N'billed', NULL, N'Mark', N'608-849-5563', N'affiliate@ttstrain.com', N'', N'PO Box 310', N'affiliate@ttstrain.com', N'608-849-5563', N'Mark', N'None')
+
+INSERT [dbo].[WebUser] ([idUser], [UserType], [AcctStatus], [DateCreated], [FirstName], [LastName], [Initial], [idUserInstitution], [email], [futureMail], [generalComments], [taxExempt], [idSubscriptionDiscount], [timeZone], [Title]) VALUES (19, 1, N'A', CAST(0x0000A2BE00AC550B AS DateTime), N'Mark', N'Bennett', NULL, 26, N'Mark_Bennett@ttstrain.com', NULL, NULL, NULL, NULL, 3, N'na')
+INSERT [dbo].[WebUser] ([idUser], [UserType], [AcctStatus], [DateCreated], [FirstName], [LastName], [Initial], [idUserInstitution], [email], [futureMail], [generalComments], [taxExempt], [idSubscriptionDiscount], [timeZone], [Title]) VALUES (26368, 1, N'A', CAST(0x0000A3240097B1FA AS DateTime), N'Cindy', N'Wanamaker', NULL, 44869, N'cindyw@fmfcu.org', NULL, NULL, NULL, NULL, 3, N'Chief Operations Officer')
+INSERT [dbo].[WebUser] ([idUser], [UserType], [AcctStatus], [DateCreated], [FirstName], [LastName], [Initial], [idUserInstitution], [email], [futureMail], [generalComments], [taxExempt], [idSubscriptionDiscount], [timeZone], [Title]) VALUES (10568, 1, N'A', CAST(0x0000A2BE00ABCBB0 AS DateTime), N'Deborah', N'Crawford', NULL, 25, N'Deborah_Crawford@ttstrain.com', NULL, NULL, NULL, NULL, 3, N'na')
+INSERT [dbo].[Presenter] ([idUser], [Biography], [BiographyLong], [PhotoFull], [PhotoThumb]) VALUES (10568, N'<p><img class="alignleft" src="https://ttseast.blob.core.windows.net/images/presenters/crawford.jpg" alt="Photo of Deborah Crawford" />Deborah Crawford is the President of gettechnical inc. She specializes in compliance and regulations for the deposit side of financial institutions.  Her 20+ year career in banking and training began at Hibernia National Bank. She has been a seminar leader for many state associations and credit union groups across the nation.  She has Bachelors and Masters degrees from Louisiana State University. </p>', N'<p><img class="alignleft" src="https://ttseast.blob.core.windows.net/images/presenters/crawford.jpg" alt="Photo of Deborah Crawford" />Deborah Crawford is the President of gettechnical inc. She specializes in compliance and regulations for the deposit side of financial institutions.  Her 20+ year career in banking and training began at Hibernia National Bank. She has been a seminar leader for many state associations and credit union groups across the nation.  She has Bachelors and Masters degrees from Louisiana State University. </p>', N'https://ttseast.blob.core.windows.net/images/presenters/crawford.jpg', N'https://ttseast.blob.core.windows.net/images/presenters/crawford.jpg')
+SET IDENTITY_INSERT [dbo].[RegType] ON
+INSERT [dbo].[RegType] ([idRegType], [RegTypeExplain], [RegTypeLabel], [Price], [TaxExempt], [SortOrder], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (88, N'Attend the live session with the opportunity to ask questions of the presenter.  You also receive handouts.', N'Live Session Only', 155, NULL, 1, N'Live_Session_Only_1Hr_155_97', N'Yes', N'No', N'No', N'This order is for the live session only. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email.', N'This order is for the live session only. The information required to connect to the event is summarized below. Detailed information has been sent to your email and is also available at http://www.BankWebinars.com/MyWebinars.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions.', N'Connection information is summerized below and is also available at http://www.BankWebinars.com.')
+SET IDENTITY_INSERT [dbo].[RegType] OFF
