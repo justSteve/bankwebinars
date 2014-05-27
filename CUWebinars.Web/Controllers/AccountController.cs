@@ -424,9 +424,18 @@ namespace CUWebinars.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SignIn(SignInModel model)
         {
-            if (ModelState.IsValid && _membershipService.LogInUser(globalConfig.Tenant, model.Email, model.Password, model.RememberMe))
+            
+            if (ModelState.IsValid)
             {
-                var retURL = model.ReturnUrl.Replace("http://localhost:5556", "");
+                var result = _membershipService.LogInUser(globalConfig.Tenant, model.Email, model.Password, model.RememberMe);
+
+                if (!result.Item2)
+                {
+                    var webUser = _membershipService.GetUserByEmail(model.Email);
+                    return RedirectToAction("ResetPasswordWhereNotVerified", new { tempPassword = webUser.LastName });
+                }
+
+                var retURL = model.ReturnUrl.Replace("http://localhost:5556", string.Empty);
 
                 _logger.Info("Account.SignIn Post Success. Session=" + AppHelper.GetUserAuditInfo());
                 return RedirectToLocal(retURL);
@@ -472,6 +481,23 @@ namespace CUWebinars.Web.Controllers
 
             return Json(new { Result = WebUiConstants.Fail });
         }
+        
+        
+        [System.Web.Mvc.AllowAnonymous]
+        public ViewResult ResetPasswordWhereNotVerified(string tempPassword)
+        {
+            _logger.Info("Account.ResetPasswordWhereNotVerified GET. Session=" + AppHelper.GetUserAuditInfo());
+
+            var localPasswordModel = new LocalPasswordModel
+            {
+                ConfirmPassword = string.Empty,
+                OldPassword = tempPassword,
+                NewPassword = string.Empty
+            };
+
+            return View(localPasswordModel);
+        }
+
 
         [System.Web.Mvc.AllowAnonymous]
 

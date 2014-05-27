@@ -40,7 +40,7 @@ namespace CUWebinars.Business.AccountService
         WebUser GetUserByEmail(string email);
         Institution GetInstitutionByDomain(string domain);
         bool HasPassword(string tenant, string emailAddress);
-        bool LogInUser(string tenant, string emailAddress, string password, bool persistent);
+        Tuple<bool, bool> LogInUser(string tenant, string emailAddress, string password, bool persistent);
         bool LogOutUser();
 
         Institution ProcessInstitutionForUser(string institutionName,

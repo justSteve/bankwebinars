@@ -128,16 +128,35 @@ namespace CUWebinars.Business.AccountService
             return webUser;
         }
 
-        public bool LogInUser(string tenant, string emailAddress, string password, bool persistent)
+        /// <summary>
+        /// Return type is a Tuple with the following semantics:
+        /// If the first item is true, Membership Reboot could sign them in.
+        /// If the second item is true, then they do NOT have the HasNotVerified claim.
+        /// </summary>
+        /// <param name="tenant"></param>
+        /// <param name="emailAddress"></param>
+        /// <param name="password"></param>
+        /// <param name="persistent"></param>
+        /// <returns></returns>
+        public Tuple<bool, bool> LogInUser(string tenant, string emailAddress, string password, bool persistent)
         {
             UserAccount userAccount = null;
 
             if (_userAccountService.AuthenticateWithEmail(tenant, emailAddress, password, out userAccount))
             {
-                _samAuthenticationService.SignIn(userAccount, persistent);
-                return true;
+                Tuple<bool, bool> result;
+                if (userAccount.HasClaim(ClaimTypes.HasNotVerified, "true"))
+                {
+                    result = Tuple.Create(true, false);
+                }
+                else
+                {
+                    _samAuthenticationService.SignIn(userAccount, persistent);
+                    result = Tuple.Create(true, true);
+                }
+                return result;
             }
-            return false;
+            return Tuple.Create(false, false);
         }
 
         public bool LogOutUser()

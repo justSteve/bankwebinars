@@ -58,7 +58,7 @@ namespace CUWebinars.Business.Tests
 
             var result = membershipService.LogInUser(Globals.AppTenant, email, password, true);
 
-            Assert.IsTrue(result);
+            Assert.IsTrue(result.Item1);
         }
 
         [TestMethod]
@@ -77,7 +77,7 @@ namespace CUWebinars.Business.Tests
 
             var result = membershipService.LogInUser(Globals.AppTenant, email, password, true);
 
-            Assert.IsFalse(result);
+            Assert.IsFalse(result.Item1);
         }
 
         [TestMethod]
