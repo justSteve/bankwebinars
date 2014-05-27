@@ -205,10 +205,12 @@ namespace CUWebinars.Web.Controllers
         }
 
         [System.Web.Mvc.HttpPost]
-        public JsonResult SendRecordingPosted(int webinarId)
+        public JsonResult SendRecordingPosted(int webinarId, string fileName)
         {
             try
             {
+                //  Do something here with the file. Very exists in Azure. Also build connectionstring and save in OrderRow ?
+
                 var orders = _orderManagementService.GetOrdersForRecordedNotifications(webinarId);
 
                 if (orders.Any())

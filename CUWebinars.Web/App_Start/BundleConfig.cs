@@ -77,6 +77,14 @@ namespace CUWebinars.Web.App_Start
                         "~/Scripts/app/web-user-details-register.js"
             ));
 
+//            bundles.Add(new ScriptBundle("~/bundles/app-processing-register").Include(
+//            "~/Scripts/app/constants.js",
+//            "~/Scripts/app/common.js",
+//            "~/Scripts/app/register/create-user.js",
+//            "~/Scripts/app/passwordReset/password-reset.js",
+//            "~/Scripts/app/web-user-details-register.js"
+//));
+
             bundles.Add(new StyleBundle("~/Content/CrispCSS").Include(
                     "~/Content/css/styleCrisp.css",
                     "~/Content/css/header-1.css",

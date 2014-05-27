@@ -2,7 +2,7 @@
     inputFormFieldsDiv,
     failedScreenMessage,
     getSendConnectionInfoEventHtmlButton,
-    getSendRecordingPostedEventHtmlButton,
+    sendRecordingPostedEventHtmlButton,
     noOrdersScreenMessage,
     getRecipientsButton,
     resetButton,
@@ -11,7 +11,8 @@
     sendConnectionInfoUrl,
     sendRecordingPostedUrl,
     successScreenMessage,
-    waitIndicator;
+    waitIndicator,
+    webinarFileInput;
 
 //  Create a namespace. PageObjects is getting polluted across js files.
 var DEW = {
@@ -22,8 +23,8 @@ var DEW = {
         GetSendConnectionInfoEventHtmlButton: function () {
             return getSendConnectionInfoEventHtmlButton || $('#GetSendConnectionInfoEventHtmlButton');
         },
-        GetSendRecordingPostedEventHtmlButton: function () {
-            return getSendRecordingPostedEventHtmlButton || $('#GetSendRecordingPostedEventhtmlButton');
+        SendRecordingPostedEventHtmlButton: function () {
+            return sendRecordingPostedEventHtmlButton || $('#SendRecordingPostedEventHtmlButton');
         },
         InputFormFieldsDiv: function() {
             return inputFormFieldsDiv || $('#InputFormFieldsDiv');
@@ -33,6 +34,9 @@ var DEW = {
         },
         SelectedUpcomingWebinarIdDropDown: function () {
             return selectedUpcomingWebinarIdDropDown || $('#SelectedWebinarId');
+        },
+        WebinarFileInput: function () {
+            return webinarFileInput || $('#WebinarFileInput');
         },
         WaitIndicator: function () {
             return waitIndicator || $('#WaitIndicator');
@@ -53,7 +57,8 @@ $(function () {
     sendRecordingPostedUrl = '/Webinar/SendRecordingPosted';
 
     getSendConnectionInfoEventHtmlButton = $('#GetSendConnectionInfoEventHtmlButton');
-    getSendRecordingPostedEventHtmlButton = $('#GetSendRecordingPostedEventhtmlButton');
+    sendRecordingPostedEventHtmlButton = $('#SendRecordingPostedEventHtmlButton');
+    webinarFileInput = $('#WebinarFileInput');
     waitIndicator = $('#WaitIndicator');
     waitIndicator.hide();
 
@@ -110,58 +115,87 @@ $(function () {
         });
     });
 
-    getSendRecordingPostedEventHtmlButton.on('click', function (eventArgs) {
+    sendRecordingPostedEventHtmlButton.on('click', function (eventArgs) {
         eventArgs.preventDefault();
 
-        DEW.PageObjects.InputFormFieldsDiv().empty();
-        DEW.PageObjects.ButtonsContainer().fadeOut(500, function () {
-            DEW.PageObjects.InputFormFieldsDiv().fadeIn(500);
-        });
-        
-        DEW.PageObjects.InputFormFieldsDiv().load(sendRecordingPostedUrl, function () {
+        //DEW.PageObjects.InputFormFieldsDiv().empty();
+        //DEW.PageObjects.ButtonsContainer().fadeOut(500, function () {
+        //    DEW.PageObjects.InputFormFieldsDiv().fadeIn(500);
+        //});
+
+        var webinarFileName = DEW.PageObjects.WebinarFileInput().val();
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: sendRecordingPostedUrl,
+            dataType: constants.JsonDataType,
+            data: JSON.stringify({ webinarId: EvtWebPart.RecordedWebinar, fileName: webinarFileName }),
+            beforeSend: function () {
+                DEW.PageObjects.WaitIndicator().show();
+            }
+        }).done(function (result) {
+
+            labelCheckRemove();
+
+            if (result.Result === 'Success') {
+                DEW.PageObjects.InputFormFieldsDiv().append(successScreenMessage);
+            } else if (result.Result === 'No Orders to send for that webinar') {
+                DEW.PageObjects.InputFormFieldsDiv().append(noOrdersScreenMessage);
+            }
+
+        }).fail(function () {
+            labelCheckRemove();
+
+            DEW.PageObjects.InputFormFieldsDiv().append(failedScreenMessage);
+        }).always(function () {
+            DEW.PageObjects.WaitIndicator().hide();
+        });        
+        //DEW.PageObjects.InputFormFieldsDiv().load(sendRecordingPostedUrl, function () {
             
-            $('#FireSendRecordedWebinarButton').on('click', function (eventArgs) {
+        //    $('#FireSendRecordedWebinarButton').on('click', function (eventArgs) {
                 
-                resetButton = $('#ResetButton');
-                resetButton.hide();
+        //        resetButton = $('#ResetButton');
+        //        resetButton.hide();
 
-                var payload = $('#SelectedWebinarId').val();
+        //        var payload = $('#SelectedWebinarId').val();
 
-                $.ajax({
-                    type: 'POST',
-                    contentType: constants.JsonContentType,
-                    cache: false,
-                    url: sendRecordingPostedUrl,
-                    dataType: constants.JsonDataType,
-                    data: JSON.stringify({ webinarId: payload }),
-                    beforeSend: function () {
-                        DEW.PageObjects.WaitIndicator().show();
-                    }
-                }).done(function (result) {
+        //        $.ajax({
+        //            type: 'POST',
+        //            contentType: constants.JsonContentType,
+        //            cache: false,
+        //            url: sendRecordingPostedUrl,
+        //            dataType: constants.JsonDataType,
+        //            data: JSON.stringify({ webinarId: payload }),
+        //            beforeSend: function () {
+        //                DEW.PageObjects.WaitIndicator().show();
+        //            }
+        //        }).done(function (result) {
 
-                    labelCheckRemove();
+        //            labelCheckRemove();
 
-                    if (result.Result === 'Success') {
-                        DEW.PageObjects.InputFormFieldsDiv().append(successScreenMessage);
-                    } else if (result.Result === 'No Orders to send for that webinar') {
-                        DEW.PageObjects.InputFormFieldsDiv().append(noOrdersScreenMessage);
-                    }
+        //            if (result.Result === 'Success') {
+        //                DEW.PageObjects.InputFormFieldsDiv().append(successScreenMessage);
+        //            } else if (result.Result === 'No Orders to send for that webinar') {
+        //                DEW.PageObjects.InputFormFieldsDiv().append(noOrdersScreenMessage);
+        //            }
 
-                }).fail(function () {
-                    labelCheckRemove();
+        //        }).fail(function () {
+        //            labelCheckRemove();
 
-                    DEW.PageObjects.InputFormFieldsDiv().append(failedScreenMessage);
-                }).always(function () {
-                    DEW.PageObjects.WaitIndicator().hide();
-                    DEW.PageObjects.ResetButton().show();
+        //            DEW.PageObjects.InputFormFieldsDiv().append(failedScreenMessage);
+        //        }).always(function () {
+        //            DEW.PageObjects.WaitIndicator().hide();
+        //            DEW.PageObjects.ResetButton().show();
 
-                });
-            });
+        //        });
+        //    });
 
-            DEW.PageObjects.ResetButton().on('click', function (eventArgs) {
-                DEW.PageObjects.InputFormFieldsDiv().fadeOut(500, resetEventFirePanel);
-            });
-        });
+        //    DEW.PageObjects.ResetButton().on('click', function (eventArgs) {
+        //        DEW.PageObjects.InputFormFieldsDiv().fadeOut(500, resetEventFirePanel);
+        //    });
+        //});
     });
 
     var labelCheckRemove = function() {

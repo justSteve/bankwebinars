@@ -8,8 +8,20 @@
     <div style="width: 100%; margin: 10px auto; padding: 0">
         <div><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>
         <div id="ButtonsContainer">
-            <div style="display:inline-block"><button id="GetSendConnectionInfoEventHtmlButton" class="btn btn-primary btn-small">Send Connection</button></div>
-            <div style="display:inline-block"><button id="GetSendRecordingPostedEventhtmlButton" class="btn btn-primary btn-small">Send Recording</button></div>
+            
+            @{
+                var orderRow = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+                if (Model.Webinar.Status == WebinarStatus.Recorded)
+                {
+                    <input id="WebinarFileInput" type="text" placeholder="Enter File Name" />
+                    <div style="display:inline-block"><button id="SendRecordingPostedEventHtmlButton" class="btn btn-primary btn-small">Send Recording</button></div>
+                }
+                else
+                {
+                    <div style="display:inline-block"><button id="GetSendConnectionInfoEventHtmlButton" class="btn btn-primary btn-small">Send Connection</button></div>
+                }
+             }
+            
         </div>
 
         <div id="InputFormFieldsDiv">
@@ -18,8 +30,5 @@
     </div>
 </section>
 
-
-
-    <script src="@Url.Content("~/Scripts/app/notification-ops/details-event-webpart.js")"></script>
-
-
+<script type="text/javascript"> var EvtWebPart = {};EvtWebPart.RecordedWebinar = @Model.Webinar.idWebinar.ToString()</script>
+<script src="@Url.Content("~/Scripts/app/notification-ops/details-event-webpart.js")"></script>
