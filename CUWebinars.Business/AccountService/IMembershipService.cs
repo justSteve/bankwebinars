@@ -51,6 +51,7 @@ namespace CUWebinars.Business.AccountService
             string institutionType,
             string zip);
 
+        void RemoveClaim(string claimType, UserAccount account);
         void ResetPassword(string tenant, string email);
 
         void SignIn(UserAccount userAccount, bool persistant);

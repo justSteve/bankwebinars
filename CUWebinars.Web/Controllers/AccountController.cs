@@ -429,36 +429,41 @@ namespace CUWebinars.Web.Controllers
             {
                 var result = _membershipService.LogInUser(globalConfig.Tenant, model.Email, model.Password, model.RememberMe);
 
-                if (!result.Item2)
+                if (result.Item1)
                 {
-                    var webUser = _membershipService.GetUserByEmail(model.Email);
-                    return RedirectToAction("ResetPasswordWhereNotVerified", new { tempPassword = webUser.LastName });
+                    if (!result.Item2)
+                    {
+                        var webUser = _membershipService.GetUserByEmail(model.Email);
+                        if(webUser != null)
+                            return RedirectToAction("ResetPasswordWhereNotVerified", new {tempPassword = webUser.LastName, email = webUser.email});
+                        throw new Exception("");
+                    }
+                    var retURL = model.ReturnUrl.Replace("http://localhost:5556", string.Empty);
+
+                    _logger.Info("Account.SignIn Post Success. Session=" + AppHelper.GetUserAuditInfo());
+                    return RedirectToLocal(retURL);
                 }
 
-                var retURL = model.ReturnUrl.Replace("http://localhost:5556", string.Empty);
+                // If we got this far, something failed, redisplay form
+                _logger.Warn("Account.SignIn Failed. " + model.Email + "|" + model.Password + " Session=" + AppHelper.GetUserAuditInfo());
 
-                _logger.Info("Account.SignIn Post Success. Session=" + AppHelper.GetUserAuditInfo());
-                return RedirectToLocal(retURL);
+                ModelState.AddModelError(string.Empty, "The user name or password provided is incorrect.");
 
-            }
-
-            // If we got this far, something failed, redisplay form
-            _logger.Warn("Account.SignIn Failed. " + model.Email + "|" + model.Password + " Session=" + AppHelper.GetUserAuditInfo());
-
-            ModelState.AddModelError(string.Empty, "The user name or password provided is incorrect.");
-            return View("Login", new LoginModel
-            {
-                Register = new RegisterViewModel
+                return View("Login", new LoginModel
                 {
-                    RegisterFields = new RegisterModel
+                    Register = new RegisterViewModel
                     {
-                        AccountDetailsTitle = WebUiConstants.Register
-                    }
-                },
-                ResetPassword = new ResetPasswordModel(),
-                SignIn = model,
-                ActiveTab = "login"
-            });
+                        RegisterFields = new RegisterModel
+                        {
+                            AccountDetailsTitle = WebUiConstants.Register
+                        }
+                    },
+                    ResetPassword = new ResetPasswordModel(),
+                    SignIn = model,
+                    ActiveTab = "login"
+                });
+            }
+            return null;
         }
 
         [System.Web.Mvc.HttpPost]
@@ -484,18 +489,44 @@ namespace CUWebinars.Web.Controllers
         
         
         [System.Web.Mvc.AllowAnonymous]
-        public ViewResult ResetPasswordWhereNotVerified(string tempPassword)
+        public ViewResult ResetPasswordWhereNotVerified(string tempPassword, string email)
         {
             _logger.Info("Account.ResetPasswordWhereNotVerified GET. Session=" + AppHelper.GetUserAuditInfo());
 
             var localPasswordModel = new LocalPasswordModel
             {
+                Email = email,
                 ConfirmPassword = string.Empty,
                 OldPassword = tempPassword,
                 NewPassword = string.Empty
             };
 
             return View(localPasswordModel);
+        }
+        [System.Web.Mvc.HttpPost]
+        //[ValidateAntiForgeryToken]
+        [System.Web.Mvc.AllowAnonymous]
+        public ViewResult ResetPasswordWhereNotVerified(LocalPasswordModel localPasswordModel)
+        {
+            if (ModelState.IsValid)
+            {
+                _logger.Info("Account.ResetPasswordWhereNotVerified POST. Session=" + AppHelper.GetUserAuditInfo());
+
+                _stateService.SetValue(DomainConstants.UserCreatedViaNewOrder, true);
+                _membershipService.ResetPassword(globalConfig.Tenant, localPasswordModel.Email);
+
+                var key = _stateService.GetValue<string>(DomainConstants.VerificationKey);
+
+                _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
+
+                _membershipService.ChangePasswordFromResetKey(key, localPasswordModel.NewPassword);
+
+                _stateService.ClearValue(DomainConstants.VerificationKey);
+
+                return View(localPasswordModel);
+            }
+
+            return View();
         }
 
 

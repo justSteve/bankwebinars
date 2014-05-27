@@ -207,6 +207,11 @@ namespace CUWebinars.Business.AccountService
             return newInstitution;
         }
 
+        public void RemoveClaim(string claimType, UserAccount account)
+        {
+            _userAccountService.RemoveClaim(account.ID, ClaimTypes.HasNotVerified);
+        }
+
         public void ResetPassword(string tenant, string email)
         {
             //TODO: are calls to this method logged my Membership Reboot?
