@@ -18,7 +18,7 @@ namespace CUWebinars.Web.App_Start
                 "CUWebinars",
                 "TTS Staff",
                 "Account/Login",
-                "Account/Confirm/",
+                "Account/Confirmed/",
                 "Account/RegisterCancel/",
                 "Account/PasswordResetConfirm/");
 

@@ -84,6 +84,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
     <Compile Include="DatabaseSetup.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="MembershipServiceTests.cs" />

@@ -37,6 +37,9 @@ namespace CUWebinars.Web.Models
     public class LocalPasswordModel
     {
         [Required]
+        public string Email { get; set; }
+
+        [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Current password")]
         public string OldPassword { get; set; }

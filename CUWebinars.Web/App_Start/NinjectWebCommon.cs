@@ -129,36 +129,7 @@ namespace CUWebinars.Web.App_Start
 
                 return new HomeController(new WebinarRepository(sharedContext), logger);
             }).InRequestScope();
-
-            kernel.Bind<Api.OrderController>().ToMethod(ctx =>
-            {
-                var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
-                var userAccountService = kernel.Get<UserAccountService>();
-                ILogger logger = new Log4NetLogger(typeof (Api.OrderController));
-                ILogger loggerForOrderManagementService = new Log4NetLogger(typeof(OrderManagementService));
-                
-
-                var orderManagementService = new OrderManagementService(
-                    new AffiliateRepository(sharedContext),
-                    new RegTypeRepository(sharedContext),
-                    new OrderRepository(sharedContext),
-                    new RefDataRepository(),
-                    new WebUserRepository(sharedContext),
-                    new WebinarRepository(sharedContext),
-                    loggerForOrderManagementService,
-                    ttsConfig
-                    );
-
-                var membershipService = new MembershipService(
-                    new InstitutionRepository(sharedContext),
-                    new RefDataRepository(),
-                    new SamAuthenticationService(userAccountService),
-                    userAccountService,
-                    new WebUserRepository(sharedContext)
-                    );
-
-                return new Api.OrderController(membershipService, orderManagementService, kernel.Get<IStateService>(), logger);
-            }).InRequestScope();
+            
 
             kernel.Bind<Nml.OrderController>().ToMethod(ctx =>
             {

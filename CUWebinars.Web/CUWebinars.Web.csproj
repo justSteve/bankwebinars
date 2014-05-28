@@ -389,7 +389,6 @@
     <Compile Include="ViewModel\UsersForOrdersViewModel.cs" />
     <Compile Include="Core\CsvParseOps.cs" />
     <Compile Include="Models\IncomingOrderModel.cs" />
-    <Compile Include="Controllers\api\OrderController.cs" />
     <Compile Include="Controllers\api\ParentApiController.cs" />
     <Compile Include="Controllers\CartController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
@@ -436,7 +435,6 @@
     <Compile Include="Membership\DataOperations.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\AddressModel.cs" />
-    <Compile Include="Models\ChangeEmailFromKeyInputModel.cs" />
     <Compile Include="Models\ChangePasswordFromResetKeyInputModel.cs" />
     <Compile Include="Models\ManageModel.cs" />
     <Compile Include="Models\RegisterModel.cs" />
@@ -1125,7 +1123,6 @@
     <Content Include="Views\Shared\EditorTemplates\Address.cshtml" />
     <Content Include="Views\Account\_CreateUserForm.cshtml" />
     <Content Include="Views\Account\test.cshtml" />
-    <Content Include="Views\Account\Confirm.cshtml" />
     <Content Include="Views\Account\Closed.cshtml" />
     <Content Include="Views\Shared\AddLocationsView.cshtml" />
     <Content Include="Views\Shared\Partials\_DisplayRowPrice.cshtml" />
@@ -1156,6 +1153,7 @@
     <Content Include="Views\Webinar\Partials\_AdminEventButtons.cshtml" />
     <Content Include="Views\Webinar\Partials\_SendConnectionInfo.cshtml" />
     <Content Include="Views\Webinar\Partials\_SendRecordingPosted.cshtml" />
+    <Content Include="Views\Account\Confirmed.cshtml" />
     <Content Include="Views\Account\ResetPasswordWhereNotVerified.cshtml" />
     <Content Include="Views\Webinar\Partials\_UpdateConnectionInfo.cshtml" />
   </ItemGroup>
