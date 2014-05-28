@@ -55,7 +55,6 @@ namespace CUWebinars.Business.Services
 
         public Order AssignAffiliateToOrder(Affiliate affiliate, Order order)
         {
-            //var affilateToAssign = _affiliateRepository.FindByIdAndDetachItem(affiliate.idUserAff);
             return _orderRepository.AssignAffiliate(affiliate, order);
         }
 
@@ -112,15 +111,10 @@ namespace CUWebinars.Business.Services
             return _affiliateRepository.FindById(id);
         }
 
-        //public RegType GetOptionById(RegType id)
-        //{
-        //    return _RegTypeRepository.FindRegType(id);
-        //}
 
         public IList<RegType> GetOptionsByWebinarId(int id, bool detached)
         {
             return _regTypeRepository.FindRegTypesByWebinarId(id, false);
-            //return null;
         }
 
         public IList<Order> GetOrdersForLiveNotifications(int idWebinar)
@@ -137,11 +131,6 @@ namespace CUWebinars.Business.Services
         {
             return null;
         }
-
-        //public IList<Order> GetOrdersForPostedRecordingsNotifications()
-        //{
-
-        //}
 
         public IList<RegType> GetRegTypesByWebinarIdFrom(int id, bool detached)
         {
@@ -214,11 +203,6 @@ namespace CUWebinars.Business.Services
                 throw;
             }
 
-        }
-
-        public void CreateOrderEvent(Order order, UserAccount userAccount)
-        {
-            //AddEvent(new OrderSubmittedEvent<UserAccount> { Account = userAccount, Order = order });
         }
 
 
@@ -525,8 +509,7 @@ namespace CUWebinars.Business.Services
             }
             catch (Exception exception)
             {
-                _logger.ErrorException("SaveOrderChanges", exception);
-                var msg = exception.Message;
+                _logger.Error("SaveOrderChanges: {0}", exception.Message);
             }
             return null;
         }
@@ -535,29 +518,7 @@ namespace CUWebinars.Business.Services
         {
             return _orderRepository.CheckUserForRecordingAccess(w, u);
         }
-
-        public void SendConnectionInfo(Order currentOrder)
-        {
-            //try
-            //{
-            //    AddEvent(new OrderSubmittedEvent<Order> { Order =  });
-
-            //    foreach (var evt in GetEvents())
-            //    {
-            //        _ttsConfig.NotificationEventBus.RaiseEvent(evt);
-            //    }
-
-            //    Clear();
-
-            //    return updatedOrder;
-
-            //}
-            //catch (Exception exception)
-            //{
-            //    var msg = exception.Message;
-            //}
-            //return null;
-        }
+        
 
         private void ProcessDiscountCodes(object instance)
         {

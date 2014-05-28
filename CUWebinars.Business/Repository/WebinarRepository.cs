@@ -1,10 +1,6 @@
-﻿using System.Data.Entity;
-using System.IO;
-using System.Runtime.Remoting.Contexts;
-using CUWebinars.Business.Models;
+﻿using CUWebinars.Business.Models;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
+using System.Data.Entity;
 using System.Linq;
 
 namespace CUWebinars.Business.Repository
@@ -22,25 +18,16 @@ namespace CUWebinars.Business.Repository
 
         }
 
-        //public static ILog Logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public Webinar FindByIdLoaded(int id)
         {
             var webinar = items.Include(w => w.OrderRows)
-                //.Include(w => w.OptionsGroupsXrefs)
+                .Include(w => w.RegTypesGroupsXref)
                 .Include(w => w.Presenter)
-                //.Include(w => w.WebinarFiles)
-                .Include(w => w.WebinarFiles.Select(wf => wf.Webinar))
+                .Include(w => w.WebinarFiles)
                 .Include(w => w.WebinarTopicXrefs.Select(wt => wt.Topic))
                 .Where(w => w.idWebinar == id);
 
             return webinar.FirstOrDefault();
-        }
-
-        public Webinar FindByIdAndDetach(int id)
-        {
-            var webinar = FindById(id);
-            db.Entry(webinar).State = System.Data.Entity.EntityState.Detached;
-            return webinar;
         }
 
         public IQueryable<Webinar> GetUpcoming()

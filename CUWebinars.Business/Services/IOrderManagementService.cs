@@ -18,7 +18,6 @@ namespace CUWebinars.Business.Services
             string organizer, string eventId, bool allDayEvent);
         void CreateCPSubscription(OrderRow orderRow);
         Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow);
-        void CreateOrderEvent(Order order, UserAccount userAccount);
         OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, int registrationType);
         string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int idWebinar, string webinarKey);
         void DispatchDummyOrder();
