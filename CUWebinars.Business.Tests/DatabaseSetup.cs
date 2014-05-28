@@ -8,12 +8,23 @@ namespace CUWebinars.Business.Tests
     internal class DatabaseSetup
     {
         internal static string connStr = ConfigurationManager.ConnectionStrings["CUWebinarsSUTLocal"].ConnectionString;
-        internal void InstallDatabase()
+        internal void InstallDatabase(string resourceName)
         {
-            InstallDatabase(connStr);
+            InstallDatabase(connStr, GetScript(resourceName));
         }
 
-        internal void InstallDatabase(string connectionString)
+        private static string GetScript(string resourceName)
+        {
+            switch (resourceName)
+            {
+                case Constants.CreateDbDefault:
+                    return Resources.CreateDb;
+                default:
+                    throw new NotSupportedException(string.Format("There's no resource script called {0}", resourceName));
+            }
+        }
+
+        internal void InstallDatabase(string connectionString, string scriptToRunIn)
         {
             var builder = new SqlConnectionStringBuilder(connectionString) {InitialCatalog = "Master"};
 
@@ -25,11 +36,9 @@ namespace CUWebinars.Business.Tests
                 {
                     cmd.Connection = conn;
 
-                    var schemaSql = Resources.CreateDb;
-
-                    foreach (var sql in schemaSql.Split(new[] { "GO" }, StringSplitOptions.RemoveEmptyEntries))
+                    foreach (var sqlBlock in scriptToRunIn.Split(new[] { "GO" }, StringSplitOptions.RemoveEmptyEntries))
                     {
-                        cmd.CommandText = sql;
+                        cmd.CommandText = sqlBlock;
                         cmd.ExecuteNonQuery();
                     }
                 }

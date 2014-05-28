@@ -191,7 +191,7 @@ namespace CUWebinars.Web.Controllers
                 importedOrder.FirstName = webUser.FirstName;
                 importedOrder.LastName = webUser.LastName;
                 importedOrder.Institution = webUser.Institution.InstitutionName;
-                importedOrder.BillingEmail = incomingOrderModel.Email;
+                importedOrder.BillingEmail = email;
 
                 importedOrder.BillingAddress = incomingOrderModel.BillingAddress.StreetAddress;
                 importedOrder.BillingAddress2 = incomingOrderModel.BillingAddress.StreetAddress2;

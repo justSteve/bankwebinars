@@ -389,7 +389,6 @@
     <Compile Include="ViewModel\UsersForOrdersViewModel.cs" />
     <Compile Include="Core\CsvParseOps.cs" />
     <Compile Include="Models\IncomingOrderModel.cs" />
-    <Compile Include="Controllers\api\OrderController.cs" />
     <Compile Include="Controllers\api\ParentApiController.cs" />
     <Compile Include="Controllers\CartController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />

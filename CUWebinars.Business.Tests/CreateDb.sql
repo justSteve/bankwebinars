@@ -573,3 +573,253 @@ INSERT [dbo].[Presenter] ([idUser], [Biography], [BiographyLong], [PhotoFull], [
 SET IDENTITY_INSERT [dbo].[RegType] ON
 INSERT [dbo].[RegType] ([idRegType], [RegTypeExplain], [RegTypeLabel], [Price], [TaxExempt], [SortOrder], [SKU], [ShowLiveNotifications], [ShowRecordingNotifications], [ShowShippedNotifications], [Stage1CheckoutConfirmationMsg], [Stage2CheckoutConfirmationMsg], [Stage1EmailConfirmationMsg], [Stage2EmailConfirmationMsg]) VALUES (88, N'Attend the live session with the opportunity to ask questions of the presenter.  You also receive handouts.', N'Live Session Only', 155, NULL, 1, N'Live_Session_Only_1Hr_155_97', N'Yes', N'No', N'No', N'This order is for the live session only. The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) well notify you by email.', N'This order is for the live session only. The information required to connect to the event is summarized below. Detailed information has been sent to your email and is also available at http://www.BankWebinars.com/MyWebinars.', N'The connection information for your event is not yet generated, but as soon as it is (usually 2-3 days before the event) youll receive another email with complete connection instructions.', N'Connection information is summerized below and is also available at http://www.BankWebinars.com.')
 SET IDENTITY_INSERT [dbo].[RegType] OFF
+SET IDENTITY_INSERT [dbo].[Institution] ON 
+INSERT [dbo].[Institution] ([idInstitution], [InstitutionName], [InstitutionType], [domainName], [RegIdentifier], [Address], [City], [State], [Zip]) VALUES (25, N'TTS', N'New', NULL, N'N', NULL, N'city', N'st', N'55555')
+INSERT [dbo].[Institution] ([idInstitution], [InstitutionName], [InstitutionType], [domainName], [RegIdentifier], [Address], [City], [State], [Zip]) VALUES (23613, N'Fidelity Federal Savings and Loan Association', N'FDIC', NULL, N'31167', N'25 East Silver Springs Blvd', N'Ocala', N'FL', N'32670')
+INSERT [dbo].[Institution] ([idInstitution], [InstitutionName], [InstitutionType], [domainName], [RegIdentifier], [Address], [City], [State], [Zip]) VALUES (26, N'Total Training Solutions', N'New', NULL, N'N', NULL, N'city', N'st', N'55555')
+INSERT [dbo].[Institution] ([idInstitution], [InstitutionName], [InstitutionType], [domainName], [RegIdentifier], [Address], [City], [State], [Zip]) VALUES (44869, N'Franklin Mint Federal Credit Union', N'New', N'fmfcu.org', N'N', NULL, N'Broomall', N'PA', N'19008')
+
+SET IDENTITY_INSERT [dbo].[Institution] OFF
+
+
+
+/****** Object:  Index [IX_idOrderRow]    Script Date: 17/05/2014 10:23:38 AM ******/
+CREATE NONCLUSTERED INDEX [IX_idOrderRow] ON [dbo].[AdditionalLocation]
+(
+	[idOrderRow] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_idUser]    Script Date: 17/05/2014 10:23:38 AM ******/
+CREATE NONCLUSTERED INDEX [IX_idUser] ON [dbo].[Address]
+(
+	[idUser] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_idUserAff]    Script Date: 17/05/2014 10:23:38 AM ******/
+CREATE NONCLUSTERED INDEX [IX_idUserAff] ON [dbo].[Affiliate]
+(
+	[idUserAff] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_idAffiliate]    Script Date: 17/05/2014 10:23:38 AM ******/
+CREATE NONCLUSTERED INDEX [IX_idAffiliate] ON [dbo].[Order]
+(
+	[idAffiliate] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_idUser]    Script Date: 17/05/2014 10:23:38 AM ******/
+CREATE NONCLUSTERED INDEX [IX_idUser] ON [dbo].[Order]
+(
+	[idUser] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_Discount_idDiscount]    Script Date: 17/05/2014 10:23:38 AM ******/
+CREATE NONCLUSTERED INDEX [IX_Discount_idDiscount] ON [dbo].[OrderRow]
+(
+	[Discount_idDiscount] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_idOrder]    Script Date: 17/05/2014 10:23:38 AM ******/
+CREATE NONCLUSTERED INDEX [IX_idOrder] ON [dbo].[OrderRow]
+(
+	[idOrder] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_idRegType]    Script Date: 17/05/2014 10:23:38 AM ******/
+CREATE NONCLUSTERED INDEX [IX_idRegType] ON [dbo].[OrderRow]
+(
+	[idRegType] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_idWebinar]    Script Date: 17/05/2014 10:23:38 AM ******/
+CREATE NONCLUSTERED INDEX [IX_idWebinar] ON [dbo].[OrderRow]
+(
+	[idWebinar] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_idUser]    Script Date: 17/05/2014 10:23:38 AM ******/
+CREATE NONCLUSTERED INDEX [IX_idUser] ON [dbo].[Presenter]
+(
+	[idUser] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_idRegTypeGroup]    Script Date: 17/05/2014 10:23:38 AM ******/
+CREATE NONCLUSTERED INDEX [IX_idRegTypeGroup] ON [dbo].[RegTypesGroupsXref]
+(
+	[idRegTypeGroup] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_idWebinar]    Script Date: 17/05/2014 10:23:38 AM ******/
+CREATE NONCLUSTERED INDEX [IX_idWebinar] ON [dbo].[RegTypesGroupsXref]
+(
+	[idWebinar] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_idRegType]    Script Date: 17/05/2014 10:23:38 AM ******/
+CREATE NONCLUSTERED INDEX [IX_idRegType] ON [dbo].[RegTypesXref]
+(
+	[idRegType] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_idRegTypeGroup]    Script Date: 17/05/2014 10:23:38 AM ******/
+CREATE NONCLUSTERED INDEX [IX_idRegTypeGroup] ON [dbo].[RegTypesXref]
+(
+	[idRegTypeGroup] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_idParentTopic]    Script Date: 17/05/2014 10:23:38 AM ******/
+CREATE NONCLUSTERED INDEX [IX_idParentTopic] ON [dbo].[Topic]
+(
+	[idParentTopic] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_idPresenter]    Script Date: 17/05/2014 10:23:38 AM ******/
+CREATE NONCLUSTERED INDEX [IX_idPresenter] ON [dbo].[Webinar]
+(
+	[idPresenter] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_idWebinar]    Script Date: 17/05/2014 10:23:38 AM ******/
+CREATE NONCLUSTERED INDEX [IX_idWebinar] ON [dbo].[WebinarFile]
+(
+	[idWebinar] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_idTopic]    Script Date: 17/05/2014 10:23:38 AM ******/
+CREATE NONCLUSTERED INDEX [IX_idTopic] ON [dbo].[WebinarTopicXref]
+(
+	[idTopic] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_idWebinar]    Script Date: 17/05/2014 10:23:38 AM ******/
+CREATE NONCLUSTERED INDEX [IX_idWebinar] ON [dbo].[WebinarTopicXref]
+(
+	[idWebinar] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+/****** Object:  Index [IX_idUserInstitution]    Script Date: 17/05/2014 10:23:38 AM ******/
+CREATE NONCLUSTERED INDEX [IX_idUserInstitution] ON [dbo].[WebUser]
+(
+	[idUserInstitution] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[AdditionalLocation]  WITH CHECK ADD  CONSTRAINT [FK_dbo.AdditionalLocation_dbo.OrderRow_idOrderRow] FOREIGN KEY([idOrderRow])
+REFERENCES [dbo].[OrderRow] ([idOrderRow])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[AdditionalLocation] CHECK CONSTRAINT [FK_dbo.AdditionalLocation_dbo.OrderRow_idOrderRow]
+GO
+ALTER TABLE [dbo].[Address]  WITH CHECK ADD  CONSTRAINT [FK_dbo.Address_dbo.WebUser_idUser] FOREIGN KEY([idUser])
+REFERENCES [dbo].[WebUser] ([idUser])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[Address] CHECK CONSTRAINT [FK_dbo.Address_dbo.WebUser_idUser]
+GO
+ALTER TABLE [dbo].[Affiliate]  WITH CHECK ADD  CONSTRAINT [FK_dbo.Affiliate_dbo.WebUser_idUserAff] FOREIGN KEY([idUserAff])
+REFERENCES [dbo].[WebUser] ([idUser])
+GO
+ALTER TABLE [dbo].[Affiliate] CHECK CONSTRAINT [FK_dbo.Affiliate_dbo.WebUser_idUserAff]
+GO
+ALTER TABLE [dbo].[Order]  WITH CHECK ADD  CONSTRAINT [FK_dbo.Order_dbo.Affiliate_idAffiliate] FOREIGN KEY([idAffiliate])
+REFERENCES [dbo].[Affiliate] ([idUserAff])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[Order] CHECK CONSTRAINT [FK_dbo.Order_dbo.Affiliate_idAffiliate]
+GO
+ALTER TABLE [dbo].[Order]  WITH CHECK ADD  CONSTRAINT [FK_dbo.Order_dbo.WebUser_idUser] FOREIGN KEY([idUser])
+REFERENCES [dbo].[WebUser] ([idUser])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[Order] CHECK CONSTRAINT [FK_dbo.Order_dbo.WebUser_idUser]
+GO
+ALTER TABLE [dbo].[OrderRow]  WITH CHECK ADD  CONSTRAINT [FK_dbo.OrderRow_dbo.Discount_Discount_idDiscount] FOREIGN KEY([Discount_idDiscount])
+REFERENCES [dbo].[Discount] ([idDiscount])
+GO
+ALTER TABLE [dbo].[OrderRow] CHECK CONSTRAINT [FK_dbo.OrderRow_dbo.Discount_Discount_idDiscount]
+GO
+ALTER TABLE [dbo].[OrderRow]  WITH CHECK ADD  CONSTRAINT [FK_dbo.OrderRow_dbo.Order_idOrder] FOREIGN KEY([idOrder])
+REFERENCES [dbo].[Order] ([idOrder])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[OrderRow] CHECK CONSTRAINT [FK_dbo.OrderRow_dbo.Order_idOrder]
+GO
+ALTER TABLE [dbo].[OrderRow]  WITH CHECK ADD  CONSTRAINT [FK_dbo.OrderRow_dbo.RegType_idRegType] FOREIGN KEY([idRegType])
+REFERENCES [dbo].[RegType] ([idRegType])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[OrderRow] CHECK CONSTRAINT [FK_dbo.OrderRow_dbo.RegType_idRegType]
+GO
+ALTER TABLE [dbo].[OrderRow]  WITH CHECK ADD  CONSTRAINT [FK_dbo.OrderRow_dbo.Webinar_idWebinar] FOREIGN KEY([idWebinar])
+REFERENCES [dbo].[Webinar] ([idWebinar])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[OrderRow] CHECK CONSTRAINT [FK_dbo.OrderRow_dbo.Webinar_idWebinar]
+GO
+ALTER TABLE [dbo].[Presenter]  WITH CHECK ADD  CONSTRAINT [FK_dbo.Presenter_dbo.WebUser_idUser] FOREIGN KEY([idUser])
+REFERENCES [dbo].[WebUser] ([idUser])
+GO
+ALTER TABLE [dbo].[Presenter] CHECK CONSTRAINT [FK_dbo.Presenter_dbo.WebUser_idUser]
+GO
+ALTER TABLE [dbo].[RegTypesGroupsXref]  WITH CHECK ADD  CONSTRAINT [FK_dbo.RegTypesGroupsXref_dbo.RegTypesGroups_idRegTypeGroup] FOREIGN KEY([idRegTypeGroup])
+REFERENCES [dbo].[RegTypesGroups] ([idRegTypeGroup])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[RegTypesGroupsXref] CHECK CONSTRAINT [FK_dbo.RegTypesGroupsXref_dbo.RegTypesGroups_idRegTypeGroup]
+GO
+ALTER TABLE [dbo].[RegTypesGroupsXref]  WITH CHECK ADD  CONSTRAINT [FK_dbo.RegTypesGroupsXref_dbo.Webinar_idWebinar] FOREIGN KEY([idWebinar])
+REFERENCES [dbo].[Webinar] ([idWebinar])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[RegTypesGroupsXref] CHECK CONSTRAINT [FK_dbo.RegTypesGroupsXref_dbo.Webinar_idWebinar]
+GO
+ALTER TABLE [dbo].[RegTypesXref]  WITH CHECK ADD  CONSTRAINT [FK_dbo.RegTypesXref_dbo.RegType_idRegType] FOREIGN KEY([idRegType])
+REFERENCES [dbo].[RegType] ([idRegType])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[RegTypesXref] CHECK CONSTRAINT [FK_dbo.RegTypesXref_dbo.RegType_idRegType]
+GO
+ALTER TABLE [dbo].[RegTypesXref]  WITH CHECK ADD  CONSTRAINT [FK_dbo.RegTypesXref_dbo.RegTypesGroups_idRegTypeGroup] FOREIGN KEY([idRegTypeGroup])
+REFERENCES [dbo].[RegTypesGroups] ([idRegTypeGroup])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[RegTypesXref] CHECK CONSTRAINT [FK_dbo.RegTypesXref_dbo.RegTypesGroups_idRegTypeGroup]
+GO
+ALTER TABLE [dbo].[Topic]  WITH CHECK ADD  CONSTRAINT [FK_dbo.Topic_dbo.Topic_idParentTopic] FOREIGN KEY([idParentTopic])
+REFERENCES [dbo].[Topic] ([idTopic])
+GO
+ALTER TABLE [dbo].[Topic] CHECK CONSTRAINT [FK_dbo.Topic_dbo.Topic_idParentTopic]
+GO
+ALTER TABLE [dbo].[Webinar]  WITH CHECK ADD  CONSTRAINT [FK_dbo.Webinar_dbo.Presenter_idPresenter] FOREIGN KEY([idPresenter])
+REFERENCES [dbo].[Presenter] ([idUser])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[Webinar] CHECK CONSTRAINT [FK_dbo.Webinar_dbo.Presenter_idPresenter]
+GO
+ALTER TABLE [dbo].[WebinarFile]  WITH CHECK ADD  CONSTRAINT [FK_dbo.WebinarFile_dbo.Webinar_idWebinar] FOREIGN KEY([idWebinar])
+REFERENCES [dbo].[Webinar] ([idWebinar])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[WebinarFile] CHECK CONSTRAINT [FK_dbo.WebinarFile_dbo.Webinar_idWebinar]
+GO
+ALTER TABLE [dbo].[WebinarTopicXref]  WITH CHECK ADD  CONSTRAINT [FK_dbo.WebinarTopicXref_dbo.Topic_idTopic] FOREIGN KEY([idTopic])
+REFERENCES [dbo].[Topic] ([idTopic])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[WebinarTopicXref] CHECK CONSTRAINT [FK_dbo.WebinarTopicXref_dbo.Topic_idTopic]
+GO
+ALTER TABLE [dbo].[WebinarTopicXref]  WITH CHECK ADD  CONSTRAINT [FK_dbo.WebinarTopicXref_dbo.Webinar_idWebinar] FOREIGN KEY([idWebinar])
+REFERENCES [dbo].[Webinar] ([idWebinar])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[WebinarTopicXref] CHECK CONSTRAINT [FK_dbo.WebinarTopicXref_dbo.Webinar_idWebinar]
+GO
+ALTER TABLE [dbo].[WebUser]  WITH CHECK ADD  CONSTRAINT [FK_dbo.WebUser_dbo.Institution_idUserInstitution] FOREIGN KEY([idUserInstitution])
+REFERENCES [dbo].[Institution] ([idInstitution])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[WebUser] CHECK CONSTRAINT [FK_dbo.WebUser_dbo.Institution_idUserInstitution]
+GO
+USE [master]
+GO
+ALTER DATABASE [CUWebinars] SET  READ_WRITE 
+GO
