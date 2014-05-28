@@ -200,7 +200,7 @@ namespace CUWebinars.CitrixDriver
             SeleniumTestDriver.FindByIdClick("StartDate_Cal_0");
             SeleniumTestDriver.FindByCssSelectorClick("img.next");
 
-            PickDate(webinar.StartDate, true);
+            PickDate(webinar.StartTime, true);
 
             //  Start hour
             SeleniumTestDriver.TypeText("StartHour_0", webinar.StartHour);
