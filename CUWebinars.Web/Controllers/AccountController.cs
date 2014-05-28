@@ -252,7 +252,7 @@ namespace CUWebinars.Web.Controllers
         {
             try
             {
-                var changeEmailFromKeyInputModel = new ChangeEmailFromKeyInputModel
+                var changeEmailFromKeyInputModel = new LocalPasswordModel
                 {
                     Email = email,
                     OldPassword = surname,
@@ -281,7 +281,8 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.AllowAnonymous]
         [System.Web.Mvc.HttpPost]
-        public ActionResult Confirmed(ChangeEmailFromKeyInputModel model)
+        [ValidateAntiForgeryToken]
+        public ActionResult Confirmed(LocalPasswordModel model)
         {
             try
             {

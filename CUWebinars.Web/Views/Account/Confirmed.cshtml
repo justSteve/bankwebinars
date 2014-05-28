@@ -1,11 +1,11 @@
-﻿@model ChangeEmailFromKeyInputModel
+﻿@model LocalPasswordModel
 
 <div id="LogInContainer" class="container">
     <div style="margin-left: 200px;" id="reset">
         @using (Html.BeginForm("Confirmed", "Account", FormMethod.Post))
         {
-            //@Html.AntiForgeryToken()
-            //@Html.ValidationSummary()
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary()
 
             <fieldset>
                 <legend>Set Password Form</legend>
@@ -25,7 +25,6 @@
                     @Html.PasswordFor(m => m.ConfirmPassword)
                 </div>
                 <input type="submit" value="Set password" class="btn btn-default" />
-                <div>@Model.ScreenMessage</div>
             </fieldset>
         }
     </div>

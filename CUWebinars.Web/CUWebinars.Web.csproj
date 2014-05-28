@@ -435,7 +435,6 @@
     <Compile Include="Membership\DataOperations.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\AddressModel.cs" />
-    <Compile Include="Models\ChangeEmailFromKeyInputModel.cs" />
     <Compile Include="Models\ChangePasswordFromResetKeyInputModel.cs" />
     <Compile Include="Models\ManageModel.cs" />
     <Compile Include="Models\RegisterModel.cs" />
@@ -1124,7 +1123,6 @@
     <Content Include="Views\Shared\EditorTemplates\Address.cshtml" />
     <Content Include="Views\Account\_CreateUserForm.cshtml" />
     <Content Include="Views\Account\test.cshtml" />
-    <Content Include="Views\Account\Confirm.cshtml" />
     <Content Include="Views\Account\Closed.cshtml" />
     <Content Include="Views\Shared\AddLocationsView.cshtml" />
     <Content Include="Views\Shared\Partials\_DisplayRowPrice.cshtml" />

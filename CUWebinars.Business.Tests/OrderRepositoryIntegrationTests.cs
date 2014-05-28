@@ -20,7 +20,7 @@ namespace CUWebinars.Business.Tests
         public void TearDown()
         {
             var databaseSetup = new DatabaseSetup();
-            databaseSetup.UninstallDatabase();
+            databaseSetup.UninstallDatabase("CUWebinars");
         }
 
 

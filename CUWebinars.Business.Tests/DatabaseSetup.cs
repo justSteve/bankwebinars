@@ -8,6 +8,7 @@ namespace CUWebinars.Business.Tests
     internal class DatabaseSetup
     {
         internal static string connStr = ConfigurationManager.ConnectionStrings["CUWebinarsSUTLocal"].ConnectionString;
+        private const string MasterSchema = "Master";
         internal void InstallDatabase(string resourceName)
         {
             InstallDatabase(connStr, GetScript(resourceName));
@@ -26,7 +27,7 @@ namespace CUWebinars.Business.Tests
 
         internal void InstallDatabase(string connectionString, string scriptToRunIn)
         {
-            var builder = new SqlConnectionStringBuilder(connectionString) {InitialCatalog = "Master"};
+            var builder = new SqlConnectionStringBuilder(connectionString) { InitialCatalog = MasterSchema };
 
             using (var conn = new SqlConnection(builder.ConnectionString))
             {
@@ -45,24 +46,20 @@ namespace CUWebinars.Business.Tests
             }
         }
 
-        internal void UninstallDatabase()
+        internal void UninstallDatabase(string dbName)
         {
-            this.UninstallDatabase(connStr);
+            this.UninstallDatabase(connStr, dbName);
         }
 
-        internal void UninstallDatabase(string connectionString)
+        internal void UninstallDatabase(string connectionString, string dbName)
         {
             var builder = new SqlConnectionStringBuilder(connectionString);
-            builder.InitialCatalog = "Master";
+            builder.InitialCatalog = MasterSchema;
             using (var conn = new SqlConnection(builder.ConnectionString))
             {
                 conn.Open();
 
-                const string dropCmd = @"
-                    IF EXISTS (SELECT name
-                               FROM master.dbo.sysdatabases
-                               WHERE name = N'CUWebinars')
-                    DROP DATABASE [CUWebinars];";
+                string dropCmd = string.Format("IF EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = N'{0}') DROP DATABASE [{0}];", dbName);
 
                 using (var cmd = new SqlCommand(dropCmd, conn))
                     cmd.ExecuteNonQuery();
