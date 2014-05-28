@@ -14,6 +14,11 @@ namespace CUWebinars.Web.App_Start
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
+            
+            routes.MapRoute(
+                name: "EmailLinkRoute",
+                url: "{controller}/{action}/{email}/{surname}"
+            );
 
             routes.MapRoute(
                 name: "AdditionalLocationsModal",

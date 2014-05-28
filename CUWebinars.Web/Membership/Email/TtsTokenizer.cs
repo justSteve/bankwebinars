@@ -61,8 +61,11 @@ namespace CUWebinars.Web.Membership.Email
                     notification.CancelVerificationUrl = Path.Combine(notification.CancelVerificationUrl,
                         verificationKey);
 
-                    if (!_stateService.HasValue(DomainConstants.ConfirmChangeEmailLink))
+                    if (_stateService.HasValue(DomainConstants.UserCreatedViaNewOrder) && !_stateService.HasValue(DomainConstants.ConfirmChangeEmailLink))
+                    {
                         _stateService.SetValue(DomainConstants.ConfirmChangeEmailLink, notification.ConfirmChangeEmailUrl);
+                    }
+                    
                 }
 
                 foreach (var keyValuePair in values)

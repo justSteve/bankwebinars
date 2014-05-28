@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Web.Mvc;
 
 namespace CUWebinars.Web.Models
 {
 
-    public class ChangeEmailFromKeyInputModel
+    public class ChangeEmailFromKeyInputModel : LocalPasswordModel
     {
         [Required]
         [DataType(DataType.Password)]

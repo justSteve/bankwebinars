@@ -506,7 +506,7 @@ namespace CUWebinars.Business.Services
                 
                 var orderSubmittedViewModel = new OrderSubmittedViewModel
                 {
-                    ConfirmChangeEmailUrl = confirmChangeEmailLink,
+                    ConfirmChangeEmailUrl = string.Concat(confirmChangeEmailLink, Path.AltDirectorySeparatorChar, currentOrder.WebUser.LastName.ToLower()),
                     Order = updatedOrder,
                     VerificationKey = verificationKey
                 };
