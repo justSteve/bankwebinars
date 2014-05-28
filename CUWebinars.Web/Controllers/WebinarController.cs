@@ -629,5 +629,15 @@ namespace CUWebinars.Web.Controllers
             _db.Dispose();
             base.Dispose(disposing);
         }
+
+        [System.Web.Mvc.HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdateConnectionInfo(Webinar model)
+        {
+            Webinar webinar = model;
+
+            _db.SaveChanges();
+            return PartialView(webinar);
+        }
     }
 }
