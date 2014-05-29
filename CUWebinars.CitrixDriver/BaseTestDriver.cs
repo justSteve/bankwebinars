@@ -36,6 +36,11 @@ namespace CUWebinars.CitrixDriver
             webDriver.Close();
         }
 
+        public string CurrentWindowHandle
+        {
+            get { return webDriver.CurrentWindowHandle; }
+        }
+
         public virtual bool DoesElementContainText(string nameToFind, string text)
         {
             IWebElement element = webDriver.FindElement(By.Name(nameToFind));
@@ -57,7 +62,7 @@ namespace CUWebinars.CitrixDriver
         {
             if (string.IsNullOrEmpty(url))
             {
-                url = string.Format("http://localhost:{0}", port);
+                url = string.Format("http://localhost:{0}", string.IsNullOrWhiteSpace(port) ? "80" : port);
             }
 
             INavigation navigation = webDriver.Navigate();
@@ -85,7 +90,7 @@ namespace CUWebinars.CitrixDriver
 
         public virtual IWebElement FindByCssSelectorClick(string cssSelectorToFind)
         {
-            IWebElement element = webDriver.FindElement(By.CssSelector(cssSelectorToFind));
+            IWebElement element = RetryingFind(By.CssSelector(cssSelectorToFind));
 
             if (!ReferenceEquals(null, element))
             {
@@ -107,7 +112,7 @@ namespace CUWebinars.CitrixDriver
 
         public virtual IWebElement FindByIdClick(string idToFind)
         {
-            IWebElement element = webDriver.FindElement(By.Id(idToFind));
+            IWebElement element = RetryingFind(By.Id(idToFind));
 
             if (!ReferenceEquals(null, element))
             {
@@ -148,7 +153,7 @@ namespace CUWebinars.CitrixDriver
 
         public virtual IWebElement FindByXPathClick(string xpathToFind)
         {
-            IWebElement element = webDriver.FindElement(By.XPath(xpathToFind));
+            IWebElement element = RetryingFind(By.XPath(xpathToFind));
 
             if (!ReferenceEquals(null, element))
             {
@@ -357,6 +362,31 @@ namespace CUWebinars.CitrixDriver
             System.Threading.Thread.Sleep(milliseconds);
         }
 
+        public ReadOnlyCollection<string> Windows
+        {
+            get { return webDriver.WindowHandles; }
+        }
+
+        private IWebElement RetryingFind(By by)
+        {
+            IWebElement element = null;
+            int attempts = 0;
+            while (attempts < 50)
+            {
+                try
+                {
+                    element = webDriver.FindElement(by);
+                    break;
+                }
+                catch (Exception e)
+                {
+                }
+                attempts++;
+            }
+            return element;
+        }
+
+
         public virtual void SelectANode(string classNameToFind, string attributeValue)
         {
             ReadOnlyCollection<IWebElement> elements = FindByClassName(classNameToFind);
@@ -372,6 +402,11 @@ namespace CUWebinars.CitrixDriver
                     }
                 }
             }
+        }
+
+        public void SwitchToWindow(string windowName)
+        {
+            webDriver.SwitchTo().Window(windowName);
         }
 
         public void TypeTextAndTabAway(string nameToFind, string text)

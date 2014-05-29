@@ -5,6 +5,7 @@ namespace CUWebinars.Selenium.Core
 {
     public interface ITestDriver
     {
+        string CurrentWindowHandle { get; }
         string DriverPath { set; }
         int DriverPort { set; }
 
@@ -28,6 +29,7 @@ namespace CUWebinars.Selenium.Core
         string GetAlertText();
         string GetDocumentTitle();
         string GetElementValue(string idToFind);
+
         void GoToUrl(string url);
         ReadOnlyCollection<string> GetSelectedOptions(string idToFind);
         void Initialize();
@@ -40,11 +42,13 @@ namespace CUWebinars.Selenium.Core
         bool IsValuePresent(string nameToFind, string attributeToFind, string attributeValue);
         void Quit();
         void SelectANode(string classNameToFind, string attributeValue);
+        void SwitchToWindow(string windowName);
         void TabAwayFromInput(string idOfInput);
         IWebElement TypeTextWithEnter(string nameToFind, string text);
         void TypeText(string nameToFind, string text);
         void TypeTextAndTabAway(string nameToFind, string text);
         void Wait(int milliseconds = 1000);
+        ReadOnlyCollection<string> Windows { get; }
         IWebDriver WebDriver { get; }
     }
 }

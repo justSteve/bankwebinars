@@ -32,6 +32,11 @@ namespace CUWebinars.Selenium.Core
             webDriver.Close();
         }
 
+        public string CurrentWindowHandle
+        {
+            get { return webDriver.CurrentWindowHandle; }
+        }
+
         public virtual bool DoesElementContainText(string nameToFind, string text)
         {
             IWebElement element = webDriver.FindElement(By.Name(nameToFind));
@@ -369,7 +374,12 @@ namespace CUWebinars.Selenium.Core
                 }
             }
         }
-        
+
+        public void SwitchToWindow(string windowName)
+        {
+            webDriver.SwitchTo().Window(windowName);
+        }
+
         public void TypeTextAndTabAway(string nameToFind, string text)
         {
             IWebElement element = FindByNameClick(nameToFind);
@@ -399,7 +409,7 @@ namespace CUWebinars.Selenium.Core
         {
             IWebElement element = null;
             int attempts = 0;
-            while (attempts < 20)
+            while (attempts < 50)
             {
                 try
                 {
@@ -439,5 +449,11 @@ namespace CUWebinars.Selenium.Core
         {
             get { return webDriver; }
         }
+
+        public ReadOnlyCollection<string> Windows
+        {
+            get { return webDriver.WindowHandles; }
+        }
+
     }
 }

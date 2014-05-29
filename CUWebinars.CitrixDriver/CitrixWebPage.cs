@@ -13,6 +13,7 @@ namespace CUWebinars.CitrixDriver
     public class CitrixWebPage : BasePage
     {
         private int count = 0;
+        private string _mainWindow;
 
         public CitrixWebPage(ITestDriver seleniumTestDriver, string url)
         {
@@ -78,9 +79,15 @@ namespace CUWebinars.CitrixDriver
             SeleniumTestDriver.FindByIdClick("submit");
         }
 
+        public void ClickViewLinkForAccessCodeAndPhoneNumbers()
+        {
+            SeleniumTestDriver.FindByXPathClick("//*[@id='SessionSet1_1']/a");
+        }
+
         public void GoToWebinarsPage()
         {
             SeleniumTestDriver.FindByLinkTextClick("My Webinars");
+            _mainWindow = SeleniumTestDriver.CurrentWindowHandle;
         }
 
         public void ScheduleAWebinar()
@@ -158,7 +165,7 @@ namespace CUWebinars.CitrixDriver
 
         //    SeleniumTestDriver.FindByIdClick("attendee_type_1");
 
-        //    SeleniumTestDriver.FindByCssSelectorClick("div.submit_bar input[type=submit]");
+        //    SeleniumTestDriver.FindByCssSelectorClick("div.submit_bar input[Type=submit]");
 
         //}
 
@@ -221,7 +228,7 @@ namespace CUWebinars.CitrixDriver
 
             AddPanelists(null);
 
-            SeleniumTestDriver.FindByCssSelectorClick("div.submit_bar input[type=submit]");
+            SeleniumTestDriver.FindByCssSelectorClick("div.submit_bar input[Type=submit]");
 
             //  Second tab - wait a bit
             wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(1));
@@ -254,6 +261,34 @@ namespace CUWebinars.CitrixDriver
             commitButton.Click();
 
             return webinarKey;
+        }
+
+        public void GetPhoneNumbersAndAccessCodes(Dictionary<string, string> webinarDetails, string xPathForType)
+        {
+            //Perform the click operation that opens new window for details
+            SeleniumTestDriver.FindByXPathClick(xPathForType);
+
+            //Switch to new window opened
+            //SeleniumTestDriver.SwitchToWindow(SeleniumTestDriver.Windows.First());
+            foreach (var window in SeleniumTestDriver.Windows)
+            {
+                SeleniumTestDriver.SwitchToWindow(window);
+            }
+
+            SeleniumTestDriver.Wait(500);
+
+            // Perform the actions on new window
+            var phoneNumber = SeleniumTestDriver.FindByCssSelector("#parentWraper > div:nth-child(3) > p:nth-child(6) > span");
+            var accessCode = SeleniumTestDriver.FindByCssSelector("#parentWraper > div:nth-child(3) > p:nth-child(7) > span");
+
+            webinarDetails.Add("Phone", phoneNumber.Text);
+            webinarDetails.Add("AccessCode", accessCode.Text);
+
+            //Close the new window, if that window no more required
+            SeleniumTestDriver.CloseWindow();
+
+            //Switch back to original browser (first window)
+            SeleniumTestDriver.SwitchToWindow(_mainWindow);
         }
     }
 }
