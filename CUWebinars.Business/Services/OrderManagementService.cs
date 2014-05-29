@@ -487,12 +487,14 @@ namespace CUWebinars.Business.Services
                 CalculateOrderPrices(currentOrder);
 
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder);
+
+                bool linkToVerifyAccount = !string.IsNullOrWhiteSpace(confirmChangeEmailLink);
                 
                 var orderSubmittedViewModel = new OrderSubmittedViewModel
                 {
-                    ConfirmChangeEmailUrl = string.Concat(confirmChangeEmailLink, Path.AltDirectorySeparatorChar, currentOrder.WebUser.LastName.ToLower()),
+                    ConfirmChangeEmailUrl = linkToVerifyAccount ? string.Concat(confirmChangeEmailLink, Path.AltDirectorySeparatorChar, currentOrder.WebUser.LastName.ToLower()) : string.Empty,
                     Order = updatedOrder,
-                    VerificationKey = verificationKey
+                    UserCreatedOnImport = linkToVerifyAccount
                 };
 
                 AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel> { EventObject = orderSubmittedViewModel });

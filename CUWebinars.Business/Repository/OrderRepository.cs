@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.Validation;
-using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Linq;
-using CUWebinars.Business.Core;
+﻿using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Validation.Order;
 using FluentValidation;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Validation;
+using System.Diagnostics;
+using System.Linq;
 
 namespace CUWebinars.Business.Repository
 {
@@ -41,19 +39,12 @@ namespace CUWebinars.Business.Repository
             if (validationResult.IsValid)
             {
                 Add(newOrder); // save changes is called in here.
-
-                //  Best to load these from the database
-                //db.Entry(newOrder).Reference(no => no.Affiliate).Load();
-                //db.Entry(newOrder).Reference(no => no.WebUser).Load();
-                //db.ChangeTracker.DetectChanges();
-
+                
                 return newOrder;
             }
-            else
-            {
-                throw new Exception("");
-                //  and do whatever else we come up with here
-            }
+
+            var errors = ValidationHelper.GetMessagesAsXmlElement(validationResult.Errors);
+            throw new Exception(errors.ToString());
         }
 
         public OrderRow CreateOrderRow(Webinar webinar,
