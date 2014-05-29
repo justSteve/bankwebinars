@@ -29,16 +29,16 @@
     {
         joinURL = "https://www2.gotomeeting.com/join/" + webinar.WebinarKey;
     }
-    if (webinar.AccessCode != null)
+    if (webinar.AccessCodeAttendee != null)
     {
-        code = webinar.AccessCode;
+        code = webinar.AccessCodeAttendee;
     }
 
     string DateTimeString = TtsDateTimeTemplateHelperObject.FormatTimeWithDuration(webinar.Date, Model.Order.WebUser.timeZone, true, webinar.Duration);
 
-    if (webinar.AccessPhone != null)
+    if (webinar.AccessPhoneAttendee != null)
     {
-        phone = webinar.AccessPhone;
+        phone = webinar.AccessPhoneAttendee;
     }
     var HeaderText = "Your Order Confirmation " + webinar.Title + "-" + @webinar.Status;
     var BannerText = "Order Number: CU-" + Model.Order.idOrder + "<br />Type: " + row.Single().RegistrationType.OptionLabel;

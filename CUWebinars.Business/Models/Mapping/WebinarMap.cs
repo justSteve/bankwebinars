@@ -61,8 +61,6 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.RecordingUrl).HasColumnName("RecordingUrl");
             Property(t => t.ConnectionInfo).HasColumnName("ConnectionInfo");
             Property(t => t.idPresenter).HasColumnName("idPresenter");
-            //Property(t => t.idGTWebinar).HasColumnName("idGTWebinar");
-            //Property(t => t.idWebinarRegTypeGroup).HasColumnName("idWebinarRegTypeGroup");
             Property(t => t.ceu).HasColumnName("ceu");
             Property(t => t.DateCreated).HasColumnName("DateCreated");
             Property(t => t.DateChanged).HasColumnName("DateChanged");
@@ -73,10 +71,7 @@ namespace CUWebinars.Business.Models.Mapping
             HasRequired(t => t.Presenter)
                             .WithMany(t => t.Webinars)
                             .HasForeignKey(d => d.idPresenter);
-            //HasRequired(t => t.RegTypeGroup)
-            //                .WithMany(t => t.
-            //                .HasForeignKey(d => d.idWebinarRegTypeGroup);
-
+            
         }
     }
 }

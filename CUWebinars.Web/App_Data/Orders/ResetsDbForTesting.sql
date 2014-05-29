@@ -99,8 +99,8 @@ WHERE   Status = 2
 UPDATE  CUWebinars.dbo.Webinar
 SET     title = 'Upcoming_HasConnInfo_' + CAST(idWebinar AS VARCHAR) ,
         ConnectionInfo = '' ,
-		AccessPhone = '1 866 901 6455',
-		AccessCode = '672-158-048',
+		AccessPhoneAttendee = '1 866 901 6455',
+		AccessCodeAttendee = '672-158-048',
 		OrganizerKey = '922930',
 		OrganizerOAuthKey = '5jxY3KZL48HWknOaOEP2eIzVmOTS',
         RecordingUrl = '' ,
