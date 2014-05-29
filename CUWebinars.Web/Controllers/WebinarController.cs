@@ -637,7 +637,9 @@ namespace CUWebinars.Web.Controllers
             Webinar webinar = model;
 
             _db.SaveChanges();
-            return PartialView(webinar);
+            
+            return RedirectToAction("Details");
+            //return PartialView("Partials/_UpdateConnectionInfo",webinar);
         }
     }
 }

@@ -87,6 +87,10 @@ namespace CUWebinars.Web.Controllers
 
                 if (webUser == null)
                 {
+                    try
+                    {
+
+
                     var institutionForUser =
                         _membershipService.ProcessInstitutionForUser(incomingOrderModel.Institution.Trim(),
                             email,
@@ -150,7 +154,12 @@ namespace CUWebinars.Web.Controllers
 
                     //  Now we clear the value, so TtsSmtpMessageDelivery can go back to business as usual.
                     _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
+                    }
+                    catch (Exception exception)
+                    {
 
+                        _logger.Error("CreateOrder|CreateUser failed: " + exception.Message); 
+                    }
                 }
 
                 IList<AdditionalLocation> addLocation = new List<AdditionalLocation>();
