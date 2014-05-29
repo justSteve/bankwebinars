@@ -1154,6 +1154,8 @@
     <Content Include="Views\Webinar\Partials\_SendConnectionInfo.cshtml" />
     <Content Include="Views\Webinar\Partials\_SendRecordingPosted.cshtml" />
     <Content Include="Views\Account\Confirmed.cshtml" />
+    <Content Include="Views\Account\ResetPasswordWhereNotVerified.cshtml" />
+    <Content Include="Views\Webinar\Partials\_UpdateConnectionInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Notifications\" />

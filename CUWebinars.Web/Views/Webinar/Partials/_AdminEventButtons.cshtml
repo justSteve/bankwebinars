@@ -10,15 +10,23 @@
         <div id="ButtonsContainer">
             
             @{
-                var orderRow = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-                if (Model.Webinar.Status == WebinarStatus.Recorded)
+                //var orderRow = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+                if (Model.Webinar.Status == WebinarStatus.Recorded && (Model.Webinar.RecordingUrl == "") || Model.Webinar.RecordingUrl == null)
                 {
                     <input id="WebinarFileInput" type="text" placeholder="Enter File Name" />
                     <div style="display:inline-block"><button id="SendRecordingPostedEventHtmlButton" class="btn btn-primary btn-small">Send Recording</button></div>
                 }
-                else
+                if (Model.Webinar.Status == WebinarStatus.Active)
                 {
-                    <div style="display:inline-block"><button id="GetSendConnectionInfoEventHtmlButton" class="btn btn-primary btn-small">Send Connection</button></div>
+                    //Active means the connection info has been generated. This form shows
+                    // the relevant fields and offers to update them
+                    @Html.Partial(@"Partials/_UpdateConnectionInfo", Model.Webinar)
+                }
+                if (Model.Webinar.Status == WebinarStatus.Scheduled)
+                {
+                    //If session is Scheduled it's ready for the Citrix / Selenium app to run.
+                    // Not sure how we present that interface - the Admin will run an external app...
+                    // do we just display instructions here on how to do that?
                 }
                 <div style="display:inline-block"><a href="http://plaguis:777/publish.htm">Create</a></div>
 }
