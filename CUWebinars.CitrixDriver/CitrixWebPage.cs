@@ -49,7 +49,10 @@ namespace CUWebinars.CitrixDriver
         
         public void GotToLoginPage()
         {
-            SeleniumTestDriver.FindByLinkTextClick("Log In");
+            //SeleniumTestDriver.FindByLinkTextClick("Log In");
+            SeleniumTestDriver.Wait(500);
+            SeleniumTestDriver.FindByPartialLinkText("Log In");
+            SeleniumTestDriver.Wait(500);
         }
 
 
