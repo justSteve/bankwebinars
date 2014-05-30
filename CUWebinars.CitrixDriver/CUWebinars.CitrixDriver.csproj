@@ -94,7 +94,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasePage.cs" />
-    <Compile Include="BaseTestDriver.cs" />
     <Compile Include="CitrixWebPage.cs" />
     <Compile Include="IeTestDriver.cs" />
     <Compile Include="Program.cs" />

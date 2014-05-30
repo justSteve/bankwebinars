@@ -49,7 +49,11 @@ namespace CUWebinars.CitrixDriver
         
         public void GotToLoginPage()
         {
-            SeleniumTestDriver.FindByPartialLinkText("Log In").Click();
+            var webDriverWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(20));
+
+            var loginLink = webDriverWait.Until(ExpectedConditions.ElementIsVisible(By.PartialLinkText("Log In")));
+
+            loginLink.Click();
         }
 
 
@@ -76,7 +80,11 @@ namespace CUWebinars.CitrixDriver
 
         public void ClickSubmit()
         {
-            SeleniumTestDriver.FindByIdClick("submit");
+            var webDriverWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(20));
+
+            var submitButton = webDriverWait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("input#submit")));
+
+            submitButton.Click();
         }
 
         public void ClickViewLinkForAccessCodeAndPhoneNumbers()
@@ -205,7 +213,11 @@ namespace CUWebinars.CitrixDriver
             confCallRadio.Click();
 
             SeleniumTestDriver.FindByIdClick("StartDate_Cal_0");
-            SeleniumTestDriver.FindByCssSelectorClick("img.next");
+
+            wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(5));
+
+            var calendarImage = wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("img.next")));
+            calendarImage.Click();
 
             PickDate(webinar.StartTime, true);
 
@@ -269,16 +281,20 @@ namespace CUWebinars.CitrixDriver
             SeleniumTestDriver.FindByXPathClick(xPathForType);
 
             //Switch to new window opened
-            //SeleniumTestDriver.SwitchToWindow(SeleniumTestDriver.Windows.First());
             foreach (var window in SeleniumTestDriver.Windows)
             {
                 SeleniumTestDriver.SwitchToWindow(window);
             }
 
-            SeleniumTestDriver.Wait(500);
+            var webDriverWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(20));
+
 
             // Perform the actions on new window
-            var phoneNumber = SeleniumTestDriver.FindByXPath("//*[contains(text(),'Toll-free:')]/span");
+            var phoneNumber =
+                webDriverWait.Until(
+                    ExpectedConditions.ElementIsVisible(By.XPath("//*[contains(text(),'Toll-free:')]/span"))
+                    );
+
             var accessCode = SeleniumTestDriver.FindByXPath("//*[contains(text(),'Access Code:')]/span");
 
             webinarDetails.Add("Phone", phoneNumber.Text);

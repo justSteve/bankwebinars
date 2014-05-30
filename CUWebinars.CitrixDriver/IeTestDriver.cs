@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CUWebinars.Selenium.Core;
 using OpenQA.Selenium;
 using OpenQA.Selenium.IE;
 
