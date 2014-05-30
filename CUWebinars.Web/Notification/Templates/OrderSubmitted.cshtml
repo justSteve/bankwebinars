@@ -29,16 +29,16 @@
     {
         joinURL = "https://www2.gotomeeting.com/join/" + webinar.WebinarKey;
     }
-    if (webinar.AccessCode != null)
+    if (webinar.AccessCodeAttendee != null)
     {
-        code = webinar.AccessCode;
+        code = webinar.AccessCodeAttendee;
     }
 
     string DateTimeString = TtsDateTimeTemplateHelperObject.FormatTimeWithDuration(webinar.Date, Model.Order.WebUser.timeZone, true, webinar.Duration);
 
-    if (webinar.AccessPhone != null)
+    if (webinar.AccessPhoneAttendee != null)
     {
-        phone = webinar.AccessPhone;
+        phone = webinar.AccessPhoneAttendee;
     }
     var HeaderText = "Your Order Confirmation " + webinar.Title + "-" + @webinar.Status;
     var BannerText = "Order Number: CU-" + Model.Order.idOrder + "<br />Type: " + row.Single().RegistrationType.OptionLabel;
@@ -140,7 +140,12 @@
                                                                                 Thank you for your recent order.<br />
                                                                                 @if (Model.UserCreatedOnImport)
                                                                                 {
-                                                                                    <span><br />We've created an account for you using your last name all lower case (<b>@Model.Order.LastName.ToLower()</b>) as a temporary password. Please confirm your account by clicking the following link and setting your own password on that page: <a href="@Model.ConfirmChangeEmailUrl">Set Your Own Password</a>.<br /><br />Again, thank you very much for your patronage!<br /><br />Sincerely,<br />The CUWebinars Staff<br /><br /></span>
+                                                                                    <span>
+                                                                                        <br />
+                                                                                        We've created an account at <b>CUWebinars.com</b> and request you establish a new password that is unqiue to this site and hard to guess. <b><a href="@Model.ConfirmChangeEmailUrl">Set My Password</a></b>.<br />
+                                                                                        <br />If you have any problems accessing that link from inside this email you may paste this URL into your browser: <i>@Model.ConfirmChangeEmailUrl</i><br/>
+                                                                                        Again, thank you very much for your patronage!<br /><br />Sincerely,<br />The CUWebinars Staff<br /><br />
+                                                                                    </span>
                                                                                 }
                                                                             </span>
                                                                         </td>

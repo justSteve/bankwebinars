@@ -102,7 +102,7 @@ namespace CUWebinars.CitrixDriver
             var userName = ConfigurationManager.AppSettings["UserName"];
             var passWord = ConfigurationManager.AppSettings["Password"];
 
-            citrixWebPage.GotToLoginPage();
+            //citrixWebPage.GotToLoginPage();
             citrixWebPage.EnterEmailAddress(userName);
             citrixWebPage.EnterPasswordWhereUserExists(passWord);
             citrixWebPage.ClickSubmit();
