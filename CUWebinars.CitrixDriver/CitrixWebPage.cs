@@ -49,7 +49,7 @@ namespace CUWebinars.CitrixDriver
         
         public void GotToLoginPage()
         {
-            SeleniumTestDriver.FindByLinkTextClick("Log In");
+            SeleniumTestDriver.FindByPartialLinkText("Log In").Click();
         }
 
 
@@ -278,8 +278,8 @@ namespace CUWebinars.CitrixDriver
             SeleniumTestDriver.Wait(500);
 
             // Perform the actions on new window
-            var phoneNumber = SeleniumTestDriver.FindByCssSelector("#parentWraper > div:nth-child(3) > p:nth-child(6) > span");
-            var accessCode = SeleniumTestDriver.FindByCssSelector("#parentWraper > div:nth-child(3) > p:nth-child(7) > span");
+            var phoneNumber = SeleniumTestDriver.FindByXPath("//*[contains(text(),'Toll-free:')]/span");
+            var accessCode = SeleniumTestDriver.FindByXPath("//*[contains(text(),'Access Code:')]/span");
 
             webinarDetails.Add("Phone", phoneNumber.Text);
             webinarDetails.Add("AccessCode", accessCode.Text);
