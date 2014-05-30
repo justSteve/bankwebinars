@@ -386,6 +386,7 @@
     <Compile Include="Core\Exceptions.cs" />
     <Compile Include="ElmahHandleErrorAttribute.cs" />
     <Compile Include="Helpers\EventInvokerHelpers.cs" />
+    <Compile Include="ViewModel\ManualPasswordResetViewModel.cs" />
     <Compile Include="ViewModel\UsersForOrdersViewModel.cs" />
     <Compile Include="Core\CsvParseOps.cs" />
     <Compile Include="Models\IncomingOrderModel.cs" />
@@ -1156,6 +1157,7 @@
     <Content Include="Views\Account\Confirmed.cshtml" />
     <Content Include="Views\Account\ResetPasswordWhereNotVerified.cshtml" />
     <Content Include="Views\Webinar\Partials\_UpdateConnectionInfo.cshtml" />
+    <Content Include="Views\MembershipNotificationOps\_ManualPasswordReset.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Notifications\" />

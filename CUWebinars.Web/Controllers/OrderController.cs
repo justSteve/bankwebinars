@@ -232,10 +232,10 @@ namespace CUWebinars.Web.Controllers
 
                     JObject parsedJsonObject = JObject.Parse(regKeyResponse);
 
-                    if (parsedJsonObject["registrantKey"] != null)
+                    if (parsedJsonObject[WebUiConstants.RegistrantKey] != null)
                     {
-                        var registrantKey = parsedJsonObject["registrantKey"].ToString();
-                        var joinUrl = parsedJsonObject["joinUrl"].ToString();
+                        var registrantKey = parsedJsonObject[WebUiConstants.RegistrantKey].ToString();
+                        var joinUrl = parsedJsonObject[WebUiConstants.JoinUrl].ToString();
 
                         orderRow.RegistrantKey = registrantKey;
                         orderRow.JoinURL = joinUrl;

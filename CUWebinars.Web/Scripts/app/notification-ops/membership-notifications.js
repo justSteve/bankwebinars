@@ -161,6 +161,56 @@ $(function () {
 
         });
     });
+
+    $('#GetManualResetPasswordFieldsButton').on('click', function () {
+
+        $.ajax({
+            type: 'GET',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: '/MembershipNotificationOps/ManualPasswordReset',
+            dataType: constants.HtmlDataType,
+            data: null,
+            beforeSend: function () {
+                if ($('#ImportOrderButton').length > 0)
+                    $('#ImportOrderButton').off('click');
+                $('#WaitIndicator').show();
+            }
+        }).done(function (result) {
+
+            $('#InputFormFields').html(result);
+
+            $('#ManualResetPasswordButton').on('click', function (args) {
+
+                args.preventDefault();
+
+                $.ajax({
+                    type: 'POST',
+                    contentType: constants.FormPostContentType,
+                    cache: false,
+                    url: '/MembershipNotificationOps/ManualPasswordReset',
+                    dataType: constants.JsonDataType,
+                    data: $('#ManualResetPasswordForm').serialize(),
+                    beforeSend: function () {
+                        // this is where we append a loading image
+                        $('#WaitIndicator').show();
+                    }
+                }).done(function (response) {
+                    
+                    if (response.Result === 'Success') {
+                        $('#OperationMessage').html('<span class="label label-success">&nbsp;&nbsp;User password has been changed.</span>');
+                    } else if (response.Result === 'Fail') {
+                        $('#OperationMessage').html('<span class="label label-important"><strong>&nbsp;&nbsp;There was an error at the server. The new user has not been created.</strong></span>');
+                    }
+                }).always(function (data) {
+                    $('#WaitIndicator').hide();
+                });
+            });
+
+        }).always(function (result) {
+            $('#WaitIndicator').hide();
+        });
+    });
 });
 
 function addImportOrderButtonClick() {

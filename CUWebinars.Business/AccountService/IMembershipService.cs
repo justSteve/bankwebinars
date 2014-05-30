@@ -36,6 +36,7 @@ namespace CUWebinars.Business.AccountService
 
         UserAccount GetByVerificationKey(string id);
         WebUser GetDetailsOfUser(string email);
+        UserAccount GetUserAccountByEmail(string tenant, string email);
         UserAccount GetUserAccountByUserId(Guid userId);
         WebUser GetUserByEmail(string email);
         Institution GetInstitutionByDomain(string domain);

@@ -52,6 +52,10 @@ namespace CUWebinars.Business.AccountService
             var webUser = _webUserRepository.GetWebUserByEmail(email);
             return webUser;
         }
+        public UserAccount GetUserAccountByEmail(string tenant, string email)
+        {
+            return _userAccountService.GetByEmail(tenant,email);
+        }
 
         public Institution GetInstitutionByDomain(string domain)
         {

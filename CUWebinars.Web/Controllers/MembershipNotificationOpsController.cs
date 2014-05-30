@@ -1,4 +1,5 @@
-﻿using BrockAllen.MembershipReboot;
+﻿using System.Web.Helpers;
+using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
@@ -25,6 +26,7 @@ namespace CUWebinars.Web.Controllers
         private readonly IMembershipService _membershipService;
         private readonly ILogger _logger;
         private readonly IStateService _stateService;
+        private GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
         public MembershipNotificationOpsController(IMembershipService membershipService, ILogger logger, IStateService stateService)
         {
@@ -177,6 +179,40 @@ namespace CUWebinars.Web.Controllers
             }
 
             return Json(new { Result = WebUiConstants.Fail });
+        }
+
+        public PartialViewResult ManualPasswordReset()
+        {
+            var manualPasswordResetViewModel = new ManualPasswordResetViewModel
+            {
+                ConfirmPassword = string.Empty,
+                Email = string.Empty,
+                NewPassword = string.Empty
+            };
+
+            return PartialView("~/Views/MembershipNotificationOps/_ManualPasswordReset.cshtml", manualPasswordResetViewModel);
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult ManualPasswordReset(ManualPasswordResetViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var userAccount = _membershipService.GetUserAccountByEmail(globalConfig.Tenant, model.Email);
+                var newPassword = Crypto.HashPassword(model.NewPassword);
+
+                var dataOperations = new DataOperations();
+                dataOperations.ManualPasswordReset(userAccount.ID, newPassword);
+                
+                return Json(new { Result = WebUiConstants.Success });
+            }
+
+            _logger.Error("ManualPasswordReset: {0}", AppHelper.GetUserAuditInfo());
+            _logger.Error("ManualPasswordReset: {0}", "Model state was not valid");
+
+            return Json(new {Result = WebUiConstants.Fail});
         }
 
         [AllowAnonymous]

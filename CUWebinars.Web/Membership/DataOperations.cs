@@ -41,5 +41,42 @@ namespace CUWebinars.Web.Membership
                 }
             }
         }
+
+        public bool ManualPasswordReset(Guid id, string pwd)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+                using (var updateUserCommand = new SqlCommand())
+                {
+                    var idParamater = new SqlParameter
+                    {
+                        Value = id,
+                        SqlDbType = SqlDbType.UniqueIdentifier,
+                        Direction = ParameterDirection.Input,
+                        ParameterName = "@ID"
+                    };
+
+                    var pwdParamater = new SqlParameter
+                    {
+                        Value = pwd,
+                        SqlDbType = SqlDbType.NVarChar,
+                        Size = 200,
+                        Direction = ParameterDirection.Input,
+                        ParameterName = "@PWD"
+                    };
+
+
+                    updateUserCommand.Connection = sqlConnection;
+                    updateUserCommand.Parameters.AddRange(new SqlParameter[] { idParamater, pwdParamater });
+                    updateUserCommand.CommandText = "UPDATE UserAccounts SET HashedPassword = @PWD WHERE ID = @ID";
+                    updateUserCommand.CommandType = CommandType.Text;
+
+                    var numRows = updateUserCommand.ExecuteNonQuery();
+
+                    return numRows.Equals(1);
+                }
+            }
+        }
     }
 }

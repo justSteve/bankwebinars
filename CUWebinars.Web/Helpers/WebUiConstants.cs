@@ -8,6 +8,8 @@ namespace CUWebinars.Web.Helpers
 
         public const string EmptyKey = "EmptyKey";
         public const string InavlidEmail = "InavlidEmail";
+        public const string JoinUrl = "joinUrl";
+        public const string RegistrantKey = "registrantKey";
         public const string InvalidPassword = "InvalidPassword";
 
         public const string Login = "Login";
