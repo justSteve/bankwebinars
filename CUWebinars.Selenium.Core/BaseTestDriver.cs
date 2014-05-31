@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
@@ -9,13 +10,9 @@ namespace CUWebinars.Selenium.Core
 {
     public abstract class BaseTestDriver : ITestDriver
     {
+        protected const int WaitTimeout = 15;
         protected IWebDriver webDriver;
         protected string port;
-
-        public BaseTestDriver()
-        {
-
-        }
 
         public string DriverPath { set; protected get; }
         public int DriverPort { set; protected get; }
@@ -104,7 +101,8 @@ namespace CUWebinars.Selenium.Core
 
         public virtual IWebElement FindById(string idToFind)
         {
-            return webDriver.FindElement(By.Id(idToFind));
+            var wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(WaitTimeout));
+            return wait.Until(ExpectedConditions.ElementIsVisible(By.Id(idToFind)));
         }
 
         public virtual IWebElement FindByIdClick(string idToFind)
@@ -121,17 +119,31 @@ namespace CUWebinars.Selenium.Core
 
         public IWebElement FindByLinkText(string linkTextToFind)
         {
-            return webDriver.FindElement(By.LinkText(linkTextToFind));
+            var linkWait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(WaitTimeout));
+            return linkWait.Until(ExpectedConditions.ElementIsVisible(By.LinkText(linkTextToFind)));
         }
 
         public IWebElement FindByPartialLinkText(string linkTextToFind)
         {
-            return RetryingFind(By.PartialLinkText(linkTextToFind));
+            var linkWait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(WaitTimeout));
+            return linkWait.Until(ExpectedConditions.ElementIsVisible(By.PartialLinkText(linkTextToFind)));
         }
 
         public virtual IWebElement FindByLinkTextClick(string linkTextToFind)
         {
-            IWebElement element = webDriver.FindElement(By.LinkText(linkTextToFind));
+            var element = FindByLinkText(linkTextToFind);
+
+            if (!ReferenceEquals(null, element))
+            {
+                element.Click();
+            }
+
+            return element;
+        }
+
+        public virtual IWebElement FindByPartialLinkTextClick(string linkTextToFind)
+        {
+            var element = FindByPartialLinkText(linkTextToFind);
 
             if (!ReferenceEquals(null, element))
             {
@@ -150,8 +162,9 @@ namespace CUWebinars.Selenium.Core
 
         public virtual IWebElement FindByXPathClick(string xpathToFind)
         {
-            IWebElement element = webDriver.FindElement(By.XPath(xpathToFind));
-
+            var wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(WaitTimeout));
+            var element = wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(xpathToFind)));
+            
             if (!ReferenceEquals(null, element))
             {
                 element.Click();
@@ -162,12 +175,14 @@ namespace CUWebinars.Selenium.Core
 
         public virtual IWebElement FindByName(string nameToFind)
         {
-            return webDriver.FindElement(By.Name(nameToFind));
+            var wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(WaitTimeout));
+            return wait.Until(ExpectedConditions.ElementIsVisible(By.Name(nameToFind)));
         }
 
         public virtual IWebElement FindByNameClick(string nameToFind)
         {
-            IWebElement element = webDriver.FindElement(By.Name(nameToFind));
+            var wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(WaitTimeout));
+            var element = wait.Until(ExpectedConditions.ElementIsVisible(By.Name(nameToFind)));
 
             if (!ReferenceEquals(null, element))
             {
@@ -250,7 +265,7 @@ namespace CUWebinars.Selenium.Core
 
         public virtual bool IsElementPresentById(string idToFind)
         {
-            return null != FindById(idToFind);
+            return !ReferenceEquals(null, FindById(idToFind));
         }
 
         public virtual bool IsElementPresentByName(string nameToFind)
@@ -291,13 +306,7 @@ namespace CUWebinars.Selenium.Core
 
             if (!ReferenceEquals(null, elements))
             {
-                foreach (IWebElement element in elements)
-                {
-                    if (element.GetAttribute(attribute).Equals(attributeValue, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return true;
-                    }
-                }
+                return elements.Any(element => element.GetAttribute(attribute).Equals(attributeValue, StringComparison.OrdinalIgnoreCase));
             }
 
             return false;
@@ -311,7 +320,7 @@ namespace CUWebinars.Selenium.Core
             {
                 TypeText(element, text);
 
-                Thread.Sleep(1000);
+                Thread.Sleep(500);
 
                 element.SendKeys(Keys.Return);
             }
@@ -356,7 +365,7 @@ namespace CUWebinars.Selenium.Core
 
         public virtual void Wait(int milliseconds = 1000)
         {
-            System.Threading.Thread.Sleep(milliseconds);
+            Thread.Sleep(milliseconds);
         }
 
         public virtual void SelectANode(string classNameToFind, string attributeValue)
@@ -383,8 +392,7 @@ namespace CUWebinars.Selenium.Core
 
         public void TypeTextAndTabAway(string nameToFind, string text)
         {
-            var webElementWait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(300));
-            IWebElement element = webElementWait.Until(ExpectedConditions.ElementIsVisible(By.Name(nameToFind)));
+            var element = FindByNameClick(nameToFind);
 
             if (!ReferenceEquals(null, element))
             {
@@ -407,44 +415,45 @@ namespace CUWebinars.Selenium.Core
             element.SendKeys(Keys.Tab);
         }
 
-        private IWebElement RetryingFind(By by)
-        {
-            IWebElement element = null;
-            int attempts = 0;
-            while (attempts < 50)
-            {
-                try
-                {
-                    element = webDriver.FindElement(by);
-                    break;
-                }
-                catch (Exception e)
-                {
-                }
-                attempts++;
-            }
-            return element;
-        }
+        //private IWebElement RetryingFind(By by)
+        //{
+        //    IWebElement element = null;
+        //    int attempts = 0;
+        //    while (attempts < 50)
+        //    {
+        //        Thread.Sleep(100);
+        //        try
+        //        {
+        //            element = webDriver.FindElement(by);
+        //            break;
+        //        }
+        //        catch (Exception e)
+        //        {
+        //        }
+        //        attempts++;
+        //    }
+        //    return element;
+        //}
 
-        private bool RetryingFindClick(By by)
-        {
-            bool result = false;
-            int attempts = 0;
-            while (attempts < 20)
-            {
-                try
-                {
-                    webDriver.FindElement(by).Click();
-                    result = true;
-                    break;
-                }
-                catch (Exception e)
-                {
-                }
-                attempts++;
-            }
-            return result;
-        }
+        //private bool RetryingFindClick(By by)
+        //{
+        //    bool result = false;
+        //    int attempts = 0;
+        //    while (attempts < 20)
+        //    {
+        //        try
+        //        {
+        //            webDriver.FindElement(by).Click();
+        //            result = true;
+        //            break;
+        //        }
+        //        catch (Exception e)
+        //        {
+        //        }
+        //        attempts++;
+        //    }
+        //    return result;
+        //}
 
 
         public IWebDriver WebDriver

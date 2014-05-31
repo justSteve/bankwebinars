@@ -7,7 +7,9 @@ namespace CUWebinars.WebUi.Tests.Page
 {
     public abstract class BasePage
     {
-        public BasePage(ITestDriver seleniumTestDriver)
+        protected const int WaitTimeout = 15;
+
+        protected BasePage(ITestDriver seleniumTestDriver)
         {
             SeleniumTestDriver = seleniumTestDriver;
             GlobalTestConfig = Global.GlobalConfigSingleton;
@@ -21,7 +23,7 @@ namespace CUWebinars.WebUi.Tests.Page
 
         public virtual void Open()
         {
-            if (null != SeleniumTestDriver)
+            if (!ReferenceEquals(null, SeleniumTestDriver))
             {
                 SeleniumTestDriver.GoToUrl(Url);
             }
@@ -37,7 +39,7 @@ namespace CUWebinars.WebUi.Tests.Page
         {
             get
             {
-                var logoutLinkWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(15));
+                var logoutLinkWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(WaitTimeout));
 
                 var logInLink = logoutLinkWait.Until(ExpectedConditions.ElementIsVisible(By.PartialLinkText(Constants.LoginLinkText)));
 
@@ -49,7 +51,7 @@ namespace CUWebinars.WebUi.Tests.Page
         {
             get
             {
-                var logoutLinkWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(15));
+                var logoutLinkWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(WaitTimeout));
 
                 var logOffLink = logoutLinkWait.Until(ExpectedConditions.ElementIsVisible(By.PartialLinkText(Constants.LogoffLinkText)));
 
@@ -110,7 +112,7 @@ namespace CUWebinars.WebUi.Tests.Page
 
         public void ClickRegisterLinkOnLoginView()
         {
-            var newAccountWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(15));
+            var newAccountWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(WaitTimeout));
             var element = newAccountWait.Until(ExpectedConditions.ElementExists(By.XPath("/html/body/div/div/div/form/fieldset/div[3]/input")));
 
             element.Click();
@@ -120,7 +122,7 @@ namespace CUWebinars.WebUi.Tests.Page
         {
             SeleniumTestDriver.TypeTextAndTabAway("RegisterFields.Email", email);
 
-            var theSubmitButtonWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(15));
+            var theSubmitButtonWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(WaitTimeout));
             var theSubmitButton = theSubmitButtonWait.Until(ExpectedConditions.ElementExists(By.Id("TheSubmitButton")));
             theSubmitButton.Click();
         }
@@ -129,7 +131,7 @@ namespace CUWebinars.WebUi.Tests.Page
         {
             SeleniumTestDriver.TypeTextAndTabAway("Password1", password);
 
-            var theSubmitButtonWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(15));
+            var theSubmitButtonWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(WaitTimeout));
             var theSubmitButton = theSubmitButtonWait.Until(ExpectedConditions.ElementExists(By.Id("TheSubmitButton")));
             theSubmitButton.Click();
         }
@@ -145,7 +147,7 @@ namespace CUWebinars.WebUi.Tests.Page
             {
                 IWebDriver webDriver = SeleniumTestDriver.WebDriver;
 
-                var wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(15));
+                var wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(WaitTimeout));
 
                 var errorMessageElement =
                     wait.Until(
