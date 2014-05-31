@@ -5,6 +5,7 @@ using CUWebinars.Business.Models;
 using CUWebinars.Selenium.Core;
 using System;
 using System.Configuration;
+using CUWebinars.Selenium.Core.Firefox;
 
 namespace CUWebinars.CitrixDriver
 {
@@ -26,7 +27,8 @@ namespace CUWebinars.CitrixDriver
             var ttsWebinar = GetWebinar();
             var webinar = GetGTWebinar(ttsWebinar);
 
-            webDriver = new IeTestDriver { DriverPath = @ConfigurationManager.AppSettings["DriverPath"], DriverPort = 8889 };
+            //webDriver = new IeTestDriver { DriverPath = @ConfigurationManager.AppSettings["IeDriverPath"], DriverPort = 8889 };
+            webDriver = new FirefoxTestDriver { DriverPath = @ConfigurationManager.AppSettings["FireFoxBinaryPath"], DriverPort = 8889 };
             webDriver.Initialize();
 
 
