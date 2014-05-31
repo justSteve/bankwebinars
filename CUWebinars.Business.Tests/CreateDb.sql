@@ -74,12 +74,9 @@ GO
 ALTER DATABASE [CUWebinars] SET TARGET_RECOVERY_TIME = 0 SECONDS 
 GO
 USE [CUWebinars]
-
 GO
 ALTER SERVER ROLE [sysadmin] ADD MEMBER [PLAGUIS\Dave]
-
 GO
-/****** Object:  Table [dbo].[__MigrationHistory]    Script Date: 22/05/2014 11:10:24 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -101,7 +98,6 @@ CREATE TABLE [dbo].[__MigrationHistory](
 GO
 SET ANSI_PADDING OFF
 GO
-/****** Object:  Table [dbo].[AdditionalLocation]    Script Date: 22/05/2014 11:10:24 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -123,7 +119,6 @@ CREATE TABLE [dbo].[AdditionalLocation](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Address]    Script Date: 22/05/2014 11:10:24 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -147,7 +142,6 @@ CREATE TABLE [dbo].[Address](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Affiliate]    Script Date: 22/05/2014 11:10:24 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -182,7 +176,6 @@ CREATE TABLE [dbo].[Affiliate](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Discount]    Script Date: 22/05/2014 11:10:24 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -207,7 +200,6 @@ CREATE TABLE [dbo].[Discount](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Institution]    Script Date: 22/05/2014 11:10:24 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -229,7 +221,6 @@ CREATE TABLE [dbo].[Institution](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Order]    Script Date: 22/05/2014 11:10:24 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -273,7 +264,6 @@ CREATE TABLE [dbo].[Order](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[OrderRow]    Script Date: 22/05/2014 11:10:24 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -299,7 +289,6 @@ CREATE TABLE [dbo].[OrderRow](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Presenter]    Script Date: 22/05/2014 11:10:24 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -317,7 +306,6 @@ CREATE TABLE [dbo].[Presenter](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[RegType]    Script Date: 22/05/2014 11:10:24 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -344,7 +332,6 @@ CREATE TABLE [dbo].[RegType](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[RegTypesGroups]    Script Date: 22/05/2014 11:10:24 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -360,7 +347,6 @@ CREATE TABLE [dbo].[RegTypesGroups](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[RegTypesGroupsXref]    Script Date: 22/05/2014 11:10:24 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -376,7 +362,6 @@ CREATE TABLE [dbo].[RegTypesGroupsXref](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[RegTypesXref]    Script Date: 22/05/2014 11:10:24 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -392,7 +377,6 @@ CREATE TABLE [dbo].[RegTypesXref](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Topic]    Script Date: 22/05/2014 11:10:24 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -410,7 +394,6 @@ CREATE TABLE [dbo].[Topic](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Webinar]    Script Date: 22/05/2014 11:10:24 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -433,12 +416,16 @@ CREATE TABLE [dbo].[Webinar](
 	[WebinarKey] [nvarchar](max) NULL,
 	[OrganizerKey] [nvarchar](max) NULL,
 	[OrganizerOAuthKey] [nvarchar](max) NULL,
-	[AccessPhone] [nvarchar](max) NULL,
-	[AccessCode] [nvarchar](max) NULL,
 	[ceu] [nvarchar](1000) NULL,
 	[ConnectionInfo] [nvarchar](max) NULL,
 	[DateCreated] [datetime] NOT NULL,
 	[DateChanged] [datetime] NOT NULL,
+	[AccessPhoneAttendee] [nvarchar](max) NULL,
+	[AccessCodeAttendee] [nvarchar](max) NULL,
+	[AccessPhonePresenter] [nvarchar](max) NULL,
+	[AccessCodePresenter] [nvarchar](max) NULL,
+	[AccessPhoneOrganizer] [nvarchar](max) NULL,
+	[AccessCodeOrganizer] [nvarchar](max) NULL,
  CONSTRAINT [PK_dbo.Webinar] PRIMARY KEY CLUSTERED 
 (
 	[idWebinar] ASC
@@ -446,7 +433,6 @@ CREATE TABLE [dbo].[Webinar](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[WebinarFile]    Script Date: 22/05/2014 11:10:24 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -463,7 +449,6 @@ CREATE TABLE [dbo].[WebinarFile](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[WebinarTopicXref]    Script Date: 22/05/2014 11:10:24 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -479,7 +464,6 @@ CREATE TABLE [dbo].[WebinarTopicXref](
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[WebUser]    Script Date: 22/05/2014 11:10:24 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -512,14 +496,9 @@ GO
 ALTER DATABASE [CUWebinars] SET  READ_WRITE 
 GO
 USE [CUWebinars]
-
 SET IDENTITY_INSERT [dbo].[Webinar] ON
-INSERT [dbo].[Webinar] ([idWebinar], [Description], [DescriptionLong], [ImageUrl], [SmallImageUrl], [Status], [Title], [Date], [LearnCaption], [LearnBody], [WhoAttend], [Duration], [RecordingUrl], [idPresenter], [WebinarKey], [OrganizerKey], [OrganizerOAuthKey], [AccessPhone], [AccessCode], [ceu], [ConnectionInfo], [DateCreated], [DateChanged]) VALUES (404, N'<p>Your member passed away yesterday and the family is grieving. Yet, in the midst of all the remembering and honoring of a life, the legal and compliance clock is ticking. In most states, checks can be paid for 10 days after the date of death.</p><p>When your account holder dies, many issues and questions arise. Who can have information on the account? Who owns the account? Who has access to the account? What happens with powers of attorney and authorized signers on account? Can the spouse of the sole proprietor continue to access the account? What about that last tax refund check? Is the account still insured? Can a check be written to a funeral home? What about the checks coming in to pay funeral expense? Learn about checks, IRAs, deposit ownership, trusts, UTMA, affidavits of heirship and other complex issues that can occur when a member dies. </p>', N'<p>Your member passed away yesterday and the family is grieving. Yet, in the midst of all the remembering and honoring of a life, the legal and compliance clock is ticking. In most states, checks can be paid for 10 days after the date of death.</p><p>When your account holder dies, many issues and questions arise. Who can have information on the account? Who owns the account? Who has access to the account? What happens with powers of attorney and authorized signers on account? Can the spouse of the sole proprietor continue to access the account? What about that last tax refund check? Is the account still insured? Can a check be written to a funeral home? What about the checks coming in to pay funeral expense? Learn about checks, IRAs, deposit ownership, trusts, UTMA, affidavits of heirship and other complex issues that can occur when a member dies. </p>', N'', N'', 2, N'10 Lessons Learned When Your Member Dies', CAST(0x0000A34800A4CB80 AS DateTime), N'Covered Topics', N'<ul><li>Probate versus non-probate transfers</li><li>When does the will govern and when does the signature card?</li><li>What bypasses a will? PODs, IRAs, JTWROS?</li><li>Living trusts and successor trustees</li><li>When do we know that a customer is deceased?</li><li>When can we use small estate affidavits?</li><li>What happens to powers of attorney, authorized signers, etc.</li><li>How are IRAs, HSAs and UTMAs affected?</li><li>Do sole proprietorships cease at death?</li><li>NCUSIF insurance issues</li></ul>', N'This informative session is designed for customer service representatives, branch administration, branch managers, tellers, training and development staff, compliance personnel, and anyone who handles customer accounts.', CAST(1.00 AS Decimal(18, 2)), N'', 10568, NULL, N'922930', N'5jxY3KZL48HWknOaOEP2eIzVmOTS', NULL, NULL, N'1.25 CE Credits|Recommended for 1.25 CE Credit Hours. After attending this webinar, each attendee can receive a Certificate of Attendance for self-reporting of CE Credits.', NULL, CAST(0x0000A2EB01477614 AS DateTime), CAST(0x0000A2EB01477614 AS DateTime))
-
+INSERT [dbo].[Webinar] ([idWebinar], [Description], [DescriptionLong], [ImageUrl], [SmallImageUrl], [Status], [Title], [Date], [LearnCaption], [LearnBody], [WhoAttend], [Duration], [RecordingUrl], [idPresenter], [WebinarKey], [OrganizerKey], [OrganizerOAuthKey], [ceu], [ConnectionInfo], [DateCreated], [DateChanged]) VALUES (404, N'<p>Your member passed away yesterday and the family is grieving. Yet, in the midst of all the remembering and honoring of a life, the legal and compliance clock is ticking. In most states, checks can be paid for 10 days after the date of death.</p><p>When your account holder dies, many issues and questions arise. Who can have information on the account? Who owns the account? Who has access to the account? What happens with powers of attorney and authorized signers on account? Can the spouse of the sole proprietor continue to access the account? What about that last tax refund check? Is the account still insured? Can a check be written to a funeral home? What about the checks coming in to pay funeral expense? Learn about checks, IRAs, deposit ownership, trusts, UTMA, affidavits of heirship and other complex issues that can occur when a member dies. </p>', N'<p>Your member passed away yesterday and the family is grieving. Yet, in the midst of all the remembering and honoring of a life, the legal and compliance clock is ticking. In most states, checks can be paid for 10 days after the date of death.</p><p>When your account holder dies, many issues and questions arise. Who can have information on the account? Who owns the account? Who has access to the account? What happens with powers of attorney and authorized signers on account? Can the spouse of the sole proprietor continue to access the account? What about that last tax refund check? Is the account still insured? Can a check be written to a funeral home? What about the checks coming in to pay funeral expense? Learn about checks, IRAs, deposit ownership, trusts, UTMA, affidavits of heirship and other complex issues that can occur when a member dies. </p>', N'', N'', 2, N'10 Lessons Learned When Your Member Dies', CAST(0x0000A34800A4CB80 AS DateTime), N'Covered Topics', N'<ul><li>Probate versus non-probate transfers</li><li>When does the will govern and when does the signature card?</li><li>What bypasses a will? PODs, IRAs, JTWROS?</li><li>Living trusts and successor trustees</li><li>When do we know that a customer is deceased?</li><li>When can we use small estate affidavits?</li><li>What happens to powers of attorney, authorized signers, etc.</li><li>How are IRAs, HSAs and UTMAs affected?</li><li>Do sole proprietorships cease at death?</li><li>NCUSIF insurance issues</li></ul>', N'This informative session is designed for customer service representatives, branch administration, branch managers, tellers, training and development staff, compliance personnel, and anyone who handles customer accounts.', CAST(1.00 AS Decimal(18, 2)), N'', 10568, NULL, N'922930', N'5jxY3KZL48HWknOaOEP2eIzVmOTS', N'1.25 CE Credits|Recommended for 1.25 CE Credit Hours. After attending this webinar, each attendee can receive a Certificate of Attendance for self-reporting of CE Credits.', NULL, CAST(0x0000A2EB01477614 AS DateTime), CAST(0x0000A2EB01477614 AS DateTime))
 SET IDENTITY_INSERT [dbo].[Webinar] OFF
-
-
-
 INSERT [dbo].[Affiliate] ([idUserAff], [CommissionModel], [URL], [WebBanner], [WebFooter], [EmailBanner], [EmailFooter], [ttsDomain], [GAPass], [supportEmail], [DisplayTitle], [BillingModel], [Logo], [ContactPerson], [ContactPhone], [ContactEmail], [ContactFax], [ContactAddress], [TechEmail], [TechPhone], [TechName], [EmailPromo]) VALUES (19, 1, N'http://www.ttstrain.com/', N'
 		<div class="container" id="header" style="margin-bottom: 0;">
 			<table cellpadding="0" cellspacing="0">
@@ -565,7 +544,6 @@ INSERT [dbo].[Affiliate] ([idUserAff], [CommissionModel], [URL], [WebBanner], [W
 	</div>
 	<!-- end .row -->
 </div>', N'', N'', N'Bennett', NULL, NULL, N'Total Training Solutions', N'billed', NULL, N'Mark', N'608-849-5563', N'affiliate@ttstrain.com', N'', N'PO Box 310', N'affiliate@ttstrain.com', N'608-849-5563', N'Mark', N'None')
-
 INSERT [dbo].[WebUser] ([idUser], [UserType], [AcctStatus], [DateCreated], [FirstName], [LastName], [Initial], [idUserInstitution], [email], [futureMail], [generalComments], [taxExempt], [idSubscriptionDiscount], [timeZone], [Title]) VALUES (19, 1, N'A', CAST(0x0000A2BE00AC550B AS DateTime), N'Mark', N'Bennett', NULL, 26, N'Mark_Bennett@ttstrain.com', NULL, NULL, NULL, NULL, 3, N'na')
 INSERT [dbo].[WebUser] ([idUser], [UserType], [AcctStatus], [DateCreated], [FirstName], [LastName], [Initial], [idUserInstitution], [email], [futureMail], [generalComments], [taxExempt], [idSubscriptionDiscount], [timeZone], [Title]) VALUES (26368, 1, N'A', CAST(0x0000A3240097B1FA AS DateTime), N'Cindy', N'Wanamaker', NULL, 44869, N'cindyw@fmfcu.org', NULL, NULL, NULL, NULL, 3, N'Chief Operations Officer')
 INSERT [dbo].[WebUser] ([idUser], [UserType], [AcctStatus], [DateCreated], [FirstName], [LastName], [Initial], [idUserInstitution], [email], [futureMail], [generalComments], [taxExempt], [idSubscriptionDiscount], [timeZone], [Title]) VALUES (10568, 1, N'A', CAST(0x0000A2BE00ABCBB0 AS DateTime), N'Deborah', N'Crawford', NULL, 25, N'Deborah_Crawford@ttstrain.com', NULL, NULL, NULL, NULL, 3, N'na')
@@ -578,126 +556,123 @@ INSERT [dbo].[Institution] ([idInstitution], [InstitutionName], [InstitutionType
 INSERT [dbo].[Institution] ([idInstitution], [InstitutionName], [InstitutionType], [domainName], [RegIdentifier], [Address], [City], [State], [Zip]) VALUES (23613, N'Fidelity Federal Savings and Loan Association', N'FDIC', NULL, N'31167', N'25 East Silver Springs Blvd', N'Ocala', N'FL', N'32670')
 INSERT [dbo].[Institution] ([idInstitution], [InstitutionName], [InstitutionType], [domainName], [RegIdentifier], [Address], [City], [State], [Zip]) VALUES (26, N'Total Training Solutions', N'New', NULL, N'N', NULL, N'city', N'st', N'55555')
 INSERT [dbo].[Institution] ([idInstitution], [InstitutionName], [InstitutionType], [domainName], [RegIdentifier], [Address], [City], [State], [Zip]) VALUES (44869, N'Franklin Mint Federal Credit Union', N'New', N'fmfcu.org', N'N', NULL, N'Broomall', N'PA', N'19008')
-
 SET IDENTITY_INSERT [dbo].[Institution] OFF
 
-
-
-/****** Object:  Index [IX_idOrderRow]    Script Date: 17/05/2014 10:23:38 AM ******/
+/****** Object:  Index [IX_idOrderRow]    Script Date: 31/05/2014 6:08:52 PM ******/
 CREATE NONCLUSTERED INDEX [IX_idOrderRow] ON [dbo].[AdditionalLocation]
 (
 	[idOrderRow] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_idUser]    Script Date: 17/05/2014 10:23:38 AM ******/
+/****** Object:  Index [IX_idUser]    Script Date: 31/05/2014 6:08:52 PM ******/
 CREATE NONCLUSTERED INDEX [IX_idUser] ON [dbo].[Address]
 (
 	[idUser] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_idUserAff]    Script Date: 17/05/2014 10:23:38 AM ******/
+/****** Object:  Index [IX_idUserAff]    Script Date: 31/05/2014 6:08:52 PM ******/
 CREATE NONCLUSTERED INDEX [IX_idUserAff] ON [dbo].[Affiliate]
 (
 	[idUserAff] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_idAffiliate]    Script Date: 17/05/2014 10:23:38 AM ******/
+/****** Object:  Index [IX_idAffiliate]    Script Date: 31/05/2014 6:08:52 PM ******/
 CREATE NONCLUSTERED INDEX [IX_idAffiliate] ON [dbo].[Order]
 (
 	[idAffiliate] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_idUser]    Script Date: 17/05/2014 10:23:38 AM ******/
+/****** Object:  Index [IX_idUser]    Script Date: 31/05/2014 6:08:52 PM ******/
 CREATE NONCLUSTERED INDEX [IX_idUser] ON [dbo].[Order]
 (
 	[idUser] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_Discount_idDiscount]    Script Date: 17/05/2014 10:23:38 AM ******/
+/****** Object:  Index [IX_Discount_idDiscount]    Script Date: 31/05/2014 6:08:52 PM ******/
 CREATE NONCLUSTERED INDEX [IX_Discount_idDiscount] ON [dbo].[OrderRow]
 (
 	[Discount_idDiscount] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_idOrder]    Script Date: 17/05/2014 10:23:38 AM ******/
+/****** Object:  Index [IX_idOrder]    Script Date: 31/05/2014 6:08:52 PM ******/
 CREATE NONCLUSTERED INDEX [IX_idOrder] ON [dbo].[OrderRow]
 (
 	[idOrder] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_idRegType]    Script Date: 17/05/2014 10:23:38 AM ******/
+/****** Object:  Index [IX_idRegType]    Script Date: 31/05/2014 6:08:52 PM ******/
 CREATE NONCLUSTERED INDEX [IX_idRegType] ON [dbo].[OrderRow]
 (
 	[idRegType] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_idWebinar]    Script Date: 17/05/2014 10:23:38 AM ******/
+/****** Object:  Index [IX_idWebinar]    Script Date: 31/05/2014 6:08:52 PM ******/
 CREATE NONCLUSTERED INDEX [IX_idWebinar] ON [dbo].[OrderRow]
 (
 	[idWebinar] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_idUser]    Script Date: 17/05/2014 10:23:38 AM ******/
+/****** Object:  Index [IX_idUser]    Script Date: 31/05/2014 6:08:52 PM ******/
 CREATE NONCLUSTERED INDEX [IX_idUser] ON [dbo].[Presenter]
 (
 	[idUser] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_idRegTypeGroup]    Script Date: 17/05/2014 10:23:38 AM ******/
+/****** Object:  Index [IX_idRegTypeGroup]    Script Date: 31/05/2014 6:08:52 PM ******/
 CREATE NONCLUSTERED INDEX [IX_idRegTypeGroup] ON [dbo].[RegTypesGroupsXref]
 (
 	[idRegTypeGroup] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_idWebinar]    Script Date: 17/05/2014 10:23:38 AM ******/
+/****** Object:  Index [IX_idWebinar]    Script Date: 31/05/2014 6:08:52 PM ******/
 CREATE NONCLUSTERED INDEX [IX_idWebinar] ON [dbo].[RegTypesGroupsXref]
 (
 	[idWebinar] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_idRegType]    Script Date: 17/05/2014 10:23:38 AM ******/
+/****** Object:  Index [IX_idRegType]    Script Date: 31/05/2014 6:08:52 PM ******/
 CREATE NONCLUSTERED INDEX [IX_idRegType] ON [dbo].[RegTypesXref]
 (
 	[idRegType] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_idRegTypeGroup]    Script Date: 17/05/2014 10:23:38 AM ******/
+/****** Object:  Index [IX_idRegTypeGroup]    Script Date: 31/05/2014 6:08:52 PM ******/
 CREATE NONCLUSTERED INDEX [IX_idRegTypeGroup] ON [dbo].[RegTypesXref]
 (
 	[idRegTypeGroup] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_idParentTopic]    Script Date: 17/05/2014 10:23:38 AM ******/
+/****** Object:  Index [IX_idParentTopic]    Script Date: 31/05/2014 6:08:52 PM ******/
 CREATE NONCLUSTERED INDEX [IX_idParentTopic] ON [dbo].[Topic]
 (
 	[idParentTopic] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_idPresenter]    Script Date: 17/05/2014 10:23:38 AM ******/
+/****** Object:  Index [IX_idPresenter]    Script Date: 31/05/2014 6:08:52 PM ******/
 CREATE NONCLUSTERED INDEX [IX_idPresenter] ON [dbo].[Webinar]
 (
 	[idPresenter] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_idWebinar]    Script Date: 17/05/2014 10:23:38 AM ******/
+/****** Object:  Index [IX_idWebinar]    Script Date: 31/05/2014 6:08:52 PM ******/
 CREATE NONCLUSTERED INDEX [IX_idWebinar] ON [dbo].[WebinarFile]
 (
 	[idWebinar] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_idTopic]    Script Date: 17/05/2014 10:23:38 AM ******/
+/****** Object:  Index [IX_idTopic]    Script Date: 31/05/2014 6:08:52 PM ******/
 CREATE NONCLUSTERED INDEX [IX_idTopic] ON [dbo].[WebinarTopicXref]
 (
 	[idTopic] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_idWebinar]    Script Date: 17/05/2014 10:23:38 AM ******/
+/****** Object:  Index [IX_idWebinar]    Script Date: 31/05/2014 6:08:52 PM ******/
 CREATE NONCLUSTERED INDEX [IX_idWebinar] ON [dbo].[WebinarTopicXref]
 (
 	[idWebinar] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IX_idUserInstitution]    Script Date: 17/05/2014 10:23:38 AM ******/
+/****** Object:  Index [IX_idUserInstitution]    Script Date: 31/05/2014 6:08:52 PM ******/
 CREATE NONCLUSTERED INDEX [IX_idUserInstitution] ON [dbo].[WebUser]
 (
 	[idUserInstitution] ASC
@@ -822,4 +797,4 @@ GO
 USE [master]
 GO
 ALTER DATABASE [CUWebinars] SET  READ_WRITE 
-GO
+

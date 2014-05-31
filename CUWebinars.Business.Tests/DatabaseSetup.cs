@@ -7,7 +7,7 @@ namespace CUWebinars.Business.Tests
 {
     internal class DatabaseSetup
     {
-        internal static string connStr = ConfigurationManager.ConnectionStrings["CUWebinarsSUTLocal"].ConnectionString;
+        internal static string connStr = ConfigurationManager.ConnectionStrings[Constants.LocalDbConnectionStringName].ConnectionString;
         private const string MasterSchema = "Master";
         internal void InstallDatabase(string resourceName)
         {

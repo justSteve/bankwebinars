@@ -20,7 +20,7 @@ namespace CUWebinars.Business.Tests
         public void TearDown()
         {
             var databaseSetup = new DatabaseSetup();
-            databaseSetup.UninstallDatabase("CUWebinars");
+            databaseSetup.UninstallDatabase(Constants.DbName);
         }
 
 
@@ -29,9 +29,9 @@ namespace CUWebinars.Business.Tests
         public void CreateOrderCreatesNewOrder()
         {
             //  Arrange
-            var ctx = new TTSWebinarsContext("CUWebinarsSUTLocal");
+            var ctx = new TTSWebinarsContext(Constants.LocalDbConnectionStringName);
             var webUser = ctx.WebUsers.First(w => w.idUser == 26368);
-            var webinar = ctx.Webinars.First(w => w.idWebinar == 404);
+            var webinar = ctx.Webinars.First(w => w.idWebinar == 404); 
             var affiliate = ctx.Affiliates.First(w => w.idUserAff == 19);
 
             var orderRow = new OrderRow
@@ -62,7 +62,7 @@ namespace CUWebinars.Business.Tests
         public void SaveOrderChangesAddsDetailsToNewOrder()
         {
             //  Arrange
-            var ctx = new TTSWebinarsContext("CUWebinarsSUTLocal");
+            var ctx = new TTSWebinarsContext(Constants.LocalDbConnectionStringName);
             var webUser = ctx.WebUsers.Include(w => w.Institution).First(w => w.idUser == 26368);
             var webinar = ctx.Webinars.First(w => w.idWebinar == 404);
             var affiliate = ctx.Affiliates.First(w => w.idUserAff == 19);
