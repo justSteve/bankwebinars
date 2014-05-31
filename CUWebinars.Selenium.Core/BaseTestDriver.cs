@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 
 namespace CUWebinars.Selenium.Core
 {
@@ -382,7 +383,8 @@ namespace CUWebinars.Selenium.Core
 
         public void TypeTextAndTabAway(string nameToFind, string text)
         {
-            IWebElement element = FindByNameClick(nameToFind);
+            var webElementWait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(300));
+            IWebElement element = webElementWait.Until(ExpectedConditions.ElementIsVisible(By.Name(nameToFind)));
 
             if (!ReferenceEquals(null, element))
             {

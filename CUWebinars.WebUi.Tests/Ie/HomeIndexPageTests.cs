@@ -37,7 +37,7 @@ namespace CUWebinars.WebUi.Tests.Ie
             home.ClickRegisterLinkOnLoginView();
             home.EnterEmailAddressAndEnter(Constants.SitTestEmailAddress);
 
-            home.Wait(3000);
+            //home.Wait(3000);
 
             home.EnterPasswordWhereUserExists(Constants.SitTestPassword);
 

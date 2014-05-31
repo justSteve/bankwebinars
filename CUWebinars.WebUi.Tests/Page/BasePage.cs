@@ -39,10 +39,7 @@ namespace CUWebinars.WebUi.Tests.Page
             {
                 var logoutLinkWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(15));
 
-                logoutLinkWait.Until(ExpectedConditions.ElementIsVisible(By.PartialLinkText(Constants.LoginLinkText)));
-
-                var logInLink = SeleniumTestDriver.FindByPartialLinkText(Constants.LoginLinkText);
-
+                var logInLink = logoutLinkWait.Until(ExpectedConditions.ElementIsVisible(By.PartialLinkText(Constants.LoginLinkText)));
 
                 return logInLink != null;
             }
@@ -54,9 +51,7 @@ namespace CUWebinars.WebUi.Tests.Page
             {
                 var logoutLinkWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(15));
 
-                logoutLinkWait.Until(ExpectedConditions.ElementIsVisible(By.PartialLinkText(Constants.LogoffLinkText)));
-
-                var logOffLink = SeleniumTestDriver.FindByPartialLinkText(Constants.LogoffLinkText);
+                var logOffLink = logoutLinkWait.Until(ExpectedConditions.ElementIsVisible(By.PartialLinkText(Constants.LogoffLinkText)));
 
                 return logOffLink != null;
             }
@@ -116,31 +111,26 @@ namespace CUWebinars.WebUi.Tests.Page
         public void ClickRegisterLinkOnLoginView()
         {
             var newAccountWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(15));
-            newAccountWait.Until(ExpectedConditions.ElementExists(By.XPath("/html/body/div/div/div/form/fieldset/div[3]/input")));
+            var element = newAccountWait.Until(ExpectedConditions.ElementExists(By.XPath("/html/body/div/div/div/form/fieldset/div[3]/input")));
 
-            SeleniumTestDriver.FindByXPathClick("/html/body/div/div/div/form/fieldset/div[3]/input");
+            element.Click();
         }
 
         public void EnterEmailAddressAndEnter(string email)
         {
-            var emailWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(15));
-            emailWait.Until(ExpectedConditions.ElementExists(By.Name("RegisterFields.Email")));
+            SeleniumTestDriver.TypeTextAndTabAway("RegisterFields.Email", email);
 
-            SeleniumTestDriver.TypeTextWithEnter("RegisterFields.Email", email);
+            var theSubmitButtonWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(15));
+            var theSubmitButton = theSubmitButtonWait.Until(ExpectedConditions.ElementExists(By.Id("TheSubmitButton")));
+            theSubmitButton.Click();
         }
 
         public void EnterPasswordWhereUserExists(string password)
         {
-            var password1Wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(15));
-
-            password1Wait.Until(ExpectedConditions.ElementExists(By.Name("Password1")));
-
             SeleniumTestDriver.TypeTextAndTabAway("Password1", password);
 
             var theSubmitButtonWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(15));
-
             var theSubmitButton = theSubmitButtonWait.Until(ExpectedConditions.ElementExists(By.Id("TheSubmitButton")));
-
             theSubmitButton.Click();
         }
 
@@ -157,11 +147,9 @@ namespace CUWebinars.WebUi.Tests.Page
 
                 var wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(15));
 
-                var errorMessageElement = wait.Until(d =>
-                {
-                    var element = webDriver.FindElement(By.XPath(@"//*[@id=""innerContent""]/div[5]/div[2]/span"));
-                    return element;
-                });
+                var errorMessageElement =
+                    wait.Until(
+                        ExpectedConditions.ElementIsVisible(By.XPath(@"//*[@id=""innerContent""]/div[5]/div[2]/span")));
 
                 return errorMessageElement != null &&
                        errorMessageElement.Text.Equals("No Notice exists with supplied criteria",

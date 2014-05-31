@@ -681,6 +681,9 @@ namespace CUWebinars.Web.Controllers
 
             Debug.Assert(zipCentricFields.Length == 3, "There must be 3 fields in zipCentricFields, otherwise we have bad data.");
 
+            if (zipCentricFields.Length < 3)
+                zipCentricFields = AppHelper.AddNonvalidToArray(zipCentricFields);
+            
             var myCity = new string(AppHelper.CharsToTitleCase(zipCentricFields[0]).ToArray());
 
             resultObject.Add("success", "true");

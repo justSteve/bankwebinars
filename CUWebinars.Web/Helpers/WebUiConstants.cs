@@ -20,6 +20,7 @@ namespace CUWebinars.Web.Helpers
         public const string Fail = "Fail";
         public const string OpStatus = "Status";
         public const string NoOrdersForWebinar = "No Orders to send for that webinar";
+        public const string Nonvalid = "NonValid";
         public const string Success = "Success";
     }
 }

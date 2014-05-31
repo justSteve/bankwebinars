@@ -172,5 +172,17 @@ namespace CUWebinars.Web.Helpers
             return value;
         }
 
+        public static string[] AddNonvalidToArray(string[] zipCentricFields)
+        {
+            if (zipCentricFields == null) throw new ArgumentNullException("zipCentricFields");
+
+            var fixedArray = new string[3];
+
+            zipCentricFields.CopyTo(fixedArray, 0);
+
+            fixedArray[2] = WebUiConstants.Nonvalid;
+
+            return fixedArray;
+        }
     }
 }
