@@ -31,11 +31,6 @@ namespace CUWebinars.Business.AccountService
             _webUserRepository = webUserRepository;
         }
 
-        public UserAccount GetByVerificationKey(string id)
-        {
-            return _userAccountService.GetByVerificationKey(id);
-        }
-
         public WebUser GetDetailsOfUser(string email)
         {
             var webUser = _refDataRepository.GetWebUserByEmail(email);
@@ -213,8 +208,6 @@ namespace CUWebinars.Business.AccountService
 
         public bool ChangePasswordFromResetKey(string key, string newPassword)
         {
-            var userAccount = _userAccountService.GetByVerificationKey(key);
-            //_userAccountService.RemoveClaim(userAccount.ID, ClaimTypes.HasNotVerified);
             return _userAccountService.ChangePasswordFromResetKey(key, newPassword);
         }
 

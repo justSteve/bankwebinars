@@ -118,6 +118,12 @@ namespace CUWebinars.WebUi.Tests.Page
             element.Click();
         }
 
+        public void ClickResetPasswordButton()
+        {
+            SeleniumTestDriver.FindByIdClick("EdgeCaseResetPasswordButton");
+        }
+
+
         public void EnterEmailAddressAndEnter(string email)
         {
             SeleniumTestDriver.TypeTextAndTabAway("RegisterFields.Email", email);
@@ -145,17 +151,20 @@ namespace CUWebinars.WebUi.Tests.Page
         {
             get
             {
-                IWebDriver webDriver = SeleniumTestDriver.WebDriver;
-
-                var wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(WaitTimeout));
-
                 var errorMessageElement =
-                    wait.Until(
-                        ExpectedConditions.ElementIsVisible(By.XPath(@"//*[@id=""innerContent""]/div[5]/div[2]/span")));
+                    SeleniumTestDriver.FindByXPath(@"//*[@id=""innerContent""]/div[5]/div[2]/span");
 
                 return errorMessageElement != null &&
                        errorMessageElement.Text.Equals("No Notice exists with supplied criteria",
                            StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
+        public bool PasswordResetInstructionsSentLabelPresent
+        {
+            get
+            {
+                return SeleniumTestDriver.FindById("labelEmail") != null;
             }
         }
     }

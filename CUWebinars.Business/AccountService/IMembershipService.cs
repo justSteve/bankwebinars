@@ -34,7 +34,6 @@ namespace CUWebinars.Business.AccountService
 
         IEnumerable<Address> GetAddressesForUser(int id);
 
-        UserAccount GetByVerificationKey(string id);
         WebUser GetDetailsOfUser(string email);
         UserAccount GetUserAccountByEmail(string tenant, string email);
         UserAccount GetUserAccountByUserId(Guid userId);

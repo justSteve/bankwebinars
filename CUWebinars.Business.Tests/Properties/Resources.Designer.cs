@@ -61,11 +61,56 @@ namespace CUWebinars.Business.Tests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to USE [master]
+        ///GO
+        ///IF EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = N&apos;CUWebinars&apos;)
+        ///DROP DATABASE [CUWebinars];
+        ///
+        ///CREATE DATABASE [CUWebinars]
+        ///ON (name=&apos;CUWebinars&apos;, filename=&apos;E:\CUWebinars.mdf&apos;)
+        ///GO
+        ///USE [CUWebinars]
+        ///GO
+        ///ALTER DATABASE [CUWebinars] SET COMPATIBILITY_LEVEL = 110
+        ///GO
+        ///IF (1 = FULLTEXTSERVICEPROPERTY(&apos;IsFullTextInstalled&apos;))
+        ///begin
+        ///EXEC [CUWebinars].[dbo].[sp_fulltext_database] @action = &apos;enable&apos;
+        ///end
+        ///GO
+        ///ALTER DATABASE [CUWebinars] SET ANSI_NULL_DEFAULT OFF 
+        ///GO
+        ///ALTER DAT [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string CreateDb {
             get {
                 return ResourceManager.GetString("CreateDb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to USE [master]
+        ///GO
+        ///IF EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = N&apos;MembershipReboot&apos;)
+        ///DROP DATABASE [MembershipReboot];
+        ///
+        ///CREATE DATABASE [MembershipReboot] 
+        ///ON (name=&apos;MembershipReboot&apos;, filename=&apos;E:\MembershipReboot.mdf&apos;)
+        ///GO
+        ///USE [MembershipReboot]
+        ///GO
+        ///ALTER DATABASE [MembershipReboot] SET COMPATIBILITY_LEVEL = 110
+        ///GO
+        ///IF (1 = FULLTEXTSERVICEPROPERTY(&apos;IsFullTextInstalled&apos;))
+        ///begin
+        ///EXEC [MembershipReboot].[dbo].[sp_fulltext_database] @action = &apos;enable&apos;
+        ///end
+        ///GO
+        ///ALTER DATABASE [Memb [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string MemReboot {
+            get {
+                return ResourceManager.GetString("MemReboot", resourceCulture);
             }
         }
     }

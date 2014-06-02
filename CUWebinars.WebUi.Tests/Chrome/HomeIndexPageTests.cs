@@ -8,7 +8,7 @@ namespace CUWebinars.WebUi.Tests.Chrome
     {
         [TestMethod]
         [Ignore]
-        //[TestCategory("GUI Tests")]
+        //[TestCategory(TestCategories.Gui)]
         public void LoadHomePage()
         {
             var home = NavigateToHomeIndexPage();
@@ -18,7 +18,7 @@ namespace CUWebinars.WebUi.Tests.Chrome
 
         [TestMethod]
         [Ignore]
-        //[TestCategory("GUI Tests")]
+        //[TestCategory(TestCategories.Gui)]
         public void LoginToSite()
         {
             var home = NavigateToHomeIndexPage();
@@ -32,7 +32,7 @@ namespace CUWebinars.WebUi.Tests.Chrome
 
         [TestMethod]
         [Ignore]
-        //[TestCategory("GUI Tests")]
+        //[TestCategory(TestCategories.Gui)]
         public void ClickRegisterUserLinkWithExistingEmailAndLogIn()
         {
             var home = NavigateToHomeIndexPage();

@@ -89,6 +89,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.IdentityModel.Services" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.1.2\lib\net45\System.Web.Helpers.dll</HintPath>
@@ -125,9 +126,16 @@
   </Choose>
   <ItemGroup>
     <Compile Include="BusinessTestHelper.cs" />
+    <Compile Include="Config\MembershipRebootConfig.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Config\StateService.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Constants.cs" />
     <Compile Include="DatabaseSetup.cs" />
     <Compile Include="Globals.cs" />
+    <Compile Include="MembershipServiceIntegrationTests.cs" />
     <Compile Include="OrderManagementServiceIntegrationTests.cs" />
     <Compile Include="MembershipServiceTests.cs" />
     <Compile Include="OrderRepositoryIntegrationTests.cs" />
@@ -138,11 +146,13 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SamAuthenticationServiceFake.cs" />
+    <Compile Include="TestCategories.cs" />
     <Compile Include="UserAccountServiceHappyPathFake.cs" />
     <Compile Include="UserAccountServiceUnHappyPathFake.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <Content Include="Scripts\MemReboot.sql" />
     <Content Include="Notification\Templates\OrderSubmitted.cshtml" />
     <None Include="packages.config" />
   </ItemGroup>
@@ -161,7 +171,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CreateDb.sql" />
+    <Content Include="Scripts\CreateDb.sql" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

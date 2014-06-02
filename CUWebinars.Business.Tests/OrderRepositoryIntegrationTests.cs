@@ -12,20 +12,20 @@ namespace CUWebinars.Business.Tests
         [TestInitialize]
         public void SetUp()
         {
-            var databaseSetup = new DatabaseSetup();
+            var databaseSetup = new DatabaseSetup {ConnectionString = Globals.LocalDbConnectionString};
             databaseSetup.InstallDatabase(Constants.CreateDbDefault);
         }
 
         [TestCleanup]
         public void TearDown()
         {
-            var databaseSetup = new DatabaseSetup();
+            var databaseSetup = new DatabaseSetup { ConnectionString = Globals.LocalDbConnectionString };
             databaseSetup.UninstallDatabase(Constants.DbName);
         }
 
 
         [TestMethod]
-        [TestCategory("Integration Tests")]
+        [TestCategory(TestCategories.OrderRepositoryIntegration )]
         public void CreateOrderCreatesNewOrder()
         {
             //  Arrange
@@ -58,7 +58,7 @@ namespace CUWebinars.Business.Tests
         }
 
         [TestMethod]
-        [TestCategory("Integration Tests")]
+        [TestCategory(TestCategories.OrderRepositoryIntegration )]
         public void SaveOrderChangesAddsDetailsToNewOrder()
         {
             //  Arrange

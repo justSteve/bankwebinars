@@ -40,7 +40,7 @@ namespace CUWebinars.Business.Tests
 
 
 		[TestMethod]
-		[TestCategory("Membership Tests")]
+		[TestCategory(TestCategories.Membership)]
 		public void LoginUserWithValidCredentials()
 		{
 			string email = "avalid@email.com";
@@ -53,13 +53,13 @@ namespace CUWebinars.Business.Tests
 				webUserRepositoryMock.Object
 				);
 
-			var result = membershipService.LogInUser(Globals.AppTenant, email, password, true);
+			var result = membershipService.LogInUser(Globals.Tenant, email, password, true);
 
 			Assert.IsTrue(result);
 		}
 
 		[TestMethod]
-		[TestCategory("Membership Tests")]
+		[TestCategory(TestCategories.Membership)]
 		public void LoginUserWithInValidCredentials()
 		{
 			string email = "aninvalid@email.com";
@@ -72,13 +72,13 @@ namespace CUWebinars.Business.Tests
 				webUserRepositoryMock.Object
 				);
 
-			var result = membershipService.LogInUser(Globals.AppTenant, email, password, true);
+			var result = membershipService.LogInUser(Globals.Tenant, email, password, true);
 
 			Assert.IsFalse(result);
 		}
 
 		[TestMethod]
-		[TestCategory("Membership Tests")]
+		[TestCategory(TestCategories.Membership)]
 		public void GetDetailsOfUserReturnsWebUser()
 		{
 			string email = "avalid@email.com";
@@ -101,7 +101,7 @@ namespace CUWebinars.Business.Tests
 		}
 
 		[TestMethod]
-		[TestCategory("Membership Tests")]
+		[TestCategory(TestCategories.Membership)]
 		public void GetDetailsOfUserReturnsNullWhereEmailIsWrong()
 		{
 			string email = "aninvalid@email.com";
@@ -123,7 +123,7 @@ namespace CUWebinars.Business.Tests
 		}
 
 		[TestMethod]
-		[TestCategory("Membership Tests")]
+		[TestCategory(TestCategories.Membership)]
 		public void GetDetailsOfUserReturnsNullWhereEmailIsNull()
 		{
 			string email = null;
@@ -145,7 +145,7 @@ namespace CUWebinars.Business.Tests
 		}
 
 		[TestMethod]
-		[TestCategory("Membership Tests")]
+		[TestCategory(TestCategories.Membership)]
 		public void GetDetailsOfUserReturnsNullWhereEmailIsAnEmptyString()
 		{
 			string email = string.Empty;
@@ -167,7 +167,7 @@ namespace CUWebinars.Business.Tests
 		}
 
 		[TestMethod]
-		[TestCategory("Membership Tests")]
+		[TestCategory(TestCategories.Membership)]
 		public void CreateUserAddsClaims()
 		{
 			string email = string.Empty;
@@ -182,7 +182,7 @@ namespace CUWebinars.Business.Tests
 				webUserRepositoryMock.Object
 				);
 
-			var result = membershipService.CreateUser(Globals.AppTenant, "Bob", "Smith", "BobSmith", password, email);
+			var result = membershipService.CreateUser(Globals.Tenant, "Bob", "Smith", "BobSmith", password, email);
 
 
 			Assert.IsTrue(userAccountService.CreateAccountCalled);
@@ -191,7 +191,7 @@ namespace CUWebinars.Business.Tests
 		}
 
 		[TestMethod]
-		[TestCategory("Membership Tests")]
+		[TestCategory(TestCategories.Membership)]
 		public void ProcessInstitutionForUserFindsAndReturnsInstitution()
 		{
 			//  Arrange
@@ -229,7 +229,7 @@ namespace CUWebinars.Business.Tests
 		}
 
 		[TestMethod]
-		[TestCategory("Membership Tests")]
+		[TestCategory(TestCategories.Membership)]
 		public void ProcessInstitutionForUserDoesNotFindAndCreatesInstitution()
 		{
 			//  Arrange
@@ -268,7 +268,7 @@ namespace CUWebinars.Business.Tests
 		}
 
 		[TestMethod]
-		[TestCategory("Membership Tests")]
+		[TestCategory(TestCategories.Membership)]
 		public void CreateWebUserCreatesWebUserWithIdOneBiggerThanExistingBiggestIdWhenZeroPassedForidUserImportedParameter()
 		{
 			//  Arrange
@@ -285,7 +285,7 @@ namespace CUWebinars.Business.Tests
 				webUserRepositoryMock.Object
 				);
 
-			var newGuy = membershipService.CreateWebUser(Globals.AppTenant,
+			var newGuy = membershipService.CreateWebUser(Globals.Tenant,
 				"John",
 				"Doh",
 				password,
@@ -303,7 +303,7 @@ namespace CUWebinars.Business.Tests
 		} 
 		
 		[TestMethod]
-		[TestCategory("Membership Tests")]
+		[TestCategory(TestCategories.Membership)]
 		public void CreateWebUserCreatesWebUserWithIdOneBiggerThanExistingBiggestIdWhenNullPassedForidUserImportedParameter()
 		{
 			//  Arrange
@@ -320,7 +320,7 @@ namespace CUWebinars.Business.Tests
 				webUserRepositoryMock.Object
 				);
 
-			var newGuy = membershipService.CreateWebUser(Globals.AppTenant,
+			var newGuy = membershipService.CreateWebUser(Globals.Tenant,
 				"John",
 				"Doh",
 				password,
@@ -338,7 +338,7 @@ namespace CUWebinars.Business.Tests
 		}
 
 		[TestMethod]
-		[TestCategory("Membership Tests")]
+		[TestCategory(TestCategories.Membership)]
 		public void testtemplate()
 		{
 			//  Arrange

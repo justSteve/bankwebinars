@@ -7,7 +7,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
     public class HomeIndexPageTests : FirefoxBaseTest
     {
         [TestMethod]
-        [TestCategory("GUI Tests")]
+        [TestCategory(TestCategories.Gui)]
         public void LoadHomePage()
         {
             var homeIndexPage = NavigateToHomeIndexPage();
@@ -16,7 +16,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
         }
 
         [TestMethod]
-        [TestCategory("GUI Tests")]
+        [TestCategory(TestCategories.Gui)]
         public void LoginToSite()
         {
             var home = NavigateToHomeIndexPage();
@@ -29,7 +29,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
         }
 
         [TestMethod]
-        [TestCategory("GUI Tests")]
+        [TestCategory(TestCategories.Gui)]
         public void ClickRegisterUserLinkWithExistingEmailAndLogIn()
         {
             var home = NavigateToHomeIndexPage();
@@ -41,6 +41,19 @@ namespace CUWebinars.WebUi.Tests.Firefox
             Assert.IsTrue(home.LogoutLinkIsPresentOnPage);
 
             home.LogOff();
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Gui)]
+        public void ClickRegisterUserLinkWithExistingEmailAndRequestPasswordReset()
+        {
+            var home = NavigateToHomeIndexPage();
+            home.ClickLoginLink();
+            home.ClickRegisterLinkOnLoginView();
+            home.EnterEmailAddressAndEnter(Constants.SitTestEmailAddress);
+            home.ClickResetPasswordButton();
+
+            Assert.IsTrue(home.PasswordResetInstructionsSentLabelPresent); 
         }
 
 

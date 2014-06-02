@@ -7,11 +7,12 @@ namespace CUWebinars.Business.Tests
 {
     internal class DatabaseSetup
     {
-        internal static string connStr = ConfigurationManager.ConnectionStrings[Constants.LocalDbConnectionStringName].ConnectionString;
         private const string MasterSchema = "Master";
+
+        public string ConnectionString { get; set; }
         internal void InstallDatabase(string resourceName)
         {
-            InstallDatabase(connStr, GetScript(resourceName));
+            InstallDatabase(ConnectionString, GetScript(resourceName));
         }
 
         private static string GetScript(string resourceName)
@@ -20,6 +21,8 @@ namespace CUWebinars.Business.Tests
             {
                 case Constants.CreateDbDefault:
                     return Resources.CreateDb;
+                case Constants.CreateMemRebootDb:
+                    return Resources.MemReboot;
                 default:
                     throw new NotSupportedException(string.Format("There's no resource script called {0}", resourceName));
             }
@@ -48,7 +51,7 @@ namespace CUWebinars.Business.Tests
 
         internal void UninstallDatabase(string dbName)
         {
-            this.UninstallDatabase(connStr, dbName);
+            this.UninstallDatabase(ConnectionString, dbName);
         }
 
         internal void UninstallDatabase(string connectionString, string dbName)

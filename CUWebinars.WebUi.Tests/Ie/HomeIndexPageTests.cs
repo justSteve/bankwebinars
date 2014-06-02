@@ -7,7 +7,7 @@ namespace CUWebinars.WebUi.Tests.Ie
     public class HomeIndexPageTests : IeBaseTest
     {
         [TestMethod]
-        [TestCategory("GUI Tests")]
+        [TestCategory(TestCategories.Gui)]
         public void LoadHomePage()
         {
             var home = NavigateToHomeIndexPage();
@@ -16,7 +16,7 @@ namespace CUWebinars.WebUi.Tests.Ie
         }
 
         [TestMethod]
-        [TestCategory("GUI Tests")]
+        [TestCategory(TestCategories.Gui)]
         public void LoginToSite()
         {
             var home = NavigateToHomeIndexPage();
@@ -29,7 +29,7 @@ namespace CUWebinars.WebUi.Tests.Ie
         }
 
         [TestMethod]
-        [TestCategory("GUI Tests")]
+        [TestCategory(TestCategories.Gui)]
         public void ClickRegisterUserLinkWithExistingEmailAndLogIn()
         {
             var home = NavigateToHomeIndexPage();

@@ -13,7 +13,7 @@ namespace CUWebinars.Selenium.Core
         void ClearTextFromInput(string nameOfInputElement);
         void CloseWindow();
         bool DoesElementContainText(string nameToFind, string text);
-        ReadOnlyCollection<IWebElement> FindByClassName(string classNameToFind);
+        IWebElement FindByClassName(string classNameToFind);
         IWebElement FindByClassNameClick(string classNameToFind);
         IWebElement FindByCssSelectorClick(string cssSelectorToFind);
         IWebElement FindByCssSelector(string cssSelectorToFind);
@@ -41,7 +41,6 @@ namespace CUWebinars.Selenium.Core
         bool IsOptionPresent(string nameToFind, string optionText);
         bool IsValuePresent(string nameToFind, string attributeToFind, string attributeValue);
         void Quit();
-        void SelectANode(string classNameToFind, string attributeValue);
         void SwitchToWindow(string windowName);
         void TabAwayFromInput(string idOfInput);
         IWebElement TypeTextWithEnter(string nameToFind, string text);

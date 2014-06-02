@@ -65,7 +65,7 @@ namespace CUWebinars.Selenium.Core
 
         public virtual IWebElement FindByClassNameClick(string classNameToFind)
         {
-            IWebElement element = webDriver.FindElement(By.ClassName(classNameToFind));
+            IWebElement element = FindByClassName(classNameToFind);
 
             if (!ReferenceEquals(null, element))
             {
@@ -75,16 +75,15 @@ namespace CUWebinars.Selenium.Core
             return element;
         }
 
-        public virtual ReadOnlyCollection<IWebElement> FindByClassName(string classNameToFind)
+        public virtual IWebElement FindByClassName(string classNameToFind)
         {
-            ReadOnlyCollection<IWebElement> elements = webDriver.FindElements(By.ClassName(classNameToFind));
-
-            return elements;
+            var elementWait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(WaitTimeout));
+            return elementWait.Until(ExpectedConditions.ElementIsVisible(By.ClassName(classNameToFind)));
         }
 
         public virtual IWebElement FindByCssSelectorClick(string cssSelectorToFind)
         {
-            IWebElement element = webDriver.FindElement(By.CssSelector(cssSelectorToFind));
+            IWebElement element = FindByCssSelector(cssSelectorToFind);
 
             if (!ReferenceEquals(null, element))
             {
@@ -96,7 +95,8 @@ namespace CUWebinars.Selenium.Core
 
         public virtual IWebElement FindByCssSelector(string cssSelectorToFind)
         {
-            return webDriver.FindElement(By.CssSelector(cssSelectorToFind));
+            var elementWait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(WaitTimeout));
+            return elementWait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector(cssSelectorToFind)));
         }
 
         public virtual IWebElement FindById(string idToFind)
@@ -107,7 +107,7 @@ namespace CUWebinars.Selenium.Core
 
         public virtual IWebElement FindByIdClick(string idToFind)
         {
-            IWebElement element = webDriver.FindElement(By.Id(idToFind));            
+            IWebElement element = FindById(idToFind);            
             
             if (!ReferenceEquals(null, element))
             {
@@ -155,15 +155,13 @@ namespace CUWebinars.Selenium.Core
 
         public virtual IWebElement FindByXPath(string xpathToFind)
         {
-            IWebElement element = webDriver.FindElement(By.XPath(xpathToFind));
-
-            return element;
+            var elementWait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(WaitTimeout));
+            return elementWait.Until(ExpectedConditions.ElementIsVisible(By.XPath(xpathToFind)));
         }
 
         public virtual IWebElement FindByXPathClick(string xpathToFind)
         {
-            var wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(WaitTimeout));
-            var element = wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(xpathToFind)));
+            var element = FindByXPath(xpathToFind);
             
             if (!ReferenceEquals(null, element))
             {
@@ -181,8 +179,7 @@ namespace CUWebinars.Selenium.Core
 
         public virtual IWebElement FindByNameClick(string nameToFind)
         {
-            var wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(WaitTimeout));
-            var element = wait.Until(ExpectedConditions.ElementIsVisible(By.Name(nameToFind)));
+            var element = FindByName(nameToFind);
 
             if (!ReferenceEquals(null, element))
             {
@@ -366,23 +363,6 @@ namespace CUWebinars.Selenium.Core
         public virtual void Wait(int milliseconds = 1000)
         {
             Thread.Sleep(milliseconds);
-        }
-
-        public virtual void SelectANode(string classNameToFind, string attributeValue)
-        {
-            ReadOnlyCollection<IWebElement> elements = FindByClassName(classNameToFind);
-
-            if (!ReferenceEquals(null, elements))
-            {
-                foreach (IWebElement element in elements)
-                {
-                    if (element.Text.Trim().Equals(attributeValue, StringComparison.OrdinalIgnoreCase))
-                    {
-                        element.Click();
-                        break;
-                    }
-                }
-            }
         }
 
         public void SwitchToWindow(string windowName)
