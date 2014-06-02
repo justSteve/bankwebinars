@@ -6,15 +6,16 @@
 <title>
     @{
         var orderRows = from orderRow in Model.OrderRows
-                  where orderRow.RowStatus == OrderRowStatus.Active
-                  select orderRow;
-        var thisWebinar = orderRows.Single().Webinar;        
+                        where orderRow.RowStatus == OrderRowStatus.Active
+                        select orderRow;
+        var thisWebinar = orderRows.Single().Webinar;
     }
     Connection Information for @thisWebinar.Title
 </title>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 @{
+    var handoutRepo = "http://ondemand.cuwebinars.com";
     var row = from orderRow in Model.OrderRows
               where orderRow.RowStatus == OrderRowStatus.Active
               select orderRow;
@@ -135,13 +136,13 @@
                                                                                     </td>
                                                                                 </tr>
                                                                                 <tr>
-                                                                                        <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller"><p align="right" style="vert-align: top; font-size: smaller">Presenter:</p></td>
-                                                                                        <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
-                                                                                            <p style="color: black; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
-                                                                                                @webinar.Presenter.WebUser.FullName<br />
-                                                                                            </p>
-                                                                                        </td>
-                                                                                    </tr>
+                                                                                    <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller"><p align="right" style="vert-align: top; font-size: smaller">Presenter:</p></td>
+                                                                                    <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
+                                                                                        <p style="color: black; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                                                                            @webinar.Presenter.WebUser.FullName<br />
+                                                                                        </p>
+                                                                                    </td>
+                                                                                </tr>
                                                                                 <tr>
                                                                                     <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller">
                                                                                         <p align="right" style="vert-align: top; font-size: smaller">
@@ -188,7 +189,7 @@
                                                                                                 {
                                                                                                     foreach (var i in webinar.WebinarFiles)
                                                                                                     {
-                                                                                                        <a href="@i.fileLocation">@i.fileDesc</a><br />
+                                                                                                        <a href='@handoutRepo/@i.fileLocation'>@i.fileDesc</a>
                                                                                                     }
                                                                                                 }
                                                                                             }

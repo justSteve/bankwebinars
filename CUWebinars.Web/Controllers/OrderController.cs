@@ -91,74 +91,74 @@ namespace CUWebinars.Web.Controllers
                     {
 
 
-                    var institutionForUser =
-                        _membershipService.ProcessInstitutionForUser(incomingOrderModel.Institution.Trim(),
-                            email,
-                            incomingOrderModel.BillingAddress.City,
-                            incomingOrderModel.BillingAddress.State,
-                            "N",
-                            "New",
-                            incomingOrderModel.BillingAddress.Zip
-                            );
+                        var institutionForUser =
+                            _membershipService.ProcessInstitutionForUser(incomingOrderModel.Institution.Trim(),
+                                email,
+                                incomingOrderModel.BillingAddress.City,
+                                incomingOrderModel.BillingAddress.State,
+                                "N",
+                                "New",
+                                incomingOrderModel.BillingAddress.Zip
+                                );
 
-                    incomingOrderModel.BillingAddress.AddressType = WebUiConstants.BillingAddress;
-                    incomingOrderModel.ShippingAddress.AddressType = WebUiConstants.ShippingAddress;
+                        incomingOrderModel.BillingAddress.AddressType = WebUiConstants.BillingAddress;
+                        incomingOrderModel.ShippingAddress.AddressType = WebUiConstants.ShippingAddress;
 
-                    IList<Address> addresses = new List<Address>
+                        IList<Address> addresses = new List<Address>
                     {
                         incomingOrderModel.BillingAddress,
                         incomingOrderModel.ShippingAddress
                     };
 
-                    USTimeZone userTimeZone = _membershipService.GetTimeZoneByZip();
-                    webUser = _membershipService.CreateWebUser(globalConfig.Tenant
-                        , firstName
-                        , lastName
-                        , tempPassword
-                        , email
-                        , userTimeZone
-                        , UserType.Customer
-                        , institutionForUser.idInstitution
-                        , addresses
-                        , incomingOrderModel.Title == null ? null : incomingOrderModel.Title.Trim()
-                        , null
-                        , DomainConstants.Active
-                        );
+                        USTimeZone userTimeZone = _membershipService.GetTimeZoneByZip();
+                        webUser = _membershipService.CreateWebUser(globalConfig.Tenant
+                            , firstName
+                            , lastName
+                            , tempPassword
+                            , email
+                            , userTimeZone
+                            , UserType.Customer
+                            , institutionForUser.idInstitution
+                            , addresses
+                            , incomingOrderModel.Title == null ? null : incomingOrderModel.Title.Trim()
+                            , null
+                            , DomainConstants.Active
+                            );
 
-                    webUser.Institution = institutionForUser;
+                        webUser.Institution = institutionForUser;
 
-                    //  Here, we set a value which indicates to the TtsSmtpMessageDelivery object that the user was created while importing an order.
-                    //  This will be checked in TtsSmtpMessageDelivery and the notification will not be sent if this value is present.
-                    //  The idea being that the Order Submitted notification will contain the info nomrally in the User Registered email.
-                    _stateService.SetValue(DomainConstants.UserCreatedViaNewOrder, true);
+                        //  Here, we set a value which indicates to the TtsSmtpMessageDelivery object that the user was created while importing an order.
+                        //  This will be checked in TtsSmtpMessageDelivery and the notification will not be sent if this value is present.
+                        //  The idea being that the Order Submitted notification will contain the info nomrally in the User Registered email.
+                        _stateService.SetValue(DomainConstants.UserCreatedViaNewOrder, true);
 
-                    userAccount = _membershipService.CreateUser(globalConfig.Tenant
-                        , firstName
-                        , lastName
-                        , email
-                        , tempPassword
-                        , email
-                        );
+                        userAccount = _membershipService.CreateUser(globalConfig.Tenant
+                            , firstName
+                            , lastName
+                            , email
+                            , tempPassword
+                            , email
+                            );
 
-                    Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey), "There's no reason session should not have a value for the VerificationKey at this point ");
+                        Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey), "There's no reason session should not have a value for the VerificationKey at this point ");
 
-                    verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
-                    confirmChangeEmailUrl = _stateService.GetValue<string>(DomainConstants.ConfirmChangeEmailLink);
-                    _stateService.ClearValue(DomainConstants.VerificationKey);
-                    _stateService.ClearValue(DomainConstants.ConfirmChangeEmailLink);
+                        verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
+                        confirmChangeEmailUrl = _stateService.GetValue<string>(DomainConstants.ConfirmChangeEmailLink);
+                        _stateService.ClearValue(DomainConstants.VerificationKey);
+                        _stateService.ClearValue(DomainConstants.ConfirmChangeEmailLink);
 
-                    userAccount = _membershipService.VerifyEmailFromKey(
-                        verificationKey,
-                        tempPassword
-                        );
+                        userAccount = _membershipService.VerifyEmailFromKey(
+                            verificationKey,
+                            tempPassword
+                            );
 
-                    //  Now we clear the value, so TtsSmtpMessageDelivery can go back to business as usual.
-                    _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
+                        //  Now we clear the value, so TtsSmtpMessageDelivery can go back to business as usual.
+                        _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
                     }
                     catch (Exception exception)
                     {
 
-                        _logger.Error("CreateOrder|CreateUser failed: " + exception.Message); 
+                        _logger.Error("CreateOrder|CreateUser failed: " + exception.Message);
                     }
                 }
 
@@ -259,16 +259,18 @@ namespace CUWebinars.Web.Controllers
                 return Json(
                     new
                     {
-                        Result = idOfLastOrder
+                        Result = idOfLastOrder.ToString()
                     },
                     JsonRequestBehavior.AllowGet);
             }
             catch (Exception exception)
             {
-                _logger.Error("Order creation failed: "+ exception.Message);
+                var errString = String.Format("Order creation failed on {0} - {1} with msg: {2}", incomingOrderModel.Email, incomingOrderModel.idWebinar, exception.Message);
+                _logger.Error(errString);
             }
 
-            return Json(new { Result = WebUiConstants.Fail });
+            return Json(new { Result = "0"});
+            //return Json(new { Result = WebUiConstants.Fail });
         }
     }
 }
