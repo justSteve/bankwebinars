@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
@@ -12,17 +13,22 @@ namespace CUWebinars.Business.Notification.Handlers
     public class OrderSubmittedHandler<T> : IEventHandler<OrderSubmittedEvent<T>>
         where T : OrderSubmittedViewModel
     {
+        private readonly INotificationPersister _notificationPersister;
+        private readonly EnvironmentInformation _environmentInformation;
         private readonly IFormatter _generalFormatter;
         private readonly INotificationDelivery _notificationDelivery;
         private readonly ILogger _logger;
 
-        public OrderSubmittedHandler(IFormatter generalFormatter, ILogger logger)
-            : this(generalFormatter, new SmtpMessageDelivery(), logger)
+        public OrderSubmittedHandler(IFormatter generalFormatter, ILogger logger, INotificationPersister notificationPersister, EnvironmentInformation environmentInformation)
+            : this(generalFormatter, new SmtpMessageDelivery(), logger, notificationPersister, environmentInformation)
         {
-
+        
         }
-        public OrderSubmittedHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger)
+
+        public OrderSubmittedHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger, INotificationPersister notificationPersister, EnvironmentInformation environmentInformation)
         {
+            _notificationPersister = notificationPersister;
+            _environmentInformation = environmentInformation;
             _generalFormatter = generalFormatter;
             _notificationDelivery = notificationDelivery;
             _logger = logger;
@@ -33,6 +39,9 @@ namespace CUWebinars.Business.Notification.Handlers
             try
             {
                 var notificationMessage = _generalFormatter.Format(orderSubmittedEvent.EventObject, "OrderSubmitted");
+                var fullFilePathToPersistedNotification = Path.Combine(_environmentInformation.BaseUrl,
+                    orderSubmittedEvent.RelativeFilePath);
+                _notificationPersister.PersistNotification(notificationMessage.Body, fullFilePathToPersistedNotification);
 
                 notificationMessage.ReplyTo = "registrations+verify@bankwebinars.com";
                 notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail;
@@ -67,14 +76,14 @@ namespace CUWebinars.Business.Notification.Handlers
 
     public class OrderSubmittedHandler : OrderSubmittedHandler<OrderSubmittedViewModel>
     {
-        public OrderSubmittedHandler(IFormatter generalFormatter, ILogger logger)
-            : base(generalFormatter, logger)
+        public OrderSubmittedHandler(IFormatter generalFormatter, ILogger logger, INotificationPersister notificationPersister, EnvironmentInformation environmentInformation)
+            : base(generalFormatter, logger, notificationPersister, environmentInformation)
         {
 
         }
 
-        public OrderSubmittedHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger)
-            : base(generalFormatter, notificationDelivery, logger)
+        public OrderSubmittedHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger, INotificationPersister notificationPersister, EnvironmentInformation environmentInformation)
+            : base(generalFormatter, notificationDelivery, logger, notificationPersister, environmentInformation)
         {
         }
 

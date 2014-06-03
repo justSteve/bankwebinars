@@ -6,6 +6,6 @@ namespace CUWebinars.Business.Notification.Events
     public class OrderSubmittedEvent<T> : TtsBusEvent<T>, IAllowMultiple
         where T : OrderSubmittedViewModel
     {
-        
+        public string RelativeFilePath { get; set; }
     }
 }

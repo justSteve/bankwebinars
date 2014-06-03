@@ -497,7 +497,11 @@ namespace CUWebinars.Business.Services
                     UserCreatedOnImport = linkToVerifyAccount
                 };
 
-                AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel> { EventObject = orderSubmittedViewModel });
+                AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
+                {
+                    EventObject = orderSubmittedViewModel,
+                    RelativeFilePath = Path.Combine(@"App_Data\Notifications", string.Format("OrderNotification-{0}{1}", DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss-fff-tt"), ".htm"))
+                });
 
                 foreach (var evt in GetEvents())
                 {

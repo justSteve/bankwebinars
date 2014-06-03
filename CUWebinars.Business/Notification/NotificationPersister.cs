@@ -11,7 +11,7 @@ namespace CUWebinars.Business.Notification
 
         public void PersistNotification(string notification, string connectionDetails)
         {
-            using (var writer = new StreamWriter(connectionDetails ))
+            using (var writer = new StreamWriter(connectionDetails))
             {
                 writer.Write(notification);
                 writer.Flush();
