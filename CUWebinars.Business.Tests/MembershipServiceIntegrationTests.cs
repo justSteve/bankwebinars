@@ -75,18 +75,7 @@ namespace CUWebinars.Business.Tests
         [TestCategory(TestCategories.MembershipIntegration)]
         public void CreateANewWebUser()
         {
-            var ctx = new TTSWebinarsContext(Constants.LocalDbConnectionStringName);
-            var memRebootCtx = new DefaultMembershipRebootDatabase();
-            var refDataRepository = new RefDataRepository();
-            var config = MembershipRebootConfig.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.UpTwoFolders), new StateService(), refDataRepository);
-            var userAccountService = new UserAccountService(config, new DefaultUserAccountRepository());
-            
-            IMembershipService membershipService = new MembershipService(new InstitutionRepository(ctx), 
-                new RefDataRepository(), 
-                new SamAuthenticationService(userAccountService),
-                userAccountService,
-                new WebUserRepository(ctx)
-                );
+            var membershipService = CreateMembershipService();
 
             var webUser = membershipService.CreateWebUser(Globals.Tenant, 
                 TestFirstName, 
@@ -106,6 +95,67 @@ namespace CUWebinars.Business.Tests
 
             Assert.AreEqual(newWebUser.email, webUser.email);
 
+        }
+
+
+        [TestMethod]
+        [TestCategory(TestCategories.MembershipIntegration)]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void CreateUserAccountWithNoTenantThrowsException()
+        {
+            var membershipService = CreateMembershipService();
+
+            membershipService.CreateUser(null, TestFirstName, TestLastName, TestFirstName + " " + TestLastName,
+                TestPassword, TestEmail);
+
+            Assert.Fail(); // if made it this far, no exception thrown and test fails.
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.MembershipIntegration)]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void CreateUserAccountWithEmptyStringForTenantThrowsException()
+        {
+            var membershipService = CreateMembershipService();
+
+            membershipService.CreateUser(string.Empty, TestFirstName, TestLastName, TestFirstName + " " + TestLastName,
+                TestPassword, TestEmail);
+
+            Assert.Fail(); // if made it this far, no exception thrown and test fails.
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.MembershipIntegration)]
+        public void CreateUserAccountWithEmptyStringForUsernameThrowsException()
+        {
+            var membershipService = CreateMembershipService();
+
+            //  Because we have set in App.config emailIsUsername to true, a null or whitespace username
+            //  is fine and gets stored as the email address of the user.
+            membershipService.CreateUser(Globals.Tenant, TestFirstName, TestLastName, " ",
+                TestPassword, TestEmail);
+
+            var ctx = new DefaultMembershipRebootDatabase();
+            var account = ctx.Users.Where(u => u.Email == TestEmail).SingleOrDefault();
+
+            Assert.IsNotNull(account); 
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.MembershipIntegration)]
+        public void CreateUserAccountWithNullStringForUsernameThrowsException()
+        {
+            var membershipService = CreateMembershipService();
+
+            //  Because we have set in App.config emailIsUsername to true, a null or whitespace username
+            //  is fine and gets stored as the email address of the user.
+            membershipService.CreateUser(Globals.Tenant, TestFirstName, TestLastName, null,
+                TestPassword, TestEmail);
+
+            var ctx = new DefaultMembershipRebootDatabase();
+            var account = ctx.Users.Where(u => u.Email == TestEmail).SingleOrDefault();
+
+            Assert.IsNotNull(account); 
         }
 
         private IList<Address> GetAddresses(string fullName)
@@ -133,6 +183,26 @@ namespace CUWebinars.Business.Tests
             };
 
             return new[] {billingAddress, shippingAddress};
+        }
+
+
+        private static IMembershipService CreateMembershipService()
+        {
+            var ctx = new TTSWebinarsContext(Constants.LocalDbConnectionStringName);
+            var memRebootCtx = new DefaultMembershipRebootDatabase();
+            var refDataRepository = new RefDataRepository();
+            var config =
+                MembershipRebootConfig.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.UpTwoFolders),
+                    new StateService(), refDataRepository);
+            var userAccountService = new UserAccountService(config, new DefaultUserAccountRepository());
+
+            IMembershipService membershipService = new MembershipService(new InstitutionRepository(ctx),
+                new RefDataRepository(),
+                new SamAuthenticationService(userAccountService),
+                userAccountService,
+                new WebUserRepository(ctx)
+                );
+            return membershipService;
         }
     }
 }
