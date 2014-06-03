@@ -8,6 +8,7 @@ namespace CUWebinars.WebUi.Tests.Ie
     {
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
+        [TestCategory(TestCategories.IE)]
         public void LoadHomePage()
         {
             var home = NavigateToHomeIndexPage();
@@ -17,6 +18,7 @@ namespace CUWebinars.WebUi.Tests.Ie
 
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
+        [TestCategory(TestCategories.IE)]
         public void LoginToSite()
         {
             var home = NavigateToHomeIndexPage();
@@ -30,6 +32,7 @@ namespace CUWebinars.WebUi.Tests.Ie
 
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
+        [TestCategory(TestCategories.IE)]
         public void ClickRegisterUserLinkWithExistingEmailAndLogIn()
         {
             var home = NavigateToHomeIndexPage();
@@ -44,6 +47,20 @@ namespace CUWebinars.WebUi.Tests.Ie
             Assert.IsTrue(home.LogoutLinkIsPresentOnPage);
 
             home.LogOff();
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Gui)]
+        [TestCategory(TestCategories.IE)]
+        public void ClickRegisterUserLinkWithExistingEmailAndRequestPasswordReset()
+        {
+            var home = NavigateToHomeIndexPage();
+            home.ClickLoginLink();
+            home.ClickRegisterLinkOnLoginView();
+            home.EnterEmailAddressAndEnter(Constants.SitTestEmailAddress);
+            home.ClickResetPasswordButton();
+
+            Assert.IsTrue(home.PasswordResetInstructionsSentLabelPresent);
         }
         
         public HomeIndexPage NavigateToHomeIndexPage()

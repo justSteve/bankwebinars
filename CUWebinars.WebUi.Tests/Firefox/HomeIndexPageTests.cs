@@ -17,6 +17,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
 
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
+        [TestCategory(TestCategories.Firefox)]
         public void LoginToSite()
         {
             var home = NavigateToHomeIndexPage();
@@ -30,6 +31,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
 
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
+        [TestCategory(TestCategories.Firefox)]
         public void ClickRegisterUserLinkWithExistingEmailAndLogIn()
         {
             var home = NavigateToHomeIndexPage();
@@ -45,6 +47,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
 
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
+        [TestCategory(TestCategories.Firefox)]
         public void ClickRegisterUserLinkWithExistingEmailAndRequestPasswordReset()
         {
             var home = NavigateToHomeIndexPage();
