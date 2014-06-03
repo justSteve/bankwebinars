@@ -10,7 +10,7 @@ namespace CUWebinars.Selenium.Core
 {
     public abstract class BaseTestDriver : ITestDriver
     {
-        protected const int WaitTimeout = 15;
+        protected const int WaitTimeout = 30;
         protected IWebDriver webDriver;
         protected string port;
 
@@ -335,6 +335,16 @@ namespace CUWebinars.Selenium.Core
             }
         }
 
+        public virtual void TypeText(By selectStrategy, string text)
+        {
+            IWebElement element = FindWebElementWithWait(selectStrategy, WaitTimeout);
+
+            if (!ReferenceEquals(null, element))
+            {
+                TypeText(element, text);
+            }
+        }
+
         public virtual void ClearTextFromInput(string nameOfInputElement)
         {
             IWebElement element = FindByName(nameOfInputElement);
@@ -363,6 +373,17 @@ namespace CUWebinars.Selenium.Core
         public virtual void Wait(int milliseconds = 1000)
         {
             Thread.Sleep(milliseconds);
+        }
+
+        private IWebElement FindWebElementWithWait(By findBy, int seconds)
+        {
+            return WaitForElement(findBy, seconds);
+        }
+
+        private IWebElement WaitForElement(By by, int seconds)
+        {
+            var wait = new WebDriverWait(WebDriver, TimeSpan.FromSeconds(seconds));
+            return wait.Until(ExpectedConditions.ElementIsVisible(by));
         }
 
         public void SwitchToWindow(string windowName)

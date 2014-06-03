@@ -45,6 +45,7 @@ namespace CUWebinars.Selenium.Core
         void TabAwayFromInput(string idOfInput);
         IWebElement TypeTextWithEnter(string nameToFind, string text);
         void TypeText(string nameToFind, string text);
+        void TypeText(By selectStrategy, string text);
         void TypeTextAndTabAway(string nameToFind, string text);
         void Wait(int milliseconds = 1000);
         ReadOnlyCollection<string> Windows { get; }

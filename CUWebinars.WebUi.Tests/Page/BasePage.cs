@@ -123,6 +123,27 @@ namespace CUWebinars.WebUi.Tests.Page
             SeleniumTestDriver.FindByIdClick("EdgeCaseResetPasswordButton");
         }
 
+        public void ClickSubmitButton()
+        {
+            SeleniumTestDriver.FindByIdClick("TheSubmitButton");
+        }
+
+
+        public void ClickYesUseAddressButton()
+        {
+            SeleniumTestDriver.FindByNameClick("YesUseAddress");
+        }
+
+        public void EnterDetail(string detail, string domItem)
+        {
+            SeleniumTestDriver.TypeText(By.Id(domItem), detail);
+        }
+
+        public void EnterEmailAddress(string email, string domItem)
+        {
+            SeleniumTestDriver.TypeText(By.Id(domItem), email);
+        }
+
 
         public void EnterEmailAddressAndEnter(string email)
         {
@@ -132,6 +153,13 @@ namespace CUWebinars.WebUi.Tests.Page
             var theSubmitButton = theSubmitButtonWait.Until(ExpectedConditions.ElementExists(By.Id("TheSubmitButton")));
             theSubmitButton.Click();
         }
+
+
+        public void EnterPassword(string password, string domItem)
+        {
+            SeleniumTestDriver.TypeText(By.Id(domItem), password);
+        }
+
 
         public void EnterPasswordWhereUserExists(string password)
         {
@@ -160,6 +188,13 @@ namespace CUWebinars.WebUi.Tests.Page
             }
         }
 
+        public bool ManageLoggedInUserLinkIsPresentOnPage
+        {
+            get
+            {
+                return SeleniumTestDriver.FindById("btnLogin") != null;
+            }
+        }
         public bool PasswordResetInstructionsSentLabelPresent
         {
             get
