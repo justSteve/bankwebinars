@@ -73,16 +73,16 @@ namespace CUWebinars.WebUi.Tests.Ie
             var home = NavigateToHomeIndexPage();
             home.ClickLoginLink();
             home.ClickRegisterLinkOnLoginView();
-            home.EnterEmailAddress(email, "RegisterFields_Email");
+            home.EnterEmailAddress(email, Constants.RegisterFieldsEmail);
             home.ClickSubmitButton();
             home.ClickYesUseAddressButton();
-            home.EnterPassword(Constants.SitTestPasswordSameDomainAddress, "RegisterFields_Password");
-            home.EnterPassword(Constants.SitTestPasswordSameDomainAddress, "RegisterFields.ConfirmPassword");
+            home.EnterPassword(Constants.SitTestPasswordSameDomainAddress, Constants.RegisterFieldsPassword);
+            home.EnterPassword(Constants.SitTestPasswordSameDomainAddress, Constants.RegisterFieldsConfirmPassword);
             home.ClickSubmitButton();
-            home.EnterDetail(string.Concat(firstName, " ", lastName), "FullName");
-            home.EnterDetail("Mr", "RegisterFields_Title");
-            home.EnterDetail("555-555-555", "RegisterFields_BillingAddress_Phone");
-            home.EnterDetail(Constants.SitTestAddress, "RegisterFields_BillingAddress_StreetAddress");
+            home.EnterDetail(string.Concat(firstName, " ", lastName), Constants.FullNameInput);
+            home.EnterDetail(Constants.Title, Constants.RegisterFieldsTitle);
+            home.EnterDetail(Constants.SitTestPhone, Constants.RegisterFieldsPhone);
+            home.EnterDetail(Constants.SitTestAddress, Constants.RegisterFieldsStreetAddress);
             home.ClickSubmitButton();
 
             Assert.IsTrue(home.ManageLoggedInUserLinkIsPresentOnPage);
