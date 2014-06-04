@@ -131,7 +131,7 @@ $(function () {
             }
         }).done(function (result) {
 
-            var bla = JSON.parse(result);
+            var jsonData = JSON.parse(result);
 
             $.ajax({
                 type: 'POST',
@@ -139,7 +139,7 @@ $(function () {
                 cache: false,
                 url: '/Api/Order',
                 dataType: constants.HtmlDataType,
-                data: bla,
+                data: jsonData,
                 beforeSend: function () {
                     // this is where we append a loading image
                     $('#WaitIndicator').show();
@@ -236,14 +236,11 @@ function addImportOrderButtonClick() {
             }
         }).done(function (result) {
 
-            //var resultAsJson = JSON.parse(result);
-
-            if (result.Result === 'Success') {
+            var id = parseInt(result.Result, 10); // this is base 10 (2nd param)
+            
+            if (id > 0 ) {
                 $('#InputFormFields').html('<span id="OrderSucceeded" class="label label-success">Success! Order Id: ' + result.OrderId + ' OrderRow Id: ' + result.OrderRowId + '</span>');
             }
-
-            
-
         }).always(function () {
             $('#WaitIndicator').hide();
         });

@@ -19,17 +19,17 @@ namespace CUWebinars.Selenium.Core
         IWebElement FindByCssSelector(string cssSelectorToFind);
         IWebElement FindById(string idToFind);
         IWebElement FindByIdClick(string idToFind);
+        IWebElement FindByIdWithWait(string idToFind, int seconds);
         IWebElement FindByLinkText(string linkTextToFind);
         IWebElement FindByLinkTextClick(string linkTextToFind);
+        IWebElement FindByName(string nameToFind);
+        IWebElement FindByNameClick(string nameToFind);
         IWebElement FindByPartialLinkText(string linkTextToFind);
         IWebElement FindByXPath(string xpathToFind);
         IWebElement FindByXPathClick(string xpathToFind);
-        IWebElement FindByName(string nameToFind);
-        IWebElement FindByNameClick(string nameToFind);
         string GetAlertText();
         string GetDocumentTitle();
         string GetElementValue(string idToFind);
-
         void GoToUrl(string url);
         ReadOnlyCollection<string> GetSelectedOptions(string idToFind);
         void Initialize();
@@ -43,12 +43,12 @@ namespace CUWebinars.Selenium.Core
         void Quit();
         void SwitchToWindow(string windowName);
         void TabAwayFromInput(string idOfInput);
-        IWebElement TypeTextWithEnter(string nameToFind, string text);
         void TypeText(string nameToFind, string text);
         void TypeText(By selectStrategy, string text);
         void TypeTextAndTabAway(string nameToFind, string text);
+        IWebElement TypeTextWithEnter(string nameToFind, string text);
         void Wait(int milliseconds = 1000);
-        ReadOnlyCollection<string> Windows { get; }
         IWebDriver WebDriver { get; }
+        ReadOnlyCollection<string> Windows { get; }
     }
 }

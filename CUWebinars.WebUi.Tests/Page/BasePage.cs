@@ -12,12 +12,12 @@ namespace CUWebinars.WebUi.Tests.Page
         protected BasePage(ITestDriver seleniumTestDriver)
         {
             SeleniumTestDriver = seleniumTestDriver;
-            GlobalTestConfig = Global.GlobalConfigSingleton;
+            GlobalTestConfig = WebUiTestGlobals.WebUiTestGlobalsConfigSingleton;
             Url = GlobalTestConfig.HomeUrl;
         }
 
         protected string Url { get; set; }
-        protected Global GlobalTestConfig { get; set; }
+        protected WebUiTestGlobals GlobalTestConfig { get; set; }
 
         protected ITestDriver SeleniumTestDriver { get; set; }
 
