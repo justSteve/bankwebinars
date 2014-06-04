@@ -79,11 +79,12 @@
     <Compile Include="Page\Chrome\HomeIndexPage.cs" />
     <Compile Include="Chrome\HomeIndexPageTests.cs" />
     <Compile Include="Page\Firefox\MembershipNotificationsPage.cs" />
+    <Compile Include="Page\HomeIndexBasePage.cs" />
     <Compile Include="Page\MembershipNotificationsBasePage.cs" />
-    <Compile Include="WebUiTestGlobals.cs" />
+    <Compile Include="Infrastructure\WebUiTestGlobals.cs" />
     <Compile Include="Page\BasePage.cs" />
     <Compile Include="BaseTest.cs" />
-    <Compile Include="Constants.cs" />
+    <Compile Include="Infrastructure\Constants.cs" />
     <Compile Include="Firefox\FirefoxBaseTest.cs" />
     <Compile Include="Page\Firefox\HomeIndexPage.cs" />
     <Compile Include="Firefox\HomeIndexPageTests.cs" />
@@ -97,7 +98,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestCategories.cs" />
+    <Compile Include="Infrastructure\TestCategories.cs" />
     <Compile Include="WebUiTestHelpers.cs" />
   </ItemGroup>
   <ItemGroup>

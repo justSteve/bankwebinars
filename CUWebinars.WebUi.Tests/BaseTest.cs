@@ -1,6 +1,7 @@
 ﻿//using System.Web.Configuration;
 using System;
 using CUWebinars.Selenium.Core;
+using CUWebinars.WebUi.Tests.Infrastructure;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CUWebinars.WebUi.Tests

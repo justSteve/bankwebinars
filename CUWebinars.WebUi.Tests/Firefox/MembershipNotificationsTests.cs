@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CUWebinars.WebUi.Tests.Infrastructure;
 using CUWebinars.WebUi.Tests.Page.Firefox;
 using HtmlAgilityPack;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

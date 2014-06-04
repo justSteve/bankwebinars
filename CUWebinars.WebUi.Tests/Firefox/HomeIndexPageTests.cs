@@ -1,4 +1,5 @@
-﻿using CUWebinars.WebUi.Tests.Page.Firefox;
+﻿using CUWebinars.WebUi.Tests.Infrastructure;
+using CUWebinars.WebUi.Tests.Page.Firefox;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CUWebinars.WebUi.Tests.Firefox

@@ -1,4 +1,5 @@
 ﻿using CUWebinars.Selenium.Core.Ie;
+using CUWebinars.WebUi.Tests.Infrastructure;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Globalization;
 

@@ -1,4 +1,5 @@
-﻿using CUWebinars.WebUi.Tests.Page.Chrome;
+﻿using CUWebinars.WebUi.Tests.Infrastructure;
+using CUWebinars.WebUi.Tests.Page.Chrome;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CUWebinars.WebUi.Tests.Chrome

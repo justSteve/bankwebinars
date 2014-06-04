@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using CUWebinars.Selenium.Core.Firefox;
+using CUWebinars.WebUi.Tests.Infrastructure;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CUWebinars.WebUi.Tests.Firefox

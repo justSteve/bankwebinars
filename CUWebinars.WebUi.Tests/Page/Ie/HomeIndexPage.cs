@@ -2,7 +2,7 @@
 
 namespace CUWebinars.WebUi.Tests.Page.Ie
 {
-    public class HomeIndexPage : BasePage
+    public class HomeIndexPage : HomeIndexBasePage
     {
         public HomeIndexPage(ITestDriver seleniumTestDriver)
             : base(seleniumTestDriver)
