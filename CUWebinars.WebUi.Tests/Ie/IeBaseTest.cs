@@ -1,4 +1,5 @@
 ﻿using CUWebinars.Selenium.Core.Ie;
+using CUWebinars.WebUi.Tests.Infrastructure;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Globalization;
 
@@ -10,10 +11,10 @@ namespace CUWebinars.WebUi.Tests.Ie
         [TestInitialize]
         public void Setup()
         {
-            GlobalTestConfig = Global.GlobalConfigSingleton;
-            var port = int.Parse(GlobalTestConfig.IeWebDriverPort, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite);
+            WebUiTestGlobalsTestConfig = WebUiTestGlobals.WebUiTestGlobalsConfigSingleton;
+            var port = int.Parse(WebUiTestGlobalsTestConfig.IeWebDriverPort, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite);
             
-            var pathToDriver = GlobalTestConfig.IeWebDriverPath;
+            var pathToDriver = WebUiTestGlobalsTestConfig.IeWebDriverPath;
             TestDriver = new IeTestDriver { DriverPort = port, DriverPath = pathToDriver };
 
             TestDriver.Initialize();

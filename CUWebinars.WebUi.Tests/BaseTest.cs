@@ -1,6 +1,7 @@
 ﻿//using System.Web.Configuration;
 using System;
 using CUWebinars.Selenium.Core;
+using CUWebinars.WebUi.Tests.Infrastructure;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CUWebinars.WebUi.Tests
@@ -9,7 +10,7 @@ namespace CUWebinars.WebUi.Tests
     public class BaseTest
     {
         protected ITestDriver TestDriver { get; set; }
-        protected Global GlobalTestConfig { get; set; }
+        protected WebUiTestGlobals WebUiTestGlobalsTestConfig { get; set; }
 
         [TestCleanup]
         public void TearDown()

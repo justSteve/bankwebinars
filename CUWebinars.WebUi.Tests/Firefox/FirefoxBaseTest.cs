@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using CUWebinars.Selenium.Core.Firefox;
+using CUWebinars.WebUi.Tests.Infrastructure;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CUWebinars.WebUi.Tests.Firefox
@@ -10,10 +11,10 @@ namespace CUWebinars.WebUi.Tests.Firefox
         [TestInitialize]
         public void Setup()
         {
-            GlobalTestConfig = Global.GlobalConfigSingleton;
-            var port = int.Parse(GlobalTestConfig.FirefoxBrowserPort, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite);
+            WebUiTestGlobalsTestConfig = WebUiTestGlobals.WebUiTestGlobalsConfigSingleton;
+            var port = int.Parse(WebUiTestGlobalsTestConfig.FirefoxBrowserPort, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite);
 
-            var pathToBinary = GlobalTestConfig.FirefoxExePath;
+            var pathToBinary = WebUiTestGlobalsTestConfig.FirefoxExePath;
             TestDriver = new FirefoxTestDriver { DriverPath = pathToBinary, DriverPort = port };
 
             TestDriver.Initialize();

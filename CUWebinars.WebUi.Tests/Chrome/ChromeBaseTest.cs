@@ -1,4 +1,5 @@
 ﻿using CUWebinars.Selenium.Core.Chrome;
+using CUWebinars.WebUi.Tests.Infrastructure;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Globalization;
 
@@ -10,9 +11,9 @@ namespace CUWebinars.WebUi.Tests.Chrome
         [TestInitialize]
         public void Setup()
         {
-            GlobalTestConfig = Global.GlobalConfigSingleton;
-            var port = int.Parse(GlobalTestConfig.ChromeWebDriverPort, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite);
-            var pathToDriver = GlobalTestConfig.ChromeWebDriverPath;
+            WebUiTestGlobalsTestConfig = WebUiTestGlobals.WebUiTestGlobalsConfigSingleton;
+            var port = int.Parse(WebUiTestGlobalsTestConfig.ChromeWebDriverPort, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite);
+            var pathToDriver = WebUiTestGlobalsTestConfig.ChromeWebDriverPath;
             TestDriver = new ChromeTestDriver { DriverPort = port, DriverPath = pathToDriver };
             TestDriver.Initialize();
         }

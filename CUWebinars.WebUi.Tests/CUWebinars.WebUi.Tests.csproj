@@ -40,6 +40,9 @@
     <Reference Include="DDay.iCal">
       <HintPath>..\packages\DDay.iCal.1.0.2.575\lib\DDay.iCal.dll</HintPath>
     </Reference>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -47,6 +50,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
     <Reference Include="WebDriver, Version=2.41.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Selenium.WebDriver.2.41.0\lib\net40\WebDriver.dll</HintPath>
@@ -70,12 +74,17 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Chrome\ChromeBaseTest.cs" />
+    <Compile Include="Firefox\MembershipNotificationsTests.cs" />
+    <Compile Include="Infrastructure\WebUiTestHelpers.cs" />
     <Compile Include="Page\Chrome\HomeIndexPage.cs" />
     <Compile Include="Chrome\HomeIndexPageTests.cs" />
-    <Compile Include="Global.cs" />
+    <Compile Include="Page\Firefox\MembershipNotificationsPage.cs" />
+    <Compile Include="Page\HomeIndexBasePage.cs" />
+    <Compile Include="Page\MembershipNotificationsBasePage.cs" />
+    <Compile Include="Infrastructure\WebUiTestGlobals.cs" />
     <Compile Include="Page\BasePage.cs" />
     <Compile Include="BaseTest.cs" />
-    <Compile Include="Constants.cs" />
+    <Compile Include="Infrastructure\Constants.cs" />
     <Compile Include="Firefox\FirefoxBaseTest.cs" />
     <Compile Include="Page\Firefox\HomeIndexPage.cs" />
     <Compile Include="Firefox\HomeIndexPageTests.cs" />
@@ -89,7 +98,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestCategories.cs" />
+    <Compile Include="Infrastructure\TestCategories.cs" />
     <Compile Include="WebUiTestHelpers.cs" />
   </ItemGroup>
   <ItemGroup>

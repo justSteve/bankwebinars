@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="BaseTestDriver.cs" />
     <Compile Include="Chrome\ChromeTestDriver.cs" />
+    <Compile Include="Enums\SelectorStrategy.cs" />
     <Compile Include="Firefox\FirefoxTestDriver.cs" />
     <Compile Include="IExternalWebDriver.cs" />
     <Compile Include="Ie\IeTestDriver.cs" />

@@ -105,10 +105,16 @@ namespace CUWebinars.Selenium.Core
             return wait.Until(ExpectedConditions.ElementIsVisible(By.Id(idToFind)));
         }
 
+        public virtual IWebElement FindByIdWithWait(string idToFind, int seconds)
+        {
+            var wait = new WebDriverWait(webDriver, TimeSpan.FromSeconds(seconds));
+            return wait.Until(ExpectedConditions.ElementIsVisible(By.Id(idToFind)));
+        }
+
         public virtual IWebElement FindByIdClick(string idToFind)
         {
-            IWebElement element = FindById(idToFind);            
-            
+            IWebElement element = FindById(idToFind);
+
             if (!ReferenceEquals(null, element))
             {
                 element.Click();
@@ -162,7 +168,7 @@ namespace CUWebinars.Selenium.Core
         public virtual IWebElement FindByXPathClick(string xpathToFind)
         {
             var element = FindByXPath(xpathToFind);
-            
+
             if (!ReferenceEquals(null, element))
             {
                 element.Click();
@@ -409,9 +415,9 @@ namespace CUWebinars.Selenium.Core
         }
 
 
-        public void TabAwayFromInput(string idOfInput)
+        public void TabAwayFromInput(By selectStrategy)
         {
-            IWebElement element = FindById(idOfInput);
+            IWebElement element = webDriver.FindElement(selectStrategy);
 
             element.SendKeys(Keys.Tab);
         }

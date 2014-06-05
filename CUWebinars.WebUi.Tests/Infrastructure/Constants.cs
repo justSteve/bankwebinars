@@ -1,16 +1,22 @@
-﻿namespace CUWebinars.WebUi.Tests
+﻿namespace CUWebinars.WebUi.Tests.Infrastructure
 {
     internal sealed class Constants
     {
         //  Sample Data ("sit" short for system integration test)
         internal const string SitTestAddress = "1 Liberty St";
+        internal const string SitTestAltAddress = "220 Wynn Drive";
+        internal const string SitTestCity = "Huntsville";
+        internal const string SitTestCountry = "USA";
         internal const string SitTestEmailAddress = "Mark_Bennett@ttstrain.com";
         internal const string SitTestEmailAddressDomain = "@ttstrain.com";
         internal const string SitTestFirstName = "John";
+        internal const string SitTestInstitutionSuffix = "Bank";
         internal const string SitTestLastName = "Trainer";
         internal const string SitTestPassword = "bennett";
         internal const string SitTestPasswordSameDomainAddress = "f(app5yuK";
         internal const string SitTestPhone = "555-555-555";
+        internal const string SitTestState = "AL";
+        internal const string SitTestZipCode = "35893";
         internal const string Title = "Mr";
 
         //  HTML elements
@@ -25,8 +31,12 @@
 
         //
         internal const string FullNameInput = "FullName";
+        internal const string GetZipInput = "getZip";
         internal const string RegisterFieldsEmail = "RegisterFields_Email";
+        internal const string RegisterFieldsFirstName = "RegisterFields_FirstName";
+        internal const string RegisterFieldsLastName = "RegisterFields_LastName";
         internal const string RegisterFieldsConfirmPassword = "RegisterFields.ConfirmPassword";
+        internal const string RegisterFieldsInstitution = "RegisterFields_Institution";
         internal const string RegisterFieldsPassword = "RegisterFields_Password";
         internal const string RegisterFieldsPhone = "RegisterFields_BillingAddress_Phone";
         internal const string RegisterFieldsStreetAddress = "RegisterFields_BillingAddress_StreetAddress";

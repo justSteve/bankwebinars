@@ -15,7 +15,7 @@ namespace CUWebinars.WebUi.Tests
             var builder = new StringBuilder(size);
             for (var i = 0; i < size; i++)
             {
-                var ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * Random.NextDouble() + 65)));
+                var ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * Random.NextDouble() + 97)));
                 builder.Append(ch);
             }
 

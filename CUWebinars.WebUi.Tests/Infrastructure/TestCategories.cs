@@ -1,4 +1,4 @@
-﻿namespace CUWebinars.WebUi.Tests
+﻿namespace CUWebinars.WebUi.Tests.Infrastructure
 {
     internal sealed class TestCategories
     {

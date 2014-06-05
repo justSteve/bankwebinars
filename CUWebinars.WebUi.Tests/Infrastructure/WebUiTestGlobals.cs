@@ -3,10 +3,9 @@ using System.Collections.Specialized;
 using System.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace CUWebinars.WebUi.Tests
+namespace CUWebinars.WebUi.Tests.Infrastructure
 {
-    [TestClass]
-    public class Global
+    public class WebUiTestGlobals
     {
         public string ChromeWebDriverPath { get; set; }
         public string ChromeWebDriverPort { get; set; }
@@ -15,6 +14,8 @@ namespace CUWebinars.WebUi.Tests
         public string HomeUrl { get; set; }
         public string IeWebDriverPath { get; set; }
         public string IeWebDriverPort { get; set; }
+        public string MembershipNotificationsUrl { get; set; }
+        public string Tenant { get; set; }
 
 
         internal class GlobalSingletonCreator
@@ -35,13 +36,15 @@ namespace CUWebinars.WebUi.Tests
                 UniqueInstance.FirefoxExePath = ApplicationSettingsSection["FirefoxExePath"];
                 UniqueInstance.FirefoxBrowserPort = ApplicationSettingsSection["FirefoxBrowserPort"];
                 UniqueInstance.HomeUrl = ApplicationSettingsSection["HomeUrl"];
+                UniqueInstance.MembershipNotificationsUrl = ApplicationSettingsSection["MembershipNotificationsUrl"];
+                UniqueInstance.Tenant = ApplicationSettingsSection["Tenant"];
             }
 
             // Private object instantiated with private constructor
-            internal static readonly Global UniqueInstance = new Global();
+            internal static readonly WebUiTestGlobals UniqueInstance = new WebUiTestGlobals();
         }
 
-        public static Global GlobalConfigSingleton
+        public static WebUiTestGlobals WebUiTestGlobalsConfigSingleton
         {
             get
             {
