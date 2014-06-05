@@ -22,61 +22,70 @@
                     @Model.Recorded.Count.ToString())
                 </span>
             </h3>
-            <ul class="s-accordion faq fancy">
+            @*<ul class="s-accordion faq fancy">*@
 
-                @foreach (var recorded in Model.Recorded)
-                {
-                    <li class="s-wrap">
-                        @{
-                    var row = recorded.OrderRows.FirstOrDefault();
-                        }
-                        <h4 class="trigger" id="upcoming-@row.idWebinar"><a href="#">@row.Webinar.Title<i class="icon-plus-sign"></i></a></h4>
-                        <div class="s-content">
-                            <span style="font-size: small;">
-                                @Html.DisplayDate(row.Webinar.Date)<br />
-                                <br />
-                                Order ID: @row.Order.idOrder<br />Date Ordered: @row.Order.OrderDate.ToShortDateString()
-                            </span>
+            @foreach (var recorded in Model.Recorded)
+            {
+                <div>
+                    @*<li class="s-wrap">*@
+                    @{
+                //var row = recorded.OrderRows.FirstOrDefault();
+                var row = recorded.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+                    }
+                    <h4 class="trigger" id="upcoming-@row.idWebinar">
+                        @*<a href="#">*@
+                            @row.Webinar.Title
+                            @*<i class="icon-plus-sign"></i>*@
+                        @*</a>*@
+                    </h4>
+                    <span style="font-size: small;">
+                        Recorded: @Html.DisplayDate(row.Webinar.Date)
+                        <br />
+                        Order ID: @row.Order.idOrder<br />Date Ordered: @row.Order.OrderDate.ToShortDateString()
+                    </span>
+                    <div class="s-content">
 
-                            @if (recorded.OrderRows.SingleOrDefault().RegistrationType.OptionLabel != "Live_Session_Only")
+
+                        @if (row.RegistrationType.OptionLabel != "Live_Session_Only")
+                        {
+                            if (row.Webinar.RecordingUrl != "")
                             {
-                                if (row.Webinar.RecordingUrl != "")
-                                {
-                                    <div class="myWebinarscaption">
-                                        <p class="ShowsPlayBlock" align="center">
-                                            <font size="+1" face="Arial, Helvetica, sans-serif" color="#0D037C">
-                                                <b><a href="@ConfigurationManager.AppSettings["WMVRepository"]/@row.Webinar.RecordingUrl" target="_blank">Click here to view this OnDemand Recording</a></b><br />
-                                            </font>
-                                        </p>
+                                <div class="myWebinarscaption">
+                                    <p class="ShowsPlayBlock" align="center">
+                                        <font size="+1" face="Arial, Helvetica, sans-serif" color="#0D037C">
+                                            <b><a href="@ConfigurationManager.AppSettings["WMVRepository"]@row.Webinar.RecordingUrl" target="_blank">Click here to view this OnDemand Recording</a></b><br />
+                                        </font>
+                                    </p>
 
-                                        @{Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar);}
-                                        @if (row.ShipmentDate.HasValue)
-                                        {
-                                            <p>This order shipped on:<b>@Html.DisplayDate(row.ShipmentDate.Value)</b></p>
-                                        }
-                                        <div class="shareOnDemand">
-                                            <p>Need to share this event with a co-worker? Just provide them this URL: http://www.CUWebinars.com/Webinar/Play?w=@row.Webinar.idWebinar&u=@row.Order.WebUser.idUser</p>
-                                        </div>
+                                    @{Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar);}
+                                    @if (row.ShipmentDate.HasValue)
+                                    {
+                                        <p>This order shipped on:<b>@Html.DisplayDate(row.ShipmentDate.Value)</b></p>
+                                    }
+                                    <div class="shareOnDemand">
+                                        <p>Need to share this event with a co-worker? Just provide them this URL:<br/> http://www.CUWebinars.com/Webinar/Play?w=@row.Webinar.idWebinar&u=@row.Order.WebUser.idUser</p>
                                     </div>
-                                }
-                                else
-                                {
-                                    <div class="myWebinarscaption">
-                                        <span style="font-size: small;">(Recording not yet uploaded.)</span>
-                                    </div>
-                                }
+                                </div>
                             }
                             else
-                            {<div class="myWebinarscaption">
-                                <p style="font-size: small;">
-                                    Upgrade your registration with an On-Demand Recording package!<br />
-                                </p>
-                            </div>
+                            {
+                                <div class="myWebinarscaption">
+                                    <span style="font-size: small;">(Recording not yet uploaded.)</span>
+                                </div>
                             }
+                        }
+                        else
+                        {<div class="myWebinarscaption">
+                            <p style="font-size: small;">
+                                Upgrade your registration with an On-Demand Recording package!<br />
+                            </p>
                         </div>
-                    </li>
-                }
-            </ul>
+                        }
+                    </div>
+                    @*</li>*@
+                </div>
+            }
+            @*</ul>*@
         </div>
     </div>
 </div>

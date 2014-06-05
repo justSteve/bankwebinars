@@ -30,8 +30,16 @@ namespace CUWebinars.Web.Core
 
         private long ToUnixTimespan(DateTime date)
         {
-            TimeSpan tspan = date.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0));
+            //DateTime timeUtc = date;
+            //TimeZoneInfo myZone = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
+            //DateTime theTime = TimeZoneInfo.ConvertTimeFromUtc(timeUtc, myZone);
+            TimeZoneInfo tzInfo = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
+            var convertedTimeToUtc = TimeZoneInfo.ConvertTimeToUtc(date, tzInfo);
+ 
+            //return (long)Math.Truncate(tspan.TotalSeconds);
 
+
+            TimeSpan tspan = convertedTimeToUtc.Subtract(new DateTime(1970, 1, 1, 0, 0, 0));
             return (long)Math.Truncate(tspan.TotalSeconds);
         }
 
