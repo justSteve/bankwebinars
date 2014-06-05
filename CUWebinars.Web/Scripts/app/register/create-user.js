@@ -59,7 +59,9 @@ var collapseEmail,
     collapseBilling,
     collapseShipping,
     registerFieldsPassword,
-    getFirstLast;
+    getFirstLast,
+    typeofAddressBilling,
+    typeofAddressShipping;
 
 
 //  Create a namespace. PageObjects is getting polluted across js files.
@@ -164,6 +166,12 @@ var REG = {
         },
         stateShipping: function() {
             return stateShipping || $('#RegisterFields_ShippingAddress_State');
+        },
+        typeofAddressBilling: function () {
+            return typeofAddressBilling || $('#RegisterFields_BillingAddress_TypeOfAddress');
+        },
+        typeofAddressShipping: function () {
+            return typeofAddressShipping || $('#RegisterFields_ShippingAddress_TypeOfAddress');
         },
         wrapEmail: function() {
             return wrapEmail || $('#wrapEmail');
@@ -413,6 +421,9 @@ var stateManager = function () {
             disregardIntitutionDomain = true;
 
             stateManager.action = actions.CheckEmail;
+
+            REG.PageObjects.typeofAddressBilling().val(constants.TypeofAddressBilling);
+            REG.PageObjects.typeofAddressShipping().val(constants.TypeofAddressShipping);
 
             if (stateManager.inputAction === inputActions.EnterKeyPress)
                 stateManager.inputAction = inputActions.None;
@@ -702,8 +713,8 @@ function initializeState() {
     institution = $('#RegisterFields_Institution');
     emailLoginInput = $('#Email');
 
-    $('#RegisterFields_ShippingAddress_TypeOfAddress').val('shipping');
-    $('#RegisterFields_BillingAddress_TypeOfAddress').val('billing');
+    typeofAddressShipping = $('#RegisterFields_ShippingAddress_TypeOfAddress').val(constants.TypeofAddressShipping);
+    typeofAddressBilling = $('#RegisterFields_BillingAddress_TypeOfAddress').val(constants.TypeofAddressBilling);
 
     REG.PageObjects.emailLoginInput().focus();
 }

@@ -16,6 +16,8 @@
         hideAddShippingAddressLink = "#HideAddShippingAddressLink",
         streetAddress = "_StreetAddress",
         streetAddress2 = "_StreetAddress2",
+        typeofAddressBilling = "Billing",
+        typeofAddressShipping = "Shipping",
         zip = "_Zip";
 
 
@@ -36,6 +38,8 @@
         State : state,
         StreetAddress: streetAddress,
         StreetAddress2: streetAddress2,
+        TypeofAddressBilling: typeofAddressBilling,
+        TypeofAddressShipping: typeofAddressShipping,
         Zip : zip
     };
 
