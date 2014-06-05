@@ -42,7 +42,7 @@ namespace CUWebinars.Selenium.Core
         bool IsValuePresent(string nameToFind, string attributeToFind, string attributeValue);
         void Quit();
         void SwitchToWindow(string windowName);
-        void TabAwayFromInput(string idOfInput);
+        void TabAwayFromInput(By selectStrategy);
         void TypeText(string nameToFind, string text);
         void TypeText(By selectStrategy, string text);
         void TypeTextAndTabAway(string nameToFind, string text);

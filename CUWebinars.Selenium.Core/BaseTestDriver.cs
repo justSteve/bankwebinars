@@ -415,9 +415,9 @@ namespace CUWebinars.Selenium.Core
         }
 
 
-        public void TabAwayFromInput(string idOfInput)
+        public void TabAwayFromInput(By selectStrategy)
         {
-            IWebElement element = FindById(idOfInput);
+            IWebElement element = webDriver.FindElement(selectStrategy);
 
             element.SendKeys(Keys.Tab);
         }
