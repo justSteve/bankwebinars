@@ -209,8 +209,24 @@ namespace CUWebinars.Web.Controllers
                 return Json(new { Result = WebUiConstants.Success });
             }
 
+            //Please use this general pattern when logging ModelState errors.
+            var myErr = "";
+            foreach (ModelState modelState in ViewData.ModelState.Values)
+            {
+                foreach (ModelError error in modelState.Errors)
+                {
+                    myErr += error.ErrorMessage + System.Environment.NewLine;
+                }
+            }
+
             _logger.Error("ManualPasswordReset: {0}", AppHelper.GetUserAuditInfo());
-            _logger.Error("ManualPasswordReset: {0}", "Model state was not valid");
+            _logger.Error("ManualPasswordReset: {0}", myErr);
+
+            // the idea of using a Constant in this case seems limited. ... but i'm not sure so check my thinking...
+            // How can we best get the value of the modelState.Errors down to the view.
+            // I know there's a convention of injecting an 'ErrorDiv' at either the top
+            // of a form or on a field by field basis.
+            // OTOH, i really like the idea of making the button label carry the error message.
 
             return Json(new {Result = WebUiConstants.Fail});
         }

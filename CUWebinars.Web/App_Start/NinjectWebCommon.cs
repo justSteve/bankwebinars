@@ -91,6 +91,8 @@ namespace CUWebinars.Web.App_Start
             kernel.Bind<IStateService>().To<StateService>();
             kernel.Bind<IRefDataRepository>().To<RefDataRepository>();
 
+            //var config = MembershipRebootConfig.Create(baseUrl, kernel.Get<IStateService>(),
+            //    kernel.Get<IRefDataRepository>(), kernel.Get<ILogger>());
             var config = MembershipRebootConfig.Create(baseUrl, kernel.Get<IStateService>(),
                 kernel.Get<IRefDataRepository>());
             var ttsConfig = TtsConfig.Create(baseUrl);
