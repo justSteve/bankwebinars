@@ -1,33 +1,42 @@
-﻿@model LocalPasswordModel
+﻿@model CreateUserConfirmedViewModel
 
 <div id="LogInContainer" class="container">
     <div style="margin-left: 200px;" id="reset">
-        @using (Html.BeginForm("Confirmed", "Account", FormMethod.Post))
-        {
-            @Html.AntiForgeryToken()
-            @Html.ValidationSummary()
+            
+        @{
+            if (string.IsNullOrWhiteSpace(Model.ScreenMessage))
+            {
+                using (Html.BeginForm("Confirmed", "Account", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary()
 
-            <fieldset>
-                <legend>Set Password Form</legend>
-                
-                <div>You need to change your password, as your current password was temporary in nature.</div>
-                <div>Please enter a new password and confirm it below.</div>
-                <div>&nbsp;</div>
-                @Html.HiddenFor(m => m.Email)
-                @Html.HiddenFor(m => m.OldPassword)
+                    <fieldset>
+                        <legend>Set Password Form</legend>
 
-                <div>
-                    @Html.LabelFor(m => m.NewPassword)
-                    @Html.PasswordFor(m => m.NewPassword)
-                </div>
-                <div>
-                    @Html.LabelFor(m => m.ConfirmPassword)
-                    @Html.PasswordFor(m => m.ConfirmPassword)
-                </div>
-                <input type="submit" value="Set password" class="btn btn-default" />
-            </fieldset>
+                        <div>You need to change your password, as your current password was temporary in nature.</div>
+                        <div>Please enter a new password and confirm it below.</div>
+                        <div>&nbsp;</div>
+                        @Html.HiddenFor(m => m.Email)
+                        @Html.HiddenFor(m => m.OldPassword)
+
+                        <div>
+                            @Html.LabelFor(m => m.NewPassword)
+                            @Html.PasswordFor(m => m.NewPassword)
+                        </div>
+                        <div>
+                            @Html.LabelFor(m => m.ConfirmPassword)
+                            @Html.PasswordFor(m => m.ConfirmPassword)
+                        </div>
+                        <input type="submit" value="Set password" class="btn btn-default" />
+                    </fieldset>
+                }
+            }
+            else
+            {
+                <div>@Model.ScreenMessage</div>
+            }
         }
+
     </div>
 </div>
-
-+
