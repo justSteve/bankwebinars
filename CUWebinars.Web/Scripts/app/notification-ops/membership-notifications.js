@@ -239,7 +239,7 @@ function addImportOrderButtonClick() {
             var id = parseInt(result.Result, 10); // this is base 10 (2nd param)
             
             if (id > 0 ) {
-                $('#InputFormFields').html('<span id="OrderSucceeded" class="label label-success">Success! Order Id: ' + result.OrderId + ' OrderRow Id: ' + result.OrderRowId + '</span>');
+                $('#InputFormFields').html('<span id="OrderSucceeded" class="label label-success">Success! Order Id: ' + id + '</span>');
             }
         }).always(function () {
             $('#WaitIndicator').hide();
