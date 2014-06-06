@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Web;
+using System.Web.Routing;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
@@ -252,19 +254,14 @@ namespace CUWebinars.Web.Controllers
         {
             try
             {
-                var changeEmailFromKeyInputModel = new LocalPasswordModel
+                var changeEmailFromKeyInputModel = new CreateUserConfirmedViewModel
                 {
                     Email = email,
                     OldPassword = surname,
                     NewPassword = string.Empty,
-                    ConfirmPassword = string.Empty
+                    ConfirmPassword = string.Empty,
+                    ScreenMessage = string.Empty
                 };
-
-                _membershipService.VerifyUserByEmail(globalConfig.Tenant, email);
-
-                        //? "Thank you. Your email address has been successfully verified in our system."
-                        //: "Your email address has already been successfully verified in our system."
-
 
                 return View(changeEmailFromKeyInputModel);
             }
@@ -282,27 +279,34 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.AllowAnonymous]
         [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Confirmed(LocalPasswordModel model)
+        public ActionResult Confirmed(CreateUserConfirmedViewModel model)
         {
             try
             {
                 _logger.Info("Account.Confirmed POST. Session=" + AppHelper.GetUserAuditInfo());
 
-                _stateService.SetValue(DomainConstants.UserCreatedViaNewOrder, true);
-                _membershipService.ResetPassword(globalConfig.Tenant, model.Email);
+                if (_membershipService.VerifyUserByEmail(globalConfig.Tenant, model.Email))
+                {
+                    _stateService.SetValue(DomainConstants.UserCreatedViaNewOrder, true);
+                    _membershipService.ResetPassword(globalConfig.Tenant, model.Email);
 
-                var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
+                    var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
 
-                _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
+                    _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
 
-                _membershipService.ChangePasswordFromResetKey(verificationKey, model.NewPassword);
+                    _membershipService.ChangePasswordFromResetKey(verificationKey, model.NewPassword);
 
-                _stateService.ClearValue(DomainConstants.VerificationKey);
+                    _stateService.ClearValue(DomainConstants.VerificationKey);
 
-                _membershipService.LogInUser(globalConfig.Tenant, model.Email, model.NewPassword, true);
-               
-                
-                return RedirectToLocal(null);
+                    _membershipService.LogInUser(globalConfig.Tenant, model.Email, model.NewPassword, true);
+
+                    return RedirectToLocal(null);
+                }
+                else
+                {
+                    model.ScreenMessage = "Your email address has already been successfully verified in our system.";
+                    return View(model);
+                }
             }
             catch (Exception exception)
             {
@@ -466,14 +470,18 @@ namespace CUWebinars.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SignIn(SignInModel model)
         {
-            if (ModelState.IsValid && _membershipService.LogInUser(globalConfig.Tenant, model.Email, model.Password, model.RememberMe))
+            string userMustVerify = null;
+
+            if (ModelState.IsValid && _membershipService.LogInUser(globalConfig.Tenant, model.Email, model.Password, model.RememberMe, out userMustVerify))
             {
-                var retURL = model.ReturnUrl.Replace("http://localhost:5556", "");
+                var retURL = model.ReturnUrl.Replace(string.Format(@"{0}://{1}{2}/", Request.Url.Scheme, Request.Url.Authority, Request.ApplicationPath.TrimEnd('/')), "");
 
                 _logger.Info("Account.SignIn Post Success. Session=" + AppHelper.GetUserAuditInfo());
                 return RedirectToLocal(retURL);
-
             }
+
+            if (!string.IsNullOrEmpty(userMustVerify))
+                return RedirectToAction("Confirmed", new { email = model.Email, surname = model.Password } );
 
             // If we got this far, something failed, redisplay form
             _logger.Warn("Account.SignIn Failed. " + model.Email + "|" + model.Password + " Session=" + AppHelper.GetUserAuditInfo());

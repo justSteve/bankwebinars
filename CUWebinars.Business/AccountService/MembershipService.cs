@@ -129,10 +129,22 @@ namespace CUWebinars.Business.AccountService
 
         public bool LogInUser(string tenant, string emailAddress, string password, bool persistent)
         {
+            string discardThisVariable;
+            return LogInUser(tenant, emailAddress, password, persistent, out discardThisVariable);
+        }
+
+        public bool LogInUser(string tenant, string emailAddress, string password, bool persistent, out string userMustVerify)
+        {
             UserAccount userAccount = null;
+            userMustVerify = string.Empty;
 
             if (_userAccountService.AuthenticateWithEmail(tenant, emailAddress, password, out userAccount))
             {
+                if (userAccount.HasClaim(ClaimTypes.HasNotVerified))
+                {
+                    userMustVerify = "User Must Verify";
+                    return false;
+                }
                 _samAuthenticationService.SignIn(userAccount, persistent);
                 return true;
             }

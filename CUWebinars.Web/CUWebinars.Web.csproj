@@ -386,6 +386,7 @@
     <Compile Include="Core\Exceptions.cs" />
     <Compile Include="ElmahHandleErrorAttribute.cs" />
     <Compile Include="Helpers\EventInvokerHelpers.cs" />
+    <Compile Include="ViewModel\CreateUserConfirmedViewModel.cs" />
     <Compile Include="ViewModel\ManualPasswordResetViewModel.cs" />
     <Compile Include="ViewModel\UsersForOrdersViewModel.cs" />
     <Compile Include="Core\CsvParseOps.cs" />

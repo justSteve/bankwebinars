@@ -98,13 +98,13 @@ namespace CUWebinars.Web.App_Start
             kernel.Bind<MembershipRebootConfiguration>().ToConstant(config);
             kernel.Bind<TtsConfiguration>().ToConstant(ttsConfig);
 
-            kernel.Bind<IAffiliateRepository>().To<AffiliateRepository>().InRequestScope().Named(affiliateRepository);
-            kernel.Bind<IWebinarRepository>().To<WebinarRepository>().InRequestScope().Named(webinarRepository);
-            kernel.Bind<IWebUserRepository>().To<WebUserRepository>().InRequestScope().Named(webuserRepository);
-            kernel.Bind<IOrderRepository>().To<OrderRepository>().InRequestScope().Named(orderRepository);
+            kernel.Bind<IAffiliateRepository>().To<AffiliateRepository>().InRequestScope();
+            kernel.Bind<IWebinarRepository>().To<WebinarRepository>().InRequestScope();
+            kernel.Bind<IWebUserRepository>().To<WebUserRepository>().InRequestScope();
+            kernel.Bind<IOrderRepository>().To<OrderRepository>().InRequestScope();
             kernel.Bind<IInstitutionRepository>().To<InstitutionRepository>().InRequestScope();
             kernel.Bind<IUserAccountRepository>().To<DefaultUserAccountRepository>().InRequestScope();
-            kernel.Bind<IRegTypeRepository>().To<RegTypeRepository>().InRequestScope().Named(regTypeRepository);
+            kernel.Bind<IRegTypeRepository>().To<RegTypeRepository>().InRequestScope();
 
             kernel.Bind<UserAccountService>().ToMethod(ctx =>
             {
