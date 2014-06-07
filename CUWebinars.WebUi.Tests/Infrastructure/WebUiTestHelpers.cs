@@ -18,7 +18,7 @@
 //            var memRebootCtx = new DefaultMembershipRebootDatabase();
 //            var refDataRepository = new RefDataRepository();
 //            var config =
-//                MembershipRebootConfig.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\.."),
+//                MembershipRebootConfig.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"\..\.."),
 //                    new StateService(), refDataRepository);
 //            var userAccountService = new UserAccountService(config, new DefaultUserAccountRepository());
 

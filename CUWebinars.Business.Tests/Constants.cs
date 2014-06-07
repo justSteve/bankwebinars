@@ -7,6 +7,5 @@
         internal const string DbName = "CUWebinars";
         internal const string LocalDbConnectionStringName = "CUWebinarsSUTLocal";
         internal const string MembershipRebootConnectionStringName = "MembershipReboot";
-        internal const string UpTwoFolders = @"..\..";
     }
 }

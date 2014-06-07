@@ -489,7 +489,9 @@ namespace CUWebinars.Business.Services
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder);
 
                 bool linkToVerifyAccount = !string.IsNullOrWhiteSpace(confirmChangeEmailLink);
-                
+
+                _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
+
                 var orderSubmittedViewModel = new OrderSubmittedViewModel
                 {
                     ConfirmChangeEmailUrl = linkToVerifyAccount ? string.Concat(confirmChangeEmailLink, Path.AltDirectorySeparatorChar, currentOrder.WebUser.LastName.ToLower()) : string.Empty,
@@ -497,11 +499,15 @@ namespace CUWebinars.Business.Services
                     UserCreatedOnImport = linkToVerifyAccount
                 };
 
+                var relativePath = Path.Combine(@"App_Data\Notifications", string.Format("OrderNotification-{0}{1}", DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss-fff-tt"),".htm"));
+
                 AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
                 {
                     EventObject = orderSubmittedViewModel,
-                    RelativeFilePath = Path.Combine(@"App_Data\Notifications", string.Format("OrderNotification-{0}{1}", DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss-fff-tt"), ".htm"))
+                    RelativeFilePath = relativePath
                 });
+
+                _logger.Info("Persisted Email for Order {0}:{1}", currentOrder.idOrder, relativePath);
 
                 foreach (var evt in GetEvents())
                 {

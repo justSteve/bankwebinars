@@ -49,6 +49,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="WebDriver, Version=2.41.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -75,6 +76,8 @@
   <ItemGroup>
     <Compile Include="Chrome\ChromeBaseTest.cs" />
     <Compile Include="Firefox\MembershipNotificationsTests.cs" />
+    <Compile Include="Infrastructure\DataOperations.cs" />
+    <Compile Include="Infrastructure\StringExtensions.cs" />
     <Compile Include="Infrastructure\WebUiTestHelpers.cs" />
     <Compile Include="Page\Chrome\HomeIndexPage.cs" />
     <Compile Include="Chrome\HomeIndexPageTests.cs" />
@@ -105,6 +108,10 @@
     <ProjectReference Include="..\CUWebinars.Selenium.Core\CUWebinars.Selenium.Core.csproj">
       <Project>{12062741-74ad-4a12-a5c8-e520dc4cc118}</Project>
       <Name>CUWebinars.Selenium.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CUWebinars.Tests.Common\CUWebinars.Tests.Common.csproj">
+      <Project>{E1FAAC38-ECA4-406F-950A-91D72208A5FD}</Project>
+      <Name>CUWebinars.Tests.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -17,12 +17,14 @@ namespace CUWebinars.WebUi.Tests.Infrastructure
         public string MembershipNotificationsUrl { get; set; }
         public string Tenant { get; set; }
 
+        public string TtsDatabaseConnectionString { get; set; }
 
         internal class GlobalSingletonCreator
         {
             static GlobalSingletonCreator()
             {
                 NameValueCollection ApplicationSettingsSection = ConfigurationManager.AppSettings;
+                ConnectionStringSettingsCollection connectionStringSettingsSection = ConfigurationManager.ConnectionStrings;
 
                 if (ReferenceEquals(null, ApplicationSettingsSection))
                 {
@@ -38,6 +40,7 @@ namespace CUWebinars.WebUi.Tests.Infrastructure
                 UniqueInstance.HomeUrl = ApplicationSettingsSection["HomeUrl"];
                 UniqueInstance.MembershipNotificationsUrl = ApplicationSettingsSection["MembershipNotificationsUrl"];
                 UniqueInstance.Tenant = ApplicationSettingsSection["Tenant"];
+                UniqueInstance.TtsDatabaseConnectionString = connectionStringSettingsSection["TTSDataBase"].ConnectionString;
             }
 
             // Private object instantiated with private constructor

@@ -31,6 +31,7 @@ namespace CUWebinars.WebUi.Tests.Page
         public virtual void Close()
         {
             SeleniumTestDriver.CloseWindow();
+            SeleniumTestDriver.Quit();
         }
 
         public void Wait(int milliSeconds = 1000)

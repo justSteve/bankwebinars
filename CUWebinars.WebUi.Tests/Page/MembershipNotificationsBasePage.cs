@@ -19,8 +19,6 @@ namespace CUWebinars.WebUi.Tests.Page
         {
             SeleniumTestDriver.FindByIdClick("ImportOrderButton");
             var element = SeleniumTestDriver.FindByIdWithWait("OrderSucceeded", 90);
-
-            Wait(5000);
         }
 
         public void ClickImportSingleOrderButton()

@@ -256,12 +256,7 @@ namespace CUWebinars.Web.Controllers
                 //idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
                 _logger.Info("Posted idOrder=" + idOfLastOrder);
 
-                return Json(
-                    new
-                    {
-                        Result = idOfLastOrder.ToString()
-                    },
-                    JsonRequestBehavior.AllowGet);
+                return Json(new { Result = idOfLastOrder.ToString() }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception exception)
             {

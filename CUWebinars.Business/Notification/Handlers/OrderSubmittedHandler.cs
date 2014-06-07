@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
+using CUWebinars.Business.Core.Tracing;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
@@ -46,6 +48,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 notificationMessage.ReplyTo = "registrations+verify@bankwebinars.com";
                 notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);
+
             }
             catch (NullReferenceException nullReferenceException)
             {

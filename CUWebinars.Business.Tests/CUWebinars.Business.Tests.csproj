@@ -169,6 +169,10 @@
       <Project>{281C6443-2348-4578-9704-2F953CD3AF87}</Project>
       <Name>CUWebinars.NotificationSystem</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CUWebinars.Tests.Common\CUWebinars.Tests.Common.csproj">
+      <Project>{E1FAAC38-ECA4-406F-950A-91D72208A5FD}</Project>
+      <Name>CUWebinars.Tests.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\CreateDb.sql" />

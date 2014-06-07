@@ -9,6 +9,7 @@ using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Tests.Config;
+using CUWebinars.Tests.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CUWebinars.Business.Tests
@@ -47,7 +48,7 @@ namespace CUWebinars.Business.Tests
             var ctx = new TTSWebinarsContext(Constants.LocalDbConnectionStringName);
             var memRebootCtx = new DefaultMembershipRebootDatabase();
             var refDataRepository = new RefDataRepository();
-            var config = MembershipRebootConfig.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.UpTwoFolders), new StateService(), refDataRepository);
+            var config = MembershipRebootConfig.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TestConstants.UpTwoFolders), new StateService(), refDataRepository);
             var userAccountService = new UserAccountService(config, new DefaultUserAccountRepository());
             
             IMembershipService membershipService = new MembershipService(new InstitutionRepository(ctx), 
