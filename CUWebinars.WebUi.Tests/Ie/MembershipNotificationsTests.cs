@@ -1,6 +1,6 @@
 ﻿using CUWebinars.Tests.Common;
 using CUWebinars.WebUi.Tests.Infrastructure;
-using CUWebinars.WebUi.Tests.Page.Firefox;
+using CUWebinars.WebUi.Tests.Page.Ie;
 using HtmlAgilityPack;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Linq;
@@ -10,17 +10,17 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
-namespace CUWebinars.WebUi.Tests.Firefox
+namespace CUWebinars.WebUi.Tests.Ie
 {
     [TestClass]
-    public class MembershipNotificationsTests : FirefoxBaseTest
+    public class MembershipNotificationsTests : IeBaseTest
     {
-        private int notificationFileCreationTimeout = 10;
+        private const int NotificationFileCreationTimeout = 10;
         private string notificationsDirectory = string.Empty;
 
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.Firefox)]
+        [TestCategory(TestCategories.IE)]
         public void CreateNewOrderForNewUser()
         {
             var firstName = WebUiTestHelpers.RandomString(4);
@@ -39,7 +39,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
 
             membershipNotificationsPage.ClickImportOrderButton();
 
-            WaitOnNotificationFileCreation(notificationFileCreationTimeout);
+            WaitOnNotificationFileCreation(NotificationFileCreationTimeout);
 
             membershipNotificationsPage.Close();
 
@@ -48,7 +48,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
 
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.Firefox)]
+        [TestCategory(TestCategories.IE)]
         public void CreateNewOrderForExistingUserScenario1()
         {
             PerformTest(Constants.TestQueryString1);
@@ -58,37 +58,37 @@ namespace CUWebinars.WebUi.Tests.Firefox
 
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.Firefox)]
+        [TestCategory(TestCategories.IE)]
         public void CreateNewOrderForExistingUserScenario2()
         {
             PerformTest(Constants.TestQueryString2);
 
-            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());            
+            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.Firefox)]
+        [TestCategory(TestCategories.IE)]
         public void CreateNewOrderForExistingUserScenario3()
         {
             PerformTest(Constants.TestQueryString3);
 
-            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());            
+            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.Firefox)]
+        [TestCategory(TestCategories.IE)]
         public void CreateNewOrderForExistingUserScenario4()
         {
             PerformTest(Constants.TestQueryString4);
 
-            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());            
+            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
         }
 
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.Firefox)]
+        [TestCategory(TestCategories.IE)]
         public void CreateNewOrderForExistingUserScenario5()
         {
             PerformTest(Constants.TestQueryString5);
@@ -98,7 +98,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
 
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.Firefox)]
+        [TestCategory(TestCategories.IE)]
         public void CreateNewOrderForExistingUserScenario6()
         {
             PerformTest(Constants.TestQueryString6);
@@ -108,7 +108,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
 
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.Firefox)]
+        [TestCategory(TestCategories.IE)]
         public void CreateNewOrderForExistingUserScenario7()
         {
             PerformTest(Constants.TestQueryString7);
@@ -118,7 +118,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
 
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.Firefox)]
+        [TestCategory(TestCategories.IE)]
         public void CreateNewOrderForExistingUserScenario8()
         {
             PerformTest(Constants.TestQueryString8);
@@ -128,7 +128,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
 
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.Firefox)]
+        [TestCategory(TestCategories.IE)]
         public void CreateNewOrderForExistingUserScenario9()
         {
             PerformTest(Constants.TestQueryString9);
@@ -139,7 +139,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
 
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.Firefox)]
+        [TestCategory(TestCategories.IE)]
         public void CreateNewOrderForExistingUserScenario10()
         {
             PerformTest(Constants.TestQueryString10);
@@ -149,7 +149,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
 
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.Firefox)]
+        [TestCategory(TestCategories.IE)]
         public void CreateNewOrderForExistingUserScenario11()
         {
             PerformTest(Constants.TestQueryString11);
@@ -159,7 +159,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
 
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.Firefox)]
+        [TestCategory(TestCategories.IE)]
         public void CreateNewOrderForExistingUserScenario12()
         {
             PerformTest(Constants.TestQueryString12);
@@ -181,7 +181,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
 
             membershipNotificationsPage.Close();
 
-            WaitOnNotificationFileCreation(notificationFileCreationTimeout);
+            WaitOnNotificationFileCreation(NotificationFileCreationTimeout);
         }
 
         private void WaitOnNotificationFileCreation(int timeout)
@@ -235,7 +235,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
 
             return verifyLink.Count == 1;
         }
-        
+
         private bool VerifyLinkNotIncludedInSentEmail()
         {
             return !VerifyLinkIncludedInSentEmail();
@@ -259,5 +259,4 @@ namespace CUWebinars.WebUi.Tests.Firefox
 
 
     }
-
 }

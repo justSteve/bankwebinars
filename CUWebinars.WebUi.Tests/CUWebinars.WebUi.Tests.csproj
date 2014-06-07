@@ -76,6 +76,7 @@
   <ItemGroup>
     <Compile Include="Chrome\ChromeBaseTest.cs" />
     <Compile Include="Firefox\MembershipNotificationsTests.cs" />
+    <Compile Include="Ie\MembershipNotificationsTests.cs" />
     <Compile Include="Infrastructure\DataOperations.cs" />
     <Compile Include="Infrastructure\StringExtensions.cs" />
     <Compile Include="Infrastructure\WebUiTestHelpers.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Chrome\HomeIndexPageTests.cs" />
     <Compile Include="Page\Firefox\MembershipNotificationsPage.cs" />
     <Compile Include="Page\HomeIndexBasePage.cs" />
+    <Compile Include="Page\Ie\MembershipNotificationsPage.cs" />
     <Compile Include="Page\MembershipNotificationsBasePage.cs" />
     <Compile Include="Infrastructure\WebUiTestGlobals.cs" />
     <Compile Include="Page\BasePage.cs" />

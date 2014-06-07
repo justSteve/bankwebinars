@@ -193,7 +193,7 @@ namespace CUWebinars.Business.Tests
             var memRebootCtx = new DefaultMembershipRebootDatabase();
             var refDataRepository = new RefDataRepository();
             var config =
-                MembershipRebootConfig.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.UpTwoFolders),
+                MembershipRebootConfig.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TestConstants.UpTwoFolders),
                     new StateService(), refDataRepository);
             var userAccountService = new UserAccountService(config, new DefaultUserAccountRepository());
 

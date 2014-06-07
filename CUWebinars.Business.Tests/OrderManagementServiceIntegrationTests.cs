@@ -5,6 +5,7 @@ using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
+using CUWebinars.Tests.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ninject.Extensions.Logging.Log4net.Infrastructure;
 using System.Data.Entity;
@@ -45,7 +46,7 @@ namespace CUWebinars.Business.Tests
                 new WebUserRepository(ctx), 
                 new WebinarRepository(ctx),
                 new Log4NetLogger(typeof(OrderManagementService)),
-                TtsConfig.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.UpTwoFolders))
+                TtsConfig.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TestConstants.UpTwoFolders))
                     );
 
             var webUser = ctx.WebUsers.Include(w => w.Institution).First(w => w.idUser == 26368);
