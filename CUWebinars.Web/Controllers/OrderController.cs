@@ -51,12 +51,13 @@ namespace CUWebinars.Web.Controllers
 
             if (!ModelState.IsValid)
             {
+                //Please use this general pattern when logging ModelState errors.
                 var myErr = "";
                 foreach (ModelState modelState in ViewData.ModelState.Values)
                 {
                     foreach (ModelError error in modelState.Errors)
                     {
-                        myErr += modelState.Value.ToString();
+                        myErr += error.ErrorMessage + System.Environment.NewLine;
                     }
                 }
                 //a better implementation:

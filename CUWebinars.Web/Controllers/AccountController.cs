@@ -283,8 +283,6 @@ namespace CUWebinars.Web.Controllers
         {
             try
             {
-                _logger.Info("Account.Confirmed POST. Session=" + AppHelper.GetUserAuditInfo());
-
                 if (_membershipService.VerifyUserByEmail(globalConfig.Tenant, model.Email))
                 {
                     _stateService.SetValue(DomainConstants.UserCreatedViaNewOrder, true);
@@ -300,10 +298,13 @@ namespace CUWebinars.Web.Controllers
 
                     _membershipService.LogInUser(globalConfig.Tenant, model.Email, model.NewPassword, true);
 
+                    _logger.Info("Account.Confirmed POST. Session={0}", AppHelper.GetUserAuditInfo());
                     return RedirectToLocal(null);
                 }
                 else
                 {
+                    _logger.Info("Your email address has already been successfully verified in our system. Session={0}", AppHelper.GetUserAuditInfo());
+                    
                     model.ScreenMessage = "Your email address has already been successfully verified in our system.";
                     return View(model);
                 }
@@ -318,7 +319,7 @@ namespace CUWebinars.Web.Controllers
                 throw;
             }
         }
-        
+
         [ClaimsAuthorize(Roles = "Admin")]
         public ActionResult Manage(ManageMessageId? message)
         {
@@ -451,17 +452,15 @@ namespace CUWebinars.Web.Controllers
 
             if (Url.IsLocalUrl(returnUrl) && !string.IsNullOrEmpty(returnUrl))
             {
-                if (returnUrl.Contains("PasswordResetConfirm") || returnUrl.Equals("Account/Login"))
-                    returnUrl = "/Home/Index";
+                if (returnUrl.Contains("PasswordResetConfirm") || returnUrl.Equals("Account/Signin") || returnUrl.Equals("Account/Login"))
+                    returnUrl = "/Account/MyWebinars";
 
                 loginModel.ReturnUrl = returnUrl;
                 loginModel.SignIn.ReturnUrl = returnUrl;
             }
 
             ViewBag.PageStyleType = "register";
-
             loginModel.ActiveTab = "login";
-
             return View(loginModel);
         }
 
@@ -476,12 +475,15 @@ namespace CUWebinars.Web.Controllers
             {
                 var retURL = model.ReturnUrl.Replace(string.Format(@"{0}://{1}{2}/", Request.Url.Scheme, Request.Url.Authority, Request.ApplicationPath.TrimEnd('/')), "");
 
-                _logger.Info("Account.SignIn Post Success. Session=" + AppHelper.GetUserAuditInfo());
+                _logger.Info("Account.SignIn Post Success. Session={0}, Redirecting to: {1}" , AppHelper.GetUserAuditInfo(), retURL);
                 return RedirectToLocal(retURL);
             }
 
             if (!string.IsNullOrEmpty(userMustVerify))
-                return RedirectToAction("Confirmed", new { email = model.Email, surname = model.Password } );
+            {
+                _logger.Info("Account.SignIn UserMustVerify. Session={0}, Email: {1} surname: {2}" + AppHelper.GetUserAuditInfo(), model.Email, model.Password);
+                return RedirectToAction("Confirmed", new { email = model.Email, surname = model.Password });
+            }
 
             // If we got this far, something failed, redisplay form
             _logger.Warn("Account.SignIn Failed. " + model.Email + "|" + model.Password + " Session=" + AppHelper.GetUserAuditInfo());
@@ -507,7 +509,7 @@ namespace CUWebinars.Web.Controllers
         //[ValidateAntiForgeryToken]
         public JsonResult ResetPassword(string email)
         {
-            _logger.Info("Account.ResetPassword GET. Session=" + AppHelper.GetUserAuditInfo());
+            _logger.Info("Account.ResetPassword GET. Email = {1} Session={0}",  AppHelper.GetUserAuditInfo(), email);
 
             try
             {
@@ -516,14 +518,14 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Fatal("Account.ResetPassword GET Failed. " + ex.Message + " Session=" + AppHelper.GetUserAuditInfo());
+                _logger.Fatal("Account.ResetPassword GET Failed. {0}, Session = {1} on email: {2}" , ex.Message ,AppHelper.GetUserAuditInfo(), email);
             }
 
 
             return Json(new { Result = WebUiConstants.Fail });
         }
-        
-        
+
+
         //[System.Web.Mvc.AllowAnonymous]
         //public ViewResult ResetPasswordWhereNotVerified(string tempPassword, string email)
         //{
@@ -691,7 +693,7 @@ namespace CUWebinars.Web.Controllers
 
             if (zipCentricFields.Length < 3)
                 zipCentricFields = AppHelper.AddNonvalidToArray(zipCentricFields);
-            
+
             var myCity = new string(AppHelper.CharsToTitleCase(zipCentricFields[0]).ToArray());
 
             resultObject.Add("success", "true");
