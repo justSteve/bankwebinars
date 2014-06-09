@@ -141,6 +141,8 @@ namespace CUWebinars.Web.Controllers
                             , email
                             );
 
+                        _membershipService.AddRegistrationTypeNotVerifiedClaim(userAccount, ClaimValues.OrderImportRegistration);
+
                         Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey), "There's no reason session should not have a value for the VerificationKey at this point ");
 
                         verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);

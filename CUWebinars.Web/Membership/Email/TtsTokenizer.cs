@@ -56,8 +56,10 @@ namespace CUWebinars.Web.Membership.Email
 
                     notification.ConfirmPasswordResetUrl = Path.Combine(notification.ConfirmPasswordResetUrl,
                         verificationKey);
-                    notification.ConfirmChangeEmailUrl = Path.Combine(notification.ConfirmChangeEmailUrl,
-                        accountEvent.Account.Email);
+                    notification.ConfirmChangeEmailUrl = string.Concat(
+                        Path.Combine(notification.ConfirmChangeEmailUrl, accountEvent.Account.Email),
+                        Path.AltDirectorySeparatorChar + "blank"
+                        );
                     notification.CancelVerificationUrl = Path.Combine(notification.CancelVerificationUrl,
                         verificationKey);
 

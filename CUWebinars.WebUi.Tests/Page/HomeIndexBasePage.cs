@@ -215,5 +215,13 @@ namespace CUWebinars.WebUi.Tests.Page
                     StringComparison.OrdinalIgnoreCase);
             } 
         }
+
+        public bool PleaseEnterValidEmailMessageIsPresent
+        {
+            get
+            {
+                return SeleniumTestDriver.FindByXPath(@"//*[@id='ResetPassEmail']/following-sibling::span/span[contains(text(),'Please enter a valid e-mail adress')]") != null;
+            }
+        }
     }
 }

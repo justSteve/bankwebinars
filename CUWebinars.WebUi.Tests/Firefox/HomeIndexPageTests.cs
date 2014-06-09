@@ -15,6 +15,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
 
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
+        [TestCategory(TestCategories.Firefox)]
         public void LoadHomePage()
         {
             var homeIndexPage = NavigateToHomeIndexPage();
@@ -248,6 +249,8 @@ namespace CUWebinars.WebUi.Tests.Firefox
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.Gui)]
+        [TestCategory(TestCategories.Firefox)]
         public void ResetPassword()
         {
             var firstName = WebUiTestHelpers.RandomString(8);
@@ -287,6 +290,29 @@ namespace CUWebinars.WebUi.Tests.Firefox
             home.ClickResetPasswordButton(NormalResetPasswordButton);
 
             Assert.IsTrue(home.PasswordResetInstructionsInCrunchingLabelPresent);
+
+            home.Close();
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Gui)]
+        [TestCategory(TestCategories.Firefox)]
+        public void ResetPasswordWithInvalidEmail()
+        {
+            var firstName = WebUiTestHelpers.RandomString(8);
+            var lastName = WebUiTestHelpers.RandomString(5);
+            var email = string.Concat(firstName, "_", lastName, WebUiTestHelpers.RandomString(5), DotComDomain);
+
+
+            var home = NavigateToHomeIndexPage();
+           
+            home.ClickLoginLink();
+            home.ClickResetPasswordLink();
+            home.EnterEmailAddress(email, "ResetPassEmail");
+            home.ClickResetPasswordButton(NormalResetPasswordButton);
+
+
+            Assert.IsTrue(home.PleaseEnterValidEmailMessageIsPresent);
 
             home.Close();
         }

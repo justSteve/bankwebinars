@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Web;
 using System.Web.Routing;
+using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
@@ -26,6 +27,8 @@ using CUWebinars.Web.ViewModel;
 using System.Security.Claims;
 using Thinktecture.IdentityModel.Authorization.Mvc;
 using Elmah;
+using ClaimsExtensions = CUWebinars.Web.Helpers.ClaimsExtensions;
+using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
 
 namespace CUWebinars.Web.Controllers
@@ -253,10 +256,36 @@ namespace CUWebinars.Web.Controllers
                     OldPassword = surname,
                     NewPassword = string.Empty,
                     ConfirmPassword = string.Empty,
-                    ScreenMessage = string.Empty
+                    ScreenMessage = string.Empty,
+                    UserIsLoggedIn = Request.IsAuthenticated
                 };
 
-                return View(changeEmailFromKeyInputModel);
+                var userAccount = _membershipService.GetUserAccountByEmail(globalConfig.Tenant, email);
+
+                if (!ReferenceEquals(userAccount, null))
+                {
+                    bool hasAlreadyVerifiedAccount = !userAccount.HasClaim(ClaimTypes.HasNotVerified);
+
+                    if (hasAlreadyVerifiedAccount)
+                    {
+                        changeEmailFromKeyInputModel.ScreenMessage =
+                            "You've already verified your account with us. Thank you.";
+                        return View("ThankYouConfirmed", changeEmailFromKeyInputModel);
+                    }
+
+                    if (userAccount.HasClaim(ClaimTypes.HasNotVerified, ClaimValues.ManualRegistration))
+                    {
+                        changeEmailFromKeyInputModel.ScreenMessage =
+                            "Thank you for verifying your account with us.";
+                        return View("ThankYouConfirmed", changeEmailFromKeyInputModel);
+                    }
+
+                    return View(changeEmailFromKeyInputModel);
+                }
+
+                throw new Exception("User does not exist in system");
+
+
             }
             catch (Exception exception)
             {
@@ -852,6 +881,8 @@ namespace CUWebinars.Web.Controllers
                         model.RegisterFields.Password,
                         email);
 
+                    _membershipService.AddRegistrationTypeNotVerifiedClaim(userAccount, ClaimValues.ManualRegistration);
+
                     Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey), "There's no reason session should not have a value for the VerificationKey at this point ");
 
                     var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
@@ -1123,7 +1154,7 @@ namespace CUWebinars.Web.Controllers
         {
             var identity = ClaimsPrincipal.Current;
 
-            var userAccount = _membershipService.GetUserAccountByUserId(identity.GetUserID());
+            var userAccount = _membershipService.GetUserAccountByUserId(ClaimsExtensions.GetUserID(identity));
 
             var user = _membershipService.GetUserByEmail(userAccount.Email);
             return user;

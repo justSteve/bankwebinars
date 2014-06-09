@@ -1159,6 +1159,7 @@
     <Content Include="Views\Account\Confirmed.cshtml" />
     <Content Include="Views\Webinar\Partials\_UpdateConnectionInfo.cshtml" />
     <Content Include="Views\MembershipNotificationOps\_ManualPasswordReset.cshtml" />
+    <Content Include="Views\Account\ThankYouConfirmed.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Notifications\" />
