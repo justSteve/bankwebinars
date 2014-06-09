@@ -466,7 +466,7 @@ namespace CUWebinars.Web.Controllers
 
             if (ModelState.IsValid && _membershipService.LogInUser(globalConfig.Tenant, model.Email, model.Password, model.RememberMe, out userMustVerify))
             {
-                var retURL = model.ReturnUrl.Replace(string.Format(@"{0}://{1}{2}/", Request.Url.Scheme, Request.Url.Authority, Request.ApplicationPath.TrimEnd('/')), "");
+                var retURL = model.ReturnUrl.Replace(string.Format(@"{0}://{1}{2}/", Request.Url.Scheme, Request.Url.Authority, Request.ApplicationPath.TrimEnd('/')), string.Empty);
 
                 _logger.Info("Account.SignIn Post Success. Session={0}, Redirecting to: {1}" , AppHelper.GetUserAuditInfo(), retURL);
                 return RedirectToLocal(retURL);

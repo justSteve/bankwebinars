@@ -57,7 +57,7 @@ namespace CUWebinars.WebUi.Tests.Ie
             home.ClickLoginLink();
             home.ClickRegisterLinkOnLoginView();
             home.EnterEmailAddressAndEnter(Constants.SitTestEmailAddress);
-            home.ClickResetPasswordButton();
+            home.ClickResetPasswordButton("EdgeCaseResetPasswordButton");
 
             Assert.IsTrue(home.PasswordResetInstructionsSentLabelPresent);
         }

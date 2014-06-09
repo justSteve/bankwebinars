@@ -1,6 +1,3 @@
-using Api = CUWebinars.Web.Controllers.api;
-using Nml = CUWebinars.Web.Controllers;
-using System.Web.Http;
 using BrockAllen.MembershipReboot;
 using BrockAllen.MembershipReboot.Ef;
 using BrockAllen.MembershipReboot.WebHost;
@@ -10,12 +7,10 @@ using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Controllers;
-using CUWebinars.Web.Controllers.api;
 using CUWebinars.Web.Services;
-using log4net;
 using Ninject.Extensions.Logging;
 using Ninject.Extensions.Logging.Log4net.Infrastructure;
-using Ninject.Parameters;
+using System.Web.Http;
 
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(CUWebinars.Web.App_Start.NinjectWebCommon), "Start")]
 [assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(CUWebinars.Web.App_Start.NinjectWebCommon), "Stop")]

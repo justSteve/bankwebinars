@@ -9,6 +9,10 @@ namespace CUWebinars.WebUi.Tests.Firefox
     [TestClass]
     public class HomeIndexPageTests : FirefoxBaseTest
     {
+        private const string DotComDomain = ".com";
+        private const string EdgeCaseResetPasswordButton = "EdgeCaseResetPasswordButton";
+        private const string NormalResetPasswordButton = "NormalResetPasswordButton";
+
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
         public void LoadHomePage()
@@ -57,7 +61,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
             home.ClickLoginLink();
             home.ClickRegisterLinkOnLoginView();
             home.EnterEmailAddressAndEnter(Constants.SitTestEmailAddress);
-            home.ClickResetPasswordButton();
+            home.ClickResetPasswordButton(EdgeCaseResetPasswordButton);
 
             Assert.IsTrue(home.PasswordResetInstructionsSentLabelPresent); 
         }
@@ -70,7 +74,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
         {
             var firstName = WebUiTestHelpers.RandomString(8);
             var lastName = WebUiTestHelpers.RandomString(5);
-            var email = string.Concat(firstName, "_", lastName, "@", WebUiTestHelpers.RandomString(5), ".com");
+            var email = string.Concat(firstName, "_", lastName, "@", WebUiTestHelpers.RandomString(5), DotComDomain);
             var institutionNameSansSuffix = WebUiTestHelpers.RandomString(5);
             var institutionName = string.Concat(institutionNameSansSuffix, " ", Constants.SitTestInstitutionSuffix);
             
@@ -243,6 +247,49 @@ namespace CUWebinars.WebUi.Tests.Firefox
 
         }
 
+        [TestMethod]
+        public void ResetPassword()
+        {
+            var firstName = WebUiTestHelpers.RandomString(8);
+            var lastName = WebUiTestHelpers.RandomString(5);
+            var email = string.Concat(firstName, "_", lastName, "@", WebUiTestHelpers.RandomString(5), DotComDomain);
+            var institutionNameSansSuffix = WebUiTestHelpers.RandomString(5);
+            var institutionName = string.Concat(institutionNameSansSuffix, " ", Constants.SitTestInstitutionSuffix);
+
+
+            var home = NavigateToHomeIndexPage();
+            home.ClickLoginLink();
+            home.ClickRegisterLinkOnLoginView();
+            home.EnterDetail(email, Constants.RegisterFieldsEmail);
+            home.ClickSubmitButton();
+
+            home.EnterDetail(Constants.SitTestPassword, Constants.RegisterFieldsPassword);
+            home.EnterDetail(Constants.SitTestPassword, Constants.RegisterFieldsConfirmPassword);
+            home.ClickSubmitButton();
+
+            home.EnterDetail(Constants.SitTestZipCode, Constants.GetZipInput);
+            home.ClickSubmitButton();
+
+            home.EnterDetail(Constants.SitTestFirstName, Constants.FullNameInput);
+            home.TabAwayFromInput(Constants.FullNameInput, SelectorStrategy.Id);
+            home.EnterDetail(Constants.SitTestLastName, Constants.RegisterFieldsLastName);
+            home.EnterDetail(Constants.Title, Constants.RegisterFieldsTitle);
+            home.EnterDetail(institutionName, Constants.RegisterFieldsInstitution);
+            home.EnterDetail(Constants.SitTestPhone, Constants.RegisterFieldsPhone);
+            home.EnterDetail(Constants.SitTestAltAddress, Constants.RegisterFieldsStreetAddress);
+
+            home.ClickSubmitButton();
+
+            home.LogOff();
+            home.ClickLoginLink();
+            home.ClickResetPasswordLink();
+            home.EnterEmailAddress(email, "ResetPassEmail");
+            home.ClickResetPasswordButton(NormalResetPasswordButton);
+
+            Assert.IsTrue(home.PasswordResetInstructionsInCrunchingLabelPresent);
+
+            home.Close();
+        }
 
         public HomeIndexPage NavigateToHomeIndexPage()
         {

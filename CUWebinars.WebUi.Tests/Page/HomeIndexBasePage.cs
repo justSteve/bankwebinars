@@ -9,6 +9,8 @@ namespace CUWebinars.WebUi.Tests.Page
 {
     public class HomeIndexBasePage : BasePage
     {
+        private const string ForgotPasswordLinkText = "Forgot Password";
+
         public HomeIndexBasePage(ITestDriver seleniumTestDriver) : base(seleniumTestDriver)
         {
 
@@ -79,6 +81,14 @@ namespace CUWebinars.WebUi.Tests.Page
             }
         }
 
+        public bool PasswordResetInstructionsInCrunchingLabelPresent
+        {
+            get
+            {
+                return SeleniumTestDriver.FindByXPath(@"//*[@id='crunchingLabel']/span[contains(text(),'Reset Instructions sent!')]") != null;
+            }
+        }
+
 
         public void ClickLoginLink()
         {
@@ -100,9 +110,14 @@ namespace CUWebinars.WebUi.Tests.Page
             element.Click();
         }
 
-        public void ClickResetPasswordButton()
+        public void ClickResetPasswordLink()
         {
-            SeleniumTestDriver.FindByIdClick("EdgeCaseResetPasswordButton");
+            SeleniumTestDriver.FindByXPathClick("//*[@id='frmSignIn']/fieldset/div[3]/span/input");
+        }
+
+        public void ClickResetPasswordButton(string buttonId)
+        {
+            SeleniumTestDriver.FindByIdClick(buttonId);
         }
 
         public void ClickSubmitButton()
