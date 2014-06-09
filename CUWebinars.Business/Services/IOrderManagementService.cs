@@ -14,12 +14,17 @@ namespace CUWebinars.Business.Services
         string BuildConnectionInfo(OrderRow orderRow);
         int CheckUserForRecordingAccess(int i, int i1);
         AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullname);
+
         string CreateCalendarEvent(string title, string body, DateTime startDate, double duration, string location,
             string organizer, string eventId, bool allDayEvent);
+
         void CreateCPSubscription(OrderRow orderRow);
         Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow);
         OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, int registrationType);
-        string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int idWebinar, string webinarKey);
+
+        string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int idWebinar,
+            string webinarKey);
+
         void DispatchDummyOrder();
         IEnumerable<RegType> FindRegTypesByWebinarId(int webinarId);
         void FireSendConnectionInfoNotificationEvent(IList<Order> orders);
@@ -45,5 +50,8 @@ namespace CUWebinars.Business.Services
         Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id);
         OrderRow LoadOrderRow(int id);
         Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink);
+        IList<Order> SelectOrdersWithArchivedWebinars(int idUser);
+        IList<Order> SelectOrdersWithRecordedWebinars(int idUser);
+        IList<Order> SelectOrdersWithScheduledWebinars(int idUser);
     }
 }

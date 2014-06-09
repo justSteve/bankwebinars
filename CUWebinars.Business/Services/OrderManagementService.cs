@@ -526,6 +526,21 @@ namespace CUWebinars.Business.Services
             return null;
         }
 
+        public virtual IList<Order> SelectOrdersWithArchivedWebinars(int idUser)
+        {
+            return _orderRepository.SelectOrdersWithArchivedWebinars(idUser);
+        }
+
+        public IList<Order> SelectOrdersWithRecordedWebinars(int idUser)
+        {
+            return SelectOrdersWithRecordedWebinars(idUser);
+        }
+
+        public IList<Order> SelectOrdersWithScheduledWebinars(int idUser)
+        {
+            return SelectOrdersWithScheduledWebinars(idUser);
+        }
+
         public int CheckUserForRecordingAccess(int w, int u)
         {
             return _orderRepository.CheckUserForRecordingAccess(w, u);

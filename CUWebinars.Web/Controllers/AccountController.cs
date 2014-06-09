@@ -35,28 +35,21 @@ namespace CUWebinars.Web.Controllers
     public class AccountController : Controller
     {
         private readonly GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
-        private TTSWebinarsContext db = new TTSWebinarsContext();
 
         private readonly ILogger _logger;
         public IMembershipService _membershipService;
-        private readonly IOrderRepository _orderRepository;
-        private readonly IRegTypeRepository _regTypeRepository;
         private readonly IStateService _stateService;
         private readonly IOrderManagementService _orderManagementService;
 
         public AccountController(
             ILogger logger,
             IMembershipService membershipService,
-            IOrderRepository orderRepository,
             IOrderManagementService orderManagementService,
-            IRegTypeRepository regTypeRepository,
             IStateService stateService)
         {
             _logger = logger;
             _membershipService = membershipService;
-            _orderRepository = orderRepository;
             _orderManagementService = orderManagementService;
-            _regTypeRepository = regTypeRepository;
             _stateService = stateService;
         }
 
@@ -212,9 +205,9 @@ namespace CUWebinars.Web.Controllers
 
             ViewData["DiscountMsg"] = string.Empty;
 
-            model.Scheduled = _orderRepository.SelectOrdersWithScheduledWebinars(currentUser.idUser);
-            model.Recorded = _orderRepository.SelectOrdersWithRecordedWebinars(currentUser.idUser);
-            model.Archived = _orderRepository.SelectOrdersWithArchivedWebinars(currentUser.idUser);
+            model.Scheduled = _orderManagementService.SelectOrdersWithScheduledWebinars(currentUser.idUser);
+            model.Recorded = _orderManagementService.SelectOrdersWithRecordedWebinars(currentUser.idUser);
+            model.Archived = _orderManagementService.SelectOrdersWithArchivedWebinars(currentUser.idUser);
 
             foreach (var order in model.Scheduled)
             {
