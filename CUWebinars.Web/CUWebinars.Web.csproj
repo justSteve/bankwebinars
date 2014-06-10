@@ -388,7 +388,6 @@
     <Compile Include="Helpers\EventInvokerHelpers.cs" />
     <Compile Include="ViewModel\CreateUserConfirmedViewModel.cs" />
     <Compile Include="ViewModel\ManualPasswordResetViewModel.cs" />
-    <Compile Include="ViewModel\UsersForOrdersViewModel.cs" />
     <Compile Include="Core\CsvParseOps.cs" />
     <Compile Include="Models\IncomingOrderModel.cs" />
     <Compile Include="Controllers\api\ParentApiController.cs" />
@@ -453,8 +452,8 @@
     <Compile Include="ViewModel\GTWRegistrantViewModel.cs" />
     <Compile Include="ViewModel\ImportOrderViaDashboardViewModel.cs" />
     <Compile Include="ViewModel\RegisterViewModel.cs" />
+    <Compile Include="ViewModel\ResendOrderConfirmationViewModel.cs" />
     <Compile Include="ViewModel\WebinarDetailsViewModel.cs" />
-    <Compile Include="ViewModel\WebUserInfoViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\packages\Selenium.WebDriver.ChromeDriver.2.9.0.0\content\chromedriver.exe">
@@ -1147,7 +1146,6 @@
     <Content Include="Views\OrderEventFiringOps\Index.cshtml" />
     <Content Include="Views\OrderEventFiringOps\_SendReminder.cshtml" />
     <Content Include="Views\OrderEventFiringOps\_SendConnectionInfo.cshtml" />
-    <Content Include="Views\OrderEventFiringOps\_UsersAndSubmitButton.cshtml" />
     <Content Include="Views\OrderEventFiringOps\_SendRecordingPosted.cshtml" />
     <Content Include="Views\OrderEventFiringOps\_SendShippedOrder.cshtml" />
     <Content Include="Views\OrderEventFiringOps\_adHocNotification.cshtml" />
@@ -1160,6 +1158,7 @@
     <Content Include="Views\Webinar\Partials\_UpdateConnectionInfo.cshtml" />
     <Content Include="Views\MembershipNotificationOps\_ManualPasswordReset.cshtml" />
     <Content Include="Views\Account\ThankYouConfirmed.cshtml" />
+    <Content Include="Views\OrderEventFiringOps\_resendOrderConfirmation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Notifications\" />

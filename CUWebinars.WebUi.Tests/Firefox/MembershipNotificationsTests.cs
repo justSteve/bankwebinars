@@ -217,7 +217,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
         {
             var idOrder = PerformTest(Constants.TestQueryString11);
 
-            Assert.IsTrue(VerifyLinkIncludedInSentEmail());
+            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
 
             dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
 

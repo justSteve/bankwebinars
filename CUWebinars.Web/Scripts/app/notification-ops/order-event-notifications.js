@@ -2,12 +2,15 @@
     inputFormFieldsDiv,
     failedScreenMessage,
     getAdhocEventsHtmlButton,
+    getResendOrderConfirmationHtmlButton,
     getSendConnectionInfoEventHtmlButton,
     getSendRecordingPostedEventHtmlButton,
     getSendReminderEventHtmlButton,
+    noOrderScreenMessage,
     noOrdersScreenMessage,
     getRecipientsButton,
     regTypesCheckBoxesDiv,
+    resendOrderConfirmationUrl,
     selectedUpcomingWebinarId,
     selectedUpcomingWebinarIdDropDown,
     sendAdhocEventUrl,
@@ -22,6 +25,9 @@
 //  Create a namespace. PageObjects is getting polluted across js files.
 var OENS = {
     PageObjects: {
+        GetResendOrderConfirmationHtmlButton: function () {
+            return getResendOrderConfirmationHtmlButton|| $('#GetResendOrderConfirmationHtmlButton');
+        },
         GetSendConnectionInfoEventHtmlButton: function () {
             return getSendConnectionInfoEventHtmlButton || $('#GetSendConnectionInfoEventHtmlButton');
         },
@@ -55,13 +61,16 @@ $(function () {
 
     failedScreenMessage = '<br /><span id="ScreenMessageSpan" class="label label-information">&nbsp;&nbsp;Event Firing Has Failed</span>';
     noOrdersScreenMessage = '<br /><span id="ScreenMessageSpan" class="label label-information">&nbsp;&nbsp;There were no orders for that webinar</span>';
+    noOrderScreenMessage = '<br /><span id="ScreenMessageSpan" class="label label-information">&nbsp;&nbsp;There is no order which matches that Order Id</span>';
     successScreenMessage = '<br /><span id="ScreenMessageSpan" class="label label-success">&nbsp;The Orders have been sent.</span>';
     sendAdhocEventUrl = '/OrderEventFiringOps/SendAdhocEvent';
     sendConnectionInfoUrl = '/OrderEventFiringOps/SendConnectionInfo';
     sendReminderUrl = '/OrderEventFiringOps/SendReminder';
     sendRecordingPostedUrl = '/OrderEventFiringOps/SendRecordingPosted';
+    resendOrderConfirmationUrl = '/OrderEventFiringOps/ResendOrderConfirmation';
     sendOrderShippedUrl = '/OrderEventFiringOps/SendShippedOrder';
 
+    getResendOrderConfirmationHtmlButton = $('#GetResendOrderConfirmationHtmlButton');
     getSendConnectionInfoEventHtmlButton = $('#GetSendConnectionInfoEventHtmlButton');
     getSendRecordingPostedEventHtmlButton = $('#GetSendRecordingPostedEventHtmlButton');
     getSendReminderEventHtmlButton = $('#GetSendReminderEventHtmlButton');
@@ -69,7 +78,46 @@ $(function () {
     inputFormFieldsDiv = $('#InputFormFieldsDiv');
     waitIndicator = $('#WaitIndicator');
     waitIndicator.hide();
-    
+
+    getResendOrderConfirmationHtmlButton.on('click', function(eventArgs) {
+        OENS.PageObjects.InputFormFieldsDiv().empty();
+
+        OENS.PageObjects.InputFormFieldsDiv().load(resendOrderConfirmationUrl, function () {
+
+            $('#ResendOrderConfirmationViewModelButton').on('click', function () {
+
+                labelCheckRemove();
+
+                var orderId = $.trim($('#OrderId').val());
+
+                $.ajax({
+                    type: 'POST',
+                    contentType: constants.JsonContentType,
+                    cache: false,
+                    url: resendOrderConfirmationUrl,
+                    dataType: constants.JsonDataType,
+                    data: JSON.stringify({ orderId: orderId }),
+                    beforeSend: function() {
+                        OENS.PageObjects.WaitIndicator().show();
+                    }
+                }).done(function(result) {
+
+                    if (result.Result === 'Success') {
+                        OENS.PageObjects.InputFormFieldsDiv().append(successScreenMessage);
+                    } else if (result.Result === 'Fail') {
+                        OENS.PageObjects.InputFormFieldsDiv().append(noOrderScreenMessage);
+                    }
+
+
+                }).fail(function() {
+                    
+                }).always(function() {
+                    OENS.PageObjects.WaitIndicator().hide();
+                });
+            });
+        });
+    });
+
     getAdhocEventsHtmlButton.on('click', function(eventArgs) {
         OENS.PageObjects.InputFormFieldsDiv().empty();
 

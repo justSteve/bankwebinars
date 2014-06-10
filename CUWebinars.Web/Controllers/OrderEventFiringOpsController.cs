@@ -26,6 +26,30 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
+        public PartialViewResult ResendOrderConfirmation()
+        {
+            var model = new ResendOrderConfirmationViewModel
+            {
+                OrderId = string.Empty
+            };
+
+            return PartialView("_resendOrderConfirmation", model);
+        }
+
+        [HttpPost]
+        public ActionResult ResendOrderConfirmation(int orderId)
+        {
+            var order = _orderManagementService.GetOrderById(orderId);
+
+            if (ReferenceEquals(null, order))
+            {
+                return Json(new { Result = WebUiConstants.Fail });
+            }
+
+            _orderManagementService.FireSendConnectionInfoNotificationEvent(new Order[] { order });
+            return Json(new { Result = WebUiConstants.Success });
+        }
+
         public PartialViewResult SendAdhocEvent()
         {
             var model = new AdhocNotificationViewModel
@@ -58,10 +82,16 @@ namespace CUWebinars.Web.Controllers
         public JsonResult SendReminder(int webinarId)
         {
             var orders = _orderManagementService.GetOrdersForLiveNotifications(webinarId);
+            
+            if (orders.Any())
+            {
+                _orderManagementService.FireSendReminderNotificationEvent(orders);
 
-            _orderManagementService.FireSendReminderNotificationEvent(orders);
 
-            return Json(new { Result = WebUiConstants.Success });
+                return Json(new { Result = WebUiConstants.Success });
+            }
+
+            return Json(new { Result = WebUiConstants.NoOrdersForWebinar });
         }
 
         public PartialViewResult SendConnectionInfo()
