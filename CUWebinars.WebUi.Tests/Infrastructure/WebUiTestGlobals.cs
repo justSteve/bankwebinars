@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Configuration;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CUWebinars.WebUi.Tests.Infrastructure
 {
@@ -9,6 +8,7 @@ namespace CUWebinars.WebUi.Tests.Infrastructure
     {
         public string ChromeWebDriverPath { get; set; }
         public string ChromeWebDriverPort { get; set; }
+        public string DefaultConnection { get; set; }
         public string FirefoxExePath { get; set; }
         public string FirefoxBrowserPort { get; set; }
         public string HomeUrl { get; set; }
@@ -35,6 +35,7 @@ namespace CUWebinars.WebUi.Tests.Infrastructure
                 UniqueInstance.IeWebDriverPort = ApplicationSettingsSection["IeWebDriverPort"];
                 UniqueInstance.ChromeWebDriverPort = ApplicationSettingsSection["ChromeWebDriverPort"];
                 UniqueInstance.ChromeWebDriverPath = ApplicationSettingsSection["ChromeWebDriverPath"];
+                UniqueInstance.DefaultConnection = connectionStringSettingsSection["DefaultConnection"].ConnectionString;
                 UniqueInstance.FirefoxExePath = ApplicationSettingsSection["FirefoxExePath"];
                 UniqueInstance.FirefoxBrowserPort = ApplicationSettingsSection["FirefoxBrowserPort"];
                 UniqueInstance.HomeUrl = ApplicationSettingsSection["HomeUrl"];

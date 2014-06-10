@@ -494,7 +494,7 @@ namespace CUWebinars.Business.Services
 
                 var orderSubmittedViewModel = new OrderSubmittedViewModel
                 {
-                    ConfirmChangeEmailUrl = linkToVerifyAccount ? string.Concat(confirmChangeEmailLink, Path.AltDirectorySeparatorChar, currentOrder.WebUser.LastName.ToLower()) : string.Empty,
+                    ConfirmChangeEmailUrl = linkToVerifyAccount ? string.Concat(confirmChangeEmailLink.Replace("blank", string.Empty), currentOrder.WebUser.LastName.ToLower()) : string.Empty,
                     Order = updatedOrder,
                     UserCreatedOnImport = linkToVerifyAccount
                 };

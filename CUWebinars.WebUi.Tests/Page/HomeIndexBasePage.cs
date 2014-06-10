@@ -48,7 +48,7 @@ namespace CUWebinars.WebUi.Tests.Page
             theSubmitButton.Click();
         }
 
-        public void LogOff()
+        public virtual void LogOff()
         {
             SeleniumTestDriver.FindByPartialLinkText(Constants.LogoffLinkText).Click();
         }

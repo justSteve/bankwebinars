@@ -9,7 +9,7 @@ namespace CUWebinars.WebUi.Tests.Page
 {
     public abstract class MembershipNotificationsBasePage : BasePage
     {
-        public MembershipNotificationsBasePage(ITestDriver seleniumTestDriver)
+        protected MembershipNotificationsBasePage(ITestDriver seleniumTestDriver)
             : base(seleniumTestDriver)
         {
             Url = GlobalTestConfig.MembershipNotificationsUrl;
@@ -38,6 +38,11 @@ namespace CUWebinars.WebUi.Tests.Page
             var textArea = SeleniumTestDriver.FindById("JsonPayloadTextArea");
             textArea.Clear();
             textArea.SendKeys(jsonText);
+        }
+
+        public string GetOrderNumberCreated()
+        {
+            return SeleniumTestDriver.FindById("OrderSucceeded").Text;
         }
     }
 }

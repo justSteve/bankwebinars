@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using CUWebinars.Selenium.Core.Enums;
 using OpenQA.Selenium;
 
 namespace CUWebinars.Selenium.Core
@@ -27,6 +28,7 @@ namespace CUWebinars.Selenium.Core
         IWebElement FindByPartialLinkText(string linkTextToFind);
         IWebElement FindByXPath(string xpathToFind);
         IWebElement FindByXPathClick(string xpathToFind);
+        IWebElement FindElementWithoutWait(SelectorStrategy selectorStrategy, string domItem);
         string GetAlertText();
         string GetDocumentTitle();
         string GetElementValue(string idToFind);

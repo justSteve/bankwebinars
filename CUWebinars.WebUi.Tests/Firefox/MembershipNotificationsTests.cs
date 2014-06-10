@@ -1,4 +1,5 @@
-﻿using CUWebinars.Tests.Common;
+﻿using System.Globalization;
+using CUWebinars.Tests.Common;
 using CUWebinars.WebUi.Tests.Infrastructure;
 using CUWebinars.WebUi.Tests.Page.Firefox;
 using HtmlAgilityPack;
@@ -17,6 +18,7 @@ namespace CUWebinars.WebUi.Tests.Firefox
     {
         private int notificationFileCreationTimeout = 10;
         private string notificationsDirectory = string.Empty;
+        DataOperations dataOperations = new DataOperations();
 
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
@@ -41,9 +43,20 @@ namespace CUWebinars.WebUi.Tests.Firefox
 
             WaitOnNotificationFileCreation(notificationFileCreationTimeout);
 
+            var orderSuccessString = membershipNotificationsPage.GetOrderNumberCreated();
+
+            var orderId = GetOrderIdOfNewOrder(orderSuccessString);
+
+            if(ReferenceEquals(null, orderId))
+                Assert.Fail("Unable to obtain order number of the new order.");
+
             membershipNotificationsPage.Close();
 
-            Assert.IsTrue(VerifyLinkIncludedInSentEmail());
+           Assert.IsTrue(VerifyLinkIncludedInSentEmail());
+
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
+
+            dataOperations.DeleteOrder(orderId.Value);
         }
 
         [TestMethod]
@@ -51,9 +64,14 @@ namespace CUWebinars.WebUi.Tests.Firefox
         [TestCategory(TestCategories.Firefox)]
         public void CreateNewOrderForExistingUserScenario1()
         {
-            PerformTest(Constants.TestQueryString1);
+            var idOrder = PerformTest(Constants.TestQueryString1);
 
             Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
+
+            dataOperations.DeleteOrder(idOrder);
+
         }
 
         [TestMethod]
@@ -61,29 +79,44 @@ namespace CUWebinars.WebUi.Tests.Firefox
         [TestCategory(TestCategories.Firefox)]
         public void CreateNewOrderForExistingUserScenario2()
         {
-            PerformTest(Constants.TestQueryString2);
+            var idOrder = PerformTest(Constants.TestQueryString2);
 
-            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());            
+            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
+
+            dataOperations.DeleteOrder(idOrder);
+
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
         [TestCategory(TestCategories.Firefox)]
         public void CreateNewOrderForExistingUserScenario3()
         {
-            PerformTest(Constants.TestQueryString3);
+            var idOrder = PerformTest(Constants.TestQueryString3);
 
-            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());            
+            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
+
+            dataOperations.DeleteOrder(idOrder);
+
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
         [TestCategory(TestCategories.Firefox)]
         public void CreateNewOrderForExistingUserScenario4()
         {
-            PerformTest(Constants.TestQueryString4);
+            var idOrder = PerformTest(Constants.TestQueryString4);
 
-            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());            
+            Assert.IsTrue(VerifyLinkIncludedInSentEmail());
+
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
+
+            dataOperations.DeleteOrder(idOrder);
+
         }
 
         [TestMethod]
@@ -91,9 +124,14 @@ namespace CUWebinars.WebUi.Tests.Firefox
         [TestCategory(TestCategories.Firefox)]
         public void CreateNewOrderForExistingUserScenario5()
         {
-            PerformTest(Constants.TestQueryString5);
+            var idOrder = PerformTest(Constants.TestQueryString5);
 
             Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
+
+            dataOperations.DeleteOrder(idOrder);
+
         }
 
         [TestMethod]
@@ -101,9 +139,14 @@ namespace CUWebinars.WebUi.Tests.Firefox
         [TestCategory(TestCategories.Firefox)]
         public void CreateNewOrderForExistingUserScenario6()
         {
-            PerformTest(Constants.TestQueryString6);
+            var idOrder = PerformTest(Constants.TestQueryString6);
 
             Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
+
+            dataOperations.DeleteOrder(idOrder);
+
         }
 
         [TestMethod]
@@ -111,9 +154,14 @@ namespace CUWebinars.WebUi.Tests.Firefox
         [TestCategory(TestCategories.Firefox)]
         public void CreateNewOrderForExistingUserScenario7()
         {
-            PerformTest(Constants.TestQueryString7);
+            var idOrder = PerformTest(Constants.TestQueryString7);
 
             Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
+
+            dataOperations.DeleteOrder(idOrder);
+
         }
 
         [TestMethod]
@@ -121,9 +169,14 @@ namespace CUWebinars.WebUi.Tests.Firefox
         [TestCategory(TestCategories.Firefox)]
         public void CreateNewOrderForExistingUserScenario8()
         {
-            PerformTest(Constants.TestQueryString8);
+            var idOrder = PerformTest(Constants.TestQueryString8);
 
             Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
+
+            dataOperations.DeleteOrder(idOrder);
+
         }
 
         [TestMethod]
@@ -131,9 +184,14 @@ namespace CUWebinars.WebUi.Tests.Firefox
         [TestCategory(TestCategories.Firefox)]
         public void CreateNewOrderForExistingUserScenario9()
         {
-            PerformTest(Constants.TestQueryString9);
+            var idOrder = PerformTest(Constants.TestQueryString9);
 
             Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
+
+            dataOperations.DeleteOrder(idOrder);
+
         }
 
 
@@ -142,9 +200,14 @@ namespace CUWebinars.WebUi.Tests.Firefox
         [TestCategory(TestCategories.Firefox)]
         public void CreateNewOrderForExistingUserScenario10()
         {
-            PerformTest(Constants.TestQueryString10);
+            var idOrder = PerformTest(Constants.TestQueryString10);
 
             Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
+
+            dataOperations.DeleteOrder(idOrder);
+
         }
 
         [TestMethod]
@@ -152,9 +215,14 @@ namespace CUWebinars.WebUi.Tests.Firefox
         [TestCategory(TestCategories.Firefox)]
         public void CreateNewOrderForExistingUserScenario11()
         {
-            PerformTest(Constants.TestQueryString11);
+            var idOrder = PerformTest(Constants.TestQueryString11);
 
-            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+            Assert.IsTrue(VerifyLinkIncludedInSentEmail());
+
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
+
+            dataOperations.DeleteOrder(idOrder);
+
         }
 
         [TestMethod]
@@ -162,13 +230,18 @@ namespace CUWebinars.WebUi.Tests.Firefox
         [TestCategory(TestCategories.Firefox)]
         public void CreateNewOrderForExistingUserScenario12()
         {
-            PerformTest(Constants.TestQueryString12);
+            var idOrder = PerformTest(Constants.TestQueryString12);
 
             Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
+
+            dataOperations.DeleteOrder(idOrder);
+
         }
 
 
-        private void PerformTest(string queryString)
+        private int PerformTest(string queryString)
         {
             var membershipNotificationsPage = NavigateToMembershipNotificationsPage();
             membershipNotificationsPage.ClickImportSingleOrderButton();
@@ -179,18 +252,27 @@ namespace CUWebinars.WebUi.Tests.Firefox
 
             membershipNotificationsPage.ClickImportOrderButton();
 
+            WaitOnNotificationFileCreation(notificationFileCreationTimeout);
+
+            var orderSuccessString = membershipNotificationsPage.GetOrderNumberCreated();
+
             membershipNotificationsPage.Close();
 
-            WaitOnNotificationFileCreation(notificationFileCreationTimeout);
+            var orderId = GetOrderIdOfNewOrder(orderSuccessString);
+
+            if (ReferenceEquals(null, orderId))
+                Assert.Fail("Unable to obtain order number of the new order.");
+
+            return orderId.Value;
         }
 
         private void WaitOnNotificationFileCreation(int timeout)
         {
-            var doops = new DataOperations();
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.TtsDatabaseConnectionString;
 
             var notificationsDirectory = GetNotificationsDirectory();
 
-            string persistedFileName = doops.GetNameOfLatestPersistedNotification().SubstringFrom("OrderNotification");
+            string persistedFileName = dataOperations.GetNameOfLatestPersistedNotification().SubstringFrom("OrderNotification");
 
             var directoryInfo = new DirectoryInfo(notificationsDirectory);
 
@@ -213,6 +295,8 @@ namespace CUWebinars.WebUi.Tests.Firefox
             }
 
             Trace.WriteLine(persistedFileName);
+
+
         }
 
 
@@ -235,10 +319,21 @@ namespace CUWebinars.WebUi.Tests.Firefox
 
             return verifyLink.Count == 1;
         }
-        
+
         private bool VerifyLinkNotIncludedInSentEmail()
         {
             return !VerifyLinkIncludedInSentEmail();
+        }
+
+        private int? GetOrderIdOfNewOrder(string orderSuccessString)
+        {
+            var orderIdAsString = orderSuccessString.SubstringFrom(":").Remove(0, 1);
+            int id;
+
+            if(int.TryParse(orderIdAsString, NumberStyles.AllowLeadingWhite, CultureInfo.CurrentCulture, out id));
+                return id;
+
+            return null;
         }
 
         private string GetNotificationsDirectory()

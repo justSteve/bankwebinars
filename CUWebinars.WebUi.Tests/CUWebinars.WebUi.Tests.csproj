@@ -77,7 +77,6 @@
     <Compile Include="Chrome\ChromeBaseTest.cs" />
     <Compile Include="Firefox\MembershipNotificationsTests.cs" />
     <Compile Include="Ie\MembershipNotificationsTests.cs" />
-    <Compile Include="Infrastructure\DataOperations.cs" />
     <Compile Include="Infrastructure\StringExtensions.cs" />
     <Compile Include="Infrastructure\WebUiTestHelpers.cs" />
     <Compile Include="Page\Chrome\HomeIndexPage.cs" />

@@ -12,251 +12,251 @@ using System.Threading;
 
 namespace CUWebinars.WebUi.Tests.Ie
 {
-    [TestClass]
-    public class MembershipNotificationsTests : IeBaseTest
-    {
-        private const int NotificationFileCreationTimeout = 10;
-        private string notificationsDirectory = string.Empty;
-
-        [TestMethod]
-        [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.IE)]
-        public void CreateNewOrderForNewUser()
-        {
-            var firstName = WebUiTestHelpers.RandomString(4);
-            var lastName = WebUiTestHelpers.RandomString(4);
-
-            var membershipNotificationsPage = NavigateToMembershipNotificationsPage();
-
-            membershipNotificationsPage.ClickImportSingleOrderButton();
-            var json = membershipNotificationsPage.GetValueFromJsonOrderTextArea();
-
-            JObject parsedJsonObject = JObject.Parse(json);
-            var emailForUser = string.Concat(firstName, "_", lastName, Constants.SitTestEmailAddressDomain);
-
-            parsedJsonObject["Email"] = emailForUser;
-            membershipNotificationsPage.SetValueFromJsonOrderTextArea(parsedJsonObject.ToString());
-
-            membershipNotificationsPage.ClickImportOrderButton();
-
-            WaitOnNotificationFileCreation(NotificationFileCreationTimeout);
-
-            membershipNotificationsPage.Close();
-
-            Assert.IsTrue(VerifyLinkIncludedInSentEmail());
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.IE)]
-        public void CreateNewOrderForExistingUserScenario1()
-        {
-            PerformTest(Constants.TestQueryString1);
-
-            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.IE)]
-        public void CreateNewOrderForExistingUserScenario2()
-        {
-            PerformTest(Constants.TestQueryString2);
-
-            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.IE)]
-        public void CreateNewOrderForExistingUserScenario3()
-        {
-            PerformTest(Constants.TestQueryString3);
-
-            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.IE)]
-        public void CreateNewOrderForExistingUserScenario4()
-        {
-            PerformTest(Constants.TestQueryString4);
-
-            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.IE)]
-        public void CreateNewOrderForExistingUserScenario5()
-        {
-            PerformTest(Constants.TestQueryString5);
+    //[TestClass]
+    //public class MembershipNotificationsTests : IeBaseTest
+    //{
+    //    private const int NotificationFileCreationTimeout = 10;
+    //    private string notificationsDirectory = string.Empty;
+
+    //    [TestMethod]
+    //    [TestCategory(TestCategories.Gui)]
+    //    [TestCategory(TestCategories.IE)]
+    //    public void CreateNewOrderForNewUser()
+    //    {
+    //        var firstName = WebUiTestHelpers.RandomString(4);
+    //        var lastName = WebUiTestHelpers.RandomString(4);
+
+    //        var membershipNotificationsPage = NavigateToMembershipNotificationsPage();
+
+    //        membershipNotificationsPage.ClickImportSingleOrderButton();
+    //        var json = membershipNotificationsPage.GetValueFromJsonOrderTextArea();
+
+    //        JObject parsedJsonObject = JObject.Parse(json);
+    //        var emailForUser = string.Concat(firstName, "_", lastName, Constants.SitTestEmailAddressDomain);
+
+    //        parsedJsonObject["Email"] = emailForUser;
+    //        membershipNotificationsPage.SetValueFromJsonOrderTextArea(parsedJsonObject.ToString());
+
+    //        membershipNotificationsPage.ClickImportOrderButton();
+
+    //        WaitOnNotificationFileCreation(NotificationFileCreationTimeout);
+
+    //        membershipNotificationsPage.Close();
+
+    //        Assert.IsTrue(VerifyLinkIncludedInSentEmail());
+    //    }
+
+    //    [TestMethod]
+    //    [TestCategory(TestCategories.Gui)]
+    //    [TestCategory(TestCategories.IE)]
+    //    public void CreateNewOrderForExistingUserScenario1()
+    //    {
+    //        PerformTest(Constants.TestQueryString1);
+
+    //        Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+    //    }
+
+    //    [TestMethod]
+    //    [TestCategory(TestCategories.Gui)]
+    //    [TestCategory(TestCategories.IE)]
+    //    public void CreateNewOrderForExistingUserScenario2()
+    //    {
+    //        PerformTest(Constants.TestQueryString2);
+
+    //        Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+    //    }
+
+    //    [TestMethod]
+    //    [TestCategory(TestCategories.Gui)]
+    //    [TestCategory(TestCategories.IE)]
+    //    public void CreateNewOrderForExistingUserScenario3()
+    //    {
+    //        PerformTest(Constants.TestQueryString3);
+
+    //        Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+    //    }
+
+    //    [TestMethod]
+    //    [TestCategory(TestCategories.Gui)]
+    //    [TestCategory(TestCategories.IE)]
+    //    public void CreateNewOrderForExistingUserScenario4()
+    //    {
+    //        PerformTest(Constants.TestQueryString4);
+
+    //        Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+    //    }
+
+    //    [TestMethod]
+    //    [TestCategory(TestCategories.Gui)]
+    //    [TestCategory(TestCategories.IE)]
+    //    public void CreateNewOrderForExistingUserScenario5()
+    //    {
+    //        PerformTest(Constants.TestQueryString5);
 
-            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
-        }
+    //        Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+    //    }
 
-        [TestMethod]
-        [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.IE)]
-        public void CreateNewOrderForExistingUserScenario6()
-        {
-            PerformTest(Constants.TestQueryString6);
+    //    [TestMethod]
+    //    [TestCategory(TestCategories.Gui)]
+    //    [TestCategory(TestCategories.IE)]
+    //    public void CreateNewOrderForExistingUserScenario6()
+    //    {
+    //        PerformTest(Constants.TestQueryString6);
 
-            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
-        }
+    //        Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+    //    }
 
-        [TestMethod]
-        [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.IE)]
-        public void CreateNewOrderForExistingUserScenario7()
-        {
-            PerformTest(Constants.TestQueryString7);
+    //    [TestMethod]
+    //    [TestCategory(TestCategories.Gui)]
+    //    [TestCategory(TestCategories.IE)]
+    //    public void CreateNewOrderForExistingUserScenario7()
+    //    {
+    //        PerformTest(Constants.TestQueryString7);
 
-            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
-        }
+    //        Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+    //    }
 
-        [TestMethod]
-        [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.IE)]
-        public void CreateNewOrderForExistingUserScenario8()
-        {
-            PerformTest(Constants.TestQueryString8);
+    //    [TestMethod]
+    //    [TestCategory(TestCategories.Gui)]
+    //    [TestCategory(TestCategories.IE)]
+    //    public void CreateNewOrderForExistingUserScenario8()
+    //    {
+    //        PerformTest(Constants.TestQueryString8);
 
-            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
-        }
+    //        Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+    //    }
 
-        [TestMethod]
-        [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.IE)]
-        public void CreateNewOrderForExistingUserScenario9()
-        {
-            PerformTest(Constants.TestQueryString9);
+    //    [TestMethod]
+    //    [TestCategory(TestCategories.Gui)]
+    //    [TestCategory(TestCategories.IE)]
+    //    public void CreateNewOrderForExistingUserScenario9()
+    //    {
+    //        PerformTest(Constants.TestQueryString9);
 
-            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
-        }
+    //        Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+    //    }
 
 
-        [TestMethod]
-        [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.IE)]
-        public void CreateNewOrderForExistingUserScenario10()
-        {
-            PerformTest(Constants.TestQueryString10);
+    //    [TestMethod]
+    //    [TestCategory(TestCategories.Gui)]
+    //    [TestCategory(TestCategories.IE)]
+    //    public void CreateNewOrderForExistingUserScenario10()
+    //    {
+    //        PerformTest(Constants.TestQueryString10);
 
-            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
-        }
+    //        Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+    //    }
 
-        [TestMethod]
-        [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.IE)]
-        public void CreateNewOrderForExistingUserScenario11()
-        {
-            PerformTest(Constants.TestQueryString11);
+    //    [TestMethod]
+    //    [TestCategory(TestCategories.Gui)]
+    //    [TestCategory(TestCategories.IE)]
+    //    public void CreateNewOrderForExistingUserScenario11()
+    //    {
+    //        PerformTest(Constants.TestQueryString11);
 
-            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
-        }
+    //        Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+    //    }
 
-        [TestMethod]
-        [TestCategory(TestCategories.Gui)]
-        [TestCategory(TestCategories.IE)]
-        public void CreateNewOrderForExistingUserScenario12()
-        {
-            PerformTest(Constants.TestQueryString12);
+    //    [TestMethod]
+    //    [TestCategory(TestCategories.Gui)]
+    //    [TestCategory(TestCategories.IE)]
+    //    public void CreateNewOrderForExistingUserScenario12()
+    //    {
+    //        PerformTest(Constants.TestQueryString12);
 
-            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
-        }
+    //        Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+    //    }
 
 
-        private void PerformTest(string queryString)
-        {
-            var membershipNotificationsPage = NavigateToMembershipNotificationsPage();
-            membershipNotificationsPage.ClickImportSingleOrderButton();
+    //    private void PerformTest(string queryString)
+    //    {
+    //        var membershipNotificationsPage = NavigateToMembershipNotificationsPage();
+    //        membershipNotificationsPage.ClickImportSingleOrderButton();
 
-            var json = TestHelper.TransformQueryStringToJsonCompliantString(queryString);
+    //        var json = TestHelper.TransformQueryStringToJsonCompliantString(queryString);
 
-            membershipNotificationsPage.SetValueFromJsonOrderTextArea(json.ToString());
+    //        membershipNotificationsPage.SetValueFromJsonOrderTextArea(json.ToString());
 
-            membershipNotificationsPage.ClickImportOrderButton();
+    //        membershipNotificationsPage.ClickImportOrderButton();
 
-            membershipNotificationsPage.Close();
+    //        membershipNotificationsPage.Close();
 
-            WaitOnNotificationFileCreation(NotificationFileCreationTimeout);
-        }
+    //        WaitOnNotificationFileCreation(NotificationFileCreationTimeout);
+    //    }
 
-        private void WaitOnNotificationFileCreation(int timeout)
-        {
-            var doops = new DataOperations();
+    //    private void WaitOnNotificationFileCreation(int timeout)
+    //    {
+    //        var doops = new DataOperations {WebUiTestGlobalsTestConfig.TtsDatabaseConnectionString)};
 
-            var notificationsDirectory = GetNotificationsDirectory();
+    //        var notificationsDirectory = GetNotificationsDirectory();
 
-            string persistedFileName = doops.GetNameOfLatestPersistedNotification().SubstringFrom("OrderNotification");
+    //        string persistedFileName = doops.GetNameOfLatestPersistedNotification().SubstringFrom("OrderNotification");
 
-            var directoryInfo = new DirectoryInfo(notificationsDirectory);
+    //        var directoryInfo = new DirectoryInfo(notificationsDirectory);
 
-            FileInfo[] files;
+    //        FileInfo[] files;
 
-            var secs = 0;
-            var timeoutAsQuarterSeconds = timeout * 4;
+    //        var secs = 0;
+    //        var timeoutAsQuarterSeconds = timeout * 4;
 
-            while (secs < timeoutAsQuarterSeconds)
-            {
-                files = directoryInfo.GetFiles();
+    //        while (secs < timeoutAsQuarterSeconds)
+    //        {
+    //            files = directoryInfo.GetFiles();
 
-                if (files.Any(f => f.Name == persistedFileName))
-                {
-                    break;
-                }
+    //            if (files.Any(f => f.Name == persistedFileName))
+    //            {
+    //                break;
+    //            }
 
-                Thread.Sleep(250);
-                secs++;
-            }
+    //            Thread.Sleep(250);
+    //            secs++;
+    //        }
 
-            Trace.WriteLine(persistedFileName);
-        }
+    //        Trace.WriteLine(persistedFileName);
+    //    }
 
 
-        private bool VerifyLinkIncludedInSentEmail()
-        {
-            var directory = GetNotificationsDirectory();
-            var notificationFiles = new DirectoryInfo(directory).GetFiles();
+    //    private bool VerifyLinkIncludedInSentEmail()
+    //    {
+    //        var directory = GetNotificationsDirectory();
+    //        var notificationFiles = new DirectoryInfo(directory).GetFiles();
 
-            Trace.WriteLine(string.Format("{0} files", notificationFiles.Length));
-            var mostRecentNotification =
-                notificationFiles.Where(f => f.Extension == ".htm").OrderByDescending(f => f.LastWriteTime).First();
+    //        Trace.WriteLine(string.Format("{0} files", notificationFiles.Length));
+    //        var mostRecentNotification =
+    //            notificationFiles.Where(f => f.Extension == ".htm").OrderByDescending(f => f.LastWriteTime).First();
 
-            var populatedEmail = new HtmlDocument();
-            populatedEmail.Load(new FileStream(mostRecentNotification.FullName, FileMode.Open));
+    //        var populatedEmail = new HtmlDocument();
+    //        populatedEmail.Load(new FileStream(mostRecentNotification.FullName, FileMode.Open));
 
-            var verifyLink = populatedEmail.DocumentNode.SelectNodes("//i");
+    //        var verifyLink = populatedEmail.DocumentNode.SelectNodes("//i");
 
-            if (ReferenceEquals(null, verifyLink))
-                return false;
+    //        if (ReferenceEquals(null, verifyLink))
+    //            return false;
 
-            return verifyLink.Count == 1;
-        }
+    //        return verifyLink.Count == 1;
+    //    }
 
-        private bool VerifyLinkNotIncludedInSentEmail()
-        {
-            return !VerifyLinkIncludedInSentEmail();
-        }
+    //    private bool VerifyLinkNotIncludedInSentEmail()
+    //    {
+    //        return !VerifyLinkIncludedInSentEmail();
+    //    }
 
-        private string GetNotificationsDirectory()
-        {
-            if (string.IsNullOrEmpty(notificationsDirectory))
-                notificationsDirectory = Path.Combine(string.Concat(AppDomain.CurrentDomain.BaseDirectory, TestConstants.UpThreeFolders), TestConstants.NotificationsDirectory);
-            return notificationsDirectory;
-        }
+    //    private string GetNotificationsDirectory()
+    //    {
+    //        if (string.IsNullOrEmpty(notificationsDirectory))
+    //            notificationsDirectory = Path.Combine(string.Concat(AppDomain.CurrentDomain.BaseDirectory, TestConstants.UpThreeFolders), TestConstants.NotificationsDirectory);
+    //        return notificationsDirectory;
+    //    }
 
-        private MembershipNotificationsPage NavigateToMembershipNotificationsPage()
-        {
-            var membershipNotificationsPage = new MembershipNotificationsPage(TestDriver);
+    //    private MembershipNotificationsPage NavigateToMembershipNotificationsPage()
+    //    {
+    //        var membershipNotificationsPage = new MembershipNotificationsPage(TestDriver);
 
-            membershipNotificationsPage.Open();
+    //        membershipNotificationsPage.Open();
 
-            return membershipNotificationsPage;
-        }
+    //        return membershipNotificationsPage;
+    //    }
 
 
-    }
+    //}
 }

@@ -19,8 +19,8 @@ namespace CUWebinars.Selenium.Core.Ie
             
             webDriver = new InternetExplorerDriver(internetExplorerDriverService, internetExplorerOptions);
             
-            webDriver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(10));
-            webDriver.Manage().Timeouts().SetScriptTimeout(TimeSpan.FromSeconds(10));            
+            //webDriver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(10));
+            //webDriver.Manage().Timeouts().SetScriptTimeout(TimeSpan.FromSeconds(10));            
         }
     }
 }

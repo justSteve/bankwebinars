@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
+using CUWebinars.Selenium.Core.Enums;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
@@ -193,6 +194,23 @@ namespace CUWebinars.Selenium.Core
             }
 
             return element;
+        }
+
+        public IWebElement FindElementWithoutWait(SelectorStrategy selectorStrategy, string domItem)
+        {
+            try
+            {
+                switch (selectorStrategy)
+                {
+                    case SelectorStrategy.PartialLink:
+                        return webDriver.FindElement(By.PartialLinkText(domItem));
+                }
+            }
+            catch
+            {
+                
+            }
+            return null;
         }
 
         public virtual string GetElementValue(string idToFind)
