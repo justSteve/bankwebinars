@@ -89,7 +89,6 @@ namespace CUWebinars.WebUi.Tests.Page
             }
         }
 
-
         public void ClickLoginLink()
         {
             SeleniumTestDriver.FindByLinkTextClick(Constants.LoginLinkText);

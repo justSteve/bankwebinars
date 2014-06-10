@@ -219,6 +219,9 @@ namespace CUWebinars.WebUi.Tests.Ie
 
 
             var home = NavigateToHomeIndexPage();
+
+            home.LogOffIfLoggedIn();
+
             home.ClickLoginLink();
             home.ClickRegisterLinkOnLoginView();
             home.EnterDetail(email, Constants.RegisterFieldsEmail);
@@ -242,6 +245,7 @@ namespace CUWebinars.WebUi.Tests.Ie
             home.ClickSubmitButton();
 
             home.LogOff();
+
             home.ClickLoginLink();
             home.ClickResetPasswordLink();
             home.EnterEmailAddress(email, "ResetPassEmail");
@@ -261,6 +265,8 @@ namespace CUWebinars.WebUi.Tests.Ie
 
 
             var home = NavigateToHomeIndexPage();
+
+            home.LogOffIfLoggedIn();
 
             home.ClickLoginLink();
             home.ClickResetPasswordLink();
