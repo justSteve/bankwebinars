@@ -267,7 +267,7 @@ namespace CUWebinars.Web.Controllers
                 _logger.Error(errString);
             }
 
-            return Json(new { Result = "0"});
+            return Json(new { Result = "0" }, JsonRequestBehavior.AllowGet);
             //return Json(new { Result = WebUiConstants.Fail });
         }
     }

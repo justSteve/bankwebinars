@@ -238,8 +238,17 @@ function addImportOrderButtonClick() {
 
             var id = parseInt(result.Result, 10); // this is base 10 (2nd param)
             
-            if (id > 0 ) {
+            if (id > 0) {
                 $('#InputFormFields').html('<span id="OrderSucceeded" class="label label-success">Success! Order Id: ' + id + '</span>');
+            } else {
+                $('#InputFormFields').html('<span id="OrderFailed" class="label label-important">There was an error at the server and the order was not imported.</span>');
+            }
+        }).fail(function (result) {
+
+            var id = parseInt(result.Result, 10); // this is base 10 (2nd param)
+
+            if (id < 1) {
+                $('#InputFormFields').html('<span id="OrderFailed" class="label label-important">There was an error at the server and the order was not imported.</span>');
             }
         }).always(function () {
             $('#WaitIndicator').hide();
