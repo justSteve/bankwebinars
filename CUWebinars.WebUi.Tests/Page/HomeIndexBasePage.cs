@@ -142,13 +142,11 @@ namespace CUWebinars.WebUi.Tests.Page
             SeleniumTestDriver.FindByNameClick("NotInstitution");
         }
 
-        public bool ClickUpcomingEventsMenuItem()
+        public virtual bool ClickUpcomingEventsMenuItem()
         {
-            //var menu = SeleniumTestDriver.FindByXPath(@"//*[@id='main_menu']/ul/li[3]");
+            SeleniumTestDriver.HoverOverElement(SelectorStrategy.XPath, @"//*[@id='main_menu']/ul/li[3]/a");
 
-            ((IJavaScriptExecutor)SeleniumTestDriver.WebDriver).ExecuteScript("$('#main_menu ul.primary_menu li.parent:eq(1) a').mouseenter();");
-
-            SeleniumTestDriver.FindByXPathClick(@"/html/body/header/div/nav/ul/li[3]/ul/li[4]/a");
+            SeleniumTestDriver.FindByXPathClick(@"//*[@id='main_menu']/ul/li[3]/ul/li[3]/a");
 
             return SeleniumTestDriver.FindById("webinarContent").Displayed;
         }

@@ -2,7 +2,6 @@
 using CUWebinars.WebUi.Tests.Infrastructure;
 using CUWebinars.WebUi.Tests.Page.Firefox;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OpenQA.Selenium;
 
 namespace CUWebinars.WebUi.Tests.Firefox
 {
@@ -315,6 +314,19 @@ namespace CUWebinars.WebUi.Tests.Firefox
             Assert.IsTrue(home.PleaseEnterValidEmailMessageIsPresent);
 
             home.Close();
+        }
+
+
+        [TestMethod]
+        [TestCategory(TestCategories.Gui)]
+        [TestCategory(TestCategories.Firefox)]
+        public void NavigateToWebinarDetailsPage()
+        {
+            var home = NavigateToHomeIndexPage();
+
+            var newPageDisplayed = home.ClickUpcomingEventsMenuItem();
+
+            Assert.IsTrue(newPageDisplayed);
         }
 
         public HomeIndexPage NavigateToHomeIndexPage()

@@ -22,5 +22,10 @@ namespace CUWebinars.Selenium.Core.Ie
             //webDriver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(10));
             //webDriver.Manage().Timeouts().SetScriptTimeout(TimeSpan.FromSeconds(10));            
         }
+
+        public override void HoverOverElementUsingJavascript(string javascriptText)
+        {
+            ((IJavaScriptExecutor)WebDriver).ExecuteScript(javascriptText);
+        }
     }
 }

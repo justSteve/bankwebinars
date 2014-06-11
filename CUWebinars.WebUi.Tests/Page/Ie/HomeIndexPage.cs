@@ -16,5 +16,16 @@ namespace CUWebinars.WebUi.Tests.Page.Ie
             SeleniumTestDriver.FindByPartialLinkText(Constants.LogoffLinkText).SendKeys(Keys.Enter);
         }
 
+
+        public override bool ClickUpcomingEventsMenuItem()
+        {
+            SeleniumTestDriver.HoverOverElementUsingJavascript("$('#main_menu ul.primary_menu li.parent:eq(1) a').mouseenter();");
+
+            SeleniumTestDriver.FindByXPathClick(@"//*[@id='main_menu']/ul/li[3]/ul/li[3]/a");
+
+            return SeleniumTestDriver.FindById("webinarContent").Displayed;
+        }
+
+
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using CUWebinars.Selenium.Core.Enums;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 
 namespace CUWebinars.Selenium.Core
@@ -200,6 +201,7 @@ namespace CUWebinars.Selenium.Core
         {
             try
             {
+                //  TODO: complete switch statement
                 switch (selectorStrategy)
                 {
                     case SelectorStrategy.PartialLink:
@@ -211,6 +213,30 @@ namespace CUWebinars.Selenium.Core
                 
             }
             return null;
+        }
+
+        public virtual void HoverOverElement(SelectorStrategy selectorStrategy, string selectorText)
+        {
+            IWebElement elementToHoverOver = null;
+
+            //  TODO: complete switch statement
+            switch (selectorStrategy)
+            {
+                case SelectorStrategy.XPath:
+                    elementToHoverOver = FindWebElementWithWait(By.XPath(selectorText), WaitTimeout);
+                    break;
+                default:
+                    throw new NotSupportedException(string.Format("{0} is not a valid SelectorStrategy for this method", selectorStrategy));
+            }
+
+            //  Now for the hover magic
+            var builder = new Actions(WebDriver);
+            builder.MoveToElement(elementToHoverOver).Perform(); // Move cursor to the Main Menu Element  
+        }
+
+        public virtual void HoverOverElementUsingJavascript(string javascriptText)
+        {
+            
         }
 
         public virtual string GetElementValue(string idToFind)

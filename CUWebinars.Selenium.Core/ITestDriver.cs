@@ -29,6 +29,8 @@ namespace CUWebinars.Selenium.Core
         IWebElement FindByXPath(string xpathToFind);
         IWebElement FindByXPathClick(string xpathToFind);
         IWebElement FindElementWithoutWait(SelectorStrategy selectorStrategy, string domItem);
+        void HoverOverElement(SelectorStrategy selectorStrategy, string selectorText);
+        void HoverOverElementUsingJavascript(string javascriptText);
         string GetAlertText();
         string GetDocumentTitle();
         string GetElementValue(string idToFind);
