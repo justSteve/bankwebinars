@@ -236,7 +236,7 @@ namespace CUWebinars.Selenium.Core
 
         public virtual void HoverOverElementUsingJavascript(string javascriptText)
         {
-            
+            ((IJavaScriptExecutor)WebDriver).ExecuteScript(javascriptText);
         }
 
         public virtual string GetElementValue(string idToFind)

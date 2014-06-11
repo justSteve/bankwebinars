@@ -1,7 +1,5 @@
-﻿using System.Configuration;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.IE;
-using System;
 
 namespace CUWebinars.Selenium.Core.Ie
 {
@@ -21,11 +19,6 @@ namespace CUWebinars.Selenium.Core.Ie
             
             //webDriver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(10));
             //webDriver.Manage().Timeouts().SetScriptTimeout(TimeSpan.FromSeconds(10));            
-        }
-
-        public override void HoverOverElementUsingJavascript(string javascriptText)
-        {
-            ((IJavaScriptExecutor)WebDriver).ExecuteScript(javascriptText);
         }
     }
 }
