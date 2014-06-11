@@ -337,7 +337,21 @@ namespace CUWebinars.WebUi.Tests.Ie
 
             Assert.IsTrue(home.PleaseEnterValidEmailMessageIsPresent);
         }
-        
+
+
+        [TestMethod]
+        [TestCategory(TestCategories.Gui)]
+        [TestCategory(TestCategories.IE)]
+        public void NavigateToWebinarDetailsPage()
+        {
+            var home = NavigateToHomeIndexPage();
+
+            var newPageDisplayed = home.ClickUpcomingEventsMenuItem();
+
+            Assert.IsTrue(newPageDisplayed);
+        }
+
+
         public HomeIndexPage NavigateToHomeIndexPage()
         {
             var homeIndexPage = new HomeIndexPage(TestDriver);

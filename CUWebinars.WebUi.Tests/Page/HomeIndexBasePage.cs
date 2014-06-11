@@ -2,6 +2,7 @@
 using CUWebinars.Selenium.Core.Enums;
 using CUWebinars.WebUi.Tests.Infrastructure;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using System;
 
@@ -140,7 +141,19 @@ namespace CUWebinars.WebUi.Tests.Page
         {
             SeleniumTestDriver.FindByNameClick("NotInstitution");
         }
-        
+
+        public bool ClickUpcomingEventsMenuItem()
+        {
+            //var menu = SeleniumTestDriver.FindByXPath(@"//*[@id='main_menu']/ul/li[3]");
+
+            ((IJavaScriptExecutor)SeleniumTestDriver.WebDriver).ExecuteScript("$('#main_menu ul.primary_menu li.parent:eq(1) a').mouseenter();");
+
+            SeleniumTestDriver.FindByXPathClick(@"/html/body/header/div/nav/ul/li[3]/ul/li[4]/a");
+
+            return SeleniumTestDriver.FindById("webinarContent").Displayed;
+        }
+
+
         public bool PhoneNrLinkIsPresentOnPage
         {
             get { return SeleniumTestDriver.FindByCssSelector("div.phone a.tele") != null; }

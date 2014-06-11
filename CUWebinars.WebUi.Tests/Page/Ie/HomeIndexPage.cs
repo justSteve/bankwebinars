@@ -15,5 +15,6 @@ namespace CUWebinars.WebUi.Tests.Page.Ie
         {
             SeleniumTestDriver.FindByPartialLinkText(Constants.LogoffLinkText).SendKeys(Keys.Enter);
         }
+
     }
 }

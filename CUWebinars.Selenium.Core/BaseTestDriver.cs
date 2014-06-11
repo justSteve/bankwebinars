@@ -169,7 +169,7 @@ namespace CUWebinars.Selenium.Core
         public virtual IWebElement FindByXPathClick(string xpathToFind)
         {
             var element = FindByXPath(xpathToFind);
-
+            
             if (!ReferenceEquals(null, element))
             {
                 element.Click();
