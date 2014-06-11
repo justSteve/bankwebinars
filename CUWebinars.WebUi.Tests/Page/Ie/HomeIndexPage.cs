@@ -1,6 +1,6 @@
 ﻿using CUWebinars.Selenium.Core;
-using CUWebinars.Selenium.Core.Enums;
 using CUWebinars.WebUi.Tests.Infrastructure;
+using OpenQA.Selenium;
 
 namespace CUWebinars.WebUi.Tests.Page.Ie
 {
@@ -11,15 +11,9 @@ namespace CUWebinars.WebUi.Tests.Page.Ie
         {
         }
 
-        public void LogOffIfLoggedIn()
+        public override void LogOff()
         {
-            var logOffLink = SeleniumTestDriver.FindElementWithoutWait(
-                SelectorStrategy.PartialLink,
-                Constants.LogoffLinkText
-                );
-
-            if(!ReferenceEquals(null, logOffLink))
-                logOffLink.Click();
+            SeleniumTestDriver.FindByPartialLinkText(Constants.LogoffLinkText).SendKeys(Keys.Enter);
         }
     }
 }
