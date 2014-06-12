@@ -111,6 +111,21 @@ namespace CUWebinars.Business.Services
             return _affiliateRepository.FindById(id);
         }
 
+        public IEnumerable<Webinar> GetAllActive()
+        {
+            return _webinarRepository.GetAllActive().ToList();
+        }
+
+        public IEnumerable<Presenter> GetAllPresenters()
+        {
+            return _refDataRepository.GetAllPresenters();
+        }
+
+        public IEnumerable<Webinar> GetByTopic(int topicId)
+        {
+            return _webinarRepository.GetByTopic(topicId);
+        }
+
 
         public IList<RegType> GetOptionsByWebinarId(int id, bool detached)
         {
@@ -136,6 +151,11 @@ namespace CUWebinars.Business.Services
         {
             return _regTypeRepository.FindRegTypesByWebinarId(id, false);
             return null;
+        }
+
+        public IEnumerable<Topic> GetTopicsPerWebinar(int idWebinar)
+        {
+            return _webinarRepository.GetTopicsPerWebinar(idWebinar).ToList();
         }
 
         public OrderRow GetOrderRowById(int idOrderRow)
@@ -205,6 +225,17 @@ namespace CUWebinars.Business.Services
 
         }
 
+
+        public void AddWebinar(Webinar webinar)
+        {
+            _webinarRepository.Add(webinar);
+        }
+
+        public void DeleteWebinar(int webinarId)
+        {
+            var webinar = GetWebinar(webinarId);
+            _webinarRepository.Delete(webinar);
+        }
 
         public void DispatchDummyOrder()
         {
@@ -539,6 +570,11 @@ namespace CUWebinars.Business.Services
         public IList<Order> SelectOrdersWithScheduledWebinars(int idUser)
         {
             return SelectOrdersWithScheduledWebinars(idUser);
+        }
+
+        public void UpdateWebinar(Webinar webinar)
+        {
+            _webinarRepository.Update(webinar);
         }
 
         public int CheckUserForRecordingAccess(int w, int u)

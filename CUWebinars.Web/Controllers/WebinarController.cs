@@ -1,6 +1,5 @@
 ﻿using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
-using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Browsers.Webinars;
@@ -10,7 +9,6 @@ using CUWebinars.Web.ViewModel;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
@@ -20,26 +18,21 @@ namespace CUWebinars.Web.Controllers
 {
     public class WebinarController : Controller
     {
-        private readonly TTSWebinarsContext _db;
 
         IStateService stateService = new StateService();
 
         //Steve added MembershipService dependancy to allow for 'currentUser' in Details.
         private readonly IMembershipService _membershipService;
-        private readonly IWebinarRepository _webinarRepository;
         private readonly IOrderManagementService _orderManagementService;
         private readonly ILogger _logger;
 
         public WebinarController(
             IMembershipService membershipService,
-            IWebinarRepository webinarRepository,
             IOrderManagementService orderManagementService,
-            ILogger logger,
-            TTSWebinarsContext context)
+            ILogger logger
+            )
         {
-            _db = context;
             _membershipService = membershipService;
-            _webinarRepository = webinarRepository;
             _orderManagementService = orderManagementService;
             _logger = logger;
         }
@@ -48,11 +41,11 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Index()
         {
-            var webinars = _webinarRepository.GetAllActive();
+            var webinars = _orderManagementService.GetAllActive();
             ViewBag.TopicCaption = " ";
             ViewBag.Title = "All Listed Events for CUWebinars";
 
-            webinars = _webinarRepository.GetUpcoming().OrderBy(w => w.Date);
+            webinars = _orderManagementService.GetUpcomingWebinars().OrderBy(w => w.Date);
             ViewBag.Title = "All Upcoming Events for CUWebinars";
 
             return View(webinars);
@@ -118,7 +111,7 @@ namespace CUWebinars.Web.Controllers
                     break;
             }
 
-            var webinars = _webinarRepository.GetByTopic(ID);
+            var webinars = _orderManagementService.GetByTopic(ID);
             //var dtos = new WebinarDTOAssembler().Entities2DTOs(webinars);
             //return View(dtos);
             return View(webinars);
@@ -141,17 +134,17 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult AllActive(string eventsToShow)
         {
-            var webinars = _webinarRepository.GetAllActive();
+            var webinars = _orderManagementService.GetAllActive();
             ViewBag.TopicCaption = " ";
             ViewBag.Title = "All Listed Events for CUWebinars";
             if (eventsToShow == "upcoming")
             {
-                webinars = _webinarRepository.GetUpcoming().OrderBy(w => w.Date);
+                webinars = _orderManagementService.GetUpcomingWebinars().OrderBy(w => w.Date);
                 ViewBag.Title = "All Upcoming Events for CUWebinars";
             }
             if (eventsToShow == "recorded")
             {
-                webinars = _webinarRepository.GetRecorded().OrderBy(w => w.Date);
+                webinars = _orderManagementService.GetRecordedWebinars().OrderBy(w => w.Date);
                 ViewBag.Title = "All Recorded Events for CUWebinars";
             }
 
@@ -398,7 +391,7 @@ namespace CUWebinars.Web.Controllers
             [Core.DataTables.WebinarsBrowserRequestModelBinder] WebinarsBrowserRequestModel webinarsBrowserRequest)
         {
 
-            var webinars = _webinarRepository.GetByTopic(Convert.ToInt32(webinarsBrowserRequest.Search.Replace("TopicID=", "")));
+            var webinars = _orderManagementService.GetByTopic(Convert.ToInt32(webinarsBrowserRequest.Search.Replace("TopicID=", "")));
             var wList = new List<WebinarsBrowserSearchResultEntryDTO>();
             foreach (var webinar in webinars)
             {
@@ -421,18 +414,19 @@ namespace CUWebinars.Web.Controllers
         {
             if (_orderManagementService.CheckUserForRecordingAccess(u, w) > 0 || u == 19)
             {
+                Webinar webinar = _orderManagementService.GetWebinar(w);
+
                 //how do I ensure that all child objects are included?
-                var webinarFiles =
-                _db.WebinarFiles.Where(f => f.idWebinar == w)
+                var webinarFiles = webinar.WebinarFiles.Where(f => f.idWebinar == w)
                     .Select(f => f.fileDesc + "|" + f.fileLocation)
                     .ToArray();
+
                 ViewBag.WebinarFiles = webinarFiles;
 
-                Webinar webinar = _webinarRepository.FindById(w);
+                Presenter presenter = webinar.Presenter;
 
-                Presenter presenter = _db.Presenters.Include(wu => wu.WebUser).SingleOrDefault(p => p.idUser == webinar.idPresenter);
-                //Presenter presenter = _db.Presenters.Where(p => p.idUser == webinar.idPresenter).SingleOrDefault();
                 ViewBag.Presenter = presenter;
+
                 return View(webinar);
             }
 
@@ -458,7 +452,7 @@ namespace CUWebinars.Web.Controllers
 
             var options = _orderManagementService.GetOptionsByWebinarId(id, false);
             var webinar = _orderManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id);
-            ViewBag.topics = _webinarRepository.GetTopicsPerWebinar(webinar.idWebinar);
+            ViewBag.topics = _orderManagementService.GetTopicsPerWebinar(webinar.idWebinar);
 
             var model = new WebinarDetailsViewModel()
             {
@@ -486,10 +480,10 @@ namespace CUWebinars.Web.Controllers
                     var row = checkOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
                     //if (row != null)
                     //    ViewBag.orderMessages = row.RegistrationType;
-                    var webinarFiles =
-                        _db.WebinarFiles.Where(f => f.idWebinar == id)
+                    var webinarFiles = webinar.WebinarFiles
                             .Select(f => f.fileDesc + "|" + f.fileLocation)
                             .ToArray();
+
                     ViewBag.WebinarFiles = webinarFiles;
 
                     ViewBag.userOwnsThisEvent = checkOrder.idOrder;
@@ -530,7 +524,7 @@ namespace CUWebinars.Web.Controllers
         public ActionResult CalendarData()
         {
             //IList<Webinar> webinarsList = WebinarFacade.Instance.SelectAllActiveWebinars();
-            IList<Webinar> webinarsList = _webinarRepository.GetAllActive().ToList();
+            IList<Webinar> webinarsList = _orderManagementService.GetAllActive().ToList();
 
             var dtos = new CalendarDTOAssembler().Entities2DTOs(webinarsList);
 
@@ -545,7 +539,7 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Create()
         {
-            ViewBag.PresenterId = new SelectList(_db.Presenters, "Id", "Biography");
+            ViewBag.PresenterId = new SelectList(_orderManagementService.GetAllPresenters(), "Id", "Biography");
             return View();
         }
 
@@ -558,12 +552,11 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _db.Webinars.Add(webinar);
-                _db.SaveChanges();
+                _orderManagementService.AddWebinar(webinar);
                 return RedirectToAction("Index");
             }
 
-            ViewBag.PresenterId = new SelectList(_db.Presenters, "Id", "Biography", webinar.idPresenter);
+            ViewBag.PresenterId = new SelectList(_orderManagementService.GetAllPresenters(), "Id", "Biography", webinar.idPresenter);
             return View(webinar);
         }
 
@@ -572,12 +565,12 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Edit(int id = 0)
         {
-            Webinar webinar = _db.Webinars.Find(id);
+            Webinar webinar = _orderManagementService.GetWebinar(id);
             if (webinar == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.PresenterId = new SelectList(_db.Presenters, "Id", "Biography", webinar.idPresenter);
+            ViewBag.PresenterId = new SelectList(_orderManagementService.GetAllPresenters(), "Id", "Biography", webinar.idPresenter);
             return View(webinar);
         }
 
@@ -590,11 +583,10 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _db.Entry(webinar).State = EntityState.Modified;
-                _db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
-            ViewBag.PresenterId = new SelectList(_db.Presenters, "Id", "Biography", webinar.idPresenter);
+            ViewBag.PresenterId = new SelectList(_orderManagementService.GetAllPresenters(), "Id", "Biography", webinar.idPresenter);
             return View(webinar);
         }
 
@@ -603,7 +595,7 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Delete(int id = 0)
         {
-            Webinar webinar = _db.Webinars.Find(id);
+            Webinar webinar = _orderManagementService.GetWebinar(id);
             if (webinar == null)
             {
                 return HttpNotFound();
@@ -618,15 +610,12 @@ namespace CUWebinars.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Webinar webinar = _db.Webinars.Find(id);
-            _db.Webinars.Remove(webinar);
-            _db.SaveChanges();
+            _orderManagementService.DeleteWebinar(id);
             return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)
         {
-            _db.Dispose();
             base.Dispose(disposing);
         }
 
@@ -636,7 +625,7 @@ namespace CUWebinars.Web.Controllers
         {
             Webinar webinar = model;
 
-            _db.SaveChanges();
+            //_db.SaveChanges();
             
             return RedirectToAction("Details");
             //return PartialView("Partials/_UpdateConnectionInfo",webinar);

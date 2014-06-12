@@ -6,7 +6,6 @@ using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
-using CUWebinars.Web.Controllers;
 using CUWebinars.Web.Services;
 using Ninject.Extensions.Logging;
 using Ninject.Extensions.Logging.Log4net.Infrastructure;
@@ -139,77 +138,6 @@ namespace CUWebinars.Web.App_Start
                     new WebUserRepository(sharedContext)
                     );
             }).InRequestScope();
-
-            RegisterControllers(kernel, kernel.Get<TtsConfiguration>());
-
-        }
-
-        private static void RegisterControllers(IKernel kernel, TtsConfiguration ttsConfig)
-        {
-            kernel.Bind<WebinarController>().ToMethod(ctx =>
-            {
-                var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
-                var userAccountService = kernel.Get<UserAccountService>();
-                ILogger logger = new Log4NetLogger(typeof (WebinarController));
-                ILogger loggerForOrderManagementService = new Log4NetLogger(typeof (OrderManagementService));
-
-                var orderManagementService = new OrderManagementService(
-                    new AffiliateRepository(sharedContext),
-                    new RegTypeRepository(sharedContext),
-                    new OrderRepository(sharedContext),
-                    new RefDataRepository(),
-                    new WebUserRepository(sharedContext),
-                    new WebinarRepository(sharedContext),
-                    loggerForOrderManagementService,
-                    ttsConfig
-                    );
-
-                var membershipService = new MembershipService(
-                    new InstitutionRepository(sharedContext),
-                    new RefDataRepository(),
-                    new SamAuthenticationService(userAccountService),
-                    userAccountService,
-                    new WebUserRepository(sharedContext));
-
-                return new WebinarController(
-                    membershipService,
-                    new WebinarRepository(sharedContext),
-                    orderManagementService,
-                    logger,
-                    sharedContext
-                    );
-            }).InRequestScope();
-
-
-            kernel.Bind<CartController>().ToMethod(ctx =>
-            {
-                var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
-                var userAccountService = kernel.Get<UserAccountService>();
-                ILogger logger = new Log4NetLogger(typeof (CartController));
-                ILogger loggerForOrderManagementService = new Log4NetLogger(typeof (OrderManagementService));
-
-                var orderManagementService = new OrderManagementService(
-                    new AffiliateRepository(sharedContext),
-                    new RegTypeRepository(sharedContext),
-                    new OrderRepository(sharedContext),
-                    new RefDataRepository(),
-                    new WebUserRepository(sharedContext),
-                    new WebinarRepository(sharedContext),
-                    loggerForOrderManagementService,
-                    ttsConfig
-                    );
-
-                var membershipService = new MembershipService(
-                    new InstitutionRepository(sharedContext),
-                    new RefDataRepository(),
-                    new SamAuthenticationService(userAccountService),
-                    userAccountService,
-                    new WebUserRepository(sharedContext));
-
-                return new CartController(membershipService, new WebinarRepository(sharedContext),
-                    orderManagementService, ctx.Kernel.Get<IStateService>(), logger);
-            }).InRequestScope();
-
         }
     }
 }

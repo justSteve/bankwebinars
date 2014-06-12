@@ -1,13 +1,13 @@
-﻿using System;
+﻿using CUWebinars.Business.Models;
+using System;
 using System.Collections.Generic;
-using BrockAllen.MembershipReboot;
-using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.Services
 {
     public interface IOrderManagementService
     {
         void AddOrderRow(Order currentOrder, OrderRow orderRow);
+        void AddWebinar(Webinar webinar);
         Order AssignAffiliateToOrder(Affiliate affiliate, Order order);
         void AssignUserToOrder(Order currentOrder);
         Order AssignWebUserToOrder(WebUser webUser, Order order);
@@ -25,6 +25,7 @@ namespace CUWebinars.Business.Services
         string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int idWebinar,
             string webinarKey);
 
+        void DeleteWebinar(int webinarId);
         void DispatchDummyOrder();
         IEnumerable<RegType> FindRegTypesByWebinarId(int webinarId);
         void FireSendConnectionInfoNotificationEvent(IList<Order> orders);
@@ -32,6 +33,9 @@ namespace CUWebinars.Business.Services
         void FireSendRecordingIsPostedEvent(IList<Order> orders);
         void FireSendReminderNotificationEvent(IList<Order> orders);
         Affiliate GetAffiliateById(int id);
+        IEnumerable<Webinar> GetAllActive();
+        IEnumerable<Presenter> GetAllPresenters();
+        IEnumerable<Webinar> GetByTopic(int topicId);
         Discount GetDiscount(string email);
         IList<RegType> GetOptionsByWebinarId(int id, bool detached);
         Order GetOrderById(int id);
@@ -43,6 +47,7 @@ namespace CUWebinars.Business.Services
         OrderRow GetOrderRowById(int idOrderRow);
         IEnumerable<Webinar> GetRecordedWebinars();
         IList<RegType> GetRegTypesByWebinarIdFrom(int id, bool detached);
+        IEnumerable<Topic> GetTopicsPerWebinar(int idWebinar);
         IEnumerable<Webinar> GetUpcomingWebinars();
         Webinar GetWebinar(int id);
         WebUser GetWebUser(int id);
@@ -53,5 +58,6 @@ namespace CUWebinars.Business.Services
         IList<Order> SelectOrdersWithArchivedWebinars(int idUser);
         IList<Order> SelectOrdersWithRecordedWebinars(int idUser);
         IList<Order> SelectOrdersWithScheduledWebinars(int idUser);
+        void UpdateWebinar(Webinar webinar);
     }
 }
