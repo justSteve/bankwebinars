@@ -8,12 +8,15 @@ using CUWebinars.Business.Repository;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Collections.Generic;
+using Ninject.Extensions.Logging;
+using Ninject.Extensions.Logging.Log4net.Infrastructure;
 
 namespace CUWebinars.Business.Tests
 {
     [TestClass]
     public class MembershipServiceTests
     {
+        private ILogger logger;
         private Mock<IRefDataRepository> refDataRepositoryMock;
         private Mock<IInstitutionRepository> institutionRepositoryMock;
         private Mock<IWebUserRepository> webUserRepositoryMock;
@@ -33,6 +36,7 @@ namespace CUWebinars.Business.Tests
         [TestInitialize]
         public void SetupTest()
         {
+            logger = new Log4NetLogger(typeof(MembershipService));
             refDataRepositoryMock = new Mock<IRefDataRepository>();
             institutionRepositoryMock = new Mock<IInstitutionRepository>();
             webUserRepositoryMock = new Mock<IWebUserRepository>();
@@ -53,7 +57,8 @@ namespace CUWebinars.Business.Tests
                 refDataRepositoryMock.Object,
                 samAuthenticationServiceMock,
                 userAccountServiceFake,
-                webUserRepositoryMock.Object
+                webUserRepositoryMock.Object,
+                logger
                 );
 
             var result = membershipService.LogInUser(Globals.Tenant, email, password, true);
@@ -72,7 +77,8 @@ namespace CUWebinars.Business.Tests
                 refDataRepositoryMock.Object,
                 samAuthenticationServiceMock,
                 new UserAccountServiceUnHappyPathFake(new DefaultUserAccountRepository()),
-                webUserRepositoryMock.Object
+                webUserRepositoryMock.Object,
+                logger
                 );
 
             var result = membershipService.LogInUser(Globals.Tenant, email, password, true);
@@ -95,7 +101,8 @@ namespace CUWebinars.Business.Tests
                 refDataRepositoryMock.Object,
                 samAuthenticationServiceMock,
                 new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository()),
-                webUserRepositoryMock.Object
+                webUserRepositoryMock.Object,
+                logger
                 );
 
             var result = membershipService.GetDetailsOfUser(email);
@@ -118,7 +125,8 @@ namespace CUWebinars.Business.Tests
                 refDataRepositoryMock.Object,
                 samAuthenticationServiceMock,
                 new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository()),
-                webUserRepositoryMock.Object
+                webUserRepositoryMock.Object,
+                logger
                 );
 
             var result = membershipService.GetDetailsOfUser(email);
@@ -140,7 +148,8 @@ namespace CUWebinars.Business.Tests
                 refDataRepositoryMock.Object,
                 samAuthenticationServiceMock,
                 new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository()),
-                webUserRepositoryMock.Object
+                webUserRepositoryMock.Object,
+                logger
                 );
 
             var result = membershipService.GetDetailsOfUser(email);
@@ -162,7 +171,8 @@ namespace CUWebinars.Business.Tests
                 refDataRepositoryMock.Object,
                 samAuthenticationServiceMock,
                 new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository()),
-                webUserRepositoryMock.Object
+                webUserRepositoryMock.Object,
+                logger
                 );
 
             var result = membershipService.GetDetailsOfUser(email);
@@ -184,7 +194,8 @@ namespace CUWebinars.Business.Tests
                 refDataRepositoryMock.Object,
                 samAuthenticationServiceMock,
                 userAccountService,
-                webUserRepositoryMock.Object
+                webUserRepositoryMock.Object,
+                logger
                 );
 
             var result = membershipService.CreateUser(Globals.Tenant, "Bob", "Smith", "BobSmith", password, email);
@@ -213,7 +224,8 @@ namespace CUWebinars.Business.Tests
                 refDataRepositoryMock.Object,
                 samAuthenticationServiceMock,
                 userAccountServiceFake,
-                webUserRepositoryMock.Object
+                webUserRepositoryMock.Object,
+                logger
                 );
 
             //  Act
@@ -251,7 +263,8 @@ namespace CUWebinars.Business.Tests
                 refDataRepositoryMock.Object,
                 samAuthenticationServiceMock,
                 userAccountServiceFake,
-                webUserRepositoryMock.Object
+                webUserRepositoryMock.Object,
+                logger
                 );
 
             //  Act
@@ -288,7 +301,8 @@ namespace CUWebinars.Business.Tests
                 refDataRepositoryMock.Object,
                 samAuthenticationServiceMock,
                 userAccountServiceFake,
-                webUserRepositoryMock.Object
+                webUserRepositoryMock.Object,
+                logger
                 );
 
             var newGuy = membershipService.CreateWebUser(Globals.Tenant,
@@ -324,7 +338,8 @@ namespace CUWebinars.Business.Tests
                 refDataRepositoryMock.Object,
                 samAuthenticationServiceMock,
                 userAccountServiceFake,
-                webUserRepositoryMock.Object
+                webUserRepositoryMock.Object,
+                logger
                 );
 
             var newGuy = membershipService.CreateWebUser(Globals.Tenant,
@@ -356,7 +371,8 @@ namespace CUWebinars.Business.Tests
                 refDataRepositoryMock.Object,
                 samAuthenticationServiceMock,
                 userAccountService,
-                webUserRepositoryMock.Object
+                webUserRepositoryMock.Object,
+                logger
                 );
 
             membershipService.AddRegistrationTypeNotVerifiedClaim(

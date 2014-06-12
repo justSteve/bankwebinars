@@ -9,6 +9,7 @@ using CUWebinars.Business.Services;
 using CUWebinars.Web.App_Start;
 using CUWebinars.Web.Services;
 using Newtonsoft.Json.Linq;
+using Ninject.Extensions.Logging;
 using Ninject.Extensions.Logging.Log4net.Infrastructure;
 using System;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace CUWebinars.Tests.Common
     {
         public static IMembershipService CreateMembershipService()
         {
+            ILogger logger = new Log4NetLogger(typeof(MembershipService));
             var ctx = new TTSWebinarsContext();
             var refDataRepository = new RefDataRepository();
             var config = MembershipRebootConfig.Create(HttpRuntime.AppDomainAppPath, new StateService(),
@@ -30,7 +32,8 @@ namespace CUWebinars.Tests.Common
                 new RefDataRepository(),
                 new SamAuthenticationService(userAccountService),
                 userAccountService,
-                new WebUserRepository(ctx)
+                new WebUserRepository(ctx),
+                logger
                 );
 
             return membershipService;

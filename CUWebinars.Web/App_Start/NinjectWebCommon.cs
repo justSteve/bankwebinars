@@ -129,13 +129,16 @@ namespace CUWebinars.Web.App_Start
             {
                 var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
                 var userAccountService = kernel.Get<UserAccountService>();
+                ILogger loggerForMembershipService = new Log4NetLogger(typeof(MembershipService));
+
 
                 return new MembershipService(
                     new InstitutionRepository(sharedContext),
                     new RefDataRepository(),
                     new SamAuthenticationService(userAccountService),
                     userAccountService,
-                    new WebUserRepository(sharedContext)
+                    new WebUserRepository(sharedContext),
+                    loggerForMembershipService
                     );
             }).InRequestScope();
         }
