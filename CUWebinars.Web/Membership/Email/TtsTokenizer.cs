@@ -1,26 +1,22 @@
 ﻿using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
-using CUWebinars.Business.Repository;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Services;
 using RazorEngine.Templating;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
 
 namespace CUWebinars.Web.Membership.Email
 {
     public class TtsTokenizer : EmailMessageFormatter.Tokenizer
     {
         private readonly IStateService _stateService;
-        private readonly IRefDataRepository _refDataRepository;
 
-        public TtsTokenizer(IStateService stateService, IRefDataRepository refDataRepository)
+        public TtsTokenizer(IStateService stateService)
         {
             _stateService = stateService;
-            _refDataRepository = refDataRepository;
         }
 
         public override string Tokenize(UserAccountEvent<UserAccount> accountEvent, ApplicationInformation appInfo,
@@ -28,7 +24,7 @@ namespace CUWebinars.Web.Membership.Email
         {
             WebUser webUser = _stateService.GetValue<WebUser>(Constants.CurrentUser);
 
-            var body = new TemplateService();
+            var templateService = new TemplateService();
             var user = accountEvent.Account;
 
             var notification = new Notification
@@ -51,18 +47,27 @@ namespace CUWebinars.Web.Membership.Email
                 {
                     var verificationKey = values[DomainConstants.VerificationKey];
 
+                    //  We are adding this to session because it is used in the RegisterUser flow to automatically verify a new user
+                    //  in the MembershipReboot sense. CUWebinars verifies it in its own way. This is a hack of MembershipReboot, 
+                    //  but necessary to meet the app's requirements.
                     if (!_stateService.HasValue(DomainConstants.VerificationKey))
                         _stateService.SetValue(DomainConstants.VerificationKey, verificationKey);
 
                     notification.ConfirmPasswordResetUrl = Path.Combine(notification.ConfirmPasswordResetUrl,
                         verificationKey);
+
+                    //  "blank" is concatenated to the end so that it matches the route called EmailLinkRoute (See RouteConfig.cs). 
+                    //  The "surname" part of that route is something other than "blank" when the user is registered by way of an 
+                    //  Order being imported.
                     notification.ConfirmChangeEmailUrl = string.Concat(
                         Path.Combine(notification.ConfirmChangeEmailUrl, accountEvent.Account.Email),
-                        Path.AltDirectorySeparatorChar + "blank"
+                        Path.AltDirectorySeparatorChar + DomainConstants.Blank
                         );
                     notification.CancelVerificationUrl = Path.Combine(notification.CancelVerificationUrl,
                         verificationKey);
 
+                    //  We also add the ConfirmChangeEmailLink string to session where user is registered via an Order being imported.
+                    //  This is used downstream in the flow to determine whether
                     if (_stateService.HasValue(DomainConstants.UserCreatedViaNewOrder) && !_stateService.HasValue(DomainConstants.ConfirmChangeEmailLink))
                     {
                         _stateService.SetValue(DomainConstants.ConfirmChangeEmailLink, notification.ConfirmChangeEmailUrl);
@@ -79,9 +84,9 @@ namespace CUWebinars.Web.Membership.Email
                 }
             }
 
-            var b = body.Parse(msg, notification, null, null);
+            var razorParsedResult = templateService.Parse(msg, notification, null, null);
 
-            return b.Trim();
+            return razorParsedResult.Trim();
         }
     }
 }

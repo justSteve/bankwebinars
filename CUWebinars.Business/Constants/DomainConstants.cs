@@ -5,6 +5,7 @@ namespace CUWebinars.Business.Constants
     {
         public const string Active = "A";
         public const string BillingAddress = "Billing";
+        public const string Blank = "blank";
         public const string ConfirmChangeEmailLink = "ConfirmChangeEmailLink";
         public const string RazorExtension = ".cshtml";
         public const string ShippingAddress = "Shipping";

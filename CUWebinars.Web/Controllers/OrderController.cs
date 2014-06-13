@@ -263,7 +263,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception exception)
             {
-                var errString = String.Format("Order creation failed on {0} - {1} with msg: {2}", incomingOrderModel.Email, incomingOrderModel.idWebinar, exception.Message);
+                var errString = string.Format("Order creation failed on {0} - {1} with msg: {2}", incomingOrderModel.Email, incomingOrderModel.idWebinar, exception.Message);
                 _logger.Error(errString);
             }
 

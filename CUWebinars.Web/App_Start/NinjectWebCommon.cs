@@ -76,16 +76,14 @@ namespace CUWebinars.Web.App_Start
         private static void RegisterServices(IKernel kernel)
         {
             string baseUrl = HttpRuntime.AppDomainAppPath;
+
             kernel.Bind<IStateService>().To<StateService>().InRequestScope();
             kernel.Bind<IRefDataRepository>().To<RefDataRepository>().InRequestScope();
             kernel.Bind<TTSWebinarsContext>().ToSelf().InRequestScope();
 
-            //var config = MembershipRebootConfig.Create(baseUrl, kernel.Get<IStateService>(),
-            //    kernel.Get<IRefDataRepository>(), kernel.Get<ILogger>());
             kernel.Bind<MembershipRebootConfiguration>().ToMethod(ctx =>
                 MembershipRebootConfig.Create(baseUrl,
-                    kernel.Get<IStateService>(),
-                    kernel.Get<IRefDataRepository>()
+                    kernel.Get<IStateService>()
                     )).InRequestScope();
 
 
