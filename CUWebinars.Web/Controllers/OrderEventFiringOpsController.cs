@@ -28,7 +28,7 @@ namespace CUWebinars.Web.Controllers
 
         public PartialViewResult ResendOrderConfirmation()
         {
-            var model = new ResendOrderConfirmationViewModel
+            var model = new ResendOrderInformationViewModel
             {
                 OrderId = string.Empty
             };
@@ -38,6 +38,30 @@ namespace CUWebinars.Web.Controllers
 
         [HttpPost]
         public ActionResult ResendOrderConfirmation(int orderId)
+        {
+            var order = _orderManagementService.GetOrderById(orderId);
+
+            if (ReferenceEquals(null, order))
+            {
+                return Json(new { Result = WebUiConstants.Fail });
+            }
+
+            _orderManagementService.FireOrderSubmittedEvent(order);
+            return Json(new { Result = WebUiConstants.Success });
+        }
+
+        public PartialViewResult ResendConnectionInfo()
+        {
+            var model = new ResendOrderInformationViewModel
+            {
+                OrderId = string.Empty
+            };
+
+            return PartialView("_resendConnectionInfo", model);
+        }
+
+        [HttpPost]
+        public ActionResult ResendConnectionInfo(int orderId)
         {
             var order = _orderManagementService.GetOrderById(orderId);
 

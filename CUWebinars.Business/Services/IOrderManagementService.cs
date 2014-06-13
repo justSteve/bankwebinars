@@ -27,6 +27,7 @@ namespace CUWebinars.Business.Services
 
         void DeleteWebinar(int webinarId);
         void DispatchDummyOrder();
+        void FireOrderSubmittedEvent(Order order);
         IEnumerable<RegType> FindRegTypesByWebinarId(int webinarId);
         void FireSendConnectionInfoNotificationEvent(IList<Order> orders);
         void FireSendOrderShippedNotificationEvent(IList<Order> orders);

@@ -461,6 +461,35 @@ namespace CUWebinars.Business.Services
             return _regTypeRepository.FindRegTypesByWebinarId(webinarId, false);
         }
 
+        public void FireOrderSubmittedEvent(Order order)
+        {
+            _logger.Info("Adding Event for Order {0}", order.idOrder);
+
+            var orderSubmittedViewModel = new OrderSubmittedViewModel
+            {
+                ConfirmChangeEmailUrl = string.Empty,
+                Order = order,
+                UserCreatedOnImport = false
+            };
+
+            var relativePath = Path.Combine(@"App_Data\Notifications", string.Format("OrderNotification-{0}{1}", DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss-fff-tt"), ".htm"));
+
+            AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
+            {
+                EventObject = orderSubmittedViewModel,
+                RelativeFilePath = relativePath
+            });
+
+            _logger.Info("Persisted Email for Order {0}:{1}", order.idOrder, relativePath);
+
+            foreach (var evt in GetEvents())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            Clear();
+        }
+
         public void FireSendRecordingIsPostedEvent(IList<Order> orders)
         {
             foreach (var order in orders)
