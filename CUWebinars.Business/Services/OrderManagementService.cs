@@ -76,7 +76,6 @@ namespace CUWebinars.Business.Services
         {
             try
             {
-                throw new Exception("Booya");
                 var regType = _regTypeRepository.FindRegType(registrationType);
                 return _orderRepository.CreateOrderRow(webinar, additionalLocation, regType);
             }
