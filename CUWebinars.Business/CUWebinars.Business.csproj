@@ -120,6 +120,7 @@
     <Compile Include="Core\Helpers\DateTimeHelper.cs" />
     <Compile Include="Core\Helpers\GenericHelpers.cs" />
     <Compile Include="Core\Helpers\ValidationHelper.cs" />
+    <Compile Include="Core\Tracing\Log4NetTracer.cs" />
     <Compile Include="Core\Tracing\Tracer.cs" />
     <Compile Include="Models\GTWebinar.cs" />
     <Compile Include="Models\Mapping\GTWebinarMap.cs" />

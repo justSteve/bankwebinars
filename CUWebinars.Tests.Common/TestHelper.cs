@@ -24,8 +24,9 @@ namespace CUWebinars.Tests.Common
             ILogger logger = new Log4NetLogger(typeof(MembershipService));
             var ctx = new TTSWebinarsContext();
             var refDataRepository = new RefDataRepository();
-            var config = MembershipRebootConfig.Create(HttpRuntime.AppDomainAppPath, new StateService(),
-                refDataRepository);
+            var config = MembershipRebootConfig.Create(
+                HttpRuntime.AppDomainAppPath, new StateService()
+                );
             var userAccountService = new UserAccountService(config, new DefaultUserAccountRepository());
 
             IMembershipService membershipService = new MembershipService(new InstitutionRepository(ctx),
