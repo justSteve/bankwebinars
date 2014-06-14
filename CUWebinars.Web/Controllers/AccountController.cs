@@ -485,6 +485,20 @@ namespace CUWebinars.Web.Controllers
             loginModel.ActiveTab = "login";
             return View(loginModel);
         }
+        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
+        public ActionResult SignInForExcelFile(SignInModel model)
+        {
+            if (ModelState.IsValid && _membershipService.LogInUser(globalConfig.Tenant, model.Email, model.Password, model.RememberMe))
+            {
+                return Content("true");
+            }
+            else
+            {
+                return Content("false");
+            }
+        }
+
 
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]

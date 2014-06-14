@@ -10,12 +10,12 @@
                         select orderRow;
         var thisWebinar = orderRows.Single().Webinar;
     }
-    Confirmation of Registration: @orderRows.Single().RegistrationType.OptionLabel @thisWebinar.Title
+    Confirmation of Registration (CU-@orderRows.Single().idOrder): @thisWebinar.Title
 </title>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
-    @{
-        var handoutRepo = "http://ondemand.cuwebinars.com";
+@{
+    var handoutRepo = "http://ondemand.cuwebinars.com";
     var row = from orderRow in Model.Order.OrderRows
               where orderRow.RowStatus == OrderRowStatus.Active
               select orderRow;
@@ -42,7 +42,7 @@
     {
         phone = webinar.AccessPhoneAttendee;
     }
-    var HeaderText = "Your Order Confirmation for " + webinar.Title;
+    var HeaderText = "Confirmation of Registration (CU-" + row.Single().idOrder + "): @thisWebinar.Title";
     var BannerText = "Order Number: CU-" + Model.Order.idOrder + "<br />Type: " + row.Single().RegistrationType.OptionLabel;
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />

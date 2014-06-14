@@ -588,7 +588,7 @@ namespace CUWebinars.Business.Services
                     UserCreatedOnImport = linkToVerifyAccount
                 };
 
-                var relativePath = Path.Combine(@"App_Data\Notifications", string.Format("OrderNotification-{0}{1}", DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss-fff-tt"),".htm"));
+                var relativePath = Path.Combine(@"App_Data\Notifications", string.Format("OrderNotification-{0}{1}", DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss-fff-tt"), ".htm"));
 
                 AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
                 {
@@ -622,12 +622,12 @@ namespace CUWebinars.Business.Services
 
         public IList<Order> SelectOrdersWithRecordedWebinars(int idUser)
         {
-            return SelectOrdersWithRecordedWebinars(idUser);
+            return _orderRepository.SelectOrdersWithRecordedWebinars(idUser);
         }
 
         public IList<Order> SelectOrdersWithScheduledWebinars(int idUser)
         {
-            return SelectOrdersWithScheduledWebinars(idUser);
+            return  _orderRepository.SelectOrdersWithScheduledWebinars(idUser);
         }
 
         public void UpdateWebinar(Webinar webinar)

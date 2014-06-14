@@ -226,5 +226,16 @@ namespace CUWebinars.Web.Helpers
             return MvcHtmlString.Create(anchorHtml);
         }
 
+        public static bool IsDebug(this HtmlHelper htmlHelper)
+        {
+            //http://stackoverflow.com/questions/4696175/razor-view-engine-how-to-enter-preprocessorif-debug
+            // adds support for IfDebug compiler directive to razor views
+            #if DEBUG
+                        return true;
+            #else
+                              return false;
+            #endif
+        }
+
     }
 }
