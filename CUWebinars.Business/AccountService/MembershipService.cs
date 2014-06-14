@@ -6,6 +6,7 @@ using CUWebinars.Business.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Business.AccountService
 {
@@ -16,19 +17,22 @@ namespace CUWebinars.Business.AccountService
         private readonly AuthenticationService _samAuthenticationService;
         private readonly UserAccountService _userAccountService;
         private readonly IWebUserRepository _webUserRepository;
+        private readonly ILogger _logger;
 
 
         public MembershipService(IInstitutionRepository institutionRepository,
             IRefDataRepository refDataRepository,
             AuthenticationService samAuthenticationService,
             UserAccountService userAccountService,
-            IWebUserRepository webUserRepository)
+            IWebUserRepository webUserRepository,
+            ILogger logger)
         {
             _institutionRepository = institutionRepository;
             _refDataRepository = refDataRepository;
             _samAuthenticationService = samAuthenticationService;
             _userAccountService = userAccountService;
             _webUserRepository = webUserRepository;
+            _logger = logger;
         }
 
         public WebUser GetDetailsOfUser(string email)

@@ -18,11 +18,17 @@ namespace CUWebinars.Business.Repository
 
         }
 
+        public void Delete(Webinar webinar)
+        {
+            items.Remove(webinar);
+            db.SaveChanges();
+        }
+
         public Webinar FindByIdLoaded(int id)
         {
             var webinar = items.Include(w => w.OrderRows)
                 .Include(w => w.RegTypesGroupsXref)
-                .Include(w => w.Presenter)
+                .Include(w => w.Presenter.WebUser)
                 .Include(w => w.WebinarFiles)
                 .Include(w => w.WebinarTopicXrefs.Select(wt => wt.Topic))
                 .Where(w => w.idWebinar == id);
@@ -34,7 +40,10 @@ namespace CUWebinars.Business.Repository
         {
             return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
                 .Include(w => w.Presenter.WebUser)
-                .Where(w => (w.Status == WebinarStatus.Scheduled || w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress))
+                .Where(
+                    w =>
+                        (w.Status == WebinarStatus.Scheduled || w.Status == WebinarStatus.Active ||
+                         w.Status == WebinarStatus.InProgress))
                 .OrderByDescending(w => w.Date);
         }
 
@@ -49,7 +58,7 @@ namespace CUWebinars.Business.Repository
 
         public IQueryable<Topic> GetTopicsPerWebinar(int idWebinar)
         {
-            return ((TTSWebinarsContext)db).WebinarTopicXrefs
+            return ((TTSWebinarsContext) db).WebinarTopicXrefs
                 //.Include(x => x.Webinar)
                 //.Include(w => w.Topic)
                 .Where(t => t.idWebinar == idWebinar).Select(t => t.Topic);
@@ -59,7 +68,10 @@ namespace CUWebinars.Business.Repository
         {
             return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
                 .Include(w => w.Presenter.WebUser)
-                .Where(w => w.Status == WebinarStatus.Scheduled || w.Status == WebinarStatus.Recorded || w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress);
+                .Where(
+                    w =>
+                        w.Status == WebinarStatus.Scheduled || w.Status == WebinarStatus.Recorded ||
+                        w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress);
         }
 
 
@@ -73,14 +85,15 @@ namespace CUWebinars.Business.Repository
 
         public IQueryable<Order> GetOrdersByWebinar(int webinarId)
         {
-            return ((TTSWebinarsContext)db).Orders.Where(o => o.OrderRows.Single().Webinar.idWebinar == webinarId
-                    && (o.OrderStatus == OrderStatus.Billed
-                        || o.OrderStatus == OrderStatus.Paid
-                        || o.OrderStatus == OrderStatus.Submitted));
+            return ((TTSWebinarsContext) db).Orders.Where(o => o.OrderRows.Single().Webinar.idWebinar == webinarId
+                                                               && (o.OrderStatus == OrderStatus.Billed
+                                                                   || o.OrderStatus == OrderStatus.Paid
+                                                                   || o.OrderStatus == OrderStatus.Submitted));
         }
+
         public IQueryable<Order> GetAllOrdersByWebinarForUser(int webinarId, int userId)
         {
-            return ((TTSWebinarsContext)db).Orders
+            return ((TTSWebinarsContext) db).Orders
                 .Where(o => o.OrderRows.FirstOrDefault().Webinar.idWebinar == webinarId && o.idUser == userId);
         }
 
@@ -89,8 +102,10 @@ namespace CUWebinars.Business.Repository
             var webinars = items.Include(i => i.WebinarTopicXrefs.Select(w => w.Topic))
                 .Include(i => i.Presenter.WebUser)
                 .Where(w => w.WebinarTopicXrefs
-                .Any(t => t.idTopic == topicId)
-                    && (w.Status == WebinarStatus.Recorded || w.Status == WebinarStatus.Scheduled || w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress));
+                    .Any(t => t.idTopic == topicId)
+                            &&
+                            (w.Status == WebinarStatus.Recorded || w.Status == WebinarStatus.Scheduled ||
+                             w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress));
             //Logger.Debug("TopicId=" + topicId); 
 
             return webinars;
@@ -128,7 +143,7 @@ namespace CUWebinars.Business.Repository
                     //TODO: log this exception condition
                     continue;
                 }
-                if (((TTSWebinarsContext)db).RegTypes.Find(row.RegistrationType).ShowLiveNotifications == "No"
+                if (((TTSWebinarsContext) db).RegTypes.Find(row.RegistrationType).ShowLiveNotifications == "No"
                     //&& Order.OrderStatus == OrderStatus.Abandoned
                     //|| row.Status == OrderStatus.InProcess
                     //|| row.Status == OrderStatus.Canceled
@@ -145,6 +160,12 @@ namespace CUWebinars.Business.Repository
             //        || row.Status != OrderStatus.Abandoned) 
             //        && row.Status != OrderStatus.InProcess 
             //        && row.Status != OrderStatus.Canceled select order).ToList();
+        }
+
+        public void Update(Webinar webinar)
+        {
+            db.Entry(webinar).State = EntityState.Modified;
+            db.SaveChanges();
         }
     }
 }

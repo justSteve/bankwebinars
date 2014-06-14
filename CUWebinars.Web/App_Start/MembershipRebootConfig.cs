@@ -1,18 +1,14 @@
 ﻿using BrockAllen.MembershipReboot;
 using BrockAllen.MembershipReboot.WebHost;
-using CUWebinars.Business.Repository;
 using CUWebinars.Web.Membership.Email;
 using CUWebinars.Web.Services;
-using Glimpse.Core.Extensibility;
 
-using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Web.App_Start
 {
     public class MembershipRebootConfig
     {
-        public static MembershipRebootConfiguration Create(string pathToRootDirectory, IStateService stateService, IRefDataRepository refDataRepository)
-        //public static MembershipRebootConfiguration Create(string pathToRootDirectory, IStateService stateService, IRefDataRepository refDataRepository, Ninject.Extensions.Logging.ILogger logger)
+        public static MembershipRebootConfiguration Create(string pathToRootDirectory, IStateService stateService)
         {
             var settings = SecuritySettings.FromConfiguration();
             var config = new MembershipRebootConfiguration(settings);
@@ -26,9 +22,8 @@ namespace CUWebinars.Web.App_Start
                 "Account/RegisterCancel/",
                 "Account/PasswordResetConfirm/");
 
-            //var delivery = new TtsSmtpMessageDelivery(stateService, logger);
             var delivery = new TtsSmtpMessageDelivery(stateService);
-            var emailFormatter = new TtsEmailFormatter(appinfo, stateService, refDataRepository) { PathToRoot = pathToRootDirectory };
+            var emailFormatter = new TtsEmailFormatter(appinfo, stateService) { PathToRoot = pathToRootDirectory };
 
             // uncomment if you want email notifications -- also update smtp settings in web.config
             config.AddEventHandler(new EmailAccountEventsHandler(emailFormatter, delivery));

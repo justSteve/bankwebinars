@@ -8,6 +8,16 @@ namespace CUWebinars.Business.Repository
 {
     public class RefDataRepository : IRefDataRepository
     {
+        public IEnumerable<Presenter> GetAllPresenters()
+        {
+            using (var context = new TTSWebinarsContext())
+            {
+                context.Configuration.ProxyCreationEnabled = false;
+
+                return context.Presenters.ToList();
+            }
+        }
+
         public IQueryable<Institution> GetInstitutions()
         {
             using (var context = new TTSWebinarsContext())

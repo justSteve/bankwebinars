@@ -351,6 +351,32 @@ namespace CUWebinars.WebUi.Tests.Ie
             Assert.IsTrue(newPageDisplayed);
         }
 
+        [TestMethod]
+        [TestCategory(TestCategories.Gui)]
+        [TestCategory(TestCategories.IE)]
+        public void NavigateToWebinarDetailsPageListedByTopic()
+        {
+            var home = NavigateToHomeIndexPage();
+
+            var newPageDisplayed = home.ClickTopicsMenuItem();
+
+            Assert.IsTrue(newPageDisplayed);
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Gui)]
+        [TestCategory(TestCategories.IE)]
+        public void NavigateToWebinarDetailsPageListedByTopics()
+        {
+            var home = NavigateToHomeIndexPage();
+
+            var newPageDisplayed = home.ClickTopicsMenuItem();
+
+            home.ClickMoreButtonOnTopicsPage();
+
+            Assert.IsTrue(home.WebinarTitleIsDisplayedOnWebinarDetailsPage);
+        }
+
 
         public HomeIndexPage NavigateToHomeIndexPage()
         {

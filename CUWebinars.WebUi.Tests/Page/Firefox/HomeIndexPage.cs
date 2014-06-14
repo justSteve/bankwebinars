@@ -8,6 +8,5 @@ namespace CUWebinars.WebUi.Tests.Page.Firefox
             : base(seleniumTestDriver)
         {
         }
-
     }
 }

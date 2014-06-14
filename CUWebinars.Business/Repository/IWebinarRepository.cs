@@ -6,6 +6,8 @@ namespace CUWebinars.Business.Repository
 {
     public interface IWebinarRepository
     {
+        void Add(Webinar webinar);
+        void Delete(Webinar webinar);
         Webinar FindById(int id);
         Webinar FindByIdLoaded(int id);
         IQueryable<Webinar> GetUpcoming();
@@ -18,5 +20,6 @@ namespace CUWebinars.Business.Repository
         IList<Order> GetOrdersByWebinarForConnectionInfo(int id);
         Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id);
         IQueryable<Topic>  GetTopicsPerWebinar(int idWebinar);
+        void Update(Webinar webinar);
     }
 }

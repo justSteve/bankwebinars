@@ -1,29 +1,24 @@
-﻿using System;
-using System.IO;
-using BrockAllen.MembershipReboot;
-using CUWebinars.Business.AccountService;
-using CUWebinars.Business.Repository;
+﻿using BrockAllen.MembershipReboot;
 using CUWebinars.Web.Services;
+using System;
+using System.IO;
 
 namespace CUWebinars.Web.Membership.Email
 {
     public class TtsEmailFormatter : EmailMessageFormatter<UserAccount>
     {
         private readonly IStateService _stateService;
-        private readonly IRefDataRepository _refDataRepository;
-// ReSharper disable once InconsistentNaming
-        private string pathToTemplates;
+        private string _pathToTemplates;
 
-        public TtsEmailFormatter(ApplicationInformation appInfo, IStateService stateService, IRefDataRepository refDataRepository)
+        public TtsEmailFormatter(ApplicationInformation appInfo, IStateService stateService)
             : base(appInfo)
         {
             _stateService = stateService;
-            _refDataRepository = refDataRepository;
         }
 
         public string PathToRoot 
         {
-            set { pathToTemplates = Path.Combine(value, @"Membership\Email\EmailTemplates"); }
+            set { _pathToTemplates = Path.Combine(value, @"Membership\Email\EmailTemplates"); }
         }
 
         
@@ -50,7 +45,7 @@ namespace CUWebinars.Web.Membership.Email
 
         private string LoadTemplate(string name)
         {
-            name = Path.Combine(pathToTemplates, name);
+            name = Path.Combine(_pathToTemplates, name);
                         
             using (var s = File.OpenRead(name))
             {
@@ -65,7 +60,7 @@ namespace CUWebinars.Web.Membership.Email
 
         protected override Tokenizer GetTokenizer(UserAccountEvent<UserAccount> evt)
         {
-            return new TtsTokenizer(_stateService, _refDataRepository);
+            return new TtsTokenizer(_stateService);
         }
     }
 }

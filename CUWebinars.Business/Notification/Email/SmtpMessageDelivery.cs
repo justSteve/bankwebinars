@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Net.Configuration;
 using System.Net.Mail;
+using CUWebinars.Business.Core.Tracing;
 
 namespace CUWebinars.Business.Notification.Email
 {
@@ -9,7 +10,9 @@ namespace CUWebinars.Business.Notification.Email
     {
         public void Notify(INotificationMessage notificationMessage)
         {
+            var timeStamp = DateTime.Now;
             var mailMessage = new MailMessage();
+            var tmpMsg = string.Empty;
 
             if (String.IsNullOrWhiteSpace(notificationMessage.From))
             {
@@ -46,15 +49,51 @@ namespace CUWebinars.Business.Notification.Email
                     mailMessage.IsBodyHtml = true;
                     smtp.Send(mailMessage);
                 }
-                catch (SmtpException e)
+                catch (ArgumentNullException)
                 {
-                    
-                    //Tracing.Error("[SmtpMessageDelivery.Send] SmtpException: " + e.Message);
+                    Tracer.Error("Error MailerArgumentNullException: message is null ");
                 }
-                catch (Exception e)
+                catch (InvalidOperationException ex)
                 {
-                    //Tracing.Error("[SmtpMessageDelivery.Send] Exception: " + e.Message);
+                    tmpMsg = "ERROR MailerInvalidOperationException: " + notificationMessage.To;
+                    tmpMsg += " Subject: " + notificationMessage.Subject;
+                    tmpMsg += " ErrorMsg: " + ex.Message;
+                    tmpMsg += " Timestamp was: " + timeStamp;
+                    Tracer.Error(tmpMsg);
+
                 }
+                catch (SmtpFailedRecipientsException)
+                {
+                    tmpMsg = "ERROR MailerSmtpFailedRecipientsException: " + notificationMessage.To;
+                    tmpMsg += " Subject: " + notificationMessage.Subject;
+                    tmpMsg += " Timestamp was: " + timeStamp;
+                    Tracer.Error(tmpMsg);
+                }
+                catch (SmtpException ex)
+                {
+                    System.Threading.Thread.Sleep(2000);
+                    tmpMsg = "ERROR MailerSmtpException: " + notificationMessage.To;
+                    tmpMsg += " Subject: " + notificationMessage.Subject;
+                    tmpMsg += " ErrorMsg: " + ex.Message;
+                    tmpMsg += " Timestamp was: " + timeStamp;
+                    Tracer.Error(tmpMsg);
+                }
+                catch (Exception exception)
+                {
+                    System.Threading.Thread.Sleep(2000);
+                    tmpMsg = "ERROR MailerSmtpException: " + notificationMessage.To;
+                    tmpMsg += " Subject: " + notificationMessage.Subject;
+                    tmpMsg += " ErrorMsg: " + exception.Message;
+                    tmpMsg += " Timestamp was: " + timeStamp;
+                    Tracer.Error(tmpMsg);
+                }
+
+                tmpMsg = "MailerSent: " + notificationMessage.To;
+                tmpMsg += " Subject: " + notificationMessage.Subject;
+                tmpMsg += " Timestamp was: " + timeStamp;
+
+                Tracer.Information(tmpMsg);
+
             }
 
         }

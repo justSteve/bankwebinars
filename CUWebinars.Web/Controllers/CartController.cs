@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Web;
-using System.Web.Mvc;
-using CUWebinars.Business.AccountService;
+﻿using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
-using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
-using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Ninject.Extensions.Logging;
+using System;
+using System.Linq;
+using System.Web.Mvc;
 
 namespace CUWebinars.Web.Controllers
 {
@@ -23,18 +18,15 @@ namespace CUWebinars.Web.Controllers
 
         //Steve added MembershipService dependancy to allow for 'currentUser' in Details.
         private readonly IMembershipService _membershipService;
-        private readonly IWebinarRepository _webinarRepository;
         private readonly ILogger _logger;
         private readonly IOrderManagementService _orderManagementService;
 
         public CartController(IMembershipService membershipService, 
-            IWebinarRepository webinarRepository, 
             IOrderManagementService orderManagementService, 
             IStateService stateService, 
             ILogger logger)
         {
             _membershipService = membershipService;
-            _webinarRepository = webinarRepository;
             _logger = logger;
             _orderManagementService = orderManagementService;
             _stateService = stateService;

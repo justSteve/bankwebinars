@@ -1,23 +1,19 @@
 ﻿using BrockAllen.MembershipReboot;
+using CUWebinars.Business.Constants;
+using CUWebinars.Web.Services;
 using System;
 using System.Configuration;
 using System.Net.Configuration;
 using System.Net.Mail;
-using CUWebinars.Business.Constants;
-using CUWebinars.Web.Services;
-using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Web.Membership.Email
 {
     public class TtsSmtpMessageDelivery : IMessageDelivery
     {
         private readonly IStateService _stateService;
-        //private readonly ILogger _logger;
         public TtsSmtpMessageDelivery(IStateService stateService)
-        //public TtsSmtpMessageDelivery(IStateService stateService, ILogger logger)
         {
             _stateService = stateService;
-            //_logger = logger;
         }
 
         public void Send(Message msg)
@@ -29,8 +25,7 @@ namespace CUWebinars.Web.Membership.Email
 
             var mailMessage = new MailMessage();
             DateTime timeStamp = DateTime.Now;
-            //Logger.Instance.LogMessage("SenderTimer: " + timeStamp);
-            var tmpMsg = "";
+            var tmpMsg = string.Empty;
 
             if (string.IsNullOrWhiteSpace(msg.From))
             {
@@ -61,18 +56,14 @@ namespace CUWebinars.Web.Membership.Email
                 {
                     smtp.Send(mailMessage);
                 }
-                //catch (SmtpException e)
-                //{
-                //    _logger.Error("[SmtpMessageDelivery.Send] SmtpException: " + e.Message);
-                //}
                 catch (ArgumentNullException)
                 {
                     Tracing.Error("Error MailerArgumentNullException: message is null ");
                 }
                 catch (InvalidOperationException ex)
                 {
-                    tmpMsg = "ERROR MailerInvalidOperationException: " + msg.To.ToString();
-                    tmpMsg += " Subject: " + msg.Subject.ToString();
+                    tmpMsg = "ERROR MailerInvalidOperationException: " + msg.To;
+                    tmpMsg += " Subject: " + msg.Subject;
                     tmpMsg += " ErrorMsg: " + ex.Message;
                     tmpMsg += " Timestamp was: " + timeStamp;
                     Tracing.Error(tmpMsg);
@@ -80,28 +71,36 @@ namespace CUWebinars.Web.Membership.Email
                 }
                 catch (SmtpFailedRecipientsException)
                 {
-                    tmpMsg = "ERROR MailerSmtpFailedRecipientsException: " + msg.To.ToString();
-                    tmpMsg += " Subject: " + msg.Subject.ToString();
+                    tmpMsg = "ERROR MailerSmtpFailedRecipientsException: " + msg.To;
+                    tmpMsg += " Subject: " + msg.Subject;
                     tmpMsg += " Timestamp was: " + timeStamp;
                     Tracing.Error(tmpMsg);
                 }
                 catch (SmtpException ex)
                 {
                     System.Threading.Thread.Sleep(2000);
-                    tmpMsg = "ERROR MailerSmtpException: " + msg.To.ToString();
-                    tmpMsg += " Subject: " + msg.Subject.ToString();
+                    tmpMsg = "ERROR MailerSmtpException: " + msg.To;
+                    tmpMsg += " Subject: " + msg.Subject;
                     tmpMsg += " ErrorMsg: " + ex.Message;
                     tmpMsg += " Timestamp was: " + timeStamp;
                     Tracing.Error(tmpMsg);
                 }
+                catch (Exception exception)
+                {
+                    System.Threading.Thread.Sleep(2000);
+                    tmpMsg = "ERROR MailerSmtpException: " + msg.To;
+                    tmpMsg += " Subject: " + msg.Subject;
+                    tmpMsg += " ErrorMsg: " + exception.Message;
+                    tmpMsg += " Timestamp was: " + timeStamp;
+                    Tracing.Error(tmpMsg);
+                }
 
-                tmpMsg = "MailerSent: " + msg.To.ToString();
-                tmpMsg += " Subject: " + msg.Subject.ToString();
+                tmpMsg = "MailerSent: " + msg.To;
+                tmpMsg += " Subject: " + msg.Subject;
                 tmpMsg += " Timestamp was: " + timeStamp;
 
                 Tracing.Information(tmpMsg);
             }
-
         }
     }
 }

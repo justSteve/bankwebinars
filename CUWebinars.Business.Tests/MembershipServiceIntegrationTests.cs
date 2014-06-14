@@ -11,6 +11,7 @@ using CUWebinars.Business.Repository;
 using CUWebinars.Business.Tests.Config;
 using CUWebinars.Tests.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Ninject.Extensions.Logging.Log4net.Infrastructure;
 
 namespace CUWebinars.Business.Tests
 {
@@ -50,12 +51,14 @@ namespace CUWebinars.Business.Tests
             var refDataRepository = new RefDataRepository();
             var config = MembershipRebootConfig.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TestConstants.UpTwoFolders), new StateService(), refDataRepository);
             var userAccountService = new UserAccountService(config, new DefaultUserAccountRepository());
-            
+            var logger = new Log4NetLogger(typeof(MembershipService));
+
             IMembershipService membershipService = new MembershipService(new InstitutionRepository(ctx), 
                 new RefDataRepository(), 
                 new SamAuthenticationService(userAccountService),
                 userAccountService,
-                new WebUserRepository(ctx)
+                new WebUserRepository(ctx),
+                logger
                 );
 
             var userAccount = membershipService.CreateUser(Globals.Tenant, 
@@ -196,12 +199,14 @@ namespace CUWebinars.Business.Tests
                 MembershipRebootConfig.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TestConstants.UpTwoFolders),
                     new StateService(), refDataRepository);
             var userAccountService = new UserAccountService(config, new DefaultUserAccountRepository());
+            var logger = new Log4NetLogger(typeof(MembershipService));
 
             IMembershipService membershipService = new MembershipService(new InstitutionRepository(ctx),
                 new RefDataRepository(),
                 new SamAuthenticationService(userAccountService),
                 userAccountService,
-                new WebUserRepository(ctx)
+                new WebUserRepository(ctx),
+                logger
                 );
             return membershipService;
         }

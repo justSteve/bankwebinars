@@ -1,4 +1,4 @@
-﻿using BrockAllen.MembershipReboot;
+﻿using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Exceptions;
 using CUWebinars.Business.Models;
@@ -76,12 +76,13 @@ namespace CUWebinars.Business.Services
         {
             try
             {
+                throw new Exception("Booya");
                 var regType = _regTypeRepository.FindRegType(registrationType);
                 return _orderRepository.CreateOrderRow(webinar, additionalLocation, regType);
             }
             catch (Exception exception)
             {
-                _logger.ErrorException("CreateOrderRow", exception);
+                _logger.ErrorException("CreateOrderRow method", exception);
                 throw;
             }
         }
@@ -94,7 +95,7 @@ namespace CUWebinars.Business.Services
             }
             catch (Exception exception)
             {
-                _logger.ErrorException("CreateOrderRow", exception);
+                _logger.ErrorException("CreateOrderRow  method", exception);
             }
 
             return null;
@@ -103,12 +104,55 @@ namespace CUWebinars.Business.Services
 
         public AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullname)
         {
-            return _orderRepository.CreateAdditionalLocation(email, price, fullname);
+            if(string.IsNullOrWhiteSpace(email))
+                throw new ArgumentException("Email paramter was either null or white space.", "email");
+
+            try
+            {
+                return _orderRepository.CreateAdditionalLocation(email, price, fullname);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException(string.Format("CreateAdditionalLocation method - values passed in {0},{1},{2}.", email, price, fullname), exception);
+                throw;
+            }
         }
 
         public Affiliate GetAffiliateById(int id)
         {
             return _affiliateRepository.FindById(id);
+        }
+
+        public IEnumerable<Webinar> GetAllActive()
+        {
+            try
+            {
+                return _webinarRepository.GetAllActive().ToList();
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("GetAllActive method", exception);
+                throw;
+            }
+        }
+
+        public IEnumerable<Presenter> GetAllPresenters()
+        {
+            try
+            {
+                return _refDataRepository.GetAllPresenters();
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("GetAllPresenters method", exception);
+                throw;
+            }
+
+        }
+
+        public IEnumerable<Webinar> GetByTopic(int topicId)
+        {
+            return _webinarRepository.GetByTopic(topicId);
         }
 
 
@@ -136,6 +180,11 @@ namespace CUWebinars.Business.Services
         {
             return _regTypeRepository.FindRegTypesByWebinarId(id, false);
             return null;
+        }
+
+        public IEnumerable<Topic> GetTopicsPerWebinar(int idWebinar)
+        {
+            return _webinarRepository.GetTopicsPerWebinar(idWebinar).ToList();
         }
 
         public OrderRow GetOrderRowById(int idOrderRow)
@@ -205,6 +254,17 @@ namespace CUWebinars.Business.Services
 
         }
 
+
+        public void AddWebinar(Webinar webinar)
+        {
+            _webinarRepository.Add(webinar);
+        }
+
+        public void DeleteWebinar(int webinarId)
+        {
+            var webinar = GetWebinar(webinarId);
+            _webinarRepository.Delete(webinar);
+        }
 
         public void DispatchDummyOrder()
         {
@@ -401,6 +461,35 @@ namespace CUWebinars.Business.Services
             return _regTypeRepository.FindRegTypesByWebinarId(webinarId, false);
         }
 
+        public void FireOrderSubmittedEvent(Order order)
+        {
+            _logger.Info("Adding Event for Order {0}", order.idOrder);
+
+            var orderSubmittedViewModel = new OrderSubmittedViewModel
+            {
+                ConfirmChangeEmailUrl = string.Empty,
+                Order = order,
+                UserCreatedOnImport = false
+            };
+
+            var relativePath = Path.Combine(@"App_Data\Notifications", string.Format("OrderNotification-{0}{1}", DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss-fff-tt"), ".htm"));
+
+            AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
+            {
+                EventObject = orderSubmittedViewModel,
+                RelativeFilePath = relativePath
+            });
+
+            _logger.Info("Persisted Email for Order {0}:{1}", order.idOrder, relativePath);
+
+            foreach (var evt in GetEvents())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            Clear();
+        }
+
         public void FireSendRecordingIsPostedEvent(IList<Order> orders)
         {
             foreach (var order in orders)
@@ -492,9 +581,10 @@ namespace CUWebinars.Business.Services
 
                 _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
 
+                
                 var orderSubmittedViewModel = new OrderSubmittedViewModel
                 {
-                    ConfirmChangeEmailUrl = linkToVerifyAccount ? string.Concat(confirmChangeEmailLink.Replace("blank", string.Empty), currentOrder.WebUser.LastName.ToLower()) : string.Empty,
+                    ConfirmChangeEmailUrl = linkToVerifyAccount ? string.Concat(confirmChangeEmailLink.Replace(DomainConstants.Blank, string.Empty), currentOrder.WebUser.LastName.ToLower()) : string.Empty,
                     Order = updatedOrder,
                     UserCreatedOnImport = linkToVerifyAccount
                 };
@@ -521,7 +611,7 @@ namespace CUWebinars.Business.Services
             }
             catch (Exception exception)
             {
-                _logger.Error("SaveOrderChanges: {0}", exception.Message);
+                _logger.ErrorException(string.Format("SaveOrderChanges method: {0}", exception.Message), exception);
             }
             return null;
         }
@@ -539,6 +629,11 @@ namespace CUWebinars.Business.Services
         public IList<Order> SelectOrdersWithScheduledWebinars(int idUser)
         {
             return  _orderRepository.SelectOrdersWithScheduledWebinars(idUser);
+        }
+
+        public void UpdateWebinar(Webinar webinar)
+        {
+            _webinarRepository.Update(webinar);
         }
 
         public int CheckUserForRecordingAccess(int w, int u)
@@ -631,7 +726,7 @@ namespace CUWebinars.Business.Services
             }
             catch (WebException webException)
             {
-                _logger.Error("CreateRegistrantKey WebException: " + billingEmail + ", " + webinarKey + ". ExceptionMsg = " + webException.Message);
+                _logger.ErrorException(string.Format("CreateRegistrantKey WebException: {0}, {1}. ExceptionMsg = {2}",billingEmail, webinarKey, webException.Message), webException);
                 var httpWebResponse = webException.Response as HttpWebResponse;
 
                 if (httpWebResponse != null &&
@@ -648,18 +743,37 @@ namespace CUWebinars.Business.Services
                     return responsePayload;
                 }
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                _logger.ErrorException("CreateRegistrantKey WebException: " + billingEmail + ", " + webinarKey, ex);
+                _logger.ErrorException(string.Format("CreateRegistrantKey Exception: {0}, {1}. ExceptionMsg = {2}", billingEmail, webinarKey, exception.Message), exception);
+
                 return "error";
             }
             return null;
         }
 
-        string IOrderManagementService.CreateCalendarEvent(string title, string body, DateTime startDate, double duration, string location,
-            string organizer, string eventId, bool allDayEvent)
+        string IOrderManagementService.CreateCalendarEvent(string title, 
+            string body, 
+            DateTime startDate, 
+            double duration, 
+            string location,
+            string organizer, 
+            string eventId, 
+            bool allDayEvent)
         {
-            return CreateCalendarEvent(title, body, startDate, duration, location, organizer, eventId, allDayEvent);
+            try
+            {
+                return CreateCalendarEvent(title, body, startDate, duration, location, organizer, eventId, allDayEvent);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException(string.Format("Title:{0},body:{1},startDate:{2},duration{3},location{4},organizer{5},eventId{6},allDayEvent" +
+                                                     "{7}", title, body, startDate.ToString("yyyy-MM-dd-hh-mm-ss-fff-tt"), duration, location, 
+                                                     organizer, eventId, allDayEvent), 
+                                                     exception
+                                                     );
+                throw;
+            }
         }
 
         public void Clear()

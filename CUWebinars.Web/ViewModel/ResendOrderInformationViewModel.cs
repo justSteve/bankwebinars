@@ -2,7 +2,7 @@
 
 namespace CUWebinars.Web.ViewModel
 {
-    public class ResendOrderConfirmationViewModel
+    public class ResendOrderInformationViewModel
     {
         [Required]
         [Display(Name = "Order Id")]

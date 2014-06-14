@@ -452,7 +452,7 @@
     <Compile Include="ViewModel\GTWRegistrantViewModel.cs" />
     <Compile Include="ViewModel\ImportOrderViaDashboardViewModel.cs" />
     <Compile Include="ViewModel\RegisterViewModel.cs" />
-    <Compile Include="ViewModel\ResendOrderConfirmationViewModel.cs" />
+    <Compile Include="ViewModel\ResendOrderInformationViewModel.cs" />
     <Compile Include="ViewModel\WebinarDetailsViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1159,6 +1159,7 @@
     <Content Include="Views\MembershipNotificationOps\_ManualPasswordReset.cshtml" />
     <Content Include="Views\Account\ThankYouConfirmed.cshtml" />
     <Content Include="Views\OrderEventFiringOps\_resendOrderConfirmation.cshtml" />
+    <Content Include="Views\OrderEventFiringOps\_resendConnectionInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Notifications\" />

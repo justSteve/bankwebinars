@@ -125,6 +125,25 @@ namespace CUWebinars.WebUi.Tests.Page
             SeleniumTestDriver.FindByIdClick("TheSubmitButton");
         }
 
+        public void ClickMoreButtonOnTopicsPage()
+        {
+            SeleniumTestDriver.FindByCssSelectorClick("#eventBody > p:nth-child(2) > a");
+        }
+
+        public bool WebinarTitleIsDisplayedOnWebinarDetailsPage
+        {
+            get { return SeleniumTestDriver.FindByCssSelector("#webinarTitle > div > h1").Displayed; }
+        }
+
+
+        public virtual bool ClickTopicsMenuItem()
+        {
+            SeleniumTestDriver.HoverOverElement(SelectorStrategy.XPath, @"//*[@id='main_menu']/ul/li[2]/a");
+
+            SeleniumTestDriver.FindByXPathClick(@"//*[@id='main_menu']/ul/li[2]/ul/li[3]/a");
+
+            return SeleniumTestDriver.FindByXPath("//*[@id='page']/div[1]/div/h1").Displayed;
+        }
 
         public void ClickYesUseAddressButton()
         {

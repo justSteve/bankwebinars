@@ -5,11 +5,12 @@ namespace CUWebinars.Business.Repository
 {
     public interface IRefDataRepository
     {
-        IEnumerable<Address> GetAddressesForUser(int id);
-        IQueryable<Institution> GetInstitutions();
-        WebUser GetWebUserByEmail(string email);        
-        IQueryable<WebUser> GetWebUsers();
-        int GetMaxWebUserId();
         IList<Order> FindOrdersByUserId(int id);
+        IEnumerable<Address> GetAddressesForUser(int id);
+        IEnumerable<Presenter> GetAllPresenters();
+        IQueryable<Institution> GetInstitutions();
+        int GetMaxWebUserId();
+        IQueryable<WebUser> GetWebUsers();
+        WebUser GetWebUserByEmail(string email);
     }
 }

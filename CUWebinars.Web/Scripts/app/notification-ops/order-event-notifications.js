@@ -2,6 +2,7 @@
     inputFormFieldsDiv,
     failedScreenMessage,
     getAdhocEventsHtmlButton,
+    getResendConnectionInfoHtmlButton,
     getResendOrderConfirmationHtmlButton,
     getSendConnectionInfoEventHtmlButton,
     getSendRecordingPostedEventHtmlButton,
@@ -10,6 +11,7 @@
     noOrdersScreenMessage,
     getRecipientsButton,
     regTypesCheckBoxesDiv,
+    resendConnectionInfoUrl,
     resendOrderConfirmationUrl,
     selectedUpcomingWebinarId,
     selectedUpcomingWebinarIdDropDown,
@@ -25,6 +27,9 @@
 //  Create a namespace. PageObjects is getting polluted across js files.
 var OENS = {
     PageObjects: {
+        getResendConnectionInfoHtmlButton: function () {
+            return getResendConnectionInfoHtmlButton || $('#GetResendConnectionInfoHtmlButton');
+        },
         GetResendOrderConfirmationHtmlButton: function () {
             return getResendOrderConfirmationHtmlButton|| $('#GetResendOrderConfirmationHtmlButton');
         },
@@ -67,9 +72,11 @@ $(function () {
     sendConnectionInfoUrl = '/OrderEventFiringOps/SendConnectionInfo';
     sendReminderUrl = '/OrderEventFiringOps/SendReminder';
     sendRecordingPostedUrl = '/OrderEventFiringOps/SendRecordingPosted';
+    resendConnectionInfoUrl = '/OrderEventFiringOps/ResendConnectionInfo';
     resendOrderConfirmationUrl = '/OrderEventFiringOps/ResendOrderConfirmation';
     sendOrderShippedUrl = '/OrderEventFiringOps/SendShippedOrder';
 
+    getResendConnectionInfoHtmlButton = $('#GetResendConnectionInfoHtmlButton');
     getResendOrderConfirmationHtmlButton = $('#GetResendOrderConfirmationHtmlButton');
     getSendConnectionInfoEventHtmlButton = $('#GetSendConnectionInfoEventHtmlButton');
     getSendRecordingPostedEventHtmlButton = $('#GetSendRecordingPostedEventHtmlButton');
@@ -79,12 +86,54 @@ $(function () {
     waitIndicator = $('#WaitIndicator');
     waitIndicator.hide();
 
+
+    getResendConnectionInfoHtmlButton.on('click', function(eventArgs) {
+        eventArgs.preventDefault();
+        OENS.PageObjects.InputFormFieldsDiv().empty();
+
+        OENS.PageObjects.InputFormFieldsDiv().load(resendConnectionInfoUrl, function () {
+
+            $('#ResendConnectionInfoButton').on('click', function () {
+
+                labelCheckRemove();
+
+                var orderId = $.trim($('#OrderId').val());
+
+                $.ajax({
+                    type: 'POST',
+                    contentType: constants.JsonContentType,
+                    cache: false,
+                    url: resendConnectionInfoUrl,
+                    dataType: constants.JsonDataType,
+                    data: JSON.stringify({ orderId: orderId }),
+                    beforeSend: function () {
+                        OENS.PageObjects.WaitIndicator().show();
+                    }
+                }).done(function (result) {
+
+                    if (result.Result === 'Success') {
+                        OENS.PageObjects.InputFormFieldsDiv().append(successScreenMessage);
+                    } else if (result.Result === 'Fail') {
+                        OENS.PageObjects.InputFormFieldsDiv().append(noOrderScreenMessage);
+                    }
+
+                }).fail(function () {
+
+                }).always(function () {
+                    OENS.PageObjects.WaitIndicator().hide();
+                });
+            });
+
+        });
+    });
+            
     getResendOrderConfirmationHtmlButton.on('click', function(eventArgs) {
+        eventArgs.preventDefault();
         OENS.PageObjects.InputFormFieldsDiv().empty();
 
         OENS.PageObjects.InputFormFieldsDiv().load(resendOrderConfirmationUrl, function () {
 
-            $('#ResendOrderConfirmationViewModelButton').on('click', function () {
+            $('#ResendOrderConfirmationButton').on('click', function () {
 
                 labelCheckRemove();
 
