@@ -106,6 +106,10 @@
     <Compile Include="WebUiTestHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CUWebinars.Business\CUWebinars.Business.csproj">
+      <Project>{d4250c01-6ee8-4d3c-ae39-9cd038422210}</Project>
+      <Name>CUWebinars.Business</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CUWebinars.Selenium.Core\CUWebinars.Selenium.Core.csproj">
       <Project>{12062741-74ad-4a12-a5c8-e520dc4cc118}</Project>
       <Name>CUWebinars.Selenium.Core</Name>

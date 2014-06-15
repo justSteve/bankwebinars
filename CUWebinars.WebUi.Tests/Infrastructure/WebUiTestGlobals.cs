@@ -15,6 +15,7 @@ namespace CUWebinars.WebUi.Tests.Infrastructure
         public string IeWebDriverPath { get; set; }
         public string IeWebDriverPort { get; set; }
         public string MembershipNotificationsUrl { get; set; }
+        public string MembershipRebootConnection { get; set; }
         public string Tenant { get; set; }
 
         public string TtsDatabaseConnectionString { get; set; }
@@ -23,24 +24,25 @@ namespace CUWebinars.WebUi.Tests.Infrastructure
         {
             static GlobalSingletonCreator()
             {
-                NameValueCollection ApplicationSettingsSection = ConfigurationManager.AppSettings;
+                NameValueCollection applicationSettingsSection = ConfigurationManager.AppSettings;
                 ConnectionStringSettingsCollection connectionStringSettingsSection = ConfigurationManager.ConnectionStrings;
 
-                if (ReferenceEquals(null, ApplicationSettingsSection))
+                if (ReferenceEquals(null, applicationSettingsSection))
                 {
                     throw new ArgumentNullException("AppSettings not found in config file as expected.");
                 }
 
-                UniqueInstance.IeWebDriverPath = ApplicationSettingsSection["IeWebDriverPath"];
-                UniqueInstance.IeWebDriverPort = ApplicationSettingsSection["IeWebDriverPort"];
-                UniqueInstance.ChromeWebDriverPort = ApplicationSettingsSection["ChromeWebDriverPort"];
-                UniqueInstance.ChromeWebDriverPath = ApplicationSettingsSection["ChromeWebDriverPath"];
+                UniqueInstance.IeWebDriverPath = applicationSettingsSection["IeWebDriverPath"];
+                UniqueInstance.IeWebDriverPort = applicationSettingsSection["IeWebDriverPort"];
+                UniqueInstance.ChromeWebDriverPort = applicationSettingsSection["ChromeWebDriverPort"];
+                UniqueInstance.ChromeWebDriverPath = applicationSettingsSection["ChromeWebDriverPath"];
                 UniqueInstance.DefaultConnection = connectionStringSettingsSection["DefaultConnection"].ConnectionString;
-                UniqueInstance.FirefoxExePath = ApplicationSettingsSection["FirefoxExePath"];
-                UniqueInstance.FirefoxBrowserPort = ApplicationSettingsSection["FirefoxBrowserPort"];
-                UniqueInstance.HomeUrl = ApplicationSettingsSection["HomeUrl"];
-                UniqueInstance.MembershipNotificationsUrl = ApplicationSettingsSection["MembershipNotificationsUrl"];
-                UniqueInstance.Tenant = ApplicationSettingsSection["Tenant"];
+                UniqueInstance.FirefoxExePath = applicationSettingsSection["FirefoxExePath"];
+                UniqueInstance.FirefoxBrowserPort = applicationSettingsSection["FirefoxBrowserPort"];
+                UniqueInstance.HomeUrl = applicationSettingsSection["HomeUrl"];
+                UniqueInstance.MembershipNotificationsUrl = applicationSettingsSection["MembershipNotificationsUrl"];
+                UniqueInstance.MembershipRebootConnection = connectionStringSettingsSection["MembershipReboot"].ConnectionString;
+                UniqueInstance.Tenant = applicationSettingsSection["Tenant"];
                 UniqueInstance.TtsDatabaseConnectionString = connectionStringSettingsSection["TTSDataBase"].ConnectionString;
             }
 

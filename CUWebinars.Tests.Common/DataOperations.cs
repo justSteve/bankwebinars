@@ -1,6 +1,9 @@
+using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
+using CUWebinars.Business.Core.Tracing;
 
 namespace CUWebinars.Tests.Common
 {
@@ -48,5 +51,92 @@ namespace CUWebinars.Tests.Common
             }
         }
 
+        public bool DeleteMostRecentUserAccountAndClaims()
+        {
+            using (var sqlConnection = new SqlConnection(ConnectionString))
+            {
+                Guid id = default(Guid);
+                sqlConnection.Open();
+
+                using (var getMostRecentWebUserIdCommand = new SqlCommand())
+                {
+                    getMostRecentWebUserIdCommand.Connection = sqlConnection;
+                    getMostRecentWebUserIdCommand.CommandType = CommandType.Text;
+                    getMostRecentWebUserIdCommand.CommandText =
+                            string.Format("SELECT TOP 1 ID FROM UserAccounts ORDER BY Created DESC");
+
+                    id = (Guid)getMostRecentWebUserIdCommand.ExecuteScalar();
+                }
+
+                Trace.WriteLine(string.Format("Deleting useraccount {0}", id));
+
+                //  Need to use parameter because it's a Guid.
+                var idParameter = new SqlParameter
+                {
+                    Value = id,
+                    DbType = DbType.Guid,
+                    Direction = ParameterDirection.Input,
+                    ParameterName = "@ID"
+                };
+
+                using (var deleteUserClaimsCommand = new SqlCommand())
+                {
+                    deleteUserClaimsCommand.Parameters.Add(idParameter);
+                    deleteUserClaimsCommand.Connection = sqlConnection;
+                    deleteUserClaimsCommand.CommandType = CommandType.Text;
+                    deleteUserClaimsCommand.CommandText = "DELETE FROM UserClaims WHERE UserAccountID = @ID;";
+
+                    deleteUserClaimsCommand.ExecuteNonQuery();
+
+                    deleteUserClaimsCommand.Parameters.Remove(idParameter);// Re-use param later
+                }
+
+                using (var deleteUserAccountCommand = new SqlCommand())
+                {
+                    deleteUserAccountCommand.Parameters.Add(idParameter);
+                    deleteUserAccountCommand.Connection = sqlConnection;
+                    deleteUserAccountCommand.CommandType = CommandType.Text;
+                    deleteUserAccountCommand.CommandText = "DELETE FROM UserAccounts WHERE ID = @ID;";
+
+                    var numRows = deleteUserAccountCommand.ExecuteNonQuery();
+
+                    return numRows == 1;
+                }
+            }
+        }
+
+        public bool DeleteMostRecentWebUser()
+        {
+            using (var sqlConnection = new SqlConnection(ConnectionString))
+            {
+                sqlConnection.Open();
+
+                int idWebUser = default (int);
+              
+                using (var getMostRecentWebUserIdCommand = new SqlCommand())
+                {
+                    getMostRecentWebUserIdCommand.Connection = sqlConnection;
+                    getMostRecentWebUserIdCommand.CommandType = CommandType.Text;
+                    getMostRecentWebUserIdCommand.CommandText =
+                            string.Format("SELECT TOP 1 idUser FROM WebUser ORDER BY DateCreated DESC");
+
+                    idWebUser = (int)getMostRecentWebUserIdCommand.ExecuteScalar();
+                }
+
+                Trace.WriteLine(string.Format("Deleting useraccount {0}", idWebUser));
+
+                using (var deleteWebUserCommand = new SqlCommand())
+                {
+                    deleteWebUserCommand.Connection = sqlConnection;
+                    deleteWebUserCommand.CommandType = CommandType.Text;
+                    deleteWebUserCommand.CommandText =
+                            string.Format("DELETE FROM WebUser WHERE idUser = {0}", idWebUser);
+
+                    var numRows = deleteWebUserCommand.ExecuteNonQuery();
+
+                    return numRows == 1;
+                }
+            }
+        }
     }
 }

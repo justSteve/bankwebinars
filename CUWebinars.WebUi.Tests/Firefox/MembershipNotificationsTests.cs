@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using CUWebinars.Business.Core.Tracing;
 using CUWebinars.Tests.Common;
 using CUWebinars.WebUi.Tests.Infrastructure;
 using CUWebinars.WebUi.Tests.Page.Firefox;
@@ -114,8 +115,11 @@ namespace CUWebinars.WebUi.Tests.Firefox
             Assert.IsTrue(VerifyLinkIncludedInSentEmail());
 
             dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
-
             dataOperations.DeleteOrder(idOrder);
+            dataOperations.DeleteMostRecentWebUser();
+
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.MembershipRebootConnection;
+            dataOperations.DeleteMostRecentUserAccountAndClaims();
 
         }
 
@@ -217,12 +221,14 @@ namespace CUWebinars.WebUi.Tests.Firefox
         {
             var idOrder = PerformTest(Constants.TestQueryString11);
 
-            Assert.IsTrue(VerifyLinkNotIncludedInSentEmail());
+            Assert.IsTrue(VerifyLinkIncludedInSentEmail());
 
             dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
-
             dataOperations.DeleteOrder(idOrder);
+            dataOperations.DeleteMostRecentWebUser();
 
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.MembershipRebootConnection;
+            dataOperations.DeleteMostRecentUserAccountAndClaims();
         }
 
         [TestMethod]
@@ -305,7 +311,6 @@ namespace CUWebinars.WebUi.Tests.Firefox
             var directory = GetNotificationsDirectory();
             var notificationFiles = new DirectoryInfo(directory).GetFiles();
 
-            Trace.WriteLine(string.Format("{0} files", notificationFiles.Length));
             var mostRecentNotification =
                 notificationFiles.Where(f => f.Extension == ".htm").OrderByDescending(f => f.LastWriteTime).First();
 
