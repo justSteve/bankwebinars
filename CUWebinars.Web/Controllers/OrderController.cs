@@ -57,7 +57,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     foreach (ModelError error in modelState.Errors)
                     {
-                        myErr += error.ErrorMessage + System.Environment.NewLine;
+                        myErr += error.ErrorMessage + Environment.NewLine;
                     }
                 }
                 //a better implementation:
@@ -161,7 +161,7 @@ namespace CUWebinars.Web.Controllers
                     catch (Exception exception)
                     {
 
-                        _logger.Error("CreateOrder|CreateUser failed: " + exception.Message);
+                        _logger.ErrorException(string.Format("CreateOrder|CreateUser failed: {0}", exception.Message), exception);
                     }
                 }
 
@@ -264,7 +264,7 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 var errString = string.Format("Order creation failed on {0} - {1} with msg: {2}", incomingOrderModel.Email, incomingOrderModel.idWebinar, exception.Message);
-                _logger.Error(errString);
+                _logger.ErrorException(errString, exception);
             }
 
             return Json(new { Result = "0" }, JsonRequestBehavior.AllowGet);

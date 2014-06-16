@@ -110,6 +110,7 @@ namespace CUWebinars.WebUi.Tests.Ie
         [TestCategory(TestCategories.IE)]
         public void CreateNewOrderForExistingUserScenario4()
         {
+            var email = TestHelper.ExtractEmailAddress(Constants.TestQueryString4);
             var idOrder = PerformTest(Constants.TestQueryString4);
 
             Assert.IsTrue(VerifyLinkIncludedInSentEmail());
@@ -117,9 +118,9 @@ namespace CUWebinars.WebUi.Tests.Ie
             dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
 
             dataOperations.DeleteOrder(idOrder);
-            dataOperations.DeleteMostRecentWebUser();
+            dataOperations.DeleteWebUser(email);
             dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.MembershipRebootConnection;
-            dataOperations.DeleteMostRecentUserAccountAndClaims();
+            dataOperations.DeleteUserAccountAndClaims(email);
         }
 
         [TestMethod]
@@ -219,15 +220,16 @@ namespace CUWebinars.WebUi.Tests.Ie
         public void CreateNewOrderForExistingUserScenario11()
         {
             var idOrder = PerformTest(Constants.TestQueryString11);
+            var email = TestHelper.ExtractEmailAddress(Constants.TestQueryString11);
 
             Assert.IsTrue(VerifyLinkIncludedInSentEmail());
 
             dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
             dataOperations.DeleteOrder(idOrder);
-            dataOperations.DeleteMostRecentWebUser();
+            dataOperations.DeleteWebUser(email);
 
             dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.MembershipRebootConnection;
-            dataOperations.DeleteMostRecentUserAccountAndClaims();
+            dataOperations.DeleteUserAccountAndClaims(email);
         }
 
         [TestMethod]

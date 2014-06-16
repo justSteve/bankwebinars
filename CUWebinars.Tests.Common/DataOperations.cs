@@ -51,7 +51,7 @@ namespace CUWebinars.Tests.Common
             }
         }
 
-        public bool DeleteMostRecentUserAccountAndClaims()
+        public bool DeleteUserAccountAndClaims(string email)
         {
             using (var sqlConnection = new SqlConnection(ConnectionString))
             {
@@ -63,7 +63,7 @@ namespace CUWebinars.Tests.Common
                     getMostRecentWebUserIdCommand.Connection = sqlConnection;
                     getMostRecentWebUserIdCommand.CommandType = CommandType.Text;
                     getMostRecentWebUserIdCommand.CommandText =
-                            string.Format("SELECT TOP 1 ID FROM UserAccounts ORDER BY Created DESC");
+                            string.Format("SELECT ID FROM UserAccounts WHERE Email = '{0}'", email);
 
                     id = (Guid)getMostRecentWebUserIdCommand.ExecuteScalar();
                 }
@@ -105,7 +105,7 @@ namespace CUWebinars.Tests.Common
             }
         }
 
-        public bool DeleteMostRecentWebUser()
+        public bool DeleteWebUser(string email)
         {
             using (var sqlConnection = new SqlConnection(ConnectionString))
             {
@@ -118,7 +118,7 @@ namespace CUWebinars.Tests.Common
                     getMostRecentWebUserIdCommand.Connection = sqlConnection;
                     getMostRecentWebUserIdCommand.CommandType = CommandType.Text;
                     getMostRecentWebUserIdCommand.CommandText =
-                            string.Format("SELECT TOP 1 idUser FROM WebUser ORDER BY DateCreated DESC");
+                            string.Format("SELECT idUser FROM WebUser WHERE Email = '{0}'", email);
 
                     idWebUser = (int)getMostRecentWebUserIdCommand.ExecuteScalar();
                 }

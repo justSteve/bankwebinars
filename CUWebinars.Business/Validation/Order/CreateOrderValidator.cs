@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using CUWebinars.Business.Core.Tracing;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using FluentValidation;
@@ -24,7 +25,7 @@ namespace CUWebinars.Business.Validation.Order
         {
             var webinarId = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Webinar.idWebinar;
 
-            var webinar = _webinarRepository
+            var orders = _webinarRepository
                 .GetAllOrdersByWebinarForUser(webinarId, userId)
                 .ToList()
                 .Where(o => o.OrderStatus == OrderStatus.InProcess 
@@ -33,8 +34,16 @@ namespace CUWebinars.Business.Validation.Order
                     || o.OrderStatus == OrderStatus.Paid
                     || o.OrderStatus == OrderStatus.AwaitingVerification
                     );
-            
-            return !webinar.Any();
+
+            var result = !orders.Any();
+
+            if (!result)
+            {
+                Tracer.Verbose(string.Format("Validation failed for webinar {0} and User {1}",
+                    orders.First().OrderRows.First().Webinar.idWebinar, userId));
+            }
+
+            return result;
         }
     }
 }

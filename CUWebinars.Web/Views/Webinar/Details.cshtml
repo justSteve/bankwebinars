@@ -176,7 +176,7 @@
                 </div>
             </aside>
 
-            @if (loggedInUserIdentity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.CuWebinarsAbsoluteAdmin))
+            @if (loggedInUserIdentity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.CuWebinarsAdmin))
             {
                 @Html.Partial(@"Partials/_AdminEventButtons", Model)
             }

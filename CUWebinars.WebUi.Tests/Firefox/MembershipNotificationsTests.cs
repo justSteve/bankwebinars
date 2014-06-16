@@ -111,15 +111,16 @@ namespace CUWebinars.WebUi.Tests.Firefox
         public void CreateNewOrderForExistingUserScenario4()
         {
             var idOrder = PerformTest(Constants.TestQueryString4);
+            var email = TestHelper.ExtractEmailAddress(Constants.TestQueryString4);
 
             Assert.IsTrue(VerifyLinkIncludedInSentEmail());
 
             dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
             dataOperations.DeleteOrder(idOrder);
-            dataOperations.DeleteMostRecentWebUser();
+            dataOperations.DeleteWebUser(email);
 
             dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.MembershipRebootConnection;
-            dataOperations.DeleteMostRecentUserAccountAndClaims();
+            dataOperations.DeleteUserAccountAndClaims(email);
 
         }
 
@@ -219,16 +220,17 @@ namespace CUWebinars.WebUi.Tests.Firefox
         [TestCategory(TestCategories.Firefox)]
         public void CreateNewOrderForExistingUserScenario11()
         {
+            var email = TestHelper.ExtractEmailAddress(Constants.TestQueryString11);
             var idOrder = PerformTest(Constants.TestQueryString11);
 
             Assert.IsTrue(VerifyLinkIncludedInSentEmail());
 
             dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
             dataOperations.DeleteOrder(idOrder);
-            dataOperations.DeleteMostRecentWebUser();
+            dataOperations.DeleteWebUser(email);
 
             dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.MembershipRebootConnection;
-            dataOperations.DeleteMostRecentUserAccountAndClaims();
+            dataOperations.DeleteUserAccountAndClaims(email);
         }
 
         [TestMethod]

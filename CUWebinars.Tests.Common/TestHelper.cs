@@ -58,6 +58,15 @@ namespace CUWebinars.Tests.Common
             return orderManagementService;
         }
 
+        public static string ExtractEmailAddress(string queryString)
+        {
+            var indexOfEmail = queryString.IndexOf("Email=", StringComparison.OrdinalIgnoreCase);
+
+            var email = new string(queryString.Skip(indexOfEmail + 6).TakeWhile(c => c != '&').ToArray());
+
+            return email;
+        }
+
         public static JObject TransformQueryStringToJsonCompliantString(string queryString)
         {
             var queryStringValues = queryString.Split(Convert.ToChar("&"));
