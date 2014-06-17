@@ -1,8 +1,12 @@
+using System.Linq;
+using System.Reflection;
+using System.Web.Services.Description;
 using BrockAllen.MembershipReboot;
 using BrockAllen.MembershipReboot.Ef;
 using BrockAllen.MembershipReboot.WebHost;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Core;
+using CUWebinars.Business.CQS;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
@@ -24,6 +28,8 @@ namespace CUWebinars.Web.App_Start
 
     public static class NinjectWebCommon
     {
+        private static readonly Assembly _serviceAssembly = Assembly.Load("CUWebinars.Business");
+
         private static readonly Bootstrapper bootstrapper = new Bootstrapper();
 
         /// <summary>
@@ -139,6 +145,31 @@ namespace CUWebinars.Web.App_Start
                     loggerForMembershipService
                     );
             }).InRequestScope();
+
+            kernel.Bind<ICommandProcessor>().To<CommandProcessor>();
+            kernel.Bind<IQueryProcessor>().To<QueryProcessor>();
+            AutoRegisterType(typeof(ICommandHandler<>), kernel); // Register ICommandHandler
+            AutoRegisterType(typeof(IQueryHandler<,>), kernel); // Register IQueryHandler 
+
+        }
+
+        private static void AutoRegisterType(Type type, IKernel kernel)
+        {
+            var handlerRegistrations = _serviceAssembly.GetExportedTypes()
+                .Where(x => !x.IsAbstract)
+                .Where(x => !x.ContainsGenericParameters)
+                .SelectMany(x => x.GetInterfaces()
+                    .Where(i => i.IsGenericType)
+                    .Where(i => i.GetGenericTypeDefinition() == type)
+                    .Select(i => new {service = i, implementation = x})
+                );
+
+            foreach (var registration in handlerRegistrations)
+            {
+                var abstraction = registration.service; //  interface
+                var implementation = registration.implementation; // class inplementation
+                kernel.Bind(abstraction).To(implementation);
+            }
         }
     }
 }

@@ -5,7 +5,7 @@ namespace CUWebinars.Web.Models
 {
     public class IncomingOrderModel
     {
-        public IList<IncomingAdditionalLocation> AdditionalLocation { get; set; }
+        public IList<IncomingAdditionalLocation> AdditionalLocations { get; set; }
 
         public string AffiliateComments { get; set; }
         public Address BillingAddress { get; set; }
@@ -24,10 +24,4 @@ namespace CUWebinars.Web.Models
 
     }
 
-    public class IncomingAdditionalLocation
-    {
-        public string Email { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-    }
 }

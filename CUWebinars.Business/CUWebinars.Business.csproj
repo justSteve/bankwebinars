@@ -122,7 +122,25 @@
     <Compile Include="Core\Helpers\ValidationHelper.cs" />
     <Compile Include="Core\Tracing\Log4NetTracer.cs" />
     <Compile Include="Core\Tracing\Tracer.cs" />
+    <Compile Include="CQS\Commands\AddOrderCommand.cs" />
+    <Compile Include="CQS\Commands\AddOrderRowCommand.cs" />
+    <Compile Include="CQS\CommandHandlers\OrderManagementCommandHandlers.cs" />
+    <Compile Include="CQS\CommandProcessor.cs" />
+    <Compile Include="CQS\Commands\RegisterNewAccountCommand.cs" />
+    <Compile Include="CQS\Commands\VerifyAccountCommand.cs" />
+    <Compile Include="CQS\ICommandHandler.cs" />
+    <Compile Include="CQS\ICommandProcessor.cs" />
+    <Compile Include="CQS\IPostCommitRegistrator.cs" />
+    <Compile Include="CQS\IQuery.cs" />
+    <Compile Include="CQS\IQueryHandler.cs" />
+    <Compile Include="CQS\IQueryProcessor.cs" />
+    <Compile Include="CQS\PostCommitRegistratorImpl.cs" />
+    <Compile Include="CQS\Queries\OrderManagementQuery.cs" />
+    <Compile Include="CQS\Queries\OrderManagementQueryResult.cs" />
+    <Compile Include="CQS\QueryHandlers\OrderManagementQueries.cs" />
+    <Compile Include="CQS\QueryProcessor.cs" />
     <Compile Include="Models\GTWebinar.cs" />
+    <Compile Include="Models\IncomingAdditionalLocation.cs" />
     <Compile Include="Models\Mapping\GTWebinarMap.cs" />
     <Compile Include="Notification\Events\SendConnectionInfoEvent.cs" />
     <Compile Include="Notification\Events\SendRecordingPostedEvent.cs" />
@@ -265,6 +283,7 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

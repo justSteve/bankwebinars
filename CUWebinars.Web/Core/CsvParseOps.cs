@@ -59,7 +59,7 @@ namespace CUWebinars.Web.Core
                     var additionalLocations = new List<IncomingAdditionalLocation>(addresses.Length);
                     additionalLocations.AddRange(
                         addresses.Select(address => new IncomingAdditionalLocation {Email = address}));
-                    incomingOrderModel.AdditionalLocation = additionalLocations;
+                    incomingOrderModel.AdditionalLocations = additionalLocations;
 
                     incomingOrderModel.idWebinar = int.Parse(fields[2]);
                     incomingOrderModel.idRegType = int.Parse(fields[3]);
