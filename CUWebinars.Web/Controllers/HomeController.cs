@@ -38,6 +38,10 @@ namespace CUWebinars.Web.Controllers
             ViewBag.PageStyleType = "two-columns-right-sidebar";
             return View();
         }
+        public ActionResult MyWebinars()
+        {
+            return RedirectToAction("MyWebinars","Account");
+        }
 
         public ActionResult WhatIsAWebinar()
         {

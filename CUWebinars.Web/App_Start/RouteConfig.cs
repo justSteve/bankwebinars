@@ -14,11 +14,26 @@ namespace CUWebinars.Web.App_Start
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
-            
+
             routes.MapRoute(
                 name: "EmailLinkRoute",
                 url: "{controller}/{action}/{email}/{surname}"
             );
+            //in the legacy system this route will catch:
+            // bankwebinars.com/1522
+            // and redirect to the webinarController.ConnInfo
+            //routes.MapRoute(
+            //        "WebinarConnectionDetails",                                             // Route name
+            //        "{id}",                                                                 // URL with parameters
+            //        new { controller = "Webinar", action = "ConnectionDetails", id = "" },  // Parameter defaults
+            //        new{id = @"\d+"}
+            //    );
+
+            //add route that responds to
+            // 1) cuwebinars.com/mywebinars
+            // 2) mywebinars.cuwebinars.com
+
+            // by redirecting to AccountController.NewMethodThatHandlesReturningUsers
 
             routes.MapRoute(
                 name: "AdditionalLocationsModal",
