@@ -37,7 +37,7 @@ namespace CUWebinars.Business.CQS.QueryHandlers
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            
         }
     }
 }

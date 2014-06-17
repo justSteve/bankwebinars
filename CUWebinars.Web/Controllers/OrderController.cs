@@ -15,6 +15,7 @@ using CUWebinars.Business.CQS.Queries;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
+using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
@@ -26,22 +27,15 @@ namespace CUWebinars.Web.Controllers
     public class OrderController : Controller
     {
         private readonly GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
-        private readonly IMembershipService _membershipService;
-        private readonly IOrderManagementService _orderManagementService;
         private readonly IStateService _stateService;
         private readonly ILogger _logger;
-        private readonly IQueryProcessor _queryProcessor;
-        private readonly ICommandProcessor _commandProcessor;
+        private readonly IOrderControllerOrchestrator _orderControllerOrchestrator;
 
-        public OrderController(IMembershipService membershipService, IOrderManagementService orderManagementService,
-            IStateService stateService, ILogger logger, IQueryProcessor queryProcessor, ICommandProcessor commandProcessor)
+        public OrderController(IStateService stateService, ILogger logger, IOrderControllerOrchestrator orderControllerOrchestrator)
         {
-            _membershipService = membershipService;
-            _orderManagementService = orderManagementService;
             _stateService = stateService;
             _logger = logger;
-            _queryProcessor = queryProcessor;
-            _commandProcessor = commandProcessor;
+            _orderControllerOrchestrator = orderControllerOrchestrator;
         }
 
         /// <summary>
@@ -81,100 +75,47 @@ namespace CUWebinars.Web.Controllers
             try
             {
                 var email = incomingOrderModel.Email.Trim();
-                var firstName = incomingOrderModel.FirstName.Trim();
-                var lastName = incomingOrderModel.LastName.Trim();
-                var tempPassword = lastName.ToLower();
+
 
                 _logger.Info("Begin import: " + email);
 
-                var orderManagementQuery = new OrderManagementQuery
+                var orderManagementQueryResult = _orderControllerOrchestrator.GetData(incomingOrderModel, email);
+
+                if (ReferenceEquals(null, orderManagementQueryResult.WebUser))
                 {
-                    AffiliateId = incomingOrderModel.idAffiliate,
-                    Email = email,
-                    WebinarId = incomingOrderModel.idWebinar
-                };
-
-                var orderManagementQueryResult = _queryProcessor.Process(orderManagementQuery);
-
-                if ( ReferenceEquals(null, orderManagementQueryResult.WebUser))
-                {
-                    //  Here, we set a value which indicates to the TtsSmtpMessageDelivery object that the user was created while importing an order.
-                    //  This will be checked in TtsSmtpMessageDelivery and the notification will not be sent if this value is present.
-                    //  The idea being that the Order Submitted notification will contain the info nomrally in the User Registered email.
-                    _stateService.SetValue(DomainConstants.UserCreatedViaNewOrder, true);
-
-                    var registerNewAccountCommand = new RegisterNewAccountCommand
-                    {
-                        BillingAddress = incomingOrderModel.BillingAddress,
-                        Email = email,
-                        FirstName = firstName,
-                        LastName =  lastName,
-                        Institution = incomingOrderModel.Institution.Trim(),
-                        ShippingAddress = incomingOrderModel.ShippingAddress,
-                        TempPassword = tempPassword,
-                        Tenant = globalConfig.Tenant,
-                        Title = incomingOrderModel.Title == null ? null : incomingOrderModel.Title.Trim()
-                    };
-
                     try
                     {
-                        _commandProcessor.Execute(registerNewAccountCommand);
-                        orderManagementQueryResult.WebUser = registerNewAccountCommand.WebUser; //  assign out parameter for later use
 
-                        Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey), "There's no reason session should not have a value for the VerificationKey at this point ");
+                        //  Here, we set a value which indicates to the TtsSmtpMessageDelivery object that the user was created while importing an order.
+                        //  This will be checked in TtsSmtpMessageDelivery and the notification will not be sent if this value is present.
+                        //  The idea being that the Order Submitted notification will contain the info nomrally in the User Registered email.
+                        _stateService.SetValue(DomainConstants.UserCreatedViaNewOrder, true);
+
+                        orderManagementQueryResult.WebUser =
+                            _orderControllerOrchestrator.ProcessNewUser(incomingOrderModel, email);
+
+                        Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey),
+                            "There's no reason session should not have a value for the VerificationKey at this point ");
 
                         verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
                         confirmChangeEmailUrl = _stateService.GetValue<string>(DomainConstants.ConfirmChangeEmailLink);
                         _stateService.ClearValue(DomainConstants.VerificationKey);
                         _stateService.ClearValue(DomainConstants.ConfirmChangeEmailLink);
 
-                        var verifyAccountCommand = new VerifyAccountCommand
-                        {
-                            TempPassword = tempPassword,
-                            VerificationKey = verificationKey
-                        };
-
-                        _commandProcessor.Execute(verifyAccountCommand);
-
+                        _orderControllerOrchestrator.FinalizeNewRegistration(incomingOrderModel, verificationKey);
                         //  Now we clear the value, so TtsSmtpMessageDelivery can go back to business as usual.
                         _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
                     }
                     catch (Exception exception)
                     {
 
-                        _logger.ErrorException(string.Format("CreateOrder|CreateUser failed: {0}", exception.Message), exception);
+                        _logger.ErrorException(string.Format("CreateOrder|CreateUser failed: {0}", exception.Message),
+                            exception);
                     }
                 }
 
-                var addOrderRowCommand = new AddOrderRowCommand
-                {
-                    AdditionalLocations = incomingOrderModel.AdditionalLocations,
-                    Email = email,
-                    RegistrationType = incomingOrderModel.idRegType,
-                    Webinar = orderManagementQueryResult.Webinar,   
-                };
-
-                _commandProcessor.Execute(addOrderRowCommand);
-
-                var addOrderCommand = new AddOrderCommand
-                {
-                    Affiliate = orderManagementQueryResult.Affiliate,
-                    AffiliateComments = incomingOrderModel.AffiliateComments,
-                    BillingAddress = incomingOrderModel.BillingAddress,
-                    ConfirmChangeEmailUrl = confirmChangeEmailUrl,
-                    Email = email,
-                    FirstName = firstName,
-                    LastName = lastName,
-                    OrderRow = addOrderRowCommand.OrderRow, // out parameter of addOrderRowCommand command
-                    ShippingAddress = incomingOrderModel.ShippingAddress,
-                    VerificationKey = verificationKey,
-                    Webinar = orderManagementQueryResult.Webinar,
-                    WebUser = orderManagementQueryResult.WebUser
-                };
-
-                _commandProcessor.Execute(addOrderCommand);
-
-                idOfLastOrder = addOrderCommand.OrderId; // out parameter of AddOrderCommand command
+                idOfLastOrder = _orderControllerOrchestrator.CreateNewOrder(incomingOrderModel, email,
+                    orderManagementQueryResult, verificationKey, confirmChangeEmailUrl);
 
                 //idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
                 _logger.Info("Posted idOrder=" + idOfLastOrder);

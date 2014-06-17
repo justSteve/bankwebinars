@@ -384,6 +384,8 @@
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\OrderEventFiringOpsController.cs" />
     <Compile Include="Core\Exceptions.cs" />
+    <Compile Include="Core\Orchestrators\IOrderControllerOrchestrator.cs" />
+    <Compile Include="Core\Orchestrators\OrderControllerOrchestrator.cs" />
     <Compile Include="ElmahHandleErrorAttribute.cs" />
     <Compile Include="Helpers\EventInvokerHelpers.cs" />
     <Compile Include="ViewModel\CreateUserConfirmedViewModel.cs" />

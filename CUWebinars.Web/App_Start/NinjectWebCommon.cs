@@ -10,6 +10,7 @@ using CUWebinars.Business.CQS;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
+using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Services;
 using Ninject.Extensions.Logging;
 using Ninject.Extensions.Logging.Log4net.Infrastructure;
@@ -125,9 +126,9 @@ namespace CUWebinars.Web.App_Start
                     ctx.Kernel.Get<MembershipRebootConfiguration>(),
                     ctx.Kernel.Get<IUserAccountRepository>());
                 return userAccountService;
-            });
+            }).InRequestScope();
 
-            kernel.Bind<AuthenticationService>().To<SamAuthenticationService>();
+            kernel.Bind<AuthenticationService>().To<SamAuthenticationService>().InRequestScope();
             
             kernel.Bind<IMembershipService>().ToMethod(ctx =>
             {
@@ -146,10 +147,12 @@ namespace CUWebinars.Web.App_Start
                     );
             }).InRequestScope();
 
-            kernel.Bind<ICommandProcessor>().To<CommandProcessor>();
-            kernel.Bind<IQueryProcessor>().To<QueryProcessor>();
+            kernel.Bind<ICommandProcessor>().To<CommandProcessor>().InRequestScope();
+            kernel.Bind<IQueryProcessor>().To<QueryProcessor>().InRequestScope();
             AutoRegisterType(typeof(ICommandHandler<>), kernel); // Register ICommandHandler
             AutoRegisterType(typeof(IQueryHandler<,>), kernel); // Register IQueryHandler 
+
+            kernel.Bind<IOrderControllerOrchestrator>().To<OrderControllerOrchestrator>().InRequestScope();
 
         }
 
@@ -168,7 +171,7 @@ namespace CUWebinars.Web.App_Start
             {
                 var abstraction = registration.service; //  interface
                 var implementation = registration.implementation; // class inplementation
-                kernel.Bind(abstraction).To(implementation);
+                kernel.Bind(abstraction).To(implementation).InRequestScope();
             }
         }
     }

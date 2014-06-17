@@ -209,7 +209,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            
         }
     }
 }
