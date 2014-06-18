@@ -1,0 +1,55 @@
+﻿@using System.Configuration
+@using System.Web.Mvc.Html
+@using CUWebinars.Business.Models
+@model CUWebinars.Web.Notification.Templates.CertOfCompletionViewModel
+
+@*<title>*@
+@{
+    var orderRows = from orderRow in Model.Order.OrderRows
+                    where orderRow.RowStatus == OrderRowStatus.Active
+                    select orderRow;
+    var webinar = orderRows.Single().Webinar;
+
+    var UserName = Model.CurrentUser.FullName;
+    var WebinarTitle = webinar.Title;
+    var Presenter = webinar.Presenter.WebUser.FullName;
+    string DateTimeString = TtsDateTimeTemplateHelperObject.FormatTimeWithDuration(webinar.Date, Model.Order.WebUser.timeZone, true, webinar.Duration);
+    var background = Server.MapPath("~/Content/img/CertificateBackground.jpg");
+}
+    @*Confirmation of Registration (CU-@orderRows.Single().idOrder): @webinar.Title*@
+    @*</title>*@
+
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    @{
+        <head>
+            <meta name="viewport" content="width=device-width" />
+            <title></title>
+        </head>
+        <body>
+            <div id="background" style="background-image: @background">
+                <div id="wrapper">
+                    <p>Certificate of Completion</p>
+
+                    <p>@UserName</p>
+
+                    <p>
+                        has successfully completed  <br />
+                        <b>@webinar.Title</b>
+                    </p>
+
+                    <table cellpadding="0" cellspacing="0" border="1">
+                        <tbody>
+                            <tr>
+                                <td valign="top"><p>@Presenter</p></td>
+                                <td valign="top"><p>Mark Bennett – President, <strong>Total Training Solutions</strong></p></td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                    <br />
+                </div>
+            </div>
+        </body>
+    }
+</html>
+

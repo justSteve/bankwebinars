@@ -105,6 +105,7 @@ namespace CUWebinars.Web.Controllers
                         _orderControllerOrchestrator.FinalizeNewRegistration(incomingOrderModel, verificationKey);
                         //  Now we clear the value, so TtsSmtpMessageDelivery can go back to business as usual.
                         _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
+                        _logger.Info(string.Format("CreateOrder|CreateUser Succeeded: {0}", email));
                     }
                     catch (Exception exception)
                     {
@@ -118,7 +119,7 @@ namespace CUWebinars.Web.Controllers
                     orderManagementQueryResult, verificationKey, confirmChangeEmailUrl);
 
                 //idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
-                _logger.Info("Posted idOrder=" + idOfLastOrder);
+                _logger.Info(string.Format("CreateOrder|CreateNewOrder: {0}", idOfLastOrder));
 
                 return Json(new { Result = idOfLastOrder.ToString() }, JsonRequestBehavior.AllowGet);
             }

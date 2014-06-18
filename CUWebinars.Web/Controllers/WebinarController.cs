@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Web.Hosting;
 using CUWebinars.Business.AccountService;
+using CUWebinars.Business.Core.Exceptions;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
@@ -435,6 +436,21 @@ namespace CUWebinars.Web.Controllers
             ViewData["Expired"] = "This recording has expired. ";
             return View();
         }
+
+        //public ActionResult ConnectionDetails(int id)
+        //{
+        //    try
+        //    {
+        //        //string connectionInfo = NotificationFacade.Instance.PreviewNotification(
+        //        //    TemplateTypes.CONNECTION_INFORMATION, null, id, null);
+        //        //return View((object)connectionInfo);
+        //    }
+        //    catch (EntityNotFoundException)
+        //    {
+        //        return View("MissingRecord", (object)("Webinar with ID=" + id + " does not exist!"));
+        //    }
+        //}
+
         public ActionResult Details(int id)
         {
             //_orderManagementService.GetOrderById(1162);

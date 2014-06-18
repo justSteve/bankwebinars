@@ -388,6 +388,7 @@
     <Compile Include="Core\Orchestrators\OrderControllerOrchestrator.cs" />
     <Compile Include="ElmahHandleErrorAttribute.cs" />
     <Compile Include="Helpers\EventInvokerHelpers.cs" />
+    <Compile Include="Notification\Templates\CertOfCompletionViewModel.cs" />
     <Compile Include="ViewModel\CreateUserConfirmedViewModel.cs" />
     <Compile Include="ViewModel\ManualPasswordResetViewModel.cs" />
     <Compile Include="Core\CsvParseOps.cs" />
@@ -1006,6 +1007,7 @@
     <Content Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Body.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Subject.cshtml" />
     <Content Include="App_Data\Orders\ImportSampleOrders.xlsm" />
+    <Content Include="Views\Account\MyCertificate.cshtml" />
     <None Include="Properties\PublishProfiles\CUStaging.pubxml" />
     <None Include="Properties\PublishProfiles\cuwebinars1 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\cuwebinars1 - Web Deploy.pubxml" />
@@ -1162,6 +1164,7 @@
     <Content Include="Views\Account\ThankYouConfirmed.cshtml" />
     <Content Include="Views\OrderEventFiringOps\_resendOrderConfirmation.cshtml" />
     <Content Include="Views\OrderEventFiringOps\_resendConnectionInfo.cshtml" />
+    <Content Include="Views\Account\Partials\_Certificate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Notifications\" />
