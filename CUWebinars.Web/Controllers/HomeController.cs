@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Repository;
+﻿using System;
+using CUWebinars.Business.Repository;
 using Ninject.Extensions.Logging;
 using System.Linq;
 using System.ServiceModel.Syndication;
@@ -12,6 +13,7 @@ namespace CUWebinars.Web.Controllers
         
         private readonly IWebinarRepository _webinarRepository;
         private readonly ILogger _logger;
+        private bool _disposed;
 
         public HomeController(IWebinarRepository webinarRepository, ILogger logger)
         {
@@ -102,5 +104,19 @@ namespace CUWebinars.Web.Controllers
         //    return View();
         //}
 
+        protected override void Dispose(bool disposing)
+        {
+            if (!_disposed && disposing)
+            {
+                var logger = _logger as IDisposable;
+                if (logger != null)
+                    logger.Dispose();
+
+                _webinarRepository.Dispose();
+
+                base.Dispose(true);
+            }
+            _disposed = true;
+        }
     }
 }

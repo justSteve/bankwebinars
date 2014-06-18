@@ -1,10 +1,11 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using CUWebinars.Business.Models;
 using System.Collections.Generic;
 
 namespace CUWebinars.Business.Repository
 {
-    public interface IWebUserRepository
+    public interface IWebUserRepository : IDisposable
     {
         WebUser FindById(int id);
         WebUser FindByIdLoaded(int id);

@@ -14,6 +14,7 @@ namespace CUWebinars.Web.Controllers
         private readonly IRegTypeRepository _regTypeRepository;
         private readonly IWebinarRepository _webinarRepository;
         private readonly IWebUserRepository _websUserRepository;
+        private bool _disposed;
 
         public AdhocNotificationController(
             IRegTypeRepository regTypeRepository, 
@@ -68,6 +69,19 @@ namespace CUWebinars.Web.Controllers
         private IEnumerable<WebUser> GetWebUsersForUpcomingOrders(int webinarId, IList<int> regTypeIds)
         {
             return _websUserRepository.GetWebusersForWebinarWithRegtypes(webinarId, regTypeIds);
-        } 
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!_disposed && disposing)
+            {
+                _regTypeRepository.Dispose();
+                _webinarRepository.Dispose();
+                _websUserRepository.Dispose();
+
+                base.Dispose(true);
+            }
+            _disposed = true;
+        }
     }
 }

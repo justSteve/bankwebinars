@@ -5,7 +5,7 @@ using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.Repository
 {
-    public interface IAffiliateRepository
+    public interface IAffiliateRepository: IDisposable
     {
         Affiliate FindByIdAndDetachItem(int id);
         Affiliate FindByIdWithIncluding(int id, params Expression<Func<Affiliate, object>>[] includeProperties);

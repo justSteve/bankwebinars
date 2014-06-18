@@ -5,7 +5,7 @@ using System;
 
 namespace CUWebinars.Business.AccountService
 {
-    public interface IMembershipService
+    public interface IMembershipService : IDisposable
     {
         void AddRegistrationTypeNotVerifiedClaim(UserAccount userAccount, string registrationType);
 

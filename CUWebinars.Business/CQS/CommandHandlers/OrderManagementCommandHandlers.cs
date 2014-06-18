@@ -1,12 +1,11 @@
-﻿using System.Linq;
-using CUWebinars.Business.AccountService;
+﻿using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.CQS.Commands;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
+using System.Linq;
 
 namespace CUWebinars.Business.CQS.CommandHandlers
 {
@@ -19,10 +18,10 @@ namespace CUWebinars.Business.CQS.CommandHandlers
         private readonly IOrderManagementService _orderManagementService;
         private readonly IMembershipService _membershipService;
         private readonly PostCommitRegistrator _postCommitRegistrator;
+        private bool _disposed;
 
         public OrderManagementCommandHandlers(IOrderManagementService orderManagementService, 
             IMembershipService membershipService,
-            
             PostCommitRegistrator postCommitRegistrator)
         {
             _orderManagementService = orderManagementService;
@@ -163,39 +162,6 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             importedOrder.ShippingFirstName = command.FirstName;
             importedOrder.ShippingLastName = command.LastName;
 
-            if (command.OrderRow.Webinar.WebinarKey != null && command.OrderRow.RegistrationType.ShowLiveNotifications == "Yes")
-            {
-                var regKeyResponse = _orderManagementService.CreateRegistrantKey(
-                    importedOrder.FirstName,
-                    importedOrder.LastName, importedOrder.BillingEmail, command.OrderRow.idWebinar,
-                    command.OrderRow.Webinar.WebinarKey
-                    );
-
-                if (ReferenceEquals(null, regKeyResponse))
-                    throw new NullReferenceException(
-                        "The Registration Key Response from the Citrix API resulted in a null response.");
-
-                JObject parsedJsonObject = JObject.Parse(regKeyResponse);
-
-                if (parsedJsonObject[DomainConstants.RegistrantKey] != null)
-                {
-                    var registrantKey = parsedJsonObject[DomainConstants.RegistrantKey].ToString();
-                    var joinUrl = parsedJsonObject[DomainConstants.JoinUrl].ToString();
-
-                    command.OrderRow.RegistrantKey = registrantKey;
-                    command.OrderRow.JoinURL = joinUrl;
-                }
-                else
-                {
-                    /*  *************** 404 error condition *************** 
-                         * json payload will look like:
-                         *      {"description":"The webinar does not exist.","incident":3984078431536134144}
-                         * which is not usable
-                         */
-                }
-            }
-
-
             _orderManagementService.SaveOrderChanges(importedOrder, command.VerificationKey, command.ConfirmChangeEmailUrl);
 
             _postCommitRegistrator.Committed += () =>
@@ -209,7 +175,19 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
         public void Dispose()
         {
-            
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public virtual void Dispose(bool disposing)
+        {
+            if (!_disposed && disposing)
+            {
+                _membershipService.Dispose();
+                _orderManagementService.Dispose();
+
+            }
+            _disposed = true;
         }
     }
 }

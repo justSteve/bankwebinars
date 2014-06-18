@@ -1,9 +1,10 @@
+using System;
 using System.Collections.Generic;
 using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.Repository
 {
-    public interface IOrderRepository
+    public interface IOrderRepository : IDisposable
     {
         Order AssignAffiliate(Affiliate affiliate, Order order);
         Order AssignWebUserToOrder(WebUser webUser, Order order);

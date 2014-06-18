@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.Repository
 {
-    public interface IWebinarRepository
+    public interface IWebinarRepository : IDisposable
     {
         void Add(Webinar webinar);
         void Delete(Webinar webinar);

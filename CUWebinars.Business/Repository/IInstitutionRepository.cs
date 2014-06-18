@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace CUWebinars.Business.Repository
 {
-    public interface IInstitutionRepository
+    public interface IInstitutionRepository : IDisposable
     {
         void Add(Institution institution);
         IEnumerable<Institution> GetAll();

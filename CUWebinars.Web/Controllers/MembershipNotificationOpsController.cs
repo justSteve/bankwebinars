@@ -27,6 +27,7 @@ namespace CUWebinars.Web.Controllers
         private readonly ILogger _logger;
         private readonly IStateService _stateService;
         private GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+        private bool _disposed;
 
         public MembershipNotificationOpsController(IMembershipService membershipService, ILogger logger, IStateService stateService)
         {
@@ -398,6 +399,21 @@ namespace CUWebinars.Web.Controllers
 
                 return builder.ToString();
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!_disposed && disposing)
+            {
+                var logger = _logger as IDisposable;
+                if (logger != null)
+                    logger.Dispose();
+
+                _membershipService.Dispose();
+
+                base.Dispose(true);
+            }
+            _disposed = true;
         }
     }
 }

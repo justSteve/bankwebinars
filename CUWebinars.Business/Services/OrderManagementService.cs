@@ -32,6 +32,7 @@ namespace CUWebinars.Business.Services
         private readonly IWebUserRepository _webUserRepository;
         private readonly TtsConfiguration _ttsConfig;
         readonly List<IEvent> _events = new List<IEvent>();
+        private bool _disposed;
 
         public OrderManagementService(
             IAffiliateRepository affiliateRepository,
@@ -815,6 +816,30 @@ namespace CUWebinars.Business.Services
             });
 
             return new iCalendarSerializer().SerializeToString(iCal);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public virtual void Dispose(bool disposing)
+        {
+            if (!_disposed && disposing)
+            {
+                var logger = _logger as IDisposable;
+                if(logger != null)
+                    logger.Dispose();
+
+                _affiliateRepository.Dispose();
+                _orderRepository.Dispose();
+                _regTypeRepository.Dispose();
+                _webinarRepository.Dispose();
+                _webUserRepository.Dispose();
+                
+            }
+            _disposed = true;
         }
     }
 }

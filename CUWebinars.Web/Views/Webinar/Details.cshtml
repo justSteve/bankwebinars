@@ -183,23 +183,7 @@
             @Html.Partial("Partials/_RegistrationSummary")
             <!-- close .widget -->
             <!-- For certificate file widget -->
-            @{
-                if (Model.Webinar.Status == WebinarStatus.Recorded || Model.Webinar.Status == WebinarStatus.Archived
-                    &&
-                    (ViewBag.userOwnsThisEvent > 0))
-                {
-                    <form method="POST" action="/Account/MyCertificate">
-                        <input name="orderID" value="@Model.Webinar.idWebinar"/>
-                        <aside class="widget">
-                            <h5 class="short_headline"><span>Certificate Of Completion</span></h5>
-                            <input type="submit" value="My Certificate" id="ShowCertificate" class="btn btn-primary" />
 
-                            <div id="InputFormFields" style="margin-top: 20px;"></div>
-                        </aside>
-
-                    </form>
-                }
-            }
             <!-- Close certificat widget -->
             <!-- For Generate ics file widget -->
             @*<aside class="widget">

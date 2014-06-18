@@ -34,11 +34,6 @@ namespace CUWebinars.Web.App_Start
             // 2) mywebinars.cuwebinars.com
 
             // by redirecting to AccountController.NewMethodThatHandlesReturningUsers
-
-            routes.MapRoute(
-                name: "AdditionalLocationsModal",
-                url: "{controller}/{action}/{webUserId}/{webinarId}"
-                );
         }
     }
 }

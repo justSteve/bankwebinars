@@ -5,6 +5,8 @@
 
 @*<title>*@
 @{
+    Layout = "";
+
     var orderRows = from orderRow in Model.Order.OrderRows
                     where orderRow.RowStatus == OrderRowStatus.Active
                     select orderRow;
@@ -13,43 +15,50 @@
     var UserName = Model.CurrentUser.FullName;
     var WebinarTitle = webinar.Title;
     var Presenter = webinar.Presenter.WebUser.FullName;
-    string DateTimeString = TtsDateTimeTemplateHelperObject.FormatTimeWithDuration(webinar.Date, Model.Order.WebUser.timeZone, true, webinar.Duration);
-    var background = Server.MapPath("~/Content/img/CertificateBackground.jpg");
+    string DateTimeString = DateTimeHelper.FormatDate(webinar.Date);
+    var background = "~/Content/img/CertificateBackground.jpg";
 }
-    @*Confirmation of Registration (CU-@orderRows.Single().idOrder): @webinar.Title*@
-    @*</title>*@
+@*Confirmation of Registration (CU-@orderRows.Single().idOrder): @webinar.Title*@
+@*</title>*@
 
-    <html xmlns="http://www.w3.org/1999/xhtml">
-    @{
-        <head>
-            <meta name="viewport" content="width=device-width" />
-            <title></title>
-        </head>
-        <body>
-            <div id="background" style="background-image: @background">
-                <div id="wrapper">
-                    <p>Certificate of Completion</p>
+<html xmlns="http://www.w3.org/1999/xhtml">
+@{
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="~/Content/css/styleCrisp.css">
+        <style>
+            p, h1, h2, h3{
+                color: black
+            }
+        </style>
+    </head>
+    <body>
+        <div id="background" style="margin: auto; margin-top: 35px; width: 960px; height: 800px; background-image:url('/Content/img/CertificateBackground.jpg'); background-repeat: no-repeat; ">
 
-                    <p>@UserName</p>
+            <div style="padding: 120px;border: 1px; border-color: black; border-style: solid; " id="wrapper">
+                <h2 style="text-align: center; ">Total Training Solutions</h2>
+                <p align="center">presents this</p>
+                <h1 style="text-align: center; font-size: 34px;">Certificate of Completion</h1>
+                <p align="center">to</p>
+                <h2 align="center"><b>@UserName</b></h2>
 
-                    <p>
-                        has successfully completed  <br />
-                        <b>@webinar.Title</b>
-                    </p>
+                <p align="center">for</p>
+                <h3 align="center">  <br /><b>@webinar.Title</b></h3>
 
-                    <table cellpadding="0" cellspacing="0" border="1">
-                        <tbody>
-                            <tr>
-                                <td valign="top"><p>@Presenter</p></td>
-                                <td valign="top"><p>Mark Bennett – President, <strong>Total Training Solutions</strong></p></td>
-                            </tr>
-
-                        </tbody>
-                    </table>
-                    <br />
-                </div>
+                <p align="center">1 Hour Webinar <br />1.25 CE Credits</p>
+                <table align="center" cellpadding="0" cellspacing="0" width="600px" border="0">
+                    <tbody>
+                        <tr>
+                            <td valign="top"><p align="left">Presented By: <br/><b>@Presenter</b></p></td>
+                            <td valign="top"><p align="right">@DateTimeString</p></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br />
             </div>
-        </body>
-    }
+        </div>
+    </body>
+}
 </html>
 

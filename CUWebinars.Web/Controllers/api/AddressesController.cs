@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.AccountService;
+﻿using System;
+using CUWebinars.Business.AccountService;
 using Newtonsoft.Json;
 using System.Linq;
 using System.Web.Mvc;
@@ -10,6 +11,7 @@ namespace CUWebinars.Web.Controllers.api
     {
         private readonly IMembershipService _membershipService;
         private readonly ILogger _logger;
+        private bool _disposed;
 
         public AddressesController(IMembershipService membershipService, ILogger logger) : base()
         {
@@ -42,6 +44,21 @@ namespace CUWebinars.Web.Controllers.api
             //       Zip = a.Zip                   
             //   })
             //   , Formatting.Indented, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
-        }        
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!_disposed && disposing)
+            {
+                var logger = _logger as IDisposable;
+                if (logger != null)
+                    logger.Dispose();
+
+                _membershipService.Dispose();
+
+                base.Dispose(disposing);
+            }
+            _disposed = true;
+        }
     }
 }

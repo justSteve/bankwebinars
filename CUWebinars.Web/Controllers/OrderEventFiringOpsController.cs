@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Models;
+﻿using System;
+using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.ViewModel;
@@ -12,6 +13,7 @@ namespace CUWebinars.Web.Controllers
     {
         private readonly IOrderManagementService _orderManagementService;
         private readonly ILogger _logger;
+        private bool _disposed;
 
         public OrderEventFiringOpsController(IOrderManagementService orderManagementService, ILogger logger)
         {
@@ -185,6 +187,20 @@ namespace CUWebinars.Web.Controllers
 
             return Json(new {Result = WebUiConstants.Success});
         }
-        
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!_disposed && disposing)
+            {
+                var logger = _logger as IDisposable;
+                if (logger != null)
+                    logger.Dispose();
+
+                _orderManagementService.Dispose();
+
+                base.Dispose(true);
+            }
+            _disposed = true;
+        }
     }
 }
