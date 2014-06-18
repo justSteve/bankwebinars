@@ -361,7 +361,7 @@ namespace CUWebinars.Business.Tests
 
         [TestMethod]
         [TestCategory(TestCategories.Membership)]
-        public void testtemplate()
+        public void AddRegistrationTypeNotVerifiedClaimAddsClaim()
         {
             var userAccountService =
                 new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository());
@@ -381,6 +381,81 @@ namespace CUWebinars.Business.Tests
                 );
 
             Assert.AreEqual(3, userAccountService.ClaimsAdded);
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Membership)]
+        [ExpectedException(typeof(ArgumentException), "String parameter cannot be white space or null.")]
+        public void AddRegistrationTypeNotVerifiedClaimThrowsExceptionWhere2ndParamIsNull()
+        {
+            var userAccountService =
+                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository());
+
+            membershipService = new MembershipService(
+                institutionRepositoryMock.Object,
+                refDataRepositoryMock.Object,
+                samAuthenticationServiceMock,
+                userAccountService,
+                webUserRepositoryMock.Object,
+                logger
+                );
+
+            membershipService.AddRegistrationTypeNotVerifiedClaim(
+                GetExampleUserAccount(),
+                null
+                );
+
+            Assert.Fail();
+        }
+        
+        [TestMethod]
+        [TestCategory(TestCategories.Membership)]
+        [ExpectedException(typeof(ArgumentException), "String parameter cannot be white space or null.")]
+        public void AddRegistrationTypeNotVerifiedClaimThrowsExceptionWhere2ndParamIsWhiteSpace()
+        {
+            var userAccountService =
+                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository());
+
+            membershipService = new MembershipService(
+                institutionRepositoryMock.Object,
+                refDataRepositoryMock.Object,
+                samAuthenticationServiceMock,
+                userAccountService,
+                webUserRepositoryMock.Object,
+                logger
+                );
+
+            membershipService.AddRegistrationTypeNotVerifiedClaim(
+                GetExampleUserAccount(),
+                string.Empty
+                );
+
+            Assert.Fail();
+        }
+        
+        [TestMethod]
+        [TestCategory(TestCategories.Membership)]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void AddRegistrationTypeNotVerifiedClaimThrowsExceptionWhere1stParamIsNull()
+        {
+            var userAccountService =
+                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository());
+
+            membershipService = new MembershipService(
+                institutionRepositoryMock.Object,
+                refDataRepositoryMock.Object,
+                samAuthenticationServiceMock,
+                userAccountService,
+                webUserRepositoryMock.Object,
+                logger
+                );
+
+            membershipService.AddRegistrationTypeNotVerifiedClaim(
+                null,
+                ClaimValues.ManualRegistration
+                );
+
+            Assert.Fail();
         }
 
         private UserAccount GetExampleUserAccount()

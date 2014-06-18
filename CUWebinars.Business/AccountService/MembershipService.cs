@@ -229,6 +229,11 @@ namespace CUWebinars.Business.AccountService
 
         public void AddRegistrationTypeNotVerifiedClaim(UserAccount userAccount, string registrationType)
         {
+            if (userAccount == null) 
+                throw new ArgumentNullException("userAccount");
+            if (string.IsNullOrWhiteSpace(registrationType))
+                throw new ArgumentException("String parameter cannot be white space or null.", "registrationType");
+            
             _userAccountService.AddClaim(userAccount.ID, ClaimTypes.HasNotVerified, registrationType);
         }
 

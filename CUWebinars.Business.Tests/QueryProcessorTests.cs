@@ -29,10 +29,10 @@ namespace CUWebinars.Business.Tests
             var queryProcessor = kernel.Get<IQueryProcessor>();
 
             //  Act
-            var al = queryProcessor.Process(query);
+            var additionalLocation = queryProcessor.Process(query);
 
             //  Assert                    
-            Assert.IsTrue(al != null);
+            Assert.IsTrue(additionalLocation != null);
         }
 
         [TestMethod]
@@ -45,7 +45,7 @@ namespace CUWebinars.Business.Tests
 
             //  Act
             // ReSharper disable once ExpressionIsAlwaysNull
-            var al = queryProcessor.Process(query);
+            var additionalLocation = queryProcessor.Process(query);
 
             //  Assert                    
             Assert.Fail();
