@@ -15,6 +15,7 @@ namespace CUWebinars.Web.Controllers
         private readonly IStateService _stateService;
         private readonly ILogger _logger;
         private readonly IOrderControllerOrchestrator _orderControllerOrchestrator;
+        private bool _disposed;
 
         public OrderController(IStateService stateService, ILogger logger, IOrderControllerOrchestrator orderControllerOrchestrator)
         {
@@ -115,6 +116,19 @@ namespace CUWebinars.Web.Controllers
 
             return Json(new { Result = "0" }, JsonRequestBehavior.AllowGet);
             //return Json(new { Result = WebUiConstants.Fail });
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!_disposed && disposing)
+            {
+                var logger = _logger as IDisposable;
+                if (logger != null)
+                    logger.Dispose();
+
+                base.Dispose(true);
+            }
+            _disposed = true;
         }
     }
 }

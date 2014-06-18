@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CUWebinars.Business.AccountService;
+﻿using CUWebinars.Business.AccountService;
 using CUWebinars.Business.CQS.Queries;
-using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
+using System;
 
 namespace CUWebinars.Business.CQS.QueryHandlers
 {
@@ -15,6 +10,7 @@ namespace CUWebinars.Business.CQS.QueryHandlers
     {
         private readonly IMembershipService _membershipService;
         private readonly IOrderManagementService _orderManagementService;
+        private bool _disposed;
 
         public OrderManagementQueries(IMembershipService membershipService, IOrderManagementService orderManagementService)
         {
@@ -37,7 +33,19 @@ namespace CUWebinars.Business.CQS.QueryHandlers
 
         public void Dispose()
         {
-            
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public virtual void Dispose(bool disposing)
+        {
+            if (!_disposed && disposing)
+            {
+                _membershipService.Dispose();
+                _orderManagementService.Dispose();
+
+            }
+            _disposed = true;
         }
     }
 }

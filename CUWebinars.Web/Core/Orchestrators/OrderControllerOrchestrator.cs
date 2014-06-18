@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using CUWebinars.Business.CQS;
+﻿using CUWebinars.Business.CQS;
 using CUWebinars.Business.CQS.Commands;
 using CUWebinars.Business.CQS.Queries;
 using CUWebinars.Business.Models;

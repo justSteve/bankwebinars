@@ -1,32 +1,27 @@
-﻿using System;
-using System.Diagnostics;
-using System.Web;
-using System.Web.Routing;
-using BrockAllen.MembershipReboot;
+﻿using BrockAllen.MembershipReboot;
+using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
+using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Helpers;
-using CUWebinars.Web.Membership;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
+using CUWebinars.Web.ViewModel;
 using DotNetOpenAuth.AspNet;
 using Microsoft.Web.WebPages.OAuth;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Security;
-using CUWebinars.Business.AccountService;
-using CUWebinars.Business.Models;
-using CUWebinars.Business.Repository;
-using CUWebinars.Web.ViewModel;
-using System.Security.Claims;
 using Thinktecture.IdentityModel.Authorization.Mvc;
-using Elmah;
 using ClaimsExtensions = CUWebinars.Web.Helpers.ClaimsExtensions;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
@@ -43,6 +38,7 @@ namespace CUWebinars.Web.Controllers
         public IMembershipService _membershipService;
         private readonly IStateService _stateService;
         private readonly IOrderManagementService _orderManagementService;
+        private bool _disposed;
 
         public AccountController(
             ILogger logger,
@@ -1175,5 +1171,21 @@ namespace CUWebinars.Web.Controllers
         }
 
         #endregion
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!_disposed && disposing)
+            {
+                var logger = _logger as IDisposable;
+                if (logger != null)
+                    logger.Dispose();
+
+                _membershipService.Dispose();
+                _orderManagementService.Dispose();
+
+                base.Dispose(true);
+            }
+            _disposed = true;
+        }
     }
 }

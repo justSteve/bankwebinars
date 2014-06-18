@@ -18,7 +18,7 @@ namespace CUWebinars.Business.AccountService
         private readonly UserAccountService _userAccountService;
         private readonly IWebUserRepository _webUserRepository;
         private readonly ILogger _logger;
-
+        private bool _disposed;
 
         public MembershipService(IInstitutionRepository institutionRepository,
             IRefDataRepository refDataRepository,
@@ -337,6 +337,27 @@ namespace CUWebinars.Business.AccountService
             }
 
             return false;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public virtual void Dispose(bool disposing)
+        {
+            if (!_disposed && disposing)
+            {
+                var logger = _logger as IDisposable;
+                if (logger != null)
+                    logger.Dispose();
+
+                _institutionRepository.Dispose();
+                _webUserRepository.Dispose();
+
+            }
+            _disposed = true;
         }
     }
 }

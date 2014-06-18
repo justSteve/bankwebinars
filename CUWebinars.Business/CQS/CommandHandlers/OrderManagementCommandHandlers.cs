@@ -19,10 +19,10 @@ namespace CUWebinars.Business.CQS.CommandHandlers
         private readonly IOrderManagementService _orderManagementService;
         private readonly IMembershipService _membershipService;
         private readonly PostCommitRegistrator _postCommitRegistrator;
+        private bool _disposed;
 
         public OrderManagementCommandHandlers(IOrderManagementService orderManagementService, 
             IMembershipService membershipService,
-            
             PostCommitRegistrator postCommitRegistrator)
         {
             _orderManagementService = orderManagementService;
@@ -209,7 +209,19 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
         public void Dispose()
         {
-            
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public virtual void Dispose(bool disposing)
+        {
+            if (!_disposed && disposing)
+            {
+                _membershipService.Dispose();
+                _orderManagementService.Dispose();
+
+            }
+            _disposed = true;
         }
     }
 }

@@ -1,4 +1,4 @@
-namespace CUWebinars.Web.Data.Repositories.Interfaces
+namespace CUWebinars.Business.Repository
 {
     public interface IAccountRepository
     {

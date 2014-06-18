@@ -27,6 +27,7 @@ namespace CUWebinars.Web.Controllers
         private readonly IMembershipService _membershipService;
         private readonly IOrderManagementService _orderManagementService;
         private readonly ILogger _logger;
+        private bool _disposed;
 
         public WebinarController(
             IMembershipService membershipService,
@@ -616,11 +617,6 @@ namespace CUWebinars.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-        }
-
         [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult UpdateConnectionInfo(Webinar model)
@@ -722,5 +718,20 @@ namespace CUWebinars.Web.Controllers
 
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (!_disposed && disposing)
+            {
+                var logger = _logger as IDisposable;
+                if (logger != null)
+                    logger.Dispose();
+
+                _membershipService.Dispose();
+                _orderManagementService.Dispose();
+
+                base.Dispose(true);
+            }
+            _disposed = true;
+        }
     }
 }

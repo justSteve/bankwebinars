@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CUWebinars.Business.Services
 {
-    public interface IOrderManagementService
+    public interface IOrderManagementService : IDisposable
     {
         void AddOrderRow(Order currentOrder, OrderRow orderRow);
         void AddWebinar(Webinar webinar);
