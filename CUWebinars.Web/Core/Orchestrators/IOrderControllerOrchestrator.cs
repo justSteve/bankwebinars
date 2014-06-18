@@ -13,7 +13,9 @@ namespace CUWebinars.Web.Core.Orchestrators
             string confirmChangeEmailUrl
             );
         void FinalizeNewRegistration(IncomingOrderModel incomingOrderModel, string verificationKey);
-        OrderManagementQueryResult GetData(IncomingOrderModel incomingOrderModel, string email);
+        OrderManagementQueryResult GetPreparatoryData(IncomingOrderModel incomingOrderModel, string email);
+        string GetConfirmChangeEmailLinkForNewUserAccount();
+        string GetVerificationKeyForNewUserAccount();
         WebUser ProcessNewUser(IncomingOrderModel incomingOrderModel, string email);
 
     }
