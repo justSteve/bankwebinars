@@ -1,32 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web;
-using System.Web.Mvc;
-using BrockAllen.MembershipReboot;
-using CUWebinars.Business.AccountService;
-using CUWebinars.Business.Constants;
-using CUWebinars.Business.CQS;
-using CUWebinars.Business.CQS.Commands;
-using CUWebinars.Business.CQS.Queries;
-using CUWebinars.Business.Models;
-using CUWebinars.Business.Services;
-using CUWebinars.Web.Core;
+﻿using CUWebinars.Business.Constants;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
-using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
+using System;
+using System.Diagnostics;
+using System.Web.Mvc;
 
 namespace CUWebinars.Web.Controllers
 {
     public class OrderController : Controller
     {
-        private readonly GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
         private readonly IStateService _stateService;
         private readonly ILogger _logger;
         private readonly IOrderControllerOrchestrator _orderControllerOrchestrator;

@@ -1,9 +1,34 @@
+using System;
+using System.Linq;
+using System.Reflection;
 using CUWebinars.Business.Models;
+using Ninject;
 
 namespace CUWebinars.Business.Tests
 {
     public class BusinessTestHelper
     {
+        private static readonly Assembly _serviceAssembly = Assembly.Load("CUWebinars.Business.Tests");
+
+        public static void AutoRegisterType(Type type, IKernel kernel)
+        {
+            var handlerRegistrations = _serviceAssembly.GetExportedTypes()
+                .Where(x => !x.IsAbstract)
+                .Where(x => !x.ContainsGenericParameters)
+                .SelectMany(x => x.GetInterfaces()
+                    .Where(i => i.IsGenericType)
+                    .Where(i => i.GetGenericTypeDefinition() == type)
+                    .Select(i => new { service = i, implementation = x })
+                );
+
+            foreach (var registration in handlerRegistrations)
+            {
+                var abstraction = registration.service; //  interface
+                var implementation = registration.implementation; // class inplementation
+                kernel.Bind(abstraction).To(implementation).InTransientScope();
+            }
+        }
+
         public static void PopulateOrder(Order newOrder, WebUser webUser)
         {
             newOrder.AdminComments = "incomingOrderModel.AdminComments";
