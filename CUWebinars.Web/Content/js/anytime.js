@@ -1277,7 +1277,7 @@ AnyTime.noPicker = function( id )
 //
 //        WARNING: when using "inline" and XHTML and including a day-of-
 //        the-month format field, the input may only appear where a <table>
-//        element is permitted (for example, NOT within a <p> element).
+//        element is permitted (for example, NOT within a <p align="center"> element).
 //        This is because the picker uses a <table> element to arrange
 //        the day-of-the-month (calendar) buttons.  Failure to follow this
 //        advice may result in an "unknown error" in Internet Explorer.

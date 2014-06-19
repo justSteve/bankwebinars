@@ -1,4 +1,5 @@
-﻿using CUWebinars.Web.Core.Orchestrators;
+﻿using CUWebinars.Business.Constants;
+using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Models;
 using Ninject.Extensions.Logging;
@@ -58,6 +59,9 @@ namespace CUWebinars.Web.Controllers
                             _orderControllerOrchestrator.GetConfirmChangeEmailLinkForNewUserAccount();
 
                         _orderControllerOrchestrator.FinalizeNewRegistration(incomingOrderModel, verificationKey);
+                        //  Now we clear the value, so TtsSmtpMessageDelivery can go back to business as usual.
+                        //_stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
+                        _logger.Info(string.Format("CreateOrder|CreateUser Succeeded: {0}", email));
                     }
                     catch (Exception exception)
                     {
@@ -70,7 +74,8 @@ namespace CUWebinars.Web.Controllers
                 idOfLastOrder = _orderControllerOrchestrator.CreateNewOrder(incomingOrderModel, email,
                     orderManagementQueryResult, verificationKey, confirmChangeEmailUrl);
 
-                _logger.Info("Posted idOrder=" + idOfLastOrder);
+                //idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
+                _logger.Info(string.Format("CreateOrder|CreateNewOrder: {0}", idOfLastOrder));
 
                 return Json(new { Result = idOfLastOrder.ToString() }, JsonRequestBehavior.AllowGet);
             }

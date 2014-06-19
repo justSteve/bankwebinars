@@ -34,8 +34,8 @@
                     }
                     <h4 class="trigger" id="upcoming-@row.idWebinar">
                         @*<a href="#">*@
-                            @row.Webinar.Title
-                            @*<i class="icon-plus-sign"></i>*@
+                        @row.Webinar.Title
+                        @*<i class="icon-plus-sign"></i>*@
                         @*</a>*@
                     </h4>
                     <span style="font-size: small;">
@@ -44,8 +44,6 @@
                         Order ID: @row.Order.idOrder<br />Date Ordered: @row.Order.OrderDate.ToShortDateString()
                     </span>
                     <div class="s-content">
-
-
                         @if (row.RegistrationType.OptionLabel != "Live_Session_Only")
                         {
                             if (row.Webinar.RecordingUrl != "")
@@ -60,10 +58,10 @@
                                     @{Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar);}
                                     @if (row.ShipmentDate.HasValue)
                                     {
-                                        <p>This order shipped on:<b>@Html.DisplayDate(row.ShipmentDate.Value)</b></p>
+                                    <p>This order shipped on:<b>@Html.DisplayDate(row.ShipmentDate.Value)</b></p>
                                     }
                                     <div class="shareOnDemand">
-                                        <p>Need to share this event with a co-worker? Just provide them this URL:<br/> http://www.CUWebinars.com/Webinar/Play?w=@row.Webinar.idWebinar&u=@row.Order.WebUser.idUser</p>
+                                        <p>Need to share this event with a co-worker? Just provide them this URL:<br /> http://www.CUWebinars.com/Webinar/Play?w=@row.Webinar.idWebinar&u=@row.Order.WebUser.idUser</p>
                                     </div>
                                 </div>
                             }
@@ -80,6 +78,18 @@
                                 Upgrade your registration with an On-Demand Recording package!<br />
                             </p>
                         </div>
+                        }
+                        @if (row.Webinar.Status == WebinarStatus.Recorded || row.Webinar.Status == WebinarStatus.Archived)
+                        {
+                            <div>
+                                <form method="POST" action="/Account/MyCertificate">
+                                    <input type="hidden" name="orderID" value="@row.idOrder" />
+                                    <aside class="widget">
+                                        @*<h5 class="short_headline"><span>Certificate Of Completion</span></h5>*@
+                                        <input type="submit" value="My Certificate" id="ShowCertificate" class="short_headline btn btn-success" />
+                                    </aside>
+                                </form>
+                            </div>
                         }
                     </div>
                     @*</li>*@

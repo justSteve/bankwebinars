@@ -6,11 +6,11 @@
 @{
     <script language="javascript">
         function exprsOrder(idRegType) {
-            alert(idRegType);
+            alert("Please dial 800-831-0678 ext. 3 and ask to upgrade CU-@Model.Order.idOrder");
 
         };
         function upgrade(idRegType) {
-            alert(idRegType);
+            alert("Please dial 800-831-0678 ext. 3 and ask to upgrade CU-@Model.Order.idOrder");
 
         };
     </script>
@@ -23,7 +23,7 @@
         order = row.Order;
         string[] webinarFiles = ViewBag.WebinarFiles;
         //ICollection<WebinarFile> webinarFiles = row.Webinar.WebinarFiles;
-        var recording = "<a href='" + ConfigurationManager.AppSettings["wmvrepository"]+ Model.Webinar.RecordingUrl + "' target=_blank /> Recording Playback</a>"; ;
+        var recording = "<a href='" + ConfigurationManager.AppSettings["wmvrepository"] + Model.Webinar.RecordingUrl + "' target=_blank /> Recording Playback</a>"; ;
         var showShipped = "";
         if (Model.Webinar.Status != WebinarStatus.Recorded)
         {
@@ -32,19 +32,19 @@
         var wf = new StringBuilder();
 
 
-            <script language="javascript">
-                var idRegType = @orderMsgs.idRegType;
-            </script>
+        <script language="javascript">
+            var idRegType = @orderMsgs.idRegType;
+        </script>
 
         foreach (var webinarFile in webinarFiles)
         {
             string itemDesc = webinarFile.ToString().Split('|')[0];
-            string itemPath = ConfigurationManager.AppSettings["wmvrepository"]+webinarFile.ToString().Split('|')[1];
+            string itemPath = ConfigurationManager.AppSettings["wmvrepository"] + webinarFile.ToString().Split('|')[1];
             //string itemDesc = webinarFile.fileDesc;
             //string itemPath = webinarFile.fileLocation;
             wf.Append("<a href='" + itemPath + "' target=_blank >" + itemDesc + "</a><br>");
         }
-            //webinarFiles
+        //webinarFiles
         //for (var i = 0; i < webinarFiles.Count(); i++)
         //{
         //    string itemDesc = webinarFiles[i].Split('|')[0];
@@ -52,106 +52,117 @@
         //    wf.Append("<a href='" + itemPath + "' target=_blank >" + itemDesc + "</a><br>");
         //}
 
-            if (row.RegistrationType.ShowShippedNotifications == "Yes" && row.ShipmentDate != null)
-            {
-                showShipped = "<li>Shipped on: " + row.ShipmentDate.Value.ToShortDateString() + "</li>";
-            }
+        if (row.RegistrationType.ShowShippedNotifications == "Yes" && row.ShipmentDate != null)
+        {
+            showShipped = "<li>Shipped on: " + row.ShipmentDate.Value.ToShortDateString() + "</li>";
+        }
         <div id="OrderSummary" class="well well-small">
             @{
 
-            Debug.Assert(order != null, "order != null");
-                if (row.Order.OrderStatus == OrderStatus.Billed ||
-                    row.Order.OrderStatus == OrderStatus.Paid ||
-                    row.Order.OrderStatus == OrderStatus.Submitted)
-                {
-                    //webinarFiles ="";
+        Debug.Assert(order != null, "order != null");
+        if (row.Order.OrderStatus == OrderStatus.Billed ||
+            row.Order.OrderStatus == OrderStatus.Paid ||
+            row.Order.OrderStatus == OrderStatus.Submitted)
+        {
+            //webinarFiles ="";
 
-                    <aside style="width: 100%" class="widget clearfix">
-                        <div class="dropdown">
-                            <a class="dropdown-toggle btn btn-success" data-toggle="dropdown" href="#">Your Order# <b>CU-@order.idOrder</b> Summary</a>
-                            <ul style="width: 100%; padding-left: 10px;" class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                <li>Ordered on: @order.OrderDate.ToShortDateString()</li>
-                                <li>@orderMsgs.OptionLabel</li>
-                                <li>$@order.Total</li>
-                                @Html.Raw(@showShipped)
-                                <li><a href='#' onclick=' upgrade(idRegType); '>Upgrade order?</a></li>
-                            </ul>
-                        </div>
-                    </aside>
-                    if (Model.Webinar.Status == WebinarStatus.Scheduled || Model.Webinar.Status == WebinarStatus.Active || Model.Webinar.Status == WebinarStatus.InProgress)
-                    {
-                        <h5 class="short_headline"><span>Connection Information</span></h5>
-                        if (orderMsgs.ShowLiveNotifications == "Yes")
-                        {
-                            if (Model.Webinar.Status == WebinarStatus.Active || Model.Webinar.Status == WebinarStatus.InProgress)
-                            {
-                                <aside style="width: 100%" class="widget clearfix">
-                                    @Html.Partial("Partials/_ConnectionSummary", row)
-                                </aside>
-                            }
-                            else
-                            {
-                                <aside style="width: 100%" class="widget clearfix">
-                                    [not yet generated]
-                                </aside>
-                            }
-                        }
-                        else
-                        {
-                            <aside style="width: 100%; text-align: center;" class="widget clearfix">
-                                Your order currently configured as:
-                                <b><i>@orderMsgs.OptionLabel</i></b>. You'll be notified as soon as the recording is posted.
-                                @{
-                            if (orderMsgs.ShowShippedNotifications == "Yes")
-                            {
-                                <span>CD-ROMs and handouts are shipped 2-3 days following the event.</span>
-                            }
-                                }
-                                <span><br /><i>There's still time to upgrade your order!</i></span>
-                                <br /><a class="btn btn-mini btn-success" href='#' onclick=' upgrade(idRegType); '>Attend the Live Webinar?</a>
-                            </aside>
-                        }
-                    }
-                    //webinarFiles ="";
-                    if (webinarFiles.Count() > 0)
+            <aside style="width: 100%" class="widget clearfix">
+                <div class="dropdown">
+                    <a class="dropdown-toggle btn btn-success" data-toggle="dropdown" href="#">Your Order# <b>CU-@order.idOrder</b> Summary</a>
+                    <ul style="width: 100%; padding-left: 10px;" class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                        <li>Ordered on: @order.OrderDate.ToShortDateString()</li>
+                        <li>@orderMsgs.OptionLabel</li>
+                        <li>$@order.Total</li>
+                        @Html.Raw(@showShipped)
+                        <li><a href='#' onclick=' upgrade(idRegType); '>Upgrade order?</a></li>
+                    </ul>
+                </div>
+            </aside>
+            if (Model.Webinar.Status == WebinarStatus.Scheduled || Model.Webinar.Status == WebinarStatus.Active || Model.Webinar.Status == WebinarStatus.InProgress)
+            {
+                <h5 class="short_headline"><span>Connection Information</span></h5>
+                if (orderMsgs.ShowLiveNotifications == "Yes")
+                {
+                    if (Model.Webinar.Status == WebinarStatus.Active || Model.Webinar.Status == WebinarStatus.InProgress)
                     {
                         <aside style="width: 100%" class="widget clearfix">
-                            <h5 class="short_headline"><span>Event Materials</span></h5>
-                            @Html.Raw(wf.ToString())
-                            @Html.Raw(@recording)
+                            @Html.Partial("Partials/_ConnectionSummary", row)
                         </aside>
                     }
-
+                    else
+                    {
+                        <aside style="width: 100%" class="widget clearfix">
+                            [not yet generated]
+                        </aside>
+                    }
+                }
+                else
+                {
+                    <aside style="width: 100%; text-align: center;" class="widget clearfix">
+                        Your order currently configured as:
+                        <b><i>@orderMsgs.OptionLabel</i></b>. You'll be notified as soon as the recording is posted.
+                        @{
+                    if (orderMsgs.ShowShippedNotifications == "Yes")
+                    {
+                        <span>CD-ROMs and handouts are shipped 2-3 days following the event.</span>
+                    }
+                        }
+                        <span><br /><i>There's still time to upgrade your order!</i></span>
+                        <br /><a class="btn btn-mini btn-success" href='#' onclick=' upgrade(idRegType); '>Attend the Live Webinar?</a>
+                    </aside>
                 }
             }
+            //webinarFiles ="";
+            if (webinarFiles.Count() > 0)
+            {
+                <aside style="width: 100%" class="widget clearfix">
+                    <h5 class="short_headline"><span>Event Materials</span></h5>
+                    @Html.Raw(wf.ToString())
+                    @Html.Raw(@recording)
+                </aside>
+            }
 
+            if (Model.Webinar.Status == WebinarStatus.Recorded || Model.Webinar.Status == WebinarStatus.Archived)
+            {
+                <div>
+                    <form method="POST" action="/Account/MyCertificate">
+                        <input type="hidden" name="orderID" value="@Model.Order.idOrder" />
+                        <aside class="widget">
+                            @*<h5 class="short_headline"><span>Certificate Of Completion</span></h5>*@
+                            <input type="submit" value="My Certificate" id="ShowCertificate" class="short_headline btn btn-success" />
+                        </aside>
+                    </form>
+                </div>
+            }
+        }
+}
         </div>
     }
     @*else
-    {// not owned state
+        {// not owned state
 
-        <aside style="width: 100%" class="widget clearfix">
-            <div class="dropdown">
-                <a class="dropdown-toggle btn btn-success" data-toggle="dropdown" href="#">Express SignUp!</a>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+            <aside style="width: 100%" class="widget clearfix">
+                <div class="dropdown">
+                    <a class="dropdown-toggle btn btn-success" data-toggle="dropdown" href="#">Express SignUp!</a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 
-                    @foreach (var myOption in Model.Options)
-                    {
-
-                        if (Model.CheckoutOptionsViewModel.Order == null
-                            //Model.Order.idOrder < 1
-                            //Model.Order.OrderRows.Single().Status == OrderStatus.InProcess
-
-                            && !myOption.SKU.Contains("Upgrade")
-                            )
+                        @foreach (var myOption in Model.Options)
                         {
-                            <li>
-                                <a onclick='javascript:exprsOrder("@myOption.idRegType");'>&nbsp;&nbsp;@myOption.OptionLabel - $@myOption.Price&nbsp;&nbsp;</a>
-                            </li>
+
+                            if (Model.CheckoutOptionsViewModel.Order == null
+                                //Model.Order.idOrder < 1
+                                //Model.Order.OrderRows.Single().Status == OrderStatus.InProcess
+
+                                && !myOption.SKU.Contains("Upgrade")
+                                )
+                            {
+                                <li>
+                                    <a onclick='javascript:exprsOrder("@myOption.idRegType");'>&nbsp;&nbsp;@myOption.OptionLabel - $@myOption.Price&nbsp;&nbsp;</a>
+                                </li>
+                            }
                         }
-                    }
-                </ul>
-            </div>
-        </aside>
-    }*@
+                    </ul>
+                </div>
+            </aside>
+        }*@
 }

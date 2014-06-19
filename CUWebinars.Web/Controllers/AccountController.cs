@@ -6,6 +6,7 @@ using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Models;
+using CUWebinars.Web.Notification.Templates;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using DotNetOpenAuth.AspNet;
@@ -239,6 +240,19 @@ namespace CUWebinars.Web.Controllers
 
 
             return View("MyWebinars", model);
+        }
+
+        [System.Web.Mvc.AllowAnonymous]
+        [System.Web.Mvc.HttpPost]
+        public ActionResult MyCertificate(int orderID)
+        {
+            var currentUser = GetWebUserFromIPrincipal();
+
+            var currentOrder = _orderManagementService.GetOrderById(orderID);
+            var model = new CertOfCompletionViewModel { CurrentUser = currentUser, Order = currentOrder};
+            
+
+            return View("MyCertificate", model);
         }
 
         [System.Web.Mvc.AllowAnonymous]
