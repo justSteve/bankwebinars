@@ -53,6 +53,16 @@
     if (ViewBag.userOwnsThisEvent > 0)
     {
         <script language="javascript">
+            function exprsOrder(idRegType) {
+                alert("Please dial 800-831-0678 ext. 3 and ask to upgrade CU-@Model.Order.idOrder");
+
+            };
+            function upgrade(idRegType) {
+                alert("Please dial 800-831-0678 ext. 3 and ask to upgrade CU-@Model.Order.idOrder");
+
+            };
+        </script>
+        <script language="javascript">
 
             $(document).ready(function () {
                 $("#SignUpFormContainer").hide();
@@ -183,7 +193,6 @@
             @Html.Partial("Partials/_RegistrationSummary")
             <!-- close .widget -->
             <!-- For certificate file widget -->
-
             <!-- Close certificat widget -->
             <!-- For Generate ics file widget -->
             @*<aside class="widget">

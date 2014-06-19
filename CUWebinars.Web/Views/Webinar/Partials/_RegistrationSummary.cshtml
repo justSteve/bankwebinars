@@ -4,16 +4,8 @@
 @using CUWebinars.Business.Constants
 @model WebinarDetailsViewModel
 @{
-    <script language="javascript">
-        function exprsOrder(idRegType) {
-            alert("Please dial 800-831-0678 ext. 3 and ask to upgrade CU-@Model.Order.idOrder");
 
-        };
-        function upgrade(idRegType) {
-            alert("Please dial 800-831-0678 ext. 3 and ask to upgrade CU-@Model.Order.idOrder");
 
-        };
-    </script>
     Order order = null;
     OrderRow row = null;
     if (ViewBag.userOwnsThisEvent > 0)
@@ -135,7 +127,7 @@
                 </div>
             }
         }
-}
+            }
         </div>
     }
     @*else
