@@ -104,33 +104,37 @@ namespace CUWebinars.Business.Tests
 
         [TestMethod]
         [TestCategory(TestCategories.MembershipIntegration)]
-        [ExpectedException(typeof(ArgumentNullException))]
+        //[ExpectedException(typeof(ArgumentNullException))]
         public void CreateUserAccountWithNoTenantThrowsException()
         {
             var membershipService = CreateMembershipService();
 
-            membershipService.CreateUser(null, TestFirstName, TestLastName, TestFirstName + " " + TestLastName,
-                TestPassword, TestEmail);
+            ExceptionAssert.Throws<ArgumentNullException>(
+                () =>
+                    membershipService.CreateUser(null, TestFirstName, TestLastName, TestFirstName + " " + TestLastName,
+                        TestPassword, TestEmail));
 
-            Assert.Fail(); // if made it this far, no exception thrown and test fails.
+            //Assert.Fail(); // if made it this far, no exception thrown and test fails.
         }
 
         [TestMethod]
         [TestCategory(TestCategories.MembershipIntegration)]
-        [ExpectedException(typeof(ArgumentNullException))]
+        //[ExpectedException(typeof(ArgumentNullException))]
         public void CreateUserAccountWithEmptyStringForTenantThrowsException()
         {
             var membershipService = CreateMembershipService();
 
-            membershipService.CreateUser(string.Empty, TestFirstName, TestLastName, TestFirstName + " " + TestLastName,
-                TestPassword, TestEmail);
+            ExceptionAssert.Throws<ArgumentNullException>(() =>
+                membershipService.CreateUser(string.Empty, TestFirstName, TestLastName,
+                    TestFirstName + " " + TestLastName,
+                    TestPassword, TestEmail));
 
-            Assert.Fail(); // if made it this far, no exception thrown and test fails.
+            //Assert.Fail(); // if made it this far, no exception thrown and test fails.
         }
 
         [TestMethod]
         [TestCategory(TestCategories.MembershipIntegration)]
-        public void CreateUserAccountWithEmptyStringForUsernameThrowsException()
+        public void CreateUserAccountWithEmptyStringForUsernameDoesNotThrowException()
         {
             var membershipService = CreateMembershipService();
 
@@ -139,15 +143,15 @@ namespace CUWebinars.Business.Tests
             membershipService.CreateUser(Globals.Tenant, TestFirstName, TestLastName, " ",
                 TestPassword, TestEmail);
 
-            var ctx = new DefaultMembershipRebootDatabase();
-            var account = ctx.Users.Where(u => u.Email == TestEmail).SingleOrDefault();
+            var context = new DefaultMembershipRebootDatabase();
+            var account = context.Users.Where(u => u.Email == TestEmail).SingleOrDefault();
 
             Assert.IsNotNull(account); 
         }
 
         [TestMethod]
         [TestCategory(TestCategories.MembershipIntegration)]
-        public void CreateUserAccountWithNullStringForUsernameThrowsException()
+        public void CreateUserAccountWithNullStringForUsernameDoesNotThrowException()
         {
             var membershipService = CreateMembershipService();
 
@@ -156,8 +160,8 @@ namespace CUWebinars.Business.Tests
             membershipService.CreateUser(Globals.Tenant, TestFirstName, TestLastName, null,
                 TestPassword, TestEmail);
 
-            var ctx = new DefaultMembershipRebootDatabase();
-            var account = ctx.Users.Where(u => u.Email == TestEmail).SingleOrDefault();
+            var context = new DefaultMembershipRebootDatabase();
+            var account = context.Users.Where(u => u.Email == TestEmail).SingleOrDefault();
 
             Assert.IsNotNull(account); 
         }
