@@ -1,4 +1,6 @@
-﻿using System.Web.Helpers;
+﻿using System.Linq;
+using System.Security.Claims;
+using System.Web.Helpers;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
@@ -18,6 +20,7 @@ using System.IO;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using ClaimTypes = System.IdentityModel.Claims.ClaimTypes;
 
 namespace CUWebinars.Web.Controllers
 {
@@ -180,6 +183,34 @@ namespace CUWebinars.Web.Controllers
             }
 
             return Json(new { Result = WebUiConstants.Fail });
+        }
+
+        public PartialViewResult LogInAsUser()
+        {
+            var logInAsOtherUserViewModel = new LogInAsOtherUserViewModel
+            {
+                Email = string.Empty,
+                Password = string.Empty
+            };
+
+            return PartialView("_LogInAsUser", logInAsOtherUserViewModel);
+        }
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public RedirectToRouteResult LogInAsUser(LogInAsOtherUserViewModel model)
+        {
+            var adminUser = User.Identity as ClaimsIdentity;
+            var adminUserEmail = adminUser.Claims.Single(c => c.Type == ClaimTypes.Email).Value;
+            var impersonatedUserAccount = _membershipService.GetUserAccountByEmail(globalConfig.Tenant, model.Email);
+            _membershipService.LogOutUser();
+
+            _membershipService.LogInAdminUserAsOtherUser(globalConfig.Tenant, 
+                adminUserEmail.Trim(), model.Password.Trim(),
+                impersonatedUserAccount
+                );
+            
+            return RedirectToAction("Index", "Home");
         }
 
         public PartialViewResult ManualPasswordReset()

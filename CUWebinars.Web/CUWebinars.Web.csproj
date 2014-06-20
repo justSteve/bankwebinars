@@ -390,6 +390,8 @@
     <Compile Include="Helpers\EventInvokerHelpers.cs" />
     <Compile Include="Notification\Templates\CertOfCompletionViewModel.cs" />
     <Compile Include="ViewModel\CreateUserConfirmedViewModel.cs" />
+    <Compile Include="ViewModel\EmailRequiredBaseViewModel.cs" />
+    <Compile Include="ViewModel\LogInAsOtherUserViewModel.cs" />
     <Compile Include="ViewModel\ManualPasswordResetViewModel.cs" />
     <Compile Include="Core\CsvParseOps.cs" />
     <Compile Include="Models\IncomingOrderModel.cs" />
@@ -1125,6 +1127,7 @@
     <Content Include="Views\OrderEventFiringOps\_resendOrderConfirmation.cshtml" />
     <Content Include="Views\OrderEventFiringOps\_resendConnectionInfo.cshtml" />
     <Content Include="Views\Account\Partials\_Certificate.cshtml" />
+    <Content Include="Views\MembershipNotificationOps\_LogInAsUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Notifications\" />

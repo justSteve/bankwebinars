@@ -44,6 +44,7 @@ namespace CUWebinars.Business.AccountService
         bool HasPassword(string tenant, string emailAddress);
         bool LogInUser(string tenant, string emailAddress, string password, bool persistent);
         bool LogInUser(string tenant, string emailAddress, string password, bool persistent, out string userMustVerify);
+        bool LogInAdminUserAsOtherUser(string tenant, string emailAddress, string password, UserAccount account);
         bool LogOutUser();
 
         Institution ProcessInstitutionForUser(string institutionName,
