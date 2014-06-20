@@ -53,7 +53,7 @@ namespace CUWebinars.CitrixDriver
 
             var loginLink = webDriverWait.Until(ExpectedConditions.ElementIsVisible(By.PartialLinkText("Log In")));
 
-            loginLink.Click();
+            loginLink.SendKeys(Keys.Enter);
         }
 
 
@@ -244,29 +244,26 @@ namespace CUWebinars.CitrixDriver
 
             //  Second tab - wait a bit
             wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(1));
-            IWebElement webinarKeyHiddenInput = null;
-            string webinarKey = null;
 
-            var submitButtonContinue = wait.Until(d =>
-            {
-                var submitButton = SeleniumTestDriver.FindByXPath(@"//input[@value='Save and Continue >']");
-                webinarKeyHiddenInput = SeleniumTestDriver.FindByXPath(@"//input[@name='WebinarKey']");
-                return submitButton;
-            });
+            var submitButtonContinue = 
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(@"//input[@value='Save and Continue >']")));
 
-            webinarKey = webinarKeyHiddenInput.GetAttribute("value");
-            submitButtonContinue.Click();
+            wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(5));
 
+            IWebElement webinarKeyHiddenInput =
+                wait.Until(ExpectedConditions.ElementExists(By.XPath(@"//input[@name='WebinarKey']")));
+            
+            string webinarKey = webinarKeyHiddenInput.GetAttribute("value");
+            
+             submitButtonContinue.Click();
+            
+            //  Third tab - wait a bit
             SeleniumTestDriver.FindByLinkTextClick("Clear All");
 
-            //  Third tab - wait a bit
             wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(1));
 
-            var commitButton = wait.Until(d =>
-            {
-                var commitInput = SeleniumTestDriver.FindByXPath(@"//input[@value='Save and Email me the Invitation']");
-                return commitInput;
-            });
+            var commitButton = 
+                wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(@"//input[@value='Save and Email me the Invitation']")));
 
             SeleniumTestDriver.FindByXPathClick(@"//input[@name='ApprovalRequired'][2]"); // index starts at 1, not 0
 

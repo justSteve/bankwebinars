@@ -22,44 +22,65 @@ namespace CUWebinars.CitrixDriver
         private static Dictionary<string, Dictionary<string, string>> webinarDetails;
         static void Main(string[] args)
         {
+            Console.ForegroundColor = ConsoleColor.Green; // love the old green screen!
             PrimeAccessCodeAndPhoneBucket();
 
             var ttsWebinar = GetWebinar();
+
             var webinar = GetGTWebinar(ttsWebinar);
 
-            //webDriver = new IeTestDriver { DriverPath = @ConfigurationManager.AppSettings["IeDriverPath"], DriverPort = 8889 };
-            webDriver = new FirefoxTestDriver { DriverPath = @ConfigurationManager.AppSettings["FireFoxBinaryPath"], DriverPort = 8889 };
-            webDriver.Initialize();
+            if (webinar != null)
+            {
+
+                //webDriver = new IeTestDriver { DriverPath = @ConfigurationManager.AppSettings["IeDriverPath"], DriverPort = 8889 };
+                webDriver = new FirefoxTestDriver
+                {
+                    DriverPath = @ConfigurationManager.AppSettings["FireFoxBinaryPath"],
+                    DriverPort = 8889
+                };
+                webDriver.Initialize();
 
 
-            citrixWebPage = new CitrixWebPage(webDriver, ConfigurationManager.AppSettings["HomeUrl"]);
-            
-            citrixWebPage.Open();
-            Login();
+                citrixWebPage = new CitrixWebPage(webDriver, ConfigurationManager.AppSettings["HomeUrl"]);
+
+                citrixWebPage.Open();
+                Login();
 
 
-            var newWebinarKey = ScheduleASimilarWebinar(webinar);
-            citrixWebPage.ClickViewLinkForAccessCodeAndPhoneNumbers();
+                var newWebinarKey = ScheduleASimilarWebinar(webinar);
+                citrixWebPage.ClickViewLinkForAccessCodeAndPhoneNumbers();
 
-            //  First get Organizer details
-            citrixWebPage.GetPhoneNumbersAndAccessCodes(webinarDetails[Organizer], "//*[@id='ConfCallNumbersDiv1_1']/div[1]/a");
+                //  First get Organizer details
+                citrixWebPage.GetPhoneNumbersAndAccessCodes(webinarDetails[Organizer],
+                    "//*[@id='ConfCallNumbersDiv1_1']/div[1]/a");
 
-            //  Second get Panelist details
-            citrixWebPage.GetPhoneNumbersAndAccessCodes(webinarDetails[Panelist], "//*[@id='ConfCallNumbersDiv1_1']/div[2]/a");
+                //  Second get Panelist details
+                citrixWebPage.GetPhoneNumbersAndAccessCodes(webinarDetails[Panelist],
+                    "//*[@id='ConfCallNumbersDiv1_1']/div[2]/a");
 
-            //  Third get Attendee details
-            citrixWebPage.GetPhoneNumbersAndAccessCodes(webinarDetails[Attendee], "//*[@id='ConfCallNumbersDiv1_1']/div[3]/a");
+                //  Third get Attendee details
+                citrixWebPage.GetPhoneNumbersAndAccessCodes(webinarDetails[Attendee],
+                    "//*[@id='ConfCallNumbersDiv1_1']/div[3]/a");
 
-            Trace.WriteLine(webinarDetails[Organizer]["Phone"]);
-            Trace.WriteLine(webinarDetails[Organizer]["AccessCode"]);
-            Trace.WriteLine(webinarDetails[Panelist]["Phone"]);
-            Trace.WriteLine(webinarDetails[Panelist]["AccessCode"]);
-            Trace.WriteLine(webinarDetails[Attendee]["Phone"]);
-            Trace.WriteLine(webinarDetails[Attendee]["AccessCode"]);
+                Trace.WriteLine(webinarDetails[Organizer]["Phone"]);
+                Trace.WriteLine(webinarDetails[Organizer]["AccessCode"]);
+                Trace.WriteLine(webinarDetails[Panelist]["Phone"]);
+                Trace.WriteLine(webinarDetails[Panelist]["AccessCode"]);
+                Trace.WriteLine(webinarDetails[Attendee]["Phone"]);
+                Trace.WriteLine(webinarDetails[Attendee]["AccessCode"]);
 
-            citrixWebPage.Close();
+                Console.WriteLine("Organizer Phone Nr:\t{0}", webinarDetails[Organizer]["Phone"]);
+                Console.WriteLine("Organizer Access Code:\t{0}", webinarDetails[Organizer]["AccessCode"]);
+                Console.WriteLine("Panelist Phone Nr:\t{0}", webinarDetails[Panelist]["Phone"]);
+                Console.WriteLine("Panelist Access Code:\t{0}", webinarDetails[Panelist]["AccessCode"]);
+                Console.WriteLine("Attendee Phone Nr:\t{0}", webinarDetails[Attendee]["Phone"]);
+                Console.WriteLine("Attendee Access Code:\t{0}", webinarDetails[Attendee]["AccessCode"]);
 
-            Console.ReadLine(); 
+                citrixWebPage.Close();
+
+                Console.WriteLine("{0} Press any key to close...", Environment.NewLine);
+                Console.ReadLine();
+            }
         }
 
         private static void PrimeAccessCodeAndPhoneBucket()
@@ -74,8 +95,17 @@ namespace CUWebinars.CitrixDriver
 
         private static Webinar GetWebinar()
         {
-            var webinarId = int.Parse(ConfigurationManager.AppSettings["WebinarId"]);
+            Console.Write("Enter Webinar Number: ");
+            var textEntered = Console.ReadLine();
+            int webinarId;
+            while (!int.TryParse(textEntered, out webinarId))
+            {
+                Console.Write("Invalid input. The Webinar Number must be a valid Integer: ");
+                textEntered = Console.ReadLine();
+            }
+
             var webinar = context.Webinars.Find(webinarId);
+
             return webinar;
         }
 
