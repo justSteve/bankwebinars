@@ -1,10 +1,10 @@
-﻿using CUWebinars.Business.Models;
+﻿using System.Data.Entity;
+using System.Linq;
+using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Data.Entity;
-using System.Linq;
 
-namespace CUWebinars.Business.Tests
+namespace CUWebinars.Business.Tests.IntegrationTests
 {
     [TestClass]
     public class OrderRepositoryIntegrationTests

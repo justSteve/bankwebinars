@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.IO;
+using System.Linq;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
@@ -8,10 +10,8 @@ using CUWebinars.Business.Services;
 using CUWebinars.Tests.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ninject.Extensions.Logging.Log4net.Infrastructure;
-using System.Data.Entity;
-using System.Linq;
 
-namespace CUWebinars.Business.Tests
+namespace CUWebinars.Business.Tests.IntegrationTests
 {
     [TestClass]
     public class OrderManagementServiceIntegrationTests

@@ -137,10 +137,10 @@
     <Compile Include="Constants.cs" />
     <Compile Include="DatabaseSetup.cs" />
     <Compile Include="Globals.cs" />
-    <Compile Include="MembershipServiceIntegrationTests.cs" />
-    <Compile Include="OrderManagementServiceIntegrationTests.cs" />
+    <Compile Include="IntegrationTests\MembershipServiceIntegrationTests.cs" />
+    <Compile Include="IntegrationTests\OrderManagementServiceIntegrationTests.cs" />
     <Compile Include="MembershipServiceTests.cs" />
-    <Compile Include="OrderRepositoryIntegrationTests.cs" />
+    <Compile Include="IntegrationTests\OrderRepositoryIntegrationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -150,6 +150,7 @@
     <Compile Include="QueryProcessorTests.cs" />
     <Compile Include="SamAuthenticationServiceFake.cs" />
     <Compile Include="TestCategories.cs" />
+    <Compile Include="Unit Tests\OrderManagementQueriesTests.cs" />
     <Compile Include="UserAccountServiceHappyPathFake.cs" />
     <Compile Include="UserAccountServiceUnHappyPathFake.cs" />
   </ItemGroup>

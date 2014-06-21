@@ -21,6 +21,8 @@ namespace CUWebinars.Business.CQS.QueryHandlers
 
         public OrderManagementQueryResult Handle(OrderManagementQuery query)
         {
+            if (query == null) throw new ArgumentNullException("query");
+
             var orderManagementQueryResult = new OrderManagementQueryResult
             {
                 Affiliate = _orderManagementService.GetAffiliateById(query.AffiliateId),
