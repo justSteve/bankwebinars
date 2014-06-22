@@ -72,6 +72,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
         public void Handle(RegisterNewAccountCommand command)
         {
+            if (command == null) throw new ArgumentNullException("command");
             var institutionForUser = _membershipService.ProcessInstitutionForUser(command.Institution
                     , command.Email
                     ,command.BillingAddress.City
@@ -101,8 +102,6 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                 , null
                 , DomainConstants.Active
                 );
-
-            //webUser.Institution = institutionForUser;
 
             var userAccount = _membershipService.CreateUser(command.Tenant
                 , command.FirstName

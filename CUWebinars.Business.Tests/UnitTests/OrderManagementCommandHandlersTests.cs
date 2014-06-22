@@ -1,5 +1,8 @@
 ﻿using System;
+using BrockAllen.MembershipReboot;
+using BrockAllen.MembershipReboot.Ef;
 using CUWebinars.Business.AccountService;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.CQS;
 using CUWebinars.Business.CQS.CommandHandlers;
 using CUWebinars.Business.CQS.Commands;
@@ -35,7 +38,7 @@ namespace CUWebinars.Business.Tests.UnitTests
         }
 
         [TestMethod]
-        public void AddOrderRowCommandHandler()
+        public void AddOrderRowCommandHandlerCallsGetDiscount()
         {
             //  Arrange
             PopulateFields();
@@ -86,6 +89,92 @@ namespace CUWebinars.Business.Tests.UnitTests
                 () => orderManagementCommandHandler.Handle(addOrderCommand)
                 );
         }
+
+        [TestMethod]
+        public void RegisterNewAccountCommandCreatesNewWebUserAndUserAccount()
+        {
+            //  Arrange
+            string firstName = "John";
+            string lastName = "Hancock";
+            string fullName = string.Concat(firstName, " ", lastName);
+            string password = BusinessTestHelper.GetRandomString(8);
+            var addresses = BusinessTestHelper.GetAddresses(fullName);
+
+            const string cuwebinars = "CUWebinars";
+            const string acmeInc = "ACME Inc";
+            var institution = new Institution {idInstitution = 25};
+            var registerNewAccountCommand = new RegisterNewAccountCommand
+            {
+                BillingAddress = addresses[0],
+                Email = email,
+                FirstName = firstName,
+                LastName = lastName,
+                Institution = acmeInc,
+                ShippingAddress = addresses[1],
+                TempPassword = password,
+                Tenant = cuwebinars,
+                Title = null
+            };
+
+                        var userAccountService =
+                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository());
+
+            var userAccount = userAccountService.CreateAccount(cuwebinars, password, email);
+
+            _membershipServiceMock.Setup(
+                m =>
+                    m.ProcessInstitutionForUser(acmeInc, email, registerNewAccountCommand.BillingAddress.City,
+                        registerNewAccountCommand.BillingAddress.State, "N", "New",
+                        registerNewAccountCommand.BillingAddress.Zip))
+                        .Returns(institution)
+                        .Verifiable();
+            
+            _membershipServiceMock.Setup(m => m.GetTimeZoneByZip()).Returns(USTimeZone.Central)
+                .Verifiable();
+
+            _membershipServiceMock.Setup(
+                m =>
+                    m.CreateWebUser(cuwebinars, firstName, lastName, password, email, USTimeZone.Central,
+                        UserType.Customer, institution.idInstitution, addresses, null, null, DomainConstants.Active))
+                        .Verifiable();
+
+            _membershipServiceMock.Setup(m => m.CreateUser(cuwebinars, firstName, lastName, email, password, email))
+                .Returns(userAccount)
+                .Verifiable();
+
+            _membershipServiceMock.Setup(m => m.AddRegistrationTypeNotVerifiedClaim(userAccount, ClaimValues.OrderImportRegistration))
+                .Verifiable();
+
+            var orderManagementCommandHandler = new OrderManagementCommandHandlers(
+                _orderManagementServiceMock.Object, 
+                _membershipServiceMock.Object, 
+                new PostCommitRegistrator()
+                );
+
+            //  Act
+            orderManagementCommandHandler.Handle(registerNewAccountCommand);
+
+            //  Assert                        
+            _membershipServiceMock.VerifyAll();
+        }
+
+        [TestMethod]
+        public void RegisterNewAccountCommandThrowsExceptionWhenPassedNullReference()
+        {
+            RegisterNewAccountCommand registerNewAccountCommand = null;
+
+            var orderManagementCommandHandler = new OrderManagementCommandHandlers(
+                _orderManagementServiceMock.Object,
+                _membershipServiceMock.Object,
+                new PostCommitRegistrator()
+                );
+
+
+            ExceptionAssert.Throws<ArgumentNullException>(
+                () => orderManagementCommandHandler.Handle(registerNewAccountCommand)
+                );
+        }
+
 
         private void PopulateFields()
         {
