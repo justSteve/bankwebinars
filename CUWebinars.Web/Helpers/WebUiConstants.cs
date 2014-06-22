@@ -3,6 +3,8 @@ namespace CUWebinars.Web.Helpers
 {
     public sealed class WebUiConstants
     {
+        public const string AdminUserEmail = "AdminUserEmail";
+
         public const string BillingAddress = "Billing";
         public const string ShippingAddress = "Shipping";
 

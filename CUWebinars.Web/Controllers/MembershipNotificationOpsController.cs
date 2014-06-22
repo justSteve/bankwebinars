@@ -205,6 +205,8 @@ namespace CUWebinars.Web.Controllers
             var impersonatedUserAccount = _membershipService.GetUserAccountByEmail(globalConfig.Tenant, model.Email);
             _membershipService.LogOutUser();
 
+            _stateService.SetValue(WebUiConstants.AdminUserEmail, adminUserEmail);
+
             _membershipService.LogInAdminUserAsOtherUser(globalConfig.Tenant, 
                 adminUserEmail.Trim(), model.Password.Trim(),
                 impersonatedUserAccount
