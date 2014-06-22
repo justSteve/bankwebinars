@@ -1,11 +1,11 @@
-﻿using CUWebinars.Business.CQS;
+﻿using System;
+using CUWebinars.Business.CQS;
 using CUWebinars.Tests.Common;
 using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ninject;
-using System;
 
-namespace CUWebinars.Business.Tests
+namespace CUWebinars.Business.Tests.UnitTests
 {
     [TestClass]
     public class CommandProcessorTests

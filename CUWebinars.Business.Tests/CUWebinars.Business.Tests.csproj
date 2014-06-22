@@ -127,7 +127,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="BusinessTestHelper.cs" />
-    <Compile Include="CommandProcessorTests.cs" />
+    <Compile Include="UnitTests\CommandProcessorTests.cs" />
     <Compile Include="Config\MembershipRebootConfig.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -139,7 +139,7 @@
     <Compile Include="Globals.cs" />
     <Compile Include="IntegrationTests\MembershipServiceIntegrationTests.cs" />
     <Compile Include="IntegrationTests\OrderManagementServiceIntegrationTests.cs" />
-    <Compile Include="MembershipServiceTests.cs" />
+    <Compile Include="UnitTests\MembershipServiceTests.cs" />
     <Compile Include="IntegrationTests\OrderRepositoryIntegrationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -147,10 +147,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="QueryProcessorTests.cs" />
+    <Compile Include="UnitTests\OrderManagementCommandHandlersTests.cs" />
+    <Compile Include="UnitTests\QueryProcessorTests.cs" />
     <Compile Include="SamAuthenticationServiceFake.cs" />
     <Compile Include="TestCategories.cs" />
-    <Compile Include="Unit Tests\OrderManagementQueriesTests.cs" />
+    <Compile Include="UnitTests\OrderManagementQueriesTests.cs" />
     <Compile Include="UserAccountServiceHappyPathFake.cs" />
     <Compile Include="UserAccountServiceUnHappyPathFake.cs" />
   </ItemGroup>

@@ -13,9 +13,9 @@ namespace CUWebinars.Business.Tests.UnitTests
     [TestClass]
     public class OrderManagementQueriesTests
     {
-        private Mock<IMembershipService> membershipService;
-        private Mock<IOrderManagementService> orderManagementService;
-        private OrderManagementQueries orderManagementQueries;
+        private Mock<IMembershipService> _membershipServiceMock;
+        private Mock<IOrderManagementService> _orderManagementServiceMock;
+        private OrderManagementQueries _orderManagementQueries;
         private static TestContext _context;
 
         [ClassInitialize]
@@ -28,9 +28,9 @@ namespace CUWebinars.Business.Tests.UnitTests
         [TestInitialize]
         public void TestSetup()
         {
-            membershipService = new Mock<IMembershipService>();
-            orderManagementService = new Mock<IOrderManagementService>();
-            orderManagementQueries = new OrderManagementQueries(membershipService.Object, orderManagementService.Object);
+            _membershipServiceMock = new Mock<IMembershipService>();
+            _orderManagementServiceMock = new Mock<IOrderManagementService>();
+            _orderManagementQueries = new OrderManagementQueries(_membershipServiceMock.Object, _orderManagementServiceMock.Object);
         }
 
 
@@ -40,21 +40,21 @@ namespace CUWebinars.Business.Tests.UnitTests
             //  Arrange
             int idWebinar = 400;
             int idUserAff = 17;
-            string daveDaveCom = "dave@dave.com";
+            string email = "somevalid@emailaddress.com";
 
-            orderManagementService.Setup(o => o.GetAffiliateById(idUserAff)).Returns(new Affiliate { idUserAff = idUserAff });
-            orderManagementService.Setup(o => o.GetWebinar(idWebinar)).Returns(new Webinar {idWebinar = idWebinar});
-            membershipService.Setup(m => m.GetUserByEmail(daveDaveCom)).Returns(new WebUser {email = daveDaveCom});
+            _orderManagementServiceMock.Setup(o => o.GetAffiliateById(idUserAff)).Returns(new Affiliate { idUserAff = idUserAff });
+            _orderManagementServiceMock.Setup(o => o.GetWebinar(idWebinar)).Returns(new Webinar {idWebinar = idWebinar});
+            _membershipServiceMock.Setup(m => m.GetUserByEmail(email)).Returns(new WebUser {email = email});
 
             var orderManagementQuery = new OrderManagementQuery
             {
                 AffiliateId = idUserAff,
-                Email = daveDaveCom,
+                Email = email,
                 WebinarId = idWebinar
             };
 
             //  Act
-            var result = orderManagementQueries.Handle(orderManagementQuery);
+            var result = _orderManagementQueries.Handle(orderManagementQuery);
             
             //  Assert                        
             Assert.IsNotNull(result.Affiliate);
@@ -79,9 +79,8 @@ namespace CUWebinars.Business.Tests.UnitTests
             //  Act
             //  Assert                        
             ExceptionAssert.Throws<ArgumentNullException>(
-                () => orderManagementQueries.Handle(orderManagementQuery)
+                () => _orderManagementQueries.Handle(orderManagementQuery)
                 );
-
         }
     }
 }

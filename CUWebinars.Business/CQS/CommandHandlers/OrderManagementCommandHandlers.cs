@@ -31,6 +31,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
         public void Handle(AddOrderRowCommand command)
         {
+            if (command == null) throw new ArgumentNullException("command");
             IList<AdditionalLocation> additionalLocations = new List<AdditionalLocation>();
 
             if (command.AdditionalLocations != null && command.AdditionalLocations.Any())
