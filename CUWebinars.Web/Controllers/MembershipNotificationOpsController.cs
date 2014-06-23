@@ -198,11 +198,21 @@ namespace CUWebinars.Web.Controllers
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public RedirectToRouteResult LogInAsUser(LogInAsOtherUserViewModel model)
+        public ActionResult LogInAsUser(LogInAsOtherUserViewModel model)
         {
             var adminUser = User.Identity as ClaimsIdentity;
             var adminUserEmail = adminUser.Claims.Single(c => c.Type == ClaimTypes.Email).Value;
             var impersonatedUserAccount = _membershipService.GetUserAccountByEmail(globalConfig.Tenant, model.Email);
+
+            if (ReferenceEquals(null, impersonatedUserAccount))
+            {
+                var nullReferenceException =
+                    new NullReferenceException(string.Format("There is no webuser with the email address {0}", model.Email));
+                _logger.ErrorException("LogInAsUser | No User Found For Email", nullReferenceException);
+                ModelState.AddModelError("Inavlid email", nullReferenceException);
+                return View(model);
+            }
+
             _membershipService.LogOutUser();
 
             _stateService.SetValue(WebUiConstants.AdminUserEmail, adminUserEmail);
