@@ -160,6 +160,18 @@ namespace CUWebinars.Business.AccountService
             return false;
         }
 
+        public bool LogInAdminUserAsOtherUser(string tenant, string emailAddress, string password, UserAccount account)
+        {
+            UserAccount userAccount = null;
+
+            if (_userAccountService.AuthenticateWithEmail(tenant, emailAddress, password, out userAccount))
+            {
+                _samAuthenticationService.SignIn(account, false); // issue auth cookie to impersonated user account
+                return true;
+            }
+            return false;
+        }
+
         public bool LogOutUser()
         {
             _samAuthenticationService.SignOut();

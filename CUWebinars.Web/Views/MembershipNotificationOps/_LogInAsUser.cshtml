@@ -1,0 +1,33 @@
+﻿@model LogInAsOtherUserViewModel
+
+@{
+    Layout = null;
+}
+
+<div class="span8">
+    @using (Html.BeginForm("LogInAsUser", "MembershipNotificationOps", FormMethod.Post, new { id = "LogInAsUserForm" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <fieldset>
+            <legend id="ResetPassLegend">Impersonate User</legend>
+
+            <div>
+                @Html.LabelFor(l => l.Email)
+                @Html.TextBoxFor(t => t.Email)
+                @Html.ValidationMessageFor(m => m.Email)
+            </div>
+            <div>
+                @Html.LabelFor(l => l.Password)
+                @Html.PasswordFor(t => t.Password)
+                @Html.ValidationMessageFor(m => m.Password)
+            </div>
+            <div>
+                <input id="LogInAsOtherUserButton" class="btn btn-default" type="submit" value="Log in As User" /><span id="LogInAttemptStatus" style="color: green"></span>
+            </div>
+        </fieldset>
+    }
+
+    <div id="OperationMessage"></div>
+</div>
+
