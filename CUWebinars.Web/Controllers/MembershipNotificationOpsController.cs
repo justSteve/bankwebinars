@@ -210,7 +210,7 @@ namespace CUWebinars.Web.Controllers
                     new NullReferenceException(string.Format("There is no webuser with the email address {0}", model.Email));
                 _logger.ErrorException("LogInAsUser | No User Found For Email", nullReferenceException);
                 ModelState.AddModelError("Inavlid email", nullReferenceException);
-                return View(model);
+                return View("","",""); //   TODO: Figure out how to show error messages
             }
 
             _membershipService.LogOutUser();

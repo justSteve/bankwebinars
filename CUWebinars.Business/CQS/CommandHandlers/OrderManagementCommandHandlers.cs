@@ -127,6 +127,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
         public void Handle(VerifyAccountCommand command)
         {
+            if (command == null) throw new ArgumentNullException("command");
             var userAccount = _membershipService.VerifyEmailFromKey(
                             command.VerificationKey,
                             command.TempPassword
@@ -135,6 +136,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
         public void Handle(AddOrderCommand command)
         {
+            if (command == null) throw new ArgumentNullException("command");
             var importedOrder = _orderManagementService.CreateNewOrder(command.Affiliate,command.WebUser, command.Webinar, command.OrderRow);
 
             importedOrder.AdminComments = "incomingOrderModel.AdminComments";
