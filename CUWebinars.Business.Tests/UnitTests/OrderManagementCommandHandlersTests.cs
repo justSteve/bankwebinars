@@ -1,6 +1,5 @@
 ﻿using BrockAllen.MembershipReboot.Ef;
 using CUWebinars.Business.AccountService;
-using CUWebinars.Business.Constants;
 using CUWebinars.Business.CQS;
 using CUWebinars.Business.CQS.CommandHandlers;
 using CUWebinars.Business.CQS.Commands;
@@ -24,7 +23,12 @@ namespace CUWebinars.Business.Tests.UnitTests
         int _idRegType;
         IList<IncomingAdditionalLocation> _incomingAdditionalLocation;
         IList<AdditionalLocation> _additionalLocations;
+        const string cuwebinars = "CUWebinars";
+        const string acmeInc = "ACME Inc";
         private const string email = "somevalid@emailaddress.com";
+        private const string _firstName = "John";
+        private const string _lastName = "Hancock";
+        private readonly string fullName = string.Concat(_firstName, " ", _lastName);
         AddOrderRowCommand _addOrderRowCommand;
         AddOrderCommand _addOrderCommand;
 
@@ -33,10 +37,32 @@ namespace CUWebinars.Business.Tests.UnitTests
         {
             _membershipServiceMock = new Mock<IMembershipService>();
             _orderManagementServiceMock = new Mock<IOrderManagementService>();
-            new OrderManagementQueries(_membershipServiceMock.Object, _orderManagementServiceMock.Object);
+            new OrderManagementQueryHandlers(_membershipServiceMock.Object, _orderManagementServiceMock.Object);
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.OrderManagementCommandHandlers)]
+        public void AddOrderRowCommandHandlerCallsCreateOrderRow()
+        {
+            //  Arrange
+            PopulateFields();
+
+            _orderManagementServiceMock.Setup(
+                o => o.CreateOrderRow(_webinar, _additionalLocations, _idRegType))
+                .Returns(new OrderRow()).Verifiable();
+
+
+            var orderManagementCommandHandler = new OrderManagementCommandHandlers(_orderManagementServiceMock.Object,_membershipServiceMock.Object, new PostCommitRegistrator());
+
+            //  Act
+            orderManagementCommandHandler.Handle(_addOrderRowCommand);
+
+            //  Assert
+            _orderManagementServiceMock.Verify();
+        }
+        
+        [TestMethod]
+        [TestCategory(TestCategories.OrderManagementCommandHandlers)]
         public void AddOrderRowCommandHandlerCallsGetDiscount()
         {
             //  Arrange
@@ -58,6 +84,7 @@ namespace CUWebinars.Business.Tests.UnitTests
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.OrderManagementCommandHandlers)]
         public void AddOrderRowCommandHandlerCreateOrderRowOutParameter()
         {
             //  Arrange
@@ -76,6 +103,7 @@ namespace CUWebinars.Business.Tests.UnitTests
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.OrderManagementCommandHandlers)]
         public void AddOrderRowCommandHandlerThrowsExceptionWhenPassedNullReference()
         {
             //  Arrange
@@ -90,24 +118,20 @@ namespace CUWebinars.Business.Tests.UnitTests
         }
 
         [TestMethod]
-        public void RegisterNewAccountCommandCreatesNewWebUserAndUserAccount()
+        [TestCategory(TestCategories.OrderManagementCommandHandlers)]
+        public void RegisterNewAccountCommandInvokesProcessInstitutionForUser()
         {
             //  Arrange
-            string firstName = "John";
-            string lastName = "Hancock";
-            string fullName = string.Concat(firstName, " ", lastName);
             string password = BusinessTestHelper.GetRandomString(8);
             var addresses = BusinessTestHelper.GetAddresses(fullName);
 
-            const string cuwebinars = "CUWebinars";
-            const string acmeInc = "ACME Inc";
             var institution = new Institution {idInstitution = 25};
             var registerNewAccountCommand = new RegisterNewAccountCommand
             {
                 BillingAddress = addresses[0],
                 Email = email,
-                FirstName = firstName,
-                LastName = lastName,
+                FirstName = _firstName,
+                LastName = _lastName,
                 Institution = acmeInc,
                 ShippingAddress = addresses[1],
                 TempPassword = password,
@@ -128,21 +152,11 @@ namespace CUWebinars.Business.Tests.UnitTests
                         .Returns(institution)
                         .Verifiable();
             
-            _membershipServiceMock.Setup(m => m.GetTimeZoneByZip()).Returns(USTimeZone.Central)
-                .Verifiable();
+            _membershipServiceMock.Setup(m => m.GetTimeZoneByZip()).Returns(USTimeZone.Central);
 
-            _membershipServiceMock.Setup(
-                m =>
-                    m.CreateWebUser(cuwebinars, firstName, lastName, password, email, USTimeZone.Central,
-                        UserType.Customer, institution.idInstitution, addresses, null, null, DomainConstants.Active))
-                        .Verifiable();
 
-            _membershipServiceMock.Setup(m => m.CreateUser(cuwebinars, firstName, lastName, email, password, email))
-                .Returns(userAccount)
-                .Verifiable();
-
-            _membershipServiceMock.Setup(m => m.AddRegistrationTypeNotVerifiedClaim(userAccount, ClaimValues.OrderImportRegistration))
-                .Verifiable();
+            _membershipServiceMock.Setup(m => m.CreateUser(cuwebinars, _firstName, _lastName, email, password, email))
+                .Returns(userAccount);
 
             var orderManagementCommandHandler = new OrderManagementCommandHandlers(
                 _orderManagementServiceMock.Object, 
@@ -158,6 +172,175 @@ namespace CUWebinars.Business.Tests.UnitTests
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.OrderManagementCommandHandlers)]
+        public void RegisterNewAccountCommandInvokesGetTimeZoneByZip()
+        {
+            //  Arrange
+            
+            string password = BusinessTestHelper.GetRandomString(8);
+            var addresses = BusinessTestHelper.GetAddresses(fullName);
+
+            var institution = new Institution { idInstitution = 25 };
+            var registerNewAccountCommand = new RegisterNewAccountCommand
+            {
+                BillingAddress = addresses[0],
+                Email = email,
+                FirstName = _firstName,
+                LastName = _lastName,
+                Institution = acmeInc,
+                ShippingAddress = addresses[1],
+                TempPassword = password,
+                Tenant = cuwebinars,
+                Title = null
+            };
+
+            var userAccountService =
+                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository());
+
+            var userAccount = userAccountService.CreateAccount(cuwebinars, password, email);
+
+            _membershipServiceMock.Setup(
+                m =>
+                    m.ProcessInstitutionForUser(acmeInc, email, registerNewAccountCommand.BillingAddress.City,
+                        registerNewAccountCommand.BillingAddress.State, "N", "New",
+                        registerNewAccountCommand.BillingAddress.Zip))
+                        .Returns(institution);
+
+            _membershipServiceMock.Setup(m => m.GetTimeZoneByZip()).Returns(USTimeZone.Central)
+                .Verifiable();
+
+
+            _membershipServiceMock.Setup(m => m.CreateUser(cuwebinars, _firstName, _lastName, email, password, email))
+                .Returns(userAccount);
+
+            var orderManagementCommandHandler = new OrderManagementCommandHandlers(
+                _orderManagementServiceMock.Object,
+                _membershipServiceMock.Object,
+                new PostCommitRegistrator()
+                );
+
+            //  Act
+            orderManagementCommandHandler.Handle(registerNewAccountCommand);
+
+            //  Assert                        
+            _membershipServiceMock.Verify();
+        }
+        
+        [TestMethod]
+        [TestCategory(TestCategories.OrderManagementCommandHandlers)]
+        public void RegisterNewAccountCommandInvokesCreateWebUser()
+        {
+            //  Arrange
+            
+            string password = BusinessTestHelper.GetRandomString(8);
+            var addresses = BusinessTestHelper.GetAddresses(fullName);
+            var timeZone = USTimeZone.Central;
+
+            var institution = new Institution { idInstitution = 25 };
+            var registerNewAccountCommand = new RegisterNewAccountCommand
+            {
+                BillingAddress = addresses[0],
+                Email = email,
+                FirstName = _firstName,
+                LastName = _lastName,
+                Institution = acmeInc,
+                ShippingAddress = addresses[1],
+                TempPassword = password,
+                Tenant = cuwebinars,
+                Title = null
+            };
+
+            var userAccountService =
+                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository());
+
+            var userAccount = userAccountService.CreateAccount(cuwebinars, password, email);
+
+            _membershipServiceMock.Setup(
+                m =>
+                    m.ProcessInstitutionForUser(acmeInc, email, registerNewAccountCommand.BillingAddress.City,
+                        registerNewAccountCommand.BillingAddress.State, "N", "New",
+                        registerNewAccountCommand.BillingAddress.Zip))
+                        .Returns(institution);
+
+            _membershipServiceMock.Setup(m => m.GetTimeZoneByZip()).Returns(timeZone);
+
+            _membershipServiceMock.Setup(m => m.CreateWebUser(cuwebinars, _firstName, _lastName, password, email, timeZone, UserType.Customer, institution.idInstitution, addresses,null,null, "A")).Returns(new WebUser()).Verifiable();
+
+
+            _membershipServiceMock.Setup(m => m.CreateUser(cuwebinars, _firstName, _lastName, email, password, email))
+                .Returns(userAccount);
+
+            var orderManagementCommandHandler = new OrderManagementCommandHandlers(
+                _orderManagementServiceMock.Object,
+                _membershipServiceMock.Object,
+                new PostCommitRegistrator()
+                );
+
+            //  Act
+            orderManagementCommandHandler.Handle(registerNewAccountCommand);
+
+            //  Assert                        
+            _membershipServiceMock.Verify();
+        }
+        
+        [TestMethod]
+        [TestCategory(TestCategories.OrderManagementCommandHandlers)]
+        public void RegisterNewAccountCommandInvokesCreateUser()
+        {
+            //  Arrange
+            
+            string password = BusinessTestHelper.GetRandomString(8);
+            var addresses = BusinessTestHelper.GetAddresses(fullName);
+            var timeZone = USTimeZone.Central;
+
+            var institution = new Institution { idInstitution = 25 };
+            var registerNewAccountCommand = new RegisterNewAccountCommand
+            {
+                BillingAddress = addresses[0],
+                Email = email,
+                FirstName = _firstName,
+                LastName = _lastName,
+                Institution = acmeInc,
+                ShippingAddress = addresses[1],
+                TempPassword = password,
+                Tenant = cuwebinars,
+                Title = null
+            };
+
+            var userAccountService =
+                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository());
+
+            var userAccount = userAccountService.CreateAccount(cuwebinars, password, email);
+
+            _membershipServiceMock.Setup(
+                m =>
+                    m.ProcessInstitutionForUser(acmeInc, email, registerNewAccountCommand.BillingAddress.City,
+                        registerNewAccountCommand.BillingAddress.State, "N", "New",
+                        registerNewAccountCommand.BillingAddress.Zip))
+                        .Returns(institution);
+
+            _membershipServiceMock.Setup(m => m.GetTimeZoneByZip()).Returns(timeZone);
+
+            _membershipServiceMock.Setup(m => m.CreateUser(cuwebinars, _firstName, _lastName, email, password, email))
+                .Returns(userAccount)
+                .Verifiable();
+
+            var orderManagementCommandHandler = new OrderManagementCommandHandlers(
+                _orderManagementServiceMock.Object,
+                _membershipServiceMock.Object,
+                new PostCommitRegistrator()
+                );
+
+            //  Act
+            orderManagementCommandHandler.Handle(registerNewAccountCommand);
+
+            //  Assert                        
+            _membershipServiceMock.Verify();
+        }
+
+
+        [TestMethod]
+        [TestCategory(TestCategories.OrderManagementCommandHandlers)]
         public void RegisterNewAccountCommandThrowsExceptionWhenPassedNullReference()
         {
             RegisterNewAccountCommand registerNewAccountCommand = null;
@@ -175,6 +358,7 @@ namespace CUWebinars.Business.Tests.UnitTests
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.OrderManagementCommandHandlers)]
         public void VerifyAccountCommandCallsVerifyEmailFromKey()
         {
             //  Arrange
@@ -202,6 +386,7 @@ namespace CUWebinars.Business.Tests.UnitTests
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.OrderManagementCommandHandlers)]
         public void VerifyAccountCommandThrowsExceptionWhenPassedNullReference()
         {
             //  Arrange
@@ -222,18 +407,18 @@ namespace CUWebinars.Business.Tests.UnitTests
         }
 
         [TestMethod]
-        public void AddOrderCommandCreatesNewOrderAndSavesChanges()
+        [TestCategory(TestCategories.OrderManagementCommandHandlers)]
+        public void AddOrderCommandInvokesCreateNewOrder()
         {
             //  Arrange
             var newOrder = new Order();
             PopulateFields();
             _orderManagementServiceMock.Setup(o =>
                 o.CreateNewOrder(_addOrderCommand.Affiliate, _addOrderCommand.WebUser, _addOrderCommand.Webinar,
-                    _addOrderCommand.OrderRow)).Returns(newOrder);
+                    _addOrderCommand.OrderRow))
+                    .Returns(newOrder)
+                    .Verifiable();
 
-            _orderManagementServiceMock.Setup(o =>
-                o.SaveOrderChanges(newOrder, _addOrderCommand.VerificationKey,
-                    _addOrderCommand.ConfirmChangeEmailUrl)).Verifiable();
 
             var orderManagementCommandHandlers = new OrderManagementCommandHandlers(
                 _orderManagementServiceMock.Object,
@@ -249,6 +434,37 @@ namespace CUWebinars.Business.Tests.UnitTests
         }
         
         [TestMethod]
+        [TestCategory(TestCategories.OrderManagementCommandHandlers)]
+        public void AddOrderCommandInvokesSaveOrderChanges()
+        {
+            //  Arrange
+            var newOrder = new Order();
+            PopulateFields();
+            _orderManagementServiceMock.Setup(o =>
+                o.CreateNewOrder(_addOrderCommand.Affiliate, _addOrderCommand.WebUser, _addOrderCommand.Webinar,
+                    _addOrderCommand.OrderRow))
+                    .Returns(newOrder);
+
+            _orderManagementServiceMock.Setup(
+                o => o.SaveOrderChanges(newOrder, _addOrderCommand.VerificationKey, _addOrderCommand.ConfirmChangeEmailUrl))
+                .Verifiable();
+
+
+            var orderManagementCommandHandlers = new OrderManagementCommandHandlers(
+                _orderManagementServiceMock.Object,
+                _membershipServiceMock.Object,
+                new PostCommitRegistrator()
+                );
+
+            //  Act
+            orderManagementCommandHandlers.Handle(_addOrderCommand);
+
+            //  Assert                        
+            _orderManagementServiceMock.Verify();
+        }
+        
+        [TestMethod]
+        [TestCategory(TestCategories.OrderManagementCommandHandlers)]
         public void AddOrderCommandAssignsValueToOutParameterOfCommand()
         {
             //  Arrange
@@ -272,6 +488,7 @@ namespace CUWebinars.Business.Tests.UnitTests
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.OrderManagementCommandHandlers)]
         public void AddOrderCommandThrowsExceptionWhenPassedNullReference()
         {
             //  Arrange
@@ -303,8 +520,8 @@ namespace CUWebinars.Business.Tests.UnitTests
                 RegistrationType = _idRegType,
                 Webinar = _webinar
             };
-            const string firstName = "John";
-            const string lastName = "Hancock";
+            const string firstName = _firstName;
+            const string lastName = _lastName;
             var addresses = BusinessTestHelper.GetAddresses(string.Concat(firstName, " ", lastName));
 
             _addOrderCommand = new AddOrderCommand
