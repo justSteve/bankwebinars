@@ -1,4 +1,6 @@
-﻿@model CUWebinars.Web.Membership.Notification
+﻿@using System.Configuration
+@using CUWebinars.Business.Notification
+@model CUWebinars.Web.Membership.Notification
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -45,6 +47,7 @@
                                 <td align="left" bgcolor="#344a58" style="padding: 0px 15px 0px 0px; border-right-color: rgb(52, 74, 88); border-right-width: 1px; border-right-style: solid;">
                                     <p style="text-align: center; color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
                                         Important Message From Account Management at CUWebinars!
+                                        @TtsConfigHelperObject.GetEmailSendingMode()
                                     </p>
                                 </td>
                             </tr>

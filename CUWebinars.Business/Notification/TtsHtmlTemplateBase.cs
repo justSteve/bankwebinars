@@ -7,6 +7,7 @@ namespace CUWebinars.Business.Notification
     {
         private TtsHtmlHelpers _ttsTemplateHelper;
         private TtsDateTimeTemplateHelper _dateTimeHelper;
+        private TtsConfigHelper _ttsConfigHelper;
 
         public TtsHtmlHelpers TtsHtmlObj
         {
@@ -16,6 +17,11 @@ namespace CUWebinars.Business.Notification
         public TtsDateTimeTemplateHelper TtsDateTimeTemplateHelperObject
         {
             get { return _dateTimeHelper ?? (_dateTimeHelper = new TtsDateTimeTemplateHelper()); }
+        }
+
+        public TtsConfigHelper TtsConfigHelperObject
+        {
+            get { return _ttsConfigHelper ?? (_ttsConfigHelper = new TtsConfigHelper()); }
         }
     }
 }

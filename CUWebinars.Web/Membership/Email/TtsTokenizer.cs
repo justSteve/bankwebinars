@@ -1,8 +1,11 @@
 ﻿using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
+using CUWebinars.Business.Notification;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Services;
+using RazorEngine;
+using RazorEngine.Configuration;
 using RazorEngine.Templating;
 using System.Collections.Generic;
 using System.IO;
@@ -22,9 +25,21 @@ namespace CUWebinars.Web.Membership.Email
         public override string Tokenize(UserAccountEvent<UserAccount> accountEvent, ApplicationInformation appInfo,
             string msg, IDictionary<string, string> values)
         {
-            WebUser webUser = _stateService.GetValue<WebUser>(Constants.CurrentUser);
+            //WebUser webUser = _stateService.GetValue<WebUser>(Constants.CurrentUser);
 
-            var templateService = new TemplateService();
+            //  create a configuration file for the template service
+            var config = new FluentTemplateServiceConfiguration(c =>
+            {
+                c.WithEncoding(Encoding.Raw);
+                c.ResolveUsing<TemplateResolver>();
+                c.WithBaseTemplateType(typeof(TtsHtmlTemplateBase<>));
+                c.IncludeNamespaces("CUWebinars.Business.Core.Helpers",
+                    "CUWebinars.Business.Models",
+                    "CUWebinars.Business.Notification",
+                    "CUWebinars.Html");
+            });
+
+            var templateService = new TemplateService(config);
             var user = accountEvent.Account;
 
             var notification = new Notification
