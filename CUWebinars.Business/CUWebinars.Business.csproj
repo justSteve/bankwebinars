@@ -156,7 +156,7 @@
     <Compile Include="Notification\Handlers\SendShippedOrderHandler.cs" />
     <Compile Include="Notification\Renderers\IRenderer.cs" />
     <Compile Include="Notification\Renderers\Renderer.cs" />
-    <Compile Include="Notification\TtsDateTimeTemplateHelper.cs" />
+    <Compile Include="Notification\TtsTemplateHelper.cs" />
     <Compile Include="Notification\TtsHtmlTemplateBase.cs" />
     <Compile Include="Notification\NotificationPersister.cs" />
     <Compile Include="Models\Mapping\AdditionalLocationMap.cs" />

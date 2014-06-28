@@ -37,8 +37,7 @@ namespace CUWebinars.Web.Membership.Email
             {
                 smtp.Timeout = 5000;
 
-                mailMessage.From = new MailAddress(msg.From);
-
+                mailMessage.From = new MailAddress(ConfigurationManager.AppSettings["TenantEmail"]);
 
                 string destinationEmailAddress = msg.To;
 
@@ -48,6 +47,7 @@ namespace CUWebinars.Web.Membership.Email
                 }
 
                 mailMessage.To.Add(new MailAddress(destinationEmailAddress));
+
                 mailMessage.Subject = msg.Subject;
                 mailMessage.Body = msg.Body;
                 mailMessage.IsBodyHtml = true;

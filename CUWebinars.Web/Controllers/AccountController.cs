@@ -78,7 +78,7 @@ namespace CUWebinars.Web.Controllers
             {
                 if (s != "")
                 {
-                    listing += ("<p>http://www.BankWebinars.com/Home/COC/?idUser=" + id + "&displayName=" +
+                    listing += ("<p>http://www.@Tenant.com/Home/COC/?idUser=" + id + "&displayName=" +
                                 s.Replace(' ', '+') + "</p>");
                 }
             }

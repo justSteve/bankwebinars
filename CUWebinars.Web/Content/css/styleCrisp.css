@@ -138,9 +138,9 @@ pre { border: 1px solid #7caf32; margin: 1.5em 0; background: #f8f8f8; white-spa
 pre, code, tt, kbd, samp { font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace }
 sup { font-size: 75%; position: relative; bottom: 0.4em; }
 sub { font-size: 75%; position: relative; bottom: -0.2em; }
-hr { border: 0px; clear: both; margin: 30px 0 40px; background: url(https://ttseast.blob.core.windows.net/images/BankWebinars/hr.png) repeat-x; height: 3px; }
+hr { border: 0px; clear: both; margin: 30px 0 40px; background: url(http://ttsimages.ttstrain.com/images/BankWebinars/hr.png) repeat-x; height: 3px; }
 hr.empty { border: 0px; background: none; }
-pre { margin: 2% 0px 5% 0px; padding: 3%; display: block; clear: both; background: url(https://ttseast.blob.core.windows.net/images/BankWebinars/5p.png) repeat; border: 0px; }
+pre { margin: 2% 0px 5% 0px; padding: 3%; display: block; clear: both; background: url(http://ttsimages.ttstrain.com/images/BankWebinars/5p.png) repeat; border: 0px; }
 pre code, code { padding: 0; margin: 0; color: inherit; }
 pre { white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: break-word; }
 code { color: #ea4800 }
@@ -158,7 +158,7 @@ blockquote {
     padding: 10px 20px 0 50px;
     position: relative;
     quotes: none;
-    background: url(https://ttseast.blob.core.windows.net/images/BankWebinars/open-quote.png) 0 0 no-repeat;
+    background: url(http://ttsimages.ttstrain.com/images/BankWebinars/open-quote.png) 0 0 no-repeat;
     border: 0px;
     font-size: 120%;
     line-height: 175%;
@@ -274,7 +274,7 @@ figcaption {
 	clear:both;
 	font-size:90%;
 	font-style:italic;
-	background: url(https://ttseast.blob.core.windows.net/images/BankWebinars/hr.png) 0 100% repeat-x;
+	background: url(http://ttsimages.ttstrain.com/images/BankWebinars/hr.png) 0 100% repeat-x;
 }
 figcaption p:last-child { margin-bottom: 0% }
 figure.three-images {
@@ -306,7 +306,7 @@ span.plus {
     width: 100%;
     display: none;
     height: 100%;
-    background: url(https://ttseast.blob.core.windows.net/images/BankWebinars/plus.png) 50% 50% no-repeat;
+    background: url(http://ttsimages.ttstrain.com/images/BankWebinars/plus.png) 50% 50% no-repeat;
     left: 0;
     top: 0;
     opacity: 0;
@@ -455,7 +455,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 .hero-unit h1,
 .hero-unit h2 {
     margin: 0;
-    background: url(https://ttseast.blob.core.windows.net/images/BankWebinars/hr.png) 0 100% repeat-x;
+    background: url(http://ttsimages.ttstrain.com/images/BankWebinars/hr.png) 0 100% repeat-x;
     padding-bottom: 20px;
     font-size: 200%;
     font-weight: 300;
@@ -539,7 +539,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
     height: 50px;
     text-indent: -9999px;
     display: block;
-    background: #4c5966 url(https://ttseast.blob.core.windows.net/images/BankWebinars/sliderarrows.png) -80px 50% no-repeat;
+    background: #4c5966 url(http://ttsimages.ttstrain.com/images/BankWebinars/sliderarrows.png) -80px 50% no-repeat;
 }
 .image-slider.flexslider .flex-direction-nav .flex-prev {
     right: auto;
@@ -556,7 +556,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 	clear:both;
 	font-size:90%;
 	font-style:italic;
-	background: url(https://ttseast.blob.core.windows.net/images/BankWebinars/hr.png) 0 100% repeat-x;
+	background: url(http://ttsimages.ttstrain.com/images/BankWebinars/hr.png) 0 100% repeat-x;
 }
 .image-slider.flexslider .caption.no-border {
 	background: none;
@@ -597,7 +597,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 	margin-right:0;
 }
 .sidebar-left {
-	background-image: url(https://ttseast.blob.core.windows.net/images/BankWebinars/rule.png);
+	background-image: url(http://ttsimages.ttstrain.com/images/BankWebinars/rule.png);
 	background-position: 23.5% 0;
 	background-repeat: repeat-y;
 }
@@ -605,7 +605,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 
 /****** right sidebar layout ******/
 .sidebar-right {
-	background-image: url(https://ttseast.blob.core.windows.net/images/BankWebinars/rule.png);
+	background-image: url(http://ttsimages.ttstrain.com/images/BankWebinars/rule.png);
 	background-position: 76.5% 0;
 	background-repeat: repeat-y;
 }
@@ -613,7 +613,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 
 /******  contemporary 3 columns layout ******/
 .contemp-three-cols {
-	background-image: url(https://ttseast.blob.core.windows.net/images/BankWebinars/rule.png), url(https://ttseast.blob.core.windows.net/images/BankWebinars/rule.png);
+	background-image: url(http://ttsimages.ttstrain.com/images/BankWebinars/rule.png), url(http://ttsimages.ttstrain.com/images/BankWebinars/rule.png);
 	background-position: 50.75% 0, 76% 0;
 	background-repeat: repeat-y;
 }
@@ -636,7 +636,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 	float:right;
 }
 .holy-grail {
-	background-image: url(https://ttseast.blob.core.windows.net/images/BankWebinars/rule.png), url(https://ttseast.blob.core.windows.net/images/BankWebinars/rule.png);
+	background-image: url(http://ttsimages.ttstrain.com/images/BankWebinars/rule.png), url(http://ttsimages.ttstrain.com/images/BankWebinars/rule.png);
 	background-position: 23.5% 0, 76.5% 0;
 	background-repeat: repeat-y;
 }
@@ -648,7 +648,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 }
 
 /******  ie support  ******/
-.lt-ie9 .widget {background:url(https://ttseast.blob.core.windows.net/images/BankWebinars/5p.png);padding:15px;}
+.lt-ie9 .widget {background:url(http://ttsimages.ttstrain.com/images/BankWebinars/5p.png);padding:15px;}
 .lt-ie9 .contemp-three-cols, .lt-ie9 .contemp-three-cols, .lt-ie9 .sidebar-right, .lt-ie9 .sidebar-left {background-image:none;}
 
 .lt-ie8 .sidebar-right .span9, .lt-ie8 .contemp-three-cols .span6 {margin-left:0!important;}
@@ -679,7 +679,7 @@ ul.navigation li {
     padding: 3px 0 3px 13px;
     list-style: none;
     display:block;
-    background: url(https://ttseast.blob.core.windows.net/images/BankWebinars/sidebar-list-icon.png) 0 8px no-repeat;
+    background: url(http://ttsimages.ttstrain.com/images/BankWebinars/sidebar-list-icon.png) 0 8px no-repeat;
 }
 ul.navigation li a {
     text-decoration: none;
@@ -976,7 +976,7 @@ ul.image-widget {
 	height: 50px;
 	display: block;
 	margin: 0;
-	background:#53a3b7 url(https://ttseast.blob.core.windows.net/images/BankWebinars/top.png) no-repeat center center;
+	background:#53a3b7 url(http://ttsimages.ttstrain.com/images/BankWebinars/top.png) no-repeat center center;
 }
 .backToTop a:hover {
 	background-color:#9bd9e9;
@@ -1043,7 +1043,7 @@ ul.image-widget {
     border: none;
     text-indent: -9999px;
     display: block;
-    background: #758694 url(https://ttseast.blob.core.windows.net/images/BankWebinars/sliderarrows.png) -280px 50% no-repeat;
+    background: #758694 url(http://ttsimages.ttstrain.com/images/BankWebinars/sliderarrows.png) -280px 50% no-repeat;
 }
 .clientlogos .flex-direction-nav .flex-prev {
 	left: 0;
@@ -1073,7 +1073,7 @@ ul.image-widget {
 	margin:0 auto;
 }
 .login-box .login-wrapper {
-	background-image: url(https://ttseast.blob.core.windows.net/images/BankWebinars/rule.png);
+	background-image: url(http://ttsimages.ttstrain.com/images/BankWebinars/rule.png);
 	background-position: 50% 0;
 	background-repeat: repeat-y;
 }
@@ -1159,7 +1159,7 @@ ul.image-widget {
   color:#fff;
 }
 .testimonial-gallery li.highlight blockquote {  
-    background-image: url(https://ttseast.blob.core.windows.net/images/BankWebinars/open-quote-white.png);
+    background-image: url(http://ttsimages.ttstrain.com/images/BankWebinars/open-quote-white.png);
 }
 
 /*	rotating testimonials (VARIOUS PAGES)
@@ -1317,7 +1317,7 @@ body {
 	.hero-unit h1,
 	.hero-unit h2 { font-size: 280% }
 	.widget ul.navigation li {
-		background: url(https://ttseast.blob.core.windows.net/images/BankWebinars/sidebar-list-icon.png) 0 10px no-repeat;
+		background: url(http://ttsimages.ttstrain.com/images/BankWebinars/sidebar-list-icon.png) 0 10px no-repeat;
 	}
 	/*** Sidebar sponsors ***/
 	.span4 .widget .sponsors li {
@@ -1446,7 +1446,7 @@ body {
 	
 	.widget {
 		margin: 0 0 1.5% 0!important;
-		background: url(https://ttseast.blob.core.windows.net/images/BankWebinars/5p.png);
+		background: url(http://ttsimages.ttstrain.com/images/BankWebinars/5p.png);
 		padding: 15px!important;
 	}
 	.row-fluid.holy-grail .primary-column {
@@ -1735,7 +1735,7 @@ body {
 	only screen and (min-device-pixel-ratio: 2) {
 	
 	hr, figcaption, .hero-unit h1, .hero-unit h2, .image-slider.flexslider .caption {
-		background-image: url(https://ttseast.blob.core.windows.net/images/BankWebinars/retina/hr_@2x.png);
+		background-image: url(http://ttsimages.ttstrain.com/images/BankWebinars/retina/hr_@2x.png);
 		-moz-background-size: 3px 3px;
 		/*w & h of total ORIGINAL 72dpi image*/
 		-ie-background-size: 3px 3px;
@@ -1745,7 +1745,7 @@ body {
 	}
 	
 	blockquote {
-		background-image: url(https://ttseast.blob.core.windows.net/images/BankWebinars/retina/open-quote_@2x.png);
+		background-image: url(http://ttsimages.ttstrain.com/images/BankWebinars/retina/open-quote_@2x.png);
 		-moz-background-size: 38px 38px;
 		-ie-background-size: 38px 38px;
 		-o-background-size: 38px 38px;
@@ -1754,7 +1754,7 @@ body {
 	}
 	
 	span.plus {
-		background-image: url(https://ttseast.blob.core.windows.net/images/BankWebinars/retina/plus_@2x.png);
+		background-image: url(http://ttsimages.ttstrain.com/images/BankWebinars/retina/plus_@2x.png);
 		-moz-background-size: 50px 50px;
 		-ie-background-size: 50px 50px;
 		-o-background-size: 50px 50px;
@@ -1763,7 +1763,7 @@ body {
 	}
 	
 	.testimonial-gallery li.highlight blockquote {
-		background-image: url(https://ttseast.blob.core.windows.net/images/BankWebinars/retina/open-quote-white_@2x.png);
+		background-image: url(http://ttsimages.ttstrain.com/images/BankWebinars/retina/open-quote-white_@2x.png);
 		-moz-background-size: 38px 38px;
 		-ie-background-size: 38px 38px;
 		-o-background-size: 38px 38px;
@@ -1772,7 +1772,7 @@ body {
 	}
 	
 	.backToTop a {
-		background-image: url(https://ttseast.blob.core.windows.net/images/BankWebinars/retina/top_@2x.png);
+		background-image: url(http://ttsimages.ttstrain.com/images/BankWebinars/retina/top_@2x.png);
 		-moz-background-size: 50px 50px;
 		-ie-background-size: 50px 50px;
 		-o-background-size: 50px 50px;
@@ -1781,7 +1781,7 @@ body {
 	}
 	
 	.flex-direction-nav a, .clientlogos .flex-direction-nav a {
-		background-image: url(https://ttseast.blob.core.windows.net/images/BankWebinars/retina/sliderarrows_@2x.png);
+		background-image: url(http://ttsimages.ttstrain.com/images/BankWebinars/retina/sliderarrows_@2x.png);
 		-moz-background-size: 360px 100px;
 		-ie-background-size: 360px 100px;
 		-o-background-size: 360px 100px;
@@ -1790,7 +1790,7 @@ body {
 	}
 	
 	ul.navigation li, .widget ul.navigation li {
-		background-image: url(https://ttseast.blob.core.windows.net/images/BankWebinars/retina/sidebar-list-icon_@2x.png);
+		background-image: url(http://ttsimages.ttstrain.com/images/BankWebinars/retina/sidebar-list-icon_@2x.png);
 		-moz-background-size: 6px 8px;
 		-ie-background-size: 6px 8px;
 		-o-background-size: 6px 8px;

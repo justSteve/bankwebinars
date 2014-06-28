@@ -35,7 +35,7 @@ namespace CUWebinars.Business.Notification.Handlers
             try
             {
                 var notificationMessage = _generalFormatter.Format(sendRecordingPostedEvent.EventObject, "SendRecordingPosted");
-                notificationMessage.ReplyTo = "registrations@bankwebinars.com";
+                notificationMessage.ReplyTo = "registrations@@Tenant.com";
                 notificationMessage.To = sendRecordingPostedEvent.EventObject.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);
             }

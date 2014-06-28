@@ -971,6 +971,7 @@
     <Content Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Subject.cshtml" />
     <Content Include="App_Data\Orders\ImportSampleOrders.xlsm" />
     <Content Include="Views\Account\MyCertificate.cshtml" />
+    <None Include="Properties\PublishProfiles\BankWebinars.pubxml" />
     <None Include="Properties\PublishProfiles\CUStaging.pubxml" />
     <None Include="Properties\PublishProfiles\cuwebinars1 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\cuwebinars1 - Web Deploy.pubxml" />

@@ -1,4 +1,5 @@
 using System;
+using System.Configuration;
 using System.Diagnostics;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Core.Tracing;
@@ -6,12 +7,45 @@ using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.Notification
 {
-    public class TtsDateTimeTemplateHelper
+    public class TtsTemplateHelper
     {
         public string FormatDate(DateTime date)
         {
             return DateTimeHelper.FormatDate(date);
         }
+        public string Tenant()
+        {
+            return ConfigurationManager.AppSettings["Tenant"];
+
+        }
+        public string TenantLogo()
+        {
+            return ConfigurationManager.AppSettings["TenantLogo"];
+
+        }
+
+        public string TenantEmail()
+        {
+            return ConfigurationManager.AppSettings["TenantEmail"];
+
+        }
+
+        public string TenantDomain()
+        {
+            return ConfigurationManager.AppSettings["TenantDomain"];
+
+        }
+
+        public string TenantURL()
+        {
+            return ConfigurationManager.AppSettings["TenantURL"];
+
+        }
+        public string TenantPrefix()
+        {
+            return ConfigurationManager.AppSettings["TenantPrefix"];
+        }
+
 
 
         public string FormatDateShort(DateTime date)
@@ -66,5 +100,5 @@ namespace CUWebinars.Business.Notification
             return DateTimeHelper.ToDateTime(value);
         }
 
-     }
+    }
 }

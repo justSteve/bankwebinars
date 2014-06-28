@@ -1,14 +1,14 @@
-﻿@{
-    ViewBag.Title = "Common Questions About CUWebinars.com";
+﻿@using System.Configuration
+@{
+    ViewBag.Title = "Common Questions About " + ConfigurationManager.AppSettings["Tenant"] + ".com";
     Layout = "~/Views/Shared/_LayoutPublic.cshtml";
 
 }
 
 <style>
     .s-wrap {
-        margin-right: 
+        margin-right:;
     }
-
 </style>
 <div id="page">
     <div class="container visible-phone">
@@ -34,7 +34,7 @@
                     <li class="s-wrap">
                         <h4 class="trigger"><a href="#">How do I know if I already have an account on your website?<i class="icon-plus-sign"></i></a></h4>
                         <div class="s-content">
-                            <p>If you have ever received a <i>Confirmation of Registration</i> message from us, it means you have an account. The account might have been created for you by TTS/CUWebinars.com staff or one of our affiliates.  Click the <i>Login</i> button in the upper left corner and, if you've lost track of your password (or have never visited us before), select the <i>Reset Password</i> button to have a new one sent to your current email.</p>
+                            <p>If you have ever received a <i>Confirmation of Registration</i> message from us, it means you have an account. The account might have been created for you by TTS/@ConfigurationManager.AppSettings["Tenant"] staff or one of our affiliates.  Click the <i>Login</i> button in the upper left corner and, if you've lost track of your password (or have never visited us before), select the <i>Reset Password</i> button to have a new one sent to your current email.</p>
                         </div>
                         <!--close s-content-->
                     </li>

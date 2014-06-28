@@ -24,25 +24,19 @@ namespace CUWebinars.Business.Notification.Email
             {
                 smtp.Timeout = 5000;
 
-                mailMessage.To.Add(new MailAddress("steve@ttstrain.com"));
-                mailMessage.To.Add(new MailAddress(notificationMessage.To));
-                //mailMessage.To.Add(new MailAddress("58c8ac9@emailtests.com"));
-                //mailMessage.ReplyToList.Add(new MailAddress(notificationMessage.ReplyTo));
-                //if (notificationMessage.Addresses != null)
-                //{
-                //    foreach (var address in notificationMessage.Addresses)
-                //    {
-                //        mailMessage.To.Add(new MailAddress(address));
-                //    }
-                //}
-                //else
-                //{
-                //    mailMessage.To.Add(new MailAddress(notificationMessage.To));
-                //}
+                //mailMessage.To.Add(new MailAddress("steve@ttstrain.com"));
+                
+                string destinationEmailAddress = notificationMessage.To;
 
+                if (ConfigurationManager.AppSettings["EmailSendingMode"] == "testing")
+                {
+                    destinationEmailAddress = ConfigurationManager.AppSettings["TestEmailAddress"];
+                }
+                mailMessage.To.Add(destinationEmailAddress);
+                
                 try
                 {
-                    mailMessage.From = new MailAddress(notificationMessage.From);
+                    mailMessage.From = new MailAddress(ConfigurationManager.AppSettings["TenantEmail"]);
                     
                     mailMessage.Subject = notificationMessage.Subject;
                     mailMessage.Body = notificationMessage.Body;
