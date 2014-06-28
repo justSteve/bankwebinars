@@ -4,6 +4,8 @@
     {
         internal const string Membership = "Membership";
         internal const string MembershipIntegration = "Membership Integration";
+        internal const string OrderManagementQueries = "Order Management Queries";
+        internal const string OrderManagementCommandHandlers = "Order Management Command Handlers";
         internal const string OrderManagementServiceIntegration = "Order Management Service Integration";
         internal const string OrderRepositoryIntegration = "Order Repository Integration";
     }

@@ -137,7 +137,7 @@
     <Compile Include="CQS\PostCommitRegistratorImpl.cs" />
     <Compile Include="CQS\Queries\OrderManagementQuery.cs" />
     <Compile Include="CQS\Queries\OrderManagementQueryResult.cs" />
-    <Compile Include="CQS\QueryHandlers\OrderManagementQueries.cs" />
+    <Compile Include="CQS\QueryHandlers\OrderManagementQueryHandlers.cs" />
     <Compile Include="CQS\QueryProcessor.cs" />
     <Compile Include="Models\GTWebinar.cs" />
     <Compile Include="Models\IncomingAdditionalLocation.cs" />
@@ -156,6 +156,8 @@
     <Compile Include="Notification\Handlers\SendShippedOrderHandler.cs" />
     <Compile Include="Notification\Renderers\IRenderer.cs" />
     <Compile Include="Notification\Renderers\Renderer.cs" />
+    <Compile Include="Notification\TtsConfigHelper.cs" />
+    <Compile Include="Notification\TtsDateTimeTemplateHelper.cs" />
     <Compile Include="Notification\TtsTemplateHelper.cs" />
     <Compile Include="Notification\TtsHtmlTemplateBase.cs" />
     <Compile Include="Notification\NotificationPersister.cs" />

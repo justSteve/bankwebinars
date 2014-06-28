@@ -53,6 +53,8 @@ namespace CUWebinars.Business.AccountService
         }
         public UserAccount GetUserAccountByEmail(string tenant, string email)
         {
+            if (string.IsNullOrWhiteSpace(email)) throw new ArgumentNullException("email");
+            if (string.IsNullOrWhiteSpace(tenant)) throw new ArgumentNullException("tenant");
             return _userAccountService.GetByEmail(tenant,email);
         }
 

@@ -13,7 +13,7 @@ using CUWebinars.Tests.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ninject.Extensions.Logging.Log4net.Infrastructure;
 
-namespace CUWebinars.Business.Tests
+namespace CUWebinars.Business.Tests.IntegrationTests
 {
     [TestClass]
     public class MembershipServiceIntegrationTests
@@ -89,7 +89,7 @@ namespace CUWebinars.Business.Tests
                 USTimeZone.Central,
                 UserType.Customer,
                 26,
-                GetAddresses(TestFirstName + " " + TestLastName),
+                BusinessTestHelper.GetAddresses(TestFirstName + " " + TestLastName),
                 "Mr",
                 null,
                 null
@@ -164,33 +164,6 @@ namespace CUWebinars.Business.Tests
             var account = context.Users.Where(u => u.Email == TestEmail).SingleOrDefault();
 
             Assert.IsNotNull(account); 
-        }
-
-        private IList<Address> GetAddresses(string fullName)
-        {
-            var billingAddress = new Address
-            {
-               AddressType = "Billing",
-               Name = fullName,
-               City = "Dallas",
-               Zip = "75201",
-               State= "TX",
-               StreetAddress = "1 Liberty St",
-               Country = "USA"
-            };
-            
-            var shippingAddress = new Address
-            {
-               AddressType = "Shipping",
-               Name = fullName,
-               City = "Dallas",
-               Zip = "75201",
-               State= "TX",
-               StreetAddress = "1 Liberty St",
-               Country = "USA"
-            };
-
-            return new[] {billingAddress, shippingAddress};
         }
 
 

@@ -1,10 +1,11 @@
-﻿using CUWebinars.Business.CQS;
+﻿using System;
+using CUWebinars.Business.CQS;
+using CUWebinars.Tests.Common;
 using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ninject;
-using System;
 
-namespace CUWebinars.Business.Tests
+namespace CUWebinars.Business.Tests.UnitTests
 {
     [TestClass]
     public class CommandProcessorTests
@@ -33,35 +34,32 @@ namespace CUWebinars.Business.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(RuntimeBinderException), "Cannot perform runtime binding on a null reference")]
         public void CommandProcessorThrowsExceptionWhenPassedNullReference()
         {
             //  Arrange
             SaveAdditionalLocationCommand saveAdditionalLocationCommand = null;
             var commandProcessor = kernel.Get<ICommandProcessor>();
 
-            //  Act
+            //  Act & Assert
             // ReSharper disable once ExpressionIsAlwaysNull
-            commandProcessor.Execute(saveAdditionalLocationCommand);
 
-            //  Assert                    
-            Assert.Fail();
+            ExceptionAssert.Throws<RuntimeBinderException>(
+                () => commandProcessor.Execute(saveAdditionalLocationCommand),
+                "Cannot perform runtime binding on a null reference");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ActivationException), "Error activating ICommandHandler{Object}")]
         public void CommandProcessorThrowsExceptionWhenPassedNonCommand()
         {
             //  Arrange
             object thisIsNotACommand = new object();
             var commandProcessor = kernel.Get<ICommandProcessor>();
 
-            //  Act
+            //  Act & Assert
             // ReSharper disable once ExpressionIsAlwaysNull
-            commandProcessor.Execute(thisIsNotACommand);
-
-            //  Assert                    
-            Assert.Fail();
+            ExceptionAssert.Throws<ActivationException>(
+                () => commandProcessor.Execute(thisIsNotACommand),
+                "Error activating ICommandHandler{Object}");
         }
         
         #region Nested helper classes

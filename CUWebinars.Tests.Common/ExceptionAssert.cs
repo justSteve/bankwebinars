@@ -5,7 +5,7 @@ namespace CUWebinars.Tests.Common
 {
     public static class ExceptionAssert
     {
-        public static void Throws<T>(Action code, string message = null, params object[] args) where T : Exception
+        public static void Throws<T>(Action code, string exceptionMessage = null, string message = null, params object[] args) where T : Exception
         {
             try
             {
@@ -13,9 +13,17 @@ namespace CUWebinars.Tests.Common
 
                 Assert.Fail("No exception was thrown by the code under test.");
             }
-            catch(Exception exception) 
+            catch (Exception exception)
             {
-                Assert.AreEqual(exception.GetType(), typeof(T), message, args);
+                if (string.IsNullOrWhiteSpace(exceptionMessage))
+                {
+                    Assert.AreEqual(exception.GetType(), typeof(T), message, args);
+                }
+                else
+                {
+                    Assert.AreEqual(exception.GetType(), typeof(T), message, args);
+                    Assert.IsTrue(exception.Message.StartsWith(exceptionMessage, StringComparison.OrdinalIgnoreCase));
+                }
             }
         }
     }

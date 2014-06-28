@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using CUWebinars.Business.Models;
 using Ninject;
 
@@ -9,6 +11,7 @@ namespace CUWebinars.Business.Tests
     public class BusinessTestHelper
     {
         private static readonly Assembly _serviceAssembly = Assembly.Load("CUWebinars.Business.Tests");
+        private static readonly Random Random = new Random((int)DateTime.Now.Ticks);
 
         public static void AutoRegisterType(Type type, IKernel kernel)
         {
@@ -27,6 +30,48 @@ namespace CUWebinars.Business.Tests
                 var implementation = registration.implementation; // class inplementation
                 kernel.Bind(abstraction).To(implementation).InTransientScope();
             }
+        }
+
+        public static IList<Address> GetAddresses(string fullName)
+        {
+            var billingAddress = new Address
+            {
+                AddressType = "Billing",
+                Name = fullName,
+                City = "Dallas",
+                Zip = "75201",
+                State = "TX",
+                StreetAddress = "1 Liberty St",
+                Country = "USA"
+            };
+
+            var shippingAddress = new Address
+            {
+                AddressType = "Shipping",
+                Name = fullName,
+                City = "Dallas",
+                Zip = "75201",
+                State = "TX",
+                StreetAddress = "1 Liberty St",
+                Country = "USA"
+            };
+
+            return new[] { billingAddress, shippingAddress };
+        }
+
+        /// <summary>
+        /// Taken from StackOverflow answer http://stackoverflow.com/a/1122519/540156
+        /// </summary>
+        public static string GetRandomString(int size)
+        {
+            var builder = new StringBuilder(size);
+            for (var i = 0; i < size; i++)
+            {
+                var ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * Random.NextDouble() + 65)));
+                builder.Append(ch);
+            }
+
+            return builder.ToString();
         }
 
         public static void PopulateOrder(Order newOrder, WebUser webUser)

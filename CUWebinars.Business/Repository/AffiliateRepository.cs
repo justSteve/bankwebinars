@@ -30,7 +30,7 @@ namespace CUWebinars.Business.Repository
                 queryable = queryable.Include<Affiliate, object>(includeProperty);
             }
 
-            return queryable.First(a => a.idUserAff == id);
+                return queryable.First(a => a.idUserAff == id);
         }
 
         public IQueryable<Affiliate> GetAffiliates()

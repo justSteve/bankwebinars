@@ -11,8 +11,6 @@
  * under the terms set out in this paragraph. All notices and licenses
  * below are for informational purposes only.
  *
- * jQuery validation plugin 1.10.0; Copyright (c) 2006 - 2011 Jörn Zaefferer; http://opensource.org/licenses/mit-license.php
- *
  * NUGET: END LICENSE TEXT */
 /*
 * This file has been commented to support Visual Studio Intellisense.
@@ -20,7 +18,7 @@
 * intended to be used only for design-time IntelliSense.  Please use the
 * standard jQuery library for all production use.
 *
-* Comment version: 1.10.0
+* Comment version: 1.11.1
 */
 
 /*
@@ -31,12 +29,9 @@
 * for informational purposes only and are not the license terms under
 * which Microsoft distributed this file.
 *
-* jQuery validation plugin 1.10.0
-*
-* http://bassistance.de/jquery-plugins/jquery-plugin-validation/
-* http://docs.jquery.com/Plugins/Validation
-*
-* Copyright (c) 2006 - 2011 Jörn Zaefferer
+* jQuery Validation Plugin - v1.11.1 - 2/4/2013
+* https://github.com/jzaefferer/jquery-validation
+* Copyright (c) 2013 Jörn Zaefferer; Licensed MIT
 *
 */
 
@@ -308,7 +303,7 @@ $.extend($.validator, {
 			// click on selects, radiobuttons and checkboxes
 			if ( element.name in this.submitted )
 				this.element(element);
-			// or RegType elements, check parent select in that case
+			// or option elements, check parent select in that case
 			else if (element.parentNode.name in this.submitted)
 				this.element(element.parentNode);
 		},
@@ -386,7 +381,7 @@ $.extend($.validator, {
 			}
 			$(this.currentForm)
 				.validateDelegate(":text, :password, :file, select, textarea", "focusin focusout keyup", delegate)
-				.validateDelegate(":radio, :checkbox, select, RegType", "click", delegate);
+				.validateDelegate(":radio, :checkbox, select, option", "click", delegate);
 
 			if (this.settings.invalidHandler)
 				$(this.currentForm).bind("invalid-form.validate", this.settings.invalidHandler);
@@ -498,7 +493,7 @@ $.extend($.validator, {
 			/// This depends on the internal validator state. It covers all fields only after
 			/// validating the complete form (on submit or via $("form").valid()). After validating
 			/// a single element, only that element is counted. Most useful in combination with the
-			/// invalidHandler-RegType.
+			/// invalidHandler-option.
 			/// </summary>
 			/// <returns type="Number" />
 
@@ -796,7 +791,7 @@ $.extend($.validator, {
 		getLength: function(value, element) {
 			switch( element.nodeName.toLowerCase() ) {
 			case 'select':
-				return $("RegType:selected", element).length;
+				return $("option:selected", element).length;
 			case 'input':
 				if( this.checkable( element) )
 					return this.findByName(element.name).filter(':checked').length;

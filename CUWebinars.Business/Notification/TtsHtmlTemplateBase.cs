@@ -6,6 +6,8 @@ namespace CUWebinars.Business.Notification
     public class TtsHtmlTemplateBase<T>:TemplateBase<T>
     {
         private TtsHtmlHelpers _ttsTemplateHelper;
+        private TtsDateTimeTemplateHelper _dateTimeHelper;
+        private TtsConfigHelper _ttsConfigHelper;
         private TtsTemplateHelper _helper;
 
         public TtsHtmlHelpers TtsHtmlObj
@@ -16,6 +18,11 @@ namespace CUWebinars.Business.Notification
         public TtsTemplateHelper TtsTemplateHelperObject
         {
             get { return _helper ?? (_helper = new TtsTemplateHelper()); }
+        }
+
+        public TtsConfigHelper TtsConfigHelperObject
+        {
+            get { return _ttsConfigHelper ?? (_ttsConfigHelper = new TtsConfigHelper()); }
         }
     }
 }

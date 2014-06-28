@@ -680,6 +680,17 @@ namespace CUWebinars.Web.Controllers
                 _logger.Info("Account.LogOff. Session=" + AppHelper.GetUserAuditInfo());
                 _membershipService.LogOutUser();
 
+                if (_stateService.HasValue(WebUiConstants.AdminUserEmail))
+                {
+                    var adminUserAccount = _membershipService.GetUserAccountByEmail(globalConfig.Tenant, _stateService.GetValue<string>(WebUiConstants.AdminUserEmail));
+                    
+                    _membershipService.SignIn(adminUserAccount, false);
+
+                    _stateService.ClearValue(WebUiConstants.AdminUserEmail);
+
+                    return RedirectToAction("MembershipNotifications", "MembershipNotificationOps");
+                }
+
                 return RedirectToAction("Index", "Home");
             }
             _logger.Fatal("Account.LogOff at Unauthenticated User. Session=" + AppHelper.GetUserAuditInfo());

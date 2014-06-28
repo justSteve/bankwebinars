@@ -5,14 +5,14 @@ using System;
 
 namespace CUWebinars.Business.CQS.QueryHandlers
 {
-    public class OrderManagementQueries : 
+    public class OrderManagementQueryHandlers : 
         IQueryHandler<OrderManagementQuery, OrderManagementQueryResult>
     {
         private readonly IMembershipService _membershipService;
         private readonly IOrderManagementService _orderManagementService;
         private bool _disposed;
 
-        public OrderManagementQueries(IMembershipService membershipService, IOrderManagementService orderManagementService)
+        public OrderManagementQueryHandlers(IMembershipService membershipService, IOrderManagementService orderManagementService)
         {
             _membershipService = membershipService;
             _orderManagementService = orderManagementService;
@@ -21,6 +21,8 @@ namespace CUWebinars.Business.CQS.QueryHandlers
 
         public OrderManagementQueryResult Handle(OrderManagementQuery query)
         {
+            if (query == null) throw new ArgumentNullException("query");
+
             var orderManagementQueryResult = new OrderManagementQueryResult
             {
                 Affiliate = _orderManagementService.GetAffiliateById(query.AffiliateId),

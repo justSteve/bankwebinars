@@ -31,6 +31,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
         public void Handle(AddOrderRowCommand command)
         {
+            if (command == null) throw new ArgumentNullException("command");
             IList<AdditionalLocation> additionalLocations = new List<AdditionalLocation>();
 
             if (command.AdditionalLocations != null && command.AdditionalLocations.Any())
@@ -71,6 +72,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
         public void Handle(RegisterNewAccountCommand command)
         {
+            if (command == null) throw new ArgumentNullException("command");
             var institutionForUser = _membershipService.ProcessInstitutionForUser(command.Institution
                     , command.Email
                     ,command.BillingAddress.City
@@ -101,8 +103,6 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                 , DomainConstants.Active
                 );
 
-            //webUser.Institution = institutionForUser;
-
             var userAccount = _membershipService.CreateUser(command.Tenant
                 , command.FirstName
                 , command.LastName
@@ -127,6 +127,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
         public void Handle(VerifyAccountCommand command)
         {
+            if (command == null) throw new ArgumentNullException("command");
             var userAccount = _membershipService.VerifyEmailFromKey(
                             command.VerificationKey,
                             command.TempPassword
@@ -135,6 +136,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
         public void Handle(AddOrderCommand command)
         {
+            if (command == null) throw new ArgumentNullException("command");
             var importedOrder = _orderManagementService.CreateNewOrder(command.Affiliate,command.WebUser, command.Webinar, command.OrderRow);
 
             importedOrder.AdminComments = "incomingOrderModel.AdminComments";

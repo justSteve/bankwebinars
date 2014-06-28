@@ -21,7 +21,15 @@
             {
                 @Html.AntiForgeryToken()
                 @Html.ActionLink(identity.Value, "Manage", "Account", routeValues: null, htmlAttributes: new { title = "Manage", id = "btnLogin" })
-                <a href="javascript:document.getElementById('logoutForm').submit()">&nbsp;&nbsp;[Log Off]</a>
+
+                if (ReferenceEquals(Session["AdminUserEmail"], null))
+                {
+                    <a href="javascript:document.getElementById('logoutForm').submit()">&nbsp;&nbsp;[Log Off]</a>
+                }
+                else
+                {
+                    <a href="javascript:document.getElementById('logoutForm').submit()">&nbsp;&nbsp;[Release]</a>
+                }
             }
             else
             {

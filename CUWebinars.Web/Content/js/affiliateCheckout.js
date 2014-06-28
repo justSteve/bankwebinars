@@ -67,7 +67,7 @@ function initCheckoutWizard(workflowState) {
                     target: "#Step" + workflowState.CurrentStep + "_Container",
                     success: hideProcessingIndicator,
                     beforeSubmit: checkReady()
-                })
+                });
             }
         });
     });

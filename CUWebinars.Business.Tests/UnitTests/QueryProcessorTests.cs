@@ -1,10 +1,11 @@
-﻿using CUWebinars.Business.CQS;
+﻿using System;
+using CUWebinars.Business.CQS;
 using CUWebinars.Business.Models;
+using CUWebinars.Tests.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ninject;
-using System;
 
-namespace CUWebinars.Business.Tests
+namespace CUWebinars.Business.Tests.UnitTests
 {
     [TestClass]
     public class QueryProcessorTests
@@ -36,7 +37,6 @@ namespace CUWebinars.Business.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(NullReferenceException))]
         public void QueryProcessorThrowsExceptionWhenPassedNullReference()
         {
             //  Arrange
@@ -45,10 +45,9 @@ namespace CUWebinars.Business.Tests
 
             //  Act
             // ReSharper disable once ExpressionIsAlwaysNull
-            var additionalLocation = queryProcessor.Process(query);
-
-            //  Assert                    
-            Assert.Fail();
+            ExceptionAssert.Throws<NullReferenceException>(
+                () => {var additionalLocation = queryProcessor.Process(query); }
+                );
         }
 
 #region Nested helper classes

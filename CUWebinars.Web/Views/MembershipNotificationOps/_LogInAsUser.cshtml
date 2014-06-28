@@ -5,7 +5,7 @@
 }
 
 <div class="span8">
-    @using (Html.BeginForm("LogInAsUser", "MembershipNotificationOps", FormMethod.Post, new { id = "LogInAsUserForm" }))
+    @using (Html.BeginForm("LogInAsUser", "MembershipNotificationOps", FormMethod.Post, new { id = "LogInAsUserForm", target = "_blank" }))
     {
         @Html.AntiForgeryToken()
 

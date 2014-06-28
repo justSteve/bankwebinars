@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using BrockAllen.MembershipReboot;
 using BrockAllen.MembershipReboot.Ef;
 using CUWebinars.Business.AccountService;
@@ -7,11 +8,10 @@ using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System.Collections.Generic;
 using Ninject.Extensions.Logging;
 using Ninject.Extensions.Logging.Log4net.Infrastructure;
 
-namespace CUWebinars.Business.Tests
+namespace CUWebinars.Business.Tests.UnitTests
 {
     [TestClass]
     public class MembershipServiceTests
