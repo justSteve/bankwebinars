@@ -6,7 +6,7 @@ namespace CUWebinars.Business.Notification
     public class TtsHtmlTemplateBase<T>:TemplateBase<T>
     {
         private TtsHtmlHelpers _ttsTemplateHelper;
-        private TtsDateTimeTemplateHelper _dateTimeHelper;
+        //private TtsTemplateHelper _dateTimeHelper;
         private TtsConfigHelper _ttsConfigHelper;
         private TtsTemplateHelper _helper;
 
