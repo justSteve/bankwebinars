@@ -117,6 +117,7 @@
     <Compile Include="AccountService\IMembershipService.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="Constants\ClaimValues.cs" />
+    <Compile Include="Core\DataOperations.cs" />
     <Compile Include="Core\Helpers\DateTimeHelper.cs" />
     <Compile Include="Core\Helpers\GenericHelpers.cs" />
     <Compile Include="Core\Helpers\ValidationHelper.cs" />

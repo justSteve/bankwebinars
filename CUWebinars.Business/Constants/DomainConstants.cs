@@ -8,6 +8,7 @@ namespace CUWebinars.Business.Constants
         public const string Blank = "blank";
         public const string ConfirmChangeEmailLink = "ConfirmChangeEmailLink";
         public const string JoinUrl = "joinUrl";
+        public const string LoggerConnectionStringName = "LoggerConnection";
         public const string RazorExtension = ".cshtml";
         public const string RegistrantKey = "registrantKey";
         public const string ShippingAddress = "Shipping";

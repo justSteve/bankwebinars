@@ -93,32 +93,5 @@ namespace CUWebinars.Business.Tests.IntegrationTests
             //  Assert                        
             Assert.IsNotNull(savedOrder.OrderStatus == OrderStatus.Submitted);
         }
-
-        //var order = new Order
-        //{
-        //    AdminComments = "incomingOrderModel.AdminComments",
-        //    AffiliateComments = "Affiliate comments",
-        //    FirstName = "Alan",
-        //    LastName = "Turing",
-        //    idAffiliate = 19,
-        //    idUser = 26368,
-        //    OrderDate = DateTime.UtcNow,
-        //    Institution = "Some Institution",
-        //    BillingZip = "5000",
-        //    BillingState = "Tx",
-        //    BillingCity = "Del Rio",
-        //    BillingAddress = "968 Wildcat Dr",
-        //    BillingPhone = "555-555-5555",
-        //    ShippingZip = "5000",
-        //    ShippingState = "Tx",
-        //    ShippingCity = "Del Rio",
-        //    ShippingAddress = "968 Wildcat Dr",
-        //    ShippingPhone = "555-555-5555",
-        //    TaxExempt = false,
-        //    Total = 395.00M,
-        //    Origin = "incomingOrderModel.Origin",
-        //    UserComments = "incomingOrderModel.UserComments"
-        //};
-
     }
 }

@@ -328,6 +328,7 @@ namespace CUWebinars.Business.AccountService
 
         public USTimeZone GetTimeZoneByZip()
         {
+
             return USTimeZone.Central;
         }
 
