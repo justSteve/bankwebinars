@@ -94,25 +94,25 @@
 
 .btn-link.ui-wait-button .ui-icon-waiting,
 .btn-default.ui-wait-button .ui-icon-waiting {
-   background-image: url("https://ttseast.blob.core.windows.net/images/wait-default.gif");
+   background-image: url("http://ttsimages.ttstrain.com/images/wait-default.gif");
 }
 
 .btn-primary.ui-wait-button .ui-icon-waiting {
-   background-image: url("https://ttseast.blob.core.windows.net/images/wait-primary.gif");
+   background-image: url("http://ttsimages.ttstrain.com/images/wait-primary.gif");
 }
 
 .btn-success.ui-wait-button .ui-icon-waiting {
-   background-image: url("https://ttseast.blob.core.windows.net/images/wait-success.gif");
+   background-image: url("http://ttsimages.ttstrain.com/images/wait-success.gif");
 }
 
 .btn-info.ui-wait-button .ui-icon-waiting {
-   background-image: url("https://ttseast.blob.core.windows.net/images/wait-info.gif");
+   background-image: url("http://ttsimages.ttstrain.com/images/wait-info.gif");
 }
 
 .btn-warning.ui-wait-button .ui-icon-waiting {
-   background-image: url("https://ttseast.blob.core.windows.net/images/wait-warning.gif");
+   background-image: url("http://ttsimages.ttstrain.com/images/wait-warning.gif");
 }
 
 .btn-danger.ui-wait-button .ui-icon-waiting {
-   background-image: url("https://ttseast.blob.core.windows.net/images/wait-danger.gif");
+   background-image: url("http://ttsimages.ttstrain.com/images/wait-danger.gif");
 }

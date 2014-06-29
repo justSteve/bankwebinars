@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Configuration;
+using System.IO;
 using System.Web.Hosting;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Core.Exceptions;
@@ -67,51 +68,51 @@ namespace CUWebinars.Web.Controllers
             {
                 case "16":
                     ViewBag.TopicCaption = "IRA ";
-                    ViewBag.Title = "CUWebinars related to IRAs ";
+                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to IRAs ";
                     break;
                 case "15":
                     ViewBag.TopicCaption = "Compliance ";
-                    ViewBag.Title = "CUWebinars related to Compliance ";
+                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to Compliance ";
                     break;
                 case "17":
                     ViewBag.TopicCaption = "Customer Service ";
-                    ViewBag.Title = "CUWebinars related to Customer Service ";
+                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to Customer Service ";
                     break;
                 case "18":
                     ViewBag.TopicCaption = "Security ";
-                    ViewBag.Title = "CUWebinars related to Security ";
+                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to Security ";
                     break;
                 case "19":
                     ViewBag.TopicCaption = "Operations ";
-                    ViewBag.Title = "CUWebinars related to Operations ";
+                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to Operations ";
                     break;
                 case "20":
                     ViewBag.TopicCaption = "Auditing ";
-                    ViewBag.Title = "CUWebinars related to Auditing ";
+                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to Auditing ";
                     break;
                 case "21":
                     ViewBag.TopicCaption = "Sales ";
-                    ViewBag.Title = "CUWebinars related to Sales ";
+                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to Sales ";
                     break;
                 case "22":
                     ViewBag.TopicCaption = "Lending ";
-                    ViewBag.Title = "CUWebinars related to Lending ";
+                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to Lending ";
                     break;
                 case "23":
                     ViewBag.TopicCaption = "Human Resources ";
-                    ViewBag.Title = "CUWebinars related to Human Resources ";
+                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to Human Resources ";
                     break;
                 case "25":
                     ViewBag.TopicCaption = "Computer Skills ";
-                    ViewBag.Title = "CUWebinars related to Computer Skills ";
+                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to Computer Skills ";
                     break;
                 case "26":
                     ViewBag.TopicCaption = "Risk Management ";
-                    ViewBag.Title = "CUWebinars related to Risk Management ";
+                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to Risk Management ";
                     break;
                 case "27":
                     ViewBag.TopicCaption = "Teller ";
-                    ViewBag.Title = "CUWebinars related to Teller ";
+                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to Teller ";
                     break;
             }
 
@@ -511,7 +512,7 @@ namespace CUWebinars.Web.Controllers
                     var connectionText = new StringBuilder("<p>");
                     connectionText.Append(
                         row.RegistrationType.Stage2EmailConfirmationMsg.Replace(
-                            " and is also available at http://www.BankWebinars.com", "</p><p>"));
+                            " and is also available at http://www.@Tenant.com", "</p><p>"));
 
                     //connectionText.Append(webinar.ConnectionInfo.Replace(Environment.NewLine, "<br>"));
                     connectionText.Append("</p>");

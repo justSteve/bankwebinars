@@ -4,23 +4,13 @@
 @using CUWebinars.Business.Constants
 @model WebinarDetailsViewModel
 @{
-    <script language="javascript">
-        function exprsOrder(idRegType) {
-            alert("Please dial 800-831-0678 ext. 3 and ask to upgrade CU-@Model.Order.idOrder");
 
-        };
-        function upgrade(idRegType) {
-            alert("Please dial 800-831-0678 ext. 3 and ask to upgrade CU-@Model.Order.idOrder");
 
-        };
-    </script>
-    Order order = null;
-    OrderRow row = null;
     if (ViewBag.userOwnsThisEvent > 0)
     {
         RegType orderMsgs = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType;
-        row = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-        order = row.Order;
+        OrderRow row = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+        Order order = row.Order;
         string[] webinarFiles = ViewBag.WebinarFiles;
         //ICollection<WebinarFile> webinarFiles = row.Webinar.WebinarFiles;
         var recording = "<a href='" + ConfigurationManager.AppSettings["wmvrepository"] + Model.Webinar.RecordingUrl + "' target=_blank /> Recording Playback</a>"; ;
@@ -135,7 +125,7 @@
                 </div>
             }
         }
-}
+            }
         </div>
     }
     @*else

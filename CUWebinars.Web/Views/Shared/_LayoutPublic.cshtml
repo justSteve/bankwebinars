@@ -1,4 +1,5 @@
-﻿@using System.Text
+﻿@using System.Configuration
+@using System.Text
 
 @{
     var PageStyleType = ViewBag.PageStyleType;
@@ -140,14 +141,14 @@
 
         <!-- Icons ================ -->
         <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
-        <link rel="apple-touch-icon-precomposed" href="https://ttseast.blob.core.windows.net/images/BankWebinars/apple-touch-icon.png" />
+        <link rel="apple-touch-icon-precomposed" href="http://ttsimages.ttstrain.com/images/BankWebinars/apple-touch-icon.png" />
         <!-- For first- and second-generation iPad: -->
-        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="https://ttseast.blob.core.windows.net/images/BankWebinars/apple-touch-icon-72x72-precomposed.png" />
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://ttsimages.ttstrain.com/images/BankWebinars/apple-touch-icon-72x72-precomposed.png" />
         <!-- For iPhone with high-resolution Retina display: -->
-        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="https://ttseast.blob.core.windows.net/images/BankWebinars/apple-touch-icon-114x114-precomposed.png" />
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://ttsimages.ttstrain.com/images/BankWebinars/apple-touch-icon-114x114-precomposed.png" />
         <!-- For third-generation iPad with high-resolution Retina display: -->
-        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://ttseast.blob.core.windows.net/images/BankWebinars/apple-touch-icon-144x144-precomposed.png" />
-        <link rel="shortcut icon" href="https://ttseast.blob.core.windows.net/images/BankWebinars/favicon.ico" />
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://ttsimages.ttstrain.com/images/BankWebinars/apple-touch-icon-144x144-precomposed.png" />
+        <link rel="shortcut icon" href="http://ttsimages.ttstrain.com/images/BankWebinars/favicon.ico" />
         <!-- Open Graph for facebook
             http://graph.facebook.com/[UserName] replace [UserName]
             with yours and get your fb:admis content information where the XXXX goes.
@@ -158,7 +159,7 @@
         <meta property="og:image" content="" />
         <meta property="og:site_name" content="" />
         <meta property="og:locale" content="en_us" />
-        <meta property="og:description" content="CUWebinars is Webinars For Credit Unions." />
+        <meta property="og:description" content="@ConfigurationManager.AppSettings["Tenant"] is Webinars for the financial industry." />
 
         @RenderSection("Styles", required: false)
         <style>
@@ -284,7 +285,7 @@
             </nav>
             <!-- close / #main_menu -->
             <!-- begin #logo -->
-            <div id="logo"> <a href="/Home"><img alt="" src="https://ttseast.blob.core.windows.net/images/BankWebinars/trans.gif" /><em>Credit Union Webinars</em><!--effing ie7 support--></a> </div>
+            <div id="logo"> <a href="/Home"><img alt="" src="http://ttsimages.ttstrain.com/images/BankWebinars/trans.gif" /><em>Credit Union Webinars</em><!--effing ie7 support--></a> </div>
             <!-- end #logo -->
             `
         </div>
@@ -331,7 +332,7 @@
                             PO Box 310 . Waunakee, Wisconsin . 53597<br>
                             <strong>phone:</strong> <a href="tel:8008310678" class="tele">800.831.0678</a><br>
                             <strong>fax:</strong> 800.831.3776<br>
-                            <strong>email:</strong><a href="mailto:webinars@CUWebinars.com"> webinars@CUWebinars.com</a>
+                            <strong>email:</strong><a href="mailto:@ConfigurationManager.AppSettings["TenantEmail"]">@ConfigurationManager.AppSettings["TenantEmail"]</a>
                         </p>
                     </section>
                     <!--close section-->
@@ -371,7 +372,7 @@
         <section class="footerCredits">
             <div class="container">
                 <ul class="clearfix">
-                    <li>This site is © 2013 By Total Training Solutions. All rights reserved. For financial institution training visit<a href="http://www.ttstrain.com/?s=cuwebinars" target="_new"> TTSTrain.com </a></li>
+                    <li>This site is © 2014 By Total Training Solutions. All rights reserved. For financial institution training visit<a href="http://www.ttstrain.com/?s=cuwebinars" target="_new"> TTSTrain.com </a></li>
                     @*<li><a href="privacy.html">Privacy</a></li>*@
                 </ul>
             </div>
@@ -397,10 +398,10 @@
         </div>
     </div>
 
-    <div id="AttendOptions" class="modal hide fade">
+    <div id="AttendRegTypes" class="modal hide fade">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3>CUWebinars.com's Attendance Options</h3>
+            <h3>@ConfigurationManager.AppSettings["TenantDomain"]'s Attendance Options</h3>
         </div>
         <div class="modal-body">
             <p>Spells 'em out</p>

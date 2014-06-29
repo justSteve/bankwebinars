@@ -1,4 +1,5 @@
-﻿@{
+﻿@using System.Configuration
+@{
     ViewBag.Title = "Detailed Connection Instructions";
     Layout = "~/Views/Shared/_LayoutPublic.cshtml";
 
@@ -42,7 +43,7 @@
                     The instructions contained here do not include the specific Webinar ID, password,
                     and Attendee ID for your Webinar. That information is emailed by our system 2-3
                     days prior to the start of the Webinar and again, the morning of the event from
-                    the email account at <b><i>registrations@CUWebinars.com</i></b>. It can be helpful
+                    the email account at <b><i>@ConfigurationManager.AppSettings["TenantEmail"]</i></b>. It can be helpful
                     to adjust spam filtering to allow mail from this address.
                 </p>
                 <p>

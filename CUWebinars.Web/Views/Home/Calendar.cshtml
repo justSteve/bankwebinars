@@ -1,6 +1,7 @@
-﻿
+﻿@using System.Configuration
+
 @{
-    ViewBag.Title = "CUWebinars Calendar";
+    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"]+ "Calendar";
     Layout = "~/Views/Shared/_LayoutPublic.cshtml";
 }
 <script type="text/javascript">

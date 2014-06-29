@@ -20,6 +20,69 @@ namespace CUWebinars.Web.Controllers
             _orderControllerOrchestrator = orderControllerOrchestrator;
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        public ActionResult jf_Registrations(IncomingOrderModel incomingOrderModel)
+        {
+            int idOfLastOrder = default(int);
+            string verificationKey = string.Empty;
+            string confirmChangeEmailUrl = string.Empty;
+
+            if (!ModelState.IsValid)
+            {
+                ProcessModelStateErrors();
+                return Json(new { Result = WebUiConstants.Fail });
+            }
+
+            try
+            {
+                var email = incomingOrderModel.Email.Trim();
+
+                _logger.Info("Begin import: " + email);
+
+                var orderManagementQueryResult = _orderControllerOrchestrator.GetPreparatoryData(incomingOrderModel, email);
+
+                if (ReferenceEquals(null, orderManagementQueryResult.WebUser))
+                {
+                    try
+                    {
+                        orderManagementQueryResult.WebUser =
+                            _orderControllerOrchestrator.ProcessNewUser(incomingOrderModel, email);
+
+                        verificationKey = _orderControllerOrchestrator.GetVerificationKeyForNewUserAccount();
+
+                        confirmChangeEmailUrl =
+                            _orderControllerOrchestrator.GetConfirmChangeEmailLinkForNewUserAccount();
+
+                        _orderControllerOrchestrator.FinalizeNewRegistration(incomingOrderModel, verificationKey);
+                        //  Now we clear the value, so TtsSmtpMessageDelivery can go back to business as usual.
+                        //_stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
+                        _logger.Info(string.Format("CreateOrder|CreateUser Succeeded: {0}", email));
+                    }
+                    catch (Exception exception)
+                    {
+                        _logger.ErrorException(
+                            string.Format("CreateOrder|CreateUser failed: {0}", exception.Message), exception);
+                        throw;
+                    }
+                }
+
+                idOfLastOrder = _orderControllerOrchestrator.CreateNewOrder(incomingOrderModel, email,
+                    orderManagementQueryResult, verificationKey, confirmChangeEmailUrl);
+
+                //idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
+                _logger.Info(string.Format("CreateOrder|CreateNewOrder: {0}", idOfLastOrder));
+
+                return Json(new { Result = idOfLastOrder.ToString() }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception exception)
+            {
+                var errString = string.Format("Order creation failed on {0} - {1} with msg: {2}", incomingOrderModel.Email, incomingOrderModel.idWebinar, exception.Message);
+                _logger.ErrorException(errString, exception);
+            }
+
+            return View("ConfirmOrder", incomingOrderModel);
+        }
         /// <summary>
         /// For us to use a query string, this has to be a GET request.
         /// </summary>

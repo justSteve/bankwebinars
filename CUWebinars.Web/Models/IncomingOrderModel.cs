@@ -21,6 +21,7 @@ namespace CUWebinars.Web.Models
         public Address ShippingAddress { get; set; }
         public OrderStatus Status { get; set; }
         public string Title { get; set; }
+        public string RegTypeLabel { get; set; }
 
     }
 
