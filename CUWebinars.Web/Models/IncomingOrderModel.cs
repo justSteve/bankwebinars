@@ -11,7 +11,7 @@ namespace CUWebinars.Web.Models
         public Address BillingAddress { get; set; }
         public string Email { get; set; }
         public string FirstName { get; set; }
-        public int    idAffiliate { get; set; }
+        public int  idAffiliate { get; set; }
         public int idRegType { get; set; }
         public int idWebinar { get; set; }
         public string Institution  { get; set; }

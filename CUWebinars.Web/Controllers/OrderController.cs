@@ -22,7 +22,7 @@ namespace CUWebinars.Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult jf_Registrations(IncomingOrderModel incomingOrderModel)
+        public JsonResult CreateOrder_JF(IncomingOrderModel incomingOrderModel)
         {
             int idOfLastOrder = default(int);
             string verificationKey = string.Empty;
@@ -40,7 +40,53 @@ namespace CUWebinars.Web.Controllers
 
                 _logger.Info("Begin import: " + email);
 
-                var orderManagementQueryResult = _orderControllerOrchestrator.GetPreparatoryData(incomingOrderModel, email);
+                var orderManagementQueryResult = _orderControllerOrchestrator.GetPreparatoryData(incomingOrderModel,
+                    email);
+                var webinar = orderManagementQueryResult.Webinar;
+                var idRegtype = 0;
+
+                if (string.Equals(incomingOrderModel.RegTypeLabel.ToLower(), "live session only"))
+                {
+                    if (webinar.Duration == 1)
+                        idRegtype = 97;
+                    else
+                        idRegtype = 84;
+                }
+
+                if (string.Equals(incomingOrderModel.RegTypeLabel.ToLower(), "ondemand recording only"))
+                {
+                    if (webinar.Duration == 1)
+                        idRegtype = 98;
+                    else
+                        idRegtype = 85;
+                }
+
+                if (string.Equals(incomingOrderModel.RegTypeLabel.ToLower(), "cd-rom and hardcopy handouts"))
+                {
+                    if (webinar.Duration == 1)
+                        idRegtype = 99;
+                    else
+                        idRegtype = 86;
+                }
+
+                if (string.Equals(incomingOrderModel.RegTypeLabel.ToLower(), "live plus ondemand weblinks"))
+                {
+                    if (webinar.Duration == 1)
+                        idRegtype = 100;
+                    else
+                        idRegtype = 87;
+                }
+
+                if (string.Equals(incomingOrderModel.RegTypeLabel.ToLower(), "premier package"))
+                {
+                    if (webinar.Duration == 1)
+                        idRegtype = 101;
+                    else
+                        idRegtype = 88;
+                }
+
+                incomingOrderModel.idRegType = idRegtype;
+
 
                 if (ReferenceEquals(null, orderManagementQueryResult.WebUser))
                 {
@@ -77,12 +123,15 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception exception)
             {
-                var errString = string.Format("Order creation failed on {0} - {1} with msg: {2}", incomingOrderModel.Email, incomingOrderModel.idWebinar, exception.Message);
+                var errString = string.Format("Order creation failed on {0} - {1} with msg: {2}",
+                    incomingOrderModel.Email, incomingOrderModel.idWebinar, exception.Message);
                 _logger.ErrorException(errString, exception);
             }
 
-            return View("ConfirmOrder", incomingOrderModel);
+            return Json(new { Result = "0" }, JsonRequestBehavior.AllowGet);
+            //return Json(new { Result = WebUiConstants.Fail });}
         }
+
         /// <summary>
         /// For us to use a query string, this has to be a GET request.
         /// </summary>
@@ -154,7 +203,7 @@ namespace CUWebinars.Web.Controllers
 
         private void ProcessModelStateErrors()
         {
-//Please use this general pattern when logging ModelState errors.
+            //Please use this general pattern when logging ModelState errors.
             var myErr = string.Empty;
             foreach (ModelState modelState in ViewData.ModelState.Values)
             {
