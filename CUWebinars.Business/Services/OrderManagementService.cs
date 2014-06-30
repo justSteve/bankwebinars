@@ -402,6 +402,7 @@ namespace CUWebinars.Business.Services
         }
         public virtual void AssignUserToOrder(Order order)
         {
+            if (order == null) throw new ArgumentNullException("order");
             var user = order.WebUser;
 
             var billingAddress = user.Addresses.FirstOrDefault(a => a.AddressType == "Billing");

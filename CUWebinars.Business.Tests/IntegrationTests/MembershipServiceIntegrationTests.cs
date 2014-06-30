@@ -104,7 +104,6 @@ namespace CUWebinars.Business.Tests.IntegrationTests
 
         [TestMethod]
         [TestCategory(TestCategories.MembershipIntegration)]
-        //[ExpectedException(typeof(ArgumentNullException))]
         public void CreateUserAccountWithNoTenantThrowsException()
         {
             var membershipService = CreateMembershipService();
@@ -114,12 +113,10 @@ namespace CUWebinars.Business.Tests.IntegrationTests
                     membershipService.CreateUser(null, TestFirstName, TestLastName, TestFirstName + " " + TestLastName,
                         TestPassword, TestEmail));
 
-            //Assert.Fail(); // if made it this far, no exception thrown and test fails.
         }
 
         [TestMethod]
         [TestCategory(TestCategories.MembershipIntegration)]
-        //[ExpectedException(typeof(ArgumentNullException))]
         public void CreateUserAccountWithEmptyStringForTenantThrowsException()
         {
             var membershipService = CreateMembershipService();
@@ -129,7 +126,6 @@ namespace CUWebinars.Business.Tests.IntegrationTests
                     TestFirstName + " " + TestLastName,
                     TestPassword, TestEmail));
 
-            //Assert.Fail(); // if made it this far, no exception thrown and test fails.
         }
 
         [TestMethod]
