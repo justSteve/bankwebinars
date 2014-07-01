@@ -19,7 +19,7 @@ var nextButtonText = 'Next...',
 //  simple C-like enums implementation
 var actions = { CheckEmail: 'CheckEmail', CheckZip: 'CheckZip', GetPassword: 'GetPassword', LogIn: 'LogIn', PostCreateAccount: 'PostCreateAccount', SubmitLogin: 'SubmitLogin', SubmitRegister: 'SubmitRegister', DisplayBillingAddressFields: 'DisplayBillingAddressFields' };
 var inputActions = { EnterKeyPress: 'EnterKeyPress', ButtonClick: 'ButtonClick', None: 'None' };
- var buttons = { EnterDiffAddress: 'EnterDiffAddress', nonUSAddressBtn: 'nonUSAddressBtn', NotInstitution: 'NotInstitution', ResetPass: 'resetPass', SignInButton: 'SignInButton', TheSubmit: 'TheSubmit', YesUseAddress: 'YesUseAddress' };
+var buttons = { EnterDiffAddress: 'EnterDiffAddress', nonUSAddressBtn: 'nonUSAddressBtn', NotInstitution: 'NotInstitution', ResetPass: 'resetPass', SignInButton: 'SignInButton', TheSubmit: 'TheSubmit', YesUseAddress: 'YesUseAddress' };
 
 var collapseEmail,
     emailLoginInput,
@@ -516,6 +516,9 @@ var stateManager = function () {
                 if (REG.PageObjects.createUserForm().valid() == '1') {
                     stateManager.action = actions.PostCreateAccount;
                     submitCreateUserForm();
+                } else {
+                    if (stateManager.inputAction === inputActions.EnterKeyPress)
+                        stateManager.inputAction = inputActions.None;
                 }
                 break;
             case actions.SubmitLogin:
