@@ -384,6 +384,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdhocNotificationController.cs" />
     <Compile Include="Controllers\api\AddressesController.cs" />
+    <Compile Include="Controllers\api\OrderImporterController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\OrderEventFiringOpsController.cs" />
     <Compile Include="Core\Exceptions.cs" />
@@ -391,6 +392,8 @@
     <Compile Include="Core\Orchestrators\OrderControllerOrchestrator.cs" />
     <Compile Include="ElmahHandleErrorAttribute.cs" />
     <Compile Include="Helpers\EventInvokerHelpers.cs" />
+    <Compile Include="Models\ImportOrderResponse.cs" />
+    <Compile Include="Models\IncomingAFOOrder.cs" />
     <Compile Include="Notification\Templates\CertOfCompletionViewModel.cs" />
     <Compile Include="ViewModel\CreateUserConfirmedViewModel.cs" />
     <Compile Include="ViewModel\EmailRequiredBaseViewModel.cs" />
