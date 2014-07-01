@@ -384,7 +384,6 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdhocNotificationController.cs" />
     <Compile Include="Controllers\api\AddressesController.cs" />
-    <Compile Include="Controllers\api\OrderImporterController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\OrderEventFiringOpsController.cs" />
     <Compile Include="Core\Exceptions.cs" />
@@ -1137,7 +1136,6 @@
     <Content Include="Views\OrderEventFiringOps\_resendOrderConfirmation.cshtml" />
     <Content Include="Views\OrderEventFiringOps\_resendConnectionInfo.cshtml" />
     <Content Include="Views\Account\Partials\_Certificate.cshtml" />
-    <Content Include="Views\Order\ConfirmOrder.cshtml" />
     <Content Include="Views\MembershipNotificationOps\_LogInAsUser.cshtml" />
   </ItemGroup>
   <ItemGroup>

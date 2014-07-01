@@ -40,7 +40,7 @@ namespace CUWebinars.Web.Controllers.api
             _logger = logger;
         }
 
-        [HttpPost()]
+        //[HttpPost()]
         public ImportOrderResponse ImportOrder(IncomingAFOOrder incomingAFOOrder)
         {
             string orderid = string.Empty, responseString;

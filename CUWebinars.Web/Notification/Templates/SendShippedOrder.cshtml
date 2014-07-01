@@ -13,6 +13,8 @@
               select orderRow;
     var webinar = row.Single().Webinar;
 
+    var shippedDate = Convert.ToDateTime(row.SingleOrDefault().ShipmentDate).ToShortDateString();
+
     string DateTimeString = TtsTemplateHelperObject.FormatTimeWithDuration(webinar.Date, Model.WebUser.timeZone, true, webinar.Duration);
     string Tenant = TtsTemplateHelperObject.Tenant();
     string TenantEmail = TtsTemplateHelperObject.TenantEmail();
@@ -21,9 +23,9 @@
     string TenantPrefix = TtsTemplateHelperObject.TenantPrefix();
     string TenantLogo = TtsTemplateHelperObject.TenantLogo();
     string TenantCom = TenantDomain + ".com";
-    
-    var HeaderText = "Your CD-ROM and Event Materials have Shipped";
-    var BannerText = "Order Number: "+TenantPrefix + Model.idOrder;
+
+    var HeaderText = "Your Event Materials for " + webinar.Title + " have Shipped";
+    var BannerText = "Order Number: " + TenantPrefix + Model.idOrder;
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>Your CD-ROM and Event Materials have Shipped</title>
@@ -64,7 +66,7 @@
                                 </tr>
                                 <tr>
                                     <td width="462px" bgcolor="#344a58" valign="top">
-                                        <img align="middle" alt="Site Logo" border="0" height="50" hspace="25" margin="0px 0px 0px 0px" src="@TenantLogo" style="width: 332px; height: 50px; display: block;" title="CUwebinars.com" vspace="25" width="332" />
+                                        <img align="middle" alt="Site Logo" border="0" height="50" hspace="25" margin="0px 0px 0px 0px" src="@TenantLogo" style="width: 332px; height: 50px; display: block;" title="Site Logo" vspace="25" width="332" />
                                     </td>
                                     <td align="left" bgcolor="#344a58" style="padding: 0px 15px 0px 0px; border-right-color: rgb(52, 74, 88); border-right-width: 1px; border-right-style: solid;">
                                         <p style="text-align: center; color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
@@ -113,21 +115,20 @@
                                                                                     <td colspan="2" style="text-align: left; margin-left: 6px; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
                                                                                         <p style="color: black; font-family: Arial, Helvetica, sans-serif; padding: 5px; font-size: 12px;">
                                                                                             <br />Dear @Model.FirstName,<br />
-                                                                                            We've shipped your CD-ROM and other event materials (for <i>@webinar.Title</i>) via United States Postal Serivce to:
+                                                                                            We've shipped (on @shippedDate) your CD-ROM and other event materials (for <i>@webinar.Title</i>) via United States Postal Serivce to:
                                                                                             <blockquote>
-                                                                                                
+
                                                                                                 @Model.Institution<br />
+                                                                                                Attention: @Model.WebUser.FullName<br />
                                                                                                 @Model.ShippingAddress<br />
                                                                                                 @if (@Model.ShippingAddress2 != null || @Model.ShippingAddress2 != "" || @Model.ShippingAddress2 != " ")
                                                                                                 {
                                                                                                     @Model.ShippingAddress2<br />
                                                                                                 }
-                                                                                                @Model.ShippingCity, @Model.ShippingState @Model.ShippingZip<br /><br />
-
-                                                                                                Attention: @Model.WebUser.FullName
+                                                                                                @Model.ShippingCity, @Model.ShippingState @Model.ShippingZip<br />
                                                                                             </blockquote>
                                                                                         </p>
-                                                                                        <p> You should see them in the next 3-5 days.<br /><br /></p>
+                                                                                        <p> You should see them in the next 3-5 business days.<br /><br /></p>
                                                                                     </td>
                                                                                 </tr>
                                                                             </table>
