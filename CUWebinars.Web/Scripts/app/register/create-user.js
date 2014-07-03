@@ -592,6 +592,8 @@ function checkAndSubmitEmail() {
         console.log(REG.PageObjects.emailInput().valid());
         $('#emailAddress').val($('#checkEmail').val());
         $('form#checkEmail').submit();
+    } else {
+        stateManager.inputAction = inputActions.None;
     }
 }
 
