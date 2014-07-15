@@ -23,10 +23,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             _stateService = stateService;
         }
 
-        public int CreateNewOrder(IncomingOrderModel incomingOrderModel, 
-            string email, 
-            OrderManagementQueryResult orderManagementQueryResult, 
-            string verificationKey, 
+        public int CreateNewOrder(IncomingOrderModel incomingOrderModel,
+            string email,
+            OrderManagementQueryResult orderManagementQueryResult,
+            string verificationKey,
             string confirmChangeEmailUrl)
         {
             var addOrderRowCommand = new AddOrderRowCommand

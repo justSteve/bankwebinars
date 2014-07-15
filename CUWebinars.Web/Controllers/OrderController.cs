@@ -1,10 +1,14 @@
-﻿using CUWebinars.Business.Constants;
+﻿using System.Collections.Generic;
+using System.Web.Script.Serialization;
+using CUWebinars.Business.Constants;
+using CUWebinars.Business.Models;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Models;
 using Ninject.Extensions.Logging;
 using System;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 
 namespace CUWebinars.Web.Controllers
 {
@@ -22,12 +26,19 @@ namespace CUWebinars.Web.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public JsonResult CreateOrder_JF(IncomingOrderModel incomingOrderModel)
+        public ActionResult jf_Registrations(JotFormModel incomingFormCollection)
         {
             int idOfLastOrder = default(int);
             string verificationKey = string.Empty;
             string confirmChangeEmailUrl = string.Empty;
+            var incomingOrderModel = new IncomingOrderModel();
 
+            var json_serializer = new JavaScriptSerializer();
+            var rawInfo = (IDictionary<string, object>)json_serializer.DeserializeObject(incomingFormCollection.rawRequest);
+
+            JotFormOrderModel incomingJotFormOrder = JsonConvert.DeserializeObject<JotFormOrderModel>(incomingFormCollection.rawRequest);
+            
+            
             if (!ModelState.IsValid)
             {
                 ProcessModelStateErrors();
@@ -36,16 +47,49 @@ namespace CUWebinars.Web.Controllers
 
             try
             {
-                var email = incomingOrderModel.Email.Trim();
+                incomingOrderModel.idAffiliate = 19;
+                incomingOrderModel.AffiliateComments = "form.submissionID: " + incomingFormCollection.submissionID;
+                incomingOrderModel.BillingAddress = new Address();
+                incomingOrderModel.BillingAddress.AddressType = "Billing";
+                incomingOrderModel.BillingAddress.City = incomingJotFormOrder.q7_address.city;
+                incomingOrderModel.BillingAddress.Country = incomingJotFormOrder.q7_address.country;
+                incomingOrderModel.BillingAddress.Name = incomingJotFormOrder.q4_name.first + " " + incomingJotFormOrder.q4_name.last;
+                incomingOrderModel.BillingAddress.Phone = "("+ incomingJotFormOrder.q6_phoneNumber6.area + ")"+incomingJotFormOrder.q6_phoneNumber6.phone;
+                incomingOrderModel.BillingAddress.State = incomingJotFormOrder.q7_address.state;
+                incomingOrderModel.BillingAddress.StreetAddress = incomingJotFormOrder.q7_address.addr_line1;
+                incomingOrderModel.BillingAddress.StreetAddress2 = incomingJotFormOrder.q7_address.addr_line2;
+                incomingOrderModel.BillingAddress.Zip = incomingJotFormOrder.q7_address.postal;
+                incomingOrderModel.ShippingAddress = new Address();
+                incomingOrderModel.ShippingAddress.AddressType = "Shipping";
+                incomingOrderModel.ShippingAddress.City = incomingJotFormOrder.q7_address.city;
+                incomingOrderModel.ShippingAddress.Country = incomingJotFormOrder.q7_address.country;
+                incomingOrderModel.ShippingAddress.Name = incomingJotFormOrder.q4_name.first + " " + incomingJotFormOrder.q4_name.last;
+                incomingOrderModel.ShippingAddress.Phone = "(" + incomingJotFormOrder.q6_phoneNumber6.area + ")" + incomingJotFormOrder.q6_phoneNumber6.phone;
+                incomingOrderModel.ShippingAddress.State = incomingJotFormOrder.q7_address.state;
+                incomingOrderModel.ShippingAddress.StreetAddress = incomingJotFormOrder.q7_address.addr_line1;
+                incomingOrderModel.ShippingAddress.StreetAddress2 = incomingJotFormOrder.q7_address.addr_line2;
+                incomingOrderModel.ShippingAddress.Zip = incomingJotFormOrder.q7_address.postal;
+                
 
-                _logger.Info("Begin import: " + email);
+                incomingOrderModel.Email = incomingJotFormOrder.q5_email5;
+                incomingOrderModel.FirstName = incomingJotFormOrder.q4_name.first;
+                incomingOrderModel.LastName = incomingJotFormOrder.q4_name.last;
+                //incomingOrderModel. = incomingJotFormOrder.q8_institution;
+                incomingOrderModel.Institution = incomingJotFormOrder.q8_institution;
+                incomingOrderModel.Origin = "jotFormRestRequest";
+                incomingOrderModel.Title = incomingJotFormOrder.q9_title;
+                
+                incomingOrderModel.idWebinar= Convert.ToInt32(incomingJotFormOrder.q11_webinarid);
+
+                
+                _logger.Info("Begin import: " + incomingOrderModel.Email);
 
                 var orderManagementQueryResult = _orderControllerOrchestrator.GetPreparatoryData(incomingOrderModel,
-                    email);
+                    incomingOrderModel.Email);
                 var webinar = orderManagementQueryResult.Webinar;
                 var idRegtype = 0;
-
-                if (string.Equals(incomingOrderModel.RegTypeLabel.ToLower(), "live session only"))
+                //"Live Session Only - $155"
+                if (string.Equals(incomingJotFormOrder.q10_registrationType.ToLower().Split('-')[0].Trim(), "live session only"))
                 {
                     if (webinar.Duration == 1)
                         idRegtype = 97;
@@ -53,7 +97,7 @@ namespace CUWebinars.Web.Controllers
                         idRegtype = 84;
                 }
 
-                if (string.Equals(incomingOrderModel.RegTypeLabel.ToLower(), "ondemand recording only"))
+                if (string.Equals(incomingJotFormOrder.q10_registrationType.ToLower().Split('-')[0].Trim(), "ondemand recording only"))
                 {
                     if (webinar.Duration == 1)
                         idRegtype = 98;
@@ -61,7 +105,7 @@ namespace CUWebinars.Web.Controllers
                         idRegtype = 85;
                 }
 
-                if (string.Equals(incomingOrderModel.RegTypeLabel.ToLower(), "cd-rom and hardcopy handouts"))
+                if (string.Equals(incomingJotFormOrder.q10_registrationType.ToLower().Split('-')[0].Trim(), "cd-rom and hardcopy handouts"))
                 {
                     if (webinar.Duration == 1)
                         idRegtype = 99;
@@ -69,7 +113,7 @@ namespace CUWebinars.Web.Controllers
                         idRegtype = 86;
                 }
 
-                if (string.Equals(incomingOrderModel.RegTypeLabel.ToLower(), "live plus ondemand weblinks"))
+                if (string.Equals(incomingJotFormOrder.q10_registrationType.ToLower().Split('-')[0].Trim(), "live plus ondemand weblinks"))
                 {
                     if (webinar.Duration == 1)
                         idRegtype = 100;
@@ -77,7 +121,7 @@ namespace CUWebinars.Web.Controllers
                         idRegtype = 87;
                 }
 
-                if (string.Equals(incomingOrderModel.RegTypeLabel.ToLower(), "premier package"))
+                if (string.Equals(incomingJotFormOrder.q10_registrationType.ToLower().Split('-')[0].Trim(), "premier package"))
                 {
                     if (webinar.Duration == 1)
                         idRegtype = 101;
@@ -93,7 +137,7 @@ namespace CUWebinars.Web.Controllers
                     try
                     {
                         orderManagementQueryResult.WebUser =
-                            _orderControllerOrchestrator.ProcessNewUser(incomingOrderModel, email);
+                            _orderControllerOrchestrator.ProcessNewUser(incomingOrderModel, incomingOrderModel.Email);
 
                         verificationKey = _orderControllerOrchestrator.GetVerificationKeyForNewUserAccount();
 
@@ -103,7 +147,7 @@ namespace CUWebinars.Web.Controllers
                         _orderControllerOrchestrator.FinalizeNewRegistration(incomingOrderModel, verificationKey);
                         //  Now we clear the value, so TtsSmtpMessageDelivery can go back to business as usual.
                         //_stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
-                        _logger.Info(string.Format("CreateOrder|CreateUser Succeeded: {0}", email));
+                        _logger.Info(string.Format("CreateOrder|CreateUser Succeeded: {0}", incomingOrderModel.Email));
                     }
                     catch (Exception exception)
                     {
@@ -113,7 +157,7 @@ namespace CUWebinars.Web.Controllers
                     }
                 }
 
-                idOfLastOrder = _orderControllerOrchestrator.CreateNewOrder(incomingOrderModel, email,
+                idOfLastOrder = _orderControllerOrchestrator.CreateNewOrder(incomingOrderModel, incomingOrderModel.Email,
                     orderManagementQueryResult, verificationKey, confirmChangeEmailUrl);
 
                 //idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
@@ -124,11 +168,12 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 var errString = string.Format("Order creation failed on {0} - {1} with msg: {2}",
-                    incomingOrderModel.Email, incomingOrderModel.idWebinar, exception.Message);
+                   incomingOrderModel.Email, incomingOrderModel.idWebinar, exception.Message);
                 _logger.ErrorException(errString, exception);
             }
 
-            return Json(new { Result = "0" }, JsonRequestBehavior.AllowGet);
+            //return View("Error");
+            return Json(new { Result = idOfLastOrder }, JsonRequestBehavior.AllowGet);
             //return Json(new { Result = WebUiConstants.Fail });}
         }
 

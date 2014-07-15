@@ -10,7 +10,7 @@ namespace CUWebinars.Web.Controllers
 {
     public class HomeController : Controller
     {
-        
+
         private readonly IWebinarRepository _webinarRepository;
         private readonly ILogger _logger;
         private bool _disposed;
@@ -26,7 +26,8 @@ namespace CUWebinars.Web.Controllers
         {
             //http://office.microsoft.com/en-us/office365-sharepoint-online-small-business-help/basic-tasks-in-sharepoint-online-for-office-365-for-professionals-and-small-businesses-HA101988906.aspx#_Toc272147708
 
-            string strFeed = "https://totaltrainingsolutions-public.sharepoint.com/_layouts/15/listfeed.aspx?List={09364DB1-2255-406E-9CB6-45FE64C0D341}";
+            string strFeed =
+                "https://totaltrainingsolutions-public.sharepoint.com/_layouts/15/listfeed.aspx?List={09364DB1-2255-406E-9CB6-45FE64C0D341}";
 
             using (XmlReader reader = XmlReader.Create(strFeed))
             {
@@ -35,14 +36,16 @@ namespace CUWebinars.Web.Controllers
                 return PartialView(rssData);
             }
         }
+
         public ActionResult DetailedConnectionInstructions()
         {
             ViewBag.PageStyleType = "two-columns-right-sidebar";
             return View();
         }
+
         public ActionResult MyWebinars()
         {
-            return RedirectToAction("MyWebinars","Account");
+            return RedirectToAction("MyWebinars", "Account");
         }
 
         public ActionResult WhatIsAWebinar()
@@ -57,7 +60,13 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
-        public ActionResult ContactUs()
+        [HttpPost]
+        public ActionResult ConfirmOrder(FormCollection formCollection)
+        {
+            return View();
+        }
+
+    public ActionResult ContactUs()
         {
             return View();
         }
