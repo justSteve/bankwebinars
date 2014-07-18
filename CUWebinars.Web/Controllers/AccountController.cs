@@ -232,6 +232,7 @@ namespace CUWebinars.Web.Controllers
 
                             row.RegistrantKey = registrantKey;
                             row.JoinURL = joinUrl;
+                            
                         }
                     }
                 }

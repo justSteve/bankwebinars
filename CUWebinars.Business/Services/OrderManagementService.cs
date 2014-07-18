@@ -569,6 +569,28 @@ namespace CUWebinars.Business.Services
             Clear();
         }
 
+        public string UpdateOrderChanges(Order currentOrder)
+        {
+            try
+            {
+                ProcessDiscountCodes(currentOrder);
+                CalculateOrderPrices(currentOrder);
+
+                var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder);
+
+
+                _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
+
+                Clear();
+                return "success";
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException(string.Format("SaveOrderChanges method: {0}", exception.Message), exception);
+            }
+            return "failed";
+        }
+
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink)
         {
             try

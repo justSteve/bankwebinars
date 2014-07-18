@@ -60,5 +60,6 @@ namespace CUWebinars.Business.Services
         IList<Order> SelectOrdersWithRecordedWebinars(int idUser);
         IList<Order> SelectOrdersWithScheduledWebinars(int idUser);
         void UpdateWebinar(Webinar webinar);
+        String UpdateOrderChanges(Order order);
     }
 }
