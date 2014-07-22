@@ -248,7 +248,7 @@ var stateManager = function () {
 
         enterDifferentAddress = function() {
             //user choose - yes that's my institution but I'd like to enter a different address'
-            console.log('EnterDiffAddress hit');
+            ////console.log('EnterDiffAddress hit');
             REG.PageObjects.modalInstitution().modal('hide');
             REG.PageObjects.wrapZip().hide('slow');
 
@@ -276,7 +276,7 @@ var stateManager = function () {
 
             if (stateManager.inputAction.inputAction === inputActions.EnterKeyPress)
                 stateManager.inputAction = inputActions.None;
-            console.log("call foundInstitutionView: " + email);
+            ////console.log("call foundInstitutionView: " + email);
             REG.PageObjects.modalInstitution().modal('show');
 
             REG.PageObjects.institution().val(data.Institution);
@@ -306,11 +306,11 @@ var stateManager = function () {
         },
 
         newPasswordView = function(email) {
-            console.log("call newPasswordView: " + email);
+            ////console.log("call newPasswordView: " + email);
             REG.PageObjects.wrapEmail().hide('fast');
 
             var showPwdInput = $.Deferred(function() {
-                console.log("Deferred newPasswordView: " + email);
+                //console.log("Deferred newPasswordView: " + email);
                 REG.PageObjects.wrapPass().show('fast');
             });
 
@@ -352,7 +352,7 @@ var stateManager = function () {
             }
 
             if (!pwd || !confirmedPwd || pwd.length < 2 || REG.PageObjects.registerFieldsPassword().nextAll('span:last').hasClass('field-validation-error')) {
-                console.log('call RegisterFields_Password');
+                //console.log('call RegisterFields_Password');
                 if (stateManager.inputAction === inputActions.EnterKeyPress)
                     stateManager.inputAction = inputActions.None;
                 return false;
@@ -383,7 +383,7 @@ var stateManager = function () {
         },
 
         nonUsAdddressInvoked = function() {
-            console.log("hit nonUsAdddressInvoked");
+            //console.log("hit nonUsAdddressInvoked");
             REG.PageObjects.labelEmail().html('<span class="label label-info"><b>&nbsp;&nbsp;Non-US address? Please enter Special Handling Instructions</span>');
             REG.PageObjects.zipBilling().val('na');
             REG.PageObjects.nonUSAddressInput().show();
@@ -392,7 +392,7 @@ var stateManager = function () {
         },
 
         notInstitutionAddress = function() {
-            console.log('NotInstitution hit');
+            //console.log('NotInstitution hit');
             REG.PageObjects.modalInstitution().modal('hide');
 
             var showEmailInput = $.Deferred(function() {
@@ -430,7 +430,7 @@ var stateManager = function () {
         },
 
         passResetView = function() {
-            console.log("call passResetView");
+            //console.log("call passResetView");
             REG.PageObjects.login().hide('slow');
 
 
@@ -459,7 +459,7 @@ var stateManager = function () {
         },
 
         resetPassword = function(normalResetPasswordButton) {
-            console.log('resetPass hit');
+            //console.log('resetPass hit');
             if (normalResetPasswordButton.data('clicked'))
                 normalResetPasswordButton.removeData('clicked');
 
@@ -468,7 +468,7 @@ var stateManager = function () {
         },
 
         resetPasswordOrLoginView = function(email) {
-            console.log("call resetPasswordOrLoginView: " + email);
+            //console.log("call resetPasswordOrLoginView: " + email);
             $('#Email1').val(email);
             $('#ResetPassEmail').val(email);
             REG.PageObjects.labelEmail().html('<span class="label label-important"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is already on file.</span>');
@@ -497,7 +497,7 @@ var stateManager = function () {
 
             switch (stateManager.action) {
             case actions.CheckEmail:
-                console.log('CheckEmail hit');
+                //console.log('CheckEmail hit');
                 checkAndSubmitEmail();
                 if (!stateManager.disregardIntitutionDomain)
                     stateManager.disregardIntitutionDomain = true;
@@ -507,12 +507,12 @@ var stateManager = function () {
                 stateManager.newPassWordToNextStep();
                 break;
             case actions.CheckZip:
-                console.log('CheckZip hit');
+                //console.log('CheckZip hit');
                 $('#ZipChecker').val($('#getZip').val());
                 $('form#checkZip').submit();
                 break;
             case actions.SubmitRegister:
-                console.log('SubmitRegister hit');
+                //console.log('SubmitRegister hit');
                 if (REG.PageObjects.createUserForm().valid() == '1') {
                     stateManager.action = actions.PostCreateAccount;
                     submitCreateUserForm();
@@ -522,7 +522,7 @@ var stateManager = function () {
                 }
                 break;
             case actions.SubmitLogin:
-                console.log('submitLogin hit');
+                //console.log('submitLogin hit');
                 $('#Password').val($('#Password1').val());
                 REG.PageObjects.emailLoginInput().val($('#Email1').val());
                 $('form#frmSignIn').submit();
@@ -535,7 +535,7 @@ var stateManager = function () {
 
 
         useRegisteredAddress = function() {
-            console.log('YesUseAddress hit');
+            //console.log('YesUseAddress hit');
 
             zipCheckRequired = false;
 
@@ -546,18 +546,18 @@ var stateManager = function () {
 
             switch (data.success) {
             case 'true':
-                console.log('zipCodeVerified-true hit');
+                //console.log('zipCodeVerified-true hit');
                 REG.PageObjects.zipBilling().val(zipCode);
                 stateManager.action = actions.SubmitRegister;
                 enterBillingPane(data);
                 break;
             case 'false':
-                console.log('zipCodeVerified-false hit');
+                //console.log('zipCodeVerified-false hit');
                 REG.PageObjects.labelEmail().html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode was not found!</span>');
                 $('#nonUSAddressBtn').show('slow');
                 break;
             case 'invalid format':
-                console.log('zipCodeVerified-invalidformat hit');
+                //console.log('zipCodeVerified-invalidformat hit');
                 REG.PageObjects.labelEmail().html('<span class="label label-important"><b>&nbsp;&nbsp;Zipcode entered was not in the correct format!</span>');
                 break;
             }
@@ -589,7 +589,7 @@ var stateManager = function () {
 
 function checkAndSubmitEmail() {
     if (REG.PageObjects.emailInput().valid() == '1') {
-        console.log(REG.PageObjects.emailInput().valid());
+        //console.log(REG.PageObjects.emailInput().valid());
         $('#emailAddress').val($('#checkEmail').val());
         $('form#checkEmail').submit();
     } else {
@@ -599,7 +599,7 @@ function checkAndSubmitEmail() {
 
 function checkAndSubmitZip() {
     REG.PageObjects.theSubmitButton().prop('value', nextButtonText);
-    console.log('checkAndSubmitZip');
+    //console.log('checkAndSubmitZip');
     //$('#emailAddress').val($('#checkEmail').val());
     $('#checkZip').submit();
 }
@@ -611,10 +611,10 @@ function submitCreateUserForm() {
 
     //on account creation default the shipping phone to be same as billing
     $("#RegisterFields.ShippingAddress.phone").val(phoneBilling);
-    console.log("validating createUserForm: " + valid);
+    //console.log("validating createUserForm: " + valid);
 
     if (valid) {
-        console.log('createUserForm submitted.');
+        //console.log('createUserForm submitted.');
         REG.PageObjects.createUserForm().submit();
 
         REG.PageObjects.theSubmitButton().off('mouseenter');
@@ -791,7 +791,7 @@ $(function () {
                 case 'Password1':
                 case 'Email1':
                 case buttons.TheSubmit:
-                    console.log('ActionForTheSubmit = ' + stateManager.action);
+                    //console.log('ActionForTheSubmit = ' + stateManager.action);
                     stateManager.submit(); break;
                 case buttons.nonUSAddressBtn: stateManager.nonUsAdddressInvoked(); break;
                 case 'NormalResetPasswordInput':
@@ -816,7 +816,7 @@ $(function () {
                     }
             }
 
-            console.log(stateManager.action);
+            //console.log(stateManager.action);
             event.preventDefault();
 
         }
@@ -852,7 +852,7 @@ $(function () {
         switch (clickedButton) {
             case buttons.SignInButton: stateManager.logIn(); break;
             case buttons.TheSubmit:
-                console.log('ActionForTheSubmit = ' + stateManager.action);
+                //console.log('ActionForTheSubmit = ' + stateManager.action);
                 stateManager.submit(); break;
             case buttons.nonUSAddressBtn: stateManager.nonUsAdddressInvoked(); break;
             case buttons.ResetPass: stateManager.resetPassword(normalResetPasswordButton); break;
@@ -911,17 +911,17 @@ $(function () {
     //    e.preventDefault();
 
     //    if (stateManager.action !== actions.SubmitLogin) {
-    //        console.log('non-valid form');
+    //        //console.log('non-valid form');
     //        return false;
     //    }
 
     //    if (REG.PageObjects.createUserForm().valid() != '1') {
-    //        console.log('non-valid form');
+    //        //console.log('non-valid form');
     //        return false;
     //    }
 
     //    var url = '/Account/Register';
-    //    console.log('Submitting Register Details');
+    //    //console.log('Submitting Register Details');
     //    alert("startSubmitting");
     //    $.ajax({
     //        type: 'POST',
@@ -931,25 +931,25 @@ $(function () {
     //        dataType: constants.JsonDataType,
     //        data: $(this).serialize(),
     //        beforeSend: function () {
-    //            console.log('beforeSend Register Details!!!');
+    //            //console.log('beforeSend Register Details!!!');
     //            // this is where we append a loading image
     //            REG.PageObjects.labelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
     //        }
     //    }).done(function (data) {
     //        alert("datareturned");// never fires!
-    //        console.log('done Register Details');
+    //        //console.log('done Register Details');
     //        if (data.Result == 'Success') {
-    //            console.log('success  Register Details');
+    //            //console.log('success  Register Details');
     //            stateManager.action = '';
     //            REG.PageObjects.labelEmail().html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
     //            //location.assign(path + '/'); //TODO: we need to implement a pattern where if 'returnURL' (server-side origin) is populated, it's used. Otherwise return to home page.
     //            location.href = '/Home';
     //        } else if (data.Result === 'Fail') {
-    //            console.log('statusFail  Register Details');
+    //            //console.log('statusFail  Register Details');
     //            REG.PageObjects.labelEmail().html('<span class="label label-information">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
     //        }
     //    }).fail(function (data) {
-    //        console.log('failed: ' + data);
+    //        //console.log('failed: ' + data);
     //    });
     //});
 

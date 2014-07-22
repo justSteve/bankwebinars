@@ -12,6 +12,10 @@ namespace CUWebinars.Web.Models
         [Required]
         [Display(Name = "Street Address")]
         public string StreetAddress { get; set; }
+        
+
+        [Display(Name = "Full Name")]
+        public string Name { get; set; }
 
         [Display(Name = "2nd Address Line (optional)")]
         public string StreetAddress2 { get; set; }

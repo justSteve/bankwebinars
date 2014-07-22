@@ -54,15 +54,21 @@ namespace CUWebinars.Business.AccountService
             string regIdentifier,
             string institutionType,
             string zip);
-        
+
         void ResetPassword(string tenant, string email);
 
         void SignIn(UserAccount userAccount, bool persistant);
 
+        void UpdateNameTitle(
+            string firstName,
+            string lastName,
+            //string password,
+            string email,
+            string title);
         void UpdateUserDetails(string tenant,
             string firstName,
             string lastName,
-            string password,
+            //string password,
             string email,
             string institutionName,
             Address billingAddress,

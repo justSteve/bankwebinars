@@ -1,6 +1,7 @@
-﻿$(function () {
-    $(".control-label:not(span)").append(":&nbsp;");
-});
+﻿//$(function () {
+    
+//    //$(".control-label").append(":&nbsp;");
+//});
 
 
 

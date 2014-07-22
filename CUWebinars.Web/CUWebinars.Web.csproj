@@ -387,6 +387,10 @@
     <Compile Include="ElmahHandleErrorAttribute.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Helpers\EventInvokerHelpers.cs" />
+    <Compile Include="Models\EditBillingAddressModel.cs" />
+    <Compile Include="Models\EditInstitionModel.cs" />
+    <Compile Include="Models\EditNameTitleModel.cs" />
+    <Compile Include="Models\EditShippingAddressModel.cs" />
     <Compile Include="Models\ImportOrderResponse.cs" />
     <Compile Include="Models\IncomingAFOOrder.cs" />
     <Compile Include="Models\JotFormModel.cs" />
@@ -971,6 +975,7 @@
     <Content Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Body.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Subject.cshtml" />
     <Content Include="App_Data\Orders\ImportSampleOrders.xlsm" />
+    <None Include="Properties\PublishProfiles\cuwebinars.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -1090,7 +1095,6 @@
     <Content Include="Views\Account\Partials\Edit.cshtml" />
     <Content Include="Views\Account\Partials\Recorded.cshtml" />
     <Content Include="Views\Account\Partials\Upcoming.cshtml" />
-    <Content Include="Views\Account\Partials\UserEditor.hold" />
     <Content Include="Views\Account\Partials\_Institution.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\HandoutsListing.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Address.cshtml" />
@@ -1134,6 +1138,10 @@
     <Content Include="Views\Account\Partials\_Certificate.cshtml" />
     <Content Include="Views\MembershipNotificationOps\_LogInAsUser.cshtml" />
     <Content Include="Views\Home\ConfirmOrder.cshtml" />
+    <Content Include="Views\Shared\Partials\_EditNameTitle.cshtml" />
+    <Content Include="Views\Shared\Partials\_EditInsitution.cshtml" />
+    <Content Include="Views\Shared\Partials\_EditBillingAddress.cshtml" />
+    <Content Include="Views\Shared\Partials\_EditShippingAddress.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

@@ -29,6 +29,12 @@ namespace CUWebinars.Business.Repository
             db.Configuration.LazyLoadingEnabled = false;
         }
 
+        public void Remove(T item)
+        {
+            items.Remove(item);
+            db.SaveChanges();
+        }
+
         public void Add(T item)
         {
             items.Add(item);

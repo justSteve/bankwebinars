@@ -39,7 +39,7 @@ namespace CUWebinars.Business.Repository
             if (validationResult.IsValid)
             {
                 Add(newOrder); // save changes is called in here.
-                
+
                 return newOrder;
             }
 
@@ -149,6 +149,33 @@ namespace CUWebinars.Business.Repository
 
             return GetLoadedEntitiesForOrder(orders);
         }
+        public IList<Order> GetInactiveOrdersByWebinar(int idWebinar)
+        {
+            var orders = ((TTSWebinarsContext)db).OrderRows
+
+                .Include(or => or.Order)
+                .Where(or => or.idWebinar == idWebinar)
+                .Where(or => or.Order.OrderStatus != OrderStatus.Paid ||
+                    or.Order.OrderStatus != OrderStatus.Billed ||
+                    or.Order.OrderStatus != OrderStatus.Submitted
+                    )
+                .Select(o => o.Order);
+            return GetLoadedEntitiesForOrder(orders);
+        }
+
+        public IList<Order> GetActiveOrdersByWebinar(int idWebinar)
+        {
+            var orders = ((TTSWebinarsContext)db).OrderRows
+
+                .Include(or => or.Order)
+                .Where(or => or.idWebinar == idWebinar)
+                .Where(or => or.Order.OrderStatus == OrderStatus.Paid ||
+                    or.Order.OrderStatus == OrderStatus.Billed ||
+                    or.Order.OrderStatus == OrderStatus.Submitted
+                    )
+                .Select(o => o.Order);
+            return GetLoadedEntitiesForOrder(orders);
+        }
 
         public IList<Order> GetOrdersForRecordedEventNotifications(int idWebinar)
         {
@@ -170,7 +197,7 @@ namespace CUWebinars.Business.Repository
 
         public OrderRow GetOrderRowById(int idOrderRow)
         {
-            return ((TTSWebinarsContext) db).OrderRows.Include(or => or.Webinar)
+            return ((TTSWebinarsContext)db).OrderRows.Include(or => or.Webinar)
                 .Include(or => or.Order.WebUser.Institution)
                 .Include(or => or.Order.WebUser.Presenter)
                 .Include(or => or.Order.WebUser.Addresses)
@@ -208,11 +235,11 @@ namespace CUWebinars.Business.Repository
 
         public Order SaveOrderChanges(Order order)
         {
-            
+
             var error = db.GetValidationErrors();
             //is this statement waiting for additional code to
             // trap any remaining errors?
-            
+
             // is the following 
             if (error.Any())
             {
@@ -220,7 +247,7 @@ namespace CUWebinars.Business.Repository
                 {
                     order.AdminComments += err.Entry.ToString();
                 }
-                
+
             }
             else
             {

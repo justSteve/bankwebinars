@@ -140,6 +140,7 @@
     <Compile Include="CQS\Queries\OrderManagementQueryResult.cs" />
     <Compile Include="CQS\QueryHandlers\OrderManagementQueryHandlers.cs" />
     <Compile Include="CQS\QueryProcessor.cs" />
+    <Compile Include="Models\DiscountType.cs" />
     <Compile Include="Models\GTWebinar.cs" />
     <Compile Include="Models\IncomingAdditionalLocation.cs" />
     <Compile Include="Models\Mapping\GTWebinarMap.cs" />

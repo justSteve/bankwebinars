@@ -1,0 +1,18 @@
+﻿@model CUWebinars.Web.Models.EditShippingAddressModel
+
+@using (Html.BeginForm("EditShippingAddress", "Account", "Post"))
+{
+    @Html.AntiForgeryToken()
+
+    <div id="BillingAddressContainer" class="well-large">
+        <h3>Billing Address</h3>
+        @Html.EditorFor(b => b.ShippingAddress)
+    </div>
+    <div class="form-inline">
+        <div class="btn-group" style="width:160px">&nbsp;</div>
+        <div class="btn-group">
+            <input type="submit" value="Update Shipping Address" class="btn btn-default" />
+        </div>
+    </div>
+}
+

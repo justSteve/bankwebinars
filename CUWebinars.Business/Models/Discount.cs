@@ -6,7 +6,7 @@ namespace CUWebinars.Business.Models
     public partial class Discount
     {
         public int idDiscount { get; set; }
-        public byte discountType { get; set; }
+        public DiscountType discountType { get; set; }
         public string code { get; set; }
         public decimal percentOff { get; set; }
         public decimal flatOff { get; set; }
@@ -17,7 +17,5 @@ namespace CUWebinars.Business.Models
         public Nullable<System.DateTime> dateBilled { get; set; }
         public Nullable<decimal> cost { get; set; }
         public string Notes { get; set; }
-        
-        
     }
 }

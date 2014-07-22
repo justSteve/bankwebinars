@@ -1,24 +1,35 @@
 ﻿using System.Collections.Generic;
+using System.Data.Entity.Validation;
+using System.Diagnostics;
+using System.Text;
 using CUWebinars.Business.Models;
 using System.Data.Entity;
 using System.Linq;
+using CUWebinars.Business.Services;
+using log4net.Repository.Hierarchy;
+using Ninject.Extensions.Logging;
+using Ninject.Extensions.Logging.Log4net.Infrastructure;
 
 namespace CUWebinars.Business.Repository
 {
     public class WebUserRepository : TTSWebinarsRepository<TTSWebinarsContext, WebUser>, IWebUserRepository
     {
         public RefDataRepository RefContext { get; set; }
+        private readonly ILogger _logger;
 
-        public WebUserRepository()
+        public WebUserRepository(ILogger logger)
         {
             RefContext = new RefDataRepository();
+            //_logger = logger;
         }
 
         public WebUserRepository(TTSWebinarsContext ctx)
             : base(ctx)
         {
             RefContext = new RefDataRepository();
+            
         }
+        ILogger loggerForOrderManagementService = new Log4NetLogger(typeof(OrderManagementService));
 
         /// <summary>
         /// Finds the Highest Id currently in use so newly created WebUser objects have an Id.
@@ -74,8 +85,27 @@ namespace CUWebinars.Business.Repository
                 ((TTSWebinarsContext)db).Addresses.Attach(address);
                 entry.State = EntityState.Modified;
             }
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbEntityValidationException e)
+            {
+                foreach (var eve in e.EntityValidationErrors)
+                {
+                    var errorMsg = new StringBuilder();
 
-            db.SaveChanges();
+                    errorMsg.Append(string.Format("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+                        eve.Entry.Entity.GetType().Name, eve.Entry.State));
+                    foreach (var ve in eve.ValidationErrors)
+                    {
+                        errorMsg.Append(string.Format("- Property: \"{0}\", Error: \"{1}\"",
+                            ve.PropertyName, ve.ErrorMessage));
+                    }
+                    loggerForOrderManagementService.Error(errorMsg.ToString());
+                }
+                throw;
+            }
         }
 
         public IEnumerable<WebUser> GetWebusersForWebinarWithRegtypes(int idWebinar, IEnumerable<int> regTypeIds)

@@ -353,16 +353,103 @@ namespace CUWebinars.Web.Controllers
             }
         }
 
-        [ClaimsAuthorize(Roles = "Admin")]
+        [System.Web.Mvc.HttpGet]
+        public ActionResult EditBillingAddress()
+        {
+            var model = new EditBillingAddressModel();
+            ViewBag.ReturnUrl = Url.Action("Manage");
+            ViewBag.Title = WebUiConstants.ManageUser;
+
+            var user = GetWebUserFromIPrincipal();
+            var addresses = user.Addresses.ToArray();
+            var billingAddress = addresses.Where(a => a.AddressType == WebUiConstants.BillingAddress).First();
+
+            model.BillingAddress = new AddressModel
+            {
+                    Name = user.FirstName + ' ' + user.LastName,
+                    City = billingAddress.City,
+                    Country = billingAddress.Country,
+                    StreetAddress = billingAddress.StreetAddress,
+                    StreetAddress2 = billingAddress.StreetAddress2,
+                    State = billingAddress.State,
+                    Zip = billingAddress.Zip,
+                    Phone = billingAddress.Phone,
+                    TypeOfAddress = AddressType.Billing
+            
+            };
+            return PartialView("Partials/_EditBillingAddress", model);
+
+
+        }
+
+        [System.Web.Mvc.HttpGet]
+        public ActionResult EditShippingAddress()
+        {
+            EditShippingAddressModel model = new EditShippingAddressModel();
+            ViewBag.ReturnUrl = Url.Action("Manage");
+            ViewBag.Title = WebUiConstants.ManageUser;
+
+            var user = GetWebUserFromIPrincipal();
+            var addresses = user.Addresses.ToArray();
+            var shippingAddress = addresses.Where(a => a.AddressType == WebUiConstants.ShippingAddress).First();
+
+
+            model.ShippingAddress = new AddressModel
+            {
+                City = shippingAddress.City,
+                Country = shippingAddress.Country,
+                StreetAddress = shippingAddress.StreetAddress,
+                StreetAddress2 = shippingAddress.StreetAddress2,
+                State = shippingAddress.State,
+                Zip = shippingAddress.Zip,
+                Phone = shippingAddress.Phone,
+                Name = shippingAddress.Name,
+                TypeOfAddress = AddressType.Shipping
+            };
+
+
+            return PartialView("Partials/_EditShippingAddress", model);
+
+        }
+
+        [System.Web.Mvc.HttpGet]
+        public ActionResult EditInstition()
+        {
+            var model = new EditInstitutionModel();
+
+            ViewBag.ReturnUrl = Url.Action("Manage");
+            ViewBag.Title = WebUiConstants.ManageUser;
+
+            var user = GetWebUserFromIPrincipal();
+            model.Institution = user.Institution.InstitutionName;
+
+            return PartialView("Partials/_EditInsitution", model);
+        }
+
+        [System.Web.Mvc.HttpPost]
+        public ActionResult EditNameTitle(EditNameTitleModel model)
+        {
+            //var model = new EditNameTitleModel();
+            ViewBag.ReturnUrl = Url.Action("Manage");
+            ViewBag.Title = WebUiConstants.ManageUser;
+
+            var user = GetWebUserFromIPrincipal();
+
+            //model.FirstName = user.FirstName;
+            //model.LastName = user.LastName;
+            //model.Title = user.Title;
+
+            _membershipService.UpdateNameTitle(model.FirstName, model.LastName, user.email, model.Title);
+            return PartialView("Partials/_EditNameTitle", model);
+        }
+
+        //[ClaimsAuthorize(Roles = "CUWebinarsAbsoluteAdmin")]
         public ActionResult Manage(ManageMessageId? message)
         {
             ManageModel manageModel = new ManageModel
             {
                 StatusMessage = string.Empty
             };
-
-
-
             ViewBag.ReturnUrl = Url.Action("Manage");
             ViewBag.Title = WebUiConstants.ManageUser;
 
@@ -376,6 +463,8 @@ namespace CUWebinars.Web.Controllers
             {
                 BillingAddress = new AddressModel
                 {
+
+                    Name = user.FirstName + ' '+  user.LastName,
                     City = billingAddress.City,
                     Country = billingAddress.Country,
                     StreetAddress = billingAddress.StreetAddress,
@@ -394,6 +483,7 @@ namespace CUWebinars.Web.Controllers
                     State = shippingAddress.State,
                     Zip = shippingAddress.Zip,
                     Phone = shippingAddress.Phone,
+                    Name =  shippingAddress.Name,
                     TypeOfAddress = AddressType.Shipping
                 },
                 FirstName = user.FirstName,
@@ -412,11 +502,13 @@ namespace CUWebinars.Web.Controllers
         public ActionResult Manage(ManageModel model)
         {
             var updateFields = model.RegisterFields;
+            
             var billingAddressFields = updateFields.BillingAddress;
             var shippingAddressFields = updateFields.ShippingAddress;
 
             var billingAddress = new Address
             {
+                Name = model.RegisterFields.FirstName + ' ' + model.RegisterFields.LastName,
                 StreetAddress = billingAddressFields.StreetAddress.Trim(),
                 StreetAddress2 = billingAddressFields.StreetAddress2 == null ? billingAddressFields.StreetAddress2 : billingAddressFields.StreetAddress2.Trim(),
                 State = billingAddressFields.State.Trim(),
@@ -429,6 +521,7 @@ namespace CUWebinars.Web.Controllers
 
             var shippingAddress = new Address
             {
+                Name = shippingAddressFields.Name.Trim(),
                 StreetAddress = shippingAddressFields.StreetAddress.Trim(),
                 StreetAddress2 = shippingAddressFields.StreetAddress2 == null ? shippingAddressFields.StreetAddress2 : shippingAddressFields.StreetAddress2.Trim(),
                 State = shippingAddressFields.State.Trim(),
@@ -442,15 +535,14 @@ namespace CUWebinars.Web.Controllers
             _membershipService.UpdateUserDetails(globalConfig.Tenant,
                 updateFields.FirstName.Trim(),
                 updateFields.LastName.Trim(),
-                updateFields.Password,
+                //updateFields.Password,
                 updateFields.Email.Trim(),
                 updateFields.Institution,
                 billingAddress,
                 shippingAddress,
                 updateFields.Title == null ? "na" : updateFields.Title.Trim()
                 );
-            _logger.Fatal("Account.Manage Post. Session=" + AppHelper.GetUserAuditInfo());
-            // If we got this far, something failed, redisplay form
+            
             return View(model);
         }
 
@@ -496,6 +588,8 @@ namespace CUWebinars.Web.Controllers
             loginModel.ActiveTab = "login";
             return View(loginModel);
         }
+
+
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
         public ActionResult SignInForExcelFile(SignInModel model)
@@ -523,7 +617,8 @@ namespace CUWebinars.Web.Controllers
                 var retURL = model.ReturnUrl.Replace(string.Format(@"{0}://{1}{2}/", Request.Url.Scheme, Request.Url.Authority, Request.ApplicationPath.TrimEnd('/')), string.Empty);
 
                 _logger.Info("Account.SignIn Post Success. Session={0}, Redirecting to: {1}" , AppHelper.GetUserAuditInfo(), retURL);
-                return RedirectToLocal(retURL);
+                //return RedirectToLocal(retURL);
+                return RedirectToLocal("/Account/MyWebinars");
             }
 
             if (!string.IsNullOrEmpty(userMustVerify))
@@ -1213,5 +1308,7 @@ namespace CUWebinars.Web.Controllers
             }
             _disposed = true;
         }
+
+
     }
 }

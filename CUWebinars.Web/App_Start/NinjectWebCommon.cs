@@ -99,6 +99,16 @@ namespace CUWebinars.Web.App_Start
             kernel.Bind<IAffiliateRepository>().To<AffiliateRepository>().InRequestScope();
             kernel.Bind<IWebinarRepository>().To<WebinarRepository>().InRequestScope();
             kernel.Bind<IWebUserRepository>().To<WebUserRepository>().InRequestScope();
+
+            //attempting to inject logger to WebUserRepository
+            //kernel.Bind<IWebUserRepository>().ToMethod<WebUserRepository>(ctx =>
+            //{
+            //    ILogger loggerForWebUserRepository = new Log4NetLogger(typeof(WebUserRepository));
+            //    return new WebUserRepository(
+            //        loggerForWebUserRepository);
+            //}).InRequestScope();
+
+
             kernel.Bind<IOrderRepository>().To<OrderRepository>().InRequestScope();
             kernel.Bind<IInstitutionRepository>().To<InstitutionRepository>().InRequestScope();
             kernel.Bind<IUserAccountRepository>().To<DefaultUserAccountRepository>().InRequestScope();
