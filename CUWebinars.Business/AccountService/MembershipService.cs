@@ -327,14 +327,14 @@ namespace CUWebinars.Business.AccountService
             webUser.FirstName = firstName;
             webUser.LastName = lastName;
             webUser.Title = title;
-            if (!(webUser.Institution.InstitutionName.Equals(institutionName, StringComparison.OrdinalIgnoreCase)))
-                //&&
-                //billingAddress.State.Equals(billingAddressFromDb.State, StringComparison.OrdinalIgnoreCase) &&
-                //billingAddress.Zip.Equals(billingAddressFromDb.Zip, StringComparison.OrdinalIgnoreCase)) ||
-                //!webUser.Institution.InstitutionName.Equals(institutionName, StringComparison.OrdinalIgnoreCase))
-            {
-                webUser.Institution = ProcessInstitutionForUser(institutionName, email, billingAddress.City, billingAddress.State, "N", "New", billingAddress.Zip);
-            }
+            //if (!(webUser.Institution.InstitutionName.Equals(institutionName, StringComparison.OrdinalIgnoreCase)))
+            //    //&&
+            //    //billingAddress.State.Equals(billingAddressFromDb.State, StringComparison.OrdinalIgnoreCase) &&
+            //    //billingAddress.Zip.Equals(billingAddressFromDb.Zip, StringComparison.OrdinalIgnoreCase)) ||
+            //    //!webUser.Institution.InstitutionName.Equals(institutionName, StringComparison.OrdinalIgnoreCase))
+            //{
+            //    webUser.Institution = ProcessInstitutionForUser(institutionName, email, billingAddress.City, billingAddress.State, "N", "New", billingAddress.Zip);
+            //}
 
 
             _webUserRepository.Update(webUser);

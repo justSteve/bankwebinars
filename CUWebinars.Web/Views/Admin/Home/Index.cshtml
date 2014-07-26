@@ -1,0 +1,36 @@
+﻿@model CUWebinars.Web.Models.AdminDTO
+
+@{
+    ViewBag.Title = "MembershipNotifications";
+}
+
+<section>
+    <div style="width: 1100px; margin: 30px auto">
+        <h2>Admin</h2>
+
+        @Html.ValidationSummary()
+
+        <div class="row">
+            <div class="span2"><button id="ImpersonateUserButton" class="btn btn-primary">Impersonate User</button></div>
+            <div class="span1"><button id="CreateUserButton" class="btn btn-primary">Create User</button></div>
+            <div class="span1"><button id="ResetPasswordButton" class="btn btn-primary">Reset Password</button></div>
+            @*<div class="span1"><button id="ConfirmPasswordButton" class="btn btn-primary">Confirm Reset Password</button></div>
+            <div class="span1"><button id="GetImportOrderFieldsButton" class="btn btn-primary">Import an Order</button></div>
+            <div class="span1"><button id="GetImportOrderFieldsFromCsvButton" class="btn btn-primary">Import an Order From Csv File</button></div>*@
+            <div class="span1"><button id="GetManualResetPasswordFieldsButton" class="btn btn-primary">Manually Reset Password</button></div>
+            <div class="span8"><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>
+        </div>
+
+        <div class="row">
+            <div id="InputFormFields" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
+
+</section>
+
+@section scripts {
+
+    <script src="@Url.Content("~/Scripts/app/notification-ops/membership-notifications.js")"></script>
+    <script src="@Url.Content("~/Scripts/app/web-user-details-register.js")"></script>
+}

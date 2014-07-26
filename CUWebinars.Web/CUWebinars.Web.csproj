@@ -378,6 +378,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdhocNotificationController.cs" />
+    <Compile Include="Controllers\Admin\AdminHomeController.cs" />
     <Compile Include="Controllers\api\AddressesController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\OrderEventFiringOpsController.cs" />
@@ -387,6 +388,7 @@
     <Compile Include="ElmahHandleErrorAttribute.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Helpers\EventInvokerHelpers.cs" />
+    <Compile Include="Models\AdminDTO.cs" />
     <Compile Include="Models\EditBillingAddressModel.cs" />
     <Compile Include="Models\EditInstitionModel.cs" />
     <Compile Include="Models\EditNameTitleModel.cs" />
@@ -1142,12 +1144,14 @@
     <Content Include="Views\Shared\Partials\_EditInsitution.cshtml" />
     <Content Include="Views\Shared\Partials\_EditBillingAddress.cshtml" />
     <Content Include="Views\Shared\Partials\_EditShippingAddress.cshtml" />
+    <Content Include="Views\Admin\Home\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
     <Folder Include="Infrastructure\apis\citrix\GTW\" />
     <Folder Include="Notification\Delivery\" />
     <Folder Include="Utils\" />
+    <Folder Include="Views\AdminHome\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
