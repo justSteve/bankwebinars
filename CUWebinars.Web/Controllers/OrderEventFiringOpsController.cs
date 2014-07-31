@@ -13,12 +13,14 @@ namespace CUWebinars.Web.Controllers
     public class OrderEventFiringOpsController : Controller
     {
         private readonly IOrderManagementService _orderManagementService;
+        private readonly IWebinarManagementService _webinarManagementService;
         private readonly ILogger _logger;
         private bool _disposed;
 
-        public OrderEventFiringOpsController(IOrderManagementService orderManagementService, ILogger logger)
+        public OrderEventFiringOpsController(IOrderManagementService orderManagementService,IWebinarManagementService webinarManagementService, ILogger logger)
         {
             _orderManagementService = orderManagementService;
+            _webinarManagementService = webinarManagementService;
             _logger = logger;
         }
 
@@ -81,7 +83,7 @@ namespace CUWebinars.Web.Controllers
         {
             var model = new AdhocNotificationViewModel
             {
-                Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_orderManagementService)
+                Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_webinarManagementService)
             };
 
             return PartialView("_adHocNotification", model);
@@ -90,7 +92,7 @@ namespace CUWebinars.Web.Controllers
         [HttpPost]
         public ActionResult SendAdhocEvent(int webinarId)
         {
-            var regTypes = EventInvokerHelpers.GetRegTypesForWebinarAsSelectListItems(webinarId, _orderManagementService);
+            var regTypes = EventInvokerHelpers.GetRegTypesForWebinarAsSelectListItems(webinarId, _webinarManagementService);
 
             return Json(regTypes);
         }
@@ -99,7 +101,7 @@ namespace CUWebinars.Web.Controllers
         {
             var model = new AdhocNotificationViewModel
             {
-                Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_orderManagementService)
+                Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_webinarManagementService)
             };
 
             return PartialView("_SendReminder", model);
@@ -125,7 +127,7 @@ namespace CUWebinars.Web.Controllers
         {
             var model = new AdhocNotificationViewModel
             {
-                Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_orderManagementService)
+                Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_webinarManagementService)
             };
 
             return PartialView("_SendConnectionInfo", model);
@@ -175,7 +177,7 @@ namespace CUWebinars.Web.Controllers
         {
             var model = new AdhocNotificationViewModel
             {
-                Webinars = EventInvokerHelpers.GetRecordedWebinarsAsSelectListItems(_orderManagementService)
+                Webinars = EventInvokerHelpers.GetRecordedWebinarsAsSelectListItems(_webinarManagementService)
             };
 
             return PartialView("_SendRecordingPosted", model);

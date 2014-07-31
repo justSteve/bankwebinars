@@ -67,7 +67,7 @@ namespace CUWebinars.Business.Tests.Properties {
         ///DROP DATABASE [CUWebinars];
         ///
         ///CREATE DATABASE [CUWebinars]
-        ///ON (name=&apos;CUWebinars&apos;, filename=&apos;E:\CUWebinars.mdf&apos;)
+        ///ON (name=&apos;CUWebinars&apos;, filename=&apos;e:\csv\CUWebinars.mdf&apos;)
         ///GO
         ///USE [CUWebinars]
         ///GO
@@ -95,7 +95,7 @@ namespace CUWebinars.Business.Tests.Properties {
         ///DROP DATABASE [MembershipReboot];
         ///
         ///CREATE DATABASE [MembershipReboot] 
-        ///ON (name=&apos;MembershipReboot&apos;, filename=&apos;E:\MembershipReboot.mdf&apos;)
+        ///ON (name=&apos;MembershipReboot&apos;, filename=&apos;e:\csv\MembershipReboot.mdf&apos;)
         ///GO
         ///USE [MembershipReboot]
         ///GO

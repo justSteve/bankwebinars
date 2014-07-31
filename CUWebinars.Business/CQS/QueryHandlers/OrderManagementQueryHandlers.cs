@@ -10,12 +10,14 @@ namespace CUWebinars.Business.CQS.QueryHandlers
     {
         private readonly IMembershipService _membershipService;
         private readonly IOrderManagementService _orderManagementService;
+        private readonly IWebinarManagementService _webinarManagementService;
         private bool _disposed;
 
-        public OrderManagementQueryHandlers(IMembershipService membershipService, IOrderManagementService orderManagementService)
+        public OrderManagementQueryHandlers(IMembershipService membershipService, IOrderManagementService orderManagementService, IWebinarManagementService webinarManagementService)
         {
             _membershipService = membershipService;
             _orderManagementService = orderManagementService;
+            _webinarManagementService = webinarManagementService;
         }
 
 
@@ -27,7 +29,7 @@ namespace CUWebinars.Business.CQS.QueryHandlers
             {
                 Affiliate = _orderManagementService.GetAffiliateById(query.AffiliateId),
                 WebUser = _membershipService.GetUserByEmail(query.Email),
-                Webinar = _orderManagementService.GetWebinar(query.WebinarId)
+                Webinar = _webinarManagementService.GetWebinar(query.WebinarId)
             };
 
             return orderManagementQueryResult;

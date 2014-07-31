@@ -16,10 +16,10 @@
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort />
-    <IISExpressAnonymousAuthentication />
-    <IISExpressWindowsAuthentication />
-    <IISExpressUseClassicPipelineMode />
+    <IISExpressSSLPort>44301</IISExpressSSLPort>
+    <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
+    <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
+    <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
     <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
@@ -1145,6 +1145,7 @@
     <Content Include="Views\Shared\Partials\_EditBillingAddress.cshtml" />
     <Content Include="Views\Shared\Partials\_EditShippingAddress.cshtml" />
     <Content Include="Views\Admin\Home\Index.cshtml" />
+    <Content Include="Views\Webinar\CompliancePerspectives.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

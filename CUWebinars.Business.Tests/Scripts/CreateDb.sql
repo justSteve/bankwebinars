@@ -4,7 +4,7 @@ IF EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = N'CUWebinars')
 DROP DATABASE [CUWebinars];
 
 CREATE DATABASE [CUWebinars]
-ON (name='CUWebinars', filename='E:\CUWebinars.mdf')
+ON (name='CUWebinars', filename='e:\csv\CUWebinars.mdf')
 GO
 USE [CUWebinars]
 GO
@@ -75,7 +75,8 @@ ALTER DATABASE [CUWebinars] SET TARGET_RECOVERY_TIME = 0 SECONDS
 GO
 USE [CUWebinars]
 GO
-ALTER SERVER ROLE [sysadmin] ADD MEMBER [PLAGUIS\Dave]
+--ALTER SERVER ROLE [sysadmin] ADD MEMBER [PLAGUIS\Dave]
+ALTER SERVER ROLE [sysadmin] ADD MEMBER [DevHolmen8_12\Steve]
 GO
 SET ANSI_NULLS ON
 GO

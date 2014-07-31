@@ -38,8 +38,8 @@ namespace CUWebinars.Web.App_Start
         /// </summary>
         public static void Start()
         {
-            DynamicModuleUtility.RegisterModule(typeof (OnePerRequestHttpModule));
-            DynamicModuleUtility.RegisterModule(typeof (NinjectHttpModule));
+            DynamicModuleUtility.RegisterModule(typeof(OnePerRequestHttpModule));
+            DynamicModuleUtility.RegisterModule(typeof(NinjectHttpModule));
             bootstrapper.Initialize(CreateKernel);
         }
 
@@ -114,10 +114,25 @@ namespace CUWebinars.Web.App_Start
             kernel.Bind<IUserAccountRepository>().To<DefaultUserAccountRepository>().InRequestScope();
             kernel.Bind<IRegTypeRepository>().To<RegTypeRepository>().InRequestScope();
 
+            kernel.Bind<IWebinarManagementService>().ToMethod(ctx =>
+            {
+                var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
+                ILogger loggerForWebinarManagementService = new Log4NetLogger(typeof(WebinarManagementService));
+
+                return new WebinarManagementService(
+                    new RegTypeRepository(sharedContext),
+                    new RefDataRepository(),
+                    new WebUserRepository(sharedContext),
+                    new WebinarRepository(sharedContext),
+                    loggerForWebinarManagementService,
+                    ctx.Kernel.Get<TtsConfiguration>()
+                    );
+            }).InRequestScope();
+
             kernel.Bind<IOrderManagementService>().ToMethod(ctx =>
             {
                 var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
-                ILogger loggerForOrderManagementService = new Log4NetLogger(typeof (OrderManagementService));
+                ILogger loggerForOrderManagementService = new Log4NetLogger(typeof(OrderManagementService));
 
                 return new OrderManagementService(new AffiliateRepository(sharedContext),
                     new RegTypeRepository(sharedContext),
@@ -139,7 +154,7 @@ namespace CUWebinars.Web.App_Start
             }).InRequestScope();
 
             kernel.Bind<AuthenticationService>().To<SamAuthenticationService>().InRequestScope();
-            
+
             kernel.Bind<IMembershipService>().ToMethod(ctx =>
             {
                 var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
@@ -174,7 +189,7 @@ namespace CUWebinars.Web.App_Start
                 .SelectMany(x => x.GetInterfaces()
                     .Where(i => i.IsGenericType)
                     .Where(i => i.GetGenericTypeDefinition() == type)
-                    .Select(i => new {service = i, implementation = x})
+                    .Select(i => new { service = i, implementation = x })
                 );
 
             foreach (var registration in handlerRegistrations)

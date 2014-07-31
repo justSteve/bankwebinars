@@ -119,13 +119,23 @@ namespace CUWebinars.Business.Repository
 
             return webUsers;
         }
-
-        public IEnumerable<WebUser> GetWebusersForLiveNotifications(int idWebinar)
+        public IEnumerable<WebUser> GetWebusersForRecordingPostedNotifications(int idWebinar)
         {
             var webUsers = ((TTSWebinarsContext)db).OrderRows
                 .Include(or => or.Order)
                 .Where(or => or.idWebinar == idWebinar)
                 .Where(or => or.RegistrationType.ShowRecordingNotifications == "Yes")
+                .Select(o => o.Order)
+                .Select(o => o.WebUser);
+
+            return webUsers;
+        }
+        public IEnumerable<WebUser> GetWebusersForLiveNotifications(int idWebinar)
+        {
+            var webUsers = ((TTSWebinarsContext)db).OrderRows
+                .Include(or => or.Order)
+                .Where(or => or.idWebinar == idWebinar)
+                .Where(or => or.RegistrationType.ShowLiveNotifications == "Yes")
                 .Select(o => o.Order)
                 .Select(o => o.WebUser);
 

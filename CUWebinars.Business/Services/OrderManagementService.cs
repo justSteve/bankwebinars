@@ -104,7 +104,7 @@ namespace CUWebinars.Business.Services
 
         public AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullname)
         {
-            if(string.IsNullOrWhiteSpace(email))
+            if (string.IsNullOrWhiteSpace(email))
                 throw new ArgumentException("Email paramter was either null or white space.", "email");
 
             try
@@ -123,37 +123,6 @@ namespace CUWebinars.Business.Services
             return _affiliateRepository.FindById(id);
         }
 
-        public IEnumerable<Webinar> GetAllActive()
-        {
-            try
-            {
-                return _webinarRepository.GetAllActive().ToList();
-            }
-            catch (Exception exception)
-            {
-                _logger.ErrorException("GetAllActive method", exception);
-                throw;
-            }
-        }
-
-        public IEnumerable<Presenter> GetAllPresenters()
-        {
-            try
-            {
-                return _refDataRepository.GetAllPresenters();
-            }
-            catch (Exception exception)
-            {
-                _logger.ErrorException("GetAllPresenters method", exception);
-                throw;
-            }
-
-        }
-
-        public IEnumerable<Webinar> GetByTopic(int topicId)
-        {
-            return _webinarRepository.GetByTopic(topicId);
-        }
 
 
         public IList<RegType> GetOptionsByWebinarId(int id, bool detached)
@@ -182,23 +151,10 @@ namespace CUWebinars.Business.Services
             return null;
         }
 
-        public IEnumerable<Topic> GetTopicsPerWebinar(int idWebinar)
-        {
-            return _webinarRepository.GetTopicsPerWebinar(idWebinar).ToList();
-        }
 
         public OrderRow GetOrderRowById(int idOrderRow)
         {
             return _orderRepository.GetOrderRowById(idOrderRow);
-        }
-
-        public IEnumerable<Webinar> GetRecordedWebinars()
-        {
-            return _webinarRepository.GetRecorded().ToList();
-        }
-        public IEnumerable<Webinar> GetUpcomingWebinars()
-        {
-            return _webinarRepository.GetUpcoming().ToList();
         }
 
         public IEnumerable<Order> GetOrdersForShippedNotification()
@@ -224,46 +180,13 @@ namespace CUWebinars.Business.Services
                 throw;
             }
         }
-
-        public Webinar GetWebinar(int id)
-        {
-            return _webinarRepository.FindByIdLoaded(id);
-        }
         public WebUser GetWebUser(int id)
         {
             return _webUserRepository.FindByIdLoaded(id);
         }
-
         public IEnumerable<WebUser> GetWebusersForLiveNotifications(int idWebinar)
         {
             return _webUserRepository.GetWebusersForLiveNotifications(idWebinar);
-        }
-
-        public Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id)
-        {
-            try
-            {
-                var webinar = _webinarRepository.GetWebinarByIdIncludingAllWebinarsByPresenter(id);
-                return webinar;
-            }
-            catch (Exception exception)
-            {
-                _logger.ErrorException("GetWebinarByIdIncludingAllWebinarsByPresenter", exception);
-                throw;
-            }
-
-        }
-
-
-        public void AddWebinar(Webinar webinar)
-        {
-            _webinarRepository.Add(webinar);
-        }
-
-        public void DeleteWebinar(int webinarId)
-        {
-            var webinar = GetWebinar(webinarId);
-            _webinarRepository.Delete(webinar);
         }
 
         public void DispatchDummyOrder()
@@ -329,8 +252,6 @@ namespace CUWebinars.Business.Services
                 _events.Add(orderEvent);
             }
         }
-
-
         private void CalculateOrderPrices(Order order)
         {
             order.Total = 0.0M;
@@ -455,11 +376,6 @@ namespace CUWebinars.Business.Services
         public void CreateCPSubscription(OrderRow orderRow)
         {
             throw new NotImplementedException();
-        }
-
-        public IEnumerable<RegType> FindRegTypesByWebinarId(int webinarId)
-        {
-            return _regTypeRepository.FindRegTypesByWebinarId(webinarId, false);
         }
 
         public void FireOrderSubmittedEvent(Order order)
@@ -604,7 +520,7 @@ namespace CUWebinars.Business.Services
 
                 _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
 
-                
+
                 var orderSubmittedViewModel = new OrderSubmittedViewModel
                 {
                     ConfirmChangeEmailUrl = linkToVerifyAccount ? string.Concat(confirmChangeEmailLink.Replace(DomainConstants.Blank, string.Empty), currentOrder.WebUser.LastName.ToLower()) : string.Empty,
@@ -651,19 +567,14 @@ namespace CUWebinars.Business.Services
 
         public IList<Order> SelectOrdersWithScheduledWebinars(int idUser)
         {
-            return  _orderRepository.SelectOrdersWithScheduledWebinars(idUser);
-        }
-
-        public void UpdateWebinar(Webinar webinar)
-        {
-            _webinarRepository.Update(webinar);
+            return _orderRepository.SelectOrdersWithScheduledWebinars(idUser);
         }
 
         public int CheckUserForRecordingAccess(int w, int u)
         {
             return _orderRepository.CheckUserForRecordingAccess(w, u);
         }
-        
+
 
         private void ProcessDiscountCodes(object instance)
         {
@@ -702,7 +613,7 @@ namespace CUWebinars.Business.Services
             string access_token = webinar.OrganizerOAuthKey;
             //string access_token = "5jxY3KZL48HWknOaOEP2eIzVmOTS"; //steve's
             ////string access_token = "JIOHRkkCvmIKDY8QO0S4msbYH48N";//mark's
-            
+
 
             string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/" + webinarKey + "/registrants";
 
@@ -749,7 +660,7 @@ namespace CUWebinars.Business.Services
             }
             catch (WebException webException)
             {
-                _logger.ErrorException(string.Format("CreateRegistrantKey WebException: {0}, {1}. ExceptionMsg = {2}",billingEmail, webinarKey, webException.Message), webException);
+                _logger.ErrorException(string.Format("CreateRegistrantKey WebException: {0}, {1}. ExceptionMsg = {2}", billingEmail, webinarKey, webException.Message), webException);
                 var httpWebResponse = webException.Response as HttpWebResponse;
 
                 if (httpWebResponse != null &&
@@ -762,7 +673,7 @@ namespace CUWebinars.Business.Services
                     {
                         responsePayload = responsStream.ReadToEnd();
                     }
-                    
+
                     return responsePayload;
                 }
             }
@@ -775,29 +686,6 @@ namespace CUWebinars.Business.Services
             return null;
         }
 
-        string IOrderManagementService.CreateCalendarEvent(string title, 
-            string body, 
-            DateTime startDate, 
-            double duration, 
-            string location,
-            string organizer, 
-            string eventId, 
-            bool allDayEvent)
-        {
-            try
-            {
-                return CreateCalendarEvent(title, body, startDate, duration, location, organizer, eventId, allDayEvent);
-            }
-            catch (Exception exception)
-            {
-                _logger.ErrorException(string.Format("Title:{0},body:{1},startDate:{2},duration{3},location{4},organizer{5},eventId{6},allDayEvent" +
-                                                     "{7}", title, body, startDate.ToString("yyyy-MM-dd-hh-mm-ss-fff-tt"), duration, location, 
-                                                     organizer, eventId, allDayEvent), 
-                                                     exception
-                                                     );
-                throw;
-            }
-        }
 
         public void Clear()
         {
@@ -852,7 +740,7 @@ namespace CUWebinars.Business.Services
             if (!_disposed && disposing)
             {
                 var logger = _logger as IDisposable;
-                if(logger != null)
+                if (logger != null)
                     logger.Dispose();
 
                 _affiliateRepository.Dispose();
@@ -860,7 +748,7 @@ namespace CUWebinars.Business.Services
                 _regTypeRepository.Dispose();
                 _webinarRepository.Dispose();
                 _webUserRepository.Dispose();
-                
+
             }
             _disposed = true;
         }

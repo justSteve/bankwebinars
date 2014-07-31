@@ -15,6 +15,7 @@ namespace CUWebinars.Business.Tests.UnitTests
     {
         private Mock<IMembershipService> _membershipServiceMock;
         private Mock<IOrderManagementService> _orderManagementServiceMock;
+        private Mock<IWebinarManagementService> _webinarManagementServiceMock;
         private OrderManagementQueryHandlers _orderManagementQueryHandlers;
         private static TestContext _context;
 
@@ -31,7 +32,8 @@ namespace CUWebinars.Business.Tests.UnitTests
         {
             _membershipServiceMock = new Mock<IMembershipService>();
             _orderManagementServiceMock = new Mock<IOrderManagementService>();
-            _orderManagementQueryHandlers = new OrderManagementQueryHandlers(_membershipServiceMock.Object, _orderManagementServiceMock.Object);
+            _webinarManagementServiceMock = new Mock<IWebinarManagementService>();
+            _orderManagementQueryHandlers = new OrderManagementQueryHandlers(_membershipServiceMock.Object, _orderManagementServiceMock.Object, _webinarManagementServiceMock.Object);
         }
 
 
@@ -48,7 +50,7 @@ namespace CUWebinars.Business.Tests.UnitTests
                 .Returns(new Affiliate { idUserAff = idUserAff })
                 .Verifiable();
 
-            _orderManagementServiceMock.Setup(o => o.GetWebinar(idWebinar)).Returns(new Webinar {idWebinar = idWebinar});
+            _webinarManagementServiceMock.Setup(o => o.GetWebinar(idWebinar)).Returns(new Webinar {idWebinar = idWebinar});
             _membershipServiceMock.Setup(m => m.GetUserByEmail(email)).Returns(new WebUser {email = email});
 
             var orderManagementQuery = new OrderManagementQuery
@@ -78,7 +80,7 @@ namespace CUWebinars.Business.Tests.UnitTests
             _orderManagementServiceMock.Setup(o => o.GetAffiliateById(idUserAff))
                 .Returns(new Affiliate { idUserAff = idUserAff });
 
-            _orderManagementServiceMock.Setup(o => o.GetWebinar(idWebinar))
+            _webinarManagementServiceMock.Setup(o => o.GetWebinar(idWebinar))
                 .Returns(new Webinar {idWebinar = idWebinar})
                 .Verifiable();
 
@@ -111,7 +113,7 @@ namespace CUWebinars.Business.Tests.UnitTests
             _orderManagementServiceMock.Setup(o => o.GetAffiliateById(idUserAff))
                 .Returns(new Affiliate { idUserAff = idUserAff });
 
-            _orderManagementServiceMock.Setup(o => o.GetWebinar(idWebinar))
+            _webinarManagementServiceMock.Setup(o => o.GetWebinar(idWebinar))
                 .Returns(new Webinar {idWebinar = idWebinar});
 
             _membershipServiceMock.Setup(m => m.GetUserByEmail(email))
@@ -143,7 +145,7 @@ namespace CUWebinars.Business.Tests.UnitTests
             string email = "somevalid@emailaddress.com";
 
             _orderManagementServiceMock.Setup(o => o.GetAffiliateById(idUserAff)).Returns(new Affiliate { idUserAff = idUserAff });
-            _orderManagementServiceMock.Setup(o => o.GetWebinar(idWebinar)).Returns(new Webinar {idWebinar = idWebinar});
+            _webinarManagementServiceMock.Setup(o => o.GetWebinar(idWebinar)).Returns(new Webinar { idWebinar = idWebinar });
             _membershipServiceMock.Setup(m => m.GetUserByEmail(email)).Returns(new WebUser {email = email});
 
             var orderManagementQuery = new OrderManagementQuery
