@@ -65,7 +65,7 @@ function initShippingReport(tableId, options) {
                 "fnRender": function (obj) {
                     
                     var orderData = obj.aData[obj.IdataColumn];
-                    //console.log(orderData);
+                    console.log(orderData);
                     if (orderData.shippedDate == '') {
                         return '<form action="/Admin/Reports/SetShipmentDate/" method="post"><input  class=\"pull-right\" id="RecordingShipped" name="RecordingShipped" onclick=setShipped(' + orderData.Id + '); type="button" value="&nbsp;Set to Shipped&nbsp; " />';
                     } else {
