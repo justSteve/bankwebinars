@@ -39,7 +39,7 @@ namespace CUWebinars.Business.Validation.Order
 
             if (!result)
             {
-                Tracer.Verbose(string.Format("Validation failed for webinar {0} and User {1}",
+                Tracer.Error(string.Format("Validation failed for webinar {0} and User {1}",
                     orders.First().OrderRows.First().Webinar.idWebinar, userId));
             }
 

@@ -41,7 +41,8 @@ body.tall-logo nav.user {
 	float: left;
 	position: relative;
 	margin-top: 28px;
-	background: url(https://ttseast.blob.core.windows.net/images/BankWebinars/logo.png) no-repeat;
+	background: url(http://ttsimages.ttstrain.com/images/logoBW.png) no-repeat;
+	/*background: url(http://ttsimages.ttstrain.com/images/logoCU.png) no-repeat;*/
 }
 
 /* ie 7 fix*/

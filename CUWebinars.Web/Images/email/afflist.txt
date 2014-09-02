@@ -1,0 +1,62 @@
+ Volume in drive C has no label.
+ Volume Serial Number is 0678-8EFA
+
+ Directory of C:\Users\client\Documents\Visual Studio 2010\Projects\TTSTrain.Webinars\TTSTrain.Webinars.WebEntry\Content\images\email
+
+04/01/2012  09:01 AM    <DIR>          .
+04/01/2012  09:01 AM    <DIR>          ..
+04/01/2012  08:51 AM    <DIR>          ABTC
+04/01/2012  09:04 AM             2,937 afflist
+04/01/2012  08:55 AM    <DIR>          ALABAMABANKERS
+04/01/2012  08:51 AM    <DIR>          CBAO
+04/01/2012  08:50 AM    <DIR>          CFTACS
+12/14/2011  10:43 AM    <DIR>          cftgpr
+12/14/2011  10:43 AM    <DIR>          cftncs
+03/30/2012  10:48 AM    <DIR>          CFTNJ
+12/14/2011  10:43 AM    <DIR>          cftnne
+03/30/2012  10:48 AM    <DIR>          CFTOZ
+04/01/2012  08:51 AM    <DIR>          CFTRNY
+03/30/2012  10:48 AM    <DIR>          CFTSCS
+12/14/2011  10:43 AM    <DIR>          cftser
+12/14/2011  10:43 AM    <DIR>          cftsf
+12/14/2011  10:44 AM    <DIR>          cftts
+12/14/2011  10:44 AM    <DIR>          cftum
+03/30/2012  10:48 AM    <DIR>          CFTUMW
+03/30/2012  10:48 AM    <DIR>          CFTUNY
+04/01/2012  08:51 AM    <DIR>          CFTVA
+12/14/2011  10:44 AM    <DIR>          cftws
+03/30/2012  10:48 AM    <DIR>          CPD
+03/30/2012  10:48 AM    <DIR>          CTBANK
+04/01/2012  08:52 AM    <DIR>          GABANKERS
+03/30/2012  10:48 AM    <DIR>          GREGSOUTHER
+12/14/2011  10:44 AM    <DIR>          gscs
+04/01/2012  08:53 AM    <DIR>          iba
+04/01/2012  08:55 AM    <DIR>          IDAHOBANKERS
+04/01/2012  08:27 AM    <DIR>          ILBANKER
+04/01/2012  08:56 AM    <DIR>          ILFI
+03/30/2012  10:48 AM    <DIR>          INDIANABANKERS
+03/30/2012  10:48 AM    <DIR>          interaction-training
+04/01/2012  08:55 AM    <DIR>          LBA
+03/30/2012  10:48 AM    <DIR>          MASSBANKERS
+12/14/2011  10:44 AM    <DIR>          MIBankers
+04/01/2012  08:22 AM    <DIR>          MINNBANKERS
+04/01/2012  08:52 AM    <DIR>          ncba
+03/30/2012  10:48 AM    <DIR>          NCBANKERS
+12/14/2011  10:44 AM    <DIR>          ndba
+03/30/2012  10:48 AM    <DIR>          NHBANKERS
+04/01/2012  08:53 AM    <DIR>          NVBANKERS
+03/30/2012  10:48 AM    <DIR>          NYBA
+04/01/2012  08:53 AM    <DIR>          OREGONBANKERS
+12/14/2011  10:44 AM    <DIR>          ozarkCFT
+03/30/2012  10:48 AM    <DIR>          rate-watch
+12/14/2011  10:44 AM    <DIR>          sdba
+12/14/2011  10:45 AM    <DIR>          tts
+03/30/2012  10:48 AM    <DIR>          TTSKB
+03/30/2012  10:48 AM    <DIR>          UBA
+04/01/2012  08:56 AM    <DIR>          VABANKERS
+12/14/2011  10:45 AM    <DIR>          wvba
+04/01/2012  08:54 AM    <DIR>          WVBANKERS
+12/14/2011  10:45 AM    <DIR>          wyba
+04/01/2012  08:56 AM    <DIR>          wyomingbankers
+               1 File(s)          2,937 bytes
+              54 Dir(s)  34,642,780,160 bytes free

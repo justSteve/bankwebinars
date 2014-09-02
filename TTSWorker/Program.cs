@@ -14,10 +14,10 @@ namespace TTSWorker
 {
     class Program
     {
-        private static void Main()
+        private static void MainHold()
         {
             var host = "imap.gmail.com";
-            var username = "registrations@@Tenant.com";
+            var username = "registrations@BankWebinars.com";
             var password = "azza123A";
             var port = 993;
             var isSSL = true;
@@ -43,11 +43,11 @@ namespace TTSWorker
 
         }
 
-        static void Main4RSSBus()
+        static void Main()
         {
             //JobHost host = new JobHost();
             //host.RunAndBlock();
-            string connectionString = "user=registrations@@Tenant.com;password=azza123A;Offline=false;";
+            string connectionString = "user=registrations@BankWebinars.com;password=azza123A;Offline=false;";
 
 
             using (GoogleConnection connection = new GoogleConnection(connectionString))
@@ -55,8 +55,7 @@ namespace TTSWorker
                 GoogleDataAdapter gda = new GoogleDataAdapter
                 {
                     SelectCommand = new GoogleCommand(
-                        "SELECT id from MailMessages where [To] = 'registrations+verify@@Tenant.com' and  SEARCHCRITERIA " +
-                        "= 'UNSEEN' ",
+                        "SELECT id from MailMessages where [Subject] = 'Password Reset For BankWebinars.com'",
                         connection)
                 };
                 var AreErrors = "";
@@ -113,7 +112,7 @@ namespace TTSWorker
         }
         public static void ProcessEmailConfirm()
         {
-            string connectionString = "user=registrations@@Tenant.com;password=azza123A;Offline=false;";
+            string connectionString = "user=registrations@BankWebinars.com;password=azza123A;Offline=false;";
 
 
             using (GoogleConnection connection = new GoogleConnection(connectionString))

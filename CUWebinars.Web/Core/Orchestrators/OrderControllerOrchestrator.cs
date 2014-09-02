@@ -74,6 +74,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
         }
 
+
         public OrderManagementQueryResult GetPreparatoryData(IncomingOrderModel incomingOrderModel, string email)
         {
             var orderManagementQuery = new OrderManagementQuery

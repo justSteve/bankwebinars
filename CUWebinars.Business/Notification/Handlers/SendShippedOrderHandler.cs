@@ -32,7 +32,7 @@ namespace CUWebinars.Business.Notification.Handlers
             try
             {
                 var notificationMessage = _generalFormatter.Format(sendShippedOrderEvent.EventObject, "SendShippedOrder");
-                notificationMessage.ReplyTo = "registrations@@Tenant.com";
+                notificationMessage.ReplyTo = "registrations@BankWebinars.com";
                 notificationMessage.To = sendShippedOrderEvent.EventObject.BillingEmail;
 
                 _notificationDelivery.Notify(notificationMessage);

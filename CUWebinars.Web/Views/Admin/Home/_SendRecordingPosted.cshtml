@@ -1,0 +1,14 @@
+﻿@model AdhocNotificationViewModel
+
+<div class="control-group">
+    <label class="control-label" for="inputEmail">Webinars</label>
+    <div class="controls">
+        @Html.DropDownListFor(m => m.SelectedWebinarId, new SelectList(Model.Webinars, "Value", "Text"), "Choose a Recorded Webinar", new { @class = "input-xlarge" })
+    </div>
+</div>
+<div class="control-group">
+    <div class="controls">
+        <button id="GetSendRecordingPostedRecipientsButton" class="btn">Send Recording Is Posted</button>
+    </div>
+</div>
+<div id="EmailInputAndFireEventButton"></div>

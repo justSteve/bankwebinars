@@ -168,19 +168,21 @@ namespace CUWebinars.Web.Controllers
                         globalConfig.Tenant,
                         firstName,
                         lastName,
-                        string.Empty, //  Pass empty string for username because MembershipReboot assigns the email to the username field where emailIsUsername is true
+                        string.Empty,
+                        //  Pass empty string for username because MembershipReboot assigns the email to the username field where emailIsUsername is true
                         model.Password,
                         email);
 
-                    Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey), "There's no reason session should not have a value for the VerificationKey at this point ");
+                    Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey),
+                        "There's no reason session should not have a value for the VerificationKey at this point ");
 
                     var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
                     _stateService.ClearValue(DomainConstants.VerificationKey);
 
                     userAccount = _membershipService.VerifyEmailFromKey(
-                            verificationKey,
-                            model.Password
-                            );
+                        verificationKey,
+                        model.Password
+                        );
 
                     //membershipService.LogInUser(globalConfig.Tenant, model.Email, model.Password, true); // log the user in.
                     _logger.Info("/Account/Register UserAdded: " + model.Email);
@@ -192,6 +194,10 @@ namespace CUWebinars.Web.Controllers
                     ModelState.AddModelError(string.Empty, e.StatusCode.ToString());
                     _logger.Error("Importer Error: " + e.Message);
                 }
+            }
+            else
+            {
+                ProcessModelStateErrors();
             }
 
             // If we got this far, something failed, redisplay form
@@ -232,7 +238,7 @@ namespace CUWebinars.Web.Controllers
 
                             row.RegistrantKey = registrantKey;
                             row.JoinURL = joinUrl;
-                            
+
                         }
                     }
                 }
@@ -250,8 +256,8 @@ namespace CUWebinars.Web.Controllers
             var currentUser = GetWebUserFromIPrincipal();
 
             var currentOrder = _orderManagementService.GetOrderById(orderID);
-            var model = new CertOfCompletionViewModel { CurrentUser = currentUser, Order = currentOrder};
-            
+            var model = new CertOfCompletionViewModel { CurrentUser = currentUser, Order = currentOrder };
+
 
             return View("MyCertificate", model);
         }
@@ -337,7 +343,7 @@ namespace CUWebinars.Web.Controllers
                 else
                 {
                     _logger.Info("Your email address has already been successfully verified in our system. Session={0}", AppHelper.GetUserAuditInfo());
-                    
+
                     model.ScreenMessage = "Your email address has already been successfully verified in our system.";
                     return View(model);
                 }
@@ -356,6 +362,8 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.HttpGet]
         public ActionResult EditBillingAddress()
         {
+            _logger.Info("Editing Billing Address - GET");
+
             var model = new EditBillingAddressModel();
             ViewBag.ReturnUrl = Url.Action("Manage");
             ViewBag.Title = WebUiConstants.ManageUser;
@@ -366,16 +374,16 @@ namespace CUWebinars.Web.Controllers
 
             model.BillingAddress = new AddressModel
             {
-                    Name = user.FirstName + ' ' + user.LastName,
-                    City = billingAddress.City,
-                    Country = billingAddress.Country,
-                    StreetAddress = billingAddress.StreetAddress,
-                    StreetAddress2 = billingAddress.StreetAddress2,
-                    State = billingAddress.State,
-                    Zip = billingAddress.Zip,
-                    Phone = billingAddress.Phone,
-                    TypeOfAddress = AddressType.Billing
-            
+                Name = user.FirstName + ' ' + user.LastName,
+                City = billingAddress.City,
+                Country = billingAddress.Country,
+                StreetAddress = billingAddress.StreetAddress,
+                StreetAddress2 = billingAddress.StreetAddress2,
+                State = billingAddress.State,
+                Zip = billingAddress.Zip,
+                Phone = billingAddress.Phone,
+                TypeOfAddress = AddressType.Billing
+
             };
             return PartialView("Partials/_EditBillingAddress", model);
 
@@ -464,7 +472,7 @@ namespace CUWebinars.Web.Controllers
                 BillingAddress = new AddressModel
                 {
 
-                    Name = user.FirstName + ' '+  user.LastName,
+                    Name = user.FirstName + ' ' + user.LastName,
                     City = billingAddress.City,
                     Country = billingAddress.Country,
                     StreetAddress = billingAddress.StreetAddress,
@@ -483,7 +491,7 @@ namespace CUWebinars.Web.Controllers
                     State = shippingAddress.State,
                     Zip = shippingAddress.Zip,
                     Phone = shippingAddress.Phone,
-                    Name =  shippingAddress.Name,
+                    Name = shippingAddress.Name,
                     TypeOfAddress = AddressType.Shipping
                 },
                 FirstName = user.FirstName,
@@ -502,7 +510,7 @@ namespace CUWebinars.Web.Controllers
         public ActionResult Manage(ManageModel model)
         {
             var updateFields = model.RegisterFields;
-            
+
             var billingAddressFields = updateFields.BillingAddress;
             var shippingAddressFields = updateFields.ShippingAddress;
 
@@ -542,7 +550,7 @@ namespace CUWebinars.Web.Controllers
                 shippingAddress,
                 updateFields.Title == null ? "na" : updateFields.Title.Trim()
                 );
-            
+
             return View(model);
         }
 
@@ -600,6 +608,7 @@ namespace CUWebinars.Web.Controllers
             }
             else
             {
+                ProcessModelStateErrors();
                 return Content("false");
             }
         }
@@ -616,7 +625,7 @@ namespace CUWebinars.Web.Controllers
             {
                 var retURL = model.ReturnUrl.Replace(string.Format(@"{0}://{1}{2}/", Request.Url.Scheme, Request.Url.Authority, Request.ApplicationPath.TrimEnd('/')), string.Empty);
 
-                _logger.Info("Account.SignIn Post Success. Session={0}, Redirecting to: {1}" , AppHelper.GetUserAuditInfo(), retURL);
+                _logger.Info("Account.SignIn Post Success. Session={0}, Redirecting to: {1}", AppHelper.GetUserAuditInfo(), retURL);
                 //return RedirectToLocal(retURL);
                 return RedirectToLocal("/Account/MyWebinars");
             }
@@ -651,7 +660,7 @@ namespace CUWebinars.Web.Controllers
         //[ValidateAntiForgeryToken]
         public JsonResult ResetPassword(string email)
         {
-            _logger.Info("Account.ResetPassword GET. Email = {1} Session={0}",  AppHelper.GetUserAuditInfo(), email);
+            _logger.Info("Account.ResetPassword GET. Email = {1} Session={0}", AppHelper.GetUserAuditInfo(), email);
 
             try
             {
@@ -660,7 +669,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Fatal("Account.ResetPassword GET Failed. {0}, Session = {1} on email: {2}" , ex.Message ,AppHelper.GetUserAuditInfo(), email);
+                _logger.Fatal("Account.ResetPassword GET Failed. {0}, Session = {1} on email: {2}", ex.Message, AppHelper.GetUserAuditInfo(), email);
             }
 
 
@@ -740,8 +749,11 @@ namespace CUWebinars.Web.Controllers
                 {
                     if (string.IsNullOrWhiteSpace(model.Key))
                     {
-                        _logger.Warn("Account.PasswordResetConfirm.POST was passed empty or null ID. Session=PasswordResetConfirm. " + AppHelper.GetUserAuditInfo());
-                        ModelState.AddModelError("EmptyKey", "There appears to have been a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again.");
+                        _logger.Warn(
+                            "Account.PasswordResetConfirm.POST was passed empty or null ID. Session=PasswordResetConfirm. " +
+                            AppHelper.GetUserAuditInfo());
+                        ModelState.AddModelError("EmptyKey",
+                            "There appears to have been a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again.");
                     }
                     else
                     {
@@ -751,6 +763,11 @@ namespace CUWebinars.Web.Controllers
                     _logger.Info("Account.PasswordResetConfirm Post. Session=" + AppHelper.GetUserAuditInfo());
 
                     return View(model);
+                }
+                else
+                {
+                    _logger.Error("Invalid ModelState in PasswordResetConfirm");
+                    ProcessModelStateErrors();
                 }
             }
             catch (ValidationException validationException)
@@ -779,7 +796,7 @@ namespace CUWebinars.Web.Controllers
                 if (_stateService.HasValue(WebUiConstants.AdminUserEmail))
                 {
                     var adminUserAccount = _membershipService.GetUserAccountByEmail(globalConfig.Tenant, _stateService.GetValue<string>(WebUiConstants.AdminUserEmail));
-                    
+
                     _membershipService.SignIn(adminUserAccount, false);
 
                     _stateService.ClearValue(WebUiConstants.AdminUserEmail);
@@ -925,7 +942,9 @@ namespace CUWebinars.Web.Controllers
                 _logger.Error("Account.Register ModelError: " + error.ErrorMessage + "| Session=" + AppHelper.GetUserAuditInfo());
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            { _logger.Error("Invalid ModelState Detected in Register"); }
+            else
             {
                 _logger.Info("Account.Register: " + model.RegisterFields.Email.Trim() + "| Session=" + AppHelper.GetUserAuditInfo());
 
@@ -1309,6 +1328,28 @@ namespace CUWebinars.Web.Controllers
             _disposed = true;
         }
 
+        private void ProcessModelStateErrors()
+        {
 
+            //Please use this general pattern when logging ModelState errors.
+            var myErr = "ProcessModelStateErrors found errors. Session Info: " + Environment.NewLine;
+            myErr +=
+                AppHelper.GetUserAuditInfo();
+            foreach (ModelState modelState in ViewData.ModelState.Values)
+            {
+                foreach (ModelError error in modelState.Errors)
+                {
+                    myErr += error.ErrorMessage + Environment.NewLine;
+                }
+            }
+            //a better implementation:
+            //http://stackoverflow.com/questions/2845852/asp-net-mvc-how-to-convert-modelstate-errors-to-json
+            //var errorList = ModelState.ToDictionary(
+            //    kvp => kvp.Key,
+            //    kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+            //);
+
+            _logger.Error(myErr);
+        }
     }
 }

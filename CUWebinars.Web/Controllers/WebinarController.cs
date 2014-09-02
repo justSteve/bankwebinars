@@ -48,7 +48,7 @@ namespace CUWebinars.Web.Controllers
         // GET: /Webinar/
         public ActionResult CompliancePerspectives()
         {
-            
+
             ViewBag.TopicCaption = " ";
             ViewBag.Title = "All Listed Events for CUWebinars";
 
@@ -485,7 +485,12 @@ namespace CUWebinars.Web.Controllers
             var usersOrders = _orderManagementService.GetOrdersByUserId(user.idUser).Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id) != null);
 
             var options = _orderManagementService.GetOptionsByWebinarId(id, false);
+
             var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id);
+            if (webinar == null) return HttpNotFound();
+            
+            
+            
             ViewBag.topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar);
 
             var model = new WebinarDetailsViewModel()
@@ -523,15 +528,15 @@ namespace CUWebinars.Web.Controllers
                     ViewBag.userOwnsThisEvent = checkOrder.idOrder;
                     model.Order = checkOrder;
 
-                    var connectionText = new StringBuilder("<p>");
-                    connectionText.Append(
-                        row.RegistrationType.Stage2EmailConfirmationMsg.Replace(
-                            " and is also available at http://www.@Tenant.com", "</p><p>"));
+                    //var connectionText = new StringBuilder("<p>");
+                    //connectionText.Append(
+                    //    row.RegistrationType.Stage2EmailConfirmationMsg.Replace(
+                    //        " and is also available at http://www.@Tenant.com", "</p><p>"));
 
-                    //connectionText.Append(webinar.ConnectionInfo.Replace(Environment.NewLine, "<br>"));
-                    connectionText.Append("</p>");
+                    ////connectionText.Append(webinar.ConnectionInfo.Replace(Environment.NewLine, "<br>"));
+                    //connectionText.Append("</p>");
 
-                    ViewBag.connectionText = connectionText;
+                    //ViewBag.connectionText = connectionText;
 
 
                     if (checkOrder.OrderStatus == OrderStatus.InProcess && row.idWebinar != id)
@@ -656,7 +661,7 @@ namespace CUWebinars.Web.Controllers
             Webinar webinar = model;
 
             //_db.SaveChanges();
-            
+
             return RedirectToAction("Details");
             //return PartialView("Partials/_UpdateConnectionInfo",webinar);
         }
