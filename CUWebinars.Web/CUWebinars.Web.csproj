@@ -481,10 +481,7 @@
     <Content Include="App_Data\Orders\ResetsDbForTesting.sql" />
     <Content Include="App_Data\Orders\RegistrationTypeMapping.txt" />
     <Content Include="App_Data\Orders\ResetsDb.sql" />
-    <Content Include="Content\css\affiliateCheckout.css" />
-    <Content Include="Content\css\affStyling.css" />
     <Content Include="Content\css\anytime.css" />
-    <Content Include="Content\css\base-reset.css" />
     <Content Include="Content\css\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\css\base\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Content\css\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
@@ -646,10 +643,6 @@
       <DependentUpon>style.less</DependentUpon>
     </Content>
     <Content Include="Content\css\BootstrapTemplates\style.min.css" />
-    <Content Include="Content\css\checkout.css" />
-    <Content Include="Content\css\Details.css" />
-    <Content Include="Content\css\DSform.css" />
-    <Content Include="Content\css\DSViewer.css" />
     <Content Include="Content\css\firebug.css" />
     <Content Include="Content\css\font-awesome-ie7.min.css" />
     <Content Include="Content\css\font-awesome.css" />
@@ -657,30 +650,21 @@
     <Content Include="Content\css\font\fontawesome-webfont.svg" />
     <Content Include="Content\css\form.css" />
     <Content Include="Content\css\FullCalendar.css" />
-    <Content Include="Content\css\header.css" />
     <Content Include="Content\css\home_index.css" />
     <Content Include="Content\css\html-content-slider-flexslider.css" />
-    <Content Include="Content\css\jHtmlArea.ColorPickerMenu.css" />
-    <Content Include="Content\css\jHtmlArea.css" />
-    <Content Include="Content\css\jHtmlArea.Editor.css" />
     <Content Include="Content\css\jsToolsStyles.css" />
     <Content Include="Content\css\Login.css" />
+    <Content Include="Content\css\logoBW.css" />
+    <Content Include="Content\css\logoCUWebinars.css" />
     <Content Include="Content\css\Notifications.css" />
     <Content Include="Content\css\print.css" />
     <Content Include="Content\css\styles.css" />
-    <Content Include="Content\css\stylesDirectorSeries.css" />
     <Content Include="Content\css\stylesEmail.css" />
-    <None Include="Content\css\TTSstyles.HOLDER" />
     <Content Include="Content\css\ui.jqgrid.css" />
     <Content Include="Content\css\waitButton.css" />
-    <Content Include="Content\img\Auditing.jpg" />
-    <Content Include="Content\img\blankImage.gif" />
     <Content Include="Content\img\CertificateBackground.jpg" />
     <Content Include="Content\img\glyphicons-halflings-white.png" />
     <Content Include="Content\img\glyphicons-halflings.png" />
-    <Content Include="Content\img\jHtmlArea.png" />
-    <Content Include="Content\img\jHtmlArea_Toolbar_Group_BG.png" />
-    <Content Include="Content\img\jHtmlArea_Toolbar_Group__Btn_Select_BG.png" />
     <Content Include="Content\js\affiliateCheckout.js" />
     <Content Include="Content\js\affiliateReport.js" />
     <Content Include="Content\js\affiliateReport4Kyle.js" />
@@ -1819,7 +1803,6 @@
     </Content>
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
@@ -1852,8 +1835,6 @@
     <Content Include="Views\Shared\PageNotFound.cshtml" />
     <Content Include="Views\Shared\Partials\_AddToMailingBox.cshtml" />
     <Content Include="Views\Shared\Partials\_ShowAddedEventsFeed.cshtml" />
-    <Content Include="Views\Shared\_BWOriginal.cshtml" />
-    <Content Include="Views\Shared\_LayoutEmail.cshtml" />
     <Content Include="Views\Shared\_LayoutPublic.cshtml">
       <SubType>Code</SubType>
     </Content>

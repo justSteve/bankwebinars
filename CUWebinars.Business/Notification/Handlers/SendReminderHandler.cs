@@ -34,7 +34,7 @@ namespace CUWebinars.Business.Notification.Handlers
             {
                 var notificationMessage = _generalFormatter.Format(sendReminderEvent.EventObject,
                     "SendReminder");
-                notificationMessage.ReplyTo = "registrations@bankwebinars.com";
+
                 notificationMessage.To = sendReminderEvent.EventObject.BillingEmail;
 
                 _notificationDelivery.Notify(notificationMessage);
@@ -79,6 +79,6 @@ namespace CUWebinars.Business.Notification.Handlers
             : base(generalFormatter, notificationDelivery, logger)
         {
         }
-        
+
     }
 }

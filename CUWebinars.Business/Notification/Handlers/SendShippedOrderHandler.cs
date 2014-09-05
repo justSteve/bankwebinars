@@ -8,7 +8,7 @@ using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Business.Notification.Handlers
 {
-    public class SendShippedOrderHandler<T> : IEventHandler<SendShippedOrderEvent<T>> 
+    public class SendShippedOrderHandler<T> : IEventHandler<SendShippedOrderEvent<T>>
         where T : Order
     {
         private readonly IFormatter _generalFormatter;
@@ -32,9 +32,8 @@ namespace CUWebinars.Business.Notification.Handlers
             try
             {
                 var notificationMessage = _generalFormatter.Format(sendShippedOrderEvent.EventObject, "SendShippedOrder");
-                notificationMessage.ReplyTo = "registrations@BankWebinars.com";
-                notificationMessage.To = sendShippedOrderEvent.EventObject.BillingEmail;
 
+                notificationMessage.To = sendShippedOrderEvent.EventObject.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);
             }
             catch (NullReferenceException nullReferenceException)

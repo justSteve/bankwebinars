@@ -1,4 +1,5 @@
 ﻿using System.Web.Optimization;
+using CUWebinars.Web.Core;
 
 namespace CUWebinars.Web.App_Start
 {
@@ -6,9 +7,11 @@ namespace CUWebinars.Web.App_Start
     {
         // For more information on Bundling, visit http://go.microsoft.com/fwlink/?LinkId=254725
 
+        public static readonly GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
         public static void RegisterBundles(BundleCollection bundles)
         {
+
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                     "~/Scripts/jquery-1.9.1.js"
                 //"~/Scripts/jquery-1.8.2.js"
@@ -34,7 +37,7 @@ namespace CUWebinars.Web.App_Start
                         "~/Content/js/jquery-plugins/dataTables/plugins/fnSetFilteringDelay.js",
                          "~/Scripts/app/cart/additional-locations.js",
                          "~/Scripts/app/cart/create-order.js"
-                         //,"~/Scripts/app/cart/edit-order.js"
+                //,"~/Scripts/app/cart/edit-order.js"
                         ));
 
 
@@ -50,7 +53,7 @@ namespace CUWebinars.Web.App_Start
                 //initialize scripts / custom scripts all pages--> 
                         "~/Content/js/scripts.js"
                 //"~/Scripts/app/waitButton.js",
-                         //"~/Scripts/app/EditOrder.js"
+                //"~/Scripts/app/EditOrder.js"
                         ));
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at http://modernizr.com to pick only the tests you need.
@@ -82,18 +85,34 @@ namespace CUWebinars.Web.App_Start
             //    "~/Scripts/app/web-user-details-register.js"
             //));
 
-            bundles.Add(new StyleBundle("~/Content/CrispCSS").Include(
+            if (globalConfig.Tenant == "BankWebinars")
+            {
+                bundles.Add(new StyleBundle("~/Content/CrispCSS").Include(
                     "~/Content/css/styleCrisp.css",
                     "~/Content/css/header-1.css",
+                    "~/Content/css/logoBW.css",
+                    "~/Content/css/bootstrap.css",
+                    "~/Content/css/bootstrap-responsive.css",
+                    "~/Content/css/html-content-slider-flexslider.css",
+                    "~/Scripts/AutoComplete/css/styles.css",
+                    "~/Scripts/AutoComplete/css/styles.css/ui-lightness/jquery-ui-1.10.3.custom.css",
+                    "~/Content/validation.css"
+                    ));
+            }
+            
+            if (globalConfig.Tenant == "CUWebinars")
+            {
+                bundles.Add(new StyleBundle("~/Content/CrispCSS").Include(
+                    "~/Content/css/styleCrisp.css",
+                    "~/Content/css/header-1.css",
+                    "~/Content/css/logoCUWebinars.css",
                     "~/Content/css/bootstrap.css",
                     "~/Content/css/bootstrap-responsive.css",
                     "~/Scripts/AutoComplete/css/styles.css",
                     "~/Scripts/AutoComplete/css/styles.css/ui-lightness/jquery-ui-1.10.3.custom.css",
-                    //"~/Scripts/AutoComplete/css/styles.css/ui-lightness/jquery-ui-1.10.3.custom.min.css",
-
-                //"~/Content/css/waitButton.css",
                     "~/Content/validation.css"
-                ));
+                    ));
+            }
 
             bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(
                         "~/Content/themes/base/jquery.ui.core.css",

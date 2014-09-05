@@ -36,14 +36,6 @@ body.tall-logo nav.user {
 	height: 59px;
 }
 
-#logo {
-	padding: 0 0 10px 0;
-	float: left;
-	position: relative;
-	margin-top: 28px;
-	background: url(http://ttsimages.ttstrain.com/images/logoBW.png) no-repeat;
-	/*background: url(http://ttsimages.ttstrain.com/images/logoCU.png) no-repeat;*/
-}
 
 /* ie 7 fix*/
 .lt-ie8 #logo {
@@ -83,7 +75,7 @@ body.tall-logo nav.user {
 	margin-top: 0;
 	padding: 0;
 	top: -47px;
-	background-image: url(https://ttseast.blob.core.windows.net/images/BankWebinars/tall-logo-desktop.png);
+	background-image: url(https://ttseast.blob.core.windows.net/images/tall-logo-desktop.png);
 	background-color: transparent;
 	background-position: 50% 50%;
 	background-repeat: no-repeat;
@@ -233,7 +225,7 @@ body.tall-logo nav.user {
 
 /* arrow background images */
 .primary_menu li.parent i {
-	background: url(https://ttseast.blob.core.windows.net/images/BankWebinars/menu_arrow.png) 0 0 no-repeat;
+	background: url(https://ttseast.blob.core.windows.net/images/menu_arrow.png) 0 0 no-repeat;
 	display: inline-block;
 	width: 5px;
 	margin-left: 8px;
@@ -678,7 +670,7 @@ body.tall-logo nav.user {
 	}
 	
 	body.tall-logo #logo {
-		background-image: url(https://ttseast.blob.core.windows.net/images/BankWebinars/tall-logo-mobile.png);
+		background-image: url(https://ttseast.blob.core.windows.net/images/tall-logo-mobile.png);
 		/*notice that this image changes on mobile */
 		background-color: transparent!important;
 		background-position: 0 0;

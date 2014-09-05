@@ -8,7 +8,7 @@ using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Business.Notification.Handlers
 {
-    public class SendConnectionInfoHandler<T> : IEventHandler<SendConnectionInfoEvent<T>> 
+    public class SendConnectionInfoHandler<T> : IEventHandler<SendConnectionInfoEvent<T>>
         where T : Order
     {
         private readonly IFormatter _generalFormatter;
@@ -32,7 +32,7 @@ namespace CUWebinars.Business.Notification.Handlers
             try
             {
                 var notificationMessage = _generalFormatter.Format(sendConnectionInfoEvent.EventObject, "SendConnectionInfo");
-                //notificationMessage.ReplyTo = "registrations@BankWebinars.com";
+
                 notificationMessage.To = sendConnectionInfoEvent.EventObject.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);
             }
@@ -71,7 +71,7 @@ namespace CUWebinars.Business.Notification.Handlers
         public SendConnectionInfoHandler(IFormatter generalFormatter, ILogger logger)
             : base(generalFormatter, logger)
         {
-            
+
         }
 
         public SendConnectionInfoHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger)
