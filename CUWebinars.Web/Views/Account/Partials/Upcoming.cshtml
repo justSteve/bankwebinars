@@ -44,7 +44,7 @@
                         <div class="s-content">
                             <div style="text-align: right;" class="pull-right alignright">
                                 Order#: @row.idOrder<br />
-                                Cost: @row.Order.Total.ToString()<br />
+                                Cost: $@row.Order.Total.ToString()<br />
                             </div>
                             <p style="font-weight: normal; padding-left: 25px; padding-top: 0; margin-top: 0;">
                                 @*Presented by @row.Webinar.Presenter.WebUser.FullName<br />*@
@@ -52,10 +52,14 @@
                                 <span id="showRegType_@(row.idWebinar)" class="regType">
                                     Registration Type: @row.RegistrationType.OptionLabel.Replace(" Only", " ") &nbsp;&nbsp;
                                 </span>
+                                <span id="showAdditionalLocations_@(row.idWebinar)" class="regType">
+                                    @*@{Html.RenderPartial("Partials/AdditionLocations");}*@
+                                    
+                                </span>
+
                             </p>
                             @if (row.Webinar.Status == WebinarStatus.Active)
                             {
-
                                 var eventID = row.Webinar.WebinarKey;
                                 eventID = eventID.Insert(6, "-").Insert(3, "-");
                                 //var eventPass = "Pass";

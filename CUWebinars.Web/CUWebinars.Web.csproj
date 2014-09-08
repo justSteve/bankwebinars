@@ -1913,6 +1913,7 @@
     <Content Include="Views\Admin\Home\_SendRecordingPosted.cshtml" />
     <Content Include="Views\Admin\Home\_SendReminder.cshtml" />
     <Content Include="Views\Admin\Home\_SendShippedOrder.cshtml" />
+    <Content Include="Views\Account\Partials\AdditionalLocations.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Infrastructure\apis\citrix\GTW\" />
