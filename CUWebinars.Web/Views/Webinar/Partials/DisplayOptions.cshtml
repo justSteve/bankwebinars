@@ -41,26 +41,27 @@
         function signUpv1() {
 
             @{
+                var eventtitle = Model.Webinar.Title.Replace("'", "");
                 if (Model.Webinar.Duration > 1)
                 {
                     if (Model.Webinar.Status == WebinarStatus.Scheduled ||Model.Webinar.Status == WebinarStatus.Active ||Model.Webinar.Status == WebinarStatus.InProgress)
                     {
-                        <text>window.open('http://form.jotform.us/form/32525417714149?webinarid=@Model.Webinar.idWebinar&webinarTitle=@Model.Webinar.Title', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
+                        <text>window.open('http://form.jotform.us/form/32525417714149?webinarid=@Model.Webinar.idWebinar&webinarTitle=@eventtitle', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
                     }
                     else
                     {
-                        <text>window.open('http://form.jotform.us/form/32525008495151?webinarid=@Model.Webinar.idWebinar&webinarTitle=@Model.Webinar.Title', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
+                        <text>window.open('http://form.jotform.us/form/32525008495151?webinarid=@Model.Webinar.idWebinar&webinarTitle=@eventtitle', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
                     }
                 }
                 if (Model.Webinar.Duration < 2)
                 {
                     if (Model.Webinar.Status == WebinarStatus.Scheduled || Model.Webinar.Status == WebinarStatus.Active || Model.Webinar.Status == WebinarStatus.InProgress)
                     {
-                        <text>window.open('http://form.jotform.us/form/32525511772148?webinarid=@Model.Webinar.idWebinar&webinarTitle=@Model.Webinar.Title', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
+                        <text>window.open('http://form.jotform.us/form/32525511772148?webinarid=@Model.Webinar.idWebinar&webinarTitle=@eventtitle', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
                     }
                     else
                     {
-                        <text>window.open('http://form.jotform.us/form/32525522499156?webinarid=@Model.Webinar.idWebinar&webinarTitle=@Model.Webinar.Title', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
+                        <text>window.open('http://form.jotform.us/form/32525522499156?webinarid=@Model.Webinar.idWebinar&webinarTitle=@eventtitle', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
                     }
                 }
             }
@@ -69,7 +70,7 @@
     
 
     <span>
-        Choose the attendance option that's right for you! <a href="#AttendRegTypes" data-toggle="modal">(learn more)</a>
+        Choose the attendance option that's right for you. <a href="#AttendRegTypes" data-toggle="modal">(learn more)</a>
     </span>
 
     <div class="pull-right">

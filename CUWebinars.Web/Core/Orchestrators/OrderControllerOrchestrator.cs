@@ -23,10 +23,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             _stateService = stateService;
         }
 
-        public int CreateNewOrder(IncomingOrderModel incomingOrderModel, 
-            string email, 
-            OrderManagementQueryResult orderManagementQueryResult, 
-            string verificationKey, 
+        public int CreateNewOrder(IncomingOrderModel incomingOrderModel,
+            string email,
+            OrderManagementQueryResult orderManagementQueryResult,
+            string verificationKey,
             string confirmChangeEmailUrl)
         {
             var addOrderRowCommand = new AddOrderRowCommand
@@ -73,6 +73,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             //  Now we clear the value, so TtsSmtpMessageDelivery can go back to business as usual.
             _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
         }
+
 
         public OrderManagementQueryResult GetPreparatoryData(IncomingOrderModel incomingOrderModel, string email)
         {

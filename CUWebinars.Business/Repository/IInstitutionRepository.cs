@@ -8,6 +8,7 @@ namespace CUWebinars.Business.Repository
     public interface IInstitutionRepository : IDisposable
     {
         void Add(Institution institution);
+        void Remove(Institution institution);
         IEnumerable<Institution> GetAll();
         IEnumerable<Institution> GetAllIncluding(params Expression<Func<Institution, object>>[] includeProperties);
         IEnumerable<Institution> GetByNameAndZipCode(string name, string zip);

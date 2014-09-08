@@ -1,0 +1,38 @@
+﻿@model CUWebinars.Web.Models.EditNameTitleModel
+
+@using (Html.BeginForm("EditNameTitle", "Account", "Post"))
+{
+    @Html.AntiForgeryToken()
+
+    
+    
+    <div class="control-group">
+        @Html.LabelFor(model => model.FirstName, new { @class = "control-label" })
+        <div>
+            @Html.EditorFor(model => model.FirstName)
+            @Html.ValidationMessageFor(model => model.FirstName)
+        </div>
+    </div>
+
+    <div class="control-group">
+        @Html.LabelFor(model => model.LastName, new { @class = "control-label" })
+        <div>
+            @Html.EditorFor(model => model.LastName)
+            @Html.ValidationMessageFor(model => model.LastName)
+        </div>
+    </div>
+    <div class="control-group">
+        @Html.LabelFor(model => model.Title, new { @class = "control-label" })
+        <div>
+            @Html.EditorFor(model => model.Title)
+            @Html.ValidationMessageFor(model => model.Title)
+        </div>
+    </div>
+
+    <div class="form-inline">
+        <div class="btn-group" style="width:160px">&nbsp;</div>
+        <div class="btn-group">
+            <input type="submit" value="Update Name/Title" class="btn btn-default" />
+        </div>
+    </div>
+}

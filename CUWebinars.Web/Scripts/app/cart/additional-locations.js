@@ -48,7 +48,7 @@ function AddLocation(countIterator, cost) {
 function RemoveLocation(theLine) {
     //ConnCount = (ConnCount - 1);
     var theInput = theLine.split("_")[1];
-    console.log(theLine);
+    //console.log(theLine);
     alert(parentForm);
     $("#" + parentForm + " [name=submitAddLocations]").removeAttr("disabled").val("Submit");
     $("#" + parentForm + " [name=action]").val($("#" + parentForm + " [name=Email_" + theInput + "]").val());
@@ -67,7 +67,7 @@ var timer; // external so it's value is held over all instances of the timer fun
             clearTimeout(timer);
         }
         timer = setTimeout(function () {
-            console.log("checking:");
+            //console.log("checking:");
             // perform your check
             CheckEmails();
         }, 500);

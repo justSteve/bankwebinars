@@ -19,6 +19,7 @@ namespace CUWebinars.Business.Tests.UnitTests
     {
         Mock<IMembershipService> _membershipServiceMock;
         Mock<IOrderManagementService> _orderManagementServiceMock;
+        Mock<IWebinarManagementService> _webinarManagementServiceMock;
         Webinar _webinar;
         int _idRegType;
         IList<IncomingAdditionalLocation> _incomingAdditionalLocation;
@@ -37,7 +38,8 @@ namespace CUWebinars.Business.Tests.UnitTests
         {
             _membershipServiceMock = new Mock<IMembershipService>();
             _orderManagementServiceMock = new Mock<IOrderManagementService>();
-            new OrderManagementQueryHandlers(_membershipServiceMock.Object, _orderManagementServiceMock.Object);
+            _webinarManagementServiceMock = new Mock<IWebinarManagementService>();
+            new OrderManagementQueryHandlers(_membershipServiceMock.Object, _orderManagementServiceMock.Object, _webinarManagementServiceMock.Object);
         }
 
         [TestMethod]

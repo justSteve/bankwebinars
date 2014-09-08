@@ -25,5 +25,6 @@ namespace CUWebinars.Business.Models
         public int TimeZoneKey { get; set; }
         public Webinar Webinar { get; set; }
         public int idWebinar { get; set; }
+        public string Title { get; set; }
     }
 }

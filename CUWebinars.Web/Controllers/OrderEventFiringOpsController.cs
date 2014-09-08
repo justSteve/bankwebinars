@@ -3,6 +3,7 @@ using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.ViewModel;
+using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using System.Linq;
 using System.Web.Mvc;
@@ -12,12 +13,14 @@ namespace CUWebinars.Web.Controllers
     public class OrderEventFiringOpsController : Controller
     {
         private readonly IOrderManagementService _orderManagementService;
+        private readonly IWebinarManagementService _webinarManagementService;
         private readonly ILogger _logger;
         private bool _disposed;
 
-        public OrderEventFiringOpsController(IOrderManagementService orderManagementService, ILogger logger)
+        public OrderEventFiringOpsController(IOrderManagementService orderManagementService,IWebinarManagementService webinarManagementService, ILogger logger)
         {
             _orderManagementService = orderManagementService;
+            _webinarManagementService = webinarManagementService;
             _logger = logger;
         }
 
@@ -80,7 +83,7 @@ namespace CUWebinars.Web.Controllers
         {
             var model = new AdhocNotificationViewModel
             {
-                Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_orderManagementService)
+                Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_webinarManagementService)
             };
 
             return PartialView("_adHocNotification", model);
@@ -89,7 +92,7 @@ namespace CUWebinars.Web.Controllers
         [HttpPost]
         public ActionResult SendAdhocEvent(int webinarId)
         {
-            var regTypes = EventInvokerHelpers.GetRegTypesForWebinarAsSelectListItems(webinarId, _orderManagementService);
+            var regTypes = EventInvokerHelpers.GetRegTypesForWebinarAsSelectListItems(webinarId, _webinarManagementService);
 
             return Json(regTypes);
         }
@@ -98,7 +101,7 @@ namespace CUWebinars.Web.Controllers
         {
             var model = new AdhocNotificationViewModel
             {
-                Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_orderManagementService)
+                Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_webinarManagementService)
             };
 
             return PartialView("_SendReminder", model);
@@ -124,7 +127,7 @@ namespace CUWebinars.Web.Controllers
         {
             var model = new AdhocNotificationViewModel
             {
-                Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_orderManagementService)
+                Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_webinarManagementService)
             };
 
             return PartialView("_SendConnectionInfo", model);
@@ -135,16 +138,46 @@ namespace CUWebinars.Web.Controllers
         {
             var orders = _orderManagementService.GetOrdersForLiveNotifications(webinarId);
 
+            foreach (var order in orders)
+            {
+
+                GenerateRegistrantKey(order);
+
+            }
             _orderManagementService.FireSendConnectionInfoNotificationEvent(orders);
 
             return Json(new { Result = WebUiConstants.Success });
+        }
+
+        private void GenerateRegistrantKey(Order order)
+        {
+            var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+                
+            //string firstName, string lastName, string billingEmail, int webinarId,string webinarKey
+            var regKeyResponse = _orderManagementService.CreateRegistrantKey(order.FirstName, order.LastName
+                , order.BillingEmail, row.Webinar.idWebinar, row.Webinar.WebinarKey);
+
+            if (ReferenceEquals(null, regKeyResponse))
+                throw new NullReferenceException("The Registration Key Response from the Citrix API resulted in a null response.");
+
+            JObject parsedJsonObject = JObject.Parse(regKeyResponse);
+
+            if (parsedJsonObject[WebUiConstants.RegistrantKey] != null)
+            {
+                var registrantKey = parsedJsonObject[WebUiConstants.RegistrantKey].ToString();
+                var joinUrl = parsedJsonObject[WebUiConstants.JoinUrl].ToString();
+
+                row.RegistrantKey = registrantKey;
+                row.JoinURL = joinUrl;
+                var ResultOfUpdate = _orderManagementService.UpdateOrderChanges(order);
+            }
         }
 
         public PartialViewResult SendRecordingPosted()
         {
             var model = new AdhocNotificationViewModel
             {
-                Webinars = EventInvokerHelpers.GetRecordedWebinarsAsSelectListItems(_orderManagementService)
+                Webinars = EventInvokerHelpers.GetRecordedWebinarsAsSelectListItems(_webinarManagementService)
             };
 
             return PartialView("_SendRecordingPosted", model);

@@ -69,11 +69,11 @@ function initCheckoutWizard(workflowState) {
                     showProcessingIndicator();
                     $(form).ajaxSubmit({
                         target: "#Step" + workflowState.CurrentStep + "_Container",
-                        success: function() {
+                        success: function () {
                             if (!currentWorkflowState.ProceedToNextStep)
                                 hideProcessingIndicator();
                         }
-                    });
+                    })
                 }
             });
         }

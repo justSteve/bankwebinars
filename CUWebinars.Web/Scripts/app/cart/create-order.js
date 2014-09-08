@@ -189,14 +189,14 @@ $(document).ready(function () {
             dataType: constants.JsonDataType,
             data: data,
             beforeSend: function () {
-                console.log('beforeSend Register Details');
+                //console.log('beforeSend Register Details');
                 // this is where we append a loading image
                 REG.PageObjects.labelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
             }
         }).done(function (data) {
             //alert('done: ');
             if (data.Result === 'Success') {
-                console.log('success: ' + data.Result);
+                //console.log('success: ' + data.Result);
                 stateManager.action = '';
                 REG.PageObjects.labelEmail().html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
                 location.assign(path + '/'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
@@ -205,7 +205,7 @@ $(document).ready(function () {
                 stateManager.action = actions.SubmitRegister;
             }
         }).fail(function (data) {
-            console.log('failed: ' + data);
+            //console.log('failed: ' + data);
         }).always(function () {
             stateManager.inputAction = inputActions.None;
         });
@@ -228,20 +228,20 @@ function CheckIfAddLocShouldHide(optionID) {
         dataType: constants.JsonDataType,
 
         beforeSend: function () {
-            console.log('beforeSend CheckIfAddLocShouldHide');
+            //console.log('beforeSend CheckIfAddLocShouldHide');
             // no loading image needed
         }
     }).done(function (data) {
-        console.log('done CheckIfAddLocShouldHide');
+        //console.log('done CheckIfAddLocShouldHide');
         if (data.shouldShow === 'Yes') {
-            console.log('show CheckIfAddLocShouldHide');
+            //console.log('show CheckIfAddLocShouldHide');
             $("#displayAddLoc").show('slow');
         } else if (data.shouldShow === 'No') {
-            console.log('hide  CheckIfAddLocShouldHide');
+            //console.log('hide  CheckIfAddLocShouldHide');
             $("#displayAddLoc").hide(1000);
         }
     }).fail(function (data) {
-        console.log('CheckIfAddLocShouldHide failed!!! ');
+        //console.log('CheckIfAddLocShouldHide failed!!! ');
     });
 }
 
@@ -275,7 +275,7 @@ function BuildPreRegPrice(oEvent) {
 function SetCartState() {
     switch (whichStep) {
         case "Step0":
-            console.log("Step0");
+            //console.log("Step0");
             $("#connectionsCount").val(0);
             $('#collectAdditionalLocation').html('');
             $("#confirmationTab").hide();
@@ -287,7 +287,7 @@ function SetCartState() {
             break;
 
         case "Step1":
-            console.log("Step1");
+            //console.log("Step1");
 
             $("#confirmationTab").hide();
             $("#signUpTab").hide();
@@ -309,12 +309,12 @@ function SetCartState() {
             //.done($("#confirmation").show())
             $("#confirmationTab").trigger('click');
 
-            console.log("Step2");
+            //console.log("Step2");
 
             break;
 
         case "Registered":
-            console.log("state is registered");
+            //console.log("state is registered");
             $("#confirmationTab a").text('Order Summary');
             $("#signUpTab a").text('Connection Info');
 

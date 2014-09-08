@@ -7,22 +7,22 @@ namespace CUWebinars.Web.Helpers
 {
     public static class EventInvokerHelpers
     {
-        public static IEnumerable<SelectListItem> GetRegTypesForWebinarAsSelectListItems(int idWebinar, IOrderManagementService orderManagementService)
+        public static IEnumerable<SelectListItem> GetRegTypesForWebinarAsSelectListItems(int idWebinar, IWebinarManagementService webinarManagementService)
         {
-            return orderManagementService.FindRegTypesByWebinarId(idWebinar).Select(r => new SelectListItem { Text = r.OptionLabel, Value = r.idRegType.ToString() });
+            return webinarManagementService.FindRegTypesByWebinarId(idWebinar).Select(r => new SelectListItem { Text = r.OptionLabel, Value = r.idRegType.ToString() });
         }
 
 
-        public static IEnumerable<SelectListItem> GetUpcomingWebinarsAsSelectListItems(IOrderManagementService orderManagementService)
+        public static IEnumerable<SelectListItem> GetUpcomingWebinarsAsSelectListItems(IWebinarManagementService webinarManagementService)
         {
-            return orderManagementService.GetUpcomingWebinars()
+            return webinarManagementService.GetUpcomingWebinars()
                 .OrderBy(w => w.Date)
                 .Select(w => new SelectListItem { Text = w.Title, Value = w.idWebinar.ToString() });
         }
 
-        public static IEnumerable<SelectListItem> GetRecordedWebinarsAsSelectListItems(IOrderManagementService orderManagementService)
+        public static IEnumerable<SelectListItem> GetRecordedWebinarsAsSelectListItems(IWebinarManagementService webinarManagementService)
         {
-            return orderManagementService.GetRecordedWebinars().Select(w => new SelectListItem { Text = w.Title, Value = w.idWebinar.ToString() });
+            return webinarManagementService.GetRecordedWebinars().Select(w => new SelectListItem { Text = w.Title, Value = w.idWebinar.ToString() });
         }
 
         public static IEnumerable<SelectListItem> GetShippedWebinarsAsSelectListItems(IOrderManagementService orderManagementService)

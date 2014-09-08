@@ -68,6 +68,9 @@
     <Reference Include="Common.Logging.Log4Net1211">
       <HintPath>..\packages\Common.Logging.Log4Net1211.2.2.0\lib\net40\Common.Logging.Log4Net1211.dll</HintPath>
     </Reference>
+    <Reference Include="Common.Logging.NLog20">
+      <HintPath>..\packages\Common.Logging.NLog20.2.2.0\lib\net40\Common.Logging.NLog20.dll</HintPath>
+    </Reference>
     <Reference Include="DDay.iCal">
       <HintPath>..\packages\DDay.iCal.1.0.2.575\lib\DDay.iCal.dll</HintPath>
     </Reference>
@@ -100,33 +103,26 @@
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="Glimpse.AspNet, Version=1.8.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Glimpse.AspNet.1.8.1\lib\net45\Glimpse.AspNet.dll</HintPath>
+    <Reference Include="Glimpse.AspNet">
+      <HintPath>..\packages\Glimpse.AspNet.1.9.1\lib\net45\Glimpse.AspNet.dll</HintPath>
     </Reference>
-    <Reference Include="Glimpse.Core, Version=1.8.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Glimpse.1.8.4\lib\net45\Glimpse.Core.dll</HintPath>
+    <Reference Include="Glimpse.Core">
+      <HintPath>..\packages\Glimpse.1.8.6\lib\net45\Glimpse.Core.dll</HintPath>
     </Reference>
     <Reference Include="Glimpse.Elmah">
       <HintPath>..\packages\Glimpse.Elmah.1.1.1\lib\net40\Glimpse.Elmah.dll</HintPath>
     </Reference>
-    <Reference Include="Glimpse.Mvc4, Version=1.5.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Glimpse.Mvc4.1.5.3\lib\net40\Glimpse.Mvc4.dll</HintPath>
-    </Reference>
     <Reference Include="Glimpse.Ninject">
       <HintPath>..\packages\Glimpse.Ninject.0.9.0\lib\net4\Glimpse.Ninject.dll</HintPath>
     </Reference>
-    <Reference Include="JSNLog, Version=2.6.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\JSNLog.2.6.11.0\lib\net40\JSNLog.dll</HintPath>
+    <Reference Include="JSNLog">
+      <HintPath>..\packages\JSNLog.2.7.1.0\lib\net40\JSNLog.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
@@ -232,7 +228,6 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Data.Services.Client" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IdentityModel" />
@@ -241,17 +236,17 @@
     <Reference Include="System.IdentityModel.Tokens.Jwt">
       <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.1.0.0\lib\net45\System.IdentityModel.Tokens.Jwt.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http.Extensions, Version=2.2.20.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+    <Reference Include="System.Net.Http.Extensions, Version=2.2.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.20\lib\net45\System.Net.Http.Extensions.dll</HintPath>
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.27-beta\lib\net45\System.Net.Http.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http.Formatting, Version=5.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.1.2\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.0\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http.Primitives, Version=4.2.20.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+    <Reference Include="System.Net.Http.Primitives, Version=4.2.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.20\lib\net45\System.Net.Http.Primitives.dll</HintPath>
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.27-beta\lib\net45\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -269,27 +264,27 @@
     <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.1.2\lib\net45\System.Web.Helpers.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.0\lib\net45\System.Web.Helpers.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Http, Version=5.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Web.Http, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.1.2\lib\net45\System.Web.Http.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.0\lib\net45\System.Web.Http.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Http.OData, Version=5.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Web.Http.OData, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.OData.5.1.2\lib\net45\System.Web.Http.OData.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.OData.5.2.0-rc\lib\net45\System.Web.Http.OData.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Http.Tracing, Version=5.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Tracing.5.1.2\lib\net45\System.Web.Http.Tracing.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Tracing.5.2.0-rc\lib\net45\System.Web.Http.Tracing.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Http.WebHost, Version=5.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.1.2\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.0\lib\net45\System.Web.Http.WebHost.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Mvc, Version=5.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Web.Mvc, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.1.2\lib\net45\System.Web.Mvc.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.0\lib\net45\System.Web.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Optimization, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -297,20 +292,20 @@
     </Reference>
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.Razor.3.1.2\lib\net45\System.Web.Razor.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.0\lib\net45\System.Web.Razor.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.1.2\lib\net45\System.Web.WebPages.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.0\lib\net45\System.Web.WebPages.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.1.2\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.0\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.1.2\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.0\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
@@ -383,17 +378,25 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdhocNotificationController.cs" />
+    <Compile Include="Controllers\Admin\AdminHomeController.cs" />
     <Compile Include="Controllers\api\AddressesController.cs" />
-    <Compile Include="Controllers\api\OrderImporterController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\OrderEventFiringOpsController.cs" />
     <Compile Include="Core\Exceptions.cs" />
     <Compile Include="Core\Orchestrators\IOrderControllerOrchestrator.cs" />
     <Compile Include="Core\Orchestrators\OrderControllerOrchestrator.cs" />
     <Compile Include="ElmahHandleErrorAttribute.cs" />
+    <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Helpers\EventInvokerHelpers.cs" />
+    <Compile Include="Models\AdminDTO.cs" />
+    <Compile Include="Models\EditBillingAddressModel.cs" />
+    <Compile Include="Models\EditInstitionModel.cs" />
+    <Compile Include="Models\EditNameTitleModel.cs" />
+    <Compile Include="Models\EditShippingAddressModel.cs" />
     <Compile Include="Models\ImportOrderResponse.cs" />
     <Compile Include="Models\IncomingAFOOrder.cs" />
+    <Compile Include="Models\JotFormModel.cs" />
+    <Compile Include="Models\JotFormOrderModel.cs" />
     <Compile Include="Notification\Templates\CertOfCompletionViewModel.cs" />
     <Compile Include="ViewModel\CreateUserConfirmedViewModel.cs" />
     <Compile Include="ViewModel\EmailRequiredBaseViewModel.cs" />
@@ -427,7 +430,6 @@
     <Compile Include="Core\GlobalConfig.cs" />
     <Compile Include="Core\IDTOAssembler.cs" />
     <Compile Include="Core\MyWebinarsDTO.cs" />
-    <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -439,7 +441,6 @@
     <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="Helpers\EnumHelpers.cs" />
     <Compile Include="Helpers\HtmlHelpers.cs" />
-    <Compile Include="Infrastructure\apis\citrix\GTW\CreateRegistration.cs" />
     <Compile Include="Infrastructure\apis\citrix\ShareFile\OAuth2Token.cs" />
     <Compile Include="Infrastructure\apis\citrix\ShareFile\ShareFileV3Sample.cs" />
     <Compile Include="Infrastructure\TenantAuthenticationManager.cs" />
@@ -480,10 +481,7 @@
     <Content Include="App_Data\Orders\ResetsDbForTesting.sql" />
     <Content Include="App_Data\Orders\RegistrationTypeMapping.txt" />
     <Content Include="App_Data\Orders\ResetsDb.sql" />
-    <Content Include="Content\css\affiliateCheckout.css" />
-    <Content Include="Content\css\affStyling.css" />
     <Content Include="Content\css\anytime.css" />
-    <Content Include="Content\css\base-reset.css" />
     <Content Include="Content\css\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\css\base\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Content\css\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
@@ -645,10 +643,6 @@
       <DependentUpon>style.less</DependentUpon>
     </Content>
     <Content Include="Content\css\BootstrapTemplates\style.min.css" />
-    <Content Include="Content\css\checkout.css" />
-    <Content Include="Content\css\Details.css" />
-    <Content Include="Content\css\DSform.css" />
-    <Content Include="Content\css\DSViewer.css" />
     <Content Include="Content\css\firebug.css" />
     <Content Include="Content\css\font-awesome-ie7.min.css" />
     <Content Include="Content\css\font-awesome.css" />
@@ -656,30 +650,21 @@
     <Content Include="Content\css\font\fontawesome-webfont.svg" />
     <Content Include="Content\css\form.css" />
     <Content Include="Content\css\FullCalendar.css" />
-    <Content Include="Content\css\header.css" />
     <Content Include="Content\css\home_index.css" />
     <Content Include="Content\css\html-content-slider-flexslider.css" />
-    <Content Include="Content\css\jHtmlArea.ColorPickerMenu.css" />
-    <Content Include="Content\css\jHtmlArea.css" />
-    <Content Include="Content\css\jHtmlArea.Editor.css" />
     <Content Include="Content\css\jsToolsStyles.css" />
     <Content Include="Content\css\Login.css" />
+    <Content Include="Content\css\logoBW.css" />
+    <Content Include="Content\css\logoCUWebinars.css" />
     <Content Include="Content\css\Notifications.css" />
     <Content Include="Content\css\print.css" />
     <Content Include="Content\css\styles.css" />
-    <Content Include="Content\css\stylesDirectorSeries.css" />
     <Content Include="Content\css\stylesEmail.css" />
-    <Content Include="Content\css\TTSstyles.css" />
     <Content Include="Content\css\ui.jqgrid.css" />
     <Content Include="Content\css\waitButton.css" />
-    <Content Include="Content\img\Auditing.jpg" />
-    <Content Include="Content\img\blankImage.gif" />
     <Content Include="Content\img\CertificateBackground.jpg" />
     <Content Include="Content\img\glyphicons-halflings-white.png" />
     <Content Include="Content\img\glyphicons-halflings.png" />
-    <Content Include="Content\img\jHtmlArea.png" />
-    <Content Include="Content\img\jHtmlArea_Toolbar_Group_BG.png" />
-    <Content Include="Content\img\jHtmlArea_Toolbar_Group__Btn_Select_BG.png" />
     <Content Include="Content\js\affiliateCheckout.js" />
     <Content Include="Content\js\affiliateReport.js" />
     <Content Include="Content\js\affiliateReport4Kyle.js" />
@@ -873,6 +858,746 @@
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
+    <Content Include="Images\aff\ABTC\bannerOrg.png" />
+    <Content Include="Images\aff\accountantwebinar.png" />
+    <Content Include="Images\aff\accountantwebinar\banner.png" />
+    <Content Include="Images\aff\accountingwebinar\banner.png" />
+    <Content Include="Images\aff\ALABAMABANKERS\bannerOrg.png" />
+    <Content Include="Images\aff\ALABAMABANKERS\logo.png" />
+    <Content Include="Images\aff\auroratraining\banner.jpg" />
+    <Content Include="Images\aff\auroratraining\banner.png" />
+    <Content Include="Images\aff\auroratraining\bannerTTSBase.png" />
+    <Content Include="Images\aff\auroratraining\logo.png" />
+    <Content Include="Images\aff\bankerswebinar\banner.png" />
+    <Content Include="Images\aff\bankwebinar.png" />
+    <Content Include="Images\aff\bannerTTSBase.png" />
+    <Content Include="Images\aff\bkg_header.jpg" />
+    <Content Include="Images\aff\calbankers\banner.png" />
+    <Content Include="Images\aff\calbankers\bannerCaption1.jpg" />
+    <Content Include="Images\aff\CBAO\banner.gif" />
+    <Content Include="Images\aff\CBAO\banner.png" />
+    <Content Include="Images\aff\CBAO\bannerOrg.png" />
+    <Content Include="Images\aff\CBAO\footer.png" />
+    <Content Include="Images\aff\CBAO\footerCBAO.gif" />
+    <Content Include="Images\aff\CBAO\header_BaseCFT.png" />
+    <Content Include="Images\aff\CBAO\logo.png" />
+    <Content Include="Images\aff\cft-FLSC\banner.jpg" />
+    <Content Include="Images\aff\cft-FLSC\cft-logo3d_small.jpg" />
+    <Content Include="Images\aff\cft-FLSC\header_BaseCFT.png" />
+    <Content Include="Images\aff\cft-FLSC\image001.gif" />
+    <Content Include="Images\aff\CFTACS\logo.png" />
+    <Content Include="Images\aff\cftgpr\banner.jpg" />
+    <Content Include="Images\aff\cftgpr\header_footer.jpg" />
+    <Content Include="Images\aff\CFTUNY\logo.png" />
+    <Content Include="Images\aff\CFTVA\logo.png" />
+    <Content Include="Images\aff\CTBANK\logo.png" />
+    <Content Include="Images\aff\cuwebinars\banner.png" />
+    <Content Include="Images\aff\CUWebinar\banner.png" />
+    <Content Include="Images\aff\footerCFT.gif" />
+    <Content Include="Images\aff\GABANKERS\bannerOrg.png" />
+    <Content Include="Images\aff\GABANKERS\logo.png" />
+    <Content Include="Images\aff\GregSouther\banner.jpg" />
+    <Content Include="Images\aff\header.jpg" />
+    <Content Include="Images\aff\header_.jpg" />
+    <Content Include="Images\aff\header_11240.jpg" />
+    <Content Include="Images\aff\header_29.jpg" />
+    <Content Include="Images\aff\header_BaseCFT.png" />
+    <Content Include="Images\aff\header_Footer_BaseCFT.png" />
+    <Content Include="Images\aff\IDAHOBANKERS\banner.jpg" />
+    <Content Include="Images\aff\IDAHOBANKERS\bannerOrg.png" />
+    <Content Include="Images\aff\IDAHOBANKERS\header_Base.png" />
+    <Content Include="Images\aff\IDAHOBANKERS\logo.png" />
+    <Content Include="Images\aff\ILBANKER\logo.gif" />
+    <Content Include="Images\aff\ILBANKER\logo.png" />
+    <Content Include="Images\aff\ILFI\bannerOrg.png" />
+    <Content Include="Images\aff\INDIANABANKERS\bannerOrg.png" />
+    <Content Include="Images\aff\interactive\header.jpg" />
+    <Content Include="Images\aff\LBA\bannerOrg.png" />
+    <Content Include="Images\aff\LBA\logo.png" />
+    <Content Include="Images\aff\logo.png" />
+    <Content Include="Images\aff\MASSBANKERS\logo.png" />
+    <Content Include="Images\aff\MINNBANKERS\bannerOrg.png" />
+    <Content Include="Images\aff\MINNBANKERS\logo.jpg" />
+    <Content Include="Images\aff\MINNBANKERS\logo.png" />
+    <Content Include="Images\aff\NCBANKERS\logo.png" />
+    <Content Include="Images\aff\ncba\bannerOrg.png" />
+    <Content Include="Images\aff\NHBANKERS\bannerOrg.png" />
+    <Content Include="Images\aff\NHBANKERS\logo.png" />
+    <Content Include="Images\aff\NJBANKERS\logo.png" />
+    <Content Include="Images\aff\nmbankers\banner.jpg" />
+    <Content Include="Images\aff\nmbankers\banner.png" />
+    <Content Include="Images\aff\nmbankers\bannerCaption1.jpg" />
+    <Content Include="Images\aff\NVBANKERS\bannerOrg.png" />
+    <Content Include="Images\aff\NVBANKERS\logo.png" />
+    <Content Include="Images\aff\NYBA\banner.jpg" />
+    <Content Include="Images\aff\NYBA\logo.jpg" />
+    <Content Include="Images\aff\NYBA\logoOld.png" />
+    <Content Include="Images\aff\OREGONBANKERS\bannerOrg.png" />
+    <Content Include="Images\aff\OREGONBANKERS\logo.png" />
+    <Content Include="Images\aff\VABANKERS\bannerOrg.png" />
+    <Content Include="Images\aff\VABANKERS\logo.png" />
+    <Content Include="Images\aff\wisbank\banner.jpg" />
+    <Content Include="Images\aff\wisbank\banner.png" />
+    <Content Include="Images\aff\wisbank\bannerTTSBase.png" />
+    <Content Include="Images\aff\wisbank\logo.png" />
+    <Content Include="Images\aff\WVBANKERS\BannerLogo.jpg" />
+    <Content Include="Images\aff\WVBANKERS\logo.png" />
+    <Content Include="Images\aff\wyomingbankers\bannerOrg.png" />
+    <Content Include="Images\aff\wyomingbankers\logo.png" />
+    <Content Include="Images\ajax-loader.gif" />
+    <Content Include="Images\back_disabled.jpg" />
+    <Content Include="Images\back_enabled.jpg" />
+    <Content Include="Images\BankWebinars\10p.png" />
+    <Content Include="Images\BankWebinars\30p.png" />
+    <Content Include="Images\BankWebinars\50p.png" />
+    <Content Include="Images\BankWebinars\5p.png" />
+    <Content Include="Images\BankWebinars\70p.png" />
+    <Content Include="Images\BankWebinars\70pwhite.png" />
+    <Content Include="Images\BankWebinars\7p.png" />
+    <Content Include="Images\BankWebinars\80p.png" />
+    <Content Include="Images\BankWebinars\80pwhite.png" />
+    <Content Include="Images\BankWebinars\accent.png" />
+    <Content Include="Images\BankWebinars\apple-touch-icon-114x114-precomposed.png" />
+    <Content Include="Images\BankWebinars\apple-touch-icon-144x144-precomposed.png" />
+    <Content Include="Images\BankWebinars\apple-touch-icon-57x57-precomposed.png" />
+    <Content Include="Images\BankWebinars\apple-touch-icon-72x72-precomposed.png" />
+    <Content Include="Images\BankWebinars\apple-touch-icon.png" />
+    <Content Include="Images\BankWebinars\bullet.png" />
+    <Content Include="Images\BankWebinars\favicon.ico" />
+    <Content Include="Images\BankWebinars\heroAccent.png" />
+    <Content Include="Images\BankWebinars\hr.png" />
+    <Content Include="Images\BankWebinars\img_corner.png" />
+    <Content Include="Images\BankWebinars\loader.gif" />
+    <Content Include="Images\BankWebinars\logo.fw.png" />
+    <Content Include="Images\BankWebinars\logo.gif" />
+    <Content Include="Images\BankWebinars\logo.jpg" />
+    <Content Include="Images\BankWebinars\logo.png" />
+    <Content Include="Images\BankWebinars\logoBW.png" />
+    <Content Include="Images\BankWebinars\Logo\BankWebinarFinalLogo.jpg" />
+    <Content Include="Images\BankWebinars\Logo\BankWebinarFinalLogo.png" />
+    <Content Include="Images\BankWebinars\Logo\BankWebinarFinalLogo.tif" />
+    <Content Include="Images\BankWebinars\menu\Auditing.jpg" />
+    <Content Include="Images\BankWebinars\menu\Compliance.fw.png" />
+    <Content Include="Images\BankWebinars\menu\Compliance.jpg" />
+    <Content Include="Images\BankWebinars\menu\CustomerService.jpg" />
+    <Content Include="Images\BankWebinars\menu\HumanResources.jpg" />
+    <Content Include="Images\BankWebinars\menu\Lending.jpg" />
+    <Content Include="Images\BankWebinars\menu\L\Auditing.jpg" />
+    <Content Include="Images\BankWebinars\menu\L\Compliance.jpg" />
+    <Content Include="Images\BankWebinars\menu\L\Compliance1.jpg" />
+    <Content Include="Images\BankWebinars\menu\L\CustomerService.jpg" />
+    <Content Include="Images\BankWebinars\menu\L\HumanResources.jpg" />
+    <Content Include="Images\BankWebinars\menu\L\iStock_000011910155_ExtraSmall.jpg" />
+    <Content Include="Images\BankWebinars\menu\L\Lending.jpg" />
+    <Content Include="Images\BankWebinars\menu\L\Operations.jpg" />
+    <Content Include="Images\BankWebinars\menu\L\RiskManagement.jpg" />
+    <Content Include="Images\BankWebinars\menu\L\Sales.jpg" />
+    <Content Include="Images\BankWebinars\menu\L\Security.jpg" />
+    <Content Include="Images\BankWebinars\menu\L\Teller.jpg" />
+    <Content Include="Images\BankWebinars\menu\Operations.jpg" />
+    <Content Include="Images\BankWebinars\menu\RiskManagement.jpg" />
+    <Content Include="Images\BankWebinars\menu\Sales.jpg" />
+    <Content Include="Images\BankWebinars\menu\Security.jpg" />
+    <Content Include="Images\BankWebinars\menu\Teller.jpg" />
+    <Content Include="Images\BankWebinars\menu_arrow.png" />
+    <Content Include="Images\BankWebinars\navtriggerbg.png" />
+    <Content Include="Images\BankWebinars\open-quote-white.png" />
+    <Content Include="Images\BankWebinars\open-quote.png" />
+    <Content Include="Images\BankWebinars\orderedList0.png" />
+    <Content Include="Images\BankWebinars\orderedList1.png" />
+    <Content Include="Images\BankWebinars\orderedList2.png" />
+    <Content Include="Images\BankWebinars\orderedList3.png" />
+    <Content Include="Images\BankWebinars\orderedList4.png" />
+    <Content Include="Images\BankWebinars\orderedList5.png" />
+    <Content Include="Images\BankWebinars\orderedList6.png" />
+    <Content Include="Images\BankWebinars\orderedList7.png" />
+    <Content Include="Images\BankWebinars\orderedList8.png" />
+    <Content Include="Images\BankWebinars\orderedList9.png" />
+    <Content Include="Images\BankWebinars\plus.png" />
+    <Content Include="Images\BankWebinars\print-logo.png" />
+    <Content Include="Images\BankWebinars\retina\hr_%402x.png" />
+    <Content Include="Images\BankWebinars\retina\loader_%402x.gif" />
+    <Content Include="Images\BankWebinars\retina\logo_%402x.png" />
+    <Content Include="Images\BankWebinars\retina\logo_%402xBW.png" />
+    <Content Include="Images\BankWebinars\retina\menu_arrow_%402x.png" />
+    <Content Include="Images\BankWebinars\retina\NASNaviInst.exe" />
+    <Content Include="Images\BankWebinars\retina\navtriggerbg_%402x.png" />
+    <Content Include="Images\BankWebinars\retina\open-quote-white_%402x.png" />
+    <Content Include="Images\BankWebinars\retina\open-quote_%402x.png" />
+    <Content Include="Images\BankWebinars\retina\plus_%402x.png" />
+    <Content Include="Images\BankWebinars\retina\search_%402x.png" />
+    <Content Include="Images\BankWebinars\retina\sidebar-list-icon_%402x.png" />
+    <Content Include="Images\BankWebinars\retina\sliderarrows_%402x.png" />
+    <Content Include="Images\BankWebinars\retina\tall-logo-desktop_%402x.png" />
+    <Content Include="Images\BankWebinars\retina\tall-logo-mobile_%402x.png" />
+    <Content Include="Images\BankWebinars\retina\top_%402x.png" />
+    <Content Include="Images\BankWebinars\retina\TTSLogo.fw.png" />
+    <Content Include="Images\BankWebinars\retina\video-icon-small_%402x.png" />
+    <Content Include="Images\BankWebinars\retina\videoicon_%402x.png" />
+    <Content Include="Images\BankWebinars\retina\zoom-corner_%402x.png" />
+    <Content Include="Images\BankWebinars\rule.png" />
+    <Content Include="Images\BankWebinars\search.png" />
+    <Content Include="Images\BankWebinars\sidebar-list-icon.png" />
+    <Content Include="Images\BankWebinars\sign-in-facebook.png" />
+    <Content Include="Images\BankWebinars\sign-in-google.png" />
+    <Content Include="Images\BankWebinars\sign-in-linkedin.png" />
+    <Content Include="Images\BankWebinars\sign-in-openid.png" />
+    <Content Include="Images\BankWebinars\sign-in-twitter.png" />
+    <Content Include="Images\BankWebinars\sign-in-yahoo.png" />
+    <Content Include="Images\BankWebinars\sliderarrows.png" />
+    <Content Include="Images\BankWebinars\tall-logo-desktop.png" />
+    <Content Include="Images\BankWebinars\tall-logo-mobile.png" />
+    <Content Include="Images\BankWebinars\top.png" />
+    <Content Include="Images\BankWebinars\trans.gif" />
+    <Content Include="Images\BankWebinars\video-icon-small.png" />
+    <Content Include="Images\BankWebinars\video-icon.png" />
+    <Content Include="Images\BankWebinars\videoicon.png" />
+    <Content Include="Images\BankWebinars\vrLocal\checkoutwebsite.gif" />
+    <Content Include="Images\BankWebinars\vrLocal\footer.gif" />
+    <Content Include="Images\BankWebinars\vrLocal\hardware_2_footer.jpg" />
+    <Content Include="Images\BankWebinars\vrLocal\hardware_2_header_1.jpg" />
+    <Content Include="Images\BankWebinars\vrLocal\large_box_bottom.gif" />
+    <Content Include="Images\BankWebinars\vrLocal\large_box_top.gif" />
+    <Content Include="Images\BankWebinars\vrLocal\left_shadow.jpg" />
+    <Content Include="Images\BankWebinars\vrLocal\logo.png" />
+    <Content Include="Images\BankWebinars\vrLocal\right_shadow.jpg" />
+    <Content Include="Images\BankWebinars\vrLocal\spacer.gif" />
+    <Content Include="Images\BankWebinars\vrLocal\top_shadow.jpg" />
+    <Content Include="Images\BankWebinars\Webinars\w1534\cert.jpg" />
+    <Content Include="Images\BankWebinars\zoom-corner.png" />
+    <Content Include="Images\bannerCalendar.png" />
+    <Content Include="Images\bg.jpg" />
+    <Content Include="Images\bkg_headerWS.jpg" />
+    <Content Include="Images\bwBanner.png" />
+    <Content Include="Images\Calendar.gif" />
+    <Content Include="Images\Calendar.png" />
+    <Content Include="Images\cert.png" />
+    <Content Include="Images\certDS.gif" />
+    <Content Include="Images\certDS.png" />
+    <Content Include="Images\Close.png" />
+    <Content Include="Images\CoC_DS_Back.png" />
+    <Content Include="Images\compass.jpg" />
+    <Content Include="Images\compass.png" />
+    <Content Include="Images\confirmHead.png" />
+    <Content Include="Images\connectionHead.png" />
+    <Content Include="Images\costonis.jpg" />
+    <Content Include="Images\CUWebinars\10p.png" />
+    <Content Include="Images\CUWebinars\30p.png" />
+    <Content Include="Images\CUWebinars\50p.png" />
+    <Content Include="Images\CUWebinars\5p.png" />
+    <Content Include="Images\CUWebinars\70p.png" />
+    <Content Include="Images\CUWebinars\70pwhite.png" />
+    <Content Include="Images\CUWebinars\7p.png" />
+    <Content Include="Images\CUWebinars\80p.png" />
+    <Content Include="Images\CUWebinars\80pwhite.png" />
+    <Content Include="Images\CUWebinars\accent.png" />
+    <Content Include="Images\CUWebinars\apple-touch-icon-114x114-precomposed.png" />
+    <Content Include="Images\CUWebinars\apple-touch-icon-144x144-precomposed.png" />
+    <Content Include="Images\CUWebinars\apple-touch-icon-57x57-precomposed.png" />
+    <Content Include="Images\CUWebinars\apple-touch-icon-72x72-precomposed.png" />
+    <Content Include="Images\CUWebinars\apple-touch-icon.png" />
+    <Content Include="Images\CUWebinars\bullet.png" />
+    <Content Include="Images\CUWebinars\favicon.ico" />
+    <Content Include="Images\CUWebinars\heroAccent.png" />
+    <Content Include="Images\CUWebinars\hr.png" />
+    <Content Include="Images\CUWebinars\img_corner.png" />
+    <Content Include="Images\CUWebinars\loader.gif" />
+    <Content Include="Images\CUWebinars\logo.fw.png" />
+    <Content Include="Images\CUWebinars\logo.gif" />
+    <Content Include="Images\CUWebinars\logo.jpg" />
+    <Content Include="Images\CUWebinars\logo.png" />
+    <Content Include="Images\CUWebinars\Logo\BankWebinarFinalLogo.jpg" />
+    <Content Include="Images\CUWebinars\Logo\BankWebinarFinalLogo.png" />
+    <Content Include="Images\CUWebinars\Logo\BankWebinarFinalLogo.tif" />
+    <Content Include="Images\CUWebinars\menu\Auditing.jpg" />
+    <Content Include="Images\CUWebinars\menu\Compliance.fw.png" />
+    <Content Include="Images\CUWebinars\menu\Compliance.jpg" />
+    <Content Include="Images\CUWebinars\menu\CustomerService.jpg" />
+    <Content Include="Images\CUWebinars\menu\HumanResources.jpg" />
+    <Content Include="Images\CUWebinars\menu\Lending.jpg" />
+    <Content Include="Images\CUWebinars\menu\L\Auditing.jpg" />
+    <Content Include="Images\CUWebinars\menu\L\Compliance.jpg" />
+    <Content Include="Images\CUWebinars\menu\L\Compliance1.jpg" />
+    <Content Include="Images\CUWebinars\menu\L\CustomerService.jpg" />
+    <Content Include="Images\CUWebinars\menu\L\HumanResources.jpg" />
+    <Content Include="Images\CUWebinars\menu\L\iStock_000011910155_ExtraSmall.jpg" />
+    <Content Include="Images\CUWebinars\menu\L\Lending.jpg" />
+    <Content Include="Images\CUWebinars\menu\L\Operations.jpg" />
+    <Content Include="Images\CUWebinars\menu\L\RiskManagement.jpg" />
+    <Content Include="Images\CUWebinars\menu\L\Sales.jpg" />
+    <Content Include="Images\CUWebinars\menu\L\Security.jpg" />
+    <Content Include="Images\CUWebinars\menu\L\Teller.jpg" />
+    <Content Include="Images\CUWebinars\menu\Operations.jpg" />
+    <Content Include="Images\CUWebinars\menu\RiskManagement.jpg" />
+    <Content Include="Images\CUWebinars\menu\Sales.jpg" />
+    <Content Include="Images\CUWebinars\menu\Security.jpg" />
+    <Content Include="Images\CUWebinars\menu\Teller.jpg" />
+    <Content Include="Images\CUWebinars\menu_arrow.png" />
+    <Content Include="Images\CUWebinars\navtriggerbg.png" />
+    <Content Include="Images\CUWebinars\open-quote-white.png" />
+    <Content Include="Images\CUWebinars\open-quote.png" />
+    <Content Include="Images\CUWebinars\orderedList0.png" />
+    <Content Include="Images\CUWebinars\orderedList1.png" />
+    <Content Include="Images\CUWebinars\orderedList2.png" />
+    <Content Include="Images\CUWebinars\orderedList3.png" />
+    <Content Include="Images\CUWebinars\orderedList4.png" />
+    <Content Include="Images\CUWebinars\orderedList5.png" />
+    <Content Include="Images\CUWebinars\orderedList6.png" />
+    <Content Include="Images\CUWebinars\orderedList7.png" />
+    <Content Include="Images\CUWebinars\orderedList8.png" />
+    <Content Include="Images\CUWebinars\orderedList9.png" />
+    <Content Include="Images\CUWebinars\plus.png" />
+    <Content Include="Images\CUWebinars\print-logo.png" />
+    <Content Include="Images\CUWebinars\retina\hr_%402x.png" />
+    <Content Include="Images\CUWebinars\retina\loader_%402x.gif" />
+    <Content Include="Images\CUWebinars\retina\logo_%402x.png" />
+    <Content Include="Images\CUWebinars\retina\menu_arrow_%402x.png" />
+    <Content Include="Images\CUWebinars\retina\NASNaviInst.exe" />
+    <Content Include="Images\CUWebinars\retina\navtriggerbg_%402x.png" />
+    <Content Include="Images\CUWebinars\retina\open-quote-white_%402x.png" />
+    <Content Include="Images\CUWebinars\retina\open-quote_%402x.png" />
+    <Content Include="Images\CUWebinars\retina\plus_%402x.png" />
+    <Content Include="Images\CUWebinars\retina\search_%402x.png" />
+    <Content Include="Images\CUWebinars\retina\sidebar-list-icon_%402x.png" />
+    <Content Include="Images\CUWebinars\retina\sliderarrows_%402x.png" />
+    <Content Include="Images\CUWebinars\retina\tall-logo-desktop_%402x.png" />
+    <Content Include="Images\CUWebinars\retina\tall-logo-mobile_%402x.png" />
+    <Content Include="Images\CUWebinars\retina\top_%402x.png" />
+    <Content Include="Images\CUWebinars\retina\TTSLogo.fw.png" />
+    <Content Include="Images\CUWebinars\retina\video-icon-small_%402x.png" />
+    <Content Include="Images\CUWebinars\retina\videoicon_%402x.png" />
+    <Content Include="Images\CUWebinars\retina\zoom-corner_%402x.png" />
+    <Content Include="Images\CUWebinars\rule.png" />
+    <Content Include="Images\CUWebinars\search.png" />
+    <Content Include="Images\CUWebinars\sidebar-list-icon.png" />
+    <Content Include="Images\CUWebinars\sign-in-facebook.png" />
+    <Content Include="Images\CUWebinars\sign-in-google.png" />
+    <Content Include="Images\CUWebinars\sign-in-linkedin.png" />
+    <Content Include="Images\CUWebinars\sign-in-openid.png" />
+    <Content Include="Images\CUWebinars\sign-in-twitter.png" />
+    <Content Include="Images\CUWebinars\sign-in-yahoo.png" />
+    <Content Include="Images\CUWebinars\sliderarrows.png" />
+    <Content Include="Images\CUWebinars\tall-logo-desktop.png" />
+    <Content Include="Images\CUWebinars\tall-logo-mobile.png" />
+    <Content Include="Images\CUWebinars\top.png" />
+    <Content Include="Images\CUWebinars\trans.gif" />
+    <Content Include="Images\CUWebinars\video-icon-small.png" />
+    <Content Include="Images\CUWebinars\video-icon.png" />
+    <Content Include="Images\CUWebinars\videoicon.png" />
+    <Content Include="Images\CUWebinars\vrLocal\checkoutwebsite.gif" />
+    <Content Include="Images\CUWebinars\vrLocal\footer.gif" />
+    <Content Include="Images\CUWebinars\vrLocal\hardware_2_footer.jpg" />
+    <Content Include="Images\CUWebinars\vrLocal\hardware_2_header_1.jpg" />
+    <Content Include="Images\CUWebinars\vrLocal\large_box_bottom.gif" />
+    <Content Include="Images\CUWebinars\vrLocal\large_box_top.gif" />
+    <Content Include="Images\CUWebinars\vrLocal\left_shadow.jpg" />
+    <Content Include="Images\CUWebinars\vrLocal\logo.png" />
+    <Content Include="Images\CUWebinars\vrLocal\right_shadow.jpg" />
+    <Content Include="Images\CUWebinars\vrLocal\spacer.gif" />
+    <Content Include="Images\CUWebinars\vrLocal\top_shadow.jpg" />
+    <Content Include="Images\CUWebinars\Webinars\w1534\cert.jpg" />
+    <Content Include="Images\CUWebinars\zoom-corner.png" />
+    <Content Include="Images\delete.png" />
+    <Content Include="Images\DSCert.gif" />
+    <Content Include="Images\DSCert.png" />
+    <Content Include="Images\emailHeaderLeft.png" />
+    <Content Include="Images\emailHeaderR.png" />
+    <Content Include="Images\email\ABTC\bannerCaption1.jpg" />
+    <Content Include="Images\email\ABTC\bannerOrg.png" />
+    <Content Include="Images\email\addressCenter.jpg" />
+    <Content Include="Images\email\addressLeft.jpg" />
+    <Content Include="Images\email\addressLine.jpg" />
+    <Content Include="Images\email\addressRight.jpg" />
+    <Content Include="Images\email\afflist.txt" />
+    <Content Include="Images\email\ALABAMABANKERS\bannerCaption1.jpg" />
+    <Content Include="Images\email\ARKBANKERS\banner.jpg" />
+    <Content Include="Images\email\ARKBANKERS\banner.png" />
+    <Content Include="Images\email\ARKBANKERS\bannerCaption1.jpg" />
+    <Content Include="Images\email\ARKBANKERS\bannerCaption1.png" />
+    <Content Include="Images\email\auroratraining\banner.jpg" />
+    <Content Include="Images\email\auroratraining\banner.png" />
+    <Content Include="Images\email\auroratraining\bannerCaption1.jpg" />
+    <Content Include="Images\email\auroratraining\bannerTTSBase.png" />
+    <Content Include="Images\email\banner.png" />
+    <Content Include="Images\email\bannerCalendar.png" />
+    <Content Include="Images\email\bannerCaption.jpg" />
+    <Content Include="Images\email\bannerCaption.png" />
+    <Content Include="Images\email\BannerLogo.jpg" />
+    <Content Include="Images\email\BannerOrg.png" />
+    <Content Include="Images\email\bennett\addressCenter.jpg" />
+    <Content Include="Images\email\bennett\addressLeft.jpg" />
+    <Content Include="Images\email\bennett\addressRight.jpg" />
+    <Content Include="Images\email\bennett\bannerCaption.jpg" />
+    <Content Include="Images\email\bennett\bannerCaption1.jpg" />
+    <Content Include="Images\email\bennett\BannerLogo.jpg" />
+    <Content Include="Images\email\bennett\BWNewsletter.htm" />
+    <Content Include="Images\email\bennett\spacer.gif" />
+    <Content Include="Images\email\calbankers\banner.jpg" />
+    <Content Include="Images\email\calbankers\bannerCaption1.jpg" />
+    <Content Include="Images\email\CBAO\bannerCaption1.jpg" />
+    <Content Include="Images\email\CFT-FLSC\banner.jpg" />
+    <Content Include="Images\email\CFT-FLSC\banner.png" />
+    <Content Include="Images\email\CFT-FLSC\bannerCaption1.jpg" />
+    <Content Include="Images\email\CFTACS\bannerCaption1.jpg" />
+    <Content Include="Images\email\CFTACS\bannerOrg.png" />
+    <Content Include="Images\email\CFTEA\addressCenter.jpg" />
+    <Content Include="Images\email\CFTEA\addressLeft.jpg" />
+    <Content Include="Images\email\CFTEA\addressRight.jpg" />
+    <Content Include="Images\email\CFTEA\banner.jpg" />
+    <Content Include="Images\email\CFTEA\bannerCaption.jpg" />
+    <Content Include="Images\email\CFTEA\bannerCaption1.jpg" />
+    <Content Include="Images\email\CFTEA\BannerLogo.jpg" />
+    <Content Include="Images\email\CFTEA\CFTNCS.htm" />
+    <Content Include="Images\email\CFTEA\CFTTS.htm" />
+    <Content Include="Images\email\CFTEA\spacer.gif" />
+    <Content Include="Images\email\cftgpr\addressCenter.jpg" />
+    <Content Include="Images\email\cftgpr\addressLeft.jpg" />
+    <Content Include="Images\email\cftgpr\addressRight.jpg" />
+    <Content Include="Images\email\cftgpr\banner.jpg" />
+    <Content Include="Images\email\cftgpr\bannerCaption.jpg" />
+    <Content Include="Images\email\cftgpr\bannerCaption1.jpg" />
+    <Content Include="Images\email\cftgpr\BannerLogo.jpg" />
+    <Content Include="Images\email\cftgpr\spacer.gif" />
+    <Content Include="Images\email\cftncs\addressCenter.jpg" />
+    <Content Include="Images\email\cftncs\addressLeft.jpg" />
+    <Content Include="Images\email\cftncs\addressRight.jpg" />
+    <Content Include="Images\email\cftncs\banner.jpg" />
+    <Content Include="Images\email\cftncs\bannerCaption.jpg" />
+    <Content Include="Images\email\cftncs\bannerCaption1.jpg" />
+    <Content Include="Images\email\cftncs\BannerLogo.jpg" />
+    <Content Include="Images\email\cftncs\CFTNCS.htm" />
+    <Content Include="Images\email\cftncs\spacer.gif" />
+    <Content Include="Images\email\CFTNJ\bannerCaption1.jpg" />
+    <Content Include="Images\email\CFTOZ\banner.jpg" />
+    <Content Include="Images\email\CFTOZ\banner.png" />
+    <Content Include="Images\email\CFTOZ\bannerCaption1.jpg" />
+    <Content Include="Images\email\CFTRNY\bannerOrg.png" />
+    <Content Include="Images\email\CFTSCS\bannerCaption1.jpg" />
+    <Content Include="Images\email\cftser\addressCenter.jpg" />
+    <Content Include="Images\email\cftser\addressLeft.jpg" />
+    <Content Include="Images\email\cftser\addressRight.jpg" />
+    <Content Include="Images\email\cftser\bannerCaption.jpg" />
+    <Content Include="Images\email\cftser\bannerCaption1.jpg" />
+    <Content Include="Images\email\cftser\BannerLogo.jpg" />
+    <Content Include="Images\email\cftser\CFTSER.htm" />
+    <Content Include="Images\email\cftser\spacer.gif" />
+    <Content Include="Images\email\cftsf\addressCenter.jpg" />
+    <Content Include="Images\email\cftsf\addressLeft.jpg" />
+    <Content Include="Images\email\cftsf\addressRight.jpg" />
+    <Content Include="Images\email\cftsf\banner.jpg" />
+    <Content Include="Images\email\cftsf\bannerCaption.jpg" />
+    <Content Include="Images\email\cftsf\bannerCaption1.jpg" />
+    <Content Include="Images\email\cftsf\BannerLogo.jpg" />
+    <Content Include="Images\email\cftsf\CFTSF.htm" />
+    <Content Include="Images\email\cftsf\spacer.gif" />
+    <Content Include="Images\email\cftts\addressCenter.jpg" />
+    <Content Include="Images\email\cftts\addressLeft.jpg" />
+    <Content Include="Images\email\cftts\addressRight.jpg" />
+    <Content Include="Images\email\cftts\banner.jpg" />
+    <Content Include="Images\email\cftts\bannerCaption.jpg" />
+    <Content Include="Images\email\cftts\bannerCaption1.jpg" />
+    <Content Include="Images\email\cftts\BannerLogo.jpg" />
+    <Content Include="Images\email\cftts\CFTTS.htm" />
+    <Content Include="Images\email\cftts\spacer.gif" />
+    <Content Include="Images\email\CFTUMW\banner.jpg" />
+    <Content Include="Images\email\CFTUMW\banner.png" />
+    <Content Include="Images\email\cftum\addressCenter.jpg" />
+    <Content Include="Images\email\cftum\addressLeft.jpg" />
+    <Content Include="Images\email\cftum\addressRight.jpg" />
+    <Content Include="Images\email\cftum\banner.jpg" />
+    <Content Include="Images\email\cftum\bannerCaption.jpg" />
+    <Content Include="Images\email\cftum\bannerCaption1.jpg" />
+    <Content Include="Images\email\cftum\BannerLogo.jpg" />
+    <Content Include="Images\email\cftum\CFTUM.htm" />
+    <Content Include="Images\email\cftum\spacer.gif" />
+    <Content Include="Images\email\CFTUNY\bannerCaption1.jpg" />
+    <Content Include="Images\email\CFTVA\bannerCaption1.jpg" />
+    <Content Include="Images\email\CFTVA\bannerOrg.png" />
+    <Content Include="Images\email\cftws\addressCenter.jpg" />
+    <Content Include="Images\email\cftws\addressLeft.jpg" />
+    <Content Include="Images\email\cftws\addressRight.jpg" />
+    <Content Include="Images\email\cftws\banner.jpg" />
+    <Content Include="Images\email\cftws\bannerCaption.jpg" />
+    <Content Include="Images\email\cftws\bannerCaption1.jpg" />
+    <Content Include="Images\email\cftws\BannerLogo.jpg" />
+    <Content Include="Images\email\cftws\CFTWS.htm" />
+    <Content Include="Images\email\cftws\spacer.gif" />
+    <Content Include="Images\email\CPD\bannerCaption1.jpg" />
+    <Content Include="Images\email\CTBANK\bannerCaption1.jpg" />
+    <Content Include="Images\email\emailbanner.htm" />
+    <Content Include="Images\email\GABANKERS\banner.jpg" />
+    <Content Include="Images\email\GABANKERS\banner.png" />
+    <Content Include="Images\email\GABANKERS\bannerCaption1.jpg" />
+    <Content Include="Images\email\GABANKERS\bannerOrg.png" />
+    <Content Include="Images\email\GABANKERS\logo.png" />
+    <Content Include="Images\email\GREGSOUTHER\banner.jpg" />
+    <Content Include="Images\email\GREGSOUTHER\banner.png" />
+    <Content Include="Images\email\GREGSOUTHER\bannerCalendarGregSouther.png" />
+    <Content Include="Images\email\GREGSOUTHER\bannerCaption1.jpg" />
+    <Content Include="Images\email\GREGSOUTHER\bannerCaption1TTSCoBrand.jpg" />
+    <Content Include="Images\email\GREGSOUTHER\bannerCaptionGregSouther.png" />
+    <Content Include="Images\email\GREGSOUTHER\bwbanner.jpg" />
+    <Content Include="Images\email\GREGSOUTHER\upcomingwebinars1.jpg" />
+    <Content Include="Images\email\gscs\addressCenter.jpg" />
+    <Content Include="Images\email\gscs\addressLeft.jpg" />
+    <Content Include="Images\email\gscs\addressRight.jpg" />
+    <Content Include="Images\email\gscs\Banner.jpg" />
+    <Content Include="Images\email\gscs\bannerCaption.jpg" />
+    <Content Include="Images\email\gscs\bannerCaption.png" />
+    <Content Include="Images\email\gscs\BannerLogo.jpg" />
+    <Content Include="Images\email\gscs\BWNewsletter.htm" />
+    <Content Include="Images\email\gscs\gcsc.htm" />
+    <Content Include="Images\email\gscs\gcsc.png" />
+    <Content Include="Images\email\gscs\spacer.gif" />
+    <Content Include="Images\email\header_BaseCFT.png" />
+    <Content Include="Images\email\header_BaseKBTTS.png" />
+    <Content Include="Images\email\iba\addressCenter.jpg" />
+    <Content Include="Images\email\iba\addressLeft.jpg" />
+    <Content Include="Images\email\iba\addressRight.jpg" />
+    <Content Include="Images\email\iba\bannerCaption.jpg" />
+    <Content Include="Images\email\iba\BannerLogo.jpg" />
+    <Content Include="Images\email\iba\IBA.htm" />
+    <Content Include="Images\email\iba\spacer.gif" />
+    <Content Include="Images\email\IDAHOBANKERS\banner.jpg" />
+    <Content Include="Images\email\IDAHOBANKERS\banner.png" />
+    <Content Include="Images\email\IDAHOBANKERS\bannerCaption1.jpg" />
+    <Content Include="Images\email\ILBANKER\banner.jpg" />
+    <Content Include="Images\email\ILBANKER\banner.png" />
+    <Content Include="Images\email\ILBANKER\bannerCaption1.jpg" />
+    <Content Include="Images\email\ILFI\bannerCaption1.jpg" />
+    <Content Include="Images\email\ILFI\bannerOrg.png" />
+    <Content Include="Images\email\INDIANABANKERS\bannerCaption1.jpg" />
+    <Content Include="Images\email\interaction-training\bannerCaption1.jpg" />
+    <Content Include="Images\email\LBA\bannerCaption1.jpg" />
+    <Content Include="Images\email\logo.png" />
+    <Content Include="Images\email\MASSBANKERS\bannerCaption1.jpg" />
+    <Content Include="Images\email\MIBankers\addressCenter.jpg" />
+    <Content Include="Images\email\MIBankers\addressLeft.jpg" />
+    <Content Include="Images\email\MIBankers\addressRight.jpg" />
+    <Content Include="Images\email\MIBankers\banner.jpg" />
+    <Content Include="Images\email\MIBankers\banner.png" />
+    <Content Include="Images\email\MIBankers\bannerCaption.jpg" />
+    <Content Include="Images\email\MIBankers\bannerCaption1.jpg" />
+    <Content Include="Images\email\MIBankers\BannerLogo.jpg" />
+    <Content Include="Images\email\MIBankers\CFTTS.htm" />
+    <Content Include="Images\email\MIBankers\miHeadLogo.jpg" />
+    <Content Include="Images\email\MIBankers\spacer.gif" />
+    <Content Include="Images\email\MINNBANKERS\bannerCaption1.jpg" />
+    <Content Include="Images\email\NCBANKERS\banner.jpg" />
+    <Content Include="Images\email\NCBANKERS\banner.png" />
+    <Content Include="Images\email\NCBANKERS\bannerCaption1.jpg" />
+    <Content Include="Images\email\ncba\addressCenter.jpg" />
+    <Content Include="Images\email\ncba\addressLeft.jpg" />
+    <Content Include="Images\email\ncba\addressRight.jpg" />
+    <Content Include="Images\email\ncba\bannerCaption.jpg" />
+    <Content Include="Images\email\ncba\BannerLogo.jpg" />
+    <Content Include="Images\email\ncba\NCBA.htm" />
+    <Content Include="Images\email\ncba\spacer.gif" />
+    <Content Include="Images\email\ndba\addressCenter.jpg" />
+    <Content Include="Images\email\ndba\addressLeft.jpg" />
+    <Content Include="Images\email\ndba\addressRight.jpg" />
+    <Content Include="Images\email\ndba\Banner.jpg" />
+    <Content Include="Images\email\ndba\bannerCaption.jpg" />
+    <Content Include="Images\email\ndba\bannerCaption1.jpg" />
+    <Content Include="Images\email\ndba\BannerLogo.jpg" />
+    <Content Include="Images\email\ndba\CFTTS.htm" />
+    <Content Include="Images\email\ndba\spacer.gif" />
+    <Content Include="Images\email\NHBANKERS\bannerCaption1.jpg" />
+    <Content Include="Images\email\nmbankers\banner.jpg" />
+    <Content Include="Images\email\nmbankers\banner.png" />
+    <Content Include="Images\email\nmbankers\bannerCaption1.jpg" />
+    <Content Include="Images\email\NVBANKERS\bannerCaption1.jpg" />
+    <Content Include="Images\email\NYBA\banner.jpg" />
+    <Content Include="Images\email\NYBA\bannerCaption1.jpg" />
+    <Content Include="Images\email\NYBA\header_Base.png" />
+    <Content Include="Images\email\onDemand.jpg" />
+    <Content Include="Images\email\OREGONBANKERS\bannerCaption1.jpg" />
+    <Content Include="Images\email\ozarkCFT\addressCenter.jpg" />
+    <Content Include="Images\email\ozarkCFT\addressLeft.jpg" />
+    <Content Include="Images\email\ozarkCFT\addressRight.jpg" />
+    <Content Include="Images\email\ozarkCFT\bannerCaption.jpg" />
+    <Content Include="Images\email\ozarkCFT\bannerCaption1.jpg" />
+    <Content Include="Images\email\ozarkCFT\BannerLogo.jpg" />
+    <Content Include="Images\email\ozarkCFT\CFTTS.htm" />
+    <Content Include="Images\email\ozarkCFT\spacer.gif" />
+    <Content Include="Images\email\rate-watch\banner.jpg" />
+    <Content Include="Images\email\rate-watch\bannerCaption1.jpg" />
+    <Content Include="Images\email\sdba\addressCenter.jpg" />
+    <Content Include="Images\email\sdba\addressLeft.jpg" />
+    <Content Include="Images\email\sdba\addressRight.jpg" />
+    <Content Include="Images\email\sdba\banner.jpg" />
+    <Content Include="Images\email\sdba\banner.png" />
+    <Content Include="Images\email\sdba\bannerCaption.jpg" />
+    <Content Include="Images\email\sdba\bannerCaption1.jpg" />
+    <Content Include="Images\email\sdba\BannerLogo.jpg" />
+    <Content Include="Images\email\sdba\Copy of addressCenter.jpg" />
+    <Content Include="Images\email\sdba\sdba.htm" />
+    <Content Include="Images\email\sdba\spacer.gif" />
+    <Content Include="Images\email\sfcft\banner.jpg" />
+    <Content Include="Images\email\sfcft\bannerCaption1.jpg" />
+    <Content Include="Images\email\spacer.gif" />
+    <Content Include="Images\email\subPack.jpg" />
+    <Content Include="Images\email\TTSKB\banner.jpg" />
+    <Content Include="Images\email\TTSKB\bannerCaption1.jpg" />
+    <Content Include="Images\email\tts\addressCenter.jpg" />
+    <Content Include="Images\email\tts\addressLeft.jpg" />
+    <Content Include="Images\email\tts\addressRight.jpg" />
+    <Content Include="Images\email\tts\bannerCaption.jpg" />
+    <Content Include="Images\email\tts\bannerCaption1.jpg" />
+    <Content Include="Images\email\tts\BannerLogo.jpg" />
+    <Content Include="Images\email\tts\BWNewsletter.htm" />
+    <Content Include="Images\email\tts\spacer.gif" />
+    <Content Include="Images\email\UBA\bannerCaption1.jpg" />
+    <Content Include="Images\email\Untitled-1.png" />
+    <Content Include="Images\email\upcomingwebinars.jpg" />
+    <Content Include="Images\email\upcomingwebinars.png" />
+    <Content Include="Images\email\upcomingwebinars1.jpg" />
+    <Content Include="Images\email\VABANKERS\bannerCaption1.jpg" />
+    <Content Include="Images\email\wisbank - Copy %282%29\banner.jpg" />
+    <Content Include="Images\email\wisbank - Copy %282%29\banner.png" />
+    <Content Include="Images\email\wisbank - Copy %282%29\bannerCaption1.jpg" />
+    <Content Include="Images\email\wisbank - Copy %282%29\bannerTTSBase.png" />
+    <Content Include="Images\email\wisbank\banner.jpg" />
+    <Content Include="Images\email\wisbank\banner.png" />
+    <Content Include="Images\email\wisbank\bannerCaption1.jpg" />
+    <Content Include="Images\email\wisbank\bannerTTSBase.png" />
+    <Content Include="Images\email\WVBANKERS\banner.jpg" />
+    <Content Include="Images\email\WVBANKERS\banner.png" />
+    <Content Include="Images\email\WVBANKERS\bannerCaption1.jpg" />
+    <Content Include="Images\email\WVBANKERS\bannerOrg.png" />
+    <Content Include="Images\email\wvba\addressCenter.jpg" />
+    <Content Include="Images\email\wvba\addressLeft.jpg" />
+    <Content Include="Images\email\wvba\addressRight.jpg" />
+    <Content Include="Images\email\wvba\bannerCaption.jpg" />
+    <Content Include="Images\email\wvba\BannerLogo.jpg" />
+    <Content Include="Images\email\wvba\FB.gif" />
+    <Content Include="Images\email\wvba\LI.gif" />
+    <Content Include="Images\email\wvba\spacer.gif" />
+    <Content Include="Images\email\wvba\wvba.htm" />
+    <Content Include="Images\email\wyba\addressCenter.jpg" />
+    <Content Include="Images\email\wyba\addressLeft.jpg" />
+    <Content Include="Images\email\wyba\addressRight.jpg" />
+    <Content Include="Images\email\wyba\bannerCaption.jpg" />
+    <Content Include="Images\email\wyba\BannerLogo.jpg" />
+    <Content Include="Images\email\wyba\spacer.gif" />
+    <Content Include="Images\email\wyba\wyba.htm" />
+    <Content Include="Images\email\wyomingbankers\banner.jpg" />
+    <Content Include="Images\email\wyomingbankers\banner.png" />
+    <Content Include="Images\email\wyomingbankers\bannerCaption1.jpg" />
+    <Content Include="Images\footer.png" />
+    <Content Include="Images\footer_bg.png" />
+    <Content Include="Images\forward_disabled.jpg" />
+    <Content Include="Images\forward_enabled.jpg" />
+    <Content Include="Images\greenactive.gif" />
+    <Content Include="Images\greendefault.gif" />
+    <Content Include="Images\gtwScreen.gif" />
+    <Content Include="Images\gtwScreen1.gif" />
+    <Content Include="Images\gtwScreen2.gif" />
+    <Content Include="Images\header.jpg" />
+    <Content Include="Images\header2.jpg" />
+    <Content Include="Images\header2.png" />
+    <Content Include="Images\header_Base.png" />
+    <Content Include="Images\header_footer.jpg" />
+    <Content Include="Images\How2Connect1.png" />
+    <Content Include="Images\light.gif" />
+    <Content Include="Images\loginButton.png" />
+    <Content Include="Images\loginFormBackground.png" />
+    <Content Include="Images\menu.gif" />
+    <Content Include="Images\nav_bg.jpg" />
+    <Content Include="Images\presenters\allen.jpg" />
+    <Content Include="Images\presenters\annthomas.jpg" />
+    <Content Include="Images\presenters\appelbaum.jpg" />
+    <Content Include="Images\presenters\barrickman.jpg" />
+    <Content Include="Images\presenters\behringer.jpg" />
+    <Content Include="Images\presenters\blake.jpg" />
+    <Content Include="Images\presenters\branch.jpg" />
+    <Content Include="Images\presenters\certDS.png" />
+    <Content Include="Images\presenters\cole.jpg" />
+    <Content Include="Images\presenters\costonis.jpg" />
+    <Content Include="Images\presenters\crawford.jpg" />
+    <Content Include="Images\presenters\crawfordsheldon.jpg" />
+    <Content Include="Images\presenters\crawfordshelton.jpg" />
+    <Content Include="Images\presenters\c_crawford.jpg" />
+    <Content Include="Images\presenters\danasummer.jpg" />
+    <Content Include="Images\presenters\demaio.jpg" />
+    <Content Include="Images\presenters\demarino.jpg" />
+    <Content Include="Images\presenters\dicara.jpg" />
+    <Content Include="Images\presenters\doepke.jpg" />
+    <Content Include="Images\presenters\dowdy.jpg" />
+    <Content Include="Images\presenters\eskierka.jpg" />
+    <Content Include="Images\presenters\faquir.jpg" />
+    <Content Include="Images\presenters\flynn.jpg" />
+    <Content Include="Images\presenters\fragapane.jpg" />
+    <Content Include="Images\presenters\gerano.jpg" />
+    <Content Include="Images\presenters\gregg.jpg" />
+    <Content Include="Images\presenters\hinkel.jpg" />
+    <Content Include="Images\presenters\jsmith.jpg" />
+    <Content Include="Images\presenters\kelly.jpg" />
+    <Content Include="Images\presenters\konarik.jpg" />
+    <Content Include="Images\presenters\laboda.jpg" />
+    <Content Include="Images\presenters\lange.jpg" />
+    <Content Include="Images\presenters\lolley.jpg" />
+    <Content Include="Images\presenters\mccain.jpg" />
+    <Content Include="Images\presenters\mcguinn.jpg" />
+    <Content Include="Images\presenters\morin.jpg" />
+    <Content Include="Images\presenters\nelson.jpg" />
+    <Content Include="Images\presenters\neuman.jpg" />
+    <Content Include="Images\presenters\orr.jpg" />
+    <Content Include="Images\presenters\peters.jpg" />
+    <Content Include="Images\presenters\pry.jpg" />
+    <Content Include="Images\presenters\rechel.jpg" />
+    <Content Include="Images\presenters\reed.jpg" />
+    <Content Include="Images\presenters\ringstrom.jpg" />
+    <Content Include="Images\presenters\rutkowski.jpg" />
+    <Content Include="Images\presenters\saber.jpg" />
+    <Content Include="Images\presenters\shelton.jpg" />
+    <Content Include="Images\presenters\smith.jpg" />
+    <Content Include="Images\presenters\sophiekelley.jpg" />
+    <Content Include="Images\presenters\souther.JPG" />
+    <Content Include="Images\presenters\swartzberg.jpg" />
+    <Content Include="Images\presenters\thomas.jpg" />
+    <Content Include="Images\presenters\tthomas.jpg" />
+    <Content Include="Images\presenters\turner.jpg" />
+    <Content Include="Images\presenters\upcomingwebinars.jpg" />
+    <Content Include="Images\presenters\vassallo.jpg" />
+    <Content Include="Images\presenters\void.jpg" />
+    <Content Include="Images\presenters\waldorf.jpg" />
+    <Content Include="Images\regInfoHead.png" />
+    <Content Include="Images\search-icon.png" />
+    <Content Include="Images\shadedBar.png" />
+    <Content Include="Images\sort_asc.png" />
+    <Content Include="Images\sort_asc_disabled.png" />
+    <Content Include="Images\sort_both.png" />
+    <Content Include="Images\sort_desc.png" />
+    <Content Include="Images\sort_desc_disabled.png" />
+    <Content Include="Images\supportFormBackground.png" />
+    <Content Include="Images\tempMenuCap.jpg" />
+    <Content Include="Images\TTS-logo.jpg" />
+    <Content Include="Images\upcomingwebinars.jpg" />
+    <Content Include="Images\upcomingwebinars1.jpg" />
+    <Content Include="Images\voip.jpg" />
+    <Content Include="Images\vrLocal\checkoutwebsite.gif" />
+    <Content Include="Images\vrLocal\footer.gif" />
+    <Content Include="Images\vrLocal\hardware_2_footer.jpg" />
+    <Content Include="Images\vrLocal\hardware_2_header_1.jpg" />
+    <Content Include="Images\vrLocal\large_box_bottom.gif" />
+    <Content Include="Images\vrLocal\large_box_top.gif" />
+    <Content Include="Images\vrLocal\left_shadow.jpg" />
+    <Content Include="Images\vrLocal\logo.png" />
+    <Content Include="Images\vrLocal\right_shadow.jpg" />
+    <Content Include="Images\vrLocal\spacer.gif" />
+    <Content Include="Images\vrLocal\top_shadow.jpg" />
+    <Content Include="Images\wait-danger.gif" />
+    <Content Include="Images\wait-default.gif" />
+    <Content Include="Images\wait-info.gif" />
+    <Content Include="Images\wait-primary.gif" />
+    <Content Include="Images\wait-success.gif" />
+    <Content Include="Images\wait-warning.gif" />
+    <Content Include="Images\waiting.gif" />
+    <Content Include="Images\wba-logo.jpg" />
+    <Content Include="Images\WebinarTopics.JPG" />
+    <Content Include="Images\whitedot.png" />
+    <Content Include="Images\wijmoX.jpg" />
     <Content Include="Membership\Email\EmailTemplates\AccountCreatedEvent_Body.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\AccountCreatedEvent_Subject.cshtml" />
     <Content Include="App_Data\Orders\SampleData.csv" />
@@ -976,6 +1701,46 @@
     <Content Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Body.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Subject.cshtml" />
     <Content Include="App_Data\Orders\ImportSampleOrders.xlsm" />
+    <Content Include="Images\aff\auroratraining\Thumbs.db" />
+    <Content Include="Images\aff\calbankers\Thumbs.db" />
+    <Content Include="Images\aff\GABANKERS\Thumbs.db" />
+    <Content Include="Images\aff\IDAHOBANKERS\Thumbs.db" />
+    <Content Include="Images\aff\nmbankers\Thumbs.db" />
+    <Content Include="Images\aff\NYBA\Thumbs.db" />
+    <Content Include="Images\aff\VABANKERS\Thumbs.db" />
+    <Content Include="Images\aff\wisbank\Thumbs.db" />
+    <Content Include="Images\BankWebinars\Logo\BankWebinarFinalLogo.eps" />
+    <Content Include="Images\BankWebinars\Logo\BankWebinarFinalLogo.pdf" />
+    <Content Include="Images\BankWebinars\Webinars\w1534\cert.doc" />
+    <Content Include="Images\BankWebinars\Webinars\w1536\cert.doc" />
+    <Content Include="Images\BankWebinars\Webinars\w1547\cert.doc" />
+    <Content Include="Images\BankWebinars\Webinars\w1553\cert.doc" />
+    <Content Include="Images\BankWebinars\Webinars\w1553\cert.docx" />
+    <Content Include="Images\CUWebinars\Logo\BankWebinarFinalLogo.eps" />
+    <Content Include="Images\CUWebinars\Logo\BankWebinarFinalLogo.pdf" />
+    <Content Include="Images\CUWebinars\Webinars\w1534\cert.doc" />
+    <Content Include="Images\CUWebinars\Webinars\w1536\cert.doc" />
+    <Content Include="Images\CUWebinars\Webinars\w1547\cert.doc" />
+    <Content Include="Images\CUWebinars\Webinars\w1553\cert.doc" />
+    <Content Include="Images\CUWebinars\Webinars\w1553\cert.docx" />
+    <Content Include="Images\email\afflist" />
+    <Content Include="Images\email\ARKBANKERS\Thumbs.db" />
+    <Content Include="Images\email\auroratraining\Thumbs.db" />
+    <Content Include="Images\email\calbankers\Thumbs.db" />
+    <Content Include="Images\email\CFTEA\Thumbs.db" />
+    <Content Include="Images\email\cftser\Thumbs.db" />
+    <Content Include="Images\email\cftsf\Thumbs.db" />
+    <Content Include="Images\email\CFTUMW\Thumbs.db" />
+    <Content Include="Images\email\GREGSOUTHER\Thumbs.db" />
+    <Content Include="Images\email\ndba\Thumbs.db" />
+    <Content Include="Images\email\nmbankers\Thumbs.db" />
+    <Content Include="Images\email\NYBA\Thumbs.db" />
+    <Content Include="Images\email\sfcft\Thumbs.db" />
+    <Content Include="Images\email\VABANKERS\Thumbs.db" />
+    <Content Include="Images\email\wisbank - Copy %282%29\Thumbs.db" />
+    <Content Include="Images\email\wisbank\Thumbs.db" />
+    <Content Include="Images\presenters\CUWebinarsV4.bacpac" />
+    <None Include="Properties\PublishProfiles\cuwebinars.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -983,6 +1748,8 @@
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jsnlog.js" />
+    <Content Include="Scripts\jsnlog.min.js" />
     <Content Include="Views\Account\MyCertificate.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars.pubxml" />
     <None Include="Properties\PublishProfiles\CUStaging.pubxml" />
@@ -1012,8 +1779,6 @@
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="Scripts\jsnlog.js" />
-    <Content Include="Scripts\jsnlog.min.js" />
     <Content Include="Scripts\knockout-2.3.0.debug.js" />
     <Content Include="Scripts\knockout-2.3.0.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
@@ -1038,7 +1803,6 @@
     </Content>
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
@@ -1071,8 +1835,6 @@
     <Content Include="Views\Shared\PageNotFound.cshtml" />
     <Content Include="Views\Shared\Partials\_AddToMailingBox.cshtml" />
     <Content Include="Views\Shared\Partials\_ShowAddedEventsFeed.cshtml" />
-    <Content Include="Views\Shared\_BWOriginal.cshtml" />
-    <Content Include="Views\Shared\_LayoutEmail.cshtml" />
     <Content Include="Views\Shared\_LayoutPublic.cshtml">
       <SubType>Code</SubType>
     </Content>
@@ -1095,7 +1857,6 @@
     <Content Include="Views\Account\Partials\Edit.cshtml" />
     <Content Include="Views\Account\Partials\Recorded.cshtml" />
     <Content Include="Views\Account\Partials\Upcoming.cshtml" />
-    <Content Include="Views\Account\Partials\UserEditor.hold" />
     <Content Include="Views\Account\Partials\_Institution.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\HandoutsListing.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Address.cshtml" />
@@ -1137,13 +1898,25 @@
     <Content Include="Views\OrderEventFiringOps\_resendOrderConfirmation.cshtml" />
     <Content Include="Views\OrderEventFiringOps\_resendConnectionInfo.cshtml" />
     <Content Include="Views\Account\Partials\_Certificate.cshtml" />
-    <Content Include="Views\Order\ConfirmOrder.cshtml" />
     <Content Include="Views\MembershipNotificationOps\_LogInAsUser.cshtml" />
+    <Content Include="Views\Home\ConfirmOrder.cshtml" />
+    <Content Include="Views\Shared\Partials\_EditNameTitle.cshtml" />
+    <Content Include="Views\Shared\Partials\_EditInsitution.cshtml" />
+    <Content Include="Views\Shared\Partials\_EditBillingAddress.cshtml" />
+    <Content Include="Views\Shared\Partials\_EditShippingAddress.cshtml" />
+    <Content Include="Views\Admin\Home\Index.cshtml" />
+    <Content Include="Views\Webinar\CompliancePerspectives.cshtml" />
+    <Content Include="Views\Admin\Home\_adHocNotification.cshtml" />
+    <Content Include="Views\Admin\Home\_resendConnectionInfo.cshtml" />
+    <Content Include="Views\Admin\Home\_resendOrderConfirmation.cshtml" />
+    <Content Include="Views\Admin\Home\_SendConnectionInfo.cshtml" />
+    <Content Include="Views\Admin\Home\_SendRecordingPosted.cshtml" />
+    <Content Include="Views\Admin\Home\_SendReminder.cshtml" />
+    <Content Include="Views\Admin\Home\_SendShippedOrder.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Images\" />
+    <Folder Include="Infrastructure\apis\citrix\GTW\" />
     <Folder Include="Notification\Delivery\" />
-    <Folder Include="Utils\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

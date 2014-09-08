@@ -25,10 +25,10 @@ namespace CUWebinars.Web.Core
             {
                 NameValueCollection ApplicationSettingsSection = WebConfigurationManager.AppSettings;
                 
-                if(ReferenceEquals(null, ApplicationSettingsSection))
-                {
-                    throw new ArgumentNullException("AppSettings not found in config file as expected.");
-                }
+                //if(ReferenceEquals(null, ApplicationSettingsSection))
+                //{
+                //    throw new ArgumentNullException("AppSettings not found in config file as expected.");
+                //}
 
                 UniqueInstance.Tenant = ApplicationSettingsSection["Tenant"];
                 UniqueInstance.TenantEmail = ApplicationSettingsSection["TenantEmail"];

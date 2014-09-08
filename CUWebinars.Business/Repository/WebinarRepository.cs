@@ -22,7 +22,7 @@ namespace CUWebinars.Business.Repository
         {
             items.Remove(webinar);
             db.SaveChanges();
-        }
+        }//
 
         public Webinar FindByIdLoaded(int id)
         {
@@ -49,11 +49,11 @@ namespace CUWebinars.Business.Repository
 
         public Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id)
         {
-            var webinar = items.Include(w => w.Presenter.WebUser)
+            return items.Include(w => w.Presenter.WebUser)
                 .Include(w => w.Presenter.Webinars)
                 .First(w => w.idWebinar == id);
 
-            return webinar;
+            //return webinar;
         }
 
         public IQueryable<Topic> GetTopicsPerWebinar(int idWebinar)

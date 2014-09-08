@@ -9,6 +9,7 @@ namespace CUWebinars.Business.Repository
         IEnumerable<Address> GetAddressesForUser(int id);
         IEnumerable<Presenter> GetAllPresenters();
         IQueryable<Institution> GetInstitutions();
+        Institution GetInstitutionForUser(int id);
         int GetMaxWebUserId();
         IQueryable<WebUser> GetWebUsers();
         WebUser GetWebUserByEmail(string email);

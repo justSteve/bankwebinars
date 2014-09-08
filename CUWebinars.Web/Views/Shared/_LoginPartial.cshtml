@@ -21,6 +21,7 @@
             {
                 @Html.AntiForgeryToken()
                 @Html.ActionLink(identity.Value, "Manage", "Account", routeValues: null, htmlAttributes: new { title = "Manage", id = "btnLogin" })
+            @*<span>@identity.Value</span>*@
 
                 if (ReferenceEquals(Session["AdminUserEmail"], null))
                 {

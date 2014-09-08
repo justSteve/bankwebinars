@@ -1,0 +1,14 @@
+﻿@model ResendOrderInformationViewModel
+
+<div class="control-group">
+    <div class="controls">
+        @Html.LabelFor(m => m.OrderId)
+        @Html.EditorFor(m => m.OrderId)
+    </div>
+</div>
+<div class="control-group">
+    <div class="controls">
+        <button id="ResendOrderConfirmationButton" class="btn">Re-send Order Confirmation</button>
+    </div>
+</div>
+

@@ -4,7 +4,7 @@ IF EXISTS (SELECT name FROM master.dbo.sysdatabases WHERE name = N'MembershipReb
 DROP DATABASE [MembershipReboot];
 
 CREATE DATABASE [MembershipReboot] 
-ON (name='MembershipReboot', filename='E:\MembershipReboot.mdf')
+ON (name='MembershipReboot', filename='e:\csv\MembershipReboot.mdf')
 GO
 USE [MembershipReboot]
 GO

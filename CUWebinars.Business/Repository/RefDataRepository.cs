@@ -91,5 +91,16 @@ namespace CUWebinars.Business.Repository
                     .Addresses;
             }
         }
+        public Institution GetInstitutionForUser(int id)
+        {
+            using (var context = new TTSWebinarsContext())
+            {
+                context.Configuration.ProxyCreationEnabled = false;
+                return context.WebUsers
+                    .Where(w => w.idUser == id)
+                    .Single()
+                    .Institution;
+            }
+        }
     }
 }

@@ -24,319 +24,319 @@ using System.Web.Http.ModelBinding;
 
 namespace CUWebinars.Web.Controllers.api
 {
-    //public class OrderImporterController : ApiController
-    //{
-    //    private readonly GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
-    //    private readonly IMembershipService _membershipService;
-    //    private readonly IOrderManagementService _orderManagementService;
-    //    private readonly IStateService _stateService;
-    //    private readonly ILogger _logger;
+    public class OrderImporterController : ApiController
+    {
+        private readonly GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+        private readonly IMembershipService _membershipService;
+        private readonly IOrderManagementService _orderManagementService;
+        private readonly IStateService _stateService;
+        private readonly ILogger _logger;
 
-    //    public OrderImporterController(IMembershipService membershipService, IOrderManagementService orderManagementService, IStateService stateService, ILogger logger)
-    //    {
-    //        _membershipService = membershipService;
-    //        _orderManagementService = orderManagementService;
-    //        _stateService = stateService;
-    //        _logger = logger;
-    //    }
+        public OrderImporterController(IMembershipService membershipService, IOrderManagementService orderManagementService, IStateService stateService, ILogger logger)
+        {
+            _membershipService = membershipService;
+            _orderManagementService = orderManagementService;
+            _stateService = stateService;
+            _logger = logger;
+        }
 
-    //    [System.Web.Mvc.HttpPost]
-    //    public ImportOrderResponse ImportOrder(IncomingAFOOrder incomingAFOOrder)
-    //    {
-    //        string orderid = string.Empty, responseString;
-    //        int number;
-    //        bool isError = false;
+        //[HttpPost()]
+        public ImportOrderResponse ImportOrder(IncomingAFOOrder incomingAFOOrder)
+        {
+            string orderid = string.Empty, responseString;
+            int number;
+            bool isError = false;
 
-    //        var incomingOrderModel = new IncomingOrderModel();
+            var incomingOrderModel = new IncomingOrderModel();
 
-    //        try
-    //        {
+            try
+            {
 
-    //            incomingOrderModel.BillingAddress = new Address();
-    //            incomingOrderModel.ShippingAddress = new Address();
+                incomingOrderModel.BillingAddress = new Address();
+                incomingOrderModel.ShippingAddress = new Address();
 
-    //            incomingOrderModel.AffiliateComments = incomingAFOOrder.SubmissionDate.ToString() + " " + incomingAFOOrder.IP;
+                incomingOrderModel.AffiliateComments = incomingAFOOrder.SubmissionDate.ToString() + " " + incomingAFOOrder.IP;
 
-    //            incomingOrderModel.BillingAddress.Name = string.Concat(incomingAFOOrder.FirstName, " ", incomingAFOOrder.LastName);
-    //            incomingOrderModel.BillingAddress.Phone = incomingAFOOrder.Phone;
-    //            incomingOrderModel.BillingAddress.StreetAddress = incomingAFOOrder.StreetAddress;
-    //            incomingOrderModel.BillingAddress.StreetAddress2 = incomingAFOOrder.StreetAddress2;
-    //            incomingOrderModel.BillingAddress.City = incomingAFOOrder.City;
-    //            incomingOrderModel.BillingAddress.State = incomingAFOOrder.State;
-    //            incomingOrderModel.BillingAddress.Zip = incomingAFOOrder.Zip;
-    //            incomingOrderModel.BillingAddress.Country = incomingAFOOrder.Country;
-    //            incomingOrderModel.BillingAddress.AddressType = "Billing";
+                incomingOrderModel.BillingAddress.Name = string.Concat(incomingAFOOrder.FirstName, " ", incomingAFOOrder.LastName);
+                incomingOrderModel.BillingAddress.Phone = incomingAFOOrder.Phone;
+                incomingOrderModel.BillingAddress.StreetAddress = incomingAFOOrder.StreetAddress;
+                incomingOrderModel.BillingAddress.StreetAddress2 = incomingAFOOrder.StreetAddress2;
+                incomingOrderModel.BillingAddress.City = incomingAFOOrder.City;
+                incomingOrderModel.BillingAddress.State = incomingAFOOrder.State;
+                incomingOrderModel.BillingAddress.Zip = incomingAFOOrder.Zip;
+                incomingOrderModel.BillingAddress.Country = incomingAFOOrder.Country;
+                incomingOrderModel.BillingAddress.AddressType = "Billing";
 
-    //            incomingOrderModel.ShippingAddress.Name = string.Concat(incomingAFOOrder.FirstName, " ", incomingAFOOrder.LastName);
-    //            incomingOrderModel.ShippingAddress.Phone = incomingAFOOrder.Phone;
-    //            incomingOrderModel.ShippingAddress.StreetAddress = incomingAFOOrder.StreetAddress;
-    //            incomingOrderModel.ShippingAddress.StreetAddress2 = incomingAFOOrder.StreetAddress2;
-    //            incomingOrderModel.ShippingAddress.City = incomingAFOOrder.City;
-    //            incomingOrderModel.ShippingAddress.State = incomingAFOOrder.State;
-    //            incomingOrderModel.ShippingAddress.Zip = incomingAFOOrder.Zip;
-    //            incomingOrderModel.ShippingAddress.Country = incomingAFOOrder.Country;
-
-
-
-    //            // Call API Url
-
-    //            HttpClient client = new HttpClient();
-    //            client.BaseAddress = new Uri(ConfigurationManager.AppSettings["WebinarUrl"]);
-
-    //            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-    //            var response = client.PostAsJsonAsync(ConfigurationManager.AppSettings["actionOrder"], incomingAFOOrder).Result;
-
-    //            if (response.IsSuccessStatusCode)
-    //            {
-    //                responseString = response.Content.ReadAsStringAsync().Result;
-    //                orderid = JObject.Parse(responseString)["Result"].ToString();
-    //                if (!int.TryParse(orderid, out number))
-    //                {
-    //                    isError = true;
-    //                }
-    //                else
-    //                {
-    //                    if (orderid == "0")
-    //                        isError = true;
-    //                }
-    //            }
-    //            else
-    //            {
-    //                isError = true;
-    //                orderid = "Please try later.";
-    //            }
-
-    //            return new ImportOrderResponse()
-    //            {
-    //                IsError = isError,
-    //                Status = orderid,//Convert.ToString("test"),
-    //                rowIndex = incomingAFOOrder.rowNumber
-    //            };
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            Exception activeException = GeneralFunction.GetInnerMostException(ex);
-    //            return new ImportOrderResponse()
-    //            {
-    //                IsError = true,
-    //                Status = activeException.Message,//"Sorry, your feedback could not be sent",
-    //                rowIndex = incomingOrderModel.rowNumber
-    //            };
-    //        }
-    //    }
-
-
-    //    // POST api/<controller>
-    //    public HttpResponseMessage Post([FromBody] IncomingOrderModel incomingOrderModel)
-    //    {
+                incomingOrderModel.ShippingAddress.Name = string.Concat(incomingAFOOrder.FirstName, " ", incomingAFOOrder.LastName);
+                incomingOrderModel.ShippingAddress.Phone = incomingAFOOrder.Phone;
+                incomingOrderModel.ShippingAddress.StreetAddress = incomingAFOOrder.StreetAddress;
+                incomingOrderModel.ShippingAddress.StreetAddress2 = incomingAFOOrder.StreetAddress2;
+                incomingOrderModel.ShippingAddress.City = incomingAFOOrder.City;
+                incomingOrderModel.ShippingAddress.State = incomingAFOOrder.State;
+                incomingOrderModel.ShippingAddress.Zip = incomingAFOOrder.Zip;
+                incomingOrderModel.ShippingAddress.Country = incomingAFOOrder.Country;
 
 
 
-    //        int idOfLastOrder = default(int);
-    //        HttpResponseMessage httpResponseMessage = null;
+                // Call API Url
 
-    //        if (!ModelState.IsValid)
-    //        {
-    //            _logger.Error("Post found problem with Payload");
-    //            var myErr = "";
-    //            //foreach (ModelState modelState in ViewData.ModelState.Values)
-    //            //{
-    //            //    foreach (ModelError error in modelState.Errors)
-    //            //    {
-    //            //        myErr += modelState.Value.ToString();
-    //            //    }
-    //            //}
+                HttpClient client = new HttpClient();
+                client.BaseAddress = new Uri(ConfigurationManager.AppSettings["WebinarUrl"]);
 
-    //            myErr = string.Join(",", ModelState.Keys.SelectMany(k => ModelState[k].Errors).Select(m => m.ErrorMessage).ToArray());
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-    //            return Request.CreateResponse(HttpStatusCode.Found, new { Result = myErr });
-    //        }
+                var response = client.PostAsJsonAsync(ConfigurationManager.AppSettings["actionOrder"], incomingAFOOrder).Result;
 
-    //        try
-    //        {
-    //            //foreach (var incomingOrderModel in model)
-    //            //{
-    //            _logger.Info("Begin import: " + incomingOrderModel.Email.Trim());
-    //            var email = incomingOrderModel.Email.Trim();
+                if (response.IsSuccessStatusCode)
+                {
+                    responseString = response.Content.ReadAsStringAsync().Result;
+                    orderid = JObject.Parse(responseString)["Result"].ToString();
+                    if (!int.TryParse(orderid, out number))
+                    {
+                        isError = true;
+                    }
+                    else
+                    {
+                        if (orderid == "0")
+                            isError = true;
+                    }
+                }
+                else
+                {
+                    isError = true;
+                    orderid = "Please try later.";
+                }
 
-    //            var firstName = incomingOrderModel.FirstName.Trim();
-    //            var lastName = incomingOrderModel.LastName.Trim();
+                return new ImportOrderResponse()
+                {
+                    IsError = isError,
+                    Status = orderid,//Convert.ToString("test"),
+                    rowIndex = incomingAFOOrder.rowNumber
+                };
+            }
+            catch (Exception ex)
+            {
+                Exception activeException = GeneralFunction.GetInnerMostException(ex);
+                return new ImportOrderResponse()
+                {
+                    IsError = true,
+                    Status = activeException.Message,//"Sorry, your feedback could not be sent",
+                    rowIndex = incomingOrderModel.rowNumber
+                };
+            }
+        }
 
-    //            var webinar = _orderManagementService.GetWebinar(incomingOrderModel.idWebinar);
-    //            var webUser = _membershipService.GetUserByEmail(email);
-    //            var affiliate = _orderManagementService.GetAffiliateById(incomingOrderModel.idAffiliate);
 
-    //            if (webUser == null)
-    //            {
-    //                var institutionForUser =
-    //                    _membershipService.ProcessInstitutionForUser(incomingOrderModel.Institution.Trim(),
-    //                        incomingOrderModel.Email,
-    //                        incomingOrderModel.BillingAddress.City,
-    //                        incomingOrderModel.BillingAddress.State,
-    //                        "N",
-    //                        "New",
-    //                        incomingOrderModel.BillingAddress.Zip
-    //                        );
+        // POST api/<controller>
+        public HttpResponseMessage Post([FromBody] IncomingOrderModel incomingOrderModel)
+        {
 
-    //                incomingOrderModel.BillingAddress.AddressType = WebUiConstants.BillingAddress;
-    //                incomingOrderModel.ShippingAddress.AddressType = WebUiConstants.ShippingAddress;
 
-    //                IList<Address> addresses = new List<Address>
-    //                    {
-    //                        incomingOrderModel.BillingAddress,
-    //                        incomingOrderModel.ShippingAddress
-    //                    };
 
-    //                USTimeZone userTimeZone = _membershipService.GetTimeZoneByZip();
-    //                webUser = _membershipService.CreateWebUser(globalConfig.Tenant
-    //                    , firstName.Trim()
-    //                    , lastName.Trim()
-    //                    , lastName.ToLower().Trim()
-    //                    , email.Trim()
-    //                    , userTimeZone
-    //                    , UserType.Customer
-    //                    , institutionForUser.idInstitution
-    //                    , addresses
-    //                    , incomingOrderModel.Title == null ? incomingOrderModel.Title : incomingOrderModel.Title.Trim()
-    //                    , null
-    //                    , DomainConstants.Active
-    //                    );
+            int idOfLastOrder = default(int);
+            HttpResponseMessage httpResponseMessage = null;
 
-    //                webUser.Institution = institutionForUser;
+            if (!ModelState.IsValid)
+            {
+                _logger.Error("Post found problem with Payload");
+                var myErr = "";
+                //foreach (ModelState modelState in ViewData.ModelState.Values)
+                //{
+                //    foreach (ModelError error in modelState.Errors)
+                //    {
+                //        myErr += modelState.Value.ToString();
+                //    }
+                //}
 
-    //                _membershipService.CreateUser(globalConfig.Tenant
-    //                    , firstName
-    //                    , lastName
-    //                    , email
-    //                    , lastName.ToLower().Trim()
-    //                    , email
-    //                    );
-    //            }
+                myErr = string.Join(",", ModelState.Keys.SelectMany(k => ModelState[k].Errors).Select(m => m.ErrorMessage).ToArray());
 
-    //            IList<AdditionalLocation> addLocation = new List<AdditionalLocation>();
+                return Request.CreateResponse(HttpStatusCode.Found, new { Result = myErr });
+            }
 
-    //            if (incomingOrderModel.AdditionalLocation != null && incomingOrderModel.AdditionalLocation.Any())
-    //            {
-    //                var price = 150;
-    //                //string email,decimal price,string fullname
-    //                var additionalLocations = incomingOrderModel.AdditionalLocation;
+            try
+            {
+                //foreach (var incomingOrderModel in model)
+                //{
+                _logger.Info("Begin import: " + incomingOrderModel.Email.Trim());
+                var email = incomingOrderModel.Email.Trim();
 
-    //                foreach (var additionalLocation in additionalLocations)
-    //                {
-    //                    var additionalLocationEmail = additionalLocation.Email;
-    //                    //var additionalLocationFirstName = email.Split('@')[0].ToString(); // additionalLocation.FirstName
-    //                    //var additionalLocationLastName = email.Split('@')[1].ToString(); // additionalLocation.LastName
-    //                    addLocation.Add(_orderManagementService.CreateAdditionalLocation(
-    //                        additionalLocationEmail,
-    //                        price,
-    //                        null) //field for FullName
-    //                        //additionalLocationFirstName + ' ' + additionalLocationLastName)
-    //                        );
-    //                }
-    //            }
+                var firstName = incomingOrderModel.FirstName.Trim();
+                var lastName = incomingOrderModel.LastName.Trim();
 
-    //            var orderRow = _orderManagementService.CreateOrderRow(
-    //                webinar,
-    //                addLocation,
-    //                incomingOrderModel.idRegType
-    //                );
+                var webinar = _orderManagementService.GetWebinar(incomingOrderModel.idWebinar);
+                var webUser = _membershipService.GetUserByEmail(email);
+                var affiliate = _orderManagementService.GetAffiliateById(incomingOrderModel.idAffiliate);
 
-    //            orderRow.Discount = _orderManagementService.GetDiscount(incomingOrderModel.Email);
+                if (webUser == null)
+                {
+                    var institutionForUser =
+                        _membershipService.ProcessInstitutionForUser(incomingOrderModel.Institution.Trim(),
+                            incomingOrderModel.Email,
+                            incomingOrderModel.BillingAddress.City,
+                            incomingOrderModel.BillingAddress.State,
+                            "N",
+                            "New",
+                            incomingOrderModel.BillingAddress.Zip
+                            );
 
-    //            var importedOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
+                    incomingOrderModel.BillingAddress.AddressType = WebUiConstants.BillingAddress;
+                    incomingOrderModel.ShippingAddress.AddressType = WebUiConstants.ShippingAddress;
 
-    //            importedOrder.AdminComments = "incomingOrderModel.AdminComments";
-    //            importedOrder.AffiliateComments = incomingOrderModel.AffiliateComments;
-    //            importedOrder.UserComments = "incomingOrderModel.UserComments";
-    //            importedOrder.Origin = "incomingOrderModel.Origin";
-    //            importedOrder.FirstName = webUser.FirstName;
-    //            importedOrder.LastName = webUser.LastName;
-    //            importedOrder.Institution = webUser.Institution.InstitutionName;
-    //            importedOrder.BillingEmail = incomingOrderModel.Email;
+                    IList<Address> addresses = new List<Address>
+                        {
+                            incomingOrderModel.BillingAddress,
+                            incomingOrderModel.ShippingAddress
+                        };
 
-    //            importedOrder.BillingAddress = incomingOrderModel.BillingAddress.StreetAddress;
-    //            importedOrder.BillingAddress2 = incomingOrderModel.BillingAddress.StreetAddress2;
-    //            importedOrder.BillingPhone = incomingOrderModel.BillingAddress.Phone;
-    //            importedOrder.BillingCity = incomingOrderModel.BillingAddress.City;
-    //            importedOrder.BillingState = incomingOrderModel.BillingAddress.State;
-    //            importedOrder.BillingZip = incomingOrderModel.BillingAddress.Zip;
+                    USTimeZone userTimeZone = _membershipService.GetTimeZoneByZip();
+                    webUser = _membershipService.CreateWebUser(globalConfig.Tenant
+                        , firstName.Trim()
+                        , lastName.Trim()
+                        , lastName.ToLower().Trim()
+                        , email.Trim()
+                        , userTimeZone
+                        , UserType.Customer
+                        , institutionForUser.idInstitution
+                        , addresses
+                        , incomingOrderModel.Title == null ? incomingOrderModel.Title : incomingOrderModel.Title.Trim()
+                        , null
+                        , DomainConstants.Active
+                        );
 
-    //            importedOrder.ShippingAddress = incomingOrderModel.ShippingAddress.StreetAddress;
-    //            importedOrder.ShippingAddress2 = incomingOrderModel.ShippingAddress.StreetAddress2;
-    //            importedOrder.ShippingPhone = incomingOrderModel.ShippingAddress.Phone;
-    //            importedOrder.ShippingCity = incomingOrderModel.ShippingAddress.City;
-    //            importedOrder.ShippingState = incomingOrderModel.ShippingAddress.State;
-    //            importedOrder.ShippingZip = incomingOrderModel.ShippingAddress.Zip;
-    //            importedOrder.ShippingFirstName = firstName;
-    //            importedOrder.ShippingLastName = lastName;
+                    webUser.Institution = institutionForUser;
 
-    //            if (orderRow.Webinar.WebinarKey != null)
-    //            {
+                    _membershipService.CreateUser(globalConfig.Tenant
+                        , firstName
+                        , lastName
+                        , email
+                        , lastName.ToLower().Trim()
+                        , email
+                        );
+                }
 
-    //                var regKeyResponse = _orderManagementService.CreateRegistrantKey(importedOrder.FirstName,
-    //                    importedOrder.LastName, importedOrder.BillingEmail, orderRow.idWebinar,
-    //                    orderRow.Webinar.WebinarKey);
-    //                //"{\"registrantKey\":106033865,\"joinUrl\":\"https://www2.gotomeeting.com/join/739905466/106033865\"}"
-    //                //http://stackoverflow.com/questions/13588185/deserialize-json-string-using-json-net
+                IList<AdditionalLocation> addLocation = new List<AdditionalLocation>();
 
-    //                if (ReferenceEquals(null, regKeyResponse))
-    //                    throw new NullReferenceException("The Registration Key Response from the Citrix API resulted in a null response.");
+                if (incomingOrderModel.AdditionalLocation != null && incomingOrderModel.AdditionalLocation.Any())
+                {
+                    var price = 150;
+                    //string email,decimal price,string fullname
+                    var additionalLocations = incomingOrderModel.AdditionalLocation;
 
-    //                JObject parsedJsonObject = JObject.Parse(regKeyResponse);
+                    foreach (var additionalLocation in additionalLocations)
+                    {
+                        var additionalLocationEmail = additionalLocation.Email;
+                        //var additionalLocationFirstName = email.Split('@')[0].ToString(); // additionalLocation.FirstName
+                        //var additionalLocationLastName = email.Split('@')[1].ToString(); // additionalLocation.LastName
+                        addLocation.Add(_orderManagementService.CreateAdditionalLocation(
+                            additionalLocationEmail,
+                            price,
+                            null) //field for FullName
+                            //additionalLocationFirstName + ' ' + additionalLocationLastName)
+                            );
+                    }
+                }
 
-    //                if (parsedJsonObject["registrantKey"] != null)
-    //                {
-    //                    var registrantKey = parsedJsonObject["registrantKey"].ToString();
-    //                    var joinUrl = parsedJsonObject["joinUrl"].ToString();
+                var orderRow = _orderManagementService.CreateOrderRow(
+                    webinar,
+                    addLocation,
+                    incomingOrderModel.idRegType
+                    );
 
-    //                    orderRow.RegistrantKey = registrantKey;
-    //                    orderRow.JoinURL = joinUrl;
-    //                }
-    //                else
-    //                {
-    //                    /*  *************** 404 error condition *************** 
-    //                     * json payload will look like:
-    //                     *      {"description":"The webinar does not exist.","incident":3984078431536134144}
-    //                     * which is not usable
-    //                     */
-    //                }
-    //            }
+                orderRow.Discount = _orderManagementService.GetDiscount(incomingOrderModel.Email);
 
-    //            //orderRow.RegistrantKey = "SomeKey";
-    //            //orderRow.JoinURL = "https://www2.gotomeeting.com/join/739905466/106033865";
-    //            //_orderManagementService.SaveOrderChanges(importedOrder);
-    //            _orderManagementService.SaveOrderChanges(importedOrder, verificationKey, confirmChangeEmailUrl);
+                var importedOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
 
-    //            idOfLastOrder = importedOrder.idOrder;
-    //            _logger.Info("Posted idOrder=" + idOfLastOrder);
-    //            //}
+                importedOrder.AdminComments = "incomingOrderModel.AdminComments";
+                importedOrder.AffiliateComments = incomingOrderModel.AffiliateComments;
+                importedOrder.UserComments = "incomingOrderModel.UserComments";
+                importedOrder.Origin = "incomingOrderModel.Origin";
+                importedOrder.FirstName = webUser.FirstName;
+                importedOrder.LastName = webUser.LastName;
+                importedOrder.Institution = webUser.Institution.InstitutionName;
+                importedOrder.BillingEmail = incomingOrderModel.Email;
 
-    //            httpResponseMessage = Request.CreateResponse(HttpStatusCode.Created,
-    //                new { Result = idOfLastOrder.ToString() });
-    //            httpResponseMessage.Headers.Location =
-    //                new Uri(Path.Combine(Request.RequestUri.ToString(), idOfLastOrder.ToString()));
+                importedOrder.BillingAddress = incomingOrderModel.BillingAddress.StreetAddress;
+                importedOrder.BillingAddress2 = incomingOrderModel.BillingAddress.StreetAddress2;
+                importedOrder.BillingPhone = incomingOrderModel.BillingAddress.Phone;
+                importedOrder.BillingCity = incomingOrderModel.BillingAddress.City;
+                importedOrder.BillingState = incomingOrderModel.BillingAddress.State;
+                importedOrder.BillingZip = incomingOrderModel.BillingAddress.Zip;
 
-    //        }
-    //        catch (Exception exception)
-    //        {
-    //            httpResponseMessage = Request.CreateResponse(HttpStatusCode.InternalServerError,
-    //                                new { Result = "Not Saved" });
-    //            // _logger.Fatal(exception.Message);
-    //        }
-    //        return httpResponseMessage;
+                importedOrder.ShippingAddress = incomingOrderModel.ShippingAddress.StreetAddress;
+                importedOrder.ShippingAddress2 = incomingOrderModel.ShippingAddress.StreetAddress2;
+                importedOrder.ShippingPhone = incomingOrderModel.ShippingAddress.Phone;
+                importedOrder.ShippingCity = incomingOrderModel.ShippingAddress.City;
+                importedOrder.ShippingState = incomingOrderModel.ShippingAddress.State;
+                importedOrder.ShippingZip = incomingOrderModel.ShippingAddress.Zip;
+                importedOrder.ShippingFirstName = firstName;
+                importedOrder.ShippingLastName = lastName;
 
-    //    }
+                if (orderRow.Webinar.WebinarKey != null)
+                {
 
-    //    // PUT api/<controller>/5
-    //    //public void Put(int id, [FromBody]string value)
-    //    //{
-    //    //}
+                    var regKeyResponse = _orderManagementService.CreateRegistrantKey(importedOrder.FirstName,
+                        importedOrder.LastName, importedOrder.BillingEmail, orderRow.idWebinar,
+                        orderRow.Webinar.WebinarKey);
+                    //"{\"registrantKey\":106033865,\"joinUrl\":\"https://www2.gotomeeting.com/join/739905466/106033865\"}"
+                    //http://stackoverflow.com/questions/13588185/deserialize-json-string-using-json-net
 
-    //    //// DELETE api/<controller>/5
-    //    //public void Delete(int id)
-    //    //{
-    //    //}
+                    if (ReferenceEquals(null, regKeyResponse))
+                        throw new NullReferenceException("The Registration Key Response from the Citrix API resulted in a null response.");
 
-    //}
+                    JObject parsedJsonObject = JObject.Parse(regKeyResponse);
+
+                    if (parsedJsonObject["registrantKey"] != null)
+                    {
+                        var registrantKey = parsedJsonObject["registrantKey"].ToString();
+                        var joinUrl = parsedJsonObject["joinUrl"].ToString();
+
+                        orderRow.RegistrantKey = registrantKey;
+                        orderRow.JoinURL = joinUrl;
+                    }
+                    else
+                    {
+                        /*  *************** 404 error condition *************** 
+                         * json payload will look like:
+                         *      {"description":"The webinar does not exist.","incident":3984078431536134144}
+                         * which is not usable
+                         */
+                    }
+                }
+
+                //orderRow.RegistrantKey = "SomeKey";
+                //orderRow.JoinURL = "https://www2.gotomeeting.com/join/739905466/106033865";
+                //_orderManagementService.SaveOrderChanges(importedOrder);
+                _orderManagementService.SaveOrderChanges(importedOrder, verificationKey, confirmChangeEmailUrl);
+
+                idOfLastOrder = importedOrder.idOrder;
+                _logger.Info("Posted idOrder=" + idOfLastOrder);
+                //}
+
+                httpResponseMessage = Request.CreateResponse(HttpStatusCode.Created,
+                    new { Result = idOfLastOrder.ToString() });
+                httpResponseMessage.Headers.Location =
+                    new Uri(Path.Combine(Request.RequestUri.ToString(), idOfLastOrder.ToString()));
+
+            }
+            catch (Exception exception)
+            {
+                httpResponseMessage = Request.CreateResponse(HttpStatusCode.InternalServerError,
+                                    new { Result = "Not Saved" });
+                // _logger.Fatal(exception.Message);
+            }
+            return httpResponseMessage;
+
+        }
+
+        // PUT api/<controller>/5
+        //public void Put(int id, [FromBody]string value)
+        //{
+        //}
+
+        //// DELETE api/<controller>/5
+        //public void Delete(int id)
+        //{
+        //}
+
+    }
 }

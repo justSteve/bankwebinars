@@ -113,8 +113,8 @@ namespace CUWebinars.CitrixDriver
         {
             var GTWebinar = new GTWebinar
             {
-                StartTime = DateTime.Now.AddMonths(2),
-                //StartTime = webinar.Date,
+                //StartTime = DateTime.Now.AddMonths(2),
+                StartTime = webinar.Date,
                 StartHour = webinar.Date.ToString("hh:mm").ToLower(),
                 StartMeridian = webinar.Date.ToString("tt"),
                 EndHour = webinar.Date.AddHours((double)webinar.Duration).ToString("hh:mm"),
@@ -123,7 +123,9 @@ namespace CUWebinars.CitrixDriver
                 PresenterLastName=  webinar.Presenter.WebUser.LastName,
                 RequirePassword = true,
                 TemplateTitle = ConfigurationManager.AppSettings["TemplateTitle"],
-                TimeZoneKey = 68 // central
+                TimeZoneKey = 68,
+                Description = webinar.Description,
+                Title = webinar.Title // central
             };
 
             return GTWebinar;

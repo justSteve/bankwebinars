@@ -24,7 +24,7 @@ namespace CUWebinars.Business.Notification.Handlers
         public OrderSubmittedHandler(IFormatter generalFormatter, ILogger logger, INotificationPersister notificationPersister, EnvironmentInformation environmentInformation)
             : this(generalFormatter, new SmtpMessageDelivery(), logger, notificationPersister, environmentInformation)
         {
-        
+
         }
 
         public OrderSubmittedHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger, INotificationPersister notificationPersister, EnvironmentInformation environmentInformation)
@@ -35,7 +35,7 @@ namespace CUWebinars.Business.Notification.Handlers
             _notificationDelivery = notificationDelivery;
             _logger = logger;
         }
-        
+
         public virtual void Process(OrderSubmittedEvent<T> orderSubmittedEvent)
         {
             try
@@ -45,7 +45,6 @@ namespace CUWebinars.Business.Notification.Handlers
                     orderSubmittedEvent.RelativeFilePath);
                 _notificationPersister.PersistNotification(notificationMessage.Body, fullFilePathToPersistedNotification);
 
-                notificationMessage.ReplyTo = "registrations+verify@bankwebinars.com";
                 notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);
 

@@ -25,7 +25,7 @@ deleteItem = function (event) {
 
 $(function () {
 
-    console.log($('#WebUser_idUser').val().toString());
+    //console.log($('#WebUser_idUser').val().toString());
     numberOfAdditionalLocations = $('#AdditionalLocationEmailWrapper input[type="text"').length;
     if (numberOfAdditionalLocations < 1)
         $('#SumbitAdditionalLocationsForm').remove();
@@ -58,7 +58,7 @@ function wireUpHandlers() {
     additionalLocationEmailWrapper.find('i').on('click', deleteItem);
 
     $('#RegisterAdditionalLocationsForm').on('submit', function (e) {
-        console.log('hi dave');
+        //console.log('hi dave');
         debugger;
         e.preventDefault();
 

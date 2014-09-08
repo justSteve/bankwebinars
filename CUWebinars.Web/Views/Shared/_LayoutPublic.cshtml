@@ -1,9 +1,12 @@
 ﻿@using System.Configuration
 @using System.Text
+@using CUWebinars.Web.Core
 
 @{
     var PageStyleType = ViewBag.PageStyleType;
     IStateService stateService = new StateService();
+
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
 
     var currentAffiliate = stateService.GetValue<Affiliate>("CurrentAffiliate");
@@ -65,115 +68,140 @@
 <!--[if IE 8]> <html class="no-js lt-ie9" lang="en" dir="ltr"> <![endif]-->
 <!--[if gt IE 8]><!-->
 <html class="no-js" lang="en" dir="ltr">
-    <!--<![endif]-->
+<!--<![endif]-->
 
-    <head>
-        @Html.Raw(JSNLog.JavascriptLogging.Configure())
+<head>
+    @Html.Raw(JSNLog.JavascriptLogging.Configure())
 
 
-        <script type="text/javascript">
-            var ajaxAppender = JL.createAjaxAppender('ajaxAppender');
-            var consoleAppender = JL.createConsoleAppender('consoleAppender');
-            JL("myLogger").setOptions({ "appenders": [ajaxAppender, consoleAppender] });
-        </script>
-        @if (!Html.IsDebug())
-        {
+    <script type="text/javascript">
+        var ajaxAppender = JL.createAjaxAppender('ajaxAppender');
+        var consoleAppender = JL.createConsoleAppender('consoleAppender');
+        JL("myLogger").setOptions({ "appenders": [ajaxAppender, consoleAppender] });
+    </script>
+    @if (!Html.IsDebug())
+    {
             <!--Start of Zopim Live Chat Script-->
-            <script type="text/javascript">
-                window.$zopim || (function(d, s) {
-                    var z = $zopim = function(c) { z._.push(c); },
-                        $ = z.s =
-                            d.createElement(s),
-                        e = d.getElementsByTagName(s)[0];
-                    z.set = function(o) {
-                        z.set.
-                            _.push(o);
-                    };
-                    z._ = [];
-                    z.set._ = [];
-                    $.async = !0;
-                    $.setAttribute('charset', 'utf-8');
-                    $.src = 'http://cdn.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU';
-                    z.t = +new Date;
-                    $.
-                        type = 'text/javascript';
-                    e.parentNode.insertBefore($, e);
-                })(document, 'script');
-            </script>
+        <script type="text/javascript">
+            window.$zopim || (function (d, s) {
+                var z = $zopim = function (c) { z._.push(c); },
+                    $ = z.s =
+                        d.createElement(s),
+                    e = d.getElementsByTagName(s)[0];
+                z.set = function (o) {
+                    z.set.
+                        _.push(o);
+                };
+                z._ = [];
+                z.set._ = [];
+                $.async = !0;
+                $.setAttribute('charset', 'utf-8');
+                $.src = 'http://cdn.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU';
+                z.t = +new Date;
+                $.
+                    type = 'text/javascript';
+                e.parentNode.insertBefore($, e);
+            })(document, 'script');
+        </script>
             <!--End of Zopim Live Chat Script-->
+    }
+
+
+    <title>@ViewBag.Title</title>
+    <!-- Meta Data ================ -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <!-- CSS ================ -->
+    @if (!Html.IsDebug())
+    {
+        if (globalConfig.Tenant == "CUWebinars")
+         {
+             <script>
+                 (function(i, s, o, g, r, a, m) {
+                     i['GoogleAnalyticsObject'] = r;
+                     i[r] = i[r] || function() {
+                         (i[r].q = i[r].q || []).push(arguments);
+                     }, i[r].l = 1 * new Date();
+                     a = s.createElement(o),
+                         m = s.getElementsByTagName(o)[0];
+                     a.async = 1;
+                     a.src = g;
+                     m.parentNode.insertBefore(a, m);
+                 })
+                 (window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+                 ga('create', 'UA-44361719-1', 'cuwebinars.com');
+                 ga('send', 'pageview');
+
+             </script>
+             <meta name="description" content="CUWebinars.com provides high-quality live and OnDemand webinars for credit union directors, managers and tellers. " />
+             <meta name="keywords" content="credit union training, teller training, director training, credit union webinars, credit union e-learning, credit union online training, credit union financial education, credit union professional development, credit union compliance, credit union risk management" />
+
+         }
+        if (globalConfig.Tenant == "BankWebinars")
+         {
+             <script>
+                 (function(i, s, o, g, r, a, m) {
+                     i['GoogleAnalyticsObject'] = r;
+                     i[r] = i[r] || function() {
+                         (i[r].q = i[r].q || []).push(arguments)
+                     }, i[r].l = 1 * new Date();
+                     a = s.createElement(o),
+                         m = s.getElementsByTagName(o)[0];
+                     a.async = 1;
+                     a.src = g;
+                     m.parentNode.insertBefore(a, m)
+                 })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+                 ga('create', 'UA-1443899-1', 'auto');
+                 ga('send', 'pageview');
+
+             </script>
+             <meta name="description" content="Bankwebinars.com provides bankers, tellers, commercial lenders, bank directors, compliance officers, lending officers and sales leaders with training webinars featuring experts in the financial industry." />
+             <meta name="keywords" content="bank webinars, banking webinars, compliance perspectives, bank training webinars, credit administration manager training, bank board compliance training, call report webinars, call report training, bank training, total training webinars, webinar banking, bank compliance, bank compliance webinars, bank webinar, bank webinar training, training webinars, bank employee training, bank training seminars, bank training programs, commerce bank training, bank management training, bank sales training, bank online training" />
+         }
+    }
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/myApp")
+    @Scripts.Render("~/bundles/app-processing-manage")
+    @Styles.Render("~/Content/CrispCSS")
+
+    <!-- Icons ================ -->
+    <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
+    <link rel="apple-touch-icon-precomposed" href="http://images.ttstrain.com/images/BankWebinars/apple-touch-icon.png" />
+    <!-- For first- and second-generation iPad: -->
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://images.ttstrain.com/images/BankWebinars/apple-touch-icon-72x72-precomposed.png" />
+    <!-- For iPhone with high-resolution Retina display: -->
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://images.ttstrain.com/images/BankWebinars/apple-touch-icon-114x114-precomposed.png" />
+    <!-- For third-generation iPad with high-resolution Retina display: -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://images.ttstrain.com/images/BankWebinars/apple-touch-icon-144x144-precomposed.png" />
+    <link rel="shortcut icon" href="http://images.ttstrain.com/images/BankWebinars/favicon.ico" />
+    <!-- Open Graph for facebook
+        http://graph.facebook.com/[UserName] replace [UserName]
+        with yours and get your fb:admis content information where the XXXX goes.
+        ================================================== -->
+    <meta property="og:title" content="" />
+    <meta property="og:type" content="" />
+    <meta property="og:url" content="" />
+    <meta property="og:image" content="" />
+    <meta property="og:site_name" content="" />
+    <meta property="og:locale" content="en_us" />
+    <meta property="og:description" content="@ConfigurationManager.AppSettings["Tenant"] is Webinars for the financial industry." />
+
+    @RenderSection("Styles", required: false)
+    <style>
+        table td {
+            border: none;
+            text-align: center;
         }
-
-
-        <title>@ViewBag.Title</title>
-        <!-- Meta Data ================ -->
-        <meta charset="UTF-8" />
-        <meta name="description" content="Fill this in with your information" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <!-- CSS ================ -->
-        <link rel="stylesheet" href="~/Content/css/html-content-slider-flexslider.css" type="text/css" media="screen" />
-        @if (!Html.IsDebug())
-        {
-            <script>
-                (function(i, s, o, g, r, a, m) {
-                    i['GoogleAnalyticsObject'] = r;
-                    i[r] = i[r] || function() {
-                        (i[r].q = i[r].q || []).push(arguments);
-                    }, i[r].l = 1 * new Date();
-                    a = s.createElement(o),
-                        m = s.getElementsByTagName(o)[0];
-                    a.async = 1;
-                    a.src = g;
-                    m.parentNode.insertBefore(a, m);
-                })
-                (window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
-
-                ga('create', 'UA-44361719-1', 'cuwebinars.com');
-                ga('send', 'pageview');
-
-            </script>
+        .hero-unit {
+            padding-top: 20px;
+            padding-bottom: 0px;
         }
-        @Scripts.Render("~/bundles/modernizr")
-        @Scripts.Render("~/bundles/jquery")
-        @Scripts.Render("~/bundles/myApp")
-        @Scripts.Render("~/bundles/app-processing-manage")
-        @Styles.Render("~/Content/CrispCSS")
-
-        <!-- Icons ================ -->
-        <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
-        <link rel="apple-touch-icon-precomposed" href="http://ttsimages.ttstrain.com/images/BankWebinars/apple-touch-icon.png" />
-        <!-- For first- and second-generation iPad: -->
-        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://ttsimages.ttstrain.com/images/BankWebinars/apple-touch-icon-72x72-precomposed.png" />
-        <!-- For iPhone with high-resolution Retina display: -->
-        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://ttsimages.ttstrain.com/images/BankWebinars/apple-touch-icon-114x114-precomposed.png" />
-        <!-- For third-generation iPad with high-resolution Retina display: -->
-        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://ttsimages.ttstrain.com/images/BankWebinars/apple-touch-icon-144x144-precomposed.png" />
-        <link rel="shortcut icon" href="http://ttsimages.ttstrain.com/images/BankWebinars/favicon.ico" />
-        <!-- Open Graph for facebook
-            http://graph.facebook.com/[UserName] replace [UserName]
-            with yours and get your fb:admis content information where the XXXX goes.
-            ================================================== -->
-        <meta property="og:title" content="" />
-        <meta property="og:type" content="" />
-        <meta property="og:url" content="" />
-        <meta property="og:image" content="" />
-        <meta property="og:site_name" content="" />
-        <meta property="og:locale" content="en_us" />
-        <meta property="og:description" content="@ConfigurationManager.AppSettings["Tenant"] is Webinars for the financial industry." />
-
-        @RenderSection("Styles", required: false)
-        <style>
-            table td {
-                border: none;
-                text-align: center;
-            }
-
-            .hero-unit {
-                padding-top: 20px;
-                padding-bottom: 0px;
-            }
-        </style>
-    </head>
+    </style>
+</head>
 <body class="@PageStyleType">
     <!-- begin accesibility skip to nav skip content -->
     <ul class="visuallyhidden" id="top">
@@ -237,12 +265,12 @@
                         </ul>
                     </li>
                     <li class="parent">
-                        <a href="javascript:void(0)">Upcoming Events<i></i></a>
+                        <a href="javascript:void(0)">Upcoming Webinars<i></i></a>
                         <ul>@Html.Raw(sessionUpcoming)</ul>
                         @*<ul></ul>*@
                     </li>
                     <li class="parent">
-                        <a href="javascript:void(0)">OnDemand Events<i></i></a>
+                        <a href="javascript:void(0)">OnDemand Webinars<i></i></a>
                         <ul>@Html.Raw(sessionRecorded)</ul>
                         @*<ul></ul>*@
                     </li>
@@ -285,7 +313,7 @@
             </nav>
             <!-- close / #main_menu -->
             <!-- begin #logo -->
-            <div id="logo"> <a href="/Home"><img alt="" src="http://ttsimages.ttstrain.com/images/BankWebinars/trans.gif" /><em>Credit Union Webinars</em><!--effing ie7 support--></a> </div>
+            <div id="logo"> <a href="/Home"><img alt="" src="http://images.ttstrain.com/images/BankWebinars/trans.gif" /><em>Credit Union Webinars</em><!--effing ie7 support--></a> </div>
             <!-- end #logo -->
             `
         </div>
@@ -332,7 +360,7 @@
                             PO Box 310 . Waunakee, Wisconsin . 53597<br>
                             <strong>phone:</strong> <a href="tel:8008310678" class="tele">800.831.0678</a><br>
                             <strong>fax:</strong> 800.831.3776<br>
-                            <strong>email:</strong><a href="mailto:@ConfigurationManager.AppSettings["TenantEmail"]">@ConfigurationManager.AppSettings["TenantEmail"]</a>
+                            <strong>email:</strong> <a href="mailto:@ConfigurationManager.AppSettings["TenantEmail"]">@ConfigurationManager.AppSettings["TenantEmail"]</a>
                         </p>
                     </section>
                     <!--close section-->
@@ -419,7 +447,7 @@
     @RenderSection("scripts", required: false)
     <script>
         window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
-        // Send object with all data to server side log, using severity fatal,
+            // Send object with all data to server side log, using severity fatal,
             // from logger "onerrorLogger"
             JL("mylogger").fatalException({
                 "msg": "Exception!",

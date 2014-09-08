@@ -1,0 +1,19 @@
+﻿@model CUWebinars.Web.Models.EditInstitutionModel
+
+@using (Html.BeginForm("EditInstition", "Account", "Post"))
+{
+    @Html.AntiForgeryToken()
+    <div class="control-group">
+        @Html.LabelFor(model => model.Institution, new { @class = "control-label" })
+        <div>
+            @Html.EditorFor(model => model.Institution)
+            @Html.ValidationMessageFor(model => model.Institution)
+        </div>
+    </div>
+    <div class="form-inline">
+        <div class="btn-group" style="width:160px">&nbsp;</div>
+        <div class="btn-group">
+            <input type="submit" value="Update Institution" class="btn btn-default" />
+        </div>
+    </div>
+}

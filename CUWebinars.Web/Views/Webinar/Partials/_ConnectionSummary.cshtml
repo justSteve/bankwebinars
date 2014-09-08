@@ -10,12 +10,23 @@
     var teleconf = Model.Webinar.AccessPhoneAttendee;
     var accessCode = Model.Webinar.AccessCodeAttendee;
 }
- 	
+
 <div id="showConnectionInfo">
-    <table style="font-size: smaller;" width="250px">
+    <table style="font-size: smaller;" width="250">
         <tr>
-            <td colspan="2" >
-                <p>This link will become active 15-20 minutes prior to the scehuled start time of the event and connect you directly into the webinar.<br/> <a href="@Model.JoinURL" target="_JoinWebinar">@Model.JoinURL</a></p>
+            <td colspan="2">
+                @{
+                    if (@Model.JoinURL == null)
+                    {
+                        <p>This link will become active 15-20 minutes prior to the scheduled start time of the event and connect you directly into the webinar:<br /> <b><a href="https://www2.gotomeeting.com/join/@eventID" target="_JoinWebinar">https://www2.gotomeeting.com/join/@eventID</a></b></p>
+
+                    }
+                    else
+                    {
+                        <p>This link will become active 15-20 minutes prior to the scheduled start time of the event and connect you directly into the webinar:<br /> <b><a href="@Model.JoinURL" target="_JoinWebinar">@Model.JoinURL</a></b></p>
+
+                    }
+                }
             </td>
         </tr>
         <tr>

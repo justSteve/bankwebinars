@@ -1,4 +1,30 @@
-﻿table, th, td {
+﻿    .ReverseHead {
+        font-family: Verdana, BitStream vera Sans, Helvetica,Sans-serif;
+        text-align: left;
+        margin-bottom: 10px;
+    }
+
+    .dropdown li {
+        font-family: Verdana, BitStream vera Sans,Helvetica,Sans-serif;
+    }
+
+    .dropdown-menu > li > a {
+        text-align: left;
+        font-size: medium;
+    }
+
+    .propValue {
+        color: black;
+    }
+
+        .propValue a {
+            color: black;
+        }
+
+    .cCon {
+    }
+    
+    table, th, td {
     margin: 0px;
     padding: 0px;
 }

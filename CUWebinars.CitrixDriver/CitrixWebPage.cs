@@ -46,7 +46,7 @@ namespace CUWebinars.CitrixDriver
         {
             SeleniumTestDriver.ClearFederatedCookies();
         }
-        
+
         public void GotToLoginPage()
         {
             var webDriverWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(20));
@@ -128,11 +128,12 @@ namespace CUWebinars.CitrixDriver
                     prevButton.Click();
                 }
             }
+            //ClickMonth(monthHeader, month, year, prevButton);
 
             while (monthHeader.Text != string.Format("{0} {1}", month, year))
             {
-                count++;
-                nextButton.Click();
+                count--;
+                prevButton.Click();
             }
 
             ReadOnlyCollection<IWebElement> rows = dateWidget.FindElements(By.TagName("tr"));
@@ -146,15 +147,33 @@ namespace CUWebinars.CitrixDriver
             }
         }
 
+        private static void ClickMonth(IWebElement monthHeader, string month, int year, IWebElement prevButton)
+        {
+            try
+            {
+                if (monthHeader.Text != string.Format("{0} {1}", month, year))
+                {
+                    prevButton.Click();
+                }
+            }
+            catch (Exception)
+            {
+                if (monthHeader.Text != string.Format("{0} {1}", month, year))
+                {
+                    prevButton.Click();
+                }
+            }
+        }
+
         //public void CompleteDetails()
         //{
         //    SeleniumTestDriver.FindByIdClick("privateConfCallRadio");
         //    SeleniumTestDriver.FindByIdClick("StartDate_Cal_0");
         //    SeleniumTestDriver.FindByCssSelectorClick("img.next");
 
-            
+
         //    SeleniumTestDriver.TypeText("StartHour_0", "06:00");
-            
+
         //    var startMeridian = new SelectElement(SeleniumTestDriver.FindById("StartAMPM_0"));
         //    startMeridian.SelectByText("PM");
         //    SeleniumTestDriver.TypeText("EndHour_0", "11:00");
@@ -177,20 +196,9 @@ namespace CUWebinars.CitrixDriver
 
         //}
 
-        private void AddPanelists(IList<Presenter> presenters)
-        {/*
-            var nrOfPresenters = presenters.Count();
+        private void AddPanelists(string presenter)
+        {
 
-            if (nrOfPresenters > 3)
-                SeleniumTestDriver.FindByIdClick("addPanelistsLink"); 
-
-
-            for (int i = 0; i < nrOfPresenters; i++)
-            {
-                SeleniumTestDriver.TypeText("Panelist" + i + "Name_Full", presenters[i].WebUser.FullName);
-                SeleniumTestDriver.TypeText("Panelist" + i + "Email", presenters[i].WebUser.email);
-            }
-           */
             SeleniumTestDriver.TypeText("Panelist1Name_Full", "Steve Presenter");
             SeleniumTestDriver.TypeText("Panelist1Email", "amSteve@gmail.com");
         }
@@ -204,6 +212,17 @@ namespace CUWebinars.CitrixDriver
 
             var wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(5));
 
+            var webinarTitleText = wait.Until(d =>
+            {
+                var webinarTitleTextInput = SeleniumTestDriver.FindByIdClick("WebinarTitle");
+                return webinarTitleTextInput;
+            });
+
+
+            SeleniumTestDriver.TypeText("WebinarTitle", webinar.Title);
+            SeleniumTestDriver.TypeText("Description", webinar.Description);
+
+
             var confCallRadio = wait.Until(d =>
             {
                 var confCallRadioButton = SeleniumTestDriver.FindByIdClick("confCallRadio");
@@ -211,6 +230,8 @@ namespace CUWebinars.CitrixDriver
             });
 
             confCallRadio.Click();
+
+
 
             SeleniumTestDriver.FindByIdClick("StartDate_Cal_0");
 
@@ -234,35 +255,35 @@ namespace CUWebinars.CitrixDriver
             var timeZoneKey = new SelectElement(SeleniumTestDriver.FindById("TimeZoneKey"));
             timeZoneKey.SelectByValue(webinar.TimeZoneKey.ToString());
 
-            
+
             SeleniumTestDriver.FindByIdClick("pstn");
             SeleniumTestDriver.FindByIdClick("pstnTF");
 
-            AddPanelists(null);
+            AddPanelists(webinar.PresenterFirstName + ' ' + webinar.PresenterLastName);
 
             SeleniumTestDriver.FindByCssSelectorClick("div.submit_bar input[Type=submit]");
 
             //  Second tab - wait a bit
             wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(1));
 
-            var submitButtonContinue = 
+            var submitButtonContinue =
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(@"//input[@value='Save and Continue >']")));
 
             wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(5));
 
             IWebElement webinarKeyHiddenInput =
                 wait.Until(ExpectedConditions.ElementExists(By.XPath(@"//input[@name='WebinarKey']")));
-            
+
             string webinarKey = webinarKeyHiddenInput.GetAttribute("value");
-            
-             submitButtonContinue.Click();
-            
+
+            submitButtonContinue.Click();
+
             //  Third tab - wait a bit
             SeleniumTestDriver.FindByLinkTextClick("Clear All");
 
             wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(1));
 
-            var commitButton = 
+            var commitButton =
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(@"//input[@value='Save and Email me the Invitation']")));
 
             SeleniumTestDriver.FindByXPathClick(@"//input[@name='ApprovalRequired'][2]"); // index starts at 1, not 0
