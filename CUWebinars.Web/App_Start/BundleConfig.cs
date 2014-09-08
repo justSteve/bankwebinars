@@ -77,10 +77,10 @@ namespace CUWebinars.Web.App_Start
                         "~/Scripts/app/web-user-details-register.js"
             ));
 
-            //bundles.Add(new ScriptBundle("~/bundles/membership-notifications-ops").Include(
-            //    "~/Scripts/app/membership-notifications.js",
-            //    "~/Scripts/app/web-user-details-register.js"
-            //));
+            bundles.Add(new ScriptBundle("~/bundles/membership-notifications-ops").Include(
+                "~/Scripts/app/membership-notifications.js",
+                "~/Scripts/app/web-user-details-register.js"
+            ));
 
             bundles.Add(new StyleBundle("~/Content/CrispCSS").Include(
                     "~/Content/css/styleCrisp.css",
