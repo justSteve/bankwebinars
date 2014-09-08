@@ -1917,7 +1917,6 @@
   <ItemGroup>
     <Folder Include="Infrastructure\apis\citrix\GTW\" />
     <Folder Include="Notification\Delivery\" />
-    <Folder Include="Utils\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
