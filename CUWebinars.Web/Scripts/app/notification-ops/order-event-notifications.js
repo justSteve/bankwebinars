@@ -424,4 +424,8 @@ $(function () {
             $('#ScreenMessageSpan').remove();
         }
     };
+
+    var removeInnerHandlers = function() {
+        $('#ResendConnectionInfoButton').off('click', OENS.PageObjects.InputFormFieldsDiv());
+    };
 });

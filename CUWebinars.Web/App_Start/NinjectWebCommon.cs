@@ -1,6 +1,3 @@
-using System.Linq;
-using System.Reflection;
-using System.Web.Services.Description;
 using BrockAllen.MembershipReboot;
 using BrockAllen.MembershipReboot.Ef;
 using BrockAllen.MembershipReboot.WebHost;
@@ -14,6 +11,8 @@ using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Services;
 using Ninject.Extensions.Logging;
 using Ninject.Extensions.Logging.Log4net.Infrastructure;
+using System.Linq;
+using System.Reflection;
 using System.Web.Http;
 
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(CUWebinars.Web.App_Start.NinjectWebCommon), "Start")]
