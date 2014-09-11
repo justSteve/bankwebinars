@@ -14,7 +14,7 @@
               where orderRow.RowStatus == OrderRowStatus.Active
               select orderRow;
     var webinar = row.Single().Webinar;
-
+    var myRow = row.Single();
     var shippedDate = Convert.ToDateTime(row.SingleOrDefault().ShipmentDate).ToShortDateString();
 
     string DateTimeString = TtsTemplateHelperObject.FormatTimeWithDuration(webinar.Date, Model.WebUser.timeZone, true, webinar.Duration);

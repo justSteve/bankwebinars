@@ -1,4 +1,6 @@
-﻿@using System.Linq
+﻿@using System.Globalization
+@using System.Linq
+@using CUWebinars.Web.Core
 @using CUWebinars.Web.Helpers
 
 @model WebinarDetailsViewModel
@@ -6,6 +8,8 @@
 @{
     ViewBag.Title = Model.Webinar.Title + " - Presented by: " + Model.Webinar.Presenter.WebUser.FullName;
     Layout = "/Views/Shared/_LayoutPublic.cshtml";
+    NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
     var CheckoutInProcess = "false";
     if (ViewData.ContainsKey("CheckoutInProcess"))
@@ -15,8 +19,6 @@
             CheckoutInProcess = ViewData["CheckoutInProcess"].ToString();
         }
     }
-
-
     var whichStep = "Step0";
     if (ViewData.ContainsKey("WhichStep"))
     {
@@ -55,11 +57,11 @@
     {
         <script language="javascript">
             function exprsOrder(idRegType) {
-                alert("Please dial 800-831-0678 ext. 3 and ask to upgrade CU-@Model.Order.idOrder");
+                alert("Please call us at 800-831-0678 ext. 3 and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder");
 
             };
             function upgrade(idRegType) {
-                alert("Please dial 800-831-0678 ext. 3 and ask to upgrade CU-@Model.Order.idOrder");
+                alert("Please call us at 800-831-0678 ext. 3 and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder");
 
             };
         </script>
@@ -71,8 +73,6 @@
             });
         </script>
 
-        rowID = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
-        orderID = Model.Order.idOrder;
 
         if (Model.Order.OrderStatus == OrderStatus.InProcess)
         {
@@ -178,8 +178,21 @@
         <div class="span3">
             <aside class="widget">
                 <h5 class="short_headline"><span>Date/Time</span></h5>
-                <b>@Html.DisplayDate(Model.Webinar.Date)</b><br />
-                <span>@Html.Raw(showUsersTimeFormat)</span>
+                @if (Model.Webinar.Status == WebinarStatus.Recorded)
+                {
+                    var expiresDate = Model.Webinar.Date.AddMonths(6);
+                    TimeSpan calcDays = expiresDate - Model.Webinar.Date;
+                    var remainingDays = Convert.ToInt32(calcDays.TotalDays);
+
+                    <div style="font-size: smaller; text-align: center;">This event was recorded on @Html.DisplayDate(Model.Webinar.Date) and is available for OnDemand Playback until @Html.DisplayDate(expiresDate)
+                        - @remainingDays more days.</div>
+                }
+                else
+                {
+                    <b>@Html.DisplayDate(Model.Webinar.Date)</b>
+                    <br />
+                    <span>@Html.Raw(showUsersTimeFormat)</span>
+                }
                 <div id="ceu">
                     <a href="#" title="@ceuStmt ">
                         @Html.Raw(ceuShort)
@@ -202,7 +215,8 @@
                     <div class="span12" style="display:none;"><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>
                     <div id="InputFormFields" style="margin-top: 20px;"></div>
                 </aside>*@
-            <!-- Close ics file widget -->            <aside class="widget">
+            <!-- Close ics file widget -->
+            <aside class="widget">
                 <h5 class="short_headline">
                     <span>Topics</span>
                 </h5>

@@ -188,10 +188,10 @@ namespace CUWebinars.Business.Services
         {
             return _webUserRepository.GetWebusersForLiveNotifications(idWebinar);
         }
-        public IList<AdditionalLocation> GetAdditionalLocations(int idOrder)
-        {
-            return _orderRepository.GetAdditionalLocations(idOrder);
-        }
+        //public IList<AdditionalLocation> GetAdditionalLocations(int idOrder)
+        //{
+        //    return _orderRepository.GetAdditionalLocations(idOrder);
+        //}
         public void DispatchDummyOrder()
         {
             foreach (var orderSubmittedEvent in GetEvents())

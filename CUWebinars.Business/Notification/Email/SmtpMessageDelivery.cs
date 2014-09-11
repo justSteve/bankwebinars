@@ -32,6 +32,17 @@ namespace CUWebinars.Business.Notification.Email
                 {
                     destinationEmailAddress = ConfigurationManager.AppSettings["TestEmailAddress"];
                 }
+                if (System.Diagnostics.Debugger.IsAttached)
+                {
+                    destinationEmailAddress = ConfigurationManager.AppSettings["TestEmailAddress"];
+                }
+#if DEBUG
+                destinationEmailAddress = ConfigurationManager.AppSettings["TestEmailAddress"];
+#endif
+
+                mailMessage.To.Add(new MailAddress(destinationEmailAddress));
+
+                
                 mailMessage.To.Add(destinationEmailAddress);
                 
                 try

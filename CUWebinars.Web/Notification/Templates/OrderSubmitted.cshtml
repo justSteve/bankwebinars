@@ -1,5 +1,7 @@
 ﻿@using System.Configuration
+@using System.Globalization
 @using System.Linq
+@using System.Text
 @using System.Web.Mvc.Html
 @using CUWebinars.Business.Models
 @model CUWebinars.Business.Notification.ViewModel.OrderSubmittedViewModel
@@ -23,9 +25,120 @@
     var webinar = row.Single().Webinar;
     var rowRegType = row.Single().RegistrationType;
     var joinURL = row.Single().JoinURL;
+    var myRow = row.Single();
     var phone = "TBA";
     var code = "TBA";
+    var notiConnectionInfo = myRow.RegistrationType.ShowLiveNotifications;
+    var notiRecordingPosted = row.Single().RegistrationType.ShowRecordingNotifications;
+    var notiShipped = row.Single().RegistrationType.ShowShippedNotifications;
+    System.Text.StringBuilder connInfoPhrase = new System.Text.StringBuilder();
+
+
     var verifyAcctMsg = "";
+
+    var locations = row.Single().AdditionalLocation;
+    System.Text.StringBuilder addLocs = new System.Text.StringBuilder();
+
+    if (locations.Count > 0)
+    {
+        if (locations.Count == 1)
+        {
+            addLocs.Append("The registration includes a single additional location for " + @locations.First().Email + " costing " + locations.First().Price.ToString("C").Replace(".00", "") + ". </span>");
+        }
+        else
+        {
+            StringBuilder addresses = new StringBuilder();
+            int optionsCost = 0;
+            var i = 0;
+
+            foreach (var addLoc in locations)
+            {
+                i++;
+                if (i == locations.Count)
+                {
+                    addresses.Append(addLoc.Email);
+                }
+                if (i < locations.Count)
+                {
+                    if (i == locations.Count - 1)
+                    {
+                        addresses.Append(addLoc.Email + " and ");
+                    }
+                    else
+                    {
+                        addresses.Append(addLoc.Email + ", ");
+                    }
+                }
+
+                optionsCost = optionsCost + Convert.ToInt32(addLoc.Price);
+            }
+            addLocs.Append(" This registration also includes " + locations.Count + " additional locations (total added cost is " + optionsCost.ToString("C").Replace(".00", "") + ") for " + addresses + ".");
+            addLocs.Append(" These addresses will receive individualized connection information. General connection info is the same for everyone but the <i>Registrant Key</i> (the link to join the event) is customized to each of the recorded addresses.");
+        }
+    }
+    if (webinar.Status == WebinarStatus.Scheduled)
+    {
+        if (notiConnectionInfo == "Yes")
+        {
+
+            connInfoPhrase.Append("but until we hear otherwise we'll be sending you all notifications related to connecting to this event.");
+            connInfoPhrase.Append(" Typically that means we'll send you an email 2-3 days prior to the event with a reminder sent the morning of.");
+            connInfoPhrase.Append(" You'll also see notifications from our host, GoToWebinar.com. The information will amount to the same end-result ");
+            connInfoPhrase.Append(" - <i>please</i> let us know if your experience is different.</p>");
+            if (locations.Count > 0)
+            {
+                connInfoPhrase.Append("<p>" + addLocs + "</p>");
+            }
+
+        }
+        else
+        {
+            connInfoPhrase.Append("<p>There's plenty of time to adjust this order to something that better suits your needs, ");
+            connInfoPhrase.Append("but until we hear otherwise we'll only be sending you a notification that the OnDemand Recording is posted and available to view ");
+            if (notiShipped == "Yes")
+            {
+                connInfoPhrase.Append(" and another when your CD and printouts have shipped.");
+            }
+
+            connInfoPhrase.Append(".</p><p> You <i>won't</i> see notifications related to the live event...again, plenty of time to change that...just hit reply and let us know.</p>");
+        }
+    }
+
+    if (webinar.Status == WebinarStatus.Active)
+    {
+        connInfoPhrase.Append("<p>");
+        if (notiConnectionInfo == "Yes")
+        {
+            connInfoPhrase.Append("This order confirmation includes the link to be used to connect directly to the webinar.");
+        }
+        if (notiRecordingPosted == "Yes")
+        {
+            connInfoPhrase.Append("Shortly following the conclusion you'll receive another notification that the recording is posted");
+        }
+        if (notiShipped == "Yes")
+        {
+            connInfoPhrase.Append("and within another 3-5 days you'll see a notification that we've shipped your physical materials");
+        }
+        connInfoPhrase.Append(".</p>");
+        if (locations.Count > 0)
+        {
+            connInfoPhrase.Append("<p>" + addLocs + "</p>");
+        }
+    }
+    
+    if (webinar.Status == WebinarStatus.Recorded)
+    {
+        connInfoPhrase.Append("<p>");
+        if (notiRecordingPosted == "Yes")
+        {
+            connInfoPhrase.Append("Log into your account at MyWebinars to access your recording and event materials.");
+        }
+        if (notiShipped == "Yes")
+        {
+            connInfoPhrase.Append("Over the next 3-5 days you'll see a notification that we've shipped your physical materials.");
+        }
+        connInfoPhrase.Append("</p>");
+    }
 
 
     if (joinURL == null)
@@ -50,7 +163,7 @@
         phone = webinar.AccessPhoneAttendee;
     }
     var HeaderText = "Confirmation of Registration for<br />" + webinar.Title;
-    var BannerText = "Order Number: CU-" + Model.Order.idOrder + "<br />Type: " + row.Single().RegistrationType.OptionLabel;
+    var BannerText = "Order Number: " + TenantPrefix + Model.Order.idOrder + "<br />Type: " + row.Single().RegistrationType.OptionLabel;
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>[@Tenant]: Confirmation of Registration for @webinar.Title</title>
@@ -144,17 +257,18 @@
                                                                         <td colspan="2" style="text-align: left; margin-left: 6px; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: small">
                                                                             <span style="color: black; font-family: Arial, Helvetica, sans-serif; padding: 5px; font-size: 12px;">
                                                                                 <br />Dear @Model.Order.FirstName,<br />
-                                                                                Thank you for your recent order.<br />
+                                                                                Thank you for your recent order numbered: @TenantPrefix@row.Single().Order.idOrder<text>.</text>
                                                                                 @if (Model.UserCreatedOnImport)
                                                                                 {
                                                                                     <span>
-                                                                                        <br />
                                                                                         We've created an account at <b>@TenantDomain</b> and request you establish a new password that is unqiue to this site and hard to guess. <b><a href="@Model.ConfirmChangeEmailUrl">Set My Password</a></b>.<br />
-                                                                                        <br />If you have any problems accessing that link from inside this email you may paste this URL into your browser: <i>@Model.ConfirmChangeEmailUrl</i><br />
-                                                                                        Again, thank you very much for your patronage!<br /><br />Sincerely,<br />The @Tenant Staff<br /><br />
+                                                                                        If you have any problems accessing that link from inside this email you may paste this URL into your browser: <i>@Model.ConfirmChangeEmailUrl</i><br /><br />
                                                                                     </span>
                                                                                 }
+                                                                                We've recorded that you've chosen the <i><b>@row.Single().RegistrationType.OptionLabel</b></i>. @connInfoPhrase <br />
+                                                                                Again, thank you very much for your patronage!<br /><br />Sincerely,<br />The @Tenant Staff<br /><br />
                                                                             </span>
+
                                                                         </td>
                                                                     </tr>
                                                                     @*<tr>
@@ -451,7 +565,6 @@
                 </tr>
             </tbody>
         </table>
-
     </body>
 }
 </html>

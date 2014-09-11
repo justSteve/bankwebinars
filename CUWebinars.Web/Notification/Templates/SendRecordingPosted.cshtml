@@ -20,6 +20,7 @@
               where orderRow.RowStatus == OrderRowStatus.Active
               select orderRow;
     var webinar = row.Single().Webinar;
+    var myRow = row.Single();
 
     var joinURL = row.Single().JoinURL;
     var phone = "TBA";

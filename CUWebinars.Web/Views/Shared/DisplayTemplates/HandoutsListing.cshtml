@@ -2,18 +2,11 @@
 @model Webinar
 
 <div id="showHandouts-@Model.idWebinar ">
-    <p style="margin-left: 50px;" class="cCon">
-        Download Materials<br />
-
-        <span style="padding-left: 50px;">
-            @{
-                foreach (var file in Model.WebinarFiles)
-                {
-                    <a href='@ConfigurationManager.AppSettings["HandoutRepository"]@file.fileLocation' target='_blank'>@file.fileDesc</a>
-                    <br />
-                }
-            }
-
-        </span>
-    </p>
+    @{
+        foreach (var file in Model.WebinarFiles)
+        {
+            <a class="btn btn-warning" href='@ConfigurationManager.AppSettings["HandoutRepository"]@file.fileLocation' target='_blank'>@file.fileDesc</a>
+            <br />
+        }
+    }
 </div>
