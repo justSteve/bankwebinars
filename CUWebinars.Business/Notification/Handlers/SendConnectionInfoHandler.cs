@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
@@ -29,9 +30,28 @@ namespace CUWebinars.Business.Notification.Handlers
 
         public virtual void Process(SendConnectionInfoEvent<T> sendConnectionInfoEvent)
         {
+
             try
             {
                 var notificationMessage = _generalFormatter.Format(sendConnectionInfoEvent.EventObject, "SendConnectionInfo");
+
+                var isAdditionalLocation =
+                    sendConnectionInfoEvent.EventObject.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
+                        .AdditionalLocation;
+                if (isAdditionalLocation.Count != 0)
+                {
+                    //send a notification to each of any additional locations records
+                    notificationMessage.To = sendConnectionInfoEvent.EventObject.BillingEmail;
+                    foreach (var additionalLocation in isAdditionalLocation)
+                    {
+                        //override the order's Name property so that additional locations addressees 
+                        // get correct name. order isn't saved so after execution, the property reverts.
+                        sendConnectionInfoEvent.EventObject.FirstName = additionalLocation.FullName;
+                        notificationMessage = _generalFormatter.Format(sendConnectionInfoEvent.EventObject, "SendConnectionInfo");
+                        notificationMessage.To = additionalLocation.Email;
+                        _notificationDelivery.Notify(notificationMessage);
+                    }
+                }
 
                 notificationMessage.To = sendConnectionInfoEvent.EventObject.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);

@@ -23,7 +23,7 @@
     var webinar = row.Single().Webinar;
     var myRow = row.Single();
 
-    var joinURL = row.Single().JoinURL;
+    var joinURL = myRow.JoinURL;
     var phone = "TBA";
     var code = "TBA";
 
@@ -50,7 +50,7 @@
         phone = webinar.AccessPhoneAttendee;
     }
     var HeaderText = "Your Connection Information";
-    var BannerText = "Order Number: "+TenantPrefix + Model.idOrder + "<br />Type: " + row.Single().RegistrationType.OptionLabel;
+    var BannerText = "Order Number: "+TenantPrefix + Model.idOrder + "<br />Type: " + myRow.RegistrationType.OptionLabel;
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>Connection Information</title>
