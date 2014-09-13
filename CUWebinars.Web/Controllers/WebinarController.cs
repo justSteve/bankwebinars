@@ -136,20 +136,20 @@ namespace CUWebinars.Web.Controllers
             return View(webinars);
         }
 
-        public PartialViewResult GetAdditionalLocationByOrderId(int webUserId, int webinarId)
-        {
-            //  TODO: Implement
+        //public PartialViewResult GetAdditionalLocationByOrderId(int webUserId, int webinarId)
+        //{
+        //    //  TODO: Implement
 
-            //var order = _orderManagementService.GetOrdersByUserId()
+        //    var order = _orderManagementService.GetOrdersByUserId();
 
-            var addAdditionalLocationViewModel = new WebinarDetailsViewModel
-            {
-                //AdditionalLocations = order.OrderRows.First().AdditionalLocation.ToList()
-                //AdditionalLocations = new AdditionalLocation[] { new AdditionalLocation { Email = "dave@dave.com" }, new AdditionalLocation { Email = "monty@python.com" } }
-            };
+        //    var addAdditionalLocationViewModel = new WebinarDetailsViewModel
+        //    {
+        //        AdditionalLocations = order.OrderRows.First().AdditionalLocation.ToList()
+        //        AdditionalLocations = new AdditionalLocation[] { new AdditionalLocation { Email = "dave@dave.com" }, new AdditionalLocation { Email = "monty@python.com" } }
+        //    };
 
-            return PartialView("~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml", addAdditionalLocationViewModel);
-        }
+        //    return PartialView("~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml", addAdditionalLocationViewModel);
+        //}
 
         public ActionResult AllActive(string eventsToShow)
         {
@@ -488,9 +488,9 @@ namespace CUWebinars.Web.Controllers
 
             var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id);
             if (webinar == null) return HttpNotFound();
-            
-            
-            
+
+
+
             ViewBag.topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar);
 
             var model = new WebinarDetailsViewModel()
@@ -543,6 +543,64 @@ namespace CUWebinars.Web.Controllers
                     {
                         ViewBag.userHasOpenOrder = checkOrder.idOrder;
                         model.Order = checkOrder;
+                    }
+                }
+            }
+
+            if (model.Webinar == null)
+            {
+                return HttpNotFound();
+            }
+            return View(model);
+        }
+
+        public ActionResult Details2(int id)
+        {
+            ViewBag.PageStyleType = "holy-grail-three-columns";
+            var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id);
+
+            if (webinar == null) return HttpNotFound();
+            ViewBag.topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar);
+            ViewBag.userHasOpenOrder = 0;
+            ViewBag.userOwnsThisEvent = 0;
+            ;
+            ViewBag.upList = null;
+            ViewBag.regList = null;
+
+            WebUser user = Request.IsAuthenticated ? _membershipService.GetUserByEmail(User.Identity.Name) : new WebUser();
+            var usersOrders = _orderManagementService.GetOrdersByUserId(user.idUser)
+                                .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id) != null);
+
+            var options = _orderManagementService.GetOptionsByWebinarId(id, false);
+
+            var model = new WebinarDetailsViewModel()
+            {
+                WebUser = user,
+                Affiliate = stateService.GetValue<Affiliate>("CurrentAffiliate"),
+                Webinar = webinar,
+                Options = options,
+                Order = null
+            };
+
+            if (usersOrders.Any())
+            //if (usersOrders != null && usersOrders.Any())
+            {
+                foreach (var checkOrder in usersOrders)
+                {
+                    var row = checkOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+                    
+                    var webinarFiles = webinar.WebinarFiles
+                            .Select(f => f.fileDesc + "|" + f.fileLocation)
+                            .ToArray();
+
+                    ViewBag.WebinarFiles = webinarFiles;
+
+                    ViewBag.userOwnsThisEvent = checkOrder.idOrder;
+                    model.Order = checkOrder;
+                    
+                    if (checkOrder.OrderStatus == OrderStatus.InProcess && row.idWebinar != id)
+                    {
+                        ViewBag.userHasOpenOrder = checkOrder.idOrder;
                     }
                 }
             }

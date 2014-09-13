@@ -4,12 +4,11 @@
 }
 <script type="text/javascript">
     $(document).ready(function() {
-            $("[id^='mode_']").on("click", function(oEvent) {
+            $("[id^='regTypeID_']").on("click", function(oEvent) {
 
-                signUpv1();
-                //$("#stage_of_checkout").val("preReg");
-                //BuildPreRegPrice(oEvent);
-                //CheckIfAddLocShouldHide(oEvent.currentTarget.value);
+                $("#stage_of_checkout").val("preReg");
+                BuildPreRegPrice(oEvent);
+                CheckIfAddLocShouldHide(oEvent.currentTarget.value);
 
             });
     });
@@ -23,19 +22,6 @@
     //  Comment: I assume order will be null where there is no existing order for the User for that WebinarId
     //           This does not seem to have been handled in the controller as the Order is just set to null. I need to understand this.
 
-    //if (Model.Order != null)
-    //{
-    //    var order = Model.Order;
-    //    if (order.OrderRows.SingleOrDefault().OrderRowRegTypes.SingleOrDefault() != null)
-    //    {
-    //        addLocView = order.OrderRows.SingleOrDefault().OrderRowRegTypes.SingleOrDefault();
-    //    }
-    //    else
-    //    {
-    //        order.OrderRows.SingleOrDefault().OrderRowRegTypes.Add(addLocView);
-    //    }
-
-    //}
 
     <script language="javascript">
         function signUpv1() {
@@ -77,7 +63,7 @@
         @*@Html.Partial("_DisplayRowPrice", new ViewDataDictionary(row))
             @Html.Raw(TTSTr6ain.Webinars.WebEntry.Support.DisplayRowPrice.BuildRowPrice(workingRow))*@
     </div>
-    <div id="ModeOptions">
+    <div id="RegTypesList">
         <dl>
             @foreach (var myOption in Model.Options)
             {
@@ -89,7 +75,7 @@
                     // we need to display it. Only show 'Upgrades' to users
                     // who already own a registration.
                     <dt>
-                        <input type="radio" class="checkbox" id='mode_@(myOption.idRegType)' @defaultCheck name="mode" value="@myOption.idRegType" />
+                        <input type="radio" class="checkbox" id='regTypeID_@(myOption.idRegType)' @defaultCheck name="regType" value="@myOption.idRegType" />
                         &nbsp;&nbsp;@myOption.OptionLabel - $@myOption.Price&nbsp;&nbsp;<a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.OptionExplain) "><i class="icon-question-sign"></i></a>
                         <br />
                     </dt>
@@ -99,7 +85,7 @@
                     if (ViewBag.userOwnsThisEvent > 0)
                     {
                         <dt>
-                            <input type="radio" class="checkbox" id='mode_@(myOption.idRegType)' @defaultCheck name="mode" value="@myOption.idRegType" />
+                            <input type="radio" class="checkbox" id='regTypeID_@(myOption.idRegType)' @defaultCheck name="regType" value="@myOption.idRegType" />
                             &nbsp;&nbsp;@myOption.OptionLabel - $@myOption.Price&nbsp;&nbsp;<a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.OptionExplain) "><i class="icon-question-sign"></i></a>
                             <br />
                         </dt>
@@ -111,7 +97,7 @@
 
 
                 //orderRowOption.OrderRow = myOption;
-                //Model = new AdditionalLocationViewModel
+                //var AddLocModel = new AddAdditionalLocationViewModel()
                 //{
                 //    AdditionalLocations = new List<AdditionalLocation> { new AdditionalLocation { Email = "dave@dave.com" }, new AdditionalLocation { Email = "monty@python.com" } },
                 //    Webinar = Model.Webinar,

@@ -398,6 +398,7 @@
     <Compile Include="Models\JotFormModel.cs" />
     <Compile Include="Models\JotFormOrderModel.cs" />
     <Compile Include="Notification\Templates\CertOfCompletionViewModel.cs" />
+    <None Include="Views\Webinar\Details2.cshtml" />
     <None Include="Notification\Templates\OrderSubmittedAdditionalLocation.cshtml" />
     <Compile Include="ViewModel\CreateUserConfirmedViewModel.cs" />
     <Compile Include="ViewModel\EmailRequiredBaseViewModel.cs" />
@@ -478,7 +479,6 @@
     <Content Include="App_Data\Deploy\New-AzureStorage.ps1" />
     <Content Include="App_Data\Deploy\New-AzureWebsiteEnv.ps1" />
     <None Include="App_Data\Deploy\Publish-AzureWebsite.ps1" />
-    <Content Include="App_Data\Notifications\OrderNotification2014-05-15-PM.htm" />
     <Content Include="App_Data\Orders\ResetsDbForTesting.sql" />
     <Content Include="App_Data\Orders\RegistrationTypeMapping.txt" />
     <Content Include="App_Data\Orders\ResetsDb.sql" />
@@ -1917,6 +1917,7 @@
     <Content Include="Views\Account\Partials\OrderHasAdditionalLocations.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Data\Notifications\" />
     <Folder Include="Infrastructure\apis\citrix\GTW\" />
     <Folder Include="Notification\Delivery\" />
   </ItemGroup>

@@ -1,0 +1,298 @@
+﻿@using System.Globalization
+@using System.Linq
+@using CUWebinars.Web.Core
+@using CUWebinars.Web.Helpers
+
+@model WebinarDetailsViewModel
+
+@{
+    ViewBag.Title = Model.Webinar.Title + " - Presented by: " + Model.Webinar.Presenter.WebUser.FullName;
+    Layout = "/Views/Shared/_LayoutPublic.cshtml";
+    NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+
+    var CheckoutInProcess = "false";
+    if (ViewData.ContainsKey("CheckoutInProcess"))
+    {
+        if (!String.IsNullOrEmpty(ViewData["CheckoutInProcess"].ToString()))
+        {
+            CheckoutInProcess = ViewData["CheckoutInProcess"].ToString();
+        }
+    }
+    var whichStep = "Step0";
+    if (ViewData.ContainsKey("WhichStep"))
+    {
+        if (!String.IsNullOrEmpty(ViewData["WhichStep"].ToString()))
+        {
+            whichStep = ViewData["WhichStep"].ToString();
+        }
+    }
+
+    string ceuShort = String.Empty;
+    string ceuStmt = String.Empty;
+    if (String.IsNullOrEmpty(Model.Webinar.ceu) == false)
+    {
+        string[] ceu = Model.Webinar.ceu.Split('|');
+        ceuShort = ceu[0];
+        ceuStmt = ceu[1];
+    }
+    var idUser = 0;
+    var isUserLogged = "false";
+    var timeZ = USTimeZone.Central;
+    if (Model.WebUser != null && Model.WebUser.idUser > 0)
+    {
+        isUserLogged = "true";
+        timeZ = Model.WebUser.timeZone;
+        idUser = Model.WebUser.idUser;
+    }
+    var showUsersTimeFormat = "<i>" + Html.DisplayTime(Model.Webinar.Date, (USTimeZone)timeZ, false) + " - " + Html.DisplayTime(Model.Webinar.Date, Model.Webinar.Duration, timeZ) + "<br /></i>";
+    var msgOrderStatus = "";
+    var rowID = 0;
+    var orderID = 0;
+    var signUpCaption = "Sign Up!";
+    var confirmationCaption = "Confirmation";
+
+    var loggedInUserIdentity = ((ClaimsIdentity)User.Identity);
+    if (ViewBag.userOwnsThisEvent > 0)
+    {
+        <script language="javascript">
+            function exprsOrder(idRegType) {
+                alert("Please call us at 800-831-0678 ext. 3 and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder");
+
+            };
+            function upgrade(idRegType) {
+                alert("Please call us at 800-831-0678 ext. 3 and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder");
+
+            };
+        </script>
+        <script language="javascript">
+
+            $(document).ready(function () {
+                $("#SignUpFormContainer").hide();
+
+            });
+        </script>
+
+
+        if (Model.Order.OrderStatus == OrderStatus.InProcess)
+        {
+            CheckoutInProcess = "true";
+            msgOrderStatus = "<div align=\"center\" class=\"label-warning label\">Your order is InProcess and needs to be confirmed or canceled.</div>";
+        }
+    }
+}
+
+<script type="text/javascript">
+
+    CheckoutInProcess = "@(CheckoutInProcess)";
+    whichStep = "@(whichStep)";
+    orderRowID = @rowID;
+    isUserLogged = @isUserLogged;
+
+    $(document).ready(function() {
+        JL("myLogger").info("Details loaded @Model.Webinar.idWebinar for idUser @idUser.");
+    });
+
+</script>
+
+<style>
+    .icon-question-sign {
+        background-position: 14px 14px;
+    }
+
+    .hero-unit h1 {
+        color: inherit;
+        font-size: 50px;
+        letter-spacing: -1px;
+        line-height: 1;
+        margin-bottom: 0;
+    }
+
+    blockquote {
+        background: url("") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+        font-style: normal;
+        line-height: 110%;
+        font-size: small;
+        font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    }
+
+    .well-large {
+        padding: 0;
+    }
+
+        .well-large p {
+            padding: 0;
+            line-height: 100%;
+            font-size: small;
+        }
+</style>
+
+
+<div class="hero-unit">
+    <div id="webinarTitle" class="container">
+        <div class="span10">
+            <h1>@Model.Webinar.Title</h1>
+        </div>    <!--close container-->
+    </div>
+
+</div>
+<!--close hero-unit-->
+<div class="container clearfix" id="main-content">
+    <!--begin main content-->
+
+    <div id="webinarContent" class="row-fluid holy-grail">
+        <!--begin row-fluid-->
+        <section class="span3 sidebar">
+            <aside class="widget well-large">
+                <h5 class="short_headline"><span>@Model.Webinar.Presenter.WebUser.FullName</span></h5>
+                @Html.Raw(Model.Webinar.Presenter.BiographyLong)
+                @Html.Partial("Partials/_OtherEventsBySpeaker")
+            </aside>
+            <!--close aside widget-->
+        </section>
+        <!--*** add class "holy-grail" to row-fluid class to make a three column skinny, fat, skinny layout ***-->
+        <div class="span6">
+            <div class="description">
+                @Html.Raw(Model.Webinar.DescriptionLong)
+            </div>
+            <div class="description">
+                <h2 class="short_headline">
+                    <span>
+                        @Html.Raw(Model.Webinar.LearnCaption)
+                    </span>
+                </h2>
+                @Html.Raw(Model.Webinar.LearnBody)
+            </div>
+            <div class="description">
+                <h2 class="short_headline">
+                    <span>
+                        Who Should Attend?
+                    </span>
+                </h2>
+                @Html.Raw(Model.Webinar.WhoAttend)
+            </div>
+            <hr />
+        </div>
+
+
+        <div class="span3">
+            <aside class="widget">
+                <h5 class="short_headline"><span>Date/Time</span></h5>
+                @if (Model.Webinar.Status == WebinarStatus.Recorded)
+                {
+                    var expiresDate = Model.Webinar.Date.AddMonths(6);
+                    TimeSpan calcDays = expiresDate - Model.Webinar.Date;
+                    var remainingDays = Convert.ToInt32(calcDays.TotalDays);
+
+                    <div style="font-size: smaller; text-align: center;">
+                        This event was recorded on @Html.DisplayDate(Model.Webinar.Date) and is available for OnDemand Playback until @Html.DisplayDate(expiresDate)
+                        - @remainingDays more days.
+                    </div>
+                }
+                else
+                {
+                    <b>@Html.DisplayDate(Model.Webinar.Date)</b>
+                    <br />
+                    <span>@Html.Raw(showUsersTimeFormat)</span>
+                }
+                <div id="ceu">
+                    <a href="#" title="@ceuStmt ">
+                        @Html.Raw(ceuShort)
+                    </a>
+                </div>
+            </aside>
+
+            @if (loggedInUserIdentity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.CuWebinarsAdmin))
+            {
+                @Html.Partial(@"Partials/_AdminEventButtons", Model)
+            }
+            @Html.Partial("Partials/_RegistrationSummary")
+            <!-- close .widget -->
+            <!-- For certificate file widget -->
+            <!-- Close certificat widget -->
+            <!-- For Generate ics file widget -->
+            @*<aside class="widget">
+                    <h5 class="short_headline"><span>iCalendar</span></h5>
+                    <button id="CreateICSButton" class="btn btn-primary">Generate ICS</button>
+                    <div class="span12" style="display:none;"><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>
+                    <div id="InputFormFields" style="margin-top: 20px;"></div>
+                </aside>*@
+            <!-- Close ics file widget -->
+            <aside class="widget">
+                <h5 class="short_headline">
+                    <span>Topics</span>
+                </h5>
+                <ul>
+                    @foreach (var webinarTopic in ViewBag.topics)
+                    {
+                        <li>
+                            @webinarTopic.topicDesc
+                        </li>
+                    }
+                </ul>
+            </aside>
+            <!--close aside .widget -->
+            <aside class="widget">
+                <h5 class="short_headline"><span>Stay Updated</span></h5>
+                @{Html.RenderPartial("Partials/_AddToMailingBox");}
+            </aside>
+            <!--close aside .widget -->
+            @*<aside class="widget">
+                    <h5 class="short_headline"><span>Search</span></h5>
+                    <form class="searchform" method="get">
+                        <input type="search" class="span12" value="type and hit enter" onfocus="this.value=''" onblur="this.value='type and hit enter'" />
+                    </form>
+                </aside>*@
+            <!--close aside widget-->
+        </div>
+        <!--close section tertiary-column sidebar span3-->
+    </div>
+    @{
+        if ((
+        Model.Webinar.Status != WebinarStatus.Archived &&
+        Model.Webinar.Status != WebinarStatus.Deleted &&
+        Model.Webinar.Status != WebinarStatus.Pending
+        ) && ViewBag.userOwnsThisEvent < 1)
+        {
+            <div id="SignUpFormContainer" class="row-fluid">
+                @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new { id = "SignUpForm" }))
+                {
+                    <div class="content offset2 span8 well">
+                        <ul class="nav nav-tabs" id="regTabs">
+                            <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@signUpCaption</a></li>
+                            <li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
+                            <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@confirmationCaption</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="signUp">
+                                <input type="button" class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
+                                @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model)
+                            </div>
+                            <div class="tab-pane" id="contactInfo">
+                                @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutContact.cshtml", model: Model)
+                            </div>
+                            <div class="tab-pane" id="confirmation">
+                                @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutConfirm.cshtml", model: Model)
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>
+<!-- Modal -->
+<div id="logsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="logsModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="logsModalLabel">Event Logs</h3>
+    </div>
+    <div class="modal-body">
+        <p>Logs</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary">Save changes</button>
+    </div>
+</div>
