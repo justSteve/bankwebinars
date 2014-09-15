@@ -1,0 +1,50 @@
+﻿@using System.Activities
+@using System.Collections
+@using System.Globalization
+@using System.Text
+@using Microsoft.Ajax.Utilities
+@model  CUWebinars.Business.Models.OrderRow
+
+@{
+    NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
+
+    nfi.CurrencyDecimalDigits = 0;
+    var locations = Model.AdditionalLocation;
+    if (locations.Count > 0)
+       
+    {
+        if (locations.Count == 1)
+        {
+            <span>The registration includes a single additional location for @locations.First().Email costing @locations.First().Price.ToString("C", nfi). </span>
+        }
+        else
+        {
+            StringBuilder addresses = new StringBuilder();
+            int optionsCost = 0;
+            var i = 0;
+
+            foreach (var addLoc in locations)
+            {
+                i++; 
+                if (i == locations.Count)
+                {
+                    addresses.Append(addLoc.Email);
+                }
+                if (i < locations.Count)
+                {
+                    if (i == locations.Count - 1)
+                    {
+                        addresses.Append(addLoc.Email + " and ");
+                    }
+                    else
+                    {
+                        addresses.Append(addLoc.Email + ", ");
+                    }
+                }
+
+                optionsCost = optionsCost + Convert.ToInt32(addLoc.Price);
+            }
+            <span>The registration includes @locations.Count additional locations (total added cost is @optionsCost.ToString("C", nfi)) for @addresses</span><text>.</text>
+        }
+    }
+}

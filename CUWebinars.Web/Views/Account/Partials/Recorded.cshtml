@@ -2,103 +2,119 @@
 @using System.Configuration
 @using System.Data
 @using System.Data.SqlClient
+@using System.Globalization
 @using System.Linq
+@using CUWebinars.Web.Core
 @using CUWebinars.Web.Helpers
 @using CUWebinars.Business.Models
 
 @{
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
     WebUser currentUser = Model.WebUser;
 
     USTimeZone timeZ = currentUser.timeZone;
     string email = Model.WebUser.email;
+    NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
+    nfi.CurrencyDecimalDigits = 0;
 }
-<div class="container clearfix" id="main-content">
+<div class="container">
     <!--begin main content-->
-    <div class="row-fluid sidebar-right">
+    <div class="row-fluid">
         <!--begin row-fluid-->
-        <div class="span9 primary-column">
+        <div class="span10">
             <h3>
                 Recorded Events <span style="font-weight: normal; font-size: small; color: Green;">
                     (found
                     @Model.Recorded.Count.ToString())
                 </span>
             </h3>
-            @*<ul class="s-accordion faq fancy">*@
 
             @foreach (var recorded in Model.Recorded)
             {
-                <div>
-                    @*<li class="s-wrap">*@
+                <div class=" container-fluid">
                     @{
-                //var row = recorded.OrderRows.FirstOrDefault();
                 var row = recorded.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-                    }
-                    <h4 class="trigger" id="upcoming-@row.idWebinar">
-                        @*<a href="#">*@
-                        @row.Webinar.Title
-                        @*<i class="icon-plus-sign"></i>*@
-                        @*</a>*@
-                    </h4>
-                    <span style="font-size: small;">
-                        Recorded: @Html.DisplayDate(row.Webinar.Date)
-                        <br />
-                        Order ID: @row.Order.idOrder<br />Date Ordered: @row.Order.OrderDate.ToShortDateString()
-                    </span>
-                    <div class="s-content">
-                        @if (row.RegistrationType.OptionLabel != "Live_Session_Only")
-                        {
-                            if (row.Webinar.RecordingUrl != "")
-                            {
-                                <div class="myWebinarscaption">
-                                    <p class="ShowsPlayBlock" align="center">
-                                        <font size="+1" face="Arial, Helvetica, sans-serif" color="#0D037C">
-                                            <b><a href="@ConfigurationManager.AppSettings["WMVRepository"]@row.Webinar.RecordingUrl" target="_blank">Click here to view this OnDemand Recording</a></b><br />
-                                        </font>
-                                    </p>
+                var upOnDemandCost = 100;
+                var upPremium = 250;
+                var expiresDate = row.Webinar.Date.AddMonths(6);
+                TimeSpan calcDays = expiresDate - row.Webinar.Date;
+                var remainingDays = Convert.ToInt32(calcDays.TotalDays);
 
-                                    @{Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar);}
-                                    @if (row.Webinar.Status == WebinarStatus.Recorded || row.Webinar.Status == WebinarStatus.Archived)
+                    }
+                    <h4 class="span12" id="recorded-@row.idWebinar">@row.Webinar.Title</h4>
+                    <div class="row-fluid">
+                        <div class="span6">
+                            <div style="font-size: small;">
+                                This event was recorded on @Html.DisplayDate(row.Webinar.Date) and will be accessible until @Html.DisplayDate(expiresDate)
+                                - @remainingDays more days.
+                                <br />
+                                @if (row.ShipmentDate.HasValue)
+                                {
+                                    <text>This order shipped on:<b>@Html.DisplayDate(row.ShipmentDate.Value)</b></text>
+                                }
+                                <i>Order ID:</i> @globalConfig.TenantPrefix@row.Order.idOrder<br />
+                                <i>Date Ordered:</i> @row.Order.OrderDate.ToShortDateString()
+                            </div>
+
+                        </div>
+                        <div style="font-size: small; " class=" span6">
+                            <i>Type of Attendance:</i> @row.RegistrationType.OptionLabel<br />
+                            @{Html.RenderPartial("Partials/OrderHasAdditionalLocations", row);}<br />
+                            <i>Total Cost:</i> @row.Order.Total.ToString("C", nfi)
+                        </div>
+                    </div>
+
+                    <div class="span12">
+                        @if (row.RegistrationType.ShowRecordingNotifications == "Yes")
+                        {
+                            <div class="container-fluid well well-large" align="center">
+                                @if (row.Webinar.RecordingUrl != "")
+                                {
+                                    <div class="row-fluid ">
+                                        <div class="span7">
+                                            <font size="+1" face="Arial, Helvetica, sans-serif" color="#0D037C">
+                                                <b><a href="@globalConfig.WMVRepository@row.Webinar.RecordingUrl" target="_blank">Click here to view this OnDemand Recording</a></b><br />
+                                            </font>
+                                        </div>
+                                        <div class="span5">
+                                            @{Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar);}
+                                        </div>
+
+                                    </div>
+                                    <div>
+                                        <p>Need to share this event with a co-worker? <br />Provide them this URL: <tt><b>@globalConfig.TenantURL/Webinar/Play?w=@row.Webinar.idWebinar&u=@row.Order.WebUser.idUser</b></tt></p>
+                                    </div>
+                                    if (row.Webinar.Status == WebinarStatus.Recorded || row.Webinar.Status == WebinarStatus.Archived)
                                     {
-                                        <div>
+                                        <div style="margin-top: 10px;">
                                             <form method="POST" action="/Account/MyCertificate">
                                                 <input type="hidden" name="orderID" value="@row.idOrder" />
-                                                <aside class="widget">
-                                                    @*<h5 class="short_headline"><span>Certificate Of Completion</span></h5>*@
-                                                    <input type="submit" value="My Certificate" id="ShowCertificate" class="btn btn-success" />
-                                                </aside>
+                                                <input type="submit" value="My Certificate" id="ShowCertificate" class="btn pull-right btn-mini btn-success" />
                                             </form>
                                         </div>
                                     }
-                                    @if (row.ShipmentDate.HasValue)
-                                    {
-                                        <p>This order shipped on:<b>@Html.DisplayDate(row.ShipmentDate.Value)</b></p>
-                                    }
-                                    <div class="shareOnDemand">
-                                        <p>Need to share this event with a co-worker? Share this URL:<br /> http://www.CUWebinars.com/Webinar/Play?w=@row.Webinar.idWebinar&u=@row.Order.WebUser.idUser</p>
+
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span style="font-size: small;">(Recording not yet uploaded.)</span>
                                     </div>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="myWebinarscaption">
-                                    <span style="font-size: small;">(Recording not yet uploaded.)</span>
-                                </div>
-                            }
+                                }
+                            </div>
                         }
                         else
                         {
-                            <div class="myWebinarscaption">
+                            <div>
                                 <p style="font-size: small;">
-                                    Upgrade your registration with an On-Demand Recording package!<br />
+                                    <span class="btn btn-success btn-mini" id="upgradeRegistration_@row.idOrder">Upgrade</span> this registration with an <i>On-Demand Recording package</i> for @upOnDemandCost.ToString("C", nfi) or our <i>Premium package</i> for @upPremium.ToString("C", nfi)!<br />
                                 </p>
                             </div>
                         }
 
                     </div>
-                    @*</li>*@
                 </div>
             }
-            @*</ul>*@
         </div>
     </div>
 </div>

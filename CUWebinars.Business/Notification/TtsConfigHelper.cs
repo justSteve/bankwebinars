@@ -41,6 +41,13 @@ namespace CUWebinars.Business.Notification
             return ConfigurationManager.AppSettings["TenantPrefix"];
         }
 
+        public string OrderHasAdditionalLocations(int idOrder)
+        {
+            
+            
+            return null;
+
+        }
 
 
     }

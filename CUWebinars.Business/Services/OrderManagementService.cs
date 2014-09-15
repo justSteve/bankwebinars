@@ -188,10 +188,10 @@ namespace CUWebinars.Business.Services
         {
             return _webUserRepository.GetWebusersForLiveNotifications(idWebinar);
         }
-        public IList<AdditionalLocation> GetAdditionalLocations(int idOrder)
-        {
-            return _orderRepository.GetAdditionalLocations(idOrder);
-        }
+        //public IList<AdditionalLocation> GetAdditionalLocations(int idOrder)
+        //{
+        //    return _orderRepository.GetAdditionalLocations(idOrder);
+        //}
         public void DispatchDummyOrder()
         {
             foreach (var orderSubmittedEvent in GetEvents())
@@ -400,7 +400,45 @@ namespace CUWebinars.Business.Services
                 RelativeFilePath = relativePath
             });
 
+
             _logger.Info("Persisted Email for Order {0}:{1}", order.idOrder, relativePath);
+
+            foreach (var evt in GetEvents())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+            if (order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count != 0)
+            {
+                foreach (var addLoc in order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)
+                {
+                    FireOrderSubmittedAdditionalLocationEvent(order, addLoc.Email);
+                }
+            }
+
+            Clear();
+        }        
+        
+        public void FireOrderSubmittedAdditionalLocationEvent(Order order, string address)
+        {
+            _logger.Info("Adding Event for Order with Additional Location {0} - {1}", order.idOrder, address);
+
+            var orderSubmittedAdditionalLocationViewModel = new OrderSubmittedAdditionalLocationViewModel
+            {
+                ConfirmChangeEmailUrl = string.Empty,
+                Order = order,
+                UserCreatedOnImport = false,
+                notifyAddress = address
+            };
+
+            var relativePath = Path.Combine(@"App_Data\Notifications", string.Format("OrderNotificationAddLoc-{0}{1}", DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss-fff-tt"), ".htm"));
+
+            AddEvent(new OrderSubmittedAdditionalLocationEvent<OrderSubmittedAdditionalLocationViewModel>
+            {
+                EventObject = orderSubmittedAdditionalLocationViewModel,
+                RelativeFilePath = relativePath
+            });
+
+            _logger.Info("Persisted Email for Order w/AddLoc {0}-{1} :{2}", order.idOrder, address, relativePath);
 
             foreach (var evt in GetEvents())
             {

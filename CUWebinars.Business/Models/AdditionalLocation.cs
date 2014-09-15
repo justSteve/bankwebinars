@@ -14,6 +14,8 @@ namespace CUWebinars.Business.Models
         public string DescriptionPromo { get; set; }
         //Description to use after purchased
         public string DescriptionConfirm { get; set; }
+        public string RegistrantKey { get; set; }
+        public string JoinURL { get; set; }
         public bool TaxExempt { get; set; }
         public virtual OrderRow OrderRow { get; set; }
         public string Email { get; set; }

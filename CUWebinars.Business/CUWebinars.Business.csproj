@@ -144,6 +144,7 @@
     <Compile Include="Models\GTWebinar.cs" />
     <Compile Include="Models\IncomingAdditionalLocation.cs" />
     <Compile Include="Models\Mapping\GTWebinarMap.cs" />
+    <Compile Include="Notification\Events\OrderSubmittedAdditionalLocationEvent.cs" />
     <Compile Include="Notification\Events\SendConnectionInfoEvent.cs" />
     <Compile Include="Notification\Events\SendRecordingPostedEvent.cs" />
     <Compile Include="Notification\Events\SendReminderEvent.cs" />
@@ -151,6 +152,7 @@
     <Compile Include="Notification\Events\TtsBusEvent.cs" />
     <Compile Include="Notification\Formatters\Formatter.cs" />
     <Compile Include="Notification\Formatters\IFormatter.cs" />
+    <Compile Include="Notification\Handlers\OrderSubmittedAdditionalLocationHandler.cs" />
     <Compile Include="Notification\Handlers\OrderSubmittedHandler.cs" />
     <Compile Include="Notification\Handlers\SendConnectionInfoHandler.cs" />
     <Compile Include="Notification\Handlers\SendRecordingPostedHandler.cs" />
@@ -177,6 +179,7 @@
     <Compile Include="Notification\INotificationDelivery.cs" />
     <Compile Include="Notification\INotificationMessage.cs" />
     <Compile Include="Notification\TemplateResolver.cs" />
+    <Compile Include="Notification\ViewModel\OrderSubmittedAdditionalLocationViewModel.cs" />
     <Compile Include="Notification\ViewModel\OrderSubmittedViewModel.cs" />
     <Compile Include="Repository\IAccountRepository.cs" />
     <Compile Include="Repository\IAffiliateRepository.cs" />

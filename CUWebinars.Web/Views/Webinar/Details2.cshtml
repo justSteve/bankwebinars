@@ -50,7 +50,7 @@
     var rowID = 0;
     var orderID = 0;
     var signUpCaption = "Sign Up!";
-    var ConfirmationCaption = "Confirmation";
+    var confirmationCaption = "Confirmation";
 
     var loggedInUserIdentity = ((ClaimsIdentity)User.Identity);
     if (ViewBag.userOwnsThisEvent > 0)
@@ -77,7 +77,7 @@
         if (Model.Order.OrderStatus == OrderStatus.InProcess)
         {
             CheckoutInProcess = "true";
-            msgOrderStatus = "<div align=\"center\" class=\"label-warning label\">Your order is InProcess and needs to be confirmed.</div>";
+            msgOrderStatus = "<div align=\"center\" class=\"label-warning label\">Your order is InProcess and needs to be confirmed or canceled.</div>";
         }
     }
 }
@@ -184,8 +184,10 @@
                     TimeSpan calcDays = expiresDate - Model.Webinar.Date;
                     var remainingDays = Convert.ToInt32(calcDays.TotalDays);
 
-                    <div style="font-size: smaller; text-align: center;">This event was recorded on @Html.DisplayDate(Model.Webinar.Date) and is available for OnDemand Playback until @Html.DisplayDate(expiresDate)
-                        - @remainingDays more days.</div>
+                    <div style="font-size: smaller; text-align: center;">
+                        This event was recorded on @Html.DisplayDate(Model.Webinar.Date) and is available for OnDemand Playback until @Html.DisplayDate(expiresDate)
+                        - @remainingDays more days.
+                    </div>
                 }
                 else
                 {
@@ -247,33 +249,32 @@
     </div>
     @{
         if ((
-            Model.Webinar.Status != WebinarStatus.Archived &&
-            Model.Webinar.Status != WebinarStatus.Deleted &&
-            Model.Webinar.Status != WebinarStatus.Pending
-            ) && ViewBag.userOwnsThisEvent < 1)
+        Model.Webinar.Status != WebinarStatus.Archived &&
+        Model.Webinar.Status != WebinarStatus.Deleted &&
+        Model.Webinar.Status != WebinarStatus.Pending
+        ) && ViewBag.userOwnsThisEvent < 1)
         {
             <div id="SignUpFormContainer" class="row-fluid">
-                @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new { id = "RegisterAdditionalLocationsForm" }))
+                @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new { id = "SignUpForm" }))
                 {
                     <div class="content offset2 span8 well">
-
                         <ul class="nav nav-tabs" id="regTabs">
                             <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@signUpCaption</a></li>
-                            @*<li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
-                                <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@ConfirmationCaption</a></li>*@
+                            <li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
+                            <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@confirmationCaption</a></li>
                         </ul>
 
                         <div class="tab-content">
                             <div class="tab-pane active" id="signUp">
-                                <input type="button" onclick=" signUpv1(); " class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
+                                <input type="button" class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
                                 @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model)
                             </div>
-                            @*<div class="tab-pane" id="contactInfo">
-                                    @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutContact.cshtml", model: Model)
-                                </div>
-                                <div class="tab-pane" id="confirmation">
-                                    @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutConfirm.cshtml", model: Model)
-                                </div>*@
+                            <div class="tab-pane" id="contactInfo">
+                                @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutContact.cshtml", model: Model)
+                            </div>
+                            <div class="tab-pane" id="confirmation">
+                                @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutConfirm.cshtml", model: Model)
+                            </div>
                         </div>
                     </div>
                 }

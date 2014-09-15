@@ -17,7 +17,7 @@ namespace CUWebinars.Web.Controllers
         private readonly ILogger _logger;
         private bool _disposed;
 
-        public OrderEventFiringOpsController(IOrderManagementService orderManagementService,IWebinarManagementService webinarManagementService, ILogger logger)
+        public OrderEventFiringOpsController(IOrderManagementService orderManagementService, IWebinarManagementService webinarManagementService, ILogger logger)
         {
             _orderManagementService = orderManagementService;
             _webinarManagementService = webinarManagementService;
@@ -26,7 +26,7 @@ namespace CUWebinars.Web.Controllers
 
         public ViewResult Index()
         {
-            
+
 
             return View();
         }
@@ -106,12 +106,12 @@ namespace CUWebinars.Web.Controllers
 
             return PartialView("_SendReminder", model);
         }
-        
+
         [HttpPost]
         public JsonResult SendReminder(int webinarId)
         {
             var orders = _orderManagementService.GetOrdersForLiveNotifications(webinarId);
-            
+
             if (orders.Any())
             {
                 _orderManagementService.FireSendReminderNotificationEvent(orders);
@@ -140,22 +140,39 @@ namespace CUWebinars.Web.Controllers
 
             foreach (var order in orders)
             {
+                AdditionalLocation nuller = new AdditionalLocation();
+                GenerateRegistrantKey(order, nuller);
 
-                GenerateRegistrantKey(order);
-
+                if (order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count > 0)
+                {
+                    foreach (var additionalLocation in order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)
+                    {
+                        GenerateRegistrantKey(order, additionalLocation);
+                    }
+                }
             }
             _orderManagementService.FireSendConnectionInfoNotificationEvent(orders);
 
             return Json(new { Result = WebUiConstants.Success });
         }
 
-        private void GenerateRegistrantKey(Order order)
+        private void GenerateRegistrantKey(Order order, AdditionalLocation additionalLocation)
         {
             var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-                
-            //string firstName, string lastName, string billingEmail, int webinarId,string webinarKey
-            var regKeyResponse = _orderManagementService.CreateRegistrantKey(order.FirstName, order.LastName
-                , order.BillingEmail, row.Webinar.idWebinar, row.Webinar.WebinarKey);
+            var regKeyResponse = "";
+            if (additionalLocation.Email == null)
+            {
+                regKeyResponse = _orderManagementService.CreateRegistrantKey(order.FirstName, order.LastName
+                    , order.BillingEmail, row.Webinar.idWebinar, row.Webinar.WebinarKey);
+            }
+            else
+            {
+                var contents = additionalLocation.FullName.Split(' ').ToString();
+                var lastName = contents.Skip(1).ToString();
+
+                regKeyResponse = _orderManagementService.CreateRegistrantKey(additionalLocation.FullName.Split(' ')[0], lastName
+                   , additionalLocation.Email, row.Webinar.idWebinar, row.Webinar.WebinarKey);
+            }
 
             if (ReferenceEquals(null, regKeyResponse))
                 throw new NullReferenceException("The Registration Key Response from the Citrix API resulted in a null response.");
@@ -166,9 +183,16 @@ namespace CUWebinars.Web.Controllers
             {
                 var registrantKey = parsedJsonObject[WebUiConstants.RegistrantKey].ToString();
                 var joinUrl = parsedJsonObject[WebUiConstants.JoinUrl].ToString();
-
-                row.RegistrantKey = registrantKey;
-                row.JoinURL = joinUrl;
+                if (additionalLocation.Email == null)
+                {
+                    row.RegistrantKey = registrantKey;
+                    row.JoinURL = joinUrl;
+                }
+                else
+                {
+                    additionalLocation.JoinURL = joinUrl;
+                    additionalLocation.RegistrantKey= registrantKey;   
+                }
                 var ResultOfUpdate = _orderManagementService.UpdateOrderChanges(order);
             }
         }
@@ -182,7 +206,7 @@ namespace CUWebinars.Web.Controllers
 
             return PartialView("_SendRecordingPosted", model);
         }
-        
+
         [HttpPost]
         public JsonResult SendRecordingPosted(int webinarId)
         {
@@ -192,13 +216,13 @@ namespace CUWebinars.Web.Controllers
             {
                 _orderManagementService.FireSendRecordingIsPostedEvent(orders);
 
-                return Json(new {Result = WebUiConstants.Success});
+                return Json(new { Result = WebUiConstants.Success });
             }
 
             return Json(new { Result = WebUiConstants.NoOrdersForWebinar });
         }
 
-       
+
         public PartialViewResult SendShippedOrder()
         {
             var ordersShipped = EventInvokerHelpers.GetShippedWebinarsAsSelectListItems(_orderManagementService);
@@ -215,10 +239,10 @@ namespace CUWebinars.Web.Controllers
         public JsonResult SendShippedOrder(int orderId)
         {
             var order = _orderManagementService.GetOrderById(orderId);
-            
+
             _orderManagementService.FireSendOrderShippedNotificationEvent(new Order[] { order });
 
-            return Json(new {Result = WebUiConstants.Success});
+            return Json(new { Result = WebUiConstants.Success });
         }
 
         protected override void Dispose(bool disposing)

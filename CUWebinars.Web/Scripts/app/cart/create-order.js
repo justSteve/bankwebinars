@@ -1,4 +1,4 @@
-﻿$('input[name=mode]:eq(0)').attr('checked', 'checked');
+﻿$('input[name=regType]:eq(0)').attr('checked', 'checked');
 var discount = '';
 var wait4Emails = '';
 var orderRowID = 0;
@@ -39,23 +39,22 @@ $(document).ready(function () {
 
     SetCartState();
     var path = setPath();
-    $("[id^='mode_']").on("click", function (oEvent) {
+
+    $("[id^='regTypeID_']").on("click", function (oEvent) {
         $("#stage_of_checkout").val("preReg");
-        //BuildPreRegPrice(oEvent);
+
+        BuildPreRegPrice(oEvent);
         CheckIfAddLocShouldHide(oEvent.currentTarget.value);
     });
-
-
+    
     $('[id^="AddToCart"]').on('click', function () {
-        $("#frmSignup2 [name='mode']").val($('input[name=mode]:checked', '#ModeOptions').val());
-        var emails2Add = "";
-        $('[name^="Email"]').each(function () {
-            emails2Add = emails2Add + ',' + $(this).val();
-        });
-        $("#frmSignup2 [name='addEmails']").val(emails2Add);   //alert($("#frmSignup2 [name='mode']").val());
-        //alert($("#frmSignup2 [name='addEmails']").val());
+
+        $("#frmSignup2 [name='regType']").val($('input[name=regType]:checked', '#RegTypesList').val());
+        alert($('input[name=regType]:checked', '#RegTypesList').val());
         signUpForm.submit();
     });
+
+
     if (!discount == "none") {
         $('#showDiscount').css('display', 'block');
     }
@@ -75,19 +74,16 @@ $(document).ready(function () {
         $("#eDetails").collapse('hide');
     }
 
-    var signUpForm = $("#frmSignup2");
+    var signUpForm = $("#SignUpForm");
     signUpForm.submit(function (e) {
 
         e.preventDefault();
         CheckoutInProcess = true;
         if (!isUserLogged) {
-            window.location.href = "/Account/Login?returnURL=" + window.location;
-            //TODO: How can javascript re-direct the execution to the '_CreateUserFrom' partial of the Login.cshtml?
-            //  idea is that we should start off with the prompt for the email - if an account already exists
-            // for that email the user is prompted to enter password.
-            // --
-            //  the flow must include enough 'returnURL' info to resume checkout after a new account (or login to existing)
-            // is completed.
+            //
+            //TODO: Re-use code that's already been developed for the CreateAccount use case
+            //  with this difference.... the UI needs to be presented in a Modal Popup
+
         } else {
 
             $("#ProgressDialogBS").modal('show');
@@ -98,7 +94,6 @@ $(document).ready(function () {
                     orderRowID = result.orderRowID;
                     whichStep = result.whichStep;
 
-                    $("#eDetails").collapse('hide');
                     $.get("/cart/checkoutConfirm/" + orderRowID)
                         .success(function (dataConfirm) {
                             $('#confirmation').replaceWith(dataConfirm);
@@ -260,7 +255,7 @@ function BuildPreRegPrice(oEvent) {
         type: "POST",
         data: $form.serialize(),
         success: function (data) {
-            $("#mode_" + data.orderRowID).prop('checked', true);
+            $("#regTypeID_" + data.orderRowID).prop('checked', true);
 
         },
         error: function () {

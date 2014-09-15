@@ -275,11 +275,13 @@ namespace CUWebinars.Business.Repository
             return !items.Any() ? 0 : 1;
         }
 
-        public IList<AdditionalLocation> GetAdditionalLocations(int idOrder)
-        {
-            var additionalLocations = items.Include(o => o.OrderRows.Select(a => a.AdditionalLocation));
-            return null;
-        }
+        //public IList<AdditionalLocation> GetAdditionalLocations(int idOrder)
+        //{
+        //    var additionalLocations = items
+        //        .Include(o => o.OrderRows.Select(a => a.AdditionalLocation )
+        //        .Where(o => o.idOrder == idOrder));
+        //    return null;
+        //}
 
         public virtual IList<Order> SelectOrdersWithRecordedWebinars(int idUser)
         {

@@ -23,6 +23,6 @@ namespace CUWebinars.Business.Repository
         IList<Order> SelectOrdersWithScheduledWebinars(int idUser);
         
         int CheckUserForRecordingAccess(int i, int i1);
-        IList<AdditionalLocation> GetAdditionalLocations(int idOrder);
+        //IList<AdditionalLocation> GetAdditionalLocations(int idOrder);
     }
 }
