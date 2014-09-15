@@ -5,7 +5,8 @@
 
 @{
     ViewBag.Title = "My Webinars";
-    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+    Layout = "/Views/Shared/_LayoutPublic.cshtml";
+
 
     WebUser currentUser = Model.WebUser;
     var EditResult = "<span>&nbsp;</span>";
@@ -25,14 +26,14 @@
     }
 }
 
-<link href="/Content/css/home_index.css" rel="stylesheet" type="text/css" />
+@*<link href="/Content/css/home_index.css" rel="stylesheet" type="text/css" />*@
 @*<script type="text/javascript">
         function resendConfirmation(form) {
             form.parent.submit();
         }
     </script>*@
 
-<div style="width: 90%; margin-left: auto; margin-right: auto;">
+<div class="container">
     <h2>My Webinars</h2>
     @{
     //var thisDiscount = PageData["thisUser"].SubscriptionDiscount;
@@ -91,8 +92,4 @@
                 Need to produce certificates for other attendees? <a href="javascript:ListOfNames();">
                     Click here.</a></p>
         </div>*@
-</div>
-<div id="FeedBack" class="modal hide fade">
-
-    @*    <script type="text/javascript" src="http://form.jotform.us/jsform/31023099145145"></script>*@
 </div>

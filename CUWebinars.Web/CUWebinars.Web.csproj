@@ -400,6 +400,8 @@
     <Compile Include="Models\JotFormModel.cs" />
     <Compile Include="Models\JotFormOrderModel.cs" />
     <Compile Include="Notification\Templates\CertOfCompletionViewModel.cs" />
+    <None Include="Views\Webinar\Details2.cshtml" />
+    <None Include="Notification\Templates\OrderSubmittedAdditionalLocation.cshtml" />
     <Compile Include="ViewModel\CreateUserConfirmedViewModel.cs" />
     <Compile Include="ViewModel\EmailRequiredBaseViewModel.cs" />
     <Compile Include="ViewModel\LogInAsOtherUserViewModel.cs" />
@@ -479,7 +481,6 @@
     <Content Include="App_Data\Deploy\New-AzureStorage.ps1" />
     <Content Include="App_Data\Deploy\New-AzureWebsiteEnv.ps1" />
     <None Include="App_Data\Deploy\Publish-AzureWebsite.ps1" />
-    <Content Include="App_Data\Notifications\OrderNotification2014-05-15-PM.htm" />
     <Content Include="App_Data\Orders\ResetsDbForTesting.sql" />
     <Content Include="App_Data\Orders\RegistrationTypeMapping.txt" />
     <Content Include="App_Data\Orders\ResetsDb.sql" />
@@ -1698,7 +1699,6 @@
     <Content Include="Notification\Templates\SendReminder.cshtml" />
     <Content Include="Scripts\Autocomplete\css\ui-lightness\images\Thumbs.db" />
     <Content Include="App_Data\Deploy\DeployScript.ps1" />
-    <Content Include="Notification\Templates\RecordingPostedEventBody.cshtml" />
     <Content Include="Notification\Templates\SendConnectionInfo.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailChangedEvent_Subject.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Body.cshtml" />
@@ -1744,7 +1744,8 @@
     <Content Include="Images\email\wisbank\Thumbs.db" />
     <Content Include="Images\presenters\CUWebinarsV4.bacpac" />
     <None Include="Properties\PublishProfiles\cuwebinars.pubxml" />
-    <Content Include="Scripts\app\register\register-user.js.map" />
+    <None Include="Properties\PublishProfiles\cuwebinars1 - FTP %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\cuwebinars1 - Web Deploy %282%29.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -1874,7 +1875,6 @@
     <Content Include="Views\Webinar\Calendar.cshtml" />
     <Content Include="Views\Cart\GTWRegistration.cshtml" />
     <Content Include="Views\Shared\_LayoutCertificate.cshtml" />
-    <Content Include="Views\Home\Calendar.cshtml" />
     <Content Include="Views\Home\COC.cshtml" />
     <Content Include="Views\MembershipNotificationOps\MembershipNotifications.cshtml" />
     <Content Include="Views\MembershipNotificationOps\_RegisterPartial.cshtml" />
@@ -1917,9 +1917,10 @@
     <Content Include="Views\Admin\Home\_SendRecordingPosted.cshtml" />
     <Content Include="Views\Admin\Home\_SendReminder.cshtml" />
     <Content Include="Views\Admin\Home\_SendShippedOrder.cshtml" />
-    <Content Include="Views\Account\Partials\AdditionalLocations.cshtml" />
+    <Content Include="Views\Account\Partials\OrderHasAdditionalLocations.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Data\Notifications\" />
     <Folder Include="Infrastructure\apis\citrix\GTW\" />
     <Folder Include="Notification\Delivery\" />
     <Folder Include="Scripts\app\types\" />
