@@ -36,6 +36,7 @@ var exprsOrder = function (e) {
 };
 
 $(document).ready(function () {
+
     SetCartState();
     var path = setPath();
     $("[id^='mode_']").on("click", function (oEvent) {
@@ -163,55 +164,55 @@ $(document).ready(function () {
 
     //  This handler was colliding with one by the same name in create-user.
     //  It is now invoked from the create-user.js script.
-    $("#_CreateUserForm").on('submit', function (event) {
-        event.preventDefault();
-        var createUserForm = $(this);
-        $("#CreateUserHeader").text("Submitting Entry");
-        if ($("#FullNameShipping").val() === null || $("#FullNameShipping").val() === "") $("#FullNameShipping").val($("#FullName").val());
-        if ($("#ShippingFirstName").val() === null || $("#ShippingFirstName").val() === "") $("#ShippingFirstName").val($("#FirstName").val());
-        if ($("#ShippingLastName").val() === null || $("#ShippingLastName").val() === "") $("#ShippingLastName").val($("#LastName").val());
-        if ($("#ShippingCity").val() === null || $("#ShippingCity").val() === "") $("#ShippingCity").val($("#City").val());
-        if ($("#ShippingAddress").val() === null || $("#ShippingAddress").val() === "") $("#").val($("#Address").val());
-        if ($("#ShippingAddress2").val() === null || $("#ShippingAddress2").val() === "") $("#").val($("#Address2").val());
-        if ($("#ShippingState").val() === null || $("#ShippingState").val() === "") $("#ShippingState").val($("#State").val());
-        if ($("#ShippingZip").val() === null || $("#ShippingZip").val() === "") $("#ShippingZip").val($("#Zip").val());
+    //$("#_CreateUserForm").on('submit', function (event) {
+    //    event.preventDefault();
+    //    var createUserForm = $(this);
+    //    $("#CreateUserHeader").text("Submitting Entry");
+    //    if ($("#FullNameShipping").val() === null || $("#FullNameShipping").val() === "") $("#FullNameShipping").val($("#FullName").val());
+    //    if ($("#ShippingFirstName").val() === null || $("#ShippingFirstName").val() === "") $("#ShippingFirstName").val($("#FirstName").val());
+    //    if ($("#ShippingLastName").val() === null || $("#ShippingLastName").val() === "") $("#ShippingLastName").val($("#LastName").val());
+    //    if ($("#ShippingCity").val() === null || $("#ShippingCity").val() === "") $("#ShippingCity").val($("#City").val());
+    //    if ($("#ShippingAddress").val() === null || $("#ShippingAddress").val() === "") $("#").val($("#Address").val());
+    //    if ($("#ShippingAddress2").val() === null || $("#ShippingAddress2").val() === "") $("#").val($("#Address2").val());
+    //    if ($("#ShippingState").val() === null || $("#ShippingState").val() === "") $("#ShippingState").val($("#State").val());
+    //    if ($("#ShippingZip").val() === null || $("#ShippingZip").val() === "") $("#ShippingZip").val($("#Zip").val());
 
-        //$("#ProgressDialogBS").modal('show');
+    //    //$("#ProgressDialogBS").modal('show');
 
-        var data = createUserForm.serialize();
-        var url = createUserForm.attr("action");
+    //    var data = createUserForm.serialize();
+    //    var url = createUserForm.attr("action");
 
-        $.ajax({
-            type: 'POST',
-            contentType: constants.FormPostContentType,
-            cache: false,
-            url: url,
-            dataType: constants.JsonDataType,
-            data: data,
-            beforeSend: function () {
-                //console.log('beforeSend Register Details');
-                // this is where we append a loading image
-                REG.PageObjects.labelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
-            }
-        }).done(function (data) {
-            //alert('done: ');
-            if (data.Result === 'Success') {
-                //console.log('success: ' + data.Result);
-                stateManager.action = '';
-                REG.PageObjects.labelEmail().html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
-                location.assign(path + '/'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
-            } else if (data.Result === 'Fail') {
-                REG.PageObjects.labelEmail().html('<span class="label label-important">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
-                stateManager.action = actions.SubmitRegister;
-            }
-        }).fail(function (data) {
-            //console.log('failed: ' + data);
-        }).always(function () {
-            stateManager.inputAction = inputActions.None;
-        });
+    //    $.ajax({
+    //        type: 'POST',
+    //        contentType: constants.FormPostContentType,
+    //        cache: false,
+    //        url: url,
+    //        dataType: constants.JsonDataType,
+    //        data: data,
+    //        beforeSend: function () {
+    //            //console.log('beforeSend Register Details');
+    //            // this is where we append a loading image
+    //            pageObject.getLabelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
+    //        }
+    //    }).done(function (data) {
+    //        //alert('done: ');
+    //        if (data.Result === 'Success') {
+    //            //console.log('success: ' + data.Result);
+    //            stateManager.action = '';
+    //            pageObject.getLabelEmail().html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
+    //            location.assign(path + '/'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
+    //        } else if (data.Result === 'Fail') {
+    //            pageObject.getLabelEmail().html('<span class="label label-important">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
+    //            stateManager.action = actions.SubmitRegister;
+    //        }
+    //    }).fail(function (data) {
+    //        //console.log('failed: ' + data);
+    //    }).always(function () {
+    //        stateManager.inputAction = inputActions.None;
+    //    });
 
-        return false;
-    });
+    //    return false;
+    //});
 
 
 });
