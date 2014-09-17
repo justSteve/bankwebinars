@@ -121,8 +121,9 @@
     <Reference Include="Glimpse.Ninject">
       <HintPath>..\packages\Glimpse.Ninject.0.9.0\lib\net4\Glimpse.Ninject.dll</HintPath>
     </Reference>
-    <Reference Include="JSNLog">
-      <HintPath>..\packages\JSNLog.2.7.1.0\lib\net40\JSNLog.dll</HintPath>
+    <Reference Include="JSNLog, Version=2.7.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\JSNLog.2.7.4.0\lib\net40\JSNLog.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
@@ -398,8 +399,14 @@
     <Compile Include="Models\JotFormModel.cs" />
     <Compile Include="Models\JotFormOrderModel.cs" />
     <Compile Include="Notification\Templates\CertOfCompletionViewModel.cs" />
+    <Content Include="NuGet\readme.txt" />
+    <Content Include="Scripts\jsnlog.js" />
+    <Content Include="Scripts\jsnlog.min.js" />
+    <Content Include="Views\Cart\Partials\_DisplayRowPrice.cshtml" />
+    <Content Include="Scripts\jsnlog.js.map" />
     <None Include="Views\Webinar\Details2.cshtml" />
     <None Include="Notification\Templates\OrderSubmittedAdditionalLocation.cshtml" />
+    <Compile Include="ViewModel\AddAdditionalLocationViewModel.cs" />
     <Compile Include="ViewModel\CreateUserConfirmedViewModel.cs" />
     <Compile Include="ViewModel\EmailRequiredBaseViewModel.cs" />
     <Compile Include="ViewModel\LogInAsOtherUserViewModel.cs" />
@@ -670,7 +677,6 @@
     <Content Include="Content\js\affiliateReport.js" />
     <Content Include="Content\js\affiliateReport4Kyle.js" />
     <Content Include="Content\js\anytime.js" />
-    <Content Include="Content\js\blockui.js" />
     <Content Include="Content\js\BootstrapTemplates\bootstrap.js" />
     <Content Include="Content\js\BootstrapTemplates\bootstrap.min.js" />
     <Content Include="Content\js\BootstrapTemplates\functions.js" />
@@ -688,7 +694,6 @@
     <Content Include="Content\js\BootstrapTemplates\shBrushXml.js" />
     <Content Include="Content\js\BootstrapTemplates\shCore.js" />
     <Content Include="Content\js\CertificatePopup.js" />
-    <Content Include="Content\js\checkout2.js" />
     <Content Include="Content\js\discountReport.js" />
     <Content Include="Content\js\jquery-plugins\dataTables\extras\FixedHeader\html_table.html" />
     <Content Include="Content\js\jquery-plugins\dataTables\extras\FixedHeader\index.html" />
@@ -766,12 +771,7 @@
     <Content Include="Content\js\jquery-plugins\dataTables\Readme.txt" />
     <Content Include="Content\js\jquery.strings.js" />
     <Content Include="Content\js\jquery.utils.js" />
-    <Content Include="Content\js\orderRow.js" />
     <Content Include="Content\js\searchBrowser.js" />
-    <Content Include="Content\js\shippingReport.js" />
-    <Content Include="Content\js\ShippingReport2.js" />
-    <Content Include="Content\js\supportBox.js" />
-    <Content Include="Content\js\UserEditor.js" />
     <Content Include="Content\js\usersBrowser.js" />
     <Content Include="Content\js\usersBrowser4AffiliateCheckout.js" />
     <Content Include="Content\js\webinarsBrowser.js" />
@@ -1609,7 +1609,6 @@
       <DependentUpon>site.less</DependentUpon>
     </Content>
     <Content Include="Membership\Email\EmailTemplates\_BaseTemplate.html" />
-    <Content Include="NuGet\readme.txt" />
     <Content Include="Scripts\app\cart\add-additional-locations.js" />
     <Content Include="Scripts\app\cart\additional-location-modal.js" />
     <Content Include="Scripts\app\cart\additional-locations.js" />
@@ -1750,8 +1749,6 @@
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\jsnlog.js" />
-    <Content Include="Scripts\jsnlog.min.js" />
     <Content Include="Views\Account\MyCertificate.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars.pubxml" />
     <None Include="Properties\PublishProfiles\CUStaging.pubxml" />

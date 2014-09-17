@@ -253,14 +253,14 @@ namespace CUWebinars.Business.AccountService
             _samAuthenticationService.SignIn(userAccount, persistant);
         }
 
-        public void AddRegistrationTypeNotVerifiedClaim(UserAccount userAccount, string registrationType)
+        public void AddAccountTypeNotVerifiedClaim(UserAccount userAccount, string accountType)
         {
             if (userAccount == null)
                 throw new ArgumentNullException("userAccount");
-            if (string.IsNullOrWhiteSpace(registrationType))
-                throw new ArgumentException("String parameter cannot be white space or null.", "registrationType");
+            if (string.IsNullOrWhiteSpace(accountType))
+                throw new ArgumentException("String parameter cannot be white space or null.", "accountType");
 
-            _userAccountService.AddClaim(userAccount.ID, ClaimTypes.HasNotVerified, registrationType);
+            _userAccountService.AddClaim(userAccount.ID, ClaimTypes.HasNotVerified, accountType);
         }
 
         public bool ChangePasswordFromResetKey(string key, string newPassword)

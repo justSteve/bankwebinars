@@ -5,10 +5,10 @@ namespace CUWebinars.Web.ViewModel
 {
     public class WebinarDetailsViewModel
     {
-        public string btnWebinar { get; set; }
-        public string btnWhichState { get; set; }
-        public string btnHasOrder { get; set; }
-        public string stage_of_checkout { get; set; }
+        //public string btnWebinar { get; set; }
+        //public string btnWhichState { get; set; }
+        //public string btnHasOrder { get; set; }
+        //public string stage_of_checkout { get; set; }
 
         public Affiliate Affiliate { get; set; }
         public IList<RegType> Options { get; set; }

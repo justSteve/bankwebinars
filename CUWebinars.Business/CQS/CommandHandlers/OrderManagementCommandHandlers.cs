@@ -6,6 +6,7 @@ using CUWebinars.Business.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DDay.iCal;
 
 namespace CUWebinars.Business.CQS.CommandHandlers
 {
@@ -36,7 +37,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
             if (command.AdditionalLocations != null && command.AdditionalLocations.Any())
             {
-                var price = 150;
+                var price = GetPriceOfAdditionalLocation(command.Webinar.idWebinar);
 
                 //string email,decimal price,string fullname
 
@@ -67,6 +68,12 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
             _postCommitRegistrator.ExecuteActions();
             _postCommitRegistrator.Reset();
+        }
+
+        private decimal GetPriceOfAdditionalLocation(int idWebinar)
+        {
+            //Todo: hit lookup table that contained addLoc price per the given webinar
+            return 150;
         }
 
 
@@ -111,8 +118,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                 , command.Email
                 );
          
-            _membershipService.AddRegistrationTypeNotVerifiedClaim(userAccount, ClaimValues.OrderImportRegistration);
-
+            _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.OrderImportRegistration);
 
             _postCommitRegistrator.Committed += () =>
             {

@@ -7,7 +7,7 @@ namespace CUWebinars.Business.AccountService
 {
     public interface IMembershipService : IDisposable
     {
-        void AddRegistrationTypeNotVerifiedClaim(UserAccount userAccount, string registrationType);
+        void AddAccountTypeNotVerifiedClaim(UserAccount userAccount, string accountType);
 
         bool ChangePasswordFromResetKey(string key, string newPassword);
 

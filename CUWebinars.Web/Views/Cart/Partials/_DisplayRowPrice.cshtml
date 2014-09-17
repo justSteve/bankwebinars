@@ -1,0 +1,93 @@
+﻿@using System.Text
+@model OrderRow
+
+@functions {
+    private decimal CalculateOptionsPrice(OrderRow row)
+    {
+        return 0;
+    }
+
+}
+@{
+    if (Model != null)
+    {
+        var verbose = false;
+        if (ViewData.ContainsKey("verbose"))
+        {
+            if (!String.IsNullOrEmpty(ViewData["verbose"].ToString()))
+            {
+                verbose = (bool)ViewData["verbose"];
+            }
+        }
+        var row = Model;
+
+        decimal optionsTotal = CalculateOptionsPrice(row);
+        StringBuilder rowAmount = new StringBuilder();
+        if (row.Discount.flatOff != 0.0M || row.Discount.percentOff != 0.0M || optionsTotal != 0.0M)
+        {
+            rowAmount.Append("Base Cost: " + row.RegistrationType.Price.ToString("c0") + "<br />");
+        }
+        else if (verbose == true)
+        {
+            rowAmount.Append("Base Cost: " + row.RegistrationType.Price.ToString("c0") + "<br />");
+        }
+
+        if (row.Discount.flatOff != 0.0M)
+        {
+            rowAmount.Append("Discounted: " + row.Discount.flatOff.ToString("c") + " (" + row.Discount.code + ")<br />");
+        }
+        else if (verbose == true)
+        {
+            rowAmount.Append("Discounted: " + row.Discount.flatOff.ToString("c") + " (" + row.Discount.code + ")<br />");
+        }
+        if (optionsTotal != 0.0M)
+        {
+            if (row.AdditionalLocation.Count == 1)
+            {
+                rowAmount.Append("One Additional Location: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
+            }
+            else
+            {
+                rowAmount.Append(row.AdditionalLocation.Count.ToString() + " Additional Locations: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
+            }
+        }
+        else if (verbose == true)
+        {
+            if (row.AdditionalLocation.Count == 1)
+            {
+                rowAmount.Append("One Additional Location: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
+            }
+            else
+            {
+                rowAmount.Append(row.AdditionalLocation.Count.ToString() + " Additional Locations: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
+            }
+        }
+        rowAmount.Append("Total Cost: " + row.RowPrice.ToString("c").Replace(".00", ""));
+
+        <div id="billingDetails" class="well" style="text-align: right;">
+            @Html.Raw(rowAmount.ToString())<br />
+
+            @{
+        var statusLabel = "";
+        switch (row.Order.OrderStatus)
+        {
+            case OrderStatus.InProcess:
+                <span class="label label-warning">@OrderStatus.InProcess</span>
+                break;
+
+            case OrderStatus.Submitted:
+            <span class="label label-info">@OrderStatus.Submitted</span>
+                break;
+
+            case OrderStatus.Paid:
+            <span class="label label-success">@OrderStatus.Paid</span>
+                break;
+
+            case OrderStatus.AwaitingVerification:
+            <span class="label label-warning">@OrderStatus.AwaitingVerification</span>
+                break;
+        }
+            }
+        </div>
+    }
+}

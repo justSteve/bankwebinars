@@ -375,7 +375,7 @@ namespace CUWebinars.Business.Tests.UnitTests
                 logger
                 );
 
-            membershipService.AddRegistrationTypeNotVerifiedClaim(
+            membershipService.AddAccountTypeNotVerifiedClaim(
                 GetExampleUserAccount(),
                 ClaimValues.ManualRegistration
                 );
@@ -400,7 +400,7 @@ namespace CUWebinars.Business.Tests.UnitTests
                 logger
                 );
 
-            membershipService.AddRegistrationTypeNotVerifiedClaim(
+            membershipService.AddAccountTypeNotVerifiedClaim(
                 GetExampleUserAccount(),
                 null
                 );
@@ -425,7 +425,7 @@ namespace CUWebinars.Business.Tests.UnitTests
                 logger
                 );
 
-            membershipService.AddRegistrationTypeNotVerifiedClaim(
+            membershipService.AddAccountTypeNotVerifiedClaim(
                 GetExampleUserAccount(),
                 string.Empty
                 );
@@ -450,7 +450,7 @@ namespace CUWebinars.Business.Tests.UnitTests
                 logger
                 );
 
-            membershipService.AddRegistrationTypeNotVerifiedClaim(
+            membershipService.AddAccountTypeNotVerifiedClaim(
                 null,
                 ClaimValues.ManualRegistration
                 );

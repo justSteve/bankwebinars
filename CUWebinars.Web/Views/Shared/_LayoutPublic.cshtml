@@ -55,12 +55,6 @@
         stateService.SetValue("IncludeRecorded", false);
     }
 
-    //var includeArchived = stateService.GetValue<bool>("IncludeArchived");
-
-    //if (includeArchived == null)
-    //{
-    //    stateService.SetValue("IncludeArchived", false);
-    //}
 }
 <!doctype html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en" dir="ltr"> <![endif]-->
@@ -72,39 +66,27 @@
 
 <head>
     @Html.Raw(JSNLog.JavascriptLogging.Configure())
-
-
     <script type="text/javascript">
         var ajaxAppender = JL.createAjaxAppender('ajaxAppender');
         var consoleAppender = JL.createConsoleAppender('consoleAppender');
         JL("myLogger").setOptions({ "appenders": [ajaxAppender, consoleAppender] });
     </script>
-    @if (!Html.IsDebug())
+    @*@if (!Html.IsDebug())
     {
-            <!--Start of Zopim Live Chat Script-->
+        <!--Start of Zopim Live Chat Script-->
         <script type="text/javascript">
             window.$zopim || (function (d, s) {
-                var z = $zopim = function (c) { z._.push(c); },
-                    $ = z.s =
-                        d.createElement(s),
-                    e = d.getElementsByTagName(s)[0];
-                z.set = function (o) {
+                var z = $zopim = function (c) { z._.push(c) }, $ = z.s =
+                d.createElement(s), e = d.getElementsByTagName(s)[0]; z.set = function (o) {
                     z.set.
-                        _.push(o);
-                };
-                z._ = [];
-                z.set._ = [];
-                $.async = !0;
-                $.setAttribute('charset', 'utf-8');
-                $.src = 'http://cdn.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU';
-                z.t = +new Date;
-                $.
-                    type = 'text/javascript';
-                e.parentNode.insertBefore($, e);
+                    _.push(o)
+                }; z._ = []; z.set._ = []; $.async = !0; $.setAttribute('charset', 'utf-8');
+                $.src = '//v2.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU'; z.t = +new Date; $.
+                type = 'text/javascript'; e.parentNode.insertBefore($, e)
             })(document, 'script');
         </script>
-            <!--End of Zopim Live Chat Script-->
-    }
+        <!--End of Zopim Live Chat Script-->
+    }*@
 
 
     <title>@ViewBag.Title</title>
@@ -116,51 +98,51 @@
     @if (!Html.IsDebug())
     {
         if (globalConfig.Tenant == "CUWebinars")
-         {
-             <script>
-                 (function(i, s, o, g, r, a, m) {
-                     i['GoogleAnalyticsObject'] = r;
-                     i[r] = i[r] || function() {
-                         (i[r].q = i[r].q || []).push(arguments);
-                     }, i[r].l = 1 * new Date();
-                     a = s.createElement(o),
-                         m = s.getElementsByTagName(o)[0];
-                     a.async = 1;
-                     a.src = g;
-                     m.parentNode.insertBefore(a, m);
-                 })
-                 (window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+        {
+            <script>
+                (function (i, s, o, g, r, a, m) {
+                    i['GoogleAnalyticsObject'] = r;
+                    i[r] = i[r] || function () {
+                        (i[r].q = i[r].q || []).push(arguments);
+                    }, i[r].l = 1 * new Date();
+                    a = s.createElement(o),
+                        m = s.getElementsByTagName(o)[0];
+                    a.async = 1;
+                    a.src = g;
+                    m.parentNode.insertBefore(a, m);
+                })
+                (window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-                 ga('create', 'UA-44361719-1', 'cuwebinars.com');
-                 ga('send', 'pageview');
+                ga('create', 'UA-44361719-1', 'cuwebinars.com');
+                ga('send', 'pageview');
 
-             </script>
-             <meta name="description" content="CUWebinars.com provides high-quality live and OnDemand webinars for credit union directors, managers and tellers. " />
-             <meta name="keywords" content="credit union training, teller training, director training, credit union webinars, credit union e-learning, credit union online training, credit union financial education, credit union professional development, credit union compliance, credit union risk management" />
+            </script>
+            <meta name="description" content="CUWebinars.com provides high-quality live and OnDemand webinars for credit union directors, managers and tellers. " />
+            <meta name="keywords" content="credit union training, teller training, director training, credit union webinars, credit union e-learning, credit union online training, credit union financial education, credit union professional development, credit union compliance, credit union risk management" />
 
-         }
+        }
         if (globalConfig.Tenant == "BankWebinars")
-         {
-             <script>
-                 (function(i, s, o, g, r, a, m) {
-                     i['GoogleAnalyticsObject'] = r;
-                     i[r] = i[r] || function() {
-                         (i[r].q = i[r].q || []).push(arguments)
-                     }, i[r].l = 1 * new Date();
-                     a = s.createElement(o),
-                         m = s.getElementsByTagName(o)[0];
-                     a.async = 1;
-                     a.src = g;
-                     m.parentNode.insertBefore(a, m)
-                 })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+        {
+            <script>
+                (function (i, s, o, g, r, a, m) {
+                    i['GoogleAnalyticsObject'] = r;
+                    i[r] = i[r] || function () {
+                        (i[r].q = i[r].q || []).push(arguments)
+                    }, i[r].l = 1 * new Date();
+                    a = s.createElement(o),
+                        m = s.getElementsByTagName(o)[0];
+                    a.async = 1;
+                    a.src = g;
+                    m.parentNode.insertBefore(a, m)
+                })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-                 ga('create', 'UA-1443899-1', 'auto');
-                 ga('send', 'pageview');
+                ga('create', 'UA-1443899-1', 'auto');
+                ga('send', 'pageview');
 
-             </script>
-             <meta name="description" content="Bankwebinars.com provides bankers, tellers, commercial lenders, bank directors, compliance officers, lending officers and sales leaders with training webinars featuring experts in the financial industry." />
-             <meta name="keywords" content="bank webinars, banking webinars, compliance perspectives, bank training webinars, credit administration manager training, bank board compliance training, call report webinars, call report training, bank training, total training webinars, webinar banking, bank compliance, bank compliance webinars, bank webinar, bank webinar training, training webinars, bank employee training, bank training seminars, bank training programs, commerce bank training, bank management training, bank sales training, bank online training" />
-         }
+            </script>
+            <meta name="description" content="Bankwebinars.com provides bankers, tellers, commercial lenders, bank directors, compliance officers, lending officers and sales leaders with training webinars featuring experts in the financial industry." />
+            <meta name="keywords" content="bank webinars, banking webinars, compliance perspectives, bank training webinars, credit administration manager training, bank board compliance training, call report webinars, call report training, bank training, total training webinars, webinar banking, bank compliance, bank compliance webinars, bank webinar, bank webinar training, training webinars, bank employee training, bank training seminars, bank training programs, commerce bank training, bank management training, bank sales training, bank online training" />
+        }
     }
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
@@ -196,6 +178,7 @@
             border: none;
             text-align: center;
         }
+
         .hero-unit {
             padding-top: 20px;
             padding-bottom: 0px;
