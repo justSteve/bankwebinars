@@ -390,6 +390,7 @@
     <Compile Include="ElmahHandleErrorAttribute.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Helpers\EventInvokerHelpers.cs" />
+    <Compile Include="Membership\Email\AzureWebJobSmtpMessageDelivery.cs" />
     <Compile Include="Models\AdminDTO.cs" />
     <Compile Include="Models\EditBillingAddressModel.cs" />
     <Compile Include="Models\EditInstitionModel.cs" />
