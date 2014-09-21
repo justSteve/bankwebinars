@@ -1,0 +1,49 @@
+﻿using CUWebinars.Web.Infrastructure.Extensions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
+using System.Text;
+using System.Web.Mvc;
+
+namespace CUWebinars.Web.Infrastructure.Attributes
+{
+    public class JsonNetResult : ActionResult
+    {
+        public Encoding ContentEncoding { get; set; }
+        public string ContentType { get; set; }
+        public object Data { get; set; }
+
+        public IsoDateTimeConverter IsoDateTimeConverter { get; set; }
+        public JsonSerializerSettings SerializerSettings { get; set; }
+        public Formatting Formatting { get; set; }
+
+        public JsonNetResult()
+        {
+            SerializerSettings = new JsonSerializerSettings();
+        }
+
+        public override void ExecuteResult(ControllerContext context)
+        {
+            if (context == null) throw new ArgumentNullException("context");
+
+            var response = context.HttpContext.Response;
+
+            response.ContentType = !string.IsNullOrEmpty(ContentType)
+              ? ContentType
+              : "application/json";
+
+            response.CacheControl = "no-cache";
+
+            if (ContentEncoding != null) response.ContentEncoding = ContentEncoding;
+
+            // Here we call the extension method Object.ToJsonNet().
+            if (Data != null)
+            {
+                if (IsoDateTimeConverter != null && Formatting != null)
+                    response.Write(Data.ToJsonNet(SerializerSettings, Formatting, IsoDateTimeConverter));
+                else
+                    response.Write(Data.ToJsonNet());
+            }
+        }
+    }
+}
