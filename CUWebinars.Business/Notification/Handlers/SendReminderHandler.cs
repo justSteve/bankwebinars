@@ -1,4 +1,5 @@
 ﻿using System;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
@@ -34,6 +35,7 @@ namespace CUWebinars.Business.Notification.Handlers
             {
                 var notificationMessage = _generalFormatter.Format(sendReminderEvent.EventObject,
                     "SendReminder");
+                notificationMessage.PersistedName = string.Format("SendReminder-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm");
 
                 notificationMessage.To = sendReminderEvent.EventObject.BillingEmail;
 

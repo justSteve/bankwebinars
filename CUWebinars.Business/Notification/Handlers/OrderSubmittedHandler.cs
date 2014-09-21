@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core.Tracing;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification.Email;
@@ -41,6 +42,8 @@ namespace CUWebinars.Business.Notification.Handlers
             try
             {
                 var notificationMessage = _generalFormatter.Format(orderSubmittedEvent.EventObject, "OrderSubmitted");
+                notificationMessage.PersistedName = string.Format("OrderSubmitted-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm");
+
                 var fullFilePathToPersistedNotification = Path.Combine(_environmentInformation.BaseUrl,
                     orderSubmittedEvent.RelativeFilePath);
                 _notificationPersister.PersistNotification(notificationMessage.Body, fullFilePathToPersistedNotification);

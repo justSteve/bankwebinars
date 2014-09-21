@@ -1,4 +1,5 @@
 ﻿using System;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
@@ -35,6 +36,7 @@ namespace CUWebinars.Business.Notification.Handlers
             try
             {
                 var notificationMessage = _generalFormatter.Format(sendRecordingPostedEvent.EventObject, "SendRecordingPosted");
+                notificationMessage.PersistedName = string.Format("SendRecordingPosted-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm");
 
                 notificationMessage.To = sendRecordingPostedEvent.EventObject.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);

@@ -391,6 +391,10 @@
     <Compile Include="ElmahHandleErrorAttribute.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Helpers\EventInvokerHelpers.cs" />
+    <Compile Include="Infrastructure\Attributes\JsonNetResult.cs" />
+    <Compile Include="Infrastructure\Extensions\ControllerExtensions.cs" />
+    <Compile Include="Infrastructure\Extensions\ObjectExtensions.cs" />
+    <Compile Include="Infrastructure\Extensions\StringExtensions.cs" />
     <Compile Include="Membership\Email\AzureWebJobSmtpMessageDelivery.cs" />
     <Compile Include="Models\AdminDTO.cs" />
     <Compile Include="Models\EditBillingAddressModel.cs" />
@@ -413,6 +417,7 @@
     <Compile Include="ViewModel\AdditionalLocationOfferViewModel.cs" />
     <Compile Include="ViewModel\CreateUserConfirmedViewModel.cs" />
     <Compile Include="ViewModel\EmailRequiredBaseViewModel.cs" />
+    <Compile Include="ViewModel\JsonResultViewModel.cs" />
     <Compile Include="ViewModel\LogInAsOtherUserViewModel.cs" />
     <Compile Include="ViewModel\ManualPasswordResetViewModel.cs" />
     <Compile Include="Core\CsvParseOps.cs" />
