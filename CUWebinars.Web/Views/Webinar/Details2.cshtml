@@ -48,7 +48,7 @@
     var showUsersTimeFormat = "<i>" + Html.DisplayTime(Model.Webinar.Date, (USTimeZone)timeZ, false) + " - " + Html.DisplayTime(Model.Webinar.Date, Model.Webinar.Duration, timeZ) + "<br /></i>";
     var msgOrderStatus = "";
     var rowID = 0;
-    var orderID = 0;
+    var idOrder = 0;
     var signUpCaption = "Sign Up!";
     var confirmationCaption = "Confirmation";
 
@@ -257,6 +257,7 @@
             <div id="SignUpFormContainer" class="row-fluid">
                 @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new { id = "SignUpForm" }))
                 {
+
                     <div class="content offset2 span8 well">
                         <ul class="nav nav-tabs" id="regTabs">
                             <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@signUpCaption</a></li>

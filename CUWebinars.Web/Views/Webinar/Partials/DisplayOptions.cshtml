@@ -1,4 +1,5 @@
 ﻿@model WebinarDetailsViewModel
+
 @{
     var defaultCheck = "checked";
 }
@@ -7,7 +8,7 @@
             $("[id^='regTypeID_']").on("click", function(oEvent) {
 
                 $("#stage_of_checkout").val("preReg");
-                BuildPreRegPrice(oEvent);
+                //BuildPreRegPrice(oEvent);
                 CheckIfAddLocShouldHide(oEvent.currentTarget.value);
 
             });
@@ -63,7 +64,7 @@
         @*@Html.Partial("_DisplayRowPrice", new ViewDataDictionary(row))
             @Html.Raw(TTSTr6ain.Webinars.WebEntry.Support.DisplayRowPrice.BuildRowPrice(workingRow))*@
     </div>
-    <div id="RegTypesList">
+    <div id="RegistrationType">
         <dl>
             @foreach (var myOption in Model.Options)
             {
@@ -75,7 +76,7 @@
                     // we need to display it. Only show 'Upgrades' to users
                     // who already own a registration.
                     <dt>
-                        <input type="radio" class="checkbox" id='regTypeID_@(myOption.idRegType)' @defaultCheck name="regType" value="@myOption.idRegType" />
+                        <input type="radio" class="checkbox" id='regTypeID_@(myOption.idRegType)' @defaultCheck name="RegistrationType" value="@myOption.idRegType" />
                         &nbsp;&nbsp;@myOption.OptionLabel - $@myOption.Price&nbsp;&nbsp;<a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.OptionExplain) "><i class="icon-question-sign"></i></a>
                         <br />
                     </dt>
@@ -96,13 +97,12 @@
                 //}
 
 
-                //orderRowOption.OrderRow = myOption;
-                //var AddLocModel = new AddAdditionalLocationViewModel()
-                //{
-                //    AdditionalLocations = new List<AdditionalLocation> { new AdditionalLocation { Email = "dave@dave.com" }, new AdditionalLocation { Email = "monty@python.com" } },
-                //    Webinar = Model.Webinar,
-                //    WebUser = Model.WebUser
-                //};
+                var AddLocModel = new AddAdditionalLocationViewModel()
+                {
+                    AdditionalLocation = new List<AdditionalLocation> { new AdditionalLocation { Email = "dave@dave.com" }, new AdditionalLocation { Email = "monty@python.com" } },
+                    Webinar = Model.Webinar,
+                    WebUser = Model.WebUser
+                };
                 //Model.AdditionalEmailssViewModel.OrderRowRegType = orderRowRegType;
                 //TODO: ERROR HERE. How to correctly populate the AdditionalEmails value
                 // currently the RegType that is received by the Partial view

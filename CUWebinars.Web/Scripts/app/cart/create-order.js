@@ -43,14 +43,14 @@ $(document).ready(function () {
     $("[id^='regTypeID_']").on("click", function (oEvent) {
         $("#stage_of_checkout").val("preReg");
 
-        BuildPreRegPrice(oEvent);
+        //BuildPreRegPrice(oEvent);
         CheckIfAddLocShouldHide(oEvent.currentTarget.value);
     });
     
     $('[id^="AddToCart"]').on('click', function () {
 
-        $("#frmSignup2 [name='regType']").val($('input[name=regType]:checked', '#RegTypesList').val());
-        alert($('input[name=regType]:checked', '#RegTypesList').val());
+        $("#SignUpForm [name='RegistrationType']").val($('input[name=RegistrationType]:checked', '#RegistrationType').val());
+        //alert($('input[name=RegistrationType]:checked', '#RegistrationType').val());
         signUpForm.submit();
     });
 
@@ -251,12 +251,11 @@ function BuildPreRegPrice(oEvent) {
     oEvent.preventDefault();
     $("#ProgressDialogBS").modal('show');
     $.ajax({
-        url: '/cart/buildPrice',
+        url: '/cart/CheckoutDisplayRowPrice/' + orderRowID,
         type: "POST",
-        data: $form.serialize(),
+        //data: $form.serialize(),
         success: function (data) {
             $("#regTypeID_" + data.orderRowID).prop('checked', true);
-
         },
         error: function () {
 

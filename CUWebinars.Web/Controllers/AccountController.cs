@@ -222,24 +222,36 @@ namespace CUWebinars.Web.Controllers
                 {
                     if (row.JoinURL == null && row.RegistrationType.ShowLiveNotifications == "Yes")
                     {
-                        //string firstName, string lastName, string billingEmail, int webinarId,string webinarKey
                         var regKeyResponse = _orderManagementService.CreateRegistrantKey(order.FirstName, order.LastName
                             , order.BillingEmail, row.Webinar.idWebinar, row.Webinar.WebinarKey);
 
                         if (ReferenceEquals(null, regKeyResponse))
-                            throw new NullReferenceException("The Registration Key Response from the Citrix API resulted in a null response.");
+                            //throw new NullReferenceException("The Registration Key Response from the Citrix API resulted in a null response.");
+                            _logger.ErrorException(
+                                "Attempt to CreateRegistrantKey failed on Webinar: " + row.Webinar.idWebinar +
+                                " email: " + order.BillingEmail,
+                                new NullReferenceException("Attempt to CreateRegistrantKey failed on Webinar: " +
+                                                           row.Webinar.idWebinar + " email: " + order.BillingEmail));
 
-                        JObject parsedJsonObject = JObject.Parse(regKeyResponse);
-
-                        if (parsedJsonObject[WebUiConstants.RegistrantKey] != null)
+                        if (regKeyResponse != null)
                         {
-                            var registrantKey = parsedJsonObject[WebUiConstants.RegistrantKey].ToString();
-                            var joinUrl = parsedJsonObject[WebUiConstants.JoinUrl].ToString();
+                            JObject parsedJsonObject = JObject.Parse(regKeyResponse);
 
-                            row.RegistrantKey = registrantKey;
-                            row.JoinURL = joinUrl;
+                            if (parsedJsonObject[WebUiConstants.RegistrantKey] != null)
+                            {
+                                var registrantKey = parsedJsonObject[WebUiConstants.RegistrantKey].ToString();
+                                var joinUrl = parsedJsonObject[WebUiConstants.JoinUrl].ToString();
 
+                                row.RegistrantKey = registrantKey;
+                                row.JoinURL = joinUrl;
+
+                            }
                         }
+                        //else
+                        //{
+                        //    throw new NullReferenceException("Attempt to CreateRegistrantKey failed on Webinar: " +
+                        //                                     row.Webinar.idWebinar + " email: " + order.BillingEmail);
+                        //}
                     }
                 }
 
@@ -1031,7 +1043,7 @@ namespace CUWebinars.Web.Controllers
                         model.RegisterFields.Password,
                         email);
 
-                    _membershipService.AddRegistrationTypeNotVerifiedClaim(userAccount, ClaimValues.ManualRegistration);
+                    _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.ManualRegistration);
 
                     Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey), "There's no reason session should not have a value for the VerificationKey at this point ");
 
