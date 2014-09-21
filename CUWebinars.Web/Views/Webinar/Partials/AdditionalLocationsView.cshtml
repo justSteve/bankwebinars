@@ -1,25 +1,20 @@
-@model WebinarDetailsViewModel
+@model AdditionalLocationOfferViewModel
 @{
-    if (Model.Webinar.Status == WebinarStatus.Scheduled 
-        || Model.Webinar.Status == WebinarStatus.Active 
+    if (Model.Webinar.Status == WebinarStatus.Scheduled
+        || Model.Webinar.Status == WebinarStatus.Active
         || Model.Webinar.Status == WebinarStatus.InProgress)
     {
-        //Model.AddAdditionalLocationViewModel = new AddAdditionalLocationViewModel
-        //{
-        //    AdditionalLocations = Model.AdditionalLocations,
-        //    Order = Model.Order,
-        //    Webinar = Model.Webinar,
-        //    WebUser = Model.WebUser
-        //};
 
         <div id="AdditionalLocationContainer" class="well" style="margin-right: 50px;margin-left: 50px;">
             <h5>Additional Locations</h5>
             <div>
                 <blockquote style="margin-bottom: 0px;">Want your branches to participate? Facilities within your organization will be able to participate without the travel costs of coming to one location.</blockquote><div style="padding-left: 50px;">
                     <span>
-                        <b>Each additional location adds $100 to your registration.</b>
-                        <br /> Call 800-831-0678 ext. 7 to add an address to your order!
+                        <b>Each additional location adds @Model.Price.ToString("c").Replace(".00", "") to your registration.</b>
+                        <br /> INSERT FORM TO COLLECT ADDITIONAL LOCATION INSTANCES
                     </span>
+                    
+
                     @*<div id="collectAdditionalLocations"> </div>*@
                 </div>
             </div>

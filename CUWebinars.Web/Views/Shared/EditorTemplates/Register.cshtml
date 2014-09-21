@@ -6,10 +6,15 @@
         $("#BillingAddressContainer").each(function () {
             $(".control-group:first", this).hide();
         });
+        $(".control-label").after(" :");
 
     });
 </script>
-
+<style>
+    .control-label {
+        padding-right: 5px;
+    }
+</style>
 
 
 <div class="form-horizontal">
@@ -40,12 +45,12 @@
             @Html.ValidationMessageFor(model => model.Title)
         </div>
     </div>
-    @*<div class="control-group">
+    <div class="control-group">
         @Html.LabelFor(model => model.Institution, new { @class = "control-label" })
         <div>
-            <input type="text" value="@Model.Institution" disabled="disabled"/> [edit?]
+            <input type="text" value="@Model.Institution" disabled="disabled" /> [edit?]
         </div>
-    </div>*@
+    </div>
 
     <div id="BillingAddressContainer" class="well-large">
         <h3>Billing Address</h3>

@@ -101,7 +101,9 @@ namespace CUWebinars.Business.Tests.UnitTests
             };
 
             //  Act
-            _orderManagementService.AssignUserToOrder(order);
+            //_orderManagementService.AssignUserToOrder(order);
+            //attempting to depricate AssignUserToOrder
+            _orderManagementService.AssignWebUserToOrder(order.WebUser, order);
 
             //  Assert                        
             Assert.AreEqual(order.BillingEmail, "avalidemailaddress@test.com");
@@ -113,13 +115,12 @@ namespace CUWebinars.Business.Tests.UnitTests
         {
             //  Arrange
             Order order = null;
-
+            WebUser user = null;
             //  Act
             //  Assert                        
             ExceptionAssert.Throws<ArgumentNullException>(
-                () => _orderManagementService.AssignUserToOrder(order)
+                () => _orderManagementService.AssignWebUserToOrder(user, order)
                 );
-
         }
     }
 }

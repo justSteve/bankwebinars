@@ -1,29 +1,9 @@
-﻿@model WebinarDetailsViewModel
+﻿@using System.Configuration
+@using System.Text
+@model WebinarDetailsViewModel
 
 @{
     var defaultCheck = "checked";
-}
-<script type="text/javascript">
-    $(document).ready(function() {
-            $("[id^='regTypeID_']").on("click", function(oEvent) {
-
-                $("#stage_of_checkout").val("preReg");
-                //BuildPreRegPrice(oEvent);
-                CheckIfAddLocShouldHide(oEvent.currentTarget.value);
-
-            });
-    });
-</script>
-@{
-
-
-    var orderRowOption = new AdditionalLocation() { DescriptionPromo = "TODO: Change this is a temp description", Price = 150.00M };
-    //  TODO: also, I hard-coded 150 for the RegTypePrice. Not sure where this should come from.
-
-    //  Comment: I assume order will be null where there is no existing order for the User for that WebinarId
-    //           This does not seem to have been handled in the controller as the Order is just set to null. I need to understand this.
-
-
     <script language="javascript">
         function signUpv1() {
 
@@ -54,30 +34,72 @@
             }
         }
     </script>
-    
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("[id^='regTypeID_']").on("click", function (oEvent) {
 
+            $("#stage_of_checkout").val("preReg");
+            //BuildPreRegPrice(oEvent);
+            CheckIfAddLocShouldHide(oEvent.currentTarget.value);
+
+        });
+    });
+</script>
+@{
+
+    StringBuilder explainsOptionsBuilder = new StringBuilder();
+    explainsOptionsBuilder.Append("The following choices are available for this webinar.<br>");
+
+    var orderRowOption = new AdditionalLocation() { DescriptionPromo = "TODO: Change this is a temp description", Price = 150.00M };
+    //  TODO: also, I hard-coded 150 for the RegTypePrice. Not sure where this should come from.
+
+    //  Comment: I assume order will be null where there is no existing order for the User for that WebinarId
+    //           This does not seem to have been handled in the controller as the Order is just set to null.
+    //           I need to understand this.
+
+    <div id="AttendRegTypes" class="modal hide fade">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3>@ConfigurationManager.AppSettings["TenantDomain"]'s Attendance Options</h3>
+        </div>
+        <div id="ExplainRegistrationOptions" class="modal-body">
+            <p>
+
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" data-dismiss="modal" aria-hidden="true">Finished</button>
+        </div>
+    </div>
     <span>
         Choose the attendance option that's right for you. <a href="#AttendRegTypes" data-toggle="modal">(learn more)</a>
     </span>
+    if (Model.Order != null && Model.Order.OrderRows != null)
+    {
+        <div class="pull-right">
+            @Html.Partial("Partials/_DisplayRowPrice")
+        </div>
+    }
 
-    <div class="pull-right">
-        @*@Html.Partial("_DisplayRowPrice", new ViewDataDictionary(row))
-            @Html.Raw(TTSTr6ain.Webinars.WebEntry.Support.DisplayRowPrice.BuildRowPrice(workingRow))*@
-    </div>
     <div id="RegistrationType">
         <dl>
             @foreach (var myOption in Model.Options)
             {
-                //if (myOption.Type == "Text")
-                //{
+                bool appendJustOnce = true;
+
                 if (!myOption.SKU.Contains("Upgrade"))
                 {
-                    //since the RegType hasn't been designated as an 'Upgrade'
-                    // we need to display it. Only show 'Upgrades' to users
-                    // who already own a registration.
+
+                    explainsOptionsBuilder.Append("<span><b>" + myOption.OptionLabel + "</b> means " + myOption.OptionExplain + " This option costs <i>$" + myOption.Price.ToString().Replace(".00", "") + "</i><br></span>");
+                    //explainsOptionsBuilder.Append("<span><b>"+Html.Raw(myOption.OptionLabel)+"</b> means "+Html.Raw(myOption.OptionExplain) +" This option costs <i>$" + myOption.Price.ToString().Replace(".00", "")+"</i><br></span>");
                     <dt>
-                        <input type="radio" class="checkbox" id='regTypeID_@(myOption.idRegType)' @defaultCheck name="RegistrationType" value="@myOption.idRegType" />
-                        &nbsp;&nbsp;@myOption.OptionLabel - $@myOption.Price&nbsp;&nbsp;<a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.OptionExplain) "><i class="icon-question-sign"></i></a>
+                        <input type="radio" class="checkbox" id='regTypeID_@(myOption.idRegType)' @defaultCheck name="RegistrationType"
+                               value="@myOption.idRegType" />
+                        &nbsp;&nbsp;@myOption.OptionLabel- $@myOption.Price &nbsp;&nbsp;
+                        <a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.OptionExplain) ">
+                            <i class="icon-question-sign"></i>
+                        </a>
                         <br />
                     </dt>
                 }
@@ -85,39 +107,57 @@
                 {
                     if (ViewBag.userOwnsThisEvent > 0)
                     {
+                        if (appendJustOnce)
+                        {
+                            appendJustOnce = false;
+                            //since the RegType hasn't been designated as an 'Upgrade'
+                            // we need to display it. Only show 'Upgrades' to users
+                            // who already own a registration.
+                            explainsOptionsBuilder.Append("Upgrade your existing order with these options - ");
+
+                        }
                         <dt>
                             <input type="radio" class="checkbox" id='regTypeID_@(myOption.idRegType)' @defaultCheck name="regType" value="@myOption.idRegType" />
-                            &nbsp;&nbsp;@myOption.OptionLabel - $@myOption.Price&nbsp;&nbsp;<a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.OptionExplain) "><i class="icon-question-sign"></i></a>
+                            &nbsp;
+                            &nbsp;
+                            @myOption.OptionLabel
+                            - $
+                            @myOption.Price &nbsp;
+                            &nbsp;<a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.OptionExplain) "><i class="icon-question-sign"></i></a>
                             <br />
                         </dt>
                     }
                 }
 
                 defaultCheck = string.Empty;
-                //}
 
 
-                var AddLocModel = new AddAdditionalLocationViewModel()
-                {
-                    AdditionalLocation = new List<AdditionalLocation> { new AdditionalLocation { Email = "dave@dave.com" }, new AdditionalLocation { Email = "monty@python.com" } },
-                    Webinar = Model.Webinar,
-                    WebUser = Model.WebUser
-                };
-                //Model.AdditionalEmailssViewModel.OrderRowRegType = orderRowRegType;
-                //TODO: ERROR HERE. How to correctly populate the AdditionalEmails value
-                // currently the RegType that is received by the Partial view
-                // is null.
             }
 
         </dl>
-        @{
-            if (Model.Webinar.Status == WebinarStatus.Scheduled || Model.Webinar.Status == WebinarStatus.Active || Model.Webinar.Status == WebinarStatus.InProgress)
+        <script type="text/javascript" language="javascript">
+            $(document).ready(function () {
+                $("#ExplainRegistrationOptions").html("@Html.Raw(explainsOptionsBuilder.ToString())");
+            });
+
+        </script>
+
+        @if (Model.Webinar.Status == WebinarStatus.Scheduled || Model.Webinar.Status == WebinarStatus.Active || Model.Webinar.Status == WebinarStatus.InProgress)
+        {
+            decimal addLocPrice = 150;
+            var AddLocModel = new AdditionalLocationOfferViewModel()
             {
-                <div id="displayAddLoc">
-                    @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationsView.cshtml", Model)
-                </div>
-            }
+                Webinar = Model.Webinar,
+                WebUser = Model.WebUser,
+                Price = addLocPrice
+            };
+            //TODO: How to correctly populate the AdditionalEmails price value
+            <div id="displayAddLoc">
+                @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationsView.cshtml", AddLocModel)
+            </div>
         }
+
     </div>
 }
+
 

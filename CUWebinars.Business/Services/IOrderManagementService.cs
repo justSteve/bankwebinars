@@ -8,7 +8,7 @@ namespace CUWebinars.Business.Services
     {
         void AddOrderRow(Order currentOrder, OrderRow orderRow);
         Order AssignAffiliateToOrder(Affiliate affiliate, Order order);
-        void AssignUserToOrder(Order currentOrder);
+        //void AssignUserToOrder(Order currentOrder);
         Order AssignWebUserToOrder(WebUser webUser, Order order);
         string BuildConnectionInfo(OrderRow orderRow);
         int CheckUserForRecordingAccess(int i, int i1);

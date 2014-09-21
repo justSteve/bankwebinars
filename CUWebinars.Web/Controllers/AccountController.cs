@@ -510,6 +510,7 @@ namespace CUWebinars.Web.Controllers
                 LastName = user.LastName,
                 Institution = user.Institution.InstitutionName,
                 Email = user.email,
+                Title = user.Title,
                 AccountDetailsTitle = WebUiConstants.ManageUser
             };
 

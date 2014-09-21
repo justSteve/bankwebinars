@@ -212,10 +212,8 @@ namespace CUWebinars.Web.Controllers
 
             // replace AdditionalLocations handling from scratch
 
-            var orderRow = _orderManagementService.CreateOrderRow(model.Webinar, null, 0);
-            // populate the ViewBag with the RegistrationType (aka RegType)
-            //ViewBag.RegistrationType = options.SingleOrDefault(o => o.idRegType == orderRow.RegistrationType);
-
+            var orderRow = _orderManagementService.CreateOrderRow(model.Webinar, null, Convert.ToInt32(Request.Form["RegistrationType"]));
+            
 
             if (currentOrder == null)
             {
@@ -238,15 +236,17 @@ namespace CUWebinars.Web.Controllers
             if (Request.IsAuthenticated)
             {
                 IsUserLogged = true;
-                _orderManagementService.AssignUserToOrder(currentOrder);
+                
                 currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
                 currentOrder.Origin = _orderManagementService.GetOrderInitiator();
+                currentOrder.Affiliate = currentAffiliate;
 
             }
             else
             {
                 IsUserLogged = false;
                 //_orderManagementService.AssignUserToOrder(currentOrder);
+                currentOrder.Affiliate = currentAffiliate;
                 currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
                 currentOrder.Origin = _orderManagementService.GetOrderInitiator();
                 _logger.Error("ERROR: CartController | Signup - currentUser is null" + currentOrder.idOrder);
@@ -276,21 +276,13 @@ namespace CUWebinars.Web.Controllers
                 }
                 else
                 {
-                    //_orderManagementService.Save(currentOrder);
-
-                    //_orderManagementService.AddOrderRow(currentOrder, orderRow);
-
-                    Session["CurrentOrderId"] = currentOrder.idOrder;
-                    //_checkoutWorkflow.AddOrder(currentOrder);
-                    //model.Order.OrderRows.Add(orderRow);
+                    
                     model.Order = currentOrder;
 
                     //db.SaveChanges();
-                    ViewData["WhichStep"] = IsUserLogged ? "Step2" : "Step1";
                     return Json(new
                                     {
                                         success = "success",
-                                        whichStep = "Step1",
                                         orderRowID = model.Order.OrderRows.Single().idOrderRow
                                     }, JsonRequestBehavior.AllowGet);
                     //return View("~/Views/Webinar/Details2.cshtml", model);

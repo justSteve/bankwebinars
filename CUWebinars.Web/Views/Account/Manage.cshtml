@@ -24,7 +24,7 @@
 
         <div id="myTabContent" class="tab-content">
             <p class="message-success">@Model.StatusMessage</p>
-
+            <p class="pull-right">Reset Password</p>
             <p>
                 You're logged in as
                 @{
@@ -39,7 +39,7 @@
                 }
                 </p>
 
-            @using (Html.BeginForm("Manage", "Account", "Post"))
+            @using (Html.BeginForm("Manage", "Account", FormMethod.Post))
             {
                 @Html.AntiForgeryToken()
 

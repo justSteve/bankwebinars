@@ -9,7 +9,7 @@ namespace CUWebinars.Web.Controllers.Admin
     namespace TTSTrain.Webinars.WebEntry.Controllers.Admin
     {
         [ElmahHandleError]
-        //[Authorize(Roles = AppRoles.Admin)]
+        [Authorize]
         public class AdminHomeController : Controller
         {
             //

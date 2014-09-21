@@ -48,7 +48,7 @@ $(document).ready(function () {
     });
     
     $('[id^="AddToCart"]').on('click', function () {
-
+        
         $("#SignUpForm [name='RegistrationType']").val($('input[name=RegistrationType]:checked', '#RegistrationType').val());
         //alert($('input[name=RegistrationType]:checked', '#RegistrationType').val());
         signUpForm.submit();
@@ -83,7 +83,7 @@ $(document).ready(function () {
             //
             //TODO: Re-use code that's already been developed for the CreateAccount use case
             //  with this difference.... the UI needs to be presented in a Modal Popup
-
+            alert("get Contact info");
         } else {
 
             $("#ProgressDialogBS").modal('show');

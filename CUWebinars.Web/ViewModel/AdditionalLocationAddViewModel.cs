@@ -6,7 +6,7 @@ using CUWebinars.Business.Models;
 
 namespace CUWebinars.Web.ViewModel
 {
-    public class AddAdditionalLocationViewModel
+    public class AdditionalLocationAddViewModel
     {
         public List<AdditionalLocation> AdditionalLocation { get; set; }
         public Webinar Webinar { get; set; }

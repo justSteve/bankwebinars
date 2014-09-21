@@ -409,7 +409,8 @@
     <Content Include="Scripts\jsnlog.js.map" />
     <None Include="Views\Webinar\Details2.cshtml" />
     <None Include="Notification\Templates\OrderSubmittedAdditionalLocation.cshtml" />
-    <Compile Include="ViewModel\AddAdditionalLocationViewModel.cs" />
+    <Compile Include="ViewModel\AdditionalLocationAddViewModel.cs" />
+    <Compile Include="ViewModel\AdditionalLocationOfferViewModel.cs" />
     <Compile Include="ViewModel\CreateUserConfirmedViewModel.cs" />
     <Compile Include="ViewModel\EmailRequiredBaseViewModel.cs" />
     <Compile Include="ViewModel\LogInAsOtherUserViewModel.cs" />
@@ -1866,7 +1867,6 @@
     <Content Include="Views\Account\_CreateUserForm.cshtml" />
     <Content Include="Views\Account\test.cshtml" />
     <Content Include="Views\Account\Closed.cshtml" />
-    <Content Include="Views\Shared\AddLocationsView.cshtml" />
     <Content Include="Views\Shared\Partials\_DisplayRowPrice.cshtml" />
     <Content Include="Views\Webinar\Partials\_RegistrationSummary.cshtml" />
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
@@ -1878,7 +1878,7 @@
     <Content Include="Views\MembershipNotificationOps\_RegisterPartial.cshtml" />
     <Content Include="Views\MembershipNotificationOps\_ResetPasswordPartial.cshtml" />
     <Content Include="Views\MembershipNotificationOps\_PasswordResetConfirm.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\AddAdditionalLocationViewModel.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\AdditionalLocationAdd.cshtml" />
     <Content Include="Views\Webinar\Partials\_AdditionalLocationsModal.cshtml" />
     <Content Include="Views\MembershipNotificationOps\_ImportOrder.cshtml" />
     <Content Include="Views\AdhocNotification\Index.cshtml" />

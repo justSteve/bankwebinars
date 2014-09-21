@@ -298,83 +298,32 @@ namespace CUWebinars.Business.Services
             //}
 
             decimal optionsTotal = 0.0M;
-            foreach (var option in row.AdditionalLocation)
-            {
-                //var AdditionalLocation = option.AdditionalLocation;
 
-                //if (AdditionalLocation == null) continue;
+            if (row.AdditionalLocation != null)
+                foreach (var addLoc in row.AdditionalLocation)
+                {
+                    if (row.Webinar.Title.Contains("Compliance Perspectives")//.IsSubscriptionWebinar
+                        && row.AdditionalLocation.Count < 4)
+                    {
+                        continue; //Subscription webinar with up to 3 additional locations. Do not charge.
+                    }
 
-                //if (row.Webinar.Title.Contains("Compliance Perspectives")//.IsSubscriptionWebinar
-                //    && AdditionalLocation.Count < 4)
-                //{
-                //    continue; //Subscription webinar with up to 3 additional locations. Do not charge.
-                //}
-
-                //if (row.Webinar.Title.Contains("Compliance Perspectives"))
-                //{
-
-                //    int subscriptionPeriod = 12;//row.RegistrationType == RegistrationType.Twelve_Month_Subscription ? 12 : 6;
-                //    optionsTotal += (AdditionalLocation.Count - 3) * option.RegTypePrice * subscriptionPeriod;
-                //}
-                //else
-                //{
-                //    optionsTotal += AdditionalLocation.Count * option.RegTypePrice;
-                //}
-                var a = 1;
-            }
+                    if (row.Webinar.Title.Contains("Compliance Perspectives"))
+                    {
+                        //int subscriptionPeriod = 12;//row.RegistrationType == RegistrationType.Twelve_Month_Subscription ? 12 : 6;
+                        //optionsTotal += (row.AdditionalLocation.Count - 3) * row.AdditionalLocation. * subscriptionPeriod;
+                        optionsTotal += 0;
+                    }
+                    else
+                    {
+                        optionsTotal += addLoc.Price;
+                    }
+                }
             return optionsTotal;
         }
-        public virtual void AssignUserToOrder(Order order)
-        {
-            if (order == null) throw new ArgumentNullException("order");
-            var user = order.WebUser;
-
-            var billingAddress = user.Addresses.FirstOrDefault(a => a.AddressType == "Billing");
-            var shippingAddress = user.Addresses.FirstOrDefault(a => a.AddressType == "Shipping");
-
-            if (billingAddress != null)
-            {
-
-                order.BillingAddress = billingAddress.StreetAddress;
-                order.BillingCity = billingAddress.City;
-                order.BillingEmail = user.email;
-                order.FirstName = user.FirstName;
-                order.LastName = user.LastName;
-                order.BillingPhone = billingAddress.Phone;
-                order.BillingZip = billingAddress.Zip;
-                order.BillingState = billingAddress.State;
-
-                if (shippingAddress != null)
-                {
-                    order.ShippingAddress = shippingAddress.StreetAddress;
-                    order.ShippingCity = shippingAddress.City;
-                    order.ShippingFirstName = user.FirstName;
-                    order.ShippingLastName = user.LastName;
-                    order.ShippingPhone = shippingAddress.Phone;
-                    order.ShippingState = shippingAddress.State;
-                    order.ShippingZip = shippingAddress.Zip;
-                    order.Institution = user.Institution.InstitutionName;
-
-                    //if (user.SubscriptionDiscount != null)
-                    //{
-                    //    foreach (OrderRow row in order.Rows)
-                    //    {
-                    //        row.DiscountCode = user.SubscriptionDiscount.Code;
-                    //    }
-                    //}
-                    //try
-                    //{
-                    //    Save(order);
-                    //}
-                    //catch (Exception ex)
-                    //{
-                    //    Logger.Instance.LogException(ex);
-                    //    Logger.Instance.LogMessage("ERROR: Failed to save user assigned to order: "+ user.Email + " order = " + order.ID);
-                    //    throw;
-                    //}
-                }
-            }
-        }
+        //public virtual void AssignUserToOrder(Order order)
+        //{
+        //}
 
         public void CreateCPSubscription(OrderRow orderRow)
         {

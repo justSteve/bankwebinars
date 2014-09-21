@@ -27,8 +27,9 @@ namespace CUWebinars.Business.Repository
             newOrder.OrderDate = DateTime.Now;
             newOrder.OrderStatus = OrderStatus.InProcess;
 
-            newOrder.idAffiliate = affiliate.idUserAff;
-            newOrder.idUser = webUser.idUser;
+            newOrder = AssignAffiliate(affiliate, newOrder);
+
+            newOrder = AssignWebUserToOrder(webUser, newOrder);
 
             newOrder.OrderRows = new List<OrderRow>();
             newOrder.OrderRows.Add(orderRow);
@@ -64,6 +65,8 @@ namespace CUWebinars.Business.Repository
                 newOrderRow.RegistrationType = registrationType;
                 newOrderRow.RowStatus = OrderRowStatus.Active;
 
+                newOrderRow = CalculateRowPrices(newOrderRow);
+                
                 return newOrderRow;
 
             }
@@ -79,6 +82,18 @@ namespace CUWebinars.Business.Repository
                 }
                 throw;
             }
+        }
+
+        public OrderRow CalculateRowPrices(OrderRow newOrderRow)
+        {
+            newOrderRow.UnitPrice = Convert.ToDecimal(newOrderRow.RegistrationType.Price);
+
+            if (newOrderRow.AdditionalLocation != null)
+            {
+                newOrderRow.RowPrice = Convert.ToDecimal(newOrderRow.AdditionalLocation.Sum(x => x.Price)
+                    + Convert.ToDecimal(newOrderRow.RegistrationType.Price));
+            }
+            return newOrderRow;
         }
 
         public AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullName)
@@ -209,8 +224,8 @@ namespace CUWebinars.Business.Repository
 
         public Order AssignAffiliate(Affiliate affiliate, Order order)
         {
+            //order.Affiliate = affiliate;
             order.idAffiliate = affiliate.idUserAff;
-
             if (db.SaveChanges() > 0)
             {
                 db.Entry(order).Reference(o => o.Affiliate).Load();
@@ -224,11 +239,60 @@ namespace CUWebinars.Business.Repository
         {
             order.idUser = webUser.idUser;
 
-            //if (db.SaveChanges() > 0)
-            //{
-            //    //db.Entry(order).Reference(o => o.WebUser).Load();
-            //    return order;
-            //}
+            if (order == null) throw new ArgumentNullException("order");
+            //var user = order.WebUser;
+
+            var billingAddress = webUser.Addresses.FirstOrDefault(a => a.AddressType == "Billing");
+            var shippingAddress = webUser.Addresses.FirstOrDefault(a => a.AddressType == "Shipping");
+
+            if (billingAddress != null)
+            {
+
+                order.BillingAddress = billingAddress.StreetAddress;
+                order.BillingCity = billingAddress.City;
+                order.BillingEmail = webUser.email;
+                order.FirstName = webUser.FirstName;
+                order.LastName = webUser.LastName;
+                order.BillingPhone = billingAddress.Phone;
+                order.BillingZip = billingAddress.Zip;
+                order.BillingState = billingAddress.State;
+
+                if (shippingAddress != null)
+                {
+                    order.ShippingAddress = shippingAddress.StreetAddress;
+                    order.ShippingCity = shippingAddress.City;
+                    order.ShippingFirstName = webUser.FirstName;
+                    order.ShippingLastName = webUser.LastName;
+                    order.ShippingPhone = shippingAddress.Phone;
+                    order.ShippingState = shippingAddress.State;
+                    order.ShippingZip = shippingAddress.Zip;
+                    order.Institution = webUser.Institution.InstitutionName;
+
+                    //if (user.SubscriptionDiscount != null)
+                    //{
+                    //    foreach (OrderRow row in order.Rows)
+                    //    {
+                    //        row.DiscountCode = user.SubscriptionDiscount.Code;
+                    //    }
+                    //}
+                    //try
+                    //{
+                    //    Save(order);
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    Logger.Instance.LogException(ex);
+                    //    Logger.Instance.LogMessage("ERROR: Failed to save user assigned to order: "+ user.Email + " order = " + order.ID);
+                    //    throw;
+                    //}
+                }
+            }
+
+            if (db.SaveChanges() > 0)
+            {
+                //db.Entry(order).Reference(o => o.WebUser).Load();
+                return order;
+            }
 
             return order;
         }
