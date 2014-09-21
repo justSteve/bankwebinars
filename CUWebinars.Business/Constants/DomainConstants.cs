@@ -7,6 +7,7 @@ namespace CUWebinars.Business.Constants
         public const string BillingAddress = "Billing";
         public const string Blank = "blank";
         public const string ConfirmChangeEmailLink = "ConfirmChangeEmailLink";
+        public const string DateTimeLongFormat = "yyyy-MM-dd-hh-mm-ss-fff-tt";
         public const string JoinUrl = "joinUrl";
         public const string LoggerConnectionStringName = "LoggerConnection";
         public const string RazorExtension = ".cshtml";

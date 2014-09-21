@@ -9,6 +9,7 @@ namespace CUWebinars.Business.Notification.Email
         public string ReplyTo { get; set; }
         public string Subject { get; set; }
         public string Body { get; set; }
+        public string PersistedName { get; set; }
         public IList<string> Addresses { get; set; }
     }
 }

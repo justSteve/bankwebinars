@@ -392,7 +392,7 @@ namespace CUWebinars.Business.Services
                 UserCreatedOnImport = false
             };
 
-            var relativePath = Path.Combine(@"App_Data\Notifications", string.Format("OrderNotification-{0}{1}", DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss-fff-tt"), ".htm"));
+            var relativePath = Path.Combine(@"App_Data\Notifications", string.Format("OrderNotification-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm"));
 
             AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
             {
@@ -430,7 +430,7 @@ namespace CUWebinars.Business.Services
                 notifyAddress = address
             };
 
-            var relativePath = Path.Combine(@"App_Data\Notifications", string.Format("OrderNotificationAddLoc-{0}{1}", DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss-fff-tt"), ".htm"));
+            var relativePath = Path.Combine(@"App_Data\Notifications", string.Format("OrderNotificationAddLoc-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm"));
 
             AddEvent(new OrderSubmittedAdditionalLocationEvent<OrderSubmittedAdditionalLocationViewModel>
             {
@@ -569,7 +569,7 @@ namespace CUWebinars.Business.Services
                     UserCreatedOnImport = linkToVerifyAccount
                 };
 
-                var relativePath = Path.Combine(@"App_Data\Notifications", string.Format("OrderNotification-{0}{1}", DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss-fff-tt"), ".htm"));
+                var relativePath = Path.Combine(@"App_Data\Notifications", string.Format("OrderNotification-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm"));
 
                 AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
                 {

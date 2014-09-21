@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Notification.Formatters;
@@ -38,6 +39,8 @@ namespace CUWebinars.Business.Notification.Handlers
             try
             {
                 var notificationMessage = _generalFormatter.Format(orderSubmittedEvent.EventObject, "OrderSubmittedAdditionalLocation");
+                notificationMessage.PersistedName = string.Format("OrderSubmittedAdditionalLocation-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm");
+
                 var fullFilePathToPersistedNotification = Path.Combine(_environmentInformation.BaseUrl,
                     orderSubmittedEvent.RelativeFilePath);
                 _notificationPersister.PersistNotification(notificationMessage.Body, fullFilePathToPersistedNotification);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
@@ -34,6 +35,7 @@ namespace CUWebinars.Business.Notification.Handlers
             try
             {
                 var notificationMessage = _generalFormatter.Format(sendConnectionInfoEvent.EventObject, "SendConnectionInfo");
+                notificationMessage.PersistedName = string.Format("SendConnectionInfo-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm");
 
                 var isAdditionalLocation =
                     sendConnectionInfoEvent.EventObject.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
