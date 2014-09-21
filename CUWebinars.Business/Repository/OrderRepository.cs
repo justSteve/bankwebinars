@@ -27,7 +27,7 @@ namespace CUWebinars.Business.Repository
             newOrder.OrderDate = DateTime.Now;
             newOrder.OrderStatus = OrderStatus.InProcess;
 
-            newOrder = AssignAffiliate(affiliate, newOrder);
+            //newOrder = AssignAffiliate(affiliate, newOrder);
 
             newOrder = AssignWebUserToOrder(webUser, newOrder);
 
@@ -224,7 +224,23 @@ namespace CUWebinars.Business.Repository
 
         public Order AssignAffiliate(Affiliate affiliate, Order order)
         {
+            // TODO: Shopping Cart task
+            //Something's wrong here. 
+            // For whatever reason, ET is creating a new
+            // instance of the Affiliate object and attempting
+            // to save it resulting in a FK violation (idUser = 19 already exists).
+
+            // note that 19 is the id of our currently hardcoded Affiliate.
+            // the correct affiliate object is being passed in -- but attempting 
+
             //order.Affiliate = affiliate;
+
+            // which should work isn't.
+
+            // It seems slightly counter intuitive that our Order model has both an
+            // Affiliate object and an integer value for 'idAffiliate'. But same for 
+            // Webinar as well as User objects.
+
             order.idAffiliate = affiliate.idUserAff;
             if (db.SaveChanges() > 0)
             {
@@ -299,10 +315,21 @@ namespace CUWebinars.Business.Repository
 
         public Order SaveOrderChanges(Order order)
         {
-
+            //TODO: Shopping Cart Task
             var error = db.GetValidationErrors();
-            //is this statement waiting for additional code to
-            // trap any remaining errors?
+            //this method needs to be refactored to separate the 
+            // act of saving to db from the act of setting the
+            // order status to 'Submitted'. When originally coded for the 
+            // OrderImport use case, it worked ok because by the time
+            // this method executed we intented OrderStatus to be .Submitted.
+            // However, now the we are coding for the Shopping cart's use case
+            // we need to leave the order's status in the '.InProcess' state
+            // until the shopping cart's ~/Views/cart/Partials/CheckoutConfirm.cshtml
+            // partial has presented the user the fully formed Order object and given 
+            // him to a finalizing 'Confirm Order' button before changing status 
+            // to 'Submitted'.
+
+            //
 
             // is the following 
             if (error.Any())
