@@ -20,6 +20,7 @@ namespace CUWebinars.Web.Infrastructure.Attributes
         public JsonNetResult()
         {
             SerializerSettings = new JsonSerializerSettings();
+            Formatting = Formatting.None;
         }
 
         public override void ExecuteResult(ControllerContext context)
@@ -28,21 +29,21 @@ namespace CUWebinars.Web.Infrastructure.Attributes
 
             var response = context.HttpContext.Response;
 
-            response.ContentType = !string.IsNullOrEmpty(ContentType)
+            response.ContentType = !string.IsNullOrWhiteSpace(ContentType)
               ? ContentType
               : "application/json";
 
             response.CacheControl = "no-cache";
 
-            if (ContentEncoding != null) response.ContentEncoding = ContentEncoding;
+            if (!ReferenceEquals(ContentEncoding, null)) 
+                response.ContentEncoding = ContentEncoding;
 
             // Here we call the extension method Object.ToJsonNet().
-            if (Data != null)
+            if (!ReferenceEquals(Data, null))
             {
-                if (IsoDateTimeConverter != null && Formatting != null)
-                    response.Write(Data.ToJsonNet(SerializerSettings, Formatting, IsoDateTimeConverter));
-                else
-                    response.Write(Data.ToJsonNet());
+                response.Write(!ReferenceEquals(IsoDateTimeConverter, null)
+                    ? Data.ToJsonNet(SerializerSettings, Formatting, IsoDateTimeConverter)
+                    : Data.ToJsonNet());
             }
         }
     }

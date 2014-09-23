@@ -11,7 +11,7 @@ namespace CUWebinars.Web.Infrastructure.Extensions
             {
                 // Json.NET will ignore objects in reference loops and not serialize them. 
                 // The first time an object is encountered it will be serialized as usual 
-                // but if the object is encountered as a child object of itself the serializer 
+                // but if the object is encountered as a child object of itself, the serializer 
                 // will skip serializing it.
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 // maximum depth allowed when reading JSON.
@@ -19,9 +19,8 @@ namespace CUWebinars.Web.Infrastructure.Extensions
                 PreserveReferencesHandling = PreserveReferencesHandling.None
             };
 
-            // TODO: set the date format in your culture. Here is set for Australia date.
-            var timeConverter = new IsoDateTimeConverter { DateTimeFormat = "dd-MM-yyyy HH:mm:ss" };
-            settings.Converters.Add(timeConverter);
+            var dateTimeConverter = new IsoDateTimeConverter { DateTimeFormat = "MM-dd-yyyy HH:mm:ss" };
+            settings.Converters.Add(dateTimeConverter);
 
             return JsonConvert.SerializeObject(obj, Formatting.Indented, settings);
         }
