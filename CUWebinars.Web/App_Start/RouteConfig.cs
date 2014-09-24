@@ -11,9 +11,9 @@ namespace CUWebinars.Web.App_Start
 
             routes.MapRoute(
                 "Admin",                                                    // Route name
-                "{area}/{controller}/{action}/{id}",                        // URL with parameters
-                new { controller = "AdminHome", action = "Index", id = "" }, // Parameter defaults
-                new { area = "Admin", controller = "AdminHome|Discounts|Host|Affiliates|Presenters|Registrations|Reports|Templates|Users|Webinars|ContactUsLog" }
+                "{controller}",                        // URL with parameters
+                new { controller = "Admin", action = "Index" }
+
             );
             routes.MapRoute(
                 "MyWebinarsDefault",                                    // Route name

@@ -1,0 +1,513 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Security.Claims;
+using CUWebinars.Business.Services;
+using CUWebinars.Web.Services;
+using Newtonsoft.Json.Linq;
+using Ninject.Extensions.Logging;
+using System.Web;
+using System.Web.Helpers;
+using System.Web.Mvc;
+using BrockAllen.MembershipReboot;
+using CUWebinars.Business.AccountService;
+using CUWebinars.Business.Constants;
+using CUWebinars.Business.Models;
+using CUWebinars.Web.Core;
+using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Membership;
+using CUWebinars.Web.Models;
+using CUWebinars.Web.ViewModel;
+using Newtonsoft.Json;
+using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
+
+namespace CUWebinars.Web.Controllers.Admin
+{
+
+    [ElmahHandleError]
+    [Authorize]
+
+    public class AdminController : Controller
+    {
+        private readonly IOrderManagementService _orderManagementService;
+        private readonly IMembershipService _membershipService;
+        private readonly ILogger _logger;
+        private readonly IWebinarManagementService _webinarManagementService;
+        private readonly IStateService _stateService;
+        private GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+        private bool _disposed;
+
+        //
+        // GET: /Admin/
+        public ActionResult Index()
+        {
+            return View("~/Views/Admin/Home/Index.cshtml");
+        }
+
+        //
+        // GET: /Admin/
+        public AdminController(IMembershipService membershipService, ILogger logger, IStateService stateService, IWebinarManagementService webinarManagementService, IOrderManagementService orderManagementService)
+        {
+            _membershipService = membershipService;
+            _logger = logger;
+            _stateService = stateService;
+            _webinarManagementService = webinarManagementService;
+            _orderManagementService = orderManagementService;
+        }
+        public PartialViewResult ResendOrderConfirmation()
+        {
+            var model = new ResendOrderInformationViewModel
+            {
+                OrderId = string.Empty
+            };
+
+            return PartialView("~/Views/Admin/Home/_resendOrderConfirmation.cshtml", model);
+        }
+
+        [HttpPost]
+        public ActionResult ResendOrderConfirmation(int orderId)
+        {
+            var order = _orderManagementService.GetOrderById(orderId);
+
+            if (ReferenceEquals(null, order))
+            {
+                return Json(new { Result = WebUiConstants.Fail });
+            }
+
+            _orderManagementService.FireOrderSubmittedEvent(order);
+            return Json(new { Result = WebUiConstants.Success });
+        }
+
+        public PartialViewResult ResendConnectionInfo()
+        {
+            var model = new ResendOrderInformationViewModel
+            {
+                OrderId = string.Empty
+            };
+
+            return PartialView("~/Views/Admin/Home/_resendConnectionInfo.cshtml", model);
+        }
+
+        [HttpPost]
+        public ActionResult ResendConnectionInfo(int orderId)
+        {
+            var order = _orderManagementService.GetOrderById(orderId);
+
+            if (ReferenceEquals(null, order))
+            {
+                return Json(new { Result = WebUiConstants.Fail });
+            }
+
+            _orderManagementService.FireSendConnectionInfoNotificationEvent(new Order[] { order });
+            return Json(new { Result = WebUiConstants.Success });
+        }
+
+        public PartialViewResult SendAdhocEvent()
+        {
+            var model = new AdhocNotificationViewModel
+            {
+                Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_webinarManagementService)
+            };
+
+            return PartialView("~/Views/Admin/Home/_adHocNotification.cshtml", model);
+        }
+
+        [HttpPost]
+        public ActionResult SendAdhocEvent(int webinarId)
+        {
+            var regTypes = EventInvokerHelpers.GetRegTypesForWebinarAsSelectListItems(webinarId, _webinarManagementService);
+
+            return Json(regTypes);
+        }
+
+        public PartialViewResult SendReminder()
+        {
+            var model = new AdhocNotificationViewModel
+            {
+                Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_webinarManagementService)
+            };
+
+            return PartialView("~/Views/Admin/Home/_SendReminder.cshtml", model);
+        }
+
+        [HttpPost]
+        public JsonResult SendReminder(int webinarId)
+        {
+            var orders = _orderManagementService.GetOrdersForLiveNotifications(webinarId);
+
+            if (orders.Any())
+            {
+                _orderManagementService.FireSendReminderNotificationEvent(orders);
+
+
+                return Json(new { Result = WebUiConstants.Success });
+            }
+
+            return Json(new { Result = WebUiConstants.NoOrdersForWebinar });
+        }
+
+        public PartialViewResult SendConnectionInfo()
+        {
+            var model = new AdhocNotificationViewModel
+            {
+                Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_webinarManagementService)
+            };
+
+            return PartialView("~/Views/Admin/Home/_SendConnectionInfo.cshtml", model);
+        }
+
+        [HttpPost]
+        public JsonResult SendConnectionInfo(int webinarId)
+        {
+            var orders = _orderManagementService.GetOrdersForLiveNotifications(webinarId);
+
+            foreach (var order in orders)
+            {
+                AdditionalLocation nuller = new AdditionalLocation();
+                GenerateRegistrantKey(order, nuller);
+
+                if (order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count > 0)
+                {
+                    foreach (var additionalLocation in order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)
+                    {
+                        GenerateRegistrantKey(order, additionalLocation);
+                    }
+                }
+            }
+            _orderManagementService.FireSendConnectionInfoNotificationEvent(orders);
+
+            return Json(new { Result = WebUiConstants.Success });
+        }
+
+        private void GenerateRegistrantKey(Order order, AdditionalLocation additionalLocation)
+        {
+            var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+            var regKeyResponse = "";
+            if (additionalLocation.Email == null)
+            {
+                regKeyResponse = _orderManagementService.CreateRegistrantKey(order.FirstName, order.LastName
+                    , order.BillingEmail, row.Webinar.idWebinar, row.Webinar.WebinarKey);
+            }
+            else
+            {
+                var contents = additionalLocation.FullName.Split(' ').ToString();
+                var lastName = contents.Skip(1).ToString();
+
+                regKeyResponse = _orderManagementService.CreateRegistrantKey(additionalLocation.FullName.Split(' ')[0], lastName
+                   , additionalLocation.Email, row.Webinar.idWebinar, row.Webinar.WebinarKey);
+            }
+
+            if (ReferenceEquals(null, regKeyResponse))
+                throw new NullReferenceException("The Registration Key Response from the Citrix API resulted in a null response.");
+
+            JObject parsedJsonObject = JObject.Parse(regKeyResponse);
+
+            if (parsedJsonObject[WebUiConstants.RegistrantKey] != null)
+            {
+                var registrantKey = parsedJsonObject[WebUiConstants.RegistrantKey].ToString();
+                var joinUrl = parsedJsonObject[WebUiConstants.JoinUrl].ToString();
+                if (additionalLocation.Email == null)
+                {
+                    row.RegistrantKey = registrantKey;
+                    row.JoinURL = joinUrl;
+                }
+                else
+                {
+                    additionalLocation.JoinURL = joinUrl;
+                    additionalLocation.RegistrantKey = registrantKey;
+                }
+                var ResultOfUpdate = _orderManagementService.UpdateOrderChanges(order);
+            }
+        }
+
+        public PartialViewResult SendRecordingPosted()
+        {
+            var model = new AdhocNotificationViewModel
+            {
+                Webinars = EventInvokerHelpers.GetRecordedWebinarsAsSelectListItems(_webinarManagementService)
+            };
+
+            return PartialView("~/Views/Admin/Home/_SendRecordingPosted.cshtml", model);
+        }
+
+        [HttpPost]
+        public JsonResult SendRecordingPosted(int webinarId)
+        {
+            var orders = _orderManagementService.GetOrdersForRecordedNotifications(webinarId);
+
+            if (orders.Any())
+            {
+                _orderManagementService.FireSendRecordingIsPostedEvent(orders);
+
+                return Json(new { Result = WebUiConstants.Success });
+            }
+
+            return Json(new { Result = WebUiConstants.NoOrdersForWebinar });
+        }
+
+
+        public PartialViewResult SendShippedOrder()
+        {
+            var ordersShipped = EventInvokerHelpers.GetShippedWebinarsAsSelectListItems(_orderManagementService);
+
+            var model = new AdhocNotificationViewModel
+            {
+                OrdersList = ordersShipped
+            };
+
+            return PartialView("~/Views/Admin/Home/_SendShippedOrder.cshtml", model);
+        }
+
+        [HttpPost]
+        public JsonResult SendShippedOrder(int orderId)
+        {
+            var order = _orderManagementService.GetOrderById(orderId);
+
+            _orderManagementService.FireSendOrderShippedNotificationEvent(new Order[] { order });
+
+            return Json(new { Result = WebUiConstants.Success });
+        }
+
+
+        public PartialViewResult LogInAsUser()
+        {
+            var logInAsOtherUserViewModel = new LogInAsOtherUserViewModel
+            {
+                Email = string.Empty,
+                Password = string.Empty
+            };
+
+            return PartialView("~/Views/Admin/Home/_LogInAsUser.cshtml", logInAsOtherUserViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult LogInAsUser(LogInAsOtherUserViewModel model)
+        {
+            var adminUser = User.Identity as ClaimsIdentity;
+            var adminUserEmail = adminUser.Claims.Single(c => c.Type == System.IdentityModel.Claims.ClaimTypes.Email).Value;
+            var impersonatedUserAccount = _membershipService.GetUserAccountByEmail(globalConfig.Tenant, model.Email);
+
+            if (ReferenceEquals(null, impersonatedUserAccount))
+            {
+                var nullReferenceException =
+                    new NullReferenceException(string.Format("There is no webuser with the email address {0}", model.Email));
+                _logger.ErrorException("LogInAsUser | No User Found For Email", nullReferenceException);
+                ModelState.AddModelError("Inavlid email", nullReferenceException);
+                return View("", "", ""); //   TODO: Figure out how to show error messages
+            }
+
+            _membershipService.LogOutUser();
+
+            _stateService.SetValue(WebUiConstants.AdminUserEmail, adminUserEmail);
+
+            _membershipService.LogInAdminUserAsOtherUser(globalConfig.Tenant,
+                adminUserEmail.Trim(), model.Password.Trim(),
+                impersonatedUserAccount
+                );
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        public PartialViewResult ManualPasswordReset()
+        {
+            var manualPasswordResetViewModel = new ManualPasswordResetViewModel
+            {
+                ConfirmPassword = string.Empty,
+                Email = string.Empty,
+                NewPassword = string.Empty
+            };
+
+            return PartialView("~/Views/Admin/Home/_ManualPasswordReset.cshtml", manualPasswordResetViewModel);
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult ManualPasswordReset(ManualPasswordResetViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var userAccount = _membershipService.GetUserAccountByEmail(globalConfig.Tenant, model.Email);
+                if (userAccount == null)
+
+                    return Json(new { Result = WebUiConstants.InvalidEmail });
+                var newPassword = Crypto.HashPassword(model.NewPassword);
+
+                var dataOperations = new DataOperations();
+                dataOperations.ManualPasswordReset(userAccount.ID, newPassword);
+
+                return Json(new { Result = WebUiConstants.Success });
+            }
+
+            //Please use this general pattern when logging ModelState errors.
+            var myErr = "";
+            foreach (ModelState modelState in ViewData.ModelState.Values)
+            {
+                foreach (ModelError error in modelState.Errors)
+                {
+                    myErr += error.ErrorMessage + System.Environment.NewLine;
+                }
+            }
+
+            _logger.Error("ManualPasswordReset: {0}", AppHelper.GetUserAuditInfo());
+            _logger.Error("ManualPasswordReset: {0}", myErr);
+
+            return Json(new { Result = WebUiConstants.Fail + myErr });
+        }
+
+        [AllowAnonymous]
+        public PartialViewResult PasswordResetOperation()
+        {
+            var resetPasswordModel = new ResetPasswordModel
+            {
+                Email = string.Empty,
+                EmailSent = false
+            };
+
+            return PartialView("~/Views/Admin/Home/_ResetPasswordPartial.cshtml", resetPasswordModel);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public JsonResult ResetPassword(string email)
+        {
+            var globals = GlobalConfig.GlobalConfigSingleton;
+
+            try
+            {
+                _membershipService.ResetPassword(globals.Tenant, email);
+                return Json(new { Result = WebUiConstants.Success });
+            }
+            catch (Exception exception)
+            {
+                _logger.Error("ResetPassword : {0}", exception.Message);
+            }
+
+            return Json(new { Result = WebUiConstants.Fail });
+        }
+
+        public PartialViewResult GetPasswordResetConfirmFields()
+        {
+            var changePasswordFromResetKeyInputModel = new ChangePasswordFromResetKeyInputModel
+            {
+                ChangePasswordSucceeded = false
+            };
+
+            return PartialView("~/Views/Admin/Home/_PasswordResetConfirm.cshtml", changePasswordFromResetKeyInputModel);
+        }
+
+        [HttpPost]
+        public JsonResult FirePasswordResetEvent(ChangePasswordFromResetKeyInputModel model, string verificationKey)
+        {
+            if (_membershipService.ChangePasswordFromResetKey(verificationKey, model.Password))
+                model.ChangePasswordSucceeded = true;
+
+            return Json(model);
+        }
+
+
+        public PartialViewResult GetJsonTextArea()
+        {
+            const string importOrderViaDashboardViewModel = @"{""AffiliateComments"": ""Affiliate comments"",
+                                  ""BillingAddress.AddressType"": ""Billing"",
+                                  ""BillingAddress.Name"": ""Alan Turing"",
+                                  ""BillingAddress.Phone"": ""555-555-5555"",
+                                  ""BillingAddress.StreetAddress"": ""968 Wildcat Dr"",
+                                  ""BillingAddress.StreetAddress2"": """",
+                                  ""BillingAddress.City"": ""Del Rio"",
+                                  ""BillingAddress.Zip"": ""5000"",
+                                  ""BillingAddress.State"": ""Tx"",
+                                  ""BillingAddress.Country"": ""USA"",
+                                  ""Email"": ""alanbturingy@turing.com"",
+                                  ""FirstName"": ""Alan"",
+                                  ""LastName"": ""Turing"",
+                                  ""idAffiliate"": 19,
+                                  ""idRegType"": 88,
+                                  ""idWebinar"": 437,
+                                  ""Institution"": ""Some Institution"",
+                                  ""ShippingAddress.AddressType"": ""Shipping"",
+                                  ""ShippingAddress.Name"": ""Alan Turing"",
+                                  ""ShippingAddress.Phone"": ""555-555-5555"",
+                                  ""ShippingAddress.StreetAddress"": ""968 Wildcat Dr"",
+                                  ""ShippingAddress.StreetAddress2"": """",
+                                  ""ShippingAddress.City"": ""Del Rio"",
+                                  ""ShippingAddress.Zip"": ""5000"",
+                                  ""ShippingAddress.State"": ""Tx"",
+                                  ""ShippingAddress.Country"": ""USA"",
+                                  ""SendNotification"": ""true"",
+                                  ""Title"": ""Mr""}";
+
+            ViewBag.Payload = importOrderViaDashboardViewModel;
+
+            return PartialView("~/Views/Admin/Home/_ImportOrder.cshtml", importOrderViaDashboardViewModel);
+        }
+
+        public JsonResult ReadCsvAndReturnJson()
+        {
+            IList<IncomingOrderModel> incomingOrderModels = null;
+
+            using (var fileStream =
+                    System.IO.File.OpenRead(
+                    Path.Combine(HttpRuntime.AppDomainAppPath, @"App_Data/Orders", "SampleData.csv"))
+                //Path.Combine(HttpRuntime.AppDomainAppPath, @"App_Data/Orders", "OrderEntry.csv"))
+                //Path.Combine(HttpRuntime.AppDomainAppPath, @"App_Data/Orders", "newCUOrders.csv"))
+                    )
+            {
+                incomingOrderModels = CsvParseOps.ParseCsvForIncomingOrderModel(fileStream);
+            }
+
+            var returnPayload = JsonConvert.SerializeObject(incomingOrderModels);
+
+            return Json(returnPayload, JsonRequestBehavior.AllowGet);
+        }
+
+        private List<Address> ProcessAddresses(RegisterViewModel registerViewModel)
+        {
+            var billingAddress = new Address
+            {
+                AddressType =
+                    Enum.GetName(typeof(AddressType), registerViewModel.RegisterFields.BillingAddress.TypeOfAddress),
+                City = registerViewModel.RegisterFields.BillingAddress.City.Trim(),
+                Country = registerViewModel.RegisterFields.BillingAddress.Country.Trim(),
+                Name =
+                    registerViewModel.RegisterFields.FirstName.Trim() + ' ' +
+                    registerViewModel.RegisterFields.LastName.Trim(),
+                Phone = registerViewModel.RegisterFields.BillingAddress.Phone.Trim(),
+                State = registerViewModel.RegisterFields.BillingAddress.State.Trim(),
+                StreetAddress = registerViewModel.RegisterFields.BillingAddress.StreetAddress.Trim(),
+                StreetAddress2 =
+                    registerViewModel.RegisterFields.BillingAddress.StreetAddress2 == null
+                        ? registerViewModel.RegisterFields.BillingAddress.StreetAddress2
+                        : registerViewModel.RegisterFields.BillingAddress.StreetAddress2.Trim(),
+                Zip = registerViewModel.RegisterFields.BillingAddress.Zip.Trim()
+            };
+
+            var shippingAddress = new Address
+            {
+                AddressType =
+                    Enum.GetName(typeof(AddressType), registerViewModel.RegisterFields.ShippingAddress.TypeOfAddress),
+                City = registerViewModel.RegisterFields.ShippingAddress.City.Trim(),
+                Country = registerViewModel.RegisterFields.ShippingAddress.Country.Trim(),
+                Name =
+                    registerViewModel.RegisterFields.FirstName.Trim() + ' ' +
+                    registerViewModel.RegisterFields.LastName.Trim(),
+                Phone = registerViewModel.RegisterFields.ShippingAddress.Phone.Trim(),
+                State = registerViewModel.RegisterFields.ShippingAddress.State.Trim(),
+                StreetAddress = registerViewModel.RegisterFields.ShippingAddress.StreetAddress.Trim(),
+                StreetAddress2 =
+                    registerViewModel.RegisterFields.ShippingAddress.StreetAddress2 == null
+                        ? registerViewModel.RegisterFields.ShippingAddress.StreetAddress2
+                        : registerViewModel.RegisterFields.ShippingAddress.StreetAddress2.Trim(),
+                Zip = registerViewModel.RegisterFields.ShippingAddress.Zip.Trim()
+            };
+
+            return new List<Address> { billingAddress, shippingAddress };
+        }
+
+
+    }
+
+}

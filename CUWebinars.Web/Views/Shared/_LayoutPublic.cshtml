@@ -198,7 +198,7 @@
     <section class="container preheader">
         <!--this is the login for the user-->
         @Html.Partial("_LoginPartial")
-        @*@Html.ActionLink("Membership Notifications", "MembershipNotifications", "MembershipNotificationOps")*@
+        @*@Html.ActionLink("Membership Notifications", "MembershipNotifications", "Admin")*@
 
 
         <!--close user nav
@@ -220,7 +220,10 @@
     <!-- begin .header-->
     <header class="header  clearfix" style="margin-bottom: 0px; padding-bottom: 0; ">
         <div class="container">
-
+            <!-- begin #logo -->
+            <div id="logo"> <a href="/Home"><img alt="" src="http://images.ttstrain.com/images/BankWebinars/trans.gif" /><em>Credit Union Webinars</em><!--effing ie7 support--></a> </div>
+            <!-- end #logo -->
+            `
             <!-- begin #main_menu -->
             <nav id="main_menu">
                 <ul class="primary_menu">
@@ -291,10 +294,7 @@
                 </ul>
             </nav>
             <!-- close / #main_menu -->
-            <!-- begin #logo -->
-            <div id="logo"> <a href="/Home"><img alt="" src="http://images.ttstrain.com/images/BankWebinars/trans.gif" /><em>Credit Union Webinars</em><!--effing ie7 support--></a> </div>
-            <!-- end #logo -->
-            `
+            
         </div>
         <!-- close / .container-->
     </header>
