@@ -40,21 +40,6 @@
     var firstPage = stateService.GetValue<string>("FirstPage");
     var sessionID = stateService.GetValue<string>("SessionID");
     var affiliateSessionSource = stateService.GetValue<string>("AffiliateSessionSource");
-
-    var includeUpcoming = stateService.GetValue<bool>("IncludeUpcoming");
-
-    if (includeUpcoming == null)
-    {
-        stateService.SetValue("IncludeUpcoming", true);
-    }
-
-    var includeRecorded = stateService.GetValue<bool>("IncludeRecorded");
-
-    if (includeRecorded == null)
-    {
-        stateService.SetValue("IncludeRecorded", false);
-    }
-
 }
 <!doctype html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en" dir="ltr"> <![endif]-->
@@ -72,21 +57,21 @@
         JL("myLogger").setOptions({ "appenders": [ajaxAppender, consoleAppender] });
     </script>
     @*@if (!Html.IsDebug())
-    {
-        <!--Start of Zopim Live Chat Script-->
-        <script type="text/javascript">
-            window.$zopim || (function (d, s) {
-                var z = $zopim = function (c) { z._.push(c) }, $ = z.s =
-                d.createElement(s), e = d.getElementsByTagName(s)[0]; z.set = function (o) {
-                    z.set.
-                    _.push(o)
-                }; z._ = []; z.set._ = []; $.async = !0; $.setAttribute('charset', 'utf-8');
-                $.src = '//v2.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU'; z.t = +new Date; $.
-                type = 'text/javascript'; e.parentNode.insertBefore($, e)
-            })(document, 'script');
-        </script>
-        <!--End of Zopim Live Chat Script-->
-    }*@
+        {
+            <!--Start of Zopim Live Chat Script-->
+            <script type="text/javascript">
+                window.$zopim || (function (d, s) {
+                    var z = $zopim = function (c) { z._.push(c) }, $ = z.s =
+                    d.createElement(s), e = d.getElementsByTagName(s)[0]; z.set = function (o) {
+                        z.set.
+                        _.push(o)
+                    }; z._ = []; z.set._ = []; $.async = !0; $.setAttribute('charset', 'utf-8');
+                    $.src = '//v2.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU'; z.t = +new Date; $.
+                    type = 'text/javascript'; e.parentNode.insertBefore($, e)
+                })(document, 'script');
+            </script>
+            <!--End of Zopim Live Chat Script-->
+        }*@
 
 
     <title>@ViewBag.Title</title>
@@ -198,19 +183,15 @@
     <section class="container preheader">
         <!--this is the login for the user-->
         @Html.Partial("_LoginPartial")
-        @*@Html.ActionLink("Membership Notifications", "MembershipNotifications", "Admin")*@
 
-
-        <!--close user nav
-            <div class="search-wrapper">
+        <!--<div class="search-wrapper">
                 <form class="search" method="post" action="/home/search">
                     <div id="search-trigger">Search:</div>
                     <input id="search-box" type="text" placeholder="search + enter">
                 </form>
-            </div>-->
+        </div>-->
         <div class="phone"><a href="tel:8008310678" class="tele">800.831.0678</a></div>
         <ul class="social">
-            @*<li><a class="socicon small rss" href="#" data-placement="bottom" title="Subscribe to our RSS feed"></a></li>*@
             <li><a class="socicon small facebook" href="http://www.facebook.com/home.php#!/pages/Total-Training-Solutions/300546163412" target="_blank" data-placement="bottom" title="Follow us on Facebook"></a></li>
             <li><a class="socicon small twitterbird" href="http://twitter.com/#!/ttstrain" target="_blank" data-placement="bottom" title="Follow us on Twitter"></a></li>
             <li><a class="socicon small linkedin" href="https://www.linkedin.com/company/bankwebinars.com" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
@@ -223,12 +204,9 @@
             <!-- begin #logo -->
             <div id="logo"> <a href="/Home"><img alt="" src="http://images.ttstrain.com/images/BankWebinars/trans.gif" /><em>Credit Union Webinars</em><!--effing ie7 support--></a> </div>
             <!-- end #logo -->
-            `
             <!-- begin #main_menu -->
             <nav id="main_menu">
                 <ul class="primary_menu">
-                    @*<li><a href="/home">Home</a></li>*@
-
                     <li><a href="/webinar/calendar">calendar</a></li>
                     <li class="parent">
                         <a href="javascript:void(0)">topics</a>
@@ -249,12 +227,10 @@
                     <li class="parent">
                         <a href="javascript:void(0)">Upcoming Webinars</a>
                         <ul>@Html.Raw(sessionUpcoming)</ul>
-                        @*<ul></ul>*@
                     </li>
                     <li class="parent">
                         <a href="javascript:void(0)">OnDemand Webinars</a>
                         <ul>@Html.Raw(sessionRecorded)</ul>
-                        @*<ul></ul>*@
                     </li>
                     <li>
                         <a href="javascript:void(0)">About Us</a>
@@ -294,29 +270,13 @@
                 </ul>
             </nav>
             <!-- close / #main_menu -->
-            
         </div>
         <!-- close / .container-->
     </header>
     <!-- close /.header -->
     <div id="page">
-
         @RenderBody()
-
-        @*        @{Html.RenderPartial("LoginBoxBootstrap");}
-            @{Html.RenderPartial("ShowSearchBox");}*@
-
     </div>
-    @*//todo standardize progress dialog*@
-    @*<div id="ProgressDialogBS" class="modal hide fade">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3 id="progressCaption">...updating status...</h3>
-            </div>
-            <div id="progressResult" class="modal-body">
-                <i class="icon-spinner icon-spin icon-4x "></i>
-            </div>
-        </div>*@
     <!--begin footer -->
     <footer id="footer" class="clearfix">
         <div class="container">

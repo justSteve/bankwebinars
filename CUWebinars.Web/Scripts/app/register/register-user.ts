@@ -1,5 +1,5 @@
-﻿/// <reference path="../../typings/jquery/jquery.validation.d.ts" />
-/// <reference path="../../typings/jquery/jquery.d.ts" />
+﻿/// <reference path="../../typings/jquery/jquery.d.ts" />
+/// <reference path="../../typings/jquery/jquery.validation.d.ts" />
 /// <reference path="../../typings/bootstrap/bootstrap.d.ts" />
 
 module Registration {
@@ -300,12 +300,12 @@ module Registration {
 		private inputAction: InputAction;
 		private disregardIntitutionDomain: boolean = false;
 		private zipCheckRequired: boolean = false;
-		private pageObject: PageObject;
+		private pageObject: Registration.PageObject;
 		private nextButtonText: string = 'Next...';
 		private registerButtonText: string = 'Submit Register';
 		private sameAsBillingCheckedFilter: string = '#sameAsBilling:checked';
 
-		constructor(public incomingPageObject: PageObject) {
+        constructor(public incomingPageObject: Registration.PageObject) {
 			this.pageObject = incomingPageObject;
 			this.initialize();
 		}
@@ -785,26 +785,4 @@ module Registration {
 
 	};
 
-}
-
-function getMainPath(pathToCheck) {
-
-	if (pathToCheck.substr(pathToCheck.length - 1) === '/')
-		return pathToCheck.substr(0, pathToCheck.length - 1);
-	return pathToCheck;
-}
-
-function setPath() {
-	var indexOfHome = location.href.indexOf('Account');
-	var path = '';
-
-	if (indexOfHome > -1)
-		path = location.href.substr(0, location.href.indexOf('Account') - 1);
-	else
-		path = location.href;
-
-	//  IE is a rubbish browser!
-	if (path === '')
-		path = $(location).attr('href');
-	return path;
 }
