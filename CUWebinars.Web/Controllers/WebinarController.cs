@@ -1,5 +1,6 @@
 ﻿using System.Configuration;
 using System.IO;
+using System.Security.Claims;
 using System.Web.Hosting;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Core.Exceptions;
@@ -554,38 +555,29 @@ namespace CUWebinars.Web.Controllers
             return View(model);
         }
 
-        public ActionResult Details2(int id)
+        public ActionResult Details2(int? id)
         {
-            ViewBag.PageStyleType = "holy-grail-three-columns";
-            var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id);
+            var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id.Value);
 
             if (webinar == null) return HttpNotFound();
-            ViewBag.topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar);
-            ViewBag.userHasOpenOrder = 0;
-            ViewBag.userOwnsThisEvent = 0;
-            ;
-            ViewBag.upList = null;
-            ViewBag.regList = null;
-
-            WebUser user = Request.IsAuthenticated ? _membershipService.GetUserByEmail(User.Identity.Name) : new WebUser();
-            var usersOrders = _orderManagementService.GetOrdersByUserId(user.idUser)
-                                .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id) != null);
-
-            var options = _orderManagementService.GetOptionsByWebinarId(id, false);
 
             var model = new WebinarDetailsViewModel()
             {
-                WebUser = user,
                 Affiliate = stateService.GetValue<Affiliate>("CurrentAffiliate"),
                 Webinar = webinar,
-                Options = options,
                 Order = null
             };
 
-            if (usersOrders.Any())
+            InitializeDetailsState(webinar, model, id.Value);
+
+            var usersOrders = _orderManagementService.GetOrdersByUserId(model.WebUser.idUser)
+                                .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id.Value) != null);
+
+            var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray(); // perf : ensures no multiple enumerations of usersOrders
+            if (checkOrders.Any())  
             //if (usersOrders != null && usersOrders.Any())
             {
-                foreach (var checkOrder in usersOrders)
+                foreach (var checkOrder in checkOrders)
                 {
                     var row = checkOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
                     
@@ -595,14 +587,20 @@ namespace CUWebinars.Web.Controllers
 
                     ViewBag.WebinarFiles = webinarFiles;
 
-                    ViewBag.userOwnsThisEvent = checkOrder.idOrder;
+                    model.UserOwnsThisEvent = checkOrder.idOrder;
                     model.Order = checkOrder;
                     
                     if (checkOrder.OrderStatus == OrderStatus.InProcess && row.idWebinar != id)
                     {
-                        ViewBag.userHasOpenOrder = checkOrder.idOrder;
+                        model.UserHasOpenOrder = checkOrder.idOrder;
                     }
                 }
+            }
+
+            if (model.UserOwnsThisEvent > 0 && model.Order.OrderStatus == OrderStatus.InProcess)
+            {
+                model.CheckoutInProcess = "true";
+                model.MessageOrderStatus = "<div align=\"center\" class=\"label-warning label\">Your order is InProcess and needs to be confirmed or canceled.</div>";
             }
 
             if (model.Webinar == null)
@@ -610,6 +608,57 @@ namespace CUWebinars.Web.Controllers
                 return HttpNotFound();
             }
             return View(model);
+        }
+
+        private void InitializeDetailsState(Webinar webinar, WebinarDetailsViewModel model, int id)
+        {
+            ViewBag.PageStyleType = "holy-grail-three-columns";
+
+            model.Topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar);
+            model.UserHasOpenOrder = 0;
+            model.UserOwnsThisEvent = 0;
+            
+            ViewBag.upList = null; // TODO: is this variable necessary
+            ViewBag.regList = null;// TODO: is this variable necessary
+            
+            if (ViewData.ContainsKey("CheckoutInProcess") && !string.IsNullOrWhiteSpace(ViewData["CheckoutInProcess"].ToString()))
+            {
+                model.CheckoutInProcess = ViewData["CheckoutInProcess"].ToString();
+            }
+
+            model.WebUser = Request.IsAuthenticated ? _membershipService.GetUserByEmail(User.Identity.Name) : new WebUser();
+
+            var userExists = model.WebUser.idUser > 0;
+
+            model.Options = _orderManagementService.GetOptionsByWebinarId(id, false);
+            model.TimeZone = userExists ? model.WebUser.timeZone : USTimeZone.Central;
+            model.UserIsLoggedIn = userExists;
+
+            model.SignUpCaption = "Sign Up!";
+            model.ConfirmationCaption = "Confirmation";
+            model.Identity = ((ClaimsIdentity)User.Identity);
+            model.TimeFormatDisplay = "<i>" + DateTimeHelper.FormatTime(model.Webinar.Date, model.TimeZone, false) + " - " + DateTimeHelper.FormatTime(model.Webinar.Date.AddHours((double)model.Webinar.Duration), model.TimeZone, true) + "<br /></i>";
+
+            model.WhichStep = "Step0";
+
+            model.CeuShort = string.Empty;
+            model.CeuStatement = string.Empty;
+
+            if (!string.IsNullOrEmpty(model.Webinar.ceu))
+            {
+                string[] ceu = model.Webinar.ceu.Split('|');
+                model.CeuShort = ceu[0];
+                model.CeuStatement = ceu[1];
+            }
+
+            //var whichStep = "Step0";
+            //if (ViewData.ContainsKey("WhichStep"))
+            //{
+            //    if (!String.IsNullOrEmpty(ViewData["WhichStep"].ToString()))
+            //    {
+            //        whichStep = ViewData["WhichStep"].ToString();
+            //    }
+            //}
         }
 
         public ActionResult Calendar(int? ID)
@@ -823,6 +872,7 @@ namespace CUWebinars.Web.Controllers
 
                 _membershipService.Dispose();
                 _orderManagementService.Dispose();
+                _webinarManagementService.Dispose();
 
                 base.Dispose(true);
             }

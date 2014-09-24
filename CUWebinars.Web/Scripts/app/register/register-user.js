@@ -1,5 +1,5 @@
-﻿/// <reference path="../../typings/jquery/jquery.validation.d.ts" />
-/// <reference path="../../typings/jquery/jquery.d.ts" />
+﻿/// <reference path="../../typings/jquery/jquery.d.ts" />
+/// <reference path="../../typings/jquery/jquery.validation.d.ts" />
 /// <reference path="../../typings/bootstrap/bootstrap.d.ts" />
 var Registration;
 (function (Registration) {
@@ -741,25 +741,4 @@ var Registration;
     Registration.StateManager = StateManager;
     ;
 })(Registration || (Registration = {}));
-
-function getMainPath(pathToCheck) {
-    if (pathToCheck.substr(pathToCheck.length - 1) === '/')
-        return pathToCheck.substr(0, pathToCheck.length - 1);
-    return pathToCheck;
-}
-
-function setPath() {
-    var indexOfHome = location.href.indexOf('Account');
-    var path = '';
-
-    if (indexOfHome > -1)
-        path = location.href.substr(0, location.href.indexOf('Account') - 1);
-    else
-        path = location.href;
-
-    //  IE is a rubbish browser!
-    if (path === '')
-        path = $(location).attr('href');
-    return path;
-}
 //# sourceMappingURL=register-user.js.map

@@ -35,8 +35,17 @@ namespace CUWebinars.Web.App_Start
                         "~/Scripts/bootstrap-modalmanager.js",
                         "~/Content/js/jquery-plugins/dataTables/media/js/jquery.dataTables.js",
                         "~/Content/js/jquery-plugins/dataTables/plugins/fnSetFilteringDelay.js",
+                         "~/Scripts/app/cart/additional-locations.js"
+                         //"~/Scripts/app/cart/create-order.js"
+                //,"~/Scripts/app/cart/edit-order.js"
+                        ));
+            
+            bundles.Add(new ScriptBundle("~/bundles/createOrder").Include(
+                         "~/Scripts/app/utilities.js",
                          "~/Scripts/app/cart/additional-locations.js",
-                         "~/Scripts/app/cart/create-order.js"
+                         "~/Scripts/app/cart/create-order-new.js",
+                         "~/Scripts/app/cart/details.js"
+                         //"~/Scripts/app/cart/create-order.js"
                 //,"~/Scripts/app/cart/edit-order.js"
                         ));
 
@@ -86,6 +95,10 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/web-user-details-register.js"
             ));
 
+            bundles.Add(new StyleBundle("~/Content/createOrderDetails").Include(
+                "~/Content/css/details2.css"
+                ));
+
             if (globalConfig.Tenant == "BankWebinars")
             {
                 bundles.Add(new StyleBundle("~/Content/CrispCSS").Include(
@@ -130,5 +143,8 @@ namespace CUWebinars.Web.App_Start
                         "~/Content/themes/base/jquery.ui.progressbar.css",
                         "~/Content/themes/base/jquery.ui.theme.css"));
         }
+        
+
+
     }
 }
