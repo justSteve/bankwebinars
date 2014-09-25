@@ -1,5 +1,5 @@
 ﻿var adhocNotificationForm,
-    inputFormFieldsDiv,
+    InputFormFields,
     failedScreenMessage,
     getAdhocEventsHtmlButton,
     getResendConnectionInfoHtmlButton,
@@ -42,8 +42,8 @@ var OENS = {
         GetSendReminderEventHtmlButton: function () {
             return getSendReminderEventHtmlButton || $('#GetSendReminderEventHtmlButton');
         },
-        InputFormFieldsDiv: function() {
-            return inputFormFieldsDiv || $('#InputFormFieldsDiv');
+        InputFormFields: function() {
+            return InputFormFields || $('#InputFormFields');
         },
         RegTypesCheckBoxesDiv: function () {
             return regTypesCheckBoxesDiv || $('#RegTypesCheckBoxes').find('.controls');
@@ -68,13 +68,13 @@ $(function () {
     noOrdersScreenMessage = '<br /><span id="ScreenMessageSpan" class="label label-information">&nbsp;&nbsp;There were no orders for that webinar</span>';
     noOrderScreenMessage = '<br /><span id="ScreenMessageSpan" class="label label-information">&nbsp;&nbsp;There is no order which matches that Order Id</span>';
     successScreenMessage = '<br /><span id="ScreenMessageSpan" class="label label-success">&nbsp;The Orders have been sent.</span>';
-    sendAdhocEventUrl = '/OrderEventFiringOps/SendAdhocEvent';
-    sendConnectionInfoUrl = '/OrderEventFiringOps/SendConnectionInfo';
-    sendReminderUrl = '/OrderEventFiringOps/SendReminder';
-    sendRecordingPostedUrl = '/OrderEventFiringOps/SendRecordingPosted';
-    resendConnectionInfoUrl = '/OrderEventFiringOps/ResendConnectionInfo';
-    resendOrderConfirmationUrl = '/OrderEventFiringOps/ResendOrderConfirmation';
-    sendOrderShippedUrl = '/OrderEventFiringOps/SendShippedOrder';
+    sendAdhocEventUrl = '/Admin/SendAdhocEvent';
+    sendConnectionInfoUrl = '/Admin/SendConnectionInfo';
+    sendReminderUrl = '/Admin/SendReminder';
+    sendRecordingPostedUrl = '/Admin/SendRecordingPosted';
+    resendConnectionInfoUrl = '/Admin/ResendConnectionInfo';
+    resendOrderConfirmationUrl = '/Admin/ResendOrderConfirmation';
+    sendOrderShippedUrl = '/Admin/SendShippedOrder';
 
     getResendConnectionInfoHtmlButton = $('#GetResendConnectionInfoHtmlButton');
     getResendOrderConfirmationHtmlButton = $('#GetResendOrderConfirmationHtmlButton');
@@ -82,16 +82,16 @@ $(function () {
     getSendRecordingPostedEventHtmlButton = $('#GetSendRecordingPostedEventHtmlButton');
     getSendReminderEventHtmlButton = $('#GetSendReminderEventHtmlButton');
     sendShippedOrderNotificationButton = $('#SendShippedOrderNotificationButton');
-    inputFormFieldsDiv = $('#InputFormFieldsDiv');
+    InputFormFields = $('#InputFormFields');
     waitIndicator = $('#WaitIndicator');
     waitIndicator.hide();
 
 
     getResendConnectionInfoHtmlButton.on('click', function(eventArgs) {
         eventArgs.preventDefault();
-        OENS.PageObjects.InputFormFieldsDiv().empty();
+        OENS.PageObjects.InputFormFields().empty();
 
-        OENS.PageObjects.InputFormFieldsDiv().load(resendConnectionInfoUrl, function () {
+        OENS.PageObjects.InputFormFields().load(resendConnectionInfoUrl, function () {
 
             $('#ResendConnectionInfoButton').on('click', function () {
 
@@ -112,9 +112,9 @@ $(function () {
                 }).done(function (result) {
 
                     if (result.Result === 'Success') {
-                        OENS.PageObjects.InputFormFieldsDiv().append(successScreenMessage);
+                        OENS.PageObjects.InputFormFields().append(successScreenMessage);
                     } else if (result.Result === 'Fail') {
-                        OENS.PageObjects.InputFormFieldsDiv().append(noOrderScreenMessage);
+                        OENS.PageObjects.InputFormFields().append(noOrderScreenMessage);
                     }
 
                 }).fail(function () {
@@ -129,9 +129,9 @@ $(function () {
             
     getResendOrderConfirmationHtmlButton.on('click', function(eventArgs) {
         eventArgs.preventDefault();
-        OENS.PageObjects.InputFormFieldsDiv().empty();
+        OENS.PageObjects.InputFormFields().empty();
 
-        OENS.PageObjects.InputFormFieldsDiv().load(resendOrderConfirmationUrl, function () {
+        OENS.PageObjects.InputFormFields().load(resendOrderConfirmationUrl, function () {
 
             $('#ResendOrderConfirmationButton').on('click', function () {
 
@@ -152,9 +152,9 @@ $(function () {
                 }).done(function(result) {
 
                     if (result.Result === 'Success') {
-                        OENS.PageObjects.InputFormFieldsDiv().append(successScreenMessage);
+                        OENS.PageObjects.InputFormFields().append(successScreenMessage);
                     } else if (result.Result === 'Fail') {
-                        OENS.PageObjects.InputFormFieldsDiv().append(noOrderScreenMessage);
+                        OENS.PageObjects.InputFormFields().append(noOrderScreenMessage);
                     }
 
 
@@ -168,9 +168,9 @@ $(function () {
     });
 
     getAdhocEventsHtmlButton.on('click', function(eventArgs) {
-        OENS.PageObjects.InputFormFieldsDiv().empty();
+        OENS.PageObjects.InputFormFields().empty();
 
-        OENS.PageObjects.InputFormFieldsDiv().load(sendAdhocEventUrl, function () {
+        OENS.PageObjects.InputFormFields().load(sendAdhocEventUrl, function () {
             $('#RegTypesCheckBoxes').hide();
             adhocNotificationForm = $('#AdhocNotificationForm');
             selectedUpcomingWebinarIdDropDown = $('#SelectedWebinarId');
@@ -259,8 +259,8 @@ $(function () {
     
     sendShippedOrderNotificationButton.on('click', function(evtArgs) {
 
-        OENS.PageObjects.InputFormFieldsDiv().empty();
-        OENS.PageObjects.InputFormFieldsDiv().load(sendOrderShippedUrl, function () {
+        OENS.PageObjects.InputFormFields().empty();
+        OENS.PageObjects.InputFormFields().load(sendOrderShippedUrl, function () {
 
             $('#GetSendShippedOrderNotificationButton').on('click', function (eventArgs) {
 
@@ -281,13 +281,13 @@ $(function () {
                     labelCheckRemove();
 
                     if (result.Result === 'Success') {
-                        OENS.PageObjects.InputFormFieldsDiv().append(successScreenMessage);
+                        OENS.PageObjects.InputFormFields().append(successScreenMessage);
                     } else if (result.Result === 'No Orders to send for that webinar') {
-                        OENS.PageObjects.InputFormFieldsDiv().append(noOrdersScreenMessage);
+                        OENS.PageObjects.InputFormFields().append(noOrdersScreenMessage);
                     }
                 }).fail(function () {
                     labelCheckRemove();
-                    OENS.PageObjects.InputFormFieldsDiv().append(failedScreenMessage);
+                    OENS.PageObjects.InputFormFields().append(failedScreenMessage);
                 }).always(function () {
                     OENS.PageObjects.WaitIndicator().hide();
                 });;
@@ -297,9 +297,9 @@ $(function () {
     });
 
     getSendReminderEventHtmlButton.on('click', function(eventArgs) {
-        OENS.PageObjects.InputFormFieldsDiv().empty();
+        OENS.PageObjects.InputFormFields().empty();
 
-        OENS.PageObjects.InputFormFieldsDiv().load(sendReminderUrl, function() {
+        OENS.PageObjects.InputFormFields().load(sendReminderUrl, function() {
 
             $('#FireSendReminderEventButton').on('click', function (eventArgs) {
                 
@@ -320,13 +320,13 @@ $(function () {
                     labelCheckRemove();
 
                     if (result.Result === 'Success') {
-                        OENS.PageObjects.InputFormFieldsDiv().append(successScreenMessage);
+                        OENS.PageObjects.InputFormFields().append(successScreenMessage);
                     } else if (result.Result === 'No Orders to send for that webinar') {
-                        OENS.PageObjects.InputFormFieldsDiv().append(noOrdersScreenMessage);
+                        OENS.PageObjects.InputFormFields().append(noOrdersScreenMessage);
                     }
                 }).fail(function () {
                     labelCheckRemove();
-                    OENS.PageObjects.InputFormFieldsDiv().append(failedScreenMessage);
+                    OENS.PageObjects.InputFormFields().append(failedScreenMessage);
                 }).always(function () {
                     OENS.PageObjects.WaitIndicator().hide();
                 });;
@@ -334,12 +334,12 @@ $(function () {
         });
     });
 
-    getSendConnectionInfoEventHtmlButton.on('click', function(eventArgs) {
-        OENS.PageObjects.InputFormFieldsDiv().empty();
+    getSendConnectionInfoEventHtmlButton.on('click', function (eventArgs) {
 
+        OENS.PageObjects.InputFormFields().empty();
+
+        OENS.PageObjects.InputFormFields().load(sendConnectionInfoUrl, function () {
         
-        OENS.PageObjects.InputFormFieldsDiv().load(sendConnectionInfoUrl, function () {
-            
             $('#GetSendConnectionInfoRecipientsButton').on('click', function (eventArgs) {
                 
                 var payload = $('#SelectedWebinarId').val();
@@ -359,16 +359,16 @@ $(function () {
                     labelCheckRemove();
 
                     if (result.Result === 'Success') {
-                        OENS.PageObjects.InputFormFieldsDiv().append(successScreenMessage);
+                        OENS.PageObjects.InputFormFields().append(successScreenMessage);
                     } else if (result.Result === 'No Orders to send for that webinar') {
-                        OENS.PageObjects.InputFormFieldsDiv().append(noOrdersScreenMessage);
+                        OENS.PageObjects.InputFormFields().append(noOrdersScreenMessage);
                     }
 
                 }).fail(function () {
 
                     labelCheckRemove();
 
-                    OENS.PageObjects.InputFormFieldsDiv().append(failedScreenMessage);
+                    OENS.PageObjects.InputFormFields().append(failedScreenMessage);
                 }).always(function () {
                     OENS.PageObjects.WaitIndicator().hide();
                 });;
@@ -378,10 +378,10 @@ $(function () {
 
     getSendRecordingPostedEventHtmlButton.on('click', function (eventArgs) {
         eventArgs.preventDefault();
-        OENS.PageObjects.InputFormFieldsDiv().empty();
+        OENS.PageObjects.InputFormFields().empty();
 
         
-        OENS.PageObjects.InputFormFieldsDiv().load(sendRecordingPostedUrl, function () {
+        OENS.PageObjects.InputFormFields().load(sendRecordingPostedUrl, function () {
             
             $('#GetSendRecordingPostedRecipientsButton').on('click', function (eventArgs) {
                 
@@ -402,15 +402,15 @@ $(function () {
                     labelCheckRemove();
 
                     if (result.Result === 'Success') {
-                        OENS.PageObjects.InputFormFieldsDiv().append(successScreenMessage);
+                        OENS.PageObjects.InputFormFields().append(successScreenMessage);
                     } else if (result.Result === 'No Orders to send for that webinar') {
-                        OENS.PageObjects.InputFormFieldsDiv().append(noOrdersScreenMessage);
+                        OENS.PageObjects.InputFormFields().append(noOrdersScreenMessage);
                     }
 
                 }).fail(function () {
                     labelCheckRemove();
 
-                    OENS.PageObjects.InputFormFieldsDiv().append(failedScreenMessage);
+                    OENS.PageObjects.InputFormFields().append(failedScreenMessage);
                 }).always(function () {
                     OENS.PageObjects.WaitIndicator().hide();
                 });
@@ -426,6 +426,6 @@ $(function () {
     };
 
     var removeInnerHandlers = function() {
-        $('#ResendConnectionInfoButton').off('click', OENS.PageObjects.InputFormFieldsDiv());
+        $('#ResendConnectionInfoButton').off('click', OENS.PageObjects.InputFormFields());
     };
 });

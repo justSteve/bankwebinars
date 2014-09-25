@@ -28,7 +28,7 @@ namespace CUWebinars.Business.Notification.Email
                 
                 string destinationEmailAddress = notificationMessage.To;
 
-                if (ConfigurationManager.AppSettings["EmailSendingMode"] == "testing")
+                if (ConfigurationManager.AppSettings["EmailSendingMode"] != "live")
                 {
                     destinationEmailAddress = ConfigurationManager.AppSettings["TestEmailAddress"];
                 }

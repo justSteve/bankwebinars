@@ -9,31 +9,44 @@
         <h2>Admin</h2>
 
         @Html.ValidationSummary()
+        <div class="row navbar">
+            <div class="navbar-inner">
+                <a class="brand" href="#">Accounts</a>
+                <ul class="nav">
+                    <li><a id="ImpersonateUserButton">Impersonate User</a></li>
+                    <li><a id="ResetPasswordButton">Reset Password</a></li>
+                    @*<div><button id="ConfirmPasswordButton" >Confirm Reset Password</button></div>
+                    <div><button id="GetImportOrderFieldsButton" >Import an Order</button></div>
+                    <div><button id="GetImportOrderFieldsFromCsvButton" >Import an Order From Csv File</button></div>*@
+                    <li><a id="GetManualResetPasswordFieldsButton">Manually Reset Password</a></li>
+                    <li><a id="GetResendOrderConfirmationHtmlButton">Confirmation of Registration Resend</a></li>
+                    <li><a id="GetResendConnectionInfoHtmlButton">Connection Info Resend</a></li>
+                    @*<div><button id="GetAdhocEventsHtmlButton" >Ad hoc Notification</button></div>*@
+                    @*<div class="span8"><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>*@
+                </ul>
+            </div>
+        </div>
+        <div class="row navbar">
+            <div class="navbar-inner">
+                <a class="brand" href="#">Orders</a>
+                <ul class="nav">
+                    <li><a id="SendShippedOrderNotificationButton" >Shipped Order Notification</a></li>
+                    @*<div><button id="GetSendReminderEventHtmlButton" >Send Reminder</button></div>*@
+                    <li><a id="GetSendConnectionInfoEventHtmlButton" >Connection Info Notification</a></li>
+                    <li><a id="GetSendRecordingPostedEventHtmlButton" >Recording Is Posted Notification</a></li>
 
-        <div class="row">
-            <div class="span2"><button id="ImpersonateUserButton" class="btn btn-primary">Impersonate User</button></div>
-            <div class="span1"><button id="CreateUserButton" class="btn btn-primary">Create User</button></div>
-            <div class="span1"><button id="ResetPasswordButton" class="btn btn-primary">Reset Password</button></div>
-            @*<div class="span1"><button id="ConfirmPasswordButton" class="btn btn-primary">Confirm Reset Password</button></div>
-                <div class="span1"><button id="GetImportOrderFieldsButton" class="btn btn-primary">Import an Order</button></div>
-                <div class="span1"><button id="GetImportOrderFieldsFromCsvButton" class="btn btn-primary">Import an Order From Csv File</button></div>*@
-            @*<div class="span1"><button id="GetManualResetPasswordFieldsButton" class="btn btn-primary">Manually Reset Password</button></div>*@
-
-            <div class="span1"><button id="SendShippedOrderNotificationButton" class="btn btn-primary">Send Shipped Order Notification</button></div>
-            @*<div class="span1"><button id="GetSendReminderEventHtmlButton" class="btn btn-primary">Send Reminder</button></div>*@
-            <div class="span1"><button id="GetSendConnectionInfoEventHtmlButton" class="btn btn-primary">Send Connection Info Notification</button></div>
-            <div class="span1"><button id="GetSendRecordingPostedEventHtmlButton" class="btn btn-primary">Send Recording Posted</button></div>
-            <div class="span1"><button id="GetResendOrderConfirmationHtmlButton" class="btn btn-primary">Resend Order Details</button></div>
-            <div class="span1"><button id="GetResendConnectionInfoHtmlButton" class="btn btn-primary">Resend Conn Info</button></div>
-            @*<div class="span1"><button id="GetAdhocEventsHtmlButton" class="btn btn-primary">Ad hoc Notification</button></div>*@
-            @*<div class="span8"><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>*@
+                    @*<div><button id="GetAdhocEventsHtmlButton" >Ad hoc Notification</button></div>*@
+                    @*<div class="span8"><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>*@
+                </ul>
+            </div>
         </div>
         <div class="row">
-            <div class="span1"><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>
+            <div><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>
         </div>
         <div class="row">
             <div id="InputFormFields" style="margin-top: 20px;"></div>
         </div>
+
     </div>
 
 

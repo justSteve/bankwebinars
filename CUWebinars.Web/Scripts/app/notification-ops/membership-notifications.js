@@ -8,7 +8,7 @@ $(function () {
 
     $('#ImpersonateUserButton').on('click', function () {
 
-        var url = '/MembershipNotificationOps/LogInAsUser';
+        var url = '/Admin/LogInAsUser';
 
         $.ajax({
             type: 'GET',
@@ -74,7 +74,7 @@ $(function () {
             type: 'GET',
             contentType: constants.JsonContentType,
             cache: false,
-            url: '/MembershipNotificationOps/CreateAUser',
+            url: '/Admin/CreateAUser',
             dataType: constants.HtmlDataType,
             data: null,
             beforeSend: function () {
@@ -99,12 +99,12 @@ $(function () {
     });
 
     $('#ResetPasswordButton').on('click', function () {
-
+        
         $.ajax({
             type: 'GET',
             contentType: constants.JsonContentType,
             cache: false,
-            url: '/MembershipNotificationOps/PasswordResetOperation',
+            url: '/Admin/PasswordResetOperation',
             dataType: constants.HtmlDataType,
             data: null,
             beforeSend: function () {
@@ -125,7 +125,7 @@ $(function () {
             type: 'GET',
             contentType: constants.JsonContentType,
             cache: false,
-            url: '/MembershipNotificationOps/GetPasswordResetConfirmFields',
+            url: '/Admin/GetPasswordResetConfirmFields',
             dataType: constants.HtmlDataType,
             data: null,
             beforeSend: function () {
@@ -154,7 +154,7 @@ $(function () {
                 type: 'GET',
                 contentType: constants.JsonContentType,
                 cache: false,
-                url: '/MembershipNotificationOps/GetJsonTextArea',
+                url: '/Admin/GetJsonTextArea',
                 dataType: constants.HtmlDataType,
                 data: null,
                 beforeSend: function () {
@@ -182,7 +182,7 @@ $(function () {
             type: 'GET',
             contentType: constants.JsonContentType,
             cache: false,
-            url: '/MembershipNotificationOps/ReadCsvAndReturnJson',
+            url: '/Admin/ReadCsvAndReturnJson',
             dataType: constants.HtmlDataType,
             data: null,
             beforeSend: function () {
@@ -230,7 +230,7 @@ $(function () {
             type: 'GET',
             contentType: constants.JsonContentType,
             cache: false,
-            url: '/MembershipNotificationOps/ManualPasswordReset',
+            url: '/Admin/ManualPasswordReset',
             dataType: constants.HtmlDataType,
             data: null,
             beforeSend: function () {
@@ -250,7 +250,7 @@ $(function () {
                     type: 'POST',
                     contentType: constants.FormPostContentType,
                     cache: false,
-                    url: '/MembershipNotificationOps/ManualPasswordReset',
+                    url: '/Admin/ManualPasswordReset',
                     dataType: constants.JsonDataType,
                     data: $('#ManualResetPasswordForm').serialize(),
                     beforeSend: function () {
@@ -377,7 +377,7 @@ function InitializeCreateUserFields() {
             type: 'POST',
             contentType: constants.FormPostContentType,
             cache: false,
-            url: '/MembershipNotificationOps/CreateAUser',
+            url: '/Admin/CreateAUser',
             dataType: constants.HtmlDataType,
             data: null,
             beforeSend: function () {
@@ -416,7 +416,7 @@ function InitializePasswordResetFields() {
                 type: 'POST',
                 contentType: constants.JsonContentType,
                 cache: false,
-                url: '/MembershipNotificationOps/ResetPassword',
+                url: '/Admin/ResetPassword',
                 dataType: constants.JsonDataType,
                 data: JSON.stringify(model),
                 beforeSend: function () {
@@ -460,7 +460,7 @@ function InitializePasswordResetConfirmFields() {
                 type: 'POST',
                 contentType: constants.JsonContentType,
                 cache: false,
-                url: '/MembershipNotificationOps/FirePasswordResetEvent',
+                url: '/Admin/FirePasswordResetEvent',
                 dataType: constants.JsonDataType,
                 data: JSON.stringify(model),
                 beforeSend: function () {

@@ -41,7 +41,7 @@ namespace CUWebinars.Web.Membership.Email
 
                 string destinationEmailAddress = msg.To;
 
-                if (ConfigurationManager.AppSettings["EmailSendingMode"] == "testing")
+                if (ConfigurationManager.AppSettings["EmailSendingMode"] != "live")
                 {
                     destinationEmailAddress = ConfigurationManager.AppSettings["TestEmailAddress"];
                 }

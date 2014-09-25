@@ -814,7 +814,7 @@ namespace CUWebinars.Web.Controllers
 
                     _stateService.ClearValue(WebUiConstants.AdminUserEmail);
 
-                    return RedirectToAction("MembershipNotifications", "MembershipNotificationOps");
+                    return RedirectToAction("MembershipNotifications", "Admin");
                 }
 
                 return RedirectToAction("Index", "Home");
