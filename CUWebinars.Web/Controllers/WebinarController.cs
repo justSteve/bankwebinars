@@ -23,6 +23,7 @@ namespace CUWebinars.Web.Controllers
 {
     public class WebinarController : Controller
     {
+        private const string CheckoutInProcess = "CheckoutInProcess";
 
         IStateService stateService = new StateService();
 
@@ -599,7 +600,7 @@ namespace CUWebinars.Web.Controllers
 
             if (model.UserOwnsThisEvent > 0 && model.Order.OrderStatus == OrderStatus.InProcess)
             {
-                model.CheckoutInProcess = "true";
+                model.CheckoutInProcess = true;
                 model.MessageOrderStatus = "<div align=\"center\" class=\"label-warning label\">Your order is InProcess and needs to be confirmed or canceled.</div>";
             }
 
@@ -620,10 +621,10 @@ namespace CUWebinars.Web.Controllers
             
             ViewBag.upList = null; // TODO: is this variable necessary
             ViewBag.regList = null;// TODO: is this variable necessary
-            
-            if (ViewData.ContainsKey("CheckoutInProcess") && !string.IsNullOrWhiteSpace(ViewData["CheckoutInProcess"].ToString()))
+
+            if (ViewData.ContainsKey(CheckoutInProcess) && !string.IsNullOrWhiteSpace(ViewData[CheckoutInProcess].ToString()))
             {
-                model.CheckoutInProcess = ViewData["CheckoutInProcess"].ToString();
+                model.CheckoutInProcess = bool.Parse(ViewData[CheckoutInProcess].ToString());
             }
 
             model.WebUser = Request.IsAuthenticated ? _membershipService.GetUserByEmail(User.Identity.Name) : new WebUser();

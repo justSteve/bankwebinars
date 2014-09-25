@@ -14,7 +14,7 @@ namespace CUWebinars.Web.ViewModel
         public Affiliate Affiliate { get; set; }
         public string CeuShort { get; set; }
         public string CeuStatement { get; set; }
-        public string CheckoutInProcess { get; set; }
+        public bool CheckoutInProcess { get; set; }
         public string ConfirmationCaption { get; set; }
         public ClaimsIdentity Identity { get; set; }
         public string MessageOrderStatus { get; set; }

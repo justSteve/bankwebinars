@@ -244,7 +244,7 @@ namespace CUWebinars.Web
 
                         upComingPresentationListItems.Append(
                             "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href='/Webinar/Details/" +
-                            upcomingWebinars[i].idWebinar + "'>" + shortTitle + "</a></li>"
+                            upcomingWebinars[i].idWebinar + "'>" + Server.HtmlEncode(shortTitle) + "</a></li>"
                             );
                     }
                     upComingPresentationListItems.Append(

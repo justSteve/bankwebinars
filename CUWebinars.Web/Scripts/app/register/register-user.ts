@@ -80,11 +80,11 @@ module Registration {
 		private phoneShipping: JQuery;
 		private shippingFirstName: JQuery;
 		private shippingLastName: JQuery;
-        private shippingCity: JQuery;
-        private shippingAddress: JQuery;
-        private shippingAddress2: JQuery;
-        private shippingZip: JQuery;
-        private shippingState: JQuery;
+		private shippingCity: JQuery;
+		private shippingAddress: JQuery;
+		private shippingAddress2: JQuery;
+		private shippingZip: JQuery;
+		private shippingState: JQuery;
 		private streetAddressShipping: JQuery;
 		private streetAddressShipping2: JQuery;
 		private cityShipping: JQuery;
@@ -305,7 +305,7 @@ module Registration {
 		private registerButtonText: string = 'Submit Register';
 		private sameAsBillingCheckedFilter: string = '#sameAsBilling:checked';
 
-        constructor(public incomingPageObject: Registration.PageObject) {
+		constructor(public incomingPageObject: Registration.PageObject) {
 			this.pageObject = incomingPageObject;
 			this.initialize();
 		}
