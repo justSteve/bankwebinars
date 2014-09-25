@@ -7,13 +7,44 @@ module OrderRegistration {
 
     declare var $;
 
+    //  todo: duplicate in Registration module
+    export class Constants {
+        static BillingAddressFields: string = '#RegisterFields_BillingAddress';
+        static City: string = '_City';
+        static Country: string = '_Country';
+        static ConfirmDeleteShippingAddressdialog: string = '#ConfirmDeleteShippingAddressdialog';
+        static FormPostContentType: string = 'application/x-www-form-urlencoded';
+        static JsonContentType: string = 'application/json; charset=utf-8';
+        static JsonDataType: string = 'json';
+        static HtmlDataType: string = 'html';
+        static Phone: string = '_Phone';
+        static ShippingAddressFields: string = '#RegisterFields_ShippingAddress';
+        static ShippingAddressContainer: string = '#ShippingAddressContainer';
+        static State: string = '_State';
+        static AddShippingAddressLink: string = '#AddShippingAddressLink';
+        static HideAddShippingAddressLink: string = '#HideAddShippingAddressLink';
+        static StreetAddress: string = '_StreetAddress';
+        static StreetAddress2: string = '_StreetAddress2';
+        static TypeofAddressBilling: string = 'Billing';
+        static TypeofAddressShipping: string = 'Shipping';
+        static Zip: string = '_Zip';
+    };
+
     export class PageObject {
-        private discount: number;
+        private discount: string;
         private wait4Emails: string;
-        private orderRowID: number = 0;
-        private CheckoutInProcess: boolean = false;
-        private isUserLogged: boolean = false;
-        private whichStep: string = "Step0";
+        private orderRowID: number;
+        private checkoutInProcess: boolean;
+        private isUserLogged: boolean;
+        private whichStep: string;
+
+        getCheckoutInProcess(): boolean {
+            return this.checkoutInProcess;
+        }
+
+        getIsUserLogged(): boolean {
+            return this.isUserLogged;
+        }
 
         getOrderRowId(): number {
             return this.orderRowID;
@@ -23,7 +54,19 @@ module OrderRegistration {
             return this.whichStep;
         }
 
-        setWhichStep(step: string): void {
+        setCheckoutInProcess(val : boolean): void {
+            this.checkoutInProcess = val;
+        }
+
+        setIsUserLogged(val : boolean): void {
+            this.isUserLogged = val;
+        }
+
+        setOrderRowId(num : number): void {
+            this.orderRowID = num;
+        }
+
+        setWhichStep(step : string): void {
             this.whichStep = step;
         }
 
@@ -35,6 +78,59 @@ module OrderRegistration {
 
         constructor(public incomingPageObject: OrderRegistration.PageObject) {
             this.pageObject = incomingPageObject;
+        }
+
+        BuildPreRegPrice(oEvent : JQueryEventObject, orderRowId : number): void {
+            //permits a 'preReg' pricing scheme to handle
+            //computation of discounts and addl locations prior
+            //to stepping to confirmation.
+
+            var $form = $("#BuildPrice");
+
+            oEvent.preventDefault();
+            $("#ProgressDialogBS").modal('show');
+            $.ajax({
+                url: '/cart/CheckoutDisplayRowPrice/' + orderRowId,
+                type: "POST",
+                //data: $form.serialize(),
+                success: function(data) {
+                    $("#regTypeID_" + data.orderRowID).prop('checked', true);
+                },
+                error: function() {
+
+                },
+                complete: function() {
+                    $("#ProgressDialogBS").modal('hide');
+                }
+            });
+        }
+
+        CheckIfAddLocShouldHide(optionID: string): void {
+            //don't show AdditionalEmails when RegType
+            // can't support them. (ex: recorded only)
+
+            $.ajax({
+                url: "/cart/CheckIfAddLocShouldHide?optionID=" + optionID,
+                type: "GET",
+                cache: false,
+                dataType: Constants.JsonDataType,
+
+                beforeSend: function() {
+                    //console.log('beforeSend CheckIfAddLocShouldHide');
+                    // no loading image needed
+                }
+            }).done(function(data) {
+                //console.log('done CheckIfAddLocShouldHide');
+                if (data.shouldShow === 'Yes') {
+                    //console.log('show CheckIfAddLocShouldHide');
+                    $("#displayAddLoc").show('slow');
+                } else if (data.shouldShow === 'No') {
+                    //console.log('hide  CheckIfAddLocShouldHide');
+                    $("#displayAddLoc").hide(1000);
+                }
+            }).fail(function(data) {
+                //console.log('CheckIfAddLocShouldHide failed!!! ');
+            });
         }
 
         SetCartState(): void {

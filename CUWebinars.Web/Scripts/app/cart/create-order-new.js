@@ -3,19 +3,63 @@
 /// <reference path="../../typings/bootstrap/bootstrap.d.ts" />
 var OrderRegistration;
 (function (OrderRegistration) {
+    //  todo: duplicate in Registration module
+    var Constants = (function () {
+        function Constants() {
+        }
+        Constants.BillingAddressFields = '#RegisterFields_BillingAddress';
+        Constants.City = '_City';
+        Constants.Country = '_Country';
+        Constants.ConfirmDeleteShippingAddressdialog = '#ConfirmDeleteShippingAddressdialog';
+        Constants.FormPostContentType = 'application/x-www-form-urlencoded';
+        Constants.JsonContentType = 'application/json; charset=utf-8';
+        Constants.JsonDataType = 'json';
+        Constants.HtmlDataType = 'html';
+        Constants.Phone = '_Phone';
+        Constants.ShippingAddressFields = '#RegisterFields_ShippingAddress';
+        Constants.ShippingAddressContainer = '#ShippingAddressContainer';
+        Constants.State = '_State';
+        Constants.AddShippingAddressLink = '#AddShippingAddressLink';
+        Constants.HideAddShippingAddressLink = '#HideAddShippingAddressLink';
+        Constants.StreetAddress = '_StreetAddress';
+        Constants.StreetAddress2 = '_StreetAddress2';
+        Constants.TypeofAddressBilling = 'Billing';
+        Constants.TypeofAddressShipping = 'Shipping';
+        Constants.Zip = '_Zip';
+        return Constants;
+    })();
+    OrderRegistration.Constants = Constants;
+    ;
+
     var PageObject = (function () {
         function PageObject() {
-            this.orderRowID = 0;
-            this.CheckoutInProcess = false;
-            this.isUserLogged = false;
-            this.whichStep = "Step0";
         }
+        PageObject.prototype.getCheckoutInProcess = function () {
+            return this.checkoutInProcess;
+        };
+
+        PageObject.prototype.getIsUserLogged = function () {
+            return this.isUserLogged;
+        };
+
         PageObject.prototype.getOrderRowId = function () {
             return this.orderRowID;
         };
 
         PageObject.prototype.getWhichStep = function () {
             return this.whichStep;
+        };
+
+        PageObject.prototype.setCheckoutInProcess = function (val) {
+            this.checkoutInProcess = val;
+        };
+
+        PageObject.prototype.setIsUserLogged = function (val) {
+            this.isUserLogged = val;
+        };
+
+        PageObject.prototype.setOrderRowId = function (num) {
+            this.orderRowID = num;
         };
 
         PageObject.prototype.setWhichStep = function (step) {
@@ -31,6 +75,55 @@ var OrderRegistration;
             this.incomingPageObject = incomingPageObject;
             this.pageObject = incomingPageObject;
         }
+        StateManager.prototype.BuildPreRegPrice = function (oEvent, orderRowId) {
+            //permits a 'preReg' pricing scheme to handle
+            //computation of discounts and addl locations prior
+            //to stepping to confirmation.
+            var $form = $("#BuildPrice");
+
+            oEvent.preventDefault();
+            $("#ProgressDialogBS").modal('show');
+            $.ajax({
+                url: '/cart/CheckoutDisplayRowPrice/' + orderRowId,
+                type: "POST",
+                //data: $form.serialize(),
+                success: function (data) {
+                    $("#regTypeID_" + data.orderRowID).prop('checked', true);
+                },
+                error: function () {
+                },
+                complete: function () {
+                    $("#ProgressDialogBS").modal('hide');
+                }
+            });
+        };
+
+        StateManager.prototype.CheckIfAddLocShouldHide = function (optionID) {
+            //don't show AdditionalEmails when RegType
+            // can't support them. (ex: recorded only)
+            $.ajax({
+                url: "/cart/CheckIfAddLocShouldHide?optionID=" + optionID,
+                type: "GET",
+                cache: false,
+                dataType: Constants.JsonDataType,
+                beforeSend: function () {
+                    //console.log('beforeSend CheckIfAddLocShouldHide');
+                    // no loading image needed
+                }
+            }).done(function (data) {
+                //console.log('done CheckIfAddLocShouldHide');
+                if (data.shouldShow === 'Yes') {
+                    //console.log('show CheckIfAddLocShouldHide');
+                    $("#displayAddLoc").show('slow');
+                } else if (data.shouldShow === 'No') {
+                    //console.log('hide  CheckIfAddLocShouldHide');
+                    $("#displayAddLoc").hide(1000);
+                }
+            }).fail(function (data) {
+                //console.log('CheckIfAddLocShouldHide failed!!! ');
+            });
+        };
+
         StateManager.prototype.SetCartState = function () {
             switch (this.pageObject.getWhichStep()) {
                 case "Step0":

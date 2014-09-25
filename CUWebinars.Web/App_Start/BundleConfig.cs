@@ -29,6 +29,11 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/cart/add-additional-locations.js"
                 ));
 
+            bundles.Add(new ScriptBundle("~/bundles/CommonModules").Include(
+                "~/Scripts/app/constants.js",
+                "~/Scripts/app/utilities.js"
+                ));
+
             bundles.Add(new ScriptBundle("~/bundles/myApp").Include(
                         "~/Scripts/bootstrap.js",
                         "~/Scripts/bootstrap-modal.js",
@@ -41,7 +46,6 @@ namespace CUWebinars.Web.App_Start
                         ));
             
             bundles.Add(new ScriptBundle("~/bundles/createOrder").Include(
-                         "~/Scripts/app/utilities.js",
                          "~/Scripts/app/cart/additional-locations.js",
                          "~/Scripts/app/cart/create-order-new.js",
                          "~/Scripts/app/cart/details.js"
