@@ -9,6 +9,7 @@ namespace CUWebinars.Web.ViewModel
     public class AdditionalLocationOfferViewModel
     {
         public AdditionalLocation AdditionalLocation { get; set; }
+        public Order Order { get; set; }
         public Webinar Webinar { get; set; }
         public decimal Price { get; set; }
         public WebUser WebUser { get; set; }

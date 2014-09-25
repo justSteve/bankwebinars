@@ -11,15 +11,16 @@
                 <blockquote style="margin-bottom: 0px;">Want your branches to participate? Facilities within your organization will be able to participate without the travel costs of coming to one location.</blockquote><div style="padding-left: 50px;">
                     <span>
                         <b>Each additional location adds @Model.Price.ToString("c").Replace(".00", "") to your registration.</b>
-                        <br /> INSERT FORM TO COLLECT ADDITIONAL LOCATION INSTANCES
+                        <br /><a href="#AdditionalLocationsModal" role="button" class="btn" data-toggle="modal">Add?</a>
+
                     </span>
-                    
+
 
                     @*<div id="collectAdditionalLocations"> </div>*@
                 </div>
             </div>
-
-            @*@if (Model.Webinar.Title.Contains("Compliance Perspectives"))
+            @{ Html.RenderPartial("Partials/_AdditionalLocationsModal"); }
+            @if (Model.Webinar.Title.Contains("Compliance Perspectives"))
                 {
                     <div style="display: none" id="trial">
                         <p>Additional locations are not included in the trial subscription.</p>
@@ -49,8 +50,8 @@
                         Html.HiddenFor(m => m.Order.idOrder);
                     }
 
-                    @Html.DisplayFor(m => m.AddAdditionalLocationViewModel)
-                }*@
+                    @Html.DisplayFor(m => m.AdditionalLocation)
+                }
         </div>
     }
 }

@@ -37,6 +37,21 @@ namespace CUWebinars.Web.Controllers
             stateService = stateService;
         }
 
+        public PartialViewResult GetAdditionalLocationByOrderId(int webUserId, int webinarId)
+        {
+            //  TODO: Implement
+
+            var order = _orderManagementService.GetOrdersByUserId(webUserId);
+
+            var addAdditionalLocationViewModel = new AdditionalLocationAddViewModel
+            {
+                // AdditionalLocations = order.OrderRows.First().AdditionalLocation.ToList()
+                AdditionalLocation = new List<AdditionalLocation>()
+            };
+
+            return PartialView("~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml", addAdditionalLocationViewModel);
+        }
+
         ////            if (orderRowID != null && orderRowID > 0)
         //    {
         //        var thisModel = new WebinarDetailsViewModel();

@@ -11,7 +11,11 @@
     Layout = "/Views/Shared/_LayoutPublic.cshtml";
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
-    
+    var isLoggedIn = "false";// 
+    if (Model.UserIsLoggedIn)
+    {
+        isLoggedIn = "true";
+    }
     if (Model.UserOwnsThisEvent > 0)
     {
         <script language="javascript">
@@ -38,7 +42,7 @@
     CheckoutInProcess = "@(Model.CheckoutInProcess)";
     whichStep = "@(Model.WhichStep)";
     orderRowID = 0;
-    isUserLogged = @Model.UserIsLoggedIn;
+    isUserLogged = @isLoggedIn;
 
     $(document).ready(function() {
         JL("myLogger").info("Details loaded @Model.Webinar.idWebinar for idUser @Model.WebUser.idUser.");
@@ -146,7 +150,7 @@
                     <span>Topics</span>
                 </h5>
                 <ul>
-                    @foreach (var webinarTopic in ViewBag.topics)
+                    @foreach (var webinarTopic in Model.Topics)
                     {
                         <li>
                             @webinarTopic.topicDesc
@@ -171,42 +175,45 @@
         <!--close section tertiary-column sidebar span3-->
     </div>
     @{
-        if ((
+        if (
             Model.Webinar.Status != WebinarStatus.Archived &&
             Model.Webinar.Status != WebinarStatus.Deleted &&
             Model.Webinar.Status != WebinarStatus.Pending
-            ) && ViewBag.userOwnsThisEvent < 1)
+            )
         {
-            <div id="SignUpFormContainer" class="row-fluid">
-                
-                @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new { id = "SignUpForm" }))
-                {
-                    @Html.HiddenFor(model => model.Webinar.idWebinar)
-                    @Html.HiddenFor(model => model.WebUser.idUser)
+            if (Model.UserOwnsThisEvent == 0)
+            {
+                <div id="SignUpFormContainer" class="row-fluid">
+
+                    @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new {id = "SignUpForm"}))
+                    {
+                        @Html.HiddenFor(model => model.Webinar.idWebinar)
+                        @Html.HiddenFor(model => model.WebUser.idUser)
 
 
-                    <div class="content offset2 span8 well">
-                        <ul class="nav nav-tabs" id="regTabs">
-                            <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@Model.SignUpCaption</a></li>
-                            <li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
-                            <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@Model.ConfirmationCaption</a></li>
-                        </ul>
+                        <div class="content offset2 span8 well">
+                            <ul class="nav nav-tabs" id="regTabs">
+                                <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@Model.SignUpCaption</a></li>
+                                <li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
+                                <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@Model.ConfirmationCaption</a></li>
+                            </ul>
 
-                        <div class="tab-content">
-                            <div class="tab-pane active" id="signUp">
-                                <input type="button" class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
-                                @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model)
-                            </div>
-                            <div class="tab-pane" id="contactInfo">
-                                @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutContact.cshtml", model: Model)
-                            </div>
-                            <div class="tab-pane" id="confirmation">
-                                @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutConfirm.cshtml", model: Model)
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="signUp">
+                                    <input type="button" class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
+                                    @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model)
+                                </div>
+                                <div class="tab-pane" id="contactInfo">
+                                    @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutContact.cshtml", model: Model)
+                                </div>
+                                <div class="tab-pane" id="confirmation">
+                                    @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutConfirm.cshtml", model: Model)
+                                </div>
                             </div>
                         </div>
-                    </div>
-                }
-            </div>
+                    }
+                </div>
+            }
         }
     }
 </div>
@@ -230,6 +237,6 @@
     </div>
 }
 
-@section scripts{
-    @Scripts.Render("~/bundles/createOrder")
-}
+    @*@section scripts{
+            @Scripts.Render("~/bundles/createOrder")
+        }*@

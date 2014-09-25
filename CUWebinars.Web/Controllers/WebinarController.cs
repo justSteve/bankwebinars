@@ -137,21 +137,6 @@ namespace CUWebinars.Web.Controllers
             return View(webinars);
         }
 
-        //public PartialViewResult GetAdditionalLocationByOrderId(int webUserId, int webinarId)
-        //{
-        //    //  TODO: Implement
-
-        //    var order = _orderManagementService.GetOrdersByUserId();
-
-        //    var addAdditionalLocationViewModel = new WebinarDetailsViewModel
-        //    {
-        //        AdditionalLocations = order.OrderRows.First().AdditionalLocation.ToList()
-        //        AdditionalLocations = new AdditionalLocation[] { new AdditionalLocation { Email = "dave@dave.com" }, new AdditionalLocation { Email = "monty@python.com" } }
-        //    };
-
-        //    return PartialView("~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml", addAdditionalLocationViewModel);
-        //}
-
         public ActionResult AllActive(string eventsToShow)
         {
             var webinars = _webinarManagementService.GetAllActive();

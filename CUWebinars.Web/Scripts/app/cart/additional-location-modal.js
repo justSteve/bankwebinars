@@ -26,7 +26,7 @@ deleteItem = function (event) {
 $(function () {
 
     //console.log($('#WebUser_idUser').val().toString());
-    numberOfAdditionalLocations = $('#AdditionalLocationEmailWrapper input[type="text"').length;
+    numberOfAdditionalLocations = $('#AdditionalLocationEmailWrapper input[type="text"]').length;
     if (numberOfAdditionalLocations < 1)
         $('#SumbitAdditionalLocationsForm').remove();
 
