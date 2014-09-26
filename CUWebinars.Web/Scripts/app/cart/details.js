@@ -31,7 +31,7 @@ $(function() {
 
     $('[id^="AddToCart"]').on('click', function () {
 
-        $("#SignUpForm [name='RegistrationType']").val($('input[name=RegistrationType]:checked', '#RegistrationType').val());
+        $(signUpForm).find('[name="RegistrationType"]').val($('input[name=RegistrationType]:checked', '#RegistrationType').val());
         //alert($('input[name=RegistrationType]:checked', '#RegistrationType').val());
         signUpForm.submit();
     });

@@ -1,4 +1,5 @@
-﻿using BrockAllen.MembershipReboot;
+﻿using CUWebinars.Web.Infrastructure.Extensions;
+using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
@@ -944,7 +945,7 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public JsonResult Register(RegisterViewModel model)
+        public ActionResult Register(RegisterViewModel model)
         {
             var errors = ModelState.Values.SelectMany(v => v.Errors);
 
@@ -1064,12 +1065,22 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (MembershipCreateUserException e)
                 {
-                    ModelState.AddModelError(string.Empty, ErrorCodeToString(e.StatusCode));
+                    ModelState.AddModelError("MembershipCreateUserException", ErrorCodeToString(e.StatusCode));
+                    //TODO: add error message here and handle in razor
+                    _logger.Error("Account.Register Catch block: " + e.Message + "| Session=" + AppHelper.GetUserAuditInfo());
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("Exception", e.Message);
                     //TODO: add error message here and handle in razor
                     _logger.Error("Account.Register Catch block: " + e.Message + "| Session=" + AppHelper.GetUserAuditInfo());
                 }
             }
             _logger.Fatal("Account.Register failed! Session=" + AppHelper.GetUserAuditInfo());
+
+            if (!ModelState.IsValid)
+                return this.ModelStateJson(ModelState);
+
             // If we got this far, something failed, redisplay form
             return Json(new { Result = WebUiConstants.Fail });
 

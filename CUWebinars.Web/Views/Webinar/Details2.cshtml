@@ -176,7 +176,7 @@
             Model.Webinar.Status != WebinarStatus.Archived &&
             Model.Webinar.Status != WebinarStatus.Deleted &&
             Model.Webinar.Status != WebinarStatus.Pending
-            ) && ViewBag.userOwnsThisEvent < 1)
+            ) && Model.UserOwnsThisEvent < 1)
         {
             <div id="SignUpFormContainer" class="row-fluid">
 

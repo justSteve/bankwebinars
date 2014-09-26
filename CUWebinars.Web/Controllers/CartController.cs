@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using CUWebinars.Business.AccountService;
+﻿using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Helpers;
@@ -10,7 +8,6 @@ using Ninject.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Web.Mvc;
-using NLog;
 
 namespace CUWebinars.Web.Controllers
 {
@@ -23,6 +20,7 @@ namespace CUWebinars.Web.Controllers
         private readonly ILogger _logger;
         private readonly IOrderManagementService _orderManagementService;
         private readonly IWebinarManagementService _webinarManagementService;
+        private bool _disposed;
 
         public CartController(IMembershipService membershipService,
             IOrderManagementService orderManagementService,
@@ -369,6 +367,30 @@ namespace CUWebinars.Web.Controllers
             _orderManagementService.SaveOrderChanges(row.Order, null, null);
 
             return Json(row.Order.OrderStatus.ToString());
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
+            {
+                var logger = _logger as IDisposable;
+                if (logger != null)
+                    logger.Dispose();
+
+                _orderManagementService.Dispose();
+                _membershipService.Dispose();
+                _webinarManagementService.Dispose();
+
+                _disposed = true;
+            }
         }
     }
 }
