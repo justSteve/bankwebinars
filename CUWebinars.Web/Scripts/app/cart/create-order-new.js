@@ -140,9 +140,9 @@ var OrderRegistration;
 
                 case "Step1":
                     //console.log("Step1");
-                    $("#confirmationTab").hide();
-                    $("#signUpTab").hide();
-                    $("#contactInfoTab").show();
+                    $("#confirmation").hide();
+                    $("#signUp").hide();
+                    $("#contactInfo").show();
                     break;
 
                 case "Step2":

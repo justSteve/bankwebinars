@@ -1,95 +1,32 @@
-﻿@model CUWebinars.Web.ViewModel.WebinarDetailsViewModel
+﻿@model RegisterViewModel
 <div class="tab-pane" id="contactInfo">
+    User Details
+    @Html.ValidationSummary(true)
+    <div class="accordion" id="createUserPanes">
 
-    @{
-        var user = Model.WebUser;
-        var shippingIsSame = true;
-        var notifyOfShipped = false;
-        var shippedCaption = "";
-        var ShowShippedNotifications = "";
-
-
-        if (ViewBag.RegistrationType != null)
-        {
-            ShowShippedNotifications = ViewBag.RegistrationType.ShowShippedNotifications;
-        }
-        var shippingAddress = user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping" && a.idUser == user.idUser);
-        var billingAddress = user.Addresses.SingleOrDefault(a => a.AddressType == "Billing" && a.idUser == user.idUser);
-        if (Model.WebUser.AcctStatus != null)
-        {
-            if (
-                billingAddress.StreetAddress == shippingAddress.StreetAddress
-                && billingAddress.StreetAddress2 == shippingAddress.StreetAddress2
-                && billingAddress.City == shippingAddress.City
-                && billingAddress.State == shippingAddress.State
-                && billingAddress.Zip == shippingAddress.Zip
-                && billingAddress.Country == shippingAddress.Country
-                )
-            {
-                shippingIsSame = true;
-            }
-            else
-            {
-                shippingIsSame = false;
-            }
-
-            if (Model.Order != null && Model.Order.idOrder > 0)
-            {
-                OrderRow row = new OrderRow();
-                row = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-
-                <div class="span4">
-                    Billing:
-                    @{
-                if (row.Order.OrderStatus != OrderStatus.InProcess)
-                {
-                    <a role="button" href='/account/edit/@Model.WebUser.idUser' class="btn btn-mini" target='new'>Edit?</a>
-                }
-                    }
-                    <blockquote class="btn-success well">
-                        @user.LastName - @user.email<br />@user.Institution.InstitutionName<br />
-                        @billingAddress.StreetAddress - @billingAddress.StreetAddress2<br />
-                        @billingAddress.City, @billingAddress.State @billingAddress.Zip
-                    </blockquote>
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#createUserPanes" href="#collapseEmail">
+                    <span id="labelEmail">Email</span>
+                </a>
+            </div>
+            <div id="collapseEmail" class="accordion-body collapse in">
+                <div class="accordion-inner">
+                    <div class="fieldContainer" id="wrapEmail">
+                        @*<div class="span1" style="text-align: right;">
+                                Email:
+                            </div>*@
+                        <div class="span6">
+                            @Html.TextBoxFor(model => model.RegisterFields.Email, new { style = "width: 180px;" })
+                            @Html.ValidationMessageFor(model => model.RegisterFields.Email)
+                        </div>
+                    </div>
 
                 </div>
-                if (ShowShippedNotifications == "Yes")
-                {
-                    notifyOfShipped = true;
+            </div>
 
-                    if (row.ShipmentDate != null)
-                    {
-                        shippedCaption = "<div class=\"label-success\">Shipped:" + row.ShipmentDate + "</div>";
+        </div>
 
-                    }
-                    else
-                    {
-                        shippedCaption = "<div class=\"label-info\">Materials will ship within 2-4 days following the event.</div>";
-                    }
+    </div>
 
-                    if (shippingIsSame)
-                    {
-                        <div class="span3 label label-info">Shipping address is same as Billing.</div>
-                    }
-                    else
-                    {
-                        <div class="span3">
-                            Order will be shipped to:
-                            <blockquote class="well btn-success">
-                                @shippingAddress.Name
-                                <br />@user.Institution.InstitutionName<br />
-                                @shippingAddress.StreetAddress - @shippingAddress.StreetAddress2<br />
-                            @shippingAddress.City, @shippingAddress.State @shippingAddress.Zip
-                        </blockquote>
-                    </div>
-                    }
-                }
-                else
-                {
-                    <br />
-                    <div class="span4 label label-info">Order does not include any shippable items.</div>
-                }
-            }
-        }
-    }
 </div>
