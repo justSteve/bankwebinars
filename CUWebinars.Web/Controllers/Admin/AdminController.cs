@@ -187,8 +187,11 @@ namespace CUWebinars.Web.Controllers.Admin
             var regKeyResponse = "";
             if (additionalLocation.Email == null)
             {
-                regKeyResponse = _orderManagementService.CreateRegistrantKey(order.FirstName, order.LastName
-                    , order.BillingEmail, row.Webinar.idWebinar, row.Webinar.WebinarKey);
+                if (row.JoinURL == null && row.RegistrationType.ShowLiveNotifications == "Yes")
+                {
+                    regKeyResponse = _orderManagementService.CreateRegistrantKey(order.FirstName, order.LastName
+                        , order.BillingEmail, row.Webinar.idWebinar, row.Webinar.WebinarKey);
+                }
             }
             else
             {

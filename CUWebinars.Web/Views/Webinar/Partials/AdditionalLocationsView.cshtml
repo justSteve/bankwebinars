@@ -19,7 +19,7 @@
                     @*<div id="collectAdditionalLocations"> </div>*@
                 </div>
             </div>
-            @{ Html.RenderPartial("Partials/_AdditionalLocationsModal"); }
+            @{ Html.Partial("Partials/_AdditionalLocationsModal"); }
             @if (Model.Webinar.Title.Contains("Compliance Perspectives"))
                 {
                     <div style="display: none" id="trial">
