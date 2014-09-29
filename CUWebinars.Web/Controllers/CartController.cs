@@ -3,6 +3,7 @@ using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Ninject.Extensions.Logging;
@@ -15,7 +16,7 @@ namespace CUWebinars.Web.Controllers
     public class CartController : Controller
     {
         private TTSWebinarsContext db = new TTSWebinarsContext();
-        readonly IStateService _stateService = new StateService();
+        readonly IStateService _stateService;
 
         private readonly IMembershipService _membershipService;
         private readonly ILogger _logger;
@@ -33,7 +34,7 @@ namespace CUWebinars.Web.Controllers
             _logger = logger;
             _orderManagementService = orderManagementService;
             _webinarManagementService = webinarManagementService;
-            stateService = stateService;
+            _stateService = stateService;
         }
 
         public PartialViewResult GetAdditionalLocationByOrderId(int webUserId, int webinarId)
@@ -176,6 +177,24 @@ namespace CUWebinars.Web.Controllers
             var model = BuildCheckOutViewModel(ID);
             return PartialView("Partials/_DisplayRowPrice", model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active));
         }
+
+        public PartialViewResult CheckoutContactDetails()
+        {
+            var model = new RegisterViewModel
+            {
+                RegisterFields = new RegisterModel
+                {
+                    AccountDetailsTitle = string.Empty,
+                    BillingAddress = new AddressModel
+                    {
+
+                    }
+                }
+            }; 
+
+            return PartialView("~/Views/cart/Partials/CheckoutContact.cshtml", model);
+        }
+
 
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Signup2(WebinarDetailsViewModel formModel
@@ -383,12 +402,6 @@ namespace CUWebinars.Web.Controllers
             _orderManagementService.SaveOrderChanges(row.Order, null, null);
 
             return Json(row.Order.OrderStatus.ToString());
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         public virtual void Dispose(bool disposing)

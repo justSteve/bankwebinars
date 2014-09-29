@@ -59,11 +59,16 @@ $(function() {
 
         e.preventDefault();
         CheckoutInProcess = true;
-        if (!isUserLogged) {
+        if (!pageObject.getIsUserLogged()) {
             //
             //TODO: Re-use code that's already been developed for the CreateAccount use case
             //  with this difference.... the UI needs to be presented in a Modal Popup
-            alert("get Contact info");
+
+            pageObject.setWhichStep('Step1');
+            stateManager.SetCartState();
+            $('#contactInfo').load('/Cart/CheckoutContactDetails', function () { });
+
+            //alert("get Contact info");
         } else {
 
             $("#ProgressDialogBS").modal('show');

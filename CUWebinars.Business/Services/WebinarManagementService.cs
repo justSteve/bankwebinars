@@ -151,9 +151,9 @@ namespace CUWebinars.Business.Services
                 _regTypeRepository.Dispose();
                 _webinarRepository.Dispose();
                 _webUserRepository.Dispose();
-
+                
+                _disposed = true;
             }
-            _disposed = true;
         }
 
     //    string IWebinarManagementService.CreateCalendarEvent(string title,

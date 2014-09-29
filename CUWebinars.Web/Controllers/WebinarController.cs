@@ -25,7 +25,7 @@ namespace CUWebinars.Web.Controllers
     {
         private const string CheckoutInProcess = "CheckoutInProcess";
 
-        IStateService stateService = new StateService();
+        IStateService _stateService;
 
         //Steve added MembershipService dependancy to allow for 'currentUser' in Details.
         private readonly IMembershipService _membershipService;
@@ -38,13 +38,14 @@ namespace CUWebinars.Web.Controllers
             IMembershipService membershipService,
             IOrderManagementService orderManagementService,
             IWebinarManagementService webinarManagementService,
-            ILogger logger
-            )
+            ILogger logger,
+            IStateService stateService)
         {
             _membershipService = membershipService;
             _orderManagementService = orderManagementService;
             _webinarManagementService = webinarManagementService;
             _logger = logger;
+            _stateService = stateService;
         }
         //
         // GET: /Webinar/
@@ -263,7 +264,7 @@ namespace CUWebinars.Web.Controllers
         ////            var checkoutSessionHelper = new CheckoutWorkflowHelper(ControllerContext);
 
         //            var currentOrder = new Order();
-        //            var affiliate = stateService.GetValue<Affiliate>("CurrentAffiliate");
+        //            var affiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate");
         //            currentOrder.Origin = "<p>InitialPage: " + HttpContext.Session["FirstPageOfSession"] + "</p><p>" +
         //                                   " InitialReferrer: " + HttpContext.Session["FirstReferrerOfSession"] + "</p><p>" +
         //                                    " InitialCookies: " + HttpContext.Session["FirstCookiesOfSession"] + "</p>";
@@ -484,7 +485,7 @@ namespace CUWebinars.Web.Controllers
             {
                 WebUser = user
                 ,
-                Affiliate = stateService.GetValue<Affiliate>("CurrentAffiliate")
+                Affiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate")
                 ,
                 Webinar = webinar
                 ,
@@ -549,7 +550,7 @@ namespace CUWebinars.Web.Controllers
 
             var model = new WebinarDetailsViewModel()
             {
-                Affiliate = stateService.GetValue<Affiliate>("CurrentAffiliate"),
+                Affiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate"),
                 Webinar = webinar,
                 Order = null
             };
@@ -561,7 +562,6 @@ namespace CUWebinars.Web.Controllers
 
             var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray(); // perf : ensures no multiple enumerations of usersOrders
             if (checkOrders.Any())  
-            //if (usersOrders != null && usersOrders.Any())
             {
                 foreach (var checkOrder in checkOrders)
                 {
