@@ -17,15 +17,11 @@ namespace CUWebinars.Web.Infrastructure.Attributes
         public JsonSerializerSettings SerializerSettings { get; set; }
         public Formatting Formatting { get; set; }
 
-        public JsonNetResult()
-        {
-            SerializerSettings = new JsonSerializerSettings();
-            Formatting = Formatting.None;
-        }
-
         public override void ExecuteResult(ControllerContext context)
         {
             if (context == null) throw new ArgumentNullException("context");
+            if (ReferenceEquals(null, SerializerSettings)) SerializerSettings = new JsonSerializerSettings();
+            
 
             var response = context.HttpContext.Response;
 

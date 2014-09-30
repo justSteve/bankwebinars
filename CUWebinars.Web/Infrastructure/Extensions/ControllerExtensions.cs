@@ -19,7 +19,7 @@ namespace CUWebinars.Web.Infrastructure.Extensions
 
         public static ActionResult ModelStateJson(this IController controller, bool isSuccessful, string message = "", object data = null)
         {
-            return new JsonNetResult() { Data = new JsonResultViewModel<object>(isSuccessful, message) { Data = data } };
+            return new JsonNetResult { Data = new JsonResultViewModel<object>(isSuccessful, message) { Data = data } };
         }
     }
 }

@@ -37,7 +37,7 @@ namespace CUWebinars.Web.Controllers
         private readonly GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
         private readonly ILogger _logger;
-        public IMembershipService _membershipService;
+        private readonly IMembershipService _membershipService;
         private readonly IStateService _stateService;
         private readonly IOrderManagementService _orderManagementService;
         private bool _disposed;

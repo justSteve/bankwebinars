@@ -409,6 +409,7 @@
     <Content Include="Content\css\details2.css" />
     <Content Include="NuGet\readme.txt" />
     <Content Include="Scripts\app\cart\create-order-new.js" />
+    <Content Include="Scripts\app\cart\register-during-checkout.js" />
     <Content Include="Scripts\app\cart\details.js" />
     <Content Include="Scripts\app\utilities.js" />
     <Content Include="Scripts\jsnlog.js" />

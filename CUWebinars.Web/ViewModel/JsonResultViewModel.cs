@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace CUWebinars.Web.ViewModel
 {
@@ -16,7 +12,7 @@ namespace CUWebinars.Web.ViewModel
         {
             Data = data;
         }
-        public JsonResultViewModel(bool isSuccessful, string msg = "")
+        public JsonResultViewModel(bool isSuccessful = false, string msg = "")
         {
             IsSuccessful = isSuccessful;
             Message = msg;

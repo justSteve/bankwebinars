@@ -1,5 +1,6 @@
-﻿var pageObject,
-    stateManager;
+﻿var stateManager,
+    utilities;
+
 function setPath() {
     var indexOfHome = location.href.indexOf('Account');
     var path = '';
@@ -14,6 +15,7 @@ function setPath() {
         path = $(location).attr('href');
     return path;
 }
+
 $(function () {
 
     //setup ajax error handling
@@ -29,18 +31,18 @@ $(function () {
         }
     });
 
-    pageObject = new Registration.PageObject();
-    pageObject.initializeState();
+    utilities = new Common.Utilities();
 
-    stateManager = new Registration.StateManager(pageObject);
+    stateManager = new Registration.StateManager();
+    stateManager.initializeState();
 
-    var path = setPath();
+    var path = utilities.setPath();
 
-    pageObject.getEmailInput().bind('change keyup', function () {
+    $('#RegisterFields_Email').bind('change keyup', function () {
         if ($(this).validate().checkForm()) {
-            pageObject.getTheSubmitButton().removeClass('button_disabled').attr('disabled', false);
+            $('#TheSubmitButton').removeClass('button_disabled').attr('disabled', false);
         } else {
-            pageObject.getTheSubmitButton().addClass('button_disabled').attr('disabled', true);
+            $('#TheSubmitButton').addClass('button_disabled').attr('disabled', true);
         }
     });
 
@@ -60,7 +62,7 @@ $(function () {
         stateManager.setInputAction(Registration.InputAction.ButtonClick);
 
         if (stateManager.getAction() === '') {
-            pageObject.getLabelEmail().html('<span class="label label-important">&nbsp;&nbsp;There registration has encountered a problem. Please refresh the page and re-start the registration process or call Tech Support at 800-831-0678 ext. 706.</span>');
+            $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;There registration has encountered a problem. Please refresh the page and re-start the registration process or call Tech Support at 800-831-0678 ext. 706.</span>');
 
             return false;
         }
@@ -102,7 +104,7 @@ $(function () {
 
         if (event.which == 13) {
 
-            if (pageObject.getModalInstitution().filter(':visible').length > 0
+            if ($('#modalInstitution').filter(':visible').length > 0
                 && inputElementTriggered !== Registration.Button.YesUseAddress
                 && inputElementTriggered !== Registration.Button.EnterDiffAddress
                 && inputElementTriggered !== Registration.Button.NotInstitution) {
@@ -140,7 +142,7 @@ $(function () {
                 case Registration.Button.EnterDiffAddress: stateManager.enterDifferentAddress(); break;
                 case Registration.Button.NotInstitution: stateManager.notInstitutionAddress(); break;
                 default:
-                    if (pageObject.getTheSubmitButton().val() === stateManager.getRegisterButtonText()) {
+                    if ($('#TheSubmitButton').val() === stateManager.getRegisterButtonText()) {
                         if ($(stateManager.getSameAsBillingCheckedFilter()).val()) {
                             stateManager.setShippingToBilling();
                         }
@@ -155,7 +157,7 @@ $(function () {
         }
     });
 
-    pageObject.getCollapseShipping().on('shown', function () {
+    $('#CollapseShipping').on('shown', function () {
         if ($(stateManager.getSameAsBillingCheckedFilter()).val()) {
             stateManager.setShippingToBilling();
         }
@@ -167,7 +169,7 @@ $(function () {
         e.preventDefault();
 
         var jsonUrl = '/Account/CheckEmail';
-        var email = pageObject.getEmailInput().val();
+        var email = $('#RegisterFields_Email').val();
 
         if (email.length === 0) {
             $('#RegisterFields_Email').focus();
@@ -181,7 +183,7 @@ $(function () {
                 data: { email: email, disregardIntitutionDomain: stateManager.getDisregardIntitutionDomain() },
                 beforeSend: function () {
                     // this is where we append a loading image
-                    pageObject.getLabelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</span>');
+                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</span>');
                 }
             }).done(function (data) {
                 // successful request; do something with the data
@@ -197,7 +199,7 @@ $(function () {
 
             }).fail(function () {
                 // failed request; give feedback to user
-                pageObject.getWrapEmail().html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+                $('#wrapEmail').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
             }).always(function () {
                 stateManager.setInputAction(Registration.InputAction.None);
             });
@@ -221,14 +223,14 @@ $(function () {
                 data: { Zip: zipCode },
                 beforeSend: function () {
                     // this is where we append a loading image
-                    pageObject.getLabelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Zip...</span>');
+                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Zip...</span>');
                 }
             }).done(function (data) {
                 // successful request; do something with the data
                 stateManager.zipCodeVerified(data, zipCode);
             }).fail(function () {
                 // failed request; give feedback to user
-                pageObject.getWrapZip().html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+                $('#wrapZip').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
             }).always(function () {
                 stateManager.setInputAction(Registration.InputAction.None);
             });
@@ -250,11 +252,11 @@ $(function () {
         }
     });
 
-    pageObject.getModalInstitution().on('hidden', function (e) {
+    $('#modalInstitution').on('hidden', function (e) {
 
         stateManager.setInputAction(Registration.InputAction.None);
 
-        if (pageObject.getWrapZip().is(':visible')) {
+        if ($('#wrapZip').is(':visible')) {
             stateManager.setAction(Registration.Action.CheckEmail);
         }
 
@@ -262,24 +264,24 @@ $(function () {
 
     //  This handler was colliding with one by the same name in create-user.
     //  It is now invoked from the create-user.js script.
-    $("#_CreateUserForm").on('submit', function (event) {
+    $('#_CreateUserForm').on('submit', function (event) {
         event.preventDefault();
 
         var createUserForm = $(this);
         
-        if (pageObject.getFullNameShipping().val() === null || pageObject.getFullNameShipping().val() === '') pageObject.getFullNameShipping().val(pageObject.getFullName().val());
-        if (pageObject.getShippingFirstName().val() === null || pageObject.getShippingFirstName().val() === '') pageObject.getShippingFirstName().val(pageObject.getFirstName());
-        if (pageObject.getShippingLastName().val() === null || pageObject.getShippingLastName().val() === '') pageObject.getShippingLastName().val(pageObject.getLastName());
-        if (pageObject.getCityShipping().val() === null || pageObject.getCityShipping().val() === '') pageObject.getCityShipping().val(pageObject.getCityBilling().val());
-        if (pageObject.getStreetAddressShipping().val() === null || pageObject.getStreetAddressShipping().val() === '') pageObject.getStreetAddressShipping().val(pageObject.getStreetAddressBilling().val());
-        if (pageObject.getStreetAddressShipping2().val() === null || pageObject.getStreetAddressShipping2().val() === '') pageObject.getStreetAddressShipping2().val(pageObject.getStreetAddressBilling().val());
-        if (pageObject.getStateShipping().val() === null || pageObject.getStateShipping().val() === '') pageObject.getStateShipping().val(pageObject.getStateBilling().val());
-        if (pageObject.getZipShipping().val() === null || pageObject.getZipShipping().val() === '') pageObject.getZipShipping().val(pageObject.getZipBilling().val());
+        if ($('#FullNameShipping').val() === null || $('#FullNameShipping').val() === '') $('#FullNameShipping').val($('#FullName').val());
+        if ($('#ShippingFirstName').val() === null || $('#ShippingFirstName').val() === '') $('#ShippingFirstName').val($('#FirstName'));
+        if ($('#ShippingLastName').val() === null || $('#ShippingLastName').val() === '') $('#ShippingLastName').val($('#LastName'));
+        if ($('#RegisterFields_ShippingAddress_City').val() === null || $('#RegisterFields_ShippingAddress_City').val() === '') $('#RegisterFields_ShippingAddress_City').val($('#RegisterFields_BillingAddress_City').val());
+        if ($('#RegisterFields_ShippingAddress_StreetAddress').val() === null || $('#RegisterFields_ShippingAddress_StreetAddress').val() === '') $('#RegisterFields_ShippingAddress_StreetAddress').val($('#RegisterFields_BillingAddress_StreetAddress').val());
+        if ($('#RegisterFields_ShippingAddress_StreetAddress2').val() === null || $('#RegisterFields_ShippingAddress_StreetAddress2').val() === '') $('#RegisterFields_ShippingAddress_StreetAddress2').val($('#RegisterFields_BillingAddress_StreetAddress').val());
+        if ($('#RegisterFields_ShippingAddress_State').val() === null || $('#RegisterFields_ShippingAddress_State').val() === '') $('#RegisterFields_ShippingAddress_State').val($('#RegisterFields_BillingAddress_State').val());
+        if ($('#RegisterFields_ShippingAddress_Zip').val() === null || $('#RegisterFields_ShippingAddress_Zip').val() === '') $('#RegisterFields_ShippingAddress_Zip').val($('#RegisterFields_BillingAddress_Zip').val());
 
         //$("#ProgressDialogBS").modal('show');
 
         var data = createUserForm.serialize();
-        var url = createUserForm.attr("action");
+        var url = createUserForm.attr('action');
 
         $.ajax({
             type: 'POST',
@@ -291,7 +293,7 @@ $(function () {
             beforeSend: function () {
                 //console.log('beforeSend Register Details');
                 // this is where we append a loading image
-                pageObject.getLabelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
+                $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
             }
         }).done(function (data) {
             //alert('done: ');
@@ -299,14 +301,14 @@ $(function () {
                 if (data.Result === 'Success') {
                     //console.log('success: ' + data.Result);
                     stateManager.setAction('');
-                    pageObject.getLabelEmail().html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
+                    $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
                     location.assign(path + '/'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
                 } else if (data.Result === 'Fail') {
-                    pageObject.getLabelEmail().html('<span class="label label-important">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
                     stateManager.setAction(Registration.Action.SubmitRegister);
                 }
             } else if (!data.isSuccessful) {
-                pageObject.getLabelEmail().html('<span class="label label-important">&nbsp;&nbsp;&nbsp;&nbsp;' + data.data.Exception + '</span>');
+                $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;&nbsp;&nbsp;' + data.data.Exception + '</span>');
             }
 
         }).fail(function (data) {
