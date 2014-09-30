@@ -7,6 +7,7 @@ namespace CUWebinars.Business.Repository
 {
     public interface IAffiliateRepository: IDisposable
     {
+        Affiliate AttachItem(Affiliate item);
         Affiliate FindByIdAndDetachItem(int id);
         Affiliate FindByIdWithIncluding(int id, params Expression<Func<Affiliate, object>>[] includeProperties);
         IQueryable<Affiliate> GetAffiliates();

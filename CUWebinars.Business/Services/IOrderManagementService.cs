@@ -10,6 +10,7 @@ namespace CUWebinars.Business.Services
         Order AssignAffiliateToOrder(Affiliate affiliate, Order order);
         //void AssignUserToOrder(Order currentOrder);
         Order AssignWebUserToOrder(WebUser webUser, Order order);
+        Affiliate AttachAffiliate(Affiliate item);
         string BuildConnectionInfo(OrderRow orderRow);
         int CheckUserForRecordingAccess(int i, int i1);
         AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullname);
