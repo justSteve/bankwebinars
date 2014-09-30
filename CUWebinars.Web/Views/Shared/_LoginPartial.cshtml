@@ -3,25 +3,24 @@
     <nav class="user clearfix">
         @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
         {
-            Claim identity = null;
-            
-            if(ReferenceEquals(null, ViewBag.LoggedInUserIdentity))
+            Claim identity;
+
+            if (ReferenceEquals(null, ViewBag.LoggedInUserIdentity))
             {
                 identity = ((ClaimsIdentity)User.Identity)
                     .Claims
-                    .Where(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName)
-                    .FirstOrDefault();                
+                    .FirstOrDefault(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName);
             }
             else
             {
                 identity = ViewBag.LoggedInUserIdentity as Claim;
             }
-            
-            if(!ReferenceEquals(null, identity))
+
+            if (!ReferenceEquals(null, identity))
             {
                 @Html.AntiForgeryToken()
                 @Html.ActionLink(identity.Value, "Manage", "Account", routeValues: null, htmlAttributes: new { title = "Manage", id = "btnLogin" })
-            @*<span>@identity.Value</span>*@
+                @*<span>@identity.Value</span>*@
 
                 if (ReferenceEquals(Session["AdminUserEmail"], null))
                 {

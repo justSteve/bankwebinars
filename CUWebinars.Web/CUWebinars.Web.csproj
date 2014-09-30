@@ -1920,6 +1920,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Notifications\" />
+    <Folder Include="App_Data\Trace\" />
     <Folder Include="Infrastructure\apis\citrix\GTW\" />
     <Folder Include="Notification\Delivery\" />
     <Folder Include="Scripts\app\types\" />

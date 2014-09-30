@@ -560,7 +560,8 @@ namespace CUWebinars.Web.Controllers
             var usersOrders = _orderManagementService.GetOrdersByUserId(model.WebUser.idUser)
                                 .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id.Value) != null);
 
-            var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray(); // perf : ensures no multiple enumerations of usersOrders
+            var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray(); 
+            // perf : ensures no multiple enumerations of usersOrders
             if (checkOrders.Any())  
             {
                 foreach (var checkOrder in checkOrders)
@@ -603,9 +604,9 @@ namespace CUWebinars.Web.Controllers
             model.Topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar);
             model.UserHasOpenOrder = 0;
             model.UserOwnsThisEvent = 0;
-            
-            ViewBag.upList = null; // TODO: is this variable necessary
-            ViewBag.regList = null;// TODO: is this variable necessary
+
+            ViewBag.metaDesc = "";
+            ViewBag.metaKeywords = "";
 
             if (ViewData.ContainsKey(CheckoutInProcess) && !string.IsNullOrWhiteSpace(ViewData[CheckoutInProcess].ToString()))
             {
@@ -618,6 +619,9 @@ namespace CUWebinars.Web.Controllers
 
             model.Options = _orderManagementService.GetOptionsByWebinarId(id, false);
             model.TimeZone = userExists ? model.WebUser.timeZone : USTimeZone.Central;
+
+            //TODO: Check if needed. Can't the same info be obtained (within RAZOR)
+            // by simply checking 'currentUser'?
             model.UserIsLoggedIn = userExists;
 
             model.SignUpCaption = "Sign Up!";
@@ -625,6 +629,7 @@ namespace CUWebinars.Web.Controllers
             model.Identity = ((ClaimsIdentity)User.Identity);
             model.TimeFormatDisplay = "<i>" + DateTimeHelper.FormatTime(model.Webinar.Date, model.TimeZone, false) + " - " + DateTimeHelper.FormatTime(model.Webinar.Date.AddHours((double)model.Webinar.Duration), model.TimeZone, true) + "<br /></i>";
 
+            //TODO: the 'WhichStep' property is legacy and can be removed if no longer being used
             model.WhichStep = "Step0";
 
             model.CeuShort = string.Empty;

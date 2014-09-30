@@ -173,6 +173,7 @@
             </div>
             <hr />
         </div>
+        </div>
 
 
         <div class="span3">
@@ -181,8 +182,8 @@
                 @if (Model.Webinar.Status == WebinarStatus.Recorded)
                 {
                     var expiresDate = Model.Webinar.Date.AddMonths(6);
-                    TimeSpan calcDays = expiresDate - Model.Webinar.Date;
-                    var remainingDays = Convert.ToInt32(calcDays.TotalDays);
+                    var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
+
 
                     <div style="font-size: smaller; text-align: center;">This event was recorded on @Html.DisplayDate(Model.Webinar.Date) and is available for OnDemand Playback until @Html.DisplayDate(expiresDate)
                         - @remainingDays more days.</div>

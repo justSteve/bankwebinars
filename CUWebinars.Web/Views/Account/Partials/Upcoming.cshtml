@@ -56,7 +56,7 @@
                     var upOnDemandCost = 100;
                     var upPremium = 250;
                     TimeSpan calcDays = row.Webinar.Date - DateTime.Now;
-                    var remainingDays = "in " + Convert.ToInt32(calcDays.TotalDays).ToString() + " days on <i>" + @Html.DisplayDate(row.Webinar.Date) + "</i>";
+                    var remainingDays = " in " + Convert.ToInt32(calcDays.TotalDays).ToString() + " days on <i>" + @Html.DisplayDate(row.Webinar.Date) + "</i>";
                         }
 
                         @if (Convert.ToInt32(calcDays.TotalDays) == 1)
