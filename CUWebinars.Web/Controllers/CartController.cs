@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.AccountService;
+﻿using System.Collections.Generic;
+using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Helpers;
@@ -34,6 +35,21 @@ namespace CUWebinars.Web.Controllers
             _orderManagementService = orderManagementService;
             _webinarManagementService = webinarManagementService;
             _stateService = stateService;
+        }
+
+        public PartialViewResult GetAdditionalLocationByOrderId(int webUserId, int webinarId)
+        {
+            //  TODO: Implement
+
+            var order = _orderManagementService.GetOrdersByUserId(webUserId);
+
+            var addAdditionalLocationViewModel = new AdditionalLocationAddViewModel
+            {
+                // AdditionalLocations = order.OrderRows.First().AdditionalLocation.ToList()
+                AdditionalLocation = new List<AdditionalLocation>()
+            };
+
+            return PartialView("~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml", addAdditionalLocationViewModel);
         }
 
         ////            if (orderRowID != null && orderRowID > 0)

@@ -384,7 +384,6 @@
     <Compile Include="Controllers\Admin\AdminController.cs" />
     <Compile Include="Controllers\api\AddressesController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
-    <Compile Include="Controllers\OrderEventFiringOpsController.cs" />
     <Compile Include="Core\Exceptions.cs" />
     <Compile Include="Core\Orchestrators\IOrderControllerOrchestrator.cs" />
     <Compile Include="Core\Orchestrators\OrderControllerOrchestrator.cs" />
@@ -439,7 +438,6 @@
     <Compile Include="Controllers\CartController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\MembershipNotificationOpsController.cs" />
     <Compile Include="Controllers\WebinarController.cs" />
     <Compile Include="Core\AbstractDTOAssembler.cs" />
     <Compile Include="Core\Browsers\EntitiesBrowserTableDataDTO.cs" />

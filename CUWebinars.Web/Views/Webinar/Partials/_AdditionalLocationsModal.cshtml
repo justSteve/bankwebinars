@@ -1,145 +1,39 @@
-﻿@model WebinarDetailsViewModel
+﻿@model AdditionalLocationOfferViewModel
 
-<div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="myModalLabel">Additional Locations</h3>
-</div>
-<div class="modal-body">
-    <p>Add users...</p>
-    
-    <p><button id="AddInputsButton" class="btn btn-success">Click to Add More</button></p>
-    
-        @{
-            var emails = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Select(al => al.Email).ToArray();
-        }
+<div id="AdditionalLocationsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 
-        <div id="AdditionalLocationEmailWrapper">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Additional Locations</h3>
+    </div>
+    <div class="modal-body">
+        <p>Add users...</p>
+
+        <p><button id="AddInputsButton" class="btn btn-success">Click to Add More</button></p>
         @{
-            for (int i = 0; i < emails.Length; i++)
-            {
-                <span id="LocationSpan-@i">
-                    <input id="AdditionalLocationEmail_@i" name="AddAdditionalLocationViewModel.Emails[@i]" type="text" value="@emails[i]" />
-                        &nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="@i-AdditionLocationEmail-delete"></i>
-                </span><br id="@i-break" />
-            }
+            <div id="AdditionalLocationEmailWrapper">
+                @{
+                    if (Model.Order != null)
+                    {
+                        var emails = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Select(al => al.Email).ToArray();
+
+                        for (int i = 0; i < emails.Length; i++)
+                        {
+                            <span id="LocationSpan-@i">
+                                <input id="AdditionalLocationEmail_@i" name="AddAdditionalLocationViewModel.Emails[@i]" type="text" value="@emails[i]" />
+                                &nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="@i-AdditionLocationEmail-delete"></i>
+                            </span>
+                            <br id="@i-break" />
+                        }
+                    }
+                }
+            </div>
         }
-        </div>
-    
         <button id="SumbitAdditionalLocationsForm" class="btn btn-primary">Submit</button>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+
 </div>
-<div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-</div>
-
-
-@*<script src="@Url.Content("~/Scripts/app/cart/additional-location-modal.js")"></script>*@
-<script>
-    //  This will be refactored to a script. 
-    var additionalLocationEmailWrapper,
-        breakSuffix = '-break',
-        deleteItem,
-        locationsSpanPrefix = 'LocationSpan-',
-        numberOfAdditionalLocations;
-        
-
-    deleteItem = function (event) {
-        debugger; 
-        numberOfAdditionalLocations--;
-        var trashClicked = event.currentTarget.id;
-        var idx = trashClicked.substring(0, 1);
-        var spanToRemove = locationsSpanPrefix + idx;
-
-        $('#' + spanToRemove).hide(500, function () {
-            $(this).remove();
-            $('#' + idx + breakSuffix).remove();
-        });
-
-        if (numberOfAdditionalLocations < 1) {
-            $('#SumbitAdditionalLocationsForm').hide(300, function () {
-                $(this).remove();
-            });
-        }
-    };
-
-    $(function () {
-        
-        //console.log($('#WebUser_idUser').val().toString());
-        numberOfAdditionalLocations = $('#AdditionalLocationEmailWrapper input[type="text"').length;
-        if (numberOfAdditionalLocations < 1)
-            $('#SumbitAdditionalLocationsForm').remove();
-
-        wireUpHandlers();
-    });
-
-
-    function wireUpHandlers() {
-
-        additionalLocationEmailWrapper = $('#AdditionalLocationEmailWrapper');
-
-        $('#AddInputsButton').on('click', function () {
-
-            if (numberOfAdditionalLocations == 0) {
-                $('#AdditionalLocationEmailWrapper').after($('<button>',
-                {
-                    id: 'SumbitAdditionalLocationsForm',
-                    text: 'Submit',
-                    'class': 'btn btn-primary',
-                }));
-            }
-
-            additionalLocationEmailWrapper.append('<span id="' + locationsSpanPrefix + numberOfAdditionalLocations + '"><input id="AdditionalLocationEmail_' + numberOfAdditionalLocations + '" name="AddAdditionalLocationViewModel.Emails[' + numberOfAdditionalLocations + ']" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + numberOfAdditionalLocations + '-AdditionLocationEmail-delete"></i></span> <br id="' + numberOfAdditionalLocations + breakSuffix + '">');
-            additionalLocationEmailWrapper.find('i#' + numberOfAdditionalLocations + '-AdditionLocationEmail-delete').on('click', deleteItem);
-            numberOfAdditionalLocations++;
-
-        });
-
-        additionalLocationEmailWrapper.find('i').on('click', deleteItem);
-
-        //$('#RegisterAdditionalLocationsForm').on('submit', function (e) {
-        //    console.log('hi dave');
-        //    debugger;
-        //    e.preventDefault();
-
-        //    var mode = $('#Mode').val();
-        //    var stageOfCheckout = $('#Stage_of_checkout').val();
-        //    var orderId = $('[name="CheckoutOptionsViewModel.Order.idOrder"]');
-        //    var webUserId = $('[name="WebUser.idUser"]') || $('#WebUser_idUser').val();
-        //    var webinarId = $('[name="Webinar.idWebinar"]');
-
-        //    var emailAddresses = Object();
-
-        //    var emailNodes = newLocationsContainer.find('input[type=text]');
-
-        //    $.each(emailNodes, function (idx, input) {
-        //        emailAddresses[idx] = $(input).val();
-        //    });
-
-        //    var payload = {
-        //        'CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationViewModel.AddAdditionalLocationViewModel.Emails': emailAddresses,
-        //        'CheckoutOptionsViewModel.Order.idOrder': orderId.val(),
-        //        'WebUser.idUser': webUserId.val(),
-        //        'Webinar.idWebinar': webinarId.val(),
-        //        mode: 0,
-        //        stageOfCheckout: stageOfCheckout,
-        //        sixMonthPaidConnectionsCount: '',
-        //        twelveMonthPaidConnectionsCount: ''
-        //    };
-
-        //    $.ajax({
-        //        url: '/Cart/Signup2',
-        //        type: 'POST',
-        //        data: payload,
-        //        dataType: 'json',
-        //        contentType: 'application/x-www-form-urlencoded; charset=UTF-8'
-        //    }).done(function (msg) {
-        //        var bla = msg;
-        //    });
-
-        //    return false;
-        //});
-    };
-
-</script>
-
-
-    
+<script src="@Url.Content("~/Scripts/app/cart/additional-location-modal.js")"></script>

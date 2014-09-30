@@ -13,7 +13,6 @@
         </div>
 
         @{
-            
             var emails = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Select(al => al.Email).ToArray();
 
             <ol>

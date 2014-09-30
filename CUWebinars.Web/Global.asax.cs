@@ -92,6 +92,7 @@ namespace CUWebinars.Web
 
         private void Session_Start(object sender, EventArgs e)
         {
+            //avoids session state when the WebAPI method is invoked.
             if (System.Web.HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath != "~/account/get/")
             {
                 StateService.SetValue("searchTerm", string.Empty);
@@ -109,7 +110,7 @@ namespace CUWebinars.Web
                 StateService.SetValue("SubdomainBranding", @System.Configuration.ConfigurationManager.AppSettings[AppConst.TESTING_URL]);
 
                 //following are values to be stored for audit purposes.
-                if (System.Web.HttpContext.Current.Request.UrlReferrer != null)
+                if (HttpContext.Current.Request.UrlReferrer != null)
                     StateService.SetValue("SubdomainBranding", HttpContext.Current.Request.UrlReferrer.ToString().Trim());
                 StateService.SetValue("FirstPage", HttpContext.Current.Request.Url.ToString().Trim());
                 StateService.SetValue("InitialQueryString", Request.Url.Query);

@@ -12,7 +12,11 @@
     Layout = "/Views/Shared/_LayoutPublic.cshtml";
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
-    
+    var isLoggedIn = "false";//
+    if (Model.UserIsLoggedIn)
+    {
+        isLoggedIn = "true";
+    }
     if (Model.UserOwnsThisEvent > 0)
     {
         <script language="javascript">
@@ -173,15 +177,15 @@
         <!--close section tertiary-column sidebar span3-->
     </div>
     @{
-        if ((
+        if (
             Model.Webinar.Status != WebinarStatus.Archived &&
             Model.Webinar.Status != WebinarStatus.Deleted &&
             Model.Webinar.Status != WebinarStatus.Pending
-            ) && Model.UserOwnsThisEvent < 1)
+            && Model.UserOwnsThisEvent < 1)
         {
             <div id="SignUpFormContainer" class="row-fluid">
 
-                @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new { id = "SignUpForm" }))
+                    @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new {id = "SignUpForm"}))
                 {
                     @Html.HiddenFor(model => model.Webinar.idWebinar)
                     @Html.HiddenFor(model => model.WebUser.idUser)
