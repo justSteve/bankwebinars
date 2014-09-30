@@ -1,9 +1,5 @@
-﻿@using System.Configuration
-@using System.Globalization
-@using System.Linq
-@using CUWebinars.Web.Core
+﻿@using CUWebinars.Web.Core
 @using CUWebinars.Web.Helpers
-@using Microsoft.ServiceBus.Messaging
 
 @model WebinarDetailsViewModel
 
@@ -12,11 +8,7 @@
     Layout = "/Views/Shared/_LayoutPublic.cshtml";
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
-    var isLoggedIn = "false";//
-    if (Model.UserIsLoggedIn)
-    {
-        isLoggedIn = "true";
-    }
+
     if (Model.UserOwnsThisEvent > 0)
     {
         <script language="javascript">

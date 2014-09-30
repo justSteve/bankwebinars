@@ -268,22 +268,17 @@ namespace CUWebinars.Web.Controllers
             if (Request.IsAuthenticated)
             {
                 model.UserIsLoggedIn = true;
-                
-                currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
-                currentOrder.Origin = _orderManagementService.GetOrderInitiator();
-                currentOrder.Affiliate = currentAffiliate;
-
             }
             else
             {
                 model.UserIsLoggedIn = false;
                 //_orderManagementService.AssignUserToOrder(currentOrder);
-                currentOrder.Affiliate = currentAffiliate;
-                currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
-                currentOrder.Origin = _orderManagementService.GetOrderInitiator();
                 _logger.Error("ERROR: CartController | Signup - currentUser is null" + currentOrder.idOrder);
                 //TODO: assign appropriate ModelError and error logging/handling
             }
+
+            currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
+            currentOrder.Origin = _orderManagementService.GetOrderInitiator();
 
 
             currentOrder = _orderManagementService.SaveOrderChanges(currentOrder, string.Empty, string.Empty);
