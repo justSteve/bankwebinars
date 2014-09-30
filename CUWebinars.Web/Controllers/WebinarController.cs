@@ -556,12 +556,12 @@ namespace CUWebinars.Web.Controllers
             };
 
             InitializeDetailsState(webinar, model, id.Value);
+            InitializeViewCentricProperties(model);
 
             var usersOrders = _orderManagementService.GetOrdersByUserId(model.WebUser.idUser)
                                 .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id.Value) != null);
 
-            var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray(); 
-            // perf : ensures no multiple enumerations of usersOrders
+            var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray(); // perf tweak: ensures no multiple enumerations of usersOrders
             if (checkOrders.Any())  
             {
                 foreach (var checkOrder in checkOrders)
@@ -572,9 +572,9 @@ namespace CUWebinars.Web.Controllers
                             .Select(f => f.fileDesc + "|" + f.fileLocation)
                             .ToArray();
 
-                    ViewBag.WebinarFiles = webinarFiles;
+                    ViewBag.WebinarFiles = webinarFiles; // Is this intended? It will change what is stored in ViewBag.WebinarFiles with each iteration. Last one wins.
 
-                    model.UserOwnsThisEvent = checkOrder.idOrder;
+                    model.UserOwnsThisEvent = checkOrder.idOrder; // same issue with these next assignments.
                     model.Order = checkOrder;
                     
                     if (checkOrder.OrderStatus == OrderStatus.InProcess && row.idWebinar != id)
@@ -597,27 +597,46 @@ namespace CUWebinars.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// This method initializes state for variables which needed to be retrieved from the Database
+        /// </summary>
+        /// <param name="webinar"></param>
+        /// <param name="model"></param>
+        /// <param name="id"></param>
         private void InitializeDetailsState(Webinar webinar, WebinarDetailsViewModel model, int id)
         {
-            ViewBag.PageStyleType = "holy-grail-three-columns";
-
             model.Topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar);
+
+            model.WebUser = Request.IsAuthenticated ? _membershipService.GetUserByEmail(User.Identity.Name) : new WebUser();
+
+            model.Options = _orderManagementService.GetOptionsByWebinarId(id, false);
+
+            //var whichStep = "Step0";
+            //if (ViewData.ContainsKey("WhichStep"))
+            //{
+            //    if (!String.IsNullOrEmpty(ViewData["WhichStep"].ToString()))
+            //    {
+            //        whichStep = ViewData["WhichStep"].ToString();
+            //    }
+            //}
+        }
+
+        /// <summary>
+        /// This method initializes state which is more relevant to display-text and variables used in the razor view
+        /// (as distinct from variables which are meant to be captured in form submissions).
+        /// </summary>
+        /// <param name="model"></param>
+        private void InitializeViewCentricProperties(WebinarDetailsViewModel model)
+        {
+            ViewBag.PageStyleType = "holy-grail-three-columns";
             model.UserHasOpenOrder = 0;
             model.UserOwnsThisEvent = 0;
 
             ViewBag.metaDesc = "";
             ViewBag.metaKeywords = "";
 
-            if (ViewData.ContainsKey(CheckoutInProcess) && !string.IsNullOrWhiteSpace(ViewData[CheckoutInProcess].ToString()))
-            {
-                model.CheckoutInProcess = bool.Parse(ViewData[CheckoutInProcess].ToString());
-            }
-
-            model.WebUser = Request.IsAuthenticated ? _membershipService.GetUserByEmail(User.Identity.Name) : new WebUser();
-
             var userExists = model.WebUser.idUser > 0;
 
-            model.Options = _orderManagementService.GetOptionsByWebinarId(id, false);
             model.TimeZone = userExists ? model.WebUser.timeZone : USTimeZone.Central;
 
             //TODO: Check if needed. Can't the same info be obtained (within RAZOR)
@@ -642,14 +661,10 @@ namespace CUWebinars.Web.Controllers
                 model.CeuStatement = ceu[1];
             }
 
-            //var whichStep = "Step0";
-            //if (ViewData.ContainsKey("WhichStep"))
-            //{
-            //    if (!String.IsNullOrEmpty(ViewData["WhichStep"].ToString()))
-            //    {
-            //        whichStep = ViewData["WhichStep"].ToString();
-            //    }
-            //}
+            if (ViewData.ContainsKey(CheckoutInProcess) && !string.IsNullOrWhiteSpace(ViewData[CheckoutInProcess].ToString()))
+            {
+                model.CheckoutInProcess = bool.Parse(ViewData[CheckoutInProcess].ToString());
+            }
         }
 
         public ActionResult Calendar(int? ID)

@@ -6,6 +6,7 @@ namespace CUWebinars.Business.Repository
 {
     public interface IOrderRepository : IDisposable
     {
+        Order AttachItem(Order item);
         Order AssignAffiliate(Affiliate affiliate, Order order);
         Order AssignWebUserToOrder(WebUser webUser, Order order);
         AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullName);

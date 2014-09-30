@@ -64,6 +64,11 @@ namespace CUWebinars.Business.Services
             return _orderRepository.AssignWebUserToOrder(webUser, order);
         }
 
+        public Affiliate AttachAffiliate(Affiliate item)
+        {
+            return _affiliateRepository.AttachItem(item);
+        }
+
         public string BuildConnectionInfo(OrderRow orderRow)
         {
             // add code here to build string

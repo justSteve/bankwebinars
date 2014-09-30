@@ -197,13 +197,10 @@ namespace CUWebinars.Web.Controllers
 
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult Signup2(WebinarDetailsViewModel formModel
-           , string stageOfCheckout)
+        public ActionResult Signup2(WebinarDetailsViewModel formModel, string stageOfCheckout)
         {
-
-            var isPreReg = stageOfCheckout;
-            ViewData["CheckoutInProcess"] = "true";
-            var IsUserLogged = false;
+            formModel.CheckoutInProcess = true;
+            //var IsUserLogged = false;
             var model = formModel;
 
             var currentOrder = _stateService.GetValue<Order>("CurrentOrder");
@@ -213,10 +210,12 @@ namespace CUWebinars.Web.Controllers
             // in interest of minimizing - perhaps just storing the orderID and then 
             // hydrating it as needed.
             var currentAffiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate");
-
+            
             model.Order = currentOrder;
             model.Affiliate = currentAffiliate;
             model.Webinar = _webinarManagementService.GetWebinar(formModel.Webinar.idWebinar);
+
+            _orderManagementService.AttachAffiliate(model.Affiliate);
 
             try
             {
@@ -268,26 +267,21 @@ namespace CUWebinars.Web.Controllers
 
             if (Request.IsAuthenticated)
             {
-                IsUserLogged = true;
-                
-                currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
-                currentOrder.Origin = _orderManagementService.GetOrderInitiator();
-                currentOrder.Affiliate = currentAffiliate;
-
+                model.UserIsLoggedIn = true;
             }
             else
             {
-                IsUserLogged = false;
+                model.UserIsLoggedIn = false;
                 //_orderManagementService.AssignUserToOrder(currentOrder);
-                currentOrder.Affiliate = currentAffiliate;
-                currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
-                currentOrder.Origin = _orderManagementService.GetOrderInitiator();
                 _logger.Error("ERROR: CartController | Signup - currentUser is null" + currentOrder.idOrder);
                 //TODO: assign appropriate ModelError and error logging/handling
             }
 
+            currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
+            currentOrder.Origin = _orderManagementService.GetOrderInitiator();
 
-            currentOrder = _orderManagementService.SaveOrderChanges(currentOrder, "", "");
+
+            currentOrder = _orderManagementService.SaveOrderChanges(currentOrder, string.Empty, string.Empty);
 
             //if (model.Webinar.idWebinar == 883 && model.Webinar.Status == WebinarStatus.Scheduled)
             //{

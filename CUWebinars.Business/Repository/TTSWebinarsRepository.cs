@@ -63,6 +63,11 @@ namespace CUWebinars.Business.Repository
             db.Entry(item).State = EntityState.Detached;
             return item;
         }
+        public T AttachItem(T item)
+        {
+            items.Attach(item);
+            return item;
+        }
 
         protected void CheckDisposed()
         {

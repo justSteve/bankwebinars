@@ -26,6 +26,7 @@ namespace CUWebinars.Business.Repository
             var newOrder = items.Create();
             newOrder.OrderDate = DateTime.Now;
             newOrder.OrderStatus = OrderStatus.InProcess;
+            newOrder.Affiliate = affiliate;
 
             //newOrder = AssignAffiliate(affiliate, newOrder);
 
@@ -222,25 +223,14 @@ namespace CUWebinars.Business.Repository
                 .SingleOrDefault(or => or.idOrderRow == idOrderRow);
         }
 
+        /// <summary>
+        /// Only use this method if the affiliate is already attached to the context.
+        /// </summary>
+        /// <param name="affiliate"></param>
+        /// <param name="order"></param>
+        /// <returns></returns>
         public Order AssignAffiliate(Affiliate affiliate, Order order)
         {
-            // TODO: Shopping Cart task
-            //Something's wrong here. 
-            // For whatever reason, ET is creating a new
-            // instance of the Affiliate object and attempting
-            // to save it resulting in a FK violation (idUser = 19 already exists).
-
-            // note that 19 is the id of our currently hardcoded Affiliate.
-            // the correct affiliate object is being passed in -- but attempting 
-
-            //order.Affiliate = affiliate;
-
-            // which should work isn't.
-
-            // It seems slightly counter intuitive that our Order model has both an
-            // Affiliate object and an integer value for 'idAffiliate'. But same for 
-            // Webinar as well as User objects.
-
             order.idAffiliate = affiliate.idUserAff;
             if (db.SaveChanges() > 0)
             {
