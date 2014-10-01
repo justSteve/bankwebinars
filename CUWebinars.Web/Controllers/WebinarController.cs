@@ -631,12 +631,16 @@ namespace CUWebinars.Web.Controllers
             ViewBag.PageStyleType = "holy-grail-three-columns";
             model.UserHasOpenOrder = 0;
             model.UserOwnsThisEvent = 0;
-            ViewBag.upList = null; // TODO: is this variable necessary
-            ViewBag.regList = null;// TODO: is this variable necessary
+
+            ViewBag.metaDesc = "";
+            ViewBag.metaKeywords = "";
 
             var userExists = model.WebUser.idUser > 0;
 
             model.TimeZone = userExists ? model.WebUser.timeZone : USTimeZone.Central;
+
+            //TODO: Check if needed. Can't the same info be obtained (within RAZOR)
+            // by simply checking 'currentUser'?
             model.UserIsLoggedIn = userExists;
 
             model.SignUpCaption = "Sign Up!";
@@ -644,6 +648,7 @@ namespace CUWebinars.Web.Controllers
             model.Identity = ((ClaimsIdentity)User.Identity);
             model.TimeFormatDisplay = "<i>" + DateTimeHelper.FormatTime(model.Webinar.Date, model.TimeZone, false) + " - " + DateTimeHelper.FormatTime(model.Webinar.Date.AddHours((double)model.Webinar.Duration), model.TimeZone, true) + "<br /></i>";
 
+            //TODO: the 'WhichStep' property is legacy and can be removed if no longer being used
             model.WhichStep = "Step0";
 
             model.CeuShort = string.Empty;

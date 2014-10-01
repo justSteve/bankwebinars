@@ -36,9 +36,10 @@
                 var row = recorded.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
                 var upOnDemandCost = 100;
                 var upPremium = 250;
+
                 var expiresDate = row.Webinar.Date.AddMonths(6);
-                TimeSpan calcDays = expiresDate - row.Webinar.Date;
-                var remainingDays = Convert.ToInt32(calcDays.TotalDays);
+                var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
+
 
                     }
                     <h4 class="span12" id="recorded-@row.idWebinar">@row.Webinar.Title</h4>

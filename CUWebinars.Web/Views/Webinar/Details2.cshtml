@@ -96,16 +96,20 @@
 
         <div class="span3">
             <aside class="widget">
+                @if (Model.Identity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.CuWebinarsAdmin))
+                {
+                    @Html.Partial(@"Partials/_AdminEventButtons", Model)
+                }
                 <h5 class="short_headline"><span>Date/Time</span></h5>
+
                 @if (Model.Webinar.Status == WebinarStatus.Recorded)
                 {
                     var expiresDate = Model.Webinar.Date.AddMonths(6);
-                    TimeSpan calcDays = expiresDate - Model.Webinar.Date;
-                    var remainingDays = Convert.ToInt32(calcDays.TotalDays);
+                    var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
 
                     <div style="font-size: smaller; text-align: center;">
                         This event was recorded on @Html.DisplayDate(Model.Webinar.Date) and is available for OnDemand Playback until @Html.DisplayDate(expiresDate)
-                        - @remainingDays more days.
+                        - @remainingDays.ToString() more days.
                     </div>
                 }
                 else
@@ -121,10 +125,7 @@
                 </div>
             </aside>
 
-            @if (Model.Identity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.CuWebinarsAdmin))
-            {
-                @Html.Partial(@"Partials/_AdminEventButtons", Model)
-            }
+
             @Html.Partial("Partials/_RegistrationSummary")
             <!-- close .widget -->
             <!-- For certificate file widget -->
@@ -175,7 +176,7 @@
         {
             <div id="SignUpFormContainer" class="row-fluid">
 
-                    @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new {id = "SignUpForm"}))
+                @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new { id = "SignUpForm" }))
                 {
                     @Html.HiddenFor(model => model.Webinar.idWebinar)
                     @Html.HiddenFor(model => model.WebUser.idUser)
@@ -202,7 +203,7 @@
                         </div>
                     </div>
                 }
-                
+
                 <form id="checkEmail"><input type="hidden" name="emailChecker" id="emailChecker" /></form>
                 <form id="checkZip"><input type="hidden" name="ZipChecker" id="ZipChecker" /></form>
                 <form id="nonUSForm"><input type="hidden" name="AddressText" id="AddressText" /></form>
