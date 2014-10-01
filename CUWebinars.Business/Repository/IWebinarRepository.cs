@@ -22,5 +22,6 @@ namespace CUWebinars.Business.Repository
         Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id);
         IQueryable<Topic>  GetTopicsPerWebinar(int idWebinar);
         void Update(Webinar webinar);
+        IQueryable<WebinarFile> GetWebinarFilesPerWebinar(int idWebinar);
     }
 }

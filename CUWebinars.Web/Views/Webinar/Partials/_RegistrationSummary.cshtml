@@ -60,7 +60,7 @@
                         <li>@orderMsgs.OptionLabel</li>
                         <li>$@order.Total</li>
                         @Html.Raw(@showShipped)
-                        <div style="font-size: smaller;" >@{ Html.RenderPartial("~/Views/Account/Partials/OrderHasAdditionalLocations.cshtml", row); }</div>
+                        <div style="font-size: smaller;">@{ Html.RenderPartial("~/Views/Account/Partials/OrderHasAdditionalLocations.cshtml", row); }</div>
                         <li><a class="btn btn-success btn-mini" href='#' onclick=' upgrade(idRegType); '>Upgrade order?</a></li>
                     </ul>
                 </div>

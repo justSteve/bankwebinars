@@ -87,7 +87,10 @@ namespace CUWebinars.Business.Services
         {
             return _webinarRepository.GetTopicsPerWebinar(idWebinar).ToList();
         }
-
+        public IEnumerable<WebinarFile> GetWebinarFilesPerWebinar(int idWebinar)
+        {
+            return _webinarRepository.GetWebinarFilesPerWebinar(idWebinar).ToList();
+        }
         public IEnumerable<Webinar> GetRecordedWebinars()
         {
             return _webinarRepository.GetRecorded().ToList();

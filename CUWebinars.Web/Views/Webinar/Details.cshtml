@@ -173,11 +173,14 @@
             </div>
             <hr />
         </div>
-        </div>
 
 
         <div class="span3">
             <aside class="widget">
+                @if (loggedInUserIdentity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.CuWebinarsAdmin))
+        {
+            @Html.Partial(@"Partials/_AdminEventButtons", Model)
+        }
                 <h5 class="short_headline"><span>Date/Time</span></h5>
                 @if (Model.Webinar.Status == WebinarStatus.Recorded)
                 {
@@ -201,10 +204,6 @@
                 </div>
             </aside>
 
-            @if (loggedInUserIdentity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.CuWebinarsAdmin))
-            {
-                @Html.Partial(@"Partials/_AdminEventButtons", Model)
-            }
             @Html.Partial("Partials/_RegistrationSummary")
             <!-- close .widget -->
             <!-- For certificate file widget -->
@@ -281,7 +280,7 @@
             </div>
         }
     }
-</div>
+    
 <!-- Modal -->
 <div id="logsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="logsModalLabel" aria-hidden="true">
     <div class="modal-header">

@@ -14,6 +14,7 @@ namespace CUWebinars.Business.Services
         IEnumerable<Webinar> GetByTopic(int topicId);
         IEnumerable<Webinar> GetRecordedWebinars();
         IEnumerable<Topic> GetTopicsPerWebinar(int idWebinar);
+        IEnumerable<WebinarFile> GetWebinarFilesPerWebinar(int idWebinar);
         IEnumerable<Webinar> GetUpcomingWebinars();
         Webinar GetWebinar(int id);
         Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id);

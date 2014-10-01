@@ -5,19 +5,15 @@
     @{
         if (Model.Order != null && Model.Order.idOrder > 0)
         {
-            var orderRow = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-            var breakDownRegType = orderRow.ToString().Split('_');
-            int registrationType = orderRow.idRegType;
+            var row = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
 
-            var addLocations = Model.Order.OrderRows.FirstOrDefault().AdditionalLocation
-                .Where(o => o.idOrderRow == orderRow.idOrderRow).FirstOrDefault();
+            var addLocations = row.AdditionalLocation.FirstOrDefault(o => o.idOrderRow == row.idOrderRow);
 
-
-            //if (addLocations != null)
-            //{
-            //var RegCost = addLocations.Price;
-            //var RegLabel = addLocations.;
-
+            if (addLocations != null)
+            {
+                var RegCost = addLocations.Price;
+                var RegLabel = addLocations.DescriptionPromo;
+            }
             if (Model.Order.OrderStatus == OrderStatus.Submitted
                 || Model.Order.OrderStatus == OrderStatus.Paid
                 || Model.Order.OrderStatus == OrderStatus.Billed)
@@ -26,11 +22,11 @@
                 if (Model.Webinar.ConnectionInfo != null)
                 {
                     @*<blockquote style="margin-left: 150px; margin-right: 150px;" class="btn-success well">@Model.Order.OrderRows.FirstOrDefault().OrderRowRegTypes.First(o => o.idRegType == Model.Order.OrderRows.FirstOrDefault().RegistrationType).RegType.Stage2CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>*@
-                    <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn-success well">@orderRow.RegistrationType.Stage2CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
+                    <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn btn-success well">@row.RegistrationType.Stage2CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
                 }
                 else
                 {
-                    <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn-success well">@orderRow.RegistrationType.Stage1CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
+                    <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn btn-success well">@row.RegistrationType.Stage1CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
                 }
             }
             else

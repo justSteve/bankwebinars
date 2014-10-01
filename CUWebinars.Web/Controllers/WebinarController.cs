@@ -9,6 +9,7 @@ using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Browsers.Webinars;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Ninject.Extensions.Logging;
@@ -552,6 +553,7 @@ namespace CUWebinars.Web.Controllers
             {
                 Affiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate"),
                 Webinar = webinar,
+                WebinarFiles =  webinar.WebinarFiles.ToList(),
                 Order = null
             };
 
@@ -611,14 +613,7 @@ namespace CUWebinars.Web.Controllers
 
             model.Options = _orderManagementService.GetOptionsByWebinarId(id, false);
 
-            //var whichStep = "Step0";
-            //if (ViewData.ContainsKey("WhichStep"))
-            //{
-            //    if (!String.IsNullOrEmpty(ViewData["WhichStep"].ToString()))
-            //    {
-            //        whichStep = ViewData["WhichStep"].ToString();
-            //    }
-            //}
+            model.WebinarFiles = _webinarManagementService.GetWebinarFilesPerWebinar(webinar.idWebinar);
         }
 
         /// <summary>
@@ -769,14 +764,23 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult UpdateConnectionInfo(Webinar model)
+        public ActionResult UpdateConnectionInfo(ConnectionInfoModel model)
         {
-            Webinar webinar = model;
+            var webinar = _webinarManagementService.GetWebinar(model.idWebinar);
+            webinar.AccessCodeAttendee = model.AccessCodeAttendee;
+            webinar.AccessCodeOrganizer = model.AccessCodeOrganizer;
+            webinar.AccessCodePresenter = model.AccessCodePresenter;
+            webinar.AccessPhoneAttendee = model.AccessPhoneAttendee;
+            webinar.AccessPhoneOrganizer = model.AccessPhoneOrganizer;
+            webinar.AccessPhonePresenter = model.AccessPhonePresenter;
+            webinar.OrganizerOAuthKey = model.OrganizerOAuthKey;
+            webinar.OrganizerKey = model.OrganizerKey;
+            webinar.WebinarKey = model.WebinarKey;
+            
 
-            //_db.SaveChanges();
+            _webinarManagementService.UpdateWebinar(webinar);
 
-            return RedirectToAction("Details");
-            //return PartialView("Partials/_UpdateConnectionInfo",webinar);
+            return PartialView("Partials/_UpdateConnectionInfo",model);
         }
 
         public ActionResult CreateICSForWebinar(int id)

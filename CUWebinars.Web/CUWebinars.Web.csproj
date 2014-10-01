@@ -396,6 +396,7 @@
     <Compile Include="Infrastructure\Extensions\StringExtensions.cs" />
     <Compile Include="Membership\Email\AzureWebJobSmtpMessageDelivery.cs" />
     <Compile Include="Models\AdminDTO.cs" />
+    <Compile Include="Models\ConnectionInfoModel.cs" />
     <Compile Include="Models\EditBillingAddressModel.cs" />
     <Compile Include="Models\EditInstitionModel.cs" />
     <Compile Include="Models\EditNameTitleModel.cs" />
@@ -423,6 +424,7 @@
     <Content Include="Views\Admin\Home\_ResetPasswordPartial.cshtml" />
     <Content Include="Scripts\app\cart\create-order-new.js.map" />
     <Content Include="Scripts\app\utilities.js.map" />
+    <Content Include="Views\Cart\Partials\_DisplayOptionsInDropDown.cshtml" />
     <None Include="Views\Webinar\Details2.cshtml" />
     <None Include="Notification\Templates\OrderSubmittedAdditionalLocation.cshtml" />
     <Compile Include="ViewModel\AdditionalLocationAddViewModel.cs" />
@@ -489,7 +491,6 @@
     <Compile Include="Services\StateService.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModel\AdhocNotificationViewModel.cs" />
-    <Compile Include="ViewModel\ConnectionInfoViewModel.cs" />
     <Compile Include="ViewModel\GTWRegistrantViewModel.cs" />
     <Compile Include="ViewModel\ImportOrderViaDashboardViewModel.cs" />
     <Compile Include="ViewModel\RegisterViewModel.cs" />
@@ -1883,7 +1884,6 @@
     <Content Include="Views\Account\_CreateUserForm.cshtml" />
     <Content Include="Views\Account\test.cshtml" />
     <Content Include="Views\Account\Closed.cshtml" />
-    <Content Include="Views\Shared\Partials\_DisplayRowPrice.cshtml" />
     <Content Include="Views\Webinar\Partials\_RegistrationSummary.cshtml" />
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
     <Content Include="Views\Webinar\Calendar.cshtml" />

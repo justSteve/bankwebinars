@@ -19,6 +19,7 @@ namespace CUWebinars.Web.ViewModel
         public ClaimsIdentity Identity { get; set; }
         public string MessageOrderStatus { get; set; }
         public IList<RegType> Options { get; set; }
+        public IEnumerable<WebinarFile> WebinarFiles { get; set; }
         public Order Order { get; set; }
         public string SignUpCaption { get; set; }
         public string TimeFormatDisplay { get; set; }
