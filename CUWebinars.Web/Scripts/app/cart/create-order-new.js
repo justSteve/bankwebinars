@@ -71,10 +71,40 @@ var OrderRegistration;
     ;
 
     var StateManager = (function () {
-        function StateManager(incomingPageObject) {
-            this.incomingPageObject = incomingPageObject;
-            this.pageObject = incomingPageObject;
+        function StateManager() {
         }
+        StateManager.prototype.getCheckoutInProcess = function () {
+            return this.checkoutInProcess;
+        };
+
+        StateManager.prototype.getIsUserLogged = function () {
+            return this.isUserLogged;
+        };
+
+        StateManager.prototype.getOrderRowId = function () {
+            return this.orderRowID;
+        };
+
+        StateManager.prototype.getWhichStep = function () {
+            return this.whichStep;
+        };
+
+        StateManager.prototype.setCheckoutInProcess = function (val) {
+            this.checkoutInProcess = val;
+        };
+
+        StateManager.prototype.setIsUserLogged = function (val) {
+            this.isUserLogged = val;
+        };
+
+        StateManager.prototype.setOrderRowId = function (num) {
+            this.orderRowID = num;
+        };
+
+        StateManager.prototype.setWhichStep = function (step) {
+            this.whichStep = step;
+        };
+
         StateManager.prototype.BuildPreRegPrice = function (oEvent, orderRowId) {
             //permits a 'preReg' pricing scheme to handle
             //computation of discounts and addl locations prior
@@ -125,14 +155,15 @@ var OrderRegistration;
         };
 
         StateManager.prototype.SetCartState = function () {
-            switch (this.pageObject.getWhichStep()) {
+            switch (this.whichStep) {
                 case "Step0":
                     //console.log("Step0");
                     $("#connectionsCount").val(0);
                     $('#collectAdditionalLocation').html('');
                     $("#confirmationTab").hide();
                     $("#signUpTab").hide();
-                    $("#contactInfoTab").hide();
+
+                    //$("#contactInfoTab").hide();
                     $('#AddToCart').attr({ disabled: false, value: 'SignUp' });
                     $('#AddToCart1').attr({ disabled: false, value: 'SignUp' });
 
@@ -168,7 +199,9 @@ var OrderRegistration;
                     $("#confirmationTab a").text('Order Summary');
                     $("#signUpTab a").text('Connection Info');
 
-                    $.get("/cart/checkoutConfirm/" + this.pageObject.getOrderRowId()).success(function (dataConfirm) {
+                    var self = this;
+
+                    $.get("/cart/checkoutConfirm/" + self.getOrderRowId()).success(function (dataConfirm) {
                         $('#confirmation').html(dataConfirm);
                     });
                     $('#AddToCart').hide();

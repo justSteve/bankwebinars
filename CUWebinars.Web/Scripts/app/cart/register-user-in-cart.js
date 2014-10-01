@@ -1,8 +1,8 @@
 ﻿/// <reference path="../../typings/jquery/jquery.d.ts" />
 /// <reference path="../../typings/jquery/jquery.validation.d.ts" />
 /// <reference path="../../typings/bootstrap/bootstrap.d.ts" />
-var Registration;
-(function (Registration) {
+var RegistrationInCart;
+(function (RegistrationInCart) {
     var Button = (function () {
         function Button() {
         }
@@ -15,7 +15,7 @@ var Registration;
         Button.YesUseAddress = 'YesUseAddress';
         return Button;
     })();
-    Registration.Button = Button;
+    RegistrationInCart.Button = Button;
     ;
 
     var InputAction = (function () {
@@ -26,7 +26,7 @@ var Registration;
         InputAction.None = 'None';
         return InputAction;
     })();
-    Registration.InputAction = InputAction;
+    RegistrationInCart.InputAction = InputAction;
     ;
 
     var Action = (function () {
@@ -42,7 +42,7 @@ var Registration;
         Action.DisplayBillingAddressFields = 'DisplayBillingAddressFields';
         return Action;
     })();
-    Registration.Action = Action;
+    RegistrationInCart.Action = Action;
     ;
 
     var Constants = (function () {
@@ -69,7 +69,7 @@ var Registration;
         Constants.Zip = '_Zip';
         return Constants;
     })();
-    Registration.Constants = Constants;
+    RegistrationInCart.Constants = Constants;
     ;
 
     var StateManager = (function () {
@@ -189,31 +189,19 @@ var Registration;
             });
         };
 
-        StateManager.prototype.foundInstitutionView = function (data, email) {
+        StateManager.prototype.displayRegistrationModal = function (data, email) {
             if (this.inputAction === InputAction.EnterKeyPress)
                 this.inputAction = InputAction.None;
 
             ////console.log("call foundInstitutionView: " + email);
-            $('#modalInstitution').modal('show');
-
-            $('#RegisterFields_Institution').val(data.Institution);
-            $('#RegisterFields_ShippingAddress_StreetAddress').val(data.Address);
-            $('#RegisterFields_ShippingAddress_City').val(data.City);
-            $('#RegisterFields_ShippingAddress_State').val(data.State);
-            $('#RegisterFields_ShippingAddress_Zip').val(data.Zip);
-            $('#RegisterFields_BillingAddress_StreetAddress').val(data.Address);
-            $('#RegisterFields_BillingAddress_City').val(data.City);
-            $('#RegisterFields_BillingAddress_State').val(data.State);
-            $('#RegisterFields_BillingAddress_Zip').val(data.Zip);
-            $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;' + email.substring(email.indexOf('@')) + '</b>&nbsp; domain has been identified.</span>');
-            $('#ShowInstitution').html(data.Institution + '<br>' + data.Address + '<br>' + data.City + ', ' + data.State + ' ' + data.Zip + '<br>');
+            $('#modalRegisterUserDuringCartOp').modal('show');
         };
 
         StateManager.prototype.getAction = function () {
             return this.action;
         };
 
-        StateManager.prototype.getDisregardInstitutionDomain = function () {
+        StateManager.prototype.getDisregardIntitutionDomain = function () {
             return this.disregardInstitutionDomain;
         };
 
@@ -546,7 +534,7 @@ var Registration;
         };
         return StateManager;
     })();
-    Registration.StateManager = StateManager;
+    RegistrationInCart.StateManager = StateManager;
     ;
-})(Registration || (Registration = {}));
-//# sourceMappingURL=register-user.js.map
+})(RegistrationInCart || (RegistrationInCart = {}));
+//# sourceMappingURL=register-user-in-cart.js.map

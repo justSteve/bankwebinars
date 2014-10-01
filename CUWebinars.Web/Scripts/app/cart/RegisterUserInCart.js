@@ -1,8 +1,8 @@
 ﻿/// <reference path="../../typings/jquery/jquery.d.ts" />
 /// <reference path="../../typings/jquery/jquery.validation.d.ts" />
 /// <reference path="../../typings/bootstrap/bootstrap.d.ts" />
-var Registration;
-(function (Registration) {
+var RegistrationInCart;
+(function (RegistrationInCart) {
     var Button = (function () {
         function Button() {
         }
@@ -15,7 +15,7 @@ var Registration;
         Button.YesUseAddress = 'YesUseAddress';
         return Button;
     })();
-    Registration.Button = Button;
+    RegistrationInCart.Button = Button;
     ;
 
     var InputAction = (function () {
@@ -26,7 +26,7 @@ var Registration;
         InputAction.None = 'None';
         return InputAction;
     })();
-    Registration.InputAction = InputAction;
+    RegistrationInCart.InputAction = InputAction;
     ;
 
     var Action = (function () {
@@ -42,7 +42,7 @@ var Registration;
         Action.DisplayBillingAddressFields = 'DisplayBillingAddressFields';
         return Action;
     })();
-    Registration.Action = Action;
+    RegistrationInCart.Action = Action;
     ;
 
     var Constants = (function () {
@@ -69,7 +69,7 @@ var Registration;
         Constants.Zip = '_Zip';
         return Constants;
     })();
-    Registration.Constants = Constants;
+    RegistrationInCart.Constants = Constants;
     ;
 
     var StateManager = (function () {
@@ -213,7 +213,7 @@ var Registration;
             return this.action;
         };
 
-        StateManager.prototype.getDisregardInstitutionDomain = function () {
+        StateManager.prototype.getDisregardIntitutionDomain = function () {
             return this.disregardInstitutionDomain;
         };
 
@@ -546,7 +546,7 @@ var Registration;
         };
         return StateManager;
     })();
-    Registration.StateManager = StateManager;
+    RegistrationInCart.StateManager = StateManager;
     ;
-})(Registration || (Registration = {}));
-//# sourceMappingURL=register-user.js.map
+})(RegistrationInCart || (RegistrationInCart = {}));
+//# sourceMappingURL=RegisterUserInCart.js.map

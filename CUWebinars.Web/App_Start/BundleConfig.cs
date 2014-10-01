@@ -31,6 +31,7 @@ namespace CUWebinars.Web.App_Start
 
             bundles.Add(new ScriptBundle("~/bundles/CommonModules").Include(
                 "~/Scripts/app/constants.js",
+                "~/Scripts/purl.js", // excellent lib for parsing and working with the address bar content i.e. urls
                 "~/Scripts/app/utilities.js"
                 ));
 
@@ -49,7 +50,7 @@ namespace CUWebinars.Web.App_Start
                          "~/Scripts/app/cart/additional-locations.js",
                          "~/Scripts/app/cart/create-order-new.js",
                          "~/Scripts/app/cart/details.js",
-                         "~/Scripts/app/register/register-user.js",
+                         "~/Scripts/app/cart/register-user-in-cart.js",
                          "~/Scripts/app/cart/register-during-checkout.js"
                          //"~/Scripts/app/cart/create-order.js"
                 //,"~/Scripts/app/cart/edit-order.js"
@@ -93,7 +94,7 @@ namespace CUWebinars.Web.App_Start
                         "~/Scripts/app/register/register-user.js",
                         "~/Scripts/app/register/index.js",
                         "~/Scripts/app/passwordReset/password-reset.js",
-                        "~/Scripts/app/web-user-details-register.js"
+                        "~/Scripts/app/web-user-details-register.js" // TODO: old and obsolete (I think)
             ));
 
             bundles.Add(new ScriptBundle("~/bundles/membership-notifications-ops").Include(

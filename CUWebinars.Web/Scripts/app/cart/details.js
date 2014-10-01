@@ -1,7 +1,7 @@
 ﻿var discount,
-    pageObject,
+    cartStateManager,
     signUpForm,
-    stateManager;
+    cartStateManager;
 
 
 discount = '';
@@ -11,22 +11,21 @@ $(function() {
 
     signUpForm = $("#SignUpForm");
 
-    pageObject = new OrderRegistration.PageObject();
+    cartStateManager = new OrderRegistration.StateManager();
 
-    pageObject.setCheckoutInProcess(checkoutInProcess);
-    pageObject.setWhichStep(whichStep);
-    pageObject.setOrderRowId(orderRowId);
-    pageObject.setIsUserLogged(isUserLogged);
+    cartStateManager.setCheckoutInProcess(checkoutInProcess);
+    cartStateManager.setWhichStep(whichStep);
+    cartStateManager.setOrderRowId(orderRowId);
+    cartStateManager.setIsUserLogged(isUserLogged);
 
-    stateManager = new OrderRegistration.StateManager(pageObject);
 
-    stateManager.SetCartState();
+    cartStateManager.SetCartState();
 
     $("[id^='regTypeID_']").on("click", function (oEvent) {
         $("#stage_of_checkout").val("preReg");
 
         //BuildPreRegPrice(oEvent, orderRowId);
-        stateManager.CheckIfAddLocShouldHide(oEvent.currentTarget.value);
+        cartStateManager.CheckIfAddLocShouldHide(oEvent.currentTarget.value);
     });
 
     $('[id^="AddToCart"]').on('click', function () {
@@ -40,11 +39,11 @@ $(function() {
         $('#showDiscount').css('display', 'block');
     }
 
-    if (pageObject.getOrderRowId() > 0 && CheckoutInProcess) {
-        $.get("/cart/checkoutConfirm/" + pageObject.getOrderRowId())
+    if (cartStateManager.getOrderRowId() > 0 && CheckoutInProcess) {
+        $.get("/cart/checkoutConfirm/" + cartStateManager.getOrderRowId())
             .success(function (dataConfirm) {
                 $('#confirmation').replaceWith(dataConfirm);
-                $.get("/cart/checkoutContact/" + pageObject.getOrderRowId())
+                $.get("/cart/checkoutContact/" + cartStateManager.getOrderRowId())
                     .success(function (dataContact) {
                         $('#contactInfo').replaceWith(dataContact);
                     })
@@ -59,14 +58,15 @@ $(function() {
 
         e.preventDefault();
         CheckoutInProcess = true;
-        if (!pageObject.getIsUserLogged()) {
+        if (!cartStateManager.getIsUserLogged()) {
             //
             //TODO: Re-use code that's already been developed for the CreateAccount use case
             //  with this difference.... the UI needs to be presented in a Modal Popup
 
-            pageObject.setWhichStep('Step1');
-            stateManager.SetCartState();
-            $('#contactInfo').load('/Cart/CheckoutContactDetails', function () { });
+            cartStateManager.setWhichStep('Step1');
+            cartStateManager.SetCartState();
+            //$('#contactInfo').load('/Cart/CheckoutContactDetails', function () { });
+            cartStateManager.displayRegistrationModal({}, {});
 
             //alert("get Contact info");
         } else {
@@ -76,22 +76,22 @@ $(function() {
             $.post(signUpForm.attr("action"), data, function (result, status) {
                 if (result.success) {
                     //jslogger.event({ signup: { from: "EndUser Checkout" } });
-                    pageObject.setOrderRowId(result.orderRowId);
-                    pageObject.setWhichStep(result.whichStep);
+                    cartStateManager.setOrderRowId(result.orderRowId);
+                    cartStateManager.setWhichStep(result.whichStep);
 
-                    $.get("/cart/checkoutConfirm/" + pageObject.getOrderRowId())
+                    $.get("/cart/checkoutConfirm/" + cartStateManager.getOrderRowId())
                         .success(function (dataConfirm) {
                             $('#confirmation').replaceWith(dataConfirm);
                         }).done(function () {
-                            $.get("/cart/checkoutOptions/" + pageObject.getOrderRowId())
+                            $.get("/cart/checkoutOptions/" + cartStateManager.getOrderRowId())
                                 .success(function (dataOptions) {
                                     $('#signUp').replaceWith(dataOptions);
-                                    $.get("/cart/checkoutContact/" + pageObject.getOrderRowId())
+                                    $.get("/cart/checkoutContact/" + cartStateManager.getOrderRowId())
                                         .success(function (dataContact) {
                                             $('#contactInfo').replaceWith(dataContact);
                                         })
                                         .done(function () {
-                                            stateManager.SetCartState();
+                                            cartStateManager.SetCartState();
                                             //alert(whichStep);
                                         });
                                 });

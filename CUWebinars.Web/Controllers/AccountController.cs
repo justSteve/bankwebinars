@@ -625,46 +625,55 @@ namespace CUWebinars.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SignIn(SignInModel model)
         {
-            string userMustVerify = null;
-
-            if (ModelState.IsValid && _membershipService.LogInUser(_globalConfig.Tenant, model.Email, model.Password, model.RememberMe, out userMustVerify))
+            if (!ModelState.IsValid)
             {
-                if (Request.ApplicationPath != null)
+                return this.ModelStateJson(ModelState);
+            }
+
+            string userMustVerify;
+
+            if (_membershipService.LogInUser(_globalConfig.Tenant, model.Email, model.Password, model.RememberMe, out userMustVerify))
+            {
+                if (!ReferenceEquals(Request.ApplicationPath, null) && !ReferenceEquals(Request.Url, null))
                 {
-                    if (Request.Url != null)
-            {
-                var retURL = model.ReturnUrl.Replace(string.Format(@"{0}://{1}{2}/", Request.Url.Scheme, Request.Url.Authority, Request.ApplicationPath.TrimEnd('/')), string.Empty);
+                    var retURL = model.ReturnUrl.Replace(
+                            string.Format(@"{0}://{1}{2}/",
+                            Request.Url.Scheme,
+                            Request.Url.Authority,
+                            Request.ApplicationPath.TrimEnd('/')),
+                            string.Empty
+                            );
 
-                _logger.Info("Account.SignIn Post Success. Session={0}, Redirecting to: {1}", AppHelper.GetUserAuditInfo(), retURL);
-                    }
+                    _logger.Info("Account.SignIn Post Success. Session={0}, Redirecting to: {1}", AppHelper.GetUserAuditInfo(), retURL);
                 }
-                //return RedirectToLocal(retURL);
-                return RedirectToLocal("/Account/MyWebinars");
+
+                return Json(new {result = "LoggedIn"} );
             }
 
             if (!string.IsNullOrEmpty(userMustVerify))
             {
-                _logger.Info("Account.SignIn UserMustVerify. Session={0}, Email: {1} surname: {2}" + AppHelper.GetUserAuditInfo(), model.Email, model.Password);
+                _logger.Info("Account.SignIn UserMustVerify. Session={0}, Email: {1} surname: {2}",
+                    AppHelper.GetUserAuditInfo(),
+                    model.Email,
+                    model.Password
+                    );
+
                 return RedirectToAction("Confirmed", new { email = model.Email, surname = model.Password });
             }
 
             // If we got this far, something failed, redisplay form
-            _logger.Warn("Account.SignIn Failed. " + model.Email + "|" + model.Password + " Session=" + AppHelper.GetUserAuditInfo());
+            _logger.Warn("Account.SignIn Failed. {0} | {1} Session= {2}",
+                model.Email,
+                model.Password,
+                AppHelper.GetUserAuditInfo()
+                );
 
-            ModelState.AddModelError(string.Empty, "The user name or password provided is incorrect.");
-            return View("Login", new LoginModel
-            {
-                Register = new RegisterViewModel
-                {
-                    RegisterFields = new RegisterModel
-                    {
-                        AccountDetailsTitle = WebUiConstants.Register
-                    }
-                },
-                ResetPassword = new ResetPasswordModel(),
-                SignIn = model,
-                ActiveTab = "login"
-            });
+            ModelState.AddModelError(
+                string.Empty, // Needs to be an empty string to show up in ValidationSummary as not model-level error.
+                "The user name or password provided is incorrect."
+                );
+
+            return this.ModelStateJson(ModelState);
         }
 
         [System.Web.Mvc.HttpPost]

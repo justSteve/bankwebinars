@@ -74,10 +74,45 @@ module OrderRegistration {
 
     export class StateManager {
 
-        private pageObject: OrderRegistration.PageObject;
+        private discount: string;
+        private wait4Emails: string;
+        private orderRowID: number;
+        private checkoutInProcess: boolean;
+        private isUserLogged: boolean;
+        private whichStep: string;
 
-        constructor(public incomingPageObject: OrderRegistration.PageObject) {
-            this.pageObject = incomingPageObject;
+        constructor() { }
+
+        getCheckoutInProcess(): boolean {
+            return this.checkoutInProcess;
+        }
+
+        getIsUserLogged(): boolean {
+            return this.isUserLogged;
+        }
+
+        getOrderRowId(): number {
+            return this.orderRowID;
+        }
+
+        getWhichStep(): string {
+            return this.whichStep;
+        }
+
+        setCheckoutInProcess(val: boolean): void {
+            this.checkoutInProcess = val;
+        }
+
+        setIsUserLogged(val: boolean): void {
+            this.isUserLogged = val;
+        }
+
+        setOrderRowId(num: number): void {
+            this.orderRowID = num;
+        }
+
+        setWhichStep(step: string): void {
+            this.whichStep = step;
         }
 
         BuildPreRegPrice(oEvent : JQueryEventObject, orderRowId : number): void {
@@ -134,14 +169,14 @@ module OrderRegistration {
         }
 
         SetCartState(): void {
-            switch (this.pageObject.getWhichStep()) {
+            switch (this.whichStep) {
             case "Step0":
                 //console.log("Step0");
                 $("#connectionsCount").val(0);
                 $('#collectAdditionalLocation').html('');
                 $("#confirmationTab").hide();
                 $("#signUpTab").hide();
-                $("#contactInfoTab").hide();
+                //$("#contactInfoTab").hide();
                 $('#AddToCart').attr({ disabled: false, value: 'SignUp' });
                 $('#AddToCart1').attr({ disabled: false, value: 'SignUp' });
 
@@ -179,7 +214,9 @@ module OrderRegistration {
                 $("#confirmationTab a").text('Order Summary');
                 $("#signUpTab a").text('Connection Info');
 
-                $.get("/cart/checkoutConfirm/" + this.pageObject.getOrderRowId())
+                var self = this;
+
+                $.get("/cart/checkoutConfirm/" + self.getOrderRowId())
                     .success(function(dataConfirm) {
                         $('#confirmation').html(dataConfirm);
                     });

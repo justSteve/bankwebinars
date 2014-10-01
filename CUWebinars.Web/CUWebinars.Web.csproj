@@ -413,6 +413,7 @@
     <Content Include="Scripts\app\utilities.js" />
     <Content Include="Scripts\jsnlog.js" />
     <Content Include="Scripts\jsnlog.min.js" />
+    <Content Include="Scripts\purl.js" />
     <Content Include="Views\Cart\Partials\_DisplayRowPrice.cshtml" />
     <Content Include="Scripts\jsnlog.js.map" />
     <Content Include="Views\Admin\Home\_ImportOrder.cshtml" />
@@ -1945,6 +1946,7 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\app\cart\create-order-new.ts" />
+    <TypeScriptCompile Include="Scripts\app\cart\register-user-in-cart.ts" />
     <TypeScriptCompile Include="Scripts\app\register\register-user.ts" />
     <TypeScriptCompile Include="Scripts\app\utilities.ts" />
     <TypeScriptCompile Include="Scripts\typings\bootstrap\bootstrap.d.ts" />
