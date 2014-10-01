@@ -63,6 +63,11 @@ namespace CUWebinars.Business.Repository
                 //.Include(w => w.Topic)
                 .Where(t => t.idWebinar == idWebinar).Select(t => t.Topic);
         }
+        public IQueryable<WebinarFile> GetWebinarFilesPerWebinar(int idWebinar)
+        {
+            return ((TTSWebinarsContext) db).WebinarFiles
+                .Where(t => t.idWebinar == idWebinar);
+        }
 
         public IQueryable<Webinar> GetAllActive()
         {

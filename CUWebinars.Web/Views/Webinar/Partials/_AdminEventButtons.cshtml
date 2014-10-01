@@ -3,8 +3,6 @@
 
 @{
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
-
-
 }
 
 <section>
@@ -14,32 +12,52 @@
             <div class=" pull-right label label-success">@Model.Webinar.Status.ToString()</div>
             @{
                 //var orderRow = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-                if (Model.Webinar.Status == WebinarStatus.Recorded)
+                switch (Model.Webinar.Status)
                 {
-                    if (Model.Webinar.RecordingUrl == "" || Model.Webinar.RecordingUrl == null)
-                    {
-                        <input id="WebinarFileInput" type="text" placeholder="Enter File Name" />
-                        <div style="display:inline-block"><button id="SendRecordingPostedEventHtmlButton" class="btn btn-primary btn-small">Send Recording</button></div>
-                    }
-                    else
-                    {
-                        <a href="@globalConfig.WMVRepository@Model.Webinar.RecordingUrl">@globalConfig.WMVRepository@Model.Webinar.RecordingUrl </a>
-                        <div>
-                            @{Html.RenderPartial("DisplayTemplates/HandoutsListing", Model.Webinar);}
-                        </div>
-                    }
-                }
-                if (Model.Webinar.Status == WebinarStatus.Active)
-                {
-                    //Active means the connection info has been generated. This form shows
-                    // the relevant fields and offers to update them
-                    @Html.Partial(@"Partials/_UpdateConnectionInfo", Model.Webinar)
-                }
-                if (Model.Webinar.Status == WebinarStatus.Scheduled)
-                {
-                    //If session is Scheduled it's ready for the Citrix / Selenium app to run.
-                    // Not sure how we present that interface - the Admin will run an external app...
-                    // do we just display instructions here on how to do that?
+                    case WebinarStatus.Recorded:
+                        {
+                            if (string.IsNullOrEmpty(Model.Webinar.RecordingUrl))
+                            {
+                                <input id="WebinarFileInput" type="text" placeholder="Enter File Name" />
+                                <div style="display: inline-block"><button id="SendRecordingPostedEventHtmlButton" class="btn btn-primary btn-small">Send Recording</button></div>
+                            }
+                            else
+                            {
+                                <a href="@globalConfig.WMVRepository@Model.Webinar.RecordingUrl">@globalConfig.WMVRepository@Model.Webinar.RecordingUrl </a>
+                                <div>
+                                    @{ Html.RenderPartial("DisplayTemplates/HandoutsListing", Model.Webinar); }
+                                </div>
+                            }
+                            break;
+                        }
+                    case WebinarStatus.Active:
+                        {
+                            var connInfoModel = new ConnectionInfoModel
+                            {
+                                idWebinar = Model.Webinar.idWebinar,
+                                OrganizerKey = "901873",
+                                OrganizerOAuthKey = "JIOHRkkCvmIKDY8QO0S4msbYH48N",
+                                WebinarFiles = Model.Webinar.WebinarFiles
+                            };
+                            //Active means the connection info has been generated. This form shows
+                            // the relevant fields and offers to update them
+                            @Html.Partial(@"Partials/_UpdateConnectionInfo", connInfoModel)
+
+                            break;
+                        }
+                    case WebinarStatus.Scheduled:
+                        {
+
+                            <button class="btn btn-success" id="InitializeConnectionInformation">Initialize Connection Information</button>
+                            //If session is Scheduled it's ready for the Citrix / Selenium app to run.
+                            // Not sure how we present that interface - the Admin will run an external app...
+                            // do we just display instructions here on how to do that?
+                            break;
+                        }
+                    case WebinarStatus.Archived:
+                        {
+                            break;
+                        }
                 }
                 <div style="display:inline-block"><a href="http://plaguis:777/publish.htm">Create</a></div>
             }

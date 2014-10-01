@@ -1,7 +1,7 @@
 ﻿@model Webinar
 
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Editing "+ Model.Title;
 }
 
 <script type="text/javascript" src="/Scripts/cleditor/jquery.cleditor.min.js"></script>
@@ -16,6 +16,7 @@
         $('#ta_description').cleditor({});
         $('#ta_DescriptionLong').cleditor({});
         $('#ta_LearnBody').cleditor({});
+        $('#ta_WhoAttend').cleditor({});
         $(".textarea").each(function () {
             alert("hit");
             var cledDesc = $(this).cleditor()[0];
@@ -35,16 +36,15 @@
     $.cleditor.defaultOptions.controls =     // controls to add to the toolbar
       "bold italic underline | font size " +
       "style | highlight removeformat | bullets numbering | outdent " +
-      "indent | alignleft center alignright justify | undo redo | " +
-      "rule image link unlink | print source",
-    $.cleditor.defaultOptions.fonts =        // font names in the font popup
-      "Arial,Arial Black,Comic Sans MS,Courier New,Narrow,Garamond," +
-      "Georgia,Impact,Sans Serif,Serif,Tahoma,Trebuchet MS,Verdana";
-    $.cleditor.defaultOptions.sizes =        // sizes in the font size popup
-      "1,2,3,4,5,6,7";
+      "indent | alignleft center alignright | " +
+      "rule image link unlink | source",
+    //$.cleditor.defaultOptions.fonts =        // font names in the font popup
+    //  "Arial,Arial Black,Comic Sans MS,Courier New,Narrow,Garamond," +
+    //  "Georgia,Impact,Sans Serif,Serif,Tahoma,Trebuchet MS,Verdana";
+    //$.cleditor.defaultOptions.sizes =        // sizes in the font size popup
+    //  "1,2,3,4,5,6,7";
     $.cleditor.defaultOptions.styles =       // styles in the style popup
-      [["Paragraph", "<p>"], ["Header 1", "<h1>"], ["Header 2", "<h2>"],
-        ["Header 3", "<h3>"], ["Header 4", "<h4>"], ["Header 5", "<h5>"],
+      [["Paragraph", "<p>"], ["Header 3", "<h3>"], ["Header 4", "<h4>"], ["BlockQuote", "<blockquote>"],
         ["Header 6", "<h6>"]];
     $.cleditor.defaultOptions.useCSS = false; // use CSS to style HTML when possible (not supported in ie)
     $.cleditor.defaultOptions.docType =      // Document type contained within the editor
@@ -52,29 +52,29 @@
     $.cleditor.defaultOptions.docCSSFile =   // CSS file used to style the document contained within the editor
       "",
     $.cleditor.defaultOptions.bodyStyle =    // style to assign to document body contained within the editor
-      "margin=4px; font=10pt Arial,Verdana; cursor=text";
+      "margin: 4px; font: 11pt Helvetica Neue,Helvetica,Arial,sans-serif; cursor:text";
 </script>
 
 <div class="container">
 
-    <h2>Edit</h2>
+    <h2>Edit @Model.Title</h2>
     @using (Html.BeginForm())
     {
         @Html.AntiForgeryToken()
         @Html.ValidationSummary(true)
 
         <fieldset>
-            <legend>@Html.EditorFor(model => model.Title)</legend>
+            @*<legend>@Html.EditorFor(model => model.Title)</legend>*@
 
             @Html.HiddenFor(model => model.idWebinar)
 
-            @*<div class="editor-label">
+            <div class="editor-label">
                 @Html.LabelFor(model => model.Title)
             </div>
             <div class="editor-field">
                 
                 @Html.ValidationMessageFor(model => model.Title)
-            </div>*@
+            </div>
 
             <div class="editor-label">
                 @Html.LabelFor(model => model.Date)
@@ -96,9 +96,9 @@
                 @Html.LabelFor(model => model.Description)
             </div>
             <div class="editor-field">
-                <textarea id="ta_description" rows="10" cols="40">@Html.Raw(Model.Description)</textarea>
-                @*@Html.EditorFor(model => model.Description)
-                    @Html.ValidationMessageFor(model => model.Description)*@
+                
+                @Html.TextAreaFor(model => model.Description)
+                    @Html.ValidationMessageFor(model => model.Description)
             </div>
 
             <div class="editor-label">
@@ -132,6 +132,7 @@
                 @Html.LabelFor(model => model.WhoAttend)
             </div>
             <div class="editor-field">
+                <textarea id="ta_WhoAttend" rows="10" cols="40">@Html.Raw(Model.LearnBody)</textarea>
                 @Html.TextAreaFor(model => model.WhoAttend)
                 @Html.ValidationMessageFor(model => model.WhoAttend)
             </div>

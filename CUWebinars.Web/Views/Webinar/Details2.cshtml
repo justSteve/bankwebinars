@@ -96,10 +96,9 @@
 
         <div class="span3">
             <aside class="widget">
-                @if (Model.Identity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.CuWebinarsAdmin))
-                {
-                    @Html.Partial(@"Partials/_AdminEventButtons", Model)
-                }
+                @*@if (Model.Identity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.CuWebinarsAdmin)){*@
+                @Html.Partial(@"Partials/_AdminEventButtons", Model)
+                @*}*@
                 <h5 class="short_headline"><span>Date/Time</span></h5>
 
                 @if (Model.Webinar.Status == WebinarStatus.Recorded)
@@ -208,10 +207,75 @@
                 <form id="checkZip"><input type="hidden" name="ZipChecker" id="ZipChecker" /></form>
                 <form id="nonUSForm"><input type="hidden" name="AddressText" id="AddressText" /></form>
                 <form id="checkInstitution"><input type="hidden" name="InstitutionChecker" id="InstitutionChecker" /></form>
-
+                <form id="updateRegType" action="/Cart/SetRegistrationTypeAtCheckout" method="post" name="updateRegType"></form>
             </div>
         }
     }
+</div>
+
+<div id="ConfirmModal" class="modal hide fade">
+    <form action="/cart/confirmOrder" method="post" id="confirmOrder">
+        <input type="hidden" name="id" />
+        <input type="hidden" id="Step2_BillMeFormReferred" name="referred" value="" />
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3 id="confirmCaption"></h3>
+        </div>
+        <div id="confirmResult" class="modal-body">
+            <p>Registration is Confirmed</p>
+        </div>
+        <div class="modal-footer">
+            <a href="#" id="confirmRegistration" role="button" class="btn btn-success">Continue</a>
+        </div>
+
+    </form>
+
+</div>
+
+<div id="CancelModal" class="modal hide fade">
+    <form action="/cart/cancelOrder" method="post" id="cancelOrder">
+
+        <input type="hidden" name="id" />
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3 id="cancelCaption">Cancel This Order?</h3>
+        </div>
+        <div id="cancelResult" class="modal-body">
+            <p>Please confirm that you wish to delete this registration.</p>
+        </div>
+        <div class="modal-footer">
+            <a href="#" id="rtn" class="close btn btn-inverse" data-dismiss="modal">Return to checkout</a>&nbsp;&nbsp;
+            <a href="/" id="continueReg" class="btn btn-success hide">Continue</a>&nbsp;&nbsp;
+            <input type="submit" id="cancelRegistration" value="Delete This Registration" class="btn btn-danger" />
+        </div>
+    </form>
+</div>
+
+
+<div id="AddCCModal" class="modal hide fade">
+    <form action="/cart/AddCC" method="post" id="AddCC">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3 id="AddCCCaption">Carbon Copy Notifications?</h3>
+        </div>
+        <div id="CCBody" class="modal-body">
+            <p>
+                <input type="text" name="CC" />
+                <br />
+                Need to forward the connection info to a co-worker?
+                Insert the email address(s) (if multiple, just seperate the addresses by a comma) to be included in all future notifications related to this order.
+                <br />
+                <input type="text" name="CC" />
+
+            </p>
+            <p>Please note that this form is only used to forward the connection information to alternate attendees. If you would like to add Additional Locations (multiple connections by other branches, for example) we offer that optional feature on for an additional charge.  </p>
+            <input type="text" name="CC" />
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="close btn" data-dismiss="modal">Cancel</a>&nbsp;&nbsp;
+            <a href="#" id="SubmitCC" class="btn btn-success">Submit</a>
+        </div>
+    </form>
 </div>
 
 @if (Model.WebUser.UserType == UserType.Admin)

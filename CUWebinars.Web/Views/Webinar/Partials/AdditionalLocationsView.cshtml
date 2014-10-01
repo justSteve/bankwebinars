@@ -4,7 +4,6 @@
         || Model.Webinar.Status == WebinarStatus.Active
         || Model.Webinar.Status == WebinarStatus.InProgress)
     {
-
         <div id="AdditionalLocationContainer" class="well" style="margin-right: 50px;margin-left: 50px;">
             <h5>Additional Locations</h5>
             <div>
@@ -12,46 +11,43 @@
                     <span>
                         <b>Each additional location adds @Model.Price.ToString("c").Replace(".00", "") to your registration.</b>
                         <br /><a href="#AdditionalLocationsModal" role="button" class="btn" data-toggle="modal">Add?</a>
-
                     </span>
-
-
                     @*<div id="collectAdditionalLocations"> </div>*@
                 </div>
             </div>
             @{ Html.Partial("Partials/_AdditionalLocationsModal"); }
             @if (Model.Webinar.Title.Contains("Compliance Perspectives"))
-                {
-                    <div style="display: none" id="trial">
-                        <p>Additional locations are not included in the trial subscription.</p>
+            {
+                <div style="display: none" id="trial">
+                    <p>Additional locations are not included in the trial subscription.</p>
+                </div>
+                <div id="first3" style="padding-left: 50px;">
+                    Subscribers to the <b>Compliance Perspectives Series</b> receive the first three locations
+                    <br />
+                    at no additional charge ($150 per connection after those first three):
+                    <br />
+                    <div style="padding-left: 50px;">
+                        <input type="text" name="Email_0" id="Email_0" value="Email for Additional Location" class="{email: true}" /><br />
+                        <input type="text" name="Email_1" id="Email_1" value="2nd Location" disabled="disabled" class="{email: true}" /><br />
+                        <input type="text" name="Email_2" id="Email_2" value="3rd Location" disabled="disabled" class="{email: true}" /><br />
                     </div>
-                    <div id="first3" style="padding-left: 50px;">
-                        Subscribers to the <b>Compliance Perspectives Series</b> receive the first three locations
-                        <br />
-                        at no additional charge ($150 per connection after those first three):
-                        <br />
-                        <div style="padding-left: 50px;">
-                            <input type="text" name="Email_0" id="Email_0" value="Email for Additional Location" class="{email: true}" /><br />
-                            <input type="text" name="Email_1" id="Email_1" value="2nd Location" disabled="disabled" class="{email: true}" /><br />
-                            <input type="text" name="Email_2" id="Email_2" value="3rd Location" disabled="disabled" class="{email: true}" /><br />
-                        </div>
-                    </div>
-                    <div style="display: none" id="addLoc4Cost">
-                        <button value="Add?" name="showAddLocModal" id="showAddLocModal">Add?</button>
-                    </div>
-                }
-                else
-                {
-                    @Html.HiddenFor(m => m.WebUser.idUser)
-                    @Html.HiddenFor(m => m.Webinar.idWebinar)
+                </div>
+                <div style="display: none" id="addLoc4Cost">
+                    <button value="Add?" name="showAddLocModal" id="showAddLocModal">Add?</button>
+                </div>
+            }
+            else
+            {
+                @Html.HiddenFor(m => m.WebUser.idUser)
+                @Html.HiddenFor(m => m.Webinar.idWebinar)
 
-                    if (Model.Order != null)
-                    {
-                        Html.HiddenFor(m => m.Order.idOrder);
-                    }
-
-                    @Html.DisplayFor(m => m.AdditionalLocation)
+                if (Model.Order != null)
+                {
+                    Html.HiddenFor(m => m.Order.idOrder);
                 }
+
+                @Html.DisplayFor(m => m.AdditionalLocation)
+            }
         </div>
     }
 }
