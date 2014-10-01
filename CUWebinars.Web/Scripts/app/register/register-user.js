@@ -372,6 +372,8 @@ var Registration;
 
         StateManager.prototype.passResetView = function () {
             //console.log("call passResetView");
+            this.inputAction = InputAction.None;
+
             $('#login').hide('slow');
 
             var showResetInput = $.Deferred(function () {
@@ -388,6 +390,7 @@ var Registration;
             $('#login').hide('slow');
 
             this.action = Action.CheckEmail;
+            this.inputAction = InputAction.None;
 
             var showRegisterInput = $.Deferred(function (pageObject) {
                 $('#register').show('slow');
@@ -405,6 +408,7 @@ var Registration;
 
             $('#EdgeCaseResetPasswordButton').data('clicked', true);
             $('form#ResetPasswordForm').submit();
+            $('#TheSubmitButton').attr('disabled', 'disabled');
         };
 
         StateManager.prototype.resetPasswordOrLoginView = function (email) {
@@ -448,6 +452,7 @@ var Registration;
         };
 
         StateManager.prototype.startView = function () {
+            $('#loginMsgLabel').hide();
             $('#register').hide();
             $('#reset').hide();
             $('#nonUSAddressInput').hide();
@@ -486,7 +491,12 @@ var Registration;
                     //console.log('submitLogin hit');
                     $('#Password').val($('#Password1').val());
                     $('#Email').val($('#Email1').val());
+                    $('#ReturnUrl').val($('#returnUrl').val() || '/');
                     $('form#frmSignIn').submit();
+
+                    if (this.inputAction === InputAction.EnterKeyPress)
+                        this.inputAction = InputAction.None;
+
                     break;
                 case Action.DisplayBillingAddressFields:
                     this.displayBillingFields();

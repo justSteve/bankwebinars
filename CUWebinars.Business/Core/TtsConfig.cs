@@ -12,8 +12,8 @@ namespace CUWebinars.Business.Core
         {
             var config = new TtsConfiguration();
 
-            var notificationDelivery = new SmtpMessageDelivery();
-            //var notificationDelivery = new AzureCuwWebJobSmtpMessageDelivery();
+            //var notificationDelivery = new SmtpMessageDelivery();
+            var notificationDelivery = new AzureCuwWebJobSmtpMessageDelivery();
             var genericFormatter = new Formatter(new EnvironmentInformation { BaseUrl = baseUrl });
             var notificationPersister = new FileBasedNotificationPersister();
 

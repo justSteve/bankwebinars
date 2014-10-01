@@ -227,6 +227,9 @@ $(function () {
 
         e.preventDefault();
 
+        if (!$('#ReturnUrl').val())
+            $('#ReturnUrl').val('/');
+
         var data = $(this).serialize();
         var url = $(this).attr('action');
 
@@ -238,29 +241,61 @@ $(function () {
             contentType: Registration.Constants.FormPostContentType,
             //headers: headers,
             beforeSend: function (xhr) {
-                //$('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Signing in...</span>');
+                if ($('#labelEmail').is(':visible')) {
+                    $('#labelEmail').html('<span class="label label-info">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Signing in...</span>');
+                    $('#loginErrorSummary').empty();
+                } else {
+                    $('#loginMsgLabelWrap').show();
+                    $('#loginMsgLabelWrap').html('<span class="label label-info">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Signing in...</span>');
+
+                    var valSummary = $('#LoginValSummary');
+                    valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
+
+                    var errorsList = valSummary.find('ul');
+                    errorsList.empty();
+                    errorsList.append('<li style="display:none"></li>');
+                }
             }
         }).done(function (data) {
             if (data.result === 'LoggedIn') {
                 window.location.href = path + '/Account/MyWebinars';
             } else if (data.data) {
-                var valSummary = $('#LoginValSummary');
-                valSummary.removeClass('validation-summary-valid').addClass('validation-summary-errors');
 
-                var errorsList = valSummary.find('ul');
-                errorsList.empty();
+                if ($('#labelEmail').is(':visible')) {
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;Login error...</span>');
+                    var valSummary = $('#loginErrorSummary');
+                    valSummary.addClass('validation-summary-errors');
+                    valSummary.append('Please address the following login errors: <ul></ul>');
 
-                for (var error in data.data) {
-                    if (data.data.hasOwnProperty(error)) {
-                        errorsList.append('<li>' + data.data[error] + '</li>');
-                        console.log(data.data[error]);
+                    var errorsList = valSummary.find('ul');
+                    errorsList.empty();
+
+                    for (var error in data.data) {
+                        if (data.data.hasOwnProperty(error)) {
+                            errorsList.append('<li>' + data.data[error] + '</li>');
+                            console.log(data.data[error]);
+                        }
+                    }
+
+                } else {
+                    var valSummary = $('#LoginValSummary');
+                    valSummary.removeClass('validation-summary-valid').addClass('validation-summary-errors');
+
+                    var errorsList = valSummary.find('ul');
+                    errorsList.empty();
+
+                    for (var error in data.data) {
+                        if (data.data.hasOwnProperty(error)) {
+                            errorsList.append('<li>' + data.data[error] + '</li>');
+                            console.log(data.data[error]);
+                        }
                     }
                 }
             }
         }).fail(function (data) {
 
         }).always(function (data) {
-            $(Registration.Constants.LoadingId).hide();
+            $('#loginMsgLabelWrap').hide();
         });
 
     });
