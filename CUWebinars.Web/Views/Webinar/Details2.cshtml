@@ -11,7 +11,7 @@
 
     if (Model.UserOwnsThisEvent > 0)
     {
-        <script language="javascript">
+        <script type="text/javascript">
             function exprsOrder(idRegType) {
                 alert("Please call us at 800-831-0678 ext. 3 and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder");
 
@@ -20,10 +20,8 @@
                 alert("Please call us at 800-831-0678 ext. 3 and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder");
 
             };
-        </script>
-        <script language="javascript">
 
-            $(document).ready(function () {
+            $(function () {
                 $("#SignUpFormContainer").hide();
             });
         </script>
@@ -298,3 +296,21 @@
         </div>
     </div>
 }
+
+<!-- Modal for creation of a user (if necessary) -->
+<div id="modalRegisterUserDuringCartOp" class="modal hide">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Register New User</h3>
+    </div>
+    <div id="registerUserBody" class="modal-body">
+        @using (Html.BeginForm("Register", "Account", null, FormMethod.Post, new {id = "_CreateUserForm", name = "createUser"}))
+        {
+            <h5></h5>
+        }
+    </div>
+    @*<div class="modal-footer">
+            <a href="#" id="cancelContinue" class="close btn" data-dismiss="modal">Cancel</a>
+            <a href="#" id="updateInstitution" class="btn btn-danger">Update</a>
+        </div>*@
+</div>

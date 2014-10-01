@@ -58,7 +58,7 @@ module Registration {
 	export class StateManager {
 		private action: Action;
 		private inputAction: InputAction;
-		private disregardIntitutionDomain: boolean = false;
+        private disregardInstitutionDomain: boolean = false;
 		private zipCheckRequired: boolean = false;
 		private nextButtonText: string = 'Next...';
 		private registerButtonText: string = 'Submit Register';
@@ -164,7 +164,7 @@ module Registration {
 
 			$('#TheSubmitButton').prop('value', this.nextButtonText);
 
-			this.disregardIntitutionDomain = true;
+			this.disregardInstitutionDomain = true;
 
 			this.action = Action.CheckEmail;
 
@@ -204,8 +204,8 @@ module Registration {
 			return this.action;
 		}
 
-		getDisregardIntitutionDomain(): boolean {
-			return this.disregardIntitutionDomain;
+		getDisregardInstitutionDomain(): boolean {
+            return this.disregardInstitutionDomain;
 		}
 
 		getInputAction(): InputAction {
@@ -223,7 +223,7 @@ module Registration {
 		initialize(): void {
 			this.action = Action.LogIn;
 			this.inputAction = InputAction.None;
-			this.disregardIntitutionDomain = false;
+            this.disregardInstitutionDomain = false;
 			this.zipCheckRequired = true;
 			this.startView();
 
@@ -356,7 +356,7 @@ module Registration {
 
 			$('#TheSubmitButton').prop('value', this.nextButtonText);
 
-			this.disregardIntitutionDomain = true;
+            this.disregardInstitutionDomain = true;
 
 			this.action = Action.CheckEmail;
 
@@ -369,6 +369,9 @@ module Registration {
 
 		passResetView(): void {
 			//console.log("call passResetView");
+
+            this.inputAction = InputAction.None;
+
 			$('#login').hide('slow');
 
 			var showResetInput = $.Deferred(function() {
@@ -384,7 +387,8 @@ module Registration {
 		registerView() : void {
 			$('#login').hide('slow');
 
-			this.action = Action.CheckEmail;
+            this.action = Action.CheckEmail;
+		    this.inputAction = InputAction.None;
 
 			var showRegisterInput = $.Deferred(function (pageObject) {
                 $('#register').show('slow');
@@ -401,7 +405,8 @@ module Registration {
 				normalResetPasswordButton.removeData('clicked');
 
 			$('#EdgeCaseResetPasswordButton').data('clicked', true);
-			$('form#ResetPasswordForm').submit();
+            $('form#ResetPasswordForm').submit();
+            $('#TheSubmitButton').attr('disabled', 'disabled');
 		}
 
 		resetPasswordOrLoginView (email:JQuery) : void {
@@ -444,7 +449,9 @@ module Registration {
 			$('#RegisterFields_ShippingAddress_Phone').val($('#RegisterFields_BillingAddress_Phone').val());
 		}
 
-		startView(): void {
+        startView(): void {
+
+            $('#loginMsgLabel').hide();
             $('#register').hide();
 			$('#reset').hide();
 			$('#nonUSAddressInput').hide();
@@ -458,8 +465,8 @@ module Registration {
 				case Action.CheckEmail:
 					//console.log('CheckEmail hit');
 					if (this.checkAndSubmitEmail()) {
-						if (!this.disregardIntitutionDomain)
-							this.disregardIntitutionDomain = true;
+                        if (!this.disregardInstitutionDomain)
+                            this.disregardInstitutionDomain = true;
 						$('#TheSubmitButton').prop('value', this.nextButtonText);
 					}
 					break;
@@ -484,8 +491,13 @@ module Registration {
 				case Action.SubmitLogin:
 					//console.log('submitLogin hit');
 					$('#Password').val($('#Password1').val());
-					$('#Email').val($('#Email1').val());
-					$('form#frmSignIn').submit();
+                    $('#Email').val($('#Email1').val());
+                    $('#ReturnUrl').val($('#returnUrl').val() || '/');
+                    $('form#frmSignIn').submit();
+
+                    if (this.inputAction === InputAction.EnterKeyPress)
+                        this.inputAction = InputAction.None;
+
 					break;
 				case Action.DisplayBillingAddressFields:
 					this.displayBillingFields();

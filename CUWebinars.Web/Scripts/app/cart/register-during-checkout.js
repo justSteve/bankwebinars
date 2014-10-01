@@ -19,19 +19,17 @@ $(function() {
         }
     });
 
-    regPageObject = new Registration.PageObject();
-    regPageObject.initializeState();
-
-    regUserStateManager = new Registration.StateManager(regPageObject);
+    regUserStateManager = new Registration.StateManager();
+    regUserStateManager.initializeState();
     regUserStateManager.setAction(Registration.Action.CheckEmail); // starting off with CheckEmail action.
 
     var path = utilities.setPath();
 
-    regPageObject.getEmailInput().bind('change keyup', function () {
+    $('#RegisterFields_Email').bind('change keyup', function () {
         if ($(this).validate().checkForm()) {
-            regPageObject.getTheSubmitButton().removeClass('button_disabled').attr('disabled', false);
+            $('#TheSubmitButton').removeClass('button_disabled').attr('disabled', false);
         } else {
-            regPageObject.getTheSubmitButton().addClass('button_disabled').attr('disabled', true);
+            $('#TheSubmitButton').addClass('button_disabled').attr('disabled', true);
         }
     });
 
@@ -51,7 +49,7 @@ $(function() {
         regUserStateManager.setInputAction(Registration.InputAction.ButtonClick);
 
         if (regUserStateManager.getAction() === '') {
-            regPageObject.getLabelEmail().html('<span class="label label-important">&nbsp;&nbsp;There registration has encountered a problem. Please refresh the page and re-start the registration process or call Tech Support at 800-831-0678 ext. 706.</span>');
+            $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;There registration has encountered a problem. Please refresh the page and re-start the registration process or call Tech Support at 800-831-0678 ext. 706.</span>');
 
             return false;
         }
@@ -93,7 +91,7 @@ $(function() {
 
         if (event.which == 13) {
 
-            if (regPageObject.getModalInstitution().filter(':visible').length > 0
+            if ($('#modalInstitution').filter(':visible').length > 0
                 && inputElementTriggered !== Registration.Button.YesUseAddress
                 && inputElementTriggered !== Registration.Button.EnterDiffAddress
                 && inputElementTriggered !== Registration.Button.NotInstitution) {
@@ -131,7 +129,7 @@ $(function() {
                 case Registration.Button.EnterDiffAddress: regUserStateManager.enterDifferentAddress(); break;
                 case Registration.Button.NotInstitution: regUserStateManager.notInstitutionAddress(); break;
                 default:
-                    if (regPageObject.getTheSubmitButton().val() === regUserStateManager.getRegisterButtonText()) {
+                    if ($('#TheSubmitButton').val() === regUserStateManager.getRegisterButtonText()) {
                         if ($(regUserStateManager.getSameAsBillingCheckedFilter()).val()) {
                             regUserStateManager.setShippingToBilling();
                         }
@@ -146,7 +144,7 @@ $(function() {
         }
     });
 
-    regPageObject.getCollapseShipping().on('shown', function () {
+    $('#CollapseShipping').on('shown', function () {
         if ($(regUserStateManager.getSameAsBillingCheckedFilter()).val()) {
             regUserStateManager.setShippingToBilling();
         }
@@ -158,7 +156,7 @@ $(function() {
         e.preventDefault();
 
         var jsonUrl = '/Account/CheckEmail';
-        var email = regPageObject.getEmailInput().val();
+        var email = $('#RegisterFields_Email').val();
 
         if (email.length === 0) {
             $('#RegisterFields_Email').focus();
@@ -169,10 +167,10 @@ $(function() {
                 cache: false,
                 url: jsonUrl,
                 dataType: Registration.Constants.JsonDataType,
-                data: { email: email, disregardIntitutionDomain: regUserStateManager.getDisregardIntitutionDomain() },
+                data: { email: email, disregardInstitutionDomain: regUserStateManager.getDisregardIntitutionDomain() },
                 beforeSend: function () {
                     // this is where we append a loading image
-                    regPageObject.getLabelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</span>');
+                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</span>');
                 }
             }).done(function (data) {
                 // successful request; do something with the data
@@ -188,7 +186,7 @@ $(function() {
 
             }).fail(function () {
                 // failed request; give feedback to user
-                regPageObject.getWrapEmail().html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+                $('#wrapEmail').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
             }).always(function () {
                 regUserStateManager.setInputAction(Registration.InputAction.None);
             });
@@ -212,14 +210,14 @@ $(function() {
                 data: { Zip: zipCode },
                 beforeSend: function () {
                     // this is where we append a loading image
-                    regPageObject.getLabelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Zip...</span>');
+                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Zip...</span>');
                 }
             }).done(function (data) {
                 // successful request; do something with the data
                 regUserStateManager.zipCodeVerified(data, zipCode);
             }).fail(function () {
                 // failed request; give feedback to user
-                regPageObject.getWrapZip().html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+                $('#wrapZip').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
             }).always(function () {
                 regUserStateManager.setInputAction(Registration.InputAction.None);
             });
@@ -241,11 +239,11 @@ $(function() {
         }
     });
 
-    regPageObject.getModalInstitution().on('hidden', function (e) {
+    $('#modalInstitution').on('hidden', function (e) {
 
         regUserStateManager.setInputAction(Registration.InputAction.None);
 
-        if (regPageObject.getWrapZip().is(':visible')) {
+        if ($('#wrapZip').is(':visible')) {
             regUserStateManager.setAction(Registration.Action.CheckEmail);
         }
 
@@ -258,14 +256,14 @@ $(function() {
 
         var createUserForm = $(this);
 
-        if (regPageObject.getFullNameShipping().val() === null || regPageObject.getFullNameShipping().val() === '') regPageObject.getFullNameShipping().val(regPageObject.getFullName().val());
-        if (regPageObject.getShippingFirstName().val() === null || regPageObject.getShippingFirstName().val() === '') regPageObject.getShippingFirstName().val(regPageObject.getFirstName());
-        if (regPageObject.getShippingLastName().val() === null || regPageObject.getShippingLastName().val() === '') regPageObject.getShippingLastName().val(regPageObject.getLastName());
-        if (regPageObject.getCityShipping().val() === null || regPageObject.getCityShipping().val() === '') regPageObject.getCityShipping().val(regPageObject.getCityBilling().val());
-        if (regPageObject.getStreetAddressShipping().val() === null || regPageObject.getStreetAddressShipping().val() === '') regPageObject.getStreetAddressShipping().val(regPageObject.getStreetAddressBilling().val());
-        if (regPageObject.getStreetAddressShipping2().val() === null || regPageObject.getStreetAddressShipping2().val() === '') regPageObject.getStreetAddressShipping2().val(regPageObject.getStreetAddressBilling().val());
-        if (regPageObject.getStateShipping().val() === null || regPageObject.getStateShipping().val() === '') regPageObject.getStateShipping().val(regPageObject.getStateBilling().val());
-        if (regPageObject.getZipShipping().val() === null || regPageObject.getZipShipping().val() === '') regPageObject.getZipShipping().val(regPageObject.getZipBilling().val());
+        if ($('#FullNameShipping').val() === null || $('#FullNameShipping').val() === '') $('#FullNameShipping').val($('#FullName').val());
+        if ($('#ShippingFirstName').val() === null || $('#ShippingFirstName').val() === '') $('#ShippingFirstName').val($('#FirstName'));
+        if ($('#ShippingLastName').val() === null || $('#ShippingLastName').val() === '') $('#ShippingLastName').val($('#LastName'));
+        if ($('#RegisterFields_ShippingAddress_City').val() === null || $('#RegisterFields_ShippingAddress_City').val() === '') $('#RegisterFields_ShippingAddress_City').val($('#RegisterFields_BillingAddress_City').val());
+        if ($('#RegisterFields_ShippingAddress_StreetAddress').val() === null || $('#RegisterFields_ShippingAddress_StreetAddress').val() === '') $('#RegisterFields_ShippingAddress_StreetAddress').val($('#RegisterFields_BillingAddress_StreetAddress').val());
+        if ($('#RegisterFields_ShippingAddress_StreetAddress2').val() === null || $('#RegisterFields_ShippingAddress_StreetAddress2').val() === '') $('#RegisterFields_ShippingAddress_StreetAddress2').val($('#RegisterFields_BillingAddress_StreetAddress').val());
+        if ($('#RegisterFields_ShippingAddress_State').val() === null || $('#RegisterFields_ShippingAddress_State').val() === '') $('#RegisterFields_ShippingAddress_State').val($('#RegisterFields_BillingAddress_State').val());
+        if ($('#RegisterFields_ShippingAddress_Zip').val() === null || $('#RegisterFields_ShippingAddress_Zip').val() === '') $('#RegisterFields_ShippingAddress_Zip').val($('#RegisterFields_BillingAddress_Zip').val());
 
         //$("#ProgressDialogBS").modal('show');
 
@@ -282,7 +280,7 @@ $(function() {
             beforeSend: function () {
                 //console.log('beforeSend Register Details');
                 // this is where we append a loading image
-                regPageObject.getLabelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
+                $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
             }
         }).done(function (data) {
             //alert('done: ');
@@ -290,14 +288,14 @@ $(function() {
                 if (data.Result === 'Success') {
                     //console.log('success: ' + data.Result);
                     regUserStateManager.setAction('');
-                    regPageObject.getLabelEmail().html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
+                    $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
                     location.assign(path + '/'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
                 } else if (data.Result === 'Fail') {
-                    regPageObject.getLabelEmail().html('<span class="label label-important">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
                     regUserStateManager.setAction(Registration.Action.SubmitRegister);
                 }
             } else if (!data.isSuccessful) {
-                regPageObject.getLabelEmail().html('<span class="label label-important">&nbsp;&nbsp;&nbsp;&nbsp;' + data.data.Exception + '</span>');
+                $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;&nbsp;&nbsp;' + data.data.Exception + '</span>');
             }
 
         }).fail(function (data) {
@@ -308,6 +306,4 @@ $(function() {
 
         return false;
     });
-
-
 });

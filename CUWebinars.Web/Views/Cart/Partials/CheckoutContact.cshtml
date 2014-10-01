@@ -21,6 +21,63 @@
                             @Html.ValidationMessageFor(model => model.RegisterFields.Email)
                         </div>
                     </div>
+                    <div class="fieldContainer" id="wrapZip">
+                        <div class="span10">
+                            Zip Code:
+                            <input type="text" class="enterSubmit" name="getZip" id="getZip" style="width: 70px;" />
+                            @*<input type="button" value="Find City/State" name="findCityState" class="btn btn-success" />*@
+                            &nbsp;&nbsp;<input type="button" value="Have a Non-US Address?" name="nonUSAddressBtn" id="nonUSAddressBtn" class="btn btn-mini btn-info" />
+                        </div>
+                    </div>
+                    <div class="fieldContainer" id="wrapReset">
+                        <div class="container">
+                            <div id="LoginPart" class="span4">
+                                <h3>Login to existing account?</h3>
+                                <p style="text-align: right;">
+                                    Email: <input id="Email1" name="Email1" value="" type="text"> <br>
+                                    Password: <input id="Password1" name="Password1" type="password"><br>
+
+                                    @*<input type="button" class="btn-success btn" name="submitLogin" value="Login" />*@
+                                </p>
+                            </div>
+                            <div class="span2"><h3 style="text-align: center; background-color: blanchedalmond">Or...</h3></div>
+                            <div id="ResetPart" class="span4">
+                                <p style="margin-top: 50px;">
+                                    We can email you a link that will reset your password.
+                                    <input id="EdgeCaseResetPasswordButton" type="button" class="btn btn-danger" name="resetPass" value="Reset Password" />
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="fieldContainer" id="wrapPass">
+                        <div class="container">
+                            <div class="row">
+                                <div class="span10">
+                                    <p>Please enter a secure and unique password to be used with this site.</p>
+
+                                    @Html.LabelFor(m => m.RegisterFields.Password, new { style = "display:inline-block;" }):
+                                    @Html.PasswordFor(m => m.RegisterFields.Password, new { style = " width:100px;" })
+                                    &nbsp;&nbsp;
+                                    @Html.LabelFor(m => m.RegisterFields.ConfirmPassword,
+                                        new
+                                        {
+                                            @for = "RegisterFields.ConfirmPassword",
+                                            style = "display:inline-block;"
+                                        }):
+
+                                    @Html.PasswordFor(m => m.RegisterFields.ConfirmPassword, new
+                                        {
+                                            id = "RegisterFields.ConfirmPassword",
+                                            @class = "{equalTo: '#Password'}",
+                                            style = " width:100px;"
+                                        })
+                                    <br />@Html.ValidationMessageFor(m => m.RegisterFields.Password)<br />
+                                    @Html.ValidationMessageFor(m => m.RegisterFields.ConfirmPassword)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
             </div>

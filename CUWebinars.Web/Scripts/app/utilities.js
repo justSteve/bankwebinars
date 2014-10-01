@@ -11,18 +11,9 @@ var Common;
         };
 
         Utilities.prototype.setPath = function () {
-            var indexOfHome = location.href.indexOf('Account');
-            var path = '';
-
-            if (indexOfHome > -1)
-                path = location.href.substr(0, location.href.indexOf('Account') - 1);
-            else
-                path = location.href;
-
-            //  IE is a rubbish browser!
-            if (path === '')
-                path = $(location).attr('href');
-            return path;
+            var fullUrl = $.url().attr('source');
+            var indexOfAccount = location.href.indexOf('Account');
+            return fullUrl.substr(0, indexOfAccount - 1);
         };
 
         Utilities.prototype.isValidEmailAddress = function (emailAddress) {

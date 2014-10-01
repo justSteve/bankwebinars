@@ -1,21 +1,6 @@
 ﻿var stateManager,
     utilities;
 
-function setPath() {
-    var indexOfHome = location.href.indexOf('Account');
-    var path = '';
-
-    if (indexOfHome > -1)
-        path = location.href.substr(0, location.href.indexOf('Account') - 1);
-    else
-        path = location.href;
-
-    //  IE is a rubbish browser!
-    if (path === '')
-        path = $(location).attr('href');
-    return path;
-}
-
 $(function () {
 
     //setup ajax error handling
@@ -180,7 +165,7 @@ $(function () {
                 cache: false,
                 url: jsonUrl,
                 dataType: Registration.Constants.JsonDataType,
-                data: { email: email, disregardIntitutionDomain: stateManager.getDisregardIntitutionDomain() },
+                data: { email: email, disregardInstitutionDomain: stateManager.getDisregardInstitutionDomain() },
                 beforeSend: function () {
                     // this is where we append a loading image
                     $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</span>');
@@ -236,6 +221,83 @@ $(function () {
             });
         }
         return false;
+    });
+
+    $('form#frmSignIn').submit(function (e) {
+
+        e.preventDefault();
+
+        if (!$('#ReturnUrl').val())
+            $('#ReturnUrl').val('/');
+
+        var data = $(this).serialize();
+        var url = $(this).attr('action');
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: data,
+            dataType: Registration.Constants.JsonDataType,
+            contentType: Registration.Constants.FormPostContentType,
+            //headers: headers,
+            beforeSend: function (xhr) {
+                if ($('#labelEmail').is(':visible')) {
+                    $('#labelEmail').html('<span class="label label-info">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Signing in...</span>');
+                    $('#loginErrorSummary').empty();
+                } else {
+                    $('#loginMsgLabelWrap').show();
+                    $('#loginMsgLabelWrap').html('<span class="label label-info">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Signing in...</span>');
+
+                    var valSummary = $('#LoginValSummary');
+                    valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
+
+                    var errorsList = valSummary.find('ul');
+                    errorsList.empty();
+                    errorsList.append('<li style="display:none"></li>');
+                }
+            }
+        }).done(function (data) {
+            if (data.result === 'LoggedIn') {
+                window.location.href = path + '/Account/MyWebinars';
+            } else if (data.data) {
+
+                if ($('#labelEmail').is(':visible')) {
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;Login error...</span>');
+                    var valSummary = $('#loginErrorSummary');
+                    valSummary.addClass('validation-summary-errors');
+                    valSummary.append('Please address the following login errors: <ul></ul>');
+
+                    var errorsList = valSummary.find('ul');
+                    errorsList.empty();
+
+                    for (var error in data.data) {
+                        if (data.data.hasOwnProperty(error)) {
+                            errorsList.append('<li>' + data.data[error] + '</li>');
+                            console.log(data.data[error]);
+                        }
+                    }
+
+                } else {
+                    var valSummary = $('#LoginValSummary');
+                    valSummary.removeClass('validation-summary-valid').addClass('validation-summary-errors');
+
+                    var errorsList = valSummary.find('ul');
+                    errorsList.empty();
+
+                    for (var error in data.data) {
+                        if (data.data.hasOwnProperty(error)) {
+                            errorsList.append('<li>' + data.data[error] + '</li>');
+                            console.log(data.data[error]);
+                        }
+                    }
+                }
+            }
+        }).fail(function (data) {
+
+        }).always(function (data) {
+            $('#loginMsgLabelWrap').hide();
+        });
+
     });
 
     $('#FullName').blur(function () {
