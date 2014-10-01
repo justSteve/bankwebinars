@@ -410,6 +410,7 @@
     <Content Include="Scripts\app\cart\create-order-new.js" />
     <Content Include="Scripts\app\cart\register-during-checkout.js" />
     <Content Include="Scripts\app\cart\details.js" />
+    <Content Include="Scripts\app\cart\register-user-in-cart.js" />
     <Content Include="Scripts\app\utilities.js" />
     <Content Include="Scripts\jsnlog.js" />
     <Content Include="Scripts\jsnlog.min.js" />
@@ -424,6 +425,7 @@
     <Content Include="Views\Admin\Home\_ResetPasswordPartial.cshtml" />
     <Content Include="Scripts\app\cart\create-order-new.js.map" />
     <Content Include="Scripts\app\utilities.js.map" />
+    <Content Include="Scripts\app\cart\register-user-in-cart.js.map" />
     <None Include="Views\Webinar\Details2.cshtml" />
     <None Include="Notification\Templates\OrderSubmittedAdditionalLocation.cshtml" />
     <Compile Include="ViewModel\AdditionalLocationAddViewModel.cs" />

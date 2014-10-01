@@ -19,9 +19,9 @@ $(function() {
         }
     });
 
-    regUserStateManager = new Registration.StateManager();
+    regUserStateManager = new RegistrationInCart.StateManager();
     regUserStateManager.initializeState();
-    regUserStateManager.setAction(Registration.Action.CheckEmail); // starting off with CheckEmail action.
+    regUserStateManager.setAction(RegistrationInCart.Action.CheckEmail); // starting off with CheckEmail action.
 
     var path = utilities.setPath();
 
@@ -43,10 +43,10 @@ $(function() {
         if (e.currentTarget.value === 'Create New Account?') // called directly in the razor partial view
             return false;
 
-        if (regUserStateManager.getInputAction() === Registration.InputAction.EnterKeyPress)
+        if (regUserStateManager.getInputAction() === RegistrationInCart.InputAction.EnterKeyPress)
             return false;
 
-        regUserStateManager.setInputAction(Registration.InputAction.ButtonClick);
+        regUserStateManager.setInputAction(RegistrationInCart.InputAction.ButtonClick);
 
         if (regUserStateManager.getAction() === '') {
             $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;There registration has encountered a problem. Please refresh the page and re-start the registration process or call Tech Support at 800-831-0678 ext. 706.</span>');
@@ -68,15 +68,15 @@ $(function() {
         // NotInstitution
 
         switch (clickedButton) {
-            case Registration.Button.SignInButton: regUserStateManager.logIn(); break;
-            case Registration.Button.TheSubmit:
+            case RegistrationInCart.Button.SignInButton: regUserStateManager.logIn(); break;
+            case RegistrationInCart.Button.TheSubmit:
                 //console.log('ActionForTheSubmit = ' + regUserStateManager.action);
                 regUserStateManager.submit(); break;
-            case Registration.Button.nonUSAddressBtn: regUserStateManager.nonUsAdddressInvoked(); break;
-            case Registration.Button.ResetPass: regUserStateManager.resetPassword(normalResetPasswordButton); break;
-            case Registration.Button.YesUseAddress: regUserStateManager.useRegisteredAddress(); break;
-            case Registration.Button.EnterDiffAddress: regUserStateManager.enterDifferentAddress(); break;
-            case Registration.Button.NotInstitution: regUserStateManager.notInstitutionAddress(); break;
+            case RegistrationInCart.Button.nonUSAddressBtn: regUserStateManager.nonUsAdddressInvoked(); break;
+            case RegistrationInCart.Button.ResetPass: regUserStateManager.resetPassword(normalResetPasswordButton); break;
+            case RegistrationInCart.Button.YesUseAddress: regUserStateManager.useRegisteredAddress(); break;
+            case RegistrationInCart.Button.EnterDiffAddress: regUserStateManager.enterDifferentAddress(); break;
+            case RegistrationInCart.Button.NotInstitution: regUserStateManager.notInstitutionAddress(); break;
             default:
         }
     }));
@@ -92,18 +92,18 @@ $(function() {
         if (event.which == 13) {
 
             if ($('#modalInstitution').filter(':visible').length > 0
-                && inputElementTriggered !== Registration.Button.YesUseAddress
-                && inputElementTriggered !== Registration.Button.EnterDiffAddress
-                && inputElementTriggered !== Registration.Button.NotInstitution) {
+                && inputElementTriggered !== RegistrationInCart.Button.YesUseAddress
+                && inputElementTriggered !== RegistrationInCart.Button.EnterDiffAddress
+                && inputElementTriggered !== RegistrationInCart.Button.NotInstitution) {
                 return false;
             }
 
-            regUserStateManager.setInputAction(Registration.InputAction.EnterKeyPress);
+            regUserStateManager.setInputAction(RegistrationInCart.InputAction.EnterKeyPress);
 
             switch (inputElementTriggered) {
                 case 'Password':
                 case 'Email':
-                case Registration.Button.SignInButton:
+                case RegistrationInCart.Button.SignInButton:
                     regUserStateManager.logIn();
                     break;
                 case 'RegisterFields.Password':
@@ -112,10 +112,10 @@ $(function() {
                 case 'getZip':
                 case 'Password1':
                 case 'Email1':
-                case Registration.Button.TheSubmit:
+                case RegistrationInCart.Button.TheSubmit:
                     //console.log('ActionForTheSubmit = ' + regUserStateManager.action);
                     regUserStateManager.submit(); break;
-                case Registration.Button.nonUSAddressBtn: regUserStateManager.nonUsAdddressInvoked(); break;
+                case RegistrationInCart.Button.nonUSAddressBtn: regUserStateManager.nonUsAdddressInvoked(); break;
                 case 'NormalResetPasswordInput':
                 case 'NormalResetPasswordButton':
                     if ($('#EdgeCaseResetPasswordButton').data('clicked'))
@@ -124,16 +124,16 @@ $(function() {
                     $('form#ResetPasswordForm').submit();
                     break;
                 case '#EdgeCaseResetPasswordButton':
-                case Registration.Button.ResetPass: regUserStateManager.resetPassword(normalResetPasswordButton); break;
-                case Registration.Button.YesUseAddress: regUserStateManager.useRegisteredAddress(); break;
-                case Registration.Button.EnterDiffAddress: regUserStateManager.enterDifferentAddress(); break;
-                case Registration.Button.NotInstitution: regUserStateManager.notInstitutionAddress(); break;
+                case RegistrationInCart.Button.ResetPass: regUserStateManager.resetPassword(normalResetPasswordButton); break;
+                case RegistrationInCart.Button.YesUseAddress: regUserStateManager.useRegisteredAddress(); break;
+                case RegistrationInCart.Button.EnterDiffAddress: regUserStateManager.enterDifferentAddress(); break;
+                case RegistrationInCart.Button.NotInstitution: regUserStateManager.notInstitutionAddress(); break;
                 default:
                     if ($('#TheSubmitButton').val() === regUserStateManager.getRegisterButtonText()) {
                         if ($(regUserStateManager.getSameAsBillingCheckedFilter()).val()) {
                             regUserStateManager.setShippingToBilling();
                         }
-                        regUserStateManager.setAction(Registration.Action.SubmitRegister);
+                        regUserStateManager.setAction(RegistrationInCart.Action.SubmitRegister);
                         regUserStateManager.submit();
                     }
             }
@@ -163,10 +163,10 @@ $(function() {
         } else {
             $.ajax({
                 type: 'GET',
-                contentType: Registration.Constants.FormPostContentType,
+                contentType: RegistrationInCart.Constants.FormPostContentType,
                 cache: false,
                 url: jsonUrl,
-                dataType: Registration.Constants.JsonDataType,
+                dataType: RegistrationInCart.Constants.JsonDataType,
                 data: { email: email, disregardInstitutionDomain: regUserStateManager.getDisregardIntitutionDomain() },
                 beforeSend: function () {
                     // this is where we append a loading image
@@ -188,7 +188,7 @@ $(function() {
                 // failed request; give feedback to user
                 $('#wrapEmail').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
             }).always(function () {
-                regUserStateManager.setInputAction(Registration.InputAction.None);
+                regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
             });
         }
     });
@@ -203,10 +203,10 @@ $(function() {
         } else {
             $.ajax({
                 type: 'GET',
-                contentType: Registration.Constants.FormPostContentType,
+                contentType: RegistrationInCart.Constants.FormPostContentType,
                 cache: false,
                 url: jsonUrl,
-                dataType: Registration.Constants.JsonDataType,
+                dataType: RegistrationInCart.Constants.JsonDataType,
                 data: { Zip: zipCode },
                 beforeSend: function () {
                     // this is where we append a loading image
@@ -219,7 +219,7 @@ $(function() {
                 // failed request; give feedback to user
                 $('#wrapZip').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
             }).always(function () {
-                regUserStateManager.setInputAction(Registration.InputAction.None);
+                regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
             });
         }
         return false;
@@ -241,10 +241,10 @@ $(function() {
 
     $('#modalInstitution').on('hidden', function (e) {
 
-        regUserStateManager.setInputAction(Registration.InputAction.None);
+        regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
 
         if ($('#wrapZip').is(':visible')) {
-            regUserStateManager.setAction(Registration.Action.CheckEmail);
+            regUserStateManager.setAction(RegistrationInCart.Action.CheckEmail);
         }
 
     });
@@ -292,7 +292,7 @@ $(function() {
                     location.assign(path + '/'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
                 } else if (data.Result === 'Fail') {
                     $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
-                    regUserStateManager.setAction(Registration.Action.SubmitRegister);
+                    regUserStateManager.setAction(RegistrationInCart.Action.SubmitRegister);
                 }
             } else if (!data.isSuccessful) {
                 $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;&nbsp;&nbsp;' + data.data.Exception + '</span>');
@@ -301,7 +301,7 @@ $(function() {
         }).fail(function (data) {
             //console.log('failed: ' + data);
         }).always(function () {
-            regUserStateManager.setInputAction(Registration.InputAction.None);
+            regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
         });
 
         return false;
