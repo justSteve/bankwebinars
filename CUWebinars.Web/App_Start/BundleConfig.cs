@@ -49,9 +49,9 @@ namespace CUWebinars.Web.App_Start
             bundles.Add(new ScriptBundle("~/bundles/createOrder").Include(
                          "~/Scripts/app/cart/additional-locations.js",
                          "~/Scripts/app/cart/create-order-new.js",
+                         "~/Scripts/app/cart/register-during-checkout.js",
                          "~/Scripts/app/cart/details.js",
-                         "~/Scripts/app/cart/register-user-in-cart.js",
-                         "~/Scripts/app/cart/register-during-checkout.js"
+                         "~/Scripts/app/cart/register-user-in-cart.js"
                          //"~/Scripts/app/cart/create-order.js"
                 //,"~/Scripts/app/cart/edit-order.js"
                         ));

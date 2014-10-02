@@ -58,17 +58,15 @@ $(function() {
 
         e.preventDefault();
         CheckoutInProcess = true;
+
         if (!cartStateManager.getIsUserLogged()) {
-            //
-            //TODO: Re-use code that's already been developed for the CreateAccount use case
-            //  with this difference.... the UI needs to be presented in a Modal Popup
 
             cartStateManager.setWhichStep('Step1');
             cartStateManager.SetCartState();
-            //$('#contactInfo').load('/Cart/CheckoutContactDetails', function () { });
-            cartStateManager.displayRegistrationModal({}, {});
+            $('#contactInfo').load('/Cart/CheckoutContactDetails', function() {
+                registerDuringCheckout.initialize();
+            });
 
-            //alert("get Contact info");
         } else {
 
             $("#ProgressDialogBS").modal('show');

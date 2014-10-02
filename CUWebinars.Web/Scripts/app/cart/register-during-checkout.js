@@ -1,19 +1,18 @@
-﻿var regPageObject,
-    regUserStateManager;
+﻿var registerDuringCheckout = {};
 
+registerDuringCheckout.initialize = function () {
 
-$(function() {
+    var regUserStateManager;
 
     var utilities = new Common.Utilities();
 
     //setup ajax error handling
     $.ajaxSetup({
-        error: function (x, status, error) {
+        error: function(x, status, error) {
             if (x.status == 403) {
                 alert('Sorry, your session has expired. Please login again to continue');
                 window.location.href = '/Account/Login';
-            }
-            else {
+            } else {
                 alert('An error occurred: ' + status + 'nError: ' + error);
             }
         }
@@ -25,7 +24,7 @@ $(function() {
 
     var path = utilities.setPath();
 
-    $('#RegisterFields_Email').bind('change keyup', function () {
+    $('#RegisterFields_Email').bind('change keyup', function() {
         if ($(this).validate().checkForm()) {
             $('#TheSubmitButton').removeClass('button_disabled').attr('disabled', false);
         } else {
@@ -33,12 +32,12 @@ $(function() {
         }
     });
 
-    $('[name="RegisterFields.ConfirmPassword"]').on('focus', function (event) {
+    $('[name="RegisterFields.ConfirmPassword"]').on('focus', function(event) {
         $(this).next('span').removeAttr('class').attr('class', 'field-validation-valid');
         $(this).next('span span').remove();
     });
 
-    $('body').on('click', 'input:button', (function (e, data) {
+    $('body').on('click', 'input:button', (function(e, data) {
 
         if (e.currentTarget.value === 'Create New Account?') // called directly in the razor partial view
             return false;
@@ -68,20 +67,33 @@ $(function() {
         // NotInstitution
 
         switch (clickedButton) {
-            case RegistrationInCart.Button.SignInButton: regUserStateManager.logIn(); break;
-            case RegistrationInCart.Button.TheSubmit:
-                //console.log('ActionForTheSubmit = ' + regUserStateManager.action);
-                regUserStateManager.submit(); break;
-            case RegistrationInCart.Button.nonUSAddressBtn: regUserStateManager.nonUsAdddressInvoked(); break;
-            case RegistrationInCart.Button.ResetPass: regUserStateManager.resetPassword(normalResetPasswordButton); break;
-            case RegistrationInCart.Button.YesUseAddress: regUserStateManager.useRegisteredAddress(); break;
-            case RegistrationInCart.Button.EnterDiffAddress: regUserStateManager.enterDifferentAddress(); break;
-            case RegistrationInCart.Button.NotInstitution: regUserStateManager.notInstitutionAddress(); break;
-            default:
+        case RegistrationInCart.Button.SignInButton:
+            regUserStateManager.logIn();
+            break;
+        case RegistrationInCart.Button.TheSubmit:
+            //console.log('ActionForTheSubmit = ' + regUserStateManager.action);
+            regUserStateManager.submit();
+            break;
+        case RegistrationInCart.Button.nonUSAddressBtn:
+            regUserStateManager.nonUsAdddressInvoked();
+            break;
+        case RegistrationInCart.Button.ResetPass:
+            regUserStateManager.resetPassword(normalResetPasswordButton);
+            break;
+        case RegistrationInCart.Button.YesUseAddress:
+            regUserStateManager.useRegisteredAddress();
+            break;
+        case RegistrationInCart.Button.EnterDiffAddress:
+            regUserStateManager.enterDifferentAddress();
+            break;
+        case RegistrationInCart.Button.NotInstitution:
+            regUserStateManager.notInstitutionAddress();
+            break;
+        default:
         }
     }));
 
-    $('input').keypress(function (event) {
+    $('input').keypress(function(event) {
 
         var inputElementTriggered = event.currentTarget.name;
         var normalResetPasswordButton = $('#NormalResetPasswordButton');
@@ -101,41 +113,52 @@ $(function() {
             regUserStateManager.setInputAction(RegistrationInCart.InputAction.EnterKeyPress);
 
             switch (inputElementTriggered) {
-                case 'Password':
-                case 'Email':
-                case RegistrationInCart.Button.SignInButton:
-                    regUserStateManager.logIn();
-                    break;
-                case 'RegisterFields.Password':
-                case 'RegisterFields.ConfirmPassword':
-                case 'RegisterFields.Email':
-                case 'getZip':
-                case 'Password1':
-                case 'Email1':
-                case RegistrationInCart.Button.TheSubmit:
-                    //console.log('ActionForTheSubmit = ' + regUserStateManager.action);
-                    regUserStateManager.submit(); break;
-                case RegistrationInCart.Button.nonUSAddressBtn: regUserStateManager.nonUsAdddressInvoked(); break;
-                case 'NormalResetPasswordInput':
-                case 'NormalResetPasswordButton':
-                    if ($('#EdgeCaseResetPasswordButton').data('clicked'))
-                        $('#EdgeCaseResetPasswordButton').removeData('clicked');
-                    $('#NormalResetPasswordButton').data('clicked', true);
-                    $('form#ResetPasswordForm').submit();
-                    break;
-                case '#EdgeCaseResetPasswordButton':
-                case RegistrationInCart.Button.ResetPass: regUserStateManager.resetPassword(normalResetPasswordButton); break;
-                case RegistrationInCart.Button.YesUseAddress: regUserStateManager.useRegisteredAddress(); break;
-                case RegistrationInCart.Button.EnterDiffAddress: regUserStateManager.enterDifferentAddress(); break;
-                case RegistrationInCart.Button.NotInstitution: regUserStateManager.notInstitutionAddress(); break;
-                default:
-                    if ($('#TheSubmitButton').val() === regUserStateManager.getRegisterButtonText()) {
-                        if ($(regUserStateManager.getSameAsBillingCheckedFilter()).val()) {
-                            regUserStateManager.setShippingToBilling();
-                        }
-                        regUserStateManager.setAction(RegistrationInCart.Action.SubmitRegister);
-                        regUserStateManager.submit();
+            case 'Password':
+            case 'Email':
+            case RegistrationInCart.Button.SignInButton:
+                regUserStateManager.logIn();
+                break;
+            case 'RegisterFields.Password':
+            case 'RegisterFields.ConfirmPassword':
+            case 'RegisterFields.Email':
+            case 'getZip':
+            case 'Password1':
+            case 'Email1':
+            case RegistrationInCart.Button.TheSubmit:
+                //console.log('ActionForTheSubmit = ' + regUserStateManager.action);
+                regUserStateManager.submit();
+                break;
+            case RegistrationInCart.Button.nonUSAddressBtn:
+                regUserStateManager.nonUsAdddressInvoked();
+                break;
+            case 'NormalResetPasswordInput':
+            case 'NormalResetPasswordButton':
+                if ($('#EdgeCaseResetPasswordButton').data('clicked'))
+                    $('#EdgeCaseResetPasswordButton').removeData('clicked');
+                $('#NormalResetPasswordButton').data('clicked', true);
+                $('form#ResetPasswordForm').submit();
+                break;
+            case '#EdgeCaseResetPasswordButton':
+            case RegistrationInCart.Button.ResetPass:
+                regUserStateManager.resetPassword(normalResetPasswordButton);
+                break;
+            case RegistrationInCart.Button.YesUseAddress:
+                regUserStateManager.useRegisteredAddress();
+                break;
+            case RegistrationInCart.Button.EnterDiffAddress:
+                regUserStateManager.enterDifferentAddress();
+                break;
+            case RegistrationInCart.Button.NotInstitution:
+                regUserStateManager.notInstitutionAddress();
+                break;
+            default:
+                if ($('#TheSubmitButton').val() === regUserStateManager.getRegisterButtonText()) {
+                    if ($(regUserStateManager.getSameAsBillingCheckedFilter()).val()) {
+                        regUserStateManager.setShippingToBilling();
                     }
+                    regUserStateManager.setAction(RegistrationInCart.Action.SubmitRegister);
+                    regUserStateManager.submit();
+                }
             }
 
             //console.log(regUserStateManager.action);
@@ -144,14 +167,20 @@ $(function() {
         }
     });
 
-    $('#CollapseShipping').on('shown', function () {
+    $('#collapseShipping').on('shown', function() {
         if ($(regUserStateManager.getSameAsBillingCheckedFilter()).val()) {
             regUserStateManager.setShippingToBilling();
         }
     });
 
+    $('#TheSubmitButton').on('mouseenter', function () {
+        if ($('#TheSubmitButton').val() === regUserStateManager.getRegisterButtonText() && $(regUserStateManager.getSameAsBillingCheckedFilter()).val()) {
+            regUserStateManager.setShippingToBilling();
+        }
+    });
 
-    $('form#checkEmail').submit(function (e) {
+
+    $('form#checkEmail').submit(function(e) {
 
         e.preventDefault();
 
@@ -168,11 +197,11 @@ $(function() {
                 url: jsonUrl,
                 dataType: RegistrationInCart.Constants.JsonDataType,
                 data: { email: email, disregardInstitutionDomain: regUserStateManager.getDisregardIntitutionDomain() },
-                beforeSend: function () {
+                beforeSend: function() {
                     // this is where we append a loading image
                     $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</span>');
                 }
-            }).done(function (data) {
+            }).done(function(data) {
                 // successful request; do something with the data
                 if (data.success === 'foundExisting') {
                     regUserStateManager.resetPasswordOrLoginView(email);
@@ -184,16 +213,16 @@ $(function() {
                     regUserStateManager.newPasswordView(email);
                 }
 
-            }).fail(function () {
+            }).fail(function() {
                 // failed request; give feedback to user
                 $('#wrapEmail').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
-            }).always(function () {
+            }).always(function() {
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
             });
         }
     });
 
-    $('form#checkZip').submit(function () {
+    $('form#checkZip').submit(function() {
 
         var jsonUrl = '/Account/CheckZip';
         var zipCode = $('#ZipChecker').val();
@@ -208,24 +237,24 @@ $(function() {
                 url: jsonUrl,
                 dataType: RegistrationInCart.Constants.JsonDataType,
                 data: { Zip: zipCode },
-                beforeSend: function () {
+                beforeSend: function() {
                     // this is where we append a loading image
                     $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Zip...</span>');
                 }
-            }).done(function (data) {
+            }).done(function(data) {
                 // successful request; do something with the data
                 regUserStateManager.zipCodeVerified(data, zipCode);
-            }).fail(function () {
+            }).fail(function() {
                 // failed request; give feedback to user
                 $('#wrapZip').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
-            }).always(function () {
+            }).always(function() {
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
             });
         }
         return false;
     });
 
-    $('#FullName').blur(function () {
+    $('#FullName').blur(function() {
         var tempName = $('#FullName').val().split(' ');
         if (tempName.length == 2) {
             $('#RegisterFields_FirstName').val(tempName[0]);
@@ -233,13 +262,13 @@ $(function() {
         } else {
             $('#RegisterFields_FirstName').val(tempName[0]);
             $('#RegisterFields_LastName').val(tempName[1]);
-            $('#getFull').hide();
+            $('#getFullNameBilling').hide();
             $('#getFirstLast').show();
             $('#RegisterFields_LastName').focus();
         }
     });
 
-    $('#modalInstitution').on('hidden', function (e) {
+    $('#modalInstitution').on('hidden', function(e) {
 
         regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
 
@@ -251,7 +280,7 @@ $(function() {
 
     //  This handler was colliding with one by the same name in create-user.
     //  It is now invoked from the create-user.js script.
-    $('#_CreateUserForm').on('submit', function (event) {
+    $('#_CreateUserForm').on('submit', function(event) {
         event.preventDefault();
 
         var createUserForm = $(this);
@@ -277,12 +306,12 @@ $(function() {
             url: url,
             dataType: constants.JsonDataType,
             data: data,
-            beforeSend: function () {
+            beforeSend: function() {
                 //console.log('beforeSend Register Details');
                 // this is where we append a loading image
                 $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
             }
-        }).done(function (data) {
+        }).done(function(data) {
             //alert('done: ');
             if (data.Result) {
                 if (data.Result === 'Success') {
@@ -298,12 +327,12 @@ $(function() {
                 $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;&nbsp;&nbsp;' + data.data.Exception + '</span>');
             }
 
-        }).fail(function (data) {
+        }).fail(function(data) {
             //console.log('failed: ' + data);
-        }).always(function () {
+        }).always(function() {
             regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
         });
 
         return false;
     });
-});
+};

@@ -203,6 +203,9 @@
                     </div>
                 }
 
+                @using (Html.BeginForm("Register", "Account", null, FormMethod.Post, new {id = "_CreateUserForm", name = "createUser"}))
+                {
+                }
                 <form id="checkEmail"><input type="hidden" name="emailChecker" id="emailChecker" /></form>
                 <form id="checkZip"><input type="hidden" name="ZipChecker" id="ZipChecker" /></form>
                 <form id="nonUSForm"><input type="hidden" name="AddressText" id="AddressText" /></form>
@@ -298,19 +301,18 @@
 }
 
 <!-- Modal for creation of a user (if necessary) -->
-<div id="modalRegisterUserDuringCartOp" class="modal hide">
+<div id="modalInstitution" class="modal hide">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3>Register New User</h3>
+        <h3>Insitution Information</h3>
     </div>
-    <div id="registerUserBody" class="modal-body">
-        @using (Html.BeginForm("Register", "Account", null, FormMethod.Post, new {id = "_CreateUserForm", name = "createUser"}))
-        {
-            <h5></h5>
-        }
+    <div id="UserInstitutionBody" class="modal-body">
+        <h5>Is this your institution?</h5>        <div id="ShowInstitution">placeholder for ajax response</div>
+
+        <div id="instInfo">
+            <p><input type="button" class="btn btn-primary" name="YesUseAddress" value="Yes, use this address." /></p>
+            <p><input type="button" class="btn btn-warning" name="EnterDiffAddress" value="Yes, that's my institution but I want to enter a different address." /></p>
+            <p><input type="button" class="btn btn-warning" name="NotInstitution" value="No, that's not my institution" /></p>
+        </div>
     </div>
-    @*<div class="modal-footer">
-            <a href="#" id="cancelContinue" class="close btn" data-dismiss="modal">Cancel</a>
-            <a href="#" id="updateInstitution" class="btn btn-danger">Update</a>
-        </div>*@
 </div>

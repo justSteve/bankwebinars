@@ -162,8 +162,7 @@ var OrderRegistration;
                     $('#collectAdditionalLocation').html('');
                     $("#confirmationTab").hide();
                     $("#signUpTab").hide();
-
-                    //$("#contactInfoTab").hide();
+                    $("#contactInfoTab").hide();
                     $('#AddToCart').attr({ disabled: false, value: 'SignUp' });
                     $('#AddToCart1').attr({ disabled: false, value: 'SignUp' });
 

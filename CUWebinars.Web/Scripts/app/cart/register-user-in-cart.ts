@@ -72,7 +72,7 @@ module RegistrationInCart {
 
         initializeState(): void {
 
-
+            $('#sameAsBilling').attr('checked', 'checked'); // So shipping address fields same as billing address fields by default.
             $('#collapseBilling').parent().hide();
             $('#collapseShipping').parent().hide();
 
@@ -180,12 +180,24 @@ module RegistrationInCart {
             });
         }
 
-        displayRegistrationModal(data, email): void {
+        foundInstitutionView(data, email): void {
 
             if (this.inputAction === InputAction.EnterKeyPress)
                 this.inputAction = InputAction.None;
             ////console.log("call foundInstitutionView: " + email);
-            $('#modalRegisterUserDuringCartOp').modal('show');
+            $('#modalInstitution').modal('show');
+
+            $('#RegisterFields_Institution').val(data.Institution);
+            $('#RegisterFields_ShippingAddress_StreetAddress').val(data.Address);
+            $('#RegisterFields_ShippingAddress_City').val(data.City);
+            $('#RegisterFields_ShippingAddress_State').val(data.State);
+            $('#RegisterFields_ShippingAddress_Zip').val(data.Zip);
+            $('#RegisterFields_BillingAddress_StreetAddress').val(data.Address);
+            $('#RegisterFields_BillingAddress_City').val(data.City);
+            $('#RegisterFields_BillingAddress_State').val(data.State);
+            $('#RegisterFields_BillingAddress_Zip').val(data.Zip);
+            $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;' + email.substring(email.indexOf('@')) + '</b>&nbsp; domain has been identified.</span>');
+            $('#ShowInstitution').html(data.Institution + '<br>' + data.Address + '<br>' + data.City + ', ' + data.State + ' ' + data.Zip + '<br>');
         }
 
         getAction(): Action {
