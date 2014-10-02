@@ -507,11 +507,12 @@ namespace CUWebinars.Business.Services
             ProcessDiscountCodes(currentOrder);
             CalculateOrderPrices(currentOrder);
 
-            if (confirmChangeEmailLink != String.Empty)
+            if (confirmChangeEmailLink == String.Empty || confirmChangeEmailLink == "")
             {
                 //we are saving a non-confirmed order
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, 1);
 
+                return updatedOrder;
 
             }
             else
