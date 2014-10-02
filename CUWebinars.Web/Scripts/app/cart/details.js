@@ -31,7 +31,8 @@ $(function() {
     $('[id^="AddToCart"]').on('click', function () {
 
         $(signUpForm).find('[name="RegistrationType"]').val($('input[name=RegistrationType]:checked', '#RegistrationType').val());
-        //alert($('input[name=RegistrationType]:checked', '#RegistrationType').val());
+        $(signUpForm).find('[name="stageOfCheckout"]').val("preRegistration");
+        
         signUpForm.submit();
     });
 
