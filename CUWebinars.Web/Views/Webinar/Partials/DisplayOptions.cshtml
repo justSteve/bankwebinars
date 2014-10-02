@@ -39,7 +39,7 @@
         $("[id^='regTypeID_']").on("click", function (oEvent) {
             $("#stage_of_checkout").val("preReg");
             //BuildPreRegPrice(oEvent);
-            stateManager.CheckIfAddLocShouldHide(oEvent.currentTarget.value);
+            cartStateManager.CheckIfAddLocShouldHide(oEvent.currentTarget.value);
         });
     });
 </script>
