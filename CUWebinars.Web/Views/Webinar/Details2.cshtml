@@ -205,6 +205,15 @@
 
                 @using (Html.BeginForm("Register", "Account", null, FormMethod.Post, new {id = "_CreateUserForm", name = "createUser"}))
                 {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="FirstName" name="FirstName" />
+                    <input type="hidden" id="LastName" name="LastName" />
+                    <input type="hidden" id="ShippingFirstName" name="ShippingFirstName" />
+                    <input type="hidden" id="ShippingLastName" name="ShippingLastName" />
+                    <input type="hidden" id="RegisterFields_BillingAddress_Country" name="RegisterFields.BillingAddress.Country" value="US" />
+                    <input type="hidden" id="RegisterFields_ShippingAddress_Country" name="RegisterFields.ShippingAddress.Country" value="US" />
+                    <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+                    <input type="hidden" id="emailAddress" />
                 }
                 <form id="checkEmail"><input type="hidden" name="emailChecker" id="emailChecker" /></form>
                 <form id="checkZip"><input type="hidden" name="ZipChecker" id="ZipChecker" /></form>

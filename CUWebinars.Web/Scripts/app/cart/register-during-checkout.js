@@ -294,18 +294,28 @@ registerDuringCheckout.initialize = function () {
         if ($('#RegisterFields_ShippingAddress_State').val() === null || $('#RegisterFields_ShippingAddress_State').val() === '') $('#RegisterFields_ShippingAddress_State').val($('#RegisterFields_BillingAddress_State').val());
         if ($('#RegisterFields_ShippingAddress_Zip').val() === null || $('#RegisterFields_ShippingAddress_Zip').val() === '') $('#RegisterFields_ShippingAddress_Zip').val($('#RegisterFields_BillingAddress_Zip').val());
 
-        //$("#ProgressDialogBS").modal('show');
+        //  First, sort out the Antiforgery token for json POST
+        var token = $('[name=__RequestVerificationToken]').val();
+        var headers = { };
+        headers['__RequestVerificationToken'] = token;
 
-        var data = createUserForm.serialize();
+        var tabInputs = formProcessor.getApplicableInputs('contactInfo');
+        var formInputs = formProcessor.getApplicableInputs('_CreateUserForm');
+        var payloadFromTab = formProcessor.processInputs(tabInputs);
+        var payloadFromForm = formProcessor.processInputs(formInputs);
+        var payload = _.extend(payloadFromTab, payloadFromForm);
+        delete(payload['undefined']);
+
         var url = createUserForm.attr('action');
 
         $.ajax({
             type: 'POST',
-            contentType: constants.FormPostContentType,
+            contentType: constants.JsonContentType,
             cache: false,
             url: url,
             dataType: constants.JsonDataType,
-            data: data,
+            data: JSON.stringify(payload),
+            headers: headers,
             beforeSend: function() {
                 //console.log('beforeSend Register Details');
                 // this is where we append a loading image

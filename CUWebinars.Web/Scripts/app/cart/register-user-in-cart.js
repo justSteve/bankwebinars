@@ -498,7 +498,7 @@ var RegistrationInCart;
         StateManager.prototype.submitCreateUserForm = function () {
             var valid = $('#_CreateUserForm').valid();
 
-            //on account creation default the shipping phone to be same as billing
+            // on account creation default the shipping phone to be same as billing
             $("#RegisterFields.ShippingAddress.phone").val($('#RegisterFields_BillingAddress_Phone'));
 
             //console.log("validating createUserForm: " + valid);
