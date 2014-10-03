@@ -508,7 +508,7 @@ var Registration;
             var valid = $('#_CreateUserForm').valid();
 
             //on account creation default the shipping phone to be same as billing
-            $("#RegisterFields.ShippingAddress.phone").val($('#RegisterFields_BillingAddress_Phone'));
+            $('#RegisterFields.ShippingAddress.phone').val($('#RegisterFields_BillingAddress_Phone').val());
 
             //console.log("validating createUserForm: " + valid);
             if (valid) {

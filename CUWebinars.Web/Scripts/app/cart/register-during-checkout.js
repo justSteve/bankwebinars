@@ -306,7 +306,8 @@ registerDuringCheckout.initialize = function () {
         var payload = _.extend(payloadFromTab, payloadFromForm);
         delete(payload['undefined']);
 
-        var url = createUserForm.attr('action');
+        //var url = createUserForm.attr('action');
+        var url = '/Account/RegisterFromCart';
 
         $.ajax({
             type: 'POST',
@@ -327,8 +328,16 @@ registerDuringCheckout.initialize = function () {
                 if (data.Result === 'Success') {
                     //console.log('success: ' + data.Result);
                     regUserStateManager.setAction('');
-                    $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
-                    location.assign(path + '/'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
+
+                    if (utilities.relativePathStartsWith(payload['returnUrl'])) {
+                        $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! On to check-out...</span>');
+                        $('#btnLogin').html('<a href="/Account/Manage" id=\'btnLogin\' title=\'Manage\'>' + payload['FullName'] + '</a>');
+                        $('#btnLogin').after('<a href="javascript:document.getElementById(\'logoutForm\').submit()">&nbsp;&nbsp;[Log Off]</a>')
+                    } else {
+                        $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
+                        location.assign(path + '/');
+                    }
+
                 } else if (data.Result === 'Fail') {
                     $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
                     regUserStateManager.setAction(RegistrationInCart.Action.SubmitRegister);

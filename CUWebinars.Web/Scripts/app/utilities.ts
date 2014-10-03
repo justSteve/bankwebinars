@@ -6,11 +6,26 @@ module Common {
 
     export class Utilities {
 
+        getRelativePath(): string {
+            return $.url().attr('relative');
+        }
+
         getMainPath(pathToCheck : string) : string  {
 
             if (pathToCheck.substr(pathToCheck.length - 1) === '/')
                 return pathToCheck.substr(0, pathToCheck.length - 1);
             return pathToCheck;
+        }
+
+        relativePathStartsWith(stringToCheck : string) : boolean {
+            var path = this.getRelativePath();
+            var len = stringToCheck.length;
+
+            if (path.slice(0, len) === stringToCheck)
+                return true;
+            else {
+                return false;
+            }
         }
 
         setPath(): string {
