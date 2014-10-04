@@ -207,6 +207,12 @@ namespace CUWebinars.Web.Controllers
             return "error";
         }
 
+
+        public PartialViewResult GetLoginPartial()
+        {
+            return PartialView("_LoginPartial");
+        }
+
         public ActionResult MyWebinars()
         {
             var currentUser = GetWebUserFromIPrincipal();
@@ -825,7 +831,6 @@ namespace CUWebinars.Web.Controllers
             _logger.Fatal("Account.LogOff at Unauthenticated User. Session=" + AppHelper.GetUserAuditInfo());
             return RedirectToAction("Index", "Home");
         }
-
 
 
         // POST: /Account/Register

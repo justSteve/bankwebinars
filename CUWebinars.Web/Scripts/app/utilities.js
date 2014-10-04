@@ -27,7 +27,8 @@ var Common;
 
         Utilities.prototype.setPath = function () {
             var fullUrl = $.url().attr('source');
-            var indexOfAccount = location.href.indexOf('Account');
+            var relativePath = this.getRelativePath();
+            var indexOfAccount = location.href.indexOf(relativePath);
             return fullUrl.substr(0, indexOfAccount - 1);
         };
 

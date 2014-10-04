@@ -331,8 +331,10 @@ registerDuringCheckout.initialize = function () {
 
                     if (utilities.relativePathStartsWith(payload['returnUrl'])) {
                         $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! On to check-out...</span>');
-                        $('#btnLogin').html('<a href="/Account/Manage" id=\'btnLogin\' title=\'Manage\'>' + payload['FullName'] + '</a>');
-                        $('#btnLogin').after('<a href="javascript:document.getElementById(\'logoutForm\').submit()">&nbsp;&nbsp;[Log Off]</a>')
+
+                        $('#loginContainer').empty().load('/Account/GetLoginPartial', function(e) {
+                            var o = e;
+                        });
                     } else {
                         $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
                         location.assign(path + '/');

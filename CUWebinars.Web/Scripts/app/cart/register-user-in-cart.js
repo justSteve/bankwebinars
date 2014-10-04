@@ -264,7 +264,7 @@ var RegistrationInCart;
             } else {
                 $('#modalInstitution').modal('hide');
                 $('#labelEmail').fadeOut(500, function () {
-                    $(this).html('<span class="label label-success">&nbsp;&nbsp;&nbsp;&nbsp;' + $('#RegisterFields_Email').val() + ' will be used for your email address.</span>');
+                    $(this).html('<span class="label label-success">&nbsp;&nbsp;' + $('#RegisterFields_Email').val() + ' will be used for your email address.</span>');
                     $(this).fadeIn(500);
                 });
             }
@@ -347,7 +347,7 @@ var RegistrationInCart;
             });
 
             $('#wrapZip').hide('slow');
-            $('#labelEmail').html('<span class="label label-info">&nbsp;&nbsp;&nbsp;&nbsp;Proceed or enter a different email address.</span>');
+            $('#labelEmail').html('<span class="label label-info">&nbsp;&nbsp;Proceed or enter a different email address.</span>');
 
             //  Clear the billing and shipping addresses
             $('#collapseBilling input').val('');

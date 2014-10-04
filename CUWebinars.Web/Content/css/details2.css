@@ -1,4 +1,20 @@
-﻿.icon-question-sign {
+﻿#contactInfo label
+{
+    display: inline-block;
+    width: 100px;
+    text-align: right;   
+}
+
+#resetPart p {
+    margin-top: 50px;
+}
+
+#resetPart h3 {
+    text-align: center; 
+    background-color: blanchedalmond
+}
+
+.icon-question-sign {
     background-position: 14px 14px;
 }
 

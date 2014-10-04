@@ -184,7 +184,9 @@
     <!--end mobile navigation trigger-->
     <section class="container preheader">
         <!--this is the login for the user-->
-        @Html.Partial("_LoginPartial")
+        <div id="loginContainer">
+            @Html.Partial("_LoginPartial")
+        </div>
 
         <!--<div class="search-wrapper">
                 <form class="search" method="post" action="/home/search">
