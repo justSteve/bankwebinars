@@ -179,6 +179,7 @@
                 {
                     @Html.HiddenFor(model => model.Webinar.idWebinar)
                     @Html.HiddenFor(model => model.WebUser.idUser)
+                    <input type="hidden" name="stageOfCheckout"/>
 
 
                     <div class="content offset2 span8 well">
@@ -292,7 +293,6 @@
 
 @if (Model.WebUser.UserType == UserType.Admin)
 {
-
     <!-- Modal -->
     <div id="logsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="logsModalLabel" aria-hidden="true">
         <div class="modal-header">

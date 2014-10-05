@@ -18,7 +18,7 @@ namespace CUWebinars.Business.Repository
         IList<Order> GetOrdersForRecordedEventNotifications(int idWebinar);
         IList<Order> GetOrdersForShippedEventNotifications();
         OrderRow GetOrderRowById(int idOrderRow);
-        Order SaveOrderChanges(Order order);
+        Order SaveOrderChanges(Order order, int? isFromSignup);
         IList<Order> SelectOrdersWithArchivedWebinars(int idUser);
         IList<Order> SelectOrdersWithRecordedWebinars(int idUser);
         IList<Order> SelectOrdersWithScheduledWebinars(int idUser);
