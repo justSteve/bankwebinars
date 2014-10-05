@@ -123,18 +123,12 @@
     <Reference Include="Glimpse.Ninject">
       <HintPath>..\packages\Glimpse.Ninject.0.9.0\lib\net4\Glimpse.Ninject.dll</HintPath>
     </Reference>
-    <Reference Include="JSNLog, Version=2.7.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="JSNLog, Version=2.7.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\JSNLog.2.7.4.0\lib\net40\JSNLog.dll</HintPath>
+      <HintPath>..\packages\JSNLog.2.7.5.0\lib\net40\JSNLog.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="LogentriesCore">
-      <HintPath>..\packages\logentries.core.2.4.4\lib\net40\LogentriesCore.dll</HintPath>
-    </Reference>
-    <Reference Include="LogentriesLog4net">
-      <HintPath>..\packages\logentries.log4net.2.4.2\lib\net40\LogentriesLog4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.ApplicationServer.Caching.Client, Version=101.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -379,6 +373,9 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <None Include="log4net.config">
+      <SubType>Designer</SubType>
+    </None>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdhocNotificationController.cs" />
     <Compile Include="Controllers\Admin\AdminController.cs" />
@@ -417,7 +414,6 @@
     <Content Include="Scripts\jsnlog.min.js" />
     <Content Include="Scripts\purl.js" />
     <Content Include="Views\Cart\Partials\_DisplayRowPrice.cshtml" />
-    <Content Include="Scripts\jsnlog.js.map" />
     <Content Include="Views\Admin\Home\_ImportOrder.cshtml" />
     <Content Include="Views\Admin\Home\_LogInAsUser.cshtml" />
     <Content Include="Views\Admin\Home\_ManualPasswordReset.cshtml" />
@@ -428,6 +424,7 @@
     <Content Include="Scripts\app\utilities.js.map" />
     <Content Include="Views\Cart\Partials\_DisplayOptionsInDropDown.cshtml" />
     <Content Include="Scripts\app\cart\register-user-in-cart.js.map" />
+    <Content Include="Scripts\jsnlog.js.map" />
     <None Include="Views\Webinar\Details2.cshtml" />
     <None Include="Notification\Templates\OrderSubmittedAdditionalLocation.cshtml" />
     <Compile Include="ViewModel\AdditionalLocationAddViewModel.cs" />
@@ -1922,6 +1919,7 @@
     <Content Include="Views\Account\Partials\OrderHasAdditionalLocations.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Data\Logs\" />
     <Folder Include="App_Data\Notifications\" />
     <Folder Include="App_Data\Trace\" />
     <Folder Include="Infrastructure\apis\citrix\GTW\" />
