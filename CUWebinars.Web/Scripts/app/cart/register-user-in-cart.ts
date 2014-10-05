@@ -152,6 +152,9 @@ module RegistrationInCart {
 
             $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</span>');
             $('#TheSubmitButton').prop('value', this.registerButtonText);
+
+            if (this.inputAction === InputAction.EnterKeyPress)
+                this.inputAction = InputAction.None;
         }
 
         enterDifferentAddress(): void {
@@ -247,7 +250,7 @@ module RegistrationInCart {
             });
 
             $.when(showPwdInput.resolve()).then(function () {
-                $('RegisterFieldsPassword').focus();
+                $('#RegisterFields_Password').focus();
             });
 
 
@@ -256,7 +259,7 @@ module RegistrationInCart {
             } else {
                 $('#modalInstitution').modal('hide');
                 $('#labelEmail').fadeOut(500, function () {
-                    $(this).html('<span class="label label-success">&nbsp;&nbsp;&nbsp;&nbsp;' + $('#RegisterFields_Email').val() + ' will be used for your email address.</span>');
+                    $(this).html('<span class="label label-success">&nbsp;&nbsp;' + $('#RegisterFields_Email').val() + ' will be used for your email address.</span>');
                     $(this).fadeIn(500);
                 });
             }
@@ -343,7 +346,7 @@ module RegistrationInCart {
 
 
             $('#wrapZip').hide('slow');
-            $('#labelEmail').html('<span class="label label-info">&nbsp;&nbsp;&nbsp;&nbsp;Proceed or enter a different email address.</span>');
+            $('#labelEmail').html('<span class="label label-info">&nbsp;&nbsp;Proceed or enter a different email address.</span>');
 
             //  Clear the billing and shipping addresses
             $('#collapseBilling input').val('');
@@ -421,6 +424,9 @@ module RegistrationInCart {
 
             this.action = Action.SubmitLogin;
             $('#TheSubmitButton').prop('value', 'Log In');
+
+            if (this.inputAction === InputAction.EnterKeyPress)
+                this.inputAction = InputAction.None;
         }
 
         setAction(incomingAction: Action): void {
@@ -432,9 +438,20 @@ module RegistrationInCart {
         }
 
         setShippingToBilling(): void {
-            $('#FullNameShipping').val($('#FullName').val());
-            $('#ShippingFirstName').val($('#FirstName').val());
-            $('#ShippingLastName').val($('#LastName').val());
+
+            var firstName = $('#RegisterFields_FirstName').val();
+            var lastName = $('#RegisterFields_LastName').val();
+
+            if ($('#RegisterFields_LastName').val()) {
+                $('#ShippingFirstName').val(firstName);
+                $('#ShippingLastName').val(lastName);
+                $('#FirstName').val(firstName);
+                $('#LastName').val(lastName);
+                $('#FullNameShipping').val(firstName + ' ' + lastName);
+            } else {
+                $('#FullNameShipping').val($('#FullName').val());
+            }
+
             $('#RegisterFields_ShippingAddress_City').val($('#RegisterFields_BillingAddress_City').val());
             $('#RegisterFields_ShippingAddress_State').val($('#RegisterFields_BillingAddress_State').val());
             $('#RegisterFields_ShippingAddress_StreetAddress').val($('#RegisterFields_BillingAddress_StreetAddress').val());
@@ -483,6 +500,8 @@ module RegistrationInCart {
                     break;
                 case Action.SubmitLogin:
                     //console.log('submitLogin hit');
+                    if (this.inputAction === InputAction.EnterKeyPress)
+                        this.inputAction = InputAction.None;
                     $('#Password').val($('#Password1').val());
                     $('#Email').val($('#Email1').val());
                     $('form#frmSignIn').submit();

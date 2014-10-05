@@ -162,6 +162,9 @@ var RegistrationInCart;
 
             $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</span>');
             $('#TheSubmitButton').prop('value', this.registerButtonText);
+
+            if (this.inputAction === InputAction.EnterKeyPress)
+                this.inputAction = InputAction.None;
         };
 
         StateManager.prototype.enterDifferentAddress = function () {
@@ -256,7 +259,7 @@ var RegistrationInCart;
             });
 
             $.when(showPwdInput.resolve()).then(function () {
-                $('RegisterFieldsPassword').focus();
+                $('#RegisterFields_Password').focus();
             });
 
             if (email) {
@@ -425,6 +428,9 @@ var RegistrationInCart;
 
             this.action = Action.SubmitLogin;
             $('#TheSubmitButton').prop('value', 'Log In');
+
+            if (this.inputAction === InputAction.EnterKeyPress)
+                this.inputAction = InputAction.None;
         };
 
         StateManager.prototype.setAction = function (incomingAction) {
@@ -436,9 +442,19 @@ var RegistrationInCart;
         };
 
         StateManager.prototype.setShippingToBilling = function () {
-            $('#FullNameShipping').val($('#FullName').val());
-            $('#ShippingFirstName').val($('#FirstName').val());
-            $('#ShippingLastName').val($('#LastName').val());
+            var firstName = $('#RegisterFields_FirstName').val();
+            var lastName = $('#RegisterFields_LastName').val();
+
+            if ($('#RegisterFields_LastName').val()) {
+                $('#ShippingFirstName').val(firstName);
+                $('#ShippingLastName').val(lastName);
+                $('#FirstName').val(firstName);
+                $('#LastName').val(lastName);
+                $('#FullNameShipping').val(firstName + ' ' + lastName);
+            } else {
+                $('#FullNameShipping').val($('#FullName').val());
+            }
+
             $('#RegisterFields_ShippingAddress_City').val($('#RegisterFields_BillingAddress_City').val());
             $('#RegisterFields_ShippingAddress_State').val($('#RegisterFields_BillingAddress_State').val());
             $('#RegisterFields_ShippingAddress_StreetAddress').val($('#RegisterFields_BillingAddress_StreetAddress').val());
@@ -485,6 +501,8 @@ var RegistrationInCart;
                     break;
                 case Action.SubmitLogin:
                     //console.log('submitLogin hit');
+                    if (this.inputAction === InputAction.EnterKeyPress)
+                        this.inputAction = InputAction.None;
                     $('#Password').val($('#Password1').val());
                     $('#Email').val($('#Email1').val());
                     $('form#frmSignIn').submit();

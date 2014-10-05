@@ -63,7 +63,9 @@ $(function() {
 
             cartStateManager.setWhichStep('Step1');
             cartStateManager.SetCartState();
-            $('#contactInfo').load('/Cart/CheckoutContactDetails', function() {
+            $('#SignUpForm > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
+            $('#contactInfo').load('/Cart/CheckoutContactDetails', function () {
+                
                 registerDuringCheckout.initialize();
             });
 

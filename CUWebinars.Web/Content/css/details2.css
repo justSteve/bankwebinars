@@ -1,12 +1,11 @@
-﻿#contactInfo label
+﻿#SignUpFormContainer {
+    min-height: 500px;
+}
+#contactInfo label
 {
     display: inline-block;
     width: 100px;
     text-align: right;   
-}
-
-#resetPart p {
-    margin-top: 50px;
 }
 
 #resetPart h3 {
