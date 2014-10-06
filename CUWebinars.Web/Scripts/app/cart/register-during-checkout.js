@@ -289,8 +289,8 @@ registerDuringCheckout.initialize = function () {
         var createUserForm = $(this);
 
         if ($('#FullNameShipping').val() === null || $('#FullNameShipping').val() === '') $('#FullNameShipping').val($('#FullName').val());
-        if ($('#ShippingFirstName').val() === null || $('#ShippingFirstName').val() === '') $('#ShippingFirstName').val($('#FirstName'));
-        if ($('#ShippingLastName').val() === null || $('#ShippingLastName').val() === '') $('#ShippingLastName').val($('#LastName'));
+        if ($('#ShippingFirstName').val() === null || $('#ShippingFirstName').val() === '') $('#ShippingFirstName').val($('#FirstName').val());
+        if ($('#ShippingLastName').val() === null || $('#ShippingLastName').val() === '') $('#ShippingLastName').val($('#LastName').val());
         if ($('#RegisterFields_ShippingAddress_City').val() === null || $('#RegisterFields_ShippingAddress_City').val() === '') $('#RegisterFields_ShippingAddress_City').val($('#RegisterFields_BillingAddress_City').val());
         if ($('#RegisterFields_ShippingAddress_StreetAddress').val() === null || $('#RegisterFields_ShippingAddress_StreetAddress').val() === '') $('#RegisterFields_ShippingAddress_StreetAddress').val($('#RegisterFields_BillingAddress_StreetAddress').val());
         if ($('#RegisterFields_ShippingAddress_StreetAddress2').val() === null || $('#RegisterFields_ShippingAddress_StreetAddress2').val() === '') $('#RegisterFields_ShippingAddress_StreetAddress2').val($('#RegisterFields_BillingAddress_StreetAddress').val());
@@ -354,6 +354,71 @@ registerDuringCheckout.initialize = function () {
         }).fail(function(data) {
             //console.log('failed: ' + data);
         }).always(function() {
+            regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
+        });
+
+        return false;
+    });
+
+    $('#frmSignIn').on('submit', function (event) {
+
+        event.preventDefault();
+
+        var signInForm = $(this);
+
+        if ($('#loginEmail').val() === null || $('#loginEmail').val() === '') $('#loginEmail').val($('#Email1').val());
+        if ($('#loginPassword').val() === null || $('#loginPassword').val() === '') $('#loginPassword').val($('#Password1').val());
+        //if ($('#loginRememberMe').val() === null || $('#ShippingLastName').val() === '') $('#loginRememberMe').val($('#LastName'));
+
+
+
+        var url = signInForm.attr('action');
+        var data = signInForm.serialize();
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.FormPostContentType,
+            cache: false,
+            url: url,
+            dataType: constants.JsonDataType,
+            data: data,
+            beforeSend: function () {
+                $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Logging you in...</span>');
+                $('#loginErrorSummary').empty();
+            }
+        }).done(function (data) {
+            if (data.result) {
+                if (data.result === 'LoggedIn') {
+
+                    regUserStateManager.setAction('');
+
+                    $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;&nbsp;You have successfully logged in!</span>');
+
+                    $('#loginContainer').empty().load('/Account/GetLoginPartial', function (e) {
+                        var o = e;
+                    });
+                } 
+            } else if (!data.isSuccessful) {
+                $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;' + data.data.Exception + '</span>');
+
+                var valSummary = $('#loginErrorSummary');
+                valSummary.addClass('validation-summary-errors');
+                valSummary.append('Please address the following login errors: <ul></ul>');
+
+                var errorsList = valSummary.find('ul');
+                errorsList.empty();
+
+                for (var error in data.data) {
+                    if (data.data.hasOwnProperty(error)) {
+                        errorsList.append('<li>' + data.data[error] + '</li>');
+                        console.log(data.data[error]);
+                    }
+                }
+            }
+
+        }).fail(function (data) {
+            //console.log('failed: ' + data);
+        }).always(function () {
             regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
         });
 

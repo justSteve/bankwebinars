@@ -235,6 +235,9 @@ module RegistrationInCart {
 
         logIn(): void {
 
+            if (this.inputAction === InputAction.EnterKeyPress)
+                this.inputAction = InputAction.None;
+
             $('form#frmSignIn').submit();
         }
 
