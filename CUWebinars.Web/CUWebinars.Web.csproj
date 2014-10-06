@@ -385,6 +385,8 @@
     <Compile Include="Controllers\api\AddressesController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Core\Exceptions.cs" />
+    <Compile Include="Core\Orchestrators\CartControllerOrchestrator.cs" />
+    <Compile Include="Core\Orchestrators\ICartControllerOrchestrator.cs" />
     <Compile Include="Core\Orchestrators\IOrderControllerOrchestrator.cs" />
     <Compile Include="Core\Orchestrators\OrderControllerOrchestrator.cs" />
     <Compile Include="ElmahHandleErrorAttribute.cs" />

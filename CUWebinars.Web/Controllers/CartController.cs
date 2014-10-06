@@ -1,14 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Net;
-using CUWebinars.Business.AccountService;
-using CUWebinars.Business.Models;
-using CUWebinars.Business.Services;
-using CUWebinars.Web.Helpers;
-using CUWebinars.Web.Models;
+﻿using CUWebinars.Business.Models;
+using CUWebinars.Web.Core.Orchestrators;
+using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Ninject.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -19,30 +16,22 @@ namespace CUWebinars.Web.Controllers
         private TTSWebinarsContext db = new TTSWebinarsContext();
         readonly IStateService _stateService;
 
-        private readonly IMembershipService _membershipService;
         private readonly ILogger _logger;
-        private readonly IOrderManagementService _orderManagementService;
-        private readonly IWebinarManagementService _webinarManagementService;
+        private readonly ICartControllerOrchestrator _cartControllerOrchestrator;
         private bool _disposed;
 
-        public CartController(IMembershipService membershipService,
-            IOrderManagementService orderManagementService,
-            IWebinarManagementService webinarManagementService,
-            IStateService stateService,
-            ILogger logger)
+        public CartController(ILogger logger,
+            ICartControllerOrchestrator cartControllerOrchestrator)
         {
-            _membershipService = membershipService;
             _logger = logger;
-            _orderManagementService = orderManagementService;
-            _webinarManagementService = webinarManagementService;
-            _stateService = stateService;
+            _cartControllerOrchestrator = cartControllerOrchestrator;
         }
 
         public PartialViewResult GetAdditionalLocationByOrderId(int webUserId, int webinarId)
         {
             //  TODO: Implement
 
-            var order = _orderManagementService.GetOrdersByUserId(webUserId);
+            //var order = _orderManagementService.GetOrdersByUserId(webUserId);
 
             var addAdditionalLocationViewModel = new AdditionalLocationAddViewModel
             {
@@ -54,50 +43,22 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-        public WebinarDetailsViewModel BuildCheckOutViewModel(int? idOrderRow)
-        {
-            if (idOrderRow.HasValue && idOrderRow.Value > 0)
-            {
-                _logger.Info("Building ");
-                var orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
-                var order = orderRow.Order;
-                var additionalLocations = orderRow.AdditionalLocation.ToList();
-                var webUser = order.WebUser;
-                var webinar = orderRow.Webinar;
-
-                var webinarDetailsViewModel = new WebinarDetailsViewModel
-                {
-                    Affiliate = order.Affiliate,
-                    Order = order,
-                    Webinar = webinar,
-                    WebUser = webUser
-                };
-
-                return webinarDetailsViewModel;
-            }
-            return null;
-        }
-
-
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult ConfirmOrder(int id)
+        public ActionResult ConfirmOrder(int? id = null)
         {
-            var model = BuildCheckOutViewModel(id);
-
-            var order = model.Order;
-
-            if (Request["referred"] != null && WebUtility.HtmlDecode(Request["referred"]) != "How did you hear about this webinar?")
+            if (ModelState.IsValid)
             {
-                order.Origin = Request["referred"] + Environment.NewLine + order.Origin;
-                //ViewData["referred"] = Request["referred"];
+                var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
+
+                return Json(new
+                {
+                    success = "success",
+                    orderRowID = model.Order.OrderRows.SingleOrDefault().idOrderRow,
+                    msg = "OrderFacade.Instance.BuildConnectionInfo(order.Rows.SingleOrDefault())"
+                }, JsonRequestBehavior.AllowGet);
             }
 
-            return Json(new
-            {
-                success = "success",
-                orderRowID = order.OrderRows.SingleOrDefault().idOrderRow,
-                msg = "OrderFacade.Instance.BuildConnectionInfo(order.Rows.SingleOrDefault())"
-            }, JsonRequestBehavior.AllowGet);
+            return this.ModelStateJson(ModelState);
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
@@ -129,184 +90,113 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult CheckoutOptions(int ID)
         {
-            var model = BuildCheckOutViewModel(ID);
+            var model = _cartControllerOrchestrator.BuildCheckOutViewModel(ID);
             return PartialView("Partials/CheckoutOptions", model);
         }
 
         public ActionResult CheckoutContact(int ID)
         {
-            var model = BuildCheckOutViewModel(ID);
+            var model = _cartControllerOrchestrator.BuildCheckOutViewModel(ID);
             return PartialView("Partials/CheckoutContact", model);
         }
         public ActionResult CheckoutConfirm(int ID)
         {
-            var model = BuildCheckOutViewModel(ID);
+            var model = _cartControllerOrchestrator.BuildCheckOutViewModel(ID);
             return PartialView("Partials/CheckoutConfirm", model);
         }
         public ActionResult CheckoutDisplayRowPrice(int ID)
         {
-            var model = BuildCheckOutViewModel(ID);
+            var model = _cartControllerOrchestrator.BuildCheckOutViewModel(ID);
             return PartialView("Partials/_DisplayRowPrice", model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active));
         }
 
         public PartialViewResult CheckoutContactDetails()
         {
-            var model = new RegisterViewModel
-            {
-                RegisterFields = new RegisterModel
-                {
-                    AccountDetailsTitle = string.Empty,
-                    BillingAddress = new AddressModel
-                    {
-
-                    }
-                }
-            };
-
-            return PartialView("~/Views/cart/Partials/CheckoutContact.cshtml", model);
+            return PartialView("~/Views/cart/Partials/CheckoutContact.cshtml", _cartControllerOrchestrator.BuildRegisterViewModel());
         }
 
 
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Signup2(WebinarDetailsViewModel formModel, string stageOfCheckout)
         {
-            formModel.CheckoutInProcess = true;
-            var model = formModel;
-
-            //var currentOrder = _stateService.GetValue<Order>("CurrentOrder");
-            // let's see if we can avoid the need for Session Var
-
-
-
-            var currentAffiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate");
-
-            model.Order = new Order();
-            model.Affiliate = currentAffiliate;
-            model.Webinar = _webinarManagementService.GetWebinar(formModel.Webinar.idWebinar);
-
-            _orderManagementService.AttachAffiliate(model.Affiliate);
-
-            try
+            if (ModelState.IsValid)
             {
-                model.WebUser = _orderManagementService.GetWebUser(formModel.WebUser.idUser);
-            }
-            catch
-            {
-                _logger.InfoException("no valid WebUser found.", new Exception());
-            }
-
-            //var options = _orderManagementService.GetOptionsByWebinarIdFromOptionsRepository(model.Webinar.idWebinar, true);
-            var options = _orderManagementService.GetOptionsByWebinarId(model.Webinar.idWebinar, true);
-            model.Options = options;
-
-            //IList<AdditionalLocation> addLoc = new
-
-            // replace AdditionalLocations handling from scratch
-
-            var orderRow = _orderManagementService.CreateOrderRow(model.Webinar, null, Convert.ToInt32(Request.Form["RegistrationType"]));
-
-            var currentOrder = _orderManagementService.CreateNewOrder(
-                    model.Affiliate,
-                    model.WebUser,
-                    model.Webinar,
-                    orderRow
-                //,model.Options
+                var order = _cartControllerOrchestrator.CreateOrder(
+                    formModel, 
+                    stageOfCheckout,
+                    Request.Form["RegistrationType"]
                     );
-            //StateService.SetValue("CurrentOrder", string.Empty);
 
 
-            currentOrder.Origin = "<p>InitialPage: " + _stateService.GetValue<String>("FirstPage") + "</p><p>" +
-                       " InitialReferrer: " + _stateService.GetValue<String>("InitialQueryString") + "</p><p>" +
-                       " InitialCookies: " + _stateService.GetValue<String>("FirstCookies") + "</p><p>" +
-                       " SessionID: " + _stateService.GetValue<String>("SessionID") + "</p>";
-
-
-            if (Request.IsAuthenticated)
-            {
-                model.UserIsLoggedIn = true;
-            }
-            else
-            {
-                model.UserIsLoggedIn = false;
-                //_orderManagementService.AssignUserToOrder(currentOrder);
-                _logger.Error("ERROR: CartController | Signup - currentUser is null" + currentOrder.idOrder);
-                //TODO: assign appropriate ModelError and error logging/handling
-            }
-
-            currentOrder.AuditInfo = AppHelper.GetUserAuditInfo();
-            currentOrder.Origin = _orderManagementService.GetOrderInitiator();
-            
-            currentOrder = _orderManagementService.SaveOrderChanges(currentOrder, string.Empty, string.Empty);
-
-            //if (model.Webinar.idWebinar == 883 && model.Webinar.Status == WebinarStatus.Scheduled)
-            //{
-            //    try
-            //    {
-            //        _orderManagementService.CreateCPSubscription(orderRow);
-            //    }
-            //    catch (Exception)
-            //    {
-            //        throw;
-            //    }
-            //}
-
-            try
-            {
-                if (stageOfCheckout == "preReg")
+                if (Request.IsAuthenticated)
                 {
-                    return PartialView("Partials/_DisplayRowPrice", model.Order.OrderRows.Single());
+                    formModel.UserIsLoggedIn = true;
                 }
                 else
                 {
+                    formModel.UserIsLoggedIn = false;
+                    _logger.Error("ERROR: CartController | Signup - currentUser is null" + order.idOrder);
+                    //TODO: assign appropriate ModelError and error logging/handling
+                }
 
-                    model.Order = currentOrder;
+                //if (formModel.Webinar.idWebinar == 883 && formModel.Webinar.Status == WebinarStatus.Scheduled)
+                //{
+                //    try
+                //    {
+                //        _orderManagementService.CreateCPSubscription(orderRow);
+                //    }
+                //    catch (Exception)
+                //    {
+                //        throw;
+                //    }
+                //}
 
-                    //db.SaveChanges();
+                try
+                {
+                    if (stageOfCheckout == "preReg")
+                    {
+                        return PartialView("Partials/_DisplayRowPrice", formModel.Order.OrderRows.Single());
+                    }
+
+                    formModel.Order = order;
+
                     return Json(new
-                                    {
-                                        success = "success",
-                                        orderRowID = model.Order.OrderRows.Single().idOrderRow
-                                    }, JsonRequestBehavior.AllowGet);
-                    //return View("~/Views/Webinar/Details2.cshtml", model);
+                    {
+                        success = "success",
+                        orderRowID = formModel.Order.OrderRows.Single().idOrderRow
+                    }, JsonRequestBehavior.AllowGet
+                        );
+                }
+                catch(Exception exception)
+                {
+                    ModelState.AddModelError(string.Empty, exception.Message);
                 }
             }
-            catch
-            {
-                throw;
-            }
+            return this.ModelStateJson(ModelState);
         }
 
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult CheckIfAddLocShouldHide(int optionID)
         {
-            var shouldShow = "";
-            var firstOrDefault = db.RegTypes.Where(o => o.idRegType == optionID)
-                .Select(o => o.ShowLiveNotifications).FirstOrDefault();
-            if (firstOrDefault != null)
+            if (ModelState.IsValid)
             {
-                shouldShow = firstOrDefault.ToString();
-                //if (OptionsFacade.Instance.Load(optionID).ShowLiveNotifications == "No") shouldShow = "false";
-                if (shouldShow == "Yes")
-                {
-                    _logger.Info(shouldShow);
-                }
+                var shouldShow = _cartControllerOrchestrator.CheckIfAddLocShouldHide(optionID);
 
+                return Json(new {shouldShow}, JsonRequestBehavior.AllowGet);
             }
-            return Json(new
-                 {
-                     shouldShow
-                 }, JsonRequestBehavior.AllowGet);
+            return this.ModelStateJson(ModelState);
         }
 
         //[Authorize(Roles = AppRoles.Admin)]
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult SetOrderStatus(int orderRowID, OrderStatus status)
         {
-            OrderRow row = _orderManagementService.LoadOrderRow(orderRowID);
-            row.Order.OrderStatus = status;
-            _orderManagementService.SaveOrderChanges(row.Order, null, null);
-
-            return Json(row.Order.OrderStatus.ToString());
+            if (ModelState.IsValid)
+            {
+                var orderRow = _cartControllerOrchestrator.LoadOrderRow(orderRowID, status);
+                return Json(orderRow.Order.OrderStatus.ToString());
+            }
+            return this.ModelStateJson(ModelState);
         }
 
         public virtual void Dispose(bool disposing)
@@ -319,9 +209,7 @@ namespace CUWebinars.Web.Controllers
                 if (logger != null)
                     logger.Dispose();
 
-                _orderManagementService.Dispose();
-                _membershipService.Dispose();
-                _webinarManagementService.Dispose();
+                _cartControllerOrchestrator.Dispose();
 
                 _disposed = true;
             }

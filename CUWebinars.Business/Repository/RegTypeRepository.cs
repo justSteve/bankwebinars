@@ -19,6 +19,11 @@ namespace CUWebinars.Business.Repository
             return i;
         }
 
+        public IList<RegType> FindRegTypesForOption(int optionId)
+        {
+            return items.Where(o => o.idRegType == optionId).ToList();
+        }
+
         public IList<RegType> FindRegTypesByWebinarId(int id, bool detached)
         {
             var stronglyTypedContext = (TTSWebinarsContext)db;

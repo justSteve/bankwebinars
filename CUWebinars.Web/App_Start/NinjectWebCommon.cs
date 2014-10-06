@@ -92,7 +92,6 @@ namespace CUWebinars.Web.App_Start
                     kernel.Get<IStateService>()
                     )).InRequestScope();
 
-
             kernel.Bind<TtsConfiguration>().ToMethod(ctx => TtsConfig.Create(baseUrl)).InRequestScope();
 
             kernel.Bind<IAffiliateRepository>().To<AffiliateRepository>().InRequestScope();
@@ -177,6 +176,8 @@ namespace CUWebinars.Web.App_Start
             AutoRegisterType(typeof(IQueryHandler<,>), kernel); // Register IQueryHandler 
 
             kernel.Bind<IOrderControllerOrchestrator>().To<OrderControllerOrchestrator>().InRequestScope();
+            kernel.Bind<ICartControllerOrchestrator>().To<CartControllerOrchestrator>().InRequestScope()
+                .WithConstructorArgument("request", x => HttpContext.Current.Request);
 
         }
 
