@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
@@ -204,6 +205,12 @@ namespace CUWebinars.Web.Controllers
 
             // If we got this far, something failed, redisplay form
             return "error";
+        }
+
+
+        public PartialViewResult GetLoginPartial()
+        {
+            return PartialView("_LoginPartial");
         }
 
         public ActionResult MyWebinars()
@@ -826,7 +833,6 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-
         // POST: /Account/Register
         [System.Web.Mvc.HttpGet]
         [System.Web.Mvc.AllowAnonymous]
@@ -938,23 +944,13 @@ namespace CUWebinars.Web.Controllers
         // POST: /Account/Register
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public ActionResult Register(RegisterViewModel model)
+        [ValidateJsonAntiForgeryToken]
+        public ActionResult RegisterFromCart(RegisterViewModel model)
         {
-            var errors = ModelState.Values.SelectMany(v => v.Errors);
-
-
-            foreach (var error in errors)
+            if (ModelState.IsValid)
             {
-                Debug.WriteLine(error.ErrorMessage);
-                _logger.Error("Account.Register ModelError: " + error.ErrorMessage + "| Session=" + AppHelper.GetUserAuditInfo());
-            }
-
-            if (!ModelState.IsValid)
-            { _logger.Error("Invalid ModelState Detected in Register"); }
-            else
-            {
-                _logger.Info("Account.Register: " + model.RegisterFields.Email.Trim() + "| Session=" + AppHelper.GetUserAuditInfo());
+                _logger.Info("Account.Register: " + model.RegisterFields.Email.Trim() + "| Session=" +
+                             AppHelper.GetUserAuditInfo());
 
                 var email = model.RegisterFields.Email.Trim();
                 var firstName = model.RegisterFields.FirstName.Trim();
@@ -968,7 +964,8 @@ namespace CUWebinars.Web.Controllers
                     ModelState.AddModelError("Email", "That email already exists. Would you like to reset the password?");
                 }
 
-                var myInstitution = _membershipService.ProcessInstitutionForUser(model.RegisterFields.Institution.Trim(),
+                var myInstitution = _membershipService.ProcessInstitutionForUser(
+                    model.RegisterFields.Institution.Trim(),
                     email,
                     model.RegisterFields.BillingAddress.City.Trim(),
                     model.RegisterFields.BillingAddress.State.Trim(),
@@ -978,9 +975,12 @@ namespace CUWebinars.Web.Controllers
 
                 try
                 {
-                    IList<Address> addresses = new List<Address> { new Address
+                    IList<Address> addresses = new List<Address>
+                    {
+                        new Address
                         {
-                            AddressType = Enum.GetName(typeof (AddressType), model.RegisterFields.BillingAddress.TypeOfAddress),
+                            AddressType =
+                                Enum.GetName(typeof (AddressType), model.RegisterFields.BillingAddress.TypeOfAddress),
                             City = model.RegisterFields.BillingAddress.City.Trim(),
                             Country = model.RegisterFields.BillingAddress.Country.Trim(),
                             Name = firstName + ' ' + lastName,
@@ -995,7 +995,8 @@ namespace CUWebinars.Web.Controllers
                         },
                         new Address
                         {
-                            AddressType = Enum.GetName(typeof (AddressType), model.RegisterFields.ShippingAddress.TypeOfAddress),
+                            AddressType =
+                                Enum.GetName(typeof (AddressType), model.RegisterFields.ShippingAddress.TypeOfAddress),
                             City = model.RegisterFields.ShippingAddress.City.Trim(),
                             Country = model.RegisterFields.ShippingAddress.Country.Trim(),
                             Name = firstName + ' ' + lastName,
@@ -1019,7 +1020,10 @@ namespace CUWebinars.Web.Controllers
                         , UserType.Customer
                         , myInstitution.idInstitution
                         , addresses
-                        , model.RegisterFields.Title == null ? model.RegisterFields.Title : model.RegisterFields.Title.Trim()
+                        ,
+                        model.RegisterFields.Title == null
+                            ? model.RegisterFields.Title
+                            : model.RegisterFields.Title.Trim()
                         , null
                         , DomainConstants.Active
                         );
@@ -1031,23 +1035,170 @@ namespace CUWebinars.Web.Controllers
                         _globalConfig.Tenant,
                         firstName,
                         lastName,
-                        string.Empty, //  Pass empty string for username because MembershipReboot assigns the email to the username field where emailIsUsername is true
+                        string.Empty,
+                        //  Pass empty string for username because MembershipReboot assigns the email to the username field where emailIsUsername is true
                         model.RegisterFields.Password,
                         email);
 
                     _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.ManualRegistration);
 
-                    Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey), "There's no reason session should not have a value for the VerificationKey at this point ");
+                    Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey),
+                        "There's no reason session should not have a value for the VerificationKey at this point ");
 
                     var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
                     _stateService.ClearValue(DomainConstants.VerificationKey);
 
                     userAccount = _membershipService.VerifyEmailFromKey(
-                            verificationKey,
-                            model.RegisterFields.Password
-                            );
+                        verificationKey,
+                        model.RegisterFields.Password
+                        );
 
-                    _membershipService.LogInUser(_globalConfig.Tenant, model.RegisterFields.Email, model.RegisterFields.Password, true); // log the user in.
+                    _membershipService.LogInUser(_globalConfig.Tenant, model.RegisterFields.Email,
+                        model.RegisterFields.Password, true); // log the user in.
+                    _logger.Info("Account.Register UserAdded: " + model.RegisterFields.Email);
+
+                    return Json(new {Result = WebUiConstants.Success});
+
+                }
+                catch (MembershipCreateUserException e)
+                {
+                    ModelState.AddModelError("MembershipCreateUserException", ErrorCodeToString(e.StatusCode));
+                    //TODO: add error message here and handle in razor
+                    _logger.Error("Account.Register Catch block: " + e.Message + "| Session=" +
+                                  AppHelper.GetUserAuditInfo());
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("Exception", e.Message);
+                    //TODO: add error message here and handle in razor
+                    _logger.Error("Account.Register Catch block: " + e.Message + "| Session=" +
+                                  AppHelper.GetUserAuditInfo());
+                }
+            }
+            else
+            {
+                return this.ModelStateJson(ModelState);
+            }
+            _logger.Fatal("Account.Register failed! Session=" + AppHelper.GetUserAuditInfo());
+
+            // If we got this far, something failed, redisplay form
+            return Json(new {Result = WebUiConstants.Fail});
+
+        }
+
+        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                _logger.Info("Account.Register: " + model.RegisterFields.Email.Trim() + "| Session=" +
+                             AppHelper.GetUserAuditInfo());
+
+                var email = model.RegisterFields.Email.Trim();
+                var firstName = model.RegisterFields.FirstName.Trim();
+                var lastName = model.RegisterFields.LastName.Trim();
+
+                //first check if email exists
+                var checkIfUsed = _membershipService.GetUserByEmail(email);
+                if (checkIfUsed != null)
+                {
+                    _logger.Error("dupe email attempt: " + email);
+                    ModelState.AddModelError("Email", "That email already exists. Would you like to reset the password?");
+                }
+
+                var myInstitution = _membershipService.ProcessInstitutionForUser(
+                    model.RegisterFields.Institution.Trim(),
+                    email,
+                    model.RegisterFields.BillingAddress.City.Trim(),
+                    model.RegisterFields.BillingAddress.State.Trim(),
+                    "N",
+                    "New",
+                    model.RegisterFields.BillingAddress.Zip.Trim());
+
+                try
+                {
+                    IList<Address> addresses = new List<Address>
+                    {
+                        new Address
+                        {
+                            AddressType =
+                                Enum.GetName(typeof (AddressType), model.RegisterFields.BillingAddress.TypeOfAddress),
+                            City = model.RegisterFields.BillingAddress.City.Trim(),
+                            Country = model.RegisterFields.BillingAddress.Country.Trim(),
+                            Name = firstName + ' ' + lastName,
+                            Phone = model.RegisterFields.BillingAddress.Phone.Trim(),
+                            State = model.RegisterFields.BillingAddress.State.Trim(),
+                            StreetAddress = model.RegisterFields.BillingAddress.StreetAddress.Trim(),
+                            StreetAddress2 =
+                                model.RegisterFields.BillingAddress.StreetAddress2 == null
+                                    ? model.RegisterFields.BillingAddress.StreetAddress2
+                                    : model.RegisterFields.BillingAddress.StreetAddress2.Trim(),
+                            Zip = model.RegisterFields.BillingAddress.Zip.Trim()
+                        },
+                        new Address
+                        {
+                            AddressType =
+                                Enum.GetName(typeof (AddressType), model.RegisterFields.ShippingAddress.TypeOfAddress),
+                            City = model.RegisterFields.ShippingAddress.City.Trim(),
+                            Country = model.RegisterFields.ShippingAddress.Country.Trim(),
+                            Name = firstName + ' ' + lastName,
+                            Phone = model.RegisterFields.ShippingAddress.Phone.Trim(),
+                            State = model.RegisterFields.ShippingAddress.State.Trim(),
+                            StreetAddress = model.RegisterFields.ShippingAddress.StreetAddress.Trim(),
+                            StreetAddress2 =
+                                model.RegisterFields.ShippingAddress.StreetAddress2 == null
+                                    ? model.RegisterFields.ShippingAddress.StreetAddress2
+                                    : model.RegisterFields.ShippingAddress.StreetAddress2.Trim(),
+                            Zip = model.RegisterFields.ShippingAddress.Zip.Trim()
+                        }
+                    };
+
+                    var webUser = _membershipService.CreateWebUser(_globalConfig.Tenant,
+                        firstName
+                        , lastName
+                        , model.RegisterFields.Password
+                        , email
+                        , USTimeZone.Central
+                        , UserType.Customer
+                        , myInstitution.idInstitution
+                        , addresses
+                        ,
+                        model.RegisterFields.Title == null
+                            ? model.RegisterFields.Title
+                            : model.RegisterFields.Title.Trim()
+                        , null
+                        , DomainConstants.Active
+                        );
+
+                    if (!_stateService.HasValue(Constants.CurrentUser))
+                        _stateService.SetValue(Constants.CurrentUser, webUser);
+
+                    var userAccount = _membershipService.CreateUser(
+                        _globalConfig.Tenant,
+                        firstName,
+                        lastName,
+                        string.Empty,
+                        //  Pass empty string for username because MembershipReboot assigns the email to the username field where emailIsUsername is true
+                        model.RegisterFields.Password,
+                        email);
+
+                    _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.ManualRegistration);
+
+                    Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey),
+                        "There's no reason session should not have a value for the VerificationKey at this point ");
+
+                    var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
+                    _stateService.ClearValue(DomainConstants.VerificationKey);
+
+                    userAccount = _membershipService.VerifyEmailFromKey(
+                        verificationKey,
+                        model.RegisterFields.Password
+                        );
+
+                    _membershipService.LogInUser(_globalConfig.Tenant, model.RegisterFields.Email,
+                        model.RegisterFields.Password, true); // log the user in.
                     _logger.Info("Account.Register UserAdded: " + model.RegisterFields.Email);
 
                     return Json(new { Result = WebUiConstants.Success });
@@ -1057,19 +1208,22 @@ namespace CUWebinars.Web.Controllers
                 {
                     ModelState.AddModelError("MembershipCreateUserException", ErrorCodeToString(e.StatusCode));
                     //TODO: add error message here and handle in razor
-                    _logger.Error("Account.Register Catch block: " + e.Message + "| Session=" + AppHelper.GetUserAuditInfo());
+                    _logger.Error("Account.Register Catch block: " + e.Message + "| Session=" +
+                                  AppHelper.GetUserAuditInfo());
                 }
                 catch (Exception e)
                 {
                     ModelState.AddModelError("Exception", e.Message);
                     //TODO: add error message here and handle in razor
-                    _logger.Error("Account.Register Catch block: " + e.Message + "| Session=" + AppHelper.GetUserAuditInfo());
+                    _logger.Error("Account.Register Catch block: " + e.Message + "| Session=" +
+                                  AppHelper.GetUserAuditInfo());
                 }
             }
-            _logger.Fatal("Account.Register failed! Session=" + AppHelper.GetUserAuditInfo());
-
-            if (!ModelState.IsValid)
+            else
+            {
                 return this.ModelStateJson(ModelState);
+            }
+            _logger.Fatal("Account.Register failed! Session=" + AppHelper.GetUserAuditInfo());
 
             // If we got this far, something failed, redisplay form
             return Json(new { Result = WebUiConstants.Fail });
@@ -1344,26 +1498,19 @@ namespace CUWebinars.Web.Controllers
 
         private void ProcessModelStateErrors()
         {
+            var errors = ModelState.Values.SelectMany(v => v.Errors); // Get all errors flattened
 
-            //Please use this general pattern when logging ModelState errors.
-            var myErr = "ProcessModelStateErrors found errors. Session Info: " + Environment.NewLine;
-            myErr +=
-                AppHelper.GetUserAuditInfo();
-            foreach (ModelState modelState in ViewData.ModelState.Values)
+            _logger.Error("Invalid ModelState Detected in Register");
+
+            foreach (var error in errors)
             {
-                foreach (ModelError error in modelState.Errors)
-                {
-                    myErr += error.ErrorMessage + Environment.NewLine;
-                }
-            }
-            //a better implementation:
-            //http://stackoverflow.com/questions/2845852/asp-net-mvc-how-to-convert-modelstate-errors-to-json
-            //var errorList = ModelState.ToDictionary(
-            //    kvp => kvp.Key,
-            //    kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
-            //);
+                Debug.WriteLine(error.ErrorMessage);
 
-            _logger.Error(myErr);
+                _logger.Error("Account.Register ModelError: {0} | Session={1}", 
+                    error.ErrorMessage,
+                    AppHelper.GetUserAuditInfo()
+                    );
+            }
         }
     }
 }

@@ -199,9 +199,12 @@ registerDuringCheckout.initialize = function () {
                 data: { email: email, disregardInstitutionDomain: regUserStateManager.getDisregardIntitutionDomain() },
                 beforeSend: function() {
                     // this is where we append a loading image
-                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</span>');
+                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Email...</span>');
                 }
-            }).done(function(data) {
+            }).done(function (data) {
+
+                regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
+
                 // successful request; do something with the data
                 if (data.success === 'foundExisting') {
                     regUserStateManager.resetPasswordOrLoginView(email);
@@ -239,7 +242,7 @@ registerDuringCheckout.initialize = function () {
                 data: { Zip: zipCode },
                 beforeSend: function() {
                     // this is where we append a loading image
-                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Zip...</span>');
+                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Zip...</span>');
                 }
             }).done(function(data) {
                 // successful request; do something with the data
@@ -294,22 +297,33 @@ registerDuringCheckout.initialize = function () {
         if ($('#RegisterFields_ShippingAddress_State').val() === null || $('#RegisterFields_ShippingAddress_State').val() === '') $('#RegisterFields_ShippingAddress_State').val($('#RegisterFields_BillingAddress_State').val());
         if ($('#RegisterFields_ShippingAddress_Zip').val() === null || $('#RegisterFields_ShippingAddress_Zip').val() === '') $('#RegisterFields_ShippingAddress_Zip').val($('#RegisterFields_BillingAddress_Zip').val());
 
-        //$("#ProgressDialogBS").modal('show');
+        //  First, sort out the Antiforgery token for json POST
+        var token = $('[name=__RequestVerificationToken]').val();
+        var headers = { };
+        headers['__RequestVerificationToken'] = token;
 
-        var data = createUserForm.serialize();
-        var url = createUserForm.attr('action');
+        var tabInputs = formProcessor.getApplicableInputs('contactInfo');
+        var formInputs = formProcessor.getApplicableInputs('_CreateUserForm');
+        var payloadFromTab = formProcessor.processInputs(tabInputs);
+        var payloadFromForm = formProcessor.processInputs(formInputs);
+        var payload = _.extend(payloadFromTab, payloadFromForm);
+        delete (payload['undefined']); // this was the __RequestVerificationToken which we chucked in the headers. See immediately above.
+
+        //var url = createUserForm.attr('action');
+        var url = '/Account/RegisterFromCart';
 
         $.ajax({
             type: 'POST',
-            contentType: constants.FormPostContentType,
+            contentType: constants.JsonContentType,
             cache: false,
             url: url,
             dataType: constants.JsonDataType,
-            data: data,
+            data: JSON.stringify(payload),
+            headers: headers,
             beforeSend: function() {
                 //console.log('beforeSend Register Details');
                 // this is where we append a loading image
-                $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
+                $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Registering new user...</span>');
             }
         }).done(function(data) {
             //alert('done: ');
@@ -317,14 +331,24 @@ registerDuringCheckout.initialize = function () {
                 if (data.Result === 'Success') {
                     //console.log('success: ' + data.Result);
                     regUserStateManager.setAction('');
-                    $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
-                    location.assign(path + '/'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
+
+                    if (utilities.relativePathStartsWith(payload['returnUrl'])) {
+                        $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;&nbsp;You have successfully registered! On to check-out...</span>');
+
+                        $('#loginContainer').empty().load('/Account/GetLoginPartial', function(e) {
+                            var o = e;
+                        });
+                    } else {
+                        $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
+                        location.assign(path + '/');
+                    }
+
                 } else if (data.Result === 'Fail') {
                     $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
                     regUserStateManager.setAction(RegistrationInCart.Action.SubmitRegister);
                 }
             } else if (!data.isSuccessful) {
-                $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;&nbsp;&nbsp;' + data.data.Exception + '</span>');
+                $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;' + data.data.Exception + '</span>');
             }
 
         }).fail(function(data) {
@@ -335,4 +359,6 @@ registerDuringCheckout.initialize = function () {
 
         return false;
     });
+
+    $('#loadingSpinner').remove();
 };

@@ -4,15 +4,31 @@ var Common;
     var Utilities = (function () {
         function Utilities() {
         }
+        Utilities.prototype.getRelativePath = function () {
+            return $.url().attr('relative');
+        };
+
         Utilities.prototype.getMainPath = function (pathToCheck) {
             if (pathToCheck.substr(pathToCheck.length - 1) === '/')
                 return pathToCheck.substr(0, pathToCheck.length - 1);
             return pathToCheck;
         };
 
+        Utilities.prototype.relativePathStartsWith = function (stringToCheck) {
+            var path = this.getRelativePath();
+            var len = stringToCheck.length;
+
+            if (path.slice(0, len) === stringToCheck)
+                return true;
+            else {
+                return false;
+            }
+        };
+
         Utilities.prototype.setPath = function () {
             var fullUrl = $.url().attr('source');
-            var indexOfAccount = location.href.indexOf('Account');
+            var relativePath = this.getRelativePath();
+            var indexOfAccount = location.href.indexOf(relativePath);
             return fullUrl.substr(0, indexOfAccount - 1);
         };
 

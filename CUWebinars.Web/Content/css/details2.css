@@ -1,4 +1,19 @@
-﻿.icon-question-sign {
+﻿#SignUpFormContainer {
+    min-height: 500px;
+}
+#contactInfo label
+{
+    display: inline-block;
+    width: 100px;
+    text-align: right;   
+}
+
+#resetPart h3 {
+    text-align: center; 
+    background-color: blanchedalmond
+}
+
+.icon-question-sign {
     background-position: 14px 14px;
 }
 

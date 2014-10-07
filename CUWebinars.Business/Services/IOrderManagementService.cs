@@ -6,9 +6,7 @@ namespace CUWebinars.Business.Services
 {
     public interface IOrderManagementService : IDisposable
     {
-        void AddOrderRow(Order currentOrder, OrderRow orderRow);
         Order AssignAffiliateToOrder(Affiliate affiliate, Order order);
-        //void AssignUserToOrder(Order currentOrder);
         Order AssignWebUserToOrder(WebUser webUser, Order order);
         Affiliate AttachAffiliate(Affiliate item);
         string BuildConnectionInfo(OrderRow orderRow);

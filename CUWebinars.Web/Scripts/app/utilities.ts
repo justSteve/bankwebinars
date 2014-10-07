@@ -6,6 +6,10 @@ module Common {
 
     export class Utilities {
 
+        getRelativePath(): string {
+            return $.url().attr('relative');
+        }
+
         getMainPath(pathToCheck : string) : string  {
 
             if (pathToCheck.substr(pathToCheck.length - 1) === '/')
@@ -13,11 +17,22 @@ module Common {
             return pathToCheck;
         }
 
+        relativePathStartsWith(stringToCheck : string) : boolean {
+            var path = this.getRelativePath();
+            var len = stringToCheck.length;
+
+            if (path.slice(0, len) === stringToCheck)
+                return true;
+            else {
+                return false;
+            }
+        }
+
         setPath(): string {
             var fullUrl = $.url().attr('source');
-            var indexOfAccount = location.href.indexOf('Account');
+            var relativePath = this.getRelativePath();
+            var indexOfAccount = location.href.indexOf(relativePath);
             return fullUrl.substr(0, indexOfAccount - 1);
-
         }
 
         isValidEmailAddress(emailAddress:string) : boolean {

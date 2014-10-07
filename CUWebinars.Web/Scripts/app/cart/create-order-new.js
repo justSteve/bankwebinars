@@ -59,7 +59,6 @@ var OrderRegistration;
         };
 
         PageObject.prototype.setOrderRowId = function (num) {
-            alert("Hit: " + num);
             this.orderRowID = num;
         };
 

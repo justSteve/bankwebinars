@@ -12,76 +12,59 @@
             </div>
             <div id="collapseEmail" class="accordion-body collapse in">
                 <div class="accordion-inner">
-                    <div class="fieldContainer" id="wrapEmail">
-                        @*<div class="span1" style="text-align: right;">
-                                Email:
-                            </div>*@
-                        <div class="span6">
+                    <div id="wrapEmail">
+                        <div>
                             @Html.TextBoxFor(model => model.RegisterFields.Email, new { style = "width: 180px;" })
                             @Html.ValidationMessageFor(model => model.RegisterFields.Email)
                         </div>
                     </div>
-                    <div class="fieldContainer" id="wrapZip">
-                        <div class="span10">
+                    <div id="wrapZip">
+                        <div>
                             Zip Code:
-                            <input type="text" class="enterSubmit" name="getZip" id="getZip" style="width: 70px;" />
-                            @*<input type="button" value="Find City/State" name="findCityState" class="btn btn-success" />*@
-                            &nbsp;&nbsp;<input type="button" value="Have a Non-US Address?" name="nonUSAddressBtn" id="nonUSAddressBtn" class="btn btn-mini btn-info" />
+                            <input type="text" class="enterSubmit input-medium" name="getZip" id="getZip" />
+                            <input type="button" value="Have a Non-US Address?" name="nonUSAddressBtn" id="nonUSAddressBtn" class="btn btn-mini btn-info" />
                         </div>
                     </div>
-                    <div class="fieldContainer" id="wrapReset">
-                        <div class="container">
-                            <div id="LoginPart" class="span4">
-                                <h3>Login to existing account?</h3>
-                                <p style="text-align: right;">
-                                    Email: <input id="Email1" name="Email1" value="" type="text"> <br>
-                                    Password: <input id="Password1" name="Password1" type="password"><br>
-
-                                    @*<input type="button" class="btn-success btn" name="submitLogin" value="Login" />*@
-                                </p>
-                            </div>
-                            <div class="span2"><h3 style="text-align: center; background-color: blanchedalmond">Or...</h3></div>
-                            <div id="ResetPart" class="span4">
-                                <p style="margin-top: 50px;">
-                                    We can email you a link that will reset your password.
-                                    <input id="EdgeCaseResetPasswordButton" type="button" class="btn btn-danger" name="resetPass" value="Reset Password" />
-                                </p>
+                    <div id="wrapReset">
+                        <div id="LoginPart">
+                            <h3>Login to existing account?</h3>
+                            <div>
+                                <label>Email:</label> <input id="Email1" name="Email1" value="" type="text" class="input-large"> <br>
+                                <label>Password:</label> <input id="Password1" name="Password1" type="password" class="input-large"><br>
                             </div>
                         </div>
-
-                    </div>
-                    <div class="fieldContainer" id="wrapPass">
-                        <div class="container">
-                            <div class="container">
-                                <div class="span10">
-                                    <p>Please enter a secure and unique password to be used with this site.</p>
-
-                                    @Html.LabelFor(m => m.RegisterFields.Password, new { style = "display:inline-block;" }):
-                                    @Html.PasswordFor(m => m.RegisterFields.Password, new { style = " width:100px;" })
-                                    &nbsp;&nbsp;
-                                    @Html.LabelFor(m => m.RegisterFields.ConfirmPassword,
-                                        new
-                                        {
-                                            @for = "RegisterFields.ConfirmPassword",
-                                            style = "display:inline-block;"
-                                        }):
-
-                                    @Html.PasswordFor(m => m.RegisterFields.ConfirmPassword, new
-                                    {
-                                        id = "RegisterFields.ConfirmPassword",
-                                        @class = "{equalTo: '#Password'}",
-                                        style = " width:100px;"
-                                    })
-                                    <br />@Html.ValidationMessageFor(m => m.RegisterFields.Password)<br />
-                                    @Html.ValidationMessageFor(m => m.RegisterFields.ConfirmPassword)
-                                </div>
-                            </div>
+                        <div id="resetPart" class="span6">
+                            <h3>Or...</h3>
+                            We can email you a link that will reset your password.
+                            <p><input id="EdgeCaseResetPasswordButton" type="button" class="btn btn-danger" name="resetPass" value="Reset Password" /></p>
                         </div>
                     </div>
+                    <div id="wrapPass">
+                        <div>
+                            <p>Please enter a secure and unique password to be used with this site.</p>
 
+                            @Html.LabelFor(m => m.RegisterFields.Password, new { style = "display:inline-block;" }):
+                            @Html.PasswordFor(m => m.RegisterFields.Password, new { style = " width:100px;" })
+                            &nbsp;&nbsp;
+                            @Html.LabelFor(m => m.RegisterFields.ConfirmPassword,
+                                new
+                                {
+                                    @for = "RegisterFields.ConfirmPassword",
+                                    style = "display:inline-block;"
+                                }):
+
+                            @Html.PasswordFor(m => m.RegisterFields.ConfirmPassword, new
+                            {
+                                id = "RegisterFields.ConfirmPassword",
+                                @class = "{equalTo: '#Password'}",
+                                style = " width:100px;"
+                            })
+                            <br />@Html.ValidationMessageFor(m => m.RegisterFields.Password)<br />
+                            @Html.ValidationMessageFor(m => m.RegisterFields.ConfirmPassword)
+                        </div>
+                    </div>
                 </div>
             </div>
-
         </div>
         <div class="accordion-group">
             <div class="accordion-heading">
@@ -90,131 +73,98 @@
                 </a>
             </div>
             <div id="collapseBilling" class="accordion-body collapse">
-                <div class="container">
-                    <div id="getFirstLast">
-                        <div>
-                            First:
-                            @Html.TextBoxFor(model => model.RegisterFields.FirstName, new { style = "width: 75px;" })
+                <div class="accordion-inner">
+                    <div>
+                        <div id="getFirstLast">
+                            <label>First:</label>@Html.TextBoxFor(model => model.RegisterFields.FirstName, new { @class = "input-large" })
+                            <label>Last:</label>@Html.TextBoxFor(model => model.RegisterFields.LastName, new { @class = "input-large" })
+                        </div>
+                        <div id="getFullNameBilling">
+                            <label>Name:</label>
+                            <input type="text" id="FullName" name="FullName" class="input-large" />
+                        </div>
+                    </div>
+                    <div>
+                        <div id="wrapInstitutionBilling">
+                            <label>Institution:</label>@Html.TextBoxFor(model => model.RegisterFields.Institution, new { @class = "input-large" })
+                            <label>Title:</label>@Html.TextBoxFor(model => model.RegisterFields.Title, new { @class = "input-mini" })
+                        </div>
+                    </div>
+                    <div>
+                        <div id="wrapAddressBilling">
 
-                            &nbsp;Last:
-                            @Html.TextBoxFor(model => model.RegisterFields.LastName, new { style = "width: 75px;" })
+                            <label>Address:</label> @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.StreetAddress, new { @class = "input-xxlarge" })
+                            <label>(2nd address optional):</label>@Html.TextBoxFor(model => model.RegisterFields.BillingAddress.StreetAddress2, new { @class = "input-xxlarge" })
                         </div>
                     </div>
-                    <div id="getFullNameBilling">
-                        <div>
-                            Name:
-                            <input type="text" id="FullName" name="FullName" style="width: 240px;" />
+                    <div>
+                        <div id="wrapCityBilling">
+                            <label>City:</label> @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.City, new { @class = "input-large" })
+                            <label>State:</label> @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.State, new { @class = "input-medium" })
+                            <label>Zip:</label> @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Zip, new { @class = "input-mini" })
+                            @Html.HiddenFor(model => model.RegisterFields.BillingAddress.TypeOfAddress)
                         </div>
                     </div>
-                </div>
-                <div class="container">
-                    <div id="wrapInstitutionBilling">
-                        <div class="span4">
-                            Title: @Html.TextBoxFor(model => model.RegisterFields.Title, new { style = "width: 110px;" }) &nbsp; &nbsp;
-                        </div>
-                        <div class="span4">
-                            Institution:&nbsp;&nbsp;@Html.EditorFor(model => model.RegisterFields.Institution, new { style = "width: 110px;" })
-                        </div>
-                    </div>
-                </div>
-                <div class="container">
-                    <div id="wrapAddressBilling">
-                        <div class="span4">
-                            Address: @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.StreetAddress, new { style = "width: 150px;" })
-                        </div>
-                        <div class="span4">
-                            (2nd address RegTypeal)@Html.TextBoxFor(model => model.RegisterFields.BillingAddress.StreetAddress2, new { style = "width: 150px;" })
-                        </div>
-                    </div>
-                </div>
-                <div class="container">
-                    <div id="wrapCityBilling">
-                        <div class="span1">
-                            City:
-                        </div>
-                        <div class="span10">
-                            @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.City, new { style = "width: 140px;" })
+                    <div>
+                        <div id="wrapPhone">
+                            <label>Phone:</label>
+                            @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Phone, new { @class = "input-large" })
 
-                            &nbsp;&nbsp; State: @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.State, new { style = "width: 30px;" })
-                            &nbsp;&nbsp; Zip:
-                            @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Zip, new { style = "width: 50px;" })
+                            <label for="TimeZone" style="display: inline-block">Time Zone:</label>
+                            <select style="width: 120px" id="TimeZone" name="TimeZone">
+                                <option value="4">Eastern</option>
+                                <option value="3">Central</option>
+                                <option value="2">Mountain</option>
+                                <option value="1">Pacific</option>
+                            </select>
                         </div>
-                        @Html.HiddenFor(model => model.RegisterFields.BillingAddress.TypeOfAddress)
-                    </div>
-                </div>
-                <div class="container">
-                    <div class="fieldContainer" id="wrapPhone">
-                        <div class="span1">Phone:</div>
-                        @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Phone, new { style = "width: 100px;" })
 
-                        <label for="TimeZone" style="display: inline-block">Time Zone:</label>
-                        <select style="width: 120px" id="TimeZone" name="TimeZone">
-                            <option value="4">Eastern</option>
-                            <option value="3">Central</option>
-                            <option value="2">Mountain</option>
-                            <option value="1">Pacific</option>
-                        </select>
+                        <div id="nonUSAddressInputWrap">
+                            <label>&nbsp;</label>
+                            <textarea name="nonUSAddressInput" rows="5" cols="100">Special Handling for Address:</textarea>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.RegisterFields.FirstName)
+                        @Html.ValidationMessageFor(model => model.RegisterFields.LastName)
+                        @Html.ValidationMessageFor(model => model.RegisterFields.Institution)
+                        @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.Phone)
+                        @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.StreetAddress)
+                        @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.City)
+                        @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.State)
+                        @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.Zip)
                     </div>
-
-                    <div class="span1" id="nonUSAddressInput">
-                        <textarea name="nonUSAddressInput" rows="5" cols="100">Special Handling for Address:</textarea>
-                    </div>
-                    @Html.ValidationMessageFor(model => model.RegisterFields.FirstName)
-                    @Html.ValidationMessageFor(model => model.RegisterFields.LastName)
-                    @Html.ValidationMessageFor(model => model.RegisterFields.Institution)
-                    @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.Phone)
-                    @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.StreetAddress)
-                    @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.City)
-                    @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.State)
-                    @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.Zip)
                 </div>
             </div>
         </div>
-        
         <div class="accordion-group">
             <div class="accordion-heading">
                 <a class="accordion-toggle" data-toggle="collapse" data-parent="#createUserPanes" href="#collapseShipping">Shipping</a>
             </div>
             <div id="collapseShipping" class="accordion-body collapse">
                 <div class="accordion-inner">
-                    <div class="container">
-                        Same As Billing?
-                        @Html.HiddenFor(model => model.RegisterFields.ShippingAddress.Phone)
+                    <div>
+                        <label>Same As Billing?</label>@Html.HiddenFor(model => model.RegisterFields.ShippingAddress.Phone, new { @class = "input-large" })
 
                         <input type="checkbox" name="sameAsBilling" id="sameAsBilling" />
                     </div>
 
-                    <div class="container">
+                    <div>
                         <div id="getFullNameShipping">
-                            <div>
-                                Name:
-                                <input type="text" id="FullNameShipping" name="FullName" style="width: 240px;" />
-                            </div>
+                            <label>Name:</label>
+                            <input type="text" id="FullNameShipping" name="FullName" class="input-large" />
                         </div>
                     </div>
 
-                    <div class="container">
+                    <div>
                         <div id="wrapAddressShipping">
-                            <div class="span4">
-                                Address: @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.StreetAddress, new { style = "width: 150px;" })
-                            </div>
-                            <div class="span4">
-                                (2nd address RegTypeal)@Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.StreetAddress2, new { style = "width: 150px;" })
-                            </div>
+                            <label>Address:</label> @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.StreetAddress, new { @class = "input-xxlarge" })
+                            <label>(2nd address optional):</label>@Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.StreetAddress2, new { @class = "input-xxlarge" })
                         </div>
                     </div>
-                    <div class="container">
+                    <div>
                         <div id="wrapCityShipping">
-                            <div class="span1">
-                                City:
-                            </div>
-                            <div class="span10">
-                                @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.City, new { style = "width: 140px;" })
-
-                                &nbsp;&nbsp; State: @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.State, new { style = "width: 30px;" })
-                                &nbsp;&nbsp; Zip:
-                                @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.Zip, new { style = "width: 50px;" })
-                            </div>
+                            <label>City:</label>@Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.City, new { @class = "input-large" })
+                            <label>State:</label>@Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.State, new { @class = "input-medium" })
+                            <label>Zip:</label>@Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.Zip, new { @class = "input-mini" })
                             @Html.HiddenFor(model => model.RegisterFields.ShippingAddress.TypeOfAddress)
                         </div>
                         @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.StreetAddress)&nbsp;&nbsp;
@@ -227,8 +177,8 @@
         </div>
 
         <div class="form-inline">
-            <div class="btn-group" style="width: 160px">&nbsp;</div>
-            <div class="btn-group">
+            <div class="btn-group span2">&nbsp;</div>
+            <div class="btn-group span2">
                 <input id="TheSubmitButton" type="button" value="Register" name="TheSubmit" class="btn btn-default" />
             </div>
         </div>
