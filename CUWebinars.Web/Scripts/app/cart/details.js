@@ -1,4 +1,6 @@
-﻿var discount,
+﻿//  This script correlates with the Details2 View.
+
+var discount,
     cartStateManager,
     signUpForm,
     cartStateManager;

@@ -22,7 +22,7 @@ registerDuringCheckout.initialize = function () {
     regUserStateManager.initializeState();
     regUserStateManager.setAction(RegistrationInCart.Action.CheckEmail); // starting off with CheckEmail action.
 
-    var path = utilities.setPath();
+    var path = utilities.setPathToBaseUrl();
 
     $('#RegisterFields_Email').bind('change keyup', function() {
         if ($(this).validate().checkForm()) {
