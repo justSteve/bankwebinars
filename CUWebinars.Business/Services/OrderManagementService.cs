@@ -663,7 +663,8 @@ namespace CUWebinars.Business.Services
                 // Get the stream associated with the response.
                 Stream receiveStream = response.GetResponseStream();
 
-                // Pipes the stream to a higher level stream reader with the required encoding format. 
+                // Pipes the stream to a higher level 
+                //stream reader with the required encoding format. 
                 StreamReader readStream = new StreamReader(receiveStream, Encoding.UTF8);
 
                 Console.WriteLine("Response stream received.");
