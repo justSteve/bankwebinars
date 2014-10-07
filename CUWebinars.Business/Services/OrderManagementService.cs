@@ -110,7 +110,7 @@ namespace CUWebinars.Business.Services
         public AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullname)
         {
             if (string.IsNullOrWhiteSpace(email))
-                throw new ArgumentException("Email parameter was either null or white space.", "email");
+                throw new ArgumentException("Email paramter was either null or white space.", "email");
 
             try
             {
@@ -153,6 +153,11 @@ namespace CUWebinars.Business.Services
         public IList<RegType> GetRegTypesByWebinarIdFrom(int id, bool detached)
         {
             return _regTypeRepository.FindRegTypesByWebinarId(id, false);
+        }
+
+        public IList<RegType> GetRegTypesForOption(int optionId)
+        {
+            return _regTypeRepository.FindRegTypesForOption(optionId);
         }
 
 
@@ -259,19 +264,35 @@ namespace CUWebinars.Business.Services
                 _events.Add(orderEvent);
             }
         }
-        private void CalculateOrderPrice(Order order)
+        private void CalculateOrderPrices(Order order)
         {
             order.Total = 0.0M;
 
-            var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+            var row = order.OrderRows.Single();
 
-            row.UnitPrice = (decimal)row.RegistrationType.Price;
+            if (row.RegistrationType.Price != null) row.UnitPrice = (decimal)row.RegistrationType.Price;
             //
             //Calculate options price
             decimal optionsTotal = CalculateOptionsPrice(row);
 
             //Calculate row price before discount
             row.RowPrice = row.UnitPrice + optionsTotal;
+
+            //Calculate discount. Discount is not valid for subscription webinars.
+            if (row.Webinar.Title.Contains("Compliance Perspectives") == false)
+            {
+
+                //decimal discountTotal = row.
+                //if (row.DiscountPercentOff != 0.0M)
+                //{
+                //    discountTotal = row.RowPrice * row.DiscountPercentOff / 100;
+                //}
+                //if (discountTotal > row.RowPrice)
+                //{
+                //    discountTotal = row.RowPrice;
+                //}
+                //row.RowPrice = row.RowPrice - discountTotal;
+            }
 
             //Calculate order total
             order.Total += row.RowPrice;
@@ -288,14 +309,39 @@ namespace CUWebinars.Business.Services
             decimal optionsTotal = 0.0M;
 
             if (row.AdditionalLocation != null)
-                optionsTotal += row.AdditionalLocation.Sum(addLoc => addLoc.Price);
+                foreach (var addLoc in row.AdditionalLocation)
+                {
+                    if (row.Webinar.Title.Contains("Compliance Perspectives")//.IsSubscriptionWebinar
+                        && row.AdditionalLocation.Count < 4)
+                    {
+                        continue; //Subscription webinar with up to 3 additional locations. Do not charge.
+                    }
 
+                    if (row.Webinar.Title.Contains("Compliance Perspectives"))
+                    {
+                        //int subscriptionPeriod = 12;//row.RegistrationType == RegistrationType.Twelve_Month_Subscription ? 12 : 6;
+                        //optionsTotal += (row.AdditionalLocation.Count - 3) * row.AdditionalLocation. * subscriptionPeriod;
+                        optionsTotal += 0;
+                    }
+                    else
+                    {
+                        optionsTotal += addLoc.Price;
+                    }
+                }
             return optionsTotal;
+        }
+        //public virtual void AssignUserToOrder(Order order)
+        //{
+        //}
+
+        public void CreateCPSubscription(OrderRow orderRow)
+        {
+            throw new NotImplementedException();
         }
 
         public void FireOrderSubmittedEvent(Order order)
         {
-            _logger.Info("FireOrderSubmittedEvent {0}", order.idOrder);
+            _logger.Info("Adding Event for Order {0}", order.idOrder);
 
             var orderSubmittedViewModel = new OrderSubmittedViewModel
             {
@@ -443,10 +489,11 @@ namespace CUWebinars.Business.Services
             try
             {
                 ProcessDiscountCodes(currentOrder);
-                CalculateOrderPrice(currentOrder);
+                CalculateOrderPrices(currentOrder);
 
-                var myOrder = _orderRepository.SaveOrderChanges(currentOrder, 0);
-                
+                var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, 0);
+
+
                 _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
 
                 Clear();
@@ -462,18 +509,18 @@ namespace CUWebinars.Business.Services
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink)
         {
             ProcessDiscountCodes(currentOrder);
-            CalculateOrderPrice(currentOrder);
+            CalculateOrderPrices(currentOrder);
 
             if (confirmChangeEmailLink == String.Empty || confirmChangeEmailLink == "")
             {
                 //we are saving a non-confirmed order
-                // TODO: Is there a better way to determine that the order isn't 
-                //  ready to be set to final, submitted state?
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, 1);
 
                 return updatedOrder;
 
             }
+            else
+            {
                 try
                 {
                     var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, 0);
@@ -520,7 +567,7 @@ namespace CUWebinars.Business.Services
                 {
                     _logger.ErrorException(string.Format("SaveOrderChanges method: {0}", exception.Message), exception);
                 }
-            
+            }
             return null;
         }
 
@@ -547,12 +594,12 @@ namespace CUWebinars.Business.Services
 
         private void ProcessDiscountCodes(object instance)
         {
-            var a = instance;
-            
+            var a = 1;
         }
-        public Discount GetDiscount(string email)
+
+        public void AddOrderRow(Order currentOrder, OrderRow orderRow)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         public Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow)
@@ -563,17 +610,23 @@ namespace CUWebinars.Business.Services
             return order;
         }
 
-
+        public Discount GetDiscount(string email)
+        {
+            return null;
+        }
 
         public string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int webinarId,
             string webinarKey)
         {
-
+            //https://www2.gotomeeting.com/en_US/island/webinar/audio/organizers/conferenceInfo.tmpl?webinarId=495203178&role=0
+            //0 = attendee
+            //2 = panelist
+            //1 = organizer
             var webinar = _webinarRepository.FindById(webinarId);
             string orgKey = webinar.OrganizerKey;
             //string orgKey = "922930"; //steve's
             ////string orgKey = "901873";//marks
-            string accessToken = webinar.OrganizerOAuthKey;
+            string access_token = webinar.OrganizerOAuthKey;
             //string access_token = "5jxY3KZL48HWknOaOEP2eIzVmOTS"; //steve's
             ////string access_token = "JIOHRkkCvmIKDY8QO0S4msbYH48N";//mark's
 
@@ -585,14 +638,14 @@ namespace CUWebinars.Business.Services
             httpWebRequest.ContentType = "application/json";
 
             httpWebRequest.Accept = "application/vnd.citrix.g2wapi-v1.1+json";
-            httpWebRequest.Headers.Add("Authorization", "OAuth oauth_token=" + accessToken);
+            httpWebRequest.Headers.Add("Authorization", "OAuth oauth_token=" + access_token);
 
             httpWebRequest.Method = "POST";
 
-            object sendVars = new {firstName, lastName, email = billingEmail };
+            object sendVars = new { firstName = firstName, lastName = lastName, email = billingEmail };
 
             string postData = JsonConvert.SerializeObject(sendVars);
-            
+            ;
 
             byte[] requestBytes = Encoding.UTF8.GetBytes(postData);
             httpWebRequest.ContentLength = requestBytes.Length;
@@ -611,18 +664,15 @@ namespace CUWebinars.Business.Services
                 Stream receiveStream = response.GetResponseStream();
 
                 // Pipes the stream to a higher level stream reader with the required encoding format. 
-                if (receiveStream != null)
-                {
-                    StreamReader readStream = new StreamReader(receiveStream, Encoding.UTF8);
+                StreamReader readStream = new StreamReader(receiveStream, Encoding.UTF8);
 
-                    Console.WriteLine("Response stream received.");
-                    var myResponse = readStream.ReadToEnd();
-                    response.Close();
-                    readStream.Close();
+                Console.WriteLine("Response stream received.");
+                var myResponse = readStream.ReadToEnd();
+                response.Close();
+                readStream.Close();
 
-                    _logger.Info("CreateRegistrantKey returns: " + billingEmail + ", " + webinarKey + " - Response = " + myResponse);
-                    return myResponse;
-                }
+                _logger.Info("CreateRegistrantKey returns: " + billingEmail + ", " + webinarKey + " - Response = " + myResponse);
+                return myResponse;
             }
             catch (WebException webException)
             {
@@ -633,28 +683,12 @@ namespace CUWebinars.Business.Services
                     (httpWebResponse.StatusCode == HttpStatusCode.Conflict ||
                      httpWebResponse.StatusCode == HttpStatusCode.NotFound))
                 {
-
-                    //what condition is this branch handling?
-                    _logger.Info("CreateRegistrantKey Conflict/NotFound handler: " + billingEmail + ", " + webinarKey);
-
-                    string responsePayload;
-
-                    using (var responseStream = new StreamReader(httpWebResponse.GetResponseStream()))
-                    {
-                        responsePayload = responseStream.ReadToEnd();
-                    }
-
-                    return responsePayload;
-                }
-                if (httpWebResponse != null &&
-                    (httpWebResponse.StatusCode == HttpStatusCode.BadRequest))
-                {
                     string responsePayload = string.Empty;
 
-                    //TODO: Devise method to detect malformed post data
-                    //  typically 'BadRequest' means we are not providing all registration fields
-                    //  that were specified when the event was created.
-                    //https://api.citrixonline.com/G2W/rest/organizers/{organizerKey}/webinars/{webinarKey}/registrants/fields 
+                    using (var responsStream = new StreamReader(httpWebResponse.GetResponseStream()))
+                    {
+                        responsePayload = responsStream.ReadToEnd();
+                    }
 
                     return responsePayload;
                 }

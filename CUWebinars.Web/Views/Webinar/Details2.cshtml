@@ -216,11 +216,22 @@
                     <input type="hidden" name="returnUrl" value="/Webinar/Details2/@Model.Webinar.idWebinar" />
                     <input type="hidden" id="emailAddress" />
                 }
+                @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
+                {
+                    @Html.AntiForgeryToken()
+                    
+                    <input id="loginEmail" name="Email" type="hidden" value="">
+                    <input id="loginPassword" name="Password" type="hidden">
+                    <input id="loginRememberMe" type="hidden" value="true" name="RememberMe">
+                    <input type="hidden" name="returnUrl" value="/Webinar/Details2/@Model.Webinar.idWebinar" />
+                }
+
                 <form id="checkEmail"><input type="hidden" name="emailChecker" id="emailChecker" /></form>
                 <form id="checkZip"><input type="hidden" name="ZipChecker" id="ZipChecker" /></form>
                 <form id="nonUSForm"><input type="hidden" name="AddressText" id="AddressText" /></form>
                 <form id="checkInstitution"><input type="hidden" name="InstitutionChecker" id="InstitutionChecker" /></form>
                 <form id="updateRegType" action="/Cart/SetRegistrationTypeAtCheckout" method="post" name="updateRegType"></form>
+
             </div>
         }
     }

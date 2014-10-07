@@ -1,11 +1,15 @@
 ﻿/// <reference path="../typings/jquery/jquery.d.ts" />
+//  This script is for url manipulation/interpretation
+//  It uses the purl library - https://github.com/allmarkedup/purl
 var Common;
 (function (Common) {
     var Utilities = (function () {
         function Utilities() {
+            this.sourceAttribute = 'source';
+            this.relativeAttribute = 'relative';
         }
         Utilities.prototype.getRelativePath = function () {
-            return $.url().attr('relative');
+            return $.url().attr(this.relativeAttribute);
         };
 
         Utilities.prototype.getMainPath = function (pathToCheck) {
@@ -25,11 +29,11 @@ var Common;
             }
         };
 
-        Utilities.prototype.setPath = function () {
-            var fullUrl = $.url().attr('source');
+        Utilities.prototype.setPathToBaseUrl = function () {
+            var fullUrl = $.url().attr(this.sourceAttribute);
             var relativePath = this.getRelativePath();
-            var indexOfAccount = location.href.indexOf(relativePath);
-            return fullUrl.substr(0, indexOfAccount - 1);
+            var indexOfRelativePath = location.href.indexOf(relativePath);
+            return fullUrl.substr(0, indexOfRelativePath - 1);
         };
 
         Utilities.prototype.isValidEmailAddress = function (emailAddress) {

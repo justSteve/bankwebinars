@@ -682,6 +682,40 @@ namespace CUWebinars.Web.Controllers
 
             return this.ModelStateJson(ModelState);
         }
+        
+        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult SignInFromCart(SignInModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return this.ModelStateJson(ModelState);
+            }
+
+            string userMustVerify; // not relevant in this user flow. So gets discarded.
+
+            if (_membershipService.LogInUser(_globalConfig.Tenant, model.Email, model.Password, model.RememberMe, out userMustVerify))
+            {
+                _logger.Info("Account.SignIn Post Success in cart. Session={0}", AppHelper.GetUserAuditInfo());
+
+                return Json(new {result = "LoggedIn"} );
+            }
+
+            // If we got this far, something failed, redisplay form
+            _logger.Warn("Account.SignIn Failed. {0} | {1} Session= {2}",
+                model.Email,
+                model.Password,
+                AppHelper.GetUserAuditInfo()
+                );
+
+            ModelState.AddModelError(
+                string.Empty, // Needs to be an empty string to show up in ValidationSummary as not model-level error.
+                "The user name or password provided is incorrect."
+                );
+
+            return this.ModelStateJson(ModelState);
+        }
 
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]

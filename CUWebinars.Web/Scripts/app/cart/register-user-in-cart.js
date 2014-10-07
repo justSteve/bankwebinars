@@ -244,6 +244,9 @@ var RegistrationInCart;
         };
 
         StateManager.prototype.logIn = function () {
+            if (this.inputAction === InputAction.EnterKeyPress)
+                this.inputAction = InputAction.None;
+
             $('form#frmSignIn').submit();
         };
 

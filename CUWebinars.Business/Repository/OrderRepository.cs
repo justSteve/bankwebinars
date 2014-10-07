@@ -303,7 +303,7 @@ namespace CUWebinars.Business.Repository
             return order;
         }
 
-        public Order SaveOrderChanges(Order order, int? isFromSignup)
+        public Order SaveOrderChanges(Order order, int? isFromSignup = null)
         {
             //TODO: Shopping Cart Task
             var error = db.GetValidationErrors();
@@ -332,7 +332,7 @@ namespace CUWebinars.Business.Repository
             }
             else
             {
-                if (isFromSignup == 0)
+                if (isFromSignup.HasValue && isFromSignup == 0)
                 {
                     order.OrderStatus = OrderStatus.Submitted;
                 }
