@@ -504,6 +504,7 @@
     <Compile Include="ViewModel\RegisterViewModel.cs" />
     <Compile Include="ViewModel\ResendOrderInformationViewModel.cs" />
     <Compile Include="ViewModel\WebinarDetailsViewModel.cs" />
+    <Content Include="Views\Webinar\Partials\_UpdateWebinarFiles.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\packages\Selenium.WebDriver.ChromeDriver.2.9.0.0\content\chromedriver.exe">

@@ -96,9 +96,10 @@
 
         <div class="span3">
             <aside class="widget">
-                @*@if (Model.Identity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.CuWebinarsAdmin)){*@
-                @Html.Partial(@"Partials/_AdminEventButtons", Model)
-                @*}*@
+                @if (Model.Identity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.CuWebinarsAdmin))
+                {
+                    @Html.Partial(@"Partials/_AdminEventButtons", Model)
+                }
                 <h5 class="short_headline"><span>Date/Time</span></h5>
 
                 @if (Model.Webinar.Status == WebinarStatus.Recorded)
@@ -179,7 +180,7 @@
                 {
                     @Html.HiddenFor(model => model.Webinar.idWebinar)
                     @Html.HiddenFor(model => model.WebUser.idUser)
-                    <input type="hidden" name="stageOfCheckout"/>
+                    <input type="hidden" name="stageOfCheckout" />
 
 
                     <div class="content offset2 span8 well">
@@ -204,7 +205,7 @@
                     </div>
                 }
 
-                @using (Html.BeginForm("Register", "Account", null, FormMethod.Post, new {id = "_CreateUserForm", name = "createUser"}))
+                @using (Html.BeginForm("Register", "Account", null, FormMethod.Post, new { id = "_CreateUserForm", name = "createUser" }))
                 {
                     @Html.AntiForgeryToken()
                     <input type="hidden" id="FirstName" name="FirstName" />
@@ -219,7 +220,7 @@
                 @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
                 {
                     @Html.AntiForgeryToken()
-                    
+
                     <input id="loginEmail" name="Email" type="hidden" value="">
                     <input id="loginPassword" name="Password" type="hidden">
                     <input id="loginRememberMe" type="hidden" value="true" name="RememberMe">

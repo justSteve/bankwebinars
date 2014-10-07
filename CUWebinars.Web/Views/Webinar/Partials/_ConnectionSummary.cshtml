@@ -3,9 +3,6 @@
 @model OrderRow
 
 @{
-
-    var eventID = Model.Webinar.WebinarKey;
-    eventID = eventID.Insert(6, "-").Insert(3, "-");
     //var eventPass = "Pass";
     var teleconf = Model.Webinar.AccessPhoneAttendee;
     var accessCode = Model.Webinar.AccessCodeAttendee;
@@ -18,7 +15,7 @@
                 @{
                     if (@Model.JoinURL == null)
                     {
-                        <p>This link will become active 15-20 minutes prior to the scheduled start time of the event and connect you directly into the webinar:<br /> <b><a href="https://www2.gotomeeting.com/join/@eventID" target="_JoinWebinar">https://www2.gotomeeting.com/join/@eventID</a></b></p>
+                        <p>This link will become active 15-20 minutes prior to the scheduled start time of the event and connect you directly into the webinar:<br /> <b><a href="https://www2.gotomeeting.com/join/@Model.Webinar.WebinarKey" target="_JoinWebinar">https://www2.gotomeeting.com/join/@Model.Webinar.WebinarKey</a></b></p>
 
                     }
                     else

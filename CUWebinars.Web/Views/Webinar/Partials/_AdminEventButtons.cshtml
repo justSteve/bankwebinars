@@ -42,13 +42,22 @@
                             //Active means the connection info has been generated. This form shows
                             // the relevant fields and offers to update them
                             @Html.Partial(@"Partials/_UpdateConnectionInfo", connInfoModel)
+                            @Html.Partial(@"Partials/_UpdateWebinarFiles", connInfoModel)
 
                             break;
                         }
                     case WebinarStatus.Scheduled:
                         {
+                            var connInfoModel = new ConnectionInfoModel
+                            {
+                                idWebinar = Model.Webinar.idWebinar,
+                                OrganizerKey = "901873",
+                                OrganizerOAuthKey = "JIOHRkkCvmIKDY8QO0S4msbYH48N",
+                                WebinarFiles = Model.Webinar.WebinarFiles
+                            };
+                            @Html.Partial(@"Partials/_UpdateConnectionInfo", connInfoModel)
+                            @Html.Partial(@"Partials/_UpdateWebinarFiles", connInfoModel)
 
-                            <button class="btn btn-success" id="InitializeConnectionInformation">Initialize Connection Information</button>
                             //If session is Scheduled it's ready for the Citrix / Selenium app to run.
                             // Not sure how we present that interface - the Admin will run an external app...
                             // do we just display instructions here on how to do that?
@@ -59,7 +68,7 @@
                             break;
                         }
                 }
-                <div style="display:inline-block"><a href="http://plaguis:777/publish.htm">Create</a></div>
+                <div style="display:inline-block"><a href="clone">Clone this event.</a></div>
             }
 
         </div>

@@ -888,5 +888,10 @@ namespace CUWebinars.Web.Controllers
             }
             _disposed = true;
         }
+
+        public ActionResult UpdateWebinarFiles()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

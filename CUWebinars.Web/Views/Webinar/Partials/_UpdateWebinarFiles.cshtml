@@ -1,0 +1,83 @@
+﻿@model ConnectionInfoModel
+
+@{
+    ViewBag.Title = "Manage Handouts for this event";
+
+}
+<style>
+    .form-horizontal .control-label {
+        float: left;
+        padding-top: 0;
+        text-align: right;
+        width: 140px;
+        margin-top: 10px;
+    }
+
+    .form-horizontal .form-control {
+        margin-left: 10px;
+        vert-align: top;
+        margin-top: 10px;
+        border-radius: 4px;
+        height: 20px;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+
+        $(".control-label").append(":");
+
+
+    });
+</script>
+<div><a href="#UpdateWebinarHandoutsModal" role="button" class="btn" data-toggle="modal">Manage Handouts</a></div>
+@using (Html.BeginForm("UpdateWebinarFiles", "Webinar", FormMethod.Post, new { id = "_UpdateWebinarFiles" }))
+{
+    <div id="UpdateWebinarHandoutsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Update Webinar Handouts</h3>
+        </div>
+        <div class="modal-body">
+
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.idWebinar)
+
+            <div class="form-horizontal">
+                @Html.ValidationSummary(true)
+                @if (Model.WebinarFiles != null && Model.WebinarFiles.Count > 0)
+                {
+                    <div class="well well-large form-group">
+                        <div align="center">Webinar Files</div>
+                        @foreach (var file in Model.WebinarFiles)
+                        {
+
+                            <input type="hidden" name="idWebinarFile_@file.idWebinarFile" value="@file.idWebinarFile" />
+                            <div>
+                                <span class="control-label">File Name</span>
+                                <input type="text" class="form-control" name="fileLocation_@file.idWebinarFile" value="@file.fileLocation" />
+                            </div>
+                            <div>
+                                <span class="control-label">Label</span>
+                                <input type="text" class="form-control" name="fileDesc_@file.idWebinarFile" value="@file.fileDesc" /><br />
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    //TODO: Apply same input scheme as was used for Additional Locations
+                    // Like Additional Locations, there can be many 'WebinarFiles' per event
+                    // This is the location to collect those unknown number of files
+                }
+
+
+                <div class="modal-footer">
+                    <input type="submit" value="Save" class="btn btn-default pull-left" />
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
