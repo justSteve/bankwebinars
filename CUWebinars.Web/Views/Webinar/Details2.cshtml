@@ -176,11 +176,7 @@
         {
             <div id="SignUpFormContainer" class="row-fluid">
 
-                @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new { id = "SignUpForm" }))
-                {
-                    @Html.HiddenFor(model => model.Webinar.idWebinar)
-                    @Html.HiddenFor(model => model.WebUser.idUser)
-                    <input type="hidden" name="stageOfCheckout" />
+
 
 
                     <div class="content offset2 span8 well">
@@ -193,18 +189,17 @@
                         <div class="tab-content">
                             <div class="tab-pane active" id="signUp">
                                 <input type="button" class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
-                                @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model)
+                                @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)
                             </div>
                             <div class="tab-pane" id="contactInfo">
                                 @*@Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutContact.cshtml", model: Model)*@
                             </div>
                             <div class="tab-pane" id="confirmation">
-                                @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutConfirm.cshtml", model: Model)
+                                @*@Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutConfirm.cshtml", model: Model)*@
                             </div>
                         </div>
                     </div>
-                }
-
+                
                 @using (Html.BeginForm("Register", "Account", null, FormMethod.Post, new { id = "_CreateUserForm", name = "createUser" }))
                 {
                     @Html.AntiForgeryToken()

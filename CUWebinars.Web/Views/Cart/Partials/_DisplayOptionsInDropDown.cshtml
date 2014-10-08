@@ -1,6 +1,6 @@
-﻿@model OrderRow
+﻿@model DisplayOptionsInDropDownViewModel
            
-<script type="text/javascript">
+@*<script type="text/javascript">
 
     $(document).ready(function () {
 
@@ -49,21 +49,22 @@
 
     });
 </script>
-    <input type="hidden" name="ID" value="@Model.ID" />
-    <select name="RegType" id="RegType">
-        @{
-            foreach (var option in WebinarFacade.Instance.GetOptions(Model.Webinar))
+
+<input type="hidden" name="ID" value="@Model.OrderRowId" />
+<select name="RegType" id="RegType">
+    @{
+        foreach (var option in Model.Options)
+        {
+            var optionType = option.GetType();
+            if (optionType.Name == "Option")
             {
-                var optionType = option.GetType();
-                if (optionType.Name == "Option")
-                {
-                    string isSelected = (int)Model.RegistrationType == option.ID ? "selected='selected'" : "";
+                string isSelected = (int)Model.OrderRowRegistrationType.idRegType == option.idRegType ? "selected='selected'" : "";
 
-                    <option class="radio" @isSelected value="@option.ID">
-                        @option.Label
-                    </option>
-                }
+                <option class="radio" @isSelected value="@option.idRegType">
+                    @option.OptionLabel
+                </option>
             }
-
         }
-    </select>
+
+    }
+</select>*@

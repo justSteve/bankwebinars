@@ -33,7 +33,7 @@ module OrderRegistration {
     export class PageObject {
         private discount: string;
         private wait4Emails: string;
-        private orderRowID: number;
+        private orderRowId: number;
         private checkoutInProcess: boolean;
         private isUserLogged: boolean;
         private whichStep: string;
@@ -47,7 +47,7 @@ module OrderRegistration {
         }
 
         getOrderRowId(): number {
-            return this.orderRowID;
+            return this.orderRowId;
         }
 
         getWhichStep(): string {
@@ -63,7 +63,7 @@ module OrderRegistration {
         }
 
         setOrderRowId(num : number): void {
-            this.orderRowID = num;
+            this.orderRowId = num;
         }
 
         setWhichStep(step : string): void {

@@ -1,43 +1,56 @@
-﻿@model WebinarDetailsViewModel
+﻿@model CheckoutOptionsViewModel
 
 <div class="tab-pane" id="signUp">
+    
 
-    @{
-        if (Model.Order != null && Model.Order.idOrder > 0)
+    @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new { id = "SignUpForm" }))
+    {
+        @Html.HiddenFor(model => model.idWebinar)
+        @Html.HiddenFor(model => model.idUser)
+        @Html.HiddenFor(model => model.OrderExists)
+        @Html.HiddenFor(model => model.OrderHasId)
+        @Html.HiddenFor(model => model.OrderStatus)
+        @Html.HiddenFor(model => model.WebinarDuration)
+        @Html.HiddenFor(model => model.WebinarStatus)
+        @Html.HiddenFor(model => model.DisplayOptionsViewModel.EventTitle)
+        
+        <input type="hidden" name="stageOfCheckout" />
+        
+        if (Model.OrderExists && Model.OrderHasId)
         {
-            var row = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+            //var row = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
 
-            var addLocations = row.AdditionalLocation.FirstOrDefault(o => o.idOrderRow == row.idOrderRow);
+            //var addLocations = row.AdditionalLocation.FirstOrDefault(o => o.idOrderRow == row.idOrderRow);
 
-            if (addLocations != null)
+            if (@Model.AdditionalLocations != null)
             {
-                var RegCost = addLocations.Price;
-                var RegLabel = addLocations.DescriptionPromo;
+                var RegCost = Model.AdditionalLocations;
+                var RegLabel = Model.AdditionalLocations;
             }
-            if (Model.Order.OrderStatus == OrderStatus.Submitted
-                || Model.Order.OrderStatus == OrderStatus.Paid
-                || Model.Order.OrderStatus == OrderStatus.Billed)
+            if (Model.OrderStatus == OrderStatus.Submitted
+                || Model.OrderStatus == OrderStatus.Paid
+                || Model.OrderStatus == OrderStatus.Billed)
             {
                 @*<span><i>Order# @Model.Order.OrderRows.FirstOrDefault().Order.ID<br>@RegLabel - $@RegCost<br></i></span>*@
-                if (Model.Webinar.ConnectionInfo != null)
+                if (Model.ConnectionInfoPresent)
                 {
                     @*<blockquote style="margin-left: 150px; margin-right: 150px;" class="btn-success well">@Model.Order.OrderRows.FirstOrDefault().OrderRowRegTypes.First(o => o.idRegType == Model.Order.OrderRows.FirstOrDefault().RegistrationType).RegType.Stage2CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>*@
-                    <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn btn-success well">@row.RegistrationType.Stage2CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
+                    <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn btn-success well">@Model.RegistrationType.Stage2CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
                 }
                 else
                 {
-                    <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn btn-success well">@row.RegistrationType.Stage1CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
+                    <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn btn-success well">@Model.RegistrationType.Stage1CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
                 }
             }
             else
             {
                 <span>There is a pending order for this event that requires your confirmation.</span>
-                @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model)
+                @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model.DisplayOptionsViewModel)
             }
         }
         else
         {
-            @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model)
+            @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model.DisplayOptionsViewModel)
         }
     }
 </div>

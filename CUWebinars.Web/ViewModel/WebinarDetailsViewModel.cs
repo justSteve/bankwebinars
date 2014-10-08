@@ -15,6 +15,7 @@ namespace CUWebinars.Web.ViewModel
         public string CeuShort { get; set; }
         public string CeuStatement { get; set; }
         public bool CheckoutInProcess { get; set; }
+        public CheckoutOptionsViewModel CheckoutOptionsViewModel { get; set; }
         public string ConfirmationCaption { get; set; }
         public ClaimsIdentity Identity { get; set; }
         public string MessageOrderStatus { get; set; }

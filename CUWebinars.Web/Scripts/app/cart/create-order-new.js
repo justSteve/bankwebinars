@@ -43,7 +43,7 @@ var OrderRegistration;
         };
 
         PageObject.prototype.getOrderRowId = function () {
-            return this.orderRowID;
+            return this.orderRowId;
         };
 
         PageObject.prototype.getWhichStep = function () {
@@ -59,7 +59,7 @@ var OrderRegistration;
         };
 
         PageObject.prototype.setOrderRowId = function (num) {
-            this.orderRowID = num;
+            this.orderRowId = num;
         };
 
         PageObject.prototype.setWhichStep = function (step) {

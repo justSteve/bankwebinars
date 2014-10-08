@@ -1,36 +1,28 @@
 ﻿@using Ninject
-@model CUWebinars.Web.ViewModel.WebinarDetailsViewModel
+@model CheckoutConfirmViewModel
 
 <div class="tab-pane" id="confirmation">
     @{
-        if (Model.Order != null)
+        if (Model.OrderExists)
         {
             var orderRowID = 0;
             var orderID = 0;
-            OrderRow row = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-            if (row != null && row.idOrderRow > 0)
+            if (Model.OrderRowExists && Model.OrderRowHasId)
             {
-                orderRowID = row.idOrderRow;
-                orderID = Model.Order.idOrder;
-
-                var UserDetails = Model.WebUser.FirstName + " " + Model.WebUser.LastName + " - "
-                                  + Model.Order.Institution + "<br>" + Model.WebUser.email;
-
-                var CCUserDetails = "None <a href=\"#AddCCModal\" role=\"button\" class=\"btn btn-mini\" data-toggle=\"modal\"> Add?</a> ";
 
                 //if (!string.IsNullOrEmpty(row.AlternateEmail))
                 //{
                 //    CCUserDetails = row.AlternateEmail;
                 //}
-                var addLocCaption = "";
-                <div style="font-size: smaller;">@{ Html.RenderPartial("~/Views/Account/Partials/OrderHasAdditionalLocations.cshtml", row); }</div>
+                
+                <div style="font-size: smaller;">@{ Html.RenderPartial("~/Views/Account/Partials/OrderHasAdditionalLocations.cshtml", Model.OrderHasAdditionalLocationsViewModel); }</div>
                 //TODO: Handle Discounts
 
-                if (Model.Order.OrderStatus == OrderStatus.InProcess)
+                if (Model.OrderStatus == OrderStatus.InProcess)
                 {
                     <div id="inProcCart" class="well pull-right">
                         <div id="showCartPrice">
-                            @{ Html.RenderPartial("Partials/_DisplayRowPrice", row); }
+                            @{ Html.RenderPartial("Partials/_DisplayRowPrice", Model.DisplayRowPriceViewModel); }
                         </div>
 
                         <div style="font-size: x-small; text-align: center;">
@@ -50,8 +42,8 @@
                             Additional Locations:
                         </div>
                         <div class="span5">
-                            @Html.Raw(@UserDetails)<br />@Html.Raw(@CCUserDetails)<br />
-                            @{ Html.RenderPartial("Partials/_DisplayOptionsInDropDown", row); }
+                            @Html.Raw(@Model.UserDetails)<br />@Html.Raw(@Model.CCUserDetails)<br />
+                            @{ Html.RenderPartial("Partials/_DisplayOptionsInDropDown", Model.DisplayOptionsInDropDownViewModel); }
                             <br />
                             @*@Html.Raw(addLocCaption)*@
                         </div>
@@ -60,14 +52,14 @@
                     <div class="row">
                         <div class="span5">
                             <input size="350" type="text" placeholder="How did you hear about this webinar?" name="referred" id="tbReferred" value="" />
-                            @Html.Raw(Model.Order.UserComments)
-                            @Html.Raw(Model.Order.AffiliateComments)
-                            @if (Model.WebUser.UserType == UserType.Admin)
+                            @Html.Raw(Model.UserComments)
+                            @Html.Raw(Model.AffiliateComments)
+                            @if (Model.UserType == UserType.Admin)
                             {
                                 <br />
-                                @Html.Raw(Model.Order.AdminComments)
+                                @Html.Raw(Model.AdminComments)
                                 <br />
-                                @Html.Raw(Model.Order.Origin)
+                                @Html.Raw(Model.Origin)
                             }
                         </div>
                         <div class="span2">&nbsp;</div>
@@ -81,13 +73,13 @@
 
 
 
-                if (Model.Order.OrderStatus != OrderStatus.InProcess)
+                if (Model.OrderStatus != OrderStatus.InProcess)
                 {
-                    UserDetails += " - <a role=\"button\" class=\"btn btn-mini\" target=\"new\" href='/account/manage/" + Model.WebUser.idUser + "' > Edit?</a> ";
+                    Model.UserDetails += " - <a role=\"button\" class=\"btn btn-mini\" target=\"new\" href='/account/manage/" + Model.idUser + "' > Edit?</a> ";
 
                     <div id="postCheckout" class="well pull-right">
-                        <div id="showCartPrice">@{ Html.RenderPartial("Partials/_DisplayRowPrice", row); }</div>
-                        @if (Model.Order.OrderStatus != OrderStatus.Paid)
+                        <div id="showCartPrice">@{ Html.RenderPartial("Partials/_DisplayRowPrice", Model.DisplayRowPriceViewModel); }</div>
+                        @if (Model.OrderStatus != OrderStatus.Paid)
                         {
                             <span style="font-size: small; text-align: center;">
                                 Invoice mailed following the event.<br />
@@ -106,10 +98,10 @@
 
                         </div>
                         <div class="span4">
-                            @Html.Raw(@UserDetails)<br />
-                            @Html.Raw(@CCUserDetails)<br />
-                            @row.RegistrationType.OptionLabel<br />
-                            Additional Locations:<br />@Html.Raw(addLocCaption)
+                            @Html.Raw(@Model.UserDetails)<br />
+                            @Html.Raw(@Model.CCUserDetails)<br />
+                            @Model.OptionLabel<br />
+                            Additional Locations:<br />@Html.Raw(Model.AdditionalLocationCaption)
                         </div>
                     </div>
                     <div class="row">

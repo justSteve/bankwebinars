@@ -1,33 +1,33 @@
 ﻿@using System.Configuration
 @using System.Text
-@model WebinarDetailsViewModel
+@model DisplayOptionsViewModel
 
 @{
     var defaultCheck = "checked";
     <script language="javascript">
         function signUpv1() {
             @{
-                var eventtitle = Model.Webinar.Title.Replace("'", "");
-                if (Model.Webinar.Duration > 1)
+                var eventtitle = Model.EventTitle.Replace("'", "");
+                if (Model.WebinarDuration > 1)
                 {
-                    if (Model.Webinar.Status == WebinarStatus.Scheduled ||Model.Webinar.Status == WebinarStatus.Active ||Model.Webinar.Status == WebinarStatus.InProgress)
+                    if (Model.WebinarStatus == WebinarStatus.Scheduled ||Model.WebinarStatus == WebinarStatus.Active ||Model.WebinarStatus == WebinarStatus.InProgress)
                     {
-                        <text>window.open('http://form.jotform.us/form/32525417714149?webinarid=@Model.Webinar.idWebinar&webinarTitle=@eventtitle', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
+                        <text>window.open('http://form.jotform.us/form/32525417714149?webinarid=@Model.idWebinar&webinarTitle=@eventtitle', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
                     }
                     else
                     {
-                        <text>window.open('http://form.jotform.us/form/32525008495151?webinarid=@Model.Webinar.idWebinar&webinarTitle=@eventtitle', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
+                        <text>window.open('http://form.jotform.us/form/32525008495151?webinarid=@Model.idWebinar&webinarTitle=@eventtitle', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
                     }
                 }
-                if (Model.Webinar.Duration < 2)
+                if (Model.WebinarDuration < 2)
                 {
-                    if (Model.Webinar.Status == WebinarStatus.Scheduled || Model.Webinar.Status == WebinarStatus.Active || Model.Webinar.Status == WebinarStatus.InProgress)
+                    if (Model.WebinarStatus == WebinarStatus.Scheduled || Model.WebinarStatus == WebinarStatus.Active || Model.WebinarStatus == WebinarStatus.InProgress)
                     {
-                        <text>window.open('http://form.jotform.us/form/32525511772148?webinarid=@Model.Webinar.idWebinar&webinarTitle=@eventtitle', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
+                        <text>window.open('http://form.jotform.us/form/32525511772148?webinarid=@Model.idWebinar&webinarTitle=@eventtitle', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
                     }
                     else
                     {
-                        <text>window.open('http://form.jotform.us/form/32525522499156?webinarid=@Model.Webinar.idWebinar&webinarTitle=@eventtitle', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
+                        <text>window.open('http://form.jotform.us/form/32525522499156?webinarid=@Model.idWebinar&webinarTitle=@eventtitle', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
                     }
                 }
             }
@@ -45,7 +45,7 @@
 </script>
 @{
 
-    StringBuilder explainsOptionsBuilder = new StringBuilder();
+    var explainsOptionsBuilder = new StringBuilder();
     explainsOptionsBuilder.Append("The following choices are available for this webinar.<br>");
 
 
@@ -72,7 +72,7 @@
     <span>
         Choose the attendance option that's right for you. <a href="#AttendRegTypes" data-toggle="modal">(learn more)</a>
     </span>
-    if (Model.Order != null && Model.Order.OrderRows != null)
+    if (Model.OrderRowExists)
     {
         <div class="pull-right">
             @Html.Partial("Partials/_DisplayRowPrice")
@@ -134,10 +134,10 @@
             });
         </script>
 
-        @if (Model.Webinar.Status == WebinarStatus.Scheduled || Model.Webinar.Status == WebinarStatus.Active || Model.Webinar.Status == WebinarStatus.InProgress)
+        @if (Model.WebinarStatus == WebinarStatus.Scheduled || Model.WebinarStatus == WebinarStatus.Active || Model.WebinarStatus == WebinarStatus.InProgress)
         {
             decimal addLocPrice = 150;
-            var AddLocModel = new AdditionalLocationOfferViewModel()
+            @*var AddLocModel = new AdditionalLocationOfferViewModel()
             {
                 Webinar = Model.Webinar,
                 WebUser = Model.WebUser,
@@ -146,7 +146,7 @@
             //TODO: How to correctly populate the AdditionalEmails price value
             <div id="displayAddLoc">
                 @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationsView.cshtml", AddLocModel)
-            </div>
+            </div>*@
         }
     </div>
 }

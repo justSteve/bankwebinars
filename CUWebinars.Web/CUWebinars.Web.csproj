@@ -437,7 +437,12 @@
     <None Include="Notification\Templates\OrderSubmittedAdditionalLocation.cshtml" />
     <Compile Include="ViewModel\AdditionalLocationAddViewModel.cs" />
     <Compile Include="ViewModel\AdditionalLocationOfferViewModel.cs" />
+    <Compile Include="ViewModel\CheckoutConfirmViewModel.cs" />
+    <Compile Include="ViewModel\CheckoutOptionsViewModel.cs" />
     <Compile Include="ViewModel\CreateUserConfirmedViewModel.cs" />
+    <Compile Include="ViewModel\DisplayOptionsInDropDownViewModel.cs" />
+    <Compile Include="ViewModel\DisplayOptionsViewModel.cs" />
+    <Compile Include="ViewModel\DisplayRowPriceViewModel.cs" />
     <Compile Include="ViewModel\EmailRequiredBaseViewModel.cs" />
     <Compile Include="ViewModel\JsonResultViewModel.cs" />
     <Compile Include="ViewModel\LogInAsOtherUserViewModel.cs" />
@@ -501,6 +506,7 @@
     <Compile Include="ViewModel\AdhocNotificationViewModel.cs" />
     <Compile Include="ViewModel\GTWRegistrantViewModel.cs" />
     <Compile Include="ViewModel\ImportOrderViaDashboardViewModel.cs" />
+    <Compile Include="ViewModel\OrderHasAdditionalLocationsViewModel.cs" />
     <Compile Include="ViewModel\RegisterViewModel.cs" />
     <Compile Include="ViewModel\ResendOrderInformationViewModel.cs" />
     <Compile Include="ViewModel\WebinarDetailsViewModel.cs" />

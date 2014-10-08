@@ -1,4 +1,6 @@
-﻿using CUWebinars.Business.AccountService;
+﻿using System.Collections.Generic;
+using System.Text;
+using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Helpers;
@@ -16,7 +18,7 @@ namespace CUWebinars.Web.Core.Orchestrators
     public class CartControllerOrchestrator : ICartControllerOrchestrator
     {
         public HttpRequest Request { get; set; }
-        readonly IStateService _stateService;
+        private readonly IStateService _stateService;
 
         private readonly IMembershipService _membershipService;
         private readonly ILogger _logger;
@@ -28,7 +30,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             IOrderManagementService orderManagementService,
             IWebinarManagementService webinarManagementService,
             IStateService stateService,
-            ILogger logger, 
+            ILogger logger,
             HttpRequest request)
         {
             Request = request;
@@ -59,6 +61,193 @@ namespace CUWebinars.Web.Core.Orchestrators
             };
 
             return model;
+        }
+
+        public DisplayOptionsInDropDownViewModel BuildDisplayOptionsInDropDownViewModel(
+            OrderRow orderRow,
+            int? idOrderRow)
+        {
+            if (ReferenceEquals(orderRow, null))
+                orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
+
+            if (idOrderRow.HasValue && idOrderRow.Value > 0)
+            {
+                try
+                {
+                    var displayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
+                    {
+                        //Options = null, // todo: this could be sent to the server from the client. Already know the options. No need hit database.
+                        Options = new List<RegType>(),
+                        OrderRowId = idOrderRow.Value,
+                        OrderRowRegistrationType = orderRow.RegistrationType
+                    };
+
+                    return displayOptionsInDropDownViewModel;
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException("BuildCheckOutViewModel", exception);
+                    throw;
+                }
+
+            }
+
+            return null;
+        }
+
+        public CheckoutConfirmViewModel BuildCheckoutConfirmViewModel(int? idOrderRow)
+        {
+            if (idOrderRow.HasValue && idOrderRow.Value > 0)
+            {
+                try
+                {
+                    _logger.Info("Building ");
+                    var orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
+                    var webUser = orderRow.Order.WebUser;
+
+                    var checkoutConfirmViewModel = new CheckoutConfirmViewModel
+                    {
+                        AdditionalLocationCaption = string.Empty,
+                        AdminComments = orderRow.Order.AdminComments,
+                        AffiliateComments = orderRow.Order.AffiliateComments,
+                        CCUserDetails =
+                            "None <a href=\"#AddCCModal\" role=\"button\" class=\"btn btn-mini\" data-toggle=\"modal\"> Add?</a> ",
+                        DisplayOptionsInDropDownViewModel = BuildDisplayOptionsInDropDownViewModel(orderRow, idOrderRow),
+                        DisplayRowPriceViewModel = BuildDisplayRowPriceViewModel(orderRow, idOrderRow),
+                        idUser = orderRow.Order.WebUser.idUser,
+                        OrderExists = orderRow.Order != null,
+                        OrderHasAdditionalLocationsViewModel =
+                            BuildOrderHasAdditionalLocationsViewModel(orderRow, idOrderRow),
+                        OrderStatus = orderRow.Order.OrderStatus,
+                        Origin = orderRow.Order.Origin,
+                        UserComments = orderRow.Order.UserComments,
+                        UserDetails =
+                            webUser.FirstName + " " + webUser.LastName + " - " + orderRow.Order.Institution + "<br>" +
+                            webUser.email,
+                        UserType = webUser.UserType
+                    };
+
+                    if (checkoutConfirmViewModel.OrderRowExists)
+                    {
+                        if (orderRow.idOrderRow > 0)
+                            checkoutConfirmViewModel.OrderRowHasId = true;
+
+                        if (checkoutConfirmViewModel.OrderRowHasId)
+                            checkoutConfirmViewModel.OptionLabel = orderRow.RegistrationType.OptionLabel;
+
+                        if (orderRow.Order.OrderStatus == OrderStatus.InProcess)
+                            checkoutConfirmViewModel.UserDetails +=
+                                " - <a role=\"button\" class=\"btn btn-mini\" target=\"new\" href='/account/manage/" +
+                                webUser.idUser + "' > Edit?</a>";
+                    }
+
+                    if (Request["referred"] != null &&
+                        WebUtility.HtmlDecode(Request["referred"]) != "How did you hear about this webinar?")
+                    {
+                        orderRow.Order.Origin = Request["referred"] + Environment.NewLine + orderRow.Order.Origin;
+                        //ViewData["referred"] = Request["referred"];
+                    }
+
+                    return checkoutConfirmViewModel;
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException("BuildCheckOutViewModel", exception);
+                    throw;
+                }
+            }
+            return null;
+        }
+
+        public CheckoutOptionsViewModel BuildCheckoutOptionsViewModel(
+            WebinarDetailsViewModel webinarDetailsViewModel,
+            int? idWebinarId,
+            int? idOrder)
+        {
+            if (ReferenceEquals(webinarDetailsViewModel, null))
+            {
+                var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(idWebinarId.Value);
+
+                webinarDetailsViewModel = new WebinarDetailsViewModel()
+                {
+                    Affiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate"),
+                    Webinar = webinar,
+                    WebinarFiles = webinar.WebinarFiles.ToList(),
+                    Order = _orderManagementService.GetOrderById(idOrder.Value)
+                };                
+            }
+
+            if (idWebinarId.HasValue && idWebinarId.Value > 0)
+                {
+                    try
+                    {
+                        _logger.Info("Building ");
+
+                        var checkoutOptionsViewModel = new CheckoutOptionsViewModel
+                        {
+                            DisplayOptionsViewModel = new DisplayOptionsViewModel
+                            {
+                                EventTitle = webinarDetailsViewModel.Webinar.Title,
+                                idWebinar = webinarDetailsViewModel.Webinar.idWebinar,
+                                Options = webinarDetailsViewModel.Options,
+                                OrderRowExists = webinarDetailsViewModel.Order != null && webinarDetailsViewModel.Order.OrderRows != null,
+                                WebinarDuration = webinarDetailsViewModel.Webinar.Duration,
+                                WebinarStatus = webinarDetailsViewModel.Webinar.Status
+                            },
+                            AdditionalLocations = null, //TODO: come back to
+                            ConnectionInfoPresent = webinarDetailsViewModel.Webinar.ConnectionInfo != null,
+                            WebinarDuration = webinarDetailsViewModel.Webinar.Duration,
+                            idWebinar = webinarDetailsViewModel.Webinar.idWebinar,
+                            idUser = webinarDetailsViewModel.WebUser.idUser,
+                            OrderExists = webinarDetailsViewModel.Order != null,
+                            WebinarStatus = webinarDetailsViewModel.Webinar.Status
+                        };
+
+                    }
+                    catch (Exception exception)
+                    {
+                        _logger.ErrorException("BuildCheckoutOptionsViewModel", exception);
+                        throw;
+                    }
+
+                }
+            
+            return null;
+        }
+
+        public DisplayRowPriceViewModel BuildDisplayRowPriceViewModel(OrderRow orderRow, int? idOrderRow)
+        {
+            if (ReferenceEquals(orderRow,null))
+                orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
+
+            if (orderRow.RowStatus != OrderRowStatus.Active)
+                return null;
+
+            if (idOrderRow.HasValue && idOrderRow.Value > 0)
+            {
+                try
+                {
+                    _logger.Info("Building ");
+
+                    var displayRowPriceViewModel = new DisplayRowPriceViewModel
+                    {
+                        Discount = orderRow.Discount,
+                        NumberOfAdditionalLocations = orderRow.AdditionalLocation.Count(),
+                        OrderStatus = orderRow.Order.OrderStatus,
+                        Price = orderRow.RegistrationType.Price,
+                        RowPrice = orderRow.RowPrice,
+                        RegistrationType = orderRow.RegistrationType
+                    };
+
+                    return displayRowPriceViewModel;
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException("BuildDisplayRowPriceViewModel", exception);
+                    throw;
+                }
+            }
+            return null;
         }
 
         public WebinarDetailsViewModel BuildCheckOutViewModel(int? idOrderRow)
@@ -98,6 +287,72 @@ namespace CUWebinars.Web.Core.Orchestrators
                 }
             }
             return null;
+        }
+
+        public OrderHasAdditionalLocationsViewModel BuildOrderHasAdditionalLocationsViewModel(
+            OrderRow orderRow,
+            int? idOrderRow)
+        {
+            if (ReferenceEquals(orderRow, null))
+                orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
+
+            if (idOrderRow.HasValue && idOrderRow.Value > 0)
+            {
+                try
+                {
+                    _logger.Info("Building ");
+
+                    var addressesAndOptionsCost = GetAddressesAndOptionsCost(orderRow.AdditionalLocation);
+
+                    var orderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
+                    {
+                        AdditionalLocations = orderRow.AdditionalLocation,
+                        Addresses = addressesAndOptionsCost.Item1,
+                        OptionsCost = addressesAndOptionsCost.Item2
+                    };
+
+                    return orderHasAdditionalLocationsViewModel;
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException("BuildOrderHasAdditionalLocationsViewModel", exception);
+                    throw;
+                }
+            }
+            return null;
+        }
+
+        private Tuple<string, int> GetAddressesAndOptionsCost(IEnumerable<AdditionalLocation> additionalLocations)
+        {
+            StringBuilder addresses = new StringBuilder();
+            int optionsCost = 0;
+            var i = 0;
+
+            var additionalLocationsEnumerated = additionalLocations as AdditionalLocation[] ?? additionalLocations.ToArray(); // ensures only enumerated once
+
+            foreach (var additionalLocation in additionalLocationsEnumerated)
+            {
+                i++;
+                if (i == additionalLocationsEnumerated.Count())
+                {
+                    addresses.Append(additionalLocation.Email);
+                }
+                if (i < additionalLocationsEnumerated.Count())
+                {
+                    if (i == additionalLocationsEnumerated.Count() - 1)
+                    {
+                        addresses.Append(additionalLocation.Email + " and ");
+                    }
+                    else
+                    {
+                        addresses.Append(additionalLocation.Email + ", ");
+                    }
+                }
+
+                optionsCost = optionsCost + Convert.ToInt32(additionalLocation.Price);
+            }
+
+            return new Tuple<string, int>(addresses.ToString(), optionsCost);
         }
 
         public string CheckIfAddLocShouldHide(int optionId)

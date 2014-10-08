@@ -1,50 +1,22 @@
-﻿@using System.Activities
-@using System.Collections
-@using System.Globalization
-@using System.Text
-@using Microsoft.Ajax.Utilities
-@model  CUWebinars.Business.Models.OrderRow
+﻿@using System.Globalization
+@using CUWebinars.Business.Constants
+@model  OrderHasAdditionalLocationsViewModel
 
 @{
-    NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
+    var nfi = new CultureInfo(DomainConstants.UsLocale, false).NumberFormat;
 
-    nfi.CurrencyDecimalDigits = 0;
-    var locations = Model.AdditionalLocation;
-    if (locations.Count > 0)
+    var numberOfAdditionalLocations = Model.AdditionalLocations.Count();
+    
+    if (numberOfAdditionalLocations > 0)
        
     {
-        if (locations.Count == 1)
+        if (numberOfAdditionalLocations == 1)
         {
-            <span>The registration includes a single additional location for @locations.First().Email costing @locations.First().Price.ToString("C", nfi). </span>
+            <span>The registration includes a single additional location for @Model.AdditionalLocations.First().Email costing @Model.AdditionalLocations.First().Price.ToString("C", nfi). </span>
         }
         else
         {
-            StringBuilder addresses = new StringBuilder();
-            int optionsCost = 0;
-            var i = 0;
-
-            foreach (var addLoc in locations)
-            {
-                i++; 
-                if (i == locations.Count)
-                {
-                    addresses.Append(addLoc.Email);
-                }
-                if (i < locations.Count)
-                {
-                    if (i == locations.Count - 1)
-                    {
-                        addresses.Append(addLoc.Email + " and ");
-                    }
-                    else
-                    {
-                        addresses.Append(addLoc.Email + ", ");
-                    }
-                }
-
-                optionsCost = optionsCost + Convert.ToInt32(addLoc.Price);
-            }
-            <span>The registration includes @locations.Count additional locations (total added cost is @optionsCost.ToString("C", nfi)) for @addresses</span><text>.</text>
+            <span>The registration includes @numberOfAdditionalLocations additional locations (total added cost is @Model.OptionsCost.ToString("C", nfi)) for @Model.Addresses</span><text>.</text>
         }
     }
 }

@@ -88,26 +88,26 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-        public ActionResult CheckoutOptions(int ID)
+        public ActionResult CheckoutOptions(int? idWebinar, int? idOrderRow)
         {
-            var model = _cartControllerOrchestrator.BuildCheckOutViewModel(ID);
+            var model = _cartControllerOrchestrator.BuildCheckoutOptionsViewModel(null, idWebinar, idOrderRow);
             return PartialView("Partials/CheckoutOptions", model);
         }
 
         public ActionResult CheckoutContact(int ID)
         {
-            var model = _cartControllerOrchestrator.BuildCheckOutViewModel(ID);
+            var model = _cartControllerOrchestrator.BuildCheckoutConfirmViewModel(ID);
             return PartialView("Partials/CheckoutContact", model);
         }
         public ActionResult CheckoutConfirm(int ID)
         {
-            var model = _cartControllerOrchestrator.BuildCheckOutViewModel(ID);
+            var model = _cartControllerOrchestrator.BuildCheckoutConfirmViewModel(ID);
             return PartialView("Partials/CheckoutConfirm", model);
         }
         public ActionResult CheckoutDisplayRowPrice(int ID)
         {
-            var model = _cartControllerOrchestrator.BuildCheckOutViewModel(ID);
-            return PartialView("Partials/_DisplayRowPrice", model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active));
+            var model = _cartControllerOrchestrator.BuildDisplayRowPriceViewModel(null, ID);
+            return PartialView("Partials/_DisplayRowPrice", model); 
         }
 
         public PartialViewResult CheckoutContactDetails()
@@ -163,7 +163,7 @@ namespace CUWebinars.Web.Controllers
                     return Json(new
                     {
                         success = "success",
-                        orderRowID = formModel.Order.OrderRows.Single().idOrderRow
+                        orderRowId = formModel.Order.OrderRows.Single().idOrderRow
                     }, JsonRequestBehavior.AllowGet
                         );
                 }

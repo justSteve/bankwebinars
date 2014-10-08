@@ -488,6 +488,7 @@ namespace CUWebinars.Web.Controllers
                 ,
                 Affiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate")
                 ,
+                
                 Webinar = webinar
                 ,
                 Options = options
@@ -614,6 +615,35 @@ namespace CUWebinars.Web.Controllers
             model.Options = _orderManagementService.GetOptionsByWebinarId(id, false);
 
             model.WebinarFiles = _webinarManagementService.GetWebinarFilesPerWebinar(webinar.idWebinar);
+
+            model.CheckoutOptionsViewModel = new CheckoutOptionsViewModel
+            {
+                DisplayOptionsViewModel = new DisplayOptionsViewModel
+                {
+                    EventTitle = model.Webinar.Title,
+                    idWebinar = model.Webinar.idWebinar,
+                    Options = model.Options,
+                    OrderRowExists = model.Order != null && model.Order.OrderRows != null,
+                    WebinarDuration = model.Webinar.Duration,
+                    WebinarStatus = model.Webinar.Status
+                },
+                AdditionalLocations = null, //TODO: come back to
+                ConnectionInfoPresent = model.Webinar.ConnectionInfo != null,
+                WebinarDuration = model.Webinar.Duration,
+                idWebinar = model.Webinar.idWebinar,
+                idUser = model.WebUser.idUser,
+                OrderExists = model.Order != null,
+                WebinarStatus = model.Webinar.Status
+            };
+
+            if (model.CheckoutOptionsViewModel.OrderExists)
+            {
+                model.CheckoutOptionsViewModel.OrderStatus = model.Order.OrderStatus;
+                model.CheckoutOptionsViewModel.OrderHasId = model.Order.idOrder > 0;
+                var row = model.Order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active);
+                if (row != null)
+                    model.CheckoutOptionsViewModel.RegistrationType = row.RegistrationType;
+            }
         }
 
         /// <summary>
