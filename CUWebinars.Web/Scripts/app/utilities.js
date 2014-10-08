@@ -32,8 +32,8 @@ var Common;
         Utilities.prototype.setPathToBaseUrl = function () {
             var fullUrl = $.url().attr(this.sourceAttribute);
             var relativePath = this.getRelativePath();
-            var indexOfRelativePath = location.href.indexOf(relativePath);
-            return fullUrl.substr(0, indexOfRelativePath - 1);
+            var indexOfRelativePath = fullUrl.indexOf(relativePath);
+            return fullUrl.substr(0, indexOfRelativePath);
         };
 
         Utilities.prototype.isValidEmailAddress = function (emailAddress) {

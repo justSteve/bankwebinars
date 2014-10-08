@@ -21,7 +21,7 @@ $(function () {
     stateManager = new Registration.StateManager();
     stateManager.initializeState();
 
-    var path = utilities.setPath();
+    var path = utilities.setPathToBaseUrl();
 
     $('#RegisterFields_Email').bind('change keyup', function () {
         if ($(this).validate().checkForm()) {
