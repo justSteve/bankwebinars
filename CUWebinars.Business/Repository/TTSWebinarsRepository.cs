@@ -69,6 +69,11 @@ namespace CUWebinars.Business.Repository
             return item;
         }
 
+        public bool Exists(T item)
+        {
+            return items.Local.Any(e => e == item);
+        }
+
         protected void CheckDisposed()
         {
             if (db == null)

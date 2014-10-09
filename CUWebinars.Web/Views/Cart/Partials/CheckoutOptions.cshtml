@@ -1,6 +1,5 @@
 ﻿@model CheckoutOptionsViewModel
 
-<div class="tab-pane" id="signUp">
     
 
     @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new { id = "SignUpForm" }))
@@ -53,4 +52,3 @@
             @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model.DisplayOptionsViewModel)
         }
     }
-</div>

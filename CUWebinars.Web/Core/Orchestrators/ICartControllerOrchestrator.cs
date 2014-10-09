@@ -9,12 +9,15 @@ namespace CUWebinars.Web.Core.Orchestrators
         DisplayRowPriceViewModel BuildDisplayRowPriceViewModel(OrderRow orderRow, int? idOrderRow);
         RegisterViewModel BuildRegisterViewModel();
         CheckoutConfirmViewModel BuildCheckoutConfirmViewModel(int? idOrderRow);
-        CheckoutOptionsViewModel BuildCheckoutOptionsViewModel(WebinarDetailsViewModel webinarDetailsViewModel,
-            int? idWebinar, int? idOrder);
+        CheckoutOptionsViewModel BuildCheckoutOptionsViewModel(
+            WebinarDetailsViewModel webinarDetailsViewModel,
+            int? idWebinar,
+            int? idOrderRow,
+            int? idOrder);
         WebinarDetailsViewModel BuildCheckOutViewModel(int? idOrderRow);
         OrderHasAdditionalLocationsViewModel BuildOrderHasAdditionalLocationsViewModel(OrderRow orderRow, int? idOrderRow);
         string CheckIfAddLocShouldHide(int optionId);
-        Order CreateOrder(WebinarDetailsViewModel formModel, string stageOfCheckout, string registrationType);
+        Order CreateOrder(CheckoutOptionsViewModel formModel, string stageOfCheckout);
         OrderRow LoadOrderRow(int id, OrderStatus status);
     }
 }

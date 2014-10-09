@@ -31,45 +31,6 @@ var OrderRegistration;
     OrderRegistration.Constants = Constants;
     ;
 
-    var PageObject = (function () {
-        function PageObject() {
-        }
-        PageObject.prototype.getCheckoutInProcess = function () {
-            return this.checkoutInProcess;
-        };
-
-        PageObject.prototype.getIsUserLogged = function () {
-            return this.isUserLogged;
-        };
-
-        PageObject.prototype.getOrderRowId = function () {
-            return this.orderRowId;
-        };
-
-        PageObject.prototype.getWhichStep = function () {
-            return this.whichStep;
-        };
-
-        PageObject.prototype.setCheckoutInProcess = function (val) {
-            this.checkoutInProcess = val;
-        };
-
-        PageObject.prototype.setIsUserLogged = function (val) {
-            this.isUserLogged = val;
-        };
-
-        PageObject.prototype.setOrderRowId = function (num) {
-            this.orderRowId = num;
-        };
-
-        PageObject.prototype.setWhichStep = function (step) {
-            this.whichStep = step;
-        };
-        return PageObject;
-    })();
-    OrderRegistration.PageObject = PageObject;
-    ;
-
     var StateManager = (function () {
         function StateManager() {
         }
@@ -81,8 +42,16 @@ var OrderRegistration;
             return this.isUserLogged;
         };
 
+        StateManager.prototype.getOrderId = function () {
+            return this.orderId;
+        };
+
         StateManager.prototype.getOrderRowId = function () {
             return this.orderRowID;
+        };
+
+        StateManager.prototype.getWebinarId = function () {
+            return this.idWebinar;
         };
 
         StateManager.prototype.getWhichStep = function () {
@@ -97,8 +66,16 @@ var OrderRegistration;
             this.isUserLogged = val;
         };
 
+        StateManager.prototype.setOrderId = function (num) {
+            this.orderId = num;
+        };
+
         StateManager.prototype.setOrderRowId = function (num) {
             this.orderRowID = num;
+        };
+
+        StateManager.prototype.setWebinarId = function (id) {
+            this.idWebinar = id;
         };
 
         StateManager.prototype.setWhichStep = function (step) {

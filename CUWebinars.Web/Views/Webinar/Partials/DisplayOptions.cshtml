@@ -75,7 +75,7 @@
     if (Model.OrderRowExists)
     {
         <div class="pull-right">
-            @Html.Partial("Partials/_DisplayRowPrice")
+            @Html.Partial("Partials/_DisplayRowPrice", Model.DisplayRowPriceViewModel)
         </div>
     }
 
@@ -91,7 +91,7 @@
                     explainsOptionsBuilder.Append("<span><b>" + myOption.OptionLabel + "</b> means " + myOption.OptionExplain + " This option costs <i>$" + myOption.Price.ToString().Replace(".00", "") + "</i><br></span>");
                     //explainsOptionsBuilder.Append("<span><b>"+Html.Raw(myOption.OptionLabel)+"</b> means "+Html.Raw(myOption.OptionExplain) +" This option costs <i>$" + myOption.Price.ToString().Replace(".00", "")+"</i><br></span>");
                     <dt>
-                        <input type="radio" class="checkbox" id='regTypeID_@(myOption.idRegType)' @defaultCheck name="RegistrationType"
+                        <input type="radio" class="checkbox" id='regTypeID_@(myOption.idRegType)' @defaultCheck name="RegistrationTypeId"
                                value="@myOption.idRegType" />
                         &nbsp;&nbsp;@myOption.OptionLabel- $@myOption.Price &nbsp;&nbsp;
                         <a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.OptionExplain) ">

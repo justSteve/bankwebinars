@@ -30,54 +30,14 @@ module OrderRegistration {
         static Zip: string = '_Zip';
     };
 
-    export class PageObject {
-        private discount: string;
-        private wait4Emails: string;
-        private orderRowId: number;
-        private checkoutInProcess: boolean;
-        private isUserLogged: boolean;
-        private whichStep: string;
-
-        getCheckoutInProcess(): boolean {
-            return this.checkoutInProcess;
-        }
-
-        getIsUserLogged(): boolean {
-            return this.isUserLogged;
-        }
-
-        getOrderRowId(): number {
-            return this.orderRowId;
-        }
-
-        getWhichStep(): string {
-            return this.whichStep;
-        }
-
-        setCheckoutInProcess(val : boolean): void {
-            this.checkoutInProcess = val;
-        }
-
-        setIsUserLogged(val : boolean): void {
-            this.isUserLogged = val;
-        }
-
-        setOrderRowId(num : number): void {
-            this.orderRowId = num;
-        }
-
-        setWhichStep(step : string): void {
-            this.whichStep = step;
-        }
-
-    };
-
     export class StateManager {
 
         private discount: string;
         private wait4Emails: string;
+        private orderId: number;
         private orderRowID: number;
         private checkoutInProcess: boolean;
+        private idWebinar: number;
         private isUserLogged: boolean;
         private whichStep: string;
 
@@ -91,8 +51,16 @@ module OrderRegistration {
             return this.isUserLogged;
         }
 
+        getOrderId(): number {
+            return this.orderId;
+        }
+
         getOrderRowId(): number {
             return this.orderRowID;
+        }
+
+        getWebinarId(): number {
+            return this.idWebinar;
         }
 
         getWhichStep(): string {
@@ -107,8 +75,16 @@ module OrderRegistration {
             this.isUserLogged = val;
         }
 
+        setOrderId(num: number): void {
+            this.orderId = num;
+        }
+
         setOrderRowId(num: number): void {
             this.orderRowID = num;
+        }
+
+        setWebinarId(id: number): void {
+            this.idWebinar = id;
         }
 
         setWhichStep(step: string): void {

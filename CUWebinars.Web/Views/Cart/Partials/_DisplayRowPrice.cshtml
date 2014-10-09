@@ -1,5 +1,5 @@
 ﻿@using System.Text
-@model OrderRow
+@model DisplayRowPriceViewModel
 
 @functions {
     private decimal CalculateOptionsPrice(OrderRow row)
@@ -19,57 +19,63 @@
                 verbose = (bool)ViewData["verbose"];
             }
         }
-        var row = Model;
 
-        decimal optionsTotal = CalculateOptionsPrice(row);
-        StringBuilder rowAmount = new StringBuilder();
-        if (row.Discount.flatOff != 0.0M || row.Discount.percentOff != 0.0M || optionsTotal != 0.0M)
+        //decimal optionsTotal = CalculateOptionsPrice(Model);
+        decimal optionsTotal = 0.0M; //TODO: fix this. Push to Controller.
+        var rowAmount = new StringBuilder();
+
+        Model.Discount = new Discount //todo: come back to this when we get to the discount stuff
         {
-            rowAmount.Append("Base Cost: " + row.RegistrationType.Price.ToString("c0") + "<br />");
+            code = "abc", flatOff = 10.0M
+        };
+        
+        if (Model.Discount.flatOff != 0.0M || Model.Discount.percentOff != 0.0M || optionsTotal != 0.0M)
+        {
+            rowAmount.Append("Base Cost: " + Model.RegistrationType.Price.ToString("c0") + "<br />");
         }
         else if (verbose == true)
         {
-            rowAmount.Append("Base Cost: " + row.RegistrationType.Price.ToString("c0") + "<br />");
+            rowAmount.Append("Base Cost: " + Model.RegistrationType.Price.ToString("c0") + "<br />");
         }
 
-        if (row.Discount.flatOff != 0.0M)
+        if (Model.Discount.flatOff != 0.0M)
         {
-            rowAmount.Append("Discounted: " + row.Discount.flatOff.ToString("c") + " (" + row.Discount.code + ")<br />");
+            rowAmount.Append("Discounted: " + Model.Discount.flatOff.ToString("c") + " (" + Model.Discount.code + ")<br />");
         }
         else if (verbose == true)
         {
-            rowAmount.Append("Discounted: " + row.Discount.flatOff.ToString("c") + " (" + row.Discount.code + ")<br />");
+            rowAmount.Append("Discounted: " + Model.Discount.flatOff.ToString("c") + " (" + Model.Discount.code + ")<br />");
         }
         if (optionsTotal != 0.0M)
         {
-            if (row.AdditionalLocation.Count == 1)
+            if (Model.NumberOfAdditionalLocations == 1)
             {
                 rowAmount.Append("One Additional Location: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
             }
             else
             {
-                rowAmount.Append(row.AdditionalLocation.Count.ToString() + " Additional Locations: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
+                rowAmount.Append(Model.NumberOfAdditionalLocations.ToString() + " Additional Locations: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
             }
         }
         else if (verbose == true)
         {
-            if (row.AdditionalLocation.Count == 1)
+            if (Model.NumberOfAdditionalLocations == 1)
             {
                 rowAmount.Append("One Additional Location: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
             }
             else
             {
-                rowAmount.Append(row.AdditionalLocation.Count.ToString() + " Additional Locations: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
+                rowAmount.Append(Model.NumberOfAdditionalLocations.ToString() + " Additional Locations: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
             }
         }
-        rowAmount.Append("Total Cost: " + row.RowPrice.ToString("c").Replace(".00", ""));
+        rowAmount.Append("Total Cost: " + Model.RowPrice.ToString("c").Replace(".00", ""));
 
         <div id="billingDetails" class="well" style="text-align: right;">
             @Html.Raw(rowAmount.ToString())<br />
 
             @{
         var statusLabel = "";
-        switch (row.Order.OrderStatus)
+        switch (Model.OrderStatus)
         {
             case OrderStatus.InProcess:
                 <span class="label label-warning">@OrderStatus.InProcess</span>

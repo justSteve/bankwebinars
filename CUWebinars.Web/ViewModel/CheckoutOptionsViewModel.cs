@@ -14,6 +14,7 @@ namespace CUWebinars.Web.ViewModel
         public bool OrderExists { get; set; }
         public bool OrderHasId { get; set; }
         public OrderStatus OrderStatus { get; set; }
+        public int RegistrationTypeId { get; set; }
         public RegType RegistrationType { get; set; }
         public decimal WebinarDuration { get; set; }
         public WebinarStatus WebinarStatus { get; set; }

@@ -88,9 +88,9 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-        public ActionResult CheckoutOptions(int? idWebinar, int? idOrderRow)
+        public ActionResult CheckoutOptions(int? idWebinar, int? idOrderRow, int? idOrder)
         {
-            var model = _cartControllerOrchestrator.BuildCheckoutOptionsViewModel(null, idWebinar, idOrderRow);
+            var model = _cartControllerOrchestrator.BuildCheckoutOptionsViewModel(null, idWebinar, idOrderRow, idOrder);
             return PartialView("Partials/CheckoutOptions", model);
         }
 
@@ -117,24 +117,19 @@ namespace CUWebinars.Web.Controllers
 
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult Signup2(WebinarDetailsViewModel formModel, string stageOfCheckout)
+        public ActionResult Signup2(CheckoutOptionsViewModel formModel, string stageOfCheckout)
         {
             if (ModelState.IsValid)
             {
                 var order = _cartControllerOrchestrator.CreateOrder(
                     formModel, 
-                    stageOfCheckout,
-                    Request.Form["RegistrationType"]
+                    stageOfCheckout
                     );
 
 
-                if (Request.IsAuthenticated)
+                //  TODO: this all changes and user can create order whilst not authenticated
+                if (!Request.IsAuthenticated)
                 {
-                    formModel.UserIsLoggedIn = true;
-                }
-                else
-                {
-                    formModel.UserIsLoggedIn = false;
                     _logger.Error("ERROR: CartController | Signup - currentUser is null" + order.idOrder);
                     //TODO: assign appropriate ModelError and error logging/handling
                 }
@@ -155,15 +150,17 @@ namespace CUWebinars.Web.Controllers
                 {
                     if (stageOfCheckout == "preReg")
                     {
-                        return PartialView("Partials/_DisplayRowPrice", formModel.Order.OrderRows.Single());
+                        return PartialView("Partials/_DisplayRowPrice", order.OrderRows.Single());
                     }
 
-                    formModel.Order = order;
+                    //formModel.Order = order;
 
                     return Json(new
                     {
                         success = "success",
-                        orderRowId = formModel.Order.OrderRows.Single().idOrderRow
+                        orderId = order.idOrder,
+                        orderRowId = order.OrderRows.Single().idOrderRow,
+                        webinarId = formModel.idWebinar
                     }, JsonRequestBehavior.AllowGet
                         );
                 }

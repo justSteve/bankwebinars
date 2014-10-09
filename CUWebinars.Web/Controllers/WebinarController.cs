@@ -643,6 +643,19 @@ namespace CUWebinars.Web.Controllers
                 var row = model.Order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active);
                 if (row != null)
                     model.CheckoutOptionsViewModel.RegistrationType = row.RegistrationType;
+                else
+                    row = model.Order.OrderRows.SingleOrDefault();
+
+                model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
+                    new DisplayRowPriceViewModel
+                    {
+                        Discount = row.Discount,
+                        NumberOfAdditionalLocations = row.AdditionalLocation.Count(),
+                        OrderStatus = row.Order.OrderStatus,
+                        Price = row.RegistrationType.Price,
+                        RowPrice = row.RowPrice,
+                        RegistrationType = row.RegistrationType
+                    };
             }
         }
 

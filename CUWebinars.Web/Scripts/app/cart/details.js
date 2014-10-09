@@ -42,7 +42,7 @@ $(function() {
         $('#showDiscount').css('display', 'block');
     }
 
-    if (cartStateManager.getOrderRowId() > 0 && CheckoutInProcess) {
+    if (cartStateManager.getOrderRowId() > 0 && cartStateManager.getCheckoutInProcess()) {
         $.get("/cart/checkoutConfirm/" + cartStateManager.getOrderRowId())
             .success(function (dataConfirm) {
                 $('#confirmation').replaceWith(dataConfirm);
@@ -60,7 +60,7 @@ $(function() {
     signUpForm.submit(function (e) {
 
         e.preventDefault();
-        CheckoutInProcess = true;
+        cartStateManager.setCheckoutInProcess(true);
 
         if (!cartStateManager.getIsUserLogged()) {
 
@@ -74,41 +74,31 @@ $(function() {
 
         } else {
 
-            $("#ProgressDialogBS").modal('show');
+            $('#ProgressDialogBS').modal('show');
             var data = signUpForm.serialize();
-            $.post(signUpForm.attr("action"), data, function (result, status) {
+            $.post(signUpForm.attr('action'), data, function (result, status) {
                 if (result.success) {
-                    //jslogger.event({ signup: { from: "EndUser Checkout" } });
+                    //jslogger.event({ signup: { from: 'EndUser Checkout' } });
                     cartStateManager.setOrderRowId(result.orderRowId);
+                    cartStateManager.setOrderId(result.orderId);
                     cartStateManager.setWhichStep(result.whichStep);
+                    cartStateManager.setWebinarId(result.webinarId);
 
-                    $.get("/cart/checkoutConfirm/" + cartStateManager.getOrderRowId())
-                        .success(function (dataConfirm) {
-                            $('#confirmation').replaceWith(dataConfirm);
-                        }).done(function () {
-                            $.get("/cart/checkoutOptions/" + cartStateManager.getOrderRowId())
-                                .success(function (dataOptions) {
-                                    $('#signUp').replaceWith(dataOptions);
-                                    $.get("/cart/checkoutContact/" + cartStateManager.getOrderRowId())
-                                        .success(function (dataContact) {
-                                            $('#contactInfo').replaceWith(dataContact);
-                                        })
-                                        .done(function () {
-                                            cartStateManager.SetCartState();
-                                            //alert(whichStep);
-                                        });
-                                });
-                        });
+                    $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function(e) {
+                        
+                    });
+                    
+                    $('#confirmationTab a').tab('show');
                 } else {
-                    //jslogger.log({ exception: { name: "SignupFail", message: "The signUpForm submission failed." } });
-                    $('.signupErrors').html("Invalid Data. Try again?");
+                    //jslogger.log({ exception: { name: 'SignupFail', message: 'The signUpForm submission failed.' } });
+                    $('.signupErrors').html('Invalid Data. Try again?');
                 }
-            }, "json");
+            }, 'json');
 
 
-            $("#confirmationTab").tab('show');
+            //$('#confirmationTab').tab('show');
 
-            $("#ProgressDialogBS").modal('hide');
+            //$('#ProgressDialogBS').modal('hide');
 
             return false;
         }
