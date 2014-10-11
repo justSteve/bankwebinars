@@ -197,7 +197,8 @@ module Registration {
 			$('#RegisterFields_BillingAddress_State').val(data.State);
 			$('#RegisterFields_BillingAddress_Zip').val(data.Zip);
 			$('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;' + email.substring(email.indexOf('@')) + '</b>&nbsp; domain has been identified.</span>');
-			$('#ShowInstitution').html(data.Institution + '<br>' + data.Address + '<br>' + data.City + ', ' + data.State + ' ' + data.Zip + '<br>');
+            $('#ShowInstitution').html(data.Institution + '<br>' + data.Address + '<br>' + data.City + ', ' + data.State + ' ' + data.Zip + '<br>');
+		    $('input[name=YesUseAddress]').focus();
 		}
 
 		getAction(): Action {
@@ -241,22 +242,13 @@ module Registration {
 
 			var self = this;
 
-			var showPwdInput = $.Deferred(function () {
-				//console.log("Deferred newPasswordView: " + email);
-				$('#wrapPass').show('fast');
-			});
-
-			$.when(showPwdInput.resolve()).then(function() {
-				$('RegisterFieldsPassword').focus();
-			});
-
 
 			if (email) {
 				$('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; has been recorded.</span>');
 			} else {
 				$('#modalInstitution').modal('hide');
 				$('#labelEmail').fadeOut(500, function() {
-					$(this).html('<span class="label label-success">&nbsp;&nbsp;&nbsp;&nbsp;' + $('#RegisterFields_Email').val() + ' will be used for your email address.</span>');
+					$(this).html('<span class="label label-success">&nbsp;&nbsp;' + $('#RegisterFields_Email').val() + ' will be used for your email address.</span>');
 					$(this).fadeIn(500);
 				});
 			}
@@ -264,14 +256,16 @@ module Registration {
 			this.action = Action.GetPassword;
 
 			if (this.inputAction === InputAction.EnterKeyPress)
-				this.inputAction = InputAction.None;
+                this.inputAction = InputAction.None;
 
-			$('#TheSubmitButton').on('mouseenter', function() {
-				if ($(self.sameAsBillingCheckedFilter).val()) {
-					$('#SetShippingToBilling');
-				}
-			});
+            var showPwdInput = $.Deferred(function () {
+                //console.log("Deferred newPasswordView: " + email);
+                $('#wrapPass').show('fast');
+            });
 
+            $.when(showPwdInput.resolve()).then(function () {
+                $('#RegisterFields_Password').focus();
+            });
 		}
 
 		newPassWordToNextStep(): boolean {
@@ -343,7 +337,7 @@ module Registration {
 
 
 			$('#wrapZip').hide('slow');
-			$('#labelEmail').html('<span class="label label-info">&nbsp;&nbsp;&nbsp;&nbsp;Proceed or enter a different email address.</span>');
+			$('#labelEmail').html('<span class="label label-info">&nbsp;&nbsp;Proceed or enter a different email address.</span>');
 
 			//  Clear the billing and shipping addresses
 			$('#collapseBilling input').val('');
@@ -436,8 +430,12 @@ module Registration {
 			this.inputAction = incomingInputAction;
 		}
 
-		setShippingToBilling(): void {
-			$('#FullNameShipping').val($('#FullName').val());
+        setShippingToBilling(): void {
+            if ($('#getFull').is(':visible')) {
+                $('#FullNameShipping').val($('#FullName').val());
+            } else {
+                $('#FullNameShipping').val($('#FirstName').val() + ' ' + $('#LastName').val());
+            }
 			$('#ShippingFirstName').val($('#FirstName').val());
 			$('#ShippingLastName').val($('#LastName').val());
 			$('#RegisterFields_ShippingAddress_City').val($('#RegisterFields_BillingAddress_City').val());

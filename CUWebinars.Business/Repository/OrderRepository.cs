@@ -243,10 +243,15 @@ namespace CUWebinars.Business.Repository
 
         public Order AssignWebUserToOrder(WebUser webUser, Order order)
         {
-            order.idUser = webUser.idUser;
-
             if (order == null) throw new ArgumentNullException("order");
-            //var user = order.WebUser;
+
+            if (ReferenceEquals(null, webUser))
+            {
+                order.idUser = int.MaxValue;
+                return order;
+            }
+
+            order.idUser = webUser.idUser;
 
             var billingAddress = webUser.Addresses.FirstOrDefault(a => a.AddressType == "Billing");
             var shippingAddress = webUser.Addresses.FirstOrDefault(a => a.AddressType == "Shipping");

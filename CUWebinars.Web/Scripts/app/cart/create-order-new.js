@@ -54,10 +54,6 @@ var OrderRegistration;
             return this.idWebinar;
         };
 
-        StateManager.prototype.getWhichStep = function () {
-            return this.whichStep;
-        };
-
         StateManager.prototype.setCheckoutInProcess = function (val) {
             this.checkoutInProcess = val;
         };
@@ -76,10 +72,6 @@ var OrderRegistration;
 
         StateManager.prototype.setWebinarId = function (id) {
             this.idWebinar = id;
-        };
-
-        StateManager.prototype.setWhichStep = function (step) {
-            this.whichStep = step;
         };
 
         StateManager.prototype.BuildPreRegPrice = function (oEvent, orderRowId) {
@@ -132,58 +124,13 @@ var OrderRegistration;
         };
 
         StateManager.prototype.SetCartState = function () {
-            switch (this.whichStep) {
-                case "Step0":
-                    //console.log("Step0");
-                    $("#connectionsCount").val(0);
-                    $('#collectAdditionalLocation').html('');
-                    $("#confirmationTab").hide();
-                    $("#signUpTab").hide();
-                    $("#contactInfoTab").hide();
-                    $('#AddToCart').attr({ disabled: false, value: 'SignUp' });
-                    $('#AddToCart1').attr({ disabled: false, value: 'SignUp' });
-
-                    break;
-
-                case "Step1":
-                    //console.log("Step1");
-                    $("#confirmation").hide();
-                    $("#signUp").hide();
-                    $("#contactInfo").show();
-                    break;
-
-                case "Step2":
-                    $("#signUpTab").hide();
-                    $("#signUp").hide();
-
-                    $("#confirmationTab").tab('show');
-                    $("#confirmationTab").addClass('active');
-                    $("#confirmation").addClass('active');
-                    $("#confirmation").show();
-
-                    //$.get("/cart/checkoutConfirm/" + orderRowID)
-                    //    .success(function (dataConfirm) {
-                    //        $('#confirmation').html(dataConfirm);
-                    //    })
-                    //.done($("#confirmation").show())
-                    $("#confirmationTab").trigger('click');
-
-                    break;
-
-                case "Registered":
-                    //console.log("state is registered");
-                    $("#confirmationTab a").text('Order Summary');
-                    $("#signUpTab a").text('Connection Info');
-
-                    var self = this;
-
-                    $.get("/cart/checkoutConfirm/" + self.getOrderRowId()).success(function (dataConfirm) {
-                        $('#confirmation').html(dataConfirm);
-                    });
-                    $('#AddToCart').hide();
-                    $('#AddToCart1').hide();
-                    break;
-            }
+            $("#connectionsCount").val(0);
+            $('#collectAdditionalLocation').html('');
+            $("#confirmationTab").hide();
+            $("#signUpTab").hide();
+            $("#contactInfoTab").hide();
+            $('#AddToCart').attr({ disabled: false, value: 'SignUp' });
+            $('#AddToCart1').attr({ disabled: false, value: 'SignUp' });
         };
         return StateManager;
     })();

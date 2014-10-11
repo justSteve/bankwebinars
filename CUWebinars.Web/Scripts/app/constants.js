@@ -1,24 +1,24 @@
 ﻿var constants = function(){
 
-    var billingAddressFields = "#RegisterFields_BillingAddress",
-        city = "_City",
-        country = "_Country",
-        confirmDeleteShippingAddressdialog = "#ConfirmDeleteShippingAddressdialog",
-        formPostContentType = "application/x-www-form-urlencoded",
-        jsonContentType = "application/json; charset=utf-8",
-        jsonDataType = "json",
-        htmlDataType = "html",
-        phone = "_Phone",
-        shippingAddressFields = "#RegisterFields_ShippingAddress",
-        shippingAddressContainer = "#ShippingAddressContainer",
-        state = "_State",
-        addShippingAddressLink = "#AddShippingAddressLink",
-        hideAddShippingAddressLink = "#HideAddShippingAddressLink",
-        streetAddress = "_StreetAddress",
-        streetAddress2 = "_StreetAddress2",
-        typeofAddressBilling = "Billing",
-        typeofAddressShipping = "Shipping",
-        zip = "_Zip";
+    var billingAddressFields = '#RegisterFields_BillingAddress',
+        city = '_City',
+        country = '_Country',
+        confirmDeleteShippingAddressdialog = '#ConfirmDeleteShippingAddressdialog',
+        formPostContentType = 'application/x-www-form-urlencoded',
+        jsonContentType = 'application/json; charset=utf-8',
+        jsonDataType = 'json',
+        htmlDataType = 'html',
+        phone = '_Phone',
+        shippingAddressFields = '#RegisterFields_ShippingAddress',
+        shippingAddressContainer = '#ShippingAddressContainer',
+        state = '_State',
+        addShippingAddressLink = '#AddShippingAddressLink',
+        hideAddShippingAddressLink = '#HideAddShippingAddressLink',
+        streetAddress = '_StreetAddress',
+        streetAddress2 = '_StreetAddress2',
+        typeofAddressBilling = 'Billing',
+        typeofAddressShipping = 'Shipping',
+        zip = '_Zip';
 
 
     return {

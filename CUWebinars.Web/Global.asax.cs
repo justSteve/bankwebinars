@@ -95,6 +95,7 @@ namespace CUWebinars.Web
             //avoids session state when the WebAPI method is invoked.
             if (System.Web.HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath != "~/account/get/")
             {
+                
                 StateService.SetValue("searchTerm", string.Empty);
                 StateService.SetValue("IncludeRecorded", false);
                 StateService.SetValue("IncludeUpcoming", true);

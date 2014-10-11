@@ -1,4 +1,4 @@
-﻿using CUWebinars.Business.Notification;
+using CUWebinars.Business.Notification;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Formatters;
 using CUWebinars.Business.Notification.Handlers;

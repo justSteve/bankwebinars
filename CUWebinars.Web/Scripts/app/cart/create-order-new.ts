@@ -39,7 +39,6 @@ module OrderRegistration {
         private checkoutInProcess: boolean;
         private idWebinar: number;
         private isUserLogged: boolean;
-        private whichStep: string;
 
         constructor() { }
 
@@ -63,10 +62,6 @@ module OrderRegistration {
             return this.idWebinar;
         }
 
-        getWhichStep(): string {
-            return this.whichStep;
-        }
-
         setCheckoutInProcess(val: boolean): void {
             this.checkoutInProcess = val;
         }
@@ -85,10 +80,6 @@ module OrderRegistration {
 
         setWebinarId(id: number): void {
             this.idWebinar = id;
-        }
-
-        setWhichStep(step: string): void {
-            this.whichStep = step;
         }
 
         BuildPreRegPrice(oEvent : JQueryEventObject, orderRowId : number): void {
@@ -145,61 +136,13 @@ module OrderRegistration {
         }
 
         SetCartState(): void {
-            switch (this.whichStep) {
-            case "Step0":
-                //console.log("Step0");
-                $("#connectionsCount").val(0);
-                $('#collectAdditionalLocation').html('');
-                $("#confirmationTab").hide();
-                $("#signUpTab").hide();
-                $("#contactInfoTab").hide();
-                $('#AddToCart').attr({ disabled: false, value: 'SignUp' });
-                $('#AddToCart1').attr({ disabled: false, value: 'SignUp' });
-
-                break;
-
-            case "Step1":
-                //console.log("Step1");
-
-                $("#confirmation").hide();
-                $("#signUp").hide();
-                $("#contactInfo").show();
-                break;
-
-            case "Step2":
-                $("#signUpTab").hide();
-                $("#signUp").hide();
-
-                $("#confirmationTab").tab('show');
-                $("#confirmationTab").addClass('active');
-                $("#confirmation").addClass('active');
-                $("#confirmation").show();
-                //$.get("/cart/checkoutConfirm/" + orderRowID)
-                //    .success(function (dataConfirm) {
-                //        $('#confirmation').html(dataConfirm);
-                //    })
-                //.done($("#confirmation").show())
-                $("#confirmationTab").trigger('click');
-
-                //console.log("Step2");
-
-                break;
-
-            case "Registered":
-                //console.log("state is registered");
-                $("#confirmationTab a").text('Order Summary');
-                $("#signUpTab a").text('Connection Info');
-
-                var self = this;
-
-                $.get("/cart/checkoutConfirm/" + self.getOrderRowId())
-                    .success(function(dataConfirm) {
-                        $('#confirmation').html(dataConfirm);
-                    });
-                $('#AddToCart').hide();
-                $('#AddToCart1').hide();
-                break;
-            }
+            $("#connectionsCount").val(0);
+            $('#collectAdditionalLocation').html('');
+            $("#confirmationTab").hide();
+            $("#signUpTab").hide();
+            $("#contactInfoTab").hide();
+            $('#AddToCart').attr({ disabled: false, value: 'SignUp' });
+            $('#AddToCart1').attr({ disabled: false, value: 'SignUp' });            
         }
 
     };

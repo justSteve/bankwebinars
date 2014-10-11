@@ -176,10 +176,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 webinarDetailsViewModel = new WebinarDetailsViewModel()
                 {
-                    Affiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate"),
                     Webinar = webinar,
                     WebinarFiles = webinar.WebinarFiles.ToList(),
-                    Options = _orderManagementService.GetOptionsByWebinarId(idWebinar.Value, false),
                 };                
             }
 
@@ -195,7 +193,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                             {
                                 EventTitle = webinarDetailsViewModel.Webinar.Title,
                                 idWebinar = webinarDetailsViewModel.Webinar.idWebinar,
-                                Options = webinarDetailsViewModel.Options,
+                                Options = _orderManagementService.GetOptionsByWebinarId(idWebinar.Value, false),
                                 WebinarDuration = webinarDetailsViewModel.Webinar.Duration,
                                 WebinarStatus = webinarDetailsViewModel.Webinar.Status
                             },
@@ -290,7 +288,6 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     var webinarDetailsViewModel = new WebinarDetailsViewModel
                     {
-                        Affiliate = order.Affiliate,
                         Order = order,
                         Webinar = webinar,
                         WebUser = webUser
@@ -407,6 +404,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             var currentAffiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate");
             _orderManagementService.AttachAffiliate(currentAffiliate);
 
+            // At this point, user may not be registered. So, when creating the Order, if user is: 
+            // a) existing user and not logged in, or
+            // b) not yet a registered user,
+            // create a new user and ...
             var webUser = _orderManagementService.GetWebUser(formModel.idUser);
 
             return CreateNewOrder(currentAffiliate, webUser, webinar, newOrderRow);

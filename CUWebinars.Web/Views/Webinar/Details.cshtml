@@ -1,5 +1,4 @@
 ﻿@using System.Globalization
-@using System.Linq
 @using CUWebinars.Web.Core
 @using CUWebinars.Web.Helpers
 
@@ -14,23 +13,15 @@
     var CheckoutInProcess = "false";
     if (ViewData.ContainsKey("CheckoutInProcess"))
     {
-        if (!String.IsNullOrEmpty(ViewData["CheckoutInProcess"].ToString()))
+        if (!string.IsNullOrEmpty(ViewData["CheckoutInProcess"].ToString()))
         {
             CheckoutInProcess = ViewData["CheckoutInProcess"].ToString();
         }
     }
-    var whichStep = "Step0";
-    if (ViewData.ContainsKey("WhichStep"))
-    {
-        if (!String.IsNullOrEmpty(ViewData["WhichStep"].ToString()))
-        {
-            whichStep = ViewData["WhichStep"].ToString();
-        }
-    }
 
-    string ceuShort = String.Empty;
-    string ceuStmt = String.Empty;
-    if (String.IsNullOrEmpty(Model.Webinar.ceu) == false)
+    string ceuShort = string.Empty;
+    string ceuStmt = string.Empty;
+    if (string.IsNullOrEmpty(Model.Webinar.ceu) == false)
     {
         string[] ceu = Model.Webinar.ceu.Split('|');
         ceuShort = ceu[0];
@@ -85,7 +76,6 @@
 <script type="text/javascript">
 
     CheckoutInProcess = "@(CheckoutInProcess)";
-    whichStep = "@(whichStep)";
     orderRowID = @rowID;
     isUserLogged = @isUserLogged;
 

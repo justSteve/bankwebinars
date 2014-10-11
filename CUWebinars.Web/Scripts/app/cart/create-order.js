@@ -4,7 +4,6 @@ var wait4Emails = '';
 var orderRowID = 0;
 var CheckoutInProcess = false;
 var isUserLogged = false;
-var whichStep = "Step0";
 
 function setPath() {
     var indexOfHome = location.href.indexOf('Account');
@@ -92,7 +91,6 @@ $(document).ready(function () {
                 if (result.success) {
                     //jslogger.event({ signup: { from: "EndUser Checkout" } });
                     orderRowID = result.orderRowID;
-                    whichStep = result.whichStep;
 
                     $.get("/cart/checkoutConfirm/" + orderRowID)
                         .success(function (dataConfirm) {
@@ -107,7 +105,6 @@ $(document).ready(function () {
                                         })
                                         .done(function () {
                                             SetCartState();
-                                            //alert(whichStep);
                                         });
                                 });
                         });

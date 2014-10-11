@@ -9,6 +9,7 @@ using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Browsers.Webinars;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
@@ -484,15 +485,10 @@ namespace CUWebinars.Web.Controllers
 
             var model = new WebinarDetailsViewModel()
             {
-                WebUser = user
-                ,
-                Affiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate")
-                ,
-                
-                Webinar = webinar
-                ,
-                Options = options
-                ,
+                WebUser = user,
+                Webinar = webinar,
+                //Options = options
+                //,
                 Order = null
             };
 
@@ -546,58 +542,67 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Details2(int? id)
         {
-            var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id.Value);
-
-            if (webinar == null) return HttpNotFound();
-
-            var model = new WebinarDetailsViewModel()
+            if (id.HasValue)
             {
-                Affiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate"),
-                Webinar = webinar,
-                WebinarFiles =  webinar.WebinarFiles.ToList(),
-                Order = null
-            };
+                var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id.Value);
 
-            InitializeDetailsState(webinar, model, id.Value);
-            InitializeViewCentricProperties(model);
+                if (webinar == null) return HttpNotFound();
 
-            var usersOrders = _orderManagementService.GetOrdersByUserId(model.WebUser.idUser)
-                                .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id.Value) != null);
-
-            var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray(); // perf tweak: ensures no multiple enumerations of usersOrders
-            if (checkOrders.Any())  
-            {
-                foreach (var checkOrder in checkOrders)
+                var model = new WebinarDetailsViewModel()
                 {
-                    var row = checkOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-                    
-                    var webinarFiles = webinar.WebinarFiles
+                    Webinar = webinar,
+                    WebinarFiles = webinar.WebinarFiles.ToList(),
+                    Order = null
+                };
+
+                InitializeDetailsState(webinar, model, id.Value);
+                InitializeViewCentricProperties(model);
+
+                var usersOrders = _orderManagementService.GetOrdersByUserId(model.WebUser.idUser)
+                    .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id.Value) != null);
+
+                var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray();
+                    // perf tweak: ensures no multiple enumerations of usersOrders
+                if (checkOrders.Any())
+                {
+                    foreach (var checkOrder in checkOrders)
+                    {
+                        var row = checkOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+
+                        var webinarFiles = webinar.WebinarFiles
                             .Select(f => f.fileDesc + "|" + f.fileLocation)
                             .ToArray();
 
-                    ViewBag.WebinarFiles = webinarFiles; // Is this intended? It will change what is stored in ViewBag.WebinarFiles with each iteration. Last one wins.
+                        ViewBag.WebinarFiles = webinarFiles;
+                            // Is this intended? It will change what is stored in ViewBag.WebinarFiles with each iteration. Last one wins.
 
-                    model.UserOwnsThisEvent = checkOrder.idOrder; // same issue with these next assignments.
-                    model.Order = checkOrder;
-                    
-                    if (checkOrder.OrderStatus == OrderStatus.InProcess && row.idWebinar != id)
-                    {
-                        model.UserHasOpenOrder = checkOrder.idOrder;
+                        model.UserOwnsThisEvent = checkOrder.idOrder; // same issue with these next assignments.
+                        model.Order = checkOrder;
+
+                        if (checkOrder.OrderStatus == OrderStatus.InProcess && row.idWebinar != id)
+                        {
+                            model.UserHasOpenOrder = checkOrder.idOrder;
+                        }
                     }
                 }
+
+                if (model.UserOwnsThisEvent > 0 && model.Order.OrderStatus == OrderStatus.InProcess)
+                {
+                    model.CheckoutInProcess = true;
+                    model.MessageOrderStatus =
+                        "<div align=\"center\" class=\"label-warning label\">Your order is InProcess and needs to be confirmed or canceled.</div>";
+                }
+
+                if (model.Webinar == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(model);
             }
 
-            if (model.UserOwnsThisEvent > 0 && model.Order.OrderStatus == OrderStatus.InProcess)
-            {
-                model.CheckoutInProcess = true;
-                model.MessageOrderStatus = "<div align=\"center\" class=\"label-warning label\">Your order is InProcess and needs to be confirmed or canceled.</div>";
-            }
-
-            if (model.Webinar == null)
-            {
-                return HttpNotFound();
-            }
-            return View(model);
+            _logger.Error("Details2 Action invoked with null 'id' parameter");
+            ModelState.AddModelError("", "No id was sent to the Server. Please try the operation again.");
+            return this.ModelStateJson(ModelState);
         }
 
         /// <summary>
@@ -612,8 +617,6 @@ namespace CUWebinars.Web.Controllers
 
             model.WebUser = Request.IsAuthenticated ? _membershipService.GetUserByEmail(User.Identity.Name) : new WebUser();
 
-            model.Options = _orderManagementService.GetOptionsByWebinarId(id, false);
-
             model.WebinarFiles = _webinarManagementService.GetWebinarFilesPerWebinar(webinar.idWebinar);
 
             model.CheckoutOptionsViewModel = new CheckoutOptionsViewModel
@@ -622,7 +625,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     EventTitle = model.Webinar.Title,
                     idWebinar = model.Webinar.idWebinar,
-                    Options = model.Options,
+                    Options = _orderManagementService.GetOptionsByWebinarId(id, false),
                     OrderRowExists = model.Order != null && model.Order.OrderRows != null,
                     WebinarDuration = model.Webinar.Duration,
                     WebinarStatus = model.Webinar.Status

@@ -16,7 +16,6 @@ $(function() {
     cartStateManager = new OrderRegistration.StateManager();
 
     cartStateManager.setCheckoutInProcess(checkoutInProcess);
-    cartStateManager.setWhichStep(whichStep);
     cartStateManager.setOrderRowId(orderRowId);
     cartStateManager.setIsUserLogged(isUserLogged);
 
@@ -61,30 +60,42 @@ $(function() {
 
         e.preventDefault();
         cartStateManager.setCheckoutInProcess(true);
+        $('#ProgressDialogBS').modal('show');
+        var data = signUpForm.serialize();
 
         if (!cartStateManager.getIsUserLogged()) {
 
-            cartStateManager.setWhichStep('Step1');
-            cartStateManager.SetCartState();
             $('#SignUpForm > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
-            $('#contactInfo').load('/Cart/CheckoutContactDetails', function () {
-                
-                registerDuringCheckout.initialize();
-            });
+
+            $.post(signUpForm.attr('action'), data, function (result) {
+                if (result.success) {
+                    
+                    cartStateManager.setOrderRowId(result.orderRowId);
+                    cartStateManager.setOrderId(result.orderId);
+                    cartStateManager.setWebinarId(result.webinarId);
+                    $('#contactInfo').load('/Cart/CheckoutContactDetails', function(response, status, xhr) {
+
+                        registerDuringCheckout.initialize();
+                    });
+
+                    $('#contactInfo a').tab('show');
+                } else {
+                    //jslogger.log({ exception: { name: 'SignupFail', message: 'The signUpForm submission failed.' } });
+                    $('.signupErrors').html('Invalid Data. Try again?');
+                }
+            }, constants.JsonDataType);
+            
 
         } else {
 
-            $('#ProgressDialogBS').modal('show');
-            var data = signUpForm.serialize();
-            $.post(signUpForm.attr('action'), data, function (result, status) {
+            $.post(signUpForm.attr('action'), data, function (result) {
                 if (result.success) {
                     //jslogger.event({ signup: { from: 'EndUser Checkout' } });
                     cartStateManager.setOrderRowId(result.orderRowId);
                     cartStateManager.setOrderId(result.orderId);
-                    cartStateManager.setWhichStep(result.whichStep);
                     cartStateManager.setWebinarId(result.webinarId);
 
-                    $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function(e) {
+                    $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
                         
                     });
                     
@@ -93,7 +104,7 @@ $(function() {
                     //jslogger.log({ exception: { name: 'SignupFail', message: 'The signUpForm submission failed.' } });
                     $('.signupErrors').html('Invalid Data. Try again?');
                 }
-            }, 'json');
+            }, constants.JsonDataType);
 
 
             //$('#confirmationTab').tab('show');

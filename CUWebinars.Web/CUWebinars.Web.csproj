@@ -409,6 +409,7 @@
     <Compile Include="Models\JotFormModel.cs" />
     <Compile Include="Models\JotFormOrderModel.cs" />
     <Compile Include="Notification\Templates\CertOfCompletionViewModel.cs" />
+    <Content Include="Content\css\create-user-form.css" />
     <Content Include="Content\css\details2.css" />
     <Content Include="NuGet\readme.txt" />
     <Content Include="Scripts\app\cart\create-order-new.js" />

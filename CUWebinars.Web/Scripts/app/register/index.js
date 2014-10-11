@@ -142,7 +142,7 @@ $(function () {
         }
     });
 
-    $('#CollapseShipping').on('shown', function () {
+    $('#collapseShipping').on('shown', function () {
         if ($(stateManager.getSameAsBillingCheckedFilter()).val()) {
             stateManager.setShippingToBilling();
         }
@@ -168,7 +168,7 @@ $(function () {
                 data: { email: email, disregardInstitutionDomain: stateManager.getDisregardInstitutionDomain() },
                 beforeSend: function () {
                     // this is where we append a loading image
-                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</span>');
+                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Email...</span>');
                 }
             }).done(function (data) {
                 // successful request; do something with the data
@@ -208,7 +208,7 @@ $(function () {
                 data: { Zip: zipCode },
                 beforeSend: function () {
                     // this is where we append a loading image
-                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Zip...</span>');
+                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Zip...</span>');
                 }
             }).done(function (data) {
                 // successful request; do something with the data
@@ -355,7 +355,7 @@ $(function () {
             beforeSend: function () {
                 //console.log('beforeSend Register Details');
                 // this is where we append a loading image
-                $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Registering new user...</span>');
+                $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Registering new user...</span>');
             }
         }).done(function (data) {
             //alert('done: ');
@@ -363,14 +363,14 @@ $(function () {
                 if (data.Result === 'Success') {
                     //console.log('success: ' + data.Result);
                     stateManager.setAction('');
-                    $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
+                    $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
                     location.assign(path + '/'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
                 } else if (data.Result === 'Fail') {
                     $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
                     stateManager.setAction(Registration.Action.SubmitRegister);
                 }
             } else if (!data.isSuccessful) {
-                $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;&nbsp;&nbsp;' + data.data.Exception + '</span>');
+                $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;' + data.data.Exception + '</span>');
             }
 
         }).fail(function (data) {
@@ -381,6 +381,5 @@ $(function () {
 
         return false;
     });
-
 
 });
