@@ -30,6 +30,10 @@ namespace CUWebinars.Business.Repository
 
             //newOrder = AssignAffiliate(affiliate, newOrder);
 
+            // if email is null, we know it is a hollow WebUser carrying the id of the dummy user
+            if (ReferenceEquals(null, webUser.email))
+                newOrder.idUser = webUser.idUser;
+
             newOrder = AssignWebUserToOrder(webUser, newOrder);
 
             newOrder.OrderRows = new List<OrderRow>();
@@ -244,12 +248,6 @@ namespace CUWebinars.Business.Repository
         public Order AssignWebUserToOrder(WebUser webUser, Order order)
         {
             if (order == null) throw new ArgumentNullException("order");
-
-            if (ReferenceEquals(null, webUser))
-            {
-                order.idUser = 26739;
-                return order;
-            }
 
             order.idUser = webUser.idUser;
 

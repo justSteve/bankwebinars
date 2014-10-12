@@ -18,8 +18,10 @@ namespace CUWebinars.Web.Core.Orchestrators
     public class CartControllerOrchestrator : ICartControllerOrchestrator
     {
         public HttpRequest Request { get; set; }
-        private readonly IStateService _stateService;
 
+        GlobalConfig _globals = GlobalConfig.GlobalConfigSingleton;
+
+        private readonly IStateService _stateService;
         private readonly IMembershipService _membershipService;
         private readonly ILogger _logger;
         private readonly IOrderManagementService _orderManagementService;
@@ -423,7 +425,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         private Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow)
         {
-
+            if (ReferenceEquals(null, webUser))
+                webUser = new WebUser {idUser = GetDummyUserId()};
             var newOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
             newOrder.AuditInfo = AppHelper.GetUserAuditInfo();
             newOrder.Origin = _orderManagementService.GetOrderInitiator();
@@ -431,6 +434,15 @@ namespace CUWebinars.Web.Core.Orchestrators
             newOrder = _orderManagementService.SaveOrderChanges(newOrder, string.Empty, string.Empty);
 
             return newOrder;
+        }
+
+        private int GetDummyUserId()
+        {
+            int userId;
+            if (int.TryParse(_globals.UnAuthenticatedUser, out userId))
+                return userId;
+            
+            throw new FormatException("Value in AppSetting in Web.config must be a valid integer.");
         }
 
         private OrderRow CreateOrderRow(Webinar webinar, int registrationType)

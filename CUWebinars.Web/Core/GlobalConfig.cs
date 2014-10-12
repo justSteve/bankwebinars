@@ -8,18 +8,18 @@ namespace CUWebinars.Web.Core
     {
 
         public string EmailSendingMode { get; private set; }
-        public string TestEmailAddress { get; private set; }
-        public string WMVRepository { get; private set; }
         public string HandoutRepository { get; private set; }
         public string ImgRepository { get; private set; }
+        public string MembershipConnectionString { get; set; }
+        public string TestEmailAddress { get; private set; }
         public string Tenant { get; private set; }
         public string TenantEmail { get; private set; }
         public string TenantDomain { get; private set; }
         public string TenantURL { get; private set; }
         public string TenantLogo { get; private set; }
         public string TenantPrefix { get; private set; }
-
-        public string MembershipConnectionString { get; set; }
+        public string UnAuthenticatedUser { get; private set; }
+        public string WMVRepository { get; private set; }
 
         private GlobalConfig()
         {
@@ -47,6 +47,7 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.TenantURL = ApplicationSettingsSection["TenantURL"];
                 UniqueInstance.TenantLogo = ApplicationSettingsSection["TenantLogo"];
                 UniqueInstance.TenantPrefix = ApplicationSettingsSection["TenantPrefix"];
+                UniqueInstance.UnAuthenticatedUser = ApplicationSettingsSection["UnAuthenticatedUser"];
 
                 UniqueInstance.MembershipConnectionString = WebConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString;
             }
