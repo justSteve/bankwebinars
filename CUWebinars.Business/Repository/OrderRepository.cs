@@ -247,7 +247,7 @@ namespace CUWebinars.Business.Repository
 
             if (ReferenceEquals(null, webUser))
             {
-                order.idUser = int.MaxValue;
+                order.idUser = 26739;
                 return order;
             }
 

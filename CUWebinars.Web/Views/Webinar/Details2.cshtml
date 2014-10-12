@@ -199,18 +199,6 @@
                         </div>
                     </div>
                 
-                @using (Html.BeginForm("Register", "Account", null, FormMethod.Post, new { id = "_CreateUserForm", name = "createUser" }))
-                {
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" id="FirstName" name="FirstName" />
-                    <input type="hidden" id="LastName" name="LastName" />
-                    <input type="hidden" id="ShippingFirstName" name="ShippingFirstName" />
-                    <input type="hidden" id="ShippingLastName" name="ShippingLastName" />
-                    <input type="hidden" id="RegisterFields_BillingAddress_Country" name="RegisterFields.BillingAddress.Country" value="US" />
-                    <input type="hidden" id="RegisterFields_ShippingAddress_Country" name="RegisterFields.ShippingAddress.Country" value="US" />
-                    <input type="hidden" name="returnUrl" value="/Webinar/Details2/@Model.Webinar.idWebinar" />
-                    <input type="hidden" id="emailAddress" />
-                }
                 @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
                 {
                     @Html.AntiForgeryToken()
@@ -315,20 +303,3 @@
         </div>
     }
 }
-
-<!-- Modal for creation of a user (if necessary) -->
-<div id="modalInstitution" class="modal hide">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3>Insitution Information</h3>
-    </div>
-    <div id="UserInstitutionBody" class="modal-body">
-        <h5>Is this your institution?</h5>        <div id="ShowInstitution">placeholder for ajax response</div>
-
-        <div id="instInfo">
-            <p><input type="button" class="btn btn-primary" name="YesUseAddress" value="Yes, use this address." /></p>
-            <p><input type="button" class="btn btn-warning" name="EnterDiffAddress" value="Yes, that's my institution but I want to enter a different address." /></p>
-            <p><input type="button" class="btn btn-warning" name="NotInstitution" value="No, that's not my institution" /></p>
-        </div>
-    </div>
-</div>

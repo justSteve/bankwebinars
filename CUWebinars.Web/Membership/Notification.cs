@@ -9,6 +9,7 @@
         public string Email { get; set; }
         public string EmailSignature { get; set; }
         public string LoginUrl { get; set; }
+        public string TempPassword { get; set; }
         public string VerificationKey { get; set; }
         public string Username { get; set; }
     }

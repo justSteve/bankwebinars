@@ -8,6 +8,7 @@ using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Membership;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Notification.Templates;
 using CUWebinars.Web.Services;
@@ -995,7 +996,7 @@ namespace CUWebinars.Web.Controllers
                 if (checkIfUsed != null)
                 {
                     _logger.Error("dupe email attempt: " + email);
-                    ModelState.AddModelError("Email", "That email already exists. Would you like to reset the password?");
+                    ModelState.AddModelError("", "That email already exists. Would you like to reset the password?");
                 }
 
                 var myInstitution = _membershipService.ProcessInstitutionForUser(
@@ -1045,10 +1046,10 @@ namespace CUWebinars.Web.Controllers
                         }
                     };
 
-                    var webUser = _membershipService.CreateWebUser(_globalConfig.Tenant,
-                        firstName
+                    var webUser = _membershipService.CreateWebUser(_globalConfig.Tenant
+                        , firstName
                         , lastName
-                        , model.RegisterFields.Password
+                        , string.Empty
                         , email
                         , USTimeZone.Central
                         , UserType.Customer
@@ -1065,58 +1066,25 @@ namespace CUWebinars.Web.Controllers
                     if (!_stateService.HasValue(Constants.CurrentUser))
                         _stateService.SetValue(Constants.CurrentUser, webUser);
 
-                    var userAccount = _membershipService.CreateUser(
-                        _globalConfig.Tenant,
-                        firstName,
-                        lastName,
-                        string.Empty,
-                        //  Pass empty string for username because MembershipReboot assigns the email to the username field where emailIsUsername is true
-                        model.RegisterFields.Password,
-                        email);
+                    //_membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.ManualRegistration);
 
-                    _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.ManualRegistration);
-
-                    Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey),
-                        "There's no reason session should not have a value for the VerificationKey at this point ");
-
-                    var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
-                    _stateService.ClearValue(DomainConstants.VerificationKey);
-
-                    userAccount = _membershipService.VerifyEmailFromKey(
-                        verificationKey,
-                        model.RegisterFields.Password
-                        );
-
-                    _membershipService.LogInUser(_globalConfig.Tenant, model.RegisterFields.Email,
-                        model.RegisterFields.Password, true); // log the user in.
                     _logger.Info("Account.Register UserAdded: " + model.RegisterFields.Email);
 
                     return Json(new {Result = WebUiConstants.Success});
 
                 }
-                catch (MembershipCreateUserException e)
+                catch (Exception exception)
                 {
-                    ModelState.AddModelError("MembershipCreateUserException", ErrorCodeToString(e.StatusCode));
+                    ModelState.AddModelError("", exception.Message);
                     //TODO: add error message here and handle in razor
-                    _logger.Error("Account.Register Catch block: " + e.Message + "| Session=" +
+                    _logger.Error("Account.Register Catch block: " + exception.Message + "| Session=" +
                                   AppHelper.GetUserAuditInfo());
                 }
-                catch (Exception e)
-                {
-                    ModelState.AddModelError("Exception", e.Message);
-                    //TODO: add error message here and handle in razor
-                    _logger.Error("Account.Register Catch block: " + e.Message + "| Session=" +
-                                  AppHelper.GetUserAuditInfo());
-                }
-            }
-            else
-            {
-                return this.ModelStateJson(ModelState);
             }
             _logger.Fatal("Account.Register failed! Session=" + AppHelper.GetUserAuditInfo());
 
             // If we got this far, something failed, redisplay form
-            return Json(new {Result = WebUiConstants.Fail});
+            return this.ModelStateJson(ModelState);
 
         }
 
@@ -1262,6 +1230,77 @@ namespace CUWebinars.Web.Controllers
             // If we got this far, something failed, redisplay form
             return Json(new { Result = WebUiConstants.Fail });
 
+        }
+
+        // POST: /Account/Register
+        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
+        [ValidateJsonAntiForgeryToken]
+        public ActionResult CreateUserAccountFromCart(RegisterViewModel model)
+        {
+            //  Not adding any ModelState errors in this method. This method is not to return any GUI feedback.
+            //  It is effective invoked as a fire and forget, even thought it sends a http response (which gets ignored at client.)
+
+            if (ModelState.IsValid)
+            {
+                var email = model.RegisterFields.Email.Trim();
+                var firstName = model.RegisterFields.FirstName.Trim();
+                var lastName = model.RegisterFields.LastName.Trim();
+
+                //first check if email exists
+                var checkIfUsed = _membershipService.GetUserByEmail(email);
+                if (checkIfUsed != null)
+                {
+                    _logger.Error("dupe email attempt: " + email);
+                }
+                try
+                {
+                    //  model.Passwor should be null or empty. Generate own temp password here
+                    model.RegisterFields.Password = PasswordGenerator.GenerateRandomString(8);
+                    
+                    _stateService.SetValue(DomainConstants.TempPassword, model.RegisterFields.Password); // will use in TtsTokenizer
+#if DEBUG
+                    _logger.Info("Password {0} created for user {1}", model.RegisterFields.Password, model.RegisterFields.Email);
+#endif
+
+                    var userAccount = _membershipService.CreateUser(
+                        _globalConfig.Tenant,
+                        firstName,
+                        lastName,
+                        string.Empty,
+                        //  Pass empty string for username because MembershipReboot assigns the email to the username field where emailIsUsername is true
+                        model.RegisterFields.Password,
+                        email);
+
+                    _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.CartRegistration);
+
+                    _stateService.ClearValue(DomainConstants.TempPassword); // clear straight away, now that message is sent.
+
+                    _membershipService.LogInUser(_globalConfig.Tenant, model.RegisterFields.Email,
+                        model.RegisterFields.Password, true); // log the user in.
+                    _logger.Info("New CartReg User logged in: " + model.RegisterFields.Email);
+
+                    return Json(new { Result = WebUiConstants.Success });
+
+                }
+                catch (MembershipCreateUserException e)
+                {
+                    //TODO: add error message here and handle in razor
+                    _logger.Error("CreateUserAccountFromCart Catch block: " + e.Message + "| Session=" +
+                                  AppHelper.GetUserAuditInfo());
+                }
+                catch (Exception e)
+                {
+                    //TODO: add error message here and handle in razor
+                    _logger.Error("CreateUserAccountFromCart Catch block: " + e.Message + "| Session=" +
+                                  AppHelper.GetUserAuditInfo());
+                }
+            }
+
+            _logger.Fatal("CreateUserAccountFromCart failed! Session=" + AppHelper.GetUserAuditInfo());
+
+            // If we got this far, something failed, redisplay form
+            return Json(new { Result = WebUiConstants.Fail });            
         }
 
         //

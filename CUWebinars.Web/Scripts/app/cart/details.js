@@ -74,11 +74,11 @@ $(function() {
                     cartStateManager.setOrderId(result.orderId);
                     cartStateManager.setWebinarId(result.webinarId);
                     $('#contactInfo').load('/Cart/CheckoutContactDetails', function(response, status, xhr) {
-
+                        $('#_CreateUserForm input[name="returnUrl"]').val('/Webinar/Details2/' + result.webinarId);
                         registerDuringCheckout.initialize();
                     });
 
-                    $('#contactInfo a').tab('show');
+                    $('#contactInfoTab a').tab('show');
                 } else {
                     //jslogger.log({ exception: { name: 'SignupFail', message: 'The signUpForm submission failed.' } });
                     $('.signupErrors').html('Invalid Data. Try again?');

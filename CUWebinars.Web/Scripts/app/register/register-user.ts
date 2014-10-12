@@ -92,7 +92,6 @@ module Registration {
 
 		checkAndSubmitEmail(): boolean {
 			if ($('#RegisterFields_Email').valid() == true) {
-				//console.log(REG.PageObjects.emailInput().valid());
 				$('#emailAddress').val($('#checkEmail').val());
 				$('form#checkEmail').submit();
 				return true;
@@ -384,7 +383,7 @@ module Registration {
             this.action = Action.CheckEmail;
 		    this.inputAction = InputAction.None;
 
-			var showRegisterInput = $.Deferred(function (pageObject) {
+			var showRegisterInput = $.Deferred(function () {
                 $('#register').show('slow');
 			});
 
@@ -520,9 +519,6 @@ module Registration {
 		}
 
 		submitLogin(): void {
-			//REG.PageObjects.emailLoginInput().val($('#RegisterFields_Email').val());
-			//$('#Password').val($('#Password1').val());
-			//$('#frmSignin').submit();
             $('#Password').val($('#RegisterFields_Password').val());
 			$('#Email').val($('#emailAddress').val());
 			$('form#frmSignIn').submit();

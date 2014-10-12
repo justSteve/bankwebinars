@@ -606,7 +606,8 @@ namespace CUWebinars.Business.Services
         {
 
             var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow);
-            _logger.Info("CreateNewOrder: " + webUser.email + "| " + orderRow.Webinar.Title + "| " + orderRow.RegistrationType.OptionLabel);
+            var email = webUser == null ? "notauthenticated@cuwebinars.com" : webUser.email; 
+            _logger.Info("CreateNewOrder: " + email + "| " + orderRow.Webinar.Title + "| " + orderRow.RegistrationType.OptionLabel);
             return order;
         }
 

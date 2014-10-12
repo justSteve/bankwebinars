@@ -101,7 +101,6 @@ var Registration;
 
         StateManager.prototype.checkAndSubmitEmail = function () {
             if ($('#RegisterFields_Email').valid() == true) {
-                //console.log(REG.PageObjects.emailInput().valid());
                 $('#emailAddress').val($('#checkEmail').val());
                 $('form#checkEmail').submit();
                 return true;
@@ -387,7 +386,7 @@ var Registration;
             this.action = Action.CheckEmail;
             this.inputAction = InputAction.None;
 
-            var showRegisterInput = $.Deferred(function (pageObject) {
+            var showRegisterInput = $.Deferred(function () {
                 $('#register').show('slow');
             });
 
@@ -519,9 +518,6 @@ var Registration;
         };
 
         StateManager.prototype.submitLogin = function () {
-            //REG.PageObjects.emailLoginInput().val($('#RegisterFields_Email').val());
-            //$('#Password').val($('#Password1').val());
-            //$('#frmSignin').submit();
             $('#Password').val($('#RegisterFields_Password').val());
             $('#Email').val($('#emailAddress').val());
             $('form#frmSignIn').submit();

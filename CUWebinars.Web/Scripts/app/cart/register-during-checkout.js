@@ -213,7 +213,7 @@ registerDuringCheckout.initialize = function () {
                     regUserStateManager.foundInstitutionView(data, email);
 
                 } else if (data.email === 'wasNotFound') {
-                    regUserStateManager.newPasswordView(email);
+                    regUserStateManager.goToAddressFields(email);
                 }
 
             }).fail(function() {
@@ -282,7 +282,7 @@ registerDuringCheckout.initialize = function () {
     });
 
     //  This handler was colliding with one by the same name in create-user.
-    //  It is now invoked from the create-user.js script.
+    //  It is now invoked from the register-user-in-cart.js script.
     $('#_CreateUserForm').on('submit', function(event) {
         event.preventDefault();
 
@@ -299,7 +299,7 @@ registerDuringCheckout.initialize = function () {
 
         //  First, sort out the Antiforgery token for json POST
         var token = $('[name=__RequestVerificationToken]').val();
-        var headers = { };
+        var headers = {};
         headers['__RequestVerificationToken'] = token;
 
         var tabInputs = formProcessor.getApplicableInputs('contactInfo');
@@ -309,8 +309,7 @@ registerDuringCheckout.initialize = function () {
         var payload = _.extend(payloadFromTab, payloadFromForm);
         delete (payload['undefined']); // this was the __RequestVerificationToken which we chucked in the headers. See immediately above.
 
-        //var url = createUserForm.attr('action');
-        var url = '/Account/RegisterFromCart';
+        var url = createUserForm.attr('action');
 
         $.ajax({
             type: 'POST',
@@ -324,6 +323,13 @@ registerDuringCheckout.initialize = function () {
                 //console.log('beforeSend Register Details');
                 // this is where we append a loading image
                 $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Registering new user...</span>');
+
+                var valSummary = $('#valSummarySignUpForm');
+                valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
+
+                var errorsList = valSummary.find('ul');
+                errorsList.empty();
+                errorsList.append('<li style="display:none"></li>');
             }
         }).done(function(data) {
             //alert('done: ');
@@ -335,12 +341,13 @@ registerDuringCheckout.initialize = function () {
                     if (utilities.relativePathStartsWith(payload['returnUrl'])) {
                         $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;&nbsp;You have successfully registered! On to check-out...</span>');
 
-                        $('#loginContainer').empty().load('/Account/GetLoginPartial', function(e) {
-                            var o = e;
+                        $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function(response, status, xhr) {
+
                         });
+
+                        $('#confirmationTab a').tab('show');
                     } else {
-                        $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
-                        location.assign(path + '/');
+                        $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;You have successfully registered!</span>');
                     }
 
                 } else if (data.Result === 'Fail') {
@@ -348,13 +355,37 @@ registerDuringCheckout.initialize = function () {
                     regUserStateManager.setAction(RegistrationInCart.Action.SubmitRegister);
                 }
             } else if (!data.isSuccessful) {
-                $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;' + data.data.Exception + '</span>');
+                $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;There were some problems with the form. Please refer to the items in red.</span>');
+
+                formProcessor.lightUpValidationSummary('valSummarySignUpInCart', data);
             }
 
         }).fail(function(data) {
             //console.log('failed: ' + data);
         }).always(function() {
             regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
+        });
+
+        //  MembershipReboot create user post. Needs its own headers/__RequestVerificationToken
+        var createUserAccountForm = $('#_CreateUserAccountForm');
+        var tokenMr = createUserAccountForm.find('input[name=__RequestVerificationToken]').val();
+        var headersMr = {};
+        headersMr['__RequestVerificationToken'] = tokenMr;
+        var urlMr = createUserAccountForm.attr('action');
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: urlMr,
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payload),
+            headers: headersMr,
+            beforeSend: function() {
+
+            }
+        }).done(function(data) {
+            //  do nothing.              
         });
 
         return false;

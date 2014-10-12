@@ -87,7 +87,7 @@ var RegistrationInCart;
             $('#collapseShipping').parent().hide();
 
             $('#wrapZip').hide();
-            $('#wrapPass').hide();
+
             $('#wrapReset').hide();
 
             $('#nonUSAddress').hide();
@@ -116,7 +116,6 @@ var RegistrationInCart;
             $('#TheSubmitButton').prop('value', this.nextButtonText);
 
             //console.log('checkAndSubmitZip');
-            //$('#emailAddress').val($('#checkEmail').val());
             $('#checkZip').submit();
         };
 
@@ -211,6 +210,7 @@ var RegistrationInCart;
             $('#RegisterFields_BillingAddress_Zip').val(data.Zip);
             $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;' + email.substring(email.indexOf('@')) + '</b>&nbsp; domain has been identified.</span>');
             $('#ShowInstitution').html(data.Institution + '<br>' + data.Address + '<br>' + data.City + ', ' + data.State + ' ' + data.Zip + '<br>');
+            $('input[name=YesUseAddress]').focus();
         };
 
         StateManager.prototype.getAction = function () {
@@ -250,65 +250,15 @@ var RegistrationInCart;
             $('form#frmSignIn').submit();
         };
 
-        StateManager.prototype.newPasswordView = function (email) {
+        StateManager.prototype.goToAddressFields = function (email) {
             ////console.log("call newPasswordView: " + email);
-            $('#wrapEmail').hide('fast');
-
-            var self = this;
-
-            var showPwdInput = $.Deferred(function () {
-                //console.log("Deferred newPasswordView: " + email);
-                $('#wrapPass').show('fast');
-            });
-
-            $.when(showPwdInput.resolve()).then(function () {
-                $('#RegisterFields_Password').focus();
-            });
-
-            if (email) {
-                $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; has been recorded.</span>');
-            } else {
-                $('#modalInstitution').modal('hide');
-                $('#labelEmail').fadeOut(500, function () {
-                    $(this).html('<span class="label label-success">&nbsp;&nbsp;' + $('#RegisterFields_Email').val() + ' will be used for your email address.</span>');
-                    $(this).fadeIn(500);
-                });
-            }
-
-            this.action = Action.GetPassword;
-
-            if (this.inputAction === InputAction.EnterKeyPress)
-                this.inputAction = InputAction.None;
-
-            $('#TheSubmitButton').on('mouseenter', function () {
-                if ($(self.sameAsBillingCheckedFilter).val()) {
-                    $('#SetShippingToBilling');
-                }
-            });
-        };
-
-        StateManager.prototype.newPassWordToNextStep = function () {
-            var confirmPasswordInput = $('[name="RegisterFields.ConfirmPassword"]');
-            var pwd = $.trim($('#RegisterFields_Password').val());
-            var confirmedPwd = $.trim(confirmPasswordInput.val());
-
-            if (!confirmedPwd || pwd !== confirmedPwd) {
-                confirmPasswordInput.next('span').removeAttr('class').attr('class', 'field-validation-error').append('<span>Passwords don\'t match.</span>');
-                if (this.inputAction === InputAction.EnterKeyPress)
-                    this.inputAction = InputAction.None;
-                return false;
-            }
-
-            if (!pwd || pwd.length < 2 || $('#RegisterFields_Password').nextAll('span:last').hasClass('field-validation-error')) {
-                //console.log('call RegisterFields_Password');
-                if (this.inputAction === InputAction.EnterKeyPress)
-                    this.inputAction = InputAction.None;
-                return false;
-            }
+            if (email)
+                $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;' + $('#RegisterFields_Email').val() + ' will be used for your email address.</span>');
 
             if (this.zipCheckRequired) {
-                $('#wrapPass').hide('slow');
                 this.action = Action.CheckZip;
+
+                $('#wrapEmail').hide('fast');
 
                 var showGetZipInput = $.Deferred(function () {
                     $('#wrapZip').show('slow');
@@ -321,14 +271,23 @@ var RegistrationInCart;
                 if (this.inputAction === InputAction.EnterKeyPress)
                     this.inputAction = InputAction.None;
             } else {
+                $('#wrapEmail').hide('fast');
+
+                this.action = Action.SubmitRegister;
+
                 this.displayBillingFields();
 
-                //TODO: does it make sense to fire a formfield validation at this point?
-                this.action = Action.SubmitRegister;
                 this.zipCheckRequired = true;
-            }
 
-            return true;
+                if (this.inputAction === InputAction.EnterKeyPress)
+                    this.inputAction = InputAction.None;
+
+                $('#TheSubmitButton').on('mouseenter', function () {
+                    if ($(this.sameAsBillingCheckedFilter).val()) {
+                        $('#SetShippingToBilling');
+                    }
+                });
+            }
         };
 
         StateManager.prototype.nonUsAdddressInvoked = function () {
@@ -352,7 +311,6 @@ var RegistrationInCart;
                 $('#RegisterFields_Email').focus();
             });
 
-            $('#wrapZip').hide('slow');
             $('#labelEmail').html('<span class="label label-info">&nbsp;&nbsp;Proceed or enter a different email address.</span>');
 
             //  Clear the billing and shipping addresses
@@ -484,9 +442,6 @@ var RegistrationInCart;
                         $('#TheSubmitButton').prop('value', this.nextButtonText);
                     }
                     break;
-                case Action.GetPassword:
-                    this.newPassWordToNextStep();
-                    break;
                 case Action.CheckZip:
                     //console.log('CheckZip hit');
                     $('#ZipChecker').val($('#getZip').val());
@@ -542,9 +497,11 @@ var RegistrationInCart;
 
         StateManager.prototype.useRegisteredAddress = function () {
             //console.log('YesUseAddress hit');
+            $('#modalInstitution').modal('hide');
+
             this.zipCheckRequired = false;
 
-            this.newPasswordView(null);
+            this.goToAddressFields(null);
         };
 
         StateManager.prototype.zipCodeVerified = function (data, zipCode) {
