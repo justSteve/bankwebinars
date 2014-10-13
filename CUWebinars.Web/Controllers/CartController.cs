@@ -1,5 +1,7 @@
 ﻿using CUWebinars.Business.Models;
 using CUWebinars.Web.Core.Orchestrators;
+using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
@@ -13,9 +15,6 @@ namespace CUWebinars.Web.Controllers
 {
     public class CartController : Controller
     {
-        private TTSWebinarsContext db = new TTSWebinarsContext();
-        readonly IStateService _stateService;
-
         private readonly ILogger _logger;
         private readonly ICartControllerOrchestrator _cartControllerOrchestrator;
         private bool _disposed;
@@ -194,6 +193,19 @@ namespace CUWebinars.Web.Controllers
                 return Json(orderRow.Order.OrderStatus.ToString());
             }
             return this.ModelStateJson(ModelState);
+        }
+
+        [HttpPost, ValidateJsonAntiForgeryToken]
+        public ActionResult UpdateOrderWithUserId(int? orderId, int? userId)
+        {
+            if (orderId.HasValue && userId.HasValue)
+            {
+                _cartControllerOrchestrator.UpdateOrderWithUserId(orderId.Value, userId.Value);
+
+                return Json(new {Result = WebUiConstants.Success});
+            }
+
+            return View();
         }
 
         public virtual void Dispose(bool disposing)

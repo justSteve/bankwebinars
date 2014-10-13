@@ -44,7 +44,7 @@ namespace CUWebinars.Business.Services
         IList<Order> SelectOrdersWithArchivedWebinars(int idUser);
         IList<Order> SelectOrdersWithRecordedWebinars(int idUser);
         IList<Order> SelectOrdersWithScheduledWebinars(int idUser);
-        String UpdateOrderChanges(Order order);
-
+        string UpdateOrderChanges(Order order);
+        bool UpdateOrderWithUserId(int orderId, int userId);
     }
 }

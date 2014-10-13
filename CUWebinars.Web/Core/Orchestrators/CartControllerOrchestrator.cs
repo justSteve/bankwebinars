@@ -423,6 +423,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             return row;
         }
 
+        public bool UpdateOrderWithUserId(int orderId, int userId)
+        {
+            return _orderManagementService.UpdateOrderWithUserId(orderId, userId);
+        }
+
         private Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow)
         {
             if (ReferenceEquals(null, webUser))

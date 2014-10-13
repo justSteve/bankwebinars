@@ -1070,7 +1070,7 @@ namespace CUWebinars.Web.Controllers
 
                     _logger.Info("Account.Register UserAdded: " + model.RegisterFields.Email);
 
-                    return Json(new {Result = WebUiConstants.Success});
+                    return Json(new {Result = WebUiConstants.Success, UserId = webUser.idUser });
 
                 }
                 catch (Exception exception)

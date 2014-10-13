@@ -347,6 +347,13 @@ namespace CUWebinars.Business.Repository
         }
 
 
+        public bool UpdateOrderWithUserId(int orderId, int userId)
+        {
+            var order = items.Find(orderId);
+            order.idUser = userId;
+            return db.SaveChanges() == 1;
+        }
+
         public int CheckUserForRecordingAccess(int webinar, int user)
         {
             var a = items

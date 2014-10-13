@@ -19,5 +19,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         string CheckIfAddLocShouldHide(int optionId);
         Order CreateOrder(CheckoutOptionsViewModel formModel, string stageOfCheckout);
         OrderRow LoadOrderRow(int id, OrderStatus status);
+        bool UpdateOrderWithUserId(int orderId, int userId);
     }
 }

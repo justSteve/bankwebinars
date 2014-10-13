@@ -75,7 +75,7 @@ $(function() {
                     cartStateManager.setWebinarId(result.webinarId);
                     $('#contactInfo').load('/Cart/CheckoutContactDetails', function(response, status, xhr) {
                         $('#_CreateUserForm input[name="returnUrl"]').val('/Webinar/Details2/' + result.webinarId);
-                        registerDuringCheckout.initialize();
+                        registerDuringCheckout.initialize(result.orderId);
                     });
 
                     $('#contactInfoTab a').tab('show');

@@ -209,3 +209,8 @@
 {
     @Html.AntiForgeryToken()
 }
+
+@using (Html.BeginForm("UpdateOrderWithUserId", "Cart", null, FormMethod.Post, new { id = "_UpdateOrderWithUserId", name = "UpdateOrderWithUserId" }))
+{
+    @Html.AntiForgeryToken()
+}

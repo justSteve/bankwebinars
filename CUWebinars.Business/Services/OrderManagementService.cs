@@ -506,6 +506,11 @@ namespace CUWebinars.Business.Services
             return "failed";
         }
 
+        public bool UpdateOrderWithUserId(int orderId, int userId)
+        {
+            return _orderRepository.UpdateOrderWithUserId(orderId, userId);
+        }
+
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink)
         {
             ProcessDiscountCodes(currentOrder);

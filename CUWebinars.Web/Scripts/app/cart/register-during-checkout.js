@@ -1,7 +1,7 @@
 ﻿var registerDuringCheckout = {};
 
-registerDuringCheckout.initialize = function () {
-
+registerDuringCheckout.initialize = function (orderId) {
+    
     var regUserStateManager;
 
     var utilities = new Common.Utilities();
@@ -340,6 +340,31 @@ registerDuringCheckout.initialize = function () {
 
                     if (utilities.relativePathStartsWith(payload['returnUrl'])) {
                         $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;&nbsp;You have successfully registered! On to check-out...</span>');
+
+                        var updateOrderWithUserForm = $('#_UpdateOrderWithUserId');
+                        var url = updateOrderWithUserForm.attr('action');
+
+                        var token = updateOrderWithUserForm.find('input[name=__RequestVerificationToken]').val();
+                        var headers = {};
+                        headers['__RequestVerificationToken'] = token;
+
+                        var payloadForUpdate = {
+                            orderId: orderId,
+                            userId: data.UserId
+                        };
+
+                        $.ajax({
+                            type: 'POST',
+                            contentType: constants.JsonContentType,
+                            cache: false,
+                            url: url,
+                            dataType: constants.JsonDataType,
+                            data: JSON.stringify(payloadForUpdate),
+                            headers: headers,
+                        }).done(function (data) {
+                            //  This post updates the Order with the Id of the user which has been created during checkout. The Order will
+                            //  currently have the id of the "dummy" user.
+                        });
 
                         $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function(response, status, xhr) {
 

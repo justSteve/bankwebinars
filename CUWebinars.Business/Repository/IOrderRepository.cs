@@ -13,6 +13,7 @@ namespace CUWebinars.Business.Repository
         Order CreateOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow);
         OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, RegType registrationType);
         Order FindOrderByIdWithOrderRows(int id);
+        Order FindById(int id);
         IList<Order> FindOrdersByUserIdWithOrderRows(int userId);
         IList<Order> GetOrdersForLiveEventNotifications(int idWebinar);
         IList<Order> GetOrdersForRecordedEventNotifications(int idWebinar);
@@ -22,7 +23,7 @@ namespace CUWebinars.Business.Repository
         IList<Order> SelectOrdersWithArchivedWebinars(int idUser);
         IList<Order> SelectOrdersWithRecordedWebinars(int idUser);
         IList<Order> SelectOrdersWithScheduledWebinars(int idUser);
-        
+        bool UpdateOrderWithUserId(int orderId, int userId);
         int CheckUserForRecordingAccess(int i, int i1);
         //IList<AdditionalLocation> GetAdditionalLocations(int idOrder);
     }
