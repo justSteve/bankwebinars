@@ -1,6 +1,6 @@
 ﻿var registerDuringCheckout = {};
 
-registerDuringCheckout.initialize = function (orderId) {
+registerDuringCheckout.initialize = function (orderId, webinarId) {
     
     var regUserStateManager;
 
@@ -207,7 +207,7 @@ registerDuringCheckout.initialize = function (orderId) {
 
                 // successful request; do something with the data
                 if (data.success === 'foundExisting') {
-                    regUserStateManager.resetPasswordOrLoginView(email);
+                    regUserStateManager.resetPasswordOrLoginView(email, webinarId);
 
                 } else if (data.success === 'foundInstitution') {
                     regUserStateManager.foundInstitutionView(data, email);
@@ -451,11 +451,38 @@ registerDuringCheckout.initialize = function (orderId) {
                     $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;&nbsp;You have successfully logged in!</span>');
 
                     $('#loginContainer').empty().load('/Account/GetLoginPartial', function (e) {
-                        var o = e;
+
+                        $('#updateOrderWithUserIdWrapper').load('/Cart/UpdateOrderWithUserIdForm', function (response, status, xhr) {
+
+                            var updateOrderWithUserForm = $('#_UpdateOrderWithUserId');
+                            var url = updateOrderWithUserForm.attr('action');
+
+                            var token = updateOrderWithUserForm.find('input[name=__RequestVerificationToken]').val();
+                            var headers = {};
+                            headers['__RequestVerificationToken'] = token;
+
+                            var payloadForUpdate = {
+                                orderId: orderId,
+                                userId: data.UserId
+                            };
+
+                            $.ajax({
+                                type: 'POST',
+                                contentType: constants.JsonContentType,
+                                cache: false,
+                                url: url,
+                                dataType: constants.JsonDataType,
+                                data: JSON.stringify(payloadForUpdate),
+                                headers: headers,
+                            }).done(function (data) {
+                                //  This post updates the Order with the Id of the user which has been created during checkout. The Order will
+                                //  currently have the id of the "dummy" user.
+                            });
+                        });
                     });
                 } 
             } else if (!data.isSuccessful) {
-                $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;' + data.data.Exception + '</span>');
+                $('#labelEmail').html('<span class="label label-important"><i class="icon fa-exclamation-circle"></i>&nbsp;There has been a problem with your log in attempt.</span>');
 
                 var valSummary = $('#loginErrorSummary');
                 valSummary.addClass('validation-summary-errors');

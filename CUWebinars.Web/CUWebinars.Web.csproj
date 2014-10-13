@@ -513,6 +513,7 @@
     <Compile Include="ViewModel\ResendOrderInformationViewModel.cs" />
     <Compile Include="ViewModel\WebinarDetailsViewModel.cs" />
     <Content Include="Views\Webinar\Partials\_UpdateWebinarFiles.cshtml" />
+    <Content Include="Views\Cart\Partials\_UpdateOrderWithUserId.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\packages\Selenium.WebDriver.ChromeDriver.2.9.0.0\content\chromedriver.exe">

@@ -114,6 +114,11 @@ namespace CUWebinars.Web.Controllers
             return PartialView("~/Views/cart/Partials/CheckoutContact.cshtml", _cartControllerOrchestrator.BuildRegisterViewModel());
         }
 
+        public PartialViewResult UpdateOrderWithUserIdForm()
+        {
+            return PartialView("~/Views/cart/Partials/_UpdateOrderWithUserId.cshtml");
+        }
+
 
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Signup2(CheckoutOptionsViewModel formModel, string stageOfCheckout)

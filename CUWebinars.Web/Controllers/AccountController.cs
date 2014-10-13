@@ -686,7 +686,6 @@ namespace CUWebinars.Web.Controllers
         
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public ActionResult SignInFromCart(SignInModel model)
         {
             if (!ModelState.IsValid)
@@ -698,9 +697,10 @@ namespace CUWebinars.Web.Controllers
 
             if (_membershipService.LogInUser(_globalConfig.Tenant, model.Email, model.Password, model.RememberMe, out userMustVerify))
             {
+                var webUser = _membershipService.GetUserByEmail(model.Email);
                 _logger.Info("Account.SignIn Post Success in cart. Session={0}", AppHelper.GetUserAuditInfo());
 
-                return Json(new {result = "LoggedIn"} );
+                return Json(new { result = "LoggedIn", UserId = webUser.idUser });
             }
 
             // If we got this far, something failed, redisplay form

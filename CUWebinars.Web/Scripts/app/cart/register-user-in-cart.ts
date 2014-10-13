@@ -365,7 +365,7 @@ module RegistrationInCart {
             $('form#ResetPasswordForm').submit();
         }
 
-        resetPasswordOrLoginView(email: JQuery): void {
+        resetPasswordOrLoginView(email: JQuery, webinarId: number): void {
             //console.log("call resetPasswordOrLoginView: " + email);
             $('#Email1').val(email);
             $('#ResetPassEmail').val(email);

@@ -372,7 +372,7 @@ var RegistrationInCart;
             $('form#ResetPasswordForm').submit();
         };
 
-        StateManager.prototype.resetPasswordOrLoginView = function (email) {
+        StateManager.prototype.resetPasswordOrLoginView = function (email, webinarId) {
             //console.log("call resetPasswordOrLoginView: " + email);
             $('#Email1').val(email);
             $('#ResetPassEmail').val(email);
