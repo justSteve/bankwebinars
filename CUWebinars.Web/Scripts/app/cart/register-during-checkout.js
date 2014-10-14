@@ -361,13 +361,33 @@ registerDuringCheckout.initialize = function (orderId, webinarId) {
                             dataType: constants.JsonDataType,
                             data: JSON.stringify(payloadForUpdate),
                             headers: headers,
-                        }).done(function (data) {
-                            //  This post updates the Order with the Id of the user which has been created during checkout. The Order will
-                            //  currently have the id of the "dummy" user.
-                        });
+                        }).done(function(data) {
 
-                        $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function(response, status, xhr) {
+                            $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
 
+                                //  MembershipReboot create user post. Needs its own headers/__RequestVerificationToken
+                                var createUserAccountForm = $('#_CreateUserAccountForm');
+                                var tokenMr = createUserAccountForm.find('input[name=__RequestVerificationToken]').val();
+                                var headersMr = {};
+                                headersMr['__RequestVerificationToken'] = tokenMr;
+                                var urlMr = createUserAccountForm.attr('action');
+
+                                $.ajax({
+                                    type: 'POST',
+                                    contentType: constants.JsonContentType,
+                                    cache: false,
+                                    url: urlMr,
+                                    dataType: constants.JsonDataType,
+                                    data: JSON.stringify(payload),
+                                    headers: headersMr,
+                                    beforeSend: function() {
+
+                                    }
+                                }).done(function(data) {
+                                    //  do nothing.              
+                                });
+
+                            });
                         });
 
                         $('#confirmationTab a').tab('show');
@@ -389,28 +409,6 @@ registerDuringCheckout.initialize = function (orderId, webinarId) {
             //console.log('failed: ' + data);
         }).always(function() {
             regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
-        });
-
-        //  MembershipReboot create user post. Needs its own headers/__RequestVerificationToken
-        var createUserAccountForm = $('#_CreateUserAccountForm');
-        var tokenMr = createUserAccountForm.find('input[name=__RequestVerificationToken]').val();
-        var headersMr = {};
-        headersMr['__RequestVerificationToken'] = tokenMr;
-        var urlMr = createUserAccountForm.attr('action');
-
-        $.ajax({
-            type: 'POST',
-            contentType: constants.JsonContentType,
-            cache: false,
-            url: urlMr,
-            dataType: constants.JsonDataType,
-            data: JSON.stringify(payload),
-            headers: headersMr,
-            beforeSend: function() {
-
-            }
-        }).done(function(data) {
-            //  do nothing.              
         });
 
         return false;
@@ -452,6 +450,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId) {
 
                     $('#loginContainer').empty().load('/Account/GetLoginPartial', function (e) {
 
+                        $('#updateOrderWithUserIdWrapper').empty();
                         $('#updateOrderWithUserIdWrapper').load('/Cart/UpdateOrderWithUserIdForm', function (response, status, xhr) {
 
                             var updateOrderWithUserForm = $('#_UpdateOrderWithUserId');
@@ -475,8 +474,14 @@ registerDuringCheckout.initialize = function (orderId, webinarId) {
                                 data: JSON.stringify(payloadForUpdate),
                                 headers: headers,
                             }).done(function (data) {
-                                //  This post updates the Order with the Id of the user which has been created during checkout. The Order will
-                                //  currently have the id of the "dummy" user.
+
+                                if (data.Result === 'Success') {
+                                    $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function(response, status, xhr) {
+
+                                    });
+
+                                    $('#confirmationTab a').tab('show');
+                                }
                             });
                         });
                     });

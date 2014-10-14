@@ -822,6 +822,8 @@ namespace CUWebinars.Web.Controllers
                     {
                         if (_membershipService.ChangePasswordFromResetKey(model.Key, model.Password))
                             model.ChangePasswordSucceeded = true;
+                        //else 
+                            //  todo: need to log and give feedback to the user. Account not verified
                     }
                     _logger.Info("Account.PasswordResetConfirm Post. Session=" + AppHelper.GetUserAuditInfo());
 
@@ -1276,9 +1278,9 @@ namespace CUWebinars.Web.Controllers
 
                     _stateService.ClearValue(DomainConstants.TempPassword); // clear straight away, now that message is sent.
 
-                    _membershipService.LogInUser(_globalConfig.Tenant, model.RegisterFields.Email,
-                        model.RegisterFields.Password, true); // log the user in.
-                    _logger.Info("New CartReg User logged in: " + model.RegisterFields.Email);
+                    //_membershipService.LogInUser(_globalConfig.Tenant, model.RegisterFields.Email,
+                    //    model.RegisterFields.Password, true); // log the user in.
+                    //_logger.Info("New CartReg User logged in: " + model.RegisterFields.Email);
 
                     return Json(new { Result = WebUiConstants.Success });
 

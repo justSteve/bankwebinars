@@ -8,11 +8,9 @@ namespace CUWebinars.Business.Repository
 {
     public class AffiliateRepository : TTSWebinarsRepository<TTSWebinarsContext, Affiliate>, IAffiliateRepository
     {
-        public RefDataRepository RefContext { get; set; }
-
         public AffiliateRepository()
         {
-            RefContext = new RefDataRepository();
+     
         }
 
         public AffiliateRepository(TTSWebinarsContext context)
