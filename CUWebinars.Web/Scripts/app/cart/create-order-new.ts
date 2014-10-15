@@ -39,11 +39,18 @@ module OrderRegistration {
         private checkoutInProcess: boolean;
         private idWebinar: number;
         private isUserLogged: boolean;
+        private confirmOrderForm: JQuery;
+        private cancelOrderForm: JQuery;
+    
 
         constructor() { }
 
-        getCheckoutInProcess(): boolean {
-            return this.checkoutInProcess;
+        getCancelOrderForm(): JQuery {
+            return this.cancelOrderForm;
+        }
+
+        getConfirmOrderForm(): JQuery {
+            return this.confirmOrderForm;
         }
 
         getIsUserLogged(): boolean {
@@ -64,6 +71,14 @@ module OrderRegistration {
 
         setCheckoutInProcess(val: boolean): void {
             this.checkoutInProcess = val;
+        }
+
+        setCancelOrderForm(form: JQuery): void {
+            this.cancelOrderForm = form;
+        }
+
+        setConfirmOrderForm(form: JQuery): void {
+            this.confirmOrderForm = form;
         }
 
         setIsUserLogged(val: boolean): void {
@@ -133,6 +148,11 @@ module OrderRegistration {
             }).fail(function(data) {
                 //console.log('CheckIfAddLocShouldHide failed!!! ');
             });
+        }
+
+        PlaceOrder(): void {
+            $("#Step2_BillMeFormReferred").val($("#tbReferred").val());
+            this.confirmOrderForm.submit();
         }
 
         SetCartState(): void {

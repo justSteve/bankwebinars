@@ -56,7 +56,7 @@
         foreach (var option in Model.Options)
         {
             var optionType = option.GetType();
-            if (optionType.Name == "Option")
+            if (optionType.Name == "RegType")
             {
                 string isSelected = (int)Model.OrderRowRegistrationType.idRegType == option.idRegType ? "selected='selected'" : "";
 

@@ -178,6 +178,8 @@ namespace CUWebinars.Web.App_Start
             kernel.Bind<IOrderControllerOrchestrator>().To<OrderControllerOrchestrator>().InRequestScope();
             kernel.Bind<ICartControllerOrchestrator>().To<CartControllerOrchestrator>().InRequestScope()
                 .WithConstructorArgument("request", x => HttpContext.Current.Request);
+            kernel.Bind<IAccountControllerOrchestrator>().To<AccountControllerOrchestrator>().InRequestScope()
+                .WithConstructorArgument("request", x => HttpContext.Current.Request);
 
         }
 

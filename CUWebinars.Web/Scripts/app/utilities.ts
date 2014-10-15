@@ -23,6 +23,10 @@ module Common {
             return pathToCheck;
         }
 
+        goToUrl(actionMethod: string): void {
+            window.location.href = this.setPathToBaseUrl() + actionMethod;
+        }
+
         relativePathStartsWith(stringToCheck : string) : boolean {
             var path = this.getRelativePath();
             var len = stringToCheck.length;

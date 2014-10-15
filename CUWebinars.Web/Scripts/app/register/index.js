@@ -259,6 +259,9 @@ $(function () {
         }).done(function (data) {
             if (data.result === 'LoggedIn') {
                 window.location.href = path + '/Account/MyWebinars';
+            } else if (data.result === "Confirmed") {
+                //  if here, user has to verify before they can log in
+                utilities.goToUrl('/Account/Confirmed?email=' + data.result.email + '&surname=' + data.result.surname);
             } else if (data.data) {
 
                 if ($('#labelEmail').is(':visible')) {

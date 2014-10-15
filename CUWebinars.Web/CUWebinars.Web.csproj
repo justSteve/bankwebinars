@@ -385,7 +385,9 @@
     <Compile Include="Controllers\api\AddressesController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Core\Exceptions.cs" />
+    <Compile Include="Core\Orchestrators\AccountControllerOrchestrator.cs" />
     <Compile Include="Core\Orchestrators\CartControllerOrchestrator.cs" />
+    <Compile Include="Core\Orchestrators\IAccountControllerOrchestrator.cs" />
     <Compile Include="Core\Orchestrators\ICartControllerOrchestrator.cs" />
     <Compile Include="Core\Orchestrators\IOrderControllerOrchestrator.cs" />
     <Compile Include="Core\Orchestrators\OrderControllerOrchestrator.cs" />
@@ -435,6 +437,7 @@
     <Content Include="Scripts\app\cart\register-user-in-cart.js.map" />
     <Content Include="Scripts\jsnlog.js.map" />
     <Content Include="Scripts\app\register\register-user.js.map" />
+    <Content Include="Views\Cart\Partials\_ConfirmModal.cshtml" />
     <None Include="Views\Webinar\Details2.cshtml" />
     <None Include="Notification\Templates\OrderSubmittedAdditionalLocation.cshtml" />
     <Compile Include="ViewModel\AdditionalLocationAddViewModel.cs" />

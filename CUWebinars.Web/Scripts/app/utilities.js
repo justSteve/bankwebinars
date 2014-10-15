@@ -18,6 +18,10 @@ var Common;
             return pathToCheck;
         };
 
+        Utilities.prototype.goToUrl = function (actionMethod) {
+            window.location.href = this.setPathToBaseUrl() + actionMethod;
+        };
+
         Utilities.prototype.relativePathStartsWith = function (stringToCheck) {
             var path = this.getRelativePath();
             var len = stringToCheck.length;

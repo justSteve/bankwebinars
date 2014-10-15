@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
 using BrockAllen.MembershipReboot;
@@ -38,6 +39,7 @@ namespace CUWebinars.Web.Controllers
     {
         private readonly GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
+        private readonly IAccountControllerOrchestrator _accountControllerOrchestrator;
         private readonly ILogger _logger;
         private readonly IMembershipService _membershipService;
         private readonly IStateService _stateService;
@@ -45,11 +47,13 @@ namespace CUWebinars.Web.Controllers
         private bool _disposed;
 
         public AccountController(
+            IAccountControllerOrchestrator accountControllerOrchestrator,
             ILogger logger,
             IMembershipService membershipService,
             IOrderManagementService orderManagementService,
             IStateService stateService)
         {
+            _accountControllerOrchestrator = accountControllerOrchestrator;
             _logger = logger;
             _membershipService = membershipService;
             _orderManagementService = orderManagementService;
@@ -286,42 +290,11 @@ namespace CUWebinars.Web.Controllers
         {
             try
             {
-                var changeEmailFromKeyInputModel = new CreateUserConfirmedViewModel
-                {
-                    Email = email,
-                    OldPassword = surname,
-                    NewPassword = string.Empty,
-                    ConfirmPassword = string.Empty,
-                    ScreenMessage = string.Empty,
-                    UserIsLoggedIn = Request.IsAuthenticated
-                };
+                var changeEmailFromKeyInputModel = _accountControllerOrchestrator.ConfirmUser(email, surname);
 
-                var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, email);
-
-                if (!ReferenceEquals(userAccount, null))
-                {
-                    bool hasAlreadyVerifiedAccount = !userAccount.HasClaim(ClaimTypes.HasNotVerified);
-
-                    if (hasAlreadyVerifiedAccount)
-                    {
-                        changeEmailFromKeyInputModel.ScreenMessage =
-                            "You've already verified your account with us. Thank you.";
-                        return View("ThankYouConfirmed", changeEmailFromKeyInputModel);
-                    }
-
-                    if (userAccount.HasClaim(ClaimTypes.HasNotVerified, ClaimValues.ManualRegistration))
-                    {
-                        changeEmailFromKeyInputModel.ScreenMessage =
-                            "Thank you for verifying your account with us.";
-                        return View("ThankYouConfirmed", changeEmailFromKeyInputModel);
-                    }
-
-                    return View(changeEmailFromKeyInputModel);
-                }
-
-                throw new Exception("User does not exist in system");
-
-
+                return string.IsNullOrEmpty(changeEmailFromKeyInputModel.ScreenMessage) 
+                    ? View(changeEmailFromKeyInputModel) 
+                    : View("ThankYouConfirmed", changeEmailFromKeyInputModel);
             }
             catch (Exception exception)
             {
@@ -341,29 +314,18 @@ namespace CUWebinars.Web.Controllers
         {
             try
             {
-                if (_membershipService.VerifyUserByEmail(_globalConfig.Tenant, model.Email))
+                if (_accountControllerOrchestrator.UserConfirmed(model))
                 {
-                    _stateService.SetValue(DomainConstants.UserCreatedViaNewOrder, true);
-                    _membershipService.ResetPassword(_globalConfig.Tenant, model.Email);
-
-                    var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
-
-                    _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
-
-                    _membershipService.ChangePasswordFromResetKey(verificationKey, model.NewPassword);
-
-                    _stateService.ClearValue(DomainConstants.VerificationKey);
-
-                    _membershipService.LogInUser(_globalConfig.Tenant, model.Email, model.NewPassword, true);
-
-                    _logger.Info("Account.Confirmed POST. Session={0}", AppHelper.GetUserAuditInfo());
                     return RedirectToLocal(null);
                 }
-                    _logger.Info("Your email address has already been successfully verified in our system. Session={0}", AppHelper.GetUserAuditInfo());
+             
+                _logger.Info("Your email address has already been successfully verified in our system. Session={0}",
+                    AppHelper.GetUserAuditInfo());
 
-                    model.ScreenMessage = "Your email address has already been successfully verified in our system.";
-                    return View(model);
-                }
+                model.ScreenMessage = "Your email address has already been successfully verified in our system.";
+
+                return View(model);
+            }
             catch (Exception exception)
             {
                 _logger.Fatal(
@@ -578,40 +540,8 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
-            var loginModel = new LoginModel
-            {
-                SignIn = new SignInModel(),
-                ResetPassword = new ResetPasswordModel(),
-                Register = new RegisterViewModel
-                {
-                    RegisterFields = new RegisterModel
-                    {
-                        AccountDetailsTitle = WebUiConstants.Register,
-                        BillingAddress = new AddressModel { TypeOfAddress = AddressType.Billing },
-                        ShippingAddress = new AddressModel { TypeOfAddress = AddressType.Shipping }
-                    }
-                }
-            };
-
-            //So that the user can be referred back to where they were when they click logon
-            if (string.IsNullOrEmpty(returnUrl) && Request.UrlReferrer != null)
-            {
-                returnUrl = Server.UrlDecode(Request.UrlReferrer.PathAndQuery);
-                _logger.Info("Login|returnURL was: " + returnUrl + " Session=" + AppHelper.GetUserAuditInfo());
-            }
-
-            if (Url.IsLocalUrl(returnUrl) && !string.IsNullOrEmpty(returnUrl))
-            {
-                if (returnUrl.Contains("PasswordResetConfirm") || returnUrl.Equals("Account/Signin") || returnUrl.Equals("Account/Login"))
-                    returnUrl = "/Account/MyWebinars";
-
-                loginModel.ReturnUrl = returnUrl;
-                loginModel.SignIn.ReturnUrl = returnUrl;
-            }
-
             ViewBag.PageStyleType = "register";
-            loginModel.ActiveTab = "login";
-            return View(loginModel);
+            return View(_accountControllerOrchestrator.LogUserIn(returnUrl));
         }
 
 
@@ -640,21 +570,8 @@ namespace CUWebinars.Web.Controllers
 
             string userMustVerify;
 
-            if (_membershipService.LogInUser(_globalConfig.Tenant, model.Email, model.Password, model.RememberMe, out userMustVerify))
+            if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
             {
-                if (!ReferenceEquals(Request.ApplicationPath, null) && !ReferenceEquals(Request.Url, null))
-                {
-                    var retURL = model.ReturnUrl.Replace(
-                            string.Format(@"{0}://{1}{2}/",
-                            Request.Url.Scheme,
-                            Request.Url.Authority,
-                            Request.ApplicationPath.TrimEnd('/')),
-                            string.Empty
-                            );
-
-                    _logger.Info("Account.SignIn Post Success. Session={0}, Redirecting to: {1}", AppHelper.GetUserAuditInfo(), retURL);
-                }
-
                 return Json(new {result = "LoggedIn"} );
             }
 
@@ -666,7 +583,7 @@ namespace CUWebinars.Web.Controllers
                     model.Password
                     );
 
-                return RedirectToAction("Confirmed", new { email = model.Email, surname = model.Password });
+                return Json(new {result = "Confirmed", email = model.Email, surname = model.Password });
             }
 
             // If we got this far, something failed, redisplay form

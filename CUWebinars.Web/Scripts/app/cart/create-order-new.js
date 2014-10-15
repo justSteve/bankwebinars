@@ -34,8 +34,12 @@ var OrderRegistration;
     var StateManager = (function () {
         function StateManager() {
         }
-        StateManager.prototype.getCheckoutInProcess = function () {
-            return this.checkoutInProcess;
+        StateManager.prototype.getCancelOrderForm = function () {
+            return this.cancelOrderForm;
+        };
+
+        StateManager.prototype.getConfirmOrderForm = function () {
+            return this.confirmOrderForm;
         };
 
         StateManager.prototype.getIsUserLogged = function () {
@@ -56,6 +60,14 @@ var OrderRegistration;
 
         StateManager.prototype.setCheckoutInProcess = function (val) {
             this.checkoutInProcess = val;
+        };
+
+        StateManager.prototype.setCancelOrderForm = function (form) {
+            this.cancelOrderForm = form;
+        };
+
+        StateManager.prototype.setConfirmOrderForm = function (form) {
+            this.confirmOrderForm = form;
         };
 
         StateManager.prototype.setIsUserLogged = function (val) {
@@ -121,6 +133,11 @@ var OrderRegistration;
             }).fail(function (data) {
                 //console.log('CheckIfAddLocShouldHide failed!!! ');
             });
+        };
+
+        StateManager.prototype.PlaceOrder = function () {
+            $("#Step2_BillMeFormReferred").val($("#tbReferred").val());
+            this.confirmOrderForm.submit();
         };
 
         StateManager.prototype.SetCartState = function () {

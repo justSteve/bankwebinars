@@ -25,7 +25,7 @@
                         </div>
 
                         <div style="font-size: x-small; text-align: center;">
-                            <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe" onclick=" PlaceOrder(); ">Bill Me!</button>
+                            <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button>
                             <button class="btn btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button><br />
                             <a href="#CancelModal" data-toggle="modal" class="btn" id="Canceller">Cancel Registration</a><br />
                             Sales tax may be added to orders in Wisconsin or Illinois.
@@ -33,14 +33,13 @@
                     </div>
                     <div><b>Please review this order summary and and choose billing method.</b></div>
                     <div class="row">
-                        <div class="span2 offset1 alignright">
-                            Primary Contact:<br />
-                            <br />
-                            CC Notifications:<br />
-                            Type:<br />
-                            Additional Locations:
+                        <div class="span3 text-right">
+                            <p>Primary Contact:</p>
+                            <p>CC Notifications:</p>
+                            <p>Type:</p>
+                            <p>Additional Locations:</p>
                         </div>
-                        <div class="span5">
+                        <div class="span5 offset1">
                             @Html.Raw(@Model.UserDetails)<br />@Html.Raw(@Model.CCUserDetails)<br />
                             @{ Html.RenderPartial("Partials/_DisplayOptionsInDropDown", Model.DisplayOptionsInDropDownViewModel); }
                             <br />
@@ -49,8 +48,8 @@
                     </div>
 
                     <div class="row">
-                        <div class="span5">
-                            <input size="350" type="text" placeholder="How did you hear about this webinar?" name="referred" id="tbReferred" value="" />
+                        <div class="span5 offset1">
+                            <input class="input input-xlarge" type="text" placeholder="How did you hear about this webinar?" name="referred" id="tbReferred" value="" />
                             @Html.Raw(Model.UserComments)
                             @Html.Raw(Model.AffiliateComments)
                             @if (Model.UserType == UserType.Admin)
@@ -61,10 +60,10 @@
                                 @Html.Raw(Model.Origin)
                             }
                         </div>
-                        <div class="span2">&nbsp;</div>
+                        <div class="span2 offset1">&nbsp;</div>
                     </div>
                     <div class="row">
-                        <div class="span2 offset1 alignright">
+                        <div class="span5 offset1">
                             Have a comment or question for our staff?<br />
                         </div>
                     </div>
@@ -114,7 +113,9 @@
         }
     }
 
-    @*
+    @{ Html.RenderPartial("Partials/_ConfirmModal"); }
+
+@*
         @{
             if (orderRowID > 0)
             {
@@ -130,74 +131,3 @@
             }
         }*@
 
-
-
-<script type="text/javascript" language="javascript">
-    var confirmOrderForm = $("#confirmOrder");
-    var cancelOrderForm = $("#cancelOrder");
-
-    function PlaceOrder() {
-        $("#Step2_BillMeFormReferred").val($("#tbReferred").val());
-        confirmOrderForm.submit();
-    }
-
-    $(document).ready(function () {
-        @*formID = @(orderRowID);*@
-
-
-        //$("#cancelRegistration").bind("click", cancelOrderForm.submit());
-
-        confirmOrderForm.submit(function (e) {
-            console.log("submitting ConfirmOrder");
-            e.preventDefault();
-            $("#ProgressDialogBS").modal('show');
-            var data = confirmOrderForm.serialize();
-            $.post(confirmOrderForm.attr("action"), data, function (result, status) {
-                if (result.success) {
-                    orderRowID = result.orderRowID;
-
-                    $("#confirmResult").html(result.msg);
-                    $("#confirmRegistration").attr("href", "javascript:location.reload();");
-                    //$.get("/cart/checkoutConfirm/" + orderRowID, function (dataConfirm) {
-                    //    $('#confirmation').replaceWith(dataConfirm);
-                    //});
-                    //$("#signUpTab").show();
-                    //$("#contactInfoTab").show();
-
-                    CheckoutInProcess = false;
-
-                    $("#ProgressDialogBS").modal('hide');
-                    $('#ConfirmModal').modal('show');
-                } else {
-                    $('.signupErrors').html("Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! ");
-                }
-            }, "json");
-            return false;
-
-        });
-
-        cancelOrderForm.submit(function (e){
-            console.log("Submitting Cancel Order");
-            e.preventDefault();
-            var data = cancelOrderForm.serialize();
-            $.post(cancelOrderForm.attr("action"), data, function (result, status) {
-                if (result.success) {
-
-                    $('#cancelCaption').text("Order is canceled");
-                    $("#cancelRegistration").unbind("click");
-                    $("#rtn").hide();
-                    $("#continueReg").show();
-                    $("#cancelResult").hide();
-                    $("#cancelRegistration").hide();
-                    //$("#continueReg").attr("href", "/");
-
-                } else {
-                    alert("else");
-                    $('.signupErrors').html("Invalid Data. Try again?");
-                }
-            }, "json");
-            return false;
-        });
-    });
-
-</script>

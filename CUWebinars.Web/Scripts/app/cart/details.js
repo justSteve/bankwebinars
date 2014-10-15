@@ -1,17 +1,89 @@
 ﻿//  This script correlates with the Details2 View.
 
-var discount,
+var checkoutConfirm,
+    discount,
     cartStateManager,
     signUpForm,
     cartStateManager;
 
 
 discount = '';
+checkoutConfirm = {};
 
 
 $(function() {
 
-    signUpForm = $("#SignUpForm");
+    signUpForm = $('#SignUpForm');
+
+    checkoutConfirm.initialize = function () {
+
+        cartStateManager.setCancelOrderForm($('#confirmOrder'));
+        cartStateManager.setConfirmOrderForm($('#confirmOrder'));
+
+        $('#ConfirmRegistrationBillMe').on('click', function(e) {
+            cartStateManager.PlaceOrder();
+        });
+
+        cartStateManager.getConfirmOrderForm().on('submit', function (e) {
+
+            console.log('submitting ConfirmOrder');
+
+            e.preventDefault();
+
+            var self = $(this);
+            //$('#ProgressDialogBS').modal('show');
+            self.find('input[name="id"]').val(cartStateManager.getOrderId());
+
+            var data = $(this).serialize();
+
+            $.post(self.attr('action'), data, function (result, status) {
+                if (result.success) {
+                    orderRowID = result.orderRowID;
+
+                    $('#confirmResult').html(result.msg);
+                    $('#confirmRegistration').attr('href', 'javascript:location.reload();');
+                    //$.get('/cart/checkoutConfirm/' + orderRowID, function (dataConfirm) {
+                    //    $('#confirmation').replaceWith(dataConfirm);
+                    //});
+                    //$('#signUpTab').show();
+                    //$('#contactInfoTab').show();
+
+                    CheckoutInProcess = false;
+
+                    //$('#ProgressDialogBS').modal('hide');
+                    $('#ConfirmModal').modal('show');
+                } else {
+                    $('.signupErrors').html('Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! ');
+                }
+            }, 'json');
+            return false;
+
+        });
+
+        cancelOrderForm.submit(function(e) {
+            console.log("Submitting Cancel Order");
+            e.preventDefault();
+            var data = cancelOrderForm.serialize();
+            $.post(cancelOrderForm.attr("action"), data, function(result, status) {
+                if (result.success) {
+
+                    $('#cancelCaption').text("Order is canceled");
+                    $("#cancelRegistration").unbind("click");
+                    $("#rtn").hide();
+                    $("#continueReg").show();
+                    $("#cancelResult").hide();
+                    $("#cancelRegistration").hide();
+                    //$("#continueReg").attr("href", "/");
+
+                } else {
+                    alert("else");
+                    $('.signupErrors').html("Invalid Data. Try again?");
+                }
+            }, "json");
+            return false;
+        });
+
+    };
 
     cartStateManager = new OrderRegistration.StateManager();
 
@@ -96,10 +168,11 @@ $(function() {
                     cartStateManager.setWebinarId(result.webinarId);
 
                     $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
-                        
+
+                        $('#confirmationTab a').tab('show');
+                        checkoutConfirm.initialize();
                     });
-                    
-                    $('#confirmationTab a').tab('show');
+
                 } else {
                     //jslogger.log({ exception: { name: 'SignupFail', message: 'The signUpForm submission failed.' } });
                     $('.signupErrors').html('Invalid Data. Try again?');

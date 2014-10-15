@@ -487,7 +487,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId) {
                     });
                 } 
             } else if (!data.isSuccessful) {
-                $('#labelEmail').html('<span class="label label-important"><i class="icon fa-exclamation-circle"></i>&nbsp;There has been a problem with your log in attempt.</span>');
+                $('#labelEmail').html('<span class="label label-important"><i class="icon icon-exclamation-sign"></i>&nbsp;There has been a problem with your log in attempt.</span>');
 
                 var valSummary = $('#loginErrorSummary');
                 valSummary.addClass('validation-summary-errors');

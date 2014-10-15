@@ -79,7 +79,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     var displayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
                     {
                         //Options = null, // todo: this could be sent to the server from the client. Already know the options. No need hit database.
-                        Options = new List<RegType>(),
+                        Options = _orderManagementService.GetOptionsByWebinarId(orderRow.idWebinar, true),
                         OrderRowId = idOrderRow.Value,
                         OrderRowRegistrationType = orderRow.RegistrationType
                     };

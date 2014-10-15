@@ -192,8 +192,199 @@
                             </div>
                             <div class="tab-pane" id="contactInfo">
                             </div>
-                            <div class="tab-pane" id="confirmation">
-                            </div>
+                            <div class="tab-pane" id="confirmation">                    <div style="font-size: smaller;">
+</div>
+                    <div id="inProcCart" class="well pull-right">
+                        <div id="showCartPrice">
+        <div id="billingDetails" class="well" style="text-align: right;">
+            Base Cost: $155<br>Discounted: $10.00 (abc)<br>Total Cost: $155<br>
+
+                <span class="label label-warning">InProcess</span>
+
+        </div>
+
+                        </div>
+
+                        <div style="font-size: x-small; text-align: center;">
+                            @*<button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button>*@
+                            <button class="btn btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button><br>
+                            <a href="#CancelModal" data-toggle="modal" class="btn" id="Canceller">Cancel Registration</a><br>
+                            Sales tax may be added to orders in Wisconsin or Illinois.
+                        </div>
+                    </div>
+                    <div><b>Please review this order summary and and choose billing method.</b></div>
+                    <div class="row">
+                        <div class="span2 offset1 alignright">Primary Contact:<br>
+                            <br>
+                            CC Notifications:<br>
+                            Type:<br>
+                            Additional Locations:
+                        </div>
+                        <div class="span5 offset1">
+                            Zakk Rogers - Some Institution<br>drogersbox-test4@yahoo.com.au - <a role="button" class="btn btn-mini" target="new" href="/account/manage/26720"> Edit?</a><br>None <a href="#AddCCModal" role="button" class="btn btn-mini" data-toggle="modal"> Add?</a> <br>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        var signUpFormUpdate = $("#updateRegType");
+        $("#RegType").on('change', function () {
+
+            //$("#updateRegType").submit();
+            signUpFormUpdate.submit();
+        });
+
+        $("#updateRegType").submit(function (e) {
+            e.preventDefault();
+
+            //CheckoutInProcess = true;
+            if (!isUserLogged) {
+                $("#btnLogin").trigger("click");
+            } else {
+                var data = signUpFormUpdate.serialize();
+                $.post(signUpFormUpdate.attr("action"), data, function (result, status) {
+                    if (result.success) {
+
+                        orderRowID = result.orderRowID;
+
+                        $.get("/cart/CheckoutDisplayRowPrice/" + orderRowID)
+                            .success(function (dataConfirm) {
+                                console.log($('#showCartPrice').html());
+                                $('#showCartPrice').html(dataConfirm);
+                            })
+                            .done(function (dataConfirm) {
+                                console.log("after: " + $('#showCartPrice').html());
+                                SetCartState();
+                            });
+
+                        //$.get("/cart/checkoutConfirm/" + orderRowID)
+                        //    .success(function (dataConfirm) {
+                        //        $('#confirmation').replaceWith(dataConfirm);
+                        //
+                        //    });
+                    } else {
+                        $('.signupErrors').html("Invalid Data. Try again?");
+                    }
+                }, "json");
+                return false;
+            }
+        });
+
+    });
+</script>
+
+<input type="hidden" name="ID" value="4548">
+<select name="RegType" id="RegType">
+                <option class="radio" selected="'selected'" value="97">
+                    Live Session Only
+                </option>
+                <option class="radio" value="98">
+                    OnDemand Recording Only
+                </option>
+                <option class="radio" value="99">
+                    CD-ROM and Hardcopy Handouts
+                </option>
+                <option class="radio" value="100">
+                    Live Plus OnDemand Weblinks
+                </option>
+                <option class="radio" value="101">
+                    Premier Package
+                </option>
+
+</select>
+
+                            <br>
+                            
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="span5 offset1">
+                            <input class="input input-xlarge" type="text" placeholder="How did you hear about this webinar?" name="referred" id="tbReferred" value="">
+                            
+                            
+                        </div>
+                        <div class="span2 offset1">&nbsp;</div>
+                    </div>
+                    <div class="row">
+                        <div class="span2 offset1 alignright">
+                            Have a comment or question for our staff?<br>
+                        </div>
+                    </div>
+
+
+    
+
+
+
+<script type="text/javascript" language="javascript">
+    var confirmOrderForm = $("#confirmOrder");
+    var cancelOrderForm = $("#cancelOrder");
+
+    function PlaceOrder() {
+        $("#Step2_BillMeFormReferred").val($("#tbReferred").val());
+        confirmOrderForm.submit();
+    }
+
+    $(document).ready(function () {
+        
+
+
+        //$("#cancelRegistration").bind("click", cancelOrderForm.submit());
+
+        confirmOrderForm.submit(function (e) {
+            console.log("submitting ConfirmOrder");
+            e.preventDefault();
+            $("#ProgressDialogBS").modal('show');
+            var data = confirmOrderForm.serialize();
+            $.post(confirmOrderForm.attr("action"), data, function (result, status) {
+                if (result.success) {
+                    orderRowID = result.orderRowID;
+
+                    $("#confirmResult").html(result.msg);
+                    $("#confirmRegistration").attr("href", "javascript:location.reload();");
+                    //$.get("/cart/checkoutConfirm/" + orderRowID, function (dataConfirm) {
+                    //    $('#confirmation').replaceWith(dataConfirm);
+                    //});
+                    //$("#signUpTab").show();
+                    //$("#contactInfoTab").show();
+
+                    CheckoutInProcess = false;
+
+                    $("#ProgressDialogBS").modal('hide');
+                    $('#ConfirmModal').modal('show');
+                } else {
+                    $('.signupErrors').html("Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! ");
+                }
+            }, "json");
+            return false;
+
+        });
+
+        cancelOrderForm.submit(function (e){
+            console.log("Submitting Cancel Order");
+            e.preventDefault();
+            var data = cancelOrderForm.serialize();
+            $.post(cancelOrderForm.attr("action"), data, function (result, status) {
+                if (result.success) {
+
+                    $('#cancelCaption').text("Order is canceled");
+                    $("#cancelRegistration").unbind("click");
+                    $("#rtn").hide();
+                    $("#continueReg").show();
+                    $("#cancelResult").hide();
+                    $("#cancelRegistration").hide();
+                    //$("#continueReg").attr("href", "/");
+
+                } else {
+                    alert("else");
+                    $('.signupErrors').html("Invalid Data. Try again?");
+                }
+            }, "json");
+            return false;
+        });
+    });
+
+</script>
+</div>
                         </div>
                     </div>
                 
@@ -216,7 +407,7 @@
     }
 </div>
 
-<div id="ConfirmModal" class="modal hide fade">
+@*<div id="ConfirmModal" class="modal hide fade">
     <form action="/cart/confirmOrder" method="post" id="confirmOrder">
         <input type="hidden" name="id" />
         <input type="hidden" id="Step2_BillMeFormReferred" name="referred" value="" />
@@ -233,7 +424,7 @@
 
     </form>
 
-</div>
+</div>*@
 
 <div id="CancelModal" class="modal hide fade">
     <form action="/cart/cancelOrder" method="post" id="cancelOrder">
