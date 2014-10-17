@@ -15,14 +15,11 @@ $(function() {
 
     signUpForm = $('#SignUpForm');
 
-    checkoutConfirm.initialize = function () {
+    /* This function gets invoked when the 3rd tab is loaded */
+    checkoutConfirm.initialize = function (userId) {
 
-        cartStateManager.setCancelOrderForm($('#confirmOrder'));
+        cartStateManager.setCancelOrderForm($('#cancelOrder'));
         cartStateManager.setConfirmOrderForm($('#confirmOrder'));
-
-        $('#ConfirmRegistrationBillMe').on('click', function(e) {
-            cartStateManager.PlaceOrder();
-        });
 
         cartStateManager.getConfirmOrderForm().on('submit', function (e) {
 
@@ -32,7 +29,7 @@ $(function() {
 
             var self = $(this);
             //$('#ProgressDialogBS').modal('show');
-            self.find('input[name="id"]').val(cartStateManager.getOrderId());
+            self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
 
             var data = $(this).serialize();
 
@@ -51,6 +48,11 @@ $(function() {
                     CheckoutInProcess = false;
 
                     //$('#ProgressDialogBS').modal('hide');
+
+                    if (!cartStateManager.getIsUserLogged()) {
+                        logUserIn(userId);
+                    }
+
                     $('#ConfirmModal').modal('show');
                 } else {
                     $('.signupErrors').html('Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! ');
@@ -86,12 +88,9 @@ $(function() {
     };
 
     cartStateManager = new OrderRegistration.StateManager();
-
     cartStateManager.setCheckoutInProcess(checkoutInProcess);
     cartStateManager.setOrderRowId(orderRowId);
     cartStateManager.setIsUserLogged(isUserLogged);
-
-
     cartStateManager.SetCartState();
 
     $("[id^='regTypeID_']").on("click", function (oEvent) {
@@ -101,11 +100,8 @@ $(function() {
         cartStateManager.CheckIfAddLocShouldHide(oEvent.currentTarget.value);
     });
 
-    $('[id^="AddToCart"]').on('click', function () {
-
-        $(signUpForm).find('[name="RegistrationType"]').val($('input[name=RegistrationType]:checked', '#RegistrationType').val());
-        $(signUpForm).find('[name="stageOfCheckout"]').val("preRegistration");
-        
+    //  
+    $('#AddToCart').on('click', function () {
         signUpForm.submit();
     });
 
@@ -128,6 +124,7 @@ $(function() {
         $("#eDetails").collapse('hide');
     }
 
+    /* Submit event for the big green button */
     signUpForm.submit(function (e) {
 
         e.preventDefault();
@@ -135,9 +132,9 @@ $(function() {
         $('#ProgressDialogBS').modal('show');
         var data = signUpForm.serialize();
 
-        if (!cartStateManager.getIsUserLogged()) {
+        $('#SignUpForm > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
 
-            $('#SignUpForm > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
+        if (!cartStateManager.getIsUserLogged()) {
 
             $.post(signUpForm.attr('action'), data, function (result) {
                 if (result.success) {
@@ -147,7 +144,7 @@ $(function() {
                     cartStateManager.setWebinarId(result.webinarId);
                     $('#contactInfo').load('/Cart/CheckoutContactDetails', function(response, status, xhr) {
                         $('#_CreateUserForm input[name="returnUrl"]').val('/Webinar/Details2/' + result.webinarId);
-                        registerDuringCheckout.initialize(result.orderId, result.webinarId);
+                        registerDuringCheckout.initialize(result.orderId, result.webinarId, result.orderRowId);
                     });
 
                     $('#contactInfoTab a').tab('show');
@@ -188,26 +185,29 @@ $(function() {
         }
     });
 
-    $('#CreateUserSubmitter').on('click', function () {
-        var nameVal = $('#FullName').val();
-        var nameLength = nameVal.length;
-        var nameSplit = nameVal.split(" ");
-        var lastLength = nameLength - nameSplit[0].length;
-        var lastNameLength = nameSplit[0].length + 1;
-        var lastName = nameVal.slice(lastNameLength);
-        $('#FirstName').val(nameSplit[0]);
-        $('#LastName').val(lastName);
+    // TODO: Check with Steve that commented out code below can go
 
-        nameVal = $('#FullNameShipping').val();
-        nameLength = nameVal.length;
-        nameSplit = nameVal.split(" ");
-        lastLength = nameLength - nameSplit[0].length;
-        lastNameLength = nameSplit[0].length + 1;
-        lastName = nameVal.slice(lastNameLength);
-        $('#ShippingFirstName').val(nameSplit[0]);
-        $('#ShippingLastName').val(lastName);
+    //$('#CreateUserSubmitter').on('click', function () {
+    //    var nameVal = $('#FullName').val();
+    //    var nameLength = nameVal.length;
+    //    var nameSplit = nameVal.split(" ");
+    //    var lastLength = nameLength - nameSplit[0].length;
+    //    var lastNameLength = nameSplit[0].length + 1;
+    //    var lastName = nameVal.slice(lastNameLength);
+    //    $('#FirstName').val(nameSplit[0]);
+    //    $('#LastName').val(lastName);
 
-        $("#_CreateUserForm").submit();
-    });
+    //    nameVal = $('#FullNameShipping').val();
+    //    nameLength = nameVal.length;
+    //    nameSplit = nameVal.split(" ");
+    //    lastLength = nameLength - nameSplit[0].length;
+    //    lastNameLength = nameSplit[0].length + 1;
+    //    lastName = nameVal.slice(lastNameLength);
+    //    $('#ShippingFirstName').val(nameSplit[0]);
+    //    $('#ShippingLastName').val(lastName);
+
+    //    $("#_CreateUserForm").submit();
+    //});
 
 });
+

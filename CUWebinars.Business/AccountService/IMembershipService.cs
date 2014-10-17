@@ -37,10 +37,11 @@ namespace CUWebinars.Business.AccountService
         IEnumerable<Address> GetAddressesForUser(int id);
 
         WebUser GetDetailsOfUser(string email);
+        Institution GetInstitutionByDomain(string domain);
         UserAccount GetUserAccountByEmail(string tenant, string email);
         UserAccount GetUserAccountByUserId(Guid userId);
         WebUser GetUserByEmail(string email);
-        Institution GetInstitutionByDomain(string domain);
+        WebUser GetWebUserById(int userId);
         bool HasPassword(string tenant, string emailAddress);
         bool LogInUser(string tenant, string emailAddress, string password, bool persistent);
         bool LogInUser(string tenant, string emailAddress, string password, bool persistent, out string userMustVerify);

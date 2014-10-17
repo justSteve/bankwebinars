@@ -603,6 +603,50 @@ namespace CUWebinars.Web.Controllers
         
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
+        [ValidateJsonAntiForgeryToken]
+        public ActionResult SignInAfterCheckout(int? userId)
+        {
+            string userMustVerify;
+
+            var email = _membershipService.GetWebUserById(userId.Value).email;
+
+            var tempPassword = _stateService.GetValue<string>(DomainConstants.TempPassword);
+
+            _stateService.ClearValue(DomainConstants.TempPassword);
+
+            if (_accountControllerOrchestrator.SignUserIn(new SignInModel {Email = email, Password = tempPassword, ReturnUrl = "/"}, out userMustVerify))
+            {
+                return Json(new {result = "LoggedIn"} );
+            }
+
+            if (!string.IsNullOrEmpty(userMustVerify))
+            {
+                _logger.Info("Account.SignIn UserMustVerify. Session={0}, Email: {1} surname: {2}",
+                    AppHelper.GetUserAuditInfo(),
+                    email,
+                    tempPassword
+                    );
+
+                return Json(new {result = "Confirmed", email = email, surname = tempPassword });
+            }
+
+            // If we got this far, something failed, redisplay form
+            _logger.Warn("Account.SignIn Failed. {0} | {1} Session= {2}",
+                email,
+                tempPassword,
+                AppHelper.GetUserAuditInfo()
+                );
+
+            ModelState.AddModelError(
+                string.Empty, // Needs to be an empty string to show up in ValidationSummary as not model-level error.
+                "The user name or password provided is incorrect."
+                );
+
+            return this.ModelStateJson(ModelState);
+        }
+        
+        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
         public ActionResult SignInFromCart(SignInModel model)
         {
             if (!ModelState.IsValid)
@@ -612,10 +656,10 @@ namespace CUWebinars.Web.Controllers
 
             string userMustVerify; // not relevant in this user flow. So gets discarded.
 
-            if (_membershipService.LogInUser(_globalConfig.Tenant, model.Email, model.Password, model.RememberMe, out userMustVerify))
+            if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
             {
-                var webUser = _membershipService.GetUserByEmail(model.Email);
                 _logger.Info("Account.SignIn Post Success in cart. Session={0}", AppHelper.GetUserAuditInfo());
+                var webUser = _membershipService.GetUserByEmail(model.Email);
 
                 return Json(new { result = "LoggedIn", UserId = webUser.idUser });
             }
@@ -1176,6 +1220,8 @@ namespace CUWebinars.Web.Controllers
                 {
                     //  model.Passwor should be null or empty. Generate own temp password here
                     model.RegisterFields.Password = PasswordGenerator.GenerateRandomString(8);
+                    if (_stateService.HasValue(DomainConstants.TempPassword))
+                        _stateService.ClearValue(DomainConstants.TempPassword);
                     
                     _stateService.SetValue(DomainConstants.TempPassword, model.RegisterFields.Password); // will use in TtsTokenizer
 #if DEBUG
@@ -1193,7 +1239,6 @@ namespace CUWebinars.Web.Controllers
 
                     _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.CartRegistration);
 
-                    _stateService.ClearValue(DomainConstants.TempPassword); // clear straight away, now that message is sent.
 
                     //_membershipService.LogInUser(_globalConfig.Tenant, model.RegisterFields.Email,
                     //    model.RegisterFields.Password, true); // log the user in.

@@ -47,7 +47,8 @@ namespace CUWebinars.Web.Membership.Email
                 Email = user.Email,
                 EmailSignature = appInfo.EmailSignature,
                 LoginUrl = appInfo.LoginUrl,
-                TempPassword = _stateService.GetValue<string>(DomainConstants.TempPassword),
+                //TempPassword = _stateService.GetValue<string>(DomainConstants.TempPassword),
+                TempPassword = string.Empty,
                 Username = user.Username
             };
 

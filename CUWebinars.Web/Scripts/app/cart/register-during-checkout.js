@@ -1,8 +1,8 @@
 ﻿var registerDuringCheckout = {};
 
-registerDuringCheckout.initialize = function (orderId, webinarId) {
+registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId) {
     
-    var regUserStateManager;
+    var regUserStateManager, userId;
 
     var utilities = new Common.Utilities();
 
@@ -283,7 +283,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId) {
 
     //  This handler was colliding with one by the same name in create-user.
     //  It is now invoked from the register-user-in-cart.js script.
-    $('#_CreateUserForm').on('submit', function(event) {
+    $('#_CreateUserFromCartForm').on('submit', function(event) {
         event.preventDefault();
 
         var createUserForm = $(this);
@@ -303,7 +303,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId) {
         headers['__RequestVerificationToken'] = token;
 
         var tabInputs = formProcessor.getApplicableInputs('contactInfo');
-        var formInputs = formProcessor.getApplicableInputs('_CreateUserForm');
+        var formInputs = formProcessor.getApplicableInputs('_CreateUserFromCartForm');
         var payloadFromTab = formProcessor.processInputs(tabInputs);
         var payloadFromForm = formProcessor.processInputs(formInputs);
         var payload = _.extend(payloadFromTab, payloadFromForm);
@@ -338,12 +338,13 @@ registerDuringCheckout.initialize = function (orderId, webinarId) {
                     //console.log('success: ' + data.Result);
                     regUserStateManager.setAction('');
 
-                    if (utilities.relativePathStartsWith(payload['returnUrl'])) {
+                    // This if guard may not be required
+                    if (utilities.relativePathStartsWith(payload['returnUrl'])) { 
                         $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;&nbsp;You have successfully registered! On to check-out...</span>');
 
+                        // The next POST updates the Order number with the newly create id of the WebUser
                         var updateOrderWithUserForm = $('#_UpdateOrderWithUserId');
                         var url = updateOrderWithUserForm.attr('action');
-
                         var token = updateOrderWithUserForm.find('input[name=__RequestVerificationToken]').val();
                         var headers = {};
                         headers['__RequestVerificationToken'] = token;
@@ -353,6 +354,8 @@ registerDuringCheckout.initialize = function (orderId, webinarId) {
                             userId: data.UserId
                         };
 
+                        userId = data.UserId;
+
                         $.ajax({
                             type: 'POST',
                             contentType: constants.JsonContentType,
@@ -360,9 +363,10 @@ registerDuringCheckout.initialize = function (orderId, webinarId) {
                             url: url,
                             dataType: constants.JsonDataType,
                             data: JSON.stringify(payloadForUpdate),
-                            headers: headers,
+                            headers: headers
                         }).done(function(data) {
 
+                            // Upon return, load the 3rd tab. And once loaded, create the MR UserAccount (but don't log the user in). 
                             $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
 
                                 //  MembershipReboot create user post. Needs its own headers/__RequestVerificationToken
@@ -387,6 +391,11 @@ registerDuringCheckout.initialize = function (orderId, webinarId) {
                                     //  do nothing.              
                                 });
 
+                                // 
+                                $('#ConfirmRegistrationBillMe').on('click', function (e) {
+                                    $('#confirmation').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
+                                    completeOrder(userId, orderRowId);
+                                });
                             });
                         });
 
@@ -444,7 +453,9 @@ registerDuringCheckout.initialize = function (orderId, webinarId) {
             if (data.result) {
                 if (data.result === 'LoggedIn') {
 
+                    var userId = data.UserId;
                     regUserStateManager.setAction('');
+                    
 
                     $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;&nbsp;You have successfully logged in!</span>');
 
@@ -462,7 +473,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId) {
 
                             var payloadForUpdate = {
                                 orderId: orderId,
-                                userId: data.UserId
+                                userId: userId
                             };
 
                             $.ajax({
@@ -477,7 +488,9 @@ registerDuringCheckout.initialize = function (orderId, webinarId) {
 
                                 if (data.Result === 'Success') {
                                     $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function(response, status, xhr) {
-
+                                        $('#ConfirmRegistrationBillMe').on('click', function (e) {
+                                            proceed();
+                                        });
                                     });
 
                                     $('#confirmationTab a').tab('show');
@@ -515,3 +528,88 @@ registerDuringCheckout.initialize = function (orderId, webinarId) {
 
     $('#loadingSpinner').remove();
 };
+
+function completeOrder(userId, orderRowId) {
+
+    var cartStateManager = new OrderRegistration.StateManager();
+
+    cartStateManager.setCancelOrderForm($('#cancelOrder'));
+    cartStateManager.setConfirmOrderForm($('#confirmOrder'));
+
+    cartStateManager.getConfirmOrderForm().on('submit', function (e) {
+
+        console.log('submitting ConfirmOrder');
+
+        e.preventDefault();
+
+        var self = $(this);
+        //$('#ProgressDialogBS').modal('show');
+        self.find('input[name="id"]').val(orderRowId);
+
+        var data = $(this).serialize();
+
+        $.post(self.attr('action'), data, function (result, status) {
+            if (result.success) {
+                orderRowID = result.orderRowID;
+
+                $('#confirmResult').html(result.msg);
+                $('#confirmRegistration').attr('href', 'javascript:location.reload();');
+                //$.get('/cart/checkoutConfirm/' + orderRowID, function (dataConfirm) {
+                //    $('#confirmation').replaceWith(dataConfirm);
+                //});
+                //$('#signUpTab').show();
+                //$('#contactInfoTab').show();
+
+                CheckoutInProcess = false;
+
+                //$('#ProgressDialogBS').modal('hide');
+
+                logUserIn(userId);
+                
+
+                $('#ConfirmModal').modal('show');
+            } else {
+                $('.signupErrors').html('Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! ');
+            }
+        }, 'json');
+        return false;
+
+    });
+    cartStateManager.getConfirmOrderForm().submit();
+    cartStateManager.getConfirmOrderForm().off('submit');
+}
+
+function logUserIn(userId) {
+
+    $('#_SignInAfterCheckout').on('submit', function (e) {
+
+        e.preventDefault();
+
+        var payload = { userId: userId };
+
+        var token = $(this).find('input[name=__RequestVerificationToken]').val();
+        var headers = {};
+        headers['__RequestVerificationToken'] = token;
+
+        var url = $(this).attr('action');
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: url,
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payload),
+            headers: headers
+        }).done(function (data) {
+
+            $('#loginContainer').empty().load('/Account/GetLoginPartial', function() {
+                $('#loadingSpinner').remove();
+            });
+        });
+    });
+
+    $('#_SignInAfterCheckout').submit();
+
+    $('#_SignInAfterCheckout').off('submit');
+}

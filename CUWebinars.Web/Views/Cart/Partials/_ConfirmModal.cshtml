@@ -1,7 +1,7 @@
 ﻿<div id="ConfirmModal" class="modal hide fade">
-    @using (Html.BeginForm("Confirm", "Cart", null, FormMethod.Post, new { id = "confirmOrder" }))
+    @using (Html.BeginForm("ConfirmOrder", "Cart", null, FormMethod.Post, new { id = "confirmOrder" }))
     {
-        @*@Html.AntiForgeryToken()*@
+        @Html.AntiForgeryToken()
         
         <input type="hidden" name="id" />
         <input type="hidden" id="Step2_BillMeFormReferred" name="referred" value="" />

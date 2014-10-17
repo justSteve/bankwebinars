@@ -258,7 +258,7 @@
                         <div class="tab-content">
                             <div class="tab-pane active" id="signUp">
                                 <input type="button" onclick=" signUpv1(); " class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
-                                @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model)
+                                @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)
                             </div>
                             @*<div class="tab-pane" id="contactInfo">
                                     @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutContact.cshtml", model: Model)

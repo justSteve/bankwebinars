@@ -53,6 +53,12 @@ namespace CUWebinars.Business.AccountService
             var webUser = _webUserRepository.GetWebUserByEmail(email);
             return webUser;
         }
+
+        public WebUser GetWebUserById(int userId)
+        {
+            return _webUserRepository.FindById(userId);
+        }
+
         public UserAccount GetUserAccountByEmail(string tenant, string email)
         {
             if (string.IsNullOrWhiteSpace(email)) throw new ArgumentNullException("email");

@@ -430,13 +430,20 @@ module Registration {
 		}
 
         setShippingToBilling(): void {
-            if ($('#getFull').is(':visible')) {
-                $('#FullNameShipping').val($('#FullName').val());
+
+            var firstName = $('#RegisterFields_FirstName').val();
+            var lastName = $('#RegisterFields_LastName').val();
+
+            if ($('#RegisterFields_LastName').val()) {
+                $('#ShippingFirstName').val(firstName);
+                $('#ShippingLastName').val(lastName);
+                $('#FirstName').val(firstName);
+                $('#LastName').val(lastName);
+                $('#FullNameShipping').val(firstName + ' ' + lastName);
             } else {
-                $('#FullNameShipping').val($('#FirstName').val() + ' ' + $('#LastName').val());
+                $('#FullNameShipping').val($('#FullName').val());
             }
-			$('#ShippingFirstName').val($('#FirstName').val());
-			$('#ShippingLastName').val($('#LastName').val());
+
 			$('#RegisterFields_ShippingAddress_City').val($('#RegisterFields_BillingAddress_City').val());
 			$('#RegisterFields_ShippingAddress_State').val($('#RegisterFields_BillingAddress_State').val());
 			$('#RegisterFields_ShippingAddress_StreetAddress').val($('#RegisterFields_BillingAddress_StreetAddress').val());

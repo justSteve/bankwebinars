@@ -385,4 +385,17 @@ $(function () {
         return false;
     });
 
+    $('#TheSubmitButton').on('mouseenter', function () {
+        if ($('#TheSubmitButton').val() === stateManager.getRegisterButtonText() && $(stateManager.getSameAsBillingCheckedFilter()).val()) {
+            stateManager.setShippingToBilling();
+        }
+    });
+
+    $('#collapseShipping').on('shown', function () {
+        if ($(stateManager.getSameAsBillingCheckedFilter()).val()) {
+            stateManager.setShippingToBilling();
+        }
+    });
+
+
 });

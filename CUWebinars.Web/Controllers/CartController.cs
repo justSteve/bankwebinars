@@ -43,7 +43,7 @@ namespace CUWebinars.Web.Controllers
 
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult ConfirmOrder(int? id = null)
+        public ActionResult ConfirmOrder( string referred, int? id = null)
         {
             if (ModelState.IsValid)
             {

@@ -113,7 +113,12 @@
         }
     }
 
-    @{ Html.RenderPartial("Partials/_ConfirmModal"); }
+@{ Html.RenderPartial("Partials/_ConfirmModal"); }
+
+@using (Html.BeginForm("SignInAfterCheckout", "Account", null, FormMethod.Post, new { id = "_SignInAfterCheckout" }))
+{
+    @Html.AntiForgeryToken()
+}
 
 @*
         @{

@@ -83,7 +83,7 @@ namespace CUWebinars.Web.App_Start
         {
             string baseUrl = HttpRuntime.AppDomainAppPath;
 
-            kernel.Bind<IStateService>().To<StateService>().InRequestScope();
+            kernel.Bind<IStateService>().To<StateService>().InSingletonScope();
             kernel.Bind<IRefDataRepository>().To<RefDataRepository>().InRequestScope();
             kernel.Bind<TTSWebinarsContext>().ToSelf().InRequestScope();
 

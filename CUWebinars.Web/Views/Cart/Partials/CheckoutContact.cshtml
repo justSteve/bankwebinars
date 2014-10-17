@@ -2,7 +2,7 @@
 
 @Html.ValidationSummary("", new { id = "valSummarySignUpInCart" })
 
-@using (Html.BeginForm("RegisterFromCart", "Account", null, FormMethod.Post, new { id = "_CreateUserForm", name = "createUser" }))
+@using (Html.BeginForm("RegisterFromCart", "Account", null, FormMethod.Post, new { id = "_CreateUserFromCartForm", name = "createUser" }))
 {
     @Html.AntiForgeryToken()
     <input type="hidden" id="FirstName" name="FirstName" />

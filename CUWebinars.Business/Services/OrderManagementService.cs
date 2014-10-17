@@ -66,6 +66,7 @@ namespace CUWebinars.Business.Services
 
         public Affiliate AttachAffiliate(Affiliate item)
         {
+            item.Orders = null;
             return _affiliateRepository.Exists(item) ? item : _affiliateRepository.AttachItem(item);
         }
 

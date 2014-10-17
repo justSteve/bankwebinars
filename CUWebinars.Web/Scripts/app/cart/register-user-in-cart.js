@@ -449,7 +449,7 @@ var RegistrationInCart;
                     break;
                 case Action.SubmitRegister:
                     //console.log('SubmitRegister hit');
-                    if ($('#_CreateUserForm').valid() == true) {
+                    if ($('#_CreateUserFromCartForm').valid() == true) {
                         this.action = Action.PostCreateAccount;
                         this.submitCreateUserForm();
                     } else {
@@ -472,7 +472,7 @@ var RegistrationInCart;
         };
 
         StateManager.prototype.submitCreateUserForm = function () {
-            var valid = $('#_CreateUserForm').valid();
+            var valid = $('#_CreateUserFromCartForm').valid();
 
             // on account creation default the shipping phone to be same as billing
             $("#RegisterFields.ShippingAddress.phone").val($('#RegisterFields_BillingAddress_Phone'));
@@ -480,7 +480,7 @@ var RegistrationInCart;
             //console.log("validating createUserForm: " + valid);
             if (valid) {
                 //console.log('createUserForm submitted.');
-                $('#_CreateUserForm').submit();
+                $('#_CreateUserFromCartForm').submit();
 
                 $('#TheSubmitButton').off('mouseenter');
             }
