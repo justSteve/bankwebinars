@@ -60,7 +60,10 @@
                         </div>
                         <div style="font-size: small; " class=" span6">
                             <i>Type of Attendance:</i> @row.RegistrationType.OptionLabel<br />
-                            @{Html.RenderPartial("Partials/OrderHasAdditionalLocations", row);}<br />
+                            @{
+                                var addLocModel = new OrderHasAdditionalLocationsViewModel { };
+                                Html.RenderPartial("Partials/OrderHasAdditionalLocations", addLocModel);
+                            }<br />
                             <i>Total Cost:</i> @row.Order.Total.ToString("C", nfi)
                         </div>
                     </div>
@@ -94,7 +97,7 @@
                                         <span style="font-size: small;">(Recording not yet uploaded.)</span>
                                     </div>
                                 }
-                                
+
                             </div>
                         }
                         else
@@ -107,12 +110,12 @@
                         }
                         @if (row.Webinar.Status == WebinarStatus.Recorded || row.Webinar.Status == WebinarStatus.Archived)
                         {
-                        <div style="margin-top: 10px;">
-                            <form method="POST" action="/Account/MyCertificate">
-                                <input type="hidden" name="orderID" value="@row.idOrder" />
-                                <input type="submit" value="My Certificate" id="ShowCertificate" class="btn pull-right btn-mini btn-success" />
-                            </form>
-                        </div>
+                            <div style="margin-top: 10px;">
+                                <form method="POST" action="/Account/MyCertificate">
+                                    <input type="hidden" name="orderID" value="@row.idOrder" />
+                                    <input type="submit" value="My Certificate" id="ShowCertificate" class="btn pull-right btn-mini btn-success" />
+                                </form>
+                            </div>
                         }
                     </div>
                 </div>

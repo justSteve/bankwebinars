@@ -1,5 +1,4 @@
-﻿@using System.Globalization
-@using CUWebinars.Web.Core
+﻿@using CUWebinars.Web.Core
 @using CUWebinars.Web.Helpers
 
 @model WebinarDetailsViewModel
@@ -7,46 +6,12 @@
 @{
     ViewBag.Title = Model.Webinar.Title + " - Presented by: " + Model.Webinar.Presenter.WebUser.FullName;
     Layout = "/Views/Shared/_LayoutPublic.cshtml";
-    NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
-    var CheckoutInProcess = "false";
-    if (ViewData.ContainsKey("CheckoutInProcess"))
-    {
-        if (!string.IsNullOrEmpty(ViewData["CheckoutInProcess"].ToString()))
-        {
-            CheckoutInProcess = ViewData["CheckoutInProcess"].ToString();
-        }
-    }
 
-    string ceuShort = string.Empty;
-    string ceuStmt = string.Empty;
-    if (string.IsNullOrEmpty(Model.Webinar.ceu) == false)
+    if (Model.UserOwnsThisEvent > 0)
     {
-        string[] ceu = Model.Webinar.ceu.Split('|');
-        ceuShort = ceu[0];
-        ceuStmt = ceu[1];
-    }
-    var idUser = 0;
-    var isUserLogged = "false";
-    var timeZ = USTimeZone.Central;
-    if (Model.WebUser != null && Model.WebUser.idUser > 0)
-    {
-        isUserLogged = "true";
-        timeZ = Model.WebUser.timeZone;
-        idUser = Model.WebUser.idUser;
-    }
-    var showUsersTimeFormat = "<i>" + Html.DisplayTime(Model.Webinar.Date, (USTimeZone)timeZ, false) + " - " + Html.DisplayTime(Model.Webinar.Date, Model.Webinar.Duration, timeZ) + "<br /></i>";
-    var msgOrderStatus = "";
-    var rowID = 0;
-    var orderID = 0;
-    var signUpCaption = "Sign Up!";
-    var ConfirmationCaption = "Confirmation";
-
-    var loggedInUserIdentity = ((ClaimsIdentity)User.Identity);
-    if (ViewBag.userOwnsThisEvent > 0)
-    {
-        <script language="javascript">
+        <script type="text/javascript">
             function exprsOrder(idRegType) {
                 alert("Please call us at 800-831-0678 ext. 3 and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder");
 
@@ -55,68 +20,32 @@
                 alert("Please call us at 800-831-0678 ext. 3 and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder");
 
             };
-        </script>
-        <script language="javascript">
 
-            $(document).ready(function () {
+            $(function () {
                 $("#SignUpFormContainer").hide();
-
             });
         </script>
-
-
-        if (Model.Order.OrderStatus == OrderStatus.InProcess)
-        {
-            CheckoutInProcess = "true";
-            msgOrderStatus = "<div align=\"center\" class=\"label-warning label\">Your order is InProcess and needs to be confirmed.</div>";
-        }
     }
 }
 
 <script type="text/javascript">
 
-    CheckoutInProcess = "@(CheckoutInProcess)";
-    orderRowID = @rowID;
-    isUserLogged = @isUserLogged;
+    var checkoutInProcess = @(Model.CheckoutInProcess ? "true" : "false");
+    var orderRowId = 0;
+    var isUserLogged = @(@Model.UserIsLoggedIn ? "true" : "false");
 
     $(document).ready(function() {
-        JL("myLogger").info("Details loaded @Model.Webinar.idWebinar for idUser @idUser.");
+        JL("myLogger").info("Details loaded @Model.Webinar.idWebinar for idUser @Model.WebUser.idUser.");
     });
 
 </script>
 
-<style>
-    .icon-question-sign {
-        background-position: 14px 14px;
-    }
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/createOrder")
+}
 
-    .hero-unit h1 {
-        color: inherit;
-        font-size: 50px;
-        letter-spacing: -1px;
-        line-height: 1;
-        margin-bottom: 0;
-    }
-
-    blockquote {
-        background: url("") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
-        font-style: normal;
-        line-height: 110%;
-        font-size: small;
-        font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-    }
-
-    .well-large {
-        padding: 0;
-    }
-
-        .well-large p {
-            padding: 0;
-            line-height: 100%;
-            font-size: small;
-        }
-</style>
-
+@Styles.Render("~/Content/createOrderDetails")
 
 <div class="hero-unit">
     <div id="webinarTitle" class="container">
@@ -124,7 +53,6 @@
             <h1>@Model.Webinar.Title</h1>
         </div>    <!--close container-->
     </div>
-
 </div>
 <!--close hero-unit-->
 <div class="container clearfix" id="main-content">
@@ -167,34 +95,35 @@
 
         <div class="span3">
             <aside class="widget">
-                @if (loggedInUserIdentity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.CuWebinarsAdmin))
+                @if (Model.Identity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.CuWebinarsAdmin))
                 {
                     @Html.Partial(@"Partials/_AdminEventButtons", Model)
                 }
                 <h5 class="short_headline"><span>Date/Time</span></h5>
+
                 @if (Model.Webinar.Status == WebinarStatus.Recorded)
                 {
                     var expiresDate = Model.Webinar.Date.AddMonths(6);
                     var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
 
-
                     <div style="font-size: smaller; text-align: center;">
                         This event was recorded on @Html.DisplayDate(Model.Webinar.Date) and is available for OnDemand Playback until @Html.DisplayDate(expiresDate)
-                        - @remainingDays more days.
+                        - @remainingDays.ToString() more days.
                     </div>
                 }
                 else
                 {
                     <b>@Html.DisplayDate(Model.Webinar.Date)</b>
                     <br />
-                    <span>@Html.Raw(showUsersTimeFormat)</span>
+                    <span>@Html.Raw(Model.TimeFormatDisplay)</span>
                 }
                 <div id="ceu">
-                    <a href="#" title="@ceuStmt ">
-                        @Html.Raw(ceuShort)
+                    <a href="#" title="@Model.CeuStatement ">
+                        @Html.Raw(Model.CeuShort)
                     </a>
                 </div>
             </aside>
+
 
             @Html.Partial("Partials/_RegistrationSummary")
             <!-- close .widget -->
@@ -213,7 +142,7 @@
                     <span>Topics</span>
                 </h5>
                 <ul>
-                    @foreach (var webinarTopic in ViewBag.topics)
+                    @foreach (var webinarTopic in Model.Topics)
                     {
                         <li>
                             @webinarTopic.topicDesc
@@ -238,52 +167,334 @@
         <!--close section tertiary-column sidebar span3-->
     </div>
     @{
-        if ((
+        if (
             Model.Webinar.Status != WebinarStatus.Archived &&
             Model.Webinar.Status != WebinarStatus.Deleted &&
             Model.Webinar.Status != WebinarStatus.Pending
-            ) && ViewBag.userOwnsThisEvent < 1)
+            && Model.UserOwnsThisEvent < 1)
         {
             <div id="SignUpFormContainer" class="row-fluid">
-                @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new { id = "RegisterAdditionalLocationsForm" }))
-                {
-                    <div class="content offset2 span8 well">
 
-                        <ul class="nav nav-tabs" id="regTabs">
-                            <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@signUpCaption</a></li>
-                            @*<li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
-                                <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@ConfirmationCaption</a></li>*@
-                        </ul>
 
-                        <div class="tab-content">
-                            <div class="tab-pane active" id="signUp">
-                                <input type="button" onclick=" signUpv1(); " class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
-                                @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)
+
+
+                <div class="content offset2 span8 well">
+                    <ul class="nav nav-tabs" id="regTabs">
+                        <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@Model.SignUpCaption</a></li>
+                        <li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
+                        <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@Model.ConfirmationCaption</a></li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="signUp">
+                            <input type="button" class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
+                            @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)
+                        </div>
+                        <div class="tab-pane" id="contactInfo">
+                        </div>
+                        <div class="tab-pane" id="confirmation">
+                            <div style="font-size: smaller;">
                             </div>
-                            @*<div class="tab-pane" id="contactInfo">
-                                    @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutContact.cshtml", model: Model)
+                            <div id="inProcCart" class="well pull-right">
+                                <div id="showCartPrice">
+                                    <div id="billingDetails" class="well" style="text-align: right;">
+                                        Base Cost: $155<br>Discounted: $10.00 (abc)<br>Total Cost: $155<br>
+
+                                        <span class="label label-warning">InProcess</span>
+
+                                    </div>
+
                                 </div>
-                                <div class="tab-pane" id="confirmation">
-                                    @Html.Partial(partialViewName: "~/Views/cart/Partials/CheckoutConfirm.cshtml", model: Model)
-                                </div>*@
+
+                                <div style="font-size: x-small; text-align: center;">
+                                    @*<button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button>*@
+                                    <button class="btn btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button><br>
+                                    <a href="#CancelModal" data-toggle="modal" class="btn" id="Canceller">Cancel Registration</a><br>
+                                    Sales tax may be added to orders in Wisconsin or Illinois.
+                                </div>
+                            </div>
+                            <div><b>Please review this order summary and and choose billing method.</b></div>
+                            <div class="row">
+                                <div class="span2 offset1 alignright">
+                                    Primary Contact:<br>
+                                    <br>
+                                    CC Notifications:<br>
+                                    Type:<br>
+                                    Additional Locations:
+                                </div>
+                                <div class="span5 offset1">
+                                    Zakk Rogers - Some Institution<br>drogersbox-test4@yahoo.com.au - <a role="button" class="btn btn-mini" target="new" href="/account/manage/26720"> Edit?</a><br>None <a href="#AddCCModal" role="button" class="btn btn-mini" data-toggle="modal"> Add?</a> <br>
+                                    <script type="text/javascript">
+
+                                        $(document).ready(function() {
+
+                                            var signUpFormUpdate = $("#updateRegType");
+                                            $("#RegType").on('change', function() {
+
+                                                //$("#updateRegType").submit();
+                                                signUpFormUpdate.submit();
+                                            });
+
+                                            $("#updateRegType").submit(function(e) {
+                                                e.preventDefault();
+
+                                                //CheckoutInProcess = true;
+                                                if (!isUserLogged) {
+                                                    $("#btnLogin").trigger("click");
+                                                } else {
+                                                    var data = signUpFormUpdate.serialize();
+                                                    $.post(signUpFormUpdate.attr("action"), data, function(result, status) {
+                                                        if (result.success) {
+
+                                                            orderRowID = result.orderRowID;
+
+                                                            $.get("/cart/CheckoutDisplayRowPrice/" + orderRowID)
+                                                                .success(function(dataConfirm) {
+                                                                    console.log($('#showCartPrice').html());
+                                                                    $('#showCartPrice').html(dataConfirm);
+                                                                })
+                                                                .done(function(dataConfirm) {
+                                                                    console.log("after: " + $('#showCartPrice').html());
+                                                                    SetCartState();
+                                                                });
+
+                                                            //$.get("/cart/checkoutConfirm/" + orderRowID)
+                                                            //    .success(function (dataConfirm) {
+                                                            //        $('#confirmation').replaceWith(dataConfirm);
+                                                            //
+                                                            //    });
+                                                        } else {
+                                                            $('.signupErrors').html("Invalid Data. Try again?");
+                                                        }
+                                                    }, "json");
+                                                    return false;
+                                                }
+                                            });
+
+                                        });
+                                    </script>
+
+                                    <input type="hidden" name="ID" value="4548">
+                                    <select name="RegType" id="RegType">
+                                        <option class="radio" selected="'selected'" value="97">
+                                            Live Session Only
+                                        </option>
+                                        <option class="radio" value="98">
+                                            OnDemand Recording Only
+                                        </option>
+                                        <option class="radio" value="99">
+                                            CD-ROM and Hardcopy Handouts
+                                        </option>
+                                        <option class="radio" value="100">
+                                            Live Plus OnDemand Weblinks
+                                        </option>
+                                        <option class="radio" value="101">
+                                            Premier Package
+                                        </option>
+
+                                    </select>
+
+                                    <br>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="span5 offset1">
+                                    <input class="input input-xlarge" type="text" placeholder="How did you hear about this webinar?" name="referred" id="tbReferred" value="">
+
+
+                                </div>
+                                <div class="span2 offset1">&nbsp;</div>
+                            </div>
+                            <div class="row">
+                                <div class="span2 offset1 alignright">
+                                    Have a comment or question for our staff?<br>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
+                </div>
+                
+                @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
+                {
+                    <input id="loginEmail" name="Email" type="hidden" value="">
+                    <input id="loginPassword" name="Password" type="hidden">
+                    <input id="loginRememberMe" type="hidden" value="true" name="RememberMe">
+                    <input type="hidden" name="returnUrl" value="/Webinar/Details/@Model.Webinar.idWebinar" />
                 }
-            </div>
+
+                <form id="checkEmail"><input type="hidden" name="emailChecker" id="emailChecker" /></form>
+                <form id="checkZip"><input type="hidden" name="ZipChecker" id="ZipChecker" /></form>
+                <form id="nonUSForm"><input type="hidden" name="AddressText" id="AddressText" /></form>
+                <form id="checkInstitution"><input type="hidden" name="InstitutionChecker" id="InstitutionChecker" /></form>
+    
+                @* // TODO: next form hits non-existant Action. Is it no longer required? *@
+                <form id="updateRegType" action="/Cart/SetRegistrationTypeAtCheckout" method="post" name="updateRegType"></form>
+
+            </div> <!-- closes SignUpFormContainer div-->
         }
     }
 </div>
-<!-- Modal -->
-<div id="logsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="logsModalLabel" aria-hidden="true">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="logsModalLabel">Event Logs</h3>
+
+
+
+
+
+<script type="text/javascript" language="javascript">
+    //var confirmOrderForm = $("#confirmOrder");
+    //var cancelOrderForm = $("#cancelOrder");
+
+    //function PlaceOrder() {
+    //    $("#Step2_BillMeFormReferred").val($("#tbReferred").val());
+    //    confirmOrderForm.submit();
+    //}
+
+    //$(document).ready(function () {
+
+
+
+    //    //$("#cancelRegistration").bind("click", cancelOrderForm.submit());
+
+    //    confirmOrderForm.submit(function (e) {
+    //        console.log("submitting ConfirmOrder");
+    //        e.preventDefault();
+    //        $("#ProgressDialogBS").modal('show');
+    //        var data = confirmOrderForm.serialize();
+    //        $.post(confirmOrderForm.attr("action"), data, function (result, status) {
+    //            if (result.success) {
+    //                orderRowID = result.orderRowID;
+
+    //                $("#confirmResult").html(result.msg);
+    //                $("#confirmRegistration").attr("href", "javascript:location.reload();");
+    //                //$.get("/cart/checkoutConfirm/" + orderRowID, function (dataConfirm) {
+    //                //    $('#confirmation').replaceWith(dataConfirm);
+    //                //});
+    //                //$("#signUpTab").show();
+    //                //$("#contactInfoTab").show();
+
+    //                CheckoutInProcess = false;
+
+    //                $("#ProgressDialogBS").modal('hide');
+    //                $('#ConfirmModal').modal('show');
+    //            } else {
+    //                $('.signupErrors').html("Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! ");
+    //            }
+    //        }, "json");
+    //        return false;
+
+    //    });
+
+    //    cancelOrderForm.submit(function (e){
+    //        console.log("Submitting Cancel Order");
+    //        e.preventDefault();
+    //        var data = cancelOrderForm.serialize();
+    //        $.post(cancelOrderForm.attr("action"), data, function (result, status) {
+    //            if (result.success) {
+
+    //                $('#cancelCaption').text("Order is canceled");
+    //                $("#cancelRegistration").unbind("click");
+    //                $("#rtn").hide();
+    //                $("#continueReg").show();
+    //                $("#cancelResult").hide();
+    //                $("#cancelRegistration").hide();
+    //                //$("#continueReg").attr("href", "/");
+
+    //            } else {
+    //                alert("else");
+    //                $('.signupErrors').html("Invalid Data. Try again?");
+    //            }
+    //        }, "json");
+    //        return false;
+    //    });
+    //});
+
+                </script>
+        
+        
+    
+
+
+@*<div id="ConfirmModal" class="modal hide fade">
+            <form action="/cart/confirmOrder" method="post" id="confirmOrder">
+                <input type="hidden" name="id" />
+                <input type="hidden" id="Step2_BillMeFormReferred" name="referred" value="" />
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3 id="confirmCaption"></h3>
+                </div>
+                <div id="confirmResult" class="modal-body">
+                    <p>Registration is Confirmed</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" id="confirmRegistration" role="button" class="btn btn-success">Continue</a>
+                </div>
+
+            </form>
+
+        </div>
+
+    <div id="CancelModal" class="modal hide fade">
+        <form action="/cart/cancelOrder" method="post" id="cancelOrder">
+
+            <input type="hidden" name="id" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 id="cancelCaption">Cancel This Order?</h3>
+            </div>
+            <div id="cancelResult" class="modal-body">
+                <p>Please confirm that you wish to delete this registration.</p>
+            </div>
+            <div class="modal-footer">
+                <a href="#" id="rtn" class="close btn btn-inverse" data-dismiss="modal">Return to checkout</a>&nbsp;&nbsp;
+                <a href="/" id="continueReg" class="btn btn-success hide">Continue</a>&nbsp;&nbsp;
+                <input type="submit" id="cancelRegistration" value="Delete This Registration" class="btn btn-danger" />
+            </div>
+        </form>
     </div>
-    <div class="modal-body">
-        <p>Logs</p>
+
+
+    <div id="AddCCModal" class="modal hide fade">
+        <form action="/cart/AddCC" method="post" id="AddCC">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 id="AddCCCaption">Carbon Copy Notifications?</h3>
+            </div>
+            <div id="CCBody" class="modal-body">
+                <p>
+                    <input type="text" name="CC" />
+                    <br />
+                    Need to forward the connection info to a co-worker?
+                    Insert the email address(s) (if multiple, just seperate the addresses by a comma) to be included in all future notifications related to this order.
+                    <br />
+                    <input type="text" name="CC" />
+
+                </p>
+                <p>Please note that this form is only used to forward the connection information to alternate attendees. If you would like to add Additional Locations (multiple connections by other branches, for example) we offer that optional feature on for an additional charge.  </p>
+                <input type="text" name="CC" />
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="close btn" data-dismiss="modal">Cancel</a>&nbsp;&nbsp;
+                <a href="#" id="SubmitCC" class="btn btn-success">Submit</a>
+            </div>
+        </form>
     </div>
-    <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button class="btn btn-primary">Save changes</button>
-    </div>
-</div>
+
+    @{if (Model.WebUser.UserType == UserType.Admin)
+    {
+            <!-- Modal -->
+        <div id="logsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="logsModalLabel" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="logsModalLabel">Event Logs</h3>
+            </div>
+            <div class="modal-body">
+                <p>Logs</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                <button class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    }
+    }*@

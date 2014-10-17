@@ -1,7 +1,6 @@
 ﻿@using System.Configuration
 @using System.Text
 @using CUWebinars.Web.Core
-
 @{
     var PageStyleType = ViewBag.PageStyleType;
     IStateService stateService = new StateService();
@@ -33,7 +32,7 @@
     }
     else
     {
-        Response.Redirect("/?resetSession=null");
+        //Response.Redirect("/?resetSession=null");
     }
 
     var subdomainBranding = stateService.GetValue<string>("SubdomainBranding");
@@ -48,7 +47,6 @@
 <!--[if gt IE 8]><!-->
 <html class="no-js" lang="en" dir="ltr">
 <!--<![endif]-->
-
 <head>
     @Html.Raw(JSNLog.JavascriptLogging.Configure())
     <script type="text/javascript">
