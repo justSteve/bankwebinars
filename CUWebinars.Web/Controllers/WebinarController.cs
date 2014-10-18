@@ -457,90 +457,90 @@ namespace CUWebinars.Web.Controllers
         //    }
         //}
 
-        public ActionResult Details(int id)
-        {
-            //_orderManagementService.GetOrderById(1162);
-            ViewBag.userHasOpenOrder = 0;
-            ViewBag.userOwnsThisEvent = 0;
-            ;
-            ViewBag.upList = null;
-            ViewBag.regList = null;
+        //public ActionResult Details(int id)
+        //{
+        //    //_orderManagementService.GetOrderById(1162);
+        //    ViewBag.userHasOpenOrder = 0;
+        //    ViewBag.userOwnsThisEvent = 0;
+        //    ;
+        //    ViewBag.upList = null;
+        //    ViewBag.regList = null;
 
 
 
-            ViewBag.PageStyleType = "holy-grail-three-columns";
-            //
-            WebUser user = Request.IsAuthenticated ? _membershipService.GetUserByEmail(User.Identity.Name) : new WebUser();
+        //    ViewBag.PageStyleType = "holy-grail-three-columns";
+        //    //
+        //    WebUser user = Request.IsAuthenticated ? _membershipService.GetUserByEmail(User.Identity.Name) : new WebUser();
 
-            var usersOrders = _orderManagementService.GetOrdersByUserId(user.idUser).Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id) != null);
+        //    var usersOrders = _orderManagementService.GetOrdersByUserId(user.idUser).Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id) != null);
 
-            var options = _orderManagementService.GetOptionsByWebinarId(id, false);
+        //    var options = _orderManagementService.GetOptionsByWebinarId(id, false);
 
-            var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id);
-            if (webinar == null) return HttpNotFound();
-
-
-
-            ViewBag.topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar);
-
-            var model = new WebinarDetailsViewModel()
-            {
-                WebUser = user,
-                Webinar = webinar,
-                //Options = options
-                //,
-                Order = null
-            };
-
-            if (usersOrders != null && usersOrders.Any())
-            {
-                foreach (var checkOrder in usersOrders)
-                {
-                    //if (checkOrder.OrderRows.Single().idWebinar == id)
+        //    var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id);
+        //    if (webinar == null) return HttpNotFound();
 
 
-                    // OrderRow has a idRegType (the FK)
-                    // but does not have an instantiated RegType object.
 
-                    var row = checkOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-                    //if (row != null)
-                    //    ViewBag.orderMessages = row.RegistrationType;
-                    var webinarFiles = webinar.WebinarFiles
-                            .Select(f => f.fileDesc + "|" + f.fileLocation)
-                            .ToArray();
+        //    ViewBag.topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar);
 
-                    ViewBag.WebinarFiles = webinarFiles;
+        //    var model = new WebinarDetailsViewModel()
+        //    {
+        //        WebUser = user,
+        //        Webinar = webinar,
+        //        //Options = options
+        //        //,
+        //        Order = null
+        //    };
 
-                    ViewBag.userOwnsThisEvent = checkOrder.idOrder;
-                    model.Order = checkOrder;
-
-                    //var connectionText = new StringBuilder("<p>");
-                    //connectionText.Append(
-                    //    row.RegistrationType.Stage2EmailConfirmationMsg.Replace(
-                    //        " and is also available at http://www.@Tenant.com", "</p><p>"));
-
-                    ////connectionText.Append(webinar.ConnectionInfo.Replace(Environment.NewLine, "<br>"));
-                    //connectionText.Append("</p>");
-
-                    //ViewBag.connectionText = connectionText;
+        //    if (usersOrders != null && usersOrders.Any())
+        //    {
+        //        foreach (var checkOrder in usersOrders)
+        //        {
+        //            //if (checkOrder.OrderRows.Single().idWebinar == id)
 
 
-                    if (checkOrder.OrderStatus == OrderStatus.InProcess && row.idWebinar != id)
-                    {
-                        ViewBag.userHasOpenOrder = checkOrder.idOrder;
-                        model.Order = checkOrder;
-                    }
-                }
-            }
+        //            // OrderRow has a idRegType (the FK)
+        //            // but does not have an instantiated RegType object.
 
-            if (model.Webinar == null)
-            {
-                return HttpNotFound();
-            }
-            return View(model);
-        }
+        //            var row = checkOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+        //            //if (row != null)
+        //            //    ViewBag.orderMessages = row.RegistrationType;
+        //            var webinarFiles = webinar.WebinarFiles
+        //                    .Select(f => f.fileDesc + "|" + f.fileLocation)
+        //                    .ToArray();
 
-        public ActionResult Details2(int? id)
+        //            ViewBag.WebinarFiles = webinarFiles;
+
+        //            ViewBag.userOwnsThisEvent = checkOrder.idOrder;
+        //            model.Order = checkOrder;
+
+        //            //var connectionText = new StringBuilder("<p>");
+        //            //connectionText.Append(
+        //            //    row.RegistrationType.Stage2EmailConfirmationMsg.Replace(
+        //            //        " and is also available at http://www.@Tenant.com", "</p><p>"));
+
+        //            ////connectionText.Append(webinar.ConnectionInfo.Replace(Environment.NewLine, "<br>"));
+        //            //connectionText.Append("</p>");
+
+        //            //ViewBag.connectionText = connectionText;
+
+
+        //            if (checkOrder.OrderStatus == OrderStatus.InProcess && row.idWebinar != id)
+        //            {
+        //                ViewBag.userHasOpenOrder = checkOrder.idOrder;
+        //                model.Order = checkOrder;
+        //            }
+        //        }
+        //    }
+
+        //    if (model.Webinar == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
+        //    return View(model);
+        //}
+
+        public ActionResult Details(int? id)
         {
             if (id.HasValue)
             {
@@ -600,7 +600,7 @@ namespace CUWebinars.Web.Controllers
                 return View(model);
             }
 
-            _logger.Error("Details2 Action invoked with null 'id' parameter");
+            _logger.Error("Details Action invoked with null 'id' parameter");
             ModelState.AddModelError("", "No id was sent to the Server. Please try the operation again.");
             return this.ModelStateJson(ModelState);
         }

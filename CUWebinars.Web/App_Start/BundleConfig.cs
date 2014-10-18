@@ -13,12 +13,15 @@ namespace CUWebinars.Web.App_Start
         {
 
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-                    "~/Scripts/jquery-1.9.1.js"
+                    
+                //"~/Scripts/jquery-1.9.1.js"
+                "~/Scripts/jquery-1.11.1.js"
                 //"~/Scripts/jquery-1.8.2.js"
                 ));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
-                        "~/Scripts/jquery-ui-1.10.3.custom.js"));
+                        "~/Scripts/jquery-ui-1.11.1.js"));
+                        //"~/Scripts/jquery-ui-1.10.3.custom.js"));
             //"~/Scripts/jquery-ui-1.8.24.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(

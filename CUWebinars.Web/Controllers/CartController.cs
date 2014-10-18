@@ -138,26 +138,12 @@ namespace CUWebinars.Web.Controllers
                     //TODO: assign appropriate ModelError and error logging/handling
                 }
 
-                //if (formModel.Webinar.idWebinar == 883 && formModel.Webinar.Status == WebinarStatus.Scheduled)
-                //{
-                //    try
-                //    {
-                //        _orderManagementService.CreateCPSubscription(orderRow);
-                //    }
-                //    catch (Exception)
-                //    {
-                //        throw;
-                //    }
-                //}
-
                 try
                 {
                     if (stageOfCheckout == "preReg")
                     {
                         return PartialView("Partials/_DisplayRowPrice", order.OrderRows.Single());
                     }
-
-                    //formModel.Order = order;
 
                     return Json(new
                     {
