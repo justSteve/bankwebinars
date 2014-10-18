@@ -507,9 +507,38 @@ namespace CUWebinars.Business.Services
             return "failed";
         }
 
-        public bool UpdateOrderWithUserId(int orderId, int userId)
+        public void UpdateOrderWithUserId(int orderId, int userId)
         {
-            return _orderRepository.UpdateOrderWithUserId(orderId, userId);
+            var user = _webUserRepository.FindByIdLoaded(userId);
+            var order = _orderRepository.FindById(orderId);
+
+            order.idUser = userId;
+
+            var billingAddress = user.Addresses.Where(a => a.AddressType == DomainConstants.BillingAddress ).Single();
+            var shippingAddress = user.Addresses.Where(a => a.AddressType == DomainConstants.ShippingAddress).Single();
+
+            order.FirstName = user.FirstName;
+            order.LastName= user.LastName;
+            order.Institution= user.Institution.InstitutionName;
+            order.BillingPhone = billingAddress.Phone;
+            order.BillingEmail = user.email;
+            order.BillingAddress = billingAddress.StreetAddress;
+            order.BillingAddress2 = billingAddress.StreetAddress2;
+            order.BillingState= billingAddress.State;
+            order.BillingCity= billingAddress.City;
+            order.BillingZip= billingAddress.Zip;
+
+            order.ShippingFirstName = user.FirstName;
+            order.ShippingLastName = user.LastName;
+            order.ShippingPhone = shippingAddress.Phone;
+            order.ShippingAddress = shippingAddress.StreetAddress;
+            order.ShippingAddress2 = shippingAddress.StreetAddress2;
+            order.ShippingState= shippingAddress.State;
+            order.ShippingCity= shippingAddress.City;
+            order.ShippingZip= shippingAddress.Zip;
+            
+
+            _orderRepository.SaveOrderChanges(order, null);
         }
 
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink)

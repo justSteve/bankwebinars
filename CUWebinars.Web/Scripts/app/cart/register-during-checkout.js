@@ -1,6 +1,6 @@
 ﻿var registerDuringCheckout = {};
 
-registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId) {
+registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, callback) {
     
     var regUserStateManager, userId;
 
@@ -489,7 +489,8 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId) {
                                 if (data.Result === 'Success') {
                                     $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function(response, status, xhr) {
                                         $('#ConfirmRegistrationBillMe').on('click', function (e) {
-                                            proceed();
+                                            callback();
+                                            $('#confirmOrder').submit();
                                         });
                                     });
 

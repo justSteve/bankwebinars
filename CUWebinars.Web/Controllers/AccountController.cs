@@ -1239,10 +1239,16 @@ namespace CUWebinars.Web.Controllers
 
                     _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.CartRegistration);
 
+                    Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey),
+                        "There's no reason session should not have a value for the VerificationKey at this point ");
 
-                    //_membershipService.LogInUser(_globalConfig.Tenant, model.RegisterFields.Email,
-                    //    model.RegisterFields.Password, true); // log the user in.
-                    //_logger.Info("New CartReg User logged in: " + model.RegisterFields.Email);
+                    var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
+                    _stateService.ClearValue(DomainConstants.VerificationKey);
+
+                    userAccount = _membershipService.VerifyEmailFromKey(
+                        verificationKey,
+                        model.RegisterFields.Password
+                        );
 
                     return Json(new { Result = WebUiConstants.Success });
 

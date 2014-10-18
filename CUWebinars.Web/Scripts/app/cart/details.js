@@ -15,7 +15,7 @@ $(function() {
 
     signUpForm = $('#SignUpForm');
 
-    /* This function gets invoked when the 3rd tab is loaded */
+    /* This function gets invoked when the 3rd tab is loaded when an existing is using cart */
     checkoutConfirm.initialize = function (userId) {
 
         cartStateManager.setCancelOrderForm($('#cancelOrder'));
@@ -49,20 +49,16 @@ $(function() {
 
                     //$('#ProgressDialogBS').modal('hide');
 
-                    if (!cartStateManager.getIsUserLogged()) {
-                        logUserIn(userId);
-                    }
-
                     $('#ConfirmModal').modal('show');
                 } else {
                     $('.signupErrors').html('Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! ');
                 }
-            }, 'json');
+            }, constants.JsonDataType);
             return false;
 
         });
 
-        cancelOrderForm.submit(function(e) {
+        cartStateManager.getCancelOrderForm().submit(function (e) {
             console.log("Submitting Cancel Order");
             e.preventDefault();
             var data = cancelOrderForm.serialize();
@@ -100,7 +96,7 @@ $(function() {
         cartStateManager.CheckIfAddLocShouldHide(oEvent.currentTarget.value);
     });
 
-    //  
+    /* Click event for the big green button */
     $('#AddToCart').on('click', function () {
         signUpForm.submit();
     });
@@ -109,6 +105,7 @@ $(function() {
         $('#showDiscount').css('display', 'block');
     }
 
+    // TODO: Note I have not touched this handler yet.
     if (cartStateManager.getOrderRowId() > 0 && cartStateManager.getCheckoutInProcess()) {
         $.get("/cart/checkoutConfirm/" + cartStateManager.getOrderRowId())
             .success(function (dataConfirm) {
@@ -134,6 +131,7 @@ $(function() {
 
         $('#SignUpForm > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
 
+        // If the user IS NOT LOGGED IN - move to file register-during-checkout.js
         if (!cartStateManager.getIsUserLogged()) {
 
             $.post(signUpForm.attr('action'), data, function (result) {
@@ -144,7 +142,7 @@ $(function() {
                     cartStateManager.setWebinarId(result.webinarId);
                     $('#contactInfo').load('/Cart/CheckoutContactDetails', function(response, status, xhr) {
                         $('#_CreateUserForm input[name="returnUrl"]').val('/Webinar/Details2/' + result.webinarId);
-                        registerDuringCheckout.initialize(result.orderId, result.webinarId, result.orderRowId);
+                        registerDuringCheckout.initialize(result.orderId, result.webinarId, result.orderRowId, checkoutConfirm.initialize);
                     });
 
                     $('#contactInfoTab a').tab('show');
@@ -154,9 +152,9 @@ $(function() {
                 }
             }, constants.JsonDataType);
             
-
+            
         } else {
-
+            // If the user IS LOGGED IN
             $.post(signUpForm.attr('action'), data, function (result) {
                 if (result.success) {
                     //jslogger.event({ signup: { from: 'EndUser Checkout' } });
@@ -167,8 +165,12 @@ $(function() {
                     $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
 
                         $('#confirmationTab a').tab('show');
-                        checkoutConfirm.initialize();
-                    });
+                        checkoutConfirm.initialize(); // see top of this file
+
+                        $('#ConfirmRegistrationBillMe').on('click', function (e) {
+                            $('#confirmOrder').submit();
+                        });
+                    }, constants.HtmlDataType);
 
                 } else {
                     //jslogger.log({ exception: { name: 'SignupFail', message: 'The signUpForm submission failed.' } });
