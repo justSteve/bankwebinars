@@ -30,9 +30,6 @@ namespace CUWebinars.Business.Repository
 
         public IQueryable<WebUser> GetWebUsers()
         {
-            //TODO: Please verify that this is the correct extension point
-            //  Was working on a method that needed to work against all Users and put this
-            //  this here because I was patterning my approach off the GetInstitution code.
             using (var context = new TTSWebinarsContext())
             {
                 context.Configuration.ProxyCreationEnabled = false;

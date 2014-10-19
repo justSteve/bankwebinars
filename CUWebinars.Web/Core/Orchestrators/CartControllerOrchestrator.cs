@@ -242,6 +242,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public DisplayRowPriceViewModel BuildDisplayRowPriceViewModel(OrderRow orderRow, int? idOrderRow)
         {
+            
             if (ReferenceEquals(orderRow,null))
                 orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
 
@@ -252,7 +253,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 try
                 {
-                    _logger.Info("Building ");
+                    _logger.Info("Building price for " + orderRow.Order.idOrder );
 
                     var displayRowPriceViewModel = new DisplayRowPriceViewModel
                     {
@@ -281,12 +282,13 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 try
                 {
-                    _logger.Info("Building ");
                     var orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
                     var order = orderRow.Order;
                     var additionalLocations = orderRow.AdditionalLocation.ToList();
                     var webUser = order.WebUser;
                     var webinar = orderRow.Webinar;
+
+                    _logger.Info("Building BuildCheckOutViewModel for " + orderRow.Order.idOrder);
 
                     var webinarDetailsViewModel = new WebinarDetailsViewModel
                     {
@@ -298,10 +300,17 @@ namespace CUWebinars.Web.Core.Orchestrators
                     if (Request["referred"] != null &&
                         WebUtility.HtmlDecode(Request["referred"]) != "How did you hear about this webinar?")
                     {
-                        order.Origin = Request["referred"] + Environment.NewLine + order.Origin;
+                        //TODO: Review updated explaination of 'Order.Origin'
+                        //order.Origin = Request["referred"] + Environment.NewLine + order.Origin;
+                        //it was a reasonable assumption that 'referred' would be stored to 'Origin'.
+                        // however, origin property is meant to track how the order has come to be entered in the system.
+                        // e.g. was it imported, was it entered directly by the end-user? - was it entered
+                        //      by the affiliate's admin page? Or was affiliate 'Functioning As' an end-user?
+                        // 
+
+                        order.AdminComments += "Referred by: " + Request["referred"] + Environment.NewLine;
                         //ViewData["referred"] = Request["referred"];
                     }
-
                     return webinarDetailsViewModel;
                 }
                 catch (Exception exception)
@@ -324,7 +333,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 try
                 {
-                    _logger.Info("Building ");
+                    _logger.Info("Building OrderHasAdditionalLocationsViewModel for: " + orderRow.Order.idOrder);
 
                     var addressesAndOptionsCost = GetAddressesAndOptionsCost(orderRow.AdditionalLocation);
 

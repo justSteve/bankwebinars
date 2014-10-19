@@ -308,13 +308,17 @@ namespace CUWebinars.Business.Repository
 
         public Order SaveOrderChanges(Order order, int? isFromSignup = null)
         {
-            //TODO: Shopping Cart Task
+            //TODO: Shopping Cart Task - Is Dave satisfied with this approach?
             var error = db.GetValidationErrors();
-            //this method needs to be refactored to separate the 
+
+            //this method needs to separate the 
             // act of saving to db from the act of setting the
-            // order status to 'Submitted'. When originally coded for the 
+            // order status to 'Submitted'. 
+            
+            //When originally coded for the 
             // OrderImport use case, it worked ok because by the time
             // this method executed we intented OrderStatus to be .Submitted.
+            //
             // However, now the we are coding for the Shopping cart's use case
             // we need to leave the order's status in the '.InProcess' state
             // until the shopping cart's ~/Views/cart/Partials/CheckoutConfirm.cshtml

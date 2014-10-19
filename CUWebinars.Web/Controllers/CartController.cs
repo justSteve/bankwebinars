@@ -140,9 +140,11 @@ namespace CUWebinars.Web.Controllers
 
                 try
                 {
+                    //I believe 'stageOfCheckout' (as well as CheckoutInProcess) are deprecated by 
+                    // implementation of SM, yes?
                     if (stageOfCheckout == "preReg")
                     {
-                        return PartialView("Partials/_DisplayRowPrice", order.OrderRows.Single());
+                        return PartialView("Partials/_DisplayRowPrice", order.OrderRows.FirstOrDefault());
                     }
 
                     return Json(new

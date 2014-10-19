@@ -120,7 +120,7 @@ var timer; // external so it's value is held over all instances of the timer fun
                 //$("#[id^=SubmitAddLocations]").hide();
                 $("[id^=CollectAdditionalLocation] a").show();
                 //$("[id^=ShowsAddLocTotalCost]").html(result.optionsCost);
-                $("#ProgressDialogBS").modal('hide');
+                
             }
         });
     });

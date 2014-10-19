@@ -11,7 +11,7 @@ discount = '';
 checkoutConfirm = {};
 
 
-$(function() {
+$(function () {
 
     signUpForm = $('#SignUpForm');
 
@@ -23,34 +23,29 @@ $(function() {
 
         cartStateManager.getConfirmOrderForm().on('submit', function (e) {
 
-            console.log('submitting ConfirmOrder');
-
+            //console.log('submitting ConfirmOrder');
             e.preventDefault();
 
             var self = $(this);
-            //$('#ProgressDialogBS').modal('show');
             self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
 
+            JL("myLogger").info("submitting ConfirmOrder");
             var data = $(this).serialize();
 
             $.post(self.attr('action'), data, function (result, status) {
                 if (result.success) {
                     orderRowID = result.orderRowID;
 
+                    JL("myLogger").info("Posted Order: " + orderRowID);
                     $('#confirmResult').html(result.msg);
                     $('#confirmRegistration').attr('href', 'javascript:location.reload();');
-                    //$.get('/cart/checkoutConfirm/' + orderRowID, function (dataConfirm) {
-                    //    $('#confirmation').replaceWith(dataConfirm);
-                    //});
-                    //$('#signUpTab').show();
-                    //$('#contactInfoTab').show();
 
                     CheckoutInProcess = false;
 
-                    //$('#ProgressDialogBS').modal('hide');
-
                     $('#ConfirmModal').modal('show');
                 } else {
+                    //TODO: Add code that will provide as much detail to the Failed message as can be obtained from result.
+                    JL("myLogger").fatal("FAILED posting Order: ");
                     $('.signupErrors').html('Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! ');
                 }
             }, constants.JsonDataType);
@@ -59,12 +54,14 @@ $(function() {
         });
 
         cartStateManager.getCancelOrderForm().submit(function (e) {
-            console.log("Submitting Cancel Order");
+            //console.log("Submitting Cancel Order");
+            JL("myLogger").info("Canceling Order");
             e.preventDefault();
             var data = cancelOrderForm.serialize();
-            $.post(cancelOrderForm.attr("action"), data, function(result, status) {
+            $.post(cancelOrderForm.attr("action"), data, function (result, status) {
                 if (result.success) {
 
+                    JL("myLogger").info("Suceeded in canceling order");
                     $('#cancelCaption').text("Order is canceled");
                     $("#cancelRegistration").unbind("click");
                     $("#rtn").hide();
@@ -74,7 +71,8 @@ $(function() {
                     //$("#continueReg").attr("href", "/");
 
                 } else {
-                    alert("else");
+
+                    JL("myLogger").fatal("Cancel Order Failure");
                     $('.signupErrors').html("Invalid Data. Try again?");
                 }
             }, "json");
@@ -90,8 +88,24 @@ $(function() {
     cartStateManager.SetCartState();
 
     $("[id^='regTypeID_']").on("click", function (oEvent) {
+
+        //TODO: the 'stage_of_checkout' element is very much legacy. Superceded by the SM?
         $("#stage_of_checkout").val("preReg");
 
+        //TODO: In original code i had intialized the how the cart displayed the price.
+        // clearly this takes place elsewhere now adaquately but review and verify that 
+        // this is impacted by the Discount - an enitity we've yet to dance with - but this 
+        // provides the perfect opp to introduce this user story: 
+        //
+        // An existing user can posses one or more 'credits' that should be honored (acknowedged) by the shopping 
+        // cart as soon as the user's identity is known. Specifically, the cart must display the amount
+        // of the discount as well as ensuring that the cart's 'Total' field reflects the discount. Point being that
+        // that the cart shouldn't depend on the user to supply the discount. 
+        //
+        // and....
+        // absent a pre-existing discount code, the cart must suppy a form field to permit an
+        // ajax call to the server to validate anything entered by the user on the Confirmation Tab.
+        //
         //BuildPreRegPrice(oEvent, orderRowId);
         cartStateManager.CheckIfAddLocShouldHide(oEvent.currentTarget.value);
     });
@@ -118,7 +132,6 @@ $(function() {
             }).error(function (result) {
                 //jslogger.log({ exception: { name: "updateCheckout", message: "The update of checkout request failed." } });
             });
-        $("#eDetails").collapse('hide');
     }
 
     /* Submit event for the big green button */
@@ -126,7 +139,6 @@ $(function() {
 
         e.preventDefault();
         cartStateManager.setCheckoutInProcess(true);
-        $('#ProgressDialogBS').modal('show');
         var data = signUpForm.serialize();
 
         $('#SignUpForm > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
@@ -134,13 +146,15 @@ $(function() {
         // If the user IS NOT LOGGED IN - move to file register-during-checkout.js
         if (!cartStateManager.getIsUserLogged()) {
 
+            JL("myLogger").info("the user IS NOT LOGGED IN");
+
             $.post(signUpForm.attr('action'), data, function (result) {
                 if (result.success) {
-                    
+
                     cartStateManager.setOrderRowId(result.orderRowId);
                     cartStateManager.setOrderId(result.orderId);
                     cartStateManager.setWebinarId(result.webinarId);
-                    $('#contactInfo').load('/Cart/CheckoutContactDetails', function(response, status, xhr) {
+                    $('#contactInfo').load('/Cart/CheckoutContactDetails', function (response, status, xhr) {
                         $('#_CreateUserForm input[name="returnUrl"]').val('/Webinar/Details2/' + result.webinarId);
                         registerDuringCheckout.initialize(result.orderId, result.webinarId, result.orderRowId, checkoutConfirm.initialize);
                     });
@@ -151,8 +165,8 @@ $(function() {
                     $('.signupErrors').html('Invalid Data. Try again?');
                 }
             }, constants.JsonDataType);
-            
-            
+
+
         } else {
             // If the user IS LOGGED IN
             $.post(signUpForm.attr('action'), data, function (result) {
@@ -162,11 +176,13 @@ $(function() {
                     cartStateManager.setOrderId(result.orderId);
                     cartStateManager.setWebinarId(result.webinarId);
 
+                    JL("myLogger").info("submitting ConfirmOrder" + result.userId);
+
                     $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
-
                         $('#confirmationTab a').tab('show');
-                        checkoutConfirm.initialize(); // see top of this file
-
+                        checkoutConfirm.initialize();
+                        // see top of this file
+                        // 
                         $('#ConfirmRegistrationBillMe').on('click', function (e) {
                             $('#confirmOrder').submit();
                         });
@@ -178,38 +194,8 @@ $(function() {
                 }
             }, constants.JsonDataType);
 
-
-            //$('#confirmationTab').tab('show');
-
-            //$('#ProgressDialogBS').modal('hide');
-
             return false;
         }
     });
-
-    // TODO: Check with Steve that commented out code below can go
-
-    //$('#CreateUserSubmitter').on('click', function () {
-    //    var nameVal = $('#FullName').val();
-    //    var nameLength = nameVal.length;
-    //    var nameSplit = nameVal.split(" ");
-    //    var lastLength = nameLength - nameSplit[0].length;
-    //    var lastNameLength = nameSplit[0].length + 1;
-    //    var lastName = nameVal.slice(lastNameLength);
-    //    $('#FirstName').val(nameSplit[0]);
-    //    $('#LastName').val(lastName);
-
-    //    nameVal = $('#FullNameShipping').val();
-    //    nameLength = nameVal.length;
-    //    nameSplit = nameVal.split(" ");
-    //    lastLength = nameLength - nameSplit[0].length;
-    //    lastNameLength = nameSplit[0].length + 1;
-    //    lastName = nameVal.slice(lastNameLength);
-    //    $('#ShippingFirstName').val(nameSplit[0]);
-    //    $('#ShippingLastName').val(lastName);
-
-    //    $("#_CreateUserForm").submit();
-    //});
-
 });
 

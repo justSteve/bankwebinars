@@ -70,7 +70,6 @@ $(document).ready(function () {
             }).error(function (result) {
                 //jslogger.log({ exception: { name: "updateCheckout", message: "The update of checkout request failed." } });
             });
-        $("#eDetails").collapse('hide');
     }
 
     var signUpForm = $("#SignUpForm");

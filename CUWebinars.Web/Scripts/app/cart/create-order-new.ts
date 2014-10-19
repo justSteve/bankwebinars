@@ -117,7 +117,7 @@ module OrderRegistration {
 
                 },
                 complete: function() {
-                    $("#ProgressDialogBS").modal('hide');
+                    //$("#ProgressDialogBS").modal('hide');
                 }
             });
         }
