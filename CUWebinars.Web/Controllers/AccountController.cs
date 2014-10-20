@@ -37,6 +37,9 @@ namespace CUWebinars.Web.Controllers
     [System.Web.Mvc.Authorize]
     public class AccountController : Controller
     {
+        private const string ManageActionName = "Manage";
+        private const string LoggedInResult = "LoggedIn";
+        private const string ConfirmedResult = "Confirmed";
         private readonly GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
         private readonly IAccountControllerOrchestrator _accountControllerOrchestrator;
@@ -220,7 +223,7 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult MyWebinars()
         {
-            var currentUser = GetWebUserFromIPrincipal();
+            var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
             var model = new MyWebinarsDTO { WebUser = currentUser };
 
             ViewData["DiscountMsg"] = string.Empty;
@@ -276,7 +279,7 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.HttpPost]
         public ActionResult MyCertificate(int orderID)
         {
-            var currentUser = GetWebUserFromIPrincipal();
+            var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
 
             var currentOrder = _orderManagementService.GetOrderById(orderID);
             var model = new CertOfCompletionViewModel { CurrentUser = currentUser, Order = currentOrder };
@@ -342,60 +345,46 @@ namespace CUWebinars.Web.Controllers
         {
             _logger.Info("Editing Billing Address - GET");
 
-            var model = new EditBillingAddressModel();
-            ViewBag.ReturnUrl = Url.Action("Manage");
+            EditBillingAddressModel model;
+
+            try
+            {
+                model = _accountControllerOrchestrator.BuildBillingAddressModel();
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("In EditBillingAddress Action", exception);
+                throw;
+            }
+
+            ViewBag.ReturnUrl = Url.Action(ManageActionName);
             ViewBag.Title = WebUiConstants.ManageUser;
 
-            var user = GetWebUserFromIPrincipal();
-            var addresses = user.Addresses.ToArray();
-            var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
-
-            model.BillingAddress = new AddressModel
-            {
-                Name = user.FirstName + ' ' + user.LastName,
-                City = billingAddress.City,
-                Country = billingAddress.Country,
-                StreetAddress = billingAddress.StreetAddress,
-                StreetAddress2 = billingAddress.StreetAddress2,
-                State = billingAddress.State,
-                Zip = billingAddress.Zip,
-                Phone = billingAddress.Phone,
-                TypeOfAddress = AddressType.Billing
-
-            };
             return PartialView("Partials/_EditBillingAddress", model);
-
-
         }
 
         [System.Web.Mvc.HttpGet]
         public ActionResult EditShippingAddress()
         {
-            var model = new EditShippingAddressModel();
-            ViewBag.ReturnUrl = Url.Action("Manage");
+            _logger.Info("Editing Billing Address - GET");
+
+
+            EditShippingAddressModel model;
+
+            try
+            {
+                model = _accountControllerOrchestrator.BuildShippingAddressModel();
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("In EditShippingAddress Action", exception);
+                throw;
+            }
+
+            ViewBag.ReturnUrl = Url.Action(ManageActionName);
             ViewBag.Title = WebUiConstants.ManageUser;
 
-            var user = GetWebUserFromIPrincipal();
-            var addresses = user.Addresses.ToArray();
-            var shippingAddress = addresses.First(a => a.AddressType == WebUiConstants.ShippingAddress);
-
-
-            model.ShippingAddress = new AddressModel
-            {
-                City = shippingAddress.City,
-                Country = shippingAddress.Country,
-                StreetAddress = shippingAddress.StreetAddress,
-                StreetAddress2 = shippingAddress.StreetAddress2,
-                State = shippingAddress.State,
-                Zip = shippingAddress.Zip,
-                Phone = shippingAddress.Phone,
-                Name = shippingAddress.Name,
-                TypeOfAddress = AddressType.Shipping
-            };
-
-
             return PartialView("Partials/_EditShippingAddress", model);
-
         }
 
         [System.Web.Mvc.HttpGet]
@@ -403,11 +392,19 @@ namespace CUWebinars.Web.Controllers
         {
             var model = new EditInstitutionModel();
 
-            ViewBag.ReturnUrl = Url.Action("Manage");
+            ViewBag.ReturnUrl = Url.Action(ManageActionName);
             ViewBag.Title = WebUiConstants.ManageUser;
 
-            var user = GetWebUserFromIPrincipal();
-            model.Institution = user.Institution.InstitutionName;
+            try
+            {
+                var user = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
+                model.Institution = user.Institution.InstitutionName;
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("In EditInstitution Action", exception);
+                throw;
+            }
 
             return PartialView("Partials/_EditInsitution", model);
         }
@@ -415,17 +412,25 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.HttpPost]
         public ActionResult EditNameTitle(EditNameTitleModel model)
         {
-            //var model = new EditNameTitleModel();
-            ViewBag.ReturnUrl = Url.Action("Manage");
+            ViewBag.ReturnUrl = Url.Action(ManageActionName);
             ViewBag.Title = WebUiConstants.ManageUser;
 
-            var user = GetWebUserFromIPrincipal();
+            try
+            {
+                var user = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
 
-            //model.FirstName = user.FirstName;
-            //model.LastName = user.LastName;
-            //model.Title = user.Title;
+                //  TODO: [dar] This looks like ti should be uncommented
+                //model.FirstName = user.FirstName;
+                //model.LastName = user.LastName;
+                //model.Title = user.Title;
 
-            _membershipService.UpdateNameTitle(model.FirstName, model.LastName, user.email, model.Title);
+                _membershipService.UpdateNameTitle(model.FirstName, model.LastName, user.email, model.Title);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("In EditNameTitle Action", exception);
+                throw;
+            }
             return PartialView("Partials/_EditNameTitle", model);
         }
 
@@ -436,10 +441,10 @@ namespace CUWebinars.Web.Controllers
             {
                 StatusMessage = string.Empty
             };
-            ViewBag.ReturnUrl = Url.Action("Manage");
+            ViewBag.ReturnUrl = Url.Action(ManageActionName);
             ViewBag.Title = WebUiConstants.ManageUser;
 
-            var user = GetWebUserFromIPrincipal();
+            var user = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
 
             var addresses = user.Addresses.ToArray();
             var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
@@ -572,7 +577,7 @@ namespace CUWebinars.Web.Controllers
 
             if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
             {
-                return Json(new {result = "LoggedIn"} );
+                return Json(new {result = LoggedInResult} );
             }
 
             if (!string.IsNullOrEmpty(userMustVerify))
@@ -583,7 +588,7 @@ namespace CUWebinars.Web.Controllers
                     model.Password
                     );
 
-                return Json(new {result = "Confirmed", email = model.Email, surname = model.Password });
+                return Json(new {result = ConfirmedResult, email = model.Email, surname = model.Password });
             }
 
             // If we got this far, something failed, redisplay form
@@ -616,7 +621,7 @@ namespace CUWebinars.Web.Controllers
 
             if (_accountControllerOrchestrator.SignUserIn(new SignInModel {Email = email, Password = tempPassword, ReturnUrl = "/"}, out userMustVerify))
             {
-                return Json(new {result = "LoggedIn"} );
+                return Json(new {result = LoggedInResult} );
             }
 
             if (!string.IsNullOrEmpty(userMustVerify))
@@ -627,7 +632,7 @@ namespace CUWebinars.Web.Controllers
                     tempPassword
                     );
 
-                return Json(new {result = "Confirmed", email = email, surname = tempPassword });
+                return Json(new {result = ConfirmedResult, email = email, surname = tempPassword });
             }
 
             // If we got this far, something failed, redisplay form
@@ -654,14 +659,21 @@ namespace CUWebinars.Web.Controllers
                 return this.ModelStateJson(ModelState);
             }
 
-            string userMustVerify; // not relevant in this user flow. So gets discarded.
-
-            if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
+            try
             {
-                _logger.Info("Account.SignIn Post Success in cart. Session={0}", AppHelper.GetUserAuditInfo());
-                var webUser = _membershipService.GetUserByEmail(model.Email);
+                string userMustVerify; // not relevant in this user flow. So gets discarded.
 
-                return Json(new { result = "LoggedIn", UserId = webUser.idUser });
+                if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
+                {
+                    _logger.Info("Account.SignIn Post Success in cart. Session={0}", AppHelper.GetUserAuditInfo());
+                    WebUser webUser = _accountControllerOrchestrator.GetWebUserByEmail(model.Email);
+
+                    return Json(new { result = LoggedInResult, UserId = webUser.idUser });
+                }
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("In SignInFromCart Action", exception);
             }
 
             // If we got this far, something failed, redisplay form
@@ -688,7 +700,7 @@ namespace CUWebinars.Web.Controllers
 
             try
             {
-                _membershipService.ResetPassword(_globalConfig.Tenant, email);
+                _accountControllerOrchestrator.ResetPassword(_globalConfig.Tenant, email);
                 return Json(new { Result = WebUiConstants.Success });
             }
             catch (Exception ex)
@@ -750,7 +762,7 @@ namespace CUWebinars.Web.Controllers
             if (string.IsNullOrWhiteSpace(id))
             {
                 _logger.Warn("Account.PasswordResetConfirm.GET was passed empty or null ID. Session=PasswordResetConfirm. " + AppHelper.GetUserAuditInfo());
-                ModelState.AddModelError("EmptyKey", "There appears to have been a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again.");
+                ModelState.AddModelError(string.Empty, "There appears to have been a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again.");
             }
 
             var vm = new ChangePasswordFromResetKeyInputModel
@@ -776,15 +788,19 @@ namespace CUWebinars.Web.Controllers
                         _logger.Warn(
                             "Account.PasswordResetConfirm.POST was passed empty or null ID. Session=PasswordResetConfirm. " +
                             AppHelper.GetUserAuditInfo());
-                        ModelState.AddModelError("EmptyKey",
+                        ModelState.AddModelError(string.Empty,
                             "There appears to have been a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again.");
                     }
                     else
                     {
-                        if (_membershipService.ChangePasswordFromResetKey(model.Key, model.Password))
+                        if (_accountControllerOrchestrator.ChangePasswordFromResetKey(model.Key, model.Password))
                             model.ChangePasswordSucceeded = true;
-                        //else 
-                            //  todo: need to log and give feedback to the user. Account not verified
+                        else
+                        {
+                            //  TODO: I added "please contact your system administrator" for now. Do we have a number which they can call?
+                            ModelState.AddModelError(string.Empty,
+                                "Unable to change password from Reset key. Please please contact your system administrator");
+                        }
                     }
                     _logger.Info("Account.PasswordResetConfirm Post. Session=" + AppHelper.GetUserAuditInfo());
 
@@ -797,7 +813,7 @@ namespace CUWebinars.Web.Controllers
             {
 
                 _logger.Fatal("Account.ResetPassword. " + validationException.Message + " Session=" + AppHelper.GetUserAuditInfo());
-                ModelState.AddModelError("InvalidPassword", "The new password must be different than the old password.");
+                ModelState.AddModelError(string.Empty, "The new password must be different than the old password.");
             }
 
             return View(model);
@@ -808,24 +824,23 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult LogOff(string bla)
+        public ActionResult LogOff()
         {
             if (User.Identity.IsAuthenticated)
             {
-
                 _logger.Info("Account.LogOff. Session=" + AppHelper.GetUserAuditInfo());
-                _membershipService.LogOutUser();
 
-                if (_stateService.HasValue(WebUiConstants.AdminUserEmail))
+                try
                 {
-                    var adminUserAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, _stateService.GetValue<string>(WebUiConstants.AdminUserEmail));
-
-                    _membershipService.SignIn(adminUserAccount, false);
-
-                    _stateService.ClearValue(WebUiConstants.AdminUserEmail);
-
+                    _accountControllerOrchestrator.LogUserOut();
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException("In LogOff Action", exception);
+                    throw;
                 }
             }
+
             _logger.Fatal("Account.LogOff at Unauthenticated User. Session=" + AppHelper.GetUserAuditInfo());
             return RedirectToAction("Index", "Home");
         }
@@ -1360,7 +1375,7 @@ namespace CUWebinars.Web.Controllers
 
             if (User.Identity.IsAuthenticated || !OAuthWebSecurity.TryDeserializeProviderUserId(model.ExternalLoginData, out provider, out providerUserId))
             {
-                return RedirectToAction("Manage");
+                return RedirectToAction(ManageActionName);
             }
 
             if (ModelState.IsValid)
@@ -1508,17 +1523,6 @@ namespace CUWebinars.Web.Controllers
                 default:
                     return "An unknown error occurred. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
             }
-        }
-
-
-        private WebUser GetWebUserFromIPrincipal()
-        {
-            var identity = ClaimsPrincipal.Current;
-
-            var userAccount = _membershipService.GetUserAccountByUserId(ClaimsExtensions.GetUserID(identity));
-
-            var user = _membershipService.GetUserByEmail(userAccount.Email);
-            return user;
         }
 
         #endregion

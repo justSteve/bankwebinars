@@ -8,12 +8,12 @@ namespace CUWebinars.WebUi.Tests2.Infrastructure
         internal const string SitTestAltAddress = "220 Wynn Drive";
         internal const string SitTestCity = "Huntsville";
         internal const string SitTestCountry = "USA";
-        internal const string SitTestEmailAddress = "Mark_Bennett@ttstrain.com";
-        internal const string SitTestEmailAddressDomain = "@ttstrain.com";
+        internal const string SitTestEmailAddress = "not-authenticated@cuwebinars.com";
+        internal const string SitTestEmailAddressDomain = "@cuwebinars.com";
         internal const string SitTestFirstName = "John";
         internal const string SitTestInstitutionSuffix = "Bank";
         internal const string SitTestLastName = "Trainer";
-        internal const string SitTestPassword = "bennett";
+        internal const string SitTestPassword = "789uio(O";
         internal const string SitTestPasswordSameDomainAddress = "f(app5yuK";
         internal const string SitTestPhone = "555-555-555";
         internal const string SitTestState = "AL";

@@ -1,23 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Web;
 using System.Web.Mvc;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
+using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Ninject.Extensions.Logging;
+using ClaimsExtensions = CUWebinars.Web.Helpers.ClaimsExtensions;
+using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
 namespace CUWebinars.Web.Core.Orchestrators
 {
     public class AccountControllerOrchestrator : IAccountControllerOrchestrator
     {
-        GlobalConfig _globals = GlobalConfig.GlobalConfigSingleton;
+        private readonly GlobalConfig _globals = GlobalConfig.GlobalConfigSingleton;
         public HttpRequest Request { get; set; }
         private readonly ILogger _logger;
         private readonly IMembershipService _membershipService;
@@ -38,6 +42,25 @@ namespace CUWebinars.Web.Core.Orchestrators
             _orderManagementService = orderManagementService;
             _stateService = stateService;
             
+        }
+
+        public void LogUserOut()
+        {
+            _membershipService.LogOutUser();
+
+            if (_stateService.HasValue(WebUiConstants.AdminUserEmail))
+            {
+                var adminUserAccount = _membershipService.GetUserAccountByEmail(_globals.Tenant, _stateService.GetValue<string>(WebUiConstants.AdminUserEmail));
+
+                _membershipService.SignIn(adminUserAccount, false);
+
+                _stateService.ClearValue(WebUiConstants.AdminUserEmail);
+            }
+        }
+
+        public void ResetPassword(string tenant, string email)
+        {
+            _membershipService.ResetPassword(tenant, email);
         }
 
         public bool SignUserIn(SignInModel model, out string userMustVerify)
@@ -86,6 +109,76 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
 
             return false;
+        }
+
+        public EditBillingAddressModel BuildBillingAddressModel()
+        {
+            var model = new EditBillingAddressModel();
+
+            var user = GetWebUserFromIPrincipal();
+            var addresses = user.Addresses.ToArray();
+            var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
+
+            model.BillingAddress = new AddressModel
+            {
+                Name = string.Concat(user.FirstName, ' ', user.LastName),
+                City = billingAddress.City,
+                Country = billingAddress.Country,
+                StreetAddress = billingAddress.StreetAddress,
+                StreetAddress2 = billingAddress.StreetAddress2,
+                State = billingAddress.State,
+                Zip = billingAddress.Zip,
+                Phone = billingAddress.Phone,
+                TypeOfAddress = AddressType.Billing
+
+            };
+
+            return model;
+        }
+
+        public EditShippingAddressModel BuildShippingAddressModel()
+        {
+            var model = new EditShippingAddressModel();
+            
+            var user = GetWebUserFromIPrincipal();
+            var addresses = user.Addresses.ToArray();
+            var shippingAddress = addresses.First(a => a.AddressType == WebUiConstants.ShippingAddress);
+
+
+            model.ShippingAddress = new AddressModel
+            {
+                City = shippingAddress.City,
+                Country = shippingAddress.Country,
+                StreetAddress = shippingAddress.StreetAddress,
+                StreetAddress2 = shippingAddress.StreetAddress2,
+                State = shippingAddress.State,
+                Zip = shippingAddress.Zip,
+                Phone = shippingAddress.Phone,
+                Name = shippingAddress.Name,
+                TypeOfAddress = AddressType.Shipping
+            };
+
+            return model;
+        }
+
+        public bool ChangePasswordFromResetKey(string key, string password)
+        {
+            return _membershipService.ChangePasswordFromResetKey(key, password);
+        }
+
+        public WebUser GetWebUserByEmail(string email)
+        {
+            return _membershipService.GetUserByEmail(email);
+        }
+
+        public WebUser GetWebUserFromIPrincipal()
+        {
+            var identity = ClaimsPrincipal.Current;
+
+            var userAccount = _membershipService.GetUserAccountByUserId(ClaimsExtensions.GetUserID(identity));
+
+            var user = _membershipService.GetUserByEmail(userAccount.Email);
+            return user;
         }
 
         public LoginModel LogUserIn(string returnUrl)

@@ -241,12 +241,14 @@ $(function () {
             contentType: Registration.Constants.FormPostContentType,
             //headers: headers,
             beforeSend: function (xhr) {
+
+                //  If true, then we are in the "register during checkout" flow. O/w, we are in the regular log-in flow.
                 if ($('#labelEmail').is(':visible')) {
                     $('#labelEmail').html('<span class="label label-info">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Signing in...</span>');
                     $('#loginErrorSummary').empty();
                 } else {
                     $('#loginMsgLabelWrap').show();
-                    $('#loginMsgLabelWrap').html('<span class="label label-info">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Signing in...</span>');
+                    $('#loginMsgLabelWrap').html('<span id="signingInMsg" class="label label-info">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Signing in ...</span>');
 
                     var valSummary = $('#LoginValSummary');
                     valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
@@ -258,6 +260,7 @@ $(function () {
             }
         }).done(function (data) {
             if (data.result === 'LoggedIn') {
+                $('#signingInMsg').replaceWith('<span id="signingInMsg" class="label label-info">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Redirecting you now ...</span>');
                 window.location.href = path + '/Account/MyWebinars';
             } else if (data.result === "Confirmed") {
                 //  if here, user has to verify before they can log in

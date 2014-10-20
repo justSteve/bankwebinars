@@ -184,6 +184,20 @@
     <EmbeddedResource Include="Db\TTSDatabase_log.ldf">
       <DependentUpon>TTSDatabase.mdf</DependentUpon>
     </EmbeddedResource>
+    <Content Include="Db\CUWebinars.ldf">
+      <DependentUpon>CUWebinars.mdf</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Db\CUWebinars.mdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Db\MembershipReboot.mdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Db\MembershipReboot_log.ldf">
+      <DependentUpon>MembershipReboot.mdf</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Scripts\MemReboot.sql" />
     <Content Include="Notification\Templates\OrderSubmitted.cshtml" />
     <None Include="packages.config" />

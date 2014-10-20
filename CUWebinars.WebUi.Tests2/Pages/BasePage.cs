@@ -1,4 +1,5 @@
-﻿using KesselRun.SeleniumCore.TestDrivers.Contracts;
+﻿using KesselRun.SeleniumCore.Enums;
+using KesselRun.SeleniumCore.TestDrivers.Contracts;
 using OpenQA.Selenium;
 
 namespace CUWebinars.WebUi.Tests2.Pages
@@ -45,9 +46,9 @@ namespace CUWebinars.WebUi.Tests2.Pages
         }
 
 
-        public virtual void EnterDetail(string detail, IWebElement element)
+        public virtual void EnterDetail(string detail, string element)
         {
-            SeleniumTestDriver.TypeText(element, detail);
+            SeleniumTestDriver.TypeText(FinderStrategy.Id, element, detail);
         }
 
     }
