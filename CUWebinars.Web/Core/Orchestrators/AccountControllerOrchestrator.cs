@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
 using System.Web;
@@ -56,6 +58,23 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 _stateService.ClearValue(WebUiConstants.AdminUserEmail);
             }
+        }
+
+        public int? ParseZip(string zip)
+        {
+            int zipAsNumber;
+
+            if (!int.TryParse(zip, out zipAsNumber))
+            {
+                var zipToParse = zip.Split('-').FirstOrDefault();
+
+                if (zipToParse == null || !int.TryParse(zipToParse, out zipAsNumber))
+                {
+                    return null;
+                }
+            }
+
+            return zipAsNumber;
         }
 
         public void ResetPassword(string tenant, string email)
@@ -161,9 +180,32 @@ namespace CUWebinars.Web.Core.Orchestrators
             return model;
         }
 
+        public void BuildCityStateTimeZoneData(Dictionary<string, string> cityStateTimeZoneData, string zipAddress)
+        {
+            var zipCentricFields = zipAddress.Split(',');
+
+            Debug.Assert(zipCentricFields.Length == 3, "There must be 3 fields in zipCentricFields, otherwise we have bad data.");
+
+            if (zipCentricFields.Length < 3)
+                zipCentricFields = AppHelper.AddNonvalidToArray(zipCentricFields);
+
+            var myCity = new string(AppHelper.CharsToTitleCase(zipCentricFields[0]).ToArray());
+
+            cityStateTimeZoneData.Add("success", "true");
+            cityStateTimeZoneData.Add("City", myCity);
+            cityStateTimeZoneData.Add("State", zipCentricFields[1]);
+            cityStateTimeZoneData.Add("TimeZone", ((int)Enum.Parse(typeof(USTimeZone), zipCentricFields[2])).ToString(CultureInfo.InvariantCulture));
+        }
+
         public bool ChangePasswordFromResetKey(string key, string password)
         {
             return _membershipService.ChangePasswordFromResetKey(key, password);
+        }
+
+        public Institution GetInstitutionFromEmail(string email)
+        {
+            var domain = email.Split('@')[1];
+            return _membershipService.GetInstitutionByDomain(domain);
         }
 
         public WebUser GetWebUserByEmail(string email)
@@ -179,6 +221,11 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             var user = _membershipService.GetUserByEmail(userAccount.Email);
             return user;
+        }
+
+        public string GetZipAddress(int zip)
+        {
+            return AppHelper.GetCityStateFromZip(zip);
         }
 
         public LoginModel LogUserIn(string returnUrl)

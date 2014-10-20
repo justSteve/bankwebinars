@@ -40,6 +40,7 @@ namespace CUWebinars.Web.Controllers
         private const string ManageActionName = "Manage";
         private const string LoggedInResult = "LoggedIn";
         private const string ConfirmedResult = "Confirmed";
+        
         private readonly GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
         private readonly IAccountControllerOrchestrator _accountControllerOrchestrator;
@@ -861,42 +862,39 @@ namespace CUWebinars.Web.Controllers
         //[ValidateAntiForgeryToken]
         public JsonResult CheckZip(string zip)
         {
-            const char fieldDelimiter = ',';
-            int numVal;
             var resultObject = new Dictionary<string, string>();
+            const string success = "success";
+            string zipAddress;
 
-            if (!int.TryParse(zip, out numVal))
+            int? numVal = _accountControllerOrchestrator.ParseZip(zip);
+
+            //  If zip can't be parsed, send error to client
+            if (!numVal.HasValue)
             {
-                var zipToParse = zip.Split('-').FirstOrDefault();
-
-                if (zipToParse == null || !int.TryParse(zipToParse, out numVal))
-                {
-                    resultObject.Add("success", "invalid format");
-                    return Json(resultObject, JsonRequestBehavior.AllowGet);
-                }
-            }
-
-            var zipAddress = AppHelper.GetCityStateFromZip(numVal);
-
-            var zipCentricFields = zipAddress.Split(fieldDelimiter);
-
-            if (string.IsNullOrWhiteSpace(zipAddress))
-            {
-                resultObject.Add("success", "false");
+                resultObject.Add(success, "invalid format");
                 return Json(resultObject, JsonRequestBehavior.AllowGet);
             }
 
-            Debug.Assert(zipCentricFields.Length == 3, "There must be 3 fields in zipCentricFields, otherwise we have bad data.");
+            try
+            {
+                zipAddress = AppHelper.GetCityStateFromZip(numVal.Value);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("In CheckZip Action", exception);
+                throw;
+            }
 
-            if (zipCentricFields.Length < 3)
-                zipCentricFields = AppHelper.AddNonvalidToArray(zipCentricFields);
+            //  If no zip address fields found, send error to client
+            if (string.IsNullOrWhiteSpace(zipAddress))
+            {
+                resultObject.Add(success, "false");
+                return Json(resultObject, JsonRequestBehavior.AllowGet);
+            }
 
-            var myCity = new string(AppHelper.CharsToTitleCase(zipCentricFields[0]).ToArray());
-
-            resultObject.Add("success", "true");
-            resultObject.Add("City", myCity);
-            resultObject.Add("State", zipCentricFields[1]);
-            resultObject.Add("TimeZone", ((int)Enum.Parse(typeof(USTimeZone), zipCentricFields[2])).ToString(CultureInfo.InvariantCulture));
+            //  Build and return the good fields
+            _accountControllerOrchestrator.BuildCityStateTimeZoneData(resultObject, zipAddress);
+            
             //resultObject.Add("TimeZone", 3.ToString());
 
             return Json(resultObject, JsonRequestBehavior.AllowGet);
@@ -922,10 +920,11 @@ namespace CUWebinars.Web.Controllers
             _logger.Info("CheckEmail called: " + email + "| Session=" + AppHelper.GetUserAuditInfo());
             var resultObject = new Dictionary<string, string>();
 
-            var user = _membershipService.GetUserByEmail(email);
+            var user = _accountControllerOrchestrator.GetWebUserByEmail(email);
 
             if (user != null)
-            {//email exists and view is notified.
+            {
+                //  Email exists and view is notified.
                 resultObject.Add("success", "foundExisting");
                 return Json(resultObject, JsonRequestBehavior.AllowGet);
             }
@@ -935,10 +934,9 @@ namespace CUWebinars.Web.Controllers
             if (disregardInstitutionDomain)
                 return Json(resultObject, JsonRequestBehavior.AllowGet);
 
-            var domain = email.Split('@')[1];
-            var institution = _membershipService.GetInstitutionByDomain(domain);
+            var institution = _accountControllerOrchestrator.GetInstitutionFromEmail(email);
 
-            if (institution == null)
+            if ( institution == null)
                 return Json(resultObject, JsonRequestBehavior.AllowGet);
 
             //  if we have a match between user's email (domain)
@@ -950,6 +948,7 @@ namespace CUWebinars.Web.Controllers
             resultObject.Add("City", institution.City);
             resultObject.Add("State", institution.State);
             resultObject.Add("Zip", institution.Zip);
+
             _logger.Info("CheckEmailResult: " + resultObject);
             return Json(resultObject, JsonRequestBehavior.AllowGet);
         }
