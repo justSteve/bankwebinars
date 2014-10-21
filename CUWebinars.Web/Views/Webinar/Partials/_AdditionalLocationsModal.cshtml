@@ -13,14 +13,12 @@
         @{
             <div id="AdditionalLocationEmailWrapper">
                 @{
-                    if (Model.Order != null)
+                    if (Model.OrderExists)
                     {
-                        var emails = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Select(al => al.Email).ToArray();
-
-                        for (int i = 0; i < emails.Length; i++)
+                        for (int i = 0; i < Model.Emails.Count(); i++)
                         {
                             <span id="LocationSpan-@i">
-                                <input id="AdditionalLocationEmail_@i" name="AddAdditionalLocationViewModel.Emails[@i]" type="text" value="@emails[i]" />
+                                <input id="AdditionalLocationEmail_@i" name="AddAdditionalLocationViewModel.Emails[@i]" type="text" value="@Model.Emails[i]" />
                                 &nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="@i-AdditionLocationEmail-delete"></i>
                             </span>
                             <br id="@i-break" />

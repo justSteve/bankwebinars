@@ -37,7 +37,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $("[id^='regTypeID_']").on("click", function (oEvent) {
-            $("#stage_of_checkout").val("preReg");
+            //$("#stage_of_checkout").val("preReg");
             //BuildPreRegPrice(oEvent);
             cartStateManager.CheckIfAddLocShouldHide(oEvent.currentTarget.value);
         });
@@ -136,17 +136,9 @@
 
         @if (Model.WebinarStatus == WebinarStatus.Scheduled || Model.WebinarStatus == WebinarStatus.Active || Model.WebinarStatus == WebinarStatus.InProgress)
         {
-            decimal addLocPrice = 150;
-            @*var AddLocModel = new AdditionalLocationOfferViewModel()
-            {
-                Webinar = Model.Webinar,
-                WebUser = Model.WebUser,
-                Price = addLocPrice
-            };
-            //TODO: How to correctly populate the AdditionalEmails price value
             <div id="displayAddLoc">
-                @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationsView.cshtml", AddLocModel)
-            </div>*@
+                @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationsView.cshtml", Model.AdditionalLocationOfferViewModel)
+            </div>
         }
     </div>
 }

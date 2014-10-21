@@ -613,6 +613,8 @@ namespace CUWebinars.Web.Controllers
         /// <param name="id"></param>
         private void InitializeDetailsState(Webinar webinar, WebinarDetailsViewModel model, int id)
         {
+            var orderExists = model.Order != null;
+
             model.Topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar);
 
             model.WebUser = Request.IsAuthenticated ? _membershipService.GetUserByEmail(User.Identity.Name) : new WebUser();
@@ -623,6 +625,13 @@ namespace CUWebinars.Web.Controllers
             {
                 DisplayOptionsViewModel = new DisplayOptionsViewModel
                 {
+                    AdditionalLocationOfferViewModel = new AdditionalLocationOfferViewModel
+                    {
+                        AdditionalLocations = new List<AdditionalLocation>(),
+                        OrderExists = orderExists,
+                        Price = 150.0M,
+                        Webinar = webinar
+                    },
                     EventTitle = model.Webinar.Title,
                     idWebinar = model.Webinar.idWebinar,
                     Options = _orderManagementService.GetOptionsByWebinarId(id, false),
@@ -635,7 +644,7 @@ namespace CUWebinars.Web.Controllers
                 WebinarDuration = model.Webinar.Duration,
                 idWebinar = model.Webinar.idWebinar,
                 idUser = model.WebUser.idUser,
-                OrderExists = model.Order != null,
+                OrderExists = orderExists,
                 WebinarStatus = model.Webinar.Status
             };
 
@@ -659,6 +668,9 @@ namespace CUWebinars.Web.Controllers
                         RowPrice = row.RowPrice,
                         RegistrationType = row.RegistrationType
                     };
+
+                model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Emails =
+                    model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.AdditionalLocations.Select(al => al.Email).ToArray();
             }
         }
 

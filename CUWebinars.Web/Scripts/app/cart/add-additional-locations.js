@@ -21,13 +21,15 @@ function wireUpHandlers() {
     var modalFormOptions = {
         keyboard: true,
         show: true,
-        remote: '/Webinar/GetAdditionalLocationByOrderId/1/dave'
+        remote: '/Cart/GetAdditionalLocationByOrderId/1/dave'
     };
 
 
-    $('#AddLocationsButton').on('click', function () {
+    $('#AddLocationsButton').on('click', function (e) {
+
+        e.preventDefault();
         
-        modalFormOptions.remote = '/Webinar/GetAdditionalLocationByOrderId/' + $('#WebUser_idUser').val() + '/' + $('#Webinar_idWebinar').val();
+        modalFormOptions.remote = '/Cart/GetAdditionalLocationByOrderId/' + $('#WebUser_idUser').val() + '/' + $('#Webinar_idWebinar').val();
         $('#AdditionalLocationsModal').modal(modalFormOptions);
     });
 

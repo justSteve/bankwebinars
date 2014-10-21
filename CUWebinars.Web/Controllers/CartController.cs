@@ -28,8 +28,6 @@ namespace CUWebinars.Web.Controllers
 
         public PartialViewResult GetAdditionalLocationByOrderId(int webUserId, int webinarId)
         {
-            //  TODO: Implement
-
             //var order = _orderManagementService.GetOrdersByUserId(webUserId);
 
             var addAdditionalLocationViewModel = new AdditionalLocationAddViewModel

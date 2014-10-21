@@ -5,6 +5,7 @@ namespace CUWebinars.Web.ViewModel
 {
     public class DisplayOptionsViewModel
     {
+        public AdditionalLocationOfferViewModel AdditionalLocationOfferViewModel { get; set; }
         public string EventTitle { get; set; }
         public int idWebinar { get; set; }
         public DisplayRowPriceViewModel DisplayRowPriceViewModel { get; set; }
