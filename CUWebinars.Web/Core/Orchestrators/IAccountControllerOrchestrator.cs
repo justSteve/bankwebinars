@@ -21,6 +21,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         LoginModel LogUserIn(string returnUrl);
         void LogUserOut();
         int? ParseZip(string zip);
+        void RegisterAndLogInUser(RegisterViewModel registerViewModel);
         void ResetPassword(string tenant, string email);
         bool SignUserIn(SignInModel model, out string userMustVerify);
         bool UserConfirmed(CreateUserConfirmedViewModel model);

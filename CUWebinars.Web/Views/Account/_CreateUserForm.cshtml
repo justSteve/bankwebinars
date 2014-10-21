@@ -1,7 +1,6 @@
 ﻿@model RegisterViewModel
 
 @{
-    //WebUser currentUser = CurrentSession.Instance.CurrentUser;
 
     var SetSameAsBilling = "checked";
     if (ViewData["BillingSame"] != null)
@@ -24,7 +23,7 @@
     <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
     <input type="hidden" id="emailAddress" />
 
-    @Html.ValidationSummary(true)
+    @Html.ValidationSummary("There have been some errors:", new { id="registerValSummary"})
     <div class="accordion" id="createUserPanes">
         <div class="accordion-group">
             <div class="accordion-heading">

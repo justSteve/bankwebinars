@@ -75,6 +75,7 @@ var RegistrationInCart;
     var StateManager = (function () {
         function StateManager() {
             this.disregardInstitutionDomain = false;
+            this.formParsedByValidator = false;
             this.zipCheckRequired = false;
             this.nextButtonText = 'Next...';
             this.registerButtonText = 'Submit Register';
@@ -101,6 +102,7 @@ var RegistrationInCart;
         };
 
         StateManager.prototype.checkAndSubmitEmail = function () {
+            this.ensureFormValidatorParsed();
             if ($('#RegisterFields_Email').valid() == true) {
                 //console.log(REG.PageObjects.emailInput().valid());
                 $('#emailAddress').val($('#checkEmail').val());
@@ -138,6 +140,13 @@ var RegistrationInCart;
                 $('#collapseEmail').collapse('toggle');
 
                 $('#TheSubmitButton').prop('value', this.registerButtonText);
+            }
+        };
+
+        StateManager.prototype.ensureFormValidatorParsed = function () {
+            if (!this.formParsedByValidator) {
+                $.validator.unobtrusive.parse($('#_CreateUserFromCartForm'));
+                this.formParsedByValidator = true;
             }
         };
 

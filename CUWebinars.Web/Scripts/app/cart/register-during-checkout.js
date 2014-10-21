@@ -25,7 +25,8 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ca
     var path = utilities.setPathToBaseUrl();
 
     $('#RegisterFields_Email').bind('change keyup', function() {
-        if ($(this).validate().checkForm()) {
+        regUserStateManager.ensureFormValidatorParsed();
+        if ($(this).valid() == true) {
             $('#TheSubmitButton').removeClass('button_disabled').attr('disabled', false);
         } else {
             $('#TheSubmitButton').addClass('button_disabled').attr('disabled', true);

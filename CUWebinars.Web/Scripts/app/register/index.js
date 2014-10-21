@@ -1,4 +1,5 @@
-﻿var stateManager,
+﻿var formProcessor,
+    stateManager,
     utilities;
 
 $(function () {
@@ -376,7 +377,9 @@ $(function () {
                     stateManager.setAction(Registration.Action.SubmitRegister);
                 }
             } else if (!data.isSuccessful) {
-                $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;' + data.data.Exception + '</span>');
+                stateManager.setAction(Registration.Action.SubmitRegister);
+                $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;There were some problems with the form. Please refer to the items in red.</span>');
+                formProcessor.lightUpValidationSummary('registerValSummary', data);
             }
 
         }).fail(function (data) {

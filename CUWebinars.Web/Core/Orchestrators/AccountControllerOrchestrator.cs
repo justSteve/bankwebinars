@@ -77,6 +77,107 @@ namespace CUWebinars.Web.Core.Orchestrators
             return zipAsNumber;
         }
 
+        public void RegisterAndLogInUser(RegisterViewModel model)
+        {
+            var email = model.RegisterFields.Email.Trim();
+            var firstName = model.RegisterFields.FirstName.Trim();
+            var lastName = model.RegisterFields.LastName.Trim();
+            var city = model.RegisterFields.BillingAddress.City.Trim();
+            var state = model.RegisterFields.BillingAddress.State.Trim();
+            var zip = model.RegisterFields.BillingAddress.Zip.Trim();
+
+            var myInstitution = _membershipService.ProcessInstitutionForUser(
+                model.RegisterFields.Institution.Trim(),
+                email,
+                city,
+                state,
+                "N",
+                "New",
+                zip);
+
+            IList<Address> addresses = new List<Address>
+            {
+                new Address
+                {
+                    AddressType =
+                        Enum.GetName(typeof (AddressType), model.RegisterFields.BillingAddress.TypeOfAddress),
+                    City = model.RegisterFields.BillingAddress.City.Trim(),
+                    Country = model.RegisterFields.BillingAddress.Country.Trim(),
+                    Name = firstName + ' ' + lastName,
+                    Phone = model.RegisterFields.BillingAddress.Phone.Trim(),
+                    State = state,
+                    StreetAddress = model.RegisterFields.BillingAddress.StreetAddress.Trim(),
+                    StreetAddress2 =
+                        model.RegisterFields.BillingAddress.StreetAddress2 == null
+                            ? model.RegisterFields.BillingAddress.StreetAddress2
+                            : model.RegisterFields.BillingAddress.StreetAddress2.Trim(),
+                    Zip = zip
+                },
+                new Address
+                {
+                    AddressType =
+                        Enum.GetName(typeof (AddressType), model.RegisterFields.ShippingAddress.TypeOfAddress),
+                    City = model.RegisterFields.ShippingAddress.City.Trim(),
+                    Country = model.RegisterFields.ShippingAddress.Country.Trim(),
+                    Name = firstName + ' ' + lastName,
+                    Phone = model.RegisterFields.ShippingAddress.Phone.Trim(),
+                    State = model.RegisterFields.ShippingAddress.State.Trim(),
+                    StreetAddress = model.RegisterFields.ShippingAddress.StreetAddress.Trim(),
+                    StreetAddress2 =
+                        model.RegisterFields.ShippingAddress.StreetAddress2 == null
+                            ? model.RegisterFields.ShippingAddress.StreetAddress2
+                            : model.RegisterFields.ShippingAddress.StreetAddress2.Trim(),
+                    Zip = model.RegisterFields.ShippingAddress.Zip.Trim()
+                }
+            };
+
+            var webUser = _membershipService.CreateWebUser(_globals.Tenant,
+                firstName
+                , lastName
+                , model.RegisterFields.Password
+                , email
+                , USTimeZone.Central
+                , UserType.Customer
+                , myInstitution.idInstitution
+                , addresses
+                ,
+                model.RegisterFields.Title == null
+                    ? model.RegisterFields.Title
+                    : model.RegisterFields.Title.Trim()
+                , null
+                , DomainConstants.Active
+                );
+
+            if (!_stateService.HasValue(Constants.CurrentUser))
+                _stateService.SetValue(Constants.CurrentUser, webUser);
+
+            var userAccount = _membershipService.CreateUser(
+                _globals.Tenant,
+                firstName,
+                lastName,
+                string.Empty,
+                //  Pass empty string for username because MembershipReboot assigns the email to the username field where emailIsUsername is true
+                model.RegisterFields.Password,
+                email);
+
+            _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.ManualRegistration);
+
+            Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey),
+                "There's no reason session should not have a value for the VerificationKey at this point ");
+
+            var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
+            _stateService.ClearValue(DomainConstants.VerificationKey);
+
+            userAccount = _membershipService.VerifyEmailFromKey(
+                verificationKey,
+                model.RegisterFields.Password
+                );
+
+            _membershipService.LogInUser(_globals.Tenant, model.RegisterFields.Email,
+                model.RegisterFields.Password, true); // log the user in.            
+
+        }
+
         public void ResetPassword(string tenant, string email)
         {
             _membershipService.ResetPassword(tenant, email);

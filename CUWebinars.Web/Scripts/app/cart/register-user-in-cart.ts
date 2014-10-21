@@ -59,6 +59,7 @@ module RegistrationInCart {
         private action: Action;
         private inputAction: InputAction;
         private disregardInstitutionDomain: boolean = false;
+        private formParsedByValidator: boolean = false;
         private zipCheckRequired: boolean = false;
         private nextButtonText: string = 'Next...';
         private registerButtonText: string = 'Submit Register';
@@ -91,6 +92,7 @@ module RegistrationInCart {
         }
 
         checkAndSubmitEmail(): boolean {
+            this.ensureFormValidatorParsed();
             if ($('#RegisterFields_Email').valid() == true) {
                 //console.log(REG.PageObjects.emailInput().valid());
                 $('#emailAddress').val($('#checkEmail').val());
@@ -129,6 +131,13 @@ module RegistrationInCart {
                 $('#collapseEmail').collapse('toggle');
 
                 $('#TheSubmitButton').prop('value', this.registerButtonText);
+            }
+        }
+
+        ensureFormValidatorParsed(): void {
+            if (!this.formParsedByValidator) {
+                $.validator.unobtrusive.parse($('#_CreateUserFromCartForm'));
+                this.formParsedByValidator = true;
             }
         }
 
