@@ -1,40 +1,47 @@
 ﻿@using System.Linq
-@model WebinarDetailsViewModel
+@model AdditionalLocationAddViewModel
     
-<blockquote style="margin-bottom: 0;color:red;font-weight:bold">
-    TODO: replace with dynamic text!!! @*@Model.AdditionalLocation.DescriptionConfirm*@
-</blockquote>
-<div style="padding-left: 50px;">
-    <b>Each additional location adds $150 to your registration:</b> @*TODO: this is hard coded. Need to change that.*@
-    <div id="AdditionalLocationContainer">
-        
-        <div class="row pull-right">
-            <button value="Add?" type="button" class="btn btn-success btn-small" name="AddLocationsButton" id="AddLocationsButton">Add?</button>
+
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Modal title</h4>
+        <div>blabla</div>
+    </div>
+    <div class="modal-body">
+        <div>
+            blabla
         </div>
+        <div>
+            blabla
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+    </div>
+    @*<b>Each additional location adds @Model.Price.ToString("c").Replace(".00", "") to your registration.</b>*@
+    @*<b>Each additional location adds $150 to your registration.</b>
+        <div id="AdditionalLocationContainer">
 
-        @{
-            var emails = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Select(al => al.Email).ToArray();
+            @{
+                var emails = Model.AdditionalLocations.Select(al => al.Email).ToArray();
 
-            <ol>
-                @for (int i = 0; i < emails.Length; i++)
-                {
-                    <li>@emails[i]</li>
-                }
-            </ol>
-        }
+                <ol>
+                    @for (int i = 0; i < emails.Length; i++)
+                    {
+                        <li>@emails[i]</li>
+                    }
+                </ol>
+            }
 
-        </div> 
-</div>
+        </div>*@
+
 
 <!-- Button to trigger modal -->
 
 
-<!-- Modal -->
-<div id="AdditionalLocationsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-body">
-        @* modal content goes here *@
-    </div>
-</div>
 
 
-@Scripts.Render("~/bundles/AdditionalLocation")
+
+

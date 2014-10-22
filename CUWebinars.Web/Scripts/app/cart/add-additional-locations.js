@@ -20,8 +20,9 @@ function wireUpHandlers() {
 
     var modalFormOptions = {
         keyboard: true,
+        backdrop: 'static',
         show: true,
-        remote: '/Cart/GetAdditionalLocationByOrderId/1/dave'
+        remote : '/Cart/GetAdditionalLocationByOrderId/2/1'
     };
 
 
@@ -29,8 +30,8 @@ function wireUpHandlers() {
 
         e.preventDefault();
         
-        modalFormOptions.remote = '/Cart/GetAdditionalLocationByOrderId/' + $('#WebUser_idUser').val() + '/' + $('#Webinar_idWebinar').val();
-        $('#AdditionalLocationsModal').modal(modalFormOptions);
+        modalFormOptions.remote = '/Cart/GetAdditionalLocationByOrderId/' + $('#Webinar_idWebinar').val() + '/' + ($('#WebUser_idUser').val() || 0).toString();
+        $('#AdditionalLocationsModalDialog').modal(modalFormOptions);
     });
 
     

@@ -26,14 +26,17 @@ namespace CUWebinars.Web.Controllers
             _cartControllerOrchestrator = cartControllerOrchestrator;
         }
 
-        public PartialViewResult GetAdditionalLocationByOrderId(int webUserId, int webinarId)
+        public PartialViewResult GetAdditionalLocationByOrderId(int webinarId, int? webUserId = null)
         {
             //var order = _orderManagementService.GetOrdersByUserId(webUserId);
 
-            var addAdditionalLocationViewModel = new AdditionalLocationAddViewModel
+            var addAdditionalLocationViewModel = new AdditionalLocationOfferViewModel
             {
                 // AdditionalLocations = order.OrderRows.First().AdditionalLocation.ToList()
-                AdditionalLocation = new List<AdditionalLocation>()
+                AdditionalLocations = new List<AdditionalLocation>(),
+                OrderExists = false,
+                Emails = new string []{""}
+
             };
 
             return PartialView("~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml", addAdditionalLocationViewModel);

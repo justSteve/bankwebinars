@@ -628,6 +628,7 @@ namespace CUWebinars.Web.Controllers
                     AdditionalLocationOfferViewModel = new AdditionalLocationOfferViewModel
                     {
                         AdditionalLocations = new List<AdditionalLocation>(),
+                        //AdditionalLocationAddViewModel = new AdditionalLocationAddViewModel(),
                         OrderExists = orderExists,
                         Price = 150.0M,
                         Webinar = webinar
@@ -671,6 +672,10 @@ namespace CUWebinars.Web.Controllers
 
                 model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Emails =
                     model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.AdditionalLocations.Select(al => al.Email).ToArray();
+                //model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
+                //    .AdditionalLocationAddViewModel.AdditionalLocations =
+                    //model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
+                    //    .AdditionalLocations;
             }
         }
 

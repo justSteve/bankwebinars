@@ -7,6 +7,7 @@ namespace CUWebinars.Web.ViewModel
     {
         public AdditionalLocation AdditionalLocation { get; set; }
         public IEnumerable<AdditionalLocation> AdditionalLocations { get; set; }
+        public AdditionalLocationAddViewModel AdditionalLocationAddViewModel { get; set; }
         public IList<string> Emails { get; set; } // IList type because need to access items via an indexer
         public bool OrderExists { get; set; }
         public Webinar Webinar { get; set; }

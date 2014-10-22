@@ -1,15 +1,11 @@
-﻿using System;
+﻿using CUWebinars.Business.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using CUWebinars.Business.Models;
 
 namespace CUWebinars.Web.ViewModel
 {
     public class AdditionalLocationAddViewModel
     {
-        public List<AdditionalLocation> AdditionalLocation { get; set; }
-        public Webinar Webinar { get; set; }
-        public WebUser WebUser { get; set; }
+        public IEnumerable<AdditionalLocation> AdditionalLocations { get; set; }
+        public decimal Price { get; set; }
     }
 }
