@@ -25,7 +25,7 @@ namespace CUWebinars.Web.Core.Orchestrators
     public class AccountControllerOrchestrator : IAccountControllerOrchestrator
     {
         private readonly GlobalConfig _globals = GlobalConfig.GlobalConfigSingleton;
-        public HttpRequestBase Request { get; set; }
+        public HttpRequestWrapper Request { get; set; }
         private readonly ILogger _logger;
         private readonly IMembershipService _membershipService;
         private readonly IStateService _stateService;
@@ -37,7 +37,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             IMembershipService membershipService,
             IOrderManagementService orderManagementService,
             IStateService stateService,
-            HttpRequestBase request)
+            HttpRequestWrapper request)
 
         {
             Request = request;

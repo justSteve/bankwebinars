@@ -17,7 +17,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 {
     public class CartControllerOrchestrator : ICartControllerOrchestrator
     {
-        public HttpRequest Request { get; set; }
+        public HttpRequestWrapper Request { get; set; }
 
         GlobalConfig _globals = GlobalConfig.GlobalConfigSingleton;
 
@@ -33,7 +33,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             IWebinarManagementService webinarManagementService,
             IStateService stateService,
             ILogger logger,
-            HttpRequest request)
+            HttpRequestWrapper request)
         {
             Request = request;
             _membershipService = membershipService;
