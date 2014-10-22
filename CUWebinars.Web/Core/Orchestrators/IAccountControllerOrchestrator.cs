@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Models;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.ViewModel;
@@ -9,21 +10,28 @@ namespace CUWebinars.Web.Core.Orchestrators
 {
     public interface IAccountControllerOrchestrator : IDisposable
     {
-        CreateUserConfirmedViewModel ConfirmUser(string email, string surname);
         EditBillingAddressModel BuildBillingAddressModel();
         EditShippingAddressModel BuildShippingAddressModel();
         void BuildCityStateTimeZoneData(Dictionary<string, string> cityStateTimeZoneData, string zipAddress);
         bool ChangePasswordFromResetKey(string key, string password);
+        CreateUserConfirmedViewModel ConfirmUser(string email, string surname);
+        UserAccount CreateUserAccountFromCart(RegisterViewModel model);
+        WebUser CreateWebUserFromCart(RegisterViewModel model);
         Institution GetInstitutionFromEmail(string email);
         WebUser GetWebUserByEmail(string email);
+        WebUser GetWebUserById(int id);
         WebUser GetWebUserFromIPrincipal();
         string GetZipAddress(int zip);
-        LoginModel LogUserIn(string returnUrl);
+        LoginModel BuildLoginModel(string returnUrl);
+        bool LogUserIn(SignInModel signInModel);
         void LogUserOut();
         int? ParseZip(string zip);
         void RegisterAndLogInUser(RegisterViewModel registerViewModel);
         void ResetPassword(string tenant, string email);
         bool SignUserIn(SignInModel model, out string userMustVerify);
         bool UserConfirmed(CreateUserConfirmedViewModel model);
+        void UpdateNameTitle(string firstName, string lastName, string email, string title);
+        void UpdateUserDetails(ManageModel model);
+
     }
 }

@@ -12,6 +12,7 @@ using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Membership;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
@@ -24,18 +25,19 @@ namespace CUWebinars.Web.Core.Orchestrators
     public class AccountControllerOrchestrator : IAccountControllerOrchestrator
     {
         private readonly GlobalConfig _globals = GlobalConfig.GlobalConfigSingleton;
-        public HttpRequest Request { get; set; }
+        public HttpRequestBase Request { get; set; }
         private readonly ILogger _logger;
         private readonly IMembershipService _membershipService;
         private readonly IStateService _stateService;
         private readonly IOrderManagementService _orderManagementService;
         private bool _disposed;
 
-        public AccountControllerOrchestrator(ILogger logger,
+        public 
+            AccountControllerOrchestrator(ILogger logger,
             IMembershipService membershipService,
             IOrderManagementService orderManagementService,
             IStateService stateService,
-            HttpRequest request)
+            HttpRequestBase request)
 
         {
             Request = request;
@@ -44,6 +46,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             _orderManagementService = orderManagementService;
             _stateService = stateService;
             
+        }
+
+        public bool LogUserIn(SignInModel signInModel)
+        {
+            return _membershipService.LogInUser(_globals.Tenant, signInModel.Email, signInModel.Password, signInModel.RememberMe);
         }
 
         public void LogUserOut()
@@ -231,6 +238,56 @@ namespace CUWebinars.Web.Core.Orchestrators
             return false;
         }
 
+        public void UpdateNameTitle(string firstName, string lastName, string email, string title)
+        {
+            _membershipService.UpdateNameTitle(firstName, lastName, email, title);
+        }
+
+        public void UpdateUserDetails(ManageModel model)
+        {
+            var updateFields = model.RegisterFields;
+
+            var billingAddressFields = updateFields.BillingAddress;
+            var shippingAddressFields = updateFields.ShippingAddress;
+
+            var billingAddress = new Address
+            {
+                Name = model.RegisterFields.FirstName + ' ' + model.RegisterFields.LastName,
+                StreetAddress = billingAddressFields.StreetAddress.Trim(),
+                StreetAddress2 = billingAddressFields.StreetAddress2 == null ? billingAddressFields.StreetAddress2 : billingAddressFields.StreetAddress2.Trim(),
+                State = billingAddressFields.State.Trim(),
+                City = billingAddressFields.City.Trim(),
+                Country = billingAddressFields.Country.Trim(),
+                Zip = billingAddressFields.Zip.Trim(),
+                Phone = billingAddressFields.Phone.Trim(),
+                AddressType = Enum.GetName(typeof(AddressType), billingAddressFields.TypeOfAddress)
+            };
+
+            var shippingAddress = new Address
+            {
+                Name = shippingAddressFields.Name.Trim(),
+                StreetAddress = shippingAddressFields.StreetAddress.Trim(),
+                StreetAddress2 = shippingAddressFields.StreetAddress2 == null ? shippingAddressFields.StreetAddress2 : shippingAddressFields.StreetAddress2.Trim(),
+                State = shippingAddressFields.State.Trim(),
+                City = shippingAddressFields.City.Trim(),
+                Country = shippingAddressFields.Country.Trim(),
+                Zip = shippingAddressFields.Zip.Trim(),
+                Phone = shippingAddressFields.Phone.Trim(),
+                AddressType = Enum.GetName(typeof(AddressType), shippingAddressFields.TypeOfAddress)
+            };
+
+            _membershipService.UpdateUserDetails(_globals.Tenant,
+                updateFields.FirstName.Trim(),
+                updateFields.LastName.Trim(),
+                //updateFields.Password,
+                updateFields.Email.Trim(),
+                updateFields.Institution,
+                billingAddress,
+                shippingAddress,
+                updateFields.Title == null ? "na" : updateFields.Title.Trim()
+                );
+        }
+
         public EditBillingAddressModel BuildBillingAddressModel()
         {
             var model = new EditBillingAddressModel();
@@ -303,6 +360,129 @@ namespace CUWebinars.Web.Core.Orchestrators
             return _membershipService.ChangePasswordFromResetKey(key, password);
         }
 
+        public UserAccount CreateUserAccountFromCart(RegisterViewModel model)
+        {
+            var email = model.RegisterFields.Email.Trim();
+            var firstName = model.RegisterFields.FirstName.Trim();
+            var lastName = model.RegisterFields.LastName.Trim();
+
+            ////first check if email exists
+            //var checkIfUsed = _membershipService.GetUserByEmail(email);
+            //if (checkIfUsed != null)
+            //{
+            //    _logger.Error("dupe email attempt: " + email);
+            //}
+            //  model.Passwor should be null or empty. Generate own temp password here
+            model.RegisterFields.Password = PasswordGenerator.GenerateRandomString(8);
+            if (_stateService.HasValue(DomainConstants.TempPassword))
+                _stateService.ClearValue(DomainConstants.TempPassword);
+
+            _stateService.SetValue(DomainConstants.TempPassword, model.RegisterFields.Password);
+                // will use in TtsTokenizer
+#if DEBUG
+            _logger.Info("Password {0} created for user {1}", model.RegisterFields.Password, model.RegisterFields.Email);
+#endif
+
+            var userAccount = _membershipService.CreateUser(
+                _globals.Tenant,
+                firstName,
+                lastName,
+                string.Empty,
+                //  Pass empty string for username because MembershipReboot assigns the email to the username field where emailIsUsername is true
+                model.RegisterFields.Password,
+                email);
+
+            _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.CartRegistration);
+
+            Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey),
+                "There's no reason session should not have a value for the VerificationKey at this point ");
+
+            var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
+            _stateService.ClearValue(DomainConstants.VerificationKey);
+
+            userAccount = _membershipService.VerifyEmailFromKey(
+                verificationKey,
+                model.RegisterFields.Password
+                );
+
+            return userAccount;
+
+        }
+
+        public WebUser CreateWebUserFromCart(RegisterViewModel model)
+        {
+            var email = model.RegisterFields.Email.Trim();
+            var firstName = model.RegisterFields.FirstName.Trim();
+            var lastName = model.RegisterFields.LastName.Trim();
+
+            var myInstitution = _membershipService.ProcessInstitutionForUser(
+                model.RegisterFields.Institution.Trim(),
+                email,
+                model.RegisterFields.BillingAddress.City.Trim(),
+                model.RegisterFields.BillingAddress.State.Trim(),
+                "N",
+                "New",
+                model.RegisterFields.BillingAddress.Zip.Trim());
+
+            IList<Address> addresses = new List<Address>
+            {
+                new Address
+                {
+                    AddressType =
+                        Enum.GetName(typeof (AddressType), model.RegisterFields.BillingAddress.TypeOfAddress),
+                    City = model.RegisterFields.BillingAddress.City.Trim(),
+                    Country = model.RegisterFields.BillingAddress.Country.Trim(),
+                    Name = firstName + ' ' + lastName,
+                    Phone = model.RegisterFields.BillingAddress.Phone.Trim(),
+                    State = model.RegisterFields.BillingAddress.State.Trim(),
+                    StreetAddress = model.RegisterFields.BillingAddress.StreetAddress.Trim(),
+                    StreetAddress2 =
+                        model.RegisterFields.BillingAddress.StreetAddress2 == null
+                            ? model.RegisterFields.BillingAddress.StreetAddress2
+                            : model.RegisterFields.BillingAddress.StreetAddress2.Trim(),
+                    Zip = model.RegisterFields.BillingAddress.Zip.Trim()
+                },
+                new Address
+                {
+                    AddressType =
+                        Enum.GetName(typeof (AddressType), model.RegisterFields.ShippingAddress.TypeOfAddress),
+                    City = model.RegisterFields.ShippingAddress.City.Trim(),
+                    Country = model.RegisterFields.ShippingAddress.Country.Trim(),
+                    Name = firstName + ' ' + lastName,
+                    Phone = model.RegisterFields.ShippingAddress.Phone.Trim(),
+                    State = model.RegisterFields.ShippingAddress.State.Trim(),
+                    StreetAddress = model.RegisterFields.ShippingAddress.StreetAddress.Trim(),
+                    StreetAddress2 =
+                        model.RegisterFields.ShippingAddress.StreetAddress2 == null
+                            ? model.RegisterFields.ShippingAddress.StreetAddress2
+                            : model.RegisterFields.ShippingAddress.StreetAddress2.Trim(),
+                    Zip = model.RegisterFields.ShippingAddress.Zip.Trim()
+                }
+            };
+
+            var webUser = _membershipService.CreateWebUser(_globals.Tenant
+                , firstName
+                , lastName
+                , string.Empty
+                , email
+                , USTimeZone.Central
+                , UserType.Customer
+                , myInstitution.idInstitution
+                , addresses
+                ,
+                model.RegisterFields.Title == null
+                    ? model.RegisterFields.Title
+                    : model.RegisterFields.Title.Trim()
+                , null
+                , DomainConstants.Active
+                );
+
+            if (!_stateService.HasValue(Constants.CurrentUser))
+                _stateService.SetValue(Constants.CurrentUser, webUser);
+
+            return webUser;
+        }
+
         public Institution GetInstitutionFromEmail(string email)
         {
             var domain = email.Split('@')[1];
@@ -312,6 +492,11 @@ namespace CUWebinars.Web.Core.Orchestrators
         public WebUser GetWebUserByEmail(string email)
         {
             return _membershipService.GetUserByEmail(email);
+        }
+
+        public WebUser GetWebUserById(int id)
+        {
+            return _membershipService.GetWebUserById(id);
         }
 
         public WebUser GetWebUserFromIPrincipal()
@@ -329,7 +514,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             return AppHelper.GetCityStateFromZip(zip);
         }
 
-        public LoginModel LogUserIn(string returnUrl)
+        public LoginModel BuildLoginModel(string returnUrl)
         {
             var urlHelper = new UrlHelper(Request.RequestContext); 
 
