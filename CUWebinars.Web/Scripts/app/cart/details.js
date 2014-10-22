@@ -1,4 +1,5 @@
-﻿//  This script correlates with the Details2 View.
+﻿
+//  This script correlates with the Details2 View.
 
 var checkoutConfirm,
     discount,
@@ -39,9 +40,7 @@ $(function () {
                     JL("myLogger").info("Posted Order: " + orderRowID);
                     $('#confirmResult').html(result.msg);
                     $('#confirmRegistration').attr('href', 'javascript:location.reload();');
-
-                    CheckoutInProcess = false;
-
+                    
                     $('#ConfirmModal').modal('show');
                 } else {
                     //TODO: Add code that will provide as much detail to the Failed message as can be obtained from result.
@@ -89,9 +88,6 @@ $(function () {
 
     $("[id^='regTypeID_']").on("click", function (oEvent) {
 
-        //TODO: the 'stage_of_checkout' element is very much legacy. Superceded by the SM?
-        $("#stage_of_checkout").val("preReg");
-
         //TODO: In original code i had intialized the how the cart displayed the price.
         // clearly this takes place elsewhere now adaquately but review and verify that 
         // this is impacted by the Discount - an enitity we've yet to dance with - but this 
@@ -106,11 +102,11 @@ $(function () {
         // absent a pre-existing discount code, the cart must suppy a form field to permit an
         // ajax call to the server to validate anything entered by the user on the Confirmation Tab.
         //
-        //BuildPreRegPrice(oEvent, orderRowId);
+        cartStateManager.BuildPreRegPrice(oEvent, cartStateManager.getOrderRowId());
         cartStateManager.CheckIfAddLocShouldHide(oEvent.currentTarget.value);
     });
 
-    /* Click event for the big green button */
+    /* Click event for the big green SignUp button */
     $('#AddToCart').on('click', function () {
         signUpForm.submit();
     });
@@ -134,7 +130,7 @@ $(function () {
             });
     }
 
-    /* Submit event for the big green button */
+    /* Submit event for the big green SignUp button */
     signUpForm.submit(function (e) {
 
         e.preventDefault();

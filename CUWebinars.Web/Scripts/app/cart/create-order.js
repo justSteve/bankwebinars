@@ -40,7 +40,6 @@ $(document).ready(function () {
     var path = setPath();
 
     $("[id^='regTypeID_']").on("click", function (oEvent) {
-        $("#stage_of_checkout").val("preReg");
 
         //BuildPreRegPrice(oEvent);
         CheckIfAddLocShouldHide(oEvent.currentTarget.value);

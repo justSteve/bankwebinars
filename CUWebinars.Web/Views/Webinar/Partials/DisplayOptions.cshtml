@@ -33,27 +33,17 @@
             }
         }
     </script>
-}
-<script type="text/javascript">
-    $(document).ready(function () {
-        $("[id^='regTypeID_']").on("click", function (oEvent) {
-            //$("#stage_of_checkout").val("preReg");
-            //BuildPreRegPrice(oEvent);
-            cartStateManager.CheckIfAddLocShouldHide(oEvent.currentTarget.value);
-        });
-    });
-</script>
-@{
-
+    
     var explainsOptionsBuilder = new StringBuilder();
     explainsOptionsBuilder.Append("The following choices are available for this webinar.<br>");
 
 
-    //  Comment: I assume order will be null where there is no existing order for the User for that WebinarId
-    //           This does not seem to have been handled in the controller as the Order is just set to null.
-    //           I need to understand this.
-    // REPLY: Let's explore this soon
-
+                //  Comment: I assume order will be null where there is no existing order for the User for that WebinarId
+                //           This does not seem to have been handled in the controller as the Order is just set to null.
+                //           I need to understand this.
+                // REPLY: Let's explore this soon
+    
+}
 
     <div id="AttendRegTypes" class="modal hide fade">
         <div class="modal-header">

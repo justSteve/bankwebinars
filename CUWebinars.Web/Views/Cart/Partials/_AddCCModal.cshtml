@@ -1,0 +1,26 @@
+﻿<div id="AddCCModal" class="modal hide fade">
+    @using (Html.BeginForm("AddCC", "Cart", null, FormMethod.Post, new {id = "AddCC"}))
+    {
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3 id="AddCCCaption">Carbon Copy Notifications?</h3>
+        </div>
+        <div id="CCBody" class="modal-body">
+            <p>
+                <input type="text" name="CC" />
+                <br />
+                Need to forward the connection info to a co-worker?
+                Insert the email address(s) (if multiple, just seperate the addresses by a comma) to be included in all future notifications related to this order.
+                <br />
+                <input type="text" name="CC" />
+
+            </p>
+            <p>Please note that this form is only used to forward the connection information to alternate attendees. If you would like to add Additional Locations (multiple connections by other branches, for example) we offer that optional feature on for an additional charge.  </p>
+            <input type="text" name="CC" />
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="close btn" data-dismiss="modal">Cancel</a>&nbsp;&nbsp;
+            <a href="#" id="SubmitCC" class="btn btn-success">Submit</a>
+        </div>
+    }
+</div>

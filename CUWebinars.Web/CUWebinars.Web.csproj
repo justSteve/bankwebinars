@@ -467,6 +467,9 @@
     <Content Include="Scripts\app\register\register-user.js.map" />
     <Content Include="Views\Cart\Partials\_ConfirmModal.cshtml" />
     <Content Include="Scripts\jquery-1.11.1.min.map" />
+    <Content Include="Views\Cart\Partials\_CancelModal.cshtml" />
+    <Content Include="Views\Cart\Partials\_AddCCModal.cshtml" />
+    <Content Include="Views\Cart\Partials\_LogsModal.cshtml" />
     <None Include="Views\Webinar\Details.cshtml" />
     <None Include="Notification\Templates\OrderSubmittedAdditionalLocation.cshtml" />
     <Compile Include="ViewModel\AdditionalLocationAddViewModel.cs" />
