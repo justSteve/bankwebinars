@@ -30,7 +30,7 @@ namespace CUWebinars.Web.Controllers
         {
             //var order = _orderManagementService.GetOrdersByUserId(webUserId);
 
-            var addAdditionalLocationViewModel = new AdditionalLocationOfferViewModel
+             var addAdditionalLocationViewModel = new AdditionalLocationOfferViewModel
             {
                 // AdditionalLocations = order.OrderRows.First().AdditionalLocation.ToList()
                 AdditionalLocations = new List<AdditionalLocation>(),

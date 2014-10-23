@@ -147,6 +147,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="BusinessTestHelper.cs" />
+    <Compile Include="Config\DatabaseResources.cs" />
     <Compile Include="IntegrationTests\DataOperationsIntegrationTests.cs" />
     <Compile Include="UnitTests\CommandProcessorTests.cs" />
     <Compile Include="Config\MembershipRebootConfig.cs">
@@ -180,24 +181,19 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <EmbeddedResource Include="Db\TTSDatabase.mdf" />
-    <EmbeddedResource Include="Db\TTSDatabase_log.ldf">
-      <DependentUpon>TTSDatabase.mdf</DependentUpon>
-    </EmbeddedResource>
     <Content Include="Db\CUWebinars.ldf">
       <DependentUpon>CUWebinars.mdf</DependentUpon>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Db\CUWebinars.mdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <EmbeddedResource Include="Db\CUWebinars.mdf" />
+    <Content Include="Db\CUWebinarsMemship.ldf">
+      <DependentUpon>CUWebinarsMemship.mdf</DependentUpon>
     </Content>
-    <Content Include="Db\MembershipReboot.mdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <EmbeddedResource Include="Db\CUWebinarsMemship.mdf" />
+    <EmbeddedResource Include="Db\MembershipReboot.mdf" />
     <Content Include="Db\MembershipReboot_log.ldf">
       <DependentUpon>MembershipReboot.mdf</DependentUpon>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="Db\TTSDatabase.ldf" />
     <Content Include="Scripts\MemReboot.sql" />
     <Content Include="Notification\Templates\OrderSubmitted.cshtml" />
     <None Include="packages.config" />
