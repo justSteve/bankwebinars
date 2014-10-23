@@ -545,26 +545,19 @@ function completeOrder(userId, orderRowId) {
         e.preventDefault();
 
         var self = $(this);
-        //$('#ProgressDialogBS').modal('show');
         self.find('input[name="id"]').val(orderRowId);
 
         var data = $(this).serialize();
 
         $.post(self.attr('action'), data, function (result, status) {
             if (result.success) {
-                orderRowID = result.orderRowID;
+                cartStateManager.setOrderRowId(result.orderRowID);
 
                 $('#confirmResult').html(result.msg);
                 $('#confirmRegistration').attr('href', 'javascript:location.reload();');
-                //$.get('/cart/checkoutConfirm/' + orderRowID, function (dataConfirm) {
-                //    $('#confirmation').replaceWith(dataConfirm);
-                //});
-                //$('#signUpTab').show();
-                //$('#contactInfoTab').show();
 
-                CheckoutInProcess = false;
+                cartStateManager.setCheckoutInProcess(false);
 
-                //$('#ProgressDialogBS').modal('hide');
 
                 logUserIn(userId);
                 

@@ -4,6 +4,7 @@ using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Membership;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
@@ -423,6 +424,32 @@ namespace CUWebinars.Web.Core.Orchestrators
             return CreateNewOrder(currentAffiliate, webUser, webinar, newOrderRow);
         }
 
+        private Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow)
+        {
+            if (ReferenceEquals(null, webUser))
+                webUser = _membershipService.CreateWebUser(
+                    _globals.Tenant,
+                    "Not",
+                    "Authenticated",
+                    string.Empty,
+                    string.Empty,
+                    USTimeZone.Alaska,
+                    UserType.Customer,
+                    25,
+                    null,
+                    "Mr",
+                    null,
+                    null);
+ 
+            var newOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
+            newOrder.AuditInfo = AppHelper.GetUserAuditInfo();
+            newOrder.Origin = _orderManagementService.GetOrderInitiator();
+
+            newOrder = _orderManagementService.SaveOrderChanges(newOrder, string.Empty, string.Empty);
+
+            return newOrder;
+        }
+
         public OrderRow LoadOrderRow(int id, OrderStatus status)
         {
             OrderRow row = _orderManagementService.LoadOrderRow(id);
@@ -435,19 +462,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void UpdateOrderWithUserId(int orderId, int userId)
         {
             _orderManagementService.UpdateOrderWithUserId(orderId, userId);
-        }
-
-        private Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow)
-        {
-            if (ReferenceEquals(null, webUser))
-                webUser = new WebUser {idUser = GetDummyUserId()};
-            var newOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
-            newOrder.AuditInfo = AppHelper.GetUserAuditInfo();
-            newOrder.Origin = _orderManagementService.GetOrderInitiator();
-
-            newOrder = _orderManagementService.SaveOrderChanges(newOrder, string.Empty, string.Empty);
-
-            return newOrder;
         }
 
         private int GetDummyUserId()

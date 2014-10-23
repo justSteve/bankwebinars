@@ -89,7 +89,8 @@ namespace CUWebinars.Business.Tests.IntegrationTests
                 USTimeZone.Central,
                 UserType.Customer,
                 26,
-                BusinessTestHelper.GetAddresses(TestFirstName + " " + TestLastName),
+                //BusinessTestHelper.GetAddresses(TestFirstName + " " + TestLastName),
+                null,
                 "Mr",
                 null,
                 null

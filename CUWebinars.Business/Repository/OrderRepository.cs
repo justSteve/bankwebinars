@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Core.Helpers;
+﻿using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Validation.Order;
 using FluentValidation;
@@ -28,11 +29,7 @@ namespace CUWebinars.Business.Repository
             newOrder.OrderStatus = OrderStatus.InProcess;
             newOrder.Affiliate = affiliate;
 
-            //newOrder = AssignAffiliate(affiliate, newOrder);
-
-            // if email is null, we know it is a hollow WebUser carrying the id of the dummy user
-            if (ReferenceEquals(null, webUser.email))
-                newOrder.idUser = webUser.idUser;
+            newOrder.idUser = webUser.idUser;
 
             newOrder = AssignWebUserToOrder(webUser, newOrder);
 
@@ -251,12 +248,17 @@ namespace CUWebinars.Business.Repository
 
             order.idUser = webUser.idUser;
 
-            var billingAddress = webUser.Addresses.FirstOrDefault(a => a.AddressType == "Billing");
-            var shippingAddress = webUser.Addresses.FirstOrDefault(a => a.AddressType == "Shipping");
+            //  
+            if (webUser.Addresses == null)
+                return order;
+            
+            var billingAddress =
+                webUser.Addresses.FirstOrDefault(a => a.AddressType == DomainConstants.BillingAddress);
+            var shippingAddress =
+                webUser.Addresses.FirstOrDefault(a => a.AddressType == DomainConstants.ShippingAddress);
 
             if (billingAddress != null)
             {
-
                 order.BillingAddress = billingAddress.StreetAddress;
                 order.BillingCity = billingAddress.City;
                 order.BillingEmail = webUser.email;

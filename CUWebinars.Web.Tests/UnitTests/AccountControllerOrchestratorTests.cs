@@ -47,7 +47,7 @@ namespace CUWebinars.Web.Tests.UnitTests
             _loggerMock = new Mock<ILogger>();
             _stateServiceMock = new Mock<IStateService>();
             HttpContextFactory.SetCurrentContext(GetMockedHttpContext());
-            _requestMock = new Mock<HttpRequestBase>(HttpContextFactory.Current.Request);
+            //_requestMock = new Mock<HttpRequestBase>(HttpContextFactory.Current.Request);
 
             _accountControllerOrchestrator = new AccountControllerOrchestrator(_loggerMock.Object, _membershipServiceMock.Object, _orderManagementServiceMock.Object, _stateServiceMock.Object, new HttpRequestWrapper(HttpContext.Current.Request));
         }

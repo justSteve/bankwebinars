@@ -10,7 +10,7 @@
                 var eventtitle = Model.EventTitle.Replace("'", "");
                 if (Model.WebinarDuration > 1)
                 {
-                    if (Model.WebinarStatus == WebinarStatus.Scheduled ||Model.WebinarStatus == WebinarStatus.Active ||Model.WebinarStatus == WebinarStatus.InProgress)
+                    if (Model.WebinarStatus == WebinarStatus.Scheduled || Model.WebinarStatus == WebinarStatus.Active || Model.WebinarStatus == WebinarStatus.InProgress)
                     {
                         <text>window.open('http://form.jotform.us/form/32525417714149?webinarid=@Model.idWebinar&webinarTitle=@eventtitle', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');</text>
                     }
@@ -42,7 +42,6 @@
                 //           This does not seem to have been handled in the controller as the Order is just set to null.
                 //           I need to understand this.
                 // REPLY: Let's explore this soon
-    
 }
 
     <div id="AttendRegTypes" class="modal hide fade">
@@ -62,11 +61,13 @@
     <span>
         Choose the attendance option that's right for you. <a href="#AttendRegTypes" data-toggle="modal">(learn more)</a>
     </span>
-    if (Model.OrderRowExists)
-    {
-        <div class="pull-right">
-            @Html.Partial("Partials/_DisplayRowPrice", Model.DisplayRowPriceViewModel)
-        </div>
+    @{
+        if (Model.OrderRowExists)
+        {
+            <div class="pull-right">
+                @Html.Partial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel)
+            </div>
+        }
     }
 
     <div id="RegistrationType">
@@ -131,6 +132,3 @@
             </div>
         }
     </div>
-}
-
-

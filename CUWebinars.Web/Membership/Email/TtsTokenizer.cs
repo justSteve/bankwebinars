@@ -47,10 +47,11 @@ namespace CUWebinars.Web.Membership.Email
                 Email = user.Email,
                 EmailSignature = appInfo.EmailSignature,
                 LoginUrl = appInfo.LoginUrl,
-                //TempPassword = _stateService.GetValue<string>(DomainConstants.TempPassword),
-                TempPassword = string.Empty,
                 Username = user.Username
             };
+
+            if (_stateService.HasValue(DomainConstants.TempPassword))
+                notification.TempPassword = _stateService.GetValue<string>(DomainConstants.TempPassword);
 
             if (values.Any())
             {

@@ -120,7 +120,7 @@ namespace CUWebinars.Business.AccountService
             var webUser = new WebUser
             {
                 idUser = idUserImported.HasValue ? idUserImported.Value : _refDataRepository.GetMaxWebUserId() + 1,
-                // Check what default should be for nun-nullable field
+                // Check what default should be for non-nullable field
                 AcctStatus = accountStatus ?? DomainConstants.Active,
                 DateCreated = DateTime.Now,
                 email = email,
