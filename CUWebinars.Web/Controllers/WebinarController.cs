@@ -3,6 +3,7 @@ using System.IO;
 using System.Security.Claims;
 using System.Web.Hosting;
 using CUWebinars.Business.AccountService;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core.Exceptions;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
@@ -25,8 +26,6 @@ namespace CUWebinars.Web.Controllers
 {
     public class WebinarController : Controller
     {
-        private const string CheckoutInProcess = "CheckoutInProcess";
-
         IStateService _stateService;
 
         //Steve added MembershipService dependancy to allow for 'currentUser' in Details.
@@ -552,20 +551,20 @@ namespace CUWebinars.Web.Controllers
                 {
                     Webinar = webinar,
                     WebinarFiles = webinar.WebinarFiles.ToList(),
-                    Order = null
+                    Order = null // TODO: Future - Details view will display existing record which can be edited. For me to be cognisant of. 
                 };
 
-                InitializeDetailsState(webinar, model, id.Value);
-                InitializeViewCentricProperties(model);
+                InitializeDetailsState(webinar, model, id.Value); // form state, incl. stuff that will be posted back. 
+                InitializeViewCentricProperties(model); // mostly just stuff that helps determine layout of the page on load. Not meant to be sent back to Server
 
                 var usersOrders = _orderManagementService.GetOrdersByUserId(model.WebUser.idUser)
                     .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id.Value) != null);
 
                 var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray();
                     // perf tweak: ensures no multiple enumerations of usersOrders
-                if (checkOrders.Any())
+                if (checkOrders.Any()) // Webinar.Status > scheduled - WebinarFiles presenter files etc. Files only exist until init or activated Webinar
                 {
-                    foreach (var checkOrder in checkOrders)
+                    foreach (var checkOrder in checkOrders) // assumption that there will be only 1 ?
                     {
                         var row = checkOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
 
@@ -574,9 +573,8 @@ namespace CUWebinars.Web.Controllers
                             .ToArray();
 
                         ViewBag.WebinarFiles = webinarFiles;
-                            // Is this intended? It will change what is stored in ViewBag.WebinarFiles with each iteration. Last one wins.
 
-                        model.UserOwnsThisEvent = checkOrder.idOrder; // same issue with these next assignments.
+                        model.UserOwnsThisEvent = checkOrder.idOrder;
                         model.Order = checkOrder;
 
                         if (checkOrder.OrderStatus == OrderStatus.InProcess && row.idWebinar != id)
@@ -586,6 +584,7 @@ namespace CUWebinars.Web.Controllers
                     }
                 }
 
+                // Significance: must complete cart transaction before commencing a new one.
                 if (model.UserOwnsThisEvent > 0 && model.Order.OrderStatus == OrderStatus.InProcess)
                 {
                     model.CheckoutInProcess = true;
@@ -601,7 +600,7 @@ namespace CUWebinars.Web.Controllers
             }
 
             _logger.Error("Details Action invoked with null 'id' parameter");
-            ModelState.AddModelError("", "No id was sent to the Server. Please try the operation again.");
+            ModelState.AddModelError(string.Empty, "No id was sent to the Server. Please try the operation again.");
             return this.ModelStateJson(ModelState);
         }
 
@@ -690,8 +689,8 @@ namespace CUWebinars.Web.Controllers
             model.UserHasOpenOrder = 0;
             model.UserOwnsThisEvent = 0;
 
-            ViewBag.metaDesc = "";
-            ViewBag.metaKeywords = "";
+            ViewBag.metaDesc = string.Empty;
+            ViewBag.metaKeywords = string.Empty;
 
             var userExists = model.WebUser.idUser > 0;
 
@@ -699,15 +698,15 @@ namespace CUWebinars.Web.Controllers
 
             //TODO: Check if needed. Can't the same info be obtained (within RAZOR)
             // by simply checking 'currentUser'?
+            // ->
+            // Not strictly needed, but more readable in the razor e.g. if(Model.UserIsLoggedIn)
+            // But not something I'd consider worth insisting on. Happy to check currentuser. 
             model.UserIsLoggedIn = userExists;
 
             model.SignUpCaption = "Sign Up!";
             model.ConfirmationCaption = "Confirmation";
             model.Identity = ((ClaimsIdentity)User.Identity);
             model.TimeFormatDisplay = "<i>" + DateTimeHelper.FormatTime(model.Webinar.Date, model.TimeZone, false) + " - " + DateTimeHelper.FormatTime(model.Webinar.Date.AddHours((double)model.Webinar.Duration), model.TimeZone, true) + "<br /></i>";
-
-            //TODO: the 'WhichStep' property is legacy and can be removed if no longer being used
-            model.WhichStep = "Step0";
 
             model.CeuShort = string.Empty;
             model.CeuStatement = string.Empty;
@@ -719,9 +718,9 @@ namespace CUWebinars.Web.Controllers
                 model.CeuStatement = ceu[1];
             }
 
-            if (ViewData.ContainsKey(CheckoutInProcess) && !string.IsNullOrWhiteSpace(ViewData[CheckoutInProcess].ToString()))
+            if (_stateService.HasValue(DomainConstants.CheckoutInProcess))
             {
-                model.CheckoutInProcess = bool.Parse(ViewData[CheckoutInProcess].ToString());
+                model.CheckoutInProcess = true; // if it exists in session, it will always be true (by usage convention). Don't ever put false in there.
             }
         }
 

@@ -193,7 +193,13 @@
     <Content Include="Db\MembershipReboot_log.ldf">
       <DependentUpon>MembershipReboot.mdf</DependentUpon>
     </Content>
-    <EmbeddedResource Include="Db\TTSDatabase.ldf" />
+    <Content Include="Db\TTSDatabase.ldf">
+      <DependentUpon>TTSDatabase.mdf</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Db\TTSDatabase.mdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Scripts\MemReboot.sql" />
     <Content Include="Notification\Templates\OrderSubmitted.cshtml" />
     <None Include="packages.config" />

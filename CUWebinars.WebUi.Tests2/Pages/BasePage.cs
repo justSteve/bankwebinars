@@ -48,7 +48,8 @@ namespace CUWebinars.WebUi.Tests2.Pages
 
         public virtual void EnterDetail(string detail, string element)
         {
-            SeleniumTestDriver.TypeText(FinderStrategy.Id, element, detail);
+            var textBox = SeleniumTestDriver.FindById(element, ExpectedCondition.ElementIsVisible, 5);
+            SeleniumTestDriver.TypeText(textBox, detail);
         }
 
     }

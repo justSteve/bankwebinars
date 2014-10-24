@@ -105,7 +105,6 @@ module OrderRegistration {
             var $form = $("#BuildPrice");
 
             oEvent.preventDefault();
-            $("#ProgressDialogBS").modal('show');
             $.ajax({
                 url: '/cart/CheckoutDisplayRowPrice/' + orderRowId,
                 type: "POST",
@@ -117,7 +116,6 @@ module OrderRegistration {
 
                 },
                 complete: function() {
-                    //$("#ProgressDialogBS").modal('hide');
                 }
             });
         }

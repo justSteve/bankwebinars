@@ -105,7 +105,7 @@ namespace CUWebinars.WebUi.Tests.Page
         public void ClickRegisterLinkOnLoginView()
         {
             var newAccountWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(WaitTimeout));
-            var element = newAccountWait.Until(ExpectedConditions.ElementExists(By.XPath("/html/body/div/div/div/form/fieldset/div[3]/input")));
+            var element = newAccountWait.Until(ExpectedConditions.ElementExists(By.Id("registerLinkButton")));
 
             element.Click();
         }

@@ -102,7 +102,7 @@ $(function () {
         // absent a pre-existing discount code, the cart must suppy a form field to permit an
         // ajax call to the server to validate anything entered by the user on the Confirmation Tab.
         //
-        cartStateManager.BuildPreRegPrice(oEvent, cartStateManager.getOrderRowId());
+        //cartStateManager.BuildPreRegPrice(oEvent, cartStateManager.getOrderRowId());
         cartStateManager.CheckIfAddLocShouldHide(oEvent.currentTarget.value);
     });
 

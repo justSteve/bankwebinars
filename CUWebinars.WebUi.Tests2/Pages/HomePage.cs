@@ -77,14 +77,9 @@ namespace CUWebinars.WebUi.Tests2.Pages
             ClickSubmit();
         }
 
-        public void ClickSubmit()
+        public bool ClickSubmit()
         {
-            IWebElement webElement;
-
-            do
-            {
-                webElement = SeleniumTestDriver.FindByIdClick(TheSubmitButton);
-            } while (webElement == null);
+            return SeleniumTestDriver.FindByIdClickWithRetries(TheSubmitButton);
         }
 
         public void EnterPasswordWhereUserExists(string sitTestPassword)
@@ -95,13 +90,20 @@ namespace CUWebinars.WebUi.Tests2.Pages
 
         public void ClickResetPasswordButton(string resetPasswordButton)
         {
-            var link = SeleniumTestDriver.FindById(resetPasswordButton, ExpectedCondition.ElementIsVisible, 5);
-            link.Click();
+            SeleniumTestDriver.FindByIdClickWithRetries(TheSubmitButton, ExpectedCondition.ElementIsVisible, 5);
         }
 
         public void TabAwayFromInput(string id)
         {
             SeleniumTestDriver.FindById(id).SendKeys(Keys.Tab);
+        }
+
+        public void WaitForLabel(string message)
+        {
+            WebDriverWait waitForWords = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(10));
+
+            var feedbackLabel = waitForWords.Until((w) => SeleniumTestDriver.FindByCssSelector("#labelEmail > span").Text.Contains(message) ? SeleniumTestDriver.FindByCssSelector("#labelEmail > span") : null);
+
         }
     }
 }

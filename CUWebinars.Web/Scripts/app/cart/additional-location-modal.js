@@ -27,8 +27,10 @@ $(function () {
 
     //console.log($('#WebUser_idUser').val().toString());
     numberOfAdditionalLocations = $('#AdditionalLocationEmailWrapper input[type="text"]').length;
-    if (numberOfAdditionalLocations < 1)
+    if (numberOfAdditionalLocations < 1) {
+        $('#SumbitAdditionalLocationsForm').off('click');
         $('#SumbitAdditionalLocationsForm').remove();
+    }
 
     wireUpHandlers();
 });
@@ -47,56 +49,72 @@ function wireUpHandlers() {
                 text: 'Submit',
                 'class': 'btn btn-primary',
             }));
+
+            $('#SumbitAdditionalLocationsForm').on('click', function () {
+                var emailAddresses = Object();
+                var additionalLocations
+
+                var emailNodes = additionalLocationEmailWrapper.find('input[type=email]');
+
+                $.each(emailNodes, function (idx, input) {
+                    emailAddresses[idx] = $(input).val();
+                });
+
+
+            });
         }
 
-        additionalLocationEmailWrapper.append('<span id="' + locationsSpanPrefix + numberOfAdditionalLocations + '"><input id="AdditionalLocationEmail_' + numberOfAdditionalLocations + '" name="AddAdditionalLocationViewModel.Emails[' + numberOfAdditionalLocations + ']" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + numberOfAdditionalLocations + '-AdditionLocationEmail-delete"></i></span> <br id="' + numberOfAdditionalLocations + breakSuffix + '">');
+        additionalLocationEmailWrapper.append('<span id="' + locationsSpanPrefix + numberOfAdditionalLocations + '"><input id="AdditionalLocationEmail_' + numberOfAdditionalLocations + '" name="AdditionalLocations[' + numberOfAdditionalLocations + '].Email" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + numberOfAdditionalLocations + '-AdditionLocationEmail-delete"></i></span> <br id="' + numberOfAdditionalLocations + breakSuffix + '">');
         additionalLocationEmailWrapper.find('i#' + numberOfAdditionalLocations + '-AdditionLocationEmail-delete').on('click', deleteItem);
+        $('#AdditionalLocationEmail_' + numberOfAdditionalLocations).focus();
         numberOfAdditionalLocations++;
 
     });
 
     additionalLocationEmailWrapper.find('i').on('click', deleteItem);
 
-    $('#RegisterAdditionalLocationsForm').on('submit', function (e) {
-        //console.log('hi dave');
-        debugger;
-        e.preventDefault();
+    /* doesn't seem to get used*/
 
-        var mode = $('#Mode').val();
-        var stageOfCheckout = $('#Stage_of_checkout').val();
-        var orderId = $('[name="CheckoutOptionsViewModel.Order.idOrder"]');
-        var webUserId = $('[name="WebUser.idUser"]') || $('#WebUser_idUser').val();
-        var webinarId = $('[name="Webinar.idWebinar"]');
+    //$('#RegisterAdditionalLocationsForm').on('submit', function (e) {
+    //    //console.log('hi dave');
+    //    debugger;
+    //    e.preventDefault();
 
-        var emailAddresses = Object();
+    //    var mode = $('#Mode').val();
+    //    var stageOfCheckout = $('#Stage_of_checkout').val();
+    //    var orderId = $('[name="CheckoutOptionsViewModel.Order.idOrder"]');
+    //    var webUserId = $('[name="WebUser.idUser"]') || $('#WebUser_idUser').val();
+    //    var webinarId = $('[name="Webinar.idWebinar"]');
 
-        var emailNodes = newLocationsContainer.find('input[type=text]');
+    //    var emailAddresses = Object();
 
-        $.each(emailNodes, function (idx, input) {
-            emailAddresses[idx] = $(input).val();
-        });
+    //    var emailNodes = newLocationsContainer.find('input[type=text]');
 
-        var payload = {
-            'CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationViewModel.AddAdditionalLocationViewModel.Emails': emailAddresses,
-            'CheckoutOptionsViewModel.Order.idOrder': orderId.val(),
-            'WebUser.idUser': webUserId.val(),
-            'Webinar.idWebinar': webinarId.val(),
-            mode: 0,
-            stageOfCheckout: stageOfCheckout,
-            sixMonthPaidConnectionsCount: '',
-            twelveMonthPaidConnectionsCount: ''
-        };
+    //    $.each(emailNodes, function (idx, input) {
+    //        emailAddresses[idx] = $(input).val();
+    //    });
 
-        $.ajax({
-            url: '/Cart/Signup2',
-            type: 'POST',
-            data: payload,
-            dataType: 'json',
-            contentType: 'application/x-www-form-urlencoded; charset=UTF-8'
-        }).done(function (msg) {
-            var bla = msg;
-        });
+    //    var payload = {
+    //        'CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationViewModel.AddAdditionalLocationViewModel.Emails': emailAddresses,
+    //        'CheckoutOptionsViewModel.Order.idOrder': orderId.val(),
+    //        'WebUser.idUser': webUserId.val(),
+    //        'Webinar.idWebinar': webinarId.val(),
+    //        mode: 0,
+    //        stageOfCheckout: stageOfCheckout,
+    //        sixMonthPaidConnectionsCount: '',
+    //        twelveMonthPaidConnectionsCount: ''
+    //    };
 
-        return false;
-    });
+    //    $.ajax({
+    //        url: '/Cart/Signup2',
+    //        type: 'POST',
+    //        data: payload,
+    //        dataType: 'json',
+    //        contentType: 'application/x-www-form-urlencoded; charset=UTF-8'
+    //    }).done(function (msg) {
+    //        var bla = msg;
+    //    });
+
+    //    return false;
+    //});
 };

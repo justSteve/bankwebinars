@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 using CUWebinars.Business.AccountService;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Helpers;
@@ -247,6 +248,9 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (ReferenceEquals(orderRow,null))
                 orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
 
+            if (ReferenceEquals(orderRow, null)) // if it STILL equals null
+
+
             if (orderRow.RowStatus != OrderRowStatus.Active)
                 return null;
 
@@ -410,6 +414,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public Order CreateOrder(CheckoutOptionsViewModel formModel, string stageOfCheckout)
         {
+            _stateService.SetValue(DomainConstants.CheckoutInProcess, true);
+
             var webinar = _webinarManagementService.GetWebinar(formModel.idWebinar);
             var newOrderRow = CreateOrderRow(webinar, formModel.RegistrationTypeId);
 

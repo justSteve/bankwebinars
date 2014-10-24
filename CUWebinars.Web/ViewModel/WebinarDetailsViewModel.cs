@@ -31,6 +31,5 @@ namespace CUWebinars.Web.ViewModel
 
         public Webinar Webinar { get; set; }
         public WebUser WebUser { get; set; }
-        public string WhichStep { get; set; }
     }
 }
