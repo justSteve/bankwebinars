@@ -1,79 +1,13 @@
-﻿var additionalLocationEmailWrapper,
-    breakSuffix = '-break',
-    deleteItem,
-    locationsSpanPrefix = 'LocationSpan-',
-    numberOfAdditionalLocations;
+﻿
+
+//$(function () {
+    
+//});
 
 
-deleteItem = function (event) {
-    numberOfAdditionalLocations--;
-    var trashClicked = event.currentTarget.id;
-    var idx = trashClicked.substring(0, 1);
-    var spanToRemove = locationsSpanPrefix + idx;
-
-    $('#' + spanToRemove).hide(500, function () {
-        $(this).remove();
-        $('#' + idx + breakSuffix).remove();
-    });
-
-    if (numberOfAdditionalLocations < 1) {
-        $('#SumbitAdditionalLocationsForm').hide(300, function () {
-            $(this).remove();
-        });
-    }
-};
-
-$(function () {
-
-    //console.log($('#WebUser_idUser').val().toString());
-    numberOfAdditionalLocations = $('#AdditionalLocationEmailWrapper input[type="text"]').length;
-    if (numberOfAdditionalLocations < 1) {
-        $('#SumbitAdditionalLocationsForm').off('click');
-        $('#SumbitAdditionalLocationsForm').remove();
-    }
-
-    wireUpHandlers();
-});
 
 
-function wireUpHandlers() {
-
-    additionalLocationEmailWrapper = $('#AdditionalLocationEmailWrapper');
-
-    $('#AddInputsButton').on('click', function () {
-
-        if (numberOfAdditionalLocations == 0) {
-            $('#AdditionalLocationEmailWrapper').after($('<button>',
-            {
-                id: 'SumbitAdditionalLocationsForm',
-                text: 'Submit',
-                'class': 'btn btn-primary',
-            }));
-
-            $('#SumbitAdditionalLocationsForm').on('click', function () {
-                var emailAddresses = Object();
-                var additionalLocations
-
-                var emailNodes = additionalLocationEmailWrapper.find('input[type=email]');
-
-                $.each(emailNodes, function (idx, input) {
-                    emailAddresses[idx] = $(input).val();
-                });
-
-
-            });
-        }
-
-        additionalLocationEmailWrapper.append('<span id="' + locationsSpanPrefix + numberOfAdditionalLocations + '"><input id="AdditionalLocationEmail_' + numberOfAdditionalLocations + '" name="AdditionalLocations[' + numberOfAdditionalLocations + '].Email" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + numberOfAdditionalLocations + '-AdditionLocationEmail-delete"></i></span> <br id="' + numberOfAdditionalLocations + breakSuffix + '">');
-        additionalLocationEmailWrapper.find('i#' + numberOfAdditionalLocations + '-AdditionLocationEmail-delete').on('click', deleteItem);
-        $('#AdditionalLocationEmail_' + numberOfAdditionalLocations).focus();
-        numberOfAdditionalLocations++;
-
-    });
-
-    additionalLocationEmailWrapper.find('i').on('click', deleteItem);
-
-    /* doesn't seem to get used*/
+/* doesn't seem to get used. Old. Marked for deletion. */
 
     //$('#RegisterAdditionalLocationsForm').on('submit', function (e) {
     //    //console.log('hi dave');
@@ -117,4 +51,4 @@ function wireUpHandlers() {
 
     //    return false;
     //});
-};
+//};

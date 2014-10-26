@@ -2,6 +2,7 @@
 using System.Linq;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
+using CUWebinars.Business.Tests.Config;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CUWebinars.Business.Tests.IntegrationTests
@@ -9,28 +10,17 @@ namespace CUWebinars.Business.Tests.IntegrationTests
     [TestClass]
     public class OrderRepositoryIntegrationTests
     {
-        [TestInitialize]
-        public void SetUp()
-        {
-            var databaseSetup = new DatabaseSetup {ConnectionString = Globals.LocalDbConnectionString};
-            databaseSetup.InstallDatabase(Constants.CreateDbDefault);
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            var databaseSetup = new DatabaseSetup { ConnectionString = Globals.LocalDbConnectionString };
-            databaseSetup.UninstallDatabase(Constants.DbName);
-        }
-
-
         [TestMethod]
         [TestCategory(TestCategories.OrderRepositoryIntegration )]
         public void CreateOrderCreatesNewOrder()
         {
+            var databaseResources = new DatabaseResources();
+            databaseResources.PrimeMembershipTestsDatabases();
+            databaseResources.CreateCuWebinarsDb();
+
             //  Arrange
             var ctx = new TTSWebinarsContext(Constants.LocalDbConnectionStringName);
-            var webUser = ctx.WebUsers.First(w => w.idUser == 26368);
+            var webUser = ctx.WebUsers.First(w => w.idUser == 10563);
             var webinar = ctx.Webinars.First(w => w.idWebinar == 404); 
             var affiliate = ctx.Affiliates.First(w => w.idUserAff == 19);
 

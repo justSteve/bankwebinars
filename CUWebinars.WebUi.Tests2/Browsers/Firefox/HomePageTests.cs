@@ -132,7 +132,36 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             home.ClickSubmit();
 
             Assert.IsTrue(true);
-            //Assert.IsTrue(home.EmailNotValidMessageIsPresent);
+            Assert.IsTrue(home.EmailNotValidMessageIsPresent);
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Gui)]
+        [TestCategory(TestCategories.Firefox)]
+        public void ClickRegisterUserLinkWithEmailOfExistingDomainOfInstitution()
+        {
+            var firstName = WebUiTestHelpers.RandomStringFast(8);
+            var lastName = WebUiTestHelpers.RandomStringFast(5);
+            var email = string.Concat(firstName, "_", lastName, TestConstants.SitTestEmailAddressDomain);
+
+            var home = NavigateToHomeIndexPage();
+            home.ClickLoginLink();
+            home.ClickRegisterLinkOnLoginView();
+            home.EnterDetail(email, TestConstants.RegisterFieldsEmail);
+            home.ClickSubmit();
+            home.ClickYesUseAddressButton();
+            home.EnterDetail(TestConstants.SitTestPasswordSameDomainAddress, TestConstants.RegisterFieldsPassword);
+            home.EnterDetail(TestConstants.SitTestPasswordSameDomainAddress, TestConstants.RegisterFieldsConfirmPassword);
+            home.ClickSubmit();
+            home.EnterDetail(string.Concat(firstName, " ", lastName), TestConstants.FullNameInput);
+            home.EnterDetail(TestConstants.Title, TestConstants.RegisterFieldsTitle);
+            home.EnterDetail(TestConstants.SitTestPhone, TestConstants.RegisterFieldsPhone);
+            home.EnterDetail(TestConstants.SitTestAddress, TestConstants.RegisterFieldsStreetAddress);
+            home.ClickSubmit();
+
+            Assert.IsTrue(home.ManageLoggedInUserLinkIsPresentOnPage);
+
+            home.LogOff();
         }
 
         public HomePage NavigateToHomeIndexPage()

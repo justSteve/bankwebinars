@@ -7,13 +7,15 @@
         <div id="AdditionalLocationContainer" class="well" style="margin-right: 50px;margin-left: 50px;">
             <h5>Additional Locations</h5>
             <div>
-                <blockquote style="margin-bottom: 0px;">Want your branches to participate? Facilities within your organization will be able to participate without the travel costs of coming to one location.</blockquote><div style="padding-left: 50px;">
+                <blockquote style="margin-bottom: 0px;">Want your branches to participate? Facilities within your organization will be able to participate without the travel costs of coming to one location.</blockquote>
+                <div style="padding-left: 50px;">
                     <span>
                         <b>Each additional location adds @Model.Price.ToString("c").Replace(".00", "") to your registration.</b>
                         <br /><a href="#AdditionalLocationsModal" role="button" class="btn" data-toggle="modal" id="AddLocationsButton">Add?</a>
                     </span>
-                    @*<div id="collectAdditionalLocations"> </div>*@
+                    <div id="collectAdditionalLocations"> </div> @*This is where the inputs for each Additional Location will be dynamically created by the Modal dialog.*@
                 </div>
+
             </div>
             @{ Html.Partial("Partials/_AdditionalLocationsModal"); }
             @if (Model.Webinar.Title.Contains("Compliance Perspectives"))
@@ -54,7 +56,7 @@
 
 @Scripts.Render("~/bundles/AdditionalLocation")
 <!-- Modal -->
-<div id="AdditionalLocationsModalDialog" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="additionalLocationsModalDialog" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-body">
         @* modal content goes here *@
     </div><!-- /.modal-content -->

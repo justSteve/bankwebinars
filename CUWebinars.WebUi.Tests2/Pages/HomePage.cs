@@ -52,13 +52,28 @@ namespace CUWebinars.WebUi.Tests2.Pages
         {
             get
             {
-                WebDriverWait wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(15));
+                var wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(15));
                 
                 /*This may look really inefficient (that is, the repeated searches for the element in the retries) but it is necessary to avoid a Selenium StaleElementException*/
                 var feedbackLabel = wait.Until((w) => SeleniumTestDriver.FindByCssSelector("#labelEmail > span").Text.Contains("Reset Instructions sent") ? SeleniumTestDriver.FindByCssSelector("#labelEmail > span") : null);
 
                 return feedbackLabel.Text.Contains("Reset Instructions sent"); 
             }
+        }
+
+        public bool EmailNotValidMessageIsPresent
+        {
+            get
+            {
+                var msgSpan = SeleniumTestDriver.FindByClassName("field-validation-error");
+                var msg = SeleniumTestDriver.FindByTagNameFromWebElement(msgSpan, "span", 5);
+                return msg.Text.Equals("The Email field is not a valid e-mail address.", StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
+        public bool ManageLoggedInUserLinkIsPresentOnPage 
+        {
+            get { return SeleniumTestDriver.FindById("btnLogin", ExpectedCondition.ElementIsVisible, 5).Displayed; }
         }
 
         public virtual void LogOff()
@@ -104,6 +119,11 @@ namespace CUWebinars.WebUi.Tests2.Pages
 
             var feedbackLabel = waitForWords.Until((w) => SeleniumTestDriver.FindByCssSelector("#labelEmail > span").Text.Contains(message) ? SeleniumTestDriver.FindByCssSelector("#labelEmail > span") : null);
 
+        }
+
+        public void ClickYesUseAddressButton()
+        {
+            SeleniumTestDriver.FindByNameClick("YesUseAddress", ExpectedCondition.ElementIsVisible, 5);
         }
     }
 }

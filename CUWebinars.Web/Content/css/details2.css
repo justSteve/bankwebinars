@@ -42,3 +42,7 @@ blockquote {
     line-height: 100%;
     font-size: small;
 }
+
+#collectAdditionalLocations {
+    margin-top: 10px;
+}
