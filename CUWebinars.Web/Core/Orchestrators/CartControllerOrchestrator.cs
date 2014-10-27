@@ -111,7 +111,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     var checkoutConfirmViewModel = new CheckoutConfirmViewModel
                     {
-                        AdditionalLocationCaption = string.Empty,
+                        AdditionalLocationCaption = BuildAdditionalLocationsCaption(orderRow),
                         AdminComments = orderRow.Order.AdminComments,
                         AffiliateComments = orderRow.Order.AffiliateComments,
                         CCUserDetails =
@@ -163,6 +163,18 @@ namespace CUWebinars.Web.Core.Orchestrators
                 }
             }
             return null;
+        }
+
+        private string BuildAdditionalLocationsCaption(OrderRow orderRow)
+        {
+            var caption = new StringBuilder(20);
+
+            foreach (var additionalLocation in orderRow.AdditionalLocation)
+            {
+                caption.AppendFormat("{0},", additionalLocation.Email);
+            }
+
+            return caption.ToString().Substring(0, caption.Length - 1);
         }
 
         public CheckoutOptionsViewModel BuildCheckoutOptionsViewModel(

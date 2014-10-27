@@ -720,6 +720,7 @@ namespace CUWebinars.Web.Controllers
 
             if (_stateService.HasValue(DomainConstants.CheckoutInProcess))
             {
+                //  That will be set in Session in the CreateOrder Action of the CartController
                 model.CheckoutInProcess = true; // if it exists in session, it will always be true (by usage convention). Don't ever put false in there.
             }
         }
