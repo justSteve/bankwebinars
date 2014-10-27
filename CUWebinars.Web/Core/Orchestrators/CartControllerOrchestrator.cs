@@ -429,7 +429,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             _stateService.SetValue(DomainConstants.CheckoutInProcess, true);
 
             var webinar = _webinarManagementService.GetWebinar(formModel.idWebinar);
-            var newOrderRow = CreateOrderRow(webinar, formModel.RegistrationTypeId);
+            var newOrderRow = CreateOrderRow(webinar, formModel.AdditionalLocations.ToList(), formModel.RegistrationTypeId);
 
             var currentAffiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate");
             _orderManagementService.AttachAffiliate(currentAffiliate);
@@ -491,12 +491,12 @@ namespace CUWebinars.Web.Core.Orchestrators
             throw new FormatException("Value in AppSetting in Web.config must be a valid integer.");
         }
 
-        private OrderRow CreateOrderRow(Webinar webinar, int registrationType)
+        private OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocations, int registrationType)
         {
             //var currentOrder = _stateService.GetValue<Order>("CurrentOrder");
             // let's see if we can avoid the need for Session Var
 
-            var orderRow = _orderManagementService.CreateOrderRow(webinar, null, registrationType);
+            var orderRow = _orderManagementService.CreateOrderRow(webinar, additionalLocations, registrationType);
 
             return orderRow;       
         }
