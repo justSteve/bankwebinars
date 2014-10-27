@@ -1,4 +1,5 @@
-﻿using KesselRun.SeleniumCore.Enums;
+﻿using System.Threading;
+using KesselRun.SeleniumCore.Enums;
 using KesselRun.SeleniumCore.TestDrivers.Contracts;
 using OpenQA.Selenium;
 
@@ -48,9 +49,15 @@ namespace CUWebinars.WebUi.Tests2.Pages
 
         public virtual void EnterDetail(string detail, string element)
         {
-            var textBox = SeleniumTestDriver.FindById(element, ExpectedCondition.ElementIsVisible, 5);
+            var textBox = SeleniumTestDriver.FindById(element, ExpectedCondition.ElementIsVisible, 10);
+            Wait(); // I don't like these waits, but the moving panels warrant them. O/w, reliability issues.
             SeleniumTestDriver.TypeText(textBox, detail);
+            Wait();
         }
 
+        public virtual void Wait(int numberOfMilliSeconds = 250)
+        {
+            Thread.Sleep(numberOfMilliSeconds);
+        }
     }
 }

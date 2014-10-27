@@ -194,7 +194,7 @@ function wireUpHandlersForModal() {
 
         });
 
-        $('#closeButton').on('click', function(e) {
+        $('#closeButton, #additionalLocationsModalDialog > div > div.modal-header > button').on('click', function (e) {
             if (locationsBakForCancel) {
 
                 $.each(locationsBakForCancel.find('i'), function (idx, i) {

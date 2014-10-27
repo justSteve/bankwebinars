@@ -1,9 +1,7 @@
-﻿using System.Diagnostics;
-using System.Threading;
-using CUWebinars.WebUi.Tests2.Infrastructure;
+﻿using CUWebinars.WebUi.Tests2.Infrastructure;
 using CUWebinars.WebUi.Tests2.Pages;
-using KesselRun.SeleniumCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Diagnostics;
 
 namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 {
@@ -63,9 +61,10 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             home.ClickLoginLink();
             home.ClickRegisterLinkOnLoginView();
             home.EnterEmailAddressAndClickSubmit(TestConstants.SitTestEmailAddress);
-            home.ClickResetPasswordButton(EdgeCaseResetPasswordButton);
-
-            Assert.IsTrue(home.PasswordResetInstructionsSentLabelPresent);
+            if(home.ClickResetPasswordButton(EdgeCaseResetPasswordButton))
+                Assert.IsTrue(home.PasswordResetInstructionsSentLabelPresent);
+            else
+                Assert.Fail();
         }
 
         [TestMethod]
@@ -115,6 +114,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             }
 
         }
+        
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
         [TestCategory(TestCategories.Firefox)]
@@ -162,6 +162,179 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             Assert.IsTrue(home.ManageLoggedInUserLinkIsPresentOnPage);
 
             home.LogOff();
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Gui)]
+        [TestCategory(TestCategories.Firefox)]
+        public void ClickRegisterUserLinkWithEmailOfExistingDomainOfInstitutionButNotWantToUseItsAddress()
+        {
+            var firstName = WebUiTestHelpers.RandomStringFast(8);
+            var lastName = WebUiTestHelpers.RandomStringFast(5);
+            var email = string.Concat(firstName, "_", lastName, TestConstants.SitTestEmailAddressDomain);
+            var institutionNameSansSuffix = WebUiTestHelpers.RandomStringFast(5);
+            var institutionName = string.Concat(institutionNameSansSuffix, " ", TestConstants.SitTestInstitutionSuffix);
+
+
+            var home = NavigateToHomeIndexPage();
+            home.ClickLoginLink();
+            home.ClickRegisterLinkOnLoginView();
+            home.EnterDetail(email, TestConstants.RegisterFieldsEmail);
+            home.ClickSubmit();
+
+            home.ClickNoEnterDiffAddressButton();
+            home.ClickSubmit();
+
+            home.EnterDetail(TestConstants.SitTestPasswordSameDomainAddress, TestConstants.RegisterFieldsPassword);
+            home.EnterDetail(TestConstants.SitTestPasswordSameDomainAddress, TestConstants.RegisterFieldsConfirmPassword);
+            home.ClickSubmit();
+
+            home.EnterDetail(TestConstants.SitTestZipCode, TestConstants.GetZipInput);
+            home.ClickSubmit();
+
+            home.EnterDetail(TestConstants.SitTestFirstName, TestConstants.FullNameInput);
+            home.TabAwayFromInput(TestConstants.FullNameInput);
+            home.EnterDetail(TestConstants.SitTestLastName, TestConstants.RegisterFieldsLastName);
+            home.EnterDetail(TestConstants.Title, TestConstants.RegisterFieldsTitle);
+            home.EnterDetail(institutionName, TestConstants.RegisterFieldsInstitution);
+            home.EnterDetail(TestConstants.SitTestPhone, TestConstants.RegisterFieldsPhone);
+            home.EnterDetail(TestConstants.SitTestAltAddress, TestConstants.RegisterFieldsStreetAddress);
+
+            home.ClickSubmit();
+
+            Assert.IsTrue(home.LogoutLinkIsPresentOnPage);
+
+            home.LogOff();
+
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Gui)]
+        [TestCategory(TestCategories.Firefox)]
+        public void ClickRegisterUserLinkWithEmailOfExistingDomainOfInstitutionButActuallyNotTheUsersInstitution()
+        {
+            var firstName = WebUiTestHelpers.RandomStringFast(8);
+            var lastName = WebUiTestHelpers.RandomStringFast(5);
+            var email = string.Concat(firstName, "_", lastName, TestConstants.SitTestEmailAddressDomain);
+            var institutionNameSansSuffix = WebUiTestHelpers.RandomStringFast(5);
+            var institutionName = string.Concat(institutionNameSansSuffix, " ", TestConstants.SitTestInstitutionSuffix);
+
+
+            var home = NavigateToHomeIndexPage();
+            home.ClickLoginLink();
+            home.ClickRegisterLinkOnLoginView();
+            home.EnterDetail(email, TestConstants.RegisterFieldsEmail);
+            home.ClickSubmit();
+
+            home.ClickNotInstitutionButton();
+            bool proceedMessageDisplayed = home.ProceedOrEnterDifferentEmailMessagePresent;
+            home.ClickSubmit();
+
+            home.EnterDetail(TestConstants.SitTestPasswordSameDomainAddress, TestConstants.RegisterFieldsPassword);
+            home.EnterDetail(TestConstants.SitTestPasswordSameDomainAddress, TestConstants.RegisterFieldsConfirmPassword);
+            home.ClickSubmit();
+
+            home.EnterDetail(TestConstants.SitTestZipCode, TestConstants.GetZipInput);
+            home.ClickSubmit();
+
+            home.EnterDetail(TestConstants.SitTestFirstName, TestConstants.FullNameInput);
+            home.TabAwayFromInput(TestConstants.FullNameInput);
+            home.EnterDetail(TestConstants.SitTestLastName, TestConstants.RegisterFieldsLastName);
+            home.EnterDetail(TestConstants.Title, TestConstants.RegisterFieldsTitle);
+            home.EnterDetail(institutionName, TestConstants.RegisterFieldsInstitution);
+            home.EnterDetail(TestConstants.SitTestPhone, TestConstants.RegisterFieldsPhone);
+            home.EnterDetail(TestConstants.SitTestAltAddress, TestConstants.RegisterFieldsStreetAddress);
+
+            home.ClickSubmit();
+
+            Assert.IsTrue(home.LogoutLinkIsPresentOnPage);
+            Assert.IsTrue(proceedMessageDisplayed);
+
+            home.LogOff();
+
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Gui)]
+        [TestCategory(TestCategories.Firefox)]
+        public void ResetPassword()
+        {
+            var firstName = WebUiTestHelpers.RandomStringFast(8);
+            var lastName = WebUiTestHelpers.RandomStringFast(5);
+            var email = string.Concat(firstName, "_", lastName, "@", WebUiTestHelpers.RandomStringFast(5), DotComDomain);
+            var institutionNameSansSuffix = WebUiTestHelpers.RandomStringFast(5);
+            var institutionName = string.Concat(institutionNameSansSuffix, " ", TestConstants.SitTestInstitutionSuffix);
+
+            var home = NavigateToHomeIndexPage();
+            home.ClickLoginLink();
+            home.ClickRegisterLinkOnLoginView();
+            home.EnterDetail(email, TestConstants.RegisterFieldsEmail);
+            home.ClickSubmit();
+
+            home.EnterDetail(TestConstants.SitTestPassword, TestConstants.RegisterFieldsPassword);
+            home.EnterDetail(TestConstants.SitTestPassword, TestConstants.RegisterFieldsConfirmPassword);
+            home.ClickSubmit();
+
+            home.EnterDetail(TestConstants.SitTestZipCode, TestConstants.GetZipInput);
+            home.ClickSubmit();
+
+            home.EnterDetail(TestConstants.SitTestFirstName, TestConstants.FullNameInput);
+            home.TabAwayFromInput(TestConstants.FullNameInput);
+            home.EnterDetail(TestConstants.SitTestLastName, TestConstants.RegisterFieldsLastName);
+            home.EnterDetail(TestConstants.Title, TestConstants.RegisterFieldsTitle);
+            home.EnterDetail(institutionName, TestConstants.RegisterFieldsInstitution);
+            home.EnterDetail(TestConstants.SitTestPhone, TestConstants.RegisterFieldsPhone);
+            home.EnterDetail(TestConstants.SitTestAltAddress, TestConstants.RegisterFieldsStreetAddress);
+
+            home.ClickSubmit();
+
+            home.LogOff();
+            home.ClickLoginLink();
+            home.ClickResetPasswordLink();
+            home.EnterDetail(email, "ResetPassEmail");
+            home.ClickResetPasswordButton(NormalResetPasswordButton);
+
+            Assert.IsTrue(home.PasswordResetInstructionsInCrunchingLabelPresent);
+
+            home.Close();
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Gui)]
+        [TestCategory(TestCategories.Firefox)]
+        public void NavigateToWebinarDetailsPage()
+        {
+            var home = NavigateToHomeIndexPage();
+
+            var newPageDisplayed = home.ClickUpcomingEventsMenuItem();
+
+            Assert.IsTrue(newPageDisplayed);
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Gui)]
+        [TestCategory(TestCategories.Firefox)]
+        public void NavigateToWebinarDetailsPageListedByTopic()
+        {
+            var home = NavigateToHomeIndexPage();
+
+            var newPageDisplayed = home.ClickTopicsMenuItem();
+
+            Assert.IsTrue(newPageDisplayed);
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Gui)]
+        [TestCategory(TestCategories.Firefox)]
+        public void NavigateToWebinarDetailsPageListedByTopics()
+        {
+            var home = NavigateToHomeIndexPage();
+
+            var newPageDisplayed = home.ClickTopicsMenuItem();
+
+            home.ClickMoreButtonOnTopicsPage();
+
+            Assert.IsTrue(home.WebinarTitleIsDisplayedOnWebinarDetailsPage);
         }
 
         public HomePage NavigateToHomeIndexPage()
