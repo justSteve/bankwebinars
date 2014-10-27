@@ -1684,7 +1684,6 @@
     </Content>
     <Content Include="Membership\Email\EmailTemplates\_BaseTemplate.html" />
     <Content Include="Scripts\app\cart\add-additional-locations.js" />
-    <Content Include="Scripts\app\cart\additional-location-modal.js" />
     <Content Include="Scripts\app\cart\additional-locations.js" />
     <Content Include="Scripts\app\cart\create-order.js" />
     <Content Include="Scripts\app\constants.js" />

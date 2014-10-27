@@ -118,14 +118,16 @@ function primeDomVariables() {
 }
 
 function wireUpHandlersForModal() {
-    var locationsCloned;
+    var locationsCloned, locationsBakForCancel;
     var collectAdditionalLocations = $('#collectAdditionalLocations');
     var locations = collectAdditionalLocations.children();
-    collectAdditionalLocations.empty();
 
     if (locations.length > 0) {
         locationsCloned = locations.clone();
+        locationsBakForCancel = locations.clone();
     }
+
+    collectAdditionalLocations.empty();
 
     var emailInputsAdded = $.Deferred(function() {
         additionalLocationEmailWrapper = $('#AdditionalLocationEmailWrapper');
@@ -136,12 +138,18 @@ function wireUpHandlersForModal() {
     $.when(emailInputsAdded.resolve()).then(function () {
         numberOfAdditionalLocations = $('#AdditionalLocationEmailWrapper input[type="email"]').length;
 
-        
-
         if (numberOfAdditionalLocations < 1) {
             //$('#sumbitAdditionalLocationsButton').off('click');
-            $('#sumbitAdditionalLocationsButton').remove();
+            
         } else {
+
+            $('#AdditionalLocationEmailWrapper').after($('<button>',
+                    {
+                        id: 'sumbitAdditionalLocationsButton',
+                        text: 'Submit',
+                        'class': 'btn btn-primary',
+                    }));
+
             $('#sumbitAdditionalLocationsButton').on('click', function () {
 
                 collectAdditionalLocations.empty();
@@ -187,7 +195,14 @@ function wireUpHandlersForModal() {
         });
 
         $('#closeButton').on('click', function(e) {
-            //  Need to know whether this is a cancel button or just a button that closes the dialog
+            if (locationsBakForCancel) {
+
+                $.each(locationsBakForCancel.find('i'), function (idx, i) {
+                    $(i).on('click', deleteItem);
+                });
+                collectAdditionalLocations.append(locationsBakForCancel);
+            }
+
         });
     });
 }
