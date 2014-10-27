@@ -9,6 +9,7 @@ namespace CUWebinars.Business.Tests
         private static string _tenant;
         private static string _localDbConnectionString;
         private static string _membershipRebootConnectionString;
+        private static string _ttsDatabaseLocal;
 
 
         static Globals()
@@ -16,6 +17,7 @@ namespace CUWebinars.Business.Tests
             _tenant = ConfigurationManager.AppSettings["Tenant"];
             _localDbConnectionString = ConfigurationManager.ConnectionStrings[Constants.LocalDbConnectionStringName].ConnectionString;
             _membershipRebootConnectionString = ConfigurationManager.ConnectionStrings[Constants.MembershipRebootConnectionStringName].ConnectionString;
+            _ttsDatabaseLocal= ConfigurationManager.ConnectionStrings[Constants.TtsDatabaseLocalName].ConnectionString;
         }
 
         public static string LocalDbConnectionString
@@ -31,6 +33,11 @@ namespace CUWebinars.Business.Tests
         public static string Tenant
         {
             get { return _tenant; }
+        }
+
+        public static string TtsDatabaseLocal
+        {
+            get { return _ttsDatabaseLocal; }
         }
     }
 }

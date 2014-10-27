@@ -178,26 +178,10 @@
     <Compile Include="UserAccountServiceUnHappyPathFake.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Scripts\TtsDatabase.sql" />
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Db\CUWebinars.ldf">
-      <DependentUpon>CUWebinars.mdf</DependentUpon>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Db\CUWebinarsMemship.ldf">
-      <DependentUpon>CUWebinarsMemship.mdf</DependentUpon>
-    </Content>
-    <EmbeddedResource Include="Db\CUWebinars.mdf" />
-    <EmbeddedResource Include="Db\CUWebinarsMemship.mdf" />
-    <EmbeddedResource Include="Db\MembershipReboot.mdf" />
-    <Content Include="Db\MembershipReboot_log.ldf">
-      <DependentUpon>MembershipReboot.mdf</DependentUpon>
-    </Content>
-    <Content Include="Db\TTSDatabase.ldf">
-      <DependentUpon>TTSDatabase.mdf</DependentUpon>
-    </Content>
-    <EmbeddedResource Include="Db\TTSDatabase.mdf" />
     <Content Include="Scripts\MemReboot.sql" />
     <Content Include="Notification\Templates\OrderSubmitted.cshtml" />
     <None Include="packages.config" />

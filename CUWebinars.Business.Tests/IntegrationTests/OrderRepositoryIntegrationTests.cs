@@ -10,17 +10,28 @@ namespace CUWebinars.Business.Tests.IntegrationTests
     [TestClass]
     public class OrderRepositoryIntegrationTests
     {
+
+        [TestInitialize]
+        public void SetUp()
+        {
+            var databaseSetup = new DatabaseSetup { ConnectionString = Globals.LocalDbConnectionString};
+            databaseSetup.InstallDatabase(Constants.CreateDbDefault);
+        }
+
+        [TestCleanup]
+        public void TearDown()
+        {
+            var databaseSetup = new DatabaseSetup { ConnectionString = Globals.LocalDbConnectionString };
+            databaseSetup.UninstallDatabase(Constants.CUWebinarsDb);
+        }
+
         [TestMethod]
         [TestCategory(TestCategories.OrderRepositoryIntegration )]
         public void CreateOrderCreatesNewOrder()
         {
-            var databaseResources = new DatabaseResources();
-            databaseResources.PrimeMembershipTestsDatabases();
-            databaseResources.CreateCuWebinarsDb();
-
             //  Arrange
             var ctx = new TTSWebinarsContext(Constants.LocalDbConnectionStringName);
-            var webUser = ctx.WebUsers.First(w => w.idUser == 10563);
+            var webUser = ctx.WebUsers.First(w => w.idUser == 10568);
             var webinar = ctx.Webinars.First(w => w.idWebinar == 404); 
             var affiliate = ctx.Affiliates.First(w => w.idUserAff == 19);
 

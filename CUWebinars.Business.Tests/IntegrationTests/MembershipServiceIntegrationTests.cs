@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using BrockAllen.MembershipReboot;
+﻿using BrockAllen.MembershipReboot;
 using BrockAllen.MembershipReboot.Ef;
 using BrockAllen.MembershipReboot.WebHost;
 using CUWebinars.Business.AccountService;
@@ -13,6 +8,9 @@ using CUWebinars.Business.Tests.Config;
 using CUWebinars.Tests.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ninject.Extensions.Logging.Log4net.Infrastructure;
+using System;
+using System.IO;
+using System.Linq;
 
 namespace CUWebinars.Business.Tests.IntegrationTests
 {
@@ -26,8 +24,17 @@ namespace CUWebinars.Business.Tests.IntegrationTests
         private const string TestPassword = "ghjG7J*";
 
         [TestInitialize]
-        public void Setup()
+        public void SetUp()
         {
+            var databaseSetup = new DatabaseSetup { ConnectionString = Globals.MembershipRebootConnectionString };
+            databaseSetup.InstallDatabase(Constants.CreateMemRebootDb);
+        }
+
+        [TestCleanup]
+        public void TearDown()
+        {
+            var databaseSetup = new DatabaseSetup { ConnectionString = Globals.MembershipRebootConnectionString };
+            databaseSetup.UninstallDatabase(Constants.MembershipRebootConnectionStringName);
         }
 
 
@@ -36,10 +43,6 @@ namespace CUWebinars.Business.Tests.IntegrationTests
         [TestCategory(TestCategories.MembershipIntegration)]
         public void CreateANewUserAccount()
         {
-            var databaseResources = new DatabaseResources();
-            databaseResources.PrimeMembershipTestsDatabases();
-            databaseResources.CreateMembershipRebootDb();
-
             var ctx = new TTSWebinarsContext(Constants.LocalDbConnectionStringName);
             var memRebootCtx = new DefaultMembershipRebootDatabase(Constants.MembershipRebootConnectionStringName);
             var refDataRepository = new RefDataRepository();
@@ -66,8 +69,6 @@ namespace CUWebinars.Business.Tests.IntegrationTests
             var account = userAccountService.GetByEmail(Globals.Tenant, TestEmail);
 
             Assert.AreEqual(userAccount.Email, account.Email);
-
-            databaseResources.TearDownMembershipRebootDatabase();
         }
 
         [TestMethod]
@@ -75,9 +76,8 @@ namespace CUWebinars.Business.Tests.IntegrationTests
         public void CreateANewWebUser()
         {
             //  Arrange
-            var databaseResources = new DatabaseResources();
-            databaseResources.PrimeMembershipTestsDatabases();
-            databaseResources.CreateCuWebinarsDb();
+            var databaseSetup = new DatabaseSetup { ConnectionString = Globals.LocalDbConnectionString};
+            databaseSetup.InstallDatabase(Constants.CreateDbDefault);
 
             //  Act
             var membershipService = CreateMembershipService();
@@ -101,8 +101,6 @@ namespace CUWebinars.Business.Tests.IntegrationTests
 
             //  Assert       
             Assert.AreEqual(newWebUser.email, webUser.email);
-
-            databaseResources.TearDownCuWebinarsDatabase();
 
         }
 
@@ -137,10 +135,6 @@ namespace CUWebinars.Business.Tests.IntegrationTests
         [TestCategory(TestCategories.MembershipIntegration)]
         public void CreateUserAccountWithEmptyStringForUsernameDoesNotThrowException()
         {
-            var databaseResources = new DatabaseResources();
-            databaseResources.PrimeMembershipTestsDatabases();
-            databaseResources.CreateMembershipRebootDb();
-
             var membershipService = CreateMembershipService();
 
             //  Because we have set in App.config emailIsUsername to true, a null or whitespace username
@@ -152,18 +146,12 @@ namespace CUWebinars.Business.Tests.IntegrationTests
             var account = context.Users.Where(u => u.Email == TestEmail).SingleOrDefault();
 
             Assert.IsNotNull(account); 
-
-            databaseResources.TearDownMembershipRebootDatabase();
         }
 
         [TestMethod]
         [TestCategory(TestCategories.MembershipIntegration)]
         public void CreateUserAccountWithNullStringForUsernameDoesNotThrowException()
         {
-            var databaseResources = new DatabaseResources();
-            databaseResources.PrimeMembershipTestsDatabases();
-            databaseResources.CreateMembershipRebootDb();
-
             var membershipService = CreateMembershipService();
 
             //  Because we have set in App.config emailIsUsername to true, a null or whitespace username
@@ -176,7 +164,6 @@ namespace CUWebinars.Business.Tests.IntegrationTests
 
             Assert.IsNotNull(account);
 
-            databaseResources.TearDownMembershipRebootDatabase();
         }
 
 

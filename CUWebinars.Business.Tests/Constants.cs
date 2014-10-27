@@ -8,5 +8,7 @@
         internal const string CUWebinarsDb = "CUWebinars";
         internal const string LocalDbConnectionStringName = "CUWebinarsSUTLocal";
         internal const string MembershipRebootConnectionStringName = "MembershipReboot";
+        internal const string TtsDatabaseLocalName = "TtsDatabaseLocal";
+        internal const string TtsDatabaseResourceName = "TtsDatabase";
     }
 }

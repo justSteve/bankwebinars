@@ -23,6 +23,8 @@ namespace CUWebinars.Business.Tests
                     return Resources.CreateDb;
                 case Constants.CreateMemRebootDb:
                     return Resources.MemReboot;
+                case Constants.TtsDatabaseResourceName:
+                    return Resources.TtsDatabase;
                 default:
                     throw new NotSupportedException(string.Format("There's no resource script called {0}", resourceName));
             }
