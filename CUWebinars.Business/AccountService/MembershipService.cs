@@ -150,14 +150,15 @@ namespace CUWebinars.Business.AccountService
             return false;
         }
 
-        public bool LogInUser(string tenant, string emailAddress, string password, bool persistent, out string userMustVerify)
+        public bool LogInUser(string tenant, string emailAddress, string password, bool persistent, out string userMustVerify, bool signInAfterCheckout = false)
         {
-            UserAccount userAccount = null;
+            UserAccount userAccount;
             userMustVerify = string.Empty;
 
             if (_userAccountService.AuthenticateWithEmail(tenant, emailAddress, password, out userAccount))
             {
-                if (userAccount.HasClaim(ClaimTypes.HasNotVerified, ClaimValues.OrderImportRegistration))
+                if ((userAccount.HasClaim(ClaimTypes.HasNotVerified, ClaimValues.OrderImportRegistration) ||
+                    userAccount.HasClaim(ClaimTypes.HasNotVerified, ClaimValues.CartRegistration)) && !signInAfterCheckout)
                 {
                     userMustVerify = "User Must Verify";
                     return false;

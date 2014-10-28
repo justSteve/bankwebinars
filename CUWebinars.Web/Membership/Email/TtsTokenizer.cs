@@ -81,7 +81,7 @@ namespace CUWebinars.Web.Membership.Email
                         verificationKey);
 
                     //  We also add the ConfirmChangeEmailLink string to session where user is registered via an Order being imported.
-                    //  This is used downstream in the flow to determine whether
+                    //  This is used downstream in the flow with the creation of the Order.
                     if (_stateService.HasValue(DomainConstants.UserCreatedViaNewOrder) && !_stateService.HasValue(DomainConstants.ConfirmChangeEmailLink))
                     {
                         _stateService.SetValue(DomainConstants.ConfirmChangeEmailLink, notification.ConfirmChangeEmailUrl);

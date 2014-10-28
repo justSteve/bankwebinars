@@ -263,9 +263,9 @@ $(function () {
             if (data.result === 'LoggedIn') {
                 $('#signingInMsg').replaceWith('<span id="signingInMsg" class="label label-info">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Redirecting you now ...</span>');
                 window.location.href = path + '/Account/MyWebinars';
-            } else if (data.result === "Confirmed") {
+            } else if (data.result === 'Confirmed') {
                 //  if here, user has to verify before they can log in
-                utilities.goToUrl('/Account/Confirmed?email=' + data.result.email + '&surname=' + data.result.surname);
+                utilities.goToUrl('/Account/Confirmed?email=' + data.email + '&password=' + data.password);
             } else if (data.data) {
 
                 if ($('#labelEmail').is(':visible')) {

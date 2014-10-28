@@ -288,11 +288,11 @@ namespace CUWebinars.Web.Controllers
         }
 
         [System.Web.Mvc.AllowAnonymous]
-        public ActionResult Confirmed(string email, string surname)
+        public ActionResult Confirmed(string email, string password)
         {
             try
             {
-                var changeEmailFromKeyInputModel = _accountControllerOrchestrator.ConfirmUser(email, surname);
+                var changeEmailFromKeyInputModel = _accountControllerOrchestrator.ConfirmUser(email, password);
 
                 return string.IsNullOrEmpty(changeEmailFromKeyInputModel.ScreenMessage)
                     ? View(changeEmailFromKeyInputModel)
@@ -553,13 +553,13 @@ namespace CUWebinars.Web.Controllers
 
             if (!string.IsNullOrEmpty(userMustVerify))
             {
-                _logger.Info("Account.SignIn UserMustVerify. Session={0}, Email: {1} surname: {2}",
+                _logger.Info("Account.SignIn UserMustVerify. Session={0}, Email: {1} Password: {2}",
                     AppHelper.GetUserAuditInfo(),
                     model.Email,
                     model.Password
                     );
 
-                return Json(new {result = ConfirmedResult, email = model.Email, surname = model.Password });
+                return Json(new {result = ConfirmedResult, email = model.Email, password = model.Password });
             }
 
             // If we got this far, something failed, redisplay form
@@ -590,7 +590,13 @@ namespace CUWebinars.Web.Controllers
 
             _stateService.ClearValue(DomainConstants.TempPassword);
 
-            if (_accountControllerOrchestrator.SignUserIn(new SignInModel {Email = email, Password = tempPassword, ReturnUrl = "/"}, out userMustVerify))
+            if (_accountControllerOrchestrator.SignUserIn(new SignInModel
+                {
+                    Email = email, 
+                    Password = tempPassword, 
+                    ReturnUrl = "/",
+                    SigninAfterCheckout = true
+                }, out userMustVerify))
             {
                 return Json(new {result = LoggedInResult} );
             }
@@ -1007,7 +1013,7 @@ namespace CUWebinars.Web.Controllers
         public ActionResult CreateUserAccountFromCart(RegisterViewModel model)
         {
             //  Not adding any ModelState errors in this method. This method is not to return any GUI feedback.
-            //  It is effective invoked as a fire and forget, even thought it sends a http response (which gets ignored at client.)
+            //  It is effective invoked as a fire and forget, even thought it sends an http response (which gets ignored at client.)
 
             if (ModelState.IsValid)
             {

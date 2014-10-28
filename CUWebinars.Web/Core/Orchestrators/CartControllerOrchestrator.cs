@@ -429,7 +429,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             _stateService.SetValue(DomainConstants.CheckoutInProcess, true);
 
             var webinar = _webinarManagementService.GetWebinar(formModel.idWebinar);
-            var newOrderRow = CreateOrderRow(webinar, formModel.AdditionalLocations.ToList(), formModel.RegistrationTypeId);
+            var newOrderRow = CreateOrderRow(webinar, formModel.AdditionalLocations == null ? null : formModel.AdditionalLocations.ToList(), formModel.RegistrationTypeId);
 
             var currentAffiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate");
             _orderManagementService.AttachAffiliate(currentAffiliate);

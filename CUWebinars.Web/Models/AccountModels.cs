@@ -81,6 +81,9 @@ namespace CUWebinars.Web.Models
         
         [Display(Name="Remember Me")]
         public bool RememberMe { get; set; }
+        
+        [ScaffoldColumn(false)]
+        public bool SigninAfterCheckout { get; set; }
     }
 
     public class ExternalLogin

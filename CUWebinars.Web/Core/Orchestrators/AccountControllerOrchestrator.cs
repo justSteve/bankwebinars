@@ -192,7 +192,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public bool SignUserIn(SignInModel model, out string userMustVerify)
         {
-            if (_membershipService.LogInUser(_globals.Tenant, model.Email, model.Password, model.RememberMe, out userMustVerify))
+            if (_membershipService.LogInUser(_globals.Tenant, model.Email, model.Password, model.RememberMe, out userMustVerify, model.SigninAfterCheckout))
             {
                 if (!ReferenceEquals(Request.ApplicationPath, null) && !ReferenceEquals(Request.Url, null))
                 {
@@ -221,7 +221,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _membershipService.ResetPassword(_globals.Tenant, model.Email);
 
                 var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
-
+                
                 _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
 
                 _membershipService.ChangePasswordFromResetKey(verificationKey, model.NewPassword);
@@ -554,12 +554,12 @@ namespace CUWebinars.Web.Core.Orchestrators
             return loginModel;
         }
 
-        public CreateUserConfirmedViewModel ConfirmUser(string email, string surname)
+        public CreateUserConfirmedViewModel ConfirmUser(string email, string password)
         {
             var changeEmailFromKeyInputModel = new CreateUserConfirmedViewModel
             {
                 Email = email,
-                OldPassword = surname,
+                OldPassword = password,
                 NewPassword = string.Empty,
                 ConfirmPassword = string.Empty,
                 ScreenMessage = string.Empty,
