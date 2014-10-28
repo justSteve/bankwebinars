@@ -362,6 +362,8 @@ namespace CUWebinars.Business.Services
 
             _logger.Info("Persisted Email for Order {0}:{1}", order.idOrder, relativePath);
 
+            //Clear(); // need to clear at this point, otherwise the OrderSubmittedEvent will be fired again when 
+
             foreach (var evt in GetEvents())
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
@@ -399,7 +401,7 @@ namespace CUWebinars.Business.Services
 
             _logger.Info("Persisted Email for Order w/AddLoc {0}-{1} :{2}", order.idOrder, address, relativePath);
 
-            foreach (var evt in GetEvents())
+            foreach (var evt in GetEvents().OfType<OrderSubmittedAdditionalLocationEvent<OrderSubmittedAdditionalLocationViewModel>>())
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }
@@ -546,7 +548,7 @@ namespace CUWebinars.Business.Services
             ProcessDiscountCodes(currentOrder);
             CalculateOrderPrices(currentOrder);
 
-            if (confirmChangeEmailLink == String.Empty || confirmChangeEmailLink == "")
+            if (confirmChangeEmailLink == string.Empty)
             {
                 //we are saving a non-confirmed order
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, 1);
@@ -554,54 +556,51 @@ namespace CUWebinars.Business.Services
                 return updatedOrder;
 
             }
-            else
+
+            try
             {
-                try
+                var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, 0);
+
+                bool linkToVerifyAccount = !string.IsNullOrWhiteSpace(confirmChangeEmailLink);
+
+                _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
+
+
+                var orderSubmittedViewModel = new OrderSubmittedViewModel
                 {
-                    var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, 0);
+                    ConfirmChangeEmailUrl =
+                        linkToVerifyAccount
+                            ? string.Concat(confirmChangeEmailLink.Replace(DomainConstants.Blank, string.Empty),
+                                currentOrder.WebUser.LastName.ToLower())
+                            : string.Empty,
+                    Order = updatedOrder,
+                    UserCreatedOnImport = linkToVerifyAccount
+                };
 
-                    bool linkToVerifyAccount = !string.IsNullOrWhiteSpace(confirmChangeEmailLink);
+                var relativePath = Path.Combine(@"App_Data\Notifications",
+                    string.Format("OrderNotification-{0}{1}",
+                        DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm"));
 
-                    _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
-
-
-                    var orderSubmittedViewModel = new OrderSubmittedViewModel
-                    {
-                        ConfirmChangeEmailUrl =
-                            linkToVerifyAccount
-                                ? string.Concat(confirmChangeEmailLink.Replace(DomainConstants.Blank, string.Empty),
-                                    currentOrder.WebUser.LastName.ToLower())
-                                : string.Empty,
-                        Order = updatedOrder,
-                        UserCreatedOnImport = linkToVerifyAccount
-                    };
-
-                    var relativePath = Path.Combine(@"App_Data\Notifications",
-                        string.Format("OrderNotification-{0}{1}",
-                            DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm"));
-
-                    AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
-                    {
-                        EventObject = orderSubmittedViewModel,
-                        RelativeFilePath = relativePath
-                    });
-
-                    _logger.Info("Persisted Email for Order {0}:{1}", currentOrder.idOrder, relativePath);
-
-                    foreach (var evt in GetEvents())
-                    {
-                        _ttsConfig.NotificationEventBus.RaiseEvent(evt);
-                    }
-                    //what's the Clear() do?
-                    Clear();
-                    return updatedOrder;
-
-
-                }
-                catch (Exception exception)
+                AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
                 {
-                    _logger.ErrorException(string.Format("SaveOrderChanges method: {0}", exception.Message), exception);
+                    EventObject = orderSubmittedViewModel,
+                    RelativeFilePath = relativePath
+                });
+
+                _logger.Info("Persisted Email for Order {0}:{1}", currentOrder.idOrder, relativePath);
+
+                foreach (var evt in GetEvents())
+                {
+                    _ttsConfig.NotificationEventBus.RaiseEvent(evt);
                 }
+                //what's the Clear() do?
+                // [dar] it clears the EventBus. From recollection, this was necessary in the "batch create order" scenario
+                Clear();
+                return updatedOrder;
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException(string.Format("SaveOrderChanges method: {0}", exception.Message), exception);
             }
             return null;
         }

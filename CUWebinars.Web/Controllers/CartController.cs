@@ -26,6 +26,14 @@ namespace CUWebinars.Web.Controllers
             _cartControllerOrchestrator = cartControllerOrchestrator;
         }
 
+        [HttpPost]
+        public ActionResult ApplyDiscountCode(string code)
+        {
+            // HARD CODED RESPONSE
+            return Json(new { result = "100"});
+        }
+
+
         public PartialViewResult GetAdditionalLocationByOrderId(int webinarId, int? webUserId = null)
         {
             //var order = _orderManagementService.GetOrdersByUserId(webUserId);
@@ -49,12 +57,17 @@ namespace CUWebinars.Web.Controllers
             if (ModelState.IsValid)
             {
                 var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
+                var orderID = model.Order.OrderRows.SingleOrDefault().idOrderRow;
+
+                _cartControllerOrchestrator.FireOrderSubmittedNotification(order: model.Order);
+                _cartControllerOrchestrator.SetOrderStatusToSubmitted(order: model.Order);
+                
 
                 return Json(new
                 {
                     success = "success",
-                    orderRowID = model.Order.OrderRows.SingleOrDefault().idOrderRow,
-                    msg = "OrderFacade.Instance.BuildConnectionInfo(order.Rows.SingleOrDefault())"
+                    orderRowID = orderID,
+                    msg = string.Format("Your Order ID is {0}.{1}Please check your email for connection information for the webinar.", orderID, Environment.NewLine)
                 }, JsonRequestBehavior.AllowGet);
             }
 

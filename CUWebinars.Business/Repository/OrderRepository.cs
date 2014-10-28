@@ -311,7 +311,7 @@ namespace CUWebinars.Business.Repository
         public Order SaveOrderChanges(Order order, int? isFromSignup = null)
         {
             //TODO: Shopping Cart Task - Is Dave satisfied with this approach?
-            var error = db.GetValidationErrors();
+            var error = db.GetValidationErrors().ToArray();
 
             //this method needs to separate the 
             // act of saving to db from the act of setting the

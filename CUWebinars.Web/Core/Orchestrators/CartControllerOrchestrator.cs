@@ -174,7 +174,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 caption.AppendFormat("{0},", additionalLocation.Email);
             }
 
-            return caption.ToString().Substring(0, caption.Length - 1);
+            return caption.Length > 0 ? caption.ToString().Substring(0, caption.Length - 1) : string.Empty;
         }
 
         public CheckoutOptionsViewModel BuildCheckoutOptionsViewModel(
@@ -475,6 +475,16 @@ namespace CUWebinars.Web.Core.Orchestrators
             _orderManagementService.SaveOrderChanges(row.Order, null, null);
 
             return row;
+        }
+
+        public void SetOrderStatusToSubmitted(Order order)
+        {
+            _orderManagementService.UpdateOrderChanges(order);
+        }
+
+        public void FireOrderSubmittedNotification(Order order)
+        {
+            _orderManagementService.FireOrderSubmittedEvent(order);
         }
 
         public void UpdateOrderWithUserId(int orderId, int userId)

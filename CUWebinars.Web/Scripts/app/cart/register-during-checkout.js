@@ -397,6 +397,31 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ca
                                     $('#confirmation').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
                                     completeOrder(userId, orderRowId);
                                 });
+
+                                $('#SubmitDiscountCode').on('click', function (e) {
+
+                                    e.preventDefault();
+
+                                    var url = '/cart/ApplyDiscountCode';
+                                    var payload = { code: $('#DiscountCode').val() };
+
+                                    $.ajax({
+                                        type: 'POST',
+                                        contentType: constants.JsonContentType,
+                                        cache: false,
+                                        url: url,
+                                        dataType: constants.JsonDataType,
+                                        data: JSON.stringify(payload),
+                                        beforeSend: function () {
+                                            $('#confirmation').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
+                                        }
+                                    }).done(function (data) {
+                                        //  do stuff here with discount.              
+                                        var num = data.result;
+                                    }).always(function (e) {
+                                        $('#loadingSpinner').remove();
+                                    });
+                                });
                             });
                         });
 
@@ -492,6 +517,31 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ca
                                         $('#ConfirmRegistrationBillMe').on('click', function (e) {
                                             callback();
                                             $('#confirmOrder').submit();
+                                        });
+
+                                        $('#SubmitDiscountCode').on('click', function (e) {
+
+                                            e.preventDefault();
+
+                                            var url = '/cart/ApplyDiscountCode';
+                                            var payload = { code: $('#DiscountCode').val() };
+
+                                            $.ajax({
+                                                type: 'POST',
+                                                contentType: constants.JsonContentType,
+                                                cache: false,
+                                                url: url,
+                                                dataType: constants.JsonDataType,
+                                                data: JSON.stringify(payload),
+                                                beforeSend: function () {
+                                                    $('#confirmation').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
+                                                }
+                                            }).done(function (data) {
+                                                //  do stuff here with discount.              
+                                                var num = data.result;
+                                            }).always(function (e) {
+                                                $('#loadingSpinner').remove();
+                                            });
                                         });
                                     });
 

@@ -278,8 +278,7 @@ namespace CUWebinars.Web.Controllers
                             _orderControllerOrchestrator.GetConfirmChangeEmailLinkForNewUserAccount();
 
                         _orderControllerOrchestrator.FinalizeNewRegistration(incomingOrderModel, verificationKey);
-                        //  Now we clear the value, so TtsSmtpMessageDelivery can go back to business as usual.
-                        //_stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
+
                         _logger.Info(string.Format("CreateOrder|CreateUser Succeeded: {0}", email));
                     }
                     catch (Exception exception)
