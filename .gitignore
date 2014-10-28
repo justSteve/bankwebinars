@@ -172,4 +172,4 @@ CUWebinars.Web/App_Data/Notifications/
 # =========================
 # Any 3rd Party Binaries Not Available on Nuget
 # =========================
-ThirdPartyLibraries/
+!ThirdPartyLibraries/
