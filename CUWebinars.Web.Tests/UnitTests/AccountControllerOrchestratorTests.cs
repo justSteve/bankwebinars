@@ -109,7 +109,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 RememberMe = true,
                 ReturnUrl = "/"
             };
-            _membershipServiceMock.Setup(i => i.LogInUser("CUWebinars", signInModel.Email, signInModel.Password, signInModel.RememberMe, out userMustVerify))
+            _membershipServiceMock.Setup(i => i.LogInUser("CUWebinars", signInModel.Email, signInModel.Password, signInModel.RememberMe, out userMustVerify, false))
                 .Returns(true);
             
             //  Act

@@ -95,8 +95,6 @@ var Registration;
 
             this.typeofAddressShipping = $('#RegisterFields_ShippingAddress_TypeOfAddress').val(Constants.TypeofAddressShipping);
             this.typeofAddressBilling = $('#RegisterFields_BillingAddress_TypeOfAddress').val(Constants.TypeofAddressBilling);
-
-            $('#RegisterFields_Email').focus();
         };
 
         StateManager.prototype.checkAndSubmitEmail = function () {

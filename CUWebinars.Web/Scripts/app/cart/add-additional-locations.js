@@ -64,6 +64,7 @@ function wireUpHandlers() {
 
     $('#additionalLocationsModalDialog').on('shown', function() {
         wireUpHandlersForModal();
+        $('#AddInputsButton').focus();
     });
     
 
@@ -110,11 +111,8 @@ function wireUpHandlers() {
 };
 
 function primeDomVariables() {
-    //additionalLocationContainer = $('#AdditionalLocationContainer'); // not used
     addLocationsButton = $('#AddLocationsButton');
     newLocationsContainer = $('#NewLocationsContainer'); // commented out in razor
-    //numberOfEmailAddresses = $('#NumberOfEmailAddresses'); // not used
-    //signupForm = $('#RegisterAdditionalLocationsForm');
 }
 
 function wireUpHandlersForModal() {

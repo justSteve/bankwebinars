@@ -83,6 +83,9 @@ $(function () {
     $('input').keypress(function (event) {
 
         var inputElementTriggered = event.currentTarget.name;
+        if (inputElementTriggered === '' && event.currentTarget.id === 'registerLinkButton')
+            inputElementTriggered = event.currentTarget.id;
+
         var normalResetPasswordButton = $('#NormalResetPasswordButton');
 
         if (normalResetPasswordButton.filter(':visible').length > 0)
@@ -117,16 +120,18 @@ $(function () {
                 case Registration.Button.nonUSAddressBtn: stateManager.nonUsAdddressInvoked(); break;
                 case 'NormalResetPasswordInput':
                 case 'NormalResetPasswordButton':
-                    if ($('#EdgeCaseResetPasswordButton').data('clicked'))
-                        $('#EdgeCaseResetPasswordButton').removeData('clicked');
+                    var edgeCaseResetPasswordButton = $('#EdgeCaseResetPasswordButton');
+                    if (edgeCaseResetPasswordButton.data('clicked'))
+                        edgeCaseResetPasswordButton.removeData('clicked');
                     $('#NormalResetPasswordButton').data('clicked', true);
                     $('form#ResetPasswordForm').submit();
                     break;
-                case '#EdgeCaseResetPasswordButton':
+                case 'EdgeCaseResetPasswordButton':
                 case Registration.Button.ResetPass: stateManager.resetPassword(normalResetPasswordButton); break;
                 case Registration.Button.YesUseAddress: stateManager.useRegisteredAddress(); break;
                 case Registration.Button.EnterDiffAddress: stateManager.enterDifferentAddress(); break;
                 case Registration.Button.NotInstitution: stateManager.notInstitutionAddress(); break;
+                case 'registerLinkButton': stateManager.registerView(); break;
                 default:
                     if ($('#TheSubmitButton').val() === stateManager.getRegisterButtonText()) {
                         if ($(stateManager.getSameAsBillingCheckedFilter()).val()) {
@@ -154,11 +159,13 @@ $(function () {
 
         e.preventDefault();
 
+        var emailInput = $('#RegisterFields_Email');
+
         var jsonUrl = '/Account/CheckEmail';
-        var email = $('#RegisterFields_Email').val();
+        var email = emailInput.val();
 
         if (email.length === 0) {
-            $('#RegisterFields_Email').focus();
+            emailInput.focus();
         } else {
             $.ajax({
                 type: 'GET',
@@ -403,5 +410,5 @@ $(function () {
         }
     });
 
-
+    $('#Email').focus();
 });
