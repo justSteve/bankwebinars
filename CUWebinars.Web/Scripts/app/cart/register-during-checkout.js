@@ -180,6 +180,33 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ca
         }
     });
 
+    $('#ResetPasswordForm').on('submit', function(e) {
+
+        var hiddenInput = $('#ResetPassEmail');
+        hiddenInput.val($('#loginEmail').val());
+
+        e.preventDefault();
+
+        var jsonUrl = $(this).attr('action');
+        var jsonPayload = { email: hiddenInput.val() };
+
+        $.ajax({
+            type: 'POST',
+            contentType: RegistrationInCart.Constants.JsonContentType,
+            cache: false,
+            url: jsonUrl,
+            dataType: RegistrationInCart.Constants.JsonDataType,
+            data: JSON.stringify(jsonPayload),
+            beforeSend: function() {
+                $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Working...</span>');
+            }
+        }).done(function(data) {
+            if (data.result === 'Success') {
+                $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Reset instructions have been sent. Follow instructions and come back here to log in...</span>');
+            }
+        }).always(function(data) {});
+
+    });
 
     $('form#checkEmail').submit(function(e) {
 
@@ -582,8 +609,6 @@ function completeOrder(userId, orderRowId) {
 
                 $('#confirmResult').html(result.msg);
                 $('#confirmRegistration').attr('href', 'javascript:location.reload();');
-
-                cartStateManager.setCheckoutInProcess(false);
 
 
                 logUserIn(userId);

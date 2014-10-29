@@ -58,10 +58,6 @@ var OrderRegistration;
             return this.idWebinar;
         };
 
-        StateManager.prototype.setCheckoutInProcess = function (val) {
-            this.checkoutInProcess = val;
-        };
-
         StateManager.prototype.setCancelOrderForm = function (form) {
             this.cancelOrderForm = form;
         };

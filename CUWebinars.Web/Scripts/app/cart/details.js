@@ -5,7 +5,8 @@ var checkoutConfirm,
     discount,
     cartStateManager,
     signUpForm,
-    cartStateManager;
+    signUpFormContainer,
+    storedHeight;
 
 
 discount = '';
@@ -15,6 +16,7 @@ checkoutConfirm = {};
 $(function () {
 
     signUpForm = $('#SignUpForm');
+    signUpFormContainer = $('#SignUpFormContainer > div > div');
 
     /* This function gets invoked when the 3rd tab is loaded when an existing is using cart */
     checkoutConfirm.initialize = function (userId) {
@@ -81,7 +83,7 @@ $(function () {
     };
 
     cartStateManager = new OrderRegistration.StateManager();
-    cartStateManager.setCheckoutInProcess(checkoutInProcess);
+    
     cartStateManager.setOrderRowId(orderRowId);
     cartStateManager.setIsUserLogged(isUserLogged);
     cartStateManager.SetCartState();
@@ -108,6 +110,7 @@ $(function () {
 
     /* Click event for the big green SignUp button */
     $('#AddToCart').on('click', function () {
+        storedHeight = signUpFormContainer.height();
         signUpForm.submit();
     });
 
@@ -134,7 +137,10 @@ $(function () {
     signUpForm.submit(function (e) {
 
         e.preventDefault();
-        cartStateManager.setCheckoutInProcess(true);
+        
+        $('#loginEmail').val($('#Email1').val());
+        $('#loginPassword').val($('#Password1').val());
+
         var data = signUpForm.serialize();
 
         $('#SignUpForm > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
@@ -154,6 +160,7 @@ $(function () {
                         $('#_CreateUserForm input[name="returnUrl"]').val('/Webinar/Details2/' + result.webinarId);
                         registerDuringCheckout.initialize(result.orderId, result.webinarId, result.orderRowId, checkoutConfirm.initialize);
                     });
+                    //signUpFormContainer.height(storedHeight);
 
                     $('#contactInfoTab a').tab('show');
                 } else {
@@ -186,6 +193,8 @@ $(function () {
                         hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
 
                     }, constants.HtmlDataType);
+
+                    signUpFormContainer.height(storedHeight);
 
                 } else {
                     //jslogger.log({ exception: { name: 'SignupFail', message: 'The signUpForm submission failed.' } });

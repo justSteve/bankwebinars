@@ -69,10 +69,6 @@ module OrderRegistration {
             return this.idWebinar;
         }
 
-        setCheckoutInProcess(val: boolean): void {
-            this.checkoutInProcess = val;
-        }
-
         setCancelOrderForm(form: JQuery): void {
             this.cancelOrderForm = form;
         }

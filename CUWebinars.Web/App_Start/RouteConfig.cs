@@ -29,12 +29,14 @@ namespace CUWebinars.Web.App_Start
             
             routes.MapRoute(
                 name: "WebinarPlusWebUser",
-                url: "{controller}/{action}/{webinarId}/{webUserId}"
+                url: "{controller}/{action}/{webinarId}/{webUserId}",
+                defaults: new { controller = "Cart", action = "GetAdditionalLocationByOrderId" },
+                constraints: new {webinarId = @"\d+"}
             );
 
             routes.MapRoute(
                 name: "EmailLinkRoute",
-                url: "{controller}/{action}/{email}/{surname}"
+                url: "{controller}/{action}/{email}/{password}"
             );
             //in the legacy system this route will catch:
             // bankwebinars.com/1522
