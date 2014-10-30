@@ -4,11 +4,12 @@
 var checkoutConfirm,
     discount,
     cartStateManager,
+    orderRowId,
     signUpForm,
     signUpFormContainer,
     storedHeight;
 
-
+orderRowId = 0;
 discount = '';
 checkoutConfirm = {};
 
@@ -16,7 +17,7 @@ checkoutConfirm = {};
 $(function () {
 
     signUpForm = $('#SignUpForm');
-    signUpFormContainer = $('#SignUpFormContainer > div > div');
+    signUpFormContainer = $('#SignUpFormContainer');
 
     /* This function gets invoked when the 3rd tab is loaded when an existing is using cart */
     checkoutConfirm.initialize = function (userId) {
@@ -119,6 +120,7 @@ $(function () {
     }
 
     // TODO: Note I have not touched this handler yet.
+    // [dar] this handler is relevant for update/edit/view aspect of cart. Revisit when we address that.
     if (cartStateManager.getOrderRowId() > 0 && cartStateManager.getCheckoutInProcess()) {
         $.get("/cart/checkoutConfirm/" + cartStateManager.getOrderRowId())
             .success(function (dataConfirm) {
@@ -160,7 +162,7 @@ $(function () {
                         $('#_CreateUserForm input[name="returnUrl"]').val('/Webinar/Details2/' + result.webinarId);
                         registerDuringCheckout.initialize(result.orderId, result.webinarId, result.orderRowId, checkoutConfirm.initialize);
                     });
-                    //signUpFormContainer.height(storedHeight);
+                    signUpFormContainer.height(storedHeight);
 
                     $('#contactInfoTab a').tab('show');
                 } else {
@@ -191,6 +193,7 @@ $(function () {
                         });
 
                         hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
+                        hookUpChangeTypeLogic($('#RegType'));
 
                     }, constants.HtmlDataType);
 

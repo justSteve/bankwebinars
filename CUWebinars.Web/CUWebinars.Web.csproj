@@ -441,6 +441,8 @@
     <Content Include="Scripts\app\cart\register-user-in-cart.js" />
     <Content Include="Scripts\app\form-processor.js" />
     <Content Include="Scripts\app\utilities.js" />
+    <None Include="Properties\PublishProfiles\BankWebinars - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\jquery-1.11.1.js" />
     <Content Include="Scripts\jquery-1.11.1.min.js" />
@@ -1685,7 +1687,6 @@
     <Content Include="Membership\Email\EmailTemplates\_BaseTemplate.html" />
     <Content Include="Scripts\app\cart\add-additional-locations.js" />
     <Content Include="Scripts\app\cart\additional-locations.js" />
-    <Content Include="Scripts\app\cart\create-order.js" />
     <Content Include="Scripts\app\constants.js" />
     <Content Include="Scripts\app\common.js" />
     <Content Include="Scripts\app\cart\edit-order.js" />
@@ -1812,12 +1813,10 @@
     <Content Include="Images\email\VABANKERS\Thumbs.db" />
     <Content Include="Images\email\wisbank - Copy %282%29\Thumbs.db" />
     <Content Include="Images\email\wisbank\Thumbs.db" />
-    <Content Include="Images\presenters\CUWebinarsV4.bacpac" />
     <None Include="Properties\PublishProfiles\cuwebinars.pubxml" />
     <None Include="Properties\PublishProfiles\cuwebinars1 - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\cuwebinars1 - Web Deploy %282%29.pubxml" />
     <Content Include="Views\Account\MyCertificate.cshtml" />
-    <None Include="Properties\PublishProfiles\BankWebinars.pubxml" />
     <None Include="Properties\PublishProfiles\CUStaging.pubxml" />
     <None Include="Properties\PublishProfiles\cuwebinars1 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\cuwebinars1 - Web Deploy.pubxml" />

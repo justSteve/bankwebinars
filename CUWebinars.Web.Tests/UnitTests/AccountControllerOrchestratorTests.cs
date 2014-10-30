@@ -123,6 +123,7 @@ namespace CUWebinars.Web.Tests.UnitTests
         [TestMethod]
         public void BuildLoginModelReturnsLoginModel()
         {
+            var oi = HttpContextFactory.Current.Request;
             //  Arrange
             //  Act
             var logInModel = _accountControllerOrchestrator.BuildLoginModel(null);
@@ -143,7 +144,7 @@ namespace CUWebinars.Web.Tests.UnitTests
             var urlHelper = new Mock<UrlHelper>();
 
             
-            RouteConfig.RegisterRoutes(RouteTable.Routes);
+            //RouteConfig.RegisterRoutes(RouteTable.Routes);
             
             var requestContext = new Mock<RequestContext>();
             requestContext.Setup(x => x.HttpContext).Returns(context.Object);

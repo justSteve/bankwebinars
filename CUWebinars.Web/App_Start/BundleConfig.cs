@@ -47,7 +47,6 @@ namespace CUWebinars.Web.App_Start
                         "~/Content/js/jquery-plugins/dataTables/media/js/jquery.dataTables.js",
                         "~/Content/js/jquery-plugins/dataTables/plugins/fnSetFilteringDelay.js"
                          //"~/Scripts/app/cart/additional-locations.js"
-                         //"~/Scripts/app/cart/create-order.js"
                 //,"~/Scripts/app/cart/edit-order.js"
                         ));
             
@@ -57,7 +56,6 @@ namespace CUWebinars.Web.App_Start
                          "~/Scripts/app/cart/register-during-checkout.js",
                          "~/Scripts/app/cart/details.js",
                          "~/Scripts/app/cart/register-user-in-cart.js"
-                         //"~/Scripts/app/cart/create-order.js"
                 //,"~/Scripts/app/cart/edit-order.js"
                         ));
 

@@ -190,6 +190,16 @@ namespace CUWebinars.Web.Controllers
             return this.ModelStateJson(ModelState);
         }
 
+        [HttpPost]
+        public ActionResult RemoveAdditionalLocationsFromOrder(int? idOrderRow = null)
+        {
+            if (idOrderRow.HasValue)
+            {
+                _cartControllerOrchestrator.RemoveAdditionalLocationsFromOrder(idOrderRow.Value);
+            }
+            return View();
+        }
+
         //[Authorize(Roles = AppRoles.Admin)]
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult SetOrderStatus(int orderRowID, OrderStatus status)

@@ -68,7 +68,16 @@
                         <div class="span8">
                             This @showDuration hour event will be presented by @row.Webinar.Presenter.WebUser.FullName @Html.Raw(remainingDays) starting at @Html.DisplayTime(row.Webinar.Date, timeZ, true).
                             Your registration type is currently set as <b>@row.RegistrationType.OptionLabel.</b>
-                            @{ Html.RenderPartial("Partials/OrderHasAdditionalLocations", row); }
+                            @{
+                                var orderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
+                                {
+                                    AdditionalLocations = row.AdditionalLocation,
+                                    Addresses = string.Empty, // [dar] not sure what this represents.
+                                    OptionsCost = 10 // [dar] not sure what this represents.
+                                };
+                            }
+
+                            @{ Html.RenderPartial("Partials/OrderHasAdditionalLocations", orderHasAdditionalLocationsViewModel); }
                             @Html.Raw(upgradeCaption)
                         </div>
 

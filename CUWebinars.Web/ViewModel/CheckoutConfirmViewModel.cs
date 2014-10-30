@@ -22,6 +22,7 @@ namespace CUWebinars.Web.ViewModel
         public string OptionLabel { get; set; }
         public string UserComments { get; set; }
         public string UserDetails { get; set; }
+        public string UserFullname { get; set; }
         public UserType UserType { get; set; }
     }
 }

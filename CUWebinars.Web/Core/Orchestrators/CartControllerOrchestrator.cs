@@ -108,14 +108,15 @@ namespace CUWebinars.Web.Core.Orchestrators
                     _logger.Info("Building ");
                     var orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
                     var webUser = orderRow.Order.WebUser;
+                    var userFullName = string.Concat(webUser.FirstName, " ", webUser.LastName);
 
                     var checkoutConfirmViewModel = new CheckoutConfirmViewModel
                     {
                         AdditionalLocationCaption = BuildAdditionalLocationsCaption(orderRow),
                         AdminComments = orderRow.Order.AdminComments,
                         AffiliateComments = orderRow.Order.AffiliateComments,
-                        CCUserDetails =
-                            "None <a href=\"#AddCCModal\" role=\"button\" class=\"btn btn-mini\" data-toggle=\"modal\"> Add?</a> ",
+                        //CCUserDetails =
+                        //    "None <a href=\"#AddCCModal\" role=\"button\" class=\"btn btn-mini\" data-toggle=\"modal\"> Add?</a> ", // CC user removed at request
                         DisplayOptionsInDropDownViewModel = BuildDisplayOptionsInDropDownViewModel(orderRow, idOrderRow),
                         DisplayRowPriceViewModel = BuildDisplayRowPriceViewModel(orderRow, idOrderRow),
                         idUser = orderRow.Order.WebUser.idUser,
@@ -127,9 +128,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                         OrderStatus = orderRow.Order.OrderStatus,
                         Origin = orderRow.Order.Origin,
                         UserComments = orderRow.Order.UserComments,
-                        UserDetails =
-                            webUser.FirstName + " " + webUser.LastName + " - " + orderRow.Order.Institution + "<br>" +
-                            webUser.email,
+                        UserFullname = userFullName,
+                        UserDetails = string.Concat(userFullName, " - ", orderRow.Order.Institution, "<br>", webUser.email),
                         UserType = webUser.UserType
                     };
 
@@ -490,6 +490,11 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void UpdateOrderWithUserId(int orderId, int userId)
         {
             _orderManagementService.UpdateOrderWithUserId(orderId, userId);
+        }
+
+        public void RemoveAdditionalLocationsFromOrder(int idOrderRow)
+        {
+            _orderManagementService.RemoveAdditionalLocationsForOrder(idOrderRow);
         }
 
         private int GetDummyUserId()

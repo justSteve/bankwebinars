@@ -653,6 +653,7 @@ namespace CUWebinars.Web.Controllers
                 model.CheckoutOptionsViewModel.OrderStatus = model.Order.OrderStatus;
                 model.CheckoutOptionsViewModel.OrderHasId = model.Order.idOrder > 0;
                 var row = model.Order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active);
+
                 if (row != null)
                     model.CheckoutOptionsViewModel.RegistrationType = row.RegistrationType;
                 else

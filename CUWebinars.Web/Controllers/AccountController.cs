@@ -292,14 +292,7 @@ namespace CUWebinars.Web.Controllers
         {
             try
             {
-                var route = RouteData.Route.GetRouteData(HttpContext);
 
-
-                Trace.WriteLine(route.Values["controller"]);
-                Trace.WriteLine(route.Values["action"]);
-                Trace.WriteLine(route.Values["id"]);
-                Trace.WriteLine(route.Values["email"]);
-                Trace.WriteLine(route.Values["password"]);
                 var changeEmailFromKeyInputModel = _accountControllerOrchestrator.ConfirmUser(email, password);
 
                 return string.IsNullOrEmpty(changeEmailFromKeyInputModel.ScreenMessage)

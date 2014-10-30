@@ -8,9 +8,9 @@ var addLocationsButton,
     //signupForm;
 
 var additionalLocationEmailWrapper,
-    breakSuffix = '-break',
+    breakSuffix,
     deleteItem,
-    locationsSpanPrefix = 'LocationSpan-',
+    locationsSpanPrefix,
     numberOfAdditionalLocations;
 
 
@@ -43,8 +43,8 @@ $(function() {
 
 function wireUpHandlers() {
 
-    var locationsSpanPrefix = 'LocationSpan-',
-        breakSuffix = '-break';
+    locationsSpanPrefix = 'LocationSpan-',
+    breakSuffix = '-break';
 
     var modalFormOptions = {
         keyboard: true,

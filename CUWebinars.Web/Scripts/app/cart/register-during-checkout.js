@@ -203,8 +203,12 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ca
         }).done(function(data) {
             if (data.result === 'Success') {
                 $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Reset instructions have been sent. Follow instructions and come back here to log in...</span>');
+            } else {
+                $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;There was a problem resetting the password...</span>');
             }
-        }).always(function(data) {});
+        }).always(function(data) {
+            
+        });
 
     });
 
@@ -370,6 +374,8 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ca
                     if (utilities.relativePathStartsWith(payload['returnUrl'])) { 
                         $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;&nbsp;You have successfully registered! On to check-out...</span>');
 
+                        //storedHeight = signUpFormContainer.height();
+
                         // The next POST updates the Order number with the newly create id of the WebUser
                         var updateOrderWithUserForm = $('#_UpdateOrderWithUserId');
                         var url = updateOrderWithUserForm.attr('action');
@@ -426,7 +432,10 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ca
                                 });
 
                                 hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
+                                hookUpChangeTypeLogic($('#RegType'));
                             });
+
+                            //signUpFormContainer.height(storedHeight);
                         });
 
                         $('#confirmationTab a').tab('show');
@@ -459,11 +468,9 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ca
 
         var signInForm = $(this);
 
-        if ($('#loginEmail').val() === null || $('#loginEmail').val() === '') $('#loginEmail').val($('#Email1').val());
-        if ($('#loginPassword').val() === null || $('#loginPassword').val() === '') $('#loginPassword').val($('#Password1').val());
+        $('#loginEmail').val($('#Email1').val());
+        $('#loginPassword').val($('#Password1').val());
         //if ($('#loginRememberMe').val() === null || $('#ShippingLastName').val() === '') $('#loginRememberMe').val($('#LastName'));
-
-
 
         var url = signInForm.attr('action');
         var data = signInForm.serialize();
@@ -523,30 +530,9 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ca
                                             $('#confirmOrder').submit();
                                         });
 
-                                        $('#SubmitDiscountCode').on('click', function (e) {
+                                        hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
+                                        hookUpChangeTypeLogic($('#RegType'));
 
-                                            e.preventDefault();
-
-                                            var url = '/cart/ApplyDiscountCode';
-                                            var payload = { code: $('#DiscountCode').val() };
-
-                                            $.ajax({
-                                                type: 'POST',
-                                                contentType: constants.JsonContentType,
-                                                cache: false,
-                                                url: url,
-                                                dataType: constants.JsonDataType,
-                                                data: JSON.stringify(payload),
-                                                beforeSend: function () {
-                                                    $('#confirmation').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
-                                                }
-                                            }).done(function (data) {
-                                                //  do stuff here with discount.              
-                                                var num = data.result;
-                                            }).always(function (e) {
-                                                $('#loadingSpinner').remove();
-                                            });
-                                        });
                                     });
 
                                     $('#confirmationTab a').tab('show');
@@ -659,6 +645,60 @@ function logUserIn(userId) {
     $('#_SignInAfterCheckout').submit();
 
     $('#_SignInAfterCheckout').off('submit');
+}
+
+function hookUpChangeTypeLogic(dropDown) {
+
+    var changeTypeConfirmModal = $('#changeTypeConfirmModal');
+
+    $('#confirmTypeChange').on('click', function (e) {
+
+        var url = '/Cart/RemoveAdditionalLocationsFromOrder';
+        var payLoad = {
+            idOrderRow: cartStateManager.getOrderRowId()
+        };
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: url,
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payLoad),
+        }).done(function (data) {
+
+        });
+    });
+    $('#cancelTypeChange').on('click', function (e) {
+        changeTypeConfirmModal.modal('hide');
+    });
+
+    dropDown.on('change', function(e) {
+
+        e.preventDefault();
+
+        var url = '/Cart/CheckIfAddLocShouldHide?optionID=' + $(this).val();
+
+        $.ajax({
+            type: 'GET',
+            contentType: constants.FormPostContentType,
+            cache: false,
+            url: url,
+            dataType: constants.JsonDataType,
+        }).done(function (data) {
+            if (data.shouldShow === 'No') {
+
+                var modalFormOptions = {
+                    keyboard: true,
+                    backdrop: 'static',
+                    show: true,
+                };
+
+                changeTypeConfirmModal.modal(modalFormOptions);
+
+            };
+        });
+    });
 }
 
 function hookUpApplyDiscountLogic(btn) {

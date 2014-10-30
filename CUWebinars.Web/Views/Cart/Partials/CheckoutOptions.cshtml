@@ -52,3 +52,17 @@
             @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model.DisplayOptionsViewModel)
         }
     }
+
+<div id="changeTypeConfirmModal" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 id="confirmCaption">Change Webinar Type</h3>
+    </div>
+    <div id="confirmResult" class="modal-body">
+    <p>The type you have selected does not include Additional Locations. If you proceed, the Additional Locations which you selected earlier will not be included in the order.</p>
+    </div>
+    <div class="modal-footer">
+        <a href="#" id="confirmTypeChange" role="button" class="btn btn-success">Continue</a>
+        <button id="cancelTypeChange" class="btn" data-dismiss="modal">Cancel</button>
+    </div>
+</div>

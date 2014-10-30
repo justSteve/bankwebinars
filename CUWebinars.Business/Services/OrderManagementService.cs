@@ -543,6 +543,11 @@ namespace CUWebinars.Business.Services
             _orderRepository.SaveOrderChanges(order, null);
         }
 
+        public void RemoveAdditionalLocationsForOrder(int idOrderRow)
+        {
+            throw new NotImplementedException();
+        }
+
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink)
         {
             ProcessDiscountCodes(currentOrder);

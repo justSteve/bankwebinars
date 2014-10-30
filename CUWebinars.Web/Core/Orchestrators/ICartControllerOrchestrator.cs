@@ -22,5 +22,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         OrderRow LoadOrderRow(int id, OrderStatus status);
         void SetOrderStatusToSubmitted(Order order);
         void UpdateOrderWithUserId(int orderId, int userId);
+        void RemoveAdditionalLocationsFromOrder(int value);
     }
 }
