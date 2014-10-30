@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Models;
+﻿using CUWebinars.Business.Constants;
+using CUWebinars.Business.Models;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
@@ -195,9 +196,18 @@ namespace CUWebinars.Web.Controllers
         {
             if (idOrderRow.HasValue)
             {
-                _cartControllerOrchestrator.RemoveAdditionalLocationsFromOrder(idOrderRow.Value);
+                try
+                {
+                    _cartControllerOrchestrator.RemoveAdditionalLocationsFromOrder(idOrderRow.Value);
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e, "Session=" + AppHelper.GetUserAuditInfo());
+                }
+
+                return Json(new { Result = WebUiConstants.Success });
             }
-            return View();
+            return Json(new {});
         }
 
         //[Authorize(Roles = AppRoles.Admin)]

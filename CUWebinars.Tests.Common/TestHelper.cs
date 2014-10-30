@@ -51,6 +51,7 @@ namespace CUWebinars.Tests.Common
                 new RefDataRepository(),
                 new WebUserRepository(ctx),
                 new WebinarRepository(ctx),
+                new AdditionalLocationRepository(ctx), 
                 new Log4NetLogger(typeof (OrderManagementService)),
                 ttsConfig
                 );

@@ -20,6 +20,7 @@ namespace CUWebinars.Business.Tests.UnitTests
     public class OrderManagementServiceTests
     {
         private OrderManagementService _orderManagementService;
+        private Mock<IAdditionalLocationsRepository> _additionalLocationsRepositoryMock;
         private Mock<IRefDataRepository> _refDataRepositoryMock;
         private Mock<IWebUserRepository> _webUserRepositoryMock;
         private Mock<IAffiliateRepository> _affiliateRepository;
@@ -34,6 +35,7 @@ namespace CUWebinars.Business.Tests.UnitTests
         [TestInitialize]
         public void Setup()
         {
+            _additionalLocationsRepositoryMock = new Mock<IAdditionalLocationsRepository>();
             _refDataRepositoryMock = new Mock<IRefDataRepository>();
             _webinarRepository = new Mock<IWebinarRepository>();
             _webUserRepositoryMock = new Mock<IWebUserRepository>();
@@ -47,6 +49,7 @@ namespace CUWebinars.Business.Tests.UnitTests
                 _refDataRepositoryMock.Object,
                 _webUserRepositoryMock.Object,
                 _webinarRepository.Object,
+                _additionalLocationsRepositoryMock.Object,
                 logger,
                 ttsConfig);
         }

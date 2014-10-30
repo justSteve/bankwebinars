@@ -648,7 +648,7 @@ function logUserIn(userId) {
 }
 
 function hookUpChangeTypeLogic(dropDown) {
-
+    
     var changeTypeConfirmModal = $('#changeTypeConfirmModal');
 
     $('#confirmTypeChange').on('click', function (e) {
@@ -666,7 +666,12 @@ function hookUpChangeTypeLogic(dropDown) {
             dataType: constants.JsonDataType,
             data: JSON.stringify(payLoad),
         }).done(function (data) {
-
+            if (data.Result === 'Success') {
+                $('#addlocSpiel').remove();
+                $('#confirmation > div:nth-child(4) > div:nth-child(6)').empty();
+                // TODO: Also adjust the price accordingly
+                changeTypeConfirmModal.modal('hide');
+            }
         });
     });
     $('#cancelTypeChange').on('click', function (e) {
@@ -677,27 +682,31 @@ function hookUpChangeTypeLogic(dropDown) {
 
         e.preventDefault();
 
-        var url = '/Cart/CheckIfAddLocShouldHide?optionID=' + $(this).val();
+        //  First, check if there are currently any Additional Locations added to the order.
+        if ($('#addlocSpiel').length > 0) {
 
-        $.ajax({
-            type: 'GET',
-            contentType: constants.FormPostContentType,
-            cache: false,
-            url: url,
-            dataType: constants.JsonDataType,
-        }).done(function (data) {
-            if (data.shouldShow === 'No') {
+            var url = '/Cart/CheckIfAddLocShouldHide?optionID=' + $(this).val();
 
-                var modalFormOptions = {
-                    keyboard: true,
-                    backdrop: 'static',
-                    show: true,
+            $.ajax({
+                type: 'GET',
+                contentType: constants.FormPostContentType,
+                cache: false,
+                url: url,
+                dataType: constants.JsonDataType,
+            }).done(function(data) {
+                if (data.shouldShow === 'No') {
+
+                    var modalFormOptions = {
+                        keyboard: true,
+                        backdrop: 'static',
+                        show: true,
+                    };
+
+                    changeTypeConfirmModal.modal(modalFormOptions);
+
                 };
-
-                changeTypeConfirmModal.modal(modalFormOptions);
-
-            };
-        });
+            });
+        }
     });
 }
 

@@ -138,6 +138,7 @@ namespace CUWebinars.Web.App_Start
                     new RefDataRepository(),
                     new WebUserRepository(sharedContext),
                     new WebinarRepository(sharedContext),
+                    new AdditionalLocationRepository(sharedContext), 
                     loggerForOrderManagementService,
                     ctx.Kernel.Get<TtsConfiguration>()
                     );

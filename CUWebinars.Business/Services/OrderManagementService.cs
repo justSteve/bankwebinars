@@ -28,6 +28,7 @@ namespace CUWebinars.Business.Services
         private readonly IOrderRepository _orderRepository;
         private readonly IRefDataRepository _refDataRepository;
         private readonly IWebinarRepository _webinarRepository;
+        private readonly IAdditionalLocationsRepository _additionalLocationsRepository;
         private readonly ILogger _logger;
         private readonly IWebUserRepository _webUserRepository;
         private readonly TtsConfiguration _ttsConfig;
@@ -41,6 +42,7 @@ namespace CUWebinars.Business.Services
             IRefDataRepository refDataRepository,
             IWebUserRepository webUserRepository,
             IWebinarRepository webinarRepository,
+            IAdditionalLocationsRepository additionalLocationsRepository,
             ILogger logger,
             TtsConfiguration ttsConfig)
         {
@@ -50,6 +52,7 @@ namespace CUWebinars.Business.Services
             _refDataRepository = refDataRepository;
             _ttsConfig = ttsConfig;
             _webinarRepository = webinarRepository;
+            _additionalLocationsRepository = additionalLocationsRepository;
             _logger = logger;
             _webUserRepository = webUserRepository;
         }
@@ -545,7 +548,7 @@ namespace CUWebinars.Business.Services
 
         public void RemoveAdditionalLocationsForOrder(int idOrderRow)
         {
-            throw new NotImplementedException();
+            _additionalLocationsRepository.DeleteAdditionalLocationsByOrderRowId(idOrderRow);
         }
 
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink)

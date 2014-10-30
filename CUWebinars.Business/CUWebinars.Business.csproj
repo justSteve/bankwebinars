@@ -182,7 +182,9 @@
     <Compile Include="Notification\TemplateResolver.cs" />
     <Compile Include="Notification\ViewModel\OrderSubmittedAdditionalLocationViewModel.cs" />
     <Compile Include="Notification\ViewModel\OrderSubmittedViewModel.cs" />
+    <Compile Include="Repository\AdditionalLocationRepository.cs" />
     <Compile Include="Repository\IAccountRepository.cs" />
+    <Compile Include="Repository\IAdditionalLocationsRepository.cs" />
     <Compile Include="Repository\IAffiliateRepository.cs" />
     <Compile Include="Repository\AffiliateRepository.cs" />
     <Compile Include="Repository\IWebinarRepository.cs" />

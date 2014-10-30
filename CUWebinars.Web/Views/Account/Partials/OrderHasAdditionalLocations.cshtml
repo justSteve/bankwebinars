@@ -13,11 +13,11 @@
         {
             if (numberOfAdditionalLocations == 1)
             {
-                <span>The registration includes a single additional location for @Model.AdditionalLocations.First().Email costing @Model.AdditionalLocations.First().Price.ToString("C", nfi). </span>
+                <span id="addlocSpiel">The registration includes a single additional location for @Model.AdditionalLocations.First().Email costing @Model.AdditionalLocations.First().Price.ToString("C", nfi). </span>
             }
             else
             {
-                <span>The registration includes @numberOfAdditionalLocations additional locations (total added cost is @Model.OptionsCost.ToString("C", nfi)) for @Model.Addresses</span>
+                <span id="addlocSpiel">The registration includes @numberOfAdditionalLocations additional locations (total added cost is @Model.OptionsCost.ToString("C", nfi)) for @Model.Addresses</span>
                 <text>.</text>
             }
         }
