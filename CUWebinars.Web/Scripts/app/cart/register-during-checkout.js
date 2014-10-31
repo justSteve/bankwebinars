@@ -374,7 +374,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ca
                     if (utilities.relativePathStartsWith(payload['returnUrl'])) { 
                         $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;&nbsp;You have successfully registered! On to check-out...</span>');
 
-                        //storedHeight = signUpFormContainer.height();
+                        storedHeight = signUpFormContainer.height();
 
                         // The next POST updates the Order number with the newly create id of the WebUser
                         var updateOrderWithUserForm = $('#_UpdateOrderWithUserId');
@@ -433,9 +433,10 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ca
 
                                 hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
                                 hookUpChangeTypeLogic($('#RegType'));
+                                hookUpEditUserLogic($('#editUserDetails'));
                             });
 
-                            //signUpFormContainer.height(storedHeight);
+                            signUpFormContainer.height(storedHeight);
                         });
 
                         $('#confirmationTab a').tab('show');
@@ -532,6 +533,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ca
 
                                         hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
                                         hookUpChangeTypeLogic($('#RegType'));
+                                        hookUpEditUserLogic($('#editUserDetails'));
 
                                     });
 
@@ -590,10 +592,11 @@ function completeOrder(userId, orderRowId) {
         var data = $(this).serialize();
 
         $.post(self.attr('action'), data, function (result, status) {
-            if (result.success) {
-                cartStateManager.setOrderRowId(result.orderRowID);
+            if (result.Result === 'Success') {
+                cartStateManager.setOrderRowId(result.OrderRowID);
 
-                $('#confirmResult').html(result.msg);
+                $('#confirmResult').empty();
+                $('#confirmResult').html(result.Msg);
                 $('#confirmRegistration').attr('href', 'javascript:location.reload();');
 
 
@@ -647,9 +650,28 @@ function logUserIn(userId) {
     $('#_SignInAfterCheckout').off('submit');
 }
 
+function hookUpEditUserLogic(button) {
+    button.on('click', function (e) {
+
+        e.preventDefault();
+
+        var modalForm = $('#UserDetailsModal');
+
+        var modalFormOptions = {
+            keyboard: true,
+            backdrop: 'static',
+            show: true,
+        };
+
+        modalForm.modal(modalFormOptions);
+
+    });
+}
+
 function hookUpChangeTypeLogic(dropDown) {
     
     var changeTypeConfirmModal = $('#changeTypeConfirmModal');
+    var position;
 
     $('#confirmTypeChange').on('click', function (e) {
 
@@ -671,6 +693,8 @@ function hookUpChangeTypeLogic(dropDown) {
                 $('#confirmation > div:nth-child(4) > div:nth-child(6)').empty();
                 // TODO: Also adjust the price accordingly
                 changeTypeConfirmModal.modal('hide');
+
+                $('html, body').animate({ scrollTop: position.top }, 500);
             }
         });
     });
@@ -701,6 +725,8 @@ function hookUpChangeTypeLogic(dropDown) {
                         backdrop: 'static',
                         show: true,
                     };
+
+                    position = $('#confirmation').offset();
 
                     changeTypeConfirmModal.modal(modalFormOptions);
 

@@ -46,3 +46,8 @@ blockquote {
 #collectAdditionalLocations {
     margin-top: 10px;
 }
+
+#UserDetailsModal .modal-dialog  {width:75%;}
+@media screen and (min-width: 768px) {
+	#UserDetailsModal  .modal-dialog  {width:900px;}
+}

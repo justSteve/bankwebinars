@@ -86,7 +86,7 @@
 
              if (Model.OrderStatus != OrderStatus.InProcess)
              {
-                 Model.UserDetails += " - <a role=\"button\" class=\"btn btn-mini\" target=\"new\" href='/account/manage/" + Model.idUser + "' > Edit?</a> ";
+                 Model.UserDetails += " - <a id='editUserDetails' role='button' class='btn btn-mini' target='new'> Edit?</a>";
 
                 <div id="postCheckout" class="well pull-right">
                     <div id="showCartPrice">@{ Html.RenderPartial("Partials/_DisplayRowPrice", Model.DisplayRowPriceViewModel); }</div>
@@ -126,7 +126,10 @@
     }
 }
 
-@{ Html.RenderPartial("Partials/_ConfirmModal"); }
+@{
+    Html.RenderPartial("Partials/_ConfirmModal");
+    Html.RenderPartial("Partials/_UserDetailsModal", Model.ManageModel);
+}
 
 @using (Html.BeginForm("SignInAfterCheckout", "Account", null, FormMethod.Post, new { id = "_SignInAfterCheckout" }))
 {

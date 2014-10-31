@@ -336,8 +336,10 @@ namespace CUWebinars.Web.Controllers
                     exception.Message,
                     AppHelper.GetUserAuditInfo()
                     );
-                throw;
+                ModelState.AddModelError(string.Empty, exception.Message);
             }
+
+            return this.ModelStateJson(ModelState);
         }
 
         [System.Web.Mvc.HttpGet]

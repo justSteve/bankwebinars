@@ -194,6 +194,7 @@ $(function () {
 
                         hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
                         hookUpChangeTypeLogic($('#RegType'));
+                        hookUpEditUserLogic($('#editUserDetails'));
 
                     }, constants.HtmlDataType);
 

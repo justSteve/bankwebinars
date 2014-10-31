@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Constants;
+﻿using System.Diagnostics;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
@@ -66,9 +67,9 @@ namespace CUWebinars.Web.Controllers
 
                 return Json(new
                 {
-                    success = "success",
-                    orderRowID = orderID,
-                    msg = string.Format("Your Order ID is {0}.{1}Please check your email for connection information for the webinar.", orderID, Environment.NewLine)
+                    Result = WebUiConstants.Success,
+                    OrderRowID = orderID,
+                    Msg = string.Format("Your Order ID is {0}.{1}Please check your email for connection information for the webinar.", orderID, Environment.NewLine)
                 }, JsonRequestBehavior.AllowGet);
             }
 
@@ -184,7 +185,12 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                System.Diagnostics.Stopwatch sw = new Stopwatch();
+                sw.Start();
                 var shouldShow = _cartControllerOrchestrator.CheckIfAddLocShouldHide(optionID);
+                sw.Stop();
+
+                Debug.WriteLine(sw.ElapsedMilliseconds / 1000);
 
                 return Json(new {shouldShow}, JsonRequestBehavior.AllowGet);
             }

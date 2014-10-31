@@ -374,6 +374,7 @@ var Registration;
             });
 
             $.when(showResetInput.resolve()).then(function () {
+                $('#ResetPassEmail').val($('#Email').val());
                 $('#ResetPassEmail').focus();
             });
         };

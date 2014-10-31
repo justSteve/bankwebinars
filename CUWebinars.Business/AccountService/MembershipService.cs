@@ -241,7 +241,6 @@ namespace CUWebinars.Business.AccountService
 
         public void ResetPassword(string tenant, string email)
         {
-           
             try
             {
                 _userAccountService.ResetPassword(tenant, email);

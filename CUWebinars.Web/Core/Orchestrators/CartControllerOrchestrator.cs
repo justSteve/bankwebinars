@@ -110,6 +110,10 @@ namespace CUWebinars.Web.Core.Orchestrators
                     var webUser = orderRow.Order.WebUser;
                     var userFullName = string.Concat(webUser.FirstName, " ", webUser.LastName);
 
+                    var addresses = webUser.Addresses.ToArray();
+                    var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
+                    var shippingAddress = addresses.FirstOrDefault(a => a.AddressType == WebUiConstants.ShippingAddress);
+
                     var checkoutConfirmViewModel = new CheckoutConfirmViewModel
                     {
                         AdditionalLocationCaption = BuildAdditionalLocationsCaption(orderRow),
@@ -120,6 +124,45 @@ namespace CUWebinars.Web.Core.Orchestrators
                         DisplayOptionsInDropDownViewModel = BuildDisplayOptionsInDropDownViewModel(orderRow, idOrderRow),
                         DisplayRowPriceViewModel = BuildDisplayRowPriceViewModel(orderRow, idOrderRow),
                         idUser = orderRow.Order.WebUser.idUser,
+                        ManageModel = new ManageModel
+                        {
+                            HasLocalPassword = false,
+                            RegisterFields = new RegisterModel
+                            {
+                                BillingAddress = new AddressModel
+                                {
+
+                                    Name = webUser.FirstName + ' ' + webUser.LastName,
+                                    City = billingAddress.City,
+                                    Country = billingAddress.Country,
+                                    StreetAddress = billingAddress.StreetAddress,
+                                    StreetAddress2 = billingAddress.StreetAddress2,
+                                    State = billingAddress.State,
+                                    Zip = billingAddress.Zip,
+                                    Phone = billingAddress.Phone,
+                                    TypeOfAddress = AddressType.Billing
+                                },
+                                ShippingAddress = shippingAddress == null ? new AddressModel() : new AddressModel
+                                {
+                                    City = shippingAddress.City,
+                                    Country = shippingAddress.Country,
+                                    StreetAddress = shippingAddress.StreetAddress,
+                                    StreetAddress2 = shippingAddress.StreetAddress2,
+                                    State = shippingAddress.State,
+                                    Zip = shippingAddress.Zip,
+                                    Phone = shippingAddress.Phone,
+                                    Name = shippingAddress.Name,
+                                    TypeOfAddress = AddressType.Shipping
+                                },
+                                FirstName = webUser.FirstName,
+                                LastName = webUser.LastName,
+                                Institution = webUser.Institution.InstitutionName,
+                                Email = webUser.email,
+                                Title = webUser.Title,
+                                AccountDetailsTitle = WebUiConstants.ManageUser
+                            },
+                            StatusMessage = string.Empty
+                        },
                         OrderExists = orderRow.Order != null,
                         OrderHasAdditionalLocationsViewModel =
                             BuildOrderHasAdditionalLocationsViewModel(orderRow, idOrderRow),
@@ -143,8 +186,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                         if (orderRow.Order.OrderStatus == OrderStatus.InProcess)
                             checkoutConfirmViewModel.UserDetails +=
-                                " - <a role=\"button\" class=\"btn btn-mini\" target=\"new\" href='/account/manage/" +
-                                webUser.idUser + "' > Edit?</a>";
+                                " - <a id='editUserDetails' role='button' class='btn btn-mini' target='new'> Edit?</a>";
                     }
 
                     if (Request["referred"] != null &&

@@ -86,6 +86,9 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public void RegisterAndLogInUser(RegisterViewModel model)
         {
+            if (_stateService.HasValue(DomainConstants.TempPassword))
+                _stateService.HasValue(DomainConstants.TempPassword);
+
             var email = model.RegisterFields.Email.Trim();
             var firstName = model.RegisterFields.FirstName.Trim();
             var lastName = model.RegisterFields.LastName.Trim();
@@ -215,6 +218,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public bool UserConfirmed(CreateUserConfirmedViewModel model)
         {
+            //  TODO: add try catch and reverse as should be atomic.
             if (_membershipService.VerifyUserByEmail(_globals.Tenant, model.Email))
             {
                 _stateService.SetValue(DomainConstants.UserCreatedViaNewOrder, true);
@@ -224,7 +228,14 @@ namespace CUWebinars.Web.Core.Orchestrators
                 
                 _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
 
-                _membershipService.ChangePasswordFromResetKey(verificationKey, model.NewPassword);
+                try
+                {
+                    _membershipService.ChangePasswordFromResetKey(verificationKey, model.NewPassword);
+                }
+                catch (Exception exception)
+                {
+                    
+                }
 
                 _stateService.ClearValue(DomainConstants.VerificationKey);
 
