@@ -413,7 +413,7 @@
     <Compile Include="Models\JotFormOrderModel.cs" />
     <Compile Include="Notification\Templates\CertOfCompletionViewModel.cs" />
     <Content Include="Content\css\create-user-form.css" />
-    <Content Include="Content\css\details2.css" />
+    <Content Include="Content\css\details.css" />
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
     <Content Include="Content\themes\base\autocomplete.css" />

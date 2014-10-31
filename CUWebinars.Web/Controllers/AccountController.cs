@@ -493,6 +493,7 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
+        [System.Web.Mvc.AllowAnonymous]
         public ActionResult Manage(ManageModel model)
         {
             if (ModelState.IsValid)
@@ -500,7 +501,7 @@ namespace CUWebinars.Web.Controllers
                 try
                 {
                     _accountControllerOrchestrator.UpdateUserDetails(model);
-                    return View(model);
+                    return Json(new { Result = WebUiConstants.Success });
                 }
                 catch (Exception exception)
                 {

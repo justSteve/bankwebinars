@@ -651,11 +651,12 @@ function logUserIn(userId) {
 }
 
 function hookUpEditUserLogic(button) {
+
+    var modalForm = $('#UserDetailsModal');
+
     button.on('click', function (e) {
 
         e.preventDefault();
-
-        var modalForm = $('#UserDetailsModal');
 
         var modalFormOptions = {
             keyboard: true,
@@ -664,7 +665,61 @@ function hookUpEditUserLogic(button) {
         };
 
         modalForm.modal(modalFormOptions);
+    });
 
+    modalForm.on('shown', function(e) {
+        $('#saveChangesButton').on('click', function() {
+            e.preventDefault();
+
+            $('#userDetailsForm').submit();
+        });
+
+        $('#userDetailsForm').on('submit', function(e) {
+            e.preventDefault();
+
+            var url = $(this).attr('action');
+
+            var payload = $(this).serialize();
+
+            $.ajax({
+                type: 'POST',
+                contentType: constants.FormPostContentType,
+                data: payload,
+                cache: false,
+                url: url,
+                dataType: constants.JsonDataType,
+            }).done(function (data) {
+                if (data.Result === 'Success') {
+                    modalForm.modal('hide');
+                } else if (!data.isSuccessful) {
+                    formProcessor.lightUpValidationSummary('userDetailsValSummary', data);
+                }
+            });
+        });
+
+        $('#HideAddShippingAddressLink').on('click', function (e) {
+            e.preventDefault();
+
+            $('#AddShippingAddressLink').show('500');
+            $('#ShippingAddressContainer').hide('500');
+            $(this).hide();
+        });
+
+        $('#AddShippingAddressLink').on('click', function (e) {
+            e.preventDefault();
+
+            $('#HideAddShippingAddressLink').show('500');
+            $('#ShippingAddressContainer').show('500');
+            $(this).hide();
+        });
+
+        $('#ShippingAddressContainer').hide();
+        $('#HideAddShippingAddressLink').hide();
+    });
+
+    modalForm.on('hidden', function (e) {
+        $('#saveChangesButton').off('click');
+        $('#userDetailsForm').off('submit');
     });
 }
 
