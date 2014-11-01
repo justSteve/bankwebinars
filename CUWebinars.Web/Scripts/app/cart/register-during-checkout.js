@@ -1,6 +1,6 @@
 ﻿var registerDuringCheckout = {};
 
-registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, callback) {
+registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, shippingAddressRequired, callback) {
     
     var regUserStateManager, userId;
 
@@ -21,6 +21,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ca
     regUserStateManager = new RegistrationInCart.StateManager();
     regUserStateManager.initializeState();
     regUserStateManager.setAction(RegistrationInCart.Action.CheckEmail); // starting off with CheckEmail action.
+    regUserStateManager.setIsShippindAddressRequired(shippingAddressRequired);
 
     var path = utilities.setPathToBaseUrl();
 
@@ -400,6 +401,8 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ca
                             headers: headers
                         }).done(function(data) {
 
+                            signUpFormContainer.height(storedHeight);
+
                             // Upon return, load the 3rd tab. And once loaded, create the MR UserAccount (but don't log the user in). 
                             $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
 
@@ -436,7 +439,6 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ca
                                 hookUpEditUserLogic($('#editUserDetails'));
                             });
 
-                            signUpFormContainer.height(storedHeight);
                         });
 
                         $('#confirmationTab a').tab('show');
@@ -580,6 +582,8 @@ function completeOrder(userId, orderRowId) {
     cartStateManager.setCancelOrderForm($('#cancelOrder'));
     cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 
+    $('#ConfirmRegistrationBillMe').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>');
+
     cartStateManager.getConfirmOrderForm().on('submit', function (e) {
 
         console.log('submitting ConfirmOrder');
@@ -595,15 +599,18 @@ function completeOrder(userId, orderRowId) {
             if (result.Result === 'Success') {
                 cartStateManager.setOrderRowId(result.OrderRowID);
 
-                $('#confirmResult').empty();
-                $('#confirmResult').html(result.Msg);
+                $('#orderDetails').empty();
+                $('#orderDetails').append(result.Msg);
                 $('#confirmRegistration').attr('href', 'javascript:location.reload();');
 
+                $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
 
                 logUserIn(userId);
                 
-
                 $('#ConfirmModal').modal('show');
+
+                $('#finalLoadingSpinner').remove();
+
             } else {
                 $('.signupErrors').html('Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! ');
             }
@@ -650,7 +657,7 @@ function logUserIn(userId) {
     $('#_SignInAfterCheckout').off('submit');
 }
 
-function hookUpEditUserLogic(button) {
+function hookUpEditUserLogic(button, isShippindAddressRequired) {
 
     var modalForm = $('#UserDetailsModal');
 
@@ -713,14 +720,28 @@ function hookUpEditUserLogic(button) {
             $(this).hide();
         });
 
-        $('#ShippingAddressContainer').hide();
-        $('#HideAddShippingAddressLink').hide();
+        setInitialUiLayout(isShippindAddressRequired);
+
     });
 
     modalForm.on('hidden', function (e) {
         $('#saveChangesButton').off('click');
         $('#userDetailsForm').off('submit');
     });
+}
+
+function setInitialUiLayout(isShippindAddressRequired) {
+    if (isShippindAddressRequired) {
+        $('#ShippingAddressContainer').hide();
+        $('#HideAddShippingAddressLink').hide();
+    } else {
+        $('#ShippingAddressContainer, #linksToAddShippingFields').hide();
+    }
+
+    $('#passwordWrapper').remove();
+
+    $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields_Password" name="RegisterFields.Password" value="456rty^Y" />');
+    $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields.ConfirmPassword" name="RegisterFields.ConfirmPassword" value="456rty^Y" />');
 }
 
 function hookUpChangeTypeLogic(dropDown) {

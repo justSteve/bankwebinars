@@ -136,7 +136,9 @@ var RegistrationInCart;
                     $('#FullName').focus();
                 });
 
-                $('#collapseShipping').parent().show();
+                if (this.isShippindAddressRequired)
+                    $('#collapseShipping').parent().show();
+
                 $('#collapseEmail').collapse('toggle');
 
                 $('#TheSubmitButton').prop('value', this.registerButtonText);
@@ -152,7 +154,10 @@ var RegistrationInCart;
 
         StateManager.prototype.enterBillingPane = function (data) {
             $('#collapseBilling').parent().show();
-            $('#collapseShipping').parent().show();
+
+            if (this.isShippindAddressRequired)
+                $('#collapseShipping').parent().show();
+
             $('#collapseEmail').collapse('toggle');
 
             var showBillingInputs = $.Deferred(function () {
@@ -409,6 +414,10 @@ var RegistrationInCart;
 
         StateManager.prototype.setInputAction = function (incomingInputAction) {
             this.inputAction = incomingInputAction;
+        };
+
+        StateManager.prototype.setIsShippindAddressRequired = function (isShippindAddressRequired) {
+            this.isShippindAddressRequired = isShippindAddressRequired;
         };
 
         StateManager.prototype.setShippingToBilling = function () {

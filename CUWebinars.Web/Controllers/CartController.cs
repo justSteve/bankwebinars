@@ -69,7 +69,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     Result = WebUiConstants.Success,
                     OrderRowID = orderID,
-                    Msg = string.Format("Your Order ID is {0}.{1}Please check your email for connection information for the webinar.", orderID, Environment.NewLine)
+                    Msg = string.Format("<p>Your Order ID is {0}. Please check your email for connection information for the webinar.</p>", orderID)
                 }, JsonRequestBehavior.AllowGet);
             }
 

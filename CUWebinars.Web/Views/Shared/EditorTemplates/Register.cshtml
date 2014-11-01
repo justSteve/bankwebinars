@@ -1,6 +1,6 @@
 ﻿@model  RegisterModel
 
-    @Html.ValidationSummary(true, "Please address the following problems:", new { id = "userDetailsValSummary"})
+    @Html.ValidationSummary("Please address the following problems:", new { id = "userDetailsValSummary"})
 
     @Html.HiddenFor(model => model.Email)
 
@@ -37,7 +37,7 @@
         <h4>Billing Address</h4>
         @Html.EditorFor(b => b.BillingAddress)
     </div>
-    <div class="control-group">
+    <div id="linksToAddShippingFields" class="control-group">
         <span class="control-label">&nbsp;</span>
         <div>
             <a href="" class="label label-info" id="AddShippingAddressLink">Add Shipping Address if different from Billing Address</a>  <a href="" class="label label-info" id="HideAddShippingAddressLink">Remove Shipping Address fields</a>
@@ -51,19 +51,20 @@
 
     @Html.HiddenFor(m => m.AccountDetailsTitle)
 
+<div id="passwordWrapper">
     <div class="control-group">
-            @Html.LabelFor(model => model.Password, new { @class = "control-label" })
-        <div class="controls">
-            @Html.EditorFor(model => model.Password)
-            @Html.ValidationMessageFor(model => model.Password)
-        </div>
-        </div>
+                    @Html.LabelFor(model => model.Password, new {@class = "control-label"})
+                    <div class="controls">
+                        @Html.HiddenFor(model => model.Password)
+                        @Html.ValidationMessageFor(model => model.Password)
+                    </div>
+                </div>
 
     <div class="control-group">
-        @Html.LabelFor(model => model.ConfirmPassword, new { @class = "control-label" })
+        @Html.LabelFor(model => model.ConfirmPassword, new {@class = "control-label"})
         <div class="controls">
-            @Html.EditorFor(model => model.ConfirmPassword)
-            @Html.ValidationMessageFor(model => model.ConfirmPassword)
+            @Html.HiddenFor(model => model.ConfirmPassword)
+            @*@Html.ValidationMessageFor(model => model.ConfirmPassword)*@
         </div>
     </div>
-
+</div>

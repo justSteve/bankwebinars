@@ -57,6 +57,7 @@ module RegistrationInCart {
 
     export class StateManager {
         private action: Action;
+        private isShippindAddressRequired: boolean;
         private inputAction: InputAction;
         private disregardInstitutionDomain: boolean = false;
         private formParsedByValidator: boolean = false;
@@ -127,7 +128,9 @@ module RegistrationInCart {
                     $('#FullName').focus();
                 });
 
-                $('#collapseShipping').parent().show();
+                if (this.isShippindAddressRequired)
+                    $('#collapseShipping').parent().show();
+
                 $('#collapseEmail').collapse('toggle');
 
                 $('#TheSubmitButton').prop('value', this.registerButtonText);
@@ -143,7 +146,10 @@ module RegistrationInCart {
 
         enterBillingPane(data: any): void {
             $('#collapseBilling').parent().show();
-            $('#collapseShipping').parent().show();
+
+            if (this.isShippindAddressRequired)
+                $('#collapseShipping').parent().show();
+
             $('#collapseEmail').collapse('toggle');
 
             var showBillingInputs = $.Deferred(function () {
@@ -402,6 +408,10 @@ module RegistrationInCart {
 
         setInputAction(incomingInputAction: InputAction): void {
             this.inputAction = incomingInputAction;
+        }
+
+        setIsShippindAddressRequired(isShippindAddressRequired: boolean): void {
+            this.isShippindAddressRequired = isShippindAddressRequired;
         }
 
         setShippingToBilling(): void {

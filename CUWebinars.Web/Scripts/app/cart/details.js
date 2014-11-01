@@ -5,6 +5,7 @@ var checkoutConfirm,
     discount,
     cartStateManager,
     orderRowId,
+    shippingAddressRequired,
     signUpForm,
     signUpFormContainer,
     storedHeight;
@@ -35,16 +36,24 @@ $(function () {
 
             JL("myLogger").info("submitting ConfirmOrder");
             var data = $(this).serialize();
+            $('#ConfirmRegistrationBillMe').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>');
 
             $.post(self.attr('action'), data, function (result, status) {
-                if (result.success) {
-                    orderRowID = result.orderRowID;
+                if (result.Result === 'Success') {
+                    orderRowID = result.OrderRowID;
 
                     JL("myLogger").info("Posted Order: " + orderRowID);
-                    $('#confirmResult').html(result.msg);
+                    $('#orderDetails').empty();
+                    $('#orderDetails').append(result.Msg);
+
+                    $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
+                    
+
                     $('#confirmRegistration').attr('href', 'javascript:location.reload();');
                     
                     $('#ConfirmModal').modal('show');
+
+                    $('#finalLoadingSpinner').remove();
                 } else {
                     //TODO: Add code that will provide as much detail to the Failed message as can be obtained from result.
                     JL("myLogger").fatal("FAILED posting Order: ");
@@ -143,6 +152,10 @@ $(function () {
         $('#loginEmail').val($('#Email1').val());
         $('#loginPassword').val($('#Password1').val());
 
+        var regTypeLabel = $.trim($('dl dt input:checked').parent().text());
+
+        shippingAddressRequired = isShippindAddressRequired(regTypeLabel);
+
         var data = signUpForm.serialize();
 
         $('#SignUpForm > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
@@ -160,7 +173,7 @@ $(function () {
                     cartStateManager.setWebinarId(result.webinarId);
                     $('#contactInfo').load('/Cart/CheckoutContactDetails', function (response, status, xhr) {
                         $('#_CreateUserForm input[name="returnUrl"]').val('/Webinar/Details2/' + result.webinarId);
-                        registerDuringCheckout.initialize(result.orderId, result.webinarId, result.orderRowId, checkoutConfirm.initialize);
+                        registerDuringCheckout.initialize(result.orderId, result.webinarId, result.orderRowId, shippingAddressRequired, checkoutConfirm.initialize);
                     });
                     signUpFormContainer.height(storedHeight);
 
@@ -211,3 +224,10 @@ $(function () {
     });
 });
 
+function isShippindAddressRequired(regTypeLabel) {
+
+    if (regTypeLabel.indexOf('Live Session Only') > -1 || regTypeLabel.indexOf('Live Plus OnDemand Weblinks') > -1)
+        return false;
+    return true;
+
+}

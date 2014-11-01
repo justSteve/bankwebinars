@@ -78,22 +78,22 @@
         switch (Model.OrderStatus)
         {
             case OrderStatus.InProcess:
-                <span class="label label-warning">@OrderStatus.InProcess</span>
+                <span id="orderStatusLabel" class="label label-warning">@OrderStatus.InProcess</span>
                 break;
 
             case OrderStatus.Submitted:
-            <span class="label label-info">@OrderStatus.Submitted</span>
+            <span id="orderStatusLabel" class="label label-info">@OrderStatus.Submitted</span>
                 break;
 
             case OrderStatus.Paid:
-            <span class="label label-success">@OrderStatus.Paid</span>
+            <span id="orderStatusLabel" class="label label-success">@OrderStatus.Paid</span>
                 break;
 
             case OrderStatus.AwaitingVerification:
-            <span class="label label-warning">@OrderStatus.AwaitingVerification</span>
+            <span id="orderStatusLabel" class="label label-warning">@OrderStatus.AwaitingVerification</span>
                 break;
         }
-            }
+}
         </div>
     }
 }

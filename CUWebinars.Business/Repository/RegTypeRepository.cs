@@ -41,7 +41,7 @@ namespace CUWebinars.Business.Repository
             var regtypesXrefs = regtypesGroups.Include(o => o.RegTypesXrefs).SelectMany(opt => opt.RegTypesXrefs);
 
             //  Finally, get the RegTypes
-            var regTypes = regtypesXrefs.Include(o => o.RegType).Select(o => o.RegType).ToList();
+            var regTypes = regtypesXrefs.Include(o => o.RegType).Select(o => o.RegType).Distinct().ToList();
 
             if (!detached)
                 return regTypes;

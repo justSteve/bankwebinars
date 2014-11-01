@@ -1,55 +1,5 @@
 ﻿@model DisplayOptionsInDropDownViewModel
            
-<script type="text/javascript">
-
-    $(document).ready(function () {
-
-        var signUpFormUpdate = $("#updateRegType");
-        $("#RegType").on('change', function () {
-
-            //$("#updateRegType").submit();
-            signUpFormUpdate.submit();
-        });
-
-        $("#updateRegType").submit(function (e) {
-            e.preventDefault();
-
-            //CheckoutInProcess = true;
-            if (!isUserLogged) {
-                $("#btnLogin").trigger("click");
-            } else {
-                var data = signUpFormUpdate.serialize();
-                $.post(signUpFormUpdate.attr("action"), data, function (result, status) {
-                    if (result.success) {
-
-                        orderRowID = result.orderRowID;
-
-                        $.get("/cart/CheckoutDisplayRowPrice/" + orderRowID)
-                            .success(function (dataConfirm) {
-                                console.log($('#showCartPrice').html());
-                                $('#showCartPrice').html(dataConfirm);
-                            })
-                            .done(function (dataConfirm) {
-                                console.log("after: " + $('#showCartPrice').html());
-                                SetCartState();
-                            });
-
-                        //$.get("/cart/checkoutConfirm/" + orderRowID)
-                        //    .success(function (dataConfirm) {
-                        //        $('#confirmation').replaceWith(dataConfirm);
-                        //
-                        //    });
-                    } else {
-                        $('.signupErrors').html("Invalid Data. Try again?");
-                    }
-                }, "json");
-                return false;
-            }
-        });
-
-    });
-</script>
-
 <input type="hidden" name="ID" value="@Model.OrderRowId" />
 <select name="RegType" id="RegType">
     @{
