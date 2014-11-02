@@ -36,7 +36,7 @@ $(function () {
 
             JL("myLogger").info("submitting ConfirmOrder");
             var data = $(this).serialize();
-            $('#ConfirmRegistrationBillMe').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>');
+            $('#ConfirmRegistrationBillMe').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
 
             $.post(self.attr('action'), data, function (result, status) {
                 if (result.Result === 'Success') {
@@ -202,12 +202,14 @@ $(function () {
                         // see top of this file
                         // 
                         $('#ConfirmRegistrationBillMe').on('click', function (e) {
-                            $('#confirmOrder').submit();
+                            var confirmOrderForm = $('#confirmOrder');
+                            confirmOrderForm.submit();
+                            confirmOrderForm.off('submit');
                         });
 
                         hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
                         hookUpChangeTypeLogic($('#RegType'));
-                        hookUpEditUserLogic($('#editUserDetails'));
+                        hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
 
                     }, constants.HtmlDataType);
 

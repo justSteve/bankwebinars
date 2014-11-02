@@ -436,7 +436,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
                                 hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
                                 hookUpChangeTypeLogic($('#RegType'));
-                                hookUpEditUserLogic($('#editUserDetails'));
+                                hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
                             });
 
                         });
@@ -535,7 +535,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
                                         hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
                                         hookUpChangeTypeLogic($('#RegType'));
-                                        hookUpEditUserLogic($('#editUserDetails'));
+                                        hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
 
                                     });
 
@@ -582,7 +582,7 @@ function completeOrder(userId, orderRowId) {
     cartStateManager.setCancelOrderForm($('#cancelOrder'));
     cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 
-    $('#ConfirmRegistrationBillMe').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>');
+    $('#ConfirmRegistrationBillMe').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
 
     cartStateManager.getConfirmOrderForm().on('submit', function (e) {
 
@@ -657,6 +657,17 @@ function logUserIn(userId) {
     $('#_SignInAfterCheckout').off('submit');
 }
 
+function hookUpModal(modalForm) {
+
+    var modalFormOptions = {
+        keyboard: true,
+        backdrop: 'static',
+        show: true,
+    };
+
+    modalForm.modal(modalFormOptions);
+}
+
 function hookUpEditUserLogic(button, isShippindAddressRequired) {
 
     var modalForm = $('#UserDetailsModal');
@@ -665,13 +676,7 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
 
         e.preventDefault();
 
-        var modalFormOptions = {
-            keyboard: true,
-            backdrop: 'static',
-            show: true,
-        };
-
-        modalForm.modal(modalFormOptions);
+        hookUpModal(modalForm);
     });
 
     modalForm.on('shown', function(e) {
@@ -698,6 +703,20 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
             }).done(function (data) {
                 if (data.Result === 'Success') {
                     modalForm.modal('hide');
+                    var fullname = $('#RegisterFields_FirstName').val() + ' ' + $('#RegisterFields_LastName').val();
+                    $('#userFullname').text(fullname);
+
+                    var userNameInsuranceAndButton = $('#userDetailsSummed > p:nth-child(1)');
+                    userNameInsuranceAndButton.empty();
+                    userNameInsuranceAndButton.html(fullname + ' - ' + $('#RegisterFields_Institution').val() + '<br> ' + $('#RegisterFields_Email').val() + ' - <a id="editUserDetails" role="button" class="btn btn-mini" target="new"> Edit?</a>');
+
+                    $('#editUserDetails').on('click', function (e) {
+
+                        e.preventDefault();
+
+                        hookUpModal(modalForm);
+                    });
+
                 } else if (!data.isSuccessful) {
                     formProcessor.lightUpValidationSummary('userDetailsValSummary', data);
                 }
@@ -707,17 +726,22 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
         $('#HideAddShippingAddressLink').on('click', function (e) {
             e.preventDefault();
 
-            $('#AddShippingAddressLink').show('500');
-            $('#ShippingAddressContainer').hide('500');
-            $(this).hide();
+            $(this).fadeOut('500', function() {
+                $('#ShippingAddressContainer').fadeOut('500', function () {
+                    $('#AddShippingAddressLink').fadeIn('500');
+                });
+            });
+
         });
 
         $('#AddShippingAddressLink').on('click', function (e) {
             e.preventDefault();
 
-            $('#HideAddShippingAddressLink').show('500');
-            $('#ShippingAddressContainer').show('500');
-            $(this).hide();
+            $(this).fadeOut('500', function() {
+                $('#ShippingAddressContainer').fadeIn('500', function() {
+                    $('#HideAddShippingAddressLink').fadeIn('500');
+                });
+            } );
         });
 
         setInitialUiLayout(isShippindAddressRequired);
@@ -740,8 +764,10 @@ function setInitialUiLayout(isShippindAddressRequired) {
 
     $('#passwordWrapper').remove();
 
-    $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields_Password" name="RegisterFields.Password" value="456rty^Y" />');
-    $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields.ConfirmPassword" name="RegisterFields.ConfirmPassword" value="456rty^Y" />');
+    if ($('#RegisterFields_Password').length < 1) {
+        $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields_Password" name="RegisterFields.Password" value="456rty^Y" />');
+        $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields.ConfirmPassword" name="RegisterFields.ConfirmPassword" value="456rty^Y" />');
+    }
 }
 
 function hookUpChangeTypeLogic(dropDown) {
@@ -774,6 +800,7 @@ function hookUpChangeTypeLogic(dropDown) {
             }
         });
     });
+
     $('#cancelTypeChange').on('click', function (e) {
         changeTypeConfirmModal.modal('hide');
     });

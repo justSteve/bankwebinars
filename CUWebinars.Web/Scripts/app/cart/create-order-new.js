@@ -123,6 +123,7 @@ var OrderRegistration;
                 } else if (data.shouldShow === 'No') {
                     //console.log('hide  CheckIfAddLocShouldHide');
                     $("#displayAddLoc").hide(1000);
+                    $('#collectAdditionalLocations').empty();
                 }
             }).fail(function (data) {
                 //console.log('CheckIfAddLocShouldHide failed!!! ');

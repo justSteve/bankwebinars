@@ -166,16 +166,12 @@
         <!--close section tertiary-column sidebar span3-->
     </div>
     @{
-        if (
-            Model.Webinar.Status != WebinarStatus.Archived &&
+        if (Model.Webinar.Status != WebinarStatus.Archived &&
             Model.Webinar.Status != WebinarStatus.Deleted &&
             Model.Webinar.Status != WebinarStatus.Pending
             && Model.UserOwnsThisEvent < 1)
         {
             <div id="SignUpFormContainer" class="row-fluid">
-
-
-
 
                 <div class="content offset2 span8 well">
                     <ul class="nav nav-tabs" id="regTabs">
@@ -195,7 +191,7 @@
                         </div>
                     </div>
                 </div>
-                
+                @* The following forms are positioned here so that they are not nested in the form in the CheckoutOptions View. *@
                 @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
                 {
                     <input id="loginEmail" name="Email" type="hidden" value="">

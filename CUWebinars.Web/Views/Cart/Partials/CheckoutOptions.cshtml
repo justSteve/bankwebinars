@@ -13,8 +13,6 @@
         @Html.HiddenFor(model => model.WebinarStatus)
         @Html.HiddenFor(model => model.DisplayOptionsViewModel.EventTitle)
         
-        <input type="hidden" name="stageOfCheckout" />
-        
         if (Model.OrderExists && Model.OrderHasId)
         {
             //var row = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
