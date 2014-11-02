@@ -135,13 +135,12 @@ namespace CUWebinars.Web.Controllers
 
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult Signup2(CheckoutOptionsViewModel formModel, string stageOfCheckout)
+        public ActionResult Signup2(CheckoutOptionsViewModel formModel)
         {
             if (ModelState.IsValid)
             {
                 var order = _cartControllerOrchestrator.CreateOrder(
-                    formModel, 
-                    stageOfCheckout
+                    formModel
                     );
 
 
@@ -154,12 +153,7 @@ namespace CUWebinars.Web.Controllers
 
                 try
                 {
-                    //I believe 'stageOfCheckout' (as well as CheckoutInProcess) are deprecated by 
-                    // implementation of SM, yes?
-                    if (stageOfCheckout == "preReg")
-                    {
-                        return PartialView("Partials/_DisplayRowPrice", order.OrderRows.FirstOrDefault());
-                    }
+                    // todo: if in progress, will have to show populated partial view.
 
                     return Json(new
                     {

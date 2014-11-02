@@ -466,7 +466,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             return null;
         }
 
-        public Order CreateOrder(CheckoutOptionsViewModel formModel, string stageOfCheckout)
+        public Order CreateOrder(CheckoutOptionsViewModel formModel)
         {
             _stateService.SetValue(DomainConstants.CheckoutInProcess, true);
 
