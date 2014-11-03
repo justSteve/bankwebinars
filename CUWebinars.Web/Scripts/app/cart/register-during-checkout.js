@@ -780,6 +780,7 @@ function hookUpChangeTypeLogic(dropDown) {
     
     var changeTypeConfirmModal = $('#changeTypeConfirmModal');
     var position;
+    var typeChosenTmp;
 
     $('#confirmTypeChange').on('click', function (e) {
 
@@ -803,12 +804,13 @@ function hookUpChangeTypeLogic(dropDown) {
                 changeTypeConfirmModal.modal('hide');
 
                 $('html, body').animate({ scrollTop: position.top }, 500);
-            }
+            } 
         });
     });
 
     $('#cancelTypeChange').on('click', function (e) {
         changeTypeConfirmModal.modal('hide');
+        $('#chosenRegType').text(typeChosenTmp);
     });
 
     dropDown.on('change', function(e) {
@@ -842,6 +844,9 @@ function hookUpChangeTypeLogic(dropDown) {
                 };
             });
         }
+
+        typeChosenTmp = $.trim($('#chosenRegType').text());
+        $('#chosenRegType').empty().text($.trim($('#RegType option:selected').text()));
     });
 }
 
