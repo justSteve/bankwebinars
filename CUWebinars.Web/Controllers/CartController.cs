@@ -56,19 +56,27 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
-                var orderID = model.Order.OrderRows.SingleOrDefault().idOrderRow;
+                try
+                {
+                    var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
+                    var orderID = model.Order.OrderRows.SingleOrDefault().idOrderRow;
 
-                _cartControllerOrchestrator.FireOrderSubmittedNotification(order: model.Order);
-                _cartControllerOrchestrator.SetOrderStatusToSubmitted(order: model.Order);
+                    _cartControllerOrchestrator.FireOrderSubmittedNotification(order: model.Order);
+                    _cartControllerOrchestrator.SetOrderStatusToSubmitted(order: model.Order);
                 
 
-                return Json(new
+                    return Json(new
+                    {
+                        Result = WebUiConstants.Success,
+                        OrderRowID = orderID,
+                        Msg = string.Format("<p>Your Order ID is {0}. Please check your email for connection information for the webinar.</p>", orderID)
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                catch (Exception exception)
                 {
-                    Result = WebUiConstants.Success,
-                    OrderRowID = orderID,
-                    Msg = string.Format("<p>Your Order ID is {0}. Please check your email for connection information for the webinar.</p>", orderID)
-                }, JsonRequestBehavior.AllowGet);
+                    ModelState.AddModelError(string.Empty, "There was a problem at the server. Please contact the administrator.");
+                    _logger.ErrorException("ConfirmOrder|ConfirmOrder failed ", exception);
+                }
             }
 
             return this.ModelStateJson(ModelState);
@@ -139,20 +147,12 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var order = _cartControllerOrchestrator.CreateOrder(
-                    formModel
-                    );
-
-
-                //  TODO: this all changes and user can create order whilst not authenticated
-                if (!Request.IsAuthenticated)
-                {
-                    _logger.Error("ERROR: CartController | Signup - currentUser is null" + order.idOrder);
-                    //TODO: assign appropriate ModelError and error logging/handling
-                }
-
                 try
                 {
+                    var order = _cartControllerOrchestrator.CreateOrder(
+                        formModel
+                        );
+
                     // todo: if in progress, will have to show populated partial view.
 
                     return Json(new
@@ -164,7 +164,7 @@ namespace CUWebinars.Web.Controllers
                     }, JsonRequestBehavior.AllowGet
                         );
                 }
-                catch(Exception exception)
+                catch (Exception exception)
                 {
                     ModelState.AddModelError(string.Empty, exception.Message);
                 }
@@ -198,9 +198,9 @@ namespace CUWebinars.Web.Controllers
                 {
                     _cartControllerOrchestrator.RemoveAdditionalLocationsFromOrder(idOrderRow.Value);
                 }
-                catch (Exception e)
+                catch (Exception exception)
                 {
-                    _logger.Error(e, "Session=" + AppHelper.GetUserAuditInfo());
+                    _logger.ErrorException("RemoveAdditionalLocationsFromOrder|Session=" + AppHelper.GetUserAuditInfo(), exception);
                 }
 
                 return Json(new { Result = WebUiConstants.Success });

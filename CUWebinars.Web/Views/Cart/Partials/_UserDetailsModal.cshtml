@@ -17,6 +17,8 @@
                     @Html.EditorFor(m => m.RegisterFields)
 
                     <button id="saveChangesButton" type="button" class="btn btn-primary offset2">Save changes</button>
+                    
+                    @Html.ValidationSummary("Please address the following problems:", new { id = "userDetailsValSummary" })
                 }
             </div>
 

@@ -492,7 +492,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     "Not",
                     "Authenticated",
                     string.Empty,
-                    string.Empty,
+                    string.Concat(_stateService.GetValue<string>(WebUiConstants.SessionId), "@notauthenticated.com"),
                     USTimeZone.Alaska,
                     UserType.Customer,
                     25,

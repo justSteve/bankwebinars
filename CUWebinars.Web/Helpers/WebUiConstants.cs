@@ -24,5 +24,8 @@ namespace CUWebinars.Web.Helpers
         public const string NoOrdersForWebinar = "No Orders to send for that webinar";
         public const string Nonvalid = "NonValid";
         public const string Success = "Success";
+
+
+        public const string SessionId = "SessionID";
     }
 }

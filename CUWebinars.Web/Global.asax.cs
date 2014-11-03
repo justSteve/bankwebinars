@@ -3,6 +3,7 @@ using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Web.App_Start;
+using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Services;
 using log4net;
 using System;
@@ -115,7 +116,7 @@ namespace CUWebinars.Web
                     StateService.SetValue("SubdomainBranding", HttpContext.Current.Request.UrlReferrer.ToString().Trim());
                 StateService.SetValue("FirstPage", HttpContext.Current.Request.Url.ToString().Trim());
                 StateService.SetValue("InitialQueryString", Request.Url.Query);
-                StateService.SetValue("SessionID", HttpContext.Current.Session.SessionID);
+                StateService.SetValue(WebUiConstants.SessionId, HttpContext.Current.Session.SessionID);
 
                 //DETERMINE CURRENT AFFILIATE
                 //MEHTOD 1: VIA QUERY STRING -- idAff=[idUserAff]   
@@ -197,7 +198,7 @@ namespace CUWebinars.Web
                 //    
                 //}
                 */
-                logger.Info("Start Session: " + StateService.GetValue<string>("SessionID"));
+                logger.Info("Start Session: " + StateService.GetValue<string>(WebUiConstants.SessionId));
 
                 var allCookies = new StringBuilder();
 

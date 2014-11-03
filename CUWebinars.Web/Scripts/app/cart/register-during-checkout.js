@@ -428,7 +428,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                     //  do nothing.              
                                 });
 
-                                // 
+                                
                                 $('#ConfirmRegistrationBillMe').on('click', function (e) {
                                     $('#confirmation').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
                                     completeOrder(userId, orderRowId);
@@ -437,6 +437,9 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                 hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
                                 hookUpChangeTypeLogic($('#RegType'));
                                 hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
+
+                                //  Now that we are on the 3rd tab, remove the 2nd tab else we'll have some fields with identical id's on both tabs (edit user fields)
+                                $('#_CreateUserFromCartForm').remove();
                             });
 
                         });
@@ -536,6 +539,9 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                         hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
                                         hookUpChangeTypeLogic($('#RegType'));
                                         hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
+
+                                        //  Now that we are on the 3rd tab, remove the 2nd tab else we'll have some fields with identical id's on both tabs (edit user fields)
+                                        $('#_CreateUserFromCartForm').remove();
 
                                     });
 
