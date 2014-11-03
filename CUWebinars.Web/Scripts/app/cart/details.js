@@ -178,9 +178,10 @@ $(function () {
                     signUpFormContainer.height(storedHeight);
 
                     $('#contactInfoTab a').tab('show');
-                } else {
-                    //jslogger.log({ exception: { name: 'SignupFail', message: 'The signUpForm submission failed.' } });
-                    $('.signupErrors').html('Invalid Data. Try again?');
+                } else if (!data.isSuccessful) {
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;There were some problems with the form. Please refer to the items in red.</span>');
+
+                    formProcessor.lightUpValidationSummary('valSummarySignUpForm', result);
                 }
             }, constants.JsonDataType);
 
