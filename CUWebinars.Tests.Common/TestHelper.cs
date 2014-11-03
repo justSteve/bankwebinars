@@ -1,4 +1,5 @@
-﻿using BrockAllen.MembershipReboot;
+﻿using System.Text;
+using BrockAllen.MembershipReboot;
 using BrockAllen.MembershipReboot.Ef;
 using BrockAllen.MembershipReboot.WebHost;
 using CUWebinars.Business.AccountService;
@@ -21,7 +22,7 @@ namespace CUWebinars.Tests.Common
     {
         public static IMembershipService CreateMembershipService()
         {
-            ILogger logger = new Log4NetLogger(typeof(MembershipService));
+            ILogger logger = new Log4NetLogger(typeof (MembershipService));
             var ctx = new TTSWebinarsContext();
             var refDataRepository = new RefDataRepository();
             var config = MembershipRebootConfig.Create(
@@ -51,7 +52,7 @@ namespace CUWebinars.Tests.Common
                 new RefDataRepository(),
                 new WebUserRepository(ctx),
                 new WebinarRepository(ctx),
-                new AdditionalLocationRepository(ctx), 
+                new AdditionalLocationRepository(ctx),
                 new Log4NetLogger(typeof (OrderManagementService)),
                 ttsConfig
                 );
@@ -67,6 +68,24 @@ namespace CUWebinars.Tests.Common
 
             return email;
         }
+
+        private static readonly Random Random = new Random((int) DateTime.Now.Ticks);
+
+        /// <summary>
+        /// Taken from StackOverflow answer http://stackoverflow.com/a/1122519/540156
+        /// </summary>
+        public static string RandomString(int size)
+        {
+            var builder = new StringBuilder(size);
+            for (var i = 0; i < size; i++)
+            {
+                var ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26*Random.NextDouble() + 97)));
+                builder.Append(ch);
+            }
+
+            return builder.ToString();
+        }
+
 
         public static JObject TransformQueryStringToJsonCompliantString(string queryString)
         {

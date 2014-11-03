@@ -191,7 +191,7 @@
                         </div>
                     </div>
                 </div>
-                @* The following forms are positioned here so that they are not nested in the form in the CheckoutOptions View. *@
+                <!-- The following forms are positioned here so that they are not nested in the form in the CheckoutOptions View. -->
                 @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
                 {
                     <input id="loginEmail" name="Email" type="hidden" value="">
@@ -208,14 +208,11 @@
                 <form id="checkZip"><input type="hidden" name="ZipChecker" id="ZipChecker" /></form>
                 <form id="nonUSForm"><input type="hidden" name="AddressText" id="AddressText" /></form>
                 <form id="checkInstitution"><input type="hidden" name="InstitutionChecker" id="InstitutionChecker" /></form>
-    
-                @* // TODO: next form hits non-existant Action. Is it no longer required? *@
-                <form id="updateRegType" action="/Cart/SetRegistrationTypeAtCheckout" method="post" name="updateRegType"></form>
 
             </div> <!-- closes SignUpFormContainer div-->
         }
     }
-</div>
+</div> <!-- closes main-content -->
 
 
 @{

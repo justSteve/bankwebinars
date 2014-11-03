@@ -199,6 +199,12 @@ namespace CUWebinars.WebUi.Tests2.Pages
 
             return SeleniumTestDriver.FindByXPath("//*[@id='page']/div[3]/div[1]/h3/a", ExpectedCondition.ElementIsVisible, 5).Displayed;
         }
+        public void ClickWebinarsMenuItem()
+        {
+            SeleniumTestDriver.MouseOverElement(FinderStrategy.XPath, @"//*[@id='main_menu']/ul/li[3]");
+
+            SeleniumTestDriver.FindByXPathClick(@"//*[@id='main_menu']/ul/li[3]/ul/li[2]/a", ExpectedCondition.ElementIsVisible, 5);
+        }
 
         public void ClickMoreButtonOnTopicsPage()
         {
