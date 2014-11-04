@@ -16,7 +16,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             int? idOrder);
         WebinarDetailsViewModel BuildCheckOutViewModel(int? idOrderRow);
         OrderHasAdditionalLocationsViewModel BuildOrderHasAdditionalLocationsViewModel(OrderRow orderRow, int? idOrderRow);
-        string CheckIfAddLocShouldHide(int optionId);
+        Tuple<string, string> CheckIfAddLocShouldHide(int optionId);
         Order CreateOrder(CheckoutOptionsViewModel formModel);
         void FireOrderSubmittedNotification(Order order);
         OrderRow LoadOrderRow(int id, OrderStatus status);

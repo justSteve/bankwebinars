@@ -1,5 +1,6 @@
 ﻿var registerDuringCheckout = {};
 
+
 registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, shippingAddressRequired, callback) {
     
     var regUserStateManager, userId;
@@ -582,7 +583,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 };
 
 function completeOrder(userId, orderRowId) {
-
+    
     var cartStateManager = new OrderRegistration.StateManager();
 
     cartStateManager.setCancelOrderForm($('#cancelOrder'));
@@ -590,7 +591,9 @@ function completeOrder(userId, orderRowId) {
 
     $('#ConfirmRegistrationBillMe').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
 
-    cartStateManager.getConfirmOrderForm().on('submit', function (e) {
+    var confirmOrderForm = cartStateManager.getConfirmOrderForm();
+
+    confirmOrderForm.on('submit', function (e) {
 
         console.log('submitting ConfirmOrder');
 
@@ -607,7 +610,6 @@ function completeOrder(userId, orderRowId) {
 
                 $('#orderDetails').empty();
                 $('#orderDetails').append(result.Msg);
-                $('#confirmRegistration').attr('href', 'javascript:location.reload();');
 
                 $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
 
@@ -624,8 +626,21 @@ function completeOrder(userId, orderRowId) {
         return false;
 
     });
-    cartStateManager.getConfirmOrderForm().submit();
-    cartStateManager.getConfirmOrderForm().off('submit');
+
+    $('#ConfirmModal').on('hidden', function (e) {
+
+        location.reload(true);
+        //var confirmButton = $('#confirmRegistration');
+        //confirmButton.removeAttr('href');
+
+        //confirmButton.on('click', function (e) {
+        //    e.preventDefault();
+        //    location.reload(true);
+        //});
+    });
+
+    confirmOrderForm.submit();
+    confirmOrderForm.off('submit');
 }
 
 function logUserIn(userId) {
@@ -652,7 +667,7 @@ function logUserIn(userId) {
             headers: headers
         }).done(function (data) {
 
-            $('#loginContainer').empty().load('/Account/GetLoginPartial', function() {
+            $('#loginContainer').empty().load('/Account/GetLoginPartial', function (response, status, xhr) {
                 $('#loadingSpinner').remove();
             });
         });
@@ -676,6 +691,8 @@ function hookUpModal(modalForm) {
 
 function hookUpEditUserLogic(button, isShippindAddressRequired) {
 
+    registerDuringCheckout.shippingAddressRequired = isShippindAddressRequired;
+
     var modalForm = $('#UserDetailsModal');
 
     button.on('click', function (e) {
@@ -685,7 +702,10 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
         hookUpModal(modalForm);
     });
 
-    modalForm.on('shown', function(e) {
+    modalForm.on('shown', function (e) {
+
+        setUiLayout(registerDuringCheckout.shippingAddressRequired);
+
         $('#saveChangesButton').on('click', function() {
             e.preventDefault();
 
@@ -749,9 +769,13 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
                 });
             } );
         });
+        
+        $('#passwordWrapper').remove();
 
-        setInitialUiLayout(isShippindAddressRequired);
-
+        if ($('#RegisterFields_Password').length < 1) {
+            $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields_Password" name="RegisterFields.Password" value="456rty^Y" />');
+            $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields.ConfirmPassword" name="RegisterFields.ConfirmPassword" value="456rty^Y" />');
+        }
     });
 
     modalForm.on('hidden', function (e) {
@@ -760,29 +784,32 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
     });
 }
 
-function setInitialUiLayout(isShippindAddressRequired) {
+function setUiLayout(isShippindAddressRequired) {
+
     if (isShippindAddressRequired) {
         $('#ShippingAddressContainer').hide();
         $('#HideAddShippingAddressLink').hide();
+        $('#linksToAddShippingFields').show();
+        $('#AddShippingAddressLink').show();
     } else {
-        $('#ShippingAddressContainer, #linksToAddShippingFields').hide();
-    }
-
-    $('#passwordWrapper').remove();
-
-    if ($('#RegisterFields_Password').length < 1) {
-        $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields_Password" name="RegisterFields.Password" value="456rty^Y" />');
-        $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields.ConfirmPassword" name="RegisterFields.ConfirmPassword" value="456rty^Y" />');
+        $('#ShippingAddressContainer, #linksToAddShippingFields, #AddShippingAddressLink').hide();
     }
 }
 
-function hookUpChangeTypeLogic(dropDown) {
-    
-    var changeTypeConfirmModal = $('#changeTypeConfirmModal');
-    var position;
-    var typeChosenTmp;
+function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
 
-    $('#confirmTypeChange').on('click', function (e) {
+    var changeTypeConfirmModal = $('#changeTypeConfirmModal');
+    var chosenRegTypeLabel = $('#chosenRegType');
+    var position,
+        typeChosenCurrent,
+        typeChosenPrevious,
+        valOfTypeChosenPrevious,
+        valOfTypeChosenCurrent;
+
+        typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
+        valOfTypeChosenPrevious = valOfTypeChosenCurrent = dropDown.val();
+
+    $('#confirmTypeChange').on('click', function(e) {
 
         var url = '/Cart/RemoveAdditionalLocationsFromOrder';
         var payLoad = {
@@ -796,41 +823,48 @@ function hookUpChangeTypeLogic(dropDown) {
             url: url,
             dataType: constants.JsonDataType,
             data: JSON.stringify(payLoad),
-        }).done(function (data) {
+        }).done(function(data) {
             if (data.Result === 'Success') {
-                $('#addlocSpiel').remove();
                 $('#confirmation > div:nth-child(4) > div:nth-child(6)').empty();
                 // TODO: Also adjust the price accordingly
                 changeTypeConfirmModal.modal('hide');
 
                 $('html, body').animate({ scrollTop: position.top }, 500);
-            } 
+
+                $('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 706 for immediate assistance').addClass('text-info');
+            }
         });
+
+        valOfTypeChosenCurrent = valOfTypeChosenPrevious = dropDown.val();
+        typeChosenCurrent = typeChosenPrevious = $.trim($('#RegType option:selected').text());
+        chosenRegTypeLabel.empty().text(typeChosenCurrent);
     });
 
-    $('#cancelTypeChange').on('click', function (e) {
+    $('#cancelTypeChange').on('click', function(e) {
         changeTypeConfirmModal.modal('hide');
-        $('#chosenRegType').text(typeChosenTmp);
+        chosenRegTypeLabel.text(typeChosenPrevious);
+        dropDown.val(valOfTypeChosenPrevious);
     });
-
-    dropDown.on('change', function(e) {
+    
+    dropDown.on('change', function (e) {
 
         e.preventDefault();
 
-        //  First, check if there are currently any Additional Locations added to the order.
-        if ($('#addlocSpiel').length > 0) {
+        valOfTypeChosenCurrent = $(this).val();
 
-            var url = '/Cart/CheckIfAddLocShouldHide?optionID=' + $(this).val();
+        var url = '/Cart/CheckIfAddLocShouldHide?optionID=' + valOfTypeChosenCurrent;
 
-            $.ajax({
-                type: 'GET',
-                contentType: constants.FormPostContentType,
-                cache: false,
-                url: url,
-                dataType: constants.JsonDataType,
-            }).done(function(data) {
-                if (data.shouldShow === 'No') {
+        $.ajax({
+            type: 'GET',
+            contentType: constants.FormPostContentType,
+            cache: false,
+            url: url,
+            dataType: constants.JsonDataType,
+        }).done(function(data) {
+            if (data.shouldShow === 'No') {
 
+                //  First, check if there are currently any Additional Locations added to the order.
+                if ($('#addlocSpiel').length > 0) {
                     var modalFormOptions = {
                         keyboard: true,
                         backdrop: 'static',
@@ -840,13 +874,23 @@ function hookUpChangeTypeLogic(dropDown) {
                     position = $('#confirmation').offset();
 
                     changeTypeConfirmModal.modal(modalFormOptions);
+                } else {
+                    typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
+                    chosenRegTypeLabel.empty().text(typeChosenCurrent);
+                    valOfTypeChosenPrevious = valOfTypeChosenCurrent;
+                }
+            } else {
+                typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
+                chosenRegTypeLabel.empty().text(typeChosenCurrent);
+                valOfTypeChosenPrevious = valOfTypeChosenCurrent;
+            }
 
-                };
-            });
-        }
-
-        typeChosenTmp = $.trim($('#chosenRegType').text());
-        $('#chosenRegType').empty().text($.trim($('#RegType option:selected').text()));
+            if (data.shippingDetailsRqrd === 'Yes') {
+                registerDuringCheckout.shippingAddressRequired = true;
+            } else {
+                registerDuringCheckout.shippingAddressRequired = false;
+            }
+        });
     });
 }
 

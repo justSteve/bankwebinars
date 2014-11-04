@@ -447,20 +447,20 @@ namespace CUWebinars.Web.Core.Orchestrators
             return new Tuple<string, int>(addresses.ToString(), optionsCost);
         }
 
-        public string CheckIfAddLocShouldHide(int optionId)
+        public Tuple<string, string> CheckIfAddLocShouldHide(int optionId)
         {
             var firstOrDefault =  _orderManagementService.GetRegTypesForOption(optionId)
-                .Select(o => o.ShowLiveNotifications)
+                .Select(o => new { Show = o.ShowLiveNotifications, Ship = o.ShowShippedNotifications})
                 .FirstOrDefault();
 
             if (firstOrDefault != null)
             {
-                if (firstOrDefault == "Yes")
+                if (firstOrDefault.Show == "Yes")
                 {
-                    _logger.Info(firstOrDefault);
+                    _logger.Info(firstOrDefault.Show);
                 }
 
-                return firstOrDefault;
+                return new Tuple<string, string>(firstOrDefault.Show, firstOrDefault.Ship);
             }
 
             return null;

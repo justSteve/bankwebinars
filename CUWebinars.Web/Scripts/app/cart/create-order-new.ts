@@ -41,6 +41,7 @@ module OrderRegistration {
         private isUserLogged: boolean;
         private confirmOrderForm: JQuery;
         private cancelOrderForm: JQuery;
+        private shippingAddressRequired: boolean;
     
 
         constructor() { }
@@ -65,6 +66,10 @@ module OrderRegistration {
             return this.orderRowID;
         }
 
+        getShippingAddressRequired(): boolean {
+            return this.shippingAddressRequired;
+        }
+
         getWebinarId(): number {
             return this.idWebinar;
         }
@@ -87,6 +92,10 @@ module OrderRegistration {
 
         setOrderRowId(num: number): void {
             this.orderRowID = num;
+        }
+
+        setShippingAddressRequired(val: boolean): void {
+            this.shippingAddressRequired = val;
         }
 
         setWebinarId(id: number): void {
@@ -120,6 +129,8 @@ module OrderRegistration {
             //don't show AdditionalEmails when RegType
             // can't support them. (ex: recorded only)
 
+            var self = this;
+
             $.ajax({
                 url: "/cart/CheckIfAddLocShouldHide?optionID=" + optionID,
                 type: "GET",
@@ -134,11 +145,17 @@ module OrderRegistration {
                 //console.log('done CheckIfAddLocShouldHide');
                 if (data.shouldShow === 'Yes') {
                     //console.log('show CheckIfAddLocShouldHide');
-                    $("#displayAddLoc").show('slow');
+                    $('#displayAddLoc').show('slow');
                 } else if (data.shouldShow === 'No') {
                     //console.log('hide  CheckIfAddLocShouldHide');
-                    $("#displayAddLoc").hide(1000);
+                    $('#displayAddLoc').hide(1000);
                     $('#collectAdditionalLocations').empty();
+                }
+
+                if (data.shippingDetailsRqrd === 'Yes') {
+                    self.shippingAddressRequired = true;
+                } else {
+                    self.shippingAddressRequired = false;
                 }
             }).fail(function(data) {
                 //console.log('CheckIfAddLocShouldHide failed!!! ');

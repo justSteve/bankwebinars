@@ -1,5 +1,5 @@
 ﻿
-//  This script correlates with the Details2 View.
+//  This script correlates with the Details View.
 
 var checkoutConfirm,
     discount,
@@ -49,7 +49,7 @@ $(function () {
                     $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
                     
 
-                    $('#confirmRegistration').attr('href', 'javascript:location.reload();');
+                    //$('#confirmRegistration').attr('href', 'javascript:location.reload();');
                     
                     $('#ConfirmModal').modal('show');
 
@@ -92,10 +92,13 @@ $(function () {
 
     };
 
+    shippingAddressRequired = false; //todo: this should be done dynamically from db
+
     cartStateManager = new OrderRegistration.StateManager();
     
     cartStateManager.setOrderRowId(orderRowId);
     cartStateManager.setIsUserLogged(isUserLogged);
+    cartStateManager.setShippingAddressRequired(shippingAddressRequired);
     cartStateManager.SetCartState();
 
     $("[id^='regTypeID_']").on("click", function (oEvent) {
@@ -154,7 +157,7 @@ $(function () {
 
         var regTypeLabel = $.trim($('dl dt input:checked').parent().text());
 
-        shippingAddressRequired = isShippindAddressRequired(regTypeLabel);
+        shippingAddressRequired = cartStateManager.getShippingAddressRequired();
 
         var data = signUpForm.serialize();
 

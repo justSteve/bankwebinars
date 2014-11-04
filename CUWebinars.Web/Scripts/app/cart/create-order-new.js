@@ -54,6 +54,10 @@ var OrderRegistration;
             return this.orderRowID;
         };
 
+        StateManager.prototype.getShippingAddressRequired = function () {
+            return this.shippingAddressRequired;
+        };
+
         StateManager.prototype.getWebinarId = function () {
             return this.idWebinar;
         };
@@ -76,6 +80,10 @@ var OrderRegistration;
 
         StateManager.prototype.setOrderRowId = function (num) {
             this.orderRowID = num;
+        };
+
+        StateManager.prototype.setShippingAddressRequired = function (val) {
+            this.shippingAddressRequired = val;
         };
 
         StateManager.prototype.setWebinarId = function (id) {
@@ -106,6 +114,8 @@ var OrderRegistration;
         StateManager.prototype.CheckIfAddLocShouldHide = function (optionID) {
             //don't show AdditionalEmails when RegType
             // can't support them. (ex: recorded only)
+            var self = this;
+
             $.ajax({
                 url: "/cart/CheckIfAddLocShouldHide?optionID=" + optionID,
                 type: "GET",
@@ -119,11 +129,17 @@ var OrderRegistration;
                 //console.log('done CheckIfAddLocShouldHide');
                 if (data.shouldShow === 'Yes') {
                     //console.log('show CheckIfAddLocShouldHide');
-                    $("#displayAddLoc").show('slow');
+                    $('#displayAddLoc').show('slow');
                 } else if (data.shouldShow === 'No') {
                     //console.log('hide  CheckIfAddLocShouldHide');
-                    $("#displayAddLoc").hide(1000);
+                    $('#displayAddLoc').hide(1000);
                     $('#collectAdditionalLocations').empty();
+                }
+
+                if (data.shippingDetailsRqrd === 'Yes') {
+                    self.shippingAddressRequired = true;
+                } else {
+                    self.shippingAddressRequired = false;
                 }
             }).fail(function (data) {
                 //console.log('CheckIfAddLocShouldHide failed!!! ');

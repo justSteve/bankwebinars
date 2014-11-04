@@ -51,7 +51,7 @@ namespace CUWebinars.WebUi.Tests2.Pages
             {
                 return SeleniumTestDriver.FindByPartialLinkText(
                     TestConstants.LogoffLinkText, 
-                    ExpectedCondition.ElementIsVisible, 20).Displayed;
+                    ExpectedCondition.ElementIsVisible, 30).Displayed;
             } 
         }
 
