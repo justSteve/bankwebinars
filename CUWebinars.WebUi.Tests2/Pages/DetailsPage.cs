@@ -1,4 +1,5 @@
-﻿using KesselRun.SeleniumCore.Enums;
+﻿using System;
+using KesselRun.SeleniumCore.Enums;
 using KesselRun.SeleniumCore.TestDrivers.Contracts;
 
 namespace CUWebinars.WebUi.Tests2.Pages
@@ -21,7 +22,15 @@ namespace CUWebinars.WebUi.Tests2.Pages
 
         public void ClickConfirmOrderButton()
         {
-            SeleniumTestDriver.FindByIdClick("confirmRegistration", ExpectedCondition.ElementIsVisible, 25);
+            try
+            {
+                SeleniumTestDriver.FindByIdClick("confirmRegistration", ExpectedCondition.ElementIsVisible, 60);
+            }
+            catch (Exception e)
+            {
+                SeleniumTestDriver.WebDriver.SwitchTo().Alert().Accept();
+                SeleniumTestDriver.FindByIdClick("confirmRegistration");
+            }
         }
     }
 }

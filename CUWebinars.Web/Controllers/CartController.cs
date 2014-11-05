@@ -177,14 +177,9 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                System.Diagnostics.Stopwatch sw = new Stopwatch();
-                sw.Start();
-                var shouldShow = _cartControllerOrchestrator.CheckIfAddLocShouldHide(optionID);
-                sw.Stop();
+                var showPlusShip = _cartControllerOrchestrator.CheckIfAddLocShouldHide(optionID);
 
-                Debug.WriteLine(sw.ElapsedMilliseconds / 1000);
-
-                return Json(new {shouldShow}, JsonRequestBehavior.AllowGet);
+                return Json(new { shouldShow = showPlusShip.Item1, shippingDetailsRqrd = showPlusShip.Item2 }, JsonRequestBehavior.AllowGet);
             }
             return this.ModelStateJson(ModelState);
         }
