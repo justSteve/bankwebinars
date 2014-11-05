@@ -1,11 +1,11 @@
-﻿@using System.Configuration
+﻿@using CUWebinars.Web.Core
 @model Webinar
 
 <div id="showHandouts-@Model.idWebinar ">
     @{
         foreach (var file in Model.WebinarFiles)
         {
-            <a class="btn btn-warning" href='@ConfigurationManager.AppSettings["HandoutRepository"]@file.fileLocation' target='_blank'>@file.fileDesc</a>
+            <a class="btn btn-warning" href='@GlobalConfig.GlobalConfigSingleton.HandoutRepository@file.fileLocation' target='_blank'>@file.fileDesc</a>
             <br />
         }
     }

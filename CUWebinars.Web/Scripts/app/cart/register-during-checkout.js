@@ -806,6 +806,7 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
         valOfTypeChosenPrevious,
         valOfTypeChosenCurrent;
 
+        //  need to save state in the event that a Modal is displayed and Cancel is clicked on it.
         typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
         valOfTypeChosenPrevious = valOfTypeChosenCurrent = dropDown.val();
 

@@ -23,6 +23,7 @@
 </style>
 <script type="text/javascript">
     $(document).ready(function () {
+        _UpdateWebinarFiles.cshtml
 
 
         $(".control-label").append(":");
@@ -31,8 +32,7 @@
     });
 </script>
 <div><a href="#UpdateWebinarHandoutsModal" role="button" class="btn" data-toggle="modal">Manage Handouts</a></div>
-@using (Html.BeginForm("UpdateWebinarFiles", "Webinar", FormMethod.Post, new { id = "_UpdateWebinarFiles" }))
-{
+
     <div id="UpdateWebinarHandoutsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 
         <div class="modal-header">
@@ -40,9 +40,13 @@
             <h3 id="myModalLabel">Update Webinar Handouts</h3>
         </div>
         <div class="modal-body">
-
+        @using (Html.BeginForm("UpdateWebinarFiles", "Webinar", FormMethod.Post, new {id = "_UpdateWebinarFiles"}))
+        {
             @Html.AntiForgeryToken()
+
             @Html.HiddenFor(model => model.idWebinar)
+
+            <p><button id="addFilesButton" class="btn btn-success">Click to Add More</button></p>
 
             <div class="form-horizontal">
                 @Html.ValidationSummary(true)
@@ -50,34 +54,42 @@
                 {
                     <div class="well well-large form-group">
                         <div align="center">Webinar Files</div>
-                        @foreach (var file in Model.WebinarFiles)
-                        {
+                        <div id="manageFilesWrapper">
 
-                            <input type="hidden" name="idWebinarFile_@file.idWebinarFile" value="@file.idWebinarFile" />
-                            <div>
-                                <span class="control-label">File Name</span>
-                                <input type="text" class="form-control" name="fileLocation_@file.idWebinarFile" value="@file.fileLocation" />
-                            </div>
-                            <div>
-                                <span class="control-label">Label</span>
-                                <input type="text" class="form-control" name="fileDesc_@file.idWebinarFile" value="@file.fileDesc" /><br />
-                            </div>
-                        }
+                            @foreach (var file in Model.WebinarFiles)
+                            {
+                                <div id="fileDetails_@file.idWebinarFile" class="webinarFileDetails">
+                                    <i class="icon-trash icon-white pull-right" style="cursor: pointer" id="@file.idWebinarFile-Filedetails-delete"></i>
+                                    <input type="hidden" name="idWebinarFile_@file.idWebinarFile" value="@file.idWebinarFile" />
+                                    <div id="fileLocationDiv_@file.idWebinarFile">
+                                        <span class="control-label">File Name</span>
+                                        <input type="text" class="form-control" name="fileLocation_@file.idWebinarFile" value="@file.fileLocation" />
+                                    </div>
+                                    <div id="fileDescDiv_@file.idWebinarFile">
+                                        <span class="control-label">Label</span>
+                                        <input type="text" class="form-control" name="fileDesc_@file.idWebinarFile" value="@file.fileDesc" /><br />
+                                    </div>
+                                </div>
+                            }
+                        </div><!-- closes manageFilesWrapper -->
                     </div>
                 }
                 else
                 {
-                    //TODO: Apply same input scheme as was used for Additional Locations
-                    // Like Additional Locations, there can be many 'WebinarFiles' per event
-                    // This is the location to collect those unknown number of files
+                    <div class="well well-large form-group">
+                        <div align="center">Webinar Files</div>
+                        <div id="manageFilesWrapper"></div>
+                    </div>
                 }
 
-
-                <div class="modal-footer">
-                    <input type="submit" value="Save" class="btn btn-default pull-left" />
-                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                </div>
             </div>
+        }
+        </div> <!-- closes modal-body -->
+
+        <div class="modal-footer">
+            <input id="updateWebinarFilesButton" type="submit" value="Save" class="btn btn-primary pull-left" />
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
         </div>
+
     </div>
-}
+

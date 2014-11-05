@@ -83,29 +83,35 @@ namespace CUWebinars.Web.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult CancelOrder(int id)
+        public ActionResult CancelOrder(int? id = null)
         {
-            //var order = _checkoutWorkflow.CurrentOrder;
-
-            //_logger.Info("User Cancels order: " + order.ID);
-
-            //OrderFacade.Instance.DeleteOrderRow(order, id);
-
-            //_checkoutWorkflow.RemoveOrder(order.ID);
-            //_checkoutWorkflow.;
-
-
-            Session.Remove("LastOrderId");
-            Session.Remove("CurrentOrderId");
-            Session.Remove("CurrentOrderIds");
-            Session.Remove("IsOrderPaid");
-
-            return Json(new
+            if (id.HasValue)
             {
-                success = "success"
+                _cartControllerOrchestrator.CancelOrder(id.Value);
+                //var order = _checkoutWorkflow.CurrentOrder;
 
-            }, JsonRequestBehavior.AllowGet);
-            //return RedirectToAction("Step2");
+                //_logger.Info("User Cancels order: " + order.ID);
+
+                //OrderFacade.Instance.DeleteOrderRow(order, id);
+
+                //_checkoutWorkflow.RemoveOrder(order.ID);
+                //_checkoutWorkflow.;
+
+
+                Session.Remove("LastOrderId");
+                Session.Remove("CurrentOrderId");
+                Session.Remove("CurrentOrderIds");
+                Session.Remove("IsOrderPaid");
+
+                return Json(new
+                {
+                    success = "success"
+
+                }, JsonRequestBehavior.AllowGet);
+                //return RedirectToAction("Step2");
+            }
+            ModelState.AddModelError(string.Empty, "No Order ID was posted to the Server. This issue has been logged."); // TODO: custom message with instructions would be good here.
+            return this.ModelStateJson(ModelState);
         }
 
 
@@ -145,7 +151,7 @@ namespace CUWebinars.Web.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Signup2(CheckoutOptionsViewModel formModel)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid) 
             {
                 try
                 {
@@ -167,6 +173,7 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     ModelState.AddModelError(string.Empty, exception.Message);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 }
             }
             return this.ModelStateJson(ModelState);

@@ -12,6 +12,7 @@ namespace CUWebinars.Business.Repository
         AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullName);
         Order CreateOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow);
         OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, RegType registrationType);
+        void DeleteOrder(int orderId);
         Order FindOrderByIdWithOrderRows(int id);
         Order FindById(int id);
         IList<Order> FindOrdersByUserIdWithOrderRows(int userId);

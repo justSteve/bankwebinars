@@ -19,6 +19,7 @@ namespace CUWebinars.Business.Services
         string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int idWebinar,
             string webinarKey);
 
+        void DeleteOrder(int orderId);
         void DispatchDummyOrder();
         void FireOrderSubmittedEvent(Order order);
         void FireSendConnectionInfoNotificationEvent(IList<Order> orders);

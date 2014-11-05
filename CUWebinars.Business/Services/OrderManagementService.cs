@@ -205,6 +205,11 @@ namespace CUWebinars.Business.Services
         //{
         //    return _orderRepository.GetAdditionalLocations(idOrder);
         //}
+        public void DeleteOrder(int orderId)
+        {
+            _orderRepository.DeleteOrder(orderId);
+        }
+
         public void DispatchDummyOrder()
         {
             foreach (var orderSubmittedEvent in GetEvents())

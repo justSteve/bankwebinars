@@ -12,6 +12,11 @@ namespace CUWebinars.Business.Repository
 
         }
 
+        public int FindFirst()
+        {
+            return items.First().idInstitution;
+        }
+
         public IEnumerable<Institution> GetByNameAndZipCode(string name, string zip)
         {
             return items.Where(i => i.InstitutionName == name && i.Zip == zip);

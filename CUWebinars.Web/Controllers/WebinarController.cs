@@ -953,9 +953,11 @@ namespace CUWebinars.Web.Controllers
             _disposed = true;
         }
 
-        public ActionResult UpdateWebinarFiles()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdateWebinarFiles(FormCollection formCollection)
         {
-            throw new NotImplementedException();
+            return Json(new { result = WebUiConstants.Success});
         }
     }
 }

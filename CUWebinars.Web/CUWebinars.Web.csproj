@@ -459,6 +459,7 @@
     <Content Include="Content\themes\base\theme.css" />
     <Content Include="Content\themes\base\tooltip.css" />
     <Content Include="NuGet\readme.txt" />
+    <Content Include="Scripts\app\cart\update-webinar-files.js" />
     <Content Include="Scripts\app\cart\create-order-new.js" />
     <Content Include="Scripts\app\cart\register-during-checkout.js" />
     <Content Include="Scripts\app\cart\details.js" />
