@@ -33,9 +33,9 @@
     var checkoutInProcess = @(Model.CheckoutInProcess ? "true" : "false");
     var isUserLogged = @(@Model.UserIsLoggedIn ? "true" : "false");
 
-    @*$(document).ready(function() {
+    $(document).ready(function() {
         JL("myLogger").info("Details loaded @Model.Webinar.idWebinar for idUser @Model.WebUser.idUser.");
-    });*@
+    });
 
 </script>
 
@@ -50,7 +50,7 @@
     <div id="webinarTitle" class="container">
         <div class="span10">
             <h1>@Model.Webinar.Title</h1>
-        </div>    <!--close container-->
+        </div>   
     </div>
 </div>
 <!--close hero-unit-->
@@ -69,25 +69,19 @@
         </section>
         <!--*** add class "holy-grail" to row-fluid class to make a three column skinny, fat, skinny layout ***-->
         <div class="span6">
-            <div class="description">
                 @Html.Raw(Model.Webinar.DescriptionLong)
-            </div>
-            <div class="description">
                 <h2 class="short_headline">
                     <span>
                         @Html.Raw(Model.Webinar.LearnCaption)
                     </span>
                 </h2>
                 @Html.Raw(Model.Webinar.LearnBody)
-            </div>
-            <div class="description">
                 <h2 class="short_headline">
                     <span>
                         Who Should Attend?
                     </span>
                 </h2>
                 @Html.Raw(Model.Webinar.WhoAttend)
-            </div>
             <hr />
         </div>
 
