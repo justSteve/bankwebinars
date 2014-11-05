@@ -592,6 +592,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (userAccount.HasClaim(ClaimTypes.HasNotVerified, ClaimValues.ManualRegistration))
             {
                 changeEmailFromKeyInputModel.ScreenMessage = "Thank you for verifying your account with us.";
+                
                 return changeEmailFromKeyInputModel;
             }
 

@@ -31,6 +31,10 @@ namespace CUWebinars.Web.App_Start
             bundles.Add(new ScriptBundle("~/bundles/AdditionalLocation").Include(
                 "~/Scripts/app/cart/add-additional-locations.js"
                 ));
+            
+            bundles.Add(new ScriptBundle("~/bundles/manage-webinar-files").Include(
+                "~/Scripts/app/cart/update-webinar-files.js"
+                ));
 
             bundles.Add(new ScriptBundle("~/bundles/CommonModules").Include(
                 "~/Scripts/app/constants.js",
