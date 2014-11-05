@@ -29,6 +29,7 @@ namespace CUWebinars.Web
         private static TTSWebinarsContext ctx = new TTSWebinarsContext();
         private static readonly IAffiliateRepository affiliateRepository = new AffiliateRepository(ctx);
         private static readonly IWebinarRepository _reposWebinars = new WebinarRepository(ctx);
+        private static readonly IInstitutionRepository institutionRepository = new InstitutionRepository(ctx);
         private static readonly IStateService StateService = new StateService();
 
         const string AffiliateId = "idAff";
@@ -103,6 +104,7 @@ namespace CUWebinars.Web
                 StateService.SetValue("searchExtent", "Upcoming");
 
                 StateService.SetValue("CurrentAffiliate", affiliateRepository.FindByIdWithIncluding(19, a => a.WebUser));
+                StateService.SetValue("AValidInstitution", institutionRepository.FindFirst());
 
                 //This session var lets us understand the origin of the Affiliate session - 
                 //...answers the question - How was the Session Affiliate determined?

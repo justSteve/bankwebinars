@@ -500,7 +500,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     string.Concat(_stateService.GetValue<string>(WebUiConstants.SessionId), "@notauthenticated.com"),
                     USTimeZone.Alaska,
                     UserType.Customer,
-                    25,
+                    _stateService.GetValue<int>("AValidInstitution"),
                     null,
                     "Mr",
                     null,
