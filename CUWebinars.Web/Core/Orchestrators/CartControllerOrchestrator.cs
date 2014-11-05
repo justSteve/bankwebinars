@@ -414,6 +414,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             return null;
         }
 
+        public void CancelOrder(int idOrder)
+        {
+            _orderManagementService.DeleteOrder(orderId: idOrder);
+        }
+
         private Tuple<string, int> GetAddressesAndOptionsCost(IEnumerable<AdditionalLocation> additionalLocations)
         {
             StringBuilder addresses = new StringBuilder();

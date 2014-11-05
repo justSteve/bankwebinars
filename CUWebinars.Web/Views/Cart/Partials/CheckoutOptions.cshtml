@@ -57,10 +57,13 @@
         <h3 id="confirmCaption">Change Webinar Type</h3>
     </div>
     <div id="confirmResult" class="modal-body">
-    <p>The type you have selected does not include Additional Locations. If you proceed, the Additional Locations which you selected earlier will not be included in the order.</p>
+        <p>The type you have selected does not include Additional Locations. If you proceed, the Additional Locations which you selected earlier will not be included in the order.</p>
     </div>
     <div class="modal-footer">
         <a href="#" id="confirmTypeChange" role="button" class="btn btn-success">Continue</a>
         <button id="cancelTypeChange" class="btn" data-dismiss="modal">Cancel</button>
     </div>
+</div>
+<div>
+    @{ Html.RenderPartial("/Views/Cart/Partials/_CancelModal.cshtml"); }
 </div>

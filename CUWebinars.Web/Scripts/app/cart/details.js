@@ -64,29 +64,35 @@ $(function () {
 
         });
 
-        cartStateManager.getCancelOrderForm().submit(function (e) {
-            //console.log("Submitting Cancel Order");
-            JL("myLogger").info("Canceling Order");
-            e.preventDefault();
-            var data = cancelOrderForm.serialize();
-            $.post(cancelOrderForm.attr("action"), data, function (result, status) {
-                if (result.success) {
+        cartStateManager.getCancelOrderForm().on('submit', function (e) {
+            //console.log('Submitting Cancel Order');
+            JL('myLogger').info('Cancelling Order');
 
-                    JL("myLogger").info("Suceeded in canceling order");
-                    $('#cancelCaption').text("Order is canceled");
-                    $("#cancelRegistration").unbind("click");
-                    $("#rtn").hide();
-                    $("#continueReg").show();
-                    $("#cancelResult").hide();
-                    $("#cancelRegistration").hide();
-                    //$("#continueReg").attr("href", "/");
+            e.preventDefault();
+
+            $('#cancelModalOrderId').val(cartStateManager.getOrderId());
+            var data = $(this).serialize();
+
+            var self = $(this);
+
+            $.post(self.attr('action'), data, function (response, status, xhr) {
+                if (response.success) {
+
+                    JL('myLogger').info('Suceeded in canceling order');
+                    $('#cancelCaption').text('Order is canceled');
+                    $('#cancelRegistration').off('click');
+                    $('#rtn').hide();
+                    $('#continueReg').show();
+                    $('#cancelResult').hide();
+                    $('#cancelRegistration').hide();
+                    $('#continueReg').attr('href', 'http://localhost:3538/Webinar/Details/' + cartStateManager.getWebinarId());
 
                 } else {
 
-                    JL("myLogger").fatal("Cancel Order Failure");
-                    $('.signupErrors').html("Invalid Data. Try again?");
+                    JL('myLogger').fatal('Cancel Order Failure');
+                    $('.signupErrors').html('Invalid Data. Try again?');
                 }
-            }, "json");
+            }, 'json');
             return false;
         });
 
@@ -206,9 +212,17 @@ $(function () {
                         // see top of this file
                         // 
                         $('#ConfirmRegistrationBillMe').on('click', function (e) {
+                            e.preventDefault();
                             var confirmOrderForm = $('#confirmOrder');
                             confirmOrderForm.submit();
                             confirmOrderForm.off('submit');
+                        });
+
+                        $('#Canceller').on('click', function (e) {
+                            e.preventDefault();
+                            var cancelOrderForm = cartStateManager.getCancelOrderForm();
+                            cancelOrderForm.submit();
+                            cancelOrderForm.off('submit');
                         });
 
                         hookUpApplyDiscountLogic($('#SubmitDiscountCode'));

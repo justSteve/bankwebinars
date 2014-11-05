@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Constants;
+﻿using System.Security.Cryptography;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Validation.Order;
@@ -84,6 +85,13 @@ namespace CUWebinars.Business.Repository
                 }
                 throw;
             }
+        }
+
+        public void DeleteOrder(int orderId)
+        {
+            var orderToDelete = items.Find(orderId);
+            
+            Remove(orderToDelete);
         }
 
         public OrderRow CalculateRowPrices(OrderRow newOrderRow)
