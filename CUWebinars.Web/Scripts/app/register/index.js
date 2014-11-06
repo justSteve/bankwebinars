@@ -268,8 +268,8 @@ $(function () {
             }
         }).done(function (data) {
             if (data.result === 'LoggedIn') {
-                $('#signingInMsg').replaceWith('<span id="signingInMsg" class="label label-info">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Redirecting you now ...</span>');
-                window.location.href = path + '/Account/MyWebinars';
+                $('#signingInMsg').html('<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Redirecting you now ...');
+                utilities.goToUrl('/Account/MyWebinars');
             } else if (data.result === 'Confirmed') {
                 //  if here, user has to verify before they can log in
                 utilities.goToUrl('/Account/Confirmed?email=' + data.email + '&password=' + data.password);
@@ -309,7 +309,7 @@ $(function () {
         }).fail(function (data) {
 
         }).always(function (data) {
-            $('#loginMsgLabelWrap').hide();
+            
         });
 
     });
