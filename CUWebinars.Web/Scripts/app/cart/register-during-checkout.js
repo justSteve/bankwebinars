@@ -431,7 +431,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
                                 
                                 $('#ConfirmRegistrationBillMe').on('click', function (e) {
-                                    $('#confirmation').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>');
+                                    //$('#confirmation').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>');
                                     completeOrder(userId, orderRowId);
                                 });
 
@@ -623,15 +623,15 @@ function completeOrder(userId, orderRowId) {
                 $('.signupErrors').html('Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! ');
             }
         }, 'json');
-        return false;
+        
+        $('#ConfirmModal').on('hidden', function (e) {
 
+            //location.reload(true);
+
+        });
     });
 
-    $('#ConfirmModal').on('hidden', function (e) {
 
-        location.reload(true);
-
-    });
 
     confirmOrderForm.submit();
     confirmOrderForm.off('submit');
