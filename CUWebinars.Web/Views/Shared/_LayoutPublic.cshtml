@@ -49,12 +49,12 @@
 <html class="no-js" lang="en" dir="ltr">
 <!--<![endif]-->
 <head>
-    @*@Html.Raw(JSNLog.JavascriptLogging.Configure())
+    @Html.Raw(JSNLog.JavascriptLogging.Configure())
     <script type="text/javascript">
         var ajaxAppender = JL.createAjaxAppender('ajaxAppender');
         var consoleAppender = JL.createConsoleAppender('consoleAppender');
         JL("myLogger").setOptions({ "appenders": [ajaxAppender, consoleAppender] });
-    </script>*@
+    </script>
     @*@if (!Html.IsDebug())
         {
             <!--Start of Zopim Live Chat Script-->

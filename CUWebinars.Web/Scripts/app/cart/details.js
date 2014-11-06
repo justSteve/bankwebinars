@@ -48,9 +48,6 @@ $(function () {
 
                     $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
                     
-
-                    //$('#confirmRegistration').attr('href', 'javascript:location.reload();');
-                    
                     $('#ConfirmModal').modal('show');
 
                     $('#finalLoadingSpinner').remove();
@@ -60,8 +57,12 @@ $(function () {
                     $('.signupErrors').html('Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! ');
                 }
             }, constants.JsonDataType);
-            return false;
+            
+            $('#ConfirmModal').on('hidden', function (e) {
 
+                location.reload(true);
+
+            });
         });
 
         cartStateManager.getCancelOrderForm().on('submit', function (e) {
