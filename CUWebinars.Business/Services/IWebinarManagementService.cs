@@ -7,7 +7,9 @@ namespace CUWebinars.Business.Services
     public interface IWebinarManagementService : IDisposable
     {
         void AddWebinar(Webinar webinar);
+        void AddWebinarFiles(IEnumerable<WebinarFile> webinarFiles);
         void DeleteWebinar(int idWebinar );
+        void DeleteWebinarFiles(IEnumerable<WebinarFile> webinarFiles);
         IEnumerable<RegType> FindRegTypesByWebinarId(int webinarId);
         IEnumerable<Webinar> GetAllActive();
         IEnumerable<Presenter> GetAllPresenters();
@@ -19,6 +21,7 @@ namespace CUWebinars.Business.Services
         Webinar GetWebinar(int id);
         Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id);
         void UpdateWebinar(Webinar webinar);
+        void UpdateWebinarFiles(IEnumerable<WebinarFile> webinarFiles);
         Webinar GetCompliancePerspectives();
 
     }

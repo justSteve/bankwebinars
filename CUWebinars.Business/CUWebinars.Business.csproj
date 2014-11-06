@@ -187,7 +187,9 @@
     <Compile Include="Repository\IAdditionalLocationsRepository.cs" />
     <Compile Include="Repository\IAffiliateRepository.cs" />
     <Compile Include="Repository\AffiliateRepository.cs" />
+    <Compile Include="Repository\IWebinarFileRepository.cs" />
     <Compile Include="Repository\IWebinarRepository.cs" />
+    <Compile Include="Repository\WebinarFileRepository.cs" />
     <Compile Include="Repository\WebinarRepository.cs" />
     <Compile Include="Services\IOrderManagementService.cs" />
     <Compile Include="AccountService\IUserAccountService.cs" />

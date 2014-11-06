@@ -96,6 +96,7 @@ namespace CUWebinars.Web.App_Start
 
             kernel.Bind<IAffiliateRepository>().To<AffiliateRepository>().InRequestScope();
             kernel.Bind<IWebinarRepository>().To<WebinarRepository>().InRequestScope();
+            kernel.Bind<IWebinarFileRepository>().To<WebinarFileRepository>().InRequestScope();
             kernel.Bind<IWebUserRepository>().To<WebUserRepository>().InRequestScope();
 
             //attempting to inject logger to WebUserRepository
@@ -122,6 +123,7 @@ namespace CUWebinars.Web.App_Start
                     new RefDataRepository(),
                     new WebUserRepository(sharedContext),
                     new WebinarRepository(sharedContext),
+                    new WebinarFileRepository(sharedContext),
                     loggerForWebinarManagementService,
                     ctx.Kernel.Get<TtsConfiguration>()
                     );

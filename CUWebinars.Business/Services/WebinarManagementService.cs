@@ -17,6 +17,7 @@ namespace CUWebinars.Business.Services
         //private readonly IOrderRepository _orderRepository;
         private readonly IRefDataRepository _refDataRepository;
         private readonly IWebinarRepository _webinarRepository;
+        private readonly IWebinarFileRepository _webinarFileRepository;
         private readonly ILogger _logger;
         private readonly IWebUserRepository _webUserRepository;
         private readonly TtsConfiguration _ttsConfig;
@@ -30,6 +31,7 @@ namespace CUWebinars.Business.Services
             IRefDataRepository refDataRepository,
             IWebUserRepository webUserRepository,
             IWebinarRepository webinarRepository,
+            IWebinarFileRepository webinarFileRepository,
             ILogger logger,
             TtsConfiguration ttsConfig)
         {
@@ -38,6 +40,7 @@ namespace CUWebinars.Business.Services
             //_orderRepository = orderRepository;
             _refDataRepository = refDataRepository;
             _ttsConfig = ttsConfig;
+            _webinarFileRepository = webinarFileRepository;
             _webinarRepository = webinarRepository;
             _logger = logger;
             _webUserRepository = webUserRepository;
@@ -61,10 +64,20 @@ namespace CUWebinars.Business.Services
             _webinarRepository.Add(webinar);
         }
 
+        public void AddWebinarFiles(IEnumerable<WebinarFile> webinarFiles)
+        {
+            _webinarFileRepository.AddRange(webinarFiles);
+        }
+
         public void DeleteWebinar(int webinarId)
         {
             var webinar = GetWebinar(webinarId);
             _webinarRepository.Delete(webinar);
+        }
+
+        public void DeleteWebinarFiles(IEnumerable<WebinarFile> webinarFiles)
+        {
+            _webinarFileRepository.DeleteRange(webinarFiles);
         }
 
 
@@ -72,6 +85,12 @@ namespace CUWebinars.Business.Services
         {
             return _webinarRepository.GetByTopic(topicId);
         }
+
+        public void UpdateWebinarFiles(IEnumerable<WebinarFile> webinarFiles)
+        {
+            _webinarFileRepository.UpdateRange(webinarFiles);
+        }
+
         public Webinar GetCompliancePerspectives()
         {
             GetRegistrants_CP();
@@ -182,6 +201,7 @@ namespace CUWebinars.Business.Services
     //            throw;
     //        }
     //    }
+
 
         public IEnumerable<Webinar> GetAllActive()
         {

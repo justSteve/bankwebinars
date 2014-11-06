@@ -101,7 +101,8 @@ $(function () {
     shippingAddressRequired = false; //todo: this should be done dynamically from db
 
     cartStateManager = new OrderRegistration.StateManager();
-    
+
+    cartStateManager.setWebinarId(webinarId); // set in razor view
     cartStateManager.setOrderRowId(orderRowId);
     cartStateManager.setIsUserLogged(isUserLogged);
     cartStateManager.setShippingAddressRequired(shippingAddressRequired);

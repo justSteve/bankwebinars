@@ -21,16 +21,6 @@
         height: 20px;
     }
 </style>
-<script type="text/javascript">
-    $(document).ready(function () {
-        _UpdateWebinarFiles.cshtml
-
-
-        $(".control-label").append(":");
-
-
-    });
-</script>
 <div><a href="#UpdateWebinarHandoutsModal" role="button" class="btn" data-toggle="modal">Manage Handouts</a></div>
 
     <div id="UpdateWebinarHandoutsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -55,21 +45,27 @@
                     <div class="well well-large form-group">
                         <div align="center">Webinar Files</div>
                         <div id="manageFilesWrapper">
-
+                        
+                        @{
+                            int idx = 0;
+                        }
                             @foreach (var file in Model.WebinarFiles)
                             {
                                 <div id="fileDetails_@file.idWebinarFile" class="webinarFileDetails">
                                     <i class="icon-trash icon-white pull-right" style="cursor: pointer" id="@file.idWebinarFile-Filedetails-delete"></i>
-                                    <input type="hidden" name="idWebinarFile_@file.idWebinarFile" value="@file.idWebinarFile" />
+                                    <input type="hidden" name="connectionInfoModel.WebinarFiles[@idx].idWebinarFile" value="@file.idWebinarFile" />
+                                    <input type="hidden" name="connectionInfoModel.WebinarFiles[@idx].idWebinar" value="@file.idWebinar" />
                                     <div id="fileLocationDiv_@file.idWebinarFile">
                                         <span class="control-label">File Name</span>
-                                        <input type="text" class="form-control" name="fileLocation_@file.idWebinarFile" value="@file.fileLocation" />
+                                        <input type="text" class="form-control" name="connectionInfoModel.WebinarFiles[@idx].fileLocation" value="@file.fileLocation" />
+                                        <i class="icon-book icon-white"></i>
                                     </div>
                                     <div id="fileDescDiv_@file.idWebinarFile">
                                         <span class="control-label">Label</span>
-                                        <input type="text" class="form-control" name="fileDesc_@file.idWebinarFile" value="@file.fileDesc" /><br />
+                                        <input type="text" class="form-control" name="connectionInfoModel.WebinarFiles[@idx].fileDesc" value="@file.fileDesc" /><br />
                                     </div>
                                 </div>
+                                idx++;
                             }
                         </div><!-- closes manageFilesWrapper -->
                     </div>
@@ -92,4 +88,3 @@
         </div>
 
     </div>
-

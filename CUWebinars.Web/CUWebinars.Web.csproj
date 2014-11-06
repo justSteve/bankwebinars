@@ -399,6 +399,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="ViewModel\WebinarFileViewModel.cs" />
     <Content Include="ApplicationInsights.config" />
     <None Include="log4net.config">
       <SubType>Designer</SubType>
@@ -466,11 +467,11 @@
     <Content Include="Scripts\app\cart\register-user-in-cart.js" />
     <Content Include="Scripts\app\form-processor.js" />
     <Content Include="Scripts\app\utilities.js" />
-    <None Include="Properties\PublishProfiles\BankWebinars %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars.pubxml" />
-    <None Include="Properties\PublishProfiles\bankwebinars3.pubxml" />
+    <None Include="Properties\PublishProfiles\bankwebinars3 - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\bankwebinars3 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\jquery-1.11.1.js" />
     <Content Include="Scripts\jquery-1.11.1.min.js" />

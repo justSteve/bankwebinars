@@ -19,21 +19,21 @@ $(function() {
     ns.deleteItem = function(event) {
         numberOfWebinarFiles--;
         var trashClicked = event.currentTarget;
-        var trashClickedId = trashClicked.id;
+        //var trashClickedId = trashClicked.id;
         //var idx = trashClickedId.substring(0, trashClickedId.indexOf('-'));
 
         var divToRemove = $(trashClicked).parent();
 
         divToRemove.hide(500, function () {
             var id = divToRemove.attr('id');
-            if (id.charAt(id.length - 1) === 'N') {
-                $(this).remove();
-            } else {
-                var input = $(this).find('input[type="hidden"]');
-                input.val(input.val() + 'D'); // If an existing file mark for deletion at the server
-            }
+            var input = $(this).find('div[id^="fileDescDiv_"] input');
 
-            console.log($(this).data('delete'));
+            if (id.charAt(id.length - 1) === 'N') {
+                input.val(input.val() + '-ND'); // If new file mark to be ignored. Not removed from dom because indexing of collection must be preserved for the Model Binders to deserialize ViewModel.
+
+            } else {
+                input.val(input.val() + '-D'); // If an existing file mark for deletion at the server
+            }
         });
     };
 
@@ -44,16 +44,17 @@ $(function() {
 
     ns.wireUpHandlersForAddFilesModal = function() {
 
-        var newFileId = 1;
+        var newFileId;
         numberOfWebinarFiles = $('#manageFilesWrapper div[id^="fileDetails_"]').length;
+        newFileId = numberOfWebinarFiles++;
 
         if (numberOfWebinarFiles < 1) {
             //$('#sumbitAdditionalLocationsButton').off('click');
 
         } else {
 
-            var trashCans = manageFilesWrapper.find('i');
-
+            var trashCans = manageFilesWrapper.find('i[id$="-Filedetails-delete"]');
+            
             $.each(trashCans, function(idx, i) {
                 $(i).on('click', ns.deleteItem);
             });
@@ -109,5 +110,5 @@ $(function() {
 }(UWF));
 
 function getNewFileDetailsFragment(id) {
-    return '<div id="fileDetails_' + id + '" class="webinarFileDetails"><i class="icon-trash icon-white pull-right" style="cursor: pointer" id="' + id + '-Filedetails-delete"></i><input type="hidden" name="idWebinarFile_' + id + '" value="' + id + '" /><div id="fileLocationDiv_' + id + '"><span class="control-label">File Name</span><input type="text" class="form-control" name="fileLocation_' + id + '" /></div><div id="fileDescDiv_' + id + '"><span class="control-label">Label</span><input type="text" class="form-control" name="fileDesc_' + id + '" /><br /></div></div>';
+    return '<div id="fileDetails_' + id + '" class="webinarFileDetails"><i class="icon-trash icon-white pull-right" style="cursor: pointer" id="' + id + '-Filedetails-delete"></i><input type="hidden" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].idWebinarFile" value="' + id + '" /><input type="hidden" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].idWebinar" value="' + cartStateManager.getWebinarId() + '" /><div id="fileLocationDiv_' + id + '"><span class="control-label">File Name</span><input type="text" class="form-control" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].fileLocation" /><i class="icon-book icon-white"></i></div><div id="fileDescDiv_' + id + '"><span class="control-label">Label</span><input type="text" class="form-control" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].fileDesc" /><br /></div></div>';
 }

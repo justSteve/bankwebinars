@@ -955,9 +955,35 @@ namespace CUWebinars.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult UpdateWebinarFiles(FormCollection formCollection)
+        public ActionResult UpdateWebinarFiles(ConnectionInfoModel connectionInfoModel)
         {
-            return Json(new { result = WebUiConstants.Success});
+            /*
+                This is a batch update operation. The WebinarFiles collection contains the webinar files to be updated. 
+                The three possibilities are updated, deleted and created. (Even if a file was unchanged at the client, it will be treated as updated.)
+                    * If the idWebinar in the WebinarFiles is a positive number and does not end with -D, it is updated
+                    * If the idWebinar in the WebinarFiles is 0, and does not end with -ND, it has been created (suffix of 'N' appended at client deserializes to 0)
+                    * If the fileDesc in the WebinarFile ends with -D, it has been marked for deletion.             
+             */
+
+            try
+            {
+                var deletedFiles = connectionInfoModel.WebinarFiles.Where(f => f.fileDesc.EndsWith("-D")).ToList();
+                var newFiles = connectionInfoModel.WebinarFiles.Where(f => f.idWebinarFile == 0 && !f.fileDesc.EndsWith("-ND")).ToList();
+                var updatedFiles = connectionInfoModel.WebinarFiles.Where(f => f.idWebinarFile > 0 && !f.fileDesc.EndsWith("-D")).ToList();
+
+                _webinarManagementService.AddWebinarFiles(newFiles);
+                _webinarManagementService.DeleteWebinarFiles(deletedFiles);
+                _webinarManagementService.UpdateWebinarFiles(updatedFiles);
+                
+                return Json(new { result = WebUiConstants.Success });
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException(string.Format("UpdateWebinarFiles| UpdateWebinarFiles failed {0}", exception.Message), exception);
+                ModelState.AddModelError(string.Empty, "There was a problem with the update operation. Please consult with the system administrator to resolve the issue.");
+            }
+
+            return this.ModelStateJson(ModelState);
         }
     }
 }
