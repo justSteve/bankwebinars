@@ -33,8 +33,8 @@ $(function () {
 
             var self = $(this);
             self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
+            appInsights.trackEvent("submitting ConfirmOrder");
 
-            JL("myLogger").info("submitting ConfirmOrder");
             var data = $(this).serialize();
             $('#ConfirmRegistrationBillMe').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
 
@@ -42,22 +42,23 @@ $(function () {
                 if (result.Result === 'Success') {
                     orderRowID = result.OrderRowID;
 
-                    JL("myLogger").info("Posted Order: " + orderRowID);
+
+                    appInsights.trackEvent("Posted Order: " + orderRowID);
                     $('#orderDetails').empty();
                     $('#orderDetails').append(result.Msg);
 
                     $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
-                    
+
                     $('#ConfirmModal').modal('show');
 
                     $('#finalLoadingSpinner').remove();
                 } else {
                     //TODO: Add code that will provide as much detail to the Failed message as can be obtained from result.
-                    JL("myLogger").fatal("FAILED posting Order: ");
+                    appInsights.trackEvent("FAILED posting Order: ");
                     $('.signupErrors').html('Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! ');
                 }
             }, constants.JsonDataType);
-            
+
             $('#ConfirmModal').on('hidden', function (e) {
 
                 location.reload(true);
@@ -67,8 +68,8 @@ $(function () {
 
         cartStateManager.getCancelOrderForm().on('submit', function (e) {
             //console.log('Submitting Cancel Order');
-            JL('myLogger').info('Cancelling Order');
 
+            appInsights.trackEvent("Cancelling Order by user");
             e.preventDefault();
 
             $('#cancelModalOrderId').val(cartStateManager.getOrderId());
@@ -78,8 +79,7 @@ $(function () {
 
             $.post(self.attr('action'), data, function (response, status, xhr) {
                 if (response.success) {
-
-                    JL('myLogger').info('Suceeded in canceling order');
+                    appInsights.trackEvent("Suceeded in canceling order");
                     $('#cancelCaption').text('Order is canceled');
                     $('#cancelRegistration').off('click');
                     $('#rtn').hide();
@@ -90,7 +90,7 @@ $(function () {
 
                 } else {
 
-                    JL('myLogger').fatal('Cancel Order Failure');
+                    appInsights.trackEvent("Cancel Order Failure");
                     $('.signupErrors').html('Invalid Data. Try again?');
                 }
             }, 'json');
@@ -159,7 +159,7 @@ $(function () {
     signUpForm.submit(function (e) {
 
         e.preventDefault();
-        
+
         $('#loginEmail').val($('#Email1').val());
         $('#loginPassword').val($('#Password1').val());
 
@@ -174,8 +174,7 @@ $(function () {
         // If the user IS NOT LOGGED IN - move to file register-during-checkout.js
         if (!cartStateManager.getIsUserLogged()) {
 
-            JL("myLogger").info("the user IS NOT LOGGED IN");
-
+            appInsights.trackEvent("anon user hits signup");
             $.post(signUpForm.attr('action'), data, function (result) {
                 if (result.success) {
 
@@ -205,8 +204,7 @@ $(function () {
                     cartStateManager.setOrderRowId(result.orderRowId);
                     cartStateManager.setOrderId(result.orderId);
                     cartStateManager.setWebinarId(result.webinarId);
-
-                    JL("myLogger").info("submitting ConfirmOrder" + result.userId);
+                    appInsights.trackEvent("submitting ConfirmOrder" + result.userId);
 
                     $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
                         $('#confirmationTab a').tab('show');

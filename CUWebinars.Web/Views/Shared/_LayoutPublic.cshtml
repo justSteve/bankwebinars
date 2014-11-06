@@ -49,12 +49,7 @@
 <html class="no-js" lang="en" dir="ltr">
 <!--<![endif]-->
 <head>
-    @Html.Raw(JSNLog.JavascriptLogging.Configure())
-    <script type="text/javascript">
-        var ajaxAppender = JL.createAjaxAppender('ajaxAppender');
-        var consoleAppender = JL.createConsoleAppender('consoleAppender');
-        JL("myLogger").setOptions({ "appenders": [ajaxAppender, consoleAppender] });
-    </script>
+
     @*@if (!Html.IsDebug())
         {
             <!--Start of Zopim Live Chat Script-->
@@ -95,6 +90,7 @@
 
         window.appInsights = appInsights;
         appInsights.trackPageView();
+
     </script>
 
     @if (!Html.IsDebug())
@@ -394,20 +390,6 @@
 
 
     @RenderSection("scripts", required: false)
-    <script>
-        //window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
-        //    // Send object with all data to server side log, using severity fatal,
-        //    // from logger "onerrorLogger"
-        //    JL("mylogger").fatalException({
-        //        "msg": "Exception!",
-        //        "errorMsg": errorMsg, "url": url,
-        //        "line number": lineNumber, "column": column
-        //    }, errorObj);
 
-        //    // Tell browser to run its own error handler as well
-        //    return false;
-        //}
-
-    </script>
 </body>
 </html>

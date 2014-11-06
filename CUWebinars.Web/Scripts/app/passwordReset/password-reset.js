@@ -61,12 +61,8 @@ $(function () {
                 crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;<strong>Oops!</strong> Try that again in a few moments.</span>');
                     // Request failed. Show error message to user. 
                     // errorThrown has error message, or "timeout" in case of timeout.
-                    JL().fatal({
-                        "msg": "AJAX error response",
-                        "errorThrown": errorThrown,
-                        "url": url,
-                        "requestData": requestData
-                    });
+                appInsights.trackEvent("ResetPassword AJAX error: " + errorThrown);
+                
                 
             });
         }
