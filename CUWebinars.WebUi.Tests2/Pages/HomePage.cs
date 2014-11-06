@@ -3,6 +3,7 @@ using CUWebinars.WebUi.Tests2.Infrastructure;
 using KesselRun.SeleniumCore.Enums;
 using KesselRun.SeleniumCore.TestDrivers.Contracts;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 
 namespace CUWebinars.WebUi.Tests2.Pages
@@ -174,6 +175,11 @@ namespace CUWebinars.WebUi.Tests2.Pages
         {
             SeleniumTestDriver.FindByNameClick("NotInstitution", ExpectedCondition.ElementIsVisible, 5);
         }
+        public void ClickCancelModalButton()
+        {
+            // This is the small cross on the top right of the modal window for canelling out of it.
+            SeleniumTestDriver.FindByXPathClick("//*[@id='modalInstitution']/div[1]/button", ExpectedCondition.ElementIsVisible, 5);
+        }
 
         public void ClickResetPasswordLink()
         {
@@ -201,9 +207,24 @@ namespace CUWebinars.WebUi.Tests2.Pages
         }
         public void ClickWebinarsMenuItem()
         {
-            SeleniumTestDriver.MouseOverElement(FinderStrategy.XPath, @"//*[@id='main_menu']/ul/li[3]");
+            try
+            {
+                Actions action = new Actions(SeleniumTestDriver.WebDriver);
 
-            SeleniumTestDriver.FindByXPathClick(@"//*[@id='main_menu']/ul/li[3]/ul/li[2]/a", ExpectedCondition.ElementIsVisible, 5);
+                IWebElement menuTop = SeleniumTestDriver.FindByXPath(@"//*[@id='main_menu']/ul/li[3]/a", ExpectedCondition.ElementIsVisible ,3);
+                action.MoveToElement(menuTop).Perform();
+                Wait(200);            
+                action.MoveToElement(SeleniumTestDriver.FindByXPath(@"//*[@id='main_menu']/ul/li[3]/ul/li[2]/a", ExpectedCondition.ElementIsVisible, 5)).Click().Perform();
+            }
+            catch (Exception e)
+            {
+                Actions action = new Actions(SeleniumTestDriver.WebDriver);
+
+                IWebElement menuTop = SeleniumTestDriver.FindByXPath(@"//*[@id='main_menu']/ul/li[3]/a", ExpectedCondition.ElementIsVisible, 3);
+                action.MoveToElement(menuTop).Perform();
+                Wait(200);
+                action.MoveToElement(SeleniumTestDriver.FindByXPath(@"//*[@id='main_menu']/ul/li[3]/ul/li[2]/a", ExpectedCondition.ElementIsVisible, 5)).Click().Perform();                
+            }
         }
 
         public void ClickMoreButtonOnTopicsPage()

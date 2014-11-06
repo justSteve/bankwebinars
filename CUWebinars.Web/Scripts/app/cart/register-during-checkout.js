@@ -431,7 +431,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
                                 
                                 $('#ConfirmRegistrationBillMe').on('click', function (e) {
-                                    $('#confirmation').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
+                                    $('#confirmation').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>');
                                     completeOrder(userId, orderRowId);
                                 });
 
@@ -630,13 +630,7 @@ function completeOrder(userId, orderRowId) {
     $('#ConfirmModal').on('hidden', function (e) {
 
         location.reload(true);
-        //var confirmButton = $('#confirmRegistration');
-        //confirmButton.removeAttr('href');
 
-        //confirmButton.on('click', function (e) {
-        //    e.preventDefault();
-        //    location.reload(true);
-        //});
     });
 
     confirmOrderForm.submit();
