@@ -57,11 +57,7 @@ $(function () {
         }).fail(function (jqXHR, textStatus, errorThrown) {
             // Request failed. Show error message to user. 
             // errorThrown has error message, or "timeout" in case of timeout.
-            JL("mylogger").fatal({
-                "msg": "AJAX error response",
-                "errorThrown": errorThrown,
-                "url": url,
-                "requestData": ''
+            appInsights.trackEvent("LogInAsUser AJAX error: " + errorThrown);
             });
         }).always(function () {
             $('#WaitIndicator').hide();
@@ -87,11 +83,7 @@ $(function () {
         }).fail(function (jqXHR, textStatus, errorThrown) {
             // Request failed. Show error message to user. 
             // errorThrown has error message, or "timeout" in case of timeout.
-            JL("mylogger").fatal({
-                "msg": "AJAX error response",
-                "errorThrown": errorThrown,
-                "url": url,
-                "requestData": requestData
+            appInsights.trackEvent("CreateUserButton AJAX error: " + errorThrown);
             });
         }).always(function () {
             $('#WaitIndicator').hide();

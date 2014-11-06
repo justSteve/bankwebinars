@@ -124,10 +124,6 @@
     <Reference Include="Glimpse.Ninject">
       <HintPath>..\packages\Glimpse.Ninject.0.9.0\lib\net4\Glimpse.Ninject.dll</HintPath>
     </Reference>
-    <Reference Include="JSNLog, Version=2.7.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\JSNLog.2.7.5.0\lib\net40\JSNLog.dll</HintPath>
-    </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
@@ -139,6 +135,9 @@
     </Reference>
     <Reference Include="Microsoft.ApplicationInsights.Extensibility.Web">
       <HintPath>..\packages\Microsoft.ApplicationInsights.Web.0.11.1-build00694\lib\net45\Microsoft.ApplicationInsights.Extensibility.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationInsights.Log4NetAppender">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Log4NetAppender.0.10.0-build17704\lib\net40\Microsoft.ApplicationInsights.Log4NetAppender.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.ApplicationServer.Caching.Client, Version=101.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -200,7 +199,6 @@
     <Reference Include="Microsoft.WindowsAzure.Jobs">
       <HintPath>..\packages\Microsoft.WindowsAzure.Jobs.0.2.0-alpha2\lib\net45\Microsoft.WindowsAzure.Jobs.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.WindowsAzure.ServiceRuntime, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.WindowsAzure.Storage, Version=2.1.0.4, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\WindowsAzure.Storage.2.1.0.4\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
@@ -213,7 +211,7 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -239,10 +237,6 @@
     </Reference>
     <Reference Include="RazorEngine">
       <HintPath>..\packages\RazorEngine.3.4.1\lib\net45\RazorEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="RSSBus.Google.System, Version=2.0.0.40, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files\RSSBus\RSSBus ADO.NET Provider for Google V3\lib\4.0\RSSBus.Google.System.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -390,7 +384,6 @@
   <ItemGroup>
     <Compile Include="App_Start\AuthConfig.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
-    <Compile Include="App_Start\JSNLogConfig.cs" />
     <Compile Include="App_Start\MembershipRebootConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\NinjectResolver.cs" />
@@ -459,7 +452,6 @@
     <Content Include="Content\themes\base\tabs.css" />
     <Content Include="Content\themes\base\theme.css" />
     <Content Include="Content\themes\base\tooltip.css" />
-    <Content Include="NuGet\readme.txt" />
     <Content Include="Scripts\app\cart\update-webinar-files.js" />
     <Content Include="Scripts\app\cart\create-order-new.js" />
     <Content Include="Scripts\app\cart\register-during-checkout.js" />
@@ -480,8 +472,6 @@
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\jsnlog.js" />
-    <Content Include="Scripts\jsnlog.min.js" />
     <Content Include="Scripts\purl.js" />
     <Content Include="Views\Cart\Partials\_DisplayRowPrice.cshtml" />
     <Content Include="Views\Admin\Home\_ImportOrder.cshtml" />
@@ -494,7 +484,6 @@
     <Content Include="Scripts\app\utilities.js.map" />
     <Content Include="Views\Cart\Partials\_DisplayOptionsInDropDown.cshtml" />
     <Content Include="Scripts\app\cart\register-user-in-cart.js.map" />
-    <Content Include="Scripts\jsnlog.js.map" />
     <Content Include="Scripts\app\register\register-user.js.map" />
     <Content Include="Views\Cart\Partials\_ConfirmModal.cshtml" />
     <Content Include="Scripts\jquery-1.11.1.min.map" />

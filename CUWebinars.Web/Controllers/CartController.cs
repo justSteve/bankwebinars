@@ -4,6 +4,7 @@ using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.ViewModel;
+using Microsoft.ApplicationInsights;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -153,14 +154,18 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid) 
             {
+                var telemetry = new TelemetryClient();
+                telemetry.TrackEvent("Signup2Start");
                 try
                 {
+                    _logger.Info("Signup2 Enters: " + AppHelper.GetUserAuditInfo());
                     var order = _cartControllerOrchestrator.CreateOrder(
                         formModel
                         );
 
                     // todo: if in progress, will have to show populated partial view.
-
+                    _logger.Info("Signup2 order initialized: " + AppHelper.GetUserAuditInfo());
+                    
                     return Json(new
                     {
                         success = "success",
@@ -169,10 +174,12 @@ namespace CUWebinars.Web.Controllers
                         webinarId = formModel.idWebinar
                     }, JsonRequestBehavior.AllowGet
                         );
+
                 }
                 catch (Exception exception)
                 {
                     ModelState.AddModelError(string.Empty, exception.Message);
+                    _logger.FatalException("Signup2 order excepted: ", exception);
                     Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 }
             }
