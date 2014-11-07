@@ -1,58 +1,47 @@
-﻿@using System.Configuration
-@using System.Diagnostics
-@using System.Globalization
-@using System.Linq
-@using System.Text
-@using CUWebinars.Business.Constants
-@using CUWebinars.Web.Core
-@model WebinarDetailsViewModel
+﻿@using CUWebinars.Web.Core
+@model RegistrationSummaryViewModel
 <div>htere</div>
 @{
     NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
 
-    if (ViewBag.userOwnsThisEvent > 0)
+    if (Model.UserOwnsThisEvent > 0)
     {
-        RegType orderMsgs = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType;
-        OrderRow row = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-        Order order = row.Order;
-        string[] webinarFiles = ViewBag.WebinarFiles;
-        //ICollection<WebinarFile> webinarFiles = row.Webinar.WebinarFiles;
-        var recording = "<a href='" + globalConfig.WMVRepository + Model.Webinar.RecordingUrl + "' target=_blank /> Recording Playback</a>"; ;
-        var showShipped = "";
-        if (Model.Webinar.Status != WebinarStatus.Recorded || row.RegistrationType.ShowRecordingNotifications == "No")
+        RegType orderMsgs = Model.OrderRow.RegistrationType;
+        
+        Order order = Model.OrderRow.Order;
+        var showShipped = string.Empty;
+        if (Model.WebinarStatus != WebinarStatus.Recorded || Model.OrderRow.RegistrationType.ShowRecordingNotifications == "No")
         {
-            recording = "";
+            Model.RecordingLink = string.Empty;
         }
         var wf = new StringBuilder();
         <script language="javascript">
             var idRegType = @orderMsgs.idRegType;
         </script>
 
-        foreach (var webinarFile in webinarFiles)
+        foreach (var webinarFile in Model.WebinarFiles)
         {
-            string itemDesc = webinarFile.ToString().Split('|')[0];
-            string itemPath = globalConfig.WMVRepository + webinarFile.ToString().Split('|')[1];
+            string itemDesc = webinarFile.Split('|')[0];
+            string itemPath = globalConfig.WMVRepository + webinarFile.Split('|')[1];
             //string itemDesc = webinarFile.fileDesc;
             //string itemPath = webinarFile.fileLocation;
             wf.Append("<a href='" + itemPath + "' target=_blank >" + itemDesc + "</a><br>");
         }
 
-        if (row.RegistrationType.ShowShippedNotifications == "Yes" && row.ShipmentDate != null)
+        if (Model.OrderRow.RegistrationType.ShowShippedNotifications == "Yes" && Model.OrderRow.ShipmentDate != null)
         {
-            showShipped = "<li>Shipped on: " + row.ShipmentDate.Value.ToShortDateString() + "</li>";
+            showShipped = "<li>Shipped on: " + Model.OrderRow.ShipmentDate.Value.ToShortDateString() + "</li>";
         }
         <div id="OrderSummary" class="well well-small">
             @{
 
         Debug.Assert(order != null, "order != null");
-        if (row.Order.OrderStatus == OrderStatus.Billed ||
-            row.Order.OrderStatus == OrderStatus.Paid ||
-            row.Order.OrderStatus == OrderStatus.Submitted)
+        if (Model.OrderRow.Order.OrderStatus == OrderStatus.Billed ||
+            Model.OrderRow.Order.OrderStatus == OrderStatus.Paid ||
+            Model.OrderRow.Order.OrderStatus == OrderStatus.Submitted)
         {
-            //webinarFiles ="";
-
             <aside style="width: 100%" class="widget clearfix">
                 <div class="dropdown">
                     <a class="dropdown-toggle btn btn-success" data-toggle="dropdown" href="#">Your Order# <b>@globalConfig.TenantPrefix@order.idOrder</b> Summary</a>
@@ -61,20 +50,20 @@
                         <li>@orderMsgs.OptionLabel</li>
                         <li>$@order.Total</li>
                         @Html.Raw(@showShipped)
-                        <div style="font-size: smaller;">@{ Html.RenderPartial("~/Views/Account/Partials/OrderHasAdditionalLocations.cshtml", row); }</div>
+                        <div style="font-size: smaller;">@{ Html.RenderPartial("~/Views/Account/Partials/OrderHasAdditionalLocations.cshtml", Model.OrderHasAdditionalLocationsViewModel); }</div>
                         <li><a class="btn btn-success btn-mini" href='#' onclick=' upgrade(idRegType); '>Upgrade order?</a></li>
                     </ul>
                 </div>
             </aside>
-            if (Model.Webinar.Status == WebinarStatus.Scheduled || Model.Webinar.Status == WebinarStatus.Active || Model.Webinar.Status == WebinarStatus.InProgress)
+            if (Model.WebinarStatus == WebinarStatus.Scheduled || Model.WebinarStatus == WebinarStatus.Active || Model.WebinarStatus == WebinarStatus.InProgress)
             {
                 <h5 class="short_headline"><span>Connection Information</span></h5>
                 if (orderMsgs.ShowLiveNotifications == "Yes")
                 {
-                    if (Model.Webinar.Status == WebinarStatus.Active || Model.Webinar.Status == WebinarStatus.InProgress)
+                    if (Model.WebinarStatus == WebinarStatus.Active || Model.WebinarStatus == WebinarStatus.InProgress)
                     {
                         <aside style="width: 100%" class="widget clearfix">
-                            @Html.Partial("Partials/_ConnectionSummary", row)
+                            @Html.Partial("Partials/_ConnectionSummary", Model.OrderRow)
                         </aside>
                     }
                     else
@@ -101,25 +90,25 @@
                 }
             }
             //webinarFiles ="";
-            if (webinarFiles.Count() > 0)
+            if (Model.WebinarFiles.Any())
             {
                 <aside style="width: 100%" class="widget clearfix">
                     <h5 class="short_headline"><span>Event Materials</span></h5>
                     @Html.Raw(wf.ToString())
-                    @Html.Raw(recording)
+                    @Html.Raw(Model.RecordingLink)
                 </aside>
             }
 
-            if (Model.Webinar.Status == WebinarStatus.Recorded || Model.Webinar.Status == WebinarStatus.Archived)
+            if (Model.WebinarStatus == WebinarStatus.Recorded || Model.WebinarStatus == WebinarStatus.Archived)
             {
 
-                if (Model.Webinar.Status != WebinarStatus.Recorded || row.RegistrationType.ShowRecordingNotifications == "Yes")
+                if (Model.WebinarStatus != WebinarStatus.Recorded || Model.OrderRow.RegistrationType.ShowRecordingNotifications == "Yes")
                 {
-                    <p style="font-size: smaller; text-align: center;">Need to share this recording with a co-worker? <tt><b>@globalConfig.TenantURL/Webinar/Play?w=@row.Webinar.idWebinar&u=@row.Order.WebUser.idUser</b></tt></p>
+                    <p style="font-size: smaller; text-align: center;">Need to share this recording with a co-worker? <tt><b>@globalConfig.TenantURL/Webinar/Play?w=@Model.OrderRow.Webinar.idWebinar&u=@Model.OrderRow.Order.WebUser.idUser</b></tt></p>
                 }
                 <div>
                     <form method="POST" action="/Account/MyCertificate">
-                        <input type="hidden" name="orderID" value="@Model.Order.idOrder" />
+                        <input type="hidden" name="orderID" value="@order.idOrder" />
                         <aside class="widget">
                             <input type="submit" value="My Certificate" id="ShowCertificate" class="btn btn-success btn-mini pull-right " />
                         </aside>

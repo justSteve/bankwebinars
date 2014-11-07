@@ -71,9 +71,20 @@ namespace CUWebinars.Business.Repository
         public WebUser GetWebUserByEmail(string email)
         {
             return items
-                .Include("Addresses")
-                .Include("Institution")
+                .Include(wu => wu.Addresses)
+                .Include(wu => wu.Institution)
                 .Where(w => w.email == email).SingleOrDefault();
+        }
+
+        public WebUser GetWebUserByEmailLoadedWithOrdersData(string email)
+        {
+            return items
+                .Include(wu => wu.Addresses)
+                .Include(wu => wu.Institution)
+                .Include(wu => wu.Orders.Select(o => o.OrderRows.Select(or => or.Discount)))
+                .Include(wu => wu.Orders.Select(o => o.OrderRows.Select(or => or.AdditionalLocation)))
+                .Include(wu => wu.Orders.Select(o => o.OrderRows.Select(or => or.RegistrationType)))
+                .Where(wu => wu.email == email).SingleOrDefault();
         }
 
         public void UpdateAddresses(Address address)

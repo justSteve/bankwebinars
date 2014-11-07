@@ -546,12 +546,11 @@ namespace CUWebinars.Web.Controllers
                 var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id.Value);
 
                 if (webinar == null) return HttpNotFound();
-
+                
                 var model = new WebinarDetailsViewModel()
                 {
                     Webinar = webinar,
-                    WebinarFiles = webinar.WebinarFiles.ToList(),
-                    Order = null // TODO: Future - Details view will display existing record which can be edited. For me to be cognisant of. 
+                    WebinarFiles = webinar.WebinarFiles.ToList()
                 };
 
                 InitializeDetailsState(webinar, model, id.Value); // form state, incl. stuff that will be posted back. 
@@ -572,9 +571,8 @@ namespace CUWebinars.Web.Controllers
                             .Select(f => f.fileDesc + "|" + f.fileLocation)
                             .ToArray();
 
-                        ViewBag.WebinarFiles = webinarFiles;
-
-                        model.UserOwnsThisEvent = checkOrder.idOrder;
+                        model.RegistrationSummaryViewModel.WebinarFiles = webinarFiles;
+                        model.RegistrationSummaryViewModel.UserOwnsThisEvent = model.UserOwnsThisEvent = checkOrder.idOrder;
                         model.Order = checkOrder;
 
                         if (checkOrder.OrderStatus == OrderStatus.InProcess && row.idWebinar != id)
@@ -612,11 +610,16 @@ namespace CUWebinars.Web.Controllers
         /// <param name="id"></param>
         private void InitializeDetailsState(Webinar webinar, WebinarDetailsViewModel model, int id)
         {
+            model.WebUser = Request.IsAuthenticated ? _membershipService.GetUserByEmailLoadedWithOrdersData(User.Identity.Name) : new WebUser();
+
+            if (Request.IsAuthenticated && model.WebUser.Orders.FirstOrDefault() != null)
+            {
+                model.Order = model.WebUser.Orders.FirstOrDefault(o => o.OrderRows.FirstOrDefault().idWebinar == id);
+            }
+
             var orderExists = model.Order != null;
 
             model.Topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar);
-
-            model.WebUser = Request.IsAuthenticated ? _membershipService.GetUserByEmail(User.Identity.Name) : new WebUser();
 
             model.WebinarFiles = _webinarManagementService.GetWebinarFilesPerWebinar(webinar.idWebinar);
 
@@ -672,6 +675,20 @@ namespace CUWebinars.Web.Controllers
 
                 model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Emails =
                     model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.AdditionalLocations.Select(al => al.Email).ToArray();
+
+                model.RegistrationSummaryViewModel = new RegistrationSummaryViewModel
+                {
+                    OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
+                    {
+                        AdditionalLocations = row.AdditionalLocation,
+                        Addresses = string.Join(",", row.AdditionalLocation.SelectMany(al => al.Email).ToArray()),
+                        OptionsCost = 150 //TODO: not sure what to put here
+                    },
+                    OrderRow = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active),
+                    RecordingLink = "<a href='" + GlobalConfig.GlobalConfigSingleton.WMVRepository + webinar.RecordingUrl + "' target=_blank /> Recording Playback</a>",
+                    WebinarStatus = webinar.Status
+                };
+
                 //model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
                 //    .AdditionalLocationAddViewModel.AdditionalLocations =
                     //model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel

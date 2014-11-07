@@ -53,6 +53,12 @@ namespace CUWebinars.Business.AccountService
             var webUser = _webUserRepository.GetWebUserByEmail(email);
             return webUser;
         }
+        
+        public WebUser GetUserByEmailLoadedWithOrdersData(string email)
+        {
+            var webUser = _webUserRepository.GetWebUserByEmailLoadedWithOrdersData(email);
+            return webUser;
+        }
 
         public WebUser GetWebUserById(int userId)
         {

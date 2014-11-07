@@ -41,6 +41,7 @@ namespace CUWebinars.Business.AccountService
         UserAccount GetUserAccountByEmail(string tenant, string email);
         UserAccount GetUserAccountByUserId(Guid userId);
         WebUser GetUserByEmail(string email);
+        WebUser GetUserByEmailLoadedWithOrdersData(string email);
         WebUser GetWebUserById(int userId);
         bool HasPassword(string tenant, string emailAddress);
         bool LogInUser(string tenant, string emailAddress, string password, bool persistent);
