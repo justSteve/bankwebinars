@@ -681,7 +681,7 @@ namespace CUWebinars.Web.Controllers
                     OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
                     {
                         AdditionalLocations = row.AdditionalLocation,
-                        Addresses = string.Join(",", row.AdditionalLocation.SelectMany(al => al.Email).ToArray()),
+                        Addresses = string.Join(",", row.AdditionalLocation.Select(al => al.Email).ToArray()),
                         OptionsCost = 150 //TODO: not sure what to put here
                     },
                     OrderRow = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active),
