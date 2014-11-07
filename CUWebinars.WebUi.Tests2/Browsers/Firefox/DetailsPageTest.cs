@@ -156,9 +156,36 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             Assert.IsTrue(page.LogoutLinkIsPresentOnPage);
         }
+
+        [TestMethod]
+        public void AnonymousUserWithoutExistingDomainMakesOrderSuccessfully()
+        {
+            var page = NavigateToDetailsPage();
+
+            page.ClickSignUpButton();
+
+            var email = string.Concat(TestHelper.RandomString(8), "@", TestHelper.RandomString(4), DotComSuffix);
+
+            page.EnterEmailAddressAndClickSubmit(email);
+
+            page.EnterDetail(ZipCodeHolmen, ZipInput);
+            page.ClickSubmit();
+
+            page.EnterDetail(FullName, FullNameInput);
+            page.EnterDetail(Title, RegisterfieldsInput);
+            page.EnterDetail(Institution, RegisterfieldsInstitution);
+            page.EnterDetail(StreetAddress, RegisterfieldsBillingaddressStreetaddress);
+            page.EnterDetail(PhoneNumber, RegisterfieldsBillingaddressPhone);
+
+            page.ClickSubmit();
+
+            page.ClickBillMeButton();
+
+            Assert.IsTrue(page.LogoutLinkIsPresentOnPage);
+        }
         
         [TestMethod]
-        public void AnonymousUserWithExistingDomainAddsTwoLocationsAndMakesOrderSuccessfully()
+        public void UserAddsTwoLocationsAndMakesOrderSuccessfully()
         {
             var page = NavigateToDetailsPage();
 
@@ -175,7 +202,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         }   
         
         [TestMethod]
-        public void AnonymousUserWithExistingDomainAddsTwoLocationsThenDeletesOneAfterClosingModalAndMakesOrderSuccessfully()
+        public void UserAddsTwoLocationsThenDeletesOneAfterClosingModalAndMakesOrderSuccessfully()
         {
             var page = NavigateToDetailsPage();
             int id = 0;
@@ -196,7 +223,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         }
         
         [TestMethod]
-        public void AnonymousUserWithExistingDomainAddsTwoLocationsThenDeletesOneAfterClosingModalAndAddsItAgainAndMakesOrderSuccessfully()
+        public void UserAddsTwoLocationsThenDeletesOneAfterClosingModalAndAddsItAgainAndMakesOrderSuccessfully()
         {
             var page = NavigateToDetailsPage();
             int id = 0;
@@ -214,7 +241,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             page.ClickAddAdditionalLocationButton();
             page.ClickTheClickToAddMoreButton();
             page.Wait(1000);
-            page.EnterDetail("drogersbox-test2@yahoo.com.au", "AdditionalLocationEmail_1");
+            page.EnterDetail("drogersbox-test2@yahoo.com.au", "AdditionalLocationEmail_2");
             page.ClickSubmitAdditionalLocationsButton();
             page.Wait(10000);
             Assert.AreEqual(2, page.GetNumberOfAdditionalLocationTextBoxes());
@@ -222,30 +249,52 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         }
         
         [TestMethod]
-        public void AnonymousUserWithoutExistingDomainMakesOrderSuccessfully()
+        public void UserAddsTwoLocationsThenClosesModalThenOpensItThenAddsOneLocationThenClicksCancelLeavingTwoLocations()
         {
             var page = NavigateToDetailsPage();
+            int id = 0;
 
-            page.ClickSignUpButton();
+            /*********** Additional Locations modal *****************/
+            page.ClickAddAdditionalLocationButton();
+            page.ClickTheClickToAddMoreButton();
+            page.EnterDetail("drogersbox-test1@yahoo.com.au", "AdditionalLocationEmail_0");
+            page.ClickTheClickToAddMoreButton();
+            page.EnterDetail("drogersbox-test2@yahoo.com.au", "AdditionalLocationEmail_1");
+            page.ClickSubmitAdditionalLocationsButton();
+            page.Wait(1000);
+            page.DeleteAdditionalLocation(id);
+            page.Wait(500);
+            page.ClickAddAdditionalLocationButton();
+            page.ClickTheClickToAddMoreButton();
+            page.EnterDetail("drogersbox-test2@yahoo.com.au", "AdditionalLocationEmail_2");
+            page.ClickTheClickToAddMoreButton();
+            page.EnterDetail("drogersbox-test2@yahoo.com.au", "AdditionalLocationEmail_3");
+            page.ClickCancelAdditionalLocationsModalButton();
+            page.Wait(10000);
+            Assert.AreEqual(1, page.GetNumberOfAdditionalLocationTextBoxes());
+            /********************************************************/
+        }
+        
+        [TestMethod]
+        public void UserAddsTwoLocationsThenClosesModalThenOpensItThenDeletesThemAllAndSubmitButtonDisappears()
+        {
+            var page = NavigateToDetailsPage();
+            int id = 0;
 
-            var email = string.Concat(TestHelper.RandomString(8), "@" , TestHelper.RandomString(4) , DotComSuffix);
-            
-            page.EnterEmailAddressAndClickSubmit(email);
+            /*********** Additional Locations modal *****************/
+            page.ClickAddAdditionalLocationButton();
+            page.ClickTheClickToAddMoreButton();
+            page.EnterDetail("drogersbox-test1@yahoo.com.au", "AdditionalLocationEmail_0");
+            page.ClickTheClickToAddMoreButton();
+            page.EnterDetail("drogersbox-test2@yahoo.com.au", "AdditionalLocationEmail_1");
+            page.ClickSubmitAdditionalLocationsButton();
+            page.Wait(500);
+            page.ClickAddAdditionalLocationButton();
+            page.DeleteAdditionalLocation(id);
+            page.DeleteAdditionalLocation(id + 1);
 
-            page.EnterDetail(ZipCodeHolmen, ZipInput);
-            page.ClickSubmit();
-
-            page.EnterDetail(FullName, FullNameInput);
-            page.EnterDetail(Title, RegisterfieldsInput);
-            page.EnterDetail(Institution, RegisterfieldsInstitution);
-            page.EnterDetail(StreetAddress, RegisterfieldsBillingaddressStreetaddress);
-            page.EnterDetail(PhoneNumber, RegisterfieldsBillingaddressPhone);
-
-            page.ClickSubmit();
-
-            page.ClickBillMeButton();
-
-            Assert.IsTrue(page.LogoutLinkIsPresentOnPage);
+            Assert.IsTrue(page.SumbitAdditionalLocationsButtonIsNotThere);
+            /********************************************************/
         }
 
         public DetailsPage NavigateToDetailsPage()

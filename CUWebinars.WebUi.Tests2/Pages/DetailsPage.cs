@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using KesselRun.SeleniumCore.Enums;
 using KesselRun.SeleniumCore.TestDrivers.Contracts;
 using OpenQA.Selenium;
@@ -9,6 +10,11 @@ namespace CUWebinars.WebUi.Tests2.Pages
     {
         public DetailsPage(ITestDriver seleniumTestDriver) : base(seleniumTestDriver)
         {
+        }
+
+        public bool SumbitAdditionalLocationsButtonIsNotThere 
+        {
+            get { return !SeleniumTestDriver.WebDriver.FindElements(By.Id("sumbitAdditionalLocationsButton")).Any(); } 
         }
 
         public void ClickSignUpButton()
@@ -50,6 +56,11 @@ namespace CUWebinars.WebUi.Tests2.Pages
         {
             return SeleniumTestDriver.WebDriver.FindElements(By.CssSelector("#collectAdditionalLocations input[type='email']"))
                 .Count;
+        }
+
+        public void ClickCancelAdditionalLocationsModalButton()
+        {
+            SeleniumTestDriver.FindByIdClick("closeButton", ExpectedCondition.ElementIsVisible, 5);
         }
     }
 }
