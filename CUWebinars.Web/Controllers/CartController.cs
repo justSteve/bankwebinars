@@ -4,7 +4,7 @@ using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.ViewModel;
-using Microsoft.ApplicationInsights;
+
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -154,8 +154,8 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid) 
             {
-                var telemetry = new TelemetryClient();
-                telemetry.TrackEvent("Signup2Start");
+                //var telemetry = new TelemetryClient();
+                //telemetry.TrackEvent("Signup2Start");
                 try
                 {
                     _logger.Info("Signup2 Enters: " + AppHelper.GetUserAuditInfo());
