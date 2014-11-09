@@ -33,7 +33,7 @@ $(function () {
 
             var self = $(this);
             self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
-            appInsights.trackEvent("submitting ConfirmOrder");
+            //appInsights.trackEvent("submitting ConfirmOrder");
 
             var data = $(this).serialize();
             $('#ConfirmRegistrationBillMe').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
@@ -43,7 +43,7 @@ $(function () {
                     orderRowID = result.OrderRowID;
 
 
-                    appInsights.trackEvent("Posted Order: " + orderRowID);
+                    //appInsights.trackEvent("Posted Order: " + orderRowID);
                     $('#orderDetails').empty();
                     $('#orderDetails').append(result.Msg);
 
@@ -54,7 +54,7 @@ $(function () {
                     $('#finalLoadingSpinner').remove();
                 } else {
                     //TODO: Add code that will provide as much detail to the Failed message as can be obtained from result.
-                    appInsights.trackEvent("FAILED posting Order: ");
+                    //appInsights.trackEvent("FAILED posting Order: ");
                     $('.signupErrors').html('Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! ');
                 }
             }, constants.JsonDataType);
@@ -69,7 +69,7 @@ $(function () {
         cartStateManager.getCancelOrderForm().on('submit', function (e) {
             //console.log('Submitting Cancel Order');
 
-            appInsights.trackEvent("Cancelling Order by user");
+            //appInsights.trackEvent("Cancelling Order by user");
             e.preventDefault();
 
             $('#cancelModalOrderId').val(cartStateManager.getOrderId());
@@ -79,7 +79,7 @@ $(function () {
 
             $.post(self.attr('action'), data, function (response, status, xhr) {
                 if (response.success) {
-                    appInsights.trackEvent("Suceeded in canceling order");
+                    //appInsights.trackEvent("Suceeded in canceling order");
                     $('#cancelCaption').text('Order is canceled');
                     $('#cancelRegistration').off('click');
                     $('#rtn').hide();
@@ -90,7 +90,7 @@ $(function () {
 
                 } else {
 
-                    appInsights.trackEvent("Cancel Order Failure");
+                    //appInsights.trackEvent("Cancel Order Failure");
                     $('.signupErrors').html('Invalid Data. Try again?');
                 }
             }, 'json');
@@ -174,7 +174,7 @@ $(function () {
         // If the user IS NOT LOGGED IN - move to file register-during-checkout.js
         if (!cartStateManager.getIsUserLogged()) {
 
-            appInsights.trackEvent("anon user hits signup");
+            //appInsights.trackEvent("anon user hits signup");
             $.post(signUpForm.attr('action'), data, function (result) {
                 if (result.success) {
 
@@ -204,7 +204,7 @@ $(function () {
                     cartStateManager.setOrderRowId(result.orderRowId);
                     cartStateManager.setOrderId(result.orderId);
                     cartStateManager.setWebinarId(result.webinarId);
-                    appInsights.trackEvent("submitting ConfirmOrder" + result.userId);
+                    //appInsights.trackEvent("submitting ConfirmOrder" + result.userId);
 
                     $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
                         $('#confirmationTab a').tab('show');
