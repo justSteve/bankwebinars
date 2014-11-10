@@ -66,48 +66,7 @@ function wireUpHandlers() {
         wireUpHandlersForModal();
         $('#AddInputsButton').focus();
     });
-    
 
-    //signupForm.on('submit', function (e) {
-    //    e.preventDefault();
-
-    //    var mode = $('#Mode').val();
-    //    var stageOfCheckout = $('#Stage_of_checkout').val();
-    //    var orderId = $('[name="CheckoutOptionsViewModel.Order.idOrder"]');
-    //    var webUserId = $('[name="WebUser.idUser"]');
-    //    var webinarId = $('[name="Webinar.idWebinar"]');
-
-    //    var emailAddresses = Object(); 
-
-    //    var emailNodes = newLocationsContainer.find('input[type=text]');
-
-    //    $.each(emailNodes, function (idx, input) {
-    //        emailAddresses[idx] = $(input).val();
-    //    });
-
-    //    var payload = {
-    //        'CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationViewModel.AddAdditionalLocationViewModel.Emails': emailAddresses,
-    //        'CheckoutOptionsViewModel.Order.idOrder': orderId.val(),
-    //        'WebUser.idUser': webUserId.val(),
-    //        'Webinar.idWebinar': webinarId.val(),
-    //        mode: 0,
-    //        stageOfCheckout: stageOfCheckout,
-    //        sixMonthPaidConnectionsCount: '',
-    //        twelveMonthPaidConnectionsCount: ''
-    //    };
-
-    //    $.ajax({
-    //        url: '/Cart/Signup2',
-    //        type: 'POST',
-    //        data: payload,
-    //        dataType: 'json',
-    //        contentType: 'application/x-www-form-urlencoded; charset=UTF-8'
-    //    }).done(function (msg) {
-    //        var bla = msg;
-    //    });
-
-    //    return false;
-    //});
 };
 
 function primeDomVariables() {
@@ -185,9 +144,20 @@ function wireUpHandlersForModal() {
                 });
             }
 
-            additionalLocationEmailWrapper.append('<span id="' + locationsSpanPrefix + numberOfAdditionalLocations + '"><input id="AdditionalLocationEmail_' + numberOfAdditionalLocations + '" name="AdditionalLocations[' + numberOfAdditionalLocations + '].Email" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + numberOfAdditionalLocations + '-AdditionLocationEmail-delete"></i></span> <br id="' + numberOfAdditionalLocations + breakSuffix + '">');
-            additionalLocationEmailWrapper.find('i#' + numberOfAdditionalLocations + '-AdditionLocationEmail-delete').on('click', deleteItem);
-            $('#AdditionalLocationEmail_' + numberOfAdditionalLocations).focus();
+            var newId;
+            if (numberOfAdditionalLocations == 0) {
+                newId = 0;
+            } else {
+                // first get the last previous email input
+                var lastInput = additionalLocationEmailWrapper.find('input[type="email"]:last');
+                // get its id
+                var lastInputId = lastInput.attr('id');
+                var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
+                newId = id + 1;
+            }
+            additionalLocationEmailWrapper.append('<span id="' + locationsSpanPrefix + newId + '"><input id="AdditionalLocationEmail_' + newId + '" name="AdditionalLocations[' + newId + '].Email" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + newId + '-AdditionLocationEmail-delete"></i></span> <br id="' + newId + breakSuffix + '">');
+            additionalLocationEmailWrapper.find('i#' + newId + '-AdditionLocationEmail-delete').on('click', deleteItem);
+            $('#AdditionalLocationEmail_' + newId).focus();
             numberOfAdditionalLocations++;
 
         });
