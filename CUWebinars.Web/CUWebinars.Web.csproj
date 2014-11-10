@@ -468,7 +468,7 @@
     <Content Include="Views\Cart\Partials\_AddCCModal.cshtml" />
     <Content Include="Views\Cart\Partials\_LogsModal.cshtml" />
     <Content Include="Views\Cart\Partials\_UserDetailsModal.cshtml" />
-    <None Include="Views\Webinar\Details.cshtml" />
+    <Content Include="Views\Webinar\Details.cshtml" />
     <None Include="Notification\Templates\OrderSubmittedAdditionalLocation.cshtml" />
     <Compile Include="ViewModel\AdditionalLocationAddViewModel.cs" />
     <Compile Include="ViewModel\AdditionalLocationOfferViewModel.cs" />
