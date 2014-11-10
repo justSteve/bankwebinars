@@ -24,8 +24,6 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
     regUserStateManager.setAction(RegistrationInCart.Action.CheckEmail); // starting off with CheckEmail action.
     regUserStateManager.setIsShippindAddressRequired(shippingAddressRequired);
 
-    var path = utilities.setPathToBaseUrl();
-
     $('#RegisterFields_Email').bind('change keyup', function() {
         regUserStateManager.ensureFormValidatorParsed();
         if ($(this).valid() == true) {
@@ -435,6 +433,10 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                     completeOrder(userId, orderRowId);
                                 });
 
+                                $('#Canceller').on('click', function(e) {
+                                    cancelOrder(orderId, webinarId);
+                                });
+
                                 hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
                                 hookUpChangeTypeLogic($('#RegType'));
                                 hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
@@ -586,7 +588,6 @@ function completeOrder(userId, orderRowId) {
     
     var cartStateManager = new OrderRegistration.StateManager();
 
-    cartStateManager.setCancelOrderForm($('#cancelOrder'));
     cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 
     $('#ConfirmRegistrationBillMe').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
@@ -631,10 +632,59 @@ function completeOrder(userId, orderRowId) {
         });
     });
 
-
-
     confirmOrderForm.submit();
     confirmOrderForm.off('submit');
+}
+
+function cancelOrder(orderId, webinarId) {
+
+    var cartStateManager = new OrderRegistration.StateManager();
+
+    cartStateManager.setCancelOrderForm($('#cancelOrder'));
+
+    var cancelOrderForm = cartStateManager.getCancelOrderForm();
+
+    cancelOrderForm.on('submit', function (e) {
+        //console.log('Submitting Cancel Order');
+
+        //appInsights.trackEvent("Cancelling Order by user");
+        e.preventDefault();
+
+        $('#cancelModalOrderId').val(orderId);
+        var data = $(this).serialize();
+
+        var self = $(this);
+
+        $('#cancelRegistration').on('click', function (e) {
+            e.preventDefault();
+
+            $.post(self.attr('action'), data, function (response, status, xhr) {
+                if (response.success) {
+                    //appInsights.trackEvent("Suceeded in canceling order");
+
+                    var utilities = new Common.Utilities();
+                    console.log('/webinar/details/' + webinarId);
+                    utilities.goToUrl('/webinar/details/' + webinarId);
+
+                } else {
+
+                    //appInsights.trackEvent("Cancel Order Failure");
+                    $('.signupErrors').html('Invalid Data. Try again?');
+                    $('#ConfirmModal').modal('hide');
+                }
+                
+            }, 'json');
+            $('#cancelRegistration').off('click');
+        });
+
+        $('#rtn').on('click', function (e) {
+            e.preventDefault();
+            $('#CancelModal').modal('hide');
+            this.off('click');
+        });
+
+        $('#CancelModal').modal('show');
+    });
 }
 
 function logUserIn(userId) {
