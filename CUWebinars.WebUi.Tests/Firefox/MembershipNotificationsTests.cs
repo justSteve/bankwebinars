@@ -337,7 +337,8 @@ namespace CUWebinars.WebUi.Tests.Firefox
             var orderIdAsString = orderSuccessString.SubstringFrom(":").Remove(0, 1);
             int id;
 
-            if(int.TryParse(orderIdAsString, NumberStyles.AllowLeadingWhite, CultureInfo.CurrentCulture, out id));
+            if(int.TryParse(orderIdAsString, NumberStyles.AllowLeadingWhite, CultureInfo.CurrentCulture, out id))
+                ;
                 return id;
 
             return null;
