@@ -370,12 +370,14 @@ namespace CUWebinars.Business.Services
 
             _logger.Info("Persisted Email for Order {0}:{1}", order.idOrder, relativePath);
 
-            //Clear(); // need to clear at this point, otherwise the OrderSubmittedEvent will be fired again when 
 
             foreach (var evt in GetEvents())
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }
+            
+            Clear(); // need to clear at this point, otherwise the OrderSubmittedEvent will be fired again when 
+
             if (order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count != 0)
             {
                 foreach (var addLoc in order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)
@@ -383,8 +385,6 @@ namespace CUWebinars.Business.Services
                     FireOrderSubmittedAdditionalLocationEvent(order, addLoc.Email);
                 }
             }
-
-            Clear();
         }
 
         public void FireOrderSubmittedAdditionalLocationEvent(Order order, string address)

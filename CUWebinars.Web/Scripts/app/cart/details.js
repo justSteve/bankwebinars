@@ -38,6 +38,8 @@ $(function () {
             var data = $(this).serialize();
             $('#ConfirmRegistrationBillMe').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
 
+            $('#ConfirmRegistrationBillMe').attr('disabled', 'disabled');
+
             $.post(self.attr('action'), data, function (result, status) {
                 if (result.Result === 'Success') {
                     orderRowID = result.OrderRowID;
@@ -57,6 +59,9 @@ $(function () {
                     //appInsights.trackEvent("FAILED posting Order: ");
                     $('.signupErrors').html('Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! ');
                 }
+
+                $('#ConfirmRegistrationBillMe').removeAttr('disabled');
+
             }, constants.JsonDataType);
 
             $('#ConfirmModal').on('hidden', function (e) {

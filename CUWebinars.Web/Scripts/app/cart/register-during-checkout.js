@@ -433,7 +433,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                 
                                 $('#ConfirmRegistrationBillMe').on('click', function (e) {
                                     //$('#confirmation').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>');
-                                    completeOrder(userId, orderRowId);
+                                    completeOrder(userId, orderRowId, webinarId);
                                 });
 
                                 $('#Canceller').on('click', function(e) {
@@ -589,7 +589,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
     $('#loadingSpinner').remove();
 };
 
-function completeOrder(userId, orderRowId) {
+function completeOrder(userId, orderRowId, webinarId) {
     
     var cartStateManager = new OrderRegistration.StateManager();
 
@@ -610,6 +610,8 @@ function completeOrder(userId, orderRowId) {
 
         var data = $(this).serialize();
 
+        $('#ConfirmRegistrationBillMe').attr('disabled', 'disabled');
+
         $.post(self.attr('action'), data, function (result, status) {
             if (result.Result === 'Success') {
                 cartStateManager.setOrderRowId(result.OrderRowID);
@@ -628,11 +630,16 @@ function completeOrder(userId, orderRowId) {
             } else {
                 $('.signupErrors').html('Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! ');
             }
+
+            $('#ConfirmRegistrationBillMe').removeAttr('disabled');
+
         }, 'json');
         
         $('#ConfirmModal').on('hidden', function (e) {
 
-            //location.reload(true);
+            var utilities = new Common.Utilities();
+            console.log('/webinar/details/' + webinarId);
+            utilities.goToUrl('/webinar/details/' + webinarId);
 
         });
     });
