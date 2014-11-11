@@ -24,8 +24,6 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
     regUserStateManager.setAction(RegistrationInCart.Action.CheckEmail); // starting off with CheckEmail action.
     regUserStateManager.setIsShippindAddressRequired(shippingAddressRequired);
 
-    var path = utilities.setPathToBaseUrl();
-
     $('#RegisterFields_Email').bind('change keyup', function() {
         regUserStateManager.ensureFormValidatorParsed();
         if ($(this).valid() == true) {
@@ -399,7 +397,10 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                             url: url,
                             dataType: constants.JsonDataType,
                             data: JSON.stringify(payloadForUpdate),
-                            headers: headers
+                            headers: headers,
+                            beforeSend: function() {
+                                $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
+                            }
                         }).done(function(data) {
 
                             signUpFormContainer.height(storedHeight);
@@ -423,7 +424,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                     data: JSON.stringify(payload),
                                     headers: headersMr,
                                     beforeSend: function() {
-
+                                        
                                     }
                                 }).done(function(data) {
                                     //  do nothing.              
@@ -432,7 +433,11 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                 
                                 $('#ConfirmRegistrationBillMe').on('click', function (e) {
                                     //$('#confirmation').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>');
-                                    completeOrder(userId, orderRowId);
+                                    completeOrder(userId, orderRowId, webinarId);
+                                });
+
+                                $('#Canceller').on('click', function(e) {
+                                    cancelOrder(orderId, webinarId);
                                 });
 
                                 hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
@@ -441,6 +446,8 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
                                 //  Now that we are on the 3rd tab, remove the 2nd tab else we'll have some fields with identical id's on both tabs (edit user fields)
                                 $('#_CreateUserFromCartForm').remove();
+
+                                $('#loadingSpinner').remove();
                             });
 
                         });
@@ -582,11 +589,10 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
     $('#loadingSpinner').remove();
 };
 
-function completeOrder(userId, orderRowId) {
+function completeOrder(userId, orderRowId, webinarId) {
     
     var cartStateManager = new OrderRegistration.StateManager();
 
-    cartStateManager.setCancelOrderForm($('#cancelOrder'));
     cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 
     $('#ConfirmRegistrationBillMe').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
@@ -603,6 +609,8 @@ function completeOrder(userId, orderRowId) {
         self.find('input[name="id"]').val(orderRowId);
 
         var data = $(this).serialize();
+
+        $('#ConfirmRegistrationBillMe').attr('disabled', 'disabled');
 
         $.post(self.attr('action'), data, function (result, status) {
             if (result.Result === 'Success') {
@@ -622,19 +630,75 @@ function completeOrder(userId, orderRowId) {
             } else {
                 $('.signupErrors').html('Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! ');
             }
+
+            $('#ConfirmRegistrationBillMe').removeAttr('disabled');
+
         }, 'json');
         
         $('#ConfirmModal').on('hidden', function (e) {
 
-            //location.reload(true);
+            var utilities = new Common.Utilities();
+            console.log('/webinar/details/' + webinarId);
+            utilities.goToUrl('/webinar/details/' + webinarId);
 
         });
     });
 
-
-
     confirmOrderForm.submit();
     confirmOrderForm.off('submit');
+}
+
+function cancelOrder(orderId, webinarId) {
+
+    var cartStateManager = new OrderRegistration.StateManager();
+
+    cartStateManager.setCancelOrderForm($('#cancelOrder'));
+
+    var cancelOrderForm = cartStateManager.getCancelOrderForm();
+
+    $('#cancelModalOrderId').val(orderId);
+    var data = cancelOrderForm.serialize();
+    
+    $('#cancelRegistration').on('click', function (e) {
+        e.preventDefault();
+
+        // disable button while operation in progress
+        $('#cancelRegistration').attr('disabled', 'disabled');
+
+        $.post(cancelOrderForm.attr('action'), data, function (response, status, xhr) {
+            if (response.success) {
+                //appInsights.trackEvent("Suceeded in canceling order");
+
+                var utilities = new Common.Utilities();
+                console.log('/webinar/details/' + webinarId);
+                utilities.goToUrl('/webinar/details/' + webinarId);
+
+            } else {
+
+                //appInsights.trackEvent("Cancel Order Failure");
+                $('.signupErrors').html('Invalid Data. Try again?');
+                $('#ConfirmModal').modal('hide');
+            }
+
+            // enable button again upon ending operation.
+            $('#cancelRegistration').removeAttr('disabled');
+
+        }, 'json');
+
+        // unbind event so we don't get them building up each time the user clicks the Cancel Registration button.
+        this.off('click');
+        $('#rtn').off('click');
+    });
+
+    $('#rtn').on('click', function (e) {
+        e.preventDefault();
+        $('#CancelModal').modal('hide');
+
+        this.off('click');
+        $('#cancelRegistration').off('click');
+    });
+
+    $('#CancelModal').modal('show');
 }
 
 function logUserIn(userId) {

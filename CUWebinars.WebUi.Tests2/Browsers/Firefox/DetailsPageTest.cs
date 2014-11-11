@@ -5,15 +5,17 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CUWebinars.Tests.Common;
+using CUWebinars.WebUi.Tests2.Infrastructure;
 using CUWebinars.WebUi.Tests2.Pages;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 
 namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 {
     [TestClass]
     public class DetailsPageTest : FirefoxBaseTest
     {
-        private string RegisterFieldsEmailUnderscoreDelimited = "RegisterFields_Email";
+        private const string RegisterFieldsEmailUnderscoreDelimited = "RegisterFields_Email";
         private const string DotComSuffix = ".com";
         private const string FullName = "John Hancock";
         private const string Title = "Mr";
@@ -28,6 +30,8 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         private const string RegisterfieldsBillingaddressStreetaddress = "RegisterFields_BillingAddress_StreetAddress";
         private const string RegisterfieldsBillingaddressPhone = "RegisterFields_BillingAddress_Phone";
         private const string CommonDomain = "yahoo.com.au";
+        private const string TestUserPassword = "Password1";
+        private readonly string TestEmailAddress = "auser@" + CommonDomain;
 
         [TestMethod]
         public void LoadDetailsPage()
@@ -296,7 +300,64 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             Assert.IsTrue(page.SumbitAdditionalLocationsButtonIsNotThere);
             /********************************************************/
         }
+        
+        [TestMethod]
+        public void UserLogsInAndMakesSimpleOrder()
+        {
+            var institutionNameSansSuffix = WebUiTestHelpers.RandomStringFast(5);
+            var institutionName = string.Concat(institutionNameSansSuffix, " ", Infrastructure.TestConstants.SitTestInstitutionSuffix);
 
+            var firstName = WebUiTestHelpers.RandomStringFast(8);
+            var lastName = WebUiTestHelpers.RandomStringFast(5);
+            var email = string.Concat(firstName, "_", lastName, "@", WebUiTestHelpers.RandomStringFast(5), DotComSuffix);
+
+            var page = NavigateToDetailsPageViaRegisterWizard();
+
+            page.ClickLoginLink();
+            page.ClickRegisterLinkOnLoginView();
+            page.EnterDetail(email, Infrastructure.TestConstants.RegisterFieldsEmail);
+
+            page.ClickSubmit();
+
+            page.EnterDetail(Infrastructure.TestConstants.SitTestPassword, Infrastructure.TestConstants.RegisterFieldsPassword);
+            page.EnterDetail(Infrastructure.TestConstants.SitTestPassword, Infrastructure.TestConstants.RegisterFieldsConfirmPassword);
+            page.ClickSubmit();
+
+            page.EnterDetail(Infrastructure.TestConstants.SitTestZipCode, Infrastructure.TestConstants.GetZipInput);
+
+            page.ClickSubmit();
+
+            page.EnterDetail(Infrastructure.TestConstants.SitTestFirstName + " " + "Last", Infrastructure.TestConstants.FullNameInput);
+
+            page.EnterDetail(Infrastructure.TestConstants.Title, Infrastructure.TestConstants.RegisterFieldsTitle);
+            page.EnterDetail(institutionName, Infrastructure.TestConstants.RegisterFieldsInstitution);
+            page.EnterDetail(Infrastructure.TestConstants.SitTestPhone, Infrastructure.TestConstants.RegisterFieldsPhone);
+            page.EnterDetail(Infrastructure.TestConstants.SitTestAltAddress, Infrastructure.TestConstants.RegisterFieldsStreetAddress);
+
+            page.ClickSubmit();
+            page.WaitForLogOutLink();
+
+            page.ClickWebinarsMenuItem();
+             
+            page.ClickSignUpButton();
+
+            page.ClickBillMeButton();
+
+            page.ClickConfirmOrderButton();
+
+            Assert.IsTrue(page.SignUpButtonIsNotPresent);
+
+            page.LogOff();
+        }
+
+        public DetailsPage NavigateToDetailsPageViaRegisterWizard()
+        {
+            var detailsPage = new DetailsPage(TestDriver);
+            detailsPage.Open();
+            
+            return detailsPage;
+        }
+        
         public DetailsPage NavigateToDetailsPage()
         {
             var detailsPage = new DetailsPage(TestDriver);

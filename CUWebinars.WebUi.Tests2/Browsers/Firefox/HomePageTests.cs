@@ -8,7 +8,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
     [TestClass]
     public class HomePageTests : FirefoxBaseTest
     {
-        private const string DotComDomain = ".com";
+        private const string DotComSuffix = ".com";
         private const string EdgeCaseResetPasswordButton = "EdgeCaseResetPasswordButton";
         private const string NormalResetPasswordButton = "NormalResetPasswordButton";
 
@@ -74,7 +74,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         {
             var firstName = WebUiTestHelpers.RandomStringFast(8);
             var lastName = WebUiTestHelpers.RandomStringFast(5);
-            var email = string.Concat(firstName, "_", lastName, "@", WebUiTestHelpers.RandomStringFast(5), DotComDomain);
+            var email = string.Concat(firstName, "_", lastName, "@", WebUiTestHelpers.RandomStringFast(5), DotComSuffix);
             var institutionNameSansSuffix = WebUiTestHelpers.RandomStringFast(5);
             var institutionName = string.Concat(institutionNameSansSuffix, " ", TestConstants.SitTestInstitutionSuffix);
 
@@ -261,7 +261,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         {
             var firstName = WebUiTestHelpers.RandomStringFast(8);
             var lastName = WebUiTestHelpers.RandomStringFast(5);
-            var email = string.Concat(firstName, "_", lastName, "@", WebUiTestHelpers.RandomStringFast(5), DotComDomain);
+            var email = string.Concat(firstName, "_", lastName, "@", WebUiTestHelpers.RandomStringFast(5), DotComSuffix);
             var institutionNameSansSuffix = WebUiTestHelpers.RandomStringFast(5);
             var institutionName = string.Concat(institutionNameSansSuffix, " ", TestConstants.SitTestInstitutionSuffix);
 

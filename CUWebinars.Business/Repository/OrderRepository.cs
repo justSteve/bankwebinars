@@ -29,7 +29,7 @@ namespace CUWebinars.Business.Repository
             newOrder.OrderDate = DateTime.Now;
             newOrder.OrderStatus = OrderStatus.InProcess;
             newOrder.Affiliate = affiliate;
-
+            newOrder.BillingEmail = webUser.email;
             newOrder.idUser = webUser.idUser;
 
             newOrder = AssignWebUserToOrder(webUser, newOrder);

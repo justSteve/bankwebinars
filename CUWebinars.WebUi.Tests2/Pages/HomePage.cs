@@ -155,10 +155,14 @@ namespace CUWebinars.WebUi.Tests2.Pages
 
         public void WaitForLabel(string message)
         {
-            var waitForWords = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(10));
+            //var waitForWords = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(10));
+            SeleniumTestDriver.FindWithWait(30,
+                (w) =>
+                    SeleniumTestDriver.FindByCssSelector("#labelEmail > span").Text.Contains(message)
+                        ? SeleniumTestDriver.FindByCssSelector("#labelEmail > span")
+                        : null);
 
-            var feedbackLabel = waitForWords.Until((w) => SeleniumTestDriver.FindByCssSelector("#labelEmail > span").Text.Contains(message) ? SeleniumTestDriver.FindByCssSelector("#labelEmail > span") : null);
-
+            //var feedbackLabel = waitForWords.Until();
         }
 
         public void ClickYesUseAddressButton()

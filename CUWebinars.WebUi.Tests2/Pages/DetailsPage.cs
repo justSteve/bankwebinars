@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
+using CUWebinars.WebUi.Tests2.Infrastructure;
 using KesselRun.SeleniumCore.Enums;
 using KesselRun.SeleniumCore.TestDrivers.Contracts;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 
 namespace CUWebinars.WebUi.Tests2.Pages
 {
@@ -17,9 +19,17 @@ namespace CUWebinars.WebUi.Tests2.Pages
             get { return !SeleniumTestDriver.WebDriver.FindElements(By.Id("sumbitAdditionalLocationsButton")).Any(); } 
         }
 
+        public bool SignUpButtonIsNotPresent
+        {
+            get
+            {
+                return !SeleniumTestDriver.FindById("AddToCart", ExpectedCondition.ElementIsVisible, 1).Displayed;
+            }
+        }
+
         public void ClickSignUpButton()
         {
-            SeleniumTestDriver.FindByIdClick("AddToCart", ExpectedCondition.ElementIsVisible, 5);
+            SeleniumTestDriver.FindByIdClick("AddToCart", ExpectedCondition.ElementIsVisible, 15);
         }
 
         public void ClickBillMeButton()
@@ -29,7 +39,7 @@ namespace CUWebinars.WebUi.Tests2.Pages
 
         public void ClickConfirmOrderButton()
         {
-            SeleniumTestDriver.FindByIdClick("confirmRegistration", ExpectedCondition.ElementIsVisible, 60);
+            SeleniumTestDriver.FindByIdClick("confirmRegistration", ExpectedCondition.ElementIsVisible, 30);
         }
 
         public void ClickAddAdditionalLocationButton()
@@ -62,5 +72,22 @@ namespace CUWebinars.WebUi.Tests2.Pages
         {
             SeleniumTestDriver.FindByIdClick("closeButton", ExpectedCondition.ElementIsVisible, 5);
         }
+
+        public void LogInAndGoToDetailsPage(string email, string password)
+        {
+            ClickLoginLink();
+            LogInToSite(email, password);
+            SeleniumTestDriver.FindByPartialLinkText(TestConstants.LogoffLinkText,ExpectedCondition.ElementIsVisible, 15);
+            ClickWebinarsMenuItem();
+        }
+
+        public void WaitForLogOutLink()
+        {
+            SeleniumTestDriver.FindWithWait(40, (w) =>
+                w.FindElements(By.PartialLinkText(TestConstants.LogoffLinkText)).Any()
+                    ? SeleniumTestDriver.FindByPartialLinkText(TestConstants.LogoffLinkText)
+                    : null);
+        }
+        
     }
 }
