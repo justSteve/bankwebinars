@@ -83,6 +83,9 @@ $(function () {
             $('#cancelRegistration').on('click', function (e) {
                 e.preventDefault();
 
+                // disable button while operation in progress
+                $('#cancelRegistration').attr('disabled', 'disabled');
+
                 $.post(self.attr('action'), data, function (response, status, xhr) {
                     if (response.success) {
                         //appInsights.trackEvent("Suceeded in canceling order");
@@ -97,15 +100,24 @@ $(function () {
                         $('.signupErrors').html('Invalid Data. Try again?');
                         $('#ConfirmModal').modal('hide');
                     }
+
+
+                    // enable button again upon ending operation.
+                    $('#cancelRegistration').removeAttr('disabled');
+
                     
                 }, 'json');
-                $('#cancelRegistration').off('click');
+
+                // unbind event so we don't get them building up each time the user clicks the Cancel Registration button.
+                $(this).off('click');
+                $('#rtn').off('click');
             });
 
             $('#rtn').on('click', function (e) {
                 e.preventDefault();
                 $('#CancelModal').modal('hide');
                 $(this).off('click');
+                $('#cancelRegistration').off('click');
             });
 
             $('#CancelModal').modal('show');

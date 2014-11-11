@@ -397,7 +397,10 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                             url: url,
                             dataType: constants.JsonDataType,
                             data: JSON.stringify(payloadForUpdate),
-                            headers: headers
+                            headers: headers,
+                            beforeSend: function() {
+                                $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
+                            }
                         }).done(function(data) {
 
                             signUpFormContainer.height(storedHeight);
@@ -421,7 +424,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                     data: JSON.stringify(payload),
                                     headers: headersMr,
                                     beforeSend: function() {
-
+                                        
                                     }
                                 }).done(function(data) {
                                     //  do nothing.              
@@ -443,6 +446,8 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
                                 //  Now that we are on the 3rd tab, remove the 2nd tab else we'll have some fields with identical id's on both tabs (edit user fields)
                                 $('#_CreateUserFromCartForm').remove();
+
+                                $('#loadingSpinner').remove();
                             });
 
                         });
@@ -644,47 +649,49 @@ function cancelOrder(orderId, webinarId) {
 
     var cancelOrderForm = cartStateManager.getCancelOrderForm();
 
-    cancelOrderForm.on('submit', function (e) {
-        //console.log('Submitting Cancel Order');
-
-        //appInsights.trackEvent("Cancelling Order by user");
+    $('#cancelModalOrderId').val(orderId);
+    var data = cancelOrderForm.serialize();
+    
+    $('#cancelRegistration').on('click', function (e) {
         e.preventDefault();
 
-        $('#cancelModalOrderId').val(orderId);
-        var data = $(this).serialize();
+        // disable button while operation in progress
+        $('#cancelRegistration').attr('disabled', 'disabled');
 
-        var self = $(this);
+        $.post(cancelOrderForm.attr('action'), data, function (response, status, xhr) {
+            if (response.success) {
+                //appInsights.trackEvent("Suceeded in canceling order");
 
-        $('#cancelRegistration').on('click', function (e) {
-            e.preventDefault();
+                var utilities = new Common.Utilities();
+                console.log('/webinar/details/' + webinarId);
+                utilities.goToUrl('/webinar/details/' + webinarId);
 
-            $.post(self.attr('action'), data, function (response, status, xhr) {
-                if (response.success) {
-                    //appInsights.trackEvent("Suceeded in canceling order");
+            } else {
 
-                    var utilities = new Common.Utilities();
-                    console.log('/webinar/details/' + webinarId);
-                    utilities.goToUrl('/webinar/details/' + webinarId);
+                //appInsights.trackEvent("Cancel Order Failure");
+                $('.signupErrors').html('Invalid Data. Try again?');
+                $('#ConfirmModal').modal('hide');
+            }
 
-                } else {
+            // enable button again upon ending operation.
+            $('#cancelRegistration').removeAttr('disabled');
 
-                    //appInsights.trackEvent("Cancel Order Failure");
-                    $('.signupErrors').html('Invalid Data. Try again?');
-                    $('#ConfirmModal').modal('hide');
-                }
-                
-            }, 'json');
-            $('#cancelRegistration').off('click');
-        });
+        }, 'json');
 
-        $('#rtn').on('click', function (e) {
-            e.preventDefault();
-            $('#CancelModal').modal('hide');
-            this.off('click');
-        });
-
-        $('#CancelModal').modal('show');
+        // unbind event so we don't get them building up each time the user clicks the Cancel Registration button.
+        this.off('click');
+        $('#rtn').off('click');
     });
+
+    $('#rtn').on('click', function (e) {
+        e.preventDefault();
+        $('#CancelModal').modal('hide');
+
+        this.off('click');
+        $('#cancelRegistration').off('click');
+    });
+
+    $('#CancelModal').modal('show');
 }
 
 function logUserIn(userId) {

@@ -10,7 +10,7 @@ namespace CUWebinars.Business.Notification.Email
     public class AzureCuwWebJobSmtpMessageDelivery : INotificationDelivery
     {
         private static CloudQueueClient _queueClient;
-        private const string name = "cuwebinarsnotifications";
+        private const string storageAccountName = "cuwebinarsnotifications";
 
         private const string key =
             "R6+DUPUtVBKXbnoRTPfdzYXF3KeCcVZdKtpgSig2LJYne52rc6MGU+dgTadzAHbEubBjOhAoB3l8IHMdC8Prgg==";
@@ -18,7 +18,7 @@ namespace CUWebinars.Business.Notification.Email
 
         public void Notify(INotificationMessage notificationMessage)
         {
-            var storageCredentials = new StorageCredentials(name, key);
+            var storageCredentials = new StorageCredentials(storageAccountName, key);
             var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
 
             _queueClient = cloudStorageAccount.CreateCloudQueueClient();
