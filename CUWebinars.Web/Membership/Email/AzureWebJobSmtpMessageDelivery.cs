@@ -12,8 +12,8 @@ namespace CUWebinars.Web.Membership.Email
     {
         private readonly IStateService _stateService;
         private static CloudQueueClient _queueClient;
-        const string name = "cuwebinarsnotifications";
-        const string key = "R6+DUPUtVBKXbnoRTPfdzYXF3KeCcVZdKtpgSig2LJYne52rc6MGU+dgTadzAHbEubBjOhAoB3l8IHMdC8Prgg==";
+        const string storageAccountName = "cuwebinarsnotifications";
+        const string accessKey = "R6+DUPUtVBKXbnoRTPfdzYXF3KeCcVZdKtpgSig2LJYne52rc6MGU+dgTadzAHbEubBjOhAoB3l8IHMdC8Prgg==";
 
 
         public AzureWebJobSmtpMessageDelivery(IStateService stateService)
@@ -28,7 +28,7 @@ namespace CUWebinars.Web.Membership.Email
                 return;
             }
 
-            var storageCredentials = new StorageCredentials(name, key);
+            var storageCredentials = new StorageCredentials(storageAccountName, accessKey);
             var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
             
             _queueClient = cloudStorageAccount.CreateCloudQueueClient();

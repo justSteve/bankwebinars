@@ -362,20 +362,22 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                 var errorsList = valSummary.find('ul');
                 errorsList.empty();
                 errorsList.append('<li style="display:none"></li>');
+
+                storedHeight = signUpFormContainer.height();
             }
         }).done(function(data) {
             //alert('done: ');
             if (data.Result) {
                 if (data.Result === 'Success') {
+
+                    signUpFormContainer.height(storedHeight);
                     //console.log('success: ' + data.Result);
                     regUserStateManager.setAction('');
 
                     // This if guard may not be required
                     if (utilities.relativePathStartsWith(payload['returnUrl'])) { 
                         $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;&nbsp;You have successfully registered! On to check-out...</span>');
-
-                        storedHeight = signUpFormContainer.height();
-
+                        
                         // The next POST updates the Order number with the newly create id of the WebUser
                         var updateOrderWithUserForm = $('#_UpdateOrderWithUserId');
                         var url = updateOrderWithUserForm.attr('action');
@@ -402,8 +404,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                 $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
                             }
                         }).done(function(data) {
-
-                            signUpFormContainer.height(storedHeight);
+                            
 
                             // Upon return, load the 3rd tab. And once loaded, create the MR UserAccount (but don't log the user in). 
                             $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
@@ -473,7 +474,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
             regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
         });
 
-        return false;
+        signUpFormContainer.height(storedHeight);
     });
 
     $('#frmSignIn').on('submit', function (event) {

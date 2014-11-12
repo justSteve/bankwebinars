@@ -12,13 +12,13 @@ namespace CUWebinars.Business.Notification.Email
         private static CloudQueueClient _queueClient;
         private const string storageAccountName = "cuwebinarsnotifications";
 
-        private const string key =
+        private const string accessKey =
             "R6+DUPUtVBKXbnoRTPfdzYXF3KeCcVZdKtpgSig2LJYne52rc6MGU+dgTadzAHbEubBjOhAoB3l8IHMdC8Prgg==";
 
 
         public void Notify(INotificationMessage notificationMessage)
         {
-            var storageCredentials = new StorageCredentials(storageAccountName, key);
+            var storageCredentials = new StorageCredentials(storageAccountName, accessKey);
             var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
 
             _queueClient = cloudStorageAccount.CreateCloudQueueClient();

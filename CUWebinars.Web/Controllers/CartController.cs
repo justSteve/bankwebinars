@@ -191,7 +191,7 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var showPlusShip = _cartControllerOrchestrator.CheckIfAddLocShouldHide(optionID);
+                Tuple<string,string> showPlusShip = _cartControllerOrchestrator.CheckIfAddLocShouldHide(optionID);
 
                 return Json(new { shouldShow = showPlusShip.Item1, shippingDetailsRqrd = showPlusShip.Item2 }, JsonRequestBehavior.AllowGet);
             }
