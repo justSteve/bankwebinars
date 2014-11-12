@@ -11,8 +11,8 @@
     string TenantLogo = TtsConfigHelperObject.TenantLogo();
     string TenantCom = TenantDomain + ".com";
 
-    var HeaderText = "Account is Activated";
-    var BannerText = Tenant + " has confirmed your email.";
+    var HeaderText = Model.Email +" is Activated";
+    var BannerText = Tenant + " has confirmed your email: " + Model.Email;
 
 }
 <head>
@@ -85,6 +85,7 @@
                             <tr style="background-color: #000000;">
                                 <td colspan="2">
                                     <img alt="spacer.gif" height="10" src="http://images.ttstrain.com/images/vrLocal/spacer.gif" style="width: 1px; height: 10px; display: block;" width="1" />
+                                    @Model.
                                 </td>
                             </tr>
                             <tr>
