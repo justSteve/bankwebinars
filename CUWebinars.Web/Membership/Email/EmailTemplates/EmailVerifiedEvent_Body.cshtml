@@ -11,8 +11,8 @@
     string TenantLogo = TtsConfigHelperObject.TenantLogo();
     string TenantCom = TenantDomain + ".com";
 
-    var HeaderText = "Email is verified";
-    var BannerText = "Account with " + Tenant + " is confirmed.";
+    var HeaderText = Model.Email + " is verified";
+    var BannerText = Model.Email + " with " + Tenant + " is confirmed.";
 
 }
 <head>

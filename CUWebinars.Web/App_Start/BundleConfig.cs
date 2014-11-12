@@ -38,7 +38,7 @@ namespace CUWebinars.Web.App_Start
 
             bundles.Add(new ScriptBundle("~/bundles/CommonModules").Include(
                 "~/Scripts/app/constants.js",
-                "~/Scripts/underscore-{version}.js",
+                "~/Scripts/underscore.js",
                 "~/Scripts/purl.js", // excellent lib for parsing and working with the address bar content i.e. urls
                 "~/Scripts/app/utilities.js",
                 "~/Scripts/app/form-processor.js"

@@ -470,6 +470,8 @@
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\purl.js" />
+    <Content Include="Scripts\underscore.js" />
+    <Content Include="Scripts\underscore.min.js" />
     <Content Include="Views\Cart\Partials\_DisplayRowPrice.cshtml" />
     <Content Include="Views\Admin\Home\_ImportOrder.cshtml" />
     <Content Include="Views\Admin\Home\_LogInAsUser.cshtml" />
@@ -567,6 +569,7 @@
     <Compile Include="ViewModel\WebinarDetailsViewModel.cs" />
     <Content Include="Views\Webinar\Partials\_UpdateWebinarFiles.cshtml" />
     <Content Include="Views\Cart\Partials\_UpdateOrderWithUserId.cshtml" />
+    <Content Include="Scripts\underscore.min.map" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\packages\Selenium.WebDriver.ChromeDriver.2.9.0.0\content\chromedriver.exe">
