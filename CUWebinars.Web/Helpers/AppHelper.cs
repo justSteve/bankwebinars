@@ -118,6 +118,18 @@ namespace CUWebinars.Web.Helpers
             }
             return value;
         }
+        public static SessionStartInfo GetSessionStartInfo()
+        {
+
+            //TODO: time to transition the legacy xml object to a native class.
+            HttpRequest request = HttpContext.Current.Request;
+            SessionStartInfo info = new SessionStartInfo();
+
+            //and so on....
+            return null;
+
+        }
+
 
         private static readonly string AUDIT_XML_TEMPLATE =
             "<AuditInfo>" +
