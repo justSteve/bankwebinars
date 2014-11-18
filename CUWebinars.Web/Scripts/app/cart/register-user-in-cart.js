@@ -143,6 +143,12 @@ var RegistrationInCart;
 
                 $('#TheSubmitButton').prop('value', this.registerButtonText);
             }
+
+            //  set TimeZone to Central time if there is none.
+            var timeZoneInput = $('#TimeZone');
+
+            if (!timeZoneInput.val())
+                timeZoneInput.val('3'); // Central = 3
         };
 
         StateManager.prototype.ensureFormValidatorParsed = function () {

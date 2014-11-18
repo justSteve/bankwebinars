@@ -130,7 +130,7 @@ $(function () {
 
     };
 
-    shippingAddressRequired = false; //todo: this should be done dynamically from db
+    shippingAddressRequired = true; //todo: this should be done dynamically from db
 
     cartStateManager = new OrderRegistration.StateManager();
 
