@@ -1030,7 +1030,7 @@ namespace CUWebinars.Web.Controllers
         public ActionResult CreateUserAccountFromCart(RegisterViewModel model)
         {
             //  Not adding any ModelState errors in this method. This method is not to return any GUI feedback.
-            //  It is effective invoked as a fire and forget, even thought it sends an http response (which gets ignored at client.)
+            //  It is effective invoked as a fire and forget, even though it sends an http response (which gets ignored at client.)
 
             if (ModelState.IsValid)
             {

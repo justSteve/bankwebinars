@@ -16,6 +16,10 @@ using CUWebinars.Web.Membership;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage.Queue;
+using Newtonsoft.Json;
 using Ninject.Extensions.Logging;
 using ClaimsExtensions = CUWebinars.Web.Helpers.ClaimsExtensions;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
@@ -371,52 +375,42 @@ namespace CUWebinars.Web.Core.Orchestrators
             return _membershipService.ChangePasswordFromResetKey(key, password);
         }
 
-        public UserAccount CreateUserAccountFromCart(RegisterViewModel model)
+        public void CreateUserAccountFromCart(RegisterViewModel model)
         {
+            var storageCredentials = new StorageCredentials(_globals.StorageAccountName, _globals.StorageAccessKey);
+            var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
+
+            CloudQueueClient _queueClient = cloudStorageAccount.CreateCloudQueueClient();
+
+            CloudQueue cloudQueue = _queueClient.GetQueueReference(_globals.CreateUserQueueName);
+
             var email = model.RegisterFields.Email.Trim();
             var firstName = model.RegisterFields.FirstName.Trim();
             var lastName = model.RegisterFields.LastName.Trim();
 
-            ////first check if email exists
-            //var checkIfUsed = _membershipService.GetUserByEmail(email);
-            //if (checkIfUsed != null)
-            //{
-            //    _logger.Error("dupe email attempt: " + email);
-            //}
-            //  model.Passwor should be null or empty. Generate own temp password here
-            model.RegisterFields.Password = PasswordGenerator.GenerateRandomString(8);
-            if (_stateService.HasValue(DomainConstants.TempPassword))
-                _stateService.ClearValue(DomainConstants.TempPassword);
+            //first check if email exists
+            var userExists = _membershipService.GetUserAccountByEmail(_globals.Tenant, email);
+            if (userExists != null)
+            {
+                _logger.Error("dupe email attempt: " + email);
+                throw new Exception("User already exists.");
+            }
 
-            _stateService.SetValue(DomainConstants.TempPassword, model.RegisterFields.Password);
-                // will use in TtsTokenizer
+            var registerFieldsDto = new RegisterFieldsDTO
+            {
+                Email = email,
+                FirstName = firstName,
+                LastName = lastName
+            };
+                
 #if DEBUG
             _logger.Info("Password {0} created for user {1}", model.RegisterFields.Password, model.RegisterFields.Email);
 #endif
 
-            var userAccount = _membershipService.CreateUser(
-                _globals.Tenant,
-                firstName,
-                lastName,
-                string.Empty,
-                //  Pass empty string for username because MembershipReboot assigns the email to the username field where emailIsUsername is true
-                model.RegisterFields.Password,
-                email);
-
-            _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.CartRegistration);
-
-            Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey),
-                "There's no reason session should not have a value for the VerificationKey at this point ");
-
-            var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
-            _stateService.ClearValue(DomainConstants.VerificationKey);
-
-            userAccount = _membershipService.VerifyEmailFromKey(
-                verificationKey,
-                model.RegisterFields.Password
-                );
-
-            return userAccount;
+            var payload = JsonConvert.SerializeObject(registerFieldsDto);
+            var cloudQueueMessage = new CloudQueueMessage(payload);
+            cloudQueue.EncodeMessage = true;
+            cloudQueue.AddMessage(cloudQueueMessage);
 
         }
 

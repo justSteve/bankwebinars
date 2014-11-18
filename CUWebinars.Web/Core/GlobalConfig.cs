@@ -7,10 +7,13 @@ namespace CUWebinars.Web.Core
     public class GlobalConfig
     {
 
+        public string CreateUserQueueName { get; private set; }
         public string EmailSendingMode { get; private set; }
         public string HandoutRepository { get; private set; }
         public string ImgRepository { get; private set; }
         public string MembershipConnectionString { get; set; }
+        public string StorageAccessKey { get; private set; }
+        public string StorageAccountName { get; private set; }
         public string TestEmailAddress { get; private set; }
         public string Tenant { get; private set; }
         public string TenantEmail { get; private set; }
@@ -36,11 +39,14 @@ namespace CUWebinars.Web.Core
                 //{
                 //    throw new ArgumentNullException("AppSettings not found in config file as expected.");
                 //}
+                UniqueInstance.CreateUserQueueName = ApplicationSettingsSection["CreateUserQueueName"];
                 UniqueInstance.EmailSendingMode = ApplicationSettingsSection["EmailSendingMode"];
                 UniqueInstance.TestEmailAddress = ApplicationSettingsSection["TestEmailAddress"];
                 UniqueInstance.WMVRepository = ApplicationSettingsSection["WMVRepository"];
                 UniqueInstance.HandoutRepository = ApplicationSettingsSection["HandoutRepository"];
                 UniqueInstance.ImgRepository = ApplicationSettingsSection["ImgRepository"];
+                UniqueInstance.StorageAccessKey = ApplicationSettingsSection["StorageAccessKey"];
+                UniqueInstance.StorageAccountName = ApplicationSettingsSection["StorageAccountName"];
                 UniqueInstance.Tenant = ApplicationSettingsSection["Tenant"];
                 UniqueInstance.TenantEmail = ApplicationSettingsSection["TenantEmail"];
                 UniqueInstance.TenantDomain = ApplicationSettingsSection["TenantDomain"];
