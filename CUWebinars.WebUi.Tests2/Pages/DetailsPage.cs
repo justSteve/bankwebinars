@@ -88,6 +88,15 @@ namespace CUWebinars.WebUi.Tests2.Pages
                     ? SeleniumTestDriver.FindByPartialLinkText(TestConstants.LogoffLinkText)
                     : null);
         }
-        
+
+        public void ClickSignIn()
+        {
+            SeleniumTestDriver.FindByIdClickWithRetries("SignInButton", ExpectedCondition.ElementIsVisible, 5, 5);
+        }
+
+        public void PickRegType(int i)
+        {
+            SeleniumTestDriver.FindByXPathClick(string.Format(@"//*[@id='RegistrationType']/dl/dt[{0}]/input", i), ExpectedCondition.ElementIsVisible, 5);
+        }
     }
 }

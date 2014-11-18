@@ -213,19 +213,19 @@ namespace CUWebinars.WebUi.Tests2.Pages
         {
             try
             {
-                Actions action = new Actions(SeleniumTestDriver.WebDriver);
+                Actions action = SeleniumTestDriver.MouseOverElement(FinderStrategy.XPath, @"//*[@id='main_menu']/ul/li[3]/a");
 
-                IWebElement menuTop = SeleniumTestDriver.FindByXPath(@"//*[@id='main_menu']/ul/li[3]/a", ExpectedCondition.ElementIsVisible ,1);
-                action.MoveToElement(menuTop).Perform();
+                //IWebElement menuTop = SeleniumTestDriver.FindByXPath(@"//*[@id='main_menu']/ul/li[3]/a", ExpectedCondition.ElementIsVisible ,1);
+                //action.MoveToElement(menuTop).Perform();
                 Wait(200);            
                 action.MoveToElement(SeleniumTestDriver.FindByXPath(@"//*[@id='main_menu']/ul/li[3]/ul/li[2]/a", ExpectedCondition.ElementIsVisible, 5)).Click().Perform();
             }
             catch (Exception e)
             {
-                Actions action = new Actions(SeleniumTestDriver.WebDriver);
+                Actions action = SeleniumTestDriver.MouseOverElement(FinderStrategy.XPath, @"//*[@id='main_menu']/ul/li[3]/a");
 
-                IWebElement menuTop = SeleniumTestDriver.FindByXPath(@"//*[@id='main_menu']/ul/li[3]/a", ExpectedCondition.ElementIsVisible, 3);
-                action.MoveToElement(menuTop).Perform();
+                //IWebElement menuTop = SeleniumTestDriver.FindByXPath(@"//*[@id='main_menu']/ul/li[3]/a", ExpectedCondition.ElementIsVisible, 3);
+                //action.MoveToElement(menuTop).Perform();
                 Wait(200);
                 action.MoveToElement(SeleniumTestDriver.FindByXPath(@"//*[@id='main_menu']/ul/li[3]/ul/li[2]/a", ExpectedCondition.ElementIsVisible, 5)).Click().Perform();                
             }

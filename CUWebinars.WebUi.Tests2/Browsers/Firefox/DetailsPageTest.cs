@@ -33,6 +33,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         private const string TestUserPassword = "Password1";
         private readonly string TestEmailAddress = "auser@" + CommonDomain;
 
+
         [TestMethod]
         public void LoadDetailsPage()
         {
@@ -346,6 +347,278 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             page.ClickConfirmOrderButton();
 
             Assert.IsTrue(page.SignUpButtonIsNotPresent);
+
+            page.LogOff();
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Notifications)]
+        public void ExistingUserLogsInAndMakesLiveDemandOrder()
+        {
+            var dataOperations = new DataOperations();
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
+
+            var page = NavigateToDetailsPageViaRegisterWizard();
+
+            page.ClickLoginLink();
+            page.EnterDetail(WebUiTestGlobalsTestConfig.LoggedInUserEmail, Infrastructure.TestConstants.EmailInput);
+            page.EnterDetail(WebUiTestGlobalsTestConfig.LoggedInUserPassword, Infrastructure.TestConstants.PasswordInput);
+            page.ClickSignIn();
+
+            page.WaitForLogOutLink();
+
+            page.ClickWebinarsMenuItem();
+
+            page.ClickSignUpButton();
+
+            page.ClickBillMeButton();
+            
+            page.Wait(100);
+
+            dataOperations.DeleteMostRecentOrderOfUser(WebUiTestGlobalsTestConfig.LoggedInUserEmail);
+
+            page.LogOff();
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Notifications)]
+        public void ExistingUserLogsInAndMakesCdHardcopyOrderWith1AdditionalLocation()
+        {
+            var dataOperations = new DataOperations();
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
+
+            var page = NavigateToDetailsPageViaRegisterWizard();
+
+            page.ClickLoginLink();
+            page.EnterDetail(WebUiTestGlobalsTestConfig.LoggedInUserEmail, Infrastructure.TestConstants.EmailInput);
+            page.EnterDetail(WebUiTestGlobalsTestConfig.LoggedInUserPassword, Infrastructure.TestConstants.PasswordInput);
+            page.ClickSignIn();
+
+            page.WaitForLogOutLink();
+
+            page.ClickWebinarsMenuItem();
+
+            /*********** Additional Locations modal *****************/
+            page.ClickAddAdditionalLocationButton();
+            page.ClickTheClickToAddMoreButton();
+            page.EnterDetail("drogersbox-test1@yahoo.com.au", "AdditionalLocationEmail_0");
+            page.ClickSubmitAdditionalLocationsButton();
+            /*********** ************************** *****************/
+
+            page.Wait(500);
+
+            page.ClickSignUpButton();
+
+            page.ClickBillMeButton();
+
+            page.Wait(100);
+
+            dataOperations.DeleteMostRecentOrderOfUser(WebUiTestGlobalsTestConfig.LoggedInUserEmail);
+
+            page.LogOff();
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Notifications)]
+        public void ExistingUserLogsInAndMakesOnDemandRecordingOrder()
+        {
+            var dataOperations = new DataOperations();
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
+
+            var page = NavigateToDetailsPageViaRegisterWizard();
+
+            page.ClickLoginLink();
+            page.EnterDetail(WebUiTestGlobalsTestConfig.LoggedInUserEmail, Infrastructure.TestConstants.EmailInput);
+            page.EnterDetail(WebUiTestGlobalsTestConfig.LoggedInUserPassword, Infrastructure.TestConstants.PasswordInput);
+            page.ClickSignIn();
+
+            page.WaitForLogOutLink();
+
+            page.ClickWebinarsMenuItem();
+
+            page.PickRegType(2);
+            
+            page.ClickSignUpButton();
+
+            page.ClickBillMeButton();
+            
+            page.Wait(100);
+
+            dataOperations.DeleteMostRecentOrderOfUser(WebUiTestGlobalsTestConfig.LoggedInUserEmail);
+
+            page.LogOff();
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Notifications)]
+        public void ExistingUserLogsInAndMakesCdHardcopyOrder()
+        {
+            var dataOperations = new DataOperations();
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
+
+            var page = NavigateToDetailsPageViaRegisterWizard();
+
+            page.ClickLoginLink();
+            page.EnterDetail(WebUiTestGlobalsTestConfig.LoggedInUserEmail, Infrastructure.TestConstants.EmailInput);
+            page.EnterDetail(WebUiTestGlobalsTestConfig.LoggedInUserPassword, Infrastructure.TestConstants.PasswordInput);
+            page.ClickSignIn();
+
+            page.WaitForLogOutLink();
+
+            page.ClickWebinarsMenuItem();
+
+            page.PickRegType(3);
+            
+            page.ClickSignUpButton();
+
+            page.ClickBillMeButton();
+            
+            page.Wait(100);
+
+            dataOperations.DeleteMostRecentOrderOfUser(WebUiTestGlobalsTestConfig.LoggedInUserEmail);
+
+            page.LogOff();
+        }
+        
+        
+        [TestMethod]
+        [TestCategory(TestCategories.Notifications)]
+        public void ExistingUserLogsInAndMakesLivePlusOnDemandOrder()
+        {
+            var dataOperations = new DataOperations();
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
+
+            var page = NavigateToDetailsPageViaRegisterWizard();
+
+            page.ClickLoginLink();
+            page.EnterDetail(WebUiTestGlobalsTestConfig.LoggedInUserEmail, Infrastructure.TestConstants.EmailInput);
+            page.EnterDetail(WebUiTestGlobalsTestConfig.LoggedInUserPassword, Infrastructure.TestConstants.PasswordInput);
+            page.ClickSignIn();
+
+            page.WaitForLogOutLink();
+
+            page.ClickWebinarsMenuItem();
+
+            page.PickRegType(4);
+            
+            page.ClickSignUpButton();
+
+            page.ClickBillMeButton();
+            
+            page.Wait(100);
+
+            dataOperations.DeleteMostRecentOrderOfUser(WebUiTestGlobalsTestConfig.LoggedInUserEmail);
+
+            page.LogOff();
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Notifications)]
+        public void ExistingUserLogsInAndMakesLivePlusOnDemandOrderWith1AdditionalLocation()
+        {
+            var dataOperations = new DataOperations();
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
+
+            var page = NavigateToDetailsPageViaRegisterWizard();
+
+            page.ClickLoginLink();
+            page.EnterDetail(WebUiTestGlobalsTestConfig.LoggedInUserEmail, Infrastructure.TestConstants.EmailInput);
+            page.EnterDetail(WebUiTestGlobalsTestConfig.LoggedInUserPassword, Infrastructure.TestConstants.PasswordInput);
+            page.ClickSignIn();
+
+            page.WaitForLogOutLink();
+
+            page.ClickWebinarsMenuItem();
+
+            page.PickRegType(4);
+
+            /*********** Additional Locations modal *****************/
+            page.ClickAddAdditionalLocationButton();
+            page.ClickTheClickToAddMoreButton();
+            page.EnterDetail("drogersbox-test1@yahoo.com.au", "AdditionalLocationEmail_0");
+            page.ClickSubmitAdditionalLocationsButton();
+            /*********** ************************** *****************/
+
+            page.Wait(500);
+            
+            page.ClickSignUpButton();
+
+            page.ClickBillMeButton();
+            
+            page.Wait(100);
+
+            dataOperations.DeleteMostRecentOrderOfUser(WebUiTestGlobalsTestConfig.LoggedInUserEmail);
+
+            page.LogOff();
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Notifications)]
+        public void ExistingUserLogsInAndMakesPremierPackageOrder()
+        {
+            var dataOperations = new DataOperations();
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
+
+            var page = NavigateToDetailsPageViaRegisterWizard();
+
+            page.ClickLoginLink();
+            page.EnterDetail(WebUiTestGlobalsTestConfig.LoggedInUserEmail, Infrastructure.TestConstants.EmailInput);
+            page.EnterDetail(WebUiTestGlobalsTestConfig.LoggedInUserPassword, Infrastructure.TestConstants.PasswordInput);
+            page.ClickSignIn();
+
+            page.WaitForLogOutLink();
+
+            page.ClickWebinarsMenuItem();
+
+            page.PickRegType(5);
+            
+            page.ClickSignUpButton();
+
+            page.ClickBillMeButton();
+            
+            page.Wait(100);
+
+            dataOperations.DeleteMostRecentOrderOfUser(WebUiTestGlobalsTestConfig.LoggedInUserEmail);
+
+            page.LogOff();
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Notifications)]
+        public void ExistingUserLogsInAndMakesPremierPackageOrderWith1AdditionalLocation()
+        {
+            var dataOperations = new DataOperations();
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
+
+            var page = NavigateToDetailsPageViaRegisterWizard();
+
+            page.ClickLoginLink();
+            page.EnterDetail(WebUiTestGlobalsTestConfig.LoggedInUserEmail, Infrastructure.TestConstants.EmailInput);
+            page.EnterDetail(WebUiTestGlobalsTestConfig.LoggedInUserPassword, Infrastructure.TestConstants.PasswordInput);
+            page.ClickSignIn();
+
+            page.WaitForLogOutLink();
+
+            page.ClickWebinarsMenuItem();
+
+            page.PickRegType(5);
+
+            /*********** Additional Locations modal *****************/
+            page.ClickAddAdditionalLocationButton();
+            page.ClickTheClickToAddMoreButton();
+            page.EnterDetail("drogersbox-test1@yahoo.com.au", "AdditionalLocationEmail_0");
+            page.ClickSubmitAdditionalLocationsButton();
+            /*********** ************************** *****************/
+            
+            page.Wait(500);
+
+            page.ClickSignUpButton();
+
+            page.ClickBillMeButton();
+            
+            page.Wait(100);
+
+            dataOperations.DeleteMostRecentOrderOfUser(WebUiTestGlobalsTestConfig.LoggedInUserEmail);
 
             page.LogOff();
         }

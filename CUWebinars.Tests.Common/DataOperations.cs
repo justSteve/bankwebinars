@@ -50,6 +50,35 @@ namespace CUWebinars.Tests.Common
                 }
             }
         }
+        
+        public void DeleteMostRecentOrderOfUser(string email)
+        {
+            using (var sqlConnection = new SqlConnection(ConnectionString))
+            {
+                sqlConnection.Open();
+
+                using (var getMostRecentOrderOfUser = new SqlCommand())
+                {
+                    getMostRecentOrderOfUser.Connection = sqlConnection;
+                    getMostRecentOrderOfUser.CommandText = string.Format("SELECT TOP 1 * FROM [CUWebinars].[dbo].[Order] WHERE idUser = (select idUser from WebUser where email = '{0}') order by OrderDate desc", email);
+                    
+                    getMostRecentOrderOfUser.CommandType = CommandType.Text;
+
+                    int? orderId = null;
+
+                    using (var orderReader = getMostRecentOrderOfUser.ExecuteReader())
+                    {
+                        orderReader.Read();
+                        orderId = orderReader.GetInt32(0);
+                    }
+
+                    if(orderId.HasValue)
+                        DeleteOrder(orderId.Value);
+                    else
+                        throw new Exception(string.Format("Order for user {0} not found", email));
+                }
+            }
+        }
 
         public bool DeleteUserAccountAndClaims(string email)
         {

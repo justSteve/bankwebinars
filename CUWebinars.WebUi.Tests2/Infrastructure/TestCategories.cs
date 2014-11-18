@@ -10,5 +10,6 @@ namespace CUWebinars.WebUi.Tests2.Infrastructure
 
 
         internal const string Gui = "GUI";
+        internal const string Notifications = "Notifications";
     }
 }

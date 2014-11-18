@@ -31,8 +31,8 @@ namespace CUWebinars.Web.Membership.Email
                 c.WithBaseTemplateType(typeof(TtsHtmlTemplateBase<>));
                 c.IncludeNamespaces("CUWebinars.Business.Core.Helpers",
                     "CUWebinars.Business.Models",
-                    "CUWebinars.Business.Notification",
-                    "CUWebinars.Html");
+                    "CUWebinars.Business.Notification");
+                    //"CUWebinars.Html");
             });
 
             var templateService = new TemplateService(config);

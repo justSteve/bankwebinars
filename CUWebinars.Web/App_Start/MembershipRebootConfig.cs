@@ -23,8 +23,8 @@ namespace CUWebinars.Web.App_Start
                 "Account/RegisterCancel/",
                 "Account/PasswordResetConfirm/");
 
-            var delivery = new AzureWebJobSmtpMessageDelivery(stateService);
-            //var delivery = new TtsSmtpMessageDelivery(stateService);
+            //var delivery = new AzureWebJobSmtpMessageDelivery(stateService);
+            var delivery = new TtsSmtpMessageDelivery(stateService);
             var emailFormatter = new TtsEmailFormatter(appinfo, stateService) { PathToRoot = pathToRootDirectory };
 
             // uncomment if you want email notifications -- also update smtp settings in web.config

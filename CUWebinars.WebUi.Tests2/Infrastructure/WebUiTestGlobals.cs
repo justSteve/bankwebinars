@@ -14,6 +14,8 @@ namespace CUWebinars.WebUi.Tests2.Infrastructure
         public string HomeUrl { get; set; }
         public string IeWebDriverPath { get; set; }
         public string IeWebDriverPort { get; set; }
+        public string LoggedInUserEmail { get; set; }
+        public string LoggedInUserPassword { get; set; }
         public string MembershipNotificationsUrl { get; set; }
         public string MembershipRebootConnection { get; set; }
         public string Tenant { get; set; }
@@ -36,13 +38,15 @@ namespace CUWebinars.WebUi.Tests2.Infrastructure
                 UniqueInstance.IeWebDriverPort = applicationSettingsSection["IeWebDriverPort"];
                 UniqueInstance.ChromeWebDriverPort = applicationSettingsSection["ChromeWebDriverPort"];
                 UniqueInstance.ChromeWebDriverPath = applicationSettingsSection["ChromeWebDriverPath"];
-                //UniqueInstance.DefaultConnection = connectionStringSettingsSection["DefaultConnection"].ConnectionString;
+                UniqueInstance.DefaultConnection = connectionStringSettingsSection["DefaultConnection"].ConnectionString;
                 UniqueInstance.FirefoxExePath = applicationSettingsSection["FirefoxExePath"];
                 UniqueInstance.FirefoxBrowserPort = applicationSettingsSection["FirefoxBrowserPort"];
                 UniqueInstance.HomeUrl = applicationSettingsSection["HomeUrl"];
                 //UniqueInstance.MembershipNotificationsUrl = applicationSettingsSection["MembershipNotificationsUrl"];
-                //UniqueInstance.MembershipRebootConnection = connectionStringSettingsSection["MembershipReboot"].ConnectionString;
-                //UniqueInstance.Tenant = applicationSettingsSection["Tenant"];
+                UniqueInstance.MembershipRebootConnection = connectionStringSettingsSection["MembershipReboot"].ConnectionString;
+                UniqueInstance.Tenant = applicationSettingsSection["Tenant"];
+                UniqueInstance.LoggedInUserEmail = applicationSettingsSection["LoggedInUserEmail"];
+                UniqueInstance.LoggedInUserPassword = applicationSettingsSection["LoggedInUserPassword"];
                 //UniqueInstance.TtsDatabaseConnectionString = connectionStringSettingsSection["TTSDataBase"].ConnectionString;
             }
 

@@ -17,8 +17,8 @@ namespace CUWebinars.Business.Notification.Renderers
                 c.WithBaseTemplateType(typeof(TtsHtmlTemplateBase<>));
                 c.IncludeNamespaces("CUWebinars.Business.Core.Helpers",
                     "CUWebinars.Business.Models",
-                    "CUWebinars.Business.Notification",
-                    "CUWebinars.Html");
+                    "CUWebinars.Business.Notification");
+                    //"CUWebinars.Html");
             });
 
             // create a new TemplateService and pass in the configuration to the constructor
