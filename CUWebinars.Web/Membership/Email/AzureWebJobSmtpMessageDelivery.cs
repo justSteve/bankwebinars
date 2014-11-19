@@ -1,5 +1,6 @@
 ﻿using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Constants;
+using CUWebinars.Web.Core;
 using CUWebinars.Web.Services;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
@@ -10,10 +11,9 @@ namespace CUWebinars.Web.Membership.Email
 {
     public class AzureWebJobSmtpMessageDelivery : IMessageDelivery
     {
+        private readonly GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
         private readonly IStateService _stateService;
         private static CloudQueueClient _queueClient;
-        const string storageAccountName = "cuwebinarsnotifications";
-        const string accessKey = "R6+DUPUtVBKXbnoRTPfdzYXF3KeCcVZdKtpgSig2LJYne52rc6MGU+dgTadzAHbEubBjOhAoB3l8IHMdC8Prgg==";
 
 
         public AzureWebJobSmtpMessageDelivery(IStateService stateService)
@@ -28,7 +28,7 @@ namespace CUWebinars.Web.Membership.Email
                 return;
             }
 
-            var storageCredentials = new StorageCredentials(storageAccountName, accessKey);
+            var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName, _globalConfig.StorageAccessKey);
             var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
             
             _queueClient = cloudStorageAccount.CreateCloudQueueClient();

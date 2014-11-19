@@ -18,7 +18,7 @@ namespace CUWebinars.Web.Membership.Email
 
         public void Send(Message msg)
         {
-            if (_stateService.HasValue(DomainConstants.UserCreatedViaNewOrder))
+            if (_stateService.HasValue(DomainConstants.UserCreatedViaNewOrder) || _stateService.HasValue(DomainConstants.UserCreatedDuringCartCheckout))
             {
                 return;
             }

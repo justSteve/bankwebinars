@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -419,6 +420,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             var email = model.RegisterFields.Email.Trim();
             var firstName = model.RegisterFields.FirstName.Trim();
             var lastName = model.RegisterFields.LastName.Trim();
+
+            bool emailIsAvailable = _membershipService.GetUserByEmail(email) == null;
+
+            if(!emailIsAvailable)
+                throw new ValidationException(string.Format("The email address {0} is already in use by an existing user.", email));
 
             var myInstitution = _membershipService.ProcessInstitutionForUser(
                 model.RegisterFields.Institution.Trim(),

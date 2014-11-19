@@ -15,7 +15,8 @@ namespace CUWebinars.Business.Constants
         public const string RegistrantKey = "registrantKey";
         public const string ShippingAddress = "Shipping";
         public const string ResourcePathTemplate = @"Notification\Templates";
-        public const string TempPassword = "TempPassword"; 
+        public const string TempPassword = "TempPassword";
+        public const string UserCreatedDuringCartCheckout = "UserCreatedDuringCartCheckout";
         public const string UserCreatedViaNewOrder = "UserCreatedViaNewOrder";
         public const string UsLocale = "en-US";
         public const string VerificationKey = "VerificationKey";
