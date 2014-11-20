@@ -191,6 +191,8 @@ $(function () {
 
         e.preventDefault();
 
+        var beigeFormArea = signUpFormContainer.find('div.well');
+
         $('#loginEmail').val($('#Email1').val());
         $('#loginPassword').val($('#Password1').val());
 
@@ -216,7 +218,8 @@ $(function () {
                         $('#_CreateUserForm input[name="returnUrl"]').val('/Webinar/Details2/' + result.webinarId);
                         registerDuringCheckout.initialize(result.orderId, result.webinarId, result.orderRowId, shippingAddressRequired, checkoutConfirm.initialize);
                     });
-                    signUpFormContainer.height(storedHeight);
+
+                    //signUpFormContainer.height(storedHeight);
 
                     $('#contactInfoTab a').tab('show');
                 } else if (!data.isSuccessful) {
@@ -236,7 +239,7 @@ $(function () {
                     cartStateManager.setOrderId(result.orderId);
                     cartStateManager.setWebinarId(result.webinarId);
                     //appInsights.trackEvent("submitting ConfirmOrder" + result.userId);
-
+                    
                     $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
                         $('#confirmationTab a').tab('show');
 
@@ -261,9 +264,9 @@ $(function () {
                         hookUpChangeTypeLogic($('#RegType'));
                         hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
 
-                    }, constants.HtmlDataType);
+                        beigeFormArea.height($('#confirmation').height() + 30);
 
-                    signUpFormContainer.height(storedHeight);
+                    }, constants.HtmlDataType);
 
                 } else {
                     //jslogger.log({ exception: { name: 'SignupFail', message: 'The signUpForm submission failed.' } });

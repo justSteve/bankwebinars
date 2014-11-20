@@ -449,11 +449,14 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                 $('#_CreateUserFromCartForm').remove();
 
                                 $('#loadingSpinner').remove();
+                                
+                                beigeFormArea.height($('#confirmation').height() + 30);
                             });
 
                         });
 
                         $('#confirmationTab a').tab('show');
+                        
                     } else {
                         $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;You have successfully registered!</span>');
                     }
