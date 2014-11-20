@@ -403,7 +403,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 FirstName = firstName,
                 LastName = lastName
             };
-                
+
 #if DEBUG
             _logger.Info("Password {0} created for user {1}", model.RegisterFields.Password, model.RegisterFields.Email);
 #endif

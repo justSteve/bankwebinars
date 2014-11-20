@@ -16,6 +16,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
     public class DetailsPageTest : FirefoxBaseTest
     {
         private const string RegisterFieldsEmailUnderscoreDelimited = "RegisterFields_Email";
+        private const string RegisterFieldsEmailDotDelimited = "RegisterFields.Email";
         private const string DotComSuffix = ".com";
         private const string FullName = "John Hancock";
         private const string Title = "Mr";
@@ -35,6 +36,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
 
         [TestMethod]
+        [TestCategory(TestCategories.Firefox)]
         public void LoadDetailsPage()
         {
             var page = NavigateToDetailsPage();
@@ -43,7 +45,8 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         }
 
         [TestMethod]
-        public void AnonymousUserWithExistingDomainMakesOrderSuccessfully()
+        [TestCategory(TestCategories.Firefox)]
+        public void AnonymousUserWithExistingDomainMakesOrderSuccessfullyUsingSubmit()
         {
             var page = NavigateToDetailsPage();
 
@@ -54,20 +57,45 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             page.EnterEmailAddressAndClickSubmit(email);
             page.ClickYesUseAddressButton();
             
-            page.EnterDetail("Dave Rogers", FullNameInput);
+            page.EnterDetail(FullName, FullNameInput);
             page.EnterDetail(Title, RegisterfieldsInput);
-            page.EnterDetail("1 Knox St", RegisterfieldsBillingaddressStreetaddress);
-            page.EnterDetail("56787890", RegisterfieldsBillingaddressPhone);
+            page.EnterDetail(StreetAddress, RegisterfieldsBillingaddressStreetaddress);
+            page.EnterDetail(PhoneNumber, RegisterfieldsBillingaddressPhone);
 
             page.ClickSubmit();
 
             page.ClickBillMeButton();
 
-            Assert.IsTrue(page.LogoutLinkIsPresentOnPage);
+            Assert.IsTrue(page.WebinarTitleIsDisplayedOnWebinarDetailsPage);
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Firefox)]
+        public void AnonymousUserWithExistingDomainMakesOrderSuccessfullyUsingEnter()
+        {
+            var page = NavigateToDetailsPage();
+
+            page.ClickSignUpButton();
+
+            var email = TestHelper.RandomString(8) + "@" + CommonDomain;
+            
+            page.EnterDetailThenPressEnter(email, RegisterFieldsEmailUnderscoreDelimited);
+            page.ClickYesUseAddressButton();
+            
+            page.EnterDetail(FullName, FullNameInput);
+            page.EnterDetail(Title, RegisterfieldsInput);
+            page.EnterDetail(StreetAddress, RegisterfieldsBillingaddressStreetaddress);
+
+            page.EnterDetailThenPressEnter(PhoneNumber, RegisterfieldsBillingaddressPhone);
+
+            page.ClickBillMeButton();
+
+            Assert.IsTrue(page.WebinarTitleIsDisplayedOnWebinarDetailsPage);
         }
         
         [TestMethod]
-        public void AnonymousUserWithExistingDomainButDoesntUseAddressOfInstitutionMakesOrderSuccessfully()
+        [TestCategory(TestCategories.Firefox)]
+        public void AnonymousUserWithExistingDomainButDoesntUseAddressOfInstitutionMakesOrderSuccessfullyUsingSubmit()
         {
             var page = NavigateToDetailsPage();
 
@@ -79,7 +107,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.ClickNoEnterDiffAddressButton();
 
-            page.EnterDetail(email, RegisterFieldsEmailUnderscoreDelimited); // not sure why, but id changes from a "." to a "_"
+            page.EnterDetail(email, RegisterFieldsEmailUnderscoreDelimited); 
             page.ClickSubmit();
 
             page.EnterDetail(ZipCodeHolmen, ZipInput);
@@ -95,11 +123,41 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.ClickBillMeButton();
 
-            Assert.IsTrue(page.LogoutLinkIsPresentOnPage);
+            Assert.IsTrue(page.WebinarTitleIsDisplayedOnWebinarDetailsPage);
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Firefox)]
+        public void AnonymousUserWithExistingDomainButDoesntUseAddressOfInstitutionMakesOrderSuccessfullyUsingEnter()
+        {
+            var page = NavigateToDetailsPage();
+
+            page.ClickSignUpButton();
+
+            var email = TestHelper.RandomString(8) + "@" + CommonDomain;
+
+            page.EnterDetailThenPressEnter(email, RegisterFieldsEmailUnderscoreDelimited);
+
+            page.ClickNoEnterDiffAddressButton();
+
+            page.EnterDetailThenPressEnter(email, RegisterFieldsEmailUnderscoreDelimited);
+
+            page.EnterDetailThenPressEnter(ZipCodeHolmen, ZipInput);
+
+            page.EnterDetail(FullName, FullNameInput);
+            page.EnterDetail(Title, RegisterfieldsInput);
+            page.EnterDetail(Institution, RegisterfieldsInstitution);
+            page.EnterDetail(StreetAddress, RegisterfieldsBillingaddressStreetaddress);
+            page.EnterDetailThenPressEnter(PhoneNumber, RegisterfieldsBillingaddressPhone);
+            
+            page.ClickBillMeButton();
+
+            Assert.IsTrue(page.WebinarTitleIsDisplayedOnWebinarDetailsPage);
         }
         
         [TestMethod]
-        public void AnonymousUserWithExistingDomainButNotFromInstitutionMakesOrderSuccessfully()
+        [TestCategory(TestCategories.Firefox)]
+        public void AnonymousUserWithExistingDomainButNotFromInstitutionMakesOrderSuccessfullyUsingSubmit()
         {
             var page = NavigateToDetailsPage();
 
@@ -111,7 +169,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.ClickNotInstitutionButton();
 
-            page.EnterDetail(email, RegisterFieldsEmailUnderscoreDelimited); // not sure why, but id changes from a "." to a "_"
+            page.EnterDetail(email, RegisterFieldsEmailUnderscoreDelimited); 
             page.ClickSubmit();
 
             page.EnterDetail(ZipCodeHolmen, ZipInput);
@@ -127,11 +185,41 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.ClickBillMeButton();
 
-            Assert.IsTrue(page.LogoutLinkIsPresentOnPage);
+            Assert.IsTrue(page.WebinarTitleIsDisplayedOnWebinarDetailsPage);
         }
         
         [TestMethod]
-        public void AnonymousUserWithExistingDomainButClicksCrossOnModalMakesOrderSuccessfully()
+        [TestCategory(TestCategories.Firefox)]
+        public void AnonymousUserWithExistingDomainButNotFromInstitutionMakesOrderSuccessfullyUsingEnter()
+        {
+            var page = NavigateToDetailsPage();
+
+            page.ClickSignUpButton();
+
+            var email = TestHelper.RandomString(8) + "@" + CommonDomain;
+
+            page.EnterDetailThenPressEnter(email, RegisterFieldsEmailUnderscoreDelimited);
+
+            page.ClickNotInstitutionButton();
+
+            page.EnterDetailThenPressEnter(email, RegisterFieldsEmailUnderscoreDelimited);
+
+            page.EnterDetailThenPressEnter(ZipCodeHolmen, ZipInput);
+
+            page.EnterDetail(FullName, FullNameInput);
+            page.EnterDetail(Title, RegisterfieldsInput);
+            page.EnterDetail(Institution, RegisterfieldsInstitution);
+            page.EnterDetail(StreetAddress, RegisterfieldsBillingaddressStreetaddress);
+            page.EnterDetailThenPressEnter(PhoneNumber, RegisterfieldsBillingaddressPhone);
+
+            page.ClickBillMeButton();
+
+            Assert.IsTrue(page.WebinarTitleIsDisplayedOnWebinarDetailsPage);
+        }
+        
+        [TestMethod]
+        [TestCategory(TestCategories.Firefox)]
+        public void AnonymousUserWithExistingDomainButClicksCrossOnModalMakesOrderSuccessfullyUsingSubmit()
         {
             var page = NavigateToDetailsPage();
 
@@ -143,7 +231,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.ClickCancelModalButton();
 
-            page.EnterDetail(email, RegisterFieldsEmailUnderscoreDelimited); // not sure why, but id changes from a "." to a "_"
+            page.EnterDetail(email, RegisterFieldsEmailUnderscoreDelimited); 
             page.ClickSubmit();
 
             page.EnterDetail(ZipCodeHolmen, ZipInput);
@@ -159,11 +247,41 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.ClickBillMeButton();
 
-            Assert.IsTrue(page.LogoutLinkIsPresentOnPage);
+            Assert.IsTrue(page.WebinarTitleIsDisplayedOnWebinarDetailsPage);
         }
 
         [TestMethod]
-        public void AnonymousUserWithoutExistingDomainMakesOrderSuccessfully()
+        [TestCategory(TestCategories.Firefox)]
+        public void AnonymousUserWithExistingDomainButClicksCrossOnModalMakesOrderSuccessfullyUsingEnter()
+        {
+            var page = NavigateToDetailsPage();
+
+            page.ClickSignUpButton();
+
+            var email = TestHelper.RandomString(8) + "@" + CommonDomain;
+
+            page.EnterDetailThenPressEnter(email, RegisterFieldsEmailUnderscoreDelimited);
+
+            page.ClickCancelModalButton();
+
+            page.EnterDetailThenPressEnter(email, RegisterFieldsEmailUnderscoreDelimited);
+
+            page.EnterDetailThenPressEnter(ZipCodeHolmen, ZipInput);
+
+            page.EnterDetail(FullName, FullNameInput);
+            page.EnterDetail(Title, RegisterfieldsInput);
+            page.EnterDetail(Institution, RegisterfieldsInstitution);
+            page.EnterDetail(StreetAddress, RegisterfieldsBillingaddressStreetaddress);
+            page.EnterDetailThenPressEnter(PhoneNumber, RegisterfieldsBillingaddressPhone);
+
+            page.ClickBillMeButton();
+
+            Assert.IsTrue(page.WebinarTitleIsDisplayedOnWebinarDetailsPage);
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.Firefox)]
+        public void AnonymousUserWithoutExistingDomainMakesOrderSuccessfullyUsingSubmit()
         {
             var page = NavigateToDetailsPage();
 
@@ -186,10 +304,11 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.ClickBillMeButton();
 
-            Assert.IsTrue(page.LogoutLinkIsPresentOnPage);
+            Assert.IsTrue(page.WebinarTitleIsDisplayedOnWebinarDetailsPage);
         }
         
         [TestMethod]
+        [TestCategory(TestCategories.Firefox)]
         public void UserAddsTwoLocationsAndMakesOrderSuccessfully()
         {
             var page = NavigateToDetailsPage();
@@ -207,6 +326,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         }   
         
         [TestMethod]
+        [TestCategory(TestCategories.Firefox)]
         public void UserAddsTwoLocationsThenDeletesOneAfterClosingModalAndMakesOrderSuccessfully()
         {
             var page = NavigateToDetailsPage();
@@ -228,6 +348,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         }
         
         [TestMethod]
+        [TestCategory(TestCategories.Firefox)]
         public void UserAddsTwoLocationsThenDeletesOneAfterClosingModalAndAddsItAgainAndMakesOrderSuccessfully()
         {
             var page = NavigateToDetailsPage();
@@ -254,6 +375,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         }
         
         [TestMethod]
+        [TestCategory(TestCategories.Firefox)]
         public void UserAddsTwoLocationsThenClosesModalThenOpensItThenAddsOneLocationThenClicksCancelLeavingTwoLocations()
         {
             var page = NavigateToDetailsPage();
@@ -281,6 +403,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         }
         
         [TestMethod]
+        [TestCategory(TestCategories.Firefox)]
         public void UserAddsTwoLocationsThenClosesModalThenOpensItThenDeletesThemAllAndSubmitButtonDisappears()
         {
             var page = NavigateToDetailsPage();
@@ -303,6 +426,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         }
         
         [TestMethod]
+        [TestCategory(TestCategories.Firefox)]
         public void UserLogsInAndMakesSimpleOrder()
         {
             var institutionNameSansSuffix = WebUiTestHelpers.RandomStringFast(5);
@@ -353,6 +477,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
         [TestMethod]
         [TestCategory(TestCategories.Notifications)]
+        [TestCategory(TestCategories.Firefox)]
         public void ExistingUserLogsInAndMakesLiveDemandOrder()
         {
             var dataOperations = new DataOperations();
@@ -382,6 +507,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
         [TestMethod]
         [TestCategory(TestCategories.Notifications)]
+        [TestCategory(TestCategories.Firefox)]
         public void ExistingUserLogsInAndMakesCdHardcopyOrderWith1AdditionalLocation()
         {
             var dataOperations = new DataOperations();
@@ -420,6 +546,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
         [TestMethod]
         [TestCategory(TestCategories.Notifications)]
+        [TestCategory(TestCategories.Firefox)]
         public void ExistingUserLogsInAndMakesOnDemandRecordingOrder()
         {
             var dataOperations = new DataOperations();
@@ -451,6 +578,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
         [TestMethod]
         [TestCategory(TestCategories.Notifications)]
+        [TestCategory(TestCategories.Firefox)]
         public void ExistingUserLogsInAndMakesCdHardcopyOrder()
         {
             var dataOperations = new DataOperations();
@@ -483,6 +611,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         
         [TestMethod]
         [TestCategory(TestCategories.Notifications)]
+        [TestCategory(TestCategories.Firefox)]
         public void ExistingUserLogsInAndMakesLivePlusOnDemandOrder()
         {
             var dataOperations = new DataOperations();
@@ -514,6 +643,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
         [TestMethod]
         [TestCategory(TestCategories.Notifications)]
+        [TestCategory(TestCategories.Firefox)]
         public void ExistingUserLogsInAndMakesLivePlusOnDemandOrderWith1AdditionalLocation()
         {
             var dataOperations = new DataOperations();
@@ -554,6 +684,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
         [TestMethod]
         [TestCategory(TestCategories.Notifications)]
+        [TestCategory(TestCategories.Firefox)]
         public void ExistingUserLogsInAndMakesPremierPackageOrder()
         {
             var dataOperations = new DataOperations();
@@ -585,6 +716,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
         [TestMethod]
         [TestCategory(TestCategories.Notifications)]
+        [TestCategory(TestCategories.Firefox)]
         public void ExistingUserLogsInAndMakesPremierPackageOrderWith1AdditionalLocation()
         {
             var dataOperations = new DataOperations();

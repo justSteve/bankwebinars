@@ -108,7 +108,7 @@ namespace CUWebinars.WebUi.Tests2.Pages
 
         public bool WebinarTitleIsDisplayedOnWebinarDetailsPage
         {
-            get { return SeleniumTestDriver.FindByCssSelector("#webinarTitle > div > h1", ExpectedCondition.ElementIsVisible, 5).Displayed; } 
+            get { return SeleniumTestDriver.FindByCssSelector("#webinarTitle > div > h1", ExpectedCondition.ElementIsVisible, 15).Displayed; } 
             
         }
 

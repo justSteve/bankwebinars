@@ -98,5 +98,12 @@ namespace CUWebinars.WebUi.Tests2.Pages
         {
             SeleniumTestDriver.FindByXPathClick(string.Format(@"//*[@id='RegistrationType']/dl/dt[{0}]/input", i), ExpectedCondition.ElementIsVisible, 5);
         }
+
+
+        public void EnterDetailThenPressEnter(string phoneNumber, string element)
+        {
+            EnterDetail(phoneNumber, element);
+            SeleniumTestDriver.FindById(element, ExpectedCondition.ElementIsVisible, 10).SendKeys(Keys.Enter);
+        }
     }
 }

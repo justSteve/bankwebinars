@@ -204,7 +204,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
             if (data.result === 'Success') {
                 $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Reset instructions have been sent. Follow instructions and come back here to log in...</span>');
             } else {
-                $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;There was a problem resetting the password...</span>');
+                $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;</i>&nbsp;&nbsp;There was a problem resetting the password...</span>');
             }
         }).always(function(data) {
             
@@ -319,6 +319,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
         event.preventDefault();
 
         var createUserForm = $(this);
+        var beigeFormArea = signUpFormContainer.find('div.well');
 
         if ($('#FullNameShipping').val() === null || $('#FullNameShipping').val() === '') $('#FullNameShipping').val($('#FullName').val());
         if ($('#ShippingFirstName').val() === null || $('#ShippingFirstName').val() === '') $('#ShippingFirstName').val($('#FirstName').val());
@@ -362,15 +363,14 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                 var errorsList = valSummary.find('ul');
                 errorsList.empty();
                 errorsList.append('<li style="display:none"></li>');
-
-                storedHeight = signUpFormContainer.height();
+                
+                beigeFormArea.height(500);
             }
         }).done(function(data) {
             //alert('done: ');
             if (data.Result) {
                 if (data.Result === 'Success') {
 
-                    signUpFormContainer.height(storedHeight);
                     //console.log('success: ' + data.Result);
                     regUserStateManager.setAction('');
 
@@ -473,8 +473,6 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
         }).always(function() {
             regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
         });
-
-        signUpFormContainer.height(storedHeight);
     });
 
     $('#frmSignIn').on('submit', function (event) {

@@ -49,7 +49,7 @@ namespace CUWebinars.Web.Tests.UnitTests
             HttpContextFactory.SetCurrentContext(GetMockedHttpContext());
             //_requestMock = new Mock<HttpRequestBase>(HttpContextFactory.Current.Request);
 
-            _accountControllerOrchestrator = new AccountControllerOrchestrator(_loggerMock.Object, _membershipServiceMock.Object, _orderManagementServiceMock.Object, _stateServiceMock.Object, new HttpRequestWrapper(HttpContext.Current.Request));
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(_loggerMock.Object, _membershipServiceMock.Object, _orderManagementServiceMock.Object, _stateServiceMock.Object, new HttpRequestWrapper(HttpContextFactory.Current.Request));
         }
 
         [TestMethod, Ignore]
@@ -143,9 +143,9 @@ namespace CUWebinars.Web.Tests.UnitTests
             var identity = new Mock<IIdentity>();
             var urlHelper = new Mock<UrlHelper>();
 
-            
+
             //RouteConfig.RegisterRoutes(RouteTable.Routes);
-            
+
             var requestContext = new Mock<RequestContext>();
             requestContext.Setup(x => x.HttpContext).Returns(context.Object);
             context.Setup(ctx => ctx.Request).Returns(request.Object);
@@ -164,8 +164,9 @@ namespace CUWebinars.Web.Tests.UnitTests
             request.SetupGet(req => req.Headers).Returns(new NameValueCollection());
 
             //  we also need to assig a value to HttpContext.Current as it is used in the AppHelper.GetUserAuditInfo method
-            HttpContext.Current = new HttpContext(new HttpRequest("", ConfigurationManager.AppSettings["SiteUrl"], ""), new HttpResponse(new StringWriter())
-    );
+            HttpContext.Current = new HttpContext(new HttpRequest("", ConfigurationManager.AppSettings["SiteUrl"], ""),
+                new HttpResponse(new StringWriter())
+                );
 
             return context.Object;
         }
