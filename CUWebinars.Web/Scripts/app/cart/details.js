@@ -219,8 +219,6 @@ $(function () {
                         registerDuringCheckout.initialize(result.orderId, result.webinarId, result.orderRowId, shippingAddressRequired, checkoutConfirm.initialize);
                     });
 
-                    //signUpFormContainer.height(storedHeight);
-
                     $('#contactInfoTab a').tab('show');
                 } else if (!data.isSuccessful) {
                     $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;There were some problems with the form. Please refer to the items in red.</span>');
