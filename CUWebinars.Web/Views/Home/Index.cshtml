@@ -106,7 +106,7 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
-
+        $('#page > div').height(497);
     });
 </script>
 @*@foreach (var w in Model)
@@ -133,6 +133,7 @@
             useCSS: false,
 
             start: function (slider) {
+                $('#page > div').removeAttr('style');
                 slider.removeClass('loading');
             }
         });
