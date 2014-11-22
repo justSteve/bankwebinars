@@ -521,7 +521,7 @@ namespace CUWebinars.Business.Services
         {
             var user = _webUserRepository.FindByIdLoaded(userId);
             var order = _orderRepository.FindById(orderId);
-            order.AuditInfo = "Placeholder user is replaced by " + user.email + Environment.NewLine +order.AuditInfo;
+            order.AuditInfo = "Placeholder user is replaced by " + user.email + Environment.NewLine + order.AuditInfo;
             order.idUser = userId;
 
             var billingAddress = user.Addresses.Where(a => a.AddressType == DomainConstants.BillingAddress ).Single();

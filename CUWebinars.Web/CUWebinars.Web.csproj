@@ -2047,6 +2047,13 @@
     <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
     <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)\..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).dll"
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)\..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).dll.config"
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)\..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).pdb"
+copy /Y "$(SolutionDir)packages\Microsoft.AspNet.Mvc.5.2.0\lib\net45\System.Web.Mvc.dll" "$(SolutionDir)\..\CUUserAccount\ThirdPartyAssemblies\System.Web.Mvc.dll"
+</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

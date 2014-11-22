@@ -14,7 +14,6 @@ namespace CUWebinars.Web.App_Start
             var settings = SecuritySettings.FromConfiguration();
             var config = new MembershipRebootConfiguration(settings);
 
-            //  
             var appinfo = new AspNetApplicationInformation(
                 "CUWebinars",
                 "TTS Staff",

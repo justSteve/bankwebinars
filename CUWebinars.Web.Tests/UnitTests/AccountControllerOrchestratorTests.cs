@@ -49,7 +49,7 @@ namespace CUWebinars.Web.Tests.UnitTests
             HttpContextFactory.SetCurrentContext(GetMockedHttpContext());
             //_requestMock = new Mock<HttpRequestBase>(HttpContextFactory.Current.Request);
 
-            _accountControllerOrchestrator = new AccountControllerOrchestrator(_loggerMock.Object, _membershipServiceMock.Object, _orderManagementServiceMock.Object, _stateServiceMock.Object, new HttpRequestWrapper(HttpContextFactory.Current.Request));
+            //_accountControllerOrchestrator = new AccountControllerOrchestrator(_loggerMock.Object, _membershipServiceMock.Object, _orderManagementServiceMock.Object, _stateServiceMock.Object, new HttpRequestWrapper(HttpContextFactory.Current.Request));
         }
 
         [TestMethod, Ignore]

@@ -275,6 +275,9 @@ $(function () {
                 utilities.goToUrl('/Account/Confirmed?email=' + data.email + '&password=' + data.password);
             } else if (data.data) {
 
+                if ($('#signingInMsg').is(':visible'))
+                    $('#signingInMsg').remove();
+
                 if ($('#labelEmail').is(':visible')) {
                     $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;Login error...</span>');
                     var valSummary = $('#loginErrorSummary');
