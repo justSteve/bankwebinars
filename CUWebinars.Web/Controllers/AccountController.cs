@@ -1037,7 +1037,7 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
-                    //_accountControllerOrchestrator.CreateUserAccountFromCart(model);
+                    _accountControllerOrchestrator.CreateUserAccountFromCart(model);
 
                     return Json(new { Result = WebUiConstants.Success });
                 }

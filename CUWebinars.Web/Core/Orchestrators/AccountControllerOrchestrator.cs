@@ -92,7 +92,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void RegisterAndLogInUser(RegisterViewModel model)
         {
             if (_stateService.HasValue(DomainConstants.TempPassword))
-                _stateService.HasValue(DomainConstants.TempPassword);
+                _stateService.ClearValue(DomainConstants.TempPassword);
 
             var email = model.RegisterFields.Email.Trim();
             var firstName = model.RegisterFields.FirstName.Trim();
