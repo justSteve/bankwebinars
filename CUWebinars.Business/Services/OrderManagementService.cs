@@ -517,6 +517,14 @@ namespace CUWebinars.Business.Services
             return "failed";
         }
 
+        public void UpdateOrderWithUserEmail(int orderId, string email)
+        {
+            var order = GetOrderById(orderId);
+            order.BillingEmail = email;
+
+            var updatedOrder = _orderRepository.SaveOrderChanges(order, null);
+        }
+
         public void UpdateOrderWithUserId(int orderId, int userId)
         {
             var user = _webUserRepository.FindByIdLoaded(userId);

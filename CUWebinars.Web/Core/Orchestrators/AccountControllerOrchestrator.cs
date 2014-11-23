@@ -221,6 +221,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             return false;
         }
 
+        public void UpdateBillingEmailOfOrder(int idOrder, string email)
+        {
+            _orderManagementService.UpdateOrderWithUserEmail(idOrder, email);
+        }
+
         public bool UserConfirmed(CreateUserConfirmedViewModel model)
         {
             //  TODO: add try catch and reverse as should be atomic.

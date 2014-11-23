@@ -29,9 +29,9 @@ namespace CUWebinars.Web.Core.Orchestrators
         void RegisterAndLogInUser(RegisterViewModel registerViewModel);
         void ResetPassword(string tenant, string email);
         bool SignUserIn(SignInModel model, out string userMustVerify);
+        void UpdateBillingEmailOfOrder(int idOrder, string email);
         bool UserConfirmed(CreateUserConfirmedViewModel model);
         void UpdateNameTitle(string firstName, string lastName, string email, string title);
         void UpdateUserDetails(ManageModel model);
-
     }
 }

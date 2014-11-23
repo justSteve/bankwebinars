@@ -228,7 +228,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                 cache: false,
                 url: jsonUrl,
                 dataType: RegistrationInCart.Constants.JsonDataType,
-                data: { email: email, disregardInstitutionDomain: regUserStateManager.getDisregardIntitutionDomain() },
+                data: { email: email, disregardInstitutionDomain: regUserStateManager.getDisregardIntitutionDomain(), orderId: orderId },
                 beforeSend: function() {
                     // this is where we append a loading image
                     $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Email...</span>');
@@ -246,6 +246,8 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
                 } else if (data.email === 'wasNotFound') {
                     regUserStateManager.goToAddressFields(email);
+                } else if (data.error === 'Fail') {
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;An error has occurred at the server. Please contact the administrator.</span>');
                 }
 
             }).fail(function() {

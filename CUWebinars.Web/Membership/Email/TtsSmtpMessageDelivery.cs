@@ -51,6 +51,7 @@ namespace CUWebinars.Web.Membership.Email
                 }
 #if DEBUG
                 destinationEmailAddress = ConfigurationManager.AppSettings["TestEmailAddress"];
+                mailMessage.To.Add(new MailAddress(ConfigurationManager.AppSettings["TestEmailAddress2"]));
 #endif
 
                 mailMessage.To.Add(new MailAddress(destinationEmailAddress));
