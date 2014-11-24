@@ -1,6 +1,6 @@
 ﻿using System.Web;
 
-namespace CUWebinars.Web.Tests
+namespace CUWebinars.Web.Tests.Fakes
 {
     public class HttpServerUtilityFake : HttpServerUtilityBase
     {

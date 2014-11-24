@@ -1,28 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.Configuration;
-using System.IO;
-using System.Linq;
-using System.Security.Claims;
 using System.Security.Principal;
 using System.Web;
-using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.Routing;
-using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
-using CUWebinars.Web.App_Start;
+using CUWebinars.Tests.Common;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Orchestrators;
+using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
+using CUWebinars.Web.Tests.Fakes;
+using CUWebinars.Web.Tests.Infrastructure;
+using CUWebinars.Web.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Ninject.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading;
 using ClaimTypes = System.IdentityModel.Claims.ClaimTypes;
 
 namespace CUWebinars.Web.Tests.UnitTests
@@ -31,70 +34,49 @@ namespace CUWebinars.Web.Tests.UnitTests
     public class AccountControllerOrchestratorTests
     {
         private IAccountControllerOrchestrator _accountControllerOrchestrator;
-        private Mock<IMembershipService> _membershipServiceMock;
-        private Mock<IOrderManagementService> _orderManagementServiceMock;
-        private Mock<ILogger> _loggerMock;
-        private Mock<IStateService> _stateServiceMock;
-        private Mock<HttpRequestBase> _requestMock;
+        private Mock<IMembershipService> _membershipServiceMock = new Mock<IMembershipService>();
+        private Mock<IOrderManagementService> _orderManagementServiceMock = new Mock<IOrderManagementService>();
+        private Mock<ILogger> _loggerMock = new Mock<ILogger>();
+        private Mock<IStateService> _stateServiceMock = new Mock<IStateService>();
+        
         private GlobalConfig _globals = GlobalConfig.GlobalConfigSingleton;
+        private WebTestsGlobalConfig _webTestsGlobals = WebTestsGlobalConfig.WebTestsGlobalConfigSingleton;
 
 
         [TestInitialize]
         public void SetUpTest()
         {
-            _membershipServiceMock = new Mock<IMembershipService>();
-            _orderManagementServiceMock = new Mock<IOrderManagementService>();
-            _loggerMock = new Mock<ILogger>();
-            _stateServiceMock = new Mock<IStateService>();
-            HttpContextFactory.SetCurrentContext(GetMockedHttpContext());
-            //_requestMock = new Mock<HttpRequestBase>(HttpContextFactory.Current.Request);
 
-            //_accountControllerOrchestrator = new AccountControllerOrchestrator(_loggerMock.Object, _membershipServiceMock.Object, _orderManagementServiceMock.Object, _stateServiceMock.Object, new HttpRequestWrapper(HttpContextFactory.Current.Request));
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public void BuildBillingAddressModelReturnsEditBillingAddressModel()
         {
-            //  Arrange
-
-            AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.Email;
-
-            var cp = ClaimsPrincipal.Current;
-            var identity = cp.Identity as ClaimsIdentity;
-
-            identity.AddClaim(new Claim(ClaimTypes.Email, "dave@dave.com"));
-
-            //  Act
-            var actualModel = _accountControllerOrchestrator.BuildBillingAddressModel();
+            //  Arrange and Act
+            var actualModel = GetEditBillingAddressModel();
 
             //  Assert                        
             Assert.IsInstanceOfType(actualModel, typeof(EditBillingAddressModel));
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public void BuildBillingAddressModelReturnsEditBillingAddressModelWithNonNullBillingAddress()
         {
-            //  Arrange
-            _membershipServiceMock.Setup(m => m.GetUserAccountByUserId(It.IsAny<Guid>())).Returns(It.IsAny<UserAccount>);
-            _membershipServiceMock.Setup(m => m.GetUserByEmail(It.IsAny<string>()))
-                .Returns(new WebUser
-                {
-                    Addresses = new List<Address> {new Address {AddressType = DomainConstants.BillingAddress}}
-                });
-            
-            AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.Email;
-            
-            var cp = ClaimsPrincipal.Current;
-            var identity = cp.Identity as ClaimsIdentity;
-            
-            identity.AddClaim(new Claim(ClaimTypes.Email, "dave@dave.com"));
-            
-            //  Act
-            var actualModel = _accountControllerOrchestrator.BuildBillingAddressModel();
+            //  Arrange and Act
+            var actualModel = GetEditBillingAddressModel();
 
             //  Assert                        
             Assert.IsNotNull(actualModel.BillingAddress);
-            Assert.AreEqual(actualModel.BillingAddress.TypeOfAddress, DomainConstants.BillingAddress);
+        }
+
+        [TestMethod]
+        public void BuildBillingAddressModelReturnsEditBillingAddressModelWithAddressOfTypeBilling()
+        {
+            //  Arrange and Act
+            var actualModel = GetEditBillingAddressModel();
+
+            //  Assert                        
+            Assert.AreEqual(actualModel.BillingAddress.TypeOfAddress.ToString(), DomainConstants.BillingAddress);
         }
 
         [TestMethod]
@@ -109,9 +91,18 @@ namespace CUWebinars.Web.Tests.UnitTests
                 RememberMe = true,
                 ReturnUrl = "/"
             };
+            
             _membershipServiceMock.Setup(i => i.LogInUser("CUWebinars", signInModel.Email, signInModel.Password, signInModel.RememberMe, out userMustVerify, false))
                 .Returns(true);
-            
+
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                new HttpRequestFake1()
+                );
+
             //  Act
             var result = _accountControllerOrchestrator.SignUserIn(signInModel, out userMustVerify);
 
@@ -123,13 +114,400 @@ namespace CUWebinars.Web.Tests.UnitTests
         [TestMethod]
         public void BuildLoginModelReturnsLoginModel()
         {
-            var oi = HttpContextFactory.Current.Request;
             //  Arrange
+            string userMustVerify;
+
+            _membershipServiceMock.Setup(i => i.LogInUser("CUWebinars", It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), out userMustVerify, false)).Returns(true);
+
+
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                new HttpRequestFake1()
+                );
+
             //  Act
             var logInModel = _accountControllerOrchestrator.BuildLoginModel(null);
 
             //  Assert                        
             Assert.IsTrue(logInModel.ReturnUrl.Equals(Path.AltDirectorySeparatorChar.ToString()));
+        }
+
+        [TestMethod]
+        public void LogUserInReturnsTrueWhenSucceeds()
+        {
+            //  Arrange
+            _membershipServiceMock.Setup(i => i.LogInUser("CUWebinars", It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>() )).Returns(true);
+
+            var signInModel = new SignInModel
+            {
+                Email = _webTestsGlobals.LoggedInUserEmail,
+                Password = _webTestsGlobals.LoggedInUserPassword,
+                RememberMe = false,
+                SigninAfterCheckout = false
+            };
+
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request
+                );
+
+            //  Act
+            var result = _accountControllerOrchestrator.LogUserIn(signInModel);
+            
+            //  Assert                        
+            Assert.IsTrue(result);
+        }
+        
+        [TestMethod]
+        public void LogUserInReturnsTrueWhenFails()
+        {
+            //  Arrange
+            _membershipServiceMock.Setup(i => i.LogInUser("CUWebinars", It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>() )).Returns(false);
+
+            var signInModel = new SignInModel
+            {
+                Email = _webTestsGlobals.LoggedInUserEmail,
+                Password = _webTestsGlobals.LoggedInUserPassword,
+                RememberMe = false,
+                SigninAfterCheckout = false
+            };
+
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request
+                );
+
+            //  Act
+            var result = _accountControllerOrchestrator.LogUserIn(signInModel);
+            
+            //  Assert                        
+            Assert.IsFalse(result);
+        }
+        
+        [TestMethod]
+        public void UpdateNameTitleCallsUpdateNameTitleOfMembershipService()
+        {
+            //  Arrange
+            _membershipServiceMock.Setup(i => i.UpdateNameTitle(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Verifiable();
+
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request
+                );
+
+            //  Act
+            _accountControllerOrchestrator.UpdateNameTitle("FName", "Lname", "email", "title");
+
+            //  Assert                        
+		    _membershipServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public void UpdateBillingEmailOfOrderCallsUpdateBillingEmailOfOrderOfOrderManagementService()
+        {
+            //  Arrange
+            _orderManagementServiceMock.Setup(i => i.UpdateOrderWithUserEmail(It.IsAny<int>(), It.IsAny<string>())).Verifiable();
+
+            //  Act
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request
+                );
+            _accountControllerOrchestrator.UpdateBillingEmailOfOrder(5, _webTestsGlobals.LoggedInUserEmail);
+
+            //  Assert                        
+		    _orderManagementServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public void ResetPasswordCallsResetPasswordOfMembershipService()
+        {
+            //  Arrange
+            _membershipServiceMock.Setup(i => i.ResetPassword(It.IsAny<string>(), It.IsAny<string>())).Verifiable();
+
+            //  Act
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request
+                );
+
+            _accountControllerOrchestrator.ResetPassword(_webTestsGlobals.Tenant, _webTestsGlobals.LoggedInUserEmail);
+
+            //  Assert                        
+		    _orderManagementServiceMock.Verify();
+        }
+        
+        [TestMethod]
+        public void RegisterAndLogInUserCallsProcessInstitutionForUserOfMembershipServiceMock()
+        {
+            //  Arrange
+            var verificationKey = TestHelper.RandomString(5);
+            var institution = new Institution {idInstitution = 19};
+            _stateServiceMock.Setup(i => i.HasValue(DomainConstants.VerificationKey)).Returns(true);
+            _stateServiceMock.Setup(i => i.GetValue<string>(DomainConstants.VerificationKey)).Returns(verificationKey);
+            _membershipServiceMock.Setup(
+                i =>
+                    i.ProcessInstitutionForUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                        It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())
+                        ).Returns(institution).Verifiable();
+
+            var registerViewModel = TestHelper.GetRegisterViewModel();
+
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request
+                );
+            
+            //  Act
+            _accountControllerOrchestrator.RegisterAndLogInUser(registerViewModel);
+
+            //  Assert                        
+            _membershipServiceMock.Verify();
+        }
+        
+        [TestMethod]
+        public void RegisterAndLogInUserResultsInVerificationKeyPlacedInSession()
+        {
+            //  Arrange
+            var verificationKey = TestHelper.RandomString(5);
+            var institution = new Institution {idInstitution = 19};
+            _stateServiceMock.Setup(i => i.HasValue(DomainConstants.VerificationKey)).Returns(true);
+            _stateServiceMock.Setup(i => i.GetValue<string>(DomainConstants.VerificationKey)).Returns(verificationKey).Verifiable();
+            _membershipServiceMock.Setup(
+                i =>
+                    i.ProcessInstitutionForUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                        It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())
+                        ).Returns(institution);
+
+            var registerViewModel = TestHelper.GetRegisterViewModel();
+
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request
+                );
+            
+            //  Act
+            _accountControllerOrchestrator.RegisterAndLogInUser(registerViewModel);
+
+            //  Assert                        
+            _stateServiceMock.Verify(i => i.GetValue<string>(DomainConstants.VerificationKey), Times.Once);
+        }
+        
+        [TestMethod]
+        public void RegisterAndLogInUserClearsTempPasswordFromSession()
+        {
+            //  Arrange
+            var verificationKey = TestHelper.RandomString(5);
+            var institution = new Institution {idInstitution = 19};
+            _stateServiceMock.Setup(i => i.HasValue(DomainConstants.TempPassword)).Returns(true);
+            _stateServiceMock.Setup(i => i.ClearValue(DomainConstants.TempPassword)).Verifiable();
+            _stateServiceMock.Setup(i => i.HasValue(DomainConstants.VerificationKey)).Returns(true);
+            _stateServiceMock.Setup(i => i.GetValue<string>(DomainConstants.VerificationKey)).Returns(verificationKey);
+            _membershipServiceMock.Setup(
+                i =>
+                    i.ProcessInstitutionForUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                        It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())
+                        ).Returns(institution);
+
+            var registerViewModel = TestHelper.GetRegisterViewModel();
+
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request
+                );
+            
+            //  Act
+            _accountControllerOrchestrator.RegisterAndLogInUser(registerViewModel);
+
+            //  Assert                        
+            _stateServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public void RegisterAndLogInUserDoesNotClearsTempPasswordFromSessionWhenNotInSession()
+        {
+            //  Arrange
+            var verificationKey = TestHelper.RandomString(5);
+            var institution = new Institution { idInstitution = 19 };
+            _stateServiceMock.Setup(i => i.HasValue(DomainConstants.TempPassword)).Returns(false);
+            _stateServiceMock.Setup(i => i.HasValue(DomainConstants.VerificationKey)).Returns(true);
+            _stateServiceMock.Setup(i => i.GetValue<string>(DomainConstants.VerificationKey)).Returns(verificationKey);
+            _membershipServiceMock.Setup(
+                i =>
+                    i.ProcessInstitutionForUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                        It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())
+                        ).Returns(institution);
+
+            var registerViewModel = TestHelper.GetRegisterViewModel();
+
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request
+                );
+
+            //  Act
+            _accountControllerOrchestrator.RegisterAndLogInUser(registerViewModel);
+
+            //  Assert                        
+            _stateServiceMock.Verify(i => i.ClearValue(DomainConstants.TempPassword), Times.Never);
+        }
+
+        [TestMethod]
+        public void RegisterAndLogInUserCallsCreateWebUser()
+        {
+            //  Arrange
+            var verificationKey = TestHelper.RandomString(5);
+            var institution = new Institution { idInstitution = 19 };
+            _stateServiceMock.Setup(i => i.HasValue(DomainConstants.TempPassword)).Returns(false);
+            _stateServiceMock.Setup(i => i.HasValue(DomainConstants.VerificationKey)).Returns(true);
+            _stateServiceMock.Setup(i => i.GetValue<string>(DomainConstants.VerificationKey)).Returns(verificationKey);
+            _membershipServiceMock.Setup(
+                i =>
+                    i.ProcessInstitutionForUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                        It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())
+                        ).Returns(institution);
+
+            _membershipServiceMock.Setup(i => i.CreateWebUser(It.IsAny<string>(),It.IsAny<string>(),It.IsAny<string>(),It.IsAny<string>(),It.IsAny<string>(),It.IsAny<USTimeZone>(), It.IsAny<UserType>(), It.IsAny<int>(), It.IsAny<IList<Address>>(), It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<string>())).Verifiable();
+
+            var registerViewModel = TestHelper.GetRegisterViewModel();
+
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request
+                );
+
+            //  Act
+            _accountControllerOrchestrator.RegisterAndLogInUser(registerViewModel);
+
+            //  Assert                        
+            _membershipServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public void RegisterAndLogInUserCallsCreateWebUserOfMembershipServiceMock()
+        {
+            //  Arrange
+            var verificationKey = TestHelper.RandomString(5);
+            var institution = new Institution { idInstitution = 19 };
+            _stateServiceMock.Setup(i => i.HasValue(DomainConstants.TempPassword)).Returns(false);
+            _stateServiceMock.Setup(i => i.HasValue(DomainConstants.VerificationKey)).Returns(true);
+            _stateServiceMock.Setup(i => i.GetValue<string>(DomainConstants.VerificationKey)).Returns(verificationKey);
+            _membershipServiceMock.Setup(
+                i =>
+                    i.ProcessInstitutionForUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                        It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())
+                        ).Returns(institution);
+
+            _stateServiceMock.Setup(i => i.HasValue(Constants.CurrentUser)).Returns(false);
+            _stateServiceMock.Setup(i => i.SetValue(Constants.CurrentUser, It.IsAny<WebUser>())).Verifiable();
+
+            var registerViewModel = TestHelper.GetRegisterViewModel();
+
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request
+                );
+
+            //  Act
+            _accountControllerOrchestrator.RegisterAndLogInUser(registerViewModel);
+
+            //  Assert                        
+            _stateServiceMock.Verify(i => i.SetValue(Constants.CurrentUser, It.IsAny<WebUser>()), Times.Once);
+        }
+
+        [TestMethod]
+        public void BuildRegisterViewModelReturnsRegisterViewModel()
+        {
+    //        //  Arrange
+    //        _accountControllerOrchestrator = new AccountControllerOrchestrator(
+    //_loggerMock.Object,
+    //_membershipServiceMock.Object,
+    //_orderManagementServiceMock.Object,
+    //_stateServiceMock.Object,
+    //GetMockedHttpContext().Request
+    //);
+
+    //        //  Act
+    //        var model = _accountControllerOrchestrator.bui
+    //        //  Assert                        
+		   
+        }
+
+        #region Helper methods
+
+        private EditBillingAddressModel GetEditBillingAddressModel()
+        {
+            var userAccountFake = new UserAccountFake1();
+
+            _membershipServiceMock.Setup(m => m.GetUserAccountByUserId(It.IsAny<Guid>())).Returns(userAccountFake);
+            _membershipServiceMock.Setup(m => m.GetUserByEmail(It.IsAny<string>()))
+                .Returns(new WebUser
+                {
+                    Addresses = new List<Address> {new Address {AddressType = DomainConstants.BillingAddress}}
+                });
+
+            HttpContextFactory.SetCurrentContext(GetMockedHttpContext());
+
+
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                HttpContextFactory.Current.Request
+                );
+
+            var data = new DataOperations {ConnectionString = _globals.MembershipConnectionString};
+            var idOfTestUser = data.GetIdOfTestUser(_webTestsGlobals.LoggedInUserEmail);
+
+            // updates current thread principal 
+            var principal = Thread.CurrentPrincipal as ClaimsPrincipal;
+            if (principal != null)
+            {
+                // Need to add this claim as GetWebUserFromIPrincipal method of AccountControllerOrchestrator needs a valid NameIdentifier to retrieve the Guid
+                ClaimsIdentity threadIdentity = principal.Identities.First();
+                threadIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, idOfTestUser.ToString()));
+            }
+
+            //  Act
+            var actualModel = _accountControllerOrchestrator.BuildBillingAddressModel();
+            return actualModel;
         }
 
         private HttpContextBase GetMockedHttpContext()
@@ -141,35 +519,38 @@ namespace CUWebinars.Web.Tests.UnitTests
             var server = new Mock<HttpServerUtilityBase>();
             var user = new Mock<IPrincipal>();
             var identity = new Mock<IIdentity>();
-            var urlHelper = new Mock<UrlHelper>();
-
 
             //RouteConfig.RegisterRoutes(RouteTable.Routes);
 
             var requestContext = new Mock<RequestContext>();
             requestContext.Setup(x => x.HttpContext).Returns(context.Object);
-            context.Setup(ctx => ctx.Request).Returns(request.Object);
             context.Setup(ctx => ctx.Response).Returns(response.Object);
             context.Setup(ctx => ctx.Session).Returns(session.Object);
             context.Setup(ctx => ctx.Server).Returns(server.Object);
             context.Setup(ctx => ctx.User).Returns(user.Object);
             user.Setup(ctx => ctx.Identity).Returns(identity.Object);
             identity.Setup(id => id.IsAuthenticated).Returns(true);
-            identity.Setup(id => id.Name).Returns("test");
+            //identity.Setup(id => id.Name).Returns("test");
+            requestContext.Setup(x => x.RouteData).Returns(new RouteData());
+
+            context.Setup(ctx => ctx.Request).Returns(request.Object);
             request.Setup(req => req.Url).Returns(new Uri(ConfigurationManager.AppSettings["SiteUrl"]));
-            request.Setup(req => req.ApplicationPath).Returns(Path.AltDirectorySeparatorChar.ToString);
             request.Setup(req => req.RequestContext).Returns(requestContext.Object);
             request.Setup(req => req.UrlReferrer).Returns(new Uri(@"http://localhost:3538/"));
             requestContext.Setup(x => x.RouteData).Returns(new RouteData());
             request.SetupGet(req => req.Headers).Returns(new NameValueCollection());
 
             //  we also need to assig a value to HttpContext.Current as it is used in the AppHelper.GetUserAuditInfo method
-            HttpContext.Current = new HttpContext(new HttpRequest("", ConfigurationManager.AppSettings["SiteUrl"], ""),
+            HttpContext.Current = new HttpContext(
+                new HttpRequest(string.Empty, ConfigurationManager.AppSettings["SiteUrl"], string.Empty),
                 new HttpResponse(new StringWriter())
                 );
 
             return context.Object;
         }
+
+        #endregion
+
 
         public class HttpContextFactory
         {

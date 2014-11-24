@@ -1,19 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Security.Claims;
-using System.Web;
-using System.Web.Mvc;
-using BrockAllen.MembershipReboot;
+﻿using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Helpers;
-using CUWebinars.Web.Membership;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
@@ -22,6 +12,15 @@ using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Newtonsoft.Json;
 using Ninject.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
+using System.Security.Claims;
+using System.Web;
+using System.Web.Mvc;
 using ClaimsExtensions = CUWebinars.Web.Helpers.ClaimsExtensions;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
@@ -30,7 +29,7 @@ namespace CUWebinars.Web.Core.Orchestrators
     public class AccountControllerOrchestrator : IAccountControllerOrchestrator
     {
         private readonly GlobalConfig _globals = GlobalConfig.GlobalConfigSingleton;
-        public HttpRequestWrapper Request { get; set; }
+        public HttpRequestBase Request { get; set; }
         private readonly ILogger _logger;
         private readonly IMembershipService _membershipService;
         private readonly IStateService _stateService;
@@ -42,7 +41,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             IMembershipService membershipService,
             IOrderManagementService orderManagementService,
             IStateService stateService,
-            HttpRequestWrapper request)
+            HttpRequestBase request)
 
         {
             Request = request;

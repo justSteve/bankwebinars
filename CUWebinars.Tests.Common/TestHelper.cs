@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 using BrockAllen.MembershipReboot;
 using BrockAllen.MembershipReboot.Ef;
 using BrockAllen.MembershipReboot.WebHost;
@@ -8,7 +9,10 @@ using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.App_Start;
+using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
+using CUWebinars.Web.ViewModel;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using Ninject.Extensions.Logging.Log4net.Infrastructure;
@@ -114,6 +118,77 @@ namespace CUWebinars.Tests.Common
             var jObject = JObject.Parse(@json);
 
             return jObject;
+        }
+
+        public static IList<Address> GetAddresses(string fullName)
+        {
+            var billingAddress = new Address
+            {
+                AddressType = "Billing",
+                Name = fullName,
+                City = "Dallas",
+                Zip = "75201",
+                State = "TX",
+                StreetAddress = "1 Liberty St",
+                Country = "USA"
+            };
+
+            var shippingAddress = new Address
+            {
+                AddressType = "Shipping",
+                Name = fullName,
+                City = "Dallas",
+                Zip = "75201",
+                State = "TX",
+                StreetAddress = "1 Liberty St",
+                Country = "USA"
+            };
+
+            return new[] { billingAddress, shippingAddress };
+        }
+
+        public static RegisterViewModel GetRegisterViewModel()
+        {
+            var registerViewModel = new RegisterViewModel
+            {
+                RegisterFields = new RegisterModel
+                {
+                    AccountDetailsTitle = WebUiConstants.Register,
+                    BillingAddress = new AddressModel
+                    {
+                        TypeOfAddress = AddressType.Billing,
+                        Name = "Jon Hancock",
+                        City = "Dallas",
+                        Zip = "75201",
+                        State = "TX",
+                        StreetAddress = "1 Liberty St",
+                        Country = "USA",
+                        Phone = "222-222-2222"
+                    },
+                    ConfirmPassword = "Passw0rd1",
+                    Email = "Jon@Hancock.com",
+                    FirstName = "Jon",
+                    idWebUser = 25,
+                    Institution = "Inc Inc",
+                    LastName = "Hancock",
+                    Password = "Passw0rd1",
+                    ShippingAddress = new AddressModel
+                    {
+                        TypeOfAddress = AddressType.Shipping,
+                        Name = "Jon Hancock",
+                        City = "Dallas",
+                        Zip = "75201",
+                        State = "TX",
+                        StreetAddress = "1 Liberty St",
+                        Country = "USA",
+                        Phone = "222-222-2222"
+                    },
+                    Title = "Mr", 
+                    UserType = UserType.Customer
+                }
+            };
+
+            return registerViewModel;
         }
     }
 }

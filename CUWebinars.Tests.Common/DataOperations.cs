@@ -11,7 +11,29 @@ namespace CUWebinars.Tests.Common
     {
         public string ConnectionString { get; set; }
 
-        public string GetNameOfLatestPersistedNotification()
+        public Guid GetIdOfTestUser(string email)
+        {
+            using (var sqlConnection = new SqlConnection(ConnectionString))
+            {
+                sqlConnection.Open();
+
+                using (var loggerQueryCommand = new SqlCommand())
+                {
+                    loggerQueryCommand.Connection = sqlConnection;
+                    loggerQueryCommand.CommandText =
+                        string.Format("SELECT ID FROM UserAccounts WHERE Email = '{0}';", email);
+                    loggerQueryCommand.CommandType = CommandType.Text;
+
+                    var message = loggerQueryCommand.ExecuteScalar();
+
+                    return new Guid(message.ToString());
+                }
+            }
+        }
+
+
+        public
+            string GetNameOfLatestPersistedNotification()
         {
             using (var sqlConnection = new SqlConnection(ConnectionString))
             {
