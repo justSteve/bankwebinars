@@ -504,46 +504,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.LogOff();
         }
-
-        [TestMethod]
-        [TestCategory(TestCategories.Notifications)]
-        [TestCategory(TestCategories.Firefox)]
-        public void ExistingUserLogsInAndMakesCdHardcopyOrderWith1AdditionalLocation()
-        {
-            var dataOperations = new DataOperations();
-            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
-
-            var page = NavigateToDetailsPageViaRegisterWizard();
-
-            page.ClickLoginLink();
-            page.EnterDetail(WebUiTestGlobalsTestConfig.LoggedInUserEmail, Infrastructure.TestConstants.EmailInput);
-            page.EnterDetail(WebUiTestGlobalsTestConfig.LoggedInUserPassword, Infrastructure.TestConstants.PasswordInput);
-            page.ClickSignIn();
-
-            page.WaitForLogOutLink();
-
-            page.ClickWebinarsMenuItem();
-
-            /*********** Additional Locations modal *****************/
-            page.ClickAddAdditionalLocationButton();
-            page.ClickTheClickToAddMoreButton();
-            page.EnterDetail("drogersbox-test1@yahoo.com.au", "AdditionalLocationEmail_0");
-            page.ClickSubmitAdditionalLocationsButton();
-            /*********** ************************** *****************/
-
-            page.Wait(500);
-
-            page.ClickSignUpButton();
-
-            page.ClickBillMeButton();
-
-            page.Wait(100);
-
-            dataOperations.DeleteMostRecentOrderOfUser(WebUiTestGlobalsTestConfig.LoggedInUserEmail);
-
-            page.LogOff();
-        }
-
+        
         [TestMethod]
         [TestCategory(TestCategories.Notifications)]
         [TestCategory(TestCategories.Firefox)]
@@ -607,7 +568,46 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.LogOff();
         }
-        
+
+        [TestMethod]
+        [Ignore]
+        [TestCategory(TestCategories.Notifications)]
+        [TestCategory(TestCategories.Firefox)]
+        public void ExistingUserLogsInAndMakesCdHardcopyOrderWith1AdditionalLocation()
+        {
+            var dataOperations = new DataOperations();
+            dataOperations.ConnectionString = WebUiTestGlobalsTestConfig.DefaultConnection;
+
+            var page = NavigateToDetailsPageViaRegisterWizard();
+
+            page.ClickLoginLink();
+            page.EnterDetail(WebUiTestGlobalsTestConfig.LoggedInUserEmail, Infrastructure.TestConstants.EmailInput);
+            page.EnterDetail(WebUiTestGlobalsTestConfig.LoggedInUserPassword, Infrastructure.TestConstants.PasswordInput);
+            page.ClickSignIn();
+
+            page.WaitForLogOutLink();
+
+            page.ClickWebinarsMenuItem();
+
+            /*********** Additional Locations modal *****************/
+            page.ClickAddAdditionalLocationButton();
+            page.ClickTheClickToAddMoreButton();
+            page.EnterDetail("drogersbox-test1@yahoo.com.au", "AdditionalLocationEmail_0");
+            page.ClickSubmitAdditionalLocationsButton();
+            /*********** ************************** *****************/
+
+            page.Wait(500);
+
+            page.ClickSignUpButton();
+
+            page.ClickBillMeButton();
+
+            page.Wait(100);
+
+            dataOperations.DeleteMostRecentOrderOfUser(WebUiTestGlobalsTestConfig.LoggedInUserEmail);
+
+            page.LogOff();
+        }
         
         [TestMethod]
         [TestCategory(TestCategories.Notifications)]
@@ -642,6 +642,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         }
 
         [TestMethod]
+        [Ignore]
         [TestCategory(TestCategories.Notifications)]
         [TestCategory(TestCategories.Firefox)]
         public void ExistingUserLogsInAndMakesLivePlusOnDemandOrderWith1AdditionalLocation()
@@ -715,6 +716,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         }
 
         [TestMethod]
+        [Ignore]
         [TestCategory(TestCategories.Notifications)]
         [TestCategory(TestCategories.Firefox)]
         public void ExistingUserLogsInAndMakesPremierPackageOrderWith1AdditionalLocation()
