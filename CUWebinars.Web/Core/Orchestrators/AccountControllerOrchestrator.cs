@@ -29,10 +29,11 @@ namespace CUWebinars.Web.Core.Orchestrators
     public class AccountControllerOrchestrator : IAccountControllerOrchestrator
     {
         private readonly GlobalConfig _globals = GlobalConfig.GlobalConfigSingleton;
-        public HttpRequestBase Request { get; set; }
+        private readonly HttpRequestBase _request;
         private readonly ILogger _logger;
         private readonly IMembershipService _membershipService;
         private readonly IStateService _stateService;
+        private readonly IAppHelper _appHelper;
         private readonly IOrderManagementService _orderManagementService;
         private bool _disposed;
 
@@ -41,15 +42,16 @@ namespace CUWebinars.Web.Core.Orchestrators
             IMembershipService membershipService,
             IOrderManagementService orderManagementService,
             IStateService stateService,
-            HttpRequestBase request)
+            HttpRequestBase request,
+            IAppHelper appHelper)
 
         {
-            Request = request;
+            _request = request;
             _logger = logger;
             _membershipService = membershipService;
             _orderManagementService = orderManagementService;
             _stateService = stateService;
-            
+            _appHelper = appHelper;
         }
 
         public bool LogUserIn(SignInModel signInModel)
@@ -201,17 +203,17 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             if (_membershipService.LogInUser(_globals.Tenant, model.Email, model.Password, model.RememberMe, out userMustVerify, model.SigninAfterCheckout))
             {
-                if (!ReferenceEquals(Request.ApplicationPath, null) && !ReferenceEquals(Request.Url, null))
+                if (!ReferenceEquals(_request.ApplicationPath, null) && !ReferenceEquals(_request.Url, null))
                 {
                     var retUrl = model.ReturnUrl.Replace(
                             string.Format(@"{0}://{1}{2}/",
-                            Request.Url.Scheme,
-                            Request.Url.Authority,
-                            Request.ApplicationPath.TrimEnd('/')),
+                            _request.Url.Scheme,
+                            _request.Url.Authority,
+                            _request.ApplicationPath.TrimEnd('/')),
                             string.Empty
                             );
 
-                    _logger.Info("Account.SignIn Post Success. Session={0}, Redirecting to: {1}", AppHelper.GetUserAuditInfo(), retUrl);
+                    _logger.Info("Account.SignIn Post Success. Session={0}, Redirecting to: {1}", _appHelper.GetUserAuditInfo(), retUrl);
                 }
 
                 return true;
@@ -250,7 +252,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 _membershipService.LogInUser(_globals.Tenant, model.Email, model.NewPassword, true);
 
-                _logger.Info("Account.Confirmed POST. Session={0}", AppHelper.GetUserAuditInfo());
+                _logger.Info("Account.Confirmed POST. Session={0}", _appHelper.GetUserAuditInfo());
                 
                 return true;
             }
@@ -526,12 +528,12 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public string GetZipAddress(int zip)
         {
-            return AppHelper.GetCityStateFromZip(zip);
+            return _appHelper.GetCityStateFromZip(zip);
         }
 
         public LoginModel BuildLoginModel(string returnUrl)
         {
-            var urlHelper = new UrlHelper(Request.RequestContext); 
+            var urlHelper = new UrlHelper(_request.RequestContext); 
 
             var loginModel = new LoginModel
             {
@@ -549,10 +551,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             };
 
             //So that the user can be referred back to where they were when they click logon
-            if (string.IsNullOrEmpty(returnUrl) && Request.UrlReferrer != null)
+            if (string.IsNullOrEmpty(returnUrl) && _request.UrlReferrer != null)
             {
-                returnUrl = HttpUtility.UrlDecode(Request.UrlReferrer.PathAndQuery);
-                _logger.Info("Login|returnURL was: " + returnUrl + " Session=" + AppHelper.GetUserAuditInfo());
+                returnUrl = HttpUtility.UrlDecode(_request.UrlReferrer.PathAndQuery);
+                _logger.Info("Login|returnURL was: " + returnUrl + " Session=" + _appHelper.GetUserAuditInfo());
             }
 
             if (urlHelper.IsLocalUrl(returnUrl) && !string.IsNullOrEmpty(returnUrl))
@@ -578,7 +580,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 NewPassword = string.Empty,
                 ConfirmPassword = string.Empty,
                 ScreenMessage = string.Empty,
-                UserIsLoggedIn = Request.IsAuthenticated
+                UserIsLoggedIn = _request.IsAuthenticated
             };
 
             var userAccount = _membershipService.GetUserAccountByEmail(_globals.Tenant, email);

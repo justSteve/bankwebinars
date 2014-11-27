@@ -8,6 +8,7 @@ using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core.Orchestrators;
+using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Services;
 using Ninject.Extensions.Logging;
 using Ninject.Extensions.Logging.Log4net.Infrastructure;
@@ -28,6 +29,7 @@ namespace CUWebinars.Web.App_Start
 
     public static class NinjectWebCommon
     {
+        private const string Request = "request";
         private static readonly Assembly _serviceAssembly = Assembly.Load("CUWebinars.Business");
 
         private static readonly Bootstrapper bootstrapper = new Bootstrapper();
@@ -93,21 +95,12 @@ namespace CUWebinars.Web.App_Start
                     )).InRequestScope();
 
             kernel.Bind<TtsConfiguration>().ToMethod(ctx => TtsConfig.Create(baseUrl)).InRequestScope();
+            kernel.Bind<IAppHelper>().To<AppHelper>().InRequestScope().WithConstructorArgument(Request, x => new HttpRequestWrapper(HttpContext.Current.Request));
 
             kernel.Bind<IAffiliateRepository>().To<AffiliateRepository>().InRequestScope();
             kernel.Bind<IWebinarRepository>().To<WebinarRepository>().InRequestScope();
             kernel.Bind<IWebinarFileRepository>().To<WebinarFileRepository>().InRequestScope();
             kernel.Bind<IWebUserRepository>().To<WebUserRepository>().InRequestScope();
-
-            //attempting to inject logger to WebUserRepository
-            //kernel.Bind<IWebUserRepository>().ToMethod<WebUserRepository>(ctx =>
-            //{
-            //    ILogger loggerForWebUserRepository = new Log4NetLogger(typeof(WebUserRepository));
-            //    return new WebUserRepository(
-            //        loggerForWebUserRepository);
-            //}).InRequestScope();
-
-
             kernel.Bind<IOrderRepository>().To<OrderRepository>().InRequestScope();
             kernel.Bind<IInstitutionRepository>().To<InstitutionRepository>().InRequestScope();
             kernel.Bind<IUserAccountRepository>().To<DefaultUserAccountRepository>().InRequestScope();
@@ -180,9 +173,9 @@ namespace CUWebinars.Web.App_Start
 
             kernel.Bind<IOrderControllerOrchestrator>().To<OrderControllerOrchestrator>().InRequestScope();
             kernel.Bind<ICartControllerOrchestrator>().To<CartControllerOrchestrator>().InRequestScope()
-                .WithConstructorArgument("request", x => new HttpRequestWrapper(HttpContext.Current.Request));
+                .WithConstructorArgument(Request, x => new HttpRequestWrapper(HttpContext.Current.Request));
             kernel.Bind<IAccountControllerOrchestrator>().To<AccountControllerOrchestrator>().InRequestScope()
-                .WithConstructorArgument("request", x => new HttpRequestWrapper(HttpContext.Current.Request));
+                .WithConstructorArgument(Request, x => new HttpRequestWrapper(HttpContext.Current.Request));
 
         }
 

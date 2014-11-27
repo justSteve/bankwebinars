@@ -11,13 +11,20 @@ using CUWebinars.Business.Models;
 
 namespace CUWebinars.Web.Helpers
 {
-    public class AppHelper
+    public class AppHelper : IAppHelper
     {
+        private readonly HttpRequestBase _request;
+
+        public AppHelper(HttpRequestBase request)
+        {
+            _request = request;
+        }
+
         /// <summary>
         /// Retrieves the city state zip via URL parameter and stored in the ASP.NET Session
         /// </summary>
         /// <returns>City | State based on input zipcode</returns>
-        public static String GetCityStateFromZip(int zipCode)
+        public string GetCityStateFromZip(int zipCode)
         {
 
             var _connLogger = new SqlConnection(ConfigurationManager.ConnectionStrings["LoggerConnection"].ConnectionString);
@@ -92,7 +99,7 @@ namespace CUWebinars.Web.Helpers
         /// Retrieves the City State info found via FDI Certification code
         /// </summary>
         /// <returns>Affiliate or null</returns>
-        public static String GetCityStateFromCert(int Cert)
+        public static string GetCityStateFromCert(int Cert)
         {
 
             var _connSproc = new SqlConnection(ConfigurationManager.ConnectionStrings["Institutions"].ConnectionString);
@@ -131,7 +138,7 @@ namespace CUWebinars.Web.Helpers
         }
 
 
-        private static readonly string AUDIT_XML_TEMPLATE =
+        private const string AUDIT_XML_TEMPLATE =
             "<AuditInfo>" +
             "<RemoteAddress>#REMOTE_ADDR#</RemoteAddress>" +
             "<RemoteHost>#REMOTE_HOST#</RemoteHost>" +
@@ -140,17 +147,15 @@ namespace CUWebinars.Web.Helpers
             "<Cookie>#HTTP_COOKIE#</Cookie>" +
             "</AuditInfo>";
 
-        public static string GetUserAuditInfo()
+        public string GetUserAuditInfo()
         {
-            HttpRequest request = HttpContext.Current.Request;
+            string remoteAddres = SecurityElement.Escape(_request.ServerVariables["REMOTE_ADDR"]);
+            string remoteHost = SecurityElement.Escape(_request.ServerVariables["REMOTE_HOST"]);
+            string remoteUser = SecurityElement.Escape(_request.ServerVariables["REMOTE_USER"]);
+            string userAgent = SecurityElement.Escape(_request.ServerVariables["HTTP_USER_AGENT"]);
+            string userCookie = SecurityElement.Escape(_request.ServerVariables["HTTP_COOKIE"]);
 
-            string remoteAddres = SecurityElement.Escape(request.ServerVariables["REMOTE_ADDR"]);
-            string remoteHost = SecurityElement.Escape(request.ServerVariables["REMOTE_HOST"]);
-            string remoteUser = SecurityElement.Escape(request.ServerVariables["REMOTE_USER"]);
-            string userAgent = SecurityElement.Escape(request.ServerVariables["HTTP_USER_AGENT"]);
-            string userCookie = SecurityElement.Escape(request.ServerVariables["HTTP_COOKIE"]);
-
-            StringBuilder auditXML = new StringBuilder(AUDIT_XML_TEMPLATE);
+            var auditXML = new StringBuilder(AUDIT_XML_TEMPLATE);
             auditXML.Replace("#REMOTE_ADDR#", remoteAddres);
             auditXML.Replace("#REMOTE_HOST#", remoteHost);
             auditXML.Replace("#REMOTE_USER#", remoteUser);
@@ -160,7 +165,7 @@ namespace CUWebinars.Web.Helpers
         }
 
 
-        public static List<string> InstitutionAutoComplete(string name, string zip)
+        public List<string> InstitutionAutoComplete(string name, string zip)
         {
             var _connSproc = new SqlConnection(ConfigurationManager.ConnectionStrings["LoggerConnection"].ConnectionString);
             _connSproc.Open();

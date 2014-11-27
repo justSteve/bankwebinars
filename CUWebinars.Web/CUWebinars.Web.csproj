@@ -375,6 +375,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Helpers\IAppHelper.cs" />
     <Compile Include="Helpers\SessionStartInfo.cs" />
     <Compile Include="Models\RegisterFieldsDTO.cs" />
     <Compile Include="ViewModel\RegistrationSummaryViewModel.cs" />
@@ -2048,9 +2049,9 @@
     <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)\..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).dll"
-copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)\..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).dll.config"
-copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)\..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).pdb"
+    <PostBuildEvent>copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).dll"
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).dll.config"
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).pdb"
 copy /Y "$(SolutionDir)packages\Microsoft.AspNet.Mvc.5.2.0\lib\net45\System.Web.Mvc.dll" "$(SolutionDir)\..\CUUserAccount\ThirdPartyAssemblies\System.Web.Mvc.dll"
 </PostBuildEvent>
   </PropertyGroup>

@@ -18,6 +18,7 @@ namespace CUWebinars.Web.Tests.Infrastructure
 
                     UniqueInstance.LoggedInUserEmail = ApplicationSettingsSection["LoggedInUserEmail"];
                     UniqueInstance.LoggedInUserPassword = ApplicationSettingsSection["LoggedInUserPassword"];
+                    UniqueInstance.SiteUrl = ApplicationSettingsSection["SiteUrl"];
                     UniqueInstance.Tenant = ApplicationSettingsSection["Tenant"];
 
                     UniqueInstance.MembershipConnectionString = ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString;
@@ -26,6 +27,8 @@ namespace CUWebinars.Web.Tests.Infrastructure
                 // Private object instantiated with private constructor
                 internal static readonly WebTestsGlobalConfig UniqueInstance = new WebTestsGlobalConfig();
             }
+
+        public string SiteUrl { get; private set; }
 
         public string Tenant { get; private set; }
 

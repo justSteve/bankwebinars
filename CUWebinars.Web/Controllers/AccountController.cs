@@ -41,6 +41,7 @@ namespace CUWebinars.Web.Controllers
         private readonly ILogger _logger;
         private readonly IMembershipService _membershipService;
         private readonly IStateService _stateService;
+        private readonly IAppHelper _appHelper;
         private readonly IOrderManagementService _orderManagementService;
         private bool _disposed;
 
@@ -49,13 +50,15 @@ namespace CUWebinars.Web.Controllers
             ILogger logger,
             IMembershipService membershipService,
             IOrderManagementService orderManagementService,
-            IStateService stateService)
+            IStateService stateService,
+            IAppHelper appHelper)
         {
             _accountControllerOrchestrator = accountControllerOrchestrator;
             _logger = logger;
             _membershipService = membershipService;
             _orderManagementService = orderManagementService;
             _stateService = stateService;
+            _appHelper = appHelper;
         }
 
         public ActionResult COC(int idWebinar, string displayName)
@@ -305,7 +308,7 @@ namespace CUWebinars.Web.Controllers
                 _logger.Fatal(
                     "Account.Confirm Exception On GET: {0} Session={1}",
                     exception.Message,
-                    AppHelper.GetUserAuditInfo()
+                    _appHelper.GetUserAuditInfo()
                     );
                 throw;
             }
@@ -324,7 +327,7 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 _logger.Info("Your email address has already been successfully verified in our system. Session={0}",
-                    AppHelper.GetUserAuditInfo());
+                    _appHelper.GetUserAuditInfo());
 
                 model.ScreenMessage = "Your email address has already been successfully verified in our system.";
 
@@ -335,7 +338,7 @@ namespace CUWebinars.Web.Controllers
                 _logger.Fatal(
                     "Account.Confirm Exception On GET: {0} Session={1}",
                     exception.Message,
-                    AppHelper.GetUserAuditInfo()
+                    _appHelper.GetUserAuditInfo()
                     );
                 ModelState.AddModelError(string.Empty, exception.Message);
             }
@@ -536,10 +539,10 @@ namespace CUWebinars.Web.Controllers
             ProcessModelStateErrors();
             return Content("false");
         }
-    
 
 
-    [System.Web.Mvc.HttpPost]
+
+        [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
         [ValidateAntiForgeryToken]
         public ActionResult SignIn(SignInModel model)
@@ -549,39 +552,53 @@ namespace CUWebinars.Web.Controllers
                 return this.ModelStateJson(ModelState);
             }
 
-            string userMustVerify;
-
-            if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
+            try
             {
-                return Json(new {result = LoggedInResult} );
-            }
+                string userMustVerify;
 
-            if (!string.IsNullOrEmpty(userMustVerify))
-            {
-                _logger.Info("Account.SignIn UserMustVerify. Session={0}, Email: {1} Password: {2}",
-                    AppHelper.GetUserAuditInfo(),
+                if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
+                {
+                    return Json(new {result = LoggedInResult});
+                }
+
+                if (!string.IsNullOrEmpty(userMustVerify))
+                {
+                    _logger.Info("Account.SignIn UserMustVerify. Session={0}, Email: {1} Password: {2}",
+                        _appHelper.GetUserAuditInfo(),
+                        model.Email,
+                        model.Password
+                        );
+
+                    return Json(new {result = ConfirmedResult, email = model.Email, password = model.Password});
+                }
+
+                // If we got this far, something failed, redisplay form
+                _logger.Warn("Account.SignIn Failed. {0} | {1} Session= {2}",
                     model.Email,
-                    model.Password
+                    model.Password,
+                    _appHelper.GetUserAuditInfo()
                     );
 
-                return Json(new {result = ConfirmedResult, email = model.Email, password = model.Password });
+                ModelState.AddModelError(
+                    string.Empty,
+                    // Needs to be an empty string to show up in ValidationSummary as not model-level error.
+                    "The user name or password provided is incorrect."
+                    );
             }
+            catch (Exception exception)
+            {
+                _logger.ErrorException(string.Format("Account.SignIn Failed. {0} | {1} Session= {2}", model.Email, model.Password, _appHelper.GetUserAuditInfo()), exception);
 
-            // If we got this far, something failed, redisplay form
-            _logger.Warn("Account.SignIn Failed. {0} | {1} Session= {2}",
-                model.Email,
-                model.Password,
-                AppHelper.GetUserAuditInfo()
-                );
-
-            ModelState.AddModelError(
-                string.Empty, // Needs to be an empty string to show up in ValidationSummary as not model-level error.
-                "The user name or password provided is incorrect."
-                );
+                ModelState.AddModelError(
+                    string.Empty,
+                    // Needs to be an empty string to show up in ValidationSummary as not model-level error.
+                    "There was an error at the server which has been logged. It the error recurs, please call 800-831-0678 ext 706 for immediate assistance."
+                    );
+            }
 
             return this.ModelStateJson(ModelState);
         }
-        
+
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
         [ValidateJsonAntiForgeryToken]
@@ -609,7 +626,7 @@ namespace CUWebinars.Web.Controllers
             if (!string.IsNullOrEmpty(userMustVerify))
             {
                 _logger.Info("Account.SignIn UserMustVerify. Session={0}, Email: {1} surname: {2}",
-                    AppHelper.GetUserAuditInfo(),
+                    _appHelper.GetUserAuditInfo(),
                     email,
                     tempPassword
                     );
@@ -621,7 +638,7 @@ namespace CUWebinars.Web.Controllers
             _logger.Warn("Account.SignIn Failed. {0} | {1} Session= {2}",
                 email,
                 tempPassword,
-                AppHelper.GetUserAuditInfo()
+                _appHelper.GetUserAuditInfo()
                 );
 
             ModelState.AddModelError(
@@ -647,7 +664,7 @@ namespace CUWebinars.Web.Controllers
 
                 if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
                 {
-                    _logger.Info("Account.SignIn Post Success in cart. Session={0}", AppHelper.GetUserAuditInfo());
+                    _logger.Info("Account.SignIn Post Success in cart. Session={0}", _appHelper.GetUserAuditInfo());
                     WebUser webUser = _accountControllerOrchestrator.GetWebUserByEmail(model.Email);
 
                     return Json(new { result = LoggedInResult, UserId = webUser.idUser });
@@ -662,7 +679,7 @@ namespace CUWebinars.Web.Controllers
             _logger.Warn("Account.SignIn Failed. {0} | {1} Session= {2}",
                 model.Email,
                 model.Password,
-                AppHelper.GetUserAuditInfo()
+                _appHelper.GetUserAuditInfo()
                 );
 
             ModelState.AddModelError(
@@ -678,7 +695,7 @@ namespace CUWebinars.Web.Controllers
         //[ValidateAntiForgeryToken]
         public JsonResult ResetPassword(string email)
         {
-            _logger.Info("Account.ResetPassword GET. Email = {1} Session={0}", AppHelper.GetUserAuditInfo(), email);
+            _logger.Info("Account.ResetPassword GET. Email = {1} Session={0}", _appHelper.GetUserAuditInfo(), email);
 
             try
             {
@@ -687,7 +704,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Fatal("Account.ResetPassword GET Failed. {0}, Session = {1} on email: {2}", ex.Message, AppHelper.GetUserAuditInfo(), email);
+                _logger.Fatal("Account.ResetPassword GET Failed. {0}, Session = {1} on email: {2}", ex.Message, _appHelper.GetUserAuditInfo(), email);
             }
 
 
@@ -698,7 +715,7 @@ namespace CUWebinars.Web.Controllers
         //[System.Web.Mvc.AllowAnonymous]
         //public ViewResult ResetPasswordWhereNotVerified(string tempPassword, string email)
         //{
-        //    _logger.Info("Account.ResetPasswordWhereNotVerified GET. Session=" + AppHelper.GetUserAuditInfo());
+        //    _logger.Info("Account.ResetPasswordWhereNotVerified GET. Session=" + _appHelper.GetUserAuditInfo());
 
         //    var localPasswordModel = new LocalPasswordModel
         //    {
@@ -717,7 +734,7 @@ namespace CUWebinars.Web.Controllers
         //{
         //    if (ModelState.IsValid)
         //    {
-        //        _logger.Info("Account.ResetPasswordWhereNotVerified POST. Session=" + AppHelper.GetUserAuditInfo());
+        //        _logger.Info("Account.ResetPasswordWhereNotVerified POST. Session=" + _appHelper.GetUserAuditInfo());
 
         //        _stateService.SetValue(DomainConstants.UserCreatedViaNewOrder, true);
         //        _membershipService.ResetPassword(_globalConfig.Tenant, localPasswordModel.Email);
@@ -743,7 +760,7 @@ namespace CUWebinars.Web.Controllers
         {
             if (string.IsNullOrWhiteSpace(id))
             {
-                _logger.Warn("Account.PasswordResetConfirm.GET was passed empty or null ID. Session=PasswordResetConfirm. " + AppHelper.GetUserAuditInfo());
+                _logger.Warn("Account.PasswordResetConfirm.GET was passed empty or null ID. Session=PasswordResetConfirm. " + _appHelper.GetUserAuditInfo());
                 ModelState.AddModelError(string.Empty, "There appears to have been a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again.");
             }
 
@@ -769,7 +786,7 @@ namespace CUWebinars.Web.Controllers
                     {
                         _logger.Warn(
                             "Account.PasswordResetConfirm.POST was passed empty or null ID. Session=PasswordResetConfirm. " +
-                            AppHelper.GetUserAuditInfo());
+                            _appHelper.GetUserAuditInfo());
                         ModelState.AddModelError(string.Empty,
                             "There appears to have been a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again.");
                     }
@@ -784,7 +801,7 @@ namespace CUWebinars.Web.Controllers
                                 "Unable to change password from Reset key. Please please contact your system administrator");
                         }
                     }
-                    _logger.Info("Account.PasswordResetConfirm Post. Session=" + AppHelper.GetUserAuditInfo());
+                    _logger.Info("Account.PasswordResetConfirm Post. Session=" + _appHelper.GetUserAuditInfo());
 
                     return View(model);
                 }
@@ -794,7 +811,7 @@ namespace CUWebinars.Web.Controllers
             catch (ValidationException validationException)
             {
 
-                _logger.Fatal("Account.ResetPassword. " + validationException.Message + " Session=" + AppHelper.GetUserAuditInfo());
+                _logger.Fatal("Account.ResetPassword. " + validationException.Message + " Session=" + _appHelper.GetUserAuditInfo());
                 ModelState.AddModelError(string.Empty, "The new password must be different than the old password.");
             }
 
@@ -810,7 +827,7 @@ namespace CUWebinars.Web.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                _logger.Info("Account.LogOff. Session=" + AppHelper.GetUserAuditInfo());
+                _logger.Info("Account.LogOff. Session=" + _appHelper.GetUserAuditInfo());
 
                 try
                 {
@@ -823,7 +840,7 @@ namespace CUWebinars.Web.Controllers
                 }
             }
 
-            _logger.Fatal("Account.LogOff at Unauthenticated User. Session=" + AppHelper.GetUserAuditInfo());
+            _logger.Fatal("Account.LogOff at Unauthenticated User. Session=" + _appHelper.GetUserAuditInfo());
             return RedirectToAction("Index", "Home");
         }
 
@@ -858,7 +875,7 @@ namespace CUWebinars.Web.Controllers
 
             try
             {
-                zipAddress = AppHelper.GetCityStateFromZip(numVal.Value);
+                zipAddress = _appHelper.GetCityStateFromZip(numVal.Value);
             }
             catch (Exception exception)
             {
@@ -886,7 +903,7 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.AllowAnonymous]
         public JsonResult AutocompleteInstitution()
         {
-            List<string> ac = AppHelper.InstitutionAutoComplete(Request.QueryString["term"], Request.QueryString["zip"]);
+            List<string> ac = _appHelper.InstitutionAutoComplete(Request.QueryString["term"], Request.QueryString["zip"]);
             //string name, msa;
             //var retValue = new { values = ac };
             return Json(ac, JsonRequestBehavior.AllowGet);
@@ -900,7 +917,7 @@ namespace CUWebinars.Web.Controllers
         {
             try
             {
-                _logger.Info("CheckEmail called: " + email + "| Session=" + AppHelper.GetUserAuditInfo());
+                _logger.Info("CheckEmail called: " + email + "| Session=" + _appHelper.GetUserAuditInfo());
                 var resultObject = new Dictionary<string, string>();
 
                 if (orderId.HasValue)
@@ -956,7 +973,7 @@ namespace CUWebinars.Web.Controllers
             if (ModelState.IsValid)
             {
                 _logger.Info("Account.Register: " + model.RegisterFields.Email.Trim() + "| Session=" +
-                             AppHelper.GetUserAuditInfo());
+                             _appHelper.GetUserAuditInfo());
                 try
                 {
                     var webUser = _accountControllerOrchestrator.CreateWebUserFromCart(model);
@@ -971,10 +988,10 @@ namespace CUWebinars.Web.Controllers
                     ModelState.AddModelError("", exception.Message);
                     //TODO: add error message here and handle in razor
                     _logger.Error("Account.Register Catch block: " + exception.Message + "| Session=" +
-                                  AppHelper.GetUserAuditInfo());
+                                  _appHelper.GetUserAuditInfo());
                 }
             }
-            _logger.Fatal("Account.Register failed! Session=" + AppHelper.GetUserAuditInfo());
+            _logger.Fatal("Account.Register failed! Session=" + _appHelper.GetUserAuditInfo());
 
             // If we got this far, something failed, redisplay form
             return this.ModelStateJson(ModelState);
@@ -989,7 +1006,7 @@ namespace CUWebinars.Web.Controllers
             if (ModelState.IsValid)
             {
                 _logger.Info("Account.Register: " + model.RegisterFields.Email.Trim() + 
-                    "| Session=" + AppHelper.GetUserAuditInfo());
+                    "| Session=" + _appHelper.GetUserAuditInfo());
 
                 try
                 {
@@ -1003,21 +1020,21 @@ namespace CUWebinars.Web.Controllers
                     ModelState.AddModelError(string.Empty, ErrorCodeToString(e.StatusCode));
                     
                     _logger.Error("Account.Register Catch block: " + e.Message + "| Session=" +
-                                  AppHelper.GetUserAuditInfo());
+                                  _appHelper.GetUserAuditInfo());
                 }
                 catch (Exception e)
                 {
                     ModelState.AddModelError(string.Empty, "An error has occurred at the server and it has been logged. Please try again, or contact us so we can resolve the problem.");
                     
                     _logger.Error("Account.Register Catch block: " + e.Message + "| Session=" +
-                                  AppHelper.GetUserAuditInfo());
+                                  _appHelper.GetUserAuditInfo());
                 }
             }
             else
             {
                 return this.ModelStateJson(ModelState);
             }
-            _logger.Fatal("Account.Register failed! Session=" + AppHelper.GetUserAuditInfo());
+            _logger.Fatal("Account.Register failed! Session=" + _appHelper.GetUserAuditInfo());
 
             // If we got this far, something failed, redisplay form
             return this.ModelStateJson(ModelState);
@@ -1045,17 +1062,17 @@ namespace CUWebinars.Web.Controllers
                 {
                     //TODO: add error message here and handle in razor
                     _logger.Error("CreateUserAccountFromCart Catch block: " + e.Message + "| Session=" +
-                                  AppHelper.GetUserAuditInfo());
+                                  _appHelper.GetUserAuditInfo());
                 }
                 catch (Exception e)
                 {
                     //TODO: add error message here and handle in razor
                     _logger.Error("CreateUserAccountFromCart Catch block: " + e.Message + "| Session=" +
-                                  AppHelper.GetUserAuditInfo());
+                                  _appHelper.GetUserAuditInfo());
                 }
             }
 
-            _logger.Fatal("CreateUserAccountFromCart failed! Session=" + AppHelper.GetUserAuditInfo());
+            _logger.Fatal("CreateUserAccountFromCart failed! Session=" + _appHelper.GetUserAuditInfo());
             
             return Json(new { Result = WebUiConstants.Fail }); // This actually gets discarded by view.           
         }
@@ -1186,7 +1203,7 @@ namespace CUWebinars.Web.Controllers
 
                 _logger.Error("Account.Register ModelError: {0} | Session={1}", 
                     error.ErrorMessage,
-                    AppHelper.GetUserAuditInfo()
+                    _appHelper.GetUserAuditInfo()
                     );
             }
         }

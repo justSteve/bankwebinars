@@ -9,5 +9,6 @@ namespace CUWebinars.Business.Repository
         RegType FindRegType(int idRegType);
         IList<RegType> FindRegTypesForOption(int optionId);
         IList<RegType> FindRegTypesByWebinarId(int id, bool detached);
+        bool IsShippingAddressRequired(int regTypeId);
     }
 }
