@@ -26,30 +26,37 @@ namespace CUWebinars.Web.Helpers
         /// <returns>City | State based on input zipcode</returns>
         public string GetCityStateFromZip(int zipCode)
         {
+            string cityStateFromZip = string.Empty;
 
-            var _connLogger = new SqlConnection(ConfigurationManager.ConnectionStrings["LoggerConnection"].ConnectionString);
-
-            _connLogger.Open();
-            var body =
-                "select City, (select stateAbbreviation from States where StateCode = " +
-                "               (SELECT StateCode FROM [dbo].zipcodes WHERE zipcode = " + zipCode + "))," +
-                "               (SELECT timezone FROM [dbo].[TimeZoneByZip] WHERE zip = '" + zipCode + "') from [dbo].zipcodes where zipcode = " + zipCode;
-
-            SqlCommand cmdGetBody = new SqlCommand(
-                body, _connLogger
-                );
-
-            cmdGetBody.CommandType = CommandType.Text;
-            // execute the command
-            SqlDataReader msgReader = cmdGetBody.ExecuteReader();
-
-            var value = "";
-
-            while (msgReader.Read())
+            using (var loggerConnection =
+                    new SqlConnection(ConfigurationManager.ConnectionStrings["LoggerConnection"].ConnectionString))
             {
-                return value = msgReader.FieldCount > 0 ? msgReader[0].ToString() + "," + msgReader[1].ToString() + "," + msgReader[2].ToString() : null;
+                loggerConnection.Open();
+
+                var body =
+                    "select City, (select stateAbbreviation from States where StateCode = " +
+                    "               (SELECT StateCode FROM [dbo].zipcodes WHERE zipcode = " + zipCode + "))," +
+                    "               (SELECT timezone FROM [dbo].[TimeZoneByZip] WHERE zip = '" + zipCode +
+                    "') from [dbo].zipcodes where zipcode = " + zipCode;
+
+                using (var cmdGetBody = new SqlCommand(body, loggerConnection))
+                {
+                    cmdGetBody.CommandType = CommandType.Text;
+                    // execute the command
+                    SqlDataReader msgReader = cmdGetBody.ExecuteReader();
+
+                    while (msgReader.Read())
+                    {
+                        cityStateFromZip =
+                            msgReader.FieldCount > 0
+                                ? msgReader[0].ToString() + "," + msgReader[1].ToString() + "," +
+                                  msgReader[2].ToString()
+                                : null;
+                    }
+
+                    return cityStateFromZip;
+                }
             }
-            return value;
         }
 
         public static USTimeZone ComputeTimeZone(string offset)

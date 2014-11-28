@@ -52,7 +52,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.ClickSignUpButton();
 
-            var email = TestHelper.RandomString(8) + "@" + CommonDomain;
+            var email = TestHelper.RandomStringFast(8) + "@" + CommonDomain;
             
             page.EnterEmailAddressAndClickSubmit(email);
             page.ClickYesUseAddressButton();
@@ -77,7 +77,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.ClickSignUpButton();
 
-            var email = TestHelper.RandomString(8) + "@" + CommonDomain;
+            var email = TestHelper.RandomStringFast(8) + "@" + CommonDomain;
             
             page.EnterDetailThenPressEnter(email, RegisterFieldsEmailUnderscoreDelimited);
             page.ClickYesUseAddressButton();
@@ -101,7 +101,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.ClickSignUpButton();
 
-            var email = TestHelper.RandomString(8) + "@" + CommonDomain;
+            var email = TestHelper.RandomStringFast(8) + "@" + CommonDomain;
             
             page.EnterEmailAddressAndClickSubmit(email);
 
@@ -134,7 +134,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.ClickSignUpButton();
 
-            var email = TestHelper.RandomString(8) + "@" + CommonDomain;
+            var email = TestHelper.RandomStringFast(8) + "@" + CommonDomain;
 
             page.EnterDetailThenPressEnter(email, RegisterFieldsEmailUnderscoreDelimited);
 
@@ -163,7 +163,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.ClickSignUpButton();
 
-            var email = TestHelper.RandomString(8) + "@" + CommonDomain;
+            var email = TestHelper.RandomStringFast(8) + "@" + CommonDomain;
             
             page.EnterEmailAddressAndClickSubmit(email);
 
@@ -196,7 +196,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.ClickSignUpButton();
 
-            var email = TestHelper.RandomString(8) + "@" + CommonDomain;
+            var email = TestHelper.RandomStringFast(8) + "@" + CommonDomain;
 
             page.EnterDetailThenPressEnter(email, RegisterFieldsEmailUnderscoreDelimited);
 
@@ -225,7 +225,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.ClickSignUpButton();
 
-            var email = TestHelper.RandomString(8) + "@" + CommonDomain;
+            var email = TestHelper.RandomStringFast(8) + "@" + CommonDomain;
             
             page.EnterEmailAddressAndClickSubmit(email);
 
@@ -258,7 +258,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.ClickSignUpButton();
 
-            var email = TestHelper.RandomString(8) + "@" + CommonDomain;
+            var email = TestHelper.RandomStringFast(8) + "@" + CommonDomain;
 
             page.EnterDetailThenPressEnter(email, RegisterFieldsEmailUnderscoreDelimited);
 
@@ -287,7 +287,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.ClickSignUpButton();
 
-            var email = string.Concat(TestHelper.RandomString(8), "@", TestHelper.RandomString(4), DotComSuffix);
+            var email = string.Concat(TestHelper.RandomStringFast(8), "@", TestHelper.RandomStringFast(4), DotComSuffix);
 
             page.EnterEmailAddressAndClickSubmit(email);
 
