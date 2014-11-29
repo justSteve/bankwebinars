@@ -11,13 +11,13 @@
     string TenantLogo = TtsConfigHelperObject.TenantLogo();
     string TenantCom = TenantDomain + ".com";
 
-    var HeaderText = Model.Email +" is Activated";
+    var HeaderText = Model.Email + " is activated with " + Tenant;
     var BannerText = Tenant + " has confirmed your email: " + Model.Email;
 
 }
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Your account with @Tenant is activated. </title>
+    <title>@Model.Email is activated with @Tenant. </title>
     <style type="text/css">
         .auto-style1 {
             height: 10px;
