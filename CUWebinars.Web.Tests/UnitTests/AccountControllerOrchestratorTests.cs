@@ -857,7 +857,7 @@ namespace CUWebinars.Web.Tests.UnitTests
         }
 
         [TestMethod]
-        public void BuildLoginModelReturnsLoginModelWithReturnUrlWhichIsSameAsPassedAsParametesr()
+        public void BuildLoginModelReturnsLoginModelWithMyWebinarUrlWhereReturnUrlIsAccountSlashSignin()
         {
             //  Arrange
             var request = new HttpRequestFake1();
@@ -877,6 +877,58 @@ namespace CUWebinars.Web.Tests.UnitTests
 
             //  Act
             var result = _accountControllerOrchestrator.BuildLoginModel("/Account/Signin");
+
+            //  Assert                        
+            Assert.AreEqual(result.ReturnUrl, "/Account/MyWebinars");
+        }
+
+        [TestMethod]
+        public void BuildLoginModelReturnsLoginModelWithMyWebinarUrlWhereReturnUrlIsAccountSlashLogin()
+        {
+            //  Arrange
+            var request = new HttpRequestFake1();
+            _appHelperMock.Setup(i => i.GetUserAuditInfo()).Returns(string.Format(AuditInfo, request.ServerVariables[TestConstants.HttpCookie], TestConstants.HomeUrlRelative)
+    );
+
+            _loggerMock.Setup(i => i.Info(It.IsAny<string>())).Verifiable();
+            
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
+                );
+
+            //  Act
+            var result = _accountControllerOrchestrator.BuildLoginModel("/Account/Login");
+
+            //  Assert                        
+            Assert.AreEqual(result.ReturnUrl, "/Account/MyWebinars");
+        }
+
+        [TestMethod]
+        public void BuildLoginModelReturnsLoginModelWithMyWebinarUrlWhereReturnUrlContainsPasswordResetConfirm()
+        {
+            //  Arrange
+            var request = new HttpRequestFake1();
+            _appHelperMock.Setup(i => i.GetUserAuditInfo()).Returns(string.Format(AuditInfo, request.ServerVariables[TestConstants.HttpCookie], TestConstants.HomeUrlRelative)
+    );
+
+            _loggerMock.Setup(i => i.Info(It.IsAny<string>())).Verifiable();
+            
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
+                );
+
+            //  Act
+            var result = _accountControllerOrchestrator.BuildLoginModel("/Account/PasswordResetConfirm");
 
             //  Assert                        
             Assert.AreEqual(result.ReturnUrl, "/Account/MyWebinars");

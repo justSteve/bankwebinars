@@ -7,6 +7,7 @@ using CUWebinars.Business.CQS;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
+using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Services;
@@ -94,7 +95,7 @@ namespace CUWebinars.Web.App_Start
                     kernel.Get<IStateService>()
                     )).InRequestScope();
 
-            kernel.Bind<TtsConfiguration>().ToMethod(ctx => TtsConfig.Create(baseUrl)).InRequestScope();
+            kernel.Bind<TtsConfiguration>().ToMethod(ctx => TtsConfig.Create(baseUrl, GlobalConfig.GlobalConfigSingleton.UseAzureWebjobs)).InRequestScope();
             kernel.Bind<IAppHelper>().To<AppHelper>().InRequestScope().WithConstructorArgument(Request, x => new HttpRequestWrapper(HttpContext.Current.Request));
 
             kernel.Bind<IAffiliateRepository>().To<AffiliateRepository>().InRequestScope();

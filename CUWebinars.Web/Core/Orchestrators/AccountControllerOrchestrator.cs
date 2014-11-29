@@ -4,6 +4,7 @@ using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Membership;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
@@ -384,40 +385,79 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public void CreateUserAccountFromCart(RegisterViewModel model)
         {
-            var storageCredentials = new StorageCredentials(_globals.StorageAccountName, _globals.StorageAccessKey);
-            var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
-
-            CloudQueueClient _queueClient = cloudStorageAccount.CreateCloudQueueClient();
-
-            CloudQueue cloudQueue = _queueClient.GetQueueReference(_globals.CreateUserQueueName);
-
-            var email = model.RegisterFields.Email.Trim();
-            var firstName = model.RegisterFields.FirstName.Trim();
-            var lastName = model.RegisterFields.LastName.Trim();
-
-            //first check if email exists
-            var userExists = _membershipService.GetUserAccountByEmail(_globals.Tenant, email);
-            if (userExists != null)
+            // This boolean is a toggle which live in the AppSettings of the config file.
+            if (_globals.UseAzureWebjobs)
             {
-                _logger.Error("dupe email attempt: " + email);
-                throw new Exception("User already exists.");
-            }
+                var storageCredentials = new StorageCredentials(_globals.StorageAccountName, _globals.StorageAccessKey);
+                var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
 
-            var registerFieldsDto = new RegisterFieldsDTO
-            {
-                Email = email,
-                FirstName = firstName,
-                LastName = lastName
-            };
+                CloudQueueClient _queueClient = cloudStorageAccount.CreateCloudQueueClient();
+
+                CloudQueue cloudQueue = _queueClient.GetQueueReference(_globals.CreateUserQueueName);
+
+                var email = model.RegisterFields.Email.Trim();
+                var firstName = model.RegisterFields.FirstName.Trim();
+                var lastName = model.RegisterFields.LastName.Trim();
+
+                //first check if email exists
+                var userExists = _membershipService.GetUserAccountByEmail(_globals.Tenant, email);
+                if (userExists != null)
+                {
+                    _logger.Error("dupe email attempt: " + email);
+                    throw new Exception("User already exists.");
+                }
+
+                var registerFieldsDto = new RegisterFieldsDTO
+                {
+                    Email = email,
+                    FirstName = firstName,
+                    LastName = lastName
+                };
 
 #if DEBUG
-            _logger.Info("Password {0} created for user {1}", model.RegisterFields.Password, model.RegisterFields.Email);
+                _logger.Info("Password {0} created for user {1}", model.RegisterFields.Password,
+                    model.RegisterFields.Email);
 #endif
 
-            var payload = JsonConvert.SerializeObject(registerFieldsDto);
-            var cloudQueueMessage = new CloudQueueMessage(payload);
-            cloudQueue.EncodeMessage = true;
-            cloudQueue.AddMessage(cloudQueueMessage);
+                var payload = JsonConvert.SerializeObject(registerFieldsDto);
+                var cloudQueueMessage = new CloudQueueMessage(payload);
+                cloudQueue.EncodeMessage = true;
+                cloudQueue.AddMessage(cloudQueueMessage);
+            }
+            else
+            {
+                var email = model.RegisterFields.Email.Trim();
+                var firstName = model.RegisterFields.FirstName.Trim();
+                var lastName = model.RegisterFields.LastName.Trim();
+
+                var password = PasswordGenerator.GenerateRandomString(8);
+
+                if (_stateService.HasValue(DomainConstants.TempPassword))
+                    _stateService.ClearValue(DomainConstants.TempPassword);
+
+                _stateService.SetValue(DomainConstants.TempPassword, password);
+
+                var userAccount = _membershipService.CreateUser(
+                    _globals.Tenant,
+                    firstName,
+                    lastName,
+                    string.Empty,
+                    //  Pass empty string for username because MembershipReboot assigns the email to the username field where emailIsUsername is true
+                    password,
+                    email);
+
+                _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.CartRegistration);
+
+                var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
+                _stateService.ClearValue(DomainConstants.VerificationKey);
+
+                _stateService.SetValue(DomainConstants.UserCreatedDuringCartCheckout, true);
+
+                _membershipService.VerifyEmailFromKey(
+                    verificationKey,
+                    password
+                    );                
+            }
 
         }
 
@@ -559,7 +599,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             if (urlHelper.IsLocalUrl(returnUrl) && !string.IsNullOrEmpty(returnUrl))
             {
-                if (returnUrl.Contains("PasswordResetConfirm") || returnUrl.Equals("Account/Signin") || returnUrl.Equals("Account/Login"))
+                if (returnUrl.Contains("PasswordResetConfirm") || returnUrl.Equals("/Account/Signin") || returnUrl.Equals("/Account/Login"))
                     returnUrl = "/Account/MyWebinars";
 
                 loginModel.ReturnUrl = returnUrl;

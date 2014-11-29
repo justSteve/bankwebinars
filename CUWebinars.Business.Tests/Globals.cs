@@ -10,11 +10,13 @@ namespace CUWebinars.Business.Tests
         private static string _localDbConnectionString;
         private static string _membershipRebootConnectionString;
         private static string _ttsDatabaseLocal;
+        private static bool _useAzureWebjobs;
 
 
         static Globals()
         {
             _tenant = ConfigurationManager.AppSettings["Tenant"];
+            _useAzureWebjobs = bool.Parse(ConfigurationManager.AppSettings["UseAzureWebjobs"]);
             _localDbConnectionString = ConfigurationManager.ConnectionStrings[Constants.LocalDbConnectionStringName].ConnectionString;
             _membershipRebootConnectionString = ConfigurationManager.ConnectionStrings[Constants.MembershipRebootConnectionStringName].ConnectionString;
             _ttsDatabaseLocal= ConfigurationManager.ConnectionStrings[Constants.TtsDatabaseLocalName].ConnectionString;
@@ -38,6 +40,11 @@ namespace CUWebinars.Business.Tests
         public static string TtsDatabaseLocal
         {
             get { return _ttsDatabaseLocal; }
+        }
+
+        public static bool UseAzureWebjobs
+        {
+            get { return _useAzureWebjobs; }
         }
     }
 }
