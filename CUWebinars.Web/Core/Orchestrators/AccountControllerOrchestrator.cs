@@ -4,6 +4,7 @@ using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Membership;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
@@ -29,10 +30,11 @@ namespace CUWebinars.Web.Core.Orchestrators
     public class AccountControllerOrchestrator : IAccountControllerOrchestrator
     {
         private readonly GlobalConfig _globals = GlobalConfig.GlobalConfigSingleton;
-        public HttpRequestBase Request { get; set; }
+        private readonly HttpRequestBase _request;
         private readonly ILogger _logger;
         private readonly IMembershipService _membershipService;
         private readonly IStateService _stateService;
+        private readonly IAppHelper _appHelper;
         private readonly IOrderManagementService _orderManagementService;
         private bool _disposed;
 
@@ -41,15 +43,16 @@ namespace CUWebinars.Web.Core.Orchestrators
             IMembershipService membershipService,
             IOrderManagementService orderManagementService,
             IStateService stateService,
-            HttpRequestBase request)
+            HttpRequestBase request,
+            IAppHelper appHelper)
 
         {
-            Request = request;
+            _request = request;
             _logger = logger;
             _membershipService = membershipService;
             _orderManagementService = orderManagementService;
             _stateService = stateService;
-            
+            _appHelper = appHelper;
         }
 
         public bool LogUserIn(SignInModel signInModel)
@@ -201,17 +204,17 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             if (_membershipService.LogInUser(_globals.Tenant, model.Email, model.Password, model.RememberMe, out userMustVerify, model.SigninAfterCheckout))
             {
-                if (!ReferenceEquals(Request.ApplicationPath, null) && !ReferenceEquals(Request.Url, null))
+                if (!ReferenceEquals(_request.ApplicationPath, null) && !ReferenceEquals(_request.Url, null))
                 {
                     var retUrl = model.ReturnUrl.Replace(
                             string.Format(@"{0}://{1}{2}/",
-                            Request.Url.Scheme,
-                            Request.Url.Authority,
-                            Request.ApplicationPath.TrimEnd('/')),
+                            _request.Url.Scheme,
+                            _request.Url.Authority,
+                            _request.ApplicationPath.TrimEnd('/')),
                             string.Empty
                             );
 
-                    _logger.Info("Account.SignIn Post Success. Session={0}, Redirecting to: {1}", AppHelper.GetUserAuditInfo(), retUrl);
+                    _logger.Info("Account.SignIn Post Success. Session={0}, Redirecting to: {1}", _appHelper.GetUserAuditInfo(), retUrl);
                 }
 
                 return true;
@@ -250,7 +253,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 _membershipService.LogInUser(_globals.Tenant, model.Email, model.NewPassword, true);
 
-                _logger.Info("Account.Confirmed POST. Session={0}", AppHelper.GetUserAuditInfo());
+                _logger.Info("Account.Confirmed POST. Session={0}", _appHelper.GetUserAuditInfo());
                 
                 return true;
             }
@@ -382,40 +385,79 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public void CreateUserAccountFromCart(RegisterViewModel model)
         {
-            var storageCredentials = new StorageCredentials(_globals.StorageAccountName, _globals.StorageAccessKey);
-            var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
-
-            CloudQueueClient _queueClient = cloudStorageAccount.CreateCloudQueueClient();
-
-            CloudQueue cloudQueue = _queueClient.GetQueueReference(_globals.CreateUserQueueName);
-
-            var email = model.RegisterFields.Email.Trim();
-            var firstName = model.RegisterFields.FirstName.Trim();
-            var lastName = model.RegisterFields.LastName.Trim();
-
-            //first check if email exists
-            var userExists = _membershipService.GetUserAccountByEmail(_globals.Tenant, email);
-            if (userExists != null)
+            // This boolean is a toggle which live in the AppSettings of the config file.
+            if (_globals.UseAzureWebjobs)
             {
-                _logger.Error("dupe email attempt: " + email);
-                throw new Exception("User already exists.");
-            }
+                var storageCredentials = new StorageCredentials(_globals.StorageAccountName, _globals.StorageAccessKey);
+                var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
 
-            var registerFieldsDto = new RegisterFieldsDTO
-            {
-                Email = email,
-                FirstName = firstName,
-                LastName = lastName
-            };
+                CloudQueueClient _queueClient = cloudStorageAccount.CreateCloudQueueClient();
+
+                CloudQueue cloudQueue = _queueClient.GetQueueReference(_globals.CreateUserQueueName);
+
+                var email = model.RegisterFields.Email.Trim();
+                var firstName = model.RegisterFields.FirstName.Trim();
+                var lastName = model.RegisterFields.LastName.Trim();
+
+                //first check if email exists
+                var userExists = _membershipService.GetUserAccountByEmail(_globals.Tenant, email);
+                if (userExists != null)
+                {
+                    _logger.Error("dupe email attempt: " + email);
+                    throw new Exception("User already exists.");
+                }
+
+                var registerFieldsDto = new RegisterFieldsDTO
+                {
+                    Email = email,
+                    FirstName = firstName,
+                    LastName = lastName
+                };
 
 #if DEBUG
-            _logger.Info("Password {0} created for user {1}", model.RegisterFields.Password, model.RegisterFields.Email);
+                _logger.Info("Password {0} created for user {1}", model.RegisterFields.Password,
+                    model.RegisterFields.Email);
 #endif
 
-            var payload = JsonConvert.SerializeObject(registerFieldsDto);
-            var cloudQueueMessage = new CloudQueueMessage(payload);
-            cloudQueue.EncodeMessage = true;
-            cloudQueue.AddMessage(cloudQueueMessage);
+                var payload = JsonConvert.SerializeObject(registerFieldsDto);
+                var cloudQueueMessage = new CloudQueueMessage(payload);
+                cloudQueue.EncodeMessage = true;
+                cloudQueue.AddMessage(cloudQueueMessage);
+            }
+            else
+            {
+                var email = model.RegisterFields.Email.Trim();
+                var firstName = model.RegisterFields.FirstName.Trim();
+                var lastName = model.RegisterFields.LastName.Trim();
+
+                var password = PasswordGenerator.GenerateRandomString(8);
+
+                if (_stateService.HasValue(DomainConstants.TempPassword))
+                    _stateService.ClearValue(DomainConstants.TempPassword);
+
+                _stateService.SetValue(DomainConstants.TempPassword, password);
+
+                var userAccount = _membershipService.CreateUser(
+                    _globals.Tenant,
+                    firstName,
+                    lastName,
+                    string.Empty,
+                    //  Pass empty string for username because MembershipReboot assigns the email to the username field where emailIsUsername is true
+                    password,
+                    email);
+
+                _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.CartRegistration);
+
+                var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
+                _stateService.ClearValue(DomainConstants.VerificationKey);
+
+                _stateService.SetValue(DomainConstants.UserCreatedDuringCartCheckout, true);
+
+                _membershipService.VerifyEmailFromKey(
+                    verificationKey,
+                    password
+                    );                
+            }
 
         }
 
@@ -526,12 +568,12 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public string GetZipAddress(int zip)
         {
-            return AppHelper.GetCityStateFromZip(zip);
+            return _appHelper.GetCityStateFromZip(zip);
         }
 
         public LoginModel BuildLoginModel(string returnUrl)
         {
-            var urlHelper = new UrlHelper(Request.RequestContext); 
+            var urlHelper = new UrlHelper(_request.RequestContext); 
 
             var loginModel = new LoginModel
             {
@@ -549,15 +591,15 @@ namespace CUWebinars.Web.Core.Orchestrators
             };
 
             //So that the user can be referred back to where they were when they click logon
-            if (string.IsNullOrEmpty(returnUrl) && Request.UrlReferrer != null)
+            if (string.IsNullOrEmpty(returnUrl) && _request.UrlReferrer != null)
             {
-                returnUrl = HttpUtility.UrlDecode(Request.UrlReferrer.PathAndQuery);
-                _logger.Info("Login|returnURL was: " + returnUrl + " Session=" + AppHelper.GetUserAuditInfo());
+                returnUrl = HttpUtility.UrlDecode(_request.UrlReferrer.PathAndQuery);
+                _logger.Info("Login|returnURL was: " + returnUrl + " Session=" + _appHelper.GetUserAuditInfo());
             }
 
             if (urlHelper.IsLocalUrl(returnUrl) && !string.IsNullOrEmpty(returnUrl))
             {
-                if (returnUrl.Contains("PasswordResetConfirm") || returnUrl.Equals("Account/Signin") || returnUrl.Equals("Account/Login"))
+                if (returnUrl.Contains("PasswordResetConfirm") || returnUrl.Equals("/Account/Signin") || returnUrl.Equals("/Account/Login"))
                     returnUrl = "/Account/MyWebinars";
 
                 loginModel.ReturnUrl = returnUrl;
@@ -578,7 +620,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 NewPassword = string.Empty,
                 ConfirmPassword = string.Empty,
                 ScreenMessage = string.Empty,
-                UserIsLoggedIn = Request.IsAuthenticated
+                UserIsLoggedIn = _request.IsAuthenticated
             };
 
             var userAccount = _membershipService.GetUserAccountByEmail(_globals.Tenant, email);

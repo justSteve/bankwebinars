@@ -26,6 +26,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         private readonly IStateService _stateService;
         private readonly IMembershipService _membershipService;
         private readonly ILogger _logger;
+        private readonly IAppHelper _appHelper;
         private readonly IOrderManagementService _orderManagementService;
         private readonly IWebinarManagementService _webinarManagementService;
         private bool _disposed;
@@ -35,11 +36,13 @@ namespace CUWebinars.Web.Core.Orchestrators
             IWebinarManagementService webinarManagementService,
             IStateService stateService,
             ILogger logger,
-            HttpRequestWrapper request)
+            HttpRequestWrapper request,
+            IAppHelper appHelper)
         {
             Request = request;
             _membershipService = membershipService;
             _logger = logger;
+            _appHelper = appHelper;
             _orderManagementService = orderManagementService;
             _webinarManagementService = webinarManagementService;
             _stateService = stateService;
@@ -507,7 +510,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     null);
  
             var newOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
-            newOrder.AuditInfo = AppHelper.GetUserAuditInfo();
+            newOrder.AuditInfo = _appHelper.GetUserAuditInfo();
             newOrder.Origin = _orderManagementService.GetOrderInitiator();
 
             newOrder = _orderManagementService.SaveOrderChanges(newOrder, string.Empty, string.Empty);

@@ -32,6 +32,7 @@ namespace CUWebinars.Web.Controllers.Admin
     public class AdminController : Controller
     {
         private readonly IOrderManagementService _orderManagementService;
+        private readonly IAppHelper _appHelper;
         private readonly IMembershipService _membershipService;
         private readonly ILogger _logger;
         private readonly IWebinarManagementService _webinarManagementService;
@@ -48,13 +49,14 @@ namespace CUWebinars.Web.Controllers.Admin
 
         //
         // GET: /Admin/
-        public AdminController(IMembershipService membershipService, ILogger logger, IStateService stateService, IWebinarManagementService webinarManagementService, IOrderManagementService orderManagementService)
+        public AdminController(IMembershipService membershipService, ILogger logger, IStateService stateService, IWebinarManagementService webinarManagementService, IOrderManagementService orderManagementService, IAppHelper appHelper)
         {
             _membershipService = membershipService;
             _logger = logger;
             _stateService = stateService;
             _webinarManagementService = webinarManagementService;
             _orderManagementService = orderManagementService;
+            _appHelper = appHelper;
         }
         public PartialViewResult ResendOrderConfirmation()
         {
@@ -364,7 +366,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
             }
 
-            _logger.Error("ManualPasswordReset: {0}", AppHelper.GetUserAuditInfo());
+            _logger.Error("ManualPasswordReset: {0}", _appHelper.GetUserAuditInfo());
             _logger.Error("ManualPasswordReset: {0}", myErr);
 
             return Json(new { Result = WebUiConstants.Fail + myErr });

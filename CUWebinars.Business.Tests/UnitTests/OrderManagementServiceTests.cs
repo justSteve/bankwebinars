@@ -30,7 +30,7 @@ namespace CUWebinars.Business.Tests.UnitTests
         private ILogger logger = new Log4NetLogger(typeof (OrderManagementService));
 
         private TtsConfiguration ttsConfig =
-            TtsConfig.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TestConstants.UpTwoFolders));
+            TtsConfig.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TestConstants.UpTwoFolders), Globals.UseAzureWebjobs);
 
         [TestInitialize]
         public void Setup()

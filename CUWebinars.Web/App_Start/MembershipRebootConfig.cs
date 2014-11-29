@@ -1,6 +1,7 @@
 using BrockAllen.MembershipReboot;
 using BrockAllen.MembershipReboot.WebHost;
 using CUWebinars.Business.Notification.Email;
+using CUWebinars.Web.Core;
 using CUWebinars.Web.Membership.Email;
 using CUWebinars.Web.Services;
 
@@ -22,8 +23,13 @@ namespace CUWebinars.Web.App_Start
                 "Account/RegisterCancel/",
                 "Account/PasswordResetConfirm/");
 
-            var delivery = new AzureWebJobSmtpMessageDelivery(stateService);
-            //var delivery = new TtsSmtpMessageDelivery(stateService);
+            IMessageDelivery delivery;
+
+            if(GlobalConfig.GlobalConfigSingleton.UseAzureWebjobs)
+                delivery = new AzureWebJobSmtpMessageDelivery(stateService);
+            else
+                delivery = new TtsSmtpMessageDelivery(stateService);
+                
             var emailFormatter = new TtsEmailFormatter(appinfo, stateService) { PathToRoot = pathToRootDirectory };
 
             // uncomment if you want email notifications -- also update smtp settings in web.config

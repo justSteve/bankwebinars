@@ -22,6 +22,7 @@ namespace CUWebinars.Web.Core
         public string TenantLogo { get; private set; }
         public string TenantPrefix { get; private set; }
         public string UnAuthenticatedUser { get; private set; }
+        public bool UseAzureWebjobs { get; private set; }
         public string WMVRepository { get; private set; }
 
         private GlobalConfig()
@@ -54,6 +55,7 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.TenantLogo = ApplicationSettingsSection["TenantLogo"];
                 UniqueInstance.TenantPrefix = ApplicationSettingsSection["TenantPrefix"];
                 UniqueInstance.UnAuthenticatedUser = ApplicationSettingsSection["UnAuthenticatedUser"];
+                UniqueInstance.UseAzureWebjobs = bool.Parse(ApplicationSettingsSection["UseAzureWebjobs"]);
 
                 UniqueInstance.MembershipConnectionString = WebConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString;
             }

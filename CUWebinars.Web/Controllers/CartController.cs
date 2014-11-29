@@ -18,13 +18,16 @@ namespace CUWebinars.Web.Controllers
     {
         private readonly ILogger _logger;
         private readonly ICartControllerOrchestrator _cartControllerOrchestrator;
+        private readonly IAppHelper _appHelper;
         private bool _disposed;
 
         public CartController(ILogger logger,
-            ICartControllerOrchestrator cartControllerOrchestrator)
+            ICartControllerOrchestrator cartControllerOrchestrator,
+            IAppHelper appHelper)
         {
             _logger = logger;
             _cartControllerOrchestrator = cartControllerOrchestrator;
+            _appHelper = appHelper;
         }
 
         [HttpPost]
@@ -158,13 +161,13 @@ namespace CUWebinars.Web.Controllers
                 //telemetry.TrackEvent("Signup2Start");
                 try
                 {
-                    _logger.Info("Signup2 Enters: " + AppHelper.GetUserAuditInfo());
+                    _logger.Info("Signup2 Enters: " + _appHelper.GetUserAuditInfo());
                     var order = _cartControllerOrchestrator.CreateOrder(
                         formModel
                         );
 
                     // todo: if in progress, will have to show populated partial view.
-                    _logger.Info("Signup2 order initialized: " + AppHelper.GetUserAuditInfo());
+                    _logger.Info("Signup2 order initialized: " + _appHelper.GetUserAuditInfo());
                     
                     return Json(new
                     {
@@ -209,7 +212,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (Exception exception)
                 {
-                    _logger.ErrorException("RemoveAdditionalLocationsFromOrder|Session=" + AppHelper.GetUserAuditInfo(), exception);
+                    _logger.ErrorException("RemoveAdditionalLocationsFromOrder|Session=" + _appHelper.GetUserAuditInfo(), exception);
                 }
 
                 return Json(new { Result = WebUiConstants.Success });

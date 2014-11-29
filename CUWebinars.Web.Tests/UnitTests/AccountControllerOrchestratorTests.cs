@@ -33,7 +33,10 @@ namespace CUWebinars.Web.Tests.UnitTests
     [TestClass]
     public class AccountControllerOrchestratorTests
     {
+        private const string AuditInfo = "Account.SignIn Post Success. Session=<AuditInfo><RemoteAddress>::1</RemoteAddress><RemoteHost>::1</RemoteHost><RemoteUser></RemoteUser><UserAgent>Mozilla/5.0 (Windows NT 6.1; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0</UserAgent><Cookie>{0}</Cookie></AuditInfo>, Redirecting to: {1}";
+        
         private IAccountControllerOrchestrator _accountControllerOrchestrator;
+        private Mock<IAppHelper> _appHelperMock = new Mock<IAppHelper>();
         private Mock<IMembershipService> _membershipServiceMock = new Mock<IMembershipService>();
         private Mock<IOrderManagementService> _orderManagementServiceMock = new Mock<IOrderManagementService>();
         private Mock<ILogger> _loggerMock = new Mock<ILogger>();
@@ -92,6 +95,11 @@ namespace CUWebinars.Web.Tests.UnitTests
                 ReturnUrl = "/"
             };
             
+            var request = new HttpRequestFake1();
+
+            _appHelperMock.Setup(i => i.GetUserAuditInfo()).Returns(string.Format(AuditInfo, request.ServerVariables[TestConstants.HttpCookie], signInModel.ReturnUrl)
+                );
+
             _membershipServiceMock.Setup(i => i.LogInUser("CUWebinars", signInModel.Email, signInModel.Password, signInModel.RememberMe, out userMustVerify, false))
                 .Returns(true);
 
@@ -100,7 +108,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                new HttpRequestFake1()
+                request,
+                _appHelperMock.Object
                 );
 
             //  Act
@@ -112,27 +121,117 @@ namespace CUWebinars.Web.Tests.UnitTests
         }
 
         [TestMethod]
-        public void BuildLoginModelReturnsLoginModel()
+        public void SignUserInSignsInUserAndConstructsReturnUrlForLogging()
         {
             //  Arrange
             string userMustVerify;
+            var signInModel = new SignInModel
+            {
+                Email = "dave@dave.com",
+                Password = "gfhjdg",
+                RememberMe = true,
+                ReturnUrl = "/"
+            };
+            
+            var request = new HttpRequestFake1();
 
-            _membershipServiceMock.Setup(i => i.LogInUser("CUWebinars", It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), out userMustVerify, false)).Returns(true);
+            var retUrl = signInModel.ReturnUrl.Replace(string.Format(@"{0}://{1}{2}/", request.Url.Scheme, request.Url.Authority, request.ApplicationPath.TrimEnd('/')),string.Empty);
 
+            _appHelperMock.Setup(i => i.GetUserAuditInfo()).Returns(string.Format(AuditInfo, request.ServerVariables[TestConstants.HttpCookie], signInModel.ReturnUrl)
+                );
+
+            //  This test is testing that the returnUrl is re-constructed from the HttpRequest object and passed to the logger's Info method.
+            _loggerMock.Setup(i => i.Info(It.IsAny<string>(), It.IsAny<string>(), retUrl)).Verifiable();
+
+            _membershipServiceMock.Setup(i => i.LogInUser("CUWebinars", signInModel.Email, signInModel.Password, signInModel.RememberMe, out userMustVerify, false))
+                .Returns(true);
 
             _accountControllerOrchestrator = new AccountControllerOrchestrator(
                 _loggerMock.Object,
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                new HttpRequestFake1()
+                request,
+                _appHelperMock.Object
                 );
 
             //  Act
-            var logInModel = _accountControllerOrchestrator.BuildLoginModel(null);
+            var result = _accountControllerOrchestrator.SignUserIn(signInModel, out userMustVerify);
 
             //  Assert                        
-            Assert.IsTrue(logInModel.ReturnUrl.Equals(Path.AltDirectorySeparatorChar.ToString()));
+            _loggerMock.Verify();
+
+        }
+
+        [TestMethod]
+        public void SignUserInThrowsNullReferenceExceptionWhereReturnUrlPropertyOnModelIsNull()
+        {
+            //  Arrange
+            string userMustVerify;
+            var signInModel = new SignInModel
+            {
+                Email = "dave@dave.com",
+                Password = "gfhjdg",
+                RememberMe = true,
+                ReturnUrl = null
+            };
+            
+            var request = new HttpRequestFake1();
+
+            //  This test is testing that the returnUrl in the model cannot be null if the RequestContext's ApplicationPath and Url properties are not null.
+            _membershipServiceMock.Setup(i => i.LogInUser("CUWebinars", signInModel.Email, signInModel.Password, signInModel.RememberMe, out userMustVerify, false))
+                .Returns(true);
+
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                request,
+                _appHelperMock.Object
+                );
+
+            //  Act
+            //  Assert                        
+            ExceptionAssert.Throws<NullReferenceException>(() => _accountControllerOrchestrator.SignUserIn(signInModel, out userMustVerify));
+        }
+
+        [TestMethod]
+        public void SignUserInFailsToSignsInUserWhereInavlidCredentials()
+        {
+            //  Arrange
+            string userMustVerify;
+            var signInModel = new SignInModel
+            {
+                Email = "dave@dave.com",
+                Password = "invalid",
+                RememberMe = true,
+                ReturnUrl = "/"
+            };
+            
+            var request = new HttpRequestFake1();
+
+            _appHelperMock.Setup(i => i.GetUserAuditInfo()).Returns(string.Format(AuditInfo, request.ServerVariables[TestConstants.HttpCookie], signInModel.ReturnUrl)
+                );
+
+            _membershipServiceMock.Setup(i => i.LogInUser("CUWebinars", signInModel.Email, signInModel.Password, signInModel.RememberMe, out userMustVerify, false))
+                .Returns(false);
+
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                request,
+                _appHelperMock.Object
+                );
+
+            //  Act
+            var result = _accountControllerOrchestrator.SignUserIn(signInModel, out userMustVerify);
+
+            //  Assert                        
+            Assert.IsFalse(result);
+
         }
 
         [TestMethod]
@@ -154,7 +253,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
                 );
 
             //  Act
@@ -183,7 +283,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
                 );
 
             //  Act
@@ -204,7 +305,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
                 );
 
             //  Act
@@ -226,7 +328,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
                 );
             _accountControllerOrchestrator.UpdateBillingEmailOfOrder(5, _webTestsGlobals.LoggedInUserEmail);
 
@@ -246,7 +349,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
                 );
 
             _accountControllerOrchestrator.ResetPassword(_webTestsGlobals.Tenant, _webTestsGlobals.LoggedInUserEmail);
@@ -259,7 +363,7 @@ namespace CUWebinars.Web.Tests.UnitTests
         public void RegisterAndLogInUserCallsProcessInstitutionForUserOfMembershipServiceMock()
         {
             //  Arrange
-            var verificationKey = TestHelper.RandomString(5);
+            var verificationKey = TestHelper.RandomStringFast(5);
             var institution = new Institution {idInstitution = 19};
             _stateServiceMock.Setup(i => i.HasValue(DomainConstants.VerificationKey)).Returns(true);
             _stateServiceMock.Setup(i => i.GetValue<string>(DomainConstants.VerificationKey)).Returns(verificationKey);
@@ -276,7 +380,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
                 );
             
             //  Act
@@ -290,7 +395,7 @@ namespace CUWebinars.Web.Tests.UnitTests
         public void RegisterAndLogInUserResultsInVerificationKeyPlacedInSession()
         {
             //  Arrange
-            var verificationKey = TestHelper.RandomString(5);
+            var verificationKey = TestHelper.RandomStringFast(5);
             var institution = new Institution {idInstitution = 19};
             _stateServiceMock.Setup(i => i.HasValue(DomainConstants.VerificationKey)).Returns(true);
             _stateServiceMock.Setup(i => i.GetValue<string>(DomainConstants.VerificationKey)).Returns(verificationKey).Verifiable();
@@ -307,7 +412,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
                 );
             
             //  Act
@@ -321,7 +427,7 @@ namespace CUWebinars.Web.Tests.UnitTests
         public void RegisterAndLogInUserClearsTempPasswordFromSession()
         {
             //  Arrange
-            var verificationKey = TestHelper.RandomString(5);
+            var verificationKey = TestHelper.RandomStringFast(5);
             var institution = new Institution {idInstitution = 19};
             _stateServiceMock.Setup(i => i.HasValue(DomainConstants.TempPassword)).Returns(true);
             _stateServiceMock.Setup(i => i.ClearValue(DomainConstants.TempPassword)).Verifiable();
@@ -340,7 +446,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
                 );
             
             //  Act
@@ -354,7 +461,7 @@ namespace CUWebinars.Web.Tests.UnitTests
         public void RegisterAndLogInUserDoesNotClearsTempPasswordFromSessionWhenNotInSession()
         {
             //  Arrange
-            var verificationKey = TestHelper.RandomString(5);
+            var verificationKey = TestHelper.RandomStringFast(5);
             var institution = new Institution { idInstitution = 19 };
             _stateServiceMock.Setup(i => i.HasValue(DomainConstants.TempPassword)).Returns(false);
             _stateServiceMock.Setup(i => i.HasValue(DomainConstants.VerificationKey)).Returns(true);
@@ -372,8 +479,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request
-                );
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object);
 
             //  Act
             _accountControllerOrchestrator.RegisterAndLogInUser(registerViewModel);
@@ -386,7 +493,7 @@ namespace CUWebinars.Web.Tests.UnitTests
         public void RegisterAndLogInUserCallsCreateWebUser()
         {
             //  Arrange
-            var verificationKey = TestHelper.RandomString(5);
+            var verificationKey = TestHelper.RandomStringFast(5);
             var institution = new Institution { idInstitution = 19 };
             _stateServiceMock.Setup(i => i.HasValue(DomainConstants.TempPassword)).Returns(false);
             _stateServiceMock.Setup(i => i.HasValue(DomainConstants.VerificationKey)).Returns(true);
@@ -406,7 +513,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
                 );
 
             //  Act
@@ -420,7 +528,7 @@ namespace CUWebinars.Web.Tests.UnitTests
         public void RegisterAndLogInUserCallsCreateWebUserOfMembershipServiceMock()
         {
             //  Arrange
-            var verificationKey = TestHelper.RandomString(5);
+            var verificationKey = TestHelper.RandomStringFast(5);
             var institution = new Institution { idInstitution = 19 };
             _stateServiceMock.Setup(i => i.HasValue(DomainConstants.TempPassword)).Returns(false);
             _stateServiceMock.Setup(i => i.HasValue(DomainConstants.VerificationKey)).Returns(true);
@@ -441,7 +549,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
                 );
 
             //  Act
@@ -452,22 +561,423 @@ namespace CUWebinars.Web.Tests.UnitTests
         }
 
         [TestMethod]
-        public void BuildRegisterViewModelReturnsRegisterViewModel()
+        public void GetZipAddressReturnsZipWhereZipGetsHit()
         {
-    //        //  Arrange
-    //        _accountControllerOrchestrator = new AccountControllerOrchestrator(
-    //_loggerMock.Object,
-    //_membershipServiceMock.Object,
-    //_orderManagementServiceMock.Object,
-    //_stateServiceMock.Object,
-    //GetMockedHttpContext().Request
-    //);
+            //  Arrange
+            _appHelperMock.Setup(i => i.GetCityStateFromZip(It.IsAny<int>())).Returns("WILLISTON,ND,-6");
 
-    //        //  Act
-    //        var model = _accountControllerOrchestrator.bui
-    //        //  Assert                        
-		   
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
+                );
+            //  Act
+            var zipAddress = _accountControllerOrchestrator.GetZipAddress(54535);
+
+            //  Assert                        
+            Assert.IsInstanceOfType(zipAddress, typeof (string));
         }
+
+        [TestMethod]
+        public void GetZipAddressReturnsZipWhereZipGetsNoHits()
+        {
+            //  Arrange
+            _appHelperMock.Setup(i => i.GetCityStateFromZip(It.IsAny<int>())).Returns(string.Empty);
+
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
+                );
+            //  Act
+            var zipAddress = _accountControllerOrchestrator.GetZipAddress(54535);
+            
+            //  Assert                        
+            Assert.AreEqual(zipAddress, string.Empty);
+        }
+
+
+        [TestMethod]
+        public void UserConfirmedReturnsTrueWhenVerifiedSuccessfully()
+        {
+            //  Arrange
+            var model = new CreateUserConfirmedViewModel
+            {
+                NewPassword = TestConstants.PasswordNew,
+                Email = TestConstants.Email,
+                OldPassword = TestConstants.PasswordOld
+            };
+
+            var request = new HttpRequestFake1();
+            var verificationKey = TestHelper.RandomStringFast(8);
+
+            _membershipServiceMock.Setup(i => i.VerifyUserByEmail(_webTestsGlobals.Tenant, model.Email)).Returns(true);
+            _stateServiceMock.Setup(i => i.SetValue(DomainConstants.UserCreatedViaNewOrder, true));
+            _stateServiceMock.Setup(i => i.GetValue<string>(DomainConstants.VerificationKey)).Returns(verificationKey);
+            
+            _membershipServiceMock.Setup(i => i.ChangePasswordFromResetKey(verificationKey, model.NewPassword)).Returns(true);
+            _membershipServiceMock.Setup(i => i.LogInUser(_webTestsGlobals.Tenant,model.Email, model.NewPassword, true)).Returns(true);
+            
+            _appHelperMock.Setup(i => i.GetUserAuditInfo()).Returns(string.Format(AuditInfo, request.ServerVariables[TestConstants.HttpCookie], TestConstants.HomeUrlRelative));
+
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
+                );
+
+            //  Act
+            var result = _accountControllerOrchestrator.UserConfirmed(model);
+            
+            //  Assert                        
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void UserConfirmedReturnsFalseWhenVerifiedSuccessfully()
+        {
+            //  Arrange
+            var model = new CreateUserConfirmedViewModel
+            {
+                NewPassword = TestConstants.PasswordNew,
+                Email = TestConstants.Email,
+                OldPassword = TestConstants.PasswordOld
+            };
+
+            _membershipServiceMock.Setup(i => i.VerifyUserByEmail(_webTestsGlobals.Tenant, model.Email)).Returns(false);
+
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
+                );
+
+            //  Act
+            var result = _accountControllerOrchestrator.UserConfirmed(model);
+
+            //  Assert                        
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void StateServiceSetsUserCreatedViaNewOrderValueWhenUserVerifiedSuccessfully()
+        {
+            //  Arrange
+            var model = new CreateUserConfirmedViewModel
+            {
+                NewPassword = TestConstants.PasswordNew,
+                Email = TestConstants.Email,
+                OldPassword = TestConstants.PasswordOld
+            };
+
+            var request = new HttpRequestFake1();
+            var verificationKey = TestHelper.RandomStringFast(8);
+
+            _membershipServiceMock.Setup(i => i.VerifyUserByEmail(_webTestsGlobals.Tenant, model.Email)).Returns(true);
+            
+            //  This is the bit we are verifying and asserting against. It may seem like a private implementation detail,
+            //  but it is actually important in downstream operations that the StateService sets that value.
+            _stateServiceMock.Setup(i => i.SetValue(DomainConstants.UserCreatedViaNewOrder, true)).Verifiable();
+            _stateServiceMock.Setup(i => i.GetValue<string>(DomainConstants.VerificationKey)).Returns(verificationKey);
+
+            _membershipServiceMock.Setup(i => i.ChangePasswordFromResetKey(verificationKey, model.NewPassword)).Returns(true);
+            _membershipServiceMock.Setup(i => i.LogInUser(_webTestsGlobals.Tenant, model.Email, model.NewPassword, true)).Returns(true);
+
+            _appHelperMock.Setup(i => i.GetUserAuditInfo()).Returns(string.Format(AuditInfo, request.ServerVariables[TestConstants.HttpCookie], TestConstants.HomeUrlRelative));
+
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
+                );
+
+            //  Act
+            var result = _accountControllerOrchestrator.UserConfirmed(model);
+
+            //  Assert                        
+            _stateServiceMock.Verify();
+        }
+        
+        [TestMethod]
+        public void StateServiceClearsUserCreatedViaNewOrderValueWhenUserVerifiedSuccessfully()
+        {
+            //  Arrange
+            var model = new CreateUserConfirmedViewModel
+            {
+                NewPassword = TestConstants.PasswordNew,
+                Email = TestConstants.Email,
+                OldPassword = TestConstants.PasswordOld
+            };
+
+            var request = new HttpRequestFake1();
+            var verificationKey = TestHelper.RandomStringFast(8);
+
+            _membershipServiceMock.Setup(i => i.VerifyUserByEmail(_webTestsGlobals.Tenant, model.Email)).Returns(true);
+            
+            _stateServiceMock.Setup(i => i.GetValue<string>(DomainConstants.VerificationKey)).Returns(verificationKey);
+
+            //  This is the bit we are verifying and asserting against. It may seem like a private implementation detail,
+            //  but it is actually important that after the notifications are sent, the StateService clears that value.
+            _stateServiceMock.Setup(i => i.ClearValue(DomainConstants.UserCreatedViaNewOrder)).Verifiable();
+
+            _membershipServiceMock.Setup(i => i.ChangePasswordFromResetKey(verificationKey, model.NewPassword)).Returns(true);
+            _membershipServiceMock.Setup(i => i.LogInUser(_webTestsGlobals.Tenant, model.Email, model.NewPassword, true)).Returns(true);
+
+            _appHelperMock.Setup(i => i.GetUserAuditInfo()).Returns(string.Format(AuditInfo, request.ServerVariables[TestConstants.HttpCookie], TestConstants.HomeUrlRelative));
+
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
+                );
+
+            //  Act
+            var result = _accountControllerOrchestrator.UserConfirmed(model);
+
+            //  Assert                        
+            _stateServiceMock.Verify();
+        }
+
+
+        [TestMethod]
+        public void BuildLoginModelReturnsLoginModel()
+        {
+            //  Arrange
+            var fake = new HttpRequestFake1();
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
+                );
+
+            //  Act
+            var result = _accountControllerOrchestrator.BuildLoginModel(TestConstants.HomeUrlRelative);
+
+            //  Assert                        
+            Assert.IsInstanceOfType(result, typeof (LoginModel));
+        }
+
+        [TestMethod]
+        public void BuildLoginModelLogsReturnUrlWhereNullPassedAsParameter()
+        {
+            //  Arrange
+            var request = new HttpRequestFake1();
+            _appHelperMock.Setup(i => i.GetUserAuditInfo()).Returns(string.Format(AuditInfo, request.ServerVariables[TestConstants.HttpCookie], TestConstants.HomeUrlRelative)
+    );
+
+            _loggerMock.Setup(i => i.Info(It.IsAny<string>())).Verifiable();
+            
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
+                );
+
+            //  Act
+            var result = _accountControllerOrchestrator.BuildLoginModel(null);
+
+            //  Assert                        
+            _loggerMock.Verify();
+        }
+
+        [TestMethod]
+        public void BuildLoginModelReturnsLoginModelWithNonNullReturnUrlWhereNullPassedAsParameter()
+        {
+            //  Arrange
+            var request = new HttpRequestFake1();
+            _appHelperMock.Setup(i => i.GetUserAuditInfo()).Returns(string.Format(AuditInfo, request.ServerVariables[TestConstants.HttpCookie], TestConstants.HomeUrlRelative)
+    );
+
+            _loggerMock.Setup(i => i.Info(It.IsAny<string>())).Verifiable();
+            
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
+                );
+
+            //  Act
+            var result = _accountControllerOrchestrator.BuildLoginModel(null);
+
+            //  Assert                        
+            Assert.IsNotNull(result.ReturnUrl);
+        }
+
+        [TestMethod]
+        public void BuildLoginModelReturnsLoginModelWithReturnUrlWhichIsSameAsPassedAsParameter()
+        {
+            //  Arrange
+            var request = new HttpRequestFake1();
+            _appHelperMock.Setup(i => i.GetUserAuditInfo()).Returns(string.Format(AuditInfo, request.ServerVariables[TestConstants.HttpCookie], TestConstants.HomeUrlRelative)
+    );
+
+            _loggerMock.Setup(i => i.Info(It.IsAny<string>())).Verifiable();
+            
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
+                );
+
+            //  Act
+            var result = _accountControllerOrchestrator.BuildLoginModel(TestConstants.HomeUrlRelative);
+
+            //  Assert                        
+            Assert.AreEqual(result.ReturnUrl, TestConstants.HomeUrlRelative);
+        }
+
+        [TestMethod]
+        public void BuildLoginModelReturnsLoginModelWithMyWebinarUrlWhereReturnUrlIsAccountSlashSignin()
+        {
+            //  Arrange
+            var request = new HttpRequestFake1();
+            _appHelperMock.Setup(i => i.GetUserAuditInfo()).Returns(string.Format(AuditInfo, request.ServerVariables[TestConstants.HttpCookie], TestConstants.HomeUrlRelative)
+    );
+
+            _loggerMock.Setup(i => i.Info(It.IsAny<string>())).Verifiable();
+            
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
+                );
+
+            //  Act
+            var result = _accountControllerOrchestrator.BuildLoginModel("/Account/Signin");
+
+            //  Assert                        
+            Assert.AreEqual(result.ReturnUrl, "/Account/MyWebinars");
+        }
+
+        [TestMethod]
+        public void BuildLoginModelReturnsLoginModelWithMyWebinarUrlWhereReturnUrlIsAccountSlashLogin()
+        {
+            //  Arrange
+            var request = new HttpRequestFake1();
+            _appHelperMock.Setup(i => i.GetUserAuditInfo()).Returns(string.Format(AuditInfo, request.ServerVariables[TestConstants.HttpCookie], TestConstants.HomeUrlRelative)
+    );
+
+            _loggerMock.Setup(i => i.Info(It.IsAny<string>())).Verifiable();
+            
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
+                );
+
+            //  Act
+            var result = _accountControllerOrchestrator.BuildLoginModel("/Account/Login");
+
+            //  Assert                        
+            Assert.AreEqual(result.ReturnUrl, "/Account/MyWebinars");
+        }
+
+        [TestMethod]
+        public void BuildLoginModelReturnsLoginModelWithMyWebinarUrlWhereReturnUrlContainsPasswordResetConfirm()
+        {
+            //  Arrange
+            var request = new HttpRequestFake1();
+            _appHelperMock.Setup(i => i.GetUserAuditInfo()).Returns(string.Format(AuditInfo, request.ServerVariables[TestConstants.HttpCookie], TestConstants.HomeUrlRelative)
+    );
+
+            _loggerMock.Setup(i => i.Info(It.IsAny<string>())).Verifiable();
+            
+            _accountControllerOrchestrator = new AccountControllerOrchestrator(
+                _loggerMock.Object,
+                _membershipServiceMock.Object,
+                _orderManagementServiceMock.Object,
+                _stateServiceMock.Object,
+                GetMockedHttpContext().Request,
+                _appHelperMock.Object
+                );
+
+            //  Act
+            var result = _accountControllerOrchestrator.BuildLoginModel("/Account/PasswordResetConfirm");
+
+            //  Assert                        
+            Assert.AreEqual(result.ReturnUrl, "/Account/MyWebinars");
+        }
+
+        //    [TestMethod]
+    //    public void BuildRegisterViewModelReturnsRegisterViewModel()
+    //    {
+    ////        //  Arrange
+    ////        _accountControllerOrchestrator = new AccountControllerOrchestrator(
+    ////_loggerMock.Object,
+    ////_membershipServiceMock.Object,
+    ////_orderManagementServiceMock.Object,
+    ////_stateServiceMock.Object,
+    ////GetMockedHttpContext().Request,
+    ////_appHelperMock.Object
+    ////);
+
+    ////        //  Act
+    ////        var model = _accountControllerOrchestrator
+    ////        //  Assert                        
+		   
+    //    }
+
+        //[TestMethod]
+        //public void BuildLoginModelReturnsLoginModel()
+        //{
+        //    //  Arrange
+        //    string userMustVerify;
+
+        //    _membershipServiceMock.Setup(i => i.LogInUser("CUWebinars", It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), out userMustVerify, false)).Returns(true);
+
+
+        //    _accountControllerOrchestrator = new AccountControllerOrchestrator(
+        //        _loggerMock.Object,
+        //        _membershipServiceMock.Object,
+        //        _orderManagementServiceMock.Object,
+        //        _stateServiceMock.Object,
+        //        new HttpRequestFake1(),
+        //        _appHelperMock.Object
+        //        );
+
+        //    //  Act
+        //    var logInModel = _accountControllerOrchestrator.BuildLoginModel(null);
+
+        //    //  Assert                        
+        //    Assert.IsTrue(logInModel.ReturnUrl.Equals(Path.AltDirectorySeparatorChar.ToString()));
+        //}
+
 
         #region Helper methods
 
@@ -490,7 +1000,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                HttpContextFactory.Current.Request
+                HttpContextFactory.Current.Request,
+                _appHelperMock.Object
                 );
 
             var data = new DataOperations {ConnectionString = _globals.MembershipConnectionString};

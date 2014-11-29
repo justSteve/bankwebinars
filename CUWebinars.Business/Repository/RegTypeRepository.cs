@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using CUWebinars.Business.Models;
@@ -51,5 +52,11 @@ namespace CUWebinars.Business.Repository
             return regTypes;
         }
 
+        public bool IsShippingAddressRequired(int regTypeId)
+        {
+            var regType = items.Find(regTypeId);
+
+            return regType.ShowShippedNotifications.Trim().Equals("Yes", StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

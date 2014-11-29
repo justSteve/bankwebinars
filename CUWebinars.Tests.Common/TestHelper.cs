@@ -24,6 +24,8 @@ namespace CUWebinars.Tests.Common
 {
     public class TestHelper
     {
+        private static readonly Random Random = new Random((int)DateTime.Now.Ticks);
+
         public static IMembershipService CreateMembershipService()
         {
             ILogger logger = new Log4NetLogger(typeof (MembershipService));
@@ -73,12 +75,10 @@ namespace CUWebinars.Tests.Common
             return email;
         }
 
-        private static readonly Random Random = new Random((int) DateTime.Now.Ticks);
-
         /// <summary>
         /// Taken from StackOverflow answer http://stackoverflow.com/a/1122519/540156
         /// </summary>
-        public static string RandomString(int size)
+        public static string RandomStringFast(int size)
         {
             var builder = new StringBuilder(size);
             for (var i = 0; i < size; i++)

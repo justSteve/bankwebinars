@@ -26,15 +26,17 @@ namespace CUWebinars.Web.Controllers
         private readonly IOrderControllerOrchestrator _orderControllerOrchestrator;
         private IOrderManagementService _orderManagementService;
         private IWebinarManagementService _webinarManagementService;
+        private readonly IAppHelper _appHelper;
 
         private bool _disposed;
 
-        public OrderController(ILogger logger, IOrderControllerOrchestrator orderControllerOrchestrator, IOrderManagementService orderManagementService, IWebinarManagementService webinarManagementService)
+        public OrderController(ILogger logger, IOrderControllerOrchestrator orderControllerOrchestrator, IOrderManagementService orderManagementService, IWebinarManagementService webinarManagementService, IAppHelper appHelper)
         {
             _logger = logger;
             _orderControllerOrchestrator = orderControllerOrchestrator;
             _orderManagementService = orderManagementService;
             _webinarManagementService = webinarManagementService;
+            _appHelper = appHelper;
         }
 
         [HttpPost]
@@ -311,8 +313,7 @@ namespace CUWebinars.Web.Controllers
         {
             //Please use this general pattern when logging ModelState errors.
             var myErr = "ProcessModelStateErrors found errors. Session Info: " + Environment.NewLine;
-            myErr +=
-                AppHelper.GetUserAuditInfo();
+            myErr += _appHelper.GetUserAuditInfo();
 
             foreach (ModelState modelState in ViewData.ModelState.Values)
             {
