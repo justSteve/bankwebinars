@@ -82,7 +82,7 @@ namespace CUWebinars.Tests.Common
                 using (var getMostRecentOrderOfUser = new SqlCommand())
                 {
                     getMostRecentOrderOfUser.Connection = sqlConnection;
-                    getMostRecentOrderOfUser.CommandText = string.Format("SELECT TOP 1 * FROM [CUWebinars].[dbo].[Order] WHERE idUser = (select idUser from WebUser where email = '{0}') order by OrderDate desc", email);
+                    getMostRecentOrderOfUser.CommandText = string.Format("SELECT TOP 1 * FROM [Order] WHERE idUser = (select idUser from WebUser where email = '{0}') order by OrderDate desc", email);
                     
                     getMostRecentOrderOfUser.CommandType = CommandType.Text;
 
