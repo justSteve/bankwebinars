@@ -215,8 +215,8 @@ namespace CUWebinars.WebUi.Tests2.Pages
             {
                 Actions action = SeleniumTestDriver.MouseOverElement(FinderStrategy.XPath, @"//*[@id='main_menu']/ul/li[3]/a");
 
-                Wait(800);
-                var subMenuItem = SeleniumTestDriver.FindByXPath(@"//*[@id='main_menu']/ul/li[3]/ul/li[1]/a", ExpectedCondition.ElementIsVisible, 5);
+                Wait(1000);
+                var subMenuItem = SeleniumTestDriver.FindByXPath(@"//*[@id='main_menu']/ul/li[3]/ul/li[1]/a", ExpectedCondition.ElementExists, 5);
                 Wait();
                 action.MoveToElement(subMenuItem).Click().Perform();
             }
@@ -224,8 +224,8 @@ namespace CUWebinars.WebUi.Tests2.Pages
             {
                 Actions action = SeleniumTestDriver.MouseOverElement(FinderStrategy.XPath, @"//*[@id='main_menu']/ul/li[3]/a");
 
-                Wait(800);
-                var subMenuItem = SeleniumTestDriver.FindByXPath(@"//*[@id='main_menu']/ul/li[3]/ul/li[1]/a", ExpectedCondition.ElementIsVisible, 5);
+                Wait(1000);
+                var subMenuItem = SeleniumTestDriver.FindByXPath(@"//*[@id='main_menu']/ul/li[3]/ul/li[1]/a", ExpectedCondition.ElementExists, 5);
                 Wait();
                 action.MoveToElement(subMenuItem).Click().Perform();
             }
