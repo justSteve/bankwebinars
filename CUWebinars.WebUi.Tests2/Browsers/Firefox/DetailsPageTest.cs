@@ -462,7 +462,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             page.ClickSubmit();
             page.WaitForLogOutLink();
 
-            page.ClickWebinarsMenuItem();
+            page.ClickWebinarsMenuItem(3);
              
             page.ClickSignUpButton();
 
@@ -492,7 +492,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.WaitForLogOutLink();
 
-            page.ClickWebinarsMenuItem();
+            page.ClickWebinarsMenuItem(3);
 
             page.ClickSignUpButton();
 
@@ -522,7 +522,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.WaitForLogOutLink();
 
-            page.ClickWebinarsMenuItem();
+            page.ClickWebinarsMenuItem(3);
 
             page.PickRegType(2);
             
@@ -554,7 +554,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.WaitForLogOutLink();
 
-            page.ClickWebinarsMenuItem();
+            page.ClickWebinarsMenuItem(3);
 
             page.PickRegType(3);
             
@@ -587,7 +587,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.WaitForLogOutLink();
 
-            page.ClickWebinarsMenuItem();
+            page.ClickWebinarsMenuItem(3);
 
             /*********** Additional Locations modal *****************/
             page.ClickAddAdditionalLocationButton();
@@ -626,7 +626,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.WaitForLogOutLink();
 
-            page.ClickWebinarsMenuItem();
+            page.ClickWebinarsMenuItem(3);
 
             page.PickRegType(4);
             
@@ -659,7 +659,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.WaitForLogOutLink();
 
-            page.ClickWebinarsMenuItem();
+            page.ClickWebinarsMenuItem(3);
 
             page.PickRegType(4);
 
@@ -700,7 +700,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.WaitForLogOutLink();
 
-            page.ClickWebinarsMenuItem();
+            page.ClickWebinarsMenuItem(3);
 
             page.PickRegType(5);
             
@@ -733,7 +733,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.WaitForLogOutLink();
 
-            page.ClickWebinarsMenuItem();
+            page.ClickWebinarsMenuItem(3);
 
             page.PickRegType(5);
 
@@ -769,7 +769,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         {
             var detailsPage = new DetailsPage(TestDriver);
             detailsPage.Open();
-            detailsPage.ClickWebinarsMenuItem();
+            detailsPage.ClickWebinarsMenuItem(3);
             return detailsPage;
         }
     }

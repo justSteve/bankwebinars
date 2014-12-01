@@ -78,7 +78,7 @@ namespace CUWebinars.WebUi.Tests2.Pages
             ClickLoginLink();
             LogInToSite(email, password);
             SeleniumTestDriver.FindByPartialLinkText(TestConstants.LogoffLinkText,ExpectedCondition.ElementIsVisible, 15);
-            ClickWebinarsMenuItem();
+            ClickWebinarsMenuItem(3);
         }
 
         public void WaitForLogOutLink()
