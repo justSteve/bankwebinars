@@ -133,6 +133,8 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Fakes\HttpRequestFake1.cs" />
+    <Compile Include="Infrastructure\HttpContextFactory.cs" />
+    <Compile Include="Infrastructure\WebTestHelpers.cs" />
     <Compile Include="Infrastructure\WebTestsGlobalConfig.cs" />
     <Compile Include="UnitTests\AccountControllerOrchestratorTests.cs" />
     <Compile Include="AccountControllerTests.cs" />
@@ -140,6 +142,7 @@
     <Compile Include="OrderControllerIntegrationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Fakes\UserAccountFake1.cs" />
+    <Compile Include="UnitTests\CartControllerOrchestratorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

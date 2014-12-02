@@ -19,7 +19,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 {
     public class CartControllerOrchestrator : ICartControllerOrchestrator
     {
-        public HttpRequestWrapper Request { get; set; }
+        public HttpRequestBase Request { get; set; }
 
         GlobalConfig _globals = GlobalConfig.GlobalConfigSingleton;
 
@@ -36,7 +36,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             IWebinarManagementService webinarManagementService,
             IStateService stateService,
             ILogger logger,
-            HttpRequestWrapper request,
+            HttpRequestBase request,
             IAppHelper appHelper)
         {
             Request = request;
@@ -74,11 +74,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             OrderRow orderRow,
             int? idOrderRow)
         {
-            if (ReferenceEquals(orderRow, null))
-                orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
-
             if (idOrderRow.HasValue && idOrderRow.Value > 0)
             {
+                if (ReferenceEquals(orderRow, null))
+                    orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
+
                 try
                 {
                     var displayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
