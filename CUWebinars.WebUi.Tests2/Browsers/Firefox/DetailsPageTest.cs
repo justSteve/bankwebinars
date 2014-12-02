@@ -41,7 +41,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         {
             var page = NavigateToDetailsPage();
 
-            Assert.IsTrue(page.WebinarTitleIsDisplayedOnWebinarDetailsPage);    
+            Assert.IsTrue(page.WebinarTitleIsDisplayedOnWebinarDetailsPage);
         }
 
         [TestMethod]
@@ -53,10 +53,10 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             page.ClickSignUpButton();
 
             var email = TestHelper.RandomStringFast(8) + "@" + CommonDomain;
-            
+
             page.EnterEmailAddressAndClickSubmit(email);
             page.ClickYesUseAddressButton();
-            
+
             page.EnterDetail(FullName, FullNameInput);
             page.EnterDetail(Title, RegisterfieldsInput);
             page.EnterDetail(StreetAddress, RegisterfieldsBillingaddressStreetaddress);
@@ -78,10 +78,10 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             page.ClickSignUpButton();
 
             var email = TestHelper.RandomStringFast(8) + "@" + CommonDomain;
-            
+
             page.EnterDetailThenPressEnter(email, RegisterFieldsEmailUnderscoreDelimited);
             page.ClickYesUseAddressButton();
-            
+
             page.EnterDetail(FullName, FullNameInput);
             page.EnterDetail(Title, RegisterfieldsInput);
             page.EnterDetail(StreetAddress, RegisterfieldsBillingaddressStreetaddress);
@@ -92,7 +92,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             Assert.IsTrue(page.WebinarTitleIsDisplayedOnWebinarDetailsPage);
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.Firefox)]
         public void AnonymousUserWithExistingDomainButDoesntUseAddressOfInstitutionMakesOrderSuccessfullyUsingSubmit()
@@ -102,12 +102,12 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             page.ClickSignUpButton();
 
             var email = TestHelper.RandomStringFast(8) + "@" + CommonDomain;
-            
+
             page.EnterEmailAddressAndClickSubmit(email);
 
             page.ClickNoEnterDiffAddressButton();
 
-            page.EnterDetail(email, RegisterFieldsEmailUnderscoreDelimited); 
+            page.EnterDetail(email, RegisterFieldsEmailUnderscoreDelimited);
             page.ClickSubmit();
 
             page.EnterDetail(ZipCodeHolmen, ZipInput);
@@ -149,12 +149,12 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             page.EnterDetail(Institution, RegisterfieldsInstitution);
             page.EnterDetail(StreetAddress, RegisterfieldsBillingaddressStreetaddress);
             page.EnterDetailThenPressEnter(PhoneNumber, RegisterfieldsBillingaddressPhone);
-            
+
             page.ClickBillMeButton();
 
             Assert.IsTrue(page.WebinarTitleIsDisplayedOnWebinarDetailsPage);
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.Firefox)]
         public void AnonymousUserWithExistingDomainButNotFromInstitutionMakesOrderSuccessfullyUsingSubmit()
@@ -164,12 +164,12 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             page.ClickSignUpButton();
 
             var email = TestHelper.RandomStringFast(8) + "@" + CommonDomain;
-            
+
             page.EnterEmailAddressAndClickSubmit(email);
 
             page.ClickNotInstitutionButton();
 
-            page.EnterDetail(email, RegisterFieldsEmailUnderscoreDelimited); 
+            page.EnterDetail(email, RegisterFieldsEmailUnderscoreDelimited);
             page.ClickSubmit();
 
             page.EnterDetail(ZipCodeHolmen, ZipInput);
@@ -187,7 +187,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             Assert.IsTrue(page.WebinarTitleIsDisplayedOnWebinarDetailsPage);
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.Firefox)]
         public void AnonymousUserWithExistingDomainButNotFromInstitutionMakesOrderSuccessfullyUsingEnter()
@@ -216,7 +216,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             Assert.IsTrue(page.WebinarTitleIsDisplayedOnWebinarDetailsPage);
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.Firefox)]
         public void AnonymousUserWithExistingDomainButClicksCrossOnModalMakesOrderSuccessfullyUsingSubmit()
@@ -226,12 +226,12 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             page.ClickSignUpButton();
 
             var email = TestHelper.RandomStringFast(8) + "@" + CommonDomain;
-            
+
             page.EnterEmailAddressAndClickSubmit(email);
 
             page.ClickCancelModalButton();
 
-            page.EnterDetail(email, RegisterFieldsEmailUnderscoreDelimited); 
+            page.EnterDetail(email, RegisterFieldsEmailUnderscoreDelimited);
             page.ClickSubmit();
 
             page.EnterDetail(ZipCodeHolmen, ZipInput);
@@ -306,7 +306,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             Assert.IsTrue(page.WebinarTitleIsDisplayedOnWebinarDetailsPage);
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.Firefox)]
         public void UserAddsTwoLocationsAndMakesOrderSuccessfully()
@@ -323,8 +323,8 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             /********************************************************/
 
             Assert.AreEqual(2, page.GetNumberOfAdditionalLocationTextBoxes());
-        }   
-        
+        }
+
         [TestMethod]
         [TestCategory(TestCategories.Firefox)]
         public void UserAddsTwoLocationsThenDeletesOneAfterClosingModalAndMakesOrderSuccessfully()
@@ -346,7 +346,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             Assert.AreEqual(1, page.GetNumberOfAdditionalLocationTextBoxes());
             /********************************************************/
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.Firefox)]
         public void UserAddsTwoLocationsThenDeletesOneAfterClosingModalAndAddsItAgainAndMakesOrderSuccessfully()
@@ -373,7 +373,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             Assert.AreEqual(2, page.GetNumberOfAdditionalLocationTextBoxes());
             /********************************************************/
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.Firefox)]
         public void UserAddsTwoLocationsThenClosesModalThenOpensItThenAddsOneLocationThenClicksCancelLeavingTwoLocations()
@@ -401,7 +401,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             Assert.AreEqual(1, page.GetNumberOfAdditionalLocationTextBoxes());
             /********************************************************/
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.Firefox)]
         public void UserAddsTwoLocationsThenClosesModalThenOpensItThenDeletesThemAllAndSubmitButtonDisappears()
@@ -424,7 +424,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             Assert.IsTrue(page.SumbitAdditionalLocationsButtonIsNotThere);
             /********************************************************/
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.Firefox)]
         public void UserLogsInAndMakesSimpleOrder()
@@ -463,7 +463,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             page.WaitForLogOutLink();
 
             page.ClickWebinarsMenuItem(3);
-             
+
             page.ClickSignUpButton();
 
             page.ClickBillMeButton();
@@ -506,7 +506,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.LogOff();
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.Notifications)]
         [TestCategory(TestCategories.Firefox)]
@@ -527,11 +527,11 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             page.ClickWebinarsMenuItem(3);
 
             page.PickRegType(2);
-            
+
             page.ClickSignUpButton();
 
             page.ClickBillMeButton();
-            
+
             page.Wait(100);
 
             dataOperations.DeleteMostRecentOrderOfUser(WebUiTestGlobalsTestConfig.LoggedInUserEmail);
@@ -559,11 +559,11 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             page.ClickWebinarsMenuItem(3);
 
             page.PickRegType(3);
-            
+
             page.ClickSignUpButton();
 
             page.ClickBillMeButton();
-            
+
             page.Wait(100);
 
             dataOperations.DeleteMostRecentOrderOfUser(WebUiTestGlobalsTestConfig.LoggedInUserEmail);
@@ -610,7 +610,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.LogOff();
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.Notifications)]
         [TestCategory(TestCategories.Firefox)]
@@ -631,11 +631,11 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             page.ClickWebinarsMenuItem(3);
 
             page.PickRegType(4);
-            
+
             page.ClickSignUpButton();
 
             page.ClickBillMeButton();
-            
+
             page.Wait(100);
 
             dataOperations.DeleteMostRecentOrderOfUser(WebUiTestGlobalsTestConfig.LoggedInUserEmail);
@@ -673,11 +673,11 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             /*********** ************************** *****************/
 
             page.Wait(500);
-            
+
             page.ClickSignUpButton();
 
             page.ClickBillMeButton();
-            
+
             page.Wait(100);
 
             dataOperations.DeleteMostRecentOrderOfUser(WebUiTestGlobalsTestConfig.LoggedInUserEmail);
@@ -705,11 +705,11 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             page.ClickWebinarsMenuItem(3);
 
             page.PickRegType(5);
-            
+
             page.ClickSignUpButton();
 
             page.ClickBillMeButton();
-            
+
             page.Wait(100);
 
             dataOperations.DeleteMostRecentOrderOfUser(WebUiTestGlobalsTestConfig.LoggedInUserEmail);
@@ -745,13 +745,13 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             page.EnterDetail("drogersbox-test1@yahoo.com.au", "AdditionalLocationEmail_0");
             page.ClickSubmitAdditionalLocationsButton();
             /*********** ************************** *****************/
-            
+
             page.Wait(500);
 
             page.ClickSignUpButton();
 
             page.ClickBillMeButton();
-            
+
             page.Wait(100);
 
             dataOperations.DeleteMostRecentOrderOfUser(WebUiTestGlobalsTestConfig.LoggedInUserEmail);
@@ -765,46 +765,67 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         public void UserLogsInDuringCheckoutAndMakesASimpleOrder()
         {
             //  we can pull these variables from anywhere. I have hardcoded them.
-            int idWebinar = 4566;
-            int regType = 3;
-            string email = WebUiTestGlobalsTestConfig.LoggedInUserEmail; 
-            string password = WebUiTestGlobalsTestConfig.LoggedInUserPassword;
 
-            var page = NavigateToDetailsPageByUrl(string.Format(@"http://localhost:3538/Webinar/Details/{0}", idWebinar));
+            int testWebinar = 1;
+                int regType = 1;
+            if (testWebinar < 11)
+            {
+                int idWebinar = testWebinar;
 
+                string email = WebUiTestGlobalsTestConfig.LoggedInUserEmail;
+                string password = WebUiTestGlobalsTestConfig.LoggedInUserPassword;
 
-            //  use this to choose an option. Lowest parameter is 1 (not 0). 
-            //  The first radio button is selected on load, so don't even call this method 
-            //  if you do want to choose that 1st radio button.
-            page.PickRegType(regType);
-            
-            page.Wait(500);
+                var page =
+                    NavigateToDetailsPageByUrl(string.Format(@"http://localhost:3538/Webinar/Details/{0}", idWebinar));
+                
+                //  use this to choose an option. Lowest parameter is 1 (not 0). 
+                //  The first radio button is selected on load, so don't even call this method 
+                //  if you do want to choose that 1st radio button.
+                if (regType > 1)
+                {
+                    try
+                    {
+                        page.PickRegType(regType);
+                        page.Wait(500);
 
-            // click the big green Signup button
-            page.ClickSignUpButton();
+                        // click the big green Signup button
+                        page.ClickSignUpButton();
 
-            // enter UserName of test user for this test (parameters are {username, idOfInput} )
-            page.EnterDetail(email, RegisterFieldsEmailUnderscoreDelimited);
-            page.ClickSubmit();
+                        // enter UserName of test user for this test (parameters are {username, idOfInput} )
+                        page.EnterDetail(email, RegisterFieldsEmailUnderscoreDelimited);
+                        page.ClickSubmit();
 
-            // enter Password of test user for this test (parameters are {password, idOfInput} )
-            page.EnterDetail(password, "Password1");
-            page.ClickSubmit();
+                        // enter Password of test user for this test (parameters are {password, idOfInput} )
+                        page.EnterDetail(password, "Password1");
+                        page.ClickSubmit();
 
-            // Finally, click the Bill Me button on the final tab.
-            page.ClickBillMeButton();
+                        // Finally, click the Bill Me button on the final tab.
+                        page.ClickBillMeButton();
 
-            page.LogOff();
+                        page.LogOff();
+                        
+                        regType++;
+                        testWebinar++;
+                    }
+                    catch (Exception)
+                    {
+                        regType++;
+                        testWebinar++;
+                        page.LogOff();
+                    }
+                }
+
+            }
         }
 
         public DetailsPage NavigateToDetailsPageViaRegisterWizard()
         {
             var detailsPage = new DetailsPage(TestDriver);
             detailsPage.Open();
-            
+
             return detailsPage;
         }
-        
+
         public DetailsPage NavigateToDetailsPage()
         {
             var detailsPage = new DetailsPage(TestDriver);
@@ -812,13 +833,13 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             detailsPage.ClickWebinarsMenuItem(3);
             return detailsPage;
         }
-        
+
         public DetailsPage NavigateToDetailsPageByUrl(string url)
         {
             var detailsPage = new DetailsPage(TestDriver);
-            
+
             detailsPage.OpenPage(url);
-            
+
             return detailsPage;
         }
     }
