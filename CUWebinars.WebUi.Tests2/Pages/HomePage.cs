@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using CUWebinars.WebUi.Tests2.Infrastructure;
 using KesselRun.SeleniumCore.Enums;
 using KesselRun.SeleniumCore.TestDrivers.Contracts;
@@ -209,25 +210,29 @@ namespace CUWebinars.WebUi.Tests2.Pages
 
             return SeleniumTestDriver.FindByXPath("//*[@id='page']/div[3]/div[1]/h3/a", ExpectedCondition.ElementIsVisible, 5).Displayed;
         }
-        public void ClickWebinarsMenuItem()
+        public void ClickWebinarsMenuItem(int subMenuNumber)
         {
             try
             {
-                Actions action = SeleniumTestDriver.MouseOverElement(FinderStrategy.XPath, @"//*[@id='main_menu']/ul/li[3]/a");
+                SeleniumTestDriver.MouseOverElementUsingScript("$('#main_menu > ul > li:nth-child(3) > a').mouseenter();");
 
-                Wait(800);
-                var subMenuItem = SeleniumTestDriver.FindByXPath(@"//*[@id='main_menu']/ul/li[3]/ul/li[1]/a", ExpectedCondition.ElementIsVisible, 5);
                 Wait();
-                action.MoveToElement(subMenuItem).Click().Perform();
+                var subMenuItem = SeleniumTestDriver.FindByXPath(
+                    string.Format(@"//*[@id='main_menu']/ul/li[3]/ul/li[{0}]/a", subMenuNumber), ExpectedCondition.ElementExists, 5);
+                Wait();
+
+                subMenuItem.Click();
             }
             catch (Exception e)
             {
-                Actions action = SeleniumTestDriver.MouseOverElement(FinderStrategy.XPath, @"//*[@id='main_menu']/ul/li[3]/a");
+                SeleniumTestDriver.MouseOverElementUsingScript("$('#main_menu > ul > li:nth-child(3) > a').mouseenter();");
 
-                Wait(800);
-                var subMenuItem = SeleniumTestDriver.FindByXPath(@"//*[@id='main_menu']/ul/li[3]/ul/li[1]/a", ExpectedCondition.ElementIsVisible, 5);
                 Wait();
-                action.MoveToElement(subMenuItem).Click().Perform();
+                var subMenuItem = SeleniumTestDriver.FindByXPath(
+                    string.Format(@"//*[@id='main_menu']/ul/li[3]/ul/li[{0}]/a", subMenuNumber), ExpectedCondition.ElementExists, 5);
+                Wait();
+
+                subMenuItem.Click();
             }
         }
 

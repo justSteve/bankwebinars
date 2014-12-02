@@ -1,10 +1,4 @@
-﻿using System.Collections.Specialized;
-using System.Configuration;
-using System.Security.Principal;
-using System.Web;
-using System.Web.Mvc;
-using System.Web.Routing;
-using CUWebinars.Business.AccountService;
+﻿using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
@@ -22,7 +16,6 @@ using Moq;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -253,7 +246,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
 
@@ -283,7 +276,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
 
@@ -305,7 +298,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
 
@@ -328,7 +321,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
             _accountControllerOrchestrator.UpdateBillingEmailOfOrder(5, _webTestsGlobals.LoggedInUserEmail);
@@ -349,7 +342,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
 
@@ -380,7 +373,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
             
@@ -412,7 +405,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
             
@@ -446,7 +439,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
             
@@ -479,7 +472,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object);
 
             //  Act
@@ -513,7 +506,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
 
@@ -549,7 +542,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
 
@@ -571,7 +564,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
             //  Act
@@ -592,7 +585,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
             //  Act
@@ -631,7 +624,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
 
@@ -660,7 +653,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
 
@@ -702,7 +695,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
 
@@ -745,7 +738,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
 
@@ -767,7 +760,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
 
@@ -793,7 +786,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
 
@@ -819,7 +812,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
 
@@ -845,7 +838,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
 
@@ -871,7 +864,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
 
@@ -897,7 +890,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
 
@@ -923,7 +916,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _membershipServiceMock.Object,
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
-                GetMockedHttpContext().Request,
+                WebTestHelpers.GetMockedHttpContext().Request,
                 _appHelperMock.Object
                 );
 
@@ -934,49 +927,6 @@ namespace CUWebinars.Web.Tests.UnitTests
             Assert.AreEqual(result.ReturnUrl, "/Account/MyWebinars");
         }
 
-        //    [TestMethod]
-    //    public void BuildRegisterViewModelReturnsRegisterViewModel()
-    //    {
-    ////        //  Arrange
-    ////        _accountControllerOrchestrator = new AccountControllerOrchestrator(
-    ////_loggerMock.Object,
-    ////_membershipServiceMock.Object,
-    ////_orderManagementServiceMock.Object,
-    ////_stateServiceMock.Object,
-    ////GetMockedHttpContext().Request,
-    ////_appHelperMock.Object
-    ////);
-
-    ////        //  Act
-    ////        var model = _accountControllerOrchestrator
-    ////        //  Assert                        
-		   
-    //    }
-
-        //[TestMethod]
-        //public void BuildLoginModelReturnsLoginModel()
-        //{
-        //    //  Arrange
-        //    string userMustVerify;
-
-        //    _membershipServiceMock.Setup(i => i.LogInUser("CUWebinars", It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), out userMustVerify, false)).Returns(true);
-
-
-        //    _accountControllerOrchestrator = new AccountControllerOrchestrator(
-        //        _loggerMock.Object,
-        //        _membershipServiceMock.Object,
-        //        _orderManagementServiceMock.Object,
-        //        _stateServiceMock.Object,
-        //        new HttpRequestFake1(),
-        //        _appHelperMock.Object
-        //        );
-
-        //    //  Act
-        //    var logInModel = _accountControllerOrchestrator.BuildLoginModel(null);
-
-        //    //  Assert                        
-        //    Assert.IsTrue(logInModel.ReturnUrl.Equals(Path.AltDirectorySeparatorChar.ToString()));
-        //}
 
 
         #region Helper methods
@@ -992,7 +942,7 @@ namespace CUWebinars.Web.Tests.UnitTests
                     Addresses = new List<Address> {new Address {AddressType = DomainConstants.BillingAddress}}
                 });
 
-            HttpContextFactory.SetCurrentContext(GetMockedHttpContext());
+            HttpContextFactory.SetCurrentContext(WebTestHelpers.GetMockedHttpContext());
 
 
             _accountControllerOrchestrator = new AccountControllerOrchestrator(
@@ -1021,70 +971,10 @@ namespace CUWebinars.Web.Tests.UnitTests
             return actualModel;
         }
 
-        private HttpContextBase GetMockedHttpContext()
-        {
-            var context = new Mock<HttpContextBase>();
-            var request = new Mock<HttpRequestBase>();
-            var response = new Mock<HttpResponseBase>();
-            var session = new Mock<HttpSessionStateBase>();
-            var server = new Mock<HttpServerUtilityBase>();
-            var user = new Mock<IPrincipal>();
-            var identity = new Mock<IIdentity>();
-
-            //RouteConfig.RegisterRoutes(RouteTable.Routes);
-
-            var requestContext = new Mock<RequestContext>();
-            requestContext.Setup(x => x.HttpContext).Returns(context.Object);
-            context.Setup(ctx => ctx.Response).Returns(response.Object);
-            context.Setup(ctx => ctx.Session).Returns(session.Object);
-            context.Setup(ctx => ctx.Server).Returns(server.Object);
-            context.Setup(ctx => ctx.User).Returns(user.Object);
-            user.Setup(ctx => ctx.Identity).Returns(identity.Object);
-            identity.Setup(id => id.IsAuthenticated).Returns(true);
-            //identity.Setup(id => id.Name).Returns("test");
-            requestContext.Setup(x => x.RouteData).Returns(new RouteData());
-
-            context.Setup(ctx => ctx.Request).Returns(request.Object);
-            request.Setup(req => req.Url).Returns(new Uri(ConfigurationManager.AppSettings["SiteUrl"]));
-            request.Setup(req => req.RequestContext).Returns(requestContext.Object);
-            request.Setup(req => req.UrlReferrer).Returns(new Uri(@"http://localhost:3538/"));
-            requestContext.Setup(x => x.RouteData).Returns(new RouteData());
-            request.SetupGet(req => req.Headers).Returns(new NameValueCollection());
-
-            //  we also need to assig a value to HttpContext.Current as it is used in the AppHelper.GetUserAuditInfo method
-            HttpContext.Current = new HttpContext(
-                new HttpRequest(string.Empty, ConfigurationManager.AppSettings["SiteUrl"], string.Empty),
-                new HttpResponse(new StringWriter())
-                );
-
-            return context.Object;
-        }
+        
 
         #endregion
-
-
-        public class HttpContextFactory
-        {
-            private static HttpContextBase m_context;
-            public static HttpContextBase Current
-            {
-                get
-                {
-                    if (m_context != null)
-                        return m_context;
-
-                    if (HttpContext.Current == null)
-                        throw new InvalidOperationException("HttpContext not available");
-
-                    return new HttpContextWrapper(HttpContext.Current);
-                }
-            }
-
-            public static void SetCurrentContext(HttpContextBase context)
-            {
-                m_context = context;
-            }
-        }
+        
 
     }
 }
