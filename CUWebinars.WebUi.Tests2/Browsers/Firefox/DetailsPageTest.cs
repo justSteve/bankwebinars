@@ -757,6 +757,44 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             page.LogOff();
         }
 
+        [TestMethod]
+        [TestCategory(TestCategories.Notifications)]
+        [TestCategory(TestCategories.Firefox)]
+        public void UserLogsInDuringCheckoutAndMakesASimpleOrder()
+        {
+            //  we can pull these variables from anywhere. I have hardcoded them.
+            int idWebinar = 4566;
+            int regType = 3;
+            string email = WebUiTestGlobalsTestConfig.LoggedInUserEmail; 
+            string password = WebUiTestGlobalsTestConfig.LoggedInUserPassword;
+
+            var page = NavigateToDetailsPageByUrl(string.Format(@"http://localhost:3538/Webinar/Details/{0}", idWebinar));
+
+
+            //  use this to choose an option. Lowest parameter is 1 (not 0). 
+            //  The first radio button is selected on load, so don't even call this method 
+            //  if you do want to choose that 1st radio button.
+            page.PickRegType(regType);
+            
+            page.Wait(500);
+
+            // click the big green Signup button
+            page.ClickSignUpButton();
+
+            // enter UserName of test user for this test (parameters are {username, idOfInput} )
+            page.EnterDetail(email, RegisterFieldsEmailUnderscoreDelimited);
+            page.ClickSubmit();
+
+            // enter Password of test user for this test (parameters are {password, idOfInput} )
+            page.EnterDetail(password, "Password1");
+            page.ClickSubmit();
+
+            // Finally, click the Bill Me button on the final tab.
+            page.ClickBillMeButton();
+
+            page.LogOff();
+        }
+
         public DetailsPage NavigateToDetailsPageViaRegisterWizard()
         {
             var detailsPage = new DetailsPage(TestDriver);
@@ -770,6 +808,15 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             var detailsPage = new DetailsPage(TestDriver);
             detailsPage.Open();
             detailsPage.ClickWebinarsMenuItem(3);
+            return detailsPage;
+        }
+        
+        public DetailsPage NavigateToDetailsPageByUrl(string url)
+        {
+            var detailsPage = new DetailsPage(TestDriver);
+            
+            detailsPage.OpenPage(url);
+            
             return detailsPage;
         }
     }
