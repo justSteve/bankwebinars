@@ -494,10 +494,12 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             page.ClickWebinarsMenuItem();
 
+            page.PickRegType(2);
+
             page.ClickSignUpButton();
 
             page.ClickBillMeButton();
-            
+
             page.Wait(100);
 
             dataOperations.DeleteMostRecentOrderOfUser(WebUiTestGlobalsTestConfig.LoggedInUserEmail);
