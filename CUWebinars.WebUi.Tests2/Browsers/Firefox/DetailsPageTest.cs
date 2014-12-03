@@ -764,57 +764,96 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         [TestCategory(TestCategories.Firefox)]
         public void UserLogsInDuringCheckoutAndMakesASimpleOrder()
         {
-            //  we can pull these variables from anywhere. I have hardcoded them.
-
-            int testWebinar = 1;
-                int regType = 1;
-            if (testWebinar < 11)
+            //
+            string[] testUsers = new[]
             {
-                int idWebinar = testWebinar;
-
-                string email = WebUiTestGlobalsTestConfig.LoggedInUserEmail;
-                string password = WebUiTestGlobalsTestConfig.LoggedInUserPassword;
-
-                var page =
-                    NavigateToDetailsPageByUrl(string.Format(@"http://localhost:3538/Webinar/Details/{0}", idWebinar));
-                
-                //  use this to choose an option. Lowest parameter is 1 (not 0). 
-                //  The first radio button is selected on load, so don't even call this method 
-                //  if you do want to choose that 1st radio button.
-                if (regType > 1)
+                "1-1@ttstester.com",
+                "1-2@ttstester.com",
+                "1-3@ttstester.com",
+                "1-4@ttstester.com",
+                "1-5@ttstester.com",
+                "2-1@ttstester.com",
+                "2-2@ttstester.com",
+                "3-1@ttstester.com",
+                "3-2@ttstester.com",
+                "3-3@ttstester.com",
+                "3-4@ttstester.com",
+                "3-5@ttstester.com",
+                "4-1@ttstester.com",
+                "4-2@ttstester.com",
+                "5-1@ttstester.com",
+                "5-2@ttstester.com",
+                "5-3@ttstester.com",
+                "5-4@ttstester.com",
+                "5-5@ttstester.com",
+                "6-1@ttstester.com",
+                "6-2@ttstester.com",
+                "7-1@ttstester.com",
+                "7-2@ttstester.com",
+                "7-3@ttstester.com",
+                "7-4@ttstester.com",
+                "7-5@ttstester.com",
+                "8-1@ttstester.com",
+                "8-2@ttstester.com",
+                "9-1@ttstester.com",
+                "9-2@ttstester.com",
+                "9-3@ttstester.com",
+                "9-4@ttstester.com",
+                "9-5@ttstester.com",
+                "10-1@ttstester.com",
+                "10-2@ttstester.com"
+            };
+            for (var i = 0; i < testUsers.Count(); i++)
+            {
+                int testWebinar = Convert.ToInt32(testUsers[i].Split('@')[0].Split('-')[0]); ;
+                int regType =  Convert.ToInt32(testUsers[i].Split('@')[0].Split('-')[1]); ;
+                if (testWebinar < 11)
                 {
-                    try
+                    int idWebinar = testWebinar;
+
+                    string email = testUsers[i];
+                    string password = "kkkkkk";
+
+                    var page =
+                        NavigateToDetailsPageByUrl(string.Format(@"http://localhost:3538/Webinar/Details/{0}", idWebinar));
+
+                    //  use this to choose an option. Lowest parameter is 1 (not 0). 
+                    //  The first radio button is selected on load, so don't even call this method 
+                    //  if you do want to choose that 1st radio button.
+                    if (regType > 1)
                     {
-                        page.PickRegType(regType);
-                        page.Wait(500);
+                        try
+                        {
+                            page.PickRegType(regType);
+                            page.Wait(500);
 
-                        // click the big green Signup button
-                        page.ClickSignUpButton();
+                            // click the big green Signup button
+                            page.ClickSignUpButton();
 
-                        // enter UserName of test user for this test (parameters are {username, idOfInput} )
-                        page.EnterDetail(email, RegisterFieldsEmailUnderscoreDelimited);
-                        page.ClickSubmit();
+                            // enter UserName of test user for this test (parameters are {username, idOfInput} )
+                            page.EnterDetail(email, RegisterFieldsEmailUnderscoreDelimited);
+                            page.ClickSubmit();
 
-                        // enter Password of test user for this test (parameters are {password, idOfInput} )
-                        page.EnterDetail(password, "Password1");
-                        page.ClickSubmit();
+                            // enter Password of test user for this test (parameters are {password, idOfInput} )
+                            page.EnterDetail(password, "Password1");
+                            page.ClickSubmit();
 
-                        // Finally, click the Bill Me button on the final tab.
-                        page.ClickBillMeButton();
+                            // Finally, click the Bill Me button on the final tab.
+                            page.ClickBillMeButton();
 
-                        page.LogOff();
-                        
-                        regType++;
-                        testWebinar++;
-                    }
-                    catch (Exception)
-                    {
-                        regType++;
-                        testWebinar++;
-                        page.LogOff();
+                            page.LogOff();
+
+                            regType++;
+                            testWebinar++;
+                        }
+                        catch (Exception)
+                        {
+                            regType++;
+                            testWebinar++;
+                            page.LogOff();
+                        }
                     }
                 }
-
             }
         }
 
