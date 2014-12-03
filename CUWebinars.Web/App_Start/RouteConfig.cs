@@ -9,10 +9,12 @@ namespace CUWebinars.Web.App_Start
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            //routes.MapRoute(
-            //    "WebinarDetails",                                                    // Route name
-            //    url: "Webinar/Details/{id}"                        // URL with parameters
-            //);
+            routes.MapRoute(
+                "WebinarDetails",
+                url: "{id}/{seoUrl}",
+                defaults: new { controller = "Webinar", action = "Details", id = 0 },
+                constraints: new { id = @"\d+" }
+            );
 
             routes.MapRoute(
                 "MyWebinarsDefault",                                    // Route name

@@ -4,6 +4,7 @@ using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Web.App_Start;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Services;
 using log4net;
 using System;
@@ -242,13 +243,15 @@ namespace CUWebinars.Web
                 {
                     for (int i = 0; i < upcomingWebinars.Count; i++)
                     {
-                        string shortTitle =
-                            upcomingWebinars[i].Title.Length > 35
-                                ? upcomingWebinars[i].Title.Substring(0, 35) + "..."
-                                : upcomingWebinars[i].Title;
+                        var upcomingWebinar = upcomingWebinars[i];
+                        string shortTitle = upcomingWebinar.Title.Length > 35
+                                ? upcomingWebinar.Title.Substring(0, 35) + "..."
+                                : upcomingWebinar.Title;
+
+                        string seoTitle = upcomingWebinar.Title.RemoveIllegalCharacters().ReplaceSpacesWithHyphens().ToLower();
 
                         upComingPresentationListItems.Append(
-                            "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href='/Webinar/Details/" +
+                            string.Format("<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href='/{0}/{1}'", upcomingWebinar.idWebinar, seoTitle) +
                             upcomingWebinars[i].idWebinar + "'>" + Server.HtmlEncode(shortTitle) + "</a></li>"
                             );
                     }
