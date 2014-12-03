@@ -20,6 +20,7 @@ namespace CUWebinars.Web.Membership.Email
         {
             if (_stateService.HasValue(DomainConstants.UserCreatedViaNewOrder) || _stateService.HasValue(DomainConstants.UserCreatedDuringCartCheckout))
             {
+                _stateService.ClearValue(DomainConstants.UserCreatedDuringCartCheckout);
                 return;
             }
 

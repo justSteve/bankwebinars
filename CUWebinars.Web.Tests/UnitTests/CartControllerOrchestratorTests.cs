@@ -95,7 +95,6 @@ namespace CUWebinars.Web.Tests.UnitTests
                 RegistrationType = new RegType()
             };
 
-
             _orderManagementServiceMock.Setup(i => i.GetOrderRowById(It.IsAny<int>())).Returns(orderRow);
 
 

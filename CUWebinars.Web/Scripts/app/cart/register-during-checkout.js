@@ -624,8 +624,6 @@ function completeOrder(userId, orderRowId, webinarId) {
                 $('#orderDetails').append(result.Msg);
 
                 $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
-
-                logUserIn(userId);
                 
                 $('#ConfirmModal').modal('show');
 
@@ -703,41 +701,6 @@ function cancelOrder(orderId, webinarId) {
     });
 
     $('#CancelModal').modal('show');
-}
-
-function logUserIn(userId) {
-
-    $('#_SignInAfterCheckout').on('submit', function (e) {
-
-        e.preventDefault();
-
-        var payload = { userId: userId };
-
-        var token = $(this).find('input[name=__RequestVerificationToken]').val();
-        var headers = {};
-        headers['__RequestVerificationToken'] = token;
-
-        var url = $(this).attr('action');
-
-        $.ajax({
-            type: 'POST',
-            contentType: constants.JsonContentType,
-            cache: false,
-            url: url,
-            dataType: constants.JsonDataType,
-            data: JSON.stringify(payload),
-            headers: headers
-        }).done(function (data) {
-
-            $('#loginContainer').empty().load('/Account/GetLoginPartial', function (response, status, xhr) {
-                $('#loadingSpinner').remove();
-            });
-        });
-    });
-
-    $('#_SignInAfterCheckout').submit();
-
-    $('#_SignInAfterCheckout').off('submit');
 }
 
 function hookUpModal(modalForm) {

@@ -43,7 +43,8 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 var fullFilePathToPersistedNotification = Path.Combine(_environmentInformation.BaseUrl,
                     orderSubmittedEvent.RelativeFilePath);
-                _notificationPersister.PersistNotification(notificationMessage.Body, fullFilePathToPersistedNotification);
+                
+                //_notificationPersister.PersistNotification(notificationMessage.Body, fullFilePathToPersistedNotification);
 
                 notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);
