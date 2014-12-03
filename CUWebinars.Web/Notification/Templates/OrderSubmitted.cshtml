@@ -75,10 +75,7 @@
 
         if (notiConnectionInfo == "Yes")
         {
-            connInfoPhrase.Append("<p>There's plenty of time to adjust this order if necessary, ");
-            connInfoPhrase.Append("but until we hear otherwise we'll be sending you an email with connection instructions ");
-            connInfoPhrase.Append("2-3 days prior to the event plus a reminder sent the morning of. </p>");
-
+            
             if (notiRecordingPosted == "Yes")
             {
                 connInfoPhrase.Append("<p> Shortly following the conclusion you'll receive notification that the recording is posted");
@@ -94,11 +91,9 @@
         }
         else
         {
-            connInfoPhrase.Append("<p>There's plenty of time to adjust this order if necessary, ");
-            connInfoPhrase.Append("but until we hear otherwise we'll only be sending you a notification that the OnDemand Recording is posted");
             if (notiShipped == "Yes")
             {
-                connInfoPhrase.Append(" and then another when your CD and printouts have shipped");
+                connInfoPhrase.Append("e'll only be sending you a notification that the OnDemand Recording is posted and then another when your CD and printouts have shipped");
             }
             connInfoPhrase.Append(".</p><p> You <i>won't</i> see notifications related to the live event...again, plenty of time to change that...just hit reply and let us know.</p>");
         }

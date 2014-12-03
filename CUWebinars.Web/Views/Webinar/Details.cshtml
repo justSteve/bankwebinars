@@ -59,9 +59,14 @@
         <!--begin row-fluid-->
         <section class="span3 sidebar">
             <aside class="widget well-large">
-                <h5 class="short_headline"><span>@Model.Webinar.Presenter.WebUser.FullName</span></h5>
-                @Html.Raw(Model.Webinar.Presenter.BiographyLong)
-                @Html.Partial("Partials/_OtherEventsBySpeaker")
+                @{
+                    if (Model.Webinar.idWebinar > 100)
+                    {
+                        <h5 class="short_headline"><span>@Model.Webinar.Presenter.WebUser.FullName</span></h5>
+                        @Html.Raw(Model.Webinar.Presenter.BiographyLong)
+                        @Html.Partial("Partials/_OtherEventsBySpeaker")
+                    }
+                }
             </aside>
             <!--close aside widget-->
         </section>

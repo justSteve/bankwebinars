@@ -58,7 +58,8 @@ $(function () {
             // Request failed. Show error message to user. 
             // errorThrown has error message, or "timeout" in case of timeout.
             //appInsights.trackEvent("LogInAsUser AJAX error: " + errorThrown);
-            });
+            var i = 0;
+
         }).always(function () {
             $('#WaitIndicator').hide();
         });
@@ -84,14 +85,15 @@ $(function () {
             // Request failed. Show error message to user. 
             // errorThrown has error message, or "timeout" in case of timeout.
             //appInsights.trackEvent("CreateUserButton AJAX error: " + errorThrown);
-            });
+            var i = 0;
+
         }).always(function () {
             $('#WaitIndicator').hide();
         });
     });
 
     $('#ResetPasswordButton').on('click', function () {
-        
+
         $.ajax({
             type: 'GET',
             contentType: constants.JsonContentType,
@@ -250,7 +252,7 @@ $(function () {
                         $('#WaitIndicator').show();
                     }
                 }).done(function (response) {
-                    
+
                     if (response.Result === 'Success') {
                         $('#OperationMessage').html('<span class="label label-success">&nbsp;&nbsp;User password has been changed.</span>');
                     } else if (response.Result === 'Fail') {
@@ -272,11 +274,11 @@ function addImportOrderButtonClick() {
 
         var jsonPayload = $('#JsonPayloadTextArea').val();
         var queryString = '?';
-        
+
         $.each($.parseJSON(jsonPayload), function (idx, value) {
             queryString += idx + '=' + value + '&';
         });
-        
+
         $.ajax({
             type: 'GET',
             contentType: constants.FormPostContentType,
@@ -291,7 +293,7 @@ function addImportOrderButtonClick() {
         }).done(function (result) {
 
             var id = parseInt(result.Result, 10); // this is base 10 (2nd param)
-            
+
             if (id > 0) {
                 $('#InputFormFields').html('<span id="OrderSucceeded" class="label label-success">Success! Order Id: ' + id + '</span>');
             } else {

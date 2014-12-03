@@ -218,7 +218,7 @@ namespace CUWebinars.Web.Controllers
             if (!ModelState.IsValid)
             {
                 var myError = ProcessModelStateErrors();
-                return Json(new { Result = WebUiConstants.Fail, Error = myError });
+                return Json(new { Result = WebUiConstants.Fail, Error = myError }, JsonRequestBehavior.AllowGet);
             }
             //http://v3.bankwebinars.com/order/createorder?idAffiliate=12014&BillingAddress.AddressType=Billing&BillingAddress.Name=CDRom%20UpcomingHasConnInfo&BillingAddress.Phone=%28256%29%20837-6110&BillingAddress.StreetAddress=220%20Wynn%20Drive&BillingAddress.StreetAddress2=%20&BillingAddress.City=Huntsville&BillingAddress.Zip=35893&BillingAddress.State=AL&BillingAddress.Country=USA&ShippingAddress.AddressType=Shipping&ShippingAddress.Name=CDRom%20UpcomingHasConnInfo&ShippingAddress.Phone=%28256%29%20837-6110&ShippingAddress.StreetAddress=220%20Wynn%20Drive&ShippingAddress.StreetAddress2=%20&ShippingAddress.City=Huntsville&ShippingAddress.Zip=35553&ShippingAddress.State=AL&ShippingAddress.Country=USA&Email=CDRomHasConnectionInfo@ttstrain1.com&Title=VP/Chief%20Compliance%20Officer&Institution=Grone%20Federal%20Credit%20Union&FirstName=CDRom&LastName=UpcomingHasConnInfo&idRegType=99&idWebinar=3558
 
@@ -226,8 +226,8 @@ namespace CUWebinars.Web.Controllers
             WebClient client = new WebClient();
             string url = "http://importer.bankwebinars.com/Registrations/ImportOrders3/?" + queryString;
             string result = client.DownloadString(url);
-            
-            return Json(new { Result = result });
+
+            return Json(new { Result = result }, JsonRequestBehavior.AllowGet);
 
         }
 

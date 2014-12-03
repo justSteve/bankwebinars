@@ -448,6 +448,7 @@
     <None Include="Properties\PublishProfiles\BankWebinars.pubxml" />
     <None Include="Properties\PublishProfiles\bankwebinars3 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\bankwebinars3 - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\bankwebinars3__bwStaging.pubxml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\jquery-1.11.1.js" />
     <Content Include="Scripts\jquery-1.11.1.min.js" />
