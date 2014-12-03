@@ -11,6 +11,8 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
     [TestClass]
     public class FirefoxBaseTest : BaseTest
     {
+        protected ITestDriverFactory Foundry;
+
         [TestInitialize]
         public void Setup()
         {
@@ -20,14 +22,14 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             var pathToDriver = WebUiTestGlobalsTestConfig.FirefoxExePath;
 
-            ITestDriverFactory foundry = new TestDriverFactory(new DriverOptions
+            Foundry = new TestDriverFactory(new DriverOptions
             {
                 DriverExePath = pathToDriver,
                 Port = port,
                 Url = WebUiTestGlobalsTestConfig.HomeUrl
             });
 
-            TestDriver = foundry.CreateTestDriver<FirefoxTestDriver>();
+            TestDriver = Foundry.CreateTestDriver<FirefoxTestDriver>();
         }
 
     }

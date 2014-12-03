@@ -59,5 +59,10 @@ namespace CUWebinars.WebUi.Tests2.Pages
         {
             Thread.Sleep(numberOfMilliSeconds);
         }
+
+        public virtual void QuitPage()
+        {
+            SeleniumTestDriver.WebDriver.Quit();
+        }
     }
 }

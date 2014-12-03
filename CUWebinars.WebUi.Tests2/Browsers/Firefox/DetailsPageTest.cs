@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using CUWebinars.Tests.Common;
 using CUWebinars.WebUi.Tests2.Infrastructure;
 using CUWebinars.WebUi.Tests2.Pages;
+using KesselRun.SeleniumCore.TestDrivers.Browsers.Firefox;
+using KesselRun.SeleniumCore.TestDrivers.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 
@@ -809,50 +811,64 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
                 int regType =  Convert.ToInt32(testUsers[i].Split('@')[0].Split('-')[1]); ;
                 if (testWebinar < 11)
                 {
+                    var freshTestDriver = Foundry.CreateTestDriver<FirefoxTestDriver>();
+
                     int idWebinar = testWebinar;
 
                     string email = testUsers[i];
                     string password = "kkkkkk";
 
                     var page =
-                        NavigateToDetailsPageByUrl(string.Format(@"http://localhost:3538/Webinar/Details/{0}", idWebinar));
+                        NavigateToDetailsPageByUrl(string.Format(@"http://localhost:3538/Webinar/Details/{0}", idWebinar), freshTestDriver);
 
                     //  use this to choose an option. Lowest parameter is 1 (not 0). 
                     //  The first radio button is selected on load, so don't even call this method 
                     //  if you do want to choose that 1st radio button.
+
                     if (regType > 1)
                     {
                         try
                         {
                             page.PickRegType(regType);
                             page.Wait(500);
-
-                            // click the big green Signup button
-                            page.ClickSignUpButton();
-
-                            // enter UserName of test user for this test (parameters are {username, idOfInput} )
-                            page.EnterDetail(email, RegisterFieldsEmailUnderscoreDelimited);
-                            page.ClickSubmit();
-
-                            // enter Password of test user for this test (parameters are {password, idOfInput} )
-                            page.EnterDetail(password, "Password1");
-                            page.ClickSubmit();
-
-                            // Finally, click the Bill Me button on the final tab.
-                            page.ClickBillMeButton();
-
-                            page.LogOff();
-
-                            regType++;
-                            testWebinar++;
                         }
-                        catch (Exception)
+                        catch (Exception exception)
                         {
-                            regType++;
-                            testWebinar++;
-                            page.LogOff();
+
                         }
                     }
+
+                    try
+                    {
+                        // click the big green Signup button
+                        page.ClickSignUpButton();
+
+                        // enter UserName of test user for this test (parameters are {username, idOfInput} )
+                        page.EnterDetail(email, RegisterFieldsEmailUnderscoreDelimited);
+                        page.ClickSubmit();
+
+                        // enter Password of test user for this test (parameters are {password, idOfInput} )
+                        page.EnterDetail(password, "Password1");
+                        page.ClickSubmit();
+                        page.Wait(6000);
+
+                        // Finally, click the Bill Me button on the final tab.
+                        page.ClickBillMeButton();
+
+                        page.Wait(3000);
+
+                        page.QuitPage();
+
+                        regType++;
+                        testWebinar++;
+                    }
+                    catch (Exception)
+                    {
+                        regType++;
+                        testWebinar++;
+                        page.LogOff();
+                    }
+
                 }
             }
         }
@@ -873,9 +889,19 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             return detailsPage;
         }
 
-        public DetailsPage NavigateToDetailsPageByUrl(string url)
+        public DetailsPage NavigateToDetailsPageByUrl(string url, ITestDriver driver = null)
         {
-            var detailsPage = new DetailsPage(TestDriver);
+            DetailsPage detailsPage;
+
+            if (ReferenceEquals(driver, null))
+            {
+                detailsPage = new DetailsPage(TestDriver);
+            }
+            else
+            {
+                detailsPage = new DetailsPage(driver);
+            }
+
 
             detailsPage.OpenPage(url);
 
