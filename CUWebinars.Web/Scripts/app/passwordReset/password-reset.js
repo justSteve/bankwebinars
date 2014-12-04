@@ -29,7 +29,7 @@ $(function () {
             return false;
         }
 
-        var jsonUrl = '/Account/ResetPassword';
+        var jsonUrl = $(this).attr('action');
         var email = resetPassEmail.val();
 
         if (email.length === 0) {
@@ -49,11 +49,16 @@ $(function () {
             }).done(function(data) {
 
                 if (data.Result === 'Success') {
-                    crunchingLabel.html('<span class="label label-success">&nbsp; Reset Instructions sent!</span>');
+                    crunchingLabel.html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp; Reset Instructions sent!</span>');
                     $('#wrapReset div.container').hide("slow");
                     $('#NormalResetPasswordButton').hide();
                 } else {
-                    crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;Error. Please retry...</span>');
+                    if (data['Invalid']) {
+                        Rollbar.error("Invalid email address.");
+                        crunchingLabel.html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Are you sure you typed it corretly?</span>');
+                    } else {
+                        crunchingLabel.html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Error. Please retry...</span>');
+                    }
                 }
 
             }).fail(function (jqXHR, textStatus, errorThrown) {

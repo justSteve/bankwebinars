@@ -697,10 +697,21 @@ namespace CUWebinars.Web.Controllers
         {
             _logger.Info("Account.ResetPassword GET. Email = {1} Session={0}", _appHelper.GetUserAuditInfo(), email);
 
+            var errorsDictionary = new Dictionary<string, string>(StringComparer.Ordinal);
+            errorsDictionary.Add("Result", WebUiConstants.Fail);   
+
             try
             {
                 _accountControllerOrchestrator.ResetPassword(_globalConfig.Tenant, email);
                 return Json(new { Result = WebUiConstants.Success });
+            }
+            catch (ValidationException validationException)
+            {
+                if (validationException.Message.StartsWith("Invalid email", StringComparison.OrdinalIgnoreCase))
+                {
+                    errorsDictionary.Add("Invalid", "UnkownEmail");   
+                }
+                _logger.Fatal("Account.ResetPassword GET Failed. {0}, Session = {1} on email: {2}", validationException.Message, _appHelper.GetUserAuditInfo(), email);
             }
             catch (Exception ex)
             {
@@ -708,7 +719,7 @@ namespace CUWebinars.Web.Controllers
             }
 
 
-            return Json(new { Result = WebUiConstants.Fail });
+            return Json(errorsDictionary);
         }
 
 

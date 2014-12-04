@@ -183,7 +183,6 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
     $('#ResetPasswordForm').on('submit', function(e) {
 
         var hiddenInput = $('#ResetPassEmail');
-        hiddenInput.val($('#loginEmail').val());
 
         e.preventDefault();
 
@@ -198,13 +197,18 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
             dataType: RegistrationInCart.Constants.JsonDataType,
             data: JSON.stringify(jsonPayload),
             beforeSend: function() {
-                $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Working...</span>');
+                $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;&nbsp;Working...</span>');
             }
         }).done(function(data) {
-            if (data.result === 'Success') {
-                $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Reset instructions have been sent. Follow instructions and come back here to log in...</span>');
+            if (data.Result === 'Success') {
+                $('#labelEmail').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Reset instructions have been sent. Follow instructions and come back here to log in...</span>');
             } else {
-                $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;</i>&nbsp;&nbsp;There was a problem resetting the password...</span>');
+                if (data['Invalid']) {
+                    Rollbar.error("Invalid email address.");
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Are you sure you typed it corretly?</span>');
+                } else {
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Error. Please retry...</span>');
+                }
             }
         }).always(function(data) {
             

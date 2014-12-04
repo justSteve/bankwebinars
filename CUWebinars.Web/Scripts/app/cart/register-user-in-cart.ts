@@ -384,6 +384,7 @@ module RegistrationInCart {
                 normalResetPasswordButton.removeData('clicked');
 
             $('#EdgeCaseResetPasswordButton').data('clicked', true);
+            $('#ResetPassEmail').val($('#Email1').val());
             $('form#ResetPasswordForm').submit();
         }
 
