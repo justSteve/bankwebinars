@@ -134,7 +134,7 @@ namespace CUWebinars.Business.Services
 
 
 
-        public IList<RegType> GetOptionsByWebinarId(int id, bool detached)
+        public IDictionary<RegType, bool> GetOptionsByWebinarId(int id, bool detached)
         {
             return _regTypeRepository.FindRegTypesByWebinarId(id, false);
         }
@@ -154,7 +154,7 @@ namespace CUWebinars.Business.Services
             return null;
         }
 
-        public IList<RegType> GetRegTypesByWebinarIdFrom(int id, bool detached)
+        public IDictionary<RegType, bool> GetRegTypesByWebinarIdFrom(int id, bool detached)
         {
             return _regTypeRepository.FindRegTypesByWebinarId(id, false);
         }

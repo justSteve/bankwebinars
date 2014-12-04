@@ -77,16 +77,17 @@
             {
                 bool appendJustOnce = true;
 
-                if (!myOption.SKU.Contains("Upgrade"))
+                if (!myOption.Key.SKU.Contains("Upgrade"))
                 {
 
-                    explainsOptionsBuilder.Append("<span><b>" + myOption.OptionLabel + "</b> means " + myOption.OptionExplain + " This option costs <i>$" + myOption.Price.ToString().Replace(".00", "") + "</i><br></span>");
+                    explainsOptionsBuilder.Append("<span><b>" + myOption.Key.OptionLabel + "</b> means " + myOption.Key.OptionExplain + " This option costs <i>$" + myOption.Key.Price.ToString().Replace(".00", "") + "</i><br></span>");
                     //explainsOptionsBuilder.Append("<span><b>"+Html.Raw(myOption.OptionLabel)+"</b> means "+Html.Raw(myOption.OptionExplain) +" This option costs <i>$" + myOption.Price.ToString().Replace(".00", "")+"</i><br></span>");
                     <dt>
-                        <input type="radio" class="checkbox" id='regTypeID_@(myOption.idRegType)' @defaultCheck name="RegistrationTypeId"
-                               value="@myOption.idRegType" />
-                        &nbsp;&nbsp;@myOption.OptionLabel - $@myOption.Price &nbsp;&nbsp;
-                        <a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.OptionExplain) ">
+                        @Html.Hidden(string.Concat("IsShippingRequired_", myOption.Key.idRegType), myOption.Value.ToString())
+                        <input type="radio" class="checkbox" id='regTypeID_@(myOption.Key.idRegType)' @defaultCheck name="RegistrationTypeId"
+                               value="@myOption.Key.idRegType" />
+                        &nbsp;&nbsp;@myOption.Key.OptionLabel - $@myOption.Key.Price &nbsp;&nbsp;
+                        <a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.Key.OptionExplain) ">
                             <i class="icon-question-sign"></i>
                         </a>
                         <br />
@@ -106,13 +107,13 @@
 
                         }
                         <dt>
-                            <input type="radio" class="checkbox" id='regTypeID_@(myOption.idRegType)' @defaultCheck name="regType" value="@myOption.idRegType" />
+                            <input type="radio" class="checkbox" id='regTypeID_@(myOption.Key.idRegType)' @defaultCheck name="regType" value="@myOption.Key.idRegType" />
                             &nbsp;
                             &nbsp;
-                            @myOption.OptionLabel
+                            @myOption.Key.OptionLabel
                             - $
-                            @myOption.Price &nbsp;
-                            &nbsp;<a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.OptionExplain) "><i class="icon-question-sign"></i></a>
+                            @myOption.Key.Price &nbsp;
+                            &nbsp;<a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.Key.OptionExplain) "><i class="icon-question-sign"></i></a>
                             <br />
                         </dt>
                     }

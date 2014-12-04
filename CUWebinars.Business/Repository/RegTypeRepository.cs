@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace CUWebinars.Business.Repository
         public RegTypeRepository(TTSWebinarsContext ctx)
             : base(ctx)
         {
-            
+
         }
 
         public RegType FindRegType(int id)
@@ -25,15 +26,17 @@ namespace CUWebinars.Business.Repository
             return items.Where(o => o.idRegType == optionId).ToList();
         }
 
-        public IList<RegType> FindRegTypesByWebinarId(int id, bool detached)
+        public IDictionary<RegType, bool> FindRegTypesByWebinarId(int id, bool detached)
         {
-            var stronglyTypedContext = (TTSWebinarsContext)db;
+            IDictionary<RegType, bool> regTypesAndShippingRequirement = new Dictionary<RegType, bool>();
+
+            var stronglyTypedContext = (TTSWebinarsContext) db;
 
             var webinars = stronglyTypedContext.Webinars
                 .Where(w => w.idWebinar == id);
 
             // There can be only one RegTypesGroupsXrefs per webinar at any one time
-            var regTypesGroupsXrefs = webinars.SelectMany(w => w.RegTypesGroupsXref );
+            var regTypesGroupsXrefs = webinars.SelectMany(w => w.RegTypesGroupsXref);
 
             //  For each of those RegTypesGroupsXrefs, get the relevant OptionGroup
             var regtypesGroups = regTypesGroupsXrefs.Include(o => o.RegTypesGroup).Select(o => o.RegTypesGroup);
@@ -42,12 +45,20 @@ namespace CUWebinars.Business.Repository
             var regtypesXrefs = regtypesGroups.Include(o => o.RegTypesXrefs).SelectMany(opt => opt.RegTypesXrefs);
 
             //  Finally, get the RegTypes
-            var regTypes = regtypesXrefs.Include(o => o.RegType).Select(o => o.RegType).Distinct().ToList();
+            var regTypes =
+                regtypesXrefs.Include(o => o.RegType)
+                    .Select(o => o.RegType)
+                    .Distinct()
+                    .ToList()
+                    .ToDictionary(r => r, rt => rt.ShowShippedNotifications.Trim().Equals("Yes", StringComparison.OrdinalIgnoreCase), new RegTypeComparer());
 
             if (!detached)
                 return regTypes;
 
-            regTypes.ForEach(o => stronglyTypedContext.Entry(o).State = EntityState.Detached);
+            foreach (var regType in regTypes)
+            {
+                stronglyTypedContext.Entry(regType.Key).State = EntityState.Detached;
+            }
 
             return regTypes;
         }
@@ -57,6 +68,20 @@ namespace CUWebinars.Business.Repository
             var regType = items.Find(regTypeId);
 
             return regType.ShowShippedNotifications.Trim().Equals("Yes", StringComparison.OrdinalIgnoreCase);
+        }
+    }
+
+
+    internal class RegTypeComparer : EqualityComparer<RegType>
+    {
+        public override bool Equals(RegType x, RegType y)
+        {
+            return x.idRegType.CompareTo(y.idRegType) == 0;
+        }
+
+        public override int GetHashCode(RegType obj)
+        {
+            return obj.idRegType.ToString().ToLower().GetHashCode();
         }
     }
 }

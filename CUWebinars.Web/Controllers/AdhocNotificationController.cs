@@ -59,7 +59,7 @@ namespace CUWebinars.Web.Controllers
         {
             return
                 _regTypeRepository.FindRegTypesByWebinarId(idWebinar, false)
-                    .Select(r => new SelectListItem {Text = r.OptionLabel, Value = r.idRegType.ToString()});
+                    .Select(r => new SelectListItem {Text = r.Key.OptionLabel, Value = r.Key.idRegType.ToString()});
         }
         private IEnumerable<SelectListItem> GetUpcomingWebinarsAsSelectListItems()
         {

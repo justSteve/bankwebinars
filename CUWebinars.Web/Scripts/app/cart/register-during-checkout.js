@@ -2,7 +2,9 @@
 
 
 registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, shippingAddressRequired, callback) {
-    
+
+    Rollbar.info({ 'reg-during-check': { orderId: orderId, webinarId: webinarId, orderRowId: orderRowId, shippingAddressRequired: shippingAddressRequired, callback: callback } });
+
     var regUserStateManager, userId;
 
     var utilities = new Common.Utilities();
@@ -595,6 +597,23 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
     });
 
     $('#loadingSpinner').remove();
+
+    if (shippingAddressRequired) {
+        var modalShippingDetails = $('#UserDetailsModal'),
+            modalFormOptionsOnPageLoad = {
+                keyboard: true,
+                backdrop: 'static',
+                show: true,
+            };
+
+        modalShippingDetails.on('shown', function(e) {
+
+            setUiLayout(true);
+        });
+        
+        modalShippingDetails.modal(modalFormOptionsOnPageLoad);
+    }
+
 };
 
 function completeOrder(userId, orderRowId, webinarId) {
@@ -724,12 +743,14 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
 
     var modalForm = $('#UserDetailsModal');
 
-    button.on('click', function (e) {
+    if (button) {
+        button.on('click', function(e) {
 
-        e.preventDefault();
+            e.preventDefault();
 
-        hookUpModal(modalForm);
-    });
+            hookUpModal(modalForm);
+        });
+    }
 
     modalForm.on('shown', function (e) {
 
@@ -917,6 +938,8 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
 
             if (data.shippingDetailsRqrd === 'Yes') {
                 registerDuringCheckout.shippingAddressRequired = true;
+                //hookUpEditUserLogic(null, true);
+                hookUpModal($('#UserDetailsModal'));
             } else {
                 registerDuringCheckout.shippingAddressRequired = false;
             }
@@ -950,4 +973,19 @@ function hookUpApplyDiscountLogic(btn) {
             $('#loadingSpinner').remove();
         });
     });
+}
+
+function showModalForShippingAddressDetails() {
+    var modalShippingDetails = $('#UserDetailsModal'),
+        modalFormOptionsOnPageLoad = {
+            keyboard: true,
+            backdrop: 'static',
+            show: true,
+        };
+
+    modalShippingDetails.on('shown', function (e) {
+        setUiLayout(true);
+    });
+
+    modalShippingDetails.modal(modalFormOptionsOnPageLoad);
 }

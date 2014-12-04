@@ -142,7 +142,7 @@ namespace CUWebinars.Business.Services
 
 
 
-        public IEnumerable<RegType> FindRegTypesByWebinarId(int webinarId)
+        public IDictionary<RegType, bool> FindRegTypesByWebinarId(int webinarId)
         {
             return _regTypeRepository.FindRegTypesByWebinarId(webinarId, false);
         }

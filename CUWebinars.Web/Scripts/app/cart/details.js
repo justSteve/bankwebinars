@@ -128,16 +128,16 @@ $(function () {
             $('#CancelModal').modal('show');
         });
 
+        if (shippingAddressRequired) {
+            hookUpModal($('#UserDetailsModal'));
+        }
     };
-
-    shippingAddressRequired = true; //todo: this should be done dynamically from db
-
+    
     cartStateManager = new OrderRegistration.StateManager();
 
     cartStateManager.setWebinarId(webinarId); // set in razor view
     cartStateManager.setOrderRowId(orderRowId);
     cartStateManager.setIsUserLogged(isUserLogged);
-    cartStateManager.setShippingAddressRequired(shippingAddressRequired);
     cartStateManager.SetCartState();
 
     $("[id^='regTypeID_']").on("click", function (oEvent) {
@@ -196,9 +196,8 @@ $(function () {
         $('#loginEmail').val($('#Email1').val());
         $('#loginPassword').val($('#Password1').val());
 
-        var regTypeLabel = $.trim($('dl dt input:checked').parent().text());
-
-        shippingAddressRequired = cartStateManager.getShippingAddressRequired();
+        //  value converted to a Boolean
+        shippingAddressRequired = isShippindAddressRequired($('#RegistrationType > dl dt input:checked').prev());
 
         var data = signUpForm.serialize();
 
@@ -232,7 +231,7 @@ $(function () {
             // If the user IS LOGGED IN
             $.post(signUpForm.attr('action'), data, function (result) {
                 if (result.success) {
-                    //jslogger.event({ signup: { from: 'EndUser Checkout' } });
+                    Rollbar.info({ signup: { from: 'EndUser Checkout', orderRowId: result.orderRowId } });
                     cartStateManager.setOrderRowId(result.orderRowId);
                     cartStateManager.setOrderId(result.orderId);
                     cartStateManager.setWebinarId(result.webinarId);
@@ -277,9 +276,9 @@ $(function () {
     });
 });
 
-function isShippindAddressRequired(regTypeLabel) {
-
-    if (regTypeLabel.indexOf('Live Session Only') > -1 || regTypeLabel.indexOf('Live Plus OnDemand Weblinks') > -1)
+function isShippindAddressRequired(jQueryObject) {
+    
+    if ($.trim(jQueryObject.val()).toLowerCase() === 'false')
         return false;
     return true;
 

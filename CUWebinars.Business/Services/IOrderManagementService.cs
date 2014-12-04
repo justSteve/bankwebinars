@@ -28,7 +28,7 @@ namespace CUWebinars.Business.Services
         void FireSendReminderNotificationEvent(IList<Order> orders);
         Affiliate GetAffiliateById(int id);
         Discount GetDiscount(string email);
-        IList<RegType> GetOptionsByWebinarId(int id, bool detached);
+        IDictionary<RegType, bool> GetOptionsByWebinarId(int id, bool detached);
         Order GetOrderById(int id);
         string GetOrderInitiator();
         IList<Order> GetOrdersByUserId(int id);
@@ -36,7 +36,7 @@ namespace CUWebinars.Business.Services
         IList<Order> GetOrdersForRecordedNotifications(int idWebinar);
         IEnumerable<Order> GetOrdersForShippedNotification();
         OrderRow GetOrderRowById(int idOrderRow);
-        IList<RegType> GetRegTypesByWebinarIdFrom(int id, bool detached);
+        IDictionary<RegType, bool> GetRegTypesByWebinarIdFrom(int id, bool detached);
         IList<RegType> GetRegTypesForOption(int optionId);
         WebUser GetWebUser(int id);
         IEnumerable<WebUser> GetWebusersForLiveNotifications(int idWebinar);

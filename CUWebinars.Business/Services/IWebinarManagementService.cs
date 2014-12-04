@@ -10,7 +10,7 @@ namespace CUWebinars.Business.Services
         void AddWebinarFiles(IEnumerable<WebinarFile> webinarFiles);
         void DeleteWebinar(int idWebinar );
         void DeleteWebinarFiles(IEnumerable<WebinarFile> webinarFiles);
-        IEnumerable<RegType> FindRegTypesByWebinarId(int webinarId);
+        IDictionary<RegType, bool> FindRegTypesByWebinarId(int webinarId);
         IEnumerable<Webinar> GetAllActive();
         IEnumerable<Presenter> GetAllPresenters();
         IEnumerable<Webinar> GetByTopic(int topicId);

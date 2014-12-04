@@ -9,7 +9,7 @@ namespace CUWebinars.Web.Helpers
     {
         public static IEnumerable<SelectListItem> GetRegTypesForWebinarAsSelectListItems(int idWebinar, IWebinarManagementService webinarManagementService)
         {
-            return webinarManagementService.FindRegTypesByWebinarId(idWebinar).Select(r => new SelectListItem { Text = r.OptionLabel, Value = r.idRegType.ToString() });
+            return webinarManagementService.FindRegTypesByWebinarId(idWebinar).Select(r => new SelectListItem { Text = r.Key.OptionLabel, Value = r.Key.idRegType.ToString() });
         }
 
 

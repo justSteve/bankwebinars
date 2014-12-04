@@ -6,7 +6,7 @@ namespace CUWebinars.Web.ViewModel
 {
     public class DisplayOptionsInDropDownViewModel
     {
-        public IEnumerable<RegType> Options { get; set; }
+        public IDictionary<RegType, bool> Options { get; set; }
         public int OrderRowId { get; set; }
         public RegType OrderRowRegistrationType { get; set; }
     }

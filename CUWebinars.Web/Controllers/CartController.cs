@@ -47,7 +47,7 @@ namespace CUWebinars.Web.Controllers
                 // AdditionalLocations = order.OrderRows.First().AdditionalLocation.ToList()
                 AdditionalLocations = new List<AdditionalLocation>(),
                 OrderExists = false,
-                Emails = new string []{""}
+                Emails = new[]{""}
 
             };
 

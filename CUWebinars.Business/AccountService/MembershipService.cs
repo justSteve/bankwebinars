@@ -437,19 +437,18 @@ namespace CUWebinars.Business.AccountService
             shippingAddressFromDb.Phone = shippingAddress.Phone;
             shippingAddressFromDb.Zip = shippingAddress.Zip;
             shippingAddressFromDb.Country = shippingAddress.Country;
+            
+            _webUserRepository.UpdateAddresses(shippingAddressFromDb);
 
             webUser.Addresses.Clear();
             webUser.Addresses.Add(billingAddressFromDb);
             webUser.Addresses.Add(shippingAddressFromDb);
 
 
-            webUser.generalComments = auditChanges + System.Environment.NewLine + "----------------" +
-                                      System.Environment.NewLine + webUser.generalComments;
-
-          
-            _webUserRepository.UpdateAddresses(shippingAddressFromDb);
+            webUser.generalComments = (auditChanges + System.Environment.NewLine + "--------" +
+                                      System.Environment.NewLine + webUser.generalComments).Substring(0,1000);
+            
             _webUserRepository.Update(webUser);
-            //}
         }
 
         public UserAccount VerifyEmailFromKey(string key, string password)
