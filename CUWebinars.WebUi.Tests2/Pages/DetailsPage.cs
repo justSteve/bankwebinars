@@ -96,7 +96,7 @@ namespace CUWebinars.WebUi.Tests2.Pages
 
         public void PickRegType(int i)
         {
-            SeleniumTestDriver.FindByXPathClick(string.Format(@"//*[@id='RegistrationType']/dl/dt[{0}]/input", i), ExpectedCondition.ElementIsVisible, 5);
+            SeleniumTestDriver.FindByXPathClick(string.Format(@"//*[@id='RegistrationType']/dl/dt[{0}]/input[2]", i), ExpectedCondition.ElementIsVisible, 5);
         }
 
 
