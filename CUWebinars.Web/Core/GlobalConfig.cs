@@ -15,13 +15,14 @@ namespace CUWebinars.Web.Core
         public bool NotificationsTesting { get; set; }
         public string StorageAccessKey { get; private set; }
         public string StorageAccountName { get; private set; }
-        public string TestEmailAddress { get; private set; }
         public string Tenant { get; private set; }
         public string TenantEmail { get; private set; }
         public string TenantDomain { get; private set; }
         public string TenantURL { get; private set; }
         public string TenantLogo { get; private set; }
         public string TenantPrefix { get; private set; }
+        public string TestEmailAddress { get; private set; }
+        public string TestEmailAddress2 { get; private set; }
         public string UnAuthenticatedUser { get; private set; }
         public bool UseAzureWebjobs { get; private set; }
         public string WMVRepository { get; private set; }
@@ -43,7 +44,6 @@ namespace CUWebinars.Web.Core
                 //}
                 UniqueInstance.CreateUserQueueName = ApplicationSettingsSection["CreateUserQueueName"];
                 UniqueInstance.EmailSendingMode = ApplicationSettingsSection["EmailSendingMode"];
-                UniqueInstance.TestEmailAddress = ApplicationSettingsSection["TestEmailAddress"];
                 UniqueInstance.WMVRepository = ApplicationSettingsSection["WMVRepository"];
                 UniqueInstance.HandoutRepository = ApplicationSettingsSection["HandoutRepository"];
                 UniqueInstance.ImgRepository = ApplicationSettingsSection["ImgRepository"];
@@ -56,6 +56,8 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.TenantURL = ApplicationSettingsSection["TenantURL"];
                 UniqueInstance.TenantLogo = ApplicationSettingsSection["TenantLogo"];
                 UniqueInstance.TenantPrefix = ApplicationSettingsSection["TenantPrefix"];
+                UniqueInstance.TestEmailAddress = ApplicationSettingsSection["TestEmailAddress"];
+                UniqueInstance.TestEmailAddress2 = ApplicationSettingsSection["TestEmailAddress2"];
                 UniqueInstance.UnAuthenticatedUser = ApplicationSettingsSection["UnAuthenticatedUser"];
                 UniqueInstance.UseAzureWebjobs = bool.Parse(ApplicationSettingsSection["UseAzureWebjobs"]);
 

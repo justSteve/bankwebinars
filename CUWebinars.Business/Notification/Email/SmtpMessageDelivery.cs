@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.Net.Configuration;
 using System.Net.Mail;
@@ -8,6 +9,7 @@ namespace CUWebinars.Business.Notification.Email
 {
     public class SmtpMessageDelivery : INotificationDelivery
     {
+        private readonly NameValueCollection _appSettings = ConfigurationManager.AppSettings;
         public void Notify(INotificationMessage notificationMessage)
         {
             var timeStamp = DateTime.Now;
@@ -23,31 +25,21 @@ namespace CUWebinars.Business.Notification.Email
             using (var smtp = new SmtpClient())
             {
                 smtp.Timeout = 5000;
-
-                //mailMessage.To.Add(new MailAddress("steve@ttstrain.com"));
                 
                 string destinationEmailAddress = notificationMessage.To;
 
-                if (ConfigurationManager.AppSettings["EmailSendingMode"] != "live")
+                //  Set this AppSetting in Web.Config to true when testing i.e. not live
+                if (_appSettings["EmailSendingMode"] != "live")
                 {
-                    destinationEmailAddress = ConfigurationManager.AppSettings["TestEmailAddress"];
+                    destinationEmailAddress = _appSettings["TestEmailAddress"];
+                    mailMessage.To.Add(new MailAddress(_appSettings["TestEmailAddress2"]));
                 }
-                if (System.Diagnostics.Debugger.IsAttached)
-                {
-                    destinationEmailAddress = ConfigurationManager.AppSettings["TestEmailAddress"];
-                }
-#if DEBUG
-                destinationEmailAddress = ConfigurationManager.AppSettings["TestEmailAddress"];
-#endif
 
-                mailMessage.To.Add(new MailAddress(destinationEmailAddress));
-
-                
                 mailMessage.To.Add(destinationEmailAddress);
                 
                 try
                 {
-                    mailMessage.From = new MailAddress(ConfigurationManager.AppSettings["TenantEmail"]);
+                    mailMessage.From = new MailAddress(_appSettings["TenantEmail"]);
                     
                     mailMessage.Subject = notificationMessage.Subject;
                     mailMessage.Body = notificationMessage.Body;

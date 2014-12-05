@@ -1,5 +1,6 @@
 ﻿using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Constants;
+using CUWebinars.Web.Core;
 using CUWebinars.Web.Services;
 using System;
 using System.Configuration;
@@ -11,6 +12,7 @@ namespace CUWebinars.Web.Membership.Email
     public class TtsSmtpMessageDelivery : IMessageDelivery
     {
         private readonly IStateService _stateService;
+        private readonly GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
         public TtsSmtpMessageDelivery(IStateService stateService)
         {
             _stateService = stateService;
@@ -38,22 +40,20 @@ namespace CUWebinars.Web.Membership.Email
             {
                 smtp.Timeout = 5000;
 
-                mailMessage.From = new MailAddress(ConfigurationManager.AppSettings["TenantEmail"]);
+                mailMessage.From = new MailAddress(_globalConfig.TenantEmail);
 
                 string destinationEmailAddress = msg.To;
 
-                if (ConfigurationManager.AppSettings["EmailSendingMode"] != "live")
+                //  Set this AppSetting in Web.Config to true when testing i.e. not live
+                if (_globalConfig.EmailSendingMode != "live")
                 {
-                    destinationEmailAddress = ConfigurationManager.AppSettings["TestEmailAddress"];
+                    destinationEmailAddress = _globalConfig.TestEmailAddress;
+                    mailMessage.To.Add(new MailAddress(_globalConfig.TestEmailAddress2));
                 }
-                if (System.Diagnostics.Debugger.IsAttached)
-                {
-                    destinationEmailAddress = ConfigurationManager.AppSettings["TestEmailAddress"];
-                }
-#if DEBUG
-                destinationEmailAddress = ConfigurationManager.AppSettings["TestEmailAddress"];
-                mailMessage.To.Add(new MailAddress(ConfigurationManager.AppSettings["TestEmailAddress2"]));
-#endif
+                //if (System.Diagnostics.Debugger.IsAttached)
+                //{
+                //    destinationEmailAddress = _globalConfig.TestEmailAddress;
+                //}
 
                 mailMessage.To.Add(new MailAddress(destinationEmailAddress));
 
