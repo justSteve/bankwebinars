@@ -12,15 +12,17 @@ namespace CUWebinars.Web.Core
         public string HandoutRepository { get; private set; }
         public string ImgRepository { get; private set; }
         public string MembershipConnectionString { get; set; }
+        public bool NotificationsTesting { get; set; }
         public string StorageAccessKey { get; private set; }
         public string StorageAccountName { get; private set; }
-        public string TestEmailAddress { get; private set; }
         public string Tenant { get; private set; }
         public string TenantEmail { get; private set; }
         public string TenantDomain { get; private set; }
         public string TenantURL { get; private set; }
         public string TenantLogo { get; private set; }
         public string TenantPrefix { get; private set; }
+        public string TestEmailAddress { get; private set; }
+        public string TestEmailAddress2 { get; private set; }
         public string UnAuthenticatedUser { get; private set; }
         public bool UseAzureWebjobs { get; private set; }
         public string WMVRepository { get; private set; }
@@ -42,10 +44,10 @@ namespace CUWebinars.Web.Core
                 //}
                 UniqueInstance.CreateUserQueueName = ApplicationSettingsSection["CreateUserQueueName"];
                 UniqueInstance.EmailSendingMode = ApplicationSettingsSection["EmailSendingMode"];
-                UniqueInstance.TestEmailAddress = ApplicationSettingsSection["TestEmailAddress"];
                 UniqueInstance.WMVRepository = ApplicationSettingsSection["WMVRepository"];
                 UniqueInstance.HandoutRepository = ApplicationSettingsSection["HandoutRepository"];
                 UniqueInstance.ImgRepository = ApplicationSettingsSection["ImgRepository"];
+                UniqueInstance.NotificationsTesting = bool.Parse(ApplicationSettingsSection["NotificationsTesting"]);
                 UniqueInstance.StorageAccessKey = ApplicationSettingsSection["StorageAccessKey"];
                 UniqueInstance.StorageAccountName = ApplicationSettingsSection["StorageAccountName"];
                 UniqueInstance.Tenant = ApplicationSettingsSection["Tenant"];
@@ -54,6 +56,8 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.TenantURL = ApplicationSettingsSection["TenantURL"];
                 UniqueInstance.TenantLogo = ApplicationSettingsSection["TenantLogo"];
                 UniqueInstance.TenantPrefix = ApplicationSettingsSection["TenantPrefix"];
+                UniqueInstance.TestEmailAddress = ApplicationSettingsSection["TestEmailAddress"];
+                UniqueInstance.TestEmailAddress2 = ApplicationSettingsSection["TestEmailAddress2"];
                 UniqueInstance.UnAuthenticatedUser = ApplicationSettingsSection["UnAuthenticatedUser"];
                 UniqueInstance.UseAzureWebjobs = bool.Parse(ApplicationSettingsSection["UseAzureWebjobs"]);
 
@@ -63,6 +67,7 @@ namespace CUWebinars.Web.Core
             // Private object instantiated with private constructor
             internal static readonly GlobalConfig UniqueInstance = new GlobalConfig();
         }
+
 
         // Public static property to get the singleton object
         public static GlobalConfig GlobalConfigSingleton
