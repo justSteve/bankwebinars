@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -834,7 +835,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
                         }
                         catch (Exception exception)
                         {
-
+                            Trace.Write(string.Format("Failed to pick radio button for regType {0}", regType));
                         }
                     }
 

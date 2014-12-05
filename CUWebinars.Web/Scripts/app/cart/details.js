@@ -18,9 +18,9 @@ checkoutConfirm = {};
 $(function () {
 
     signUpForm = $('#SignUpForm');
-    signUpFormContainer = $('#SignUpFormContainer');
+    signUpFormContainer = $('#SignUpFormContainer'); // The big beige box
 
-    /* This function gets invoked when the 3rd tab is loaded when an existing is using cart */
+    /* This function gets invoked when the 3rd tab is loaded and an existing user is using the cart */
     checkoutConfirm.initialize = function (userId) {
 
         cartStateManager.setCancelOrderForm($('#cancelOrder'));
@@ -28,7 +28,7 @@ $(function () {
 
         cartStateManager.getConfirmOrderForm().on('submit', function (e) {
 
-            //console.log('submitting ConfirmOrder');
+            Rollbar.info('submitting confirmOrder form');
             e.preventDefault();
 
             var self = $(this);
@@ -77,7 +77,7 @@ $(function () {
 
         cancelOrderForm.on('submit', function (e) {
 
-            //appInsights.trackEvent("Cancelling Order by user");
+            Rollbar.info('Submitting cancelOrderForm');
             e.preventDefault();
 
             $('#cancelModalOrderId').val(cartStateManager.getOrderId());
@@ -127,17 +127,14 @@ $(function () {
 
             $('#CancelModal').modal('show');
         });
-
-        if (shippingAddressRequired) {
-            hookUpModal($('#UserDetailsModal'));
-        }
+        
     };
     
     cartStateManager = new OrderRegistration.StateManager();
 
-    cartStateManager.setWebinarId(webinarId); // set in razor view
-    cartStateManager.setOrderRowId(orderRowId);
-    cartStateManager.setIsUserLogged(isUserLogged);
+    cartStateManager.setWebinarId(webinarId); // webinarId is set in a script tab in razor view Details.cshtml
+    cartStateManager.setOrderRowId(orderRowId); // orderRowId is set at top of this file
+    cartStateManager.setIsUserLogged(isUserLogged); // isUserLogged is set in a script tab in razor view Details.cshtml
     cartStateManager.SetCartState();
 
     $("[id^='regTypeID_']").on("click", function (oEvent) {
@@ -196,18 +193,20 @@ $(function () {
         $('#loginEmail').val($('#Email1').val());
         $('#loginPassword').val($('#Password1').val());
 
-        //  value converted to a Boolean
+        //  value converted to a Boolean in isShippindAddressRequired function
+        //  valu comes from a hidden impact in the radio btn list next to the relevant radio button (previous-sibling)
         shippingAddressRequired = isShippindAddressRequired($('#RegistrationType > dl dt input:checked').prev());
 
         var data = signUpForm.serialize();
 
         $('#SignUpForm > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
 
-        // If the user IS NOT LOGGED IN - move to file register-during-checkout.js
+        // If the user IS NOT LOGGED IN - control moves to the register-during-checkout.js script
         if (!cartStateManager.getIsUserLogged()) {
 
             //appInsights.trackEvent("anon user hits signup");
             $.post(signUpForm.attr('action'), data, function (result) {
+
                 if (result.success) {
 
                     cartStateManager.setOrderRowId(result.orderRowId);
@@ -240,10 +239,16 @@ $(function () {
                     $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
                         $('#confirmationTab a').tab('show');
 
+                        if (shippingAddressRequired && notificationsTesting === 'false') {
+                            // Following function lives in the register-during-checkout.js script 
+                            // which will be in memory at this point and thus will have been hoisted.
+                            hookUpModal($('#UserDetailsModal')); 
+                        }
+
                         // see top of this file
                         checkoutConfirm.initialize();
                         
-                        // 
+                        // The Bill Me button on 3rd tab
                         $('#ConfirmRegistrationBillMe').on('click', function (e) {
                             e.preventDefault();
                             var confirmOrderForm = $('#confirmOrder');
@@ -251,12 +256,15 @@ $(function () {
                             confirmOrderForm.off('submit');
                         });
 
+                        // The Cancel Registration button on 3rd tab
                         $('#Canceller').on('click', function (e) {
                             e.preventDefault();
                             var cancelOrderForm = cartStateManager.getCancelOrderForm();
                             cancelOrderForm.submit();
                         });
 
+                        // Following 3 functions live in the register-during-checkout.js script 
+                        // which will be in memory at this point and thus will be hoisted
                         hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
                         hookUpChangeTypeLogic($('#RegType'));
                         hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);

@@ -12,6 +12,7 @@ namespace CUWebinars.Web.Core
         public string HandoutRepository { get; private set; }
         public string ImgRepository { get; private set; }
         public string MembershipConnectionString { get; set; }
+        public bool NotificationsTesting { get; set; }
         public string StorageAccessKey { get; private set; }
         public string StorageAccountName { get; private set; }
         public string TestEmailAddress { get; private set; }
@@ -46,6 +47,7 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.WMVRepository = ApplicationSettingsSection["WMVRepository"];
                 UniqueInstance.HandoutRepository = ApplicationSettingsSection["HandoutRepository"];
                 UniqueInstance.ImgRepository = ApplicationSettingsSection["ImgRepository"];
+                UniqueInstance.NotificationsTesting = bool.Parse(ApplicationSettingsSection["NotificationsTesting"]);
                 UniqueInstance.StorageAccessKey = ApplicationSettingsSection["StorageAccessKey"];
                 UniqueInstance.StorageAccountName = ApplicationSettingsSection["StorageAccountName"];
                 UniqueInstance.Tenant = ApplicationSettingsSection["Tenant"];
@@ -63,6 +65,7 @@ namespace CUWebinars.Web.Core
             // Private object instantiated with private constructor
             internal static readonly GlobalConfig UniqueInstance = new GlobalConfig();
         }
+
 
         // Public static property to get the singleton object
         public static GlobalConfig GlobalConfigSingleton

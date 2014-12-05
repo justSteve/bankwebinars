@@ -3,7 +3,10 @@
 
 registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, shippingAddressRequired, callback) {
 
-    Rollbar.info({ 'reg-during-check': { orderId: orderId, webinarId: webinarId, orderRowId: orderRowId, shippingAddressRequired: shippingAddressRequired, callback: callback } });
+    Rollbar.info({ 'reg-during-check': { orderId: orderId, webinarId: webinarId, orderRowId: orderRowId, shippingAddressRequired: shippingAddressRequired } });
+
+    cartStateManager.setCancelOrderForm($('#cancelOrder'));
+    cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 
     var regUserStateManager, userId;
 
@@ -453,6 +456,10 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                 hookUpChangeTypeLogic($('#RegType'));
                                 hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
 
+                                if (shippingAddressRequired && notificationsTesting === 'false') {
+                                    hookUpModal($('#UserDetailsModal'));
+                                }
+
                                 //  Now that we are on the 3rd tab, remove the 2nd tab else we'll have some fields with identical id's on both tabs (edit user fields)
                                 $('#_CreateUserFromCartForm').remove();
 
@@ -550,13 +557,25 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                 if (data.Result === 'Success') {
                                     $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function(response, status, xhr) {
                                         $('#ConfirmRegistrationBillMe').on('click', function (e) {
+                                            e.preventDefault();
                                             callback();
                                             $('#confirmOrder').submit();
+                                        });
+
+                                        $('#Canceller').on('click', function (e) {
+                                            e.preventDefault();
+                                            callback();
+                                            var cancelOrderForm = cartStateManager.getCancelOrderForm();
+                                            cancelOrderForm.submit();
                                         });
 
                                         hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
                                         hookUpChangeTypeLogic($('#RegType'));
                                         hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
+
+                                        if (shippingAddressRequired && notificationsTesting === 'false') {
+                                            hookUpModal($('#UserDetailsModal'));
+                                        }
 
                                         //  Now that we are on the 3rd tab, remove the 2nd tab else we'll have some fields with identical id's on both tabs (edit user fields)
                                         $('#_CreateUserFromCartForm').remove();
@@ -597,22 +616,6 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
     });
 
     $('#loadingSpinner').remove();
-
-    if (shippingAddressRequired) {
-        var modalShippingDetails = $('#UserDetailsModal'),
-            modalFormOptionsOnPageLoad = {
-                keyboard: true,
-                backdrop: 'static',
-                show: true,
-            };
-
-        modalShippingDetails.on('shown', function(e) {
-
-            setUiLayout(true);
-        });
-        
-        modalShippingDetails.modal(modalFormOptionsOnPageLoad);
-    }
 
 };
 
@@ -743,14 +746,12 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
 
     var modalForm = $('#UserDetailsModal');
 
-    if (button) {
-        button.on('click', function(e) {
+    button.on('click', function(e) {
 
-            e.preventDefault();
+        e.preventDefault();
 
-            hookUpModal(modalForm);
-        });
-    }
+        hookUpModal(modalForm);
+    });
 
     modalForm.on('shown', function (e) {
 
