@@ -10,7 +10,7 @@ using DDay.iCal;
 
 namespace CUWebinars.Business.CQS.CommandHandlers
 {
-    public class OrderManagementCommandHandlers : 
+    public class OrderManagementCommandHandlers :
         ICommandHandler<AddOrderRowCommand>,
         ICommandHandler<RegisterNewAccountCommand>,
         ICommandHandler<VerifyAccountCommand>,
@@ -21,7 +21,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
         private readonly PostCommitRegistrator _postCommitRegistrator;
         private bool _disposed;
 
-        public OrderManagementCommandHandlers(IOrderManagementService orderManagementService, 
+        public OrderManagementCommandHandlers(IOrderManagementService orderManagementService,
             IMembershipService membershipService,
             PostCommitRegistrator postCommitRegistrator)
         {
@@ -46,7 +46,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                     var additionalLocationEmail = additionalLocation.Email;
 
                     additionalLocations.Add(_orderManagementService.CreateAdditionalLocation(
-                        additionalLocationEmail, 
+                        additionalLocationEmail,
                         price,
                         null)//field for FullName
                         );
@@ -54,10 +54,10 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                 }
             }
 
-             var orderRow = _orderManagementService.CreateOrderRow(command.Webinar, 
-                additionalLocations,
-                command.RegistrationType
-                );
+            var orderRow = _orderManagementService.CreateOrderRow(command.Webinar,
+               additionalLocations,
+               command.RegistrationType
+               );
 
             orderRow.Discount = _orderManagementService.GetDiscount(command.Email);
 
@@ -72,7 +72,8 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
         private decimal GetPriceOfAdditionalLocation(int idWebinar)
         {
-            //Todo: hit lookup table that contained addLoc price per the given webinar
+            //Todo: AdditionalLocationsLookupPrice is a xRef table for price of each billable AdditionalLocation seat.
+            // integrate price according to above lookup table.
             return 150;
         }
 
@@ -82,11 +83,11 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             if (command == null) throw new ArgumentNullException("command");
             var institutionForUser = _membershipService.ProcessInstitutionForUser(command.Institution
                     , command.Email
-                    ,command.BillingAddress.City
-                    ,command.BillingAddress.State
-                    ,"N"
-                    ,"New"
-                    ,command.BillingAddress.Zip
+                    , command.BillingAddress.City
+                    , command.BillingAddress.State
+                    , "N"
+                    , "New"
+                    , command.BillingAddress.Zip
                     );
 
             USTimeZone userTimeZone = _membershipService.GetTimeZoneByZip();
@@ -94,7 +95,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             command.BillingAddress.AddressType = DomainConstants.BillingAddress;
             command.ShippingAddress.AddressType = DomainConstants.ShippingAddress;
 
-            var addresses = new List<Address> {command.BillingAddress, command.ShippingAddress};
+            var addresses = new List<Address> { command.BillingAddress, command.ShippingAddress };
 
             var webUser = _membershipService.CreateWebUser(command.Tenant
                 , command.FirstName
@@ -117,7 +118,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                 , command.TempPassword
                 , command.Email
                 );
-         
+
             _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.OrderImportRegistration);
 
             _postCommitRegistrator.Committed += () =>
@@ -143,7 +144,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
         public void Handle(AddOrderCommand command)
         {
             if (command == null) throw new ArgumentNullException("command");
-            var importedOrder = _orderManagementService.CreateNewOrder(command.Affiliate,command.WebUser, command.Webinar, command.OrderRow);
+            var importedOrder = _orderManagementService.CreateNewOrder(command.Affiliate, command.WebUser, command.Webinar, command.OrderRow);
 
             importedOrder.AdminComments = "incomingOrderModel.AdminComments";
             importedOrder.AffiliateComments = command.AffiliateComments;

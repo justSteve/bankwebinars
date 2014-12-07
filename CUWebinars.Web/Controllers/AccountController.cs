@@ -806,11 +806,11 @@ namespace CUWebinars.Web.Controllers
                 {
                     if (string.IsNullOrWhiteSpace(model.Key))
                     {
-                        _logger.Warn(
+                        _logger.Error(
                             "Account.PasswordResetConfirm.POST was passed empty or null ID. Session=PasswordResetConfirm. " +
                             _appHelper.GetUserAuditInfo());
                         ModelState.AddModelError(string.Empty,
-                            "There appears to have been a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again.");
+                            "There appears to have been a problem with the link which you clicked to navigate to this page. Please try clicking the link from the email again. In case of persisant problems contact us at 800-831-0678 ext. 707");
                     }
                     else
                     {
@@ -818,9 +818,9 @@ namespace CUWebinars.Web.Controllers
                             model.ChangePasswordSucceeded = true;
                         else
                         {
-                            //  TODO: I added "please contact your system administrator" for now. Do we have a number which they can call?
+                            _logger.Error("_accountControllerOrchestrator.ChangePasswordFromResetKey tossed error.");
                             ModelState.AddModelError(string.Empty,
-                                "Unable to change password from Reset key. Please please contact your system administrator");
+                                "We've logged an error. Please attempt the password reset procedure again. In case of persisant failures contact us at support@ttstrain.com - or, for immediate assistance contact us at 800-831-0678 ext. 707.");
                         }
                     }
                     _logger.Info("Account.PasswordResetConfirm Post. Session=" + _appHelper.GetUserAuditInfo());
