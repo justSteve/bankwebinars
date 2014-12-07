@@ -448,6 +448,8 @@
     <None Include="Properties\PublishProfiles\BankWebinars.pubxml" />
     <None Include="Properties\PublishProfiles\bankwebinars3 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\bankwebinars3 - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\BankWebinars31.pubxml" />
+    <None Include="Properties\PublishProfiles\BankWebinars3_1.pubxml" />
     <None Include="Properties\PublishProfiles\bankwebinars3__bwStaging.pubxml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\jquery-1.11.1.js" />
@@ -478,6 +480,7 @@
     <Content Include="Views\Cart\Partials\_AddCCModal.cshtml" />
     <Content Include="Views\Cart\Partials\_LogsModal.cshtml" />
     <Content Include="Views\Cart\Partials\_UserDetailsModal.cshtml" />
+    <Content Include="Views\Home\robots.txt" />
     <Content Include="Views\Webinar\Details.cshtml" />
     <None Include="Notification\Templates\OrderSubmittedAdditionalLocation.cshtml" />
     <Compile Include="ViewModel\AdditionalLocationAddViewModel.cs" />

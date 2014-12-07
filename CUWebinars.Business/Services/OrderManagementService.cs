@@ -276,10 +276,17 @@ namespace CUWebinars.Business.Services
         private void CalculateOrderPrices(Order order)
         {
             order.Total = 0.0M;
+            var row = order.OrderRows.FirstOrDefault();
 
-            var row = order.OrderRows.Single();
+            foreach (var i in order.OrderRows)
+            {
+                if (i.RowStatus == OrderRowStatus.Active)
+                {
+                    row = i;
+                }
+            }
 
-            if (row.RegistrationType.Price != null) row.UnitPrice = (decimal)row.RegistrationType.Price;
+            if (row != null ) row.UnitPrice = (decimal)row.RegistrationType.Price;
             //
             //Calculate options price
             decimal optionsTotal = CalculateOptionsPrice(row);
@@ -287,21 +294,17 @@ namespace CUWebinars.Business.Services
             //Calculate row price before discount
             row.RowPrice = row.UnitPrice + optionsTotal;
 
-            //Calculate discount. Discount is not valid for subscription webinars.
-            if (row.Webinar.Title.Contains("Compliance Perspectives") == false)
+            //Calculate discount. 
+            decimal discountTotal = 0;
+            if (row.Discount != null && row.Discount.percentOff != 0.0M)
             {
-
-                //decimal discountTotal = row.
-                //if (row.DiscountPercentOff != 0.0M)
-                //{
-                //    discountTotal = row.RowPrice * row.DiscountPercentOff / 100;
-                //}
-                //if (discountTotal > row.RowPrice)
-                //{
-                //    discountTotal = row.RowPrice;
-                //}
-                //row.RowPrice = row.RowPrice - discountTotal;
+                discountTotal = row.RowPrice * row.Discount.percentOff / 100;
             }
+            if (discountTotal > row.RowPrice)
+            {
+                discountTotal = row.RowPrice;
+            }
+            row.RowPrice = row.RowPrice - discountTotal;
 
             //Calculate order total
             order.Total += row.RowPrice;
@@ -320,22 +323,7 @@ namespace CUWebinars.Business.Services
             if (row.AdditionalLocation != null)
                 foreach (var addLoc in row.AdditionalLocation)
                 {
-                    if (row.Webinar.Title.Contains("Compliance Perspectives")//.IsSubscriptionWebinar
-                        && row.AdditionalLocation.Count < 4)
-                    {
-                        continue; //Subscription webinar with up to 3 additional locations. Do not charge.
-                    }
-
-                    if (row.Webinar.Title.Contains("Compliance Perspectives"))
-                    {
-                        //int subscriptionPeriod = 12;//row.RegistrationType == RegistrationType.Twelve_Month_Subscription ? 12 : 6;
-                        //optionsTotal += (row.AdditionalLocation.Count - 3) * row.AdditionalLocation. * subscriptionPeriod;
-                        optionsTotal += 0;
-                    }
-                    else
-                    {
-                        optionsTotal += addLoc.Price;
-                    }
+                    optionsTotal += addLoc.Price;
                 }
             return optionsTotal;
         }
@@ -375,7 +363,7 @@ namespace CUWebinars.Business.Services
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }
-            
+
             Clear(); // need to clear at this point, otherwise the OrderSubmittedEvent will be fired again when 
 
             if (order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count != 0)
@@ -532,29 +520,29 @@ namespace CUWebinars.Business.Services
             order.AuditInfo = "Placeholder user is replaced by " + user.email + Environment.NewLine + order.AuditInfo;
             order.idUser = userId;
 
-            var billingAddress = user.Addresses.Where(a => a.AddressType == DomainConstants.BillingAddress ).Single();
+            var billingAddress = user.Addresses.Where(a => a.AddressType == DomainConstants.BillingAddress).Single();
             var shippingAddress = user.Addresses.Where(a => a.AddressType == DomainConstants.ShippingAddress).Single();
 
             order.FirstName = user.FirstName;
-            order.LastName= user.LastName;
-            order.Institution= user.Institution.InstitutionName;
+            order.LastName = user.LastName;
+            order.Institution = user.Institution.InstitutionName;
             order.BillingPhone = billingAddress.Phone;
             order.BillingEmail = user.email;
             order.BillingAddress = billingAddress.StreetAddress;
             order.BillingAddress2 = billingAddress.StreetAddress2;
-            order.BillingState= billingAddress.State;
-            order.BillingCity= billingAddress.City;
-            order.BillingZip= billingAddress.Zip;
+            order.BillingState = billingAddress.State;
+            order.BillingCity = billingAddress.City;
+            order.BillingZip = billingAddress.Zip;
 
             order.ShippingFirstName = user.FirstName;
             order.ShippingLastName = user.LastName;
             order.ShippingPhone = shippingAddress.Phone;
             order.ShippingAddress = shippingAddress.StreetAddress;
             order.ShippingAddress2 = shippingAddress.StreetAddress2;
-            order.ShippingState= shippingAddress.State;
-            order.ShippingCity= shippingAddress.City;
-            order.ShippingZip= shippingAddress.Zip;
-            
+            order.ShippingState = shippingAddress.State;
+            order.ShippingCity = shippingAddress.City;
+            order.ShippingZip = shippingAddress.Zip;
+
 
             _orderRepository.SaveOrderChanges(order, null);
         }
@@ -661,7 +649,7 @@ namespace CUWebinars.Business.Services
         {
 
             var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow);
-            var email = webUser == null ? "notauthenticated@cuwebinars.com" : webUser.email; 
+            var email = webUser == null ? "notauthenticated@cuwebinars.com" : webUser.email;
             _logger.Info("CreateNewOrder: " + email + "| " + orderRow.Webinar.Title + "| " + orderRow.RegistrationType.OptionLabel);
             return order;
         }

@@ -101,7 +101,7 @@ namespace CUWebinars.Web.Controllers
                 //_checkoutWorkflow.RemoveOrder(order.ID);
                 //_checkoutWorkflow.;
 
-
+                //TODO: this is remant of the legacy system and is surely in need of update.
                 Session.Remove("LastOrderId");
                 Session.Remove("CurrentOrderId");
                 Session.Remove("CurrentOrderIds");
@@ -114,7 +114,7 @@ namespace CUWebinars.Web.Controllers
                 }, JsonRequestBehavior.AllowGet);
                 //return RedirectToAction("Step2");
             }
-            ModelState.AddModelError(string.Empty, "No Order ID was posted to the Server. This issue has been logged."); // TODO: custom message with instructions would be good here.
+            ModelState.AddModelError(string.Empty, "No Order ID was posted to the Server. In case of persistant error contact us at support@ttstrain.com, or, for immediate assistance, 800-831-0678 ext. 707."); // 
             return this.ModelStateJson(ModelState);
         }
 

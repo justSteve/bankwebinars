@@ -682,7 +682,8 @@ namespace CUWebinars.Web.Controllers
                     {
                         AdditionalLocations = row.AdditionalLocation,
                         Addresses = string.Join(",", row.AdditionalLocation.Select(al => al.Email).ToArray()),
-                        OptionsCost = 150 //TODO: not sure what to put here
+                        OptionsCost = 150 //TODO: please reference AdditionalLocationsLookupPrice for pricing
+                        //was: not sure what to put here
                     },
                     OrderRow = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active),
                     RecordingLink = "<a href='" + GlobalConfig.GlobalConfigSingleton.WMVRepository + webinar.RecordingUrl + "' target=_blank /> Recording Playback</a>",

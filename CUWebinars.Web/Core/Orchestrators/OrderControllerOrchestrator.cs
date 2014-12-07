@@ -38,7 +38,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             };
 
             _commandProcessor.Execute(addOrderRowCommand);
-
             var addOrderCommand = new AddOrderCommand
             {
                 Affiliate = orderManagementQueryResult.Affiliate,
@@ -56,7 +55,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             };
 
             _commandProcessor.Execute(addOrderCommand);
-
+            
             return addOrderCommand.OrderId;
         }
 

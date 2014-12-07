@@ -75,15 +75,17 @@
 
         if (notiConnectionInfo == "Yes")
         {
-            
+            connInfoPhrase.Append("<p>Two to three days prior to the event ");
+            connInfoPhrase.Append("we'll send connection instructions and links to handouts or other materials. </p>");
+
             if (notiRecordingPosted == "Yes")
             {
-                connInfoPhrase.Append("<p> Shortly following the conclusion you'll receive notification that the recording is posted");
+                connInfoPhrase.Append("<p> Shortly following the conclusion you'll receive notification when the recording is posted");
 
 
                 if (notiShipped == "Yes")
                 {
-                    connInfoPhrase.Append(" and, 3-5 days later, another that we've shipped your CD and printouts");
+                    connInfoPhrase.Append(" - then again 3-5 days later informing you that we've shipped your CD and printouts");
                 }
                 connInfoPhrase.Append(".</p>");
             }
@@ -91,11 +93,13 @@
         }
         else
         {
+            connInfoPhrase.Append("<p>Because this order doesn't include the <i>live</i> session ");
+            connInfoPhrase.Append("we'll only be sending you a notification when the OnDemand Recording is posted");
             if (notiShipped == "Yes")
             {
-                connInfoPhrase.Append("e'll only be sending you a notification that the OnDemand Recording is posted and then another when your CD and printouts have shipped");
+                connInfoPhrase.Append(" and then another after your CD and printouts have shipped");
             }
-            connInfoPhrase.Append(".<p> You <i>won't</i> see notifications related to the live event...again, plenty of time to change that...just hit reply and let us know.</p>");
+            connInfoPhrase.Append(".</p>");
         }
     }
 
@@ -105,7 +109,7 @@
         connInfoPhrase.Append("<p>");
         if (notiConnectionInfo == "Yes")
         {
-            connInfoPhrase.Append(" This order confirmation includes the link to connect directly to the webinar.");
+            connInfoPhrase.Append(" This order confirmation includes a link to connect directly to the webinar.");
         }
         if (notiRecordingPosted == "Yes")
         {
@@ -113,7 +117,7 @@
 
             if (notiShipped == "Yes")
             {
-                connInfoPhrase.Append(" and, 3-5 days later, another that we've shipped your CD and printouts");
+                connInfoPhrase.Append(" - then again 3-5 days later that we've shipped your CD and printouts");
             }
             connInfoPhrase.Append(".</p>");
         }
@@ -251,8 +255,9 @@
                                                                         <td colspan="2" style="text-align: left; margin-left: 6px; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: small">
                                                                             <div style="color: black; font-family: Arial, Helvetica, sans-serif; padding: 5px; font-size: 12px;">
                                                                                 <p>
-                                                                                    Dear @Model.Order.FirstName,<br />
-                                                                                    Thank you for your recent order numbered: @TenantPrefix@row.Single().Order.idOrder<text>.</text>
+                                                                                    Dear @Model.Order.FirstName,<br /><br />
+                                                                                    Thank you for your order @TenantPrefix@row.Single().Order.idOrder for a
+                                                                                    <i>@row.Single().RegistrationType.OptionLabel</i> on the event titled <i>@row.Single().Webinar.Title</i>.
                                                                                     @if (Model.UserCreatedOnImport)
                                                                                     {
                                                                                         <span>
@@ -260,10 +265,9 @@
                                                                                             If you have any problems accessing that link from inside this email you may paste this URL into your browser: <i>@Model.ConfirmChangeEmailUrl</i><br /><br />
                                                                                         </span>
                                                                                     }
-                                                                                    Your registration indicates that you've chosen the <i>@row.Single().RegistrationType.OptionLabel</i>.
                                                                                 </p> @connInfoPhrase
                                                                                 <p>
-                                                                                    Thank you very much for your patronage and don't hesitate to let us know how we can serve you better!<br /><br />Sincerely,<br />The @Tenant Staff<br /><br />
+                                                                                    Again, thank you very much for your patronage and don't hesitate to let us know how we can serve you better!<br /><br />Sincerely,<br />The @Tenant Staff<br /><br />
                                                                                 </p>
                                                                             </div>
                                                                         </td>
@@ -409,7 +413,7 @@
                                                                                     </td>
                                                                                 </tr>
                                                                             }
-                                                                        }
+                                                                        } // end 'if webinar active' branch
                                                                         else
                                                                         {
                                                                             if (rowRegType.ShowLiveNotifications == "Yes")
@@ -440,13 +444,13 @@
                                                                             {
                                                                                 <tr>
                                                                                     <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: small;">
-                                                                                        <span align="right" style="vert-align: top; font-size: 12px; ">
+                                                                                        <span align="right" style="vert-align: top; font-size: 10px">
                                                                                             CD-ROM:
                                                                                         </span>
                                                                                     </td>
                                                                                     <td style="width: 350px;  text-align: left; font-size: small; background-color: #B4D1EC; padding-left: 6px;">
                                                                                         <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
-                                                                                            The CD-ROM and handouts will ship 7-10 business days following the event. Your order also includes six months access to the OnDemand Recording.
+                                                                                            The CD-ROM and handouts will arrive 7-10 business days following the event. Your order also includes six months access to the OnDemand Playback.
                                                                                         </span>
                                                                                     </td>
                                                                                 </tr>
@@ -459,13 +463,13 @@
                                                                             {
                                                                                 <tr>
                                                                                     <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px">
-                                                                                        <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                                                                        <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
                                                                                             CD-ROM:
                                                                                         </span>
                                                                                     </td>
                                                                                     <td style="width: 350px; text-align: left; font-size: small; background-color: #B4D1EC; padding-left: 6px;">
                                                                                         <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
-                                                                                            The CD-ROM and handouts will ship within 3-5 days.<br />
+                                                                                            The CD-ROM and handouts will arrive 7-10 business days following the event. Your order also includes six months access to the OnDemand Playback.<br />
                                                                                         </span>
                                                                                     </td>
                                                                                 </tr>
