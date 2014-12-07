@@ -166,6 +166,7 @@
     <Compile Include="Notification\Handlers\SendRecordingPostedHandler.cs" />
     <Compile Include="Notification\Handlers\SendReminderHandler.cs" />
     <Compile Include="Notification\Handlers\SendShippedOrderHandler.cs" />
+    <Compile Include="Notification\INotificationPersister.cs" />
     <Compile Include="Notification\Renderers\IRenderer.cs" />
     <Compile Include="Notification\Renderers\Renderer.cs" />
     <Compile Include="Notification\TtsConfigHelper.cs" />

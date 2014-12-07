@@ -8,7 +8,7 @@ namespace CUWebinars.Business.Core
 {
     public class TtsConfig
     {
-        public static TtsConfiguration Create(string baseUrl, bool useAzureWebjobs)
+        public static TtsConfiguration Create(string baseUrl, bool useAzureWebjobs, string storageAccountName, string storageAccessKey)
         {
             var config = new TtsConfiguration();
 
@@ -16,7 +16,7 @@ namespace CUWebinars.Business.Core
 
             // toggle whether to use Azure Webjobs or local code (for local debugiing/development purposes)
             if (useAzureWebjobs)
-                notificationDelivery = new AzureCuwWebJobSmtpMessageDelivery();
+                notificationDelivery = new AzureCuwWebJobSmtpMessageDelivery(storageAccountName, storageAccessKey);
             else
                 notificationDelivery = new SmtpMessageDelivery();
 

@@ -5,6 +5,9 @@
 }
 
 <div class="span8">
+    
+    @Html.ValidationSummary("There was a problem with user impersonation: ", new { id = "registerValidationSummary" })
+
     @using (Html.BeginForm("LogInAsUser", "MembershipNotificationOps", FormMethod.Post, new { id = "LogInAsUserForm", target = "_blank" }))
     {
         @Html.AntiForgeryToken()

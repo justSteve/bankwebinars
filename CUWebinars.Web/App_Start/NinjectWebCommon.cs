@@ -84,6 +84,7 @@ namespace CUWebinars.Web.App_Start
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
+            GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
             string baseUrl = HttpRuntime.AppDomainAppPath;
 
             kernel.Bind<IStateService>().To<StateService>().InSingletonScope();
@@ -95,7 +96,13 @@ namespace CUWebinars.Web.App_Start
                     kernel.Get<IStateService>()
                     )).InRequestScope();
 
-            kernel.Bind<TtsConfiguration>().ToMethod(ctx => TtsConfig.Create(baseUrl, GlobalConfig.GlobalConfigSingleton.UseAzureWebjobs)).InRequestScope();
+            kernel.Bind<TtsConfiguration>().ToMethod(ctx => TtsConfig.Create(
+                baseUrl, 
+                globalConfig.UseAzureWebjobs,
+                globalConfig.StorageAccountName, 
+                globalConfig.StorageAccessKey
+                )).InRequestScope();
+
             kernel.Bind<IAppHelper>().To<AppHelper>().InRequestScope().WithConstructorArgument(Request, x => new HttpRequestWrapper(HttpContext.Current.Request));
 
             kernel.Bind<IAffiliateRepository>().To<AffiliateRepository>().InRequestScope();

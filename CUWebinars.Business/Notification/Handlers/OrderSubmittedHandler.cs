@@ -44,8 +44,8 @@ namespace CUWebinars.Business.Notification.Handlers
                 var notificationMessage = _generalFormatter.Format(orderSubmittedEvent.EventObject, "OrderSubmitted");
                 notificationMessage.PersistedName = string.Format("OrderSubmitted-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm");
 
-                var fullFilePathToPersistedNotification = Path.Combine(_environmentInformation.BaseUrl,
-                    orderSubmittedEvent.RelativeFilePath);
+                //var fullFilePathToPersistedNotification = Path.Combine(_environmentInformation.BaseUrl,
+                //    orderSubmittedEvent.RelativeFilePath);
                 //_notificationPersister.PersistNotification(notificationMessage.Body, fullFilePathToPersistedNotification);
 
                 notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail;
