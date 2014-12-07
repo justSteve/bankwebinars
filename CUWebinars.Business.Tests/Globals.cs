@@ -11,11 +11,16 @@ namespace CUWebinars.Business.Tests
         private static string _membershipRebootConnectionString;
         private static string _ttsDatabaseLocal;
         private static bool _useAzureWebjobs;
+        private static string _storageAccountName;
+        private static string _storageAccessKey;
 
 
         static Globals()
         {
             _tenant = ConfigurationManager.AppSettings["Tenant"];
+            _useAzureWebjobs = bool.Parse(ConfigurationManager.AppSettings["UseAzureWebjobs"]);
+            _storageAccountName = ConfigurationManager.AppSettings["StorageAccountName"];
+            _storageAccessKey = ConfigurationManager.AppSettings["StorageAccessKey"];
             _useAzureWebjobs = bool.Parse(ConfigurationManager.AppSettings["UseAzureWebjobs"]);
             _localDbConnectionString = ConfigurationManager.ConnectionStrings[Constants.LocalDbConnectionStringName].ConnectionString;
             _membershipRebootConnectionString = ConfigurationManager.ConnectionStrings[Constants.MembershipRebootConnectionStringName].ConnectionString;
@@ -45,6 +50,16 @@ namespace CUWebinars.Business.Tests
         public static bool UseAzureWebjobs
         {
             get { return _useAzureWebjobs; }
+        }
+
+        public static string StorageAccountName
+        {
+            get { return _storageAccountName; }
+        }
+
+        public static string StorageAccessKey
+        {
+            get { return _storageAccessKey; }
         }
     }
 }

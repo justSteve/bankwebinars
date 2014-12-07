@@ -426,10 +426,9 @@ namespace CUWebinars.Web.Controllers
             {
                 var user = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
 
-                //  TODO: [dar] This looks like ti should be uncommented
-                //model.FirstName = user.FirstName;
-                //model.LastName = user.LastName;
-                //model.Title = user.Title;
+                model.FirstName = user.FirstName;
+                model.LastName = user.LastName;
+                model.Title = user.Title;
 
                 _accountControllerOrchestrator.UpdateNameTitle(model.FirstName, model.LastName, user.email, model.Title);
             }
@@ -994,26 +993,26 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _logger.Info("Account.Register: " + model.RegisterFields.Email.Trim() + "| Session=" +
-                             _appHelper.GetUserAuditInfo());
+                _logger.Info("Account.Register: {0} | Session= {1}", model.RegisterFields.Email.Trim(), _appHelper.GetUserAuditInfo());
+
                 try
                 {
                     var webUser = _accountControllerOrchestrator.CreateWebUserFromCart(model);
 
-                    _logger.Info("Account.Register UserAdded: " + model.RegisterFields.Email);
+                    _logger.Info("Account.Register UserAdded: {0}", model.RegisterFields.Email);
 
                     return Json(new {Result = WebUiConstants.Success, UserId = webUser.idUser, Email = webUser.email});
 
                 }
                 catch (Exception exception)
                 {
-                    ModelState.AddModelError("", exception.Message);
-                    //TODO: add error message here and handle in razor
-                    _logger.Error("Account.Register Catch block: " + exception.Message + "| Session=" +
-                                  _appHelper.GetUserAuditInfo());
+                    ModelState.AddModelError(string.Empty, "Please call us at 800-831-0678 ext. 3 to resolve.");
+                    
+                    _logger.Error("Account.Register Catch block: {0} | Session= {1}", _appHelper.GetUserAuditInfo());
                 }
             }
-            _logger.Fatal("Account.Register failed! Session=" + _appHelper.GetUserAuditInfo());
+
+            _logger.Fatal("Account.Register failed! Session={0}", _appHelper.GetUserAuditInfo());
 
             // If we got this far, something failed, redisplay form
             return this.ModelStateJson(ModelState);
@@ -1082,15 +1081,13 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (MembershipCreateUserException e)
                 {
-                    //TODO: add error message here and handle in razor
-                    _logger.Error("CreateUserAccountFromCart Catch block: " + e.Message + "| Session=" +
-                                  _appHelper.GetUserAuditInfo());
+                    _logger.Error("CreateUserAccountFromCart Catch block: {0} | Session= {1}", 
+                        e.Message,_appHelper.GetUserAuditInfo());
                 }
                 catch (Exception e)
                 {
-                    //TODO: add error message here and handle in razor
-                    _logger.Error("CreateUserAccountFromCart Catch block: " + e.Message + "| Session=" +
-                                  _appHelper.GetUserAuditInfo());
+                    _logger.Error("CreateUserAccountFromCart Catch block: {0} | Session= {1}",
+                        e.Message, _appHelper.GetUserAuditInfo());
                 }
             }
 

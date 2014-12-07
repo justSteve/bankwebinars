@@ -294,7 +294,7 @@ namespace CUWebinars.Web.Controllers
         //            {
         //                Webinar = webinar,
         //                Order = currentOrder,
-        //                AlternateEmail = String.Empty,
+        //                AlternateEmail = string.Empty,
         //                RegistrationType = mode
         //            };
         //            //if (webinar.idWebinar == 842 && webinar.Status == WebinarStatus.Scheduled)

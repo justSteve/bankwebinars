@@ -24,38 +24,8 @@ $(function () {
         }).done(function (result) {
             $('#InputFormFields').html(result);
 
-            //var model = {
-            //    Email: $('#Email').val(),
-            //    Password: $('#Password').val()
-            //};
-
-            //$('#LogInAsOtherUserButton').on('click', function () {
-
-            //    $.ajax({
-            //        type: 'POST',
-            //        contentType: constants.FormPostContentType,
-            //        cache: false,
-            //        url: url,
-            //        dataType: constants.HtmlDataType,
-            //        data: null,
-            //        beforeSend: function () {
-            //            // this is where we append a loading image
-            //            $('#WaitIndicator').show();
-            //        }
-            //    }).done(function (data) {
-            //        var response = JSON.parse(data);
-            //        if (response.Result === 'Success') {
-            //            $('#OperationMessage').html('&nbsp;The new user has been added with username: <strong>' + response.email + '</strong> and password: <strong>' + response.password + '</strong>');
-            //        } else if (response.Result === 'Fail') {
-            //            $('#OperationMessage').html('<span class="label label-important"><strong>&nbsp;&nbsp;There was an error at the server. The new user has not been created.</strong></span>');
-            //        }
-            //    }).always(function (data) {
-            //        $('#WaitIndicator').hide();
-            //    });
-            //});
-
         }).fail(function (jqXHR, textStatus, errorThrown) {
-            // Request failed. Show error message to user. 
+            
             // errorThrown has error message, or "timeout" in case of timeout.
             //appInsights.trackEvent("LogInAsUser AJAX error: " + errorThrown);
             var i = 0;

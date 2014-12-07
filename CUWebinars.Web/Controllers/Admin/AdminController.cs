@@ -300,27 +300,34 @@ namespace CUWebinars.Web.Controllers.Admin
         [ValidateAntiForgeryToken]
         public ActionResult LogInAsUser(LogInAsOtherUserViewModel model)
         {
-            var adminUser = User.Identity as ClaimsIdentity;
-            var adminUserEmail = adminUser.Claims.Single(c => c.Type == System.IdentityModel.Claims.ClaimTypes.Email).Value;
-            var impersonatedUserAccount = _membershipService.GetUserAccountByEmail(globalConfig.Tenant, model.Email);
-
-            if (ReferenceEquals(null, impersonatedUserAccount))
+            if (ModelState.IsValid)
             {
-                var nullReferenceException =
-                    new NullReferenceException(string.Format("There is no webuser with the email address {0}", model.Email));
-                _logger.ErrorException("LogInAsUser | No User Found For Email", nullReferenceException);
-                ModelState.AddModelError("Inavlid email", nullReferenceException);
-                return View("", "", ""); //   TODO: Figure out how to show error messages
+                var adminUser = User.Identity as ClaimsIdentity;
+                var adminUserEmail =
+                    adminUser.Claims.Single(c => c.Type == System.IdentityModel.Claims.ClaimTypes.Email).Value;
+                var impersonatedUserAccount = _membershipService.GetUserAccountByEmail(globalConfig.Tenant, model.Email);
+
+                if (ReferenceEquals(null, impersonatedUserAccount))
+                {
+                    var nullReferenceException =
+                        new NullReferenceException(string.Format("There is no webuser with the email address {0}",
+                            model.Email));
+                    _logger.ErrorException("LogInAsUser | No User Found For Email", nullReferenceException);
+                    ModelState.AddModelError(string.Empty, nullReferenceException);
+                    return View("", "", ""); //   TODO: Figure out how to show error messages
+                }
+
+                _membershipService.LogOutUser();
+
+                _stateService.SetValue(WebUiConstants.AdminUserEmail, adminUserEmail);
+
+                _membershipService.LogInAdminUserAsOtherUser(globalConfig.Tenant,
+                    adminUserEmail.Trim(), model.Password.Trim(),
+                    impersonatedUserAccount
+                    );
+
+                return RedirectToAction("Index", "Home");
             }
-
-            _membershipService.LogOutUser();
-
-            _stateService.SetValue(WebUiConstants.AdminUserEmail, adminUserEmail);
-
-            _membershipService.LogInAdminUserAsOtherUser(globalConfig.Tenant,
-                adminUserEmail.Trim(), model.Password.Trim(),
-                impersonatedUserAccount
-                );
 
             return RedirectToAction("Index", "Home");
         }

@@ -1,24 +1,27 @@
-﻿using System;
-using System.Configuration;
-using Microsoft.WindowsAzure.Storage;
+﻿using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Newtonsoft.Json;
+using System;
 
 namespace CUWebinars.Business.Notification.Email
 {
     public class AzureCuwWebJobSmtpMessageDelivery : INotificationDelivery
     {
         private static CloudQueueClient _queueClient;
-        private const string storageAccountName = "cuwebinarsnotifications";
+        private readonly string _storageAccountName;
+        private readonly string _storageAccessKey;
 
-        private const string accessKey =
-            "R6+DUPUtVBKXbnoRTPfdzYXF3KeCcVZdKtpgSig2LJYne52rc6MGU+dgTadzAHbEubBjOhAoB3l8IHMdC8Prgg==";
+        public AzureCuwWebJobSmtpMessageDelivery(string storageAccountName, string storageAccessKey)
+        {
+            _storageAccountName = storageAccountName;
+            _storageAccessKey = storageAccessKey;
+        }
 
 
         public void Notify(INotificationMessage notificationMessage)
         {
-            var storageCredentials = new StorageCredentials(storageAccountName, accessKey);
+            var storageCredentials = new StorageCredentials(_storageAccountName, _storageAccessKey);
             var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
 
             _queueClient = cloudStorageAccount.CreateCloudQueueClient();
@@ -43,10 +46,6 @@ namespace CUWebinars.Business.Notification.Email
             {
                 throw new Exception("Message had no recipient.");
             }
-
-#if DEBUG
-            message.To = ConfigurationManager.AppSettings["TestEmailAddress"];
-#endif
 
             if (ReferenceEquals(null, message.ReplyTo))
             {

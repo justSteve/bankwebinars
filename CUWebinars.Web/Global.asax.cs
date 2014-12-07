@@ -123,7 +123,7 @@ namespace CUWebinars.Web
 
                 //DETERMINE CURRENT AFFILIATE
                 //MEHTOD 1: VIA QUERY STRING -- idAff=[idUserAff]   
-                if (!String.IsNullOrEmpty(Request.QueryString[AffiliateId]))
+                if (!string.IsNullOrEmpty(Request.QueryString[AffiliateId]))
                 {
 
                     int loadAff;

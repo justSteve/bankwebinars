@@ -4,12 +4,6 @@
 
 $(function () {
 
-    Rollbar.critical("Test error 1");
-    //Rollbar.error("Test error 2");
-    //Rollbar.warning("Test error 3");
-    //Rollbar.info("Test error 4");
-    
-
     //setup ajax error handling
     $.ajaxSetup({
         error: function (x, status, error) {
@@ -421,5 +415,3 @@ $(function () {
 
     $('#Email').focus();
 });
-
-//Rollbar.debug("Test error 5");
