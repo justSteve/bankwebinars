@@ -11,15 +11,6 @@
 @{
     if (Model != null)
     {
-        var verbose = false;
-        if (ViewData.ContainsKey("verbose"))
-        {
-            if (!String.IsNullOrEmpty(ViewData["verbose"].ToString()))
-            {
-                verbose = (bool)ViewData["verbose"];
-            }
-        }
-
         //decimal optionsTotal = CalculateOptionsPrice(Model);
         decimal optionsTotal = 0.0M; //TODO: fix this. Push to Controller.
         var rowAmount = new StringBuilder();
@@ -33,31 +24,12 @@
         {
             rowAmount.Append("Base Cost: " + Model.RegistrationType.Price.ToString("c0") + "<br />");
         }
-        else if (verbose == true)
-        {
-            rowAmount.Append("Base Cost: " + Model.RegistrationType.Price.ToString("c0") + "<br />");
-        }
 
         if (Model.Discount.flatOff != 0.0M)
         {
             rowAmount.Append("Discounted: " + Model.Discount.flatOff.ToString("c") + " (" + Model.Discount.code + ")<br />");
         }
-        else if (verbose == true)
-        {
-            rowAmount.Append("Discounted: " + Model.Discount.flatOff.ToString("c") + " (" + Model.Discount.code + ")<br />");
-        }
         if (optionsTotal != 0.0M)
-        {
-            if (Model.NumberOfAdditionalLocations == 1)
-            {
-                rowAmount.Append("One Additional Location: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
-            }
-            else
-            {
-                rowAmount.Append(Model.NumberOfAdditionalLocations.ToString() + " Additional Locations: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
-            }
-        }
-        else if (verbose == true)
         {
             if (Model.NumberOfAdditionalLocations == 1)
             {

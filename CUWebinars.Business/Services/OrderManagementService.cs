@@ -286,7 +286,7 @@ namespace CUWebinars.Business.Services
                 }
             }
 
-            if (row != null ) row.UnitPrice = (decimal)row.RegistrationType.Price;
+            if (row != null) row.UnitPrice = (decimal)row.RegistrationType.Price;
             //
             //Calculate options price
             decimal optionsTotal = CalculateOptionsPrice(row);
@@ -296,10 +296,17 @@ namespace CUWebinars.Business.Services
 
             //Calculate discount. 
             decimal discountTotal = 0;
+
             if (row.Discount != null && row.Discount.percentOff != 0.0M)
             {
                 discountTotal = row.RowPrice * row.Discount.percentOff / 100;
             }
+            else
+                if (row.Discount != null && row.Discount.flatOff != 0.0M)
+                {
+                    discountTotal = row.RowPrice - row.Discount.flatOff;
+                }
+
             if (discountTotal > row.RowPrice)
             {
                 discountTotal = row.RowPrice;
@@ -307,7 +314,7 @@ namespace CUWebinars.Business.Services
             row.RowPrice = row.RowPrice - discountTotal;
 
             //Calculate order total
-            order.Total += row.RowPrice;
+            order.Total = row.RowPrice;
 
         }
 
