@@ -1,3 +1,5 @@
+using System.Collections.Specialized;
+using System.Configuration;
 using CUWebinars.Business.Notification;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Formatters;
@@ -8,8 +10,11 @@ namespace CUWebinars.Business.Core
 {
     public class TtsConfig
     {
+        public static string DefaultConnectionString { get; private set; }
         public static TtsConfiguration Create(string baseUrl, bool useAzureWebjobs, string storageAccountName, string storageAccessKey)
         {
+            InitializeConfig();
+
             var config = new TtsConfiguration();
 
             INotificationDelivery notificationDelivery;
@@ -45,6 +50,14 @@ namespace CUWebinars.Business.Core
                 sendRecordingPostedHandlerLogger));
 
             return config;
+        }
+
+        private static void InitializeConfig()
+        {
+            NameValueCollection applicationSettingsSection = ConfigurationManager.AppSettings;
+            ConnectionStringSettingsCollection connectionStringSettingsCollection  = ConfigurationManager.ConnectionStrings;
+
+            DefaultConnectionString = connectionStringSettingsCollection["DefaultConnection"].ConnectionString;
         }
     }
 }

@@ -535,7 +535,6 @@
     <Compile Include="Helpers\HtmlHelpers.cs" />
     <Compile Include="Infrastructure\apis\citrix\ShareFile\OAuth2Token.cs" />
     <Compile Include="Infrastructure\apis\citrix\ShareFile\ShareFileV3Sample.cs" />
-    <Compile Include="Infrastructure\TenantAuthenticationManager.cs" />
     <Compile Include="Infrastructure\TTSAuthorizationManager.cs" />
     <Compile Include="Membership\DataOperations.cs" />
     <Compile Include="Models\AccountModels.cs" />

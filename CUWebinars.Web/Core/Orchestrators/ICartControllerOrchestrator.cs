@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Models;
+﻿using CUWebinars.Business.Core;
+using CUWebinars.Business.Models;
 using CUWebinars.Web.ViewModel;
 using System;
 
@@ -6,7 +7,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 {
     public interface ICartControllerOrchestrator : IDisposable
     {
-        DisplayRowPriceViewModel BuildDisplayRowPriceViewModel(OrderRow orderRow, int? idOrderRow);
+        DisplayRowPriceViewModel BuildDisplayRowPriceViewModel(OrderRow orderRow, int? idOrderRow, decimal? optionsCost = null);
         RegisterViewModel BuildRegisterViewModel();
         CheckoutConfirmViewModel BuildCheckoutConfirmViewModel(int? idOrderRow);
         CheckoutOptionsViewModel BuildCheckoutOptionsViewModel(

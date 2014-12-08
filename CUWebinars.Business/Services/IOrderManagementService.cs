@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Models;
+﻿using CUWebinars.Business.Core;
+using CUWebinars.Business.Models;
 using System;
 using System.Collections.Generic;
 
@@ -10,6 +11,7 @@ namespace CUWebinars.Business.Services
         Order AssignWebUserToOrder(WebUser webUser, Order order);
         Affiliate AttachAffiliate(Affiliate item);
         string BuildConnectionInfo(OrderRow orderRow);
+        PricesAndDiscounts CalculateOrderPrices(Order order, decimal optionsCost);
         int CheckUserForRecordingAccess(int i, int i1);
         AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullname);
 
@@ -26,6 +28,7 @@ namespace CUWebinars.Business.Services
         void FireSendOrderShippedNotificationEvent(IList<Order> orders);
         void FireSendRecordingIsPostedEvent(IList<Order> orders);
         void FireSendReminderNotificationEvent(IList<Order> orders);
+        Tuple<string, decimal> GetAdditionalLocationsPricing(IEnumerable<AdditionalLocation> additionalLocations, int idWebinar);
         Affiliate GetAffiliateById(int id);
         Discount GetDiscount(string email);
         IDictionary<RegType, bool> GetOptionsByWebinarId(int id, bool detached);

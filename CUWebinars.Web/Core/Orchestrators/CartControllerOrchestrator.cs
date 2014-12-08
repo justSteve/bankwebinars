@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
+using System.Web.Mvc;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Helpers;
-using CUWebinars.Web.Membership;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
@@ -14,6 +16,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Web;
+using DataOperations = CUWebinars.Web.Membership.DataOperations;
 
 namespace CUWebinars.Web.Core.Orchestrators
 {
@@ -117,6 +120,10 @@ namespace CUWebinars.Web.Core.Orchestrators
                     var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
                     var shippingAddress = addresses.FirstOrDefault(a => a.AddressType == WebUiConstants.ShippingAddress);
 
+                    // This ViewModel is built here because it is re-used.
+                    var orderHasAdditionalLocationsViewModel =
+                        BuildOrderHasAdditionalLocationsViewModel(orderRow, idOrderRow);
+
                     var checkoutConfirmViewModel = new CheckoutConfirmViewModel
                     {
                         AdditionalLocationCaption = BuildAdditionalLocationsCaption(orderRow),
@@ -125,7 +132,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         //CCUserDetails =
                         //    "None <a href=\"#AddCCModal\" role=\"button\" class=\"btn btn-mini\" data-toggle=\"modal\"> Add?</a> ", // CC user removed at request
                         DisplayOptionsInDropDownViewModel = BuildDisplayOptionsInDropDownViewModel(orderRow, idOrderRow),
-                        DisplayRowPriceViewModel = BuildDisplayRowPriceViewModel(orderRow, idOrderRow),
+                        DisplayRowPriceViewModel = BuildDisplayRowPriceViewModel(orderRow, idOrderRow, orderHasAdditionalLocationsViewModel.OptionsCost),
                         idUser = orderRow.Order.WebUser.idUser,
                         ManageModel = new ManageModel
                         {
@@ -167,8 +174,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                             StatusMessage = string.Empty
                         },
                         OrderExists = orderRow.Order != null,
-                        OrderHasAdditionalLocationsViewModel =
-                            BuildOrderHasAdditionalLocationsViewModel(orderRow, idOrderRow),
+                        OrderHasAdditionalLocationsViewModel = orderHasAdditionalLocationsViewModel,
                         OrderRowExists = true,
                         OrderRowHasId = true,
                         OrderStatus = orderRow.Order.OrderStatus,
@@ -299,23 +305,26 @@ namespace CUWebinars.Web.Core.Orchestrators
             return null;
         }
 
-        public DisplayRowPriceViewModel BuildDisplayRowPriceViewModel(OrderRow orderRow, int? idOrderRow)
+        public DisplayRowPriceViewModel BuildDisplayRowPriceViewModel(OrderRow orderRow, int? idOrderRow, decimal? optionsCost = null)
         {
-            
-            if (ReferenceEquals(orderRow,null))
-                orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
-
-            if (ReferenceEquals(orderRow, null)) // if it STILL equals null
-
-
-            if (orderRow.RowStatus != OrderRowStatus.Active)
-                return null;
-
             if (idOrderRow.HasValue && idOrderRow.Value > 0)
             {
                 try
                 {
+                    if (ReferenceEquals(orderRow, null))
+                        orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
+
+                    if (orderRow.RowStatus != OrderRowStatus.Active)
+                        return null;
+
                     _logger.Info("Building price for " + orderRow.Order.idOrder );
+
+                    if (!optionsCost.HasValue)
+                    {
+                        var dataOperations = new Business.Core.DataOperations(GlobalConfig.GlobalConfigSingleton.DefaultConnectionString);
+                        var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(orderRow.idWebinar);
+                        optionsCost = additionalLocationsPricing.Single().Item2;
+                    }
 
                     var displayRowPriceViewModel = new DisplayRowPriceViewModel
                     {
@@ -323,6 +332,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         NumberOfAdditionalLocations = orderRow.AdditionalLocation.Count(),
                         OrderStatus = orderRow.Order.OrderStatus,
                         Price = orderRow.RegistrationType.Price,
+                        PricesAndDiscounts = _orderManagementService.CalculateOrderPrices(orderRow.Order, optionsCost.Value),
                         RowPrice = orderRow.RowPrice,
                         RegistrationType = orderRow.RegistrationType
                     };
@@ -397,7 +407,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     _logger.Info("Building OrderHasAdditionalLocationsViewModel for: " + orderRow.Order.idOrder);
 
-                    var addressesAndOptionsCost = GetAddressesAndOptionsCost(orderRow.AdditionalLocation);
+                    var addressesAndOptionsCost = _orderManagementService.GetAdditionalLocationsPricing(orderRow.AdditionalLocation, orderRow.idWebinar);
 
                     var orderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
                     {
@@ -420,39 +430,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void CancelOrder(int idOrder)
         {
             _orderManagementService.DeleteOrder(orderId: idOrder);
-        }
-
-        private Tuple<string, int> GetAddressesAndOptionsCost(IEnumerable<AdditionalLocation> additionalLocations)
-        {
-            StringBuilder addresses = new StringBuilder();
-            int optionsCost = 0;
-            var i = 0;
-
-            var additionalLocationsEnumerated = additionalLocations as AdditionalLocation[] ?? additionalLocations.ToArray(); // ensures only enumerated once
-
-            foreach (var additionalLocation in additionalLocationsEnumerated)
-            {
-                i++;
-                if (i == additionalLocationsEnumerated.Count())
-                {
-                    addresses.Append(additionalLocation.Email);
-                }
-                if (i < additionalLocationsEnumerated.Count())
-                {
-                    if (i == additionalLocationsEnumerated.Count() - 1)
-                    {
-                        addresses.Append(additionalLocation.Email + " and ");
-                    }
-                    else
-                    {
-                        addresses.Append(additionalLocation.Email + ", ");
-                    }
-                }
-
-                optionsCost = optionsCost + Convert.ToInt32(additionalLocation.Price);
-            }
-
-            return new Tuple<string, int>(addresses.ToString(), optionsCost);
         }
 
         public Tuple<string, string> CheckIfAddLocShouldHide(int optionId)

@@ -128,6 +128,7 @@
     <Compile Include="Core\Helpers\DateTimeHelper.cs" />
     <Compile Include="Core\Helpers\GenericHelpers.cs" />
     <Compile Include="Core\Helpers\ValidationHelper.cs" />
+    <Compile Include="Core\PricesAndDiscounts.cs" />
     <Compile Include="Core\Tracing\Log4NetTracer.cs" />
     <Compile Include="Core\Tracing\Tracer.cs" />
     <Compile Include="CQS\Commands\AddOrderCommand.cs" />

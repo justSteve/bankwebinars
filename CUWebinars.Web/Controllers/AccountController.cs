@@ -228,7 +228,10 @@ namespace CUWebinars.Web.Controllers
         public ActionResult MyWebinars()
         {
             var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
-            var model = new MyWebinarsDTO {WebUser = currentUser};
+            var model = new MyWebinarsDTO {WebUser = currentUser, OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel()
+            {
+                
+            }};
 
             ViewData["DiscountMsg"] = string.Empty;
 

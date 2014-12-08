@@ -676,14 +676,18 @@ namespace CUWebinars.Web.Controllers
                 model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Emails =
                     model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.AdditionalLocations.Select(al => al.Email).ToArray();
 
+                var additionalLocationsPricing = 
+                    _orderManagementService.GetAdditionalLocationsPricing(row.AdditionalLocation,
+                    webinar.idWebinar
+                    );
+
                 model.RegistrationSummaryViewModel = new RegistrationSummaryViewModel
                 {
                     OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
                     {
                         AdditionalLocations = row.AdditionalLocation,
-                        Addresses = string.Join(",", row.AdditionalLocation.Select(al => al.Email).ToArray()),
-                        OptionsCost = 150 //TODO: please reference AdditionalLocationsLookupPrice for pricing
-                        //was: not sure what to put here
+                        Addresses = additionalLocationsPricing.Item1,
+                        OptionsCost = additionalLocationsPricing.Item2
                     },
                     OrderRow = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active),
                     RecordingLink = "<a href='" + GlobalConfig.GlobalConfigSingleton.WMVRepository + webinar.RecordingUrl + "' target=_blank /> Recording Playback</a>",
