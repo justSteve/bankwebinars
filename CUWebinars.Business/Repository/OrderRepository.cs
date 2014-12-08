@@ -25,6 +25,7 @@ namespace CUWebinars.Business.Repository
 
         public Order CreateOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow)
         {
+
             var newOrder = items.Create();
             newOrder.OrderDate = DateTime.Now;
             newOrder.OrderStatus = OrderStatus.InProcess;
@@ -36,6 +37,11 @@ namespace CUWebinars.Business.Repository
 
             newOrder.OrderRows = new List<OrderRow>();
             newOrder.OrderRows.Add(orderRow);
+
+            if (webUser.idSubscriptionDiscount != null && webUser.idSubscriptionDiscount > 0)
+            {
+                newOrder.OrderRows.Single().Discount = GetUserDiscount(webUser.idUser);
+            }
 
             //_orderValidator.ValidateAndThrow(newOrder);
             var validationResult = _orderValidator.Validate(newOrder);
@@ -69,7 +75,7 @@ namespace CUWebinars.Business.Repository
                 newOrderRow.RowStatus = OrderRowStatus.Active;
 
                 newOrderRow = CalculateRowPrices(newOrderRow);
-                
+
                 return newOrderRow;
 
             }
@@ -90,7 +96,7 @@ namespace CUWebinars.Business.Repository
         public void DeleteOrder(int orderId)
         {
             var orderToDelete = items.Find(orderId);
-            
+
             Remove(orderToDelete);
         }
 
@@ -259,7 +265,7 @@ namespace CUWebinars.Business.Repository
             //  
             if (webUser.Addresses == null)
                 return order;
-            
+
             var billingAddress =
                 webUser.Addresses.FirstOrDefault(a => a.AddressType == DomainConstants.BillingAddress);
             var shippingAddress =
@@ -324,7 +330,7 @@ namespace CUWebinars.Business.Repository
             //this method needs to separate the 
             // act of saving to db from the act of setting the
             // order status to 'Submitted'. 
-            
+
             //When originally coded for the 
             // OrderImport use case, it worked ok because by the time
             // this method executed we intented OrderStatus to be .Submitted.
@@ -444,5 +450,17 @@ namespace CUWebinars.Business.Repository
                 .Include(o => o.OrderRows.Select(or => or.Discount))
                 .ToList();
         }
+        public virtual Discount GetUserDiscount(int idUser)
+        {
+            var usercode = ((TTSWebinarsContext)db).WebUsers.Where(u => u.idUser == idUser).Select(u => u.idSubscriptionDiscount).Single();
+
+            return ((TTSWebinarsContext)db).Discounts.Where(d => d.idDiscount == usercode).Single();
+
+        }
+        public virtual bool IsDiscountCodeValid(string discountCode)
+        {
+            return true;
+        }
+
     }
 }

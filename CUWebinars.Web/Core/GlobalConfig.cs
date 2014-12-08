@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
+using System.Configuration;
 using System.Web.Configuration;
 
 namespace CUWebinars.Web.Core
@@ -11,6 +11,7 @@ namespace CUWebinars.Web.Core
         public string EmailSendingMode { get; private set; }
         public string HandoutRepository { get; private set; }
         public string ImgRepository { get; private set; }
+        public string DefaultConnectionString { get; set; }
         public string MembershipConnectionString { get; set; }
         public bool NotificationsTesting { get; set; }
         public string StorageAccessKey { get; private set; }
@@ -37,11 +38,7 @@ namespace CUWebinars.Web.Core
             static GlobalConfigSingletonCreator()
             {
                 NameValueCollection ApplicationSettingsSection = WebConfigurationManager.AppSettings;
-                
-                //if(ReferenceEquals(null, ApplicationSettingsSection))
-                //{
-                //    throw new ArgumentNullException("AppSettings not found in config file as expected.");
-                //}
+
                 UniqueInstance.CreateUserQueueName = ApplicationSettingsSection["CreateUserQueueName"];
                 UniqueInstance.EmailSendingMode = ApplicationSettingsSection["EmailSendingMode"];
                 UniqueInstance.WMVRepository = ApplicationSettingsSection["WMVRepository"];
@@ -61,7 +58,10 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.UnAuthenticatedUser = ApplicationSettingsSection["UnAuthenticatedUser"];
                 UniqueInstance.UseAzureWebjobs = bool.Parse(ApplicationSettingsSection["UseAzureWebjobs"]);
 
-                UniqueInstance.MembershipConnectionString = WebConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString;
+                ConnectionStringSettingsCollection ConnectionStringSettings = WebConfigurationManager.ConnectionStrings;
+
+                UniqueInstance.DefaultConnectionString = ConnectionStringSettings["DefaultConnection"].ConnectionString;
+                UniqueInstance.MembershipConnectionString = ConnectionStringSettings["MembershipReboot"].ConnectionString;
             }
 
             // Private object instantiated with private constructor

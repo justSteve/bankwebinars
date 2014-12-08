@@ -1,6 +1,9 @@
-﻿using CUWebinars.Business.Constants;
+﻿using System.Configuration;
+using System.Diagnostics;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Exceptions;
+using CUWebinars.Business.Migrations;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Notification.ViewModel;
@@ -125,6 +128,55 @@ namespace CUWebinars.Business.Services
                 _logger.ErrorException(string.Format("CreateAdditionalLocation method - values passed in {0},{1},{2}.", email, price, fullname), exception);
                 throw;
             }
+        }
+
+        public Tuple<string, decimal> GetAdditionalLocationsPricing(IEnumerable<AdditionalLocation> additionalLocations, int idWebinar)
+        {
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+            var addresses = new StringBuilder();
+            decimal optionsCost = 0M;
+            var i = 0;
+
+            var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(idWebinar);
+
+            // perf tweak - ensures enumerable will only be enumerated once
+            var additionalLocationsEnumerated = additionalLocations as AdditionalLocation[] ?? additionalLocations.ToArray();
+
+            var stringBuilder = new StringBuilder("<strong>"); // emails in bold text, or whatever suits
+            //tagBuilder.AddCssClass("muted");
+
+            foreach (var additionalLocation in additionalLocationsEnumerated)
+            {
+                stringBuilder.Append(additionalLocation.Email);
+                stringBuilder.Append("</strong>");
+
+                string emailSpanElement = stringBuilder.ToString();
+                i++;
+
+                if (i == additionalLocationsEnumerated.Count())
+                {
+                    addresses.Append(emailSpanElement);
+                }
+                if (i < additionalLocationsEnumerated.Count())
+                {
+                    if (i == additionalLocationsEnumerated.Count() - 1)
+                    {
+                        addresses.Append(emailSpanElement + " and ");
+                    }
+                    else
+                    {
+                        addresses.Append(emailSpanElement + ", ");
+                    }
+                }
+
+                Debug.Assert(additionalLocationsPricing.Count == 1,
+                    "There should only ever be 1 value returned for the cost of an Additionalocation for a particular Webinar"
+                    );
+                // Item2 of the tuple is the price value as a decimal. Item 1 is the AdditionalLocationsLookupPrice id 
+                optionsCost += additionalLocationsPricing.Single().Item2;
+            }
+
+            return new Tuple<string, decimal>(addresses.ToString(), optionsCost);
         }
 
         public Affiliate GetAffiliateById(int id)
@@ -258,6 +310,7 @@ namespace CUWebinars.Business.Services
 
         public string GetOrderInitiator()
         {
+            //TODO: GetOrderInitiator() returns the source of the order (migrated, imported, end-user, affiliate)
             return "0";
         }
 
@@ -273,26 +326,26 @@ namespace CUWebinars.Business.Services
                 _events.Add(orderEvent);
             }
         }
-        private void CalculateOrderPrices(Order order)
+        public PricesAndDiscounts CalculateOrderPrices(Order order, decimal optionsCost)
         {
             order.Total = 0.0M;
+            PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
+
             var row = order.OrderRows.FirstOrDefault();
 
-            foreach (var i in order.OrderRows)
+            foreach (var orderRow in order.OrderRows)
             {
-                if (i.RowStatus == OrderRowStatus.Active)
+                if (orderRow.RowStatus == OrderRowStatus.Active)
                 {
-                    row = i;
+                    row = orderRow;
                 }
             }
 
             if (row != null) row.UnitPrice = (decimal)row.RegistrationType.Price;
-            //
-            //Calculate options price
-            decimal optionsTotal = CalculateOptionsPrice(row);
 
             //Calculate row price before discount
-            row.RowPrice = row.UnitPrice + optionsTotal;
+            row.RowPrice = row.UnitPrice + optionsCost;
+            pricesAndDiscounts.RowPrice = row.RowPrice;
 
             //Calculate discount. 
             decimal discountTotal = 0;
@@ -301,41 +354,50 @@ namespace CUWebinars.Business.Services
             {
                 discountTotal = row.RowPrice * row.Discount.percentOff / 100;
             }
-            else
-                if (row.Discount != null && row.Discount.flatOff != 0.0M)
-                {
-                    discountTotal = row.RowPrice - row.Discount.flatOff;
-                }
+            else if (row.Discount != null && row.Discount.flatOff != 0.0M)
+            {
+                discountTotal = row.Discount.flatOff;
+            }
 
             if (discountTotal > row.RowPrice)
             {
                 discountTotal = row.RowPrice;
             }
+
             row.RowPrice = row.RowPrice - discountTotal;
+            pricesAndDiscounts.TotalDiscount = discountTotal;
+            pricesAndDiscounts.RowPrice = row.RowPrice;
+            pricesAndDiscounts.TotalOptions = optionsCost;
 
             //Calculate order total
-            order.Total = row.RowPrice;
+            order.Total += row.RowPrice;
+            pricesAndDiscounts.TotalOrderPrice = order.Total;
 
+            return pricesAndDiscounts;
         }
 
-        public virtual decimal CalculateOptionsPrice(OrderRow row)
-        {
-            //if (row.RegistrationType == RegistrationType.SubscriptionRedeem)
-            //{
-            //    return 0.0M;
-            //}
-
-            decimal optionsTotal = 0.0M;
-
-            if (row.AdditionalLocation != null)
-                foreach (var addLoc in row.AdditionalLocation)
-                {
-                    optionsTotal += addLoc.Price;
-                }
-            return optionsTotal;
-        }
-        //public virtual void AssignUserToOrder(Order order)
+        //public virtual decimal CalculateOptionsPrice(OrderRow row)
         //{
+        //    ////if (row.RegistrationType == RegistrationType.SubscriptionRedeem)
+        //    ////{
+        //    ////    return 0.0M;
+        //    ////}
+
+        //    //var additionalLocationsPricingForWebinar = GetAdditionalLocationsPricing(row.idWebinar);
+
+        //    //decimal optionsTotal = 0.0M;
+
+        //    //if (row.AdditionalLocation != null)
+        //    //{
+        //    //    foreach (var addLoc in row.AdditionalLocation)
+        //    //    {
+        //    //        // Item2 of the tuple is price
+        //    //        addLoc.Price = additionalLocationsPricingForWebinar[0].Item2;
+        //    //        optionsTotal += addLoc.Price;
+        //    //    }
+        //    //}
+
+        //    //return optionsTotal;
         //}
 
         public void CreateCPSubscription(OrderRow orderRow)
@@ -494,8 +556,10 @@ namespace CUWebinars.Business.Services
         {
             try
             {
+                var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+                var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(currentOrder.OrderRows.Single().idWebinar);
                 ProcessDiscountCodes(currentOrder);
-                CalculateOrderPrices(currentOrder);
+                CalculateOrderPrices(currentOrder, additionalLocationsPricing.Single().Item2);
 
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, 0);
 
@@ -561,8 +625,11 @@ namespace CUWebinars.Business.Services
 
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink)
         {
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+            var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(currentOrder.OrderRows.Single().idWebinar);
+
             ProcessDiscountCodes(currentOrder);
-            CalculateOrderPrices(currentOrder);
+            CalculateOrderPrices(currentOrder, additionalLocationsPricing.Single().Item2);
 
             if (confirmChangeEmailLink == string.Empty)
             {
@@ -642,9 +709,54 @@ namespace CUWebinars.Business.Services
         }
 
 
-        private void ProcessDiscountCodes(object instance)
+        private void ProcessDiscountCodes(Order order)
         {
-            var a = 1;
+            var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+            //legacy's verbetum if (row.Discount == null && String.IsNullOrEmpty(row.DiscountCode) == false)
+
+            if (row.Discount != null)
+            {
+                RedeemDiscount(row);
+            }
+            else
+            {
+                _logger.Error("ERROR: Rejected Discount On Order: " + order.idOrder);
+            }
+            //legacy: tracks error condition 
+            //else if (row.Discount != null && row.Discount.Code != row.DiscountCode)
+            //{
+            //    RejectDiscount(row);
+            //    _logger.Error("ERROR: Rejected Discount On Order: " + order.ID);
+
+            //    if (String.IsNullOrEmpty(row.DiscountCode) == false)
+            //    {
+            //        RedeemDiscount(row);
+            //    }
+            //}
+
+        }
+        public virtual bool IsDiscountCodeValid(string discountCode)
+        {
+
+            return true;
+        }
+        
+        
+        private void RedeemDiscount(OrderRow orderRow)
+        {
+            Discount discount = orderRow.Discount;
+
+            if (discount.discountType != DiscountType.Subscription)
+                discount.usesNumber--;
+            _logger.Info("Discount was redeemed for {0}.", orderRow.idOrder);
+            //TODO: Determine if OrderRow should be saved here or depend on other code in the workflow.
+        }
+
+        private void RejectDiscount(OrderRow orderRow)
+        {
+            orderRow.Discount.usesNumber++;
+            //according to legacy code but can a condition exist 
+            //  a non-valid discount resulted in a decrement.
         }
 
         public void AddOrderRow(Order currentOrder, OrderRow orderRow)

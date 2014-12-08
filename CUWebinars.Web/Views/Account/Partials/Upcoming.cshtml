@@ -1,12 +1,61 @@
-﻿@model CUWebinars.Web.Core.MyWebinarsDTO
-@using System.Data
-@using System.Globalization
+﻿@model MyWebinarsDTO
 @using System.Linq
-@using CUWebinars.Business.Repository
-@using System.Data.SqlClient
+@using CUWebinars.Business.Services
 @using CUWebinars.Web.Core
 @using CUWebinars.Web.Helpers
-@using CUWebinars.Business.Models
+@using Microsoft.Ajax.Utilities
+@using Ninject
+
+@functions{
+
+    private Tuple<string, decimal> GetAdditionalLocationsPricing(IEnumerable<AdditionalLocation> additionalLocations, int idWebinar)
+    {
+        var dataOperations = new CUWebinars.Business.Core.DataOperations(GlobalConfig.GlobalConfigSingleton.DefaultConnectionString);
+        var addresses = new StringBuilder();
+        decimal optionsCost = 0M;
+        var i = 0;
+
+        var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(idWebinar);
+
+        // perf tweak - ensures enumerable will only be enumerated once
+        var additionalLocationsEnumerated = additionalLocations as AdditionalLocation[] ?? additionalLocations.ToArray();
+
+        var tagBuilder = new TagBuilder("<strong>"); // emails in bold text, or whatever suits
+        //tagBuilder.AddCssClass("muted");
+
+        foreach (var additionalLocation in additionalLocationsEnumerated)
+        {
+            tagBuilder.InnerHtml = additionalLocation.Email;
+            var emailSpanElement = tagBuilder.ToString(TagRenderMode.Normal);
+            i++;
+
+            if (i == additionalLocationsEnumerated.Count())
+            {
+                addresses.Append(emailSpanElement);
+            }
+            if (i < additionalLocationsEnumerated.Count())
+            {
+                if (i == additionalLocationsEnumerated.Count() - 1)
+                {
+                    addresses.Append(emailSpanElement + " and ");
+                }
+                else
+                {
+                    addresses.Append(emailSpanElement + ", ");
+                }
+            }
+
+            Debug.Assert(additionalLocationsPricing.Count == 1,
+                "There should only ever be 1 value returned for the cost of an Additionalocation for a particular Webinar"
+                );
+            // Item2 of the tuple is the price value as a decimal. Item 1 is the AdditionalLocationsLookupPrice id 
+            optionsCost += additionalLocationsPricing.Single().Item2;
+        }
+
+        return new Tuple<string, decimal>(addresses.ToString(), optionsCost);        
+    }
+}
+
 @{
     WebUser currentUser = Model.WebUser;
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
@@ -69,11 +118,13 @@
                             This @showDuration hour event will be presented by @row.Webinar.Presenter.WebUser.FullName @Html.Raw(remainingDays) starting at @Html.DisplayTime(row.Webinar.Date, timeZ, true).
                             Your registration type is currently set as <b>@row.RegistrationType.OptionLabel.</b>
                             @{
+                                var additionalLocationsPricing = GetAdditionalLocationsPricing(row.AdditionalLocation, row.idWebinar);
+                                
                                 var orderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
                                 {
                                     AdditionalLocations = row.AdditionalLocation,
-                                    Addresses = string.Empty, // [dar] not sure what this represents.
-                                    OptionsCost = 10 // [dar] not sure what this represents.
+                                    Addresses = additionalLocationsPricing.Item1,
+                                    OptionsCost = additionalLocationsPricing.Item2 
                                 };
                             }
 

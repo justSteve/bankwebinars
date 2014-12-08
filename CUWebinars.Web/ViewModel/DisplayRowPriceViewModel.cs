@@ -1,4 +1,5 @@
 ﻿
+using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 
 namespace CUWebinars.Web.ViewModel
@@ -9,6 +10,7 @@ namespace CUWebinars.Web.ViewModel
         public int NumberOfAdditionalLocations { get; set; }
         public OrderStatus OrderStatus { get; set; }
         public double Price { get; set; }
+        public PricesAndDiscounts PricesAndDiscounts { get; set; }
         public RegType  RegistrationType { get; set; }
         public decimal RowPrice { get; set; }
     }

@@ -22,6 +22,8 @@ namespace CUWebinars.Business.AccountService
         private readonly ILogger _logger;
         private bool _disposed;
 
+        //TODO: Check logging usage in the class. My inclination is to step thru each substantive method here and insert at least an info level log. Exceptions as error or fatal. Argument against?
+
         public MembershipService(IInstitutionRepository institutionRepository,
             IRefDataRepository refDataRepository,
             AuthenticationService samAuthenticationService,
@@ -67,8 +69,10 @@ namespace CUWebinars.Business.AccountService
 
         public UserAccount GetUserAccountByEmail(string tenant, string email)
         {
+            // is there a reason these thrown exceptions aren't explicitly logged?
             if (string.IsNullOrWhiteSpace(email)) throw new ArgumentNullException("email");
             if (string.IsNullOrWhiteSpace(tenant)) throw new ArgumentNullException("tenant");
+            // While attempting to naviate to the definition of GetByEmail 
             return _userAccountService.GetByEmail(tenant, email);
         }
 
@@ -253,8 +257,7 @@ namespace CUWebinars.Business.AccountService
             }
             catch (Exception exception)
             {
-                var a = 2;
-                throw;
+                _logger.ErrorException("ResetPassword", exception);
             }
         }
 
@@ -269,6 +272,7 @@ namespace CUWebinars.Business.AccountService
                 throw new ArgumentNullException("userAccount");
             if (string.IsNullOrWhiteSpace(accountType))
                 throw new ArgumentException("String parameter cannot be white space or null.", "accountType");
+            
 
             _userAccountService.AddClaim(userAccount.ID, ClaimTypes.HasNotVerified, accountType);
         }

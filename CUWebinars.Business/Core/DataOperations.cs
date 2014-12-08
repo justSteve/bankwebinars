@@ -1,4 +1,6 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
@@ -16,6 +18,41 @@ namespace CUWebinars.Business.Core
             _connectionString = connectionString;
         }
 
+        public IList<Tuple<int, decimal>> GetAdditionalLocationsPricing(int webinarId)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString)) 
+            {
+                sqlConnection.Open();
+
+                using (var getPricingsCommand = new SqlCommand())
+                {
+                    var webinarIdParameter = new SqlParameter
+                    {
+                        SqlDbType = SqlDbType.Int,
+                        ParameterName = "@webinarId",
+                        Value = webinarId
+                    };
+
+                    getPricingsCommand.Connection = sqlConnection;
+                    getPricingsCommand.CommandType = CommandType.Text;
+                    getPricingsCommand.Parameters.Add(webinarIdParameter);
+                    getPricingsCommand.CommandText = "SELECT id, cost FROM AdditionalLocationsLookupPrice WHERE idWebinar = @webinarId;";
+
+                    IList<Tuple<int, decimal>> pricingInformation = new List<Tuple<int, decimal>>();
+
+                    using (var reader = getPricingsCommand.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            pricingInformation.Add(new Tuple<int, decimal>(reader.GetInt32(0), reader.GetDecimal(1)));
+                        }
+                    }
+
+                    return pricingInformation;
+                }
+            }
+        }
+        
         public USTimeZone GetTimeZoneByZipCode(string zip)
         {
             using (var sqlConnection = new SqlConnection(_connectionString)) 

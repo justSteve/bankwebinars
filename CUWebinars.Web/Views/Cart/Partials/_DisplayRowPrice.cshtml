@@ -1,13 +1,10 @@
-﻿@using System.Text
-@model DisplayRowPriceViewModel
+﻿@model DisplayRowPriceViewModel
 
 @functions {
-    private decimal CalculateOptionsPrice(OrderRow row)
-    {
-        return 0;
-    }
-
+    private const string CurrencyFormatToken = "c";
+    private const string DotAndTwoDecimals = ".00";
 }
+
 @{
     if (Model != null)
     {
@@ -17,36 +14,29 @@
 
         Model.Discount = new Discount //todo: come back to this when we get to the discount stuff
         {
-            code = "abc", flatOff = 10.0M
+            code = "abc",
+            flatOff = 10.0M
         };
-        
-        if (Model.Discount.flatOff != 0.0M || Model.Discount.percentOff != 0.0M || optionsTotal != 0.0M)
+
+        rowAmount.Append("Base Cost: " + Model.RegistrationType.Price.ToString("c0") + "<br />");
+
+        rowAmount.Append("Discounted: " + Model.Discount.flatOff.ToString(CurrencyFormatToken) + " (" + Model.Discount.code + ")<br />");
+
+        if (Model.NumberOfAdditionalLocations == 1)
         {
-            rowAmount.Append("Base Cost: " + Model.RegistrationType.Price.ToString("c0") + "<br />");
+            rowAmount.Append("One Additional Location: " + Model.PricesAndDiscounts.TotalOptions.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "<br>");
+        }
+        else
+        {
+            rowAmount.Append(Model.NumberOfAdditionalLocations + " Additional Locations: " + Model.PricesAndDiscounts.TotalOptions.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "<br>");
         }
 
-        if (Model.Discount.flatOff != 0.0M)
-        {
-            rowAmount.Append("Discounted: " + Model.Discount.flatOff.ToString("c") + " (" + Model.Discount.code + ")<br />");
-        }
-        if (optionsTotal != 0.0M)
-        {
-            if (Model.NumberOfAdditionalLocations == 1)
-            {
-                rowAmount.Append("One Additional Location: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
-            }
-            else
-            {
-                rowAmount.Append(Model.NumberOfAdditionalLocations.ToString() + " Additional Locations: " + optionsTotal.ToString("c").Replace(".00", "") + "<br>");
-            }
-        }
-        rowAmount.Append("Total Cost: " + Model.RowPrice.ToString("c").Replace(".00", ""));
+        rowAmount.Append("Total Cost: " + Model.PricesAndDiscounts.RowPrice.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, ""));
 
         <div id="billingDetails" class="well" style="text-align: right;">
             @Html.Raw(rowAmount.ToString())<br />
 
             @{
-        var statusLabel = "";
         switch (Model.OrderStatus)
         {
             case OrderStatus.InProcess:
@@ -65,7 +55,7 @@
             <span id="orderStatusLabel" class="label label-warning">@OrderStatus.AwaitingVerification</span>
                 break;
         }
-}
+            }
         </div>
     }
 }
