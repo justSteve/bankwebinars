@@ -142,15 +142,13 @@ namespace CUWebinars.Business.Services
             // perf tweak - ensures enumerable will only be enumerated once
             var additionalLocationsEnumerated = additionalLocations as AdditionalLocation[] ?? additionalLocations.ToArray();
 
-            var stringBuilder = new StringBuilder("<strong>"); // emails in bold text, or whatever suits
+            string emailSpanElement = string.Empty; // emails in bold text, or whatever suits
             //tagBuilder.AddCssClass("muted");
 
             foreach (var additionalLocation in additionalLocationsEnumerated)
             {
-                stringBuilder.Append(additionalLocation.Email);
-                stringBuilder.Append("</strong>");
-
-                string emailSpanElement = stringBuilder.ToString();
+                emailSpanElement = string.Format("<strong>{0}</strong>", additionalLocation.Email);
+                
                 i++;
 
                 if (i == additionalLocationsEnumerated.Count())
@@ -344,7 +342,7 @@ namespace CUWebinars.Business.Services
 
             //Calculate row price before discount
             row.RowPrice = row.UnitPrice + optionsCost;
-            pricesAndDiscounts.RowPrice = row.RowPrice;
+            pricesAndDiscounts.UnitPrice = row.UnitPrice;
 
             //Calculate discount. 
             decimal discountTotal = 0;
@@ -364,7 +362,6 @@ namespace CUWebinars.Business.Services
 
             row.RowPrice -= discountTotal;
             pricesAndDiscounts.TotalDiscount = discountTotal;
-            pricesAndDiscounts.RowPrice = row.RowPrice;
             pricesAndDiscounts.TotalOptions = optionsCost;
 
             //Calculate order total

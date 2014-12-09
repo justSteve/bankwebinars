@@ -26,20 +26,20 @@
             code = "abc", flatOff = 10.0M
         };
 
-        rowAmount.Append("Base Cost: <span id='baseCost'>" + Model.RegistrationType.Price.ToString("c0") + "</span><br />");
+        rowAmount.Append("Base Cost: <span id='baseCost'>" + Model.PricesAndDiscounts.UnitPrice.ToString("c0") + "</span><br />");
 
-        rowAmount.Append("Discounted: <span id='totalDiscount'>" + Model.Discount.flatOff.ToString(CurrencyFormatToken) + "</span> (" + Model.Discount.code + ")<br />");
+        rowAmount.Append("<span id='discountedText'>Discounted: <span id='totalDiscount'>" + Model.Discount.flatOff.ToString(CurrencyFormatToken) + "</span> (" + Model.Discount.code + ")</span><br />");
 
         if (Model.NumberOfAdditionalLocations == 1)
         {
-            rowAmount.Append("One Additional Location: <span id='totalAdLocsPrice'>" + Model.PricesAndDiscounts.TotalOptions.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "</span><br>");
+            rowAmount.Append("<span id='addLocsText'>One Additional Location: <span id='totalAdLocsPrice'>" + Model.PricesAndDiscounts.TotalOptions.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "</span></span><br>");
         }
         else
         {
-            rowAmount.Append(Model.NumberOfAdditionalLocations + " Additional Locations: <span id='totalAdLocsPrice'>" + Model.PricesAndDiscounts.TotalOptions.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "</span><br>");
+            rowAmount.Append("<span id='addLocsText'>" + Model.NumberOfAdditionalLocations + " Additional Locations: <span id='totalAdLocsPrice'>" + Model.PricesAndDiscounts.TotalOptions.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "</span></span><br>");
         }
 
-        rowAmount.Append("Total Cost: <span id='totalPrice'>" + Model.PricesAndDiscounts.RowPrice.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "</span>");
+        rowAmount.Append("Total Cost: <span id='totalPrice'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "</span>");
 
         <div id="billingDetails" class="well" style="text-align: right;">
             @Html.Raw(rowAmount.ToString())<br />

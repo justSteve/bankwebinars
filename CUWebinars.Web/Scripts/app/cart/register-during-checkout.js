@@ -885,6 +885,8 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
                 $('html, body').animate({ scrollTop: position.top }, 500);
 
                 $('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 706 for immediate assistance').addClass('text-info');
+
+                $('#addLocsText').html('Additional Locations: <span id="totalAdLocsPrice">$0.00</span>').addClass('muted');
             }
         });
 
