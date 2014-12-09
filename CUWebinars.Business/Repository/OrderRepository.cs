@@ -68,7 +68,7 @@ namespace CUWebinars.Business.Repository
                 newOrderRow.RegistrationType = registrationType;
                 newOrderRow.RowStatus = OrderRowStatus.Active;
 
-                newOrderRow = CalculateRowPrices(newOrderRow);
+                newOrderRow.RowPrice = Convert.ToDecimal(newOrderRow.RegistrationType.Price);
                 
                 return newOrderRow;
 
@@ -93,19 +93,7 @@ namespace CUWebinars.Business.Repository
             
             Remove(orderToDelete);
         }
-
-        public OrderRow CalculateRowPrices(OrderRow newOrderRow)
-        {
-            newOrderRow.UnitPrice = Convert.ToDecimal(newOrderRow.RegistrationType.Price);
-
-            if (newOrderRow.AdditionalLocation != null)
-            {
-                newOrderRow.RowPrice = Convert.ToDecimal(newOrderRow.AdditionalLocation.Sum(x => x.Price)
-                    + Convert.ToDecimal(newOrderRow.RegistrationType.Price));
-            }
-            return newOrderRow;
-        }
-
+        
         public AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullName)
         {
             try

@@ -11,9 +11,9 @@ namespace CUWebinars.Web.Core
         public string EmailSendingMode { get; private set; }
         public string HandoutRepository { get; private set; }
         public string ImgRepository { get; private set; }
-        public string DefaultConnectionString { get; set; }
-        public string MembershipConnectionString { get; set; }
-        public bool NotificationsTesting { get; set; }
+        public string DefaultConnectionString { get; private set; }
+        public string MembershipConnectionString { get; private set; }
+        public bool NotificationsTesting { get; private set; }
         public string StorageAccessKey { get; private set; }
         public string StorageAccountName { get; private set; }
         public string Tenant { get; private set; }

@@ -362,7 +362,7 @@ namespace CUWebinars.Business.Services
                 discountTotal = row.RowPrice;
             }
 
-            row.RowPrice = row.RowPrice - discountTotal;
+            row.RowPrice -= discountTotal;
             pricesAndDiscounts.TotalDiscount = discountTotal;
             pricesAndDiscounts.RowPrice = row.RowPrice;
             pricesAndDiscounts.TotalOptions = optionsCost;

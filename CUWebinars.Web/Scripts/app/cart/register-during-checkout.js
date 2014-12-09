@@ -861,6 +861,7 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
         typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
         valOfTypeChosenPrevious = valOfTypeChosenCurrent = dropDown.val();
 
+    // This is the callback which fires once the modal window that the dropdownlist opens, closes upon confirmbutton-click
     $('#confirmTypeChange').on('click', function(e) {
 
         var url = '/Cart/RemoveAdditionalLocationsFromOrder';
@@ -892,6 +893,7 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
         chosenRegTypeLabel.empty().text(typeChosenCurrent);
     });
 
+    // This is the callback which fires once the modal window that the dropdownlist opens, closes upon cancelbutton-click
     $('#cancelTypeChange').on('click', function(e) {
         changeTypeConfirmModal.modal('hide');
         chosenRegTypeLabel.text(typeChosenPrevious);
