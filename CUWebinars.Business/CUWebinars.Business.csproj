@@ -280,12 +280,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
-    <None Include="SQLSeeding\BACPACs\CUWebinars.bacpac" />
-    <None Include="SQLSeeding\BACPACs\CUWebinarsClean.bacpac" />
-    <None Include="SQLSeeding\BACPACs\CUWebinarsMigratorV2.bak" />
-    <None Include="SQLSeeding\BACPACs\MembershipReboot.bacpac" />
-    <None Include="SQLSeeding\BACPACs\MembershipRebootClean.bacpac" />
-    <None Include="SQLSeeding\BACPACs\TTSDatabase-2014-5-4-20-7.bacpac" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="SQLSeeding\ExecutesTheMigrationsScripts.sql" />
@@ -301,7 +295,9 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="SQLSeeding\BACPACs\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <PropertyGroup>

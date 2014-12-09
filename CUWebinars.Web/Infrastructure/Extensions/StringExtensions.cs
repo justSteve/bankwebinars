@@ -57,6 +57,7 @@ namespace CUWebinars.Web.Infrastructure.Extensions
             }
             catch (Exception exception)
             {
+                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 return string.Empty;
             }
         }

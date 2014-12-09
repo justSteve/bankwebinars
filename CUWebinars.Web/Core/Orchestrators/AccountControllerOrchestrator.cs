@@ -246,7 +246,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 }
                 catch (Exception exception)
                 {
-                    
+                    _logger.ErrorException("ChangePasswordFromResetKey: ", exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 }
 
                 _stateService.ClearValue(DomainConstants.VerificationKey);

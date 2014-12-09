@@ -1023,8 +1023,9 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     ModelState.AddModelError(string.Empty, "Please call us at 800-831-0678 ext. 3 to resolve.");
-                    
-                    _logger.Error("Account.Register Catch block: {0} | Session= {1}", _appHelper.GetUserAuditInfo());
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                    _logger.Error("Account.Register Catch block | Session= {1}", _appHelper.GetUserAuditInfo());
+
                 }
             }
 
