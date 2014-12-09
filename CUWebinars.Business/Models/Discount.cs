@@ -7,6 +7,7 @@ namespace CUWebinars.Business.Models
     {
         public int idDiscount { get; set; }
         public DiscountType discountType { get; set; }
+        
         public string code { get; set; }
         public decimal percentOff { get; set; }
         public decimal flatOff { get; set; }

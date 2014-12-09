@@ -1,8 +1,8 @@
 ﻿@model DisplayRowPriceViewModel
 
 @functions {
-    private const string CurrencyFormatToken = "c";
-    private const string DotAndTwoDecimals = ".00";
+        private const string CurrencyFormatToken = "c";
+        private const string DotAndTwoDecimals = ".00";
 }
 
 @{
@@ -17,44 +17,44 @@
             code = "abc",
             flatOff = 10.0M
         };
+        
+        rowAmount.Append("Base Cost: <span id='baseCost'>" + Model.PricesAndDiscounts.UnitPrice.ToString("c0") + "</span><br />");
 
-        rowAmount.Append("Base Cost: " + Model.RegistrationType.Price.ToString("c0") + "<br />");
-
-        rowAmount.Append("Discounted: " + Model.Discount.flatOff.ToString(CurrencyFormatToken) + " (" + Model.Discount.code + ")<br />");
+        rowAmount.Append("<span id='discountedText'>Discounted: <span id='totalDiscount'>" + Model.Discount.flatOff.ToString(CurrencyFormatToken) + "</span> (" + Model.Discount.code + ")</span><br />");
 
         if (Model.NumberOfAdditionalLocations == 1)
         {
-            rowAmount.Append("One Additional Location: " + Model.PricesAndDiscounts.TotalOptions.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "<br>");
+            rowAmount.Append("<span id='addLocsText'>One Additional Location: <span id='totalAdLocsPrice'>" + Model.PricesAndDiscounts.TotalOptions.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "</span></span><br>");
         }
         else
         {
-            rowAmount.Append(Model.NumberOfAdditionalLocations + " Additional Locations: " + Model.PricesAndDiscounts.TotalOptions.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "<br>");
+            rowAmount.Append("<span id='addLocsText'>" + Model.NumberOfAdditionalLocations + " Additional Locations: <span id='totalAdLocsPrice'>" + Model.PricesAndDiscounts.TotalOptions.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "</span></span><br>");
         }
 
-        rowAmount.Append("Total Cost: " + Model.PricesAndDiscounts.RowPrice.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, ""));
+        rowAmount.Append("Total Cost: <span id='totalPrice'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "</span>");
 
         <div id="billingDetails" class="well" style="text-align: right;">
             @Html.Raw(rowAmount.ToString())<br />
 
             @{
-        switch (Model.OrderStatus)
-        {
-            case OrderStatus.InProcess:
-                <span id="orderStatusLabel" class="label label-warning">@OrderStatus.InProcess</span>
-                break;
+                switch (Model.OrderStatus)
+                {
+                    case OrderStatus.InProcess:
+                        <span id="orderStatusLabel" class="label label-warning">@OrderStatus.InProcess</span>
+                        break;
 
-            case OrderStatus.Submitted:
-            <span id="orderStatusLabel" class="label label-info">@OrderStatus.Submitted</span>
-                break;
+                    case OrderStatus.Submitted:
+                        <span id="orderStatusLabel" class="label label-info">@OrderStatus.Submitted</span>
+                        break;
 
-            case OrderStatus.Paid:
-            <span id="orderStatusLabel" class="label label-success">@OrderStatus.Paid</span>
-                break;
+                    case OrderStatus.Paid:
+                        <span id="orderStatusLabel" class="label label-success">@OrderStatus.Paid</span>
+                        break;
 
-            case OrderStatus.AwaitingVerification:
-            <span id="orderStatusLabel" class="label label-warning">@OrderStatus.AwaitingVerification</span>
-                break;
-        }
+                    case OrderStatus.AwaitingVerification:
+                        <span id="orderStatusLabel" class="label label-warning">@OrderStatus.AwaitingVerification</span>
+                        break;
+                }
             }
         </div>
     }

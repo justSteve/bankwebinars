@@ -74,8 +74,8 @@ namespace CUWebinars.Business.Repository
                 newOrderRow.RegistrationType = registrationType;
                 newOrderRow.RowStatus = OrderRowStatus.Active;
 
-                newOrderRow = CalculateRowPrices(newOrderRow);
-
+                newOrderRow.RowPrice = Convert.ToDecimal(newOrderRow.RegistrationType.Price);
+                
                 return newOrderRow;
 
             }
@@ -96,20 +96,8 @@ namespace CUWebinars.Business.Repository
         public void DeleteOrder(int orderId)
         {
             var orderToDelete = items.Find(orderId);
-
+            
             Remove(orderToDelete);
-        }
-
-        public OrderRow CalculateRowPrices(OrderRow newOrderRow)
-        {
-            newOrderRow.UnitPrice = Convert.ToDecimal(newOrderRow.RegistrationType.Price);
-
-            if (newOrderRow.AdditionalLocation != null)
-            {
-                newOrderRow.RowPrice = Convert.ToDecimal(newOrderRow.AdditionalLocation.Sum(x => x.Price)
-                    + Convert.ToDecimal(newOrderRow.RegistrationType.Price));
-            }
-            return newOrderRow;
         }
 
         public AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullName)
@@ -265,7 +253,7 @@ namespace CUWebinars.Business.Repository
             //  
             if (webUser.Addresses == null)
                 return order;
-
+            
             var billingAddress =
                 webUser.Addresses.FirstOrDefault(a => a.AddressType == DomainConstants.BillingAddress);
             var shippingAddress =
@@ -330,7 +318,7 @@ namespace CUWebinars.Business.Repository
             //this method needs to separate the 
             // act of saving to db from the act of setting the
             // order status to 'Submitted'. 
-
+            
             //When originally coded for the 
             // OrderImport use case, it worked ok because by the time
             // this method executed we intented OrderStatus to be .Submitted.
@@ -454,7 +442,8 @@ namespace CUWebinars.Business.Repository
         {
             var usercode = ((TTSWebinarsContext)db).WebUsers.Where(u => u.idUser == idUser).Select(u => u.idSubscriptionDiscount).Single();
 
-            return ((TTSWebinarsContext)db).Discounts.Where(d => d.idDiscount == usercode).Single();
+            var discount = ((TTSWebinarsContext)db).Discounts.Where(d => d.idDiscount == usercode).Single();
+            return discount;
 
         }
         public virtual bool IsDiscountCodeValid(string discountCode)

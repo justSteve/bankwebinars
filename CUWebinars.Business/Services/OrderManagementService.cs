@@ -95,6 +95,8 @@ namespace CUWebinars.Business.Services
             catch (Exception exception)
             {
                 _logger.ErrorException("CreateOrderRow method", exception);
+                //todo: can elmah be persuaded to fire from thic class? 
+                //Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 throw;
             }
         }
@@ -142,15 +144,13 @@ namespace CUWebinars.Business.Services
             // perf tweak - ensures enumerable will only be enumerated once
             var additionalLocationsEnumerated = additionalLocations as AdditionalLocation[] ?? additionalLocations.ToArray();
 
-            var stringBuilder = new StringBuilder("<strong>"); // emails in bold text, or whatever suits
+            string emailSpanElement = string.Empty; // emails in bold text, or whatever suits
             //tagBuilder.AddCssClass("muted");
 
             foreach (var additionalLocation in additionalLocationsEnumerated)
             {
-                stringBuilder.Append(additionalLocation.Email);
-                stringBuilder.Append("</strong>");
-
-                string emailSpanElement = stringBuilder.ToString();
+                emailSpanElement = string.Format("<strong>{0}</strong>", additionalLocation.Email);
+                
                 i++;
 
                 if (i == additionalLocationsEnumerated.Count())
@@ -345,7 +345,7 @@ namespace CUWebinars.Business.Services
 
             //Calculate row price before discount
             row.RowPrice = row.UnitPrice + optionsCost;
-            pricesAndDiscounts.RowPrice = row.RowPrice;
+            pricesAndDiscounts.UnitPrice = row.UnitPrice;
 
             //Calculate discount. 
             decimal discountTotal = 0;
@@ -364,9 +364,8 @@ namespace CUWebinars.Business.Services
                 discountTotal = row.RowPrice;
             }
 
-            row.RowPrice = row.RowPrice - discountTotal;
+            row.RowPrice -= discountTotal;
             pricesAndDiscounts.TotalDiscount = discountTotal;
-            pricesAndDiscounts.RowPrice = row.RowPrice;
             pricesAndDiscounts.TotalOptions = optionsCost;
 
             //Calculate order total
@@ -708,19 +707,21 @@ namespace CUWebinars.Business.Services
             return _orderRepository.CheckUserForRecordingAccess(w, u);
         }
 
-
         private void ProcessDiscountCodes(Order order)
         {
+            //TODO Decide: Should Discounts have a Service dedicated to them?
             var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             //legacy's verbetum if (row.Discount == null && String.IsNullOrEmpty(row.DiscountCode) == false)
 
             if (row.Discount != null)
             {
                 RedeemDiscount(row);
+                _logger.Info("Redeemed Discount On Order: " + order.idOrder);
             }
             else
             {
-                _logger.Error("ERROR: Rejected Discount On Order: " + order.idOrder);
+                var aHolder = "";
+                //_logger.Error("ERROR: Rejected Discount On Order: " + order.idOrder);
             }
             //legacy: tracks error condition 
             //else if (row.Discount != null && row.Discount.Code != row.DiscountCode)

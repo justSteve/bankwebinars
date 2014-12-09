@@ -97,6 +97,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 catch (Exception exception)
                 {
                     _logger.ErrorException("BuildCheckOutViewModel", exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                     throw;
                 }
 
@@ -210,6 +211,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 catch (Exception exception)
                 {
                     _logger.ErrorException("BuildCheckOutViewModel", exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                     throw;
                 }
             }
@@ -297,6 +299,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     catch (Exception exception)
                     {
                         _logger.ErrorException("BuildCheckoutOptionsViewModel", exception);
+                        Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                         throw;
                     }
 
@@ -342,6 +345,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 catch (Exception exception)
                 {
                     _logger.ErrorException("BuildDisplayRowPriceViewModel", exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                     throw;
                 }
             }
@@ -388,6 +392,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 catch (Exception exception)
                 {
                     _logger.ErrorException("BuildCheckOutViewModel", exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                     throw;
                 }
             }
@@ -421,6 +426,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 catch (Exception exception)
                 {
                     _logger.ErrorException("BuildOrderHasAdditionalLocationsViewModel", exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                     throw;
                 }
             }

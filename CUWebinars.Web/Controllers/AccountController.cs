@@ -314,6 +314,7 @@ namespace CUWebinars.Web.Controllers
                     exception.Message,
                     _appHelper.GetUserAuditInfo()
                     );
+                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 throw;
             }
         }
@@ -345,6 +346,7 @@ namespace CUWebinars.Web.Controllers
                     _appHelper.GetUserAuditInfo()
                     );
                 ModelState.AddModelError(string.Empty, exception.Message);
+                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
             }
 
             return this.ModelStateJson(ModelState);
@@ -364,6 +366,7 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 _logger.ErrorException("In EditBillingAddress Action", exception);
+                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 throw;
             }
 
@@ -388,6 +391,7 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 _logger.ErrorException("In EditShippingAddress Action", exception);
+                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 throw;
             }
 
@@ -413,6 +417,8 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 _logger.ErrorException("In EditInstitution Action", exception);
+                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+
                 throw;
             }
 
@@ -438,6 +444,7 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 _logger.ErrorException("In EditNameTitle Action", exception);
+                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 throw;
             }
             return PartialView("Partials/_EditNameTitle", model);
@@ -523,6 +530,7 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     _logger.ErrorException("In Manage Action", exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                     throw;
                 }
             }
@@ -601,6 +609,7 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 _logger.ErrorException(string.Format("Account.SignIn Failed. {0} | {1} Session= {2}", model.Email, model.Password, _appHelper.GetUserAuditInfo()), exception);
+                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
 
                 ModelState.AddModelError(
                     string.Empty,
@@ -686,6 +695,7 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 _logger.ErrorException("In SignInFromCart Action", exception);
+                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
             }
 
             // If we got this far, something failed, redisplay form
@@ -860,6 +870,7 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     _logger.ErrorException("In LogOff Action", exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                     throw;
                 }
             }
@@ -904,6 +915,7 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 _logger.ErrorException("In CheckZip Action", exception);
+                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 throw;
             }
 
@@ -984,6 +996,7 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 _logger.ErrorException("In CheckEmail method", exception);
+                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 return Json(new { error = WebUiConstants.Fail }, JsonRequestBehavior.AllowGet);
             }
         }

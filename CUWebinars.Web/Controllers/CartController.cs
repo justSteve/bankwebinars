@@ -4,7 +4,7 @@ using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.ViewModel;
-
+using DDay.iCal;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -80,6 +80,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     ModelState.AddModelError(string.Empty, "There was a problem at the server. Please contact the administrator.");
                     _logger.ErrorException("ConfirmOrder|ConfirmOrder failed ", exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 }
             }
 
@@ -183,6 +184,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     ModelState.AddModelError(string.Empty, exception.Message);
                     _logger.FatalException("Signup2 order excepted: ", exception);
+                    
                     Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 }
             }
@@ -213,6 +215,7 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     _logger.ErrorException("RemoveAdditionalLocationsFromOrder|Session=" + _appHelper.GetUserAuditInfo(), exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 }
 
                 return Json(new { Result = WebUiConstants.Success });

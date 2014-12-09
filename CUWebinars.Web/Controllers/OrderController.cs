@@ -158,6 +158,7 @@ namespace CUWebinars.Web.Controllers
                     {
                         _logger.ErrorException(
                             string.Format("CreateOrder|CreateUser failed: {0}", exception.Message), exception);
+                        Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                         throw;
                     }
                 }
@@ -287,6 +288,7 @@ namespace CUWebinars.Web.Controllers
                     {
                         _logger.ErrorException(
                             string.Format("CreateOrder|CreateUser failed: {0}", exception.Message), exception);
+                        Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                         throw;
                     }
                 }

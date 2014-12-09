@@ -22,7 +22,7 @@ namespace CUWebinars.Business.Models.Mapping
             // Table & Column Mappings
             ToTable("Discount");
             Property(t => t.idDiscount).HasColumnName("idDiscount");
-            Property(t => t.discountType).HasColumnName("discountType");
+            Property(t => t.discountType).IsRequired();
             Property(t => t.code).HasColumnName("code");
             Property(t => t.percentOff).HasColumnName("percentOff");
             Property(t => t.flatOff).HasColumnName("flatOff");
