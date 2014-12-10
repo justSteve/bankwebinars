@@ -1,6 +1,6 @@
 namespace CUWebinars.Business.Models
 {
-    public enum DiscountType
+    public enum DiscountType : byte
     {
         Promo = 1,
         Compensation = 2,

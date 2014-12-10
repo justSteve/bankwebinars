@@ -273,9 +273,12 @@ $(function () {
 
                     }, constants.HtmlDataType);
 
-                } else {
-                    //jslogger.log({ exception: { name: 'SignupFail', message: 'The signUpForm submission failed.' } });
-                    $('.signupErrors').html('Invalid Data. Try again?');
+                } else if (result.isSuccessful === false) {
+                    formProcessor.lightUpValidationSummary('valSummarySignUpForm', result);
+                    var spinnerParent = document.getElementById('RegistrationType');
+                    var spinner = document.getElementById('loadingSpinner');
+                    spinnerParent.removeChild(spinner);
+                    //$('#loadingSpinner').remove();
                 }
             }, constants.JsonDataType);
 

@@ -14,7 +14,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
     //setup ajax error handling
     $.ajaxSetup({
-        error: function(x, status, error) {
+        error: function (x, status, error) {
             if (x.status == 403) {
                 alert('Sorry, your session has expired. Please login again to continue');
                 window.location.href = '/Account/Login';
@@ -29,7 +29,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
     regUserStateManager.setAction(RegistrationInCart.Action.CheckEmail); // starting off with CheckEmail action.
     regUserStateManager.setIsShippindAddressRequired(shippingAddressRequired);
 
-    $('#RegisterFields_Email').bind('change keyup', function() {
+    $('#RegisterFields_Email').bind('change keyup', function () {
         regUserStateManager.ensureFormValidatorParsed();
         if ($(this).valid() == true) {
             $('#TheSubmitButton').removeClass('button_disabled').attr('disabled', false);
@@ -38,12 +38,12 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
         }
     });
 
-    $('[name="RegisterFields.ConfirmPassword"]').on('focus', function(event) {
+    $('[name="RegisterFields.ConfirmPassword"]').on('focus', function (event) {
         $(this).next('span').removeAttr('class').attr('class', 'field-validation-valid');
         $(this).next('span span').remove();
     });
 
-    $('body').on('click', 'input:button', (function(e, data) {
+    $('body').on('click', 'input:button', (function (e, data) {
 
         if (e.currentTarget.value === 'Create New Account?') // called directly in the razor partial view
             return false;
@@ -73,33 +73,33 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
         // NotInstitution
 
         switch (clickedButton) {
-        case RegistrationInCart.Button.SignInButton:
-            regUserStateManager.logIn();
-            break;
-        case RegistrationInCart.Button.TheSubmit:
-            //console.log('ActionForTheSubmit = ' + regUserStateManager.action);
-            regUserStateManager.submit();
-            break;
-        case RegistrationInCart.Button.nonUSAddressBtn:
-            regUserStateManager.nonUsAdddressInvoked();
-            break;
-        case RegistrationInCart.Button.ResetPass:
-            regUserStateManager.resetPassword(normalResetPasswordButton);
-            break;
-        case RegistrationInCart.Button.YesUseAddress:
-            regUserStateManager.useRegisteredAddress();
-            break;
-        case RegistrationInCart.Button.EnterDiffAddress:
-            regUserStateManager.enterDifferentAddress();
-            break;
-        case RegistrationInCart.Button.NotInstitution:
-            regUserStateManager.notInstitutionAddress();
-            break;
-        default:
+            case RegistrationInCart.Button.SignInButton:
+                regUserStateManager.logIn();
+                break;
+            case RegistrationInCart.Button.TheSubmit:
+                //console.log('ActionForTheSubmit = ' + regUserStateManager.action);
+                regUserStateManager.submit();
+                break;
+            case RegistrationInCart.Button.nonUSAddressBtn:
+                regUserStateManager.nonUsAdddressInvoked();
+                break;
+            case RegistrationInCart.Button.ResetPass:
+                regUserStateManager.resetPassword(normalResetPasswordButton);
+                break;
+            case RegistrationInCart.Button.YesUseAddress:
+                regUserStateManager.useRegisteredAddress();
+                break;
+            case RegistrationInCart.Button.EnterDiffAddress:
+                regUserStateManager.enterDifferentAddress();
+                break;
+            case RegistrationInCart.Button.NotInstitution:
+                regUserStateManager.notInstitutionAddress();
+                break;
+            default:
         }
     }));
 
-    $('input').keypress(function(event) {
+    $('input').keypress(function (event) {
 
         var inputElementTriggered = event.currentTarget.name;
         var normalResetPasswordButton = $('#NormalResetPasswordButton');
@@ -119,52 +119,52 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
             regUserStateManager.setInputAction(RegistrationInCart.InputAction.EnterKeyPress);
 
             switch (inputElementTriggered) {
-            case 'Password':
-            case 'Email':
-            case RegistrationInCart.Button.SignInButton:
-                regUserStateManager.logIn();
-                break;
-            case 'RegisterFields.Password':
-            case 'RegisterFields.ConfirmPassword':
-            case 'RegisterFields.Email':
-            case 'getZip':
-            case 'Password1':
-            case 'Email1':
-            case RegistrationInCart.Button.TheSubmit:
-                //console.log('ActionForTheSubmit = ' + regUserStateManager.action);
-                regUserStateManager.submit();
-                break;
-            case RegistrationInCart.Button.nonUSAddressBtn:
-                regUserStateManager.nonUsAdddressInvoked();
-                break;
-            case 'NormalResetPasswordInput':
-            case 'NormalResetPasswordButton':
-                if ($('#EdgeCaseResetPasswordButton').data('clicked'))
-                    $('#EdgeCaseResetPasswordButton').removeData('clicked');
-                $('#NormalResetPasswordButton').data('clicked', true);
-                $('form#ResetPasswordForm').submit();
-                break;
-            case '#EdgeCaseResetPasswordButton':
-            case RegistrationInCart.Button.ResetPass:
-                regUserStateManager.resetPassword(normalResetPasswordButton);
-                break;
-            case RegistrationInCart.Button.YesUseAddress:
-                regUserStateManager.useRegisteredAddress();
-                break;
-            case RegistrationInCart.Button.EnterDiffAddress:
-                regUserStateManager.enterDifferentAddress();
-                break;
-            case RegistrationInCart.Button.NotInstitution:
-                regUserStateManager.notInstitutionAddress();
-                break;
-            default:
-                if ($('#TheSubmitButton').val() === regUserStateManager.getRegisterButtonText()) {
-                    if ($(regUserStateManager.getSameAsBillingCheckedFilter()).val()) {
-                        regUserStateManager.setShippingToBilling();
-                    }
-                    regUserStateManager.setAction(RegistrationInCart.Action.SubmitRegister);
+                case 'Password':
+                case 'Email':
+                case RegistrationInCart.Button.SignInButton:
+                    regUserStateManager.logIn();
+                    break;
+                case 'RegisterFields.Password':
+                case 'RegisterFields.ConfirmPassword':
+                case 'RegisterFields.Email':
+                case 'getZip':
+                case 'Password1':
+                case 'Email1':
+                case RegistrationInCart.Button.TheSubmit:
+                    //console.log('ActionForTheSubmit = ' + regUserStateManager.action);
                     regUserStateManager.submit();
-                }
+                    break;
+                case RegistrationInCart.Button.nonUSAddressBtn:
+                    regUserStateManager.nonUsAdddressInvoked();
+                    break;
+                case 'NormalResetPasswordInput':
+                case 'NormalResetPasswordButton':
+                    if ($('#EdgeCaseResetPasswordButton').data('clicked'))
+                        $('#EdgeCaseResetPasswordButton').removeData('clicked');
+                    $('#NormalResetPasswordButton').data('clicked', true);
+                    $('form#ResetPasswordForm').submit();
+                    break;
+                case '#EdgeCaseResetPasswordButton':
+                case RegistrationInCart.Button.ResetPass:
+                    regUserStateManager.resetPassword(normalResetPasswordButton);
+                    break;
+                case RegistrationInCart.Button.YesUseAddress:
+                    regUserStateManager.useRegisteredAddress();
+                    break;
+                case RegistrationInCart.Button.EnterDiffAddress:
+                    regUserStateManager.enterDifferentAddress();
+                    break;
+                case RegistrationInCart.Button.NotInstitution:
+                    regUserStateManager.notInstitutionAddress();
+                    break;
+                default:
+                    if ($('#TheSubmitButton').val() === regUserStateManager.getRegisterButtonText()) {
+                        if ($(regUserStateManager.getSameAsBillingCheckedFilter()).val()) {
+                            regUserStateManager.setShippingToBilling();
+                        }
+                        regUserStateManager.setAction(RegistrationInCart.Action.SubmitRegister);
+                        regUserStateManager.submit();
+                    }
             }
 
             //console.log(regUserStateManager.action);
@@ -173,7 +173,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
         }
     });
 
-    $('#collapseShipping').on('shown', function() {
+    $('#collapseShipping').on('shown', function () {
         if ($(regUserStateManager.getSameAsBillingCheckedFilter()).val()) {
             regUserStateManager.setShippingToBilling();
         }
@@ -185,7 +185,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
         }
     });
 
-    $('#ResetPasswordForm').on('submit', function(e) {
+    $('#ResetPasswordForm').on('submit', function (e) {
 
         var hiddenInput = $('#ResetPassEmail');
 
@@ -201,10 +201,10 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
             url: jsonUrl,
             dataType: RegistrationInCart.Constants.JsonDataType,
             data: JSON.stringify(jsonPayload),
-            beforeSend: function() {
+            beforeSend: function () {
                 $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;&nbsp;Working...</span>');
             }
-        }).done(function(data) {
+        }).done(function (data) {
             if (data.Result === 'Success') {
                 $('#labelEmail').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Reset instructions have been sent. Follow instructions and come back here to log in...</span>');
             } else {
@@ -215,13 +215,13 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                     $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Error. Please retry...</span>');
                 }
             }
-        }).always(function(data) {
-            
+        }).always(function (data) {
+
         });
 
     });
 
-    $('form#checkEmail').submit(function(e) {
+    $('form#checkEmail').submit(function (e) {
 
         e.preventDefault();
 
@@ -238,7 +238,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                 url: jsonUrl,
                 dataType: RegistrationInCart.Constants.JsonDataType,
                 data: { email: email, disregardInstitutionDomain: regUserStateManager.getDisregardIntitutionDomain(), orderId: orderId },
-                beforeSend: function() {
+                beforeSend: function () {
                     // this is where we append a loading image
                     $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Email...</span>');
                 }
@@ -259,16 +259,16 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                     $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;An error has occurred at the server. Please contact the administrator.</span>');
                 }
 
-            }).fail(function() {
+            }).fail(function () {
                 // failed request; give feedback to user
                 $('#wrapEmail').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
-            }).always(function() {
+            }).always(function () {
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
             });
         }
     });
 
-    $('form#checkZip').submit(function() {
+    $('form#checkZip').submit(function () {
 
         var jsonUrl = '/Account/CheckZip';
         var zipCode = $('#ZipChecker').val();
@@ -283,24 +283,24 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                 url: jsonUrl,
                 dataType: RegistrationInCart.Constants.JsonDataType,
                 data: { Zip: zipCode },
-                beforeSend: function() {
+                beforeSend: function () {
                     // this is where we append a loading image
                     $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Zip...</span>');
                 }
-            }).done(function(data) {
+            }).done(function (data) {
                 // successful request; do something with the data
                 regUserStateManager.zipCodeVerified(data, zipCode);
-            }).fail(function() {
+            }).fail(function () {
                 // failed request; give feedback to user
                 $('#wrapZip').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
-            }).always(function() {
+            }).always(function () {
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
             });
         }
         return false;
     });
 
-    $('#FullName').blur(function() {
+    $('#FullName').blur(function () {
         var tempName = $('#FullName').val().split(' ');
         if (tempName.length == 2) {
             $('#RegisterFields_FirstName').val(tempName[0]);
@@ -314,7 +314,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
         }
     });
 
-    $('#modalInstitution').on('hidden', function(e) {
+    $('#modalInstitution').on('hidden', function (e) {
 
         regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
 
@@ -326,7 +326,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
     //  This handler was colliding with one by the same name in create-user.
     //  It is now invoked from the register-user-in-cart.js script.
-    $('#_CreateUserFromCartForm').on('submit', function(event) {
+    $('#_CreateUserFromCartForm').on('submit', function (event) {
         event.preventDefault();
 
         var createUserForm = $(this);
@@ -363,7 +363,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
             headers: headers,
-            beforeSend: function() {
+            beforeSend: function () {
                 //console.log('beforeSend Register Details');
                 // this is where we append a loading image
                 $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Registering new user...</span>');
@@ -374,10 +374,10 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                 var errorsList = valSummary.find('ul');
                 errorsList.empty();
                 errorsList.append('<li style="display:none"></li>');
-                
+
                 beigeFormArea.height(500);
             }
-        }).done(function(data) {
+        }).done(function (data) {
             //alert('done: ');
             if (data.Result) {
                 if (data.Result === 'Success') {
@@ -386,9 +386,9 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                     regUserStateManager.setAction('');
 
                     // This if guard may not be required
-                    if (utilities.relativePathStartsWith(payload['returnUrl'])) { 
+                    if (utilities.relativePathStartsWith(payload['returnUrl'])) {
                         $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;&nbsp;You have successfully registered! On to check-out...</span>');
-                        
+
                         // The next POST updates the Order number with the newly create id of the WebUser
                         var updateOrderWithUserForm = $('#_UpdateOrderWithUserId');
                         var url = updateOrderWithUserForm.attr('action');
@@ -411,11 +411,11 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                             dataType: constants.JsonDataType,
                             data: JSON.stringify(payloadForUpdate),
                             headers: headers,
-                            beforeSend: function() {
+                            beforeSend: function () {
                                 $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
                             }
-                        }).done(function(data) {
-                            
+                        }).done(function (data) {
+
 
                             // Upon return, load the 3rd tab. And once loaded, create the MR UserAccount (but don't log the user in). 
                             $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
@@ -435,20 +435,20 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                     dataType: constants.JsonDataType,
                                     data: JSON.stringify(payload),
                                     headers: headersMr,
-                                    beforeSend: function() {
-                                        
+                                    beforeSend: function () {
+
                                     }
-                                }).done(function(data) {
+                                }).done(function (data) {
                                     //  do nothing.              
                                 });
 
-                                
+
                                 $('#ConfirmRegistrationBillMe').on('click', function (e) {
                                     //$('#confirmation').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>');
                                     completeOrder(userId, orderRowId, webinarId);
                                 });
 
-                                $('#Canceller').on('click', function(e) {
+                                $('#Canceller').on('click', function (e) {
                                     cancelOrder(orderId, webinarId);
                                 });
 
@@ -464,14 +464,14 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                 $('#_CreateUserFromCartForm').remove();
 
                                 $('#loadingSpinner').remove();
-                                
+
                                 beigeFormArea.height($('#confirmation').height() + 30);
                             });
 
                         });
 
                         $('#confirmationTab a').tab('show');
-                        
+
                     } else {
                         $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;You have successfully registered!</span>');
                     }
@@ -486,9 +486,9 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                 formProcessor.lightUpValidationSummary('valSummarySignUpInCart', data);
             }
 
-        }).fail(function(data) {
+        }).fail(function (data) {
             //console.log('failed: ' + data);
-        }).always(function() {
+        }).always(function () {
             regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
         });
     });
@@ -523,7 +523,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
                     var userId = data.UserId;
                     regUserStateManager.setAction('');
-                    
+
 
                     $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;&nbsp;You have successfully logged in!</span>');
 
@@ -555,7 +555,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                             }).done(function (data) {
 
                                 if (data.Result === 'Success') {
-                                    $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function(response, status, xhr) {
+                                    $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
                                         $('#ConfirmRegistrationBillMe').on('click', function (e) {
                                             e.preventDefault();
                                             callback();
@@ -587,7 +587,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                             });
                         });
                     });
-                } 
+                }
             } else if (!data.isSuccessful) {
                 $('#labelEmail').html('<span class="label label-important"><i class="icon icon-exclamation-sign"></i>&nbsp;There has been a problem with your log in attempt.</span>');
 
@@ -620,7 +620,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 };
 
 function completeOrder(userId, orderRowId, webinarId) {
-    
+
     var cartStateManager = new OrderRegistration.StateManager();
 
     cartStateManager.setConfirmOrderForm($('#confirmOrder'));
@@ -650,7 +650,7 @@ function completeOrder(userId, orderRowId, webinarId) {
                 $('#orderDetails').append(result.Msg);
 
                 $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
-                
+
                 $('#ConfirmModal').modal('show');
 
                 $('#finalLoadingSpinner').remove();
@@ -662,7 +662,7 @@ function completeOrder(userId, orderRowId, webinarId) {
             $('#ConfirmRegistrationBillMe').removeAttr('disabled');
 
         }, 'json');
-        
+
         $('#ConfirmModal').on('hidden', function (e) {
 
             var utilities = new Common.Utilities();
@@ -686,7 +686,7 @@ function cancelOrder(orderId, webinarId) {
 
     $('#cancelModalOrderId').val(orderId);
     var data = cancelOrderForm.serialize();
-    
+
     $('#cancelRegistration').on('click', function (e) {
         e.preventDefault();
 
@@ -733,7 +733,7 @@ function hookUpModal(modalForm) {
 
     var modalFormOptions = {
         keyboard: true,
-        backdrop: 'static',
+        //backdrop: 'static',
         show: true,
     };
 
@@ -746,7 +746,7 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
 
     var modalForm = $('#UserDetailsModal');
 
-    button.on('click', function(e) {
+    button.on('click', function (e) {
 
         e.preventDefault();
 
@@ -757,13 +757,13 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
 
         setUiLayout(registerDuringCheckout.shippingAddressRequired);
 
-        $('#saveChangesButton').on('click', function() {
+        $('#saveChangesButton').on('click', function () {
             e.preventDefault();
 
             $('#userDetailsForm').submit();
         });
 
-        $('#userDetailsForm').on('submit', function(e) {
+        $('#userDetailsForm').on('submit', function (e) {
             e.preventDefault();
 
             var url = $(this).attr('action');
@@ -803,7 +803,7 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
         $('#HideAddShippingAddressLink').on('click', function (e) {
             e.preventDefault();
 
-            $(this).fadeOut('500', function() {
+            $(this).fadeOut('500', function () {
                 $('#ShippingAddressContainer').fadeOut('500', function () {
                     $('#AddShippingAddressLink').fadeIn('500');
                 });
@@ -814,13 +814,13 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
         $('#AddShippingAddressLink').on('click', function (e) {
             e.preventDefault();
 
-            $(this).fadeOut('500', function() {
-                $('#ShippingAddressContainer').fadeIn('500', function() {
+            $(this).fadeOut('500', function () {
+                $('#ShippingAddressContainer').fadeIn('500', function () {
                     $('#HideAddShippingAddressLink').fadeIn('500');
                 });
-            } );
+            });
         });
-        
+
         $('#passwordWrapper').remove();
 
         if ($('#RegisterFields_Password').length < 1) {
@@ -857,12 +857,12 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
         valOfTypeChosenPrevious,
         valOfTypeChosenCurrent;
 
-        //  need to save state in the event that a Modal is displayed and Cancel is clicked on it.
-        typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
-        valOfTypeChosenPrevious = valOfTypeChosenCurrent = dropDown.val();
+    //  need to save state in the event that a Modal is displayed and Cancel is clicked on it.
+    typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
+    valOfTypeChosenPrevious = valOfTypeChosenCurrent = dropDown.val();
 
     // This is the callback which fires once the modal window that the dropdownlist opens, closes upon confirmbutton-click
-    $('#confirmTypeChange').on('click', function(e) {
+    $('#confirmTypeChange').on('click', function (e) {
 
         var url = '/Cart/RemoveAdditionalLocationsFromOrder';
         var payLoad = {
@@ -876,7 +876,7 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
             url: url,
             dataType: constants.JsonDataType,
             data: JSON.stringify(payLoad),
-        }).done(function(data) {
+        }).done(function (data) {
             if (data.Result === 'Success') {
                 $('#confirmation > div:nth-child(4) > div:nth-child(6)').empty();
                 // TODO: Also adjust the price accordingly
@@ -887,6 +887,9 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
                 $('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 706 for immediate assistance').addClass('text-info');
 
                 $('#addLocsText').html('Additional Locations: <span id="totalAdLocsPrice">$0.00</span>').addClass('muted');
+
+                // This variable is initially set in the CheckoutConfirm.cshtml razor view
+                anyAddLocs = false;
             }
         });
 
@@ -895,13 +898,17 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
         chosenRegTypeLabel.empty().text(typeChosenCurrent);
     });
 
+    changeTypeConfirmModal.on('hidden', function () {
+        ShowModalForShippingDetails(registerDuringCheckout.shippingAddressRequired);
+    });
+
     // This is the callback which fires once the modal window that the dropdownlist opens, closes upon cancelbutton-click
-    $('#cancelTypeChange').on('click', function(e) {
+    $('#cancelTypeChange').on('click', function (e) {
         changeTypeConfirmModal.modal('hide');
         chosenRegTypeLabel.text(typeChosenPrevious);
         dropDown.val(valOfTypeChosenPrevious);
     });
-    
+
     dropDown.on('change', function (e) {
 
         e.preventDefault();
@@ -916,11 +923,17 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
             cache: false,
             url: url,
             dataType: constants.JsonDataType,
-        }).done(function(data) {
+        }).done(function (data) {
             if (data.shouldShow === 'No') {
 
+                if (data.shippingDetailsRqrd === 'Yes') {
+                    registerDuringCheckout.shippingAddressRequired = true;
+                } else {
+                    registerDuringCheckout.shippingAddressRequired = false;
+                }
+
                 //  First, check if there are currently any Additional Locations added to the order.
-                if ($('#addlocSpiel').length > 0) {
+                if (anyAddLocs === true) {
                     var modalFormOptions = {
                         keyboard: true,
                         backdrop: 'static',
@@ -934,22 +947,27 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
                     typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
                     chosenRegTypeLabel.empty().text(typeChosenCurrent);
                     valOfTypeChosenPrevious = valOfTypeChosenCurrent;
+                    ShowModalForShippingDetails(data.shippingDetailsRqrd);
                 }
             } else {
                 typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
                 chosenRegTypeLabel.empty().text(typeChosenCurrent);
                 valOfTypeChosenPrevious = valOfTypeChosenCurrent;
-            }
-
-            if (data.shippingDetailsRqrd === 'Yes') {
-                registerDuringCheckout.shippingAddressRequired = true;
-                //hookUpEditUserLogic(null, true);
-                hookUpModal($('#UserDetailsModal'));
-            } else {
-                registerDuringCheckout.shippingAddressRequired = false;
+                ShowModalForShippingDetails(data.shippingDetailsRqrd);
             }
         });
     });
+}
+
+function ShowModalForShippingDetails(shippingDetailsRqrd) {
+
+    if (shippingDetailsRqrd === true) {
+        registerDuringCheckout.shippingAddressRequired = true;
+        hookUpModal($('#UserDetailsModal'));
+
+    } else {
+        registerDuringCheckout.shippingAddressRequired = false;
+    }
 }
 
 function hookUpApplyDiscountLogic(btn) {

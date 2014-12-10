@@ -40,7 +40,7 @@ namespace CUWebinars.Business.Repository
 
             if (webUser.idSubscriptionDiscount != null && webUser.idSubscriptionDiscount > 0)
             {
-                newOrder.OrderRows.Single().Discount = GetUserDiscount(webUser.idUser);
+                orderRow.Discount = GetUserDiscount(webUser.idUser);
             }
 
             //_orderValidator.ValidateAndThrow(newOrder);

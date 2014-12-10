@@ -170,6 +170,8 @@ namespace CUWebinars.Web.Controllers
                     // todo: if in progress, will have to show populated partial view.
                     _logger.Info("Signup2 order initialized: " + _appHelper.GetUserAuditInfo());
                     
+                    throw new Exception("Bad happened");
+
                     return Json(new
                     {
                         success = "success",
@@ -182,7 +184,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (Exception exception)
                 {
-                    ModelState.AddModelError(string.Empty, exception.Message);
+                    ModelState.AddModelError(string.Empty, "There has been an error at the server which has been logged.");
                     _logger.FatalException("Signup2 order excepted: ", exception);
                     
                     Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
