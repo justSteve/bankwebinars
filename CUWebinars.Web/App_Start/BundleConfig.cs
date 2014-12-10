@@ -13,7 +13,7 @@ namespace CUWebinars.Web.App_Start
         {
 
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-                    
+
                 //"~/Scripts/jquery-1.9.1.js"
                 "~/Scripts/jquery-1.11.1.js"
                 //"~/Scripts/jquery-1.8.2.js"
@@ -21,7 +21,7 @@ namespace CUWebinars.Web.App_Start
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
                         "~/Scripts/jquery-ui-1.11.1.js"));
-                        //"~/Scripts/jquery-ui-1.10.3.custom.js"));
+            //"~/Scripts/jquery-ui-1.10.3.custom.js"));
             //"~/Scripts/jquery-ui-1.8.24.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
@@ -31,7 +31,7 @@ namespace CUWebinars.Web.App_Start
             bundles.Add(new ScriptBundle("~/bundles/AdditionalLocation").Include(
                 "~/Scripts/app/cart/add-additional-locations.js"
                 ));
-            
+
             bundles.Add(new ScriptBundle("~/bundles/manage-webinar-files").Include(
                 "~/Scripts/app/cart/update-webinar-files.js"
                 ));
@@ -50,12 +50,12 @@ namespace CUWebinars.Web.App_Start
                         "~/Scripts/bootstrap-modalmanager.js",
                         "~/Content/js/jquery-plugins/dataTables/media/js/jquery.dataTables.js",
                         "~/Content/js/jquery-plugins/dataTables/plugins/fnSetFilteringDelay.js"
-                         //"~/Scripts/app/cart/additional-locations.js"
+                //"~/Scripts/app/cart/additional-locations.js"
                 //,"~/Scripts/app/cart/edit-order.js"
                         ));
-            
+
             bundles.Add(new ScriptBundle("~/bundles/createOrder").Include(
-                         //"~/Scripts/app/cart/additional-locations.js",
+                //"~/Scripts/app/cart/additional-locations.js",
                          "~/Scripts/app/cart/create-order-new.js",
                          "~/Scripts/app/cart/register-during-checkout.js",
                          "~/Scripts/app/cart/details.js",
@@ -117,35 +117,17 @@ namespace CUWebinars.Web.App_Start
                 "~/Content/css/create-user-form.css"
                 ));
 
-            if (globalConfig.Tenant == "BankWebinars")
-            {
-                bundles.Add(new StyleBundle("~/Content/CrispCSS").Include(
-                    "~/Content/css/styleCrisp.css",
-                    "~/Content/css/header-1.css",
-                    "~/Content/css/logoBW.css",
-                    "~/Content/css/bootstrap.css",
-                    "~/Content/css/bootstrap-responsive.css",
-                    "~/Content/css/html-content-slider-flexslider.css",
-                    "~/Scripts/AutoComplete/css/styles.css",
-                    "~/Scripts/AutoComplete/css/styles.css/ui-lightness/jquery-ui-1.10.3.custom.css",
-                    "~/Content/validation.css"
-                    ));
-            }
-            
-            if (globalConfig.Tenant == "CUWebinars")
-            {
-                bundles.Add(new StyleBundle("~/Content/CrispCSS").Include(
-                    "~/Content/css/styleCrisp.css",
-                    "~/Content/css/header-1.css",
-                    "~/Content/css/logoCUWebinars.css",
-                    "~/Content/css/bootstrap.css",
-                    "~/Content/css/bootstrap-responsive.css",
-                    "~/Content/css/html-content-slider-flexslider.css",
-                    "~/Scripts/AutoComplete/css/styles.css",
-                    "~/Scripts/AutoComplete/css/styles.css/ui-lightness/jquery-ui-1.10.3.custom.css",
-                    "~/Content/validation.css"
-                    ));
-            }
+            bundles.Add(new StyleBundle("~/Content/CrispCSS").Include(
+                "~/Content/css/styleCrisp.css",
+                "~/Content/css/header-1.css",
+                "~/Content/css/bootstrap.css",
+                "~/Content/css/bootstrap-responsive.css",
+                "~/Content/css/html-content-slider-flexslider.css",
+                "~/Scripts/AutoComplete/css/styles.css",
+                "~/Scripts/AutoComplete/css/styles.css/ui-lightness/jquery-ui-1.10.3.custom.css",
+                "~/Content/validation.css"
+                ));
+
 
             bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(
                         "~/Content/themes/base/jquery.ui.core.css",

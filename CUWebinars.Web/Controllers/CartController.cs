@@ -170,7 +170,7 @@ namespace CUWebinars.Web.Controllers
                     // todo: if in progress, will have to show populated partial view.
                     _logger.Info("Signup2 order initialized: " + _appHelper.GetUserAuditInfo());
                     
-                    throw new Exception("Bad happened");
+                    //throw new Exception("Bad happened");
 
                     return Json(new
                     {

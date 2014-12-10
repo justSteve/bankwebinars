@@ -36,6 +36,11 @@ namespace CUWebinars.Web.Controllers
                 return PartialView(rssData);
             }
         }
+        public ActionResult PrivacyStatement()
+        {
+            ViewBag.PageStyleType = "two-columns-right-sidebar";
+            return View();
+        }
 
         public ActionResult DetailedConnectionInstructions()
         {
