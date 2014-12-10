@@ -1,6 +1,5 @@
 using BrockAllen.MembershipReboot;
 using BrockAllen.MembershipReboot.WebHost;
-using CUWebinars.Business.Notification.Email;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Membership.Email;
 using CUWebinars.Web.Services;
@@ -10,18 +9,19 @@ namespace CUWebinars.Web.App_Start
 {
     public class MembershipRebootConfig
     {
+        private static readonly GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
         public static MembershipRebootConfiguration Create(string pathToRootDirectory, IStateService stateService)
         {
             var settings = SecuritySettings.FromConfiguration();
             var config = new MembershipRebootConfiguration(settings);
 
             var appinfo = new AspNetApplicationInformation(
-                "CUWebinars",
-                "TTS Staff",
-                "Account/Login",
-                "Account/Confirmed/",
-                "Account/RegisterCancel/",
-                "Account/PasswordResetConfirm/");
+                _globalConfig.Tenant,
+                _globalConfig.EmailSignature,
+                _globalConfig.RelativeLoginUrl,
+                _globalConfig.RelativeConfirmChangeUrl,
+                _globalConfig.RelativeCancelVerificationUrl,
+                _globalConfig.RelativeConfirmPasswordResetUrl);
 
             IMessageDelivery delivery;
 

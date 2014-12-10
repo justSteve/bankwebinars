@@ -40,7 +40,7 @@ namespace CUWebinars.Web.Membership.Email
 
             var notification = new Notification
             {
-                ApplicationName = appInfo.ApplicationName,
+                Tenant = appInfo.ApplicationName, // This is an MR class, so we are confined to its properties. But we can set tham as we like.
                 CancelVerificationUrl = appInfo.CancelVerificationUrl,
                 ConfirmChangeEmailUrl = appInfo.ConfirmChangeEmailUrl,
                 ConfirmPasswordResetUrl = appInfo.ConfirmPasswordResetUrl,

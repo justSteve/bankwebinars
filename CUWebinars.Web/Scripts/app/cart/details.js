@@ -200,6 +200,8 @@ $(function () {
         var data = signUpForm.serialize();
 
         $('#SignUpForm > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
+        var spinner = $('#loadingSpinner');
+
 
         // If the user IS NOT LOGGED IN - control moves to the register-during-checkout.js script
         if (!cartStateManager.getIsUserLogged()) {
@@ -275,10 +277,8 @@ $(function () {
 
                 } else if (result.isSuccessful === false) {
                     formProcessor.lightUpValidationSummary('valSummarySignUpForm', result);
-                    var spinnerParent = document.getElementById('RegistrationType');
-                    var spinner = document.getElementById('loadingSpinner');
-                    spinnerParent.removeChild(spinner);
-                    //$('#loadingSpinner').remove();
+
+                    spinner.remove();
                 }
             }, constants.JsonDataType);
 

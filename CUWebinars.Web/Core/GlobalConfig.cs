@@ -9,11 +9,16 @@ namespace CUWebinars.Web.Core
 
         public string CreateUserQueueName { get; private set; }
         public string EmailSendingMode { get; private set; }
+        public string EmailSignature { get; private set; }
         public string HandoutRepository { get; private set; }
         public string ImgRepository { get; private set; }
         public string DefaultConnectionString { get; private set; }
         public string MembershipConnectionString { get; private set; }
         public bool NotificationsTesting { get; private set; }
+        public string RelativeLoginUrl { get; private set; }
+        public string RelativeConfirmChangeUrl { get; private set; }
+        public string RelativeCancelVerificationUrl { get; private set; }
+        public string RelativeConfirmPasswordResetUrl { get; private set; }
         public string StorageAccessKey { get; private set; }
         public string StorageAccountName { get; private set; }
         public string Tenant { get; private set; }
@@ -41,10 +46,15 @@ namespace CUWebinars.Web.Core
 
                 UniqueInstance.CreateUserQueueName = ApplicationSettingsSection["CreateUserQueueName"];
                 UniqueInstance.EmailSendingMode = ApplicationSettingsSection["EmailSendingMode"];
+                UniqueInstance.EmailSignature = ApplicationSettingsSection["EmailSignature"];
                 UniqueInstance.WMVRepository = ApplicationSettingsSection["WMVRepository"];
                 UniqueInstance.HandoutRepository = ApplicationSettingsSection["HandoutRepository"];
                 UniqueInstance.ImgRepository = ApplicationSettingsSection["ImgRepository"];
                 UniqueInstance.NotificationsTesting = bool.Parse(ApplicationSettingsSection["NotificationsTesting"]);
+                UniqueInstance.RelativeLoginUrl = ApplicationSettingsSection["RelativeLoginUrl"];
+                UniqueInstance.RelativeConfirmChangeUrl = ApplicationSettingsSection["RelativeConfirmChangeUrl"];
+                UniqueInstance.RelativeCancelVerificationUrl = ApplicationSettingsSection["RelativeCancelVerificationUrl"];
+                UniqueInstance.RelativeConfirmPasswordResetUrl = ApplicationSettingsSection["RelativeConfirmPasswordResetUrl"];
                 UniqueInstance.StorageAccessKey = ApplicationSettingsSection["StorageAccessKey"];
                 UniqueInstance.StorageAccountName = ApplicationSettingsSection["StorageAccountName"];
                 UniqueInstance.Tenant = ApplicationSettingsSection["Tenant"];
