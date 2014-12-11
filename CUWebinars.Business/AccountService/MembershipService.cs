@@ -448,9 +448,12 @@ namespace CUWebinars.Business.AccountService
             webUser.Addresses.Add(billingAddressFromDb);
             webUser.Addresses.Add(shippingAddressFromDb);
 
+            // This string has blown out a couple of times. This following code ensures it does not exceed the max size of the database column.
+            var comments = (auditChanges + System.Environment.NewLine + "--------" +
+                                      System.Environment.NewLine + webUser.generalComments);
+            webUser.generalComments = comments.Length < 1000 ? comments : comments.Substring(0, 1000);
 
-            webUser.generalComments = (auditChanges + System.Environment.NewLine + "--------" +
-                                      System.Environment.NewLine + webUser.generalComments).Substring(0,1000);
+
             
             _webUserRepository.Update(webUser);
         }

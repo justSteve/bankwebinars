@@ -731,13 +731,13 @@ function cancelOrder(orderId, webinarId) {
 
 function hookUpModal(modalForm) {
 
-    var modalFormOptions = {
-        keyboard: true,
-        //backdrop: 'static',
-        show: true,
-    };
+    //var modalFormOptions = {
+    //    keyboard: true,
+    //    backdrop: 'static',
+    //    show: true,
+    //};
 
-    modalForm.modal(modalFormOptions);
+    modalForm.modal('show');
 }
 
 function hookUpEditUserLogic(button, isShippindAddressRequired) {
@@ -849,7 +849,7 @@ function setUiLayout(isShippindAddressRequired) {
 
 function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
 
-    var changeTypeConfirmModal = $('#changeTypeConfirmModal');
+    //var changeTypeConfirmModal = $('#changeTypeConfirmModal');
     var chosenRegTypeLabel = $('#chosenRegType');
     var position,
         typeChosenCurrent,
@@ -862,52 +862,51 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
     valOfTypeChosenPrevious = valOfTypeChosenCurrent = dropDown.val();
 
     // This is the callback which fires once the modal window that the dropdownlist opens, closes upon confirmbutton-click
-    $('#confirmTypeChange').on('click', function (e) {
+    //$('#confirmTypeChange').on('click', function (e) {
 
-        var url = '/Cart/RemoveAdditionalLocationsFromOrder';
-        var payLoad = {
-            idOrderRow: cartStateManager.getOrderRowId()
-        };
+    //    //var url = '/Cart/RemoveAdditionalLocationsFromOrder';
+    //    //var payLoad = {
+    //    //    idOrderRow: cartStateManager.getOrderRowId()
+    //    //};
 
-        $.ajax({
-            type: 'POST',
-            contentType: constants.JsonContentType,
-            cache: false,
-            url: url,
-            dataType: constants.JsonDataType,
-            data: JSON.stringify(payLoad),
-        }).done(function (data) {
-            if (data.Result === 'Success') {
-                $('#confirmation > div:nth-child(4) > div:nth-child(6)').empty();
-                // TODO: Also adjust the price accordingly
-                changeTypeConfirmModal.modal('hide');
+    //    //$.ajax({
+    //    //    type: 'POST',
+    //    //    contentType: constants.JsonContentType,
+    //    //    cache: false,
+    //    //    url: url,
+    //    //    dataType: constants.JsonDataType,
+    //    //    data: JSON.stringify(payLoad),
+    //    //}).done(function (data) {
+    //    //    if (data.Result === 'Success') {
+    //    //        $('#confirmation > div:nth-child(4) > div:nth-child(6)').empty();
+    //    //        // TODO: Also adjust the price accordingly
+    //    //        changeTypeConfirmModal.modal('hide');
 
-                $('html, body').animate({ scrollTop: position.top }, 500);
+    //    //        $('html, body').animate({ scrollTop: position.top }, 500);
 
-                $('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 706 for immediate assistance').addClass('text-info');
+    //    //        $('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 706 for immediate assistance').addClass('text-info');
 
-                $('#addLocsText').html('Additional Locations: <span id="totalAdLocsPrice">$0.00</span>').addClass('muted');
+    //    //        $('#addLocsText').html('Additional Locations: <span id="totalAdLocsPrice">$0.00</span>').addClass('muted');
 
-                // This variable is initially set in the CheckoutConfirm.cshtml razor view
-                anyAddLocs = false;
-            }
-        });
+    //    //        // This variable is initially set in the CheckoutConfirm.cshtml razor view
+    //    //        anyAddLocs = false;
+    //    //    }
+    //    //});
 
-        valOfTypeChosenCurrent = valOfTypeChosenPrevious = dropDown.val();
-        typeChosenCurrent = typeChosenPrevious = $.trim($('#RegType option:selected').text());
-        chosenRegTypeLabel.empty().text(typeChosenCurrent);
-    });
+    //    //valOfTypeChosenCurrent = valOfTypeChosenPrevious = dropDown.val();
+    //    //typeChosenCurrent = typeChosenPrevious = $.trim($('#RegType option:selected').text());
+    //    //chosenRegTypeLabel.empty().text(typeChosenCurrent);
+    //});
 
-    changeTypeConfirmModal.on('hidden', function () {
-        ShowModalForShippingDetails(registerDuringCheckout.shippingAddressRequired);
-    });
+    //changeTypeConfirmModal.on('hidden', function () {
+    //    ShowModalForShippingDetails(registerDuringCheckout.shippingAddressRequired);
+    //});
 
     // This is the callback which fires once the modal window that the dropdownlist opens, closes upon cancelbutton-click
-    $('#cancelTypeChange').on('click', function (e) {
-        changeTypeConfirmModal.modal('hide');
-        chosenRegTypeLabel.text(typeChosenPrevious);
-        dropDown.val(valOfTypeChosenPrevious);
-    });
+    //$('#cancelTypeChange').on('click', function (e) {
+    //    chosenRegTypeLabel.text(typeChosenPrevious);
+    //    dropDown.val(valOfTypeChosenPrevious);
+    //});
 
     dropDown.on('change', function (e) {
 
@@ -926,12 +925,6 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
         }).done(function (data) {
             if (data.shouldShow === 'No') {
 
-                if (data.shippingDetailsRqrd === 'Yes') {
-                    registerDuringCheckout.shippingAddressRequired = true;
-                } else {
-                    registerDuringCheckout.shippingAddressRequired = false;
-                }
-
                 //  First, check if there are currently any Additional Locations added to the order.
                 if (anyAddLocs === true) {
                     var modalFormOptions = {
@@ -942,19 +935,56 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
 
                     position = $('#confirmation').offset();
 
-                    changeTypeConfirmModal.modal(modalFormOptions);
+                    var url = '/Cart/RemoveAdditionalLocationsFromOrder';
+                    var payLoad = {
+                        idOrderRow: cartStateManager.getOrderRowId()
+                    };
+
+                    $.ajax({
+                        type: 'POST',
+                        contentType: constants.JsonContentType,
+                        cache: false,
+                        url: url,
+                        dataType: constants.JsonDataType,
+                        data: JSON.stringify(payLoad),
+                    }).done(function (data) {
+                        if (data.Result === 'Success') {
+                            $('#confirmation > div:nth-child(4) > div:nth-child(6)').empty();
+                            // TODO: Also adjust the price accordingly
+                            //changeTypeConfirmModal.modal('hide');
+
+                            //$('html, body').animate({ scrollTop: position.top }, 500);
+
+                            $('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 706 for immediate assistance').addClass('text-info');
+
+                            $('#addLocsText').html('Additional Locations: <span id="totalAdLocsPrice">$0.00</span>').addClass('muted');
+
+                            // This variable is initially set in the CheckoutConfirm.cshtml razor view
+                            anyAddLocs = false;
+                        }
+                    });
+
+                    valOfTypeChosenCurrent = valOfTypeChosenPrevious = dropDown.val();
+                    typeChosenCurrent = typeChosenPrevious = $.trim($('#RegType option:selected').text());
+                    chosenRegTypeLabel.empty().text(typeChosenCurrent);
                 } else {
                     typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
                     chosenRegTypeLabel.empty().text(typeChosenCurrent);
                     valOfTypeChosenPrevious = valOfTypeChosenCurrent;
-                    ShowModalForShippingDetails(data.shippingDetailsRqrd);
                 }
             } else {
                 typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
                 chosenRegTypeLabel.empty().text(typeChosenCurrent);
                 valOfTypeChosenPrevious = valOfTypeChosenCurrent;
-                ShowModalForShippingDetails(data.shippingDetailsRqrd);
             }
+
+            if (data.shippingDetailsRqrd === 'Yes') {
+                registerDuringCheckout.shippingAddressRequired = true;
+            } else {
+                registerDuringCheckout.shippingAddressRequired = false;
+            }
+
+            ShowModalForShippingDetails(registerDuringCheckout.shippingAddressRequired);
         });
     });
 }

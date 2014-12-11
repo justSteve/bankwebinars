@@ -554,7 +554,7 @@ namespace CUWebinars.Web.Controllers
                 };
 
                 InitializeDetailsState(webinar, model, id.Value); // form state, incl. stuff that will be posted back. 
-                InitializeViewCentricProperties(model); // mostly just stuff that helps determine layout of the page on load. Not meant to be sent back to Server
+                InitializeViewCentricProperties(model); // mostly just stuff that helps determine layout of the page on load. Not meant to be sent back here to Server from the View
 
                 var usersOrders = _orderManagementService.GetOrdersByUserId(model.WebUser.idUser)
                     .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id.Value) != null);
@@ -570,10 +570,14 @@ namespace CUWebinars.Web.Controllers
                         var webinarFiles = webinar.WebinarFiles
                             .Select(f => f.fileDesc + "|" + f.fileLocation)
                             .ToArray();
+                        if (checkOrder.OrderRows.Single().idWebinar == id)
+                        {
 
-                        model.RegistrationSummaryViewModel.WebinarFiles = webinarFiles;
-                        model.RegistrationSummaryViewModel.UserOwnsThisEvent = model.UserOwnsThisEvent = checkOrder.idOrder;
-                        model.Order = checkOrder;
+                            model.RegistrationSummaryViewModel.WebinarFiles = webinarFiles;
+                            model.RegistrationSummaryViewModel.UserOwnsThisEvent =
+                                model.UserOwnsThisEvent = checkOrder.idOrder;
+                            model.Order = checkOrder;
+                        }
 
                         if (checkOrder.OrderStatus == OrderStatus.InProcess && row.idWebinar != id)
                         {

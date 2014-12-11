@@ -1060,6 +1060,13 @@ namespace CUWebinars.Web.Controllers
                     _logger.Error("Account.Register Catch block: " + e.Message + "| Session=" +
                                   _appHelper.GetUserAuditInfo());
                 }
+                catch (ValidationException validationException)
+                {
+                    ModelState.AddModelError(string.Empty, validationException.Message);
+                    
+                    _logger.Error("Account.Register Catch block: " + validationException.Message + "| Session=" +
+                                  _appHelper.GetUserAuditInfo());
+                }
                 catch (Exception e)
                 {
                     ModelState.AddModelError(string.Empty, "An error has occurred at the server and it has been logged. Please try again, or contact us so we can resolve the problem.");
