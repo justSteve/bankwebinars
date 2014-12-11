@@ -580,6 +580,7 @@
     <Content Include="Views\Cart\Partials\_UpdateOrderWithUserId.cshtml" />
     <Content Include="Scripts\underscore.min.map" />
     <Content Include="Views\Home\PrivacyStatement.cshtml" />
+    <Content Include="Views\Cart\Partials\_ConfirmModal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\packages\Selenium.WebDriver.ChromeDriver.2.9.0.0\content\chromedriver.exe">
