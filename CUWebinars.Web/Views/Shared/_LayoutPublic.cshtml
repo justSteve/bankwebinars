@@ -189,26 +189,24 @@
         <!--this is the login for the user-->
         <div id="loginContainer">
             @Html.Partial("_LoginPartial")
-            <div class="search-wrapper">
+            @*<div class="search-wrapper">
                 <form class="search" method="post" action="/home/search">
                     <div id="search-trigger">Search:</div>
                     <input id="search-box" type="text" placeholder="search + enter">
                 </form>
-            </div>
+            </div>*@
         </div>
-
-
 
         <div class="phone"><a href="tel:8008310678" class="tele">800.831.0678</a></div>
         <ul class="social">
-            <li style="margin-top: 8px; font-size: smaller; line-height: 15px; background-color: #758694; color: #ffffff; text-align: center">This site managed by<br /> BankWebinars.com</li>
+            <li>  <a style="background-image: https://ttseast.blob.core.windows.net/images/TTS-logo.jpg" class="ttslogo" href="" target="_blank" data-placement="bottom" title="A TTS Production"><img src="https://ttseast.blob.core.windows.net/images/TTS-logo.jpg" /></a></li>
             <li><a class="socicon small facebook" href="http://www.facebook.com/home.php#!/pages/Total-Training-Solutions/300546163412" target="_blank" data-placement="bottom" title="Follow us on Facebook"></a></li>
             <li><a class="socicon small twitterbird" href="http://twitter.com/#!/ttstrain" target="_blank" data-placement="bottom" title="Follow us on Twitter"></a></li>
             <li><a class="socicon small linkedin" href="https://www.linkedin.com/company/bankwebinars.com" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
         </ul>
-        <ul class="notifications">
+        @*<ul class="notifications">
             <li><i class=" icon-envelope"></i></li>
-        </ul>
+        </ul>*@
 
     </section>
     <!-- begin .header-->
@@ -329,9 +327,9 @@
         </div>
         <!-- close footer .container-->
         <section class="footerCredits">
-            <div style="text-align: center;" class="container">
+            <div class="container">
                 <ul class="clearfix">
-                    <li>@globalConfig.TenantDomain is © 2014 By Total Training Solutions. <br />All rights reserved. </li>
+                    <li style="text-align: right;">@globalConfig.TenantDomain is © 2014 By Total Training Solutions. <br />All rights reserved. </li>
                     <li style="text-align: left;"><a href="/home/privacystatement">Privacy Statement</a><br />For financial institution training visit<a href="http://www.ttstrain.com/?s=cuwebinars" target="_new"> TTSTrain.com </a></li>
                 </ul>
             </div>

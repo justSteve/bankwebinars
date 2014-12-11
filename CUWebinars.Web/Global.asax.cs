@@ -239,6 +239,9 @@ namespace CUWebinars.Web
                 //setup upcoming and recorded menu contents
                 var upcomingWebinars = _reposWebinars.GetUpcoming().OrderBy(w => w.Date).Take(8).ToList();
                 var upComingPresentationListItems = new StringBuilder();
+                upComingPresentationListItems.Append(
+                    "<li role='presentation'><a  role=\"menuitem\" tabindex=\"-1\"  href='/Webinar/allActive/?eventsToShow=upcoming'>View <b>All</b> Upcoming Events</a></li>");
+                
                 if (upcomingWebinars.Count > 0)
                 {
                     for (int i = 0; i < upcomingWebinars.Count; i++)
@@ -255,9 +258,7 @@ namespace CUWebinars.Web
                             upcomingWebinars[i].idWebinar + "'>" + Server.HtmlEncode(shortTitle) + "</a></li>"
                             );
                     }
-                    upComingPresentationListItems.Append(
-                    "<li role='presentation'><a  role=\"menuitem\" tabindex=\"-1\"  href='/Webinar/allActive/?eventsToShow=upcoming'><font color=\"green\">View <b>All</b> Upcoming Events</font></a></li>");
-                
+                    
                 }
                 StateService.SetValue("upcoming", upComingPresentationListItems);
 
@@ -265,6 +266,8 @@ namespace CUWebinars.Web
 
                 var recordedWebinars = _reposWebinars.GetRecorded().OrderBy( w => w.Date).Take(8).ToList();
                 StringBuilder recordedWebinarsListItems = new StringBuilder();
+                recordedWebinarsListItems.Append(
+                    "<li role='presentation'><a  role=\"menuitem\" tabindex=\"-1\"  href='/Webinar/allActive/?eventsToShow=recorded'>View <b>All</b> Recordings</a></li>");
                 if (recordedWebinars.Count > 0)
                 {
                     for (int i = 0; i < 8; i++)
@@ -279,9 +282,7 @@ namespace CUWebinars.Web
                             recordedWebinars[i].idWebinar + "'>" + Server.HtmlEncode(ShortTitle) + "</a></li>"
                             );
                     }
-                    recordedWebinarsListItems.Append(
-                    "<li role='presentation'><a  role=\"menuitem\" tabindex=\"-1\"  href='/Webinar/allActive/?eventsToShow=recorded'><font color=\"green\">View <b>All</b> Recordings</font></a></li>");
-                
+                    
                 }
                 StateService.SetValue("rec", recordedWebinarsListItems);
             }
