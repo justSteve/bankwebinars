@@ -333,12 +333,9 @@ namespace CUWebinars.Business.Services
 
             var row = order.OrderRows.FirstOrDefault();
 
-            foreach (var orderRow in order.OrderRows)
+            foreach (var orderRow in order.OrderRows.Where(orderRow => orderRow.RowStatus == OrderRowStatus.Active))
             {
-                if (orderRow.RowStatus == OrderRowStatus.Active)
-                {
-                    row = orderRow;
-                }
+                row = orderRow;
             }
 
             if (row != null) row.UnitPrice = (decimal)row.RegistrationType.Price;

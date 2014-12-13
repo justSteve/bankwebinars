@@ -571,9 +571,9 @@ namespace CUWebinars.Web.Controllers
                         var webinarFiles = webinar.WebinarFiles
                             .Select(f => f.fileDesc + "|" + f.fileLocation)
                             .ToArray();
-                        if (checkOrder.OrderRows.Single().idWebinar == id)
-                        {
 
+                        if (row.idWebinar == id)
+                        {
                             model.RegistrationSummaryViewModel.WebinarFiles = webinarFiles;
                             model.RegistrationSummaryViewModel.UserOwnsThisEvent =
                                 model.UserOwnsThisEvent = checkOrder.idOrder;
@@ -587,12 +587,96 @@ namespace CUWebinars.Web.Controllers
                     }
                 }
 
-                // Significance: must complete cart transaction before commencing a new one.
+
+                /*****************************************************************************************/
+                /* Significance of next 'if': must complete cart transaction before commencing a new one.*/
+                /*****************************************************************************************/
                 if (model.UserOwnsThisEvent > 0 && model.Order.OrderStatus == OrderStatus.InProcess)
                 {
                     model.CheckoutInProcess = true;
                     model.MessageOrderStatus =
                         "<div align=\"center\" class=\"label-warning label\">Your order is InProcess and needs to be confirmed or canceled.</div>";
+
+                    var additionalLocationsViewModel = model.RegistrationSummaryViewModel.OrderHasAdditionalLocationsViewModel;
+                    var orderRow = model.Order.OrderRows.Single();
+                    var webUser = orderRow.Order.WebUser;
+                    var userFullName = string.Concat(webUser.FirstName, " ", webUser.LastName);
+                    var addresses = webUser.Addresses.ToArray();
+                    var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
+                    var shippingAddress = addresses.FirstOrDefault(a => a.AddressType == WebUiConstants.ShippingAddress);
+
+
+                    model.CheckoutConfirmViewModel = new CheckoutConfirmViewModel
+                    {
+                        AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(orderRow),
+                        AdminComments = model.Order.AdminComments,
+                        AffiliateComments = model.Order.AffiliateComments,
+                        //CCUserDetails = "",
+                        DiscountCode = orderRow.Discount == null ? string.Empty :  orderRow.Discount.code, // TODO: null possible?
+                        DisplayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
+                        {
+                             Options = _orderManagementService.GetOptionsByWebinarId(orderRow.idWebinar, true),
+                             OrderRowId = orderRow.idOrderRow,
+                             OrderRowRegistrationType = orderRow.RegistrationType
+                        },
+                        DisplayRowPriceViewModel = model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel,
+                        idUser = model.Order.idUser,
+                        ManageModel = new ManageModel
+                        {
+                            HasLocalPassword = false,
+                            RegisterFields = new RegisterModel
+                            {
+                                BillingAddress = new AddressModel
+                                {
+
+                                    Name = webUser.FirstName + ' ' + webUser.LastName,
+                                    City = billingAddress.City,
+                                    Country = billingAddress.Country,
+                                    StreetAddress = billingAddress.StreetAddress,
+                                    StreetAddress2 = billingAddress.StreetAddress2,
+                                    State = billingAddress.State,
+                                    Zip = billingAddress.Zip,
+                                    Phone = billingAddress.Phone,
+                                    TypeOfAddress = AddressType.Billing
+                                },
+                                ShippingAddress = shippingAddress == null ? new AddressModel() : new AddressModel
+                                {
+                                    City = shippingAddress.City,
+                                    Country = shippingAddress.Country,
+                                    StreetAddress = shippingAddress.StreetAddress,
+                                    StreetAddress2 = shippingAddress.StreetAddress2,
+                                    State = shippingAddress.State,
+                                    Zip = shippingAddress.Zip,
+                                    Phone = shippingAddress.Phone,
+                                    Name = shippingAddress.Name,
+                                    TypeOfAddress = AddressType.Shipping
+                                },
+                                FirstName = webUser.FirstName,
+                                LastName = webUser.LastName,
+                                Institution = webUser.Institution.InstitutionName,
+                                Email = webUser.email,
+                                Title = webUser.Title,
+                                AccountDetailsTitle = WebUiConstants.ManageUser
+                            },
+                            StatusMessage = string.Empty
+                        },
+                        OptionLabel = orderRow.RegistrationType.OptionLabel,
+                        OrderExists = true,
+                        OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
+                        {
+                            AdditionalLocations = model.Order.OrderRows.Single().AdditionalLocation,
+                            Addresses = additionalLocationsViewModel.Addresses,
+                            OptionsCost = additionalLocationsViewModel.OptionsCost,
+                        },
+                        OrderRowExists = true,
+                        OrderRowHasId = true,
+                        OrderStatus = OrderStatus.InProcess,
+                        Origin = model.Order.Origin,
+                        UserComments = model.Order.UserComments,
+                        UserDetails = string.Concat(userFullName, " - ", orderRow.Order.Institution, "<br>", webUser.email),
+                        UserFullname = userFullName,
+                        UserType = UserType.Customer
+                    };
                 }
 
                 if (model.Webinar == null)
@@ -667,6 +751,11 @@ namespace CUWebinars.Web.Controllers
                 else
                     row = model.Order.OrderRows.SingleOrDefault();
 
+                var additionalLocationsPricing =
+                    _orderManagementService.GetAdditionalLocationsPricing(row.AdditionalLocation,
+                    webinar.idWebinar
+                    );
+
                 model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
                     new DisplayRowPriceViewModel
                     {
@@ -674,17 +763,13 @@ namespace CUWebinars.Web.Controllers
                         NumberOfAdditionalLocations = row.AdditionalLocation.Count(),
                         OrderStatus = row.Order.OrderStatus,
                         Price = row.RegistrationType.Price,
+                        PricesAndDiscounts = _orderManagementService.CalculateOrderPrices(row.Order, additionalLocationsPricing.Item2),
                         RowPrice = row.RowPrice,
                         RegistrationType = row.RegistrationType
                     };
 
                 model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Emails =
                     model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.AdditionalLocations.Select(al => al.Email).ToArray();
-
-                var additionalLocationsPricing = 
-                    _orderManagementService.GetAdditionalLocationsPricing(row.AdditionalLocation,
-                    webinar.idWebinar
-                    );
 
                 model.RegistrationSummaryViewModel = new RegistrationSummaryViewModel
                 {

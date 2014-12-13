@@ -1,5 +1,4 @@
-﻿@using Ninject
-@model CheckoutConfirmViewModel
+﻿@model CheckoutConfirmViewModel
 
 @{
     if (Model.OrderExists)
@@ -21,7 +20,7 @@
              {
                 <div id="inProcCart" class="well pull-right">
                     <div id="showCartPrice">
-                        @{ Html.RenderPartial("Partials/_DisplayRowPrice", Model.DisplayRowPriceViewModel); }
+                        @{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }
                     </div>
 
                     <div style="font-size: x-small; text-align: center;">
@@ -52,7 +51,7 @@
                     <div id="userDetailsSummed" class="span5 offset1">
                         <p>@Html.Raw(@Model.UserDetails)</p>
 
-                        <p>@{ Html.RenderPartial("Partials/_DisplayOptionsInDropDown", Model.DisplayOptionsInDropDownViewModel); }</p>
+                        <p>@{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel); }</p>
                         <br />
                         @*@Html.Raw(addLocCaption)*@
                     </div>
@@ -89,7 +88,7 @@
                  Model.UserDetails += " - <a id='editUserDetails' role='button' class='btn btn-mini' target='new'> Edit?</a>";
 
                 <div id="postCheckout" class="well pull-right">
-                    <div id="showCartPrice">@{ Html.RenderPartial("Partials/_DisplayRowPrice", Model.DisplayRowPriceViewModel); }</div>
+                    <div id="showCartPrice">@{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }</div>
                     @if (Model.OrderStatus != OrderStatus.Paid)
                     {
                         <span style="font-size: small; text-align: center;">
@@ -127,8 +126,8 @@
 }
 
 @{
-    Html.RenderPartial("Partials/_ConfirmModal");
-    Html.RenderPartial("Partials/_UserDetailsModal", Model.ManageModel);
+    Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
+    Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ManageModel);
 }
 
 @using (Html.BeginForm("SignInAfterCheckout", "Account", null, FormMethod.Post, new { id = "_SignInAfterCheckout" }))
