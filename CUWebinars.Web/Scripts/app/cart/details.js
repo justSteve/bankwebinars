@@ -4,13 +4,11 @@
 var checkoutConfirm,
     discount,
     cartStateManager,
-    orderRowId,
     shippingAddressRequired,
     signUpForm,
     signUpFormContainer,
     storedHeight;
 
-orderRowId = 0;
 discount = '';
 checkoutConfirm = {};
 
@@ -135,6 +133,8 @@ $(function () {
     cartStateManager.setWebinarId(webinarId); // webinarId is set in a script tab in razor view Details.cshtml
     cartStateManager.setOrderRowId(orderRowId); // orderRowId is set at top of this file
     cartStateManager.setIsUserLogged(isUserLogged); // isUserLogged is set in a script tab in razor view Details.cshtml
+    cartStateManager.setCheckoutInProcess(checkoutInProcess);
+
     cartStateManager.SetCartState();
 
     $("[id^='regTypeID_']").on("click", function (oEvent) {
@@ -170,17 +170,38 @@ $(function () {
     // TODO: Note I have not touched this handler yet.
     // [dar] this handler is relevant for update/edit/view aspect of cart. Revisit when we address that.
     if (cartStateManager.getOrderRowId() > 0 && cartStateManager.getCheckoutInProcess()) {
-        $.get("/cart/checkoutConfirm/" + cartStateManager.getOrderRowId())
-            .success(function (dataConfirm) {
-                $('#confirmation').replaceWith(dataConfirm);
-                $.get("/cart/checkoutContact/" + cartStateManager.getOrderRowId())
-                    .success(function (dataContact) {
-                        $('#contactInfo').replaceWith(dataContact);
-                    })
-                    .done(SetCartState());
-            }).error(function (result) {
-                //jslogger.log({ exception: { name: "updateCheckout", message: "The update of checkout request failed." } });
-            });
+
+        if (shippingAddressRequired && notificationsTesting === 'false') {
+            // Following function lives in the register-during-checkout.js script 
+            // which will be in memory at this point and thus will have been hoisted.
+            hookUpModal($('#UserDetailsModal'));
+        }
+
+        // see top of this file
+        checkoutConfirm.initialize();
+
+        // The Bill Me button on 3rd tab
+        $('#ConfirmRegistrationBillMe').on('click', function (e) {
+            e.preventDefault();
+            var confirmOrderForm = $('#confirmOrder');
+            confirmOrderForm.submit();
+            confirmOrderForm.off('submit');
+        });
+
+        // The Cancel Registration button on 3rd tab
+        $('#Canceller').on('click', function (e) {
+            e.preventDefault();
+            var cancelOrderForm = cartStateManager.getCancelOrderForm();
+            cancelOrderForm.submit();
+        });
+
+        // Following 3 functions live in the register-during-checkout.js script 
+        // which will be in memory at this point and thus will be hoisted
+        hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
+        hookUpChangeTypeLogic($('#RegType'));
+        hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
+
+        beigeFormArea.height($('#confirmation').height() + 30);
     }
 
     /* Submit event for the big green SignUp button */

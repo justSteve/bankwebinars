@@ -38,6 +38,10 @@ var OrderRegistration;
             return this.cancelOrderForm;
         };
 
+        StateManager.prototype.getCheckoutInProcess = function () {
+            return this.checkoutInProcess;
+        };
+
         StateManager.prototype.getConfirmOrderForm = function () {
             return this.confirmOrderForm;
         };
@@ -64,6 +68,10 @@ var OrderRegistration;
 
         StateManager.prototype.setCancelOrderForm = function (form) {
             this.cancelOrderForm = form;
+        };
+
+        StateManager.prototype.setCheckoutInProcess = function (checkoutInProcess) {
+            this.checkoutInProcess = checkoutInProcess;
         };
 
         StateManager.prototype.setConfirmOrderForm = function (form) {

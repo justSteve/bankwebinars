@@ -50,6 +50,10 @@ module OrderRegistration {
             return this.cancelOrderForm;
         }
 
+        getCheckoutInProcess(): boolean {
+            return this.checkoutInProcess;
+        }
+
         getConfirmOrderForm(): JQuery {
             return this.confirmOrderForm;
         }
@@ -76,6 +80,10 @@ module OrderRegistration {
 
         setCancelOrderForm(form: JQuery): void {
             this.cancelOrderForm = form;
+        }
+
+        setCheckoutInProcess(checkoutInProcess: boolean): void {
+            this.checkoutInProcess = checkoutInProcess;
         }
 
         setConfirmOrderForm(form: JQuery): void {

@@ -801,6 +801,7 @@ namespace CUWebinars.Web.Controllers
             ViewBag.PageStyleType = "holy-grail-three-columns";
             model.UserHasOpenOrder = 0;
             model.UserOwnsThisEvent = 0;
+            model.CheckoutInProcess = false;
 
             ViewBag.metaDesc = string.Empty;
             ViewBag.metaKeywords = string.Empty;
@@ -829,12 +830,6 @@ namespace CUWebinars.Web.Controllers
                 string[] ceu = model.Webinar.ceu.Split('|');
                 model.CeuShort = ceu[0];
                 model.CeuStatement = ceu[1];
-            }
-
-            if (_stateService.HasValue(DomainConstants.CheckoutInProcess))
-            {
-                //  That will be set in Session in the CreateOrder Action of the CartController
-                model.CheckoutInProcess = true; // if it exists in session, it will always be true (by usage convention). Don't ever put false in there.
             }
         }
 

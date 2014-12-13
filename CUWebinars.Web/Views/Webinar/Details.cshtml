@@ -29,6 +29,7 @@
     var isUserLogged = @(@Model.UserIsLoggedIn ? "true" : "false");
     var webinarId = @(@Model.Webinar.idWebinar);
     var notificationsTesting = @(GlobalConfig.GlobalConfigSingleton.NotificationsTesting ? "true" : "false");
+    var orderRowId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.idOrder : 0);
 </script>
 
 @section scripts{
@@ -178,7 +179,7 @@
                             <div class="tab-pane" id="confirmation">
                             </div>
                         }
-                        else
+                        else if (Model.UserOwnsThisEvent > 0 && Model.CheckoutInProcess)
                         {
                             <div class="tab-pane" id="signUp">
                             </div>
