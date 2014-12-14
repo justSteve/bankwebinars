@@ -418,8 +418,16 @@
     <Compile Include="Models\JotFormModel.cs" />
     <Compile Include="Models\JotFormOrderModel.cs" />
     <Compile Include="Notification\Templates\CertOfCompletionViewModel.cs" />
+    <Content Include="Content\css\calendarview.css" />
     <Content Include="Content\css\create-user-form.css" />
     <Content Include="Content\css\details.css" />
+    <Content Include="Content\css\nova.css" />
+    <Content Include="Content\js\calendarview.js" />
+    <Content Include="Content\js\location.js" />
+    <Content Include="Content\js\protoplus-ui-form.js" />
+    <Content Include="Content\js\protoplus.js" />
+    <Content Include="Content\js\prototype.js" />
+    <Content Include="Content\js\vendor\json2.js" />
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
     <Content Include="Content\themes\base\autocomplete.css" />
