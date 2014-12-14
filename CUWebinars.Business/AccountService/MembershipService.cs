@@ -58,6 +58,7 @@ namespace CUWebinars.Business.AccountService
         
         public WebUser GetUserByEmailLoadedWithOrdersData(string email)
         {
+            if (string.IsNullOrWhiteSpace(email)) throw new ArgumentNullException("email");
             var webUser = _webUserRepository.GetWebUserByEmailLoadedWithOrdersData(email);
             return webUser;
         }
