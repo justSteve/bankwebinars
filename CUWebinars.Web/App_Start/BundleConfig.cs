@@ -100,8 +100,7 @@ namespace CUWebinars.Web.App_Start
                         "~/Scripts/app/common.js",
                         "~/Scripts/app/register/register-user.js",
                         "~/Scripts/app/register/index.js",
-                        "~/Scripts/app/passwordReset/password-reset.js",
-                        "~/Scripts/app/web-user-details-register.js" // TODO: old and obsolete (I think)
+                        "~/Scripts/app/passwordReset/password-reset.js"
             ));
 
             bundles.Add(new ScriptBundle("~/bundles/membership-notifications-ops").Include(

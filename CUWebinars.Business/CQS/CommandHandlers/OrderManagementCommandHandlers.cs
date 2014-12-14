@@ -1,5 +1,7 @@
-﻿using CUWebinars.Business.AccountService;
+﻿using System.Configuration;
+using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.CQS.Commands;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
@@ -37,20 +39,22 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
             if (command.AdditionalLocations != null && command.AdditionalLocations.Any())
             {
-                var price = GetPriceOfAdditionalLocation(command.Webinar.idWebinar);
+                var priceOfAdditionalLocationListItem = GetPriceOfAdditionalLocation(command.Webinar.idWebinar).SingleOrDefault();
 
-                //string email,decimal price,string fullname
+                decimal priceOfAdditionalLocation = 0M;
 
-                foreach (var additionalLocation in command.AdditionalLocations)
+                if (!ReferenceEquals(priceOfAdditionalLocationListItem, null))
                 {
-                    var additionalLocationEmail = additionalLocation.Email;
+                    priceOfAdditionalLocation = priceOfAdditionalLocationListItem.Item2; // Item2 of the Tuple is the price
+                }
 
+                foreach (var additionalLocationEmail in command.AdditionalLocations.Select(additionalLocation => additionalLocation.Email))
+                {
                     additionalLocations.Add(_orderManagementService.CreateAdditionalLocation(
                         additionalLocationEmail,
-                        price,
-                        null)//field for FullName
+                        priceOfAdditionalLocation,
+                        null) // field for FullName
                         );
-                    //additionalLocationFirstName + ' ' + additionalLocationLastName)
                 }
             }
 
@@ -70,11 +74,13 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             _postCommitRegistrator.Reset();
         }
 
-        private decimal GetPriceOfAdditionalLocation(int idWebinar)
+        private IList<Tuple<int,decimal>> GetPriceOfAdditionalLocation(int idWebinar)
         {
-            //Todo: AdditionalLocationsLookupPrice is a xRef table for price of each billable AdditionalLocation seat.
-            // integrate price according to above lookup table.
-            return 150;
+            DataOperations dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+
+            var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(idWebinar);
+            
+            return additionalLocationsPricing;
         }
 
 

@@ -991,7 +991,6 @@
     <Content Include="Scripts\app\waitButton.js" />
     <Content Include="Scripts\app\web-user-certificate-manage.js" />
     <Content Include="Scripts\app\web-user-details-manage.js" />
-    <Content Include="Scripts\app\web-user-details-register.js" />
     <Content Include="Scripts\Autocomplete\css\styles.css" />
     <Content Include="Scripts\Autocomplete\css\ui-lightness\images\animated-overlay.gif" />
     <Content Include="Scripts\Autocomplete\css\ui-lightness\images\ui-bg_diagonals-thick_18_b81900_40x40.png" />
