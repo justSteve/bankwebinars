@@ -33,7 +33,7 @@ namespace CUWebinars.Web.Controllers
         [HttpPost]
         public ActionResult ApplyDiscountCode(string code)
         {
-            // HARD CODED RESPONSE
+            
             return Json(new { result = "100"});
         }
 

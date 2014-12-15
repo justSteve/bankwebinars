@@ -708,6 +708,13 @@ namespace CUWebinars.Web.Controllers
 
             var orderExists = model.Order != null;
 
+            IEnumerable<AdditionalLocation> additionalLocations = null;
+
+            if (orderExists)
+            {
+                additionalLocations = model.Order.OrderRows.Single().AdditionalLocation.ToList();
+            }
+
             model.Topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar);
 
             model.WebinarFiles = _webinarManagementService.GetWebinarFilesPerWebinar(webinar.idWebinar);
@@ -718,12 +725,12 @@ namespace CUWebinars.Web.Controllers
                 {
                     AdditionalLocationOfferViewModel = new AdditionalLocationOfferViewModel
                     {
-                        AdditionalLocations = new List<AdditionalLocation>(),
+                        AdditionalLocations = additionalLocations,
                         //AdditionalLocationAddViewModel = new AdditionalLocationAddViewModel(),
                         OrderExists = orderExists,
-                        Price = 150.0M,
                         Webinar = webinar
                     },
+                    // DisplayRowPriceViewModel is assigned further below as more data comes to hand. 
                     EventTitle = model.Webinar.Title,
                     idWebinar = model.Webinar.idWebinar,
                     Options = _orderManagementService.GetOptionsByWebinarId(id, false),
@@ -731,7 +738,7 @@ namespace CUWebinars.Web.Controllers
                     WebinarDuration = model.Webinar.Duration,
                     WebinarStatus = model.Webinar.Status
                 },
-                AdditionalLocations = null, //TODO: come back to
+                AdditionalLocations = additionalLocations, 
                 ConnectionInfoPresent = model.Webinar.ConnectionInfo != null,
                 WebinarDuration = model.Webinar.Duration,
                 idWebinar = model.Webinar.idWebinar,
@@ -756,6 +763,7 @@ namespace CUWebinars.Web.Controllers
                     webinar.idWebinar
                     );
 
+                // populate DisplayRowPriceViewModel of DisplayOptionsViewModel
                 model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
                     new DisplayRowPriceViewModel
                     {
@@ -768,9 +776,19 @@ namespace CUWebinars.Web.Controllers
                         RegistrationType = row.RegistrationType
                     };
 
+                // populate AdditionalLocationOfferViewModel and AdditionalLocationAddViewModel
                 model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Emails =
                     model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.AdditionalLocations.Select(al => al.Email).ToArray();
+                model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
+                    .AdditionalLocationAddViewModel = new AdditionalLocationAddViewModel
+                    {
+                        AdditionalLocations = additionalLocations,
+                        Price = additionalLocationsPricing.Item2
+                    };
+                model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Price =
+                    additionalLocationsPricing.Item2;
 
+                // populate RegistrationSummaryViewModel and OrderHasAdditionalLocationsViewModel
                 model.RegistrationSummaryViewModel = new RegistrationSummaryViewModel
                 {
                     OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
@@ -783,11 +801,6 @@ namespace CUWebinars.Web.Controllers
                     RecordingLink = "<a href='" + GlobalConfig.GlobalConfigSingleton.WMVRepository + webinar.RecordingUrl + "' target=_blank /> Recording Playback</a>",
                     WebinarStatus = webinar.Status
                 };
-
-                //model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
-                //    .AdditionalLocationAddViewModel.AdditionalLocations =
-                    //model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
-                    //    .AdditionalLocations;
             }
         }
 
