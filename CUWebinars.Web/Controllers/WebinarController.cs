@@ -726,11 +726,11 @@ namespace CUWebinars.Web.Controllers
                     AdditionalLocationOfferViewModel = new AdditionalLocationOfferViewModel
                     {
                         AdditionalLocations = additionalLocations,
-                        //AdditionalLocationAddViewModel = new AdditionalLocationAddViewModel(),
+                        //AdditionalLocationAddViewModel property is assigned further below as more data comes to hand. 
                         OrderExists = orderExists,
                         Webinar = webinar
                     },
-                    // DisplayRowPriceViewModel is assigned further below as more data comes to hand. 
+                    // DisplayRowPriceViewModel property is assigned further below as more data comes to hand. 
                     EventTitle = model.Webinar.Title,
                     idWebinar = model.Webinar.idWebinar,
                     Options = _orderManagementService.GetOptionsByWebinarId(id, false),

@@ -1,10 +1,7 @@
 ﻿@model MyWebinarsDTO
 @using System.Linq
-@using CUWebinars.Business.Services
 @using CUWebinars.Web.Core
 @using CUWebinars.Web.Helpers
-@using Microsoft.Ajax.Utilities
-@using Ninject
 
 @functions{
 
@@ -12,10 +9,12 @@
     {
         var dataOperations = new CUWebinars.Business.Core.DataOperations(GlobalConfig.GlobalConfigSingleton.DefaultConnectionString);
         var addresses = new StringBuilder();
-        decimal optionsCost = 0M;
         var i = 0;
 
         var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(idWebinar);
+
+        decimal optionsCost = 0M;
+        
 
         // perf tweak - ensures enumerable will only be enumerated once
         var additionalLocationsEnumerated = additionalLocations as AdditionalLocation[] ?? additionalLocations.ToArray();

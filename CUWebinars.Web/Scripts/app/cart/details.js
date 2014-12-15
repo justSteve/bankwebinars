@@ -171,7 +171,7 @@ $(function () {
     // [dar] this handler is relevant for update/edit/view aspect of cart. Revisit when we address that.
     if (cartStateManager.getOrderRowId() > 0 && cartStateManager.getCheckoutInProcess()) {
 
-        if (shippingAddressRequired && notificationsTesting === 'false') {
+        if (shippingAddressRequired && notificationsTesting === false) {
             // Following function lives in the register-during-checkout.js script 
             // which will be in memory at this point and thus will have been hoisted.
             hookUpModal($('#UserDetailsModal'));
@@ -262,7 +262,7 @@ $(function () {
                     $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
                         $('#confirmationTab a').tab('show');
 
-                        if (shippingAddressRequired && notificationsTesting === 'false') {
+                        if (shippingAddressRequired && notificationsTesting === false) {
                             // Following function lives in the register-during-checkout.js script 
                             // which will be in memory at this point and thus will have been hoisted.
                             hookUpModal($('#UserDetailsModal')); 
