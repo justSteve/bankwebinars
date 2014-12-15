@@ -473,6 +473,31 @@ namespace CUWebinars.Business.AccountService
             return USTimeZone.Central;
         }
 
+        public void UpdateShippingAddressDetails(Address shippingAddress)
+        {
+            var webUser = _webUserRepository.FindByIdLoaded(shippingAddress.idUser);
+
+            var shippingAddressOnFile = webUser.Addresses.SingleOrDefault(a => a.AddressType == DomainConstants.ShippingAddress);
+
+            if (ReferenceEquals(null, shippingAddressOnFile))
+            {
+                webUser.Addresses.Add(shippingAddress);
+            }
+            else
+            {
+                shippingAddressOnFile.City = shippingAddress.City;
+                shippingAddressOnFile.Country = shippingAddress.Country;
+                shippingAddressOnFile.Name = shippingAddress.Name;
+                shippingAddressOnFile.Phone = shippingAddress.Phone;
+                shippingAddressOnFile.State = shippingAddress.State;
+                shippingAddressOnFile.StreetAddress = shippingAddress.StreetAddress;
+                shippingAddressOnFile.StreetAddress2 = shippingAddress.StreetAddress2;
+                shippingAddressOnFile.Zip = shippingAddress.Zip;
+            }
+
+            _webUserRepository.DbContext.SaveChanges();
+        }
+
         public IEnumerable<Address> GetAddressesForUser(int id)
         {
             return _refDataRepository.GetAddressesForUser(id);

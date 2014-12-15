@@ -312,6 +312,25 @@ namespace CUWebinars.Web.Core.Orchestrators
                 );
         }
 
+        public void UpdateShippingAddressDetails(AddressModel shippingAddressModel, int idUser)
+        {
+            var shippingAddress = new Address
+            {
+                AddressType = shippingAddressModel.TypeOfAddress.ToString(),
+                City = shippingAddressModel.City,
+                Country = shippingAddressModel.Country,
+                idUser = idUser,
+                Name = shippingAddressModel.Name,
+                Phone = shippingAddressModel.Phone,
+                State = shippingAddressModel.State,
+                StreetAddress = shippingAddressModel.StreetAddress,
+                StreetAddress2 = shippingAddressModel.StreetAddress2,
+                Zip = shippingAddressModel.Zip
+            };
+
+            _membershipService.UpdateShippingAddressDetails(shippingAddress);
+        }
+
         public EditBillingAddressModel BuildBillingAddressModel()
         {
             var model = new EditBillingAddressModel();

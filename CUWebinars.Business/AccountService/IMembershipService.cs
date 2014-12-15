@@ -81,5 +81,6 @@ namespace CUWebinars.Business.AccountService
         UserAccount VerifyEmailFromKey(string key, string password);
         bool VerifyUserByEmail(string tenant, string email);
         USTimeZone GetTimeZoneByZip();
+        void UpdateShippingAddressDetails(Address shippingAddress);
     }
 }

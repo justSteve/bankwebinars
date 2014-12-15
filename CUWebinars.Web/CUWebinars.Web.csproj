@@ -379,6 +379,7 @@
     <Compile Include="Helpers\IAppHelper.cs" />
     <Compile Include="Helpers\SessionStartInfo.cs" />
     <Compile Include="Models\RegisterFieldsDTO.cs" />
+    <Compile Include="Models\ShippingDetailsModel.cs" />
     <Compile Include="ViewModel\RegistrationSummaryViewModel.cs" />
     <Compile Include="ViewModel\WebinarFileViewModel.cs" />
     <Content Include="ApplicationInsights.config" />
@@ -590,6 +591,7 @@
     <Content Include="Scripts\underscore.min.map" />
     <Content Include="Views\Home\PrivacyStatement.cshtml" />
     <Content Include="Views\Cart\Partials\_ConfirmModal.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\ShippingDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\packages\Selenium.WebDriver.ChromeDriver.2.9.0.0\content\chromedriver.exe">
