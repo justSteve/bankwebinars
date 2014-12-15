@@ -783,9 +783,11 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
                 cache: false,
                 url: url,
                 dataType: constants.JsonDataType,
+                beforeSend: function(xhr){
+                    $('#updateShippingMsgLabelWrap').html('<span class="label label-info">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Updating details...</span>');
+            }
             }).done(function (data) {
                 if (data.Result === 'Success') {
-                    modalForm.modal('hide');
                     var fullname = $('#RegisterFields_FirstName').val() + ' ' + $('#RegisterFields_LastName').val();
                     $('#userFullname').text(fullname);
 
@@ -800,9 +802,17 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
                         hookUpModal(modalForm);
                     });
 
+                    $('#updateShippingMsgLabelWrap').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details updated successfully.</span>');
+                    //modalForm.modal('hide');
+
                 } else if (!data.isSuccessful) {
+                    $('#updateShippingMsgLabelWrap').empty();
                     formProcessor.lightUpValidationSummary('userDetailsValSummary', data);
+                } else {
+                    $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>There has been an error in the operation.Please call us at 800-831-0678 ext. 3 to resolve.</span>');
                 }
+            }).fail(function(data) {
+                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error in the server response. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
             });
         });
 
@@ -851,6 +861,8 @@ function setUiLayout(isShippindAddressRequired) {
     } else {
         $('#ShippingAddressContainer, #linksToAddShippingFields, #AddShippingAddressLink').hide();
     }
+
+    $('#updateShippingMsgLabelWrap').empty();
 }
 
 function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
@@ -866,53 +878,6 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
     //  need to save state in the event that a Modal is displayed and Cancel is clicked on it.
     typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
     valOfTypeChosenPrevious = valOfTypeChosenCurrent = dropDown.val();
-
-    // This is the callback which fires once the modal window that the dropdownlist opens, closes upon confirmbutton-click
-    //$('#confirmTypeChange').on('click', function (e) {
-
-    //    //var url = '/Cart/RemoveAdditionalLocationsFromOrder';
-    //    //var payLoad = {
-    //    //    idOrderRow: cartStateManager.getOrderRowId()
-    //    //};
-
-    //    //$.ajax({
-    //    //    type: 'POST',
-    //    //    contentType: constants.JsonContentType,
-    //    //    cache: false,
-    //    //    url: url,
-    //    //    dataType: constants.JsonDataType,
-    //    //    data: JSON.stringify(payLoad),
-    //    //}).done(function (data) {
-    //    //    if (data.Result === 'Success') {
-    //    //        $('#confirmation > div:nth-child(4) > div:nth-child(6)').empty();
-    //    //        // TODO: Also adjust the price accordingly
-    //    //        changeTypeConfirmModal.modal('hide');
-
-    //    //        $('html, body').animate({ scrollTop: position.top }, 500);
-
-    //    //        $('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 706 for immediate assistance').addClass('text-info');
-
-    //    //        $('#addLocsText').html('Additional Locations: <span id="totalAdLocsPrice">$0.00</span>').addClass('muted');
-
-    //    //        // This variable is initially set in the CheckoutConfirm.cshtml razor view
-    //    //        anyAddLocs = false;
-    //    //    }
-    //    //});
-
-    //    //valOfTypeChosenCurrent = valOfTypeChosenPrevious = dropDown.val();
-    //    //typeChosenCurrent = typeChosenPrevious = $.trim($('#RegType option:selected').text());
-    //    //chosenRegTypeLabel.empty().text(typeChosenCurrent);
-    //});
-
-    //changeTypeConfirmModal.on('hidden', function () {
-    //    ShowModalForShippingDetails(registerDuringCheckout.shippingAddressRequired);
-    //});
-
-    // This is the callback which fires once the modal window that the dropdownlist opens, closes upon cancelbutton-click
-    //$('#cancelTypeChange').on('click', function (e) {
-    //    chosenRegTypeLabel.text(typeChosenPrevious);
-    //    dropDown.val(valOfTypeChosenPrevious);
-    //});
 
     dropDown.on('change', function (e) {
 

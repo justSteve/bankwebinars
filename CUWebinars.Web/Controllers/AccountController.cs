@@ -1,4 +1,5 @@
 ﻿using System.Data.Entity.Validation;
+using System.Text;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
@@ -1124,8 +1125,37 @@ namespace CUWebinars.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult UpdateShippingDetails(ShippingDetailsModel shippingDetailsModel)
         {
-            _accountControllerOrchestrator.UpdateShippingAddressDetails(shippingDetailsModel.ShippingAddress, shippingDetailsModel.UserId);
-            return View();
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _accountControllerOrchestrator.UpdateShippingAddressDetails(shippingDetailsModel.ShippingAddress,
+                        shippingDetailsModel.UserId);
+                    return Json(new { Result = WebUiConstants.Success });
+                }
+                catch (DbEntityValidationException dbEntityValidationException)
+                {
+                    var stringBuilder = new StringBuilder();
+
+                    foreach (var validationErrors in dbEntityValidationException.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
+                            stringBuilder.AppendFormat("Property: {0} Error: {1} ", validationError.PropertyName, validationError.ErrorMessage);
+                        }
+                    }
+                    _logger.Error("UpdateShippingDetails dbEntityValidationException errors | {0}", stringBuilder.ToString());
+                }
+
+                catch (Exception e)
+                {
+                    _logger.Error("UpdateShippingDetails Catch block: {0} | Session = {1} | UserId: {2}", e.Message, _appHelper.GetUserAuditInfo(), shippingDetailsModel.UserId);
+                }
+                return Json(new { Result = WebUiConstants.Fail });
+            }
+            return this.ModelStateJson(ModelState);
+
         }
 
         //
