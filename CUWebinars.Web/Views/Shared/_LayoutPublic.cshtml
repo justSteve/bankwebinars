@@ -15,7 +15,8 @@
     }
     else
     {
-        Response.Redirect("/?resetSessionAff=null");
+        //TODO: Find correct way to reset a session
+        //Response.Redirect("/?resetSessionAff=null");
     }
 
     var currentUserID = 0;
@@ -87,7 +88,7 @@
     {
         if (globalConfig.Tenant == "CUWebinars")
         {
-            <script>
+        <script>
                 (function (i, s, o, g, r, a, m) {
                     i['GoogleAnalyticsObject'] = r;
                     i[r] = i[r] || function () {
@@ -104,14 +105,14 @@
                 ga('create', 'UA-44361719-1', 'cuwebinars.com');
                 ga('send', 'pageview');
 
-            </script>
-            <meta name="description" content="CUWebinars.com provides high-quality live and OnDemand webinars for credit union directors, managers and tellers. " />
-            <meta name="keywords" content="credit union training, teller training, director training, credit union webinars, credit union e-learning, credit union online training, credit union financial education, credit union professional development, credit union compliance, credit union risk management" />
+        </script>
+        <meta name="description" content="CUWebinars.com provides high-quality live and OnDemand webinars for credit union directors, managers and tellers. " />
+        <meta name="keywords" content="credit union training, teller training, director training, credit union webinars, credit union e-learning, credit union online training, credit union financial education, credit union professional development, credit union compliance, credit union risk management" />
 
         }
         if (globalConfig.Tenant == "BankWebinars")
         {
-            <script>
+        <script>
                 (function (i, s, o, g, r, a, m) {
                     i['GoogleAnalyticsObject'] = r;
                     i[r] = i[r] || function () {
@@ -127,9 +128,9 @@
                 ga('create', 'UA-1443899-1', 'auto');
                 ga('send', 'pageview');
 
-            </script>
-            <meta name="description" content="Bankwebinars.com provides bankers, tellers, commercial lenders, bank directors, compliance officers, lending officers and sales leaders with training webinars featuring experts in the financial industry." />
-            <meta name="keywords" content="bank webinars, banking webinars, compliance perspectives, bank training webinars, credit administration manager training, bank board compliance training, call report webinars, call report training, bank training, total training webinars, webinar banking, bank compliance, bank compliance webinars, bank webinar, bank webinar training, training webinars, bank employee training, bank training seminars, bank training programs, commerce bank training, bank management training, bank sales training, bank online training" />
+        </script>
+        <meta name="description" content="Bankwebinars.com provides bankers, tellers, commercial lenders, bank directors, compliance officers, lending officers and sales leaders with training webinars featuring experts in the financial industry." />
+        <meta name="keywords" content="bank webinars, banking webinars, compliance perspectives, bank training webinars, credit administration manager training, bank board compliance training, call report webinars, call report training, bank training, total training webinars, webinar banking, bank compliance, bank compliance webinars, bank webinar, bank webinar training, training webinars, bank employee training, bank training seminars, bank training programs, commerce bank training, bank management training, bank sales training, bank online training" />
         }
     }
     @Scripts.Render("~/bundles/modernizr")
@@ -190,11 +191,11 @@
         <div id="loginContainer">
             @Html.Partial("_LoginPartial")
             @*<div class="search-wrapper">
-                <form class="search" method="post" action="/home/search">
-                    <div id="search-trigger">Search:</div>
-                    <input id="search-box" type="text" placeholder="search + enter">
-                </form>
-            </div>*@
+                    <form class="search" method="post" action="/home/search">
+                        <div id="search-trigger">Search:</div>
+                        <input id="search-box" type="text" placeholder="search + enter">
+                    </form>
+                </div>*@
         </div>
 
         <div class="phone"><a href="tel:8008310678" class="tele">800.831.0678</a></div>
@@ -205,8 +206,8 @@
             <li><a class="socicon small linkedin" href="https://www.linkedin.com/company/bankwebinars.com" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
         </ul>
         @*<ul class="notifications">
-            <li><i class=" icon-envelope"></i></li>
-        </ul>*@
+                <li><i class=" icon-envelope"></i></li>
+            </ul>*@
 
     </section>
     <!-- begin .header-->

@@ -625,7 +625,7 @@ namespace CUWebinars.Business.Services
             var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(currentOrder.OrderRows.Single().idWebinar);
 
             ProcessDiscountCodes(currentOrder);
-            CalculateOrderPrices(currentOrder, additionalLocationsPricing.Single().Item2);
+            CalculateOrderPrices(currentOrder, additionalLocationsPricing.SingleOrDefault().Item2);
 
             if (confirmChangeEmailLink == string.Empty)
             {

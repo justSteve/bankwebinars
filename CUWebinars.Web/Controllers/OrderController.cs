@@ -241,7 +241,6 @@ namespace CUWebinars.Web.Controllers
 
             return string.Join("&", properties.ToArray());
         }
-
         /// <summary>
         /// For us to use a query string, this has to be a GET request.
         /// </summary>
@@ -303,7 +302,80 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception exception)
             {
+                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 var errString = string.Format("Order creation failed on {0} - {1} with msg: {2}", incomingOrderModel.Email, incomingOrderModel.idWebinar, exception.Message);
+                _logger.ErrorException(errString, exception);
+            }
+
+            return Json(new { Result = "0" }, JsonRequestBehavior.AllowGet);
+            //return Json(new { Result = WebUiConstants.Fail });
+        }
+
+        /// <summary>
+        /// For us to use a query string, this has to be a GET request.
+        /// </summary>
+        /// <param name="incomingOrderModel"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public JsonResult MigrateOrder(MigrateOrderModel migratedOrder)
+        {
+
+
+            int idOfLastOrder = default(int);
+            string verificationKey = string.Empty;
+            string confirmChangeEmailUrl = string.Empty;
+
+            if (!ModelState.IsValid)
+            {
+                var myError = ProcessModelStateErrors();
+                return Json(new { Result = WebUiConstants.Fail, Error = myError });
+            }
+
+            try
+            {
+                var email = migratedOrder.Email.Trim();
+
+                _logger.Info("Begin migrate: " + email);
+
+                var orderManagementQueryResult = _orderControllerOrchestrator.GetPreparatoryDataForMigrator(migratedOrder, email);
+
+                if (ReferenceEquals(null, orderManagementQueryResult.WebUser))
+                {
+                    try
+                    {
+                        orderManagementQueryResult.WebUser =
+                            _orderControllerOrchestrator.MigrateUser(migratedOrder, email);
+
+                        verificationKey = _orderControllerOrchestrator.GetVerificationKeyForNewUserAccount();
+
+                        confirmChangeEmailUrl =
+                            _orderControllerOrchestrator.GetConfirmChangeEmailLinkForNewUserAccount();
+
+                        _orderControllerOrchestrator.FinalizeMigratedRegistation(migratedOrder, verificationKey);
+
+                        _logger.Info(string.Format("MigrateOrder|CreateUser Succeeded: {0}", email));
+                    }
+                    catch (Exception exception)
+                    {
+                        _logger.ErrorException(
+                            string.Format("MigrateOrder|CreateUser failed: {0}", exception.Message), exception);
+                        Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                        throw;
+                    }
+                }
+
+                idOfLastOrder = _orderControllerOrchestrator.MigrateOrder(migratedOrder, email,
+                    orderManagementQueryResult, verificationKey, confirmChangeEmailUrl);
+
+                //idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
+                _logger.Info(string.Format("MigrateOrder|CreateNewOrder: {0}", idOfLastOrder));
+
+                return Json(new { Result = idOfLastOrder.ToString() }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception exception)
+            {
+                var errString = string.Format("Order creation failed on {0} - {1} with msg: {2}", migratedOrder.Email, migratedOrder.idWebinar, exception.Message);
+                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 _logger.ErrorException(errString, exception);
             }
 

@@ -16,7 +16,9 @@ namespace CUWebinars.Business.CQS.CommandHandlers
         ICommandHandler<AddOrderRowCommand>,
         ICommandHandler<RegisterNewAccountCommand>,
         ICommandHandler<VerifyAccountCommand>,
-        ICommandHandler<AddOrderCommand>
+        ICommandHandler<AddOrderCommand>,
+        ICommandHandler<MigrateOrderCommand>
+
     {
         private readonly IOrderManagementService _orderManagementService;
         private readonly IMembershipService _membershipService;
@@ -177,6 +179,8 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             importedOrder.ShippingFirstName = command.FirstName;
             importedOrder.ShippingLastName = command.LastName;
 
+            //importedOrder.OrderStatus = OrderStatus.Submitted;
+
             _orderManagementService.SaveOrderChanges(importedOrder, command.VerificationKey, command.ConfirmChangeEmailUrl);
 
             _postCommitRegistrator.Committed += () =>
@@ -188,6 +192,46 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             _postCommitRegistrator.Reset();
         }
 
+        public void Handle(MigrateOrderCommand command)
+        {
+            if (command == null) throw new ArgumentNullException("command");
+            var importedOrder = _orderManagementService.CreateNewOrder(command.Affiliate, command.WebUser, command.Webinar, command.OrderRow);
+
+            importedOrder.AdminComments = "incomingOrderModel.AdminComments";
+            importedOrder.AffiliateComments = command.AffiliateComments;
+            importedOrder.UserComments = "incomingOrderModel.UserComments";
+            importedOrder.Origin = "incomingOrderModel.Origin";
+            importedOrder.FirstName = command.FirstName;
+            importedOrder.LastName = command.LastName;
+            importedOrder.Institution = command.WebUser.Institution.InstitutionName;
+            importedOrder.BillingEmail = command.Email;
+
+            importedOrder.BillingAddress = command.BillingAddress.StreetAddress;
+            importedOrder.BillingAddress2 = command.BillingAddress.StreetAddress2;
+            importedOrder.BillingPhone = command.BillingAddress.Phone;
+            importedOrder.BillingCity = command.BillingAddress.City;
+            importedOrder.BillingState = command.BillingAddress.State;
+            importedOrder.BillingZip = command.BillingAddress.Zip;
+
+            importedOrder.ShippingAddress = command.ShippingAddress.StreetAddress;
+            importedOrder.ShippingAddress2 = command.ShippingAddress.StreetAddress2;
+            importedOrder.ShippingPhone = command.ShippingAddress.Phone;
+            importedOrder.ShippingCity = command.ShippingAddress.City;
+            importedOrder.ShippingState = command.ShippingAddress.State;
+            importedOrder.ShippingZip = command.ShippingAddress.Zip;
+            importedOrder.ShippingFirstName = command.FirstName;
+            importedOrder.ShippingLastName = command.LastName;
+
+            _orderManagementService.SaveOrderChanges(importedOrder, command.VerificationKey, command.ConfirmChangeEmailUrl);
+
+            _postCommitRegistrator.Committed += () =>
+            {
+                command.OrderId = importedOrder.idOrder;
+            };
+
+            _postCommitRegistrator.ExecuteActions();
+            _postCommitRegistrator.Reset();
+        }
         public void Dispose()
         {
             Dispose(true);

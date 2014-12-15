@@ -16,6 +16,10 @@
         var i = 0;
 
         var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(idWebinar);
+        if (additionalLocationsPricing == null)
+        {
+            
+        }
 
         // perf tweak - ensures enumerable will only be enumerated once
         var additionalLocationsEnumerated = additionalLocations as AdditionalLocation[] ?? additionalLocations.ToArray();
@@ -119,7 +123,11 @@
                             Your registration type is currently set as <b>@row.RegistrationType.OptionLabel.</b>
                             @{
                                 var additionalLocationsPricing = GetAdditionalLocationsPricing(row.AdditionalLocation, row.idWebinar);
-                                
+                                if (additionalLocationsPricing == null)
+                                {
+                                    throw new ArgumentNullException("additionalLocationsPricing");
+                                }
+
                                 var orderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
                                 {
                                     AdditionalLocations = row.AdditionalLocation,
