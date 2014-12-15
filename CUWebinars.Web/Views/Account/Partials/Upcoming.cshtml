@@ -12,6 +12,10 @@
         var i = 0;
 
         var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(idWebinar);
+        if (additionalLocationsPricing == null)
+        {
+            
+        }
 
         decimal optionsCost = 0M;
         
@@ -118,7 +122,11 @@
                             Your registration type is currently set as <b>@row.RegistrationType.OptionLabel.</b>
                             @{
                                 var additionalLocationsPricing = GetAdditionalLocationsPricing(row.AdditionalLocation, row.idWebinar);
-                                
+                                if (additionalLocationsPricing == null)
+                                {
+                                    throw new ArgumentNullException("additionalLocationsPricing");
+                                }
+
                                 var orderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
                                 {
                                     AdditionalLocations = row.AdditionalLocation,

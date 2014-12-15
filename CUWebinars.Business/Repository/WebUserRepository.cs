@@ -61,7 +61,7 @@ namespace CUWebinars.Business.Repository
         {
             var webUser = items
                 .Include(i => i.Addresses)
-                .Include(i => i.Affiliate)
+                //.Include(i => i.Affiliate)
                 .Include(i => i.Institution)
                 .Include(i => i.Presenter)
                 .Where(i => i.idUser == id);

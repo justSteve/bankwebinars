@@ -11,6 +11,7 @@ namespace CUWebinars.Business.Models
         //}
 
         public int idOrder { get; set; }
+        public int idOrderLegacy { get; set; }
         public int idUser { get; set; }
         public int idAffiliate { get; set; }
         public DateTime OrderDate { get; set; }
@@ -28,7 +29,7 @@ namespace CUWebinars.Business.Models
         public string BillingZip { get; set; }
         public string ShippingFirstName { get; set; }
         public string ShippingLastName { get; set; }
-        public string ShippingPhone { get; set; }        
+        public string ShippingPhone { get; set; }
         public string ShippingAddress { get; set; }
         public string ShippingAddress2 { get; set; }
         public string ShippingCity { get; set; }
@@ -44,7 +45,7 @@ namespace CUWebinars.Business.Models
         public virtual Affiliate Affiliate { get; set; }
         public virtual ICollection<OrderRow> OrderRows { get; set; }
         public virtual WebUser WebUser { get; set; }
-        
-        
+
+
     }
 }

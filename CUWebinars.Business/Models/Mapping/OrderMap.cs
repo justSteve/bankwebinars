@@ -34,6 +34,7 @@ namespace CUWebinars.Business.Models.Mapping
             // Table & Column Mappings
             ToTable("Order");
             Property(t => t.idOrder).HasColumnName("idOrder");
+            Property(t => t.idOrderLegacy).HasColumnName("idOrderLegacy");
             Property(t => t.idUser).HasColumnName("idUser");
             Property(t => t.idAffiliate).HasColumnName("idAffiliate");
             Property(t => t.OrderDate).HasColumnName("OrderDate");

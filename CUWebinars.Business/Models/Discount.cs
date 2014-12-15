@@ -18,5 +18,7 @@ namespace CUWebinars.Business.Models
         public Nullable<System.DateTime> dateBilled { get; set; }
         public Nullable<decimal> cost { get; set; }
         public string Notes { get; set; }
+        public int renewalTerm { get; set; }
+
     }
 }

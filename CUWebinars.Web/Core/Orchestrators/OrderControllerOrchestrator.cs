@@ -23,6 +23,43 @@ namespace CUWebinars.Web.Core.Orchestrators
             _stateService = stateService;
         }
 
+        public int MigrateOrder(MigrateOrderModel migrateOrderModel,
+                    string email,
+                    OrderManagementQueryResult orderManagementQueryResult,
+                    string verificationKey,
+                    string confirmChangeEmailUrl)
+        {
+            var addOrderRowCommand = new AddOrderRowCommand
+            {
+                AdditionalLocations = migrateOrderModel.AdditionalLocations,
+                Email = email,
+                RegistrationType = migrateOrderModel.idRegType,
+                Webinar = orderManagementQueryResult.Webinar,
+            };
+
+            _commandProcessor.Execute(addOrderRowCommand);
+
+            var migrateOrderCommand = new MigrateOrderCommand()
+            {
+                Affiliate = orderManagementQueryResult.Affiliate,
+                AffiliateComments = migrateOrderModel.AffiliateComments,
+                BillingAddress = migrateOrderModel.BillingAddress,
+                ConfirmChangeEmailUrl = confirmChangeEmailUrl,
+                Email = email,
+                FirstName = migrateOrderModel.FirstName.Trim(),
+                LastName = migrateOrderModel.LastName.Trim(),
+                OrderRow = addOrderRowCommand.OrderRow, // out parameter of addOrderRowCommand command
+                ShippingAddress = migrateOrderModel.ShippingAddress,
+                VerificationKey = verificationKey,
+                Webinar = orderManagementQueryResult.Webinar,
+                WebUser = orderManagementQueryResult.WebUser
+            };
+
+            _commandProcessor.Execute(migrateOrderModel);
+
+            return migrateOrderCommand.OrderId;
+        }
+
         public int CreateNewOrder(IncomingOrderModel incomingOrderModel,
             string email,
             OrderManagementQueryResult orderManagementQueryResult,
@@ -55,7 +92,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             };
 
             _commandProcessor.Execute(addOrderCommand);
-            
+
             return addOrderCommand.OrderId;
         }
 
@@ -73,7 +110,31 @@ namespace CUWebinars.Web.Core.Orchestrators
             _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
         }
 
+        public void FinalizeMigratedRegistation(MigrateOrderModel migrateOrder, string verificationKey)
+        {
+            var verifyAccountCommand = new VerifyAccountCommand
+            {
+                TempPassword = migrateOrder.LastName.Trim().ToLower(),
+                VerificationKey = verificationKey
+            };
 
+            //_commandProcessor.Execute(verifyAccountCommand);
+
+            //  Now we clear the value, so TtsSmtpMessageDelivery can go back to business as usual.
+            _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
+        }
+
+        public OrderManagementQueryResult GetPreparatoryDataForMigrator(MigrateOrderModel migrateOrderModel, string email)
+        {
+            var orderManagementQuery = new OrderManagementQuery
+            {
+                AffiliateId = migrateOrderModel.idAffiliate,
+                Email = email,
+                WebinarId = migrateOrderModel.idWebinar
+            };
+
+            return _queryProcessor.Process(orderManagementQuery);
+        }
         public OrderManagementQueryResult GetPreparatoryData(IncomingOrderModel incomingOrderModel, string email)
         {
             var orderManagementQuery = new OrderManagementQuery
@@ -124,6 +185,38 @@ namespace CUWebinars.Web.Core.Orchestrators
                 TempPassword = tempPassword,
                 Tenant = globalConfig.Tenant,
                 Title = incomingOrderModel.Title == null ? null : incomingOrderModel.Title.Trim()
+            };
+
+            _commandProcessor.Execute(registerNewAccountCommand);
+
+            Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey),
+    "There's no reason session should not have a value for the VerificationKey at this point ");
+
+            return registerNewAccountCommand.WebUser; //  assign out parameter for later use
+        }
+
+        public WebUser MigrateUser(MigrateOrderModel migrateOrder, string email)
+        {
+            var firstName = migrateOrder.FirstName.Trim();
+            var lastName = migrateOrder.LastName.Trim();
+            var tempPassword = lastName.ToLower();
+
+            //  Here, we set a value which indicates to the TtsSmtpMessageDelivery object that the user was created while importing an order.
+            //  This will be checked in TtsSmtpMessageDelivery and the notification will not be sent if this value is present.
+            //  The idea being that the Order Submitted notification will contain the info nomrally in the User Registered email.
+            _stateService.SetValue(DomainConstants.UserCreatedViaNewOrder, true);
+
+            var registerNewAccountCommand = new RegisterNewAccountCommand
+            {
+                BillingAddress = migrateOrder.BillingAddress,
+                Email = email,
+                FirstName = firstName,
+                LastName = lastName,
+                Institution = migrateOrder.Institution.Trim(),
+                ShippingAddress = migrateOrder.ShippingAddress,
+                TempPassword = tempPassword,
+                Tenant = globalConfig.Tenant,
+                Title = migrateOrder.Title == null ? null : migrateOrder.Title.Trim()
             };
 
             _commandProcessor.Execute(registerNewAccountCommand);

@@ -6,17 +6,25 @@ namespace CUWebinars.Web.Core.Orchestrators
 {
     public interface IOrderControllerOrchestrator
     {
-        int CreateNewOrder(IncomingOrderModel incomingOrderModel, 
-            string email, 
-            OrderManagementQueryResult orderManagementQueryResult, 
-            string verificationKey, 
+        int CreateNewOrder(IncomingOrderModel incomingOrderModel,
+            string email,
+            OrderManagementQueryResult orderManagementQueryResult,
+            string verificationKey,
+            string confirmChangeEmailUrl
+            );
+        int MigrateOrder(MigrateOrderModel migrateOrderModel,
+            string email,
+            OrderManagementQueryResult orderManagementQueryResult,
+            string verificationKey,
             string confirmChangeEmailUrl
             );
         void FinalizeNewRegistration(IncomingOrderModel incomingOrderModel, string verificationKey);
+        void FinalizeMigratedRegistation(MigrateOrderModel migrateOrder, string verificationKey);
         OrderManagementQueryResult GetPreparatoryData(IncomingOrderModel incomingOrderModel, string email);
+        OrderManagementQueryResult GetPreparatoryDataForMigrator(MigrateOrderModel migrateOrder, string email);
         string GetConfirmChangeEmailLinkForNewUserAccount();
         string GetVerificationKeyForNewUserAccount();
         WebUser ProcessNewUser(IncomingOrderModel incomingOrderModel, string email);
-
+        WebUser MigrateUser(MigrateOrderModel migrateOrder, string email);
     }
 }
