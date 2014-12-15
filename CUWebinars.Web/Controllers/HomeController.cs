@@ -73,6 +73,7 @@ namespace CUWebinars.Web.Controllers
 
     public ActionResult ContactUs()
         {
+            ViewBag.PageStyleType = "two-columns-right-sidebar";
             return View();
         }
 
@@ -89,13 +90,6 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
-        public ActionResult Contact()
-        {
-
-            ViewBag.PageStyleType = "two-columns-right-sidebar";
-
-            return View();
-        }
 
         //[HttpPost]
         //public ActionResult Contact(ContactModel model)

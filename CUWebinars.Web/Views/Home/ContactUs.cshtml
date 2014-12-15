@@ -1,10 +1,29 @@
-﻿@using System.Configuration
-@{
-    ViewBag.Title = "Contact " + ConfigurationManager.AppSettings["Tenant"] + ".com";
-    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
-
+﻿@{
+    ViewBag.Title = "Contact";
 }
-Contact @ConfigurationManager.AppSettings["Tenant"]<text>.com</text>
-We welcome questions about our services and products. Feel free to contact us via this form or by phone at 800-831-0678.
 
-<script type="text/javascript" src="http://form.jotform.us/jsform/32686256940159"></script>
+<hgroup class="title">
+    <h1>@ViewBag.Title.</h1>
+    <h2>@ViewBag.Message</h2>
+</hgroup>
+
+@section scripts
+{
+    
+        @Scripts.Render("~/bundles/jqueryval")
+    
+}
+
+<section class="contact">
+
+    <div class="container clearfix" id="main-content">
+        <div class="row-fluid reverse-order contact-page">
+            <div class="span7">
+                <script type="text/javascript" src="http://form.jotform.us/jsform/32686256940159"></script>            </div>
+            <!--close span7 -->
+        </div>
+        <!--close row-fluid-->
+    </div>
+    <!--close .container role="main-content" -->
+
+</section>
