@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
-using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.Core

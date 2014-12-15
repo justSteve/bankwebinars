@@ -1,4 +1,4 @@
-﻿@model ManageModel
+﻿@model ShippingDetailsModel
 
 <div id="UserDetailsModal" class="modal hide fade">
 
@@ -6,19 +6,20 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h2 class="modal-title">Update Details</h2>
+                <h2 class="modal-title">Shipping Address Details</h2>
+                <p>Please ensure that your shipping details are correct.</p>
             </div>
 
             <div class="modal-body">
-                @using (Html.BeginForm("Manage", "Account", null, FormMethod.Post, new { id = "userDetailsForm", @class = "form-horizontal" }))
+                @using (Html.BeginForm("UpdateShippingDetails", "Account", null, FormMethod.Post, new { id = "userDetailsForm", @class = "form-horizontal" }))
                 {
                     @Html.AntiForgeryToken()
+                    @Html.ValidationSummary("Please address the following problems:", new { id = "userDetailsValSummary" })
 
-                    @Html.EditorFor(m => m.RegisterFields)
+                    @Html.HiddenFor(m => m.UserId)
+                    @Html.EditorFor(m => m.ShippingAddress)
 
                     <button id="saveChangesButton" type="button" class="btn btn-primary offset2">Save changes</button>
-                    
-                    @Html.ValidationSummary("Please address the following problems:", new { id = "userDetailsValSummary" })
                 }
             </div>
 

@@ -136,10 +136,11 @@ namespace CUWebinars.Business.Services
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
             var addresses = new StringBuilder();
-            decimal optionsCost = 0M;
             var i = 0;
 
             var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(idWebinar);
+
+            decimal optionsCost = 0M;
 
             // perf tweak - ensures enumerable will only be enumerated once
             var additionalLocationsEnumerated = additionalLocations as AdditionalLocation[] ?? additionalLocations.ToArray();
@@ -328,8 +329,8 @@ namespace CUWebinars.Business.Services
         }
         public PricesAndDiscounts CalculateOrderPrices(Order order, decimal optionsCost)
         {
-            order.Total = 0.0M;
             PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
+            decimal totalOptionsPrice = 0M;
 
             var row = order.OrderRows.FirstOrDefault();
 
@@ -341,7 +342,8 @@ namespace CUWebinars.Business.Services
             if (row != null) row.UnitPrice = (decimal)row.RegistrationType.Price;
 
             //Calculate row price before discount
-            row.RowPrice = row.UnitPrice + optionsCost;
+            totalOptionsPrice = row.AdditionalLocation.Count * optionsCost; // cost * number of additional locations
+            row.RowPrice = row.UnitPrice + totalOptionsPrice;
             pricesAndDiscounts.UnitPrice = row.UnitPrice;
 
             //Calculate discount. 
@@ -363,10 +365,10 @@ namespace CUWebinars.Business.Services
 
             row.RowPrice -= discountTotal;
             pricesAndDiscounts.TotalDiscount = discountTotal;
-            pricesAndDiscounts.TotalOptions = optionsCost;
+            pricesAndDiscounts.TotalOptions = totalOptionsPrice;
 
             //Calculate order total
-            order.Total += row.RowPrice;
+            order.Total = row.RowPrice;
             pricesAndDiscounts.TotalOrderPrice = order.Total;
 
             return pricesAndDiscounts;
@@ -623,9 +625,15 @@ namespace CUWebinars.Business.Services
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
             var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(currentOrder.OrderRows.Single().idWebinar);
+            var tuple = additionalLocationsPricing.SingleOrDefault();
+            decimal optionsPrice = 0M;
+
+            // If no data is stored for AdditionalLocations pricing in db, price will be $0. Up to us to ensure pricing is available.
+            if (!ReferenceEquals(null, tuple))
+                optionsPrice = tuple.Item2;
 
             ProcessDiscountCodes(currentOrder);
-            CalculateOrderPrices(currentOrder, additionalLocationsPricing.SingleOrDefault().Item2);
+            CalculateOrderPrices(currentOrder, optionsPrice);
 
             if (confirmChangeEmailLink == string.Empty)
             {

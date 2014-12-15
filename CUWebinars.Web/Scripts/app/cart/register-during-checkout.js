@@ -619,6 +619,12 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
 };
 
+registerDuringCheckout.gatherPricingData = function() {
+    registerDuringCheckout.addLocsPrice = parseInt($('#totalAdLocsPrice').text().slice(1));
+    registerDuringCheckout.totalPrice = parseInt($('#totalPrice').text().slice(1));
+    registerDuringCheckout.totalDiscount = parseInt($('#totalDiscount').text().slice(1));
+};
+
 function completeOrder(userId, orderRowId, webinarId) {
 
     var cartStateManager = new OrderRegistration.StateManager();
@@ -927,11 +933,8 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
 
                 //  First, check if there are currently any Additional Locations added to the order.
                 if (anyAddLocs === true) {
-                    var modalFormOptions = {
-                        keyboard: true,
-                        backdrop: 'static',
-                        show: true,
-                    };
+
+                    registerDuringCheckout.gatherPricingData();
 
                     position = $('#confirmation').offset();
 
@@ -948,16 +951,15 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
                         dataType: constants.JsonDataType,
                         data: JSON.stringify(payLoad),
                     }).done(function (data) {
-                        if (data.Result === 'Success') {
-                            $('#confirmation > div:nth-child(4) > div:nth-child(6)').empty();
-                            // TODO: Also adjust the price accordingly
-                            //changeTypeConfirmModal.modal('hide');
 
-                            //$('html, body').animate({ scrollTop: position.top }, 500);
+                        if (data.Result === 'Success') {
+
+                            $('#additionalLocationsCaption').html('None');
 
                             $('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 706 for immediate assistance').addClass('text-info');
-
+                            
                             $('#addLocsText').html('Additional Locations: <span id="totalAdLocsPrice">$0.00</span>').addClass('muted');
+                            $('#totalPriceText').html('Additional Locations: <span id="totalPrice">$' + (registerDuringCheckout.totalPrice - registerDuringCheckout.addLocsPrice).toString() + '.00</span>');
 
                             // This variable is initially set in the CheckoutConfirm.cshtml razor view
                             anyAddLocs = false;

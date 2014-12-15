@@ -26,7 +26,7 @@ namespace CUWebinars.Web.Controllers
 {
     public class WebinarController : Controller
     {
-        IStateService _stateService;
+        private IStateService _stateService;
 
         //Steve added MembershipService dependancy to allow for 'currentUser' in Details.
         private readonly IMembershipService _membershipService;
@@ -48,6 +48,7 @@ namespace CUWebinars.Web.Controllers
             _logger = logger;
             _stateService = stateService;
         }
+
         //
         // GET: /Webinar/
         public ActionResult CompliancePerspectives()
@@ -187,13 +188,13 @@ namespace CUWebinars.Web.Controllers
                 var orders = _orderManagementService.GetOrdersForLiveNotifications(webinarId);
 
                 _orderManagementService.FireSendConnectionInfoNotificationEvent(orders);
-                return Json(new { Result = WebUiConstants.Success });
+                return Json(new {Result = WebUiConstants.Success});
             }
             catch (Exception exception)
             {
                 _logger.Error(string.Format("SendConnectionInfo Action: {0}", exception.Message), exception);
             }
-            return Json(new { Result = WebUiConstants.Fail });
+            return Json(new {Result = WebUiConstants.Fail});
         }
 
         public PartialViewResult SendRecordingPosted()
@@ -219,16 +220,16 @@ namespace CUWebinars.Web.Controllers
                 {
                     _orderManagementService.FireSendRecordingIsPostedEvent(orders);
 
-                    return Json(new { Result = WebUiConstants.Success });
+                    return Json(new {Result = WebUiConstants.Success});
                 }
 
-                return Json(new { Result = WebUiConstants.NoOrdersForWebinar });
+                return Json(new {Result = WebUiConstants.NoOrdersForWebinar});
             }
             catch (Exception exception)
             {
                 _logger.Error(string.Format("SendRecordingPosted Action: {0}", exception.Message), exception);
             }
-            return Json(new { Result = WebUiConstants.Fail });
+            return Json(new {Result = WebUiConstants.Fail});
         }
 
 
@@ -400,7 +401,9 @@ namespace CUWebinars.Web.Controllers
             [Core.DataTables.WebinarsBrowserRequestModelBinder] WebinarsBrowserRequestModel webinarsBrowserRequest)
         {
 
-            var webinars = _webinarManagementService.GetByTopic(Convert.ToInt32(webinarsBrowserRequest.Search.Replace("TopicID=", "")));
+            var webinars =
+                _webinarManagementService.GetByTopic(
+                    Convert.ToInt32(webinarsBrowserRequest.Search.Replace("TopicID=", "")));
             var wList = new List<WebinarsBrowserSearchResultEntryDTO>();
             foreach (var webinar in webinars)
             {
@@ -418,6 +421,7 @@ namespace CUWebinars.Web.Controllers
             var data = new WebinarsSearchDTOAssembler(webinarsBrowserRequest.EchoId).Entity2DTO(searchResult);
             return Json(data, JsonRequestBehavior.AllowGet);
         }
+
         //[AcceptVerbs(HttpVerbs.Get)]
         public ActionResult Play(int w, int u)
         {
@@ -547,7 +551,7 @@ namespace CUWebinars.Web.Controllers
                 var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id.Value);
 
                 if (webinar == null) return HttpNotFound();
-                
+
                 var model = new WebinarDetailsViewModel()
                 {
                     Webinar = webinar,
@@ -555,14 +559,16 @@ namespace CUWebinars.Web.Controllers
                 };
 
                 InitializeDetailsState(webinar, model, id.Value); // form state, incl. stuff that will be posted back. 
-                InitializeViewCentricProperties(model); // mostly just stuff that helps determine layout of the page on load. Not meant to be sent back here to Server from the View
+                InitializeViewCentricProperties(model);
+                    // mostly just stuff that helps determine layout of the page on load. Not meant to be sent back here to Server from the View
 
                 var usersOrders = _orderManagementService.GetOrdersByUserId(model.WebUser.idUser)
                     .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id.Value) != null);
 
                 var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray();
-                    // perf tweak: ensures no multiple enumerations of usersOrders
-                if (checkOrders.Any()) // Webinar.Status > scheduled - WebinarFiles presenter files etc. Files only exist until init or activated Webinar
+                // perf tweak: ensures no multiple enumerations of usersOrders
+                if (checkOrders.Any())
+                    // Webinar.Status > scheduled - WebinarFiles presenter files etc. Files only exist until init or activated Webinar
                 {
                     foreach (var checkOrder in checkOrders) // assumption that there will be only 1 ?
                     {
@@ -597,7 +603,8 @@ namespace CUWebinars.Web.Controllers
                     model.MessageOrderStatus =
                         "<div align=\"center\" class=\"label-warning label\">Your order is InProcess and needs to be confirmed or canceled.</div>";
 
-                    var additionalLocationsViewModel = model.RegistrationSummaryViewModel.OrderHasAdditionalLocationsViewModel;
+                    var additionalLocationsViewModel =
+                        model.RegistrationSummaryViewModel.OrderHasAdditionalLocationsViewModel;
                     var orderRow = model.Order.OrderRows.Single();
                     var webUser = orderRow.Order.WebUser;
                     var userFullName = string.Concat(webUser.FirstName, " ", webUser.LastName);
@@ -612,34 +619,23 @@ namespace CUWebinars.Web.Controllers
                         AdminComments = model.Order.AdminComments,
                         AffiliateComments = model.Order.AffiliateComments,
                         //CCUserDetails = "",
-                        DiscountCode = orderRow.Discount == null ? string.Empty :  orderRow.Discount.code, // TODO: null possible?
+                        DiscountCode = orderRow.Discount == null ? string.Empty : orderRow.Discount.code,
+                        // TODO: null possible?
                         DisplayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
                         {
-                             Options = _orderManagementService.GetOptionsByWebinarId(orderRow.idWebinar, true),
-                             OrderRowId = orderRow.idOrderRow,
-                             OrderRowRegistrationType = orderRow.RegistrationType
+                            Options = _orderManagementService.GetOptionsByWebinarId(orderRow.idWebinar, true),
+                            OrderRowId = orderRow.idOrderRow,
+                            OrderRowRegistrationType = orderRow.RegistrationType
                         },
-                        DisplayRowPriceViewModel = model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel,
+                        DisplayRowPriceViewModel =
+                            model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel,
                         idUser = model.Order.idUser,
-                        ManageModel = new ManageModel
+                        ShippingDetailsModel = new ShippingDetailsModel()
                         {
-                            HasLocalPassword = false,
-                            RegisterFields = new RegisterModel
-                            {
-                                BillingAddress = new AddressModel
-                                {
-
-                                    Name = webUser.FirstName + ' ' + webUser.LastName,
-                                    City = billingAddress.City,
-                                    Country = billingAddress.Country,
-                                    StreetAddress = billingAddress.StreetAddress,
-                                    StreetAddress2 = billingAddress.StreetAddress2,
-                                    State = billingAddress.State,
-                                    Zip = billingAddress.Zip,
-                                    Phone = billingAddress.Phone,
-                                    TypeOfAddress = AddressType.Billing
-                                },
-                                ShippingAddress = shippingAddress == null ? new AddressModel() : new AddressModel
+                            UserId = webUser.idUser,
+                            ShippingAddress = shippingAddress == null
+                                ? new AddressModel()
+                                : new AddressModel
                                 {
                                     City = shippingAddress.City,
                                     Country = shippingAddress.Country,
@@ -651,14 +647,6 @@ namespace CUWebinars.Web.Controllers
                                     Name = shippingAddress.Name,
                                     TypeOfAddress = AddressType.Shipping
                                 },
-                                FirstName = webUser.FirstName,
-                                LastName = webUser.LastName,
-                                Institution = webUser.Institution.InstitutionName,
-                                Email = webUser.email,
-                                Title = webUser.Title,
-                                AccountDetailsTitle = WebUiConstants.ManageUser
-                            },
-                            StatusMessage = string.Empty
                         },
                         OptionLabel = orderRow.RegistrationType.OptionLabel,
                         OrderExists = true,
@@ -673,7 +661,8 @@ namespace CUWebinars.Web.Controllers
                         OrderStatus = OrderStatus.InProcess,
                         Origin = model.Order.Origin,
                         UserComments = model.Order.UserComments,
-                        UserDetails = string.Concat(userFullName, " - ", orderRow.Order.Institution, "<br>", webUser.email),
+                        UserDetails =
+                            string.Concat(userFullName, " - ", orderRow.Order.Institution, "<br>", webUser.email),
                         UserFullname = userFullName,
                         UserType = UserType.Customer
                     };
@@ -699,7 +688,9 @@ namespace CUWebinars.Web.Controllers
         /// <param name="id"></param>
         private void InitializeDetailsState(Webinar webinar, WebinarDetailsViewModel model, int id)
         {
-            model.WebUser = Request.IsAuthenticated ? _membershipService.GetUserByEmailLoadedWithOrdersData(User.Identity.Name) : new WebUser();
+            model.WebUser = Request.IsAuthenticated
+                ? _membershipService.GetUserByEmailLoadedWithOrdersData(User.Identity.Name)
+                : new WebUser();
 
             if (Request.IsAuthenticated && model.WebUser.Orders.FirstOrDefault() != null)
             {
@@ -707,6 +698,13 @@ namespace CUWebinars.Web.Controllers
             }
 
             var orderExists = model.Order != null;
+
+            IEnumerable<AdditionalLocation> additionalLocations = null;
+
+            if (orderExists)
+            {
+                additionalLocations = model.Order.OrderRows.Single().AdditionalLocation.ToList();
+            }
 
             model.Topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar);
 
@@ -718,12 +716,12 @@ namespace CUWebinars.Web.Controllers
                 {
                     AdditionalLocationOfferViewModel = new AdditionalLocationOfferViewModel
                     {
-                        AdditionalLocations = new List<AdditionalLocation>(),
-                        //AdditionalLocationAddViewModel = new AdditionalLocationAddViewModel(),
+                        AdditionalLocations = additionalLocations,
+                        //AdditionalLocationAddViewModel property is assigned further below as more data comes to hand. 
                         OrderExists = orderExists,
-                        Price = 150.0M,
                         Webinar = webinar
                     },
+                    // DisplayRowPriceViewModel property is assigned further below as more data comes to hand. 
                     EventTitle = model.Webinar.Title,
                     idWebinar = model.Webinar.idWebinar,
                     Options = _orderManagementService.GetOptionsByWebinarId(id, false),
@@ -731,7 +729,7 @@ namespace CUWebinars.Web.Controllers
                     WebinarDuration = model.Webinar.Duration,
                     WebinarStatus = model.Webinar.Status
                 },
-                AdditionalLocations = null, //TODO: come back to
+                AdditionalLocations = additionalLocations,
                 ConnectionInfoPresent = model.Webinar.ConnectionInfo != null,
                 WebinarDuration = model.Webinar.Duration,
                 idWebinar = model.Webinar.idWebinar,
@@ -753,9 +751,10 @@ namespace CUWebinars.Web.Controllers
 
                 var additionalLocationsPricing =
                     _orderManagementService.GetAdditionalLocationsPricing(row.AdditionalLocation,
-                    webinar.idWebinar
-                    );
+                        webinar.idWebinar
+                        );
 
+                // populate DisplayRowPriceViewModel of DisplayOptionsViewModel
                 model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
                     new DisplayRowPriceViewModel
                     {
@@ -763,14 +762,26 @@ namespace CUWebinars.Web.Controllers
                         NumberOfAdditionalLocations = row.AdditionalLocation.Count(),
                         OrderStatus = row.Order.OrderStatus,
                         Price = row.RegistrationType.Price,
-                        PricesAndDiscounts = _orderManagementService.CalculateOrderPrices(row.Order, additionalLocationsPricing.Item2),
+                        PricesAndDiscounts =
+                            _orderManagementService.CalculateOrderPrices(row.Order, additionalLocationsPricing.Item2),
                         RowPrice = row.RowPrice,
                         RegistrationType = row.RegistrationType
                     };
 
+                // populate AdditionalLocationOfferViewModel and AdditionalLocationAddViewModel
                 model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Emails =
-                    model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.AdditionalLocations.Select(al => al.Email).ToArray();
+                    model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
+                        .AdditionalLocations.Select(al => al.Email).ToArray();
+                model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
+                    .AdditionalLocationAddViewModel = new AdditionalLocationAddViewModel
+                    {
+                        AdditionalLocations = additionalLocations,
+                        Price = additionalLocationsPricing.Item2
+                    };
+                model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel.Price =
+                    additionalLocationsPricing.Item2;
 
+                // populate RegistrationSummaryViewModel and OrderHasAdditionalLocationsViewModel
                 model.RegistrationSummaryViewModel = new RegistrationSummaryViewModel
                 {
                     OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
@@ -780,14 +791,11 @@ namespace CUWebinars.Web.Controllers
                         OptionsCost = additionalLocationsPricing.Item2
                     },
                     OrderRow = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active),
-                    RecordingLink = "<a href='" + GlobalConfig.GlobalConfigSingleton.WMVRepository + webinar.RecordingUrl + "' target=_blank /> Recording Playback</a>",
+                    RecordingLink =
+                        "<a href='" + GlobalConfig.GlobalConfigSingleton.WMVRepository + webinar.RecordingUrl +
+                        "' target=_blank /> Recording Playback</a>",
                     WebinarStatus = webinar.Status
                 };
-
-                //model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
-                //    .AdditionalLocationAddViewModel.AdditionalLocations =
-                    //model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
-                    //    .AdditionalLocations;
             }
         }
 
@@ -819,8 +827,12 @@ namespace CUWebinars.Web.Controllers
 
             model.SignUpCaption = "Sign Up!";
             model.ConfirmationCaption = "Confirmation";
-            model.Identity = ((ClaimsIdentity)User.Identity);
-            model.TimeFormatDisplay = "<i>" + DateTimeHelper.FormatTime(model.Webinar.Date, model.TimeZone, false) + " - " + DateTimeHelper.FormatTime(model.Webinar.Date.AddHours((double)model.Webinar.Duration), model.TimeZone, true) + "<br /></i>";
+            model.Identity = ((ClaimsIdentity) User.Identity);
+            model.TimeFormatDisplay = "<i>" + DateTimeHelper.FormatTime(model.Webinar.Date, model.TimeZone, false) +
+                                      " - " +
+                                      DateTimeHelper.FormatTime(
+                                          model.Webinar.Date.AddHours((double) model.Webinar.Duration), model.TimeZone,
+                                          true) + "<br /></i>";
 
             model.CeuShort = string.Empty;
             model.CeuStatement = string.Empty;
@@ -874,7 +886,8 @@ namespace CUWebinars.Web.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.PresenterId = new SelectList(_webinarManagementService.GetAllPresenters(), "Id", "Biography", webinar.idPresenter);
+            ViewBag.PresenterId = new SelectList(_webinarManagementService.GetAllPresenters(), "Id", "Biography",
+                webinar.idPresenter);
             return View(webinar);
         }
 
@@ -888,7 +901,8 @@ namespace CUWebinars.Web.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.PresenterId = new SelectList(_webinarManagementService.GetAllPresenters(), "Id", "Biography", webinar.idPresenter);
+            ViewBag.PresenterId = new SelectList(_webinarManagementService.GetAllPresenters(), "Id", "Biography",
+                webinar.idPresenter);
             return View(webinar);
         }
 
@@ -904,7 +918,8 @@ namespace CUWebinars.Web.Controllers
 
                 return RedirectToAction("Index");
             }
-            ViewBag.PresenterId = new SelectList(_webinarManagementService.GetAllPresenters(), "Id", "Biography", webinar.idPresenter);
+            ViewBag.PresenterId = new SelectList(_webinarManagementService.GetAllPresenters(), "Id", "Biography",
+                webinar.idPresenter);
             return View(webinar);
         }
 
@@ -947,11 +962,11 @@ namespace CUWebinars.Web.Controllers
             webinar.OrganizerOAuthKey = model.OrganizerOAuthKey;
             webinar.OrganizerKey = model.OrganizerKey;
             webinar.WebinarKey = model.WebinarKey;
-            
+
 
             _webinarManagementService.UpdateWebinar(webinar);
 
-            return PartialView("Partials/_UpdateConnectionInfo",model);
+            return PartialView("Partials/_UpdateConnectionInfo", model);
         }
 
         public ActionResult CreateICSForWebinar(int id)
@@ -962,7 +977,8 @@ namespace CUWebinars.Web.Controllers
 
                 string filePath = HostingEnvironment.MapPath("~/App_Data/ics/");
 
-                string defaultDescription = "1. Click this link to start or to join the Webinar:<br><br>https://www2.gotomeeting.com/ojoin/325710074/922930 <br><br><br>2. Choose one of the following audio options:<br><br> TO USE YOUR COMPUTER’S AUDIO:<br> When the Webinar begins, you will be connected to audio using your computer’s microphone and speakers (VoIP). A headset is recommended.<br><br><br> TO USE YOUR TELEPHONE:<br> If you prefer to use your phone, you must select “Use Telephone” after joining the Webinar and call in using the numbers below.<br><br><br> Toll-free: 1 877 568 4108<br> Access Code: 529-918-465<br> Audio PIN: Shown after joining the meeting<br><br><br>GoToWebinar®<br>Webinars Made Easy™<br>";
+                string defaultDescription =
+                    "1. Click this link to start or to join the Webinar:<br><br>https://www2.gotomeeting.com/ojoin/325710074/922930 <br><br><br>2. Choose one of the following audio options:<br><br> TO USE YOUR COMPUTER’S AUDIO:<br> When the Webinar begins, you will be connected to audio using your computer’s microphone and speakers (VoIP). A headset is recommended.<br><br><br> TO USE YOUR TELEPHONE:<br> If you prefer to use your phone, you must select “Use Telephone” after joining the Webinar and call in using the numbers below.<br><br><br> Toll-free: 1 877 568 4108<br> Access Code: 529-918-465<br> Audio PIN: Shown after joining the meeting<br><br><br>GoToWebinar®<br>Webinars Made Easy™<br>";
                 defaultDescription += webinar.DescriptionLong;
 
                 string presentedBy = string.Empty;
@@ -1003,7 +1019,8 @@ namespace CUWebinars.Web.Controllers
                 //str.AppendLine(string.Format("DTSTAMP:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow));
                 str.AppendLine(string.Format("DTSTAMP:{0:yyyyMMddTHHmmssZ}", webinar.Date));
 
-                str.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", webinar.Date.AddHours(Convert.ToDouble(webinar.Duration))));
+                str.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}",
+                    webinar.Date.AddHours(Convert.ToDouble(webinar.Duration))));
 
                 str.AppendLine("LOCATION;ENCODING=QUOTED-PRINTABLE:Webinar – See conference call information below");
 
@@ -1033,12 +1050,12 @@ namespace CUWebinars.Web.Controllers
                 // close the stream
                 tw.Close();
                 //Code for save ics file in application
-                return Json(new { success = true, result = "Successfully Created." }, JsonRequestBehavior.AllowGet);
+                return Json(new {success = true, result = "Successfully Created."}, JsonRequestBehavior.AllowGet);
             }
             catch (Exception e)
             {
                 _logger.Error("/Webinar/CreateICSForWebinar: " + e.Message);
-                return Json(new { success = false, result = "File creation failed." }, JsonRequestBehavior.AllowGet);
+                return Json(new {success = false, result = "File creation failed."}, JsonRequestBehavior.AllowGet);
             }
 
         }
@@ -1075,19 +1092,25 @@ namespace CUWebinars.Web.Controllers
             try
             {
                 var deletedFiles = connectionInfoModel.WebinarFiles.Where(f => f.fileDesc.EndsWith("-D")).ToList();
-                var newFiles = connectionInfoModel.WebinarFiles.Where(f => f.idWebinarFile == 0 && !f.fileDesc.EndsWith("-ND")).ToList();
-                var updatedFiles = connectionInfoModel.WebinarFiles.Where(f => f.idWebinarFile > 0 && !f.fileDesc.EndsWith("-D")).ToList();
+                var newFiles =
+                    connectionInfoModel.WebinarFiles.Where(f => f.idWebinarFile == 0 && !f.fileDesc.EndsWith("-ND"))
+                        .ToList();
+                var updatedFiles =
+                    connectionInfoModel.WebinarFiles.Where(f => f.idWebinarFile > 0 && !f.fileDesc.EndsWith("-D"))
+                        .ToList();
 
                 _webinarManagementService.AddWebinarFiles(newFiles);
                 _webinarManagementService.DeleteWebinarFiles(deletedFiles);
                 _webinarManagementService.UpdateWebinarFiles(updatedFiles);
-                
-                return Json(new { result = WebUiConstants.Success });
+
+                return Json(new {result = WebUiConstants.Success});
             }
             catch (Exception exception)
             {
-                _logger.ErrorException(string.Format("UpdateWebinarFiles| UpdateWebinarFiles failed {0}", exception.Message), exception);
-                ModelState.AddModelError(string.Empty, "There was a problem with the update operation. Please consult with the system administrator to resolve the issue.");
+                _logger.ErrorException(
+                    string.Format("UpdateWebinarFiles| UpdateWebinarFiles failed {0}", exception.Message), exception);
+                ModelState.AddModelError(string.Empty,
+                    "There was a problem with the update operation. Please consult with the system administrator to resolve the issue.");
             }
 
             return this.ModelStateJson(ModelState);

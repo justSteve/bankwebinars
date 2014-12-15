@@ -35,18 +35,20 @@
                     <div class="span3 text-right" style="margin-left: 20px">Primary Contact:</div><div id="userFullname" class="span3 text-left">@Model.UserFullname</div>
                     <div class="span3 text-right">Type:</div><div id="chosenRegType" class="span3 text-left">@Model.OptionLabel</div>
                     <div class="span3 text-right">Additional Locations:</div>
-                    <div class="span3 text-left">
+                    <div id="additionalLocationsCaption" class="span3 text-left">
                         @{
-                 if (string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption))
-                 {
-                    <text>None</text>
-                 }
-                 else
-                 {
-                    @Model.AdditionalLocationCaption
-                 }
+                            if (string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption))
+                            {
+                                <text>None</text>
+                            }
+                            else
+                            {
+                                @Model.AdditionalLocationCaption
+                            }
                         }
                     </div>
+
+
 
                     <div id="userDetailsSummed" class="span5 offset1">
                         <p>@Html.Raw(@Model.UserDetails)</p>
@@ -127,7 +129,7 @@
 
 @{
     Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
-    Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ManageModel);
+    Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
 }
 
 @using (Html.BeginForm("SignInAfterCheckout", "Account", null, FormMethod.Post, new { id = "_SignInAfterCheckout" }))

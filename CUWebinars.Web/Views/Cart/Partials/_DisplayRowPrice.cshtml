@@ -1,58 +1,105 @@
 ﻿@model DisplayRowPriceViewModel
 
 @functions {
-        private const string CurrencyFormatToken = "c";
-        private const string DotAndTwoDecimals = ".00";
+    private const string CurrencyFormatToken = "c";
+    private const string DotAndTwoDecimals = ".00";
+
+    private string GetDiscountedTextSpan()
+    {
+        var outerSpan = new TagBuilder("span");
+        outerSpan.GenerateId("discountedText");
+        
+        if(Model.PricesAndDiscounts.TotalDiscount == 0)
+            outerSpan.AddCssClass("muted");
+
+        var totalDiscountElement = new TagBuilder("span");
+        totalDiscountElement.GenerateId("totalDiscount");
+        totalDiscountElement.SetInnerText(Model.PricesAndDiscounts.TotalDiscount.ToString(CurrencyFormatToken));
+
+        outerSpan.InnerHtml = string.Concat("Discounted: ", totalDiscountElement.ToString(TagRenderMode.Normal), (Model.Discount == null ? string.Empty : string.Concat(" (", Model.Discount.code, ")")));
+
+        return outerSpan.ToString(TagRenderMode.Normal);
+    }
+    
+    private string GetAdditionalLocationsTextSpan()
+    {
+        var outerSpan = new TagBuilder("span");
+        outerSpan.GenerateId("addLocsText");
+        
+        if(Model.PricesAndDiscounts.TotalOptions == 0)
+            outerSpan.AddCssClass("muted");
+
+        var additionalLocsPriceElement = new TagBuilder("span");
+        additionalLocsPriceElement.GenerateId("totalAdLocsPrice");
+        additionalLocsPriceElement.SetInnerText(Model.PricesAndDiscounts.TotalOptions.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, ""));
+
+        if (Model.NumberOfAdditionalLocations == 1)
+        {
+            outerSpan.InnerHtml = string.Concat("One Additional Location: ", additionalLocsPriceElement.ToString(TagRenderMode.Normal));    
+        }
+        else
+        {
+            outerSpan.InnerHtml = string.Concat(Model.NumberOfAdditionalLocations, " Additional Locations: ", additionalLocsPriceElement.ToString(TagRenderMode.Normal));
+        }
+        
+        
+
+        return outerSpan.ToString(TagRenderMode.Normal);
+    }
+
+    private string GetStatusLabel(OrderStatus orderStatus)
+    {
+        var statusLabelSpan = new TagBuilder("span");
+        
+        statusLabelSpan.GenerateId("orderStatusLabel");
+        statusLabelSpan.AddCssClass("label");
+
+        switch (orderStatus)
+        {
+            case OrderStatus.InProcess:
+                statusLabelSpan.AddCssClass("label-warning");
+                statusLabelSpan.SetInnerText(@OrderStatus.InProcess.ToString());
+                break;
+
+            case OrderStatus.Submitted:
+                statusLabelSpan.AddCssClass("label-info");
+                statusLabelSpan.SetInnerText(@OrderStatus.Submitted.ToString());
+                break;
+
+            case OrderStatus.Paid:
+                statusLabelSpan.AddCssClass("label-success");
+                statusLabelSpan.SetInnerText(@OrderStatus.Paid.ToString());
+                break;
+
+            case OrderStatus.AwaitingVerification:
+                statusLabelSpan.AddCssClass("label-warning");
+                statusLabelSpan.SetInnerText(@OrderStatus.AwaitingVerification.ToString());
+                break;
+        }
+
+        return statusLabelSpan.ToString(TagRenderMode.Normal);
+    }
+        
 }
 
 @{
     if (Model != null)
     {
         var rowAmount = new StringBuilder();
-
-        Model.Discount = new Discount //todo: come back to this when we get to the discount stuff
-        {
-            code = "abc",
-            flatOff = 10.0M
-        };
         
         rowAmount.Append("Base Cost: <span id='baseCost'>" + Model.PricesAndDiscounts.UnitPrice.ToString("c0") + "</span><br />");
 
-        rowAmount.Append("<span id='discountedText'>Discounted: <span id='totalDiscount'>" + Model.Discount.flatOff.ToString(CurrencyFormatToken) + "</span> (" + Model.Discount.code + ")</span><br />");
+        rowAmount.Append(GetDiscountedTextSpan() + "<br />");
 
-        if (Model.NumberOfAdditionalLocations == 1)
-        {
-            rowAmount.Append("<span id='addLocsText'>One Additional Location: <span id='totalAdLocsPrice'>" + Model.PricesAndDiscounts.TotalOptions.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "</span></span><br>");
-        }
-        else
-        {
-            rowAmount.Append("<span id='addLocsText'>" + Model.NumberOfAdditionalLocations + " Additional Locations: <span id='totalAdLocsPrice'>" + Model.PricesAndDiscounts.TotalOptions.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "</span></span><br>");
-        }
+        rowAmount.Append(GetAdditionalLocationsTextSpan() + "<br>");
 
-        rowAmount.Append("Total Cost: <span id='totalPrice'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "</span>");
+        rowAmount.Append("<span id='totalPriceText'>Total Cost: <span id='totalPrice'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, "") + "</span></span>");
 
         <div id="billingDetails" class="well" style="text-align: right;">
             @Html.Raw(rowAmount.ToString())<br />
 
             @{
-                switch (Model.OrderStatus)
-                {
-                    case OrderStatus.InProcess:
-                        <span id="orderStatusLabel" class="label label-warning">@OrderStatus.InProcess</span>
-                        break;
-
-                    case OrderStatus.Submitted:
-                        <span id="orderStatusLabel" class="label label-info">@OrderStatus.Submitted</span>
-                        break;
-
-                    case OrderStatus.Paid:
-                        <span id="orderStatusLabel" class="label label-success">@OrderStatus.Paid</span>
-                        break;
-
-                    case OrderStatus.AwaitingVerification:
-                        <span id="orderStatusLabel" class="label label-warning">@OrderStatus.AwaitingVerification</span>
-                        break;
-                }
+                @Html.Raw(GetStatusLabel(Model.OrderStatus))
             }
         </div>
     }

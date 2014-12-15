@@ -24,7 +24,7 @@ namespace CUWebinars.Web.Core.Orchestrators
     {
         public HttpRequestBase Request { get; set; }
 
-        GlobalConfig _globals = GlobalConfig.GlobalConfigSingleton;
+        private GlobalConfig _globals = GlobalConfig.GlobalConfigSingleton;
 
         private readonly IStateService _stateService;
         private readonly IMembershipService _membershipService;
@@ -133,27 +133,16 @@ namespace CUWebinars.Web.Core.Orchestrators
                         //CCUserDetails =
                         //    "None <a href=\"#AddCCModal\" role=\"button\" class=\"btn btn-mini\" data-toggle=\"modal\"> Add?</a> ", // CC user removed at request
                         DisplayOptionsInDropDownViewModel = BuildDisplayOptionsInDropDownViewModel(orderRow, idOrderRow),
-                        DisplayRowPriceViewModel = BuildDisplayRowPriceViewModel(orderRow, idOrderRow, orderHasAdditionalLocationsViewModel.OptionsCost),
+                        DisplayRowPriceViewModel =
+                            BuildDisplayRowPriceViewModel(orderRow, idOrderRow,
+                                orderHasAdditionalLocationsViewModel.OptionsCost),
                         idUser = orderRow.Order.WebUser.idUser,
-                        ManageModel = new ManageModel
+                        ShippingDetailsModel = new ShippingDetailsModel()
                         {
-                            HasLocalPassword = false,
-                            RegisterFields = new RegisterModel
-                            {
-                                BillingAddress = new AddressModel
-                                {
-
-                                    Name = webUser.FirstName + ' ' + webUser.LastName,
-                                    City = billingAddress.City,
-                                    Country = billingAddress.Country,
-                                    StreetAddress = billingAddress.StreetAddress,
-                                    StreetAddress2 = billingAddress.StreetAddress2,
-                                    State = billingAddress.State,
-                                    Zip = billingAddress.Zip,
-                                    Phone = billingAddress.Phone,
-                                    TypeOfAddress = AddressType.Billing
-                                },
-                                ShippingAddress = shippingAddress == null ? new AddressModel() : new AddressModel
+                            UserId = webUser.idUser,
+                            ShippingAddress = shippingAddress == null
+                                ? new AddressModel()
+                                : new AddressModel
                                 {
                                     City = shippingAddress.City,
                                     Country = shippingAddress.Country,
@@ -164,15 +153,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                                     Phone = shippingAddress.Phone,
                                     Name = shippingAddress.Name,
                                     TypeOfAddress = AddressType.Shipping
-                                },
-                                FirstName = webUser.FirstName,
-                                LastName = webUser.LastName,
-                                Institution = webUser.Institution.InstitutionName,
-                                Email = webUser.email,
-                                Title = webUser.Title,
-                                AccountDetailsTitle = WebUiConstants.ManageUser
-                            },
-                            StatusMessage = string.Empty
+                                }
                         },
                         OrderExists = orderRow.Order != null,
                         OrderHasAdditionalLocationsViewModel = orderHasAdditionalLocationsViewModel,
@@ -182,7 +163,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                         Origin = orderRow.Order.Origin,
                         UserComments = orderRow.Order.UserComments,
                         UserFullname = userFullName,
-                        UserDetails = string.Concat(userFullName, " - ", orderRow.Order.Institution, "<br>", webUser.email),
+                        UserDetails =
+                            string.Concat(userFullName, " - ", orderRow.Order.Institution, "<br>", webUser.email),
                         UserType = webUser.UserType
                     };
 
@@ -235,68 +217,69 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     Webinar = webinar,
                     WebinarFiles = webinar.WebinarFiles.ToList(),
-                };                
+                };
             }
 
             if (idWebinar.HasValue && idWebinar.Value > 0)
+            {
+                try
                 {
-                    try
+                    _logger.Info("Building ");
+
+                    var checkoutOptionsViewModel = new CheckoutOptionsViewModel
                     {
-                        _logger.Info("Building ");
-
-                        var checkoutOptionsViewModel = new CheckoutOptionsViewModel
+                        DisplayOptionsViewModel = new DisplayOptionsViewModel
                         {
-                            DisplayOptionsViewModel = new DisplayOptionsViewModel
-                            {
-                                EventTitle = webinarDetailsViewModel.Webinar.Title,
-                                idWebinar = webinarDetailsViewModel.Webinar.idWebinar,
-                                Options = _orderManagementService.GetOptionsByWebinarId(idWebinar.Value, false),
-                                WebinarDuration = webinarDetailsViewModel.Webinar.Duration,
-                                WebinarStatus = webinarDetailsViewModel.Webinar.Status
-                            },
-                            AdditionalLocations = null, //TODO: come back to
-                            ConnectionInfoPresent = webinarDetailsViewModel.Webinar.ConnectionInfo != null,
-                            WebinarDuration = webinarDetailsViewModel.Webinar.Duration,
+                            EventTitle = webinarDetailsViewModel.Webinar.Title,
                             idWebinar = webinarDetailsViewModel.Webinar.idWebinar,
-                            idUser = webinarDetailsViewModel.WebUser != null ? webinarDetailsViewModel.WebUser.idUser : 0,
-                            OrderExists = order != null,
+                            Options = _orderManagementService.GetOptionsByWebinarId(idWebinar.Value, false),
+                            WebinarDuration = webinarDetailsViewModel.Webinar.Duration,
                             WebinarStatus = webinarDetailsViewModel.Webinar.Status
-                        };
+                        },
+                        AdditionalLocations = null, //TODO: come back to
+                        ConnectionInfoPresent = webinarDetailsViewModel.Webinar.ConnectionInfo != null,
+                        WebinarDuration = webinarDetailsViewModel.Webinar.Duration,
+                        idWebinar = webinarDetailsViewModel.Webinar.idWebinar,
+                        idUser = webinarDetailsViewModel.WebUser != null ? webinarDetailsViewModel.WebUser.idUser : 0,
+                        OrderExists = order != null,
+                        WebinarStatus = webinarDetailsViewModel.Webinar.Status
+                    };
 
-                        if (checkoutOptionsViewModel.OrderExists)
+                    if (checkoutOptionsViewModel.OrderExists)
+                    {
+                        checkoutOptionsViewModel.OrderHasId = order.idOrder > 0;
+
+                        if (order.OrderRows != null)
                         {
-                            checkoutOptionsViewModel.OrderHasId = order.idOrder > 0;
-
-                            if (order.OrderRows != null)
-                            {
-                                checkoutOptionsViewModel.DisplayOptionsViewModel.OrderRowExists = true;
-                                checkoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
-                                    BuildDisplayRowPriceViewModel(order.OrderRows.First(), idOrderRow);
-                            }
-                            else
-                            {
-                                checkoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
-                                                                    BuildDisplayRowPriceViewModel(null, idOrderRow);                                
-                            }
-                            
+                            checkoutOptionsViewModel.DisplayOptionsViewModel.OrderRowExists = true;
+                            checkoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
+                                BuildDisplayRowPriceViewModel(order.OrderRows.First(), idOrderRow);
+                        }
+                        else
+                        {
+                            checkoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
+                                BuildDisplayRowPriceViewModel(null, idOrderRow);
                         }
 
-                        return checkoutOptionsViewModel;
+                    }
 
-                    }
-                    catch (Exception exception)
-                    {
-                        _logger.ErrorException("BuildCheckoutOptionsViewModel", exception);
-                        Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
-                        throw;
-                    }
+                    return checkoutOptionsViewModel;
 
                 }
-            
+                catch (Exception exception)
+                {
+                    _logger.ErrorException("BuildCheckoutOptionsViewModel", exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                    throw;
+                }
+
+            }
+
             return null;
         }
 
-        public DisplayRowPriceViewModel BuildDisplayRowPriceViewModel(OrderRow orderRow, int? idOrderRow, decimal? optionsCost = null)
+        public DisplayRowPriceViewModel BuildDisplayRowPriceViewModel(OrderRow orderRow, int? idOrderRow,
+            decimal? optionsCost = null)
         {
             if (idOrderRow.HasValue && idOrderRow.Value > 0)
             {
@@ -308,11 +291,12 @@ namespace CUWebinars.Web.Core.Orchestrators
                     if (orderRow.RowStatus != OrderRowStatus.Active)
                         return null;
 
-                    _logger.Info("Building price for " + orderRow.Order.idOrder );
+                    _logger.Info("Building price for " + orderRow.Order.idOrder);
 
                     if (!optionsCost.HasValue)
                     {
-                        var dataOperations = new Business.Core.DataOperations(GlobalConfig.GlobalConfigSingleton.DefaultConnectionString);
+                        var dataOperations =
+                            new Business.Core.DataOperations(GlobalConfig.GlobalConfigSingleton.DefaultConnectionString);
                         var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(orderRow.idWebinar);
                         optionsCost = additionalLocationsPricing.Single().Item2;
                     }
@@ -323,7 +307,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                         NumberOfAdditionalLocations = orderRow.AdditionalLocation.Count(),
                         OrderStatus = orderRow.Order.OrderStatus,
                         Price = orderRow.RegistrationType.Price,
-                        PricesAndDiscounts = _orderManagementService.CalculateOrderPrices(orderRow.Order, optionsCost.Value),
+                        PricesAndDiscounts =
+                            _orderManagementService.CalculateOrderPrices(orderRow.Order, optionsCost.Value),
                         RowPrice = orderRow.RowPrice,
                         RegistrationType = orderRow.RegistrationType
                     };
@@ -400,7 +385,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     _logger.Info("Building OrderHasAdditionalLocationsViewModel for: " + orderRow.Order.idOrder);
 
-                    var addressesAndOptionsCost = _orderManagementService.GetAdditionalLocationsPricing(orderRow.AdditionalLocation, orderRow.idWebinar);
+                    var addressesAndOptionsCost =
+                        _orderManagementService.GetAdditionalLocationsPricing(orderRow.AdditionalLocation,
+                            orderRow.idWebinar);
 
                     var orderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
                     {
@@ -428,8 +415,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public Tuple<string, string> CheckIfAddLocShouldHide(int optionId)
         {
-            var firstOrDefault =  _orderManagementService.GetRegTypesForOption(optionId)
-                .Select(o => new { Show = o.ShowLiveNotifications, Ship = o.ShowShippedNotifications})
+            var firstOrDefault = _orderManagementService.GetRegTypesForOption(optionId)
+                .Select(o => new {Show = o.ShowLiveNotifications, Ship = o.ShowShippedNotifications})
                 .FirstOrDefault();
 
             if (firstOrDefault != null)
@@ -450,7 +437,9 @@ namespace CUWebinars.Web.Core.Orchestrators
             _stateService.SetValue(DomainConstants.CheckoutInProcess, true);
 
             var webinar = _webinarManagementService.GetWebinar(formModel.idWebinar);
-            var newOrderRow = CreateOrderRow(webinar, formModel.AdditionalLocations == null ? null : formModel.AdditionalLocations.ToList(), formModel.RegistrationTypeId);
+            var newOrderRow = CreateOrderRow(webinar,
+                formModel.AdditionalLocations == null ? null : formModel.AdditionalLocations.ToList(),
+                formModel.RegistrationTypeId);
 
             var currentAffiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate");
             _orderManagementService.AttachAffiliate(currentAffiliate);
@@ -479,7 +468,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     "Mr",
                     null,
                     null);
- 
+
 
             var newOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
             newOrder.AuditInfo = _appHelper.GetUserAuditInfo();
@@ -524,18 +513,19 @@ namespace CUWebinars.Web.Core.Orchestrators
             int userId;
             if (int.TryParse(_globals.UnAuthenticatedUser, out userId))
                 return userId;
-            
+
             throw new FormatException("Value in AppSetting in Web.config must be a valid integer.");
         }
 
-        private OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocations, int registrationType)
+        private OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocations,
+            int registrationType)
         {
             //var currentOrder = _stateService.GetValue<Order>("CurrentOrder");
             // let's see if we can avoid the need for Session Var
 
             var orderRow = _orderManagementService.CreateOrderRow(webinar, additionalLocations, registrationType);
 
-            return orderRow;       
+            return orderRow;
         }
 
         public void Dispose()

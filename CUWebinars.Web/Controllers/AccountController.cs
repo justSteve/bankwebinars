@@ -1120,6 +1120,14 @@ namespace CUWebinars.Web.Controllers
             return Json(new { Result = WebUiConstants.Fail }); // This actually gets discarded by view.           
         }
 
+        [System.Web.Mvc.HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdateShippingDetails(ShippingDetailsModel shippingDetailsModel)
+        {
+            _accountControllerOrchestrator.UpdateShippingAddressDetails(shippingDetailsModel.ShippingAddress, shippingDetailsModel.UserId);
+            return View();
+        }
+
         //
         // POST: /Account/Disassociate
 
