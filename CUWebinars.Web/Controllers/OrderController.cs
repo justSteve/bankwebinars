@@ -316,11 +316,9 @@ namespace CUWebinars.Web.Controllers
         /// </summary>
         /// <param name="incomingOrderModel"></param>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         public JsonResult MigrateOrder(MigrateOrderModel migratedOrder)
         {
-
-
             int idOfLastOrder = default(int);
             string verificationKey = string.Empty;
             string confirmChangeEmailUrl = string.Empty;

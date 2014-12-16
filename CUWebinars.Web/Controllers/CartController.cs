@@ -63,9 +63,10 @@ namespace CUWebinars.Web.Controllers
                 try
                 {
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
-                    var orderID = model.Order.OrderRows.SingleOrDefault().idOrderRow;
-
+                    var orderID = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
+                     model.Order.OrderStatus = OrderStatus.Submitted;
                     _cartControllerOrchestrator.FireOrderSubmittedNotification(order: model.Order);
+
                     _cartControllerOrchestrator.SetOrderStatusToSubmitted(order: model.Order);
                 
 
