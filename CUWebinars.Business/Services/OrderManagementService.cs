@@ -559,7 +559,7 @@ namespace CUWebinars.Business.Services
                 ProcessDiscountCodes(currentOrder);
                 CalculateOrderPrices(currentOrder, additionalLocationsPricing.Single().Item2);
 
-                var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, 0);
+                var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder,  (int)currentOrder.OrderStatus);
 
 
                 _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
@@ -635,14 +635,14 @@ namespace CUWebinars.Business.Services
             ProcessDiscountCodes(currentOrder);
             CalculateOrderPrices(currentOrder, optionsPrice);
 
-            if (confirmChangeEmailLink == string.Empty)
-            {
-                //we are saving a non-confirmed order
-                var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, 1);
+            //if (confirmChangeEmailLink == string.Empty)
+            //{
+            //    //we are saving a non-confirmed order
+            //    var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, 1);
 
-                return updatedOrder;
+            //    return updatedOrder;
 
-            }
+            //}
 
             try
             {
