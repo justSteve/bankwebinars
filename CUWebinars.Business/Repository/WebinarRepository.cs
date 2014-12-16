@@ -90,7 +90,7 @@ namespace CUWebinars.Business.Repository
 
         public IQueryable<Order> GetOrdersByWebinar(int webinarId)
         {
-            return ((TTSWebinarsContext) db).Orders.Where(o => o.OrderRows.Single().Webinar.idWebinar == webinarId
+            return ((TTSWebinarsContext)db).Orders.Where(o => o.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Webinar.idWebinar == webinarId
                                                                && (o.OrderStatus == OrderStatus.Billed
                                                                    || o.OrderStatus == OrderStatus.Paid
                                                                    || o.OrderStatus == OrderStatus.Submitted));

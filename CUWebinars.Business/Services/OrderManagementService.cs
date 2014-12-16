@@ -555,7 +555,11 @@ namespace CUWebinars.Business.Services
             try
             {
                 var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
-                var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(currentOrder.OrderRows.Single().idWebinar);
+
+                var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(
+                    currentOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar
+                    );
+
                 ProcessDiscountCodes(currentOrder);
                 CalculateOrderPrices(currentOrder, additionalLocationsPricing.Single().Item2);
 
@@ -624,7 +628,7 @@ namespace CUWebinars.Business.Services
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink)
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
-            var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(currentOrder.OrderRows.Single().idWebinar);
+            var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(currentOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar);
             var tuple = additionalLocationsPricing.SingleOrDefault();
             decimal optionsPrice = 0M;
 

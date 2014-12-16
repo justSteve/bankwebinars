@@ -605,7 +605,7 @@ namespace CUWebinars.Web.Controllers
 
                     var additionalLocationsViewModel =
                         model.RegistrationSummaryViewModel.OrderHasAdditionalLocationsViewModel;
-                    var orderRow = model.Order.OrderRows.Single();
+                    var orderRow = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
                     var webUser = orderRow.Order.WebUser;
                     var userFullName = string.Concat(webUser.FirstName, " ", webUser.LastName);
                     var addresses = webUser.Addresses.ToArray();
@@ -652,7 +652,7 @@ namespace CUWebinars.Web.Controllers
                         OrderExists = true,
                         OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
                         {
-                            AdditionalLocations = model.Order.OrderRows.Single().AdditionalLocation,
+                            AdditionalLocations = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation,
                             Addresses = additionalLocationsViewModel.Addresses,
                             OptionsCost = additionalLocationsViewModel.OptionsCost,
                         },
@@ -703,7 +703,7 @@ namespace CUWebinars.Web.Controllers
 
             if (orderExists)
             {
-                additionalLocations = model.Order.OrderRows.Single().AdditionalLocation.ToList();
+                additionalLocations = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.ToList();
             }
 
             model.Topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar);
