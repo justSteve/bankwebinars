@@ -1,29 +1,49 @@
-﻿@{
-    ViewBag.Title = "Contact";
+﻿@using System.Configuration
+@{
+    ViewBag.Title = "Contact Us";
 }
-
-<hgroup class="title">
-    <h1>@ViewBag.Title.</h1>
-    <h2>@ViewBag.Message</h2>
-</hgroup>
 
 @section scripts
 {
-    
-        @Scripts.Render("~/bundles/jqueryval")
-    
+    @Scripts.Render("~/bundles/jqueryval")
 }
-
-<section class="contact">
-
-    <div class="container clearfix" id="main-content">
-        <div class="row-fluid reverse-order contact-page">
-            <div class="span7">
-                <script type="text/javascript" src="http://form.jotform.us/jsform/32686256940159"></script>            </div>
-            <!--close span7 -->
-        </div>
-        <!--close row-fluid-->
+<div id="page">
+    <div class="container visible-phone">
+        <p class="right"><a class="btn btn-primary scrollto" href="#secondary-nav">Page Menu &nbsp;<i class="icon-align-justify"></i></a></p>
     </div>
-    <!--close .container role="main-content" -->
+    <div class="hero-unit">
+        <div class="container">
 
-</section>
+            <h1>@ViewBag.Title</h1>
+        </div>
+        <!--close container-->
+    </div>
+    <section class="contact">
+
+        <div class="container clearfix" id="main-content">
+            <div class="row-fluid reverse-order contact-page">
+                <div class="span7">
+                    @{
+                        if (@ConfigurationManager.AppSettings["Tenant"] == "BankWebinars")
+                        {
+                        <text>
+                            <script type="text/javascript" src="http://form.jotformpro.com/jsform/43462160046952"></script></text>
+                        }
+
+                        if (@ConfigurationManager.AppSettings["Tenant"] == "CUWebinars")
+                        {
+                        <script type="text/javascript" src="http://form.jotform.us/jsform/32686256940159"></script>
+                        }
+                    }
+                    
+                </div>
+
+                </div>
+                <!--close span7 -->
+            </div>
+            <!--close row-fluid-->
+        </div>
+        <!--close .container role="main-content" -->
+
+    </section>
+</div>

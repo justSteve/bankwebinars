@@ -493,7 +493,6 @@
     <Content Include="Scripts\purl.js" />
     <Content Include="Scripts\underscore.js" />
     <Content Include="Scripts\underscore.min.js" />
-    <Content Include="Views\Cart\Partials\_DisplayRowPrice.cshtml" />
     <Content Include="Views\Admin\Home\_ImportOrder.cshtml" />
     <Content Include="Views\Admin\Home\_LogInAsUser.cshtml" />
     <Content Include="Views\Admin\Home\_ManualPasswordReset.cshtml" />
@@ -593,6 +592,7 @@
     <Content Include="Views\Home\PrivacyStatement.cshtml" />
     <Content Include="Views\Cart\Partials\_ConfirmModal.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\ShippingDetails.cshtml" />
+    <Content Include="Views\Home\ContactUsJF.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\packages\Selenium.WebDriver.ChromeDriver.2.9.0.0\content\chromedriver.exe">
@@ -1112,7 +1112,6 @@
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Views\Account\Partials\WebinarsUserGrid.ascx" />
-    <Content Include="Views\Account\ResetPasswordWhereNotVerified.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Register.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -1129,15 +1128,7 @@
     </Content>
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Account\_ChangePasswordPartial.cshtml" />
-    <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
-    <Content Include="Views\Account\_RemoveAccountPartial.cshtml" />
-    <Content Include="Views\Account\_SetPasswordPartial.cshtml" />
-    <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
-    <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\Manage.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
@@ -1169,8 +1160,6 @@
     <Content Include="Views\Home\RssFeedOfAddedEvents.cshtml" />
     <Content Include="Views\Home\WhatIsAWebinar.cshtml" />
     <Content Include="Views\Account\MyWebinars.cshtml" />
-    <Content Include="Views\Account\_RegisterPartial.cshtml" />
-    <Content Include="Views\Account\_RemoveExternalLoginsPartial.cshtml" />
     <Content Include="Views\Account\_SignInPartial.cshtml" />
     <Content Include="Views\Account\_ResetPasswordPartial.cshtml" />
     <Content Include="Views\Account\PasswordResetConfirm.cshtml">
@@ -1178,21 +1167,15 @@
     </Content>
     <Content Include="Views\Webinar\Partials\_OtherEventsBySpeaker.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\ChangePasswordFromResetKeyInputModel.cshtml" />
-    <Content Include="Views\Account\Partials\Archived.cshtml" />
     <Content Include="Views\Account\Partials\Recorded.cshtml" />
     <Content Include="Views\Account\Partials\Upcoming.cshtml" />
-    <Content Include="Views\Account\Partials\_Institution.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\HandoutsListing.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Address.cshtml" />
     <Content Include="Views\Account\_CreateUserForm.cshtml" />
-    <Content Include="Views\Account\test.cshtml" />
-    <Content Include="Views\Account\Closed.cshtml" />
     <Content Include="Views\Webinar\Partials\_RegistrationSummary.cshtml" />
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
     <Content Include="Views\Webinar\Calendar.cshtml" />
-    <Content Include="Views\Cart\GTWRegistration.cshtml" />
     <Content Include="Views\Shared\_LayoutCertificate.cshtml" />
-    <Content Include="Views\Home\COC.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\AdditionalLocationAdd.cshtml" />
     <Content Include="Views\Webinar\Partials\_AdditionalLocationsModal.cshtml" />
     <Content Include="Views\AdhocNotification\Index.cshtml" />
@@ -1203,9 +1186,6 @@
     <Content Include="Views\Webinar\Partials\_SendRecordingPosted.cshtml" />
     <Content Include="Views\Account\Confirmed.cshtml" />
     <Content Include="Views\Webinar\Partials\_UpdateConnectionInfo.cshtml" />
-    <Content Include="Views\Account\ThankYouConfirmed.cshtml" />
-    <Content Include="Views\Account\Partials\_Certificate.cshtml" />
-    <Content Include="Views\Home\ConfirmOrder.cshtml" />
     <Content Include="Views\Shared\Partials\_EditNameTitle.cshtml" />
     <Content Include="Views\Shared\Partials\_EditInsitution.cshtml" />
     <Content Include="Views\Shared\Partials\_EditBillingAddress.cshtml" />
