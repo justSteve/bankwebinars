@@ -55,7 +55,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 WebUser = orderManagementQueryResult.WebUser
             };
 
-            _commandProcessor.Execute(migrateOrderModel);
+            _commandProcessor.Execute(migrateOrderCommand);
 
             return migrateOrderCommand.OrderId;
         }

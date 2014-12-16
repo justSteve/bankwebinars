@@ -156,7 +156,7 @@ namespace CUWebinars.Web.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Signup2(CheckoutOptionsViewModel formModel)
         {
-            if (ModelState.IsValid) 
+            if (ModelState.IsValid)
             {
                 //var telemetry = new TelemetryClient();
                 //telemetry.TrackEvent("Signup2Start");
@@ -169,23 +169,23 @@ namespace CUWebinars.Web.Controllers
 
                     // todo: if in progress, will have to show populated partial view.
                     _logger.Info("Signup2 order initialized: " + _appHelper.GetUserAuditInfo());
-                   
+
 
                     return Json(new
                     {
                         success = "success",
                         orderId = order.idOrder,
-                        orderRowId = order.OrderRows.Single().idOrderRow,
+                        orderRowId = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow,
                         webinarId = formModel.idWebinar
-                    }, JsonRequestBehavior.AllowGet
-                        );
+                    }, JsonRequestBehavior.AllowGet);
 
                 }
                 catch (Exception exception)
                 {
-                    ModelState.AddModelError(string.Empty, "There has been an error at the server which has been logged.");
+                    ModelState.AddModelError(string.Empty,
+                        "There has been an error at the server which has been logged.");
                     _logger.FatalException("Signup2 order excepted: ", exception);
-                    
+
                     Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 }
             }
