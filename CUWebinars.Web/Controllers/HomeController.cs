@@ -1,5 +1,6 @@
 ﻿using System;
 using CUWebinars.Business.Repository;
+using CUWebinars.Web.Infrastructure.Attributes;
 using Ninject.Extensions.Logging;
 using System.Linq;
 using System.ServiceModel.Syndication;
@@ -8,6 +9,7 @@ using System.Xml;
 
 namespace CUWebinars.Web.Controllers
 {
+    [MonitorAffiliate]
     public class HomeController : Controller
     {
 

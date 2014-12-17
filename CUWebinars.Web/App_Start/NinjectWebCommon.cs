@@ -1,3 +1,4 @@
+using System.Web.Mvc;
 using BrockAllen.MembershipReboot;
 using BrockAllen.MembershipReboot.Ef;
 using BrockAllen.MembershipReboot.WebHost;
@@ -10,12 +11,14 @@ using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Services;
 using Ninject.Extensions.Logging;
 using Ninject.Extensions.Logging.Log4net.Infrastructure;
 using System.Linq;
 using System.Reflection;
 using System.Web.Http;
+using Ninject.Web.Mvc.FilterBindingSyntax;
 
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(CUWebinars.Web.App_Start.NinjectWebCommon), "Start")]
 [assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(CUWebinars.Web.App_Start.NinjectWebCommon), "Stop")]
@@ -173,6 +176,8 @@ namespace CUWebinars.Web.App_Start
                     loggerForMembershipService
                     );
             }).InRequestScope();
+
+            kernel.BindFilter<MonitorAffiliateFilter>(FilterScope.Action, 0).WhenControllerHas<MonitorAffiliateAttribute>();
 
             kernel.Bind<ICommandProcessor>().To<CommandProcessor>().InRequestScope();
             kernel.Bind<IQueryProcessor>().To<QueryProcessor>().InRequestScope();

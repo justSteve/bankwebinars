@@ -1,5 +1,6 @@
 ﻿using System.Configuration;
 using System.Diagnostics;
+using System.Linq.Expressions;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Exceptions;
@@ -180,11 +181,20 @@ namespace CUWebinars.Business.Services
             return new Tuple<string, decimal>(addresses.ToString(), optionsCost);
         }
 
+        public Affiliate GetAffiliateByDomain(string domain)
+        {
+            return _affiliateRepository.LoadByTTSDomain(domain);
+        }
+
         public Affiliate GetAffiliateById(int id)
         {
             return _affiliateRepository.FindById(id);
         }
 
+        public Affiliate GetAffiliateByIdLoaded(int id, params Expression<Func<Affiliate, object>>[] includeProperties)
+        {
+            return _affiliateRepository.FindByIdWithIncluding(id, includeProperties);
+        }
 
 
         public IDictionary<RegType, bool> GetOptionsByWebinarId(int id, bool detached)
