@@ -177,8 +177,6 @@ namespace CUWebinars.Web.App_Start
                     );
             }).InRequestScope();
 
-            kernel.BindFilter<MonitorAffiliateFilter>(FilterScope.Action, 0).WhenControllerHas<MonitorAffiliateAttribute>();
-
             kernel.Bind<ICommandProcessor>().To<CommandProcessor>().InRequestScope();
             kernel.Bind<IQueryProcessor>().To<QueryProcessor>().InRequestScope();
             AutoRegisterType(typeof(ICommandHandler<>), kernel); // Register ICommandHandler
