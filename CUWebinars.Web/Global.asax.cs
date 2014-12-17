@@ -33,7 +33,6 @@ namespace CUWebinars.Web
         private static readonly IInstitutionRepository institutionRepository = new InstitutionRepository(ctx);
         private static readonly IStateService StateService = new StateService();
 
-        const string AffiliateId = "idAff";
         const string HtmlBreak = "<br />";
         const string SessionStartError = "ERROR: --SESSION START-- ";
         const char Pipe = '|';
@@ -104,7 +103,7 @@ namespace CUWebinars.Web
                 StateService.SetValue("IncludeUpcoming", true);
                 StateService.SetValue("searchExtent", "Upcoming");
 
-                StateService.SetValue("CurrentAffiliate", affiliateRepository.FindByIdWithIncluding(19, a => a.WebUser));
+                StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(19, a => a.WebUser));
                 StateService.SetValue("AValidInstitution", institutionRepository.FindFirst());
 
                 //This session var lets us understand the origin of the Affiliate session - 
@@ -112,30 +111,30 @@ namespace CUWebinars.Web
                 //Here we the initial value to 'default' ... later code will
                 // override if conditions dictate.
                 StateService.SetValue("AffiliateSessionSource", "default" + Pipe + AppConst.DEFAULT_AFFILIATE);
-                StateService.SetValue("SubdomainBranding", @System.Configuration.ConfigurationManager.AppSettings[AppConst.TESTING_URL]);
+                StateService.SetValue(WebUiConstants.SubdomainBranding, @System.Configuration.ConfigurationManager.AppSettings[AppConst.TESTING_URL]);
 
                 //following are values to be stored for audit purposes.
                 if (HttpContext.Current.Request.UrlReferrer != null)
-                    StateService.SetValue("SubdomainBranding", HttpContext.Current.Request.UrlReferrer.ToString().Trim());
+                    StateService.SetValue(WebUiConstants.SubdomainBranding, HttpContext.Current.Request.UrlReferrer.ToString().Trim());
                 StateService.SetValue("FirstPage", HttpContext.Current.Request.Url.ToString().Trim());
                 StateService.SetValue("InitialQueryString", Request.Url.Query);
                 StateService.SetValue(WebUiConstants.SessionId, HttpContext.Current.Session.SessionID);
 
                 //DETERMINE CURRENT AFFILIATE
                 //MEHTOD 1: VIA QUERY STRING -- idAff=[idUserAff]   
-                if (!string.IsNullOrEmpty(Request.QueryString[AffiliateId]))
+                if (!string.IsNullOrEmpty(Request.QueryString[WebUiConstants.AffiliateId]))
                 {
 
                     int loadAff;
 
-                    if (int.TryParse(Request.QueryString[AffiliateId], out loadAff))
+                    if (int.TryParse(Request.QueryString[WebUiConstants.AffiliateId], out loadAff))
                     {
                         try
                         {
-                            StateService.SetValue("AffiliateSessionSource", AffiliateId + Pipe + loadAff);
+                            StateService.SetValue("AffiliateSessionSource", WebUiConstants.AffiliateId + Pipe + loadAff);
                             //TODO 4BW unit test required of this method of loading affiliate by id
                             // determine the current affiliate
-                            StateService.SetValue("CurrentAffiliate", affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser));
+                            StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser));
                         }
                         catch (Exception ex)
                         {
@@ -151,7 +150,7 @@ namespace CUWebinars.Web
                 }
 
 
-                var subdomainBranding = StateService.GetValue<string>("SubdomainBranding");
+                var subdomainBranding = StateService.GetValue<string>(WebUiConstants.SubdomainBranding);
                 //METHOD 2: VIA THE DOMAIN NAME BEING RUN
                 //e.g. http://webinars.cftws.org - means CurrentAffiliate should be 'cftws'
                 if (!string.IsNullOrEmpty(subdomainBranding))
@@ -169,7 +168,7 @@ namespace CUWebinars.Web
                             //   for use (as a shortcut or nicname) by us to refer to a given affiliate. It may or may not
                             //   be literally the Domain Name used by the given affiliate.
 
-                            StateService.SetValue("CurrentAffiliate", affiliateRepository.LoadByTTSDomain(affilliateDomain) ?? affiliateRepository.LoadByTTSDomain("bennett"));
+                            StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.LoadByTTSDomain(affilliateDomain) ?? affiliateRepository.LoadByTTSDomain("bennett"));
                         }
                         catch (Exception ex)
                         {

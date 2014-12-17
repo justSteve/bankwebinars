@@ -26,6 +26,10 @@ namespace CUWebinars.Web.Helpers
         public const string Success = "Success";
 
 
+        public const string AffiliateId = "idAff";
+        public const string CurrentAffiliate = "CurrentAffiliate";
         public const string SessionId = "SessionID";
+        public const string SubdomainBranding = "SubdomainBranding";
+
     }
 }

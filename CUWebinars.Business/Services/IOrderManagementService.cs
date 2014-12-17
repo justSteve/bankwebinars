@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Core;
+﻿using System.Linq.Expressions;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,9 @@ namespace CUWebinars.Business.Services
         void FireSendRecordingIsPostedEvent(IList<Order> orders);
         void FireSendReminderNotificationEvent(IList<Order> orders);
         Tuple<string, decimal> GetAdditionalLocationsPricing(IEnumerable<AdditionalLocation> additionalLocations, int idWebinar);
+        Affiliate GetAffiliateByDomain(string domain);
         Affiliate GetAffiliateById(int id);
+        Affiliate GetAffiliateByIdLoaded(int id, params Expression<Func<Affiliate, object>>[] includeProperties);
         Discount GetDiscount(string email);
         IDictionary<RegType, bool> GetOptionsByWebinarId(int id, bool detached);
         Order GetOrderById(int id);

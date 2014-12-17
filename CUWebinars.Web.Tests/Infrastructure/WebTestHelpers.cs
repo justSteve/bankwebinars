@@ -9,6 +9,7 @@ namespace CUWebinars.Web.Tests.Infrastructure
 {
     internal class WebTestHelpers
     {
+        internal const string ReferrerAddress = "google.com";
         private static WebTestsGlobalConfig _webTestsGlobals = WebTestsGlobalConfig.WebTestsGlobalConfigSingleton;
 
         internal static HttpContextBase GetMockedHttpContext()
@@ -39,7 +40,7 @@ namespace CUWebinars.Web.Tests.Infrastructure
             request.Setup(req => req.RequestContext).Returns(requestContext.Object);
             request.Setup(req => req.UrlReferrer).Returns(new Uri(_webTestsGlobals.SiteUrl));
             requestContext.Setup(x => x.RouteData).Returns(new RouteData());
-            request.SetupGet(req => req.Headers).Returns(new NameValueCollection());
+            request.SetupGet(req => req["referred"]).Returns(ReferrerAddress);
 
             //  we also need to assign a value to HttpContext.Current as it is used in the AppHelper.GetUserAuditInfo method
             //HttpContext.Current = new HttpContext(

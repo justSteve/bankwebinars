@@ -134,6 +134,7 @@
   <ItemGroup>
     <Compile Include="Fakes\HttpRequestFake1.cs" />
     <Compile Include="Infrastructure\HttpContextFactory.cs" />
+    <Compile Include="Infrastructure\TestCategories.cs" />
     <Compile Include="Infrastructure\WebTestHelpers.cs" />
     <Compile Include="Infrastructure\WebTestsGlobalConfig.cs" />
     <Compile Include="UnitTests\AccountControllerOrchestratorTests.cs" />
