@@ -647,15 +647,6 @@ namespace CUWebinars.Business.Services
             ProcessDiscountCodes(currentOrder);
             CalculateOrderPrices(currentOrder, optionsPrice);
 
-            //if (confirmChangeEmailLink == string.Empty)
-            //{
-            //    //we are saving a non-confirmed order
-            //    var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, 1);
-
-            //    return updatedOrder;
-
-            //}
-
             try
             {
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, 0);
@@ -679,15 +670,18 @@ namespace CUWebinars.Business.Services
                 var relativePath = Path.Combine(@"App_Data\Notifications",
                     string.Format("OrderNotification-{0}{1}",
                         DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm"));
-
-                AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
+                if (currentOrder.Origin != "Migrator")
                 {
-                    EventObject = orderSubmittedViewModel,
-                    RelativeFilePath = relativePath
-                });
+                    AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
+                    {
+                        EventObject = orderSubmittedViewModel,
+                        RelativeFilePath = relativePath
+                    });
 
-                _logger.Info("Persisted Email for Order {0}:{1}", currentOrder.idOrder, relativePath);
+                    _logger.Info("Persisted Email for Order {0}:{1}", currentOrder.idOrder, relativePath);
 
+                }
+                
                 foreach (var evt in GetEvents())
                 {
                     _ttsConfig.NotificationEventBus.RaiseEvent(evt);

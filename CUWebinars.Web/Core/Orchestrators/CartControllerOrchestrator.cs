@@ -464,7 +464,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     USTimeZone.Central,
                     UserType.Customer,
                     _stateService.GetValue<int>("AValidInstitution"),
-                    null, // why is this null when it is expected to be not-null within CreateWebUser
+                    null, 
                     "Mr",
                     null,
                     null);

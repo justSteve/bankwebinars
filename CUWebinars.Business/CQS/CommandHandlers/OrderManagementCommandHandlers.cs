@@ -196,10 +196,13 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             if (command == null) throw new ArgumentNullException("command");
             var importedOrder = _orderManagementService.CreateNewOrder(command.Affiliate, command.WebUser, command.Webinar, command.OrderRow);
 
-            importedOrder.AdminComments = "incomingOrderModel.AdminComments";
+            importedOrder.AdminComments = "Mirgrate on: " + DateTime.Now.ToShortDateString();
             importedOrder.AffiliateComments = command.AffiliateComments;
-            importedOrder.UserComments = "incomingOrderModel.UserComments";
-            importedOrder.Origin = "incomingOrderModel.Origin";
+            importedOrder.UserComments = "";
+            importedOrder.Origin = "Migrator";
+            importedOrder.OrderStatus = OrderStatus.Submitted;
+            //importedOrder.idOrderLegacy = command.
+
             importedOrder.FirstName = command.FirstName;
             importedOrder.LastName = command.LastName;
             importedOrder.Institution = command.WebUser.Institution.InstitutionName;
@@ -220,6 +223,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             importedOrder.ShippingZip = command.ShippingAddress.Zip;
             importedOrder.ShippingFirstName = command.FirstName;
             importedOrder.ShippingLastName = command.LastName;
+
 
             _orderManagementService.SaveOrderChanges(importedOrder, command.VerificationKey, command.ConfirmChangeEmailUrl);
 
