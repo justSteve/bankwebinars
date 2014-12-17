@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Models;
+﻿using System;
+using CUWebinars.Business.Models;
 using System.Collections.Generic;
 
 namespace CUWebinars.Web.Models
@@ -23,6 +24,10 @@ namespace CUWebinars.Web.Models
         public Address ShippingAddress { get; set; }
         public OrderStatus Status { get; set; }
         public int idDiscount { get; set; }
+        public DateTime OrderDate { get; set; }
+        public DateTime ShipmentDate { get; set; }
+        public decimal Total { get; set; }
+
 
     }
 

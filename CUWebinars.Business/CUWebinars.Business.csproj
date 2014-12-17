@@ -145,6 +145,8 @@
     <Compile Include="CQS\IQueryHandler.cs" />
     <Compile Include="CQS\IQueryProcessor.cs" />
     <Compile Include="CQS\PostCommitRegistratorImpl.cs" />
+    <Compile Include="CQS\Queries\MigratorQuery.cs" />
+    <Compile Include="CQS\Queries\MigratorQueryResult.cs" />
     <Compile Include="CQS\Queries\OrderManagementQuery.cs" />
     <Compile Include="CQS\Queries\OrderManagementQueryResult.cs" />
     <Compile Include="CQS\QueryHandlers\OrderManagementQueryHandlers.cs" />

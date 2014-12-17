@@ -5,8 +5,9 @@ using System;
 
 namespace CUWebinars.Business.CQS.QueryHandlers
 {
-    public class OrderManagementQueryHandlers : 
-        IQueryHandler<OrderManagementQuery, OrderManagementQueryResult>
+    public class OrderManagementQueryHandlers :
+        IQueryHandler<OrderManagementQuery, OrderManagementQueryResult>,
+IQueryHandler<MirgratorQuery, MigratorQueryResult>
     {
         private readonly IMembershipService _membershipService;
         private readonly IOrderManagementService _orderManagementService;
@@ -33,6 +34,20 @@ namespace CUWebinars.Business.CQS.QueryHandlers
             };
 
             return orderManagementQueryResult;
+        }
+
+        public MigratorQueryResult Handle(MirgratorQuery query)
+        {
+            if (query == null) throw new ArgumentNullException("query");
+
+            var migrateQueryResult = new MigratorQueryResult
+            {
+                Affiliate = _orderManagementService.GetAffiliateById(query.AffiliateId),
+                WebUser = _membershipService.GetUserByEmail(query.Email),
+                Webinar = _webinarManagementService.GetWebinar(query.WebinarId)
+            };
+
+            return migrateQueryResult;
         }
 
         public void Dispose()

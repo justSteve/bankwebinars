@@ -14,14 +14,14 @@ namespace CUWebinars.Web.Core.Orchestrators
             );
         int MigrateOrder(MigrateOrderModel migrateOrderModel,
             string email,
-            OrderManagementQueryResult orderManagementQueryResult,
+            MigratorQueryResult migratorQueryResult,
             string verificationKey,
             string confirmChangeEmailUrl
             );
         void FinalizeNewRegistration(IncomingOrderModel incomingOrderModel, string verificationKey);
         void FinalizeMigratedRegistation(MigrateOrderModel migrateOrder, string verificationKey);
         OrderManagementQueryResult GetPreparatoryData(IncomingOrderModel incomingOrderModel, string email);
-        OrderManagementQueryResult GetPreparatoryDataForMigrator(MigrateOrderModel migrateOrder, string email);
+        MigratorQueryResult GetPreparatoryDataForMigrator(MigrateOrderModel migrateOrder, string email);
         string GetConfirmChangeEmailLinkForNewUserAccount();
         string GetVerificationKeyForNewUserAccount();
         WebUser ProcessNewUser(IncomingOrderModel incomingOrderModel, string email);

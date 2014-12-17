@@ -39,150 +39,6 @@ namespace CUWebinars.Web.Controllers
             _appHelper = appHelper;
         }
 
-        [HttpPost]
-        [AllowAnonymous]
-        public ActionResult jf_Registrations(JotFormModel incomingFormCollection)
-        {
-            int idOfLastOrder = default(int);
-            string verificationKey = string.Empty;
-            string confirmChangeEmailUrl = string.Empty;
-            var incomingOrderModel = new IncomingOrderModel();
-
-            //Debug.Assert(incomingOrderModel.Email != null, "incomingOrderModel.Email != null");
-            _logger.Info("Order creation on email: " + incomingOrderModel.Email);
-
-            var json_serializer = new JavaScriptSerializer();
-            var rawInfo = (IDictionary<string, object>)json_serializer.DeserializeObject(incomingFormCollection.rawRequest);
-
-            JotFormOrderModel incomingJotFormOrder = JsonConvert.DeserializeObject<JotFormOrderModel>(incomingFormCollection.rawRequest);
-
-
-            if (!ModelState.IsValid)
-            {
-                _logger.Fatal("Invalid JotFormModel State: " + incomingOrderModel.Email);
-
-                var myError = ProcessModelStateErrors();
-                return Json(new { Result = WebUiConstants.Fail, Errors = myError });
-            }
-
-            try
-            {
-                incomingOrderModel.idAffiliate = 19;
-                incomingOrderModel.AffiliateComments = "form.submissionID: " + incomingFormCollection.submissionID;
-                incomingOrderModel.BillingAddress = new Address();
-                incomingOrderModel.BillingAddress.AddressType = "Billing";
-                incomingOrderModel.BillingAddress.City = incomingJotFormOrder.q7_address.city;
-                incomingOrderModel.BillingAddress.Country = incomingJotFormOrder.q7_address.country;
-                incomingOrderModel.BillingAddress.Name = incomingJotFormOrder.q4_name.first + " " + incomingJotFormOrder.q4_name.last;
-                incomingOrderModel.BillingAddress.Phone = "(" + incomingJotFormOrder.q6_phoneNumber6.area + ")" + incomingJotFormOrder.q6_phoneNumber6.phone;
-                incomingOrderModel.BillingAddress.State = incomingJotFormOrder.q7_address.state;
-                incomingOrderModel.BillingAddress.StreetAddress = incomingJotFormOrder.q7_address.addr_line1;
-                incomingOrderModel.BillingAddress.StreetAddress2 = incomingJotFormOrder.q7_address.addr_line2;
-                incomingOrderModel.BillingAddress.Zip = incomingJotFormOrder.q7_address.postal;
-                incomingOrderModel.ShippingAddress = new Address();
-                incomingOrderModel.ShippingAddress.AddressType = "Shipping";
-                incomingOrderModel.ShippingAddress.City = incomingJotFormOrder.q7_address.city;
-                incomingOrderModel.ShippingAddress.Country = incomingJotFormOrder.q7_address.country;
-                incomingOrderModel.ShippingAddress.Name = incomingJotFormOrder.q4_name.first + " " + incomingJotFormOrder.q4_name.last;
-                incomingOrderModel.ShippingAddress.Phone = "(" + incomingJotFormOrder.q6_phoneNumber6.area + ")" + incomingJotFormOrder.q6_phoneNumber6.phone;
-                incomingOrderModel.ShippingAddress.State = incomingJotFormOrder.q7_address.state;
-                incomingOrderModel.ShippingAddress.StreetAddress = incomingJotFormOrder.q7_address.addr_line1;
-                incomingOrderModel.ShippingAddress.StreetAddress2 = incomingJotFormOrder.q7_address.addr_line2;
-                incomingOrderModel.ShippingAddress.Zip = incomingJotFormOrder.q7_address.postal;
-
-
-                incomingOrderModel.Email = incomingJotFormOrder.q5_email5;
-                incomingOrderModel.FirstName = incomingJotFormOrder.q4_name.first;
-                incomingOrderModel.LastName = incomingJotFormOrder.q4_name.last;
-                //incomingOrderModel. = incomingJotFormOrder.q8_institution;
-                incomingOrderModel.Institution = incomingJotFormOrder.q8_institution;
-                incomingOrderModel.Origin = "jotFormRestRequest";
-                incomingOrderModel.Title = incomingJotFormOrder.q9_title;
-
-                incomingOrderModel.idWebinar = Convert.ToInt32(incomingJotFormOrder.q11_webinarid);
-
-
-
-                var orderManagementQueryResult = _orderControllerOrchestrator.GetPreparatoryData(incomingOrderModel,
-                    incomingOrderModel.Email);
-                var webinar = orderManagementQueryResult.Webinar;
-                var idRegtype = 0;
-                //"Live Session Only - $155"
-                var label = incomingJotFormOrder.q10_registrationType.ToLower().Split('-')[0].Trim();
-                switch (label)
-                {
-                    case "live session only":
-                        idRegtype = webinar.Duration == 1 ? 97 : 84;
-                        break;
-
-                    case "ondemand recording only":
-                        idRegtype = webinar.Duration == 1 ? 98 : 85;
-                        break;
-                    case "cd":
-                        // "cd-rom and hardcopy handouts": the split on - catches (incorrectly) cd-rom
-                        idRegtype = webinar.Duration == 1 ? 99 : 86;
-                        break;
-                    case "live plus ondemand weblinks":
-                        idRegtype = webinar.Duration == 1 ? 100 : 87;
-                        break;
-
-                    case "premier package":
-                        idRegtype = webinar.Duration == 1 ? 101 : 88;
-                        break;
-                    default:
-                        _logger.Error("invalid regType. Label passed: " + label);
-                        break;
-                }
-
-                incomingOrderModel.idRegType = idRegtype;
-
-
-                if (ReferenceEquals(null, orderManagementQueryResult.WebUser))
-                {
-                    try
-                    {
-                        orderManagementQueryResult.WebUser =
-                            _orderControllerOrchestrator.ProcessNewUser(incomingOrderModel, incomingOrderModel.Email);
-
-                        verificationKey = _orderControllerOrchestrator.GetVerificationKeyForNewUserAccount();
-
-                        confirmChangeEmailUrl =
-                            _orderControllerOrchestrator.GetConfirmChangeEmailLinkForNewUserAccount();
-
-                        _orderControllerOrchestrator.FinalizeNewRegistration(incomingOrderModel, verificationKey);
-                        //  Now we clear the value, so TtsSmtpMessageDelivery can go back to business as usual.
-                        //_stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
-                        _logger.Info(string.Format("CreateOrder|CreateUser Succeeded: {0}", incomingOrderModel.Email));
-                    }
-                    catch (Exception exception)
-                    {
-                        _logger.ErrorException(
-                            string.Format("CreateOrder|CreateUser failed: {0}", exception.Message), exception);
-                        Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
-                        throw;
-                    }
-                }
-
-                idOfLastOrder = _orderControllerOrchestrator.CreateNewOrder(incomingOrderModel, incomingOrderModel.Email,
-                    orderManagementQueryResult, verificationKey, confirmChangeEmailUrl);
-
-                //idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
-                _logger.Info(string.Format("CreateOrder|CreateNewOrder: {0}", idOfLastOrder));
-
-                return Json(new { Result = idOfLastOrder.ToString() }, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception exception)
-            {
-                var errString = string.Format("Order creation failed on {0} - {1} with msg: {2}",
-                   incomingOrderModel.Email, incomingOrderModel.idWebinar, exception.Message);
-                _logger.ErrorException(errString, exception);
-            }
-
-            //return View("Error");
-            return Json(new { Result = idOfLastOrder }, JsonRequestBehavior.AllowGet);
-            //return Json(new { Result = WebUiConstants.Fail });}
-        }
-
         [HttpGet]
         public JsonResult GetWebinarDetails(int idWebinar)
         {
@@ -335,13 +191,13 @@ namespace CUWebinars.Web.Controllers
 
                 _logger.Info("Begin migrate: " + email);
 
-                var orderManagementQueryResult = _orderControllerOrchestrator.GetPreparatoryDataForMigrator(migratedOrder, email);
+                var migratorQueryResult = _orderControllerOrchestrator.GetPreparatoryDataForMigrator(migratedOrder, email);
 
-                if (ReferenceEquals(null, orderManagementQueryResult.WebUser))
+                if (ReferenceEquals(null, migratorQueryResult.WebUser))
                 {
                     try
                     {
-                        orderManagementQueryResult.WebUser =
+                        migratorQueryResult.WebUser =
                             _orderControllerOrchestrator.MigrateUser(migratedOrder, email);
 
                         verificationKey = _orderControllerOrchestrator.GetVerificationKeyForNewUserAccount();
@@ -363,7 +219,7 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 idOfLastOrder = _orderControllerOrchestrator.MigrateOrder(migratedOrder, email,
-                    orderManagementQueryResult, verificationKey, confirmChangeEmailUrl);
+                    migratorQueryResult, verificationKey, confirmChangeEmailUrl);
 
                 //idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
                 _logger.Info(string.Format("MigrateOrder|CreateNewOrder: {0}", idOfLastOrder));

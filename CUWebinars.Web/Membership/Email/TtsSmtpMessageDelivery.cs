@@ -24,6 +24,10 @@ namespace CUWebinars.Web.Membership.Email
             {
                 _stateService.ClearValue(DomainConstants.UserCreatedDuringCartCheckout);
                 return;
+            } else if (_stateService.HasValue(DomainConstants.UserCreatedViaMigrator))
+            {
+                _stateService.ClearValue(DomainConstants.UserCreatedDuringCartCheckout);
+                return;
             }
 
             var mailMessage = new MailMessage();

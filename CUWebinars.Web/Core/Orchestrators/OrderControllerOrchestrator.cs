@@ -25,7 +25,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public int MigrateOrder(MigrateOrderModel migrateOrderModel,
                     string email,
-                    OrderManagementQueryResult orderManagementQueryResult,
+                    MigratorQueryResult migratorQueryResult,
                     string verificationKey,
                     string confirmChangeEmailUrl)
         {
@@ -34,14 +34,14 @@ namespace CUWebinars.Web.Core.Orchestrators
                 AdditionalLocations = migrateOrderModel.AdditionalLocations,
                 Email = email,
                 RegistrationType = migrateOrderModel.idRegType,
-                Webinar = orderManagementQueryResult.Webinar,
+                Webinar = migratorQueryResult.Webinar,
             };
 
             _commandProcessor.Execute(addOrderRowCommand);
 
             var migrateOrderCommand = new MigrateOrderCommand()
             {
-                Affiliate = orderManagementQueryResult.Affiliate,
+                Affiliate = migratorQueryResult.Affiliate,
                 AffiliateComments = migrateOrderModel.AffiliateComments,
                 BillingAddress = migrateOrderModel.BillingAddress,
                 ConfirmChangeEmailUrl = confirmChangeEmailUrl,
@@ -51,8 +51,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 OrderRow = addOrderRowCommand.OrderRow, // out parameter of addOrderRowCommand command
                 ShippingAddress = migrateOrderModel.ShippingAddress,
                 VerificationKey = verificationKey,
-                Webinar = orderManagementQueryResult.Webinar,
-                WebUser = orderManagementQueryResult.WebUser
+                Webinar = migratorQueryResult.Webinar,
+                WebUser = migratorQueryResult.WebUser
             };
 
             _commandProcessor.Execute(migrateOrderCommand);
@@ -124,16 +124,16 @@ namespace CUWebinars.Web.Core.Orchestrators
             _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
         }
 
-        public OrderManagementQueryResult GetPreparatoryDataForMigrator(MigrateOrderModel migrateOrderModel, string email)
+        public MigratorQueryResult GetPreparatoryDataForMigrator(MigrateOrderModel migrateOrderModel, string email)
         {
-            var orderManagementQuery = new OrderManagementQuery
+            var migratorQuery = new MirgratorQuery
             {
                 AffiliateId = migrateOrderModel.idAffiliate,
                 Email = email,
                 WebinarId = migrateOrderModel.idWebinar
             };
 
-            return _queryProcessor.Process(orderManagementQuery);
+            return _queryProcessor.Process(migratorQuery);
         }
         public OrderManagementQueryResult GetPreparatoryData(IncomingOrderModel incomingOrderModel, string email)
         {
