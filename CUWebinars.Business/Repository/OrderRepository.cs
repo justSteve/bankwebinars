@@ -341,13 +341,13 @@ namespace CUWebinars.Business.Repository
                 }
 
             }
-            else
-            {
-                if (isFromSignup.HasValue && isFromSignup == 0)
-                {
-                    order.OrderStatus = OrderStatus.Submitted;
-                }
-            }
+            //else
+            //{
+            //    if (isFromSignup.HasValue && isFromSignup == 0)
+            //    {
+            //        order.OrderStatus = OrderStatus.Submitted;
+            //    }
+            //}
 
             db.SaveChanges();
 

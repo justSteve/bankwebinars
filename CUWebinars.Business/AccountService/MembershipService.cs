@@ -134,7 +134,7 @@ namespace CUWebinars.Business.AccountService
             if (firstName == null) throw new ArgumentNullException("firstName");
             if (lastName == null) throw new ArgumentNullException("lastName");
             if (email == null) throw new ArgumentNullException("email");
-            if (addresses == null) throw new ArgumentNullException("addresses");
+            //if (addresses == null) throw new ArgumentNullException("addresses");
 
             if (idUserImported == 0) idUserImported = null;
 

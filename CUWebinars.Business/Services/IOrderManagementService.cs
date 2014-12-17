@@ -36,7 +36,6 @@ namespace CUWebinars.Business.Services
         Discount GetDiscount(string email);
         IDictionary<RegType, bool> GetOptionsByWebinarId(int id, bool detached);
         Order GetOrderById(int id);
-        string GetOrderInitiator();
         IList<Order> GetOrdersByUserId(int id);
         IList<Order> GetOrdersForLiveNotifications(int idWebinar);
         IList<Order> GetOrdersForRecordedNotifications(int idWebinar);

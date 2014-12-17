@@ -319,12 +319,6 @@ namespace CUWebinars.Business.Services
         //    return GetAuthenticatedUser(userFacadeInstance);
         //}
 
-        public string GetOrderInitiator()
-        {
-            //TODO: GetOrderInitiator() returns the source of the order (migrated, imported, end-user, affiliate)
-            return "0";
-        }
-
         public IEnumerable<IEvent> GetEvents()
         {
             return _events;
@@ -792,6 +786,7 @@ namespace CUWebinars.Business.Services
         {
 
             var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow);
+            //TODO: Do we need to insure that a webuser record for notauthenticated@cuwebinars.com exists?
             var email = webUser == null ? "notauthenticated@cuwebinars.com" : webUser.email;
             _logger.Info("CreateNewOrder: " + email + "| " + orderRow.Webinar.Title + "| " + orderRow.RegistrationType.OptionLabel);
             return order;

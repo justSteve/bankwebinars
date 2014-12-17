@@ -179,7 +179,6 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             importedOrder.ShippingFirstName = command.FirstName;
             importedOrder.ShippingLastName = command.LastName;
 
-            //importedOrder.OrderStatus = OrderStatus.Submitted;
 
             _orderManagementService.SaveOrderChanges(importedOrder, command.VerificationKey, command.ConfirmChangeEmailUrl);
 

@@ -461,7 +461,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     "Authenticated",
                     string.Empty,
                     string.Concat(_stateService.GetValue<string>(WebUiConstants.SessionId), "@notauthenticated.com"),
-                    USTimeZone.Alaska,
+                    USTimeZone.Central,
                     UserType.Customer,
                     _stateService.GetValue<int>("AValidInstitution"),
                     null, // why is this null when it is expected to be not-null within CreateWebUser
@@ -472,7 +472,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             var newOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
             newOrder.AuditInfo = _appHelper.GetUserAuditInfo();
-            newOrder.Origin = _orderManagementService.GetOrderInitiator();
+            newOrder.Origin = "Cart";
 
             newOrder = _orderManagementService.SaveOrderChanges(newOrder, string.Empty, string.Empty);
 
