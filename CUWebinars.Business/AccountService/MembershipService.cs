@@ -1,14 +1,13 @@
 ﻿
-using System.Globalization;
-using System.Text;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
+using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ninject.Extensions.Logging;
+using System.Text;
 
 namespace CUWebinars.Business.AccountService
 {
@@ -21,8 +20,6 @@ namespace CUWebinars.Business.AccountService
         private readonly IWebUserRepository _webUserRepository;
         private readonly ILogger _logger;
         private bool _disposed;
-
-        //TODO: Check logging usage in the class. My inclination is to step thru each substantive method here and insert at least an info level log. Exceptions as error or fatal. Argument against?
 
         public MembershipService(IInstitutionRepository institutionRepository,
             IRefDataRepository refDataRepository,
@@ -41,6 +38,7 @@ namespace CUWebinars.Business.AccountService
 
         public WebUser GetDetailsOfUser(string email)
         {
+            if (email == null) throw new ArgumentNullException("email");
             var webUser = _refDataRepository.GetWebUserByEmail(email);
             return webUser;
         }
@@ -52,13 +50,14 @@ namespace CUWebinars.Business.AccountService
         /// <returns></returns>
         public WebUser GetUserByEmail(string email)
         {
+            if (email == null) throw new ArgumentNullException("email");
             var webUser = _webUserRepository.GetWebUserByEmail(email);
             return webUser;
         }
         
         public WebUser GetUserByEmailLoadedWithOrdersData(string email)
         {
-            if (string.IsNullOrWhiteSpace(email)) throw new ArgumentNullException("email");
+            if (email == null) throw new ArgumentNullException("email");
             var webUser = _webUserRepository.GetWebUserByEmailLoadedWithOrdersData(email);
             return webUser;
         }
@@ -70,21 +69,24 @@ namespace CUWebinars.Business.AccountService
 
         public UserAccount GetUserAccountByEmail(string tenant, string email)
         {
-            // is there a reason these thrown exceptions aren't explicitly logged?
-            if (string.IsNullOrWhiteSpace(email)) throw new ArgumentNullException("email");
-            if (string.IsNullOrWhiteSpace(tenant)) throw new ArgumentNullException("tenant");
+            if (tenant == null) throw new ArgumentNullException("tenant");
+            if (email == null) throw new ArgumentNullException("email");
             // While attempting to naviate to the definition of GetByEmail 
             return _userAccountService.GetByEmail(tenant, email);
         }
 
         public Institution GetInstitutionByDomain(string domain)
         {
+            if (domain == null) throw new ArgumentNullException("domain");
             var institution = _institutionRepository.GetAll().FirstOrDefault(i => i.domainName == domain);
             return institution;
         }
 
         public bool HasPassword(string tenant, string emailAddress)
         {
+            if (tenant == null) throw new ArgumentNullException("tenant");
+            if (emailAddress == null) throw new ArgumentNullException("emailAddress");
+
             var userAccount = _userAccountService.GetByEmail(tenant, emailAddress);
 
             if (ReferenceEquals(null, userAccount))
@@ -104,7 +106,10 @@ namespace CUWebinars.Business.AccountService
             string email
             )
         {
-            
+            if (firstName == null) throw new ArgumentNullException("firstName");
+            if (lastName == null) throw new ArgumentNullException("lastName");
+
+            // let MembershipReboot throw exception if other params are null
             var account = _userAccountService.CreateAccount(tenant, userName, password, email);
             _userAccountService.AddClaim(account.ID, ClaimTypes.FullName, string.Format("{0} {1}", firstName, lastName));
             _userAccountService.AddClaim(account.ID, System.Security.Claims.ClaimTypes.Role, "WebUser");
@@ -126,6 +131,11 @@ namespace CUWebinars.Business.AccountService
             int? idUserImported,
             string accountStatus = null)
         {
+            if (firstName == null) throw new ArgumentNullException("firstName");
+            if (lastName == null) throw new ArgumentNullException("lastName");
+            if (email == null) throw new ArgumentNullException("email");
+            if (addresses == null) throw new ArgumentNullException("addresses");
+
             if (idUserImported == 0) idUserImported = null;
 
             var webUser = new WebUser
@@ -207,21 +217,21 @@ namespace CUWebinars.Business.AccountService
             string institutionType,
             string zip)
         {
-            List<Institution> institution = null;
+            List<Institution> institutionsList = null;
 
             try
             {
-                var i = _institutionRepository.GetByNameAndZipCode(institutionName, zip);
-                institution = i.ToList();
+                var institutions = _institutionRepository.GetByNameAndZipCode(institutionName, zip);
+                institutionsList = institutions.ToList();
             }
             catch (Exception exception)
             {
-                string bla = exception.Message;
+                _logger.ErrorException(string.Format("ProcessInstitutionForUser exception | email:{0}", email), exception);
             }
 
-            if (institution.Count == 1)
+            if (institutionsList != null && institutionsList.Count == 1)
             {
-                return institution.First();
+                return institutionsList.First();
             }
 
             var newInstitution = new Institution
@@ -234,17 +244,7 @@ namespace CUWebinars.Business.AccountService
                 InstitutionType = institutionType,
                 domainName = new string(email.SkipWhile(ltr => ltr != '@').Skip(1).ToArray())
             };
-
-            try
-            {
-                var u = GetUserByEmail(email);
-            }
-            catch (Exception)
-            {
-                
-                throw;
-            }
-
+            
             _institutionRepository.Add(newInstitution);
 
             return newInstitution;
@@ -259,12 +259,21 @@ namespace CUWebinars.Business.AccountService
             catch (Exception exception)
             {
                 _logger.ErrorException("ResetPassword", exception);
+                throw;
             }
         }
 
         public void SignIn(UserAccount userAccount, bool persistant)
         {
-            _samAuthenticationService.SignIn(userAccount, persistant);
+            try
+            {
+                _samAuthenticationService.SignIn(userAccount, persistant);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("SignIn", exception);
+                throw;
+            }
         }
 
         public void AddAccountTypeNotVerifiedClaim(UserAccount userAccount, string accountType)
@@ -273,27 +282,49 @@ namespace CUWebinars.Business.AccountService
                 throw new ArgumentNullException("userAccount");
             if (string.IsNullOrWhiteSpace(accountType))
                 throw new ArgumentException("String parameter cannot be white space or null.", "accountType");
-            
 
-            _userAccountService.AddClaim(userAccount.ID, ClaimTypes.HasNotVerified, accountType);
+            try
+            {
+                _userAccountService.AddClaim(userAccount.ID, ClaimTypes.HasNotVerified, accountType);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("AddAccountTypeNotVerifiedClaim", exception);
+                throw;
+            }
         }
 
         public bool ChangePasswordFromResetKey(string key, string newPassword)
         {
-            return _userAccountService.ChangePasswordFromResetKey(key, newPassword);
+            try
+            {
+                return _userAccountService.ChangePasswordFromResetKey(key, newPassword);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("ChangePasswordFromResetKey", exception);
+                throw;
+            }
         }
 
         public void UpdateNameTitle(string firstName, string lastName, string email, string title)
         {
-            var webUser = GetDetailsOfUser(email);
+            // TODO: [dar] Seems to be an unfinished method. Comes down from EditNameTitle in AccountController
+            try
+            {
+                var webUser = GetDetailsOfUser(email);
 
-            var auditChanges = new StringBuilder();
+                var auditChanges = new StringBuilder();
 
-            auditChanges.Append("Record edited on " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + System.Environment.NewLine);
+                auditChanges.Append("Record edited on " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + Environment.NewLine);
 
+                _webUserRepository.Update(webUser);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("UpdateNameTitle", exception);
 
-            _webUserRepository.Update(webUser);
-
+            }
         }
 
         public void UpdateUserDetails(string tenant, string firstName, string lastName, string email, string institutionName, Address billingAddress, Address shippingAddress, string title)
@@ -303,223 +334,279 @@ namespace CUWebinars.Business.AccountService
             //{
             // removed authenticate requirement to permit Admin editing
             // of accounts
-            var webUser = GetDetailsOfUser(email);
-
-            var auditChanges = new StringBuilder();
-
-            auditChanges.Append("Record edited on " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + System.Environment.NewLine);
-
-
-            var billingAddressFromDb = webUser.Addresses.Where(a => a.AddressType == DomainConstants.BillingAddress).Single();
-
-
-            if (!(firstName.Equals(webUser.FirstName, StringComparison.OrdinalIgnoreCase)))
+            try
             {
-                auditChanges.Append("firstName from: " + webUser.FirstName + " to: " + firstName + System.Environment.NewLine);
-            }
+                var webUser = GetDetailsOfUser(email);
 
-            if (!(lastName.Equals(webUser.LastName, StringComparison.OrdinalIgnoreCase)))
-            {
-                auditChanges.Append("lastName from: " + webUser.LastName + " to: " + lastName + System.Environment.NewLine);
-            }
+                var auditChanges = new StringBuilder();
 
-            if (!(title.Equals(webUser.Title, StringComparison.OrdinalIgnoreCase)))
-            {
-                auditChanges.Append("title from: " + webUser.Title + " to: " + title + System.Environment.NewLine);
-            }
-
-            if (!(firstName.Equals(webUser.FirstName, StringComparison.OrdinalIgnoreCase))
-                || !(lastName.Equals(webUser.LastName, StringComparison.OrdinalIgnoreCase))
-                )
-            {
-                billingAddress.Name =  string.Format("{0} {1}", firstName, lastName);
-                _userAccountService.RemoveClaim(_userAccountService.GetByEmail(tenant, webUser.email).ID, ClaimTypes.FullName);
-                _userAccountService.AddClaim(_userAccountService.GetByEmail(tenant, webUser.email).ID, ClaimTypes.FullName, string.Format("{0} {1}", firstName, lastName));
-
-            }
-
-            webUser.email = email;
-            webUser.FirstName = firstName;
-            webUser.LastName = lastName;
-            webUser.Title = title;
-            //if (!(webUser.Institution.InstitutionName.Equals(institutionName, StringComparison.OrdinalIgnoreCase)))
-            //    //&&
-            //    //billingAddress.State.Equals(billingAddressFromDb.State, StringComparison.OrdinalIgnoreCase) &&
-            //    //billingAddress.Zip.Equals(billingAddressFromDb.Zip, StringComparison.OrdinalIgnoreCase)) ||
-            //    //!webUser.Institution.InstitutionName.Equals(institutionName, StringComparison.OrdinalIgnoreCase))
-            //{
-            //    webUser.Institution = ProcessInstitutionForUser(institutionName, email, billingAddress.City, billingAddress.State, "N", "New", billingAddress.Zip);
-            //}
+                auditChanges.Append("Record edited on " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToShortTimeString() + Environment.NewLine);
 
 
-            _webUserRepository.Update(webUser);
-            if (!(billingAddress.City.Equals(billingAddressFromDb.City, StringComparison.OrdinalIgnoreCase)))
-            {
-                auditChanges.Append("City from: " + billingAddressFromDb.City + " to: " + billingAddress.City + System.Environment.NewLine);
-            }
-            if (!(billingAddress.StreetAddress.Equals(billingAddressFromDb.StreetAddress, StringComparison.OrdinalIgnoreCase)))
-            {
-                auditChanges.Append("StreetAddress from: " + billingAddressFromDb.StreetAddress + " to: " + billingAddress.StreetAddress + System.Environment.NewLine);
-            }
-            if (billingAddress.StreetAddress2 != null && !(billingAddress.StreetAddress2.Equals(billingAddressFromDb.StreetAddress2, StringComparison.OrdinalIgnoreCase)))
-            {
-                auditChanges.Append("StreetAddress2 from: " + billingAddressFromDb.StreetAddress2 + " to: " + billingAddress.StreetAddress2 + System.Environment.NewLine);
-            }
-            if (!(billingAddress.State.Equals(billingAddressFromDb.State, StringComparison.OrdinalIgnoreCase)))
-            {
-                auditChanges.Append("State from: " + billingAddressFromDb.State + " to: " + billingAddress.State + System.Environment.NewLine);
-            }
-            if (!(billingAddress.Phone.Equals(billingAddressFromDb.Phone, StringComparison.OrdinalIgnoreCase)))
-            {
-                auditChanges.Append("Phone from: " + billingAddressFromDb.Phone + " to: " + billingAddress.Phone + System.Environment.NewLine);
-            }
-            if (!(billingAddress.Zip.Equals(billingAddressFromDb.Zip, StringComparison.OrdinalIgnoreCase)))
-            {
-                auditChanges.Append("Zip from: " + billingAddressFromDb.Zip + " to: " + billingAddress.Zip + System.Environment.NewLine);
-            }
-            if (!(billingAddress.Country.Equals(billingAddressFromDb.Country, StringComparison.OrdinalIgnoreCase)))
-            {
-                auditChanges.Append("Country from: " + billingAddressFromDb.Country + " to: " + billingAddress.Country + System.Environment.NewLine);
-            }
+                var billingAddressFromDb = webUser.Addresses.Single(a => a.AddressType == DomainConstants.BillingAddress);
 
 
-            billingAddressFromDb.Name = billingAddress.Name;
-            billingAddressFromDb.City = billingAddress.City;
-            billingAddressFromDb.StreetAddress = billingAddress.StreetAddress;
-            billingAddressFromDb.StreetAddress2 = billingAddress.StreetAddress2;
-            billingAddressFromDb.State = billingAddress.State;
-            billingAddressFromDb.Phone = billingAddress.Phone;
-            billingAddressFromDb.Zip = billingAddress.Zip;
-            billingAddressFromDb.Country = billingAddress.Country;
+                if (!(firstName.Equals(webUser.FirstName, StringComparison.OrdinalIgnoreCase)))
+                {
+                    auditChanges.Append("firstName from: " + webUser.FirstName + " to: " + firstName + Environment.NewLine);
+                }
 
-            //  ** Important ** update this address object before grabbing the next one from the context.
-            //  Doing so is important as the entity.state of the object needs to be either detached or modified, but NOT unchanged. 
-            _webUserRepository.UpdateAddresses(billingAddressFromDb);
+                if (!(lastName.Equals(webUser.LastName, StringComparison.OrdinalIgnoreCase)))
+                {
+                    auditChanges.Append("lastName from: " + webUser.LastName + " to: " + lastName + Environment.NewLine);
+                }
 
+                if (!(title.Equals(webUser.Title, StringComparison.OrdinalIgnoreCase)))
+                {
+                    auditChanges.Append("title from: " + webUser.Title + " to: " + title + Environment.NewLine);
+                }
 
-            var shippingAddressFromDb = webUser.Addresses.Where(a => a.AddressType == DomainConstants.ShippingAddress).Single();
+                if (!(firstName.Equals(webUser.FirstName, StringComparison.OrdinalIgnoreCase))
+                    || !(lastName.Equals(webUser.LastName, StringComparison.OrdinalIgnoreCase))
+                    )
+                {
+                    billingAddress.Name =  string.Format("{0} {1}", firstName, lastName);
+                    _userAccountService.RemoveClaim(_userAccountService.GetByEmail(tenant, webUser.email).ID, ClaimTypes.FullName);
+                    _userAccountService.AddClaim(_userAccountService.GetByEmail(tenant, webUser.email).ID, ClaimTypes.FullName, string.Format("{0} {1}", firstName, lastName));
 
-            if (!(shippingAddress.Name.Equals(shippingAddressFromDb.Name, StringComparison.OrdinalIgnoreCase)))
-            {
-                auditChanges.Append("Shipping Name from: " + shippingAddressFromDb.Name + " to: " + shippingAddress.Name + System.Environment.NewLine);
-            }
+                }
 
-            if (!(shippingAddress.City.Equals(shippingAddressFromDb.City, StringComparison.OrdinalIgnoreCase)))
-            {
-                auditChanges.Append("Shipping City from: " + shippingAddressFromDb.City + " to: " + shippingAddress.City + System.Environment.NewLine);
-            }
-            if (!(shippingAddress.StreetAddress.Equals(shippingAddressFromDb.StreetAddress, StringComparison.OrdinalIgnoreCase)))
-            {
-                auditChanges.Append("Shipping StreetAddress from: " + shippingAddressFromDb.StreetAddress + " to: " + shippingAddress.StreetAddress + System.Environment.NewLine);
-            }
-            if (shippingAddress.StreetAddress2 != null && !(shippingAddress.StreetAddress2.Equals(shippingAddressFromDb.StreetAddress2, StringComparison.OrdinalIgnoreCase)))
-            {
-                auditChanges.Append("Shipping StreetAddress2 from: " + shippingAddressFromDb.StreetAddress2 + " to: " + shippingAddress.StreetAddress2 + System.Environment.NewLine);
-            }
-            if (!(shippingAddress.State.Equals(shippingAddressFromDb.State, StringComparison.OrdinalIgnoreCase)))
-            {
-                auditChanges.Append("Shipping State from: " + shippingAddressFromDb.State + " to: " + shippingAddress.State + System.Environment.NewLine);
-            }
-            if (!(shippingAddress.Phone.Equals(shippingAddressFromDb.Phone, StringComparison.OrdinalIgnoreCase)))
-            {
-                auditChanges.Append("Shipping Phone from: " + shippingAddressFromDb.Phone + " to: " + shippingAddress.Phone + System.Environment.NewLine);
-            }
-            if (!(shippingAddress.Zip.Equals(shippingAddressFromDb.Zip, StringComparison.OrdinalIgnoreCase)))
-            {
-                auditChanges.Append("Shipping Zip from: " + shippingAddressFromDb.Zip + " to: " + shippingAddress.Zip + System.Environment.NewLine);
-            }
-            if (!(shippingAddress.Country.Equals(shippingAddressFromDb.Country, StringComparison.OrdinalIgnoreCase)))
-            {
-                auditChanges.Append("Shipping Country from: " + shippingAddressFromDb.Country + " to: " + shippingAddress.Country + System.Environment.NewLine);
-            }
+                webUser.email = email;
+                webUser.FirstName = firstName;
+                webUser.LastName = lastName;
+                webUser.Title = title;
+                //if (!(webUser.Institution.InstitutionName.Equals(institutionName, StringComparison.OrdinalIgnoreCase)))
+                //    //&&
+                //    //billingAddress.State.Equals(billingAddressFromDb.State, StringComparison.OrdinalIgnoreCase) &&
+                //    //billingAddress.Zip.Equals(billingAddressFromDb.Zip, StringComparison.OrdinalIgnoreCase)) ||
+                //    //!webUser.Institution.InstitutionName.Equals(institutionName, StringComparison.OrdinalIgnoreCase))
+                //{
+                //    webUser.Institution = ProcessInstitutionForUser(institutionName, email, billingAddress.City, billingAddress.State, "N", "New", billingAddress.Zip);
+                //}
 
 
-            shippingAddressFromDb.Name = shippingAddress.Name;
-            shippingAddressFromDb.City = shippingAddress.City;
-            shippingAddressFromDb.StreetAddress = shippingAddress.StreetAddress;
-            shippingAddressFromDb.StreetAddress2 = shippingAddress.StreetAddress2;
-            shippingAddressFromDb.State = shippingAddress.State;
-            shippingAddressFromDb.Phone = shippingAddress.Phone;
-            shippingAddressFromDb.Zip = shippingAddress.Zip;
-            shippingAddressFromDb.Country = shippingAddress.Country;
+                _webUserRepository.Update(webUser);
+                if (!(billingAddress.City.Equals(billingAddressFromDb.City, StringComparison.OrdinalIgnoreCase)))
+                {
+                    auditChanges.Append("City from: " + billingAddressFromDb.City + " to: " + billingAddress.City + Environment.NewLine);
+                }
+                if (!(billingAddress.StreetAddress.Equals(billingAddressFromDb.StreetAddress, StringComparison.OrdinalIgnoreCase)))
+                {
+                    auditChanges.Append("StreetAddress from: " + billingAddressFromDb.StreetAddress + " to: " + billingAddress.StreetAddress + Environment.NewLine);
+                }
+                if (billingAddress.StreetAddress2 != null && !(billingAddress.StreetAddress2.Equals(billingAddressFromDb.StreetAddress2, StringComparison.OrdinalIgnoreCase)))
+                {
+                    auditChanges.Append("StreetAddress2 from: " + billingAddressFromDb.StreetAddress2 + " to: " + billingAddress.StreetAddress2 + Environment.NewLine);
+                }
+                if (!(billingAddress.State.Equals(billingAddressFromDb.State, StringComparison.OrdinalIgnoreCase)))
+                {
+                    auditChanges.Append("State from: " + billingAddressFromDb.State + " to: " + billingAddress.State + Environment.NewLine);
+                }
+                if (!(billingAddress.Phone.Equals(billingAddressFromDb.Phone, StringComparison.OrdinalIgnoreCase)))
+                {
+                    auditChanges.Append("Phone from: " + billingAddressFromDb.Phone + " to: " + billingAddress.Phone + Environment.NewLine);
+                }
+                if (!(billingAddress.Zip.Equals(billingAddressFromDb.Zip, StringComparison.OrdinalIgnoreCase)))
+                {
+                    auditChanges.Append("Zip from: " + billingAddressFromDb.Zip + " to: " + billingAddress.Zip + Environment.NewLine);
+                }
+                if (!(billingAddress.Country.Equals(billingAddressFromDb.Country, StringComparison.OrdinalIgnoreCase)))
+                {
+                    auditChanges.Append("Country from: " + billingAddressFromDb.Country + " to: " + billingAddress.Country + Environment.NewLine);
+                }
+
+
+                billingAddressFromDb.Name = billingAddress.Name;
+                billingAddressFromDb.City = billingAddress.City;
+                billingAddressFromDb.StreetAddress = billingAddress.StreetAddress;
+                billingAddressFromDb.StreetAddress2 = billingAddress.StreetAddress2;
+                billingAddressFromDb.State = billingAddress.State;
+                billingAddressFromDb.Phone = billingAddress.Phone;
+                billingAddressFromDb.Zip = billingAddress.Zip;
+                billingAddressFromDb.Country = billingAddress.Country;
+
+                //  ** Important ** update this address object before grabbing the next one from the context.
+                //  Doing so is important as the entity.state of the object needs to be either detached or modified, but NOT unchanged. 
+                _webUserRepository.UpdateAddresses(billingAddressFromDb);
+
+
+                var shippingAddressFromDb = webUser.Addresses.Single(a => a.AddressType == DomainConstants.ShippingAddress);
+
+                if (!(shippingAddress.Name.Equals(shippingAddressFromDb.Name, StringComparison.OrdinalIgnoreCase)))
+                {
+                    auditChanges.Append("Shipping Name from: " + shippingAddressFromDb.Name + " to: " + shippingAddress.Name + Environment.NewLine);
+                }
+
+                if (!(shippingAddress.City.Equals(shippingAddressFromDb.City, StringComparison.OrdinalIgnoreCase)))
+                {
+                    auditChanges.Append("Shipping City from: " + shippingAddressFromDb.City + " to: " + shippingAddress.City + Environment.NewLine);
+                }
+                if (!(shippingAddress.StreetAddress.Equals(shippingAddressFromDb.StreetAddress, StringComparison.OrdinalIgnoreCase)))
+                {
+                    auditChanges.Append("Shipping StreetAddress from: " + shippingAddressFromDb.StreetAddress + " to: " + shippingAddress.StreetAddress + Environment.NewLine);
+                }
+                if (shippingAddress.StreetAddress2 != null && !(shippingAddress.StreetAddress2.Equals(shippingAddressFromDb.StreetAddress2, StringComparison.OrdinalIgnoreCase)))
+                {
+                    auditChanges.Append("Shipping StreetAddress2 from: " + shippingAddressFromDb.StreetAddress2 + " to: " + shippingAddress.StreetAddress2 + Environment.NewLine);
+                }
+                if (!(shippingAddress.State.Equals(shippingAddressFromDb.State, StringComparison.OrdinalIgnoreCase)))
+                {
+                    auditChanges.Append("Shipping State from: " + shippingAddressFromDb.State + " to: " + shippingAddress.State + Environment.NewLine);
+                }
+                if (!(shippingAddress.Phone.Equals(shippingAddressFromDb.Phone, StringComparison.OrdinalIgnoreCase)))
+                {
+                    auditChanges.Append("Shipping Phone from: " + shippingAddressFromDb.Phone + " to: " + shippingAddress.Phone + Environment.NewLine);
+                }
+                if (!(shippingAddress.Zip.Equals(shippingAddressFromDb.Zip, StringComparison.OrdinalIgnoreCase)))
+                {
+                    auditChanges.Append("Shipping Zip from: " + shippingAddressFromDb.Zip + " to: " + shippingAddress.Zip + Environment.NewLine);
+                }
+                if (!(shippingAddress.Country.Equals(shippingAddressFromDb.Country, StringComparison.OrdinalIgnoreCase)))
+                {
+                    auditChanges.Append("Shipping Country from: " + shippingAddressFromDb.Country + " to: " + shippingAddress.Country + Environment.NewLine);
+                }
+
+
+                shippingAddressFromDb.Name = shippingAddress.Name;
+                shippingAddressFromDb.City = shippingAddress.City;
+                shippingAddressFromDb.StreetAddress = shippingAddress.StreetAddress;
+                shippingAddressFromDb.StreetAddress2 = shippingAddress.StreetAddress2;
+                shippingAddressFromDb.State = shippingAddress.State;
+                shippingAddressFromDb.Phone = shippingAddress.Phone;
+                shippingAddressFromDb.Zip = shippingAddress.Zip;
+                shippingAddressFromDb.Country = shippingAddress.Country;
             
-            _webUserRepository.UpdateAddresses(shippingAddressFromDb);
+                _webUserRepository.UpdateAddresses(shippingAddressFromDb);
 
-            webUser.Addresses.Clear();
-            webUser.Addresses.Add(billingAddressFromDb);
-            webUser.Addresses.Add(shippingAddressFromDb);
+                webUser.Addresses.Clear();
+                webUser.Addresses.Add(billingAddressFromDb);
+                webUser.Addresses.Add(shippingAddressFromDb);
 
-            // This string has blown out a couple of times. This following code ensures it does not exceed the max size of the database column.
-            var comments = (auditChanges + System.Environment.NewLine + "--------" +
-                                      System.Environment.NewLine + webUser.generalComments);
-            webUser.generalComments = comments.Length < 1000 ? comments : comments.Substring(0, 1000);
+                // This string has blown out a couple of times. This following code ensures it does not exceed the max size of the database column.
+                var comments = (auditChanges + Environment.NewLine + "--------" +
+                                Environment.NewLine + webUser.generalComments);
+                webUser.generalComments = comments.Length < 1000 ? comments : comments.Substring(0, 1000);
 
 
             
-            _webUserRepository.Update(webUser);
+                _webUserRepository.Update(webUser);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("UpdateUserDetails", exception);
+            }
         }
 
         public UserAccount VerifyEmailFromKey(string key, string password)
         {
-            UserAccount userAccount;
-            _userAccountService.VerifyEmailFromKey(key, password, out userAccount);
+            UserAccount userAccount = null;
 
+            try
+            {
+                _userAccountService.VerifyEmailFromKey(key, password, out userAccount);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("VerifyEmailFromKey", exception);
+
+            }
             return userAccount;
         }
 
         public USTimeZone GetTimeZoneByZip()
         {
-
+            //todo: [dar] I think this method is redundant. Refer to GetCityStateFromZip inAppHelper
             return USTimeZone.Central;
         }
 
         public void UpdateShippingAddressDetails(Address shippingAddress)
         {
-            var webUser = _webUserRepository.FindByIdLoaded(shippingAddress.idUser);
-
-            var shippingAddressOnFile = webUser.Addresses.SingleOrDefault(a => a.AddressType == DomainConstants.ShippingAddress);
-
-            if (ReferenceEquals(null, shippingAddressOnFile))
+            try
             {
-                webUser.Addresses.Add(shippingAddress);
-            }
-            else
-            {
-                shippingAddressOnFile.City = shippingAddress.City;
-                shippingAddressOnFile.Country = shippingAddress.Country;
-                shippingAddressOnFile.Name = shippingAddress.Name;
-                shippingAddressOnFile.Phone = shippingAddress.Phone;
-                shippingAddressOnFile.State = shippingAddress.State;
-                shippingAddressOnFile.StreetAddress = shippingAddress.StreetAddress;
-                shippingAddressOnFile.StreetAddress2 = shippingAddress.StreetAddress2;
-                shippingAddressOnFile.Zip = shippingAddress.Zip;
-            }
+                var webUser = _webUserRepository.FindByIdLoaded(shippingAddress.idUser);
 
-            _webUserRepository.DbContext.SaveChanges();
+                var shippingAddressOnFile = webUser.Addresses.SingleOrDefault(a => a.AddressType == DomainConstants.ShippingAddress);
+
+                if (ReferenceEquals(null, shippingAddressOnFile))
+                {
+                    webUser.Addresses.Add(shippingAddress);
+                }
+                else
+                {
+                    shippingAddressOnFile.City = shippingAddress.City;
+                    shippingAddressOnFile.Country = shippingAddress.Country;
+                    shippingAddressOnFile.Name = shippingAddress.Name;
+                    shippingAddressOnFile.Phone = shippingAddress.Phone;
+                    shippingAddressOnFile.State = shippingAddress.State;
+                    shippingAddressOnFile.StreetAddress = shippingAddress.StreetAddress;
+                    shippingAddressOnFile.StreetAddress2 = shippingAddress.StreetAddress2;
+                    shippingAddressOnFile.Zip = shippingAddress.Zip;
+                }
+
+                _webUserRepository.DbContext.SaveChanges();
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("UpdateShippingAddressDetails", exception);
+            }
         }
 
         public IEnumerable<Address> GetAddressesForUser(int id)
         {
-            return _refDataRepository.GetAddressesForUser(id);
+            try
+            {
+                return _refDataRepository.GetAddressesForUser(id);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("GetAddressesForUser", exception);
+            }
+            return null;
         }
 
         public Institution GetInstitutionForUser(int id)
         {
-            return _refDataRepository.GetInstitutionForUser(id);
+            try
+            {
+                return _refDataRepository.GetInstitutionForUser(id);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("GetInstitutionForUser", exception);
+            }
+            return null;
         }
 
         public UserAccount GetUserAccountByUserId(Guid userId)
         {
-            return _userAccountService.GetByID(userId);
+            try
+            {
+                return _userAccountService.GetByID(userId);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("GetUserAccountByUserId", exception);
+            }
+            return null;
         }
+
         public bool VerifyUserByEmail(string tenant, string email)
         {
-            var account = _userAccountService.GetByEmail(tenant, email);
-
-            if (account.HasClaim(ClaimTypes.HasNotVerified))
+            try
             {
-                _userAccountService.RemoveClaim(account.ID, ClaimTypes.HasNotVerified);
-                return true;
+                var account = _userAccountService.GetByEmail(tenant, email);
+
+                if (account.HasClaim(ClaimTypes.HasNotVerified))
+                {
+                    _userAccountService.RemoveClaim(account.ID, ClaimTypes.HasNotVerified);
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("VerifyUserByEmail", exception);
             }
 
             return false;
