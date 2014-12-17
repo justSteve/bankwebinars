@@ -348,11 +348,15 @@ namespace CUWebinars.Business.Services
             {
                 row = orderRow;
             }
-
+            //TODO: Should this null check be a Debug.Assert instead?
             if (row != null) row.UnitPrice = (decimal)row.RegistrationType.Price;
 
             //Calculate row price before discount
-            totalOptionsPrice = row.AdditionalLocation.Count * optionsCost; // cost * number of additional locations
+            //TODO: AdditionalLocationCount is coming in as null. Should it be populated or just checked?
+            if (row.AdditionalLocation != null)
+            {
+                totalOptionsPrice = row.AdditionalLocation.Count*optionsCost; // cost * number of additional locations
+            }
             row.RowPrice = row.UnitPrice + totalOptionsPrice;
             pricesAndDiscounts.UnitPrice = row.UnitPrice;
 

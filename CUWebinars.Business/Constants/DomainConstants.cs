@@ -4,6 +4,7 @@ namespace CUWebinars.Business.Constants
     public sealed class DomainConstants
     {
         public const string Active = "A";
+        public const string New = "N";
         public const string BillingAddress = "Billing";
         public const string Blank = "blank";
         public const string CheckoutInProcess = "CheckoutInProcess"; 

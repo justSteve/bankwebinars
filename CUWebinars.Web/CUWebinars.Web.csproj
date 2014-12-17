@@ -1114,7 +1114,6 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Views\Account\Partials\WebinarsUserGrid.ascx" />
     <Content Include="Views\Shared\EditorTemplates\Register.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -1181,7 +1180,6 @@
     <Content Include="Views\Shared\_LayoutCertificate.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\AdditionalLocationAdd.cshtml" />
     <Content Include="Views\Webinar\Partials\_AdditionalLocationsModal.cshtml" />
-    <Content Include="Views\AdhocNotification\Index.cshtml" />
     <Content Include="Views\Webinar\Play.cshtml" />
     <Content Include="Views\Webinar\Partials\_ConnectionSummary.cshtml" />
     <Content Include="Views\Webinar\Partials\_AdminEventButtons.cshtml" />
