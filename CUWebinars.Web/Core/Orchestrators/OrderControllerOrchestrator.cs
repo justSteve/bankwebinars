@@ -29,24 +29,20 @@ namespace CUWebinars.Web.Core.Orchestrators
                     string verificationKey,
                     string confirmChangeEmailUrl)
         {
-            var addOrderRowCommand = new AddOrderRowCommand
+            var migrateOrderRowCommand = new MigrateOrderRowCommand
             {
-                AdditionalLocations = migrateOrderModel.AdditionalLocations,
+                AdditionalLocationsString = migrateOrderModel.AdditionalLocationsString,
                 Email = email,
                 RegistrationType = migrateOrderModel.idRegType,
+                Discount = migrateOrderModel.DiscountCode,
                 Webinar = migratorQueryResult.Webinar
             };
 
-            _commandProcessor.Execute(addOrderRowCommand);
+            _commandProcessor.Execute(migrateOrderRowCommand);
 
-            //if (migrateOrderModel.AdditionalLocations != null)
-            //{
-                
-            //}
 
             var migrateOrderCommand = new MigrateOrderCommand()
             {
-                
                 Affiliate = migratorQueryResult.Affiliate,
                 AffiliateComments = migrateOrderModel.AffiliateComments,
                 BillingAddress = migrateOrderModel.BillingAddress,
@@ -54,15 +50,18 @@ namespace CUWebinars.Web.Core.Orchestrators
                 Email = email,
                 FirstName = migrateOrderModel.FirstName.Trim(),
                 LastName = migrateOrderModel.LastName.Trim(),
-                OrderRow = addOrderRowCommand.OrderRow, // out parameter of addOrderRowCommand command
+                OrderRow = migrateOrderRowCommand.OrderRow, // out parameter of addOrderRowCommand command
                 ShippingAddress = migrateOrderModel.ShippingAddress,
                 VerificationKey = verificationKey,
                 OrderDate = migrateOrderModel.OrderDate,
+                Total = migrateOrderModel.Total,
                 idUserLegacy = migrateOrderModel.idUserLegacy,
                 idOrderLegacy = migrateOrderModel.idOrderLegacy,
                 Webinar = migratorQueryResult.Webinar,
-                WebUser = migratorQueryResult.WebUser
+                WebUser = migratorQueryResult.WebUser,
+                AdditionalLocationsString = migrateOrderModel.AdditionalLocationsString
             };
+
 
             _commandProcessor.Execute(migrateOrderCommand);
 

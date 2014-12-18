@@ -385,6 +385,7 @@
     <Compile Include="ViewModel\RegistrationSummaryViewModel.cs" />
     <Compile Include="ViewModel\WebinarFileViewModel.cs" />
     <Content Include="ApplicationInsights.config" />
+    <Content Include="App_Data\Orders\OrderMigrator.xlsm" />
     <None Include="log4net.config">
       <SubType>Designer</SubType>
     </None>
@@ -609,7 +610,6 @@
     <Content Include="App_Data\Deploy\New-AzureWebsiteEnv.ps1" />
     <None Include="App_Data\Deploy\Publish-AzureWebsite.ps1" />
     <Content Include="App_Data\Orders\ResetsDbForTesting.sql" />
-    <Content Include="App_Data\Orders\RegistrationTypeMapping.txt" />
     <Content Include="App_Data\Orders\ResetsDb.sql" />
     <Content Include="Content\css\anytime.css" />
     <Content Include="Content\css\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />

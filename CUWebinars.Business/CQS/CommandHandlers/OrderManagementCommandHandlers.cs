@@ -14,11 +14,11 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 {
     public class OrderManagementCommandHandlers :
         ICommandHandler<AddOrderRowCommand>,
+        ICommandHandler<MigrateOrderRowCommand>,
         ICommandHandler<RegisterNewAccountCommand>,
         ICommandHandler<VerifyAccountCommand>,
         ICommandHandler<AddOrderCommand>,
         ICommandHandler<MigrateOrderCommand>
-
     {
         private readonly IOrderManagementService _orderManagementService;
         private readonly IMembershipService _membershipService;
@@ -76,12 +76,47 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             _postCommitRegistrator.Reset();
         }
 
-        private IList<Tuple<int,decimal>> GetPriceOfAdditionalLocation(int idWebinar)
+        public void Handle(MigrateOrderRowCommand command)
+        {
+            if (command == null) throw new ArgumentNullException("command");
+            IList<AdditionalLocation> additionalLocations = new List<AdditionalLocation>();
+
+            //if (!string.IsNullOrWhiteSpace(command.AdditionalLocationsString) && command.AdditionalLocationsString != "NULL")
+            //{
+
+            //    string[] addLocs = command.AdditionalLocationsString.Split(',');
+            //    foreach (var additionalLocationEmail in addLocs)
+            //    {
+            //        additionalLocations.Add(_orderManagementService.CreateAdditionalLocation(
+            //            additionalLocationEmail,
+            //            0,
+            //            null) // field for FullName
+            //            );
+            //    }
+            //}
+
+            var orderRow = _orderManagementService.CreateOrderRow(command.Webinar,
+               additionalLocations,
+               command.RegistrationType
+               );
+
+            orderRow.Discount = _orderManagementService.GetDiscountByCode(command.Discount);
+
+            _postCommitRegistrator.Committed += () =>
+            {
+                command.OrderRow = orderRow;
+            };
+
+            _postCommitRegistrator.ExecuteActions();
+            _postCommitRegistrator.Reset();
+        }
+
+        private IList<Tuple<int, decimal>> GetPriceOfAdditionalLocation(int idWebinar)
         {
             DataOperations dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
 
             var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(idWebinar);
-            
+
             return additionalLocationsPricing;
         }
 
@@ -194,17 +229,20 @@ namespace CUWebinars.Business.CQS.CommandHandlers
         public void Handle(MigrateOrderCommand command)
         {
             if (command == null) throw new ArgumentNullException("command");
-            var importedOrder = _orderManagementService.CreateNewOrder(command.Affiliate, command.WebUser, command.Webinar, command.OrderRow);
+            var importedOrder = _orderManagementService.CreateNewOrder(command.Affiliate, command.WebUser,
+                command.Webinar, command.OrderRow);
 
-            importedOrder.AdminComments = "Migrated on: " + DateTime.Now.ToShortDateString();
+            importedOrder.Total = command.Total;
+
+            importedOrder.AdminComments = string.Format("MigratedOn: {0}\r\n", DateTime.Now.ToShortDateString());
+            importedOrder.AdminComments += string.Format("OrginalTotal: {0}\r\n", command.Total);
+            importedOrder.AdminComments += string.Format("OrginalUserID: {0}\r\n", command.idUserLegacy);
             importedOrder.AffiliateComments = command.AffiliateComments;
             importedOrder.UserComments = "";
             importedOrder.Origin = "Migrator";
             importedOrder.OrderStatus = OrderStatus.Submitted;
             importedOrder.idOrderLegacy = command.idOrderLegacy;
             importedOrder.OrderDate = command.OrderDate;
-            _orderManagementService.GetDiscountByCode(command.Discount);
-
             importedOrder.FirstName = command.FirstName;
             importedOrder.LastName = command.LastName;
             importedOrder.Institution = command.WebUser.Institution.InstitutionName;
@@ -228,6 +266,11 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
 
             _orderManagementService.SaveOrderChanges(importedOrder, command.VerificationKey, command.ConfirmChangeEmailUrl);
+            if (command.Total != importedOrder.Total)
+            {
+                var i = 1;
+                //logMe
+            }
 
             _postCommitRegistrator.Committed += () =>
             {

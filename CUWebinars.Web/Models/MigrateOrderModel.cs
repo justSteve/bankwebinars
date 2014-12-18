@@ -6,7 +6,7 @@ namespace CUWebinars.Web.Models
 {
     public class MigrateOrderModel
     {
-        public IList<IncomingAdditionalLocation> AdditionalLocations { get; set; }
+        public string AdditionalLocationsString { get; set; }
 
         public string AffiliateComments { get; set; }
         public Address BillingAddress { get; set; }

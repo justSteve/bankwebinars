@@ -11,11 +11,12 @@ namespace CUWebinars.Business.CQS.Commands
         public string ConfirmChangeEmailUrl { get; set; }
         public string Email { get; set; }
         public string AdditionalLocationsString { get; set; }
+        public decimal Total { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public OrderRow OrderRow { get; set; }
         public Address ShippingAddress { get; set; }
-        public string Discount { get; set; }
+        
         public int idOrderLegacy { get; set; }
         public int idUserLegacy { get; set; }
         public DateTime OrderDate { get; set; }

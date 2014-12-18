@@ -223,7 +223,7 @@ namespace CUWebinars.Web.Controllers
                     migratorQueryResult, verificationKey, confirmChangeEmailUrl);
 
                 //idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
-                _logger.Info(string.Format("MigrateOrder|CreateNewOrder: {0}", idOfLastOrder));
+                _logger.Info(string.Format("MigrateOrder|CreteNewOrder: {0}", idOfLastOrder));
 
                 return Json(new { Result = idOfLastOrder.ToString() }, JsonRequestBehavior.AllowGet);
             }
