@@ -170,13 +170,11 @@ namespace CUWebinars.Business.Services
                         addresses.Append(emailSpanElement + ", ");
                     }
                 }
-
-                Debug.Assert(additionalLocationsPricing.Count == 1,
-                    "There should only ever be 1 value returned for the cost of an Additionalocation for a particular Webinar"
-                    );
-                // Item2 of the tuple is the price value as a decimal. Item 1 is the AdditionalLocationsLookupPrice id 
-                optionsCost += additionalLocationsPricing.Single().Item2;
             }
+
+            Debug.Assert(additionalLocationsPricing.Count == 1, "There should only ever be 1 value returned for the cost of an Additionalocation for a particular Webinar");
+            // Item2 of the tuple is the price value as a decimal. Item 1 is the AdditionalLocationsLookupPrice id 
+            optionsCost = additionalLocationsPricing.Single().Item2;
 
             return new Tuple<string, decimal>(addresses.ToString(), optionsCost);
         }
@@ -336,21 +334,17 @@ namespace CUWebinars.Business.Services
             PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
             decimal totalOptionsPrice = 0M;
 
-            var row = order.OrderRows.FirstOrDefault();
+            var row = order.OrderRows.SingleOrDefault(orderRow => orderRow.RowStatus == OrderRowStatus.Active);
 
-            foreach (var orderRow in order.OrderRows.Where(orderRow => orderRow.RowStatus == OrderRowStatus.Active))
-            {
-                row = orderRow;
-            }
-            //TODO: Should this null check be a Debug.Assert instead?
-            if (row != null) row.UnitPrice = (decimal)row.RegistrationType.Price;
+            Debug.Assert(row != null, "OrderRow object should always have a value here.");
+            row.UnitPrice = (decimal)row.RegistrationType.Price;
 
             //Calculate row price before discount
-            //TODO: AdditionalLocationCount is coming in as null. Should it be populated or just checked?
             if (row.AdditionalLocation != null)
             {
                 totalOptionsPrice = row.AdditionalLocation.Count*optionsCost; // cost * number of additional locations
             }
+
             row.RowPrice = row.UnitPrice + totalOptionsPrice;
             pricesAndDiscounts.UnitPrice = row.UnitPrice;
 
@@ -630,7 +624,28 @@ namespace CUWebinars.Business.Services
 
         public void RemoveAdditionalLocationsForOrder(int idOrderRow)
         {
-            _additionalLocationsRepository.DeleteAdditionalLocationsByOrderRowId(idOrderRow);
+            try
+            {
+                _additionalLocationsRepository.DeleteAdditionalLocationsByOrderRowId(idOrderRow);
+
+                var orderRow = _orderRepository.GetOrderRowById(idOrderRow);
+                var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+                var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(orderRow.idWebinar);
+         
+                var totalOptionsDeletedCost = additionalLocationsPricing.First().Item2 * orderRow.AdditionalLocation.Count;
+                SetTotalPrice(totalOptionsDeletedCost, orderRow);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException(string.Format("RemoveAdditionalLocationsForOrder | idOrderRow={0}", idOrderRow), exception);
+            }
+        }
+
+        private void SetTotalPrice(decimal newTotalPrice, OrderRow orderRow)
+        {
+            orderRow.RowPrice = newTotalPrice;
+            orderRow.Order.Total = newTotalPrice;
+            _orderRepository.SaveOrderChanges(orderRow.Order, null);
         }
 
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink)

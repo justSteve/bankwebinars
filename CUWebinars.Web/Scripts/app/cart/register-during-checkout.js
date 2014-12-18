@@ -973,8 +973,15 @@ function hookUpApplyDiscountLogic(btn) {
 
         e.preventDefault();
 
+        registerDuringCheckout.gatherPricingData();
+
+        if (registerDuringCheckout.totalPrice < 1) {
+            return;
+        }
+
         var url = '/cart/ApplyDiscountCode';
         var payload = { code: $('#DiscountCode').val() };
+        var self = this;
 
         $.ajax({
             type: 'POST',
@@ -984,13 +991,26 @@ function hookUpApplyDiscountLogic(btn) {
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
             beforeSend: function () {
-                $('#confirmation').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
+                $(self).prepend('<i id="discountSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+                $(self).attr('disabled', 'disabled');
             }
         }).done(function (data) {
             //  do stuff here with discount.              
-            var num = data.result;
+
+            registerDuringCheckout.totalDiscount = data.Result;
+            var newTotalPrice = registerDuringCheckout.totalPrice - registerDuringCheckout.totalDiscount;
+
+            if (newTotalPrice < 0)
+                newTotalPrice = 0;
+
+            $('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 706 for immediate assistance').addClass('text-info');
+
+            $('#discountedText').html('Discounted: <span id="totalDiscount">$' + registerDuringCheckout.totalDiscount + '.00</span>').removeClass('muted');
+            $('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
+
         }).always(function (e) {
-            $('#loadingSpinner').remove();
+            $('#discountSpinner').remove();
+            $(self).removeAttr('disabled');
         });
     });
 }
