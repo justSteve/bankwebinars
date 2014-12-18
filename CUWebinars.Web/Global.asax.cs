@@ -156,7 +156,7 @@ namespace CUWebinars.Web
                 if (!string.IsNullOrEmpty(subdomainBranding))
                 {
                     var subdomainBrandType = subdomainBranding.Split('.').FirstOrDefault();
-                    if (!string.IsNullOrEmpty(subdomainBrandType) && subdomainBrandType.Equals("webinars", StringComparison.OrdinalIgnoreCase))
+                    if (!string.IsNullOrEmpty(subdomainBrandType) && subdomainBrandType.Equals(WebUiConstants.Webinars, StringComparison.OrdinalIgnoreCase))
                     {
                         //we discover we are running with an affiliate's subdomain
                         string affilliateDomain = @System.Configuration.ConfigurationManager.AppSettings[AppConst.TESTING_URL].Split('.')[1];

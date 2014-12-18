@@ -151,7 +151,7 @@ namespace CUWebinars.Business.Services
             foreach (var additionalLocation in additionalLocationsEnumerated)
             {
                 emailSpanElement = string.Format("<strong>{0}</strong>", additionalLocation.Email);
-
+                
                 i++;
 
                 if (i == additionalLocationsEnumerated.Count())
@@ -169,13 +169,11 @@ namespace CUWebinars.Business.Services
                         addresses.Append(emailSpanElement + ", ");
                     }
                 }
-
-                Debug.Assert(additionalLocationsPricing.Count == 1,
-                    "There should only ever be 1 value returned for the cost of an Additionalocation for a particular Webinar"
-                    );
-                // Item2 of the tuple is the price value as a decimal. Item 1 is the AdditionalLocationsLookupPrice id 
-                optionsCost += additionalLocationsPricing.Single().Item2;
             }
+
+            Debug.Assert(additionalLocationsPricing.Count == 1, "There should only ever be 1 value returned for the cost of an Additionalocation for a particular Webinar");
+                // Item2 of the tuple is the price value as a decimal. Item 1 is the AdditionalLocationsLookupPrice id 
+            optionsCost = additionalLocationsPricing.Single().Item2;
 
             return new Tuple<string, decimal>(addresses.ToString(), optionsCost);
         }
@@ -272,6 +270,55 @@ namespace CUWebinars.Business.Services
             _orderRepository.DeleteOrder(orderId);
         }
 
+        public Affiliate DetermineAffiliateByAlternativeMeans(int idUser)
+        {
+            var affiliateIds = _orderRepository.FindOrdersByUserId(idUser)
+                .OrderByDescending(o => o.OrderDate)
+                .Select(o => o.idAffiliate)
+                .ToList();
+
+            if (affiliateIds.Any())
+            {
+                //  get the most recent
+                int affiliateIdForOrder, mostRecentAffiliateId;
+                affiliateIdForOrder = mostRecentAffiliateId = affiliateIds.First();
+
+                if (affiliateIds.Distinct().Count() > 1) // The history is of more than 1 affiliate
+                {
+                    // The business rule is that where there is more than one Affiliate which the 
+                    // user has made orders for, if one affiliate has been used twice as many times 
+                    // as the most recent Affiliate, then make the order for that Affiliate.
+                    var groups = affiliateIds.GroupBy(a => a);
+                    int mostUsedAffiliateId = 0;
+                    int mostUses = 0;
+                    int numberOfUsesOfMostRecentAffiliate = 0;
+                    int current = 0;
+                    
+                    foreach (var group in groups)
+                    {
+                        current = group.Count();
+
+                        if (current > mostUses)
+                        {
+                            mostUses = current;
+                            mostUsedAffiliateId = group.Key;
+                        }
+
+                        if (group.Key == mostRecentAffiliateId)
+                        {
+                            numberOfUsesOfMostRecentAffiliate = current;
+                        }
+                    }
+
+                    if (mostUses >= 2*numberOfUsesOfMostRecentAffiliate)
+                        affiliateIdForOrder = mostUsedAffiliateId;
+                }
+
+                return _affiliateRepository.FindById(affiliateIdForOrder); // use the most recent
+            }
+            return null;
+        }
+
         public void DispatchDummyOrder()
         {
             foreach (var orderSubmittedEvent in GetEvents())
@@ -337,16 +384,15 @@ namespace CUWebinars.Business.Services
 
             var row = order.OrderRows.SingleOrDefault(orderRow => orderRow.RowStatus == OrderRowStatus.Active);
 
-
-            Debug.Assert(row != null, "Row should always have a value");
+            Debug.Assert(row != null, "OrderRow object should always have a value here.");
             row.UnitPrice = (decimal)row.RegistrationType.Price;
-
 
             //Calculate row price before discount
             if (row.AdditionalLocation != null)
             {
                 totalOptionsPrice = row.AdditionalLocation.Count * optionsCost; // cost * number of additional locations
             }
+
             row.RowPrice = row.UnitPrice + totalOptionsPrice;
             pricesAndDiscounts.UnitPrice = row.UnitPrice;
 
@@ -626,7 +672,28 @@ namespace CUWebinars.Business.Services
 
         public void RemoveAdditionalLocationsForOrder(int idOrderRow)
         {
+            try
+            {
             _additionalLocationsRepository.DeleteAdditionalLocationsByOrderRowId(idOrderRow);
+
+                var orderRow = _orderRepository.GetOrderRowById(idOrderRow);
+                var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+                var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(orderRow.idWebinar);
+         
+                var totalOptionsDeletedCost = additionalLocationsPricing.First().Item2 * orderRow.AdditionalLocation.Count;
+                SetTotalPrice(totalOptionsDeletedCost, orderRow);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException(string.Format("RemoveAdditionalLocationsForOrder | idOrderRow={0}", idOrderRow), exception);
+            }
+        }
+
+        private void SetTotalPrice(decimal newTotalPrice, OrderRow orderRow)
+        {
+            orderRow.RowPrice = newTotalPrice;
+            orderRow.Order.Total = newTotalPrice;
+            _orderRepository.SaveOrderChanges(orderRow.Order, null);
         }
 
         public Discount GetDiscountByCode(string discount)
@@ -674,13 +741,13 @@ namespace CUWebinars.Business.Services
                         DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm"));
                 if (currentOrder.Origin != "Migrator")
                 {
-                    AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
-                    {
-                        EventObject = orderSubmittedViewModel,
-                        RelativeFilePath = relativePath
-                    });
+                AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
+                {
+                    EventObject = orderSubmittedViewModel,
+                    RelativeFilePath = relativePath
+                });
 
-                    _logger.Info("Persisted Email for Order {0}:{1}", currentOrder.idOrder, relativePath);
+                _logger.Info("Persisted Email for Order {0}:{1}", currentOrder.idOrder, relativePath);
 
                 }
 
@@ -722,7 +789,7 @@ namespace CUWebinars.Business.Services
 
         private void ProcessDiscountCodes(Order order)
         {
-           var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+            var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             //legacy's verbetum if (row.Discount == null && String.IsNullOrEmpty(row.DiscountCode) == false)
 
             if (row.Discount != null)
@@ -753,8 +820,8 @@ namespace CUWebinars.Business.Services
 
             return true;
         }
-
-
+        
+        
         private void RedeemDiscount(OrderRow orderRow)
         {
             Discount discount = orderRow.Discount;

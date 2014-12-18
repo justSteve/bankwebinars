@@ -1,4 +1,5 @@
 ﻿using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Security.Claims;
 using System.Web.Hosting;
@@ -688,22 +689,26 @@ namespace CUWebinars.Web.Controllers
         /// <param name="id"></param>
         private void InitializeDetailsState(Webinar webinar, WebinarDetailsViewModel model, int id)
         {
+            IEnumerable<AdditionalLocation> additionalLocations = null;
+            OrderRow orderRowForOrder = null;
+
             model.WebUser = Request.IsAuthenticated
                 ? _membershipService.GetUserByEmailLoadedWithOrdersData(User.Identity.Name)
                 : new WebUser();
 
             if (Request.IsAuthenticated && model.WebUser.Orders.FirstOrDefault() != null)
             {
-                model.Order = model.WebUser.Orders.FirstOrDefault(o => o.OrderRows.FirstOrDefault().idWebinar == id);
+                model.Order = model.WebUser.Orders.FirstOrDefault(o => o.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar == id);
             }
 
             var orderExists = model.Order != null;
 
-            IEnumerable<AdditionalLocation> additionalLocations = null;
-
             if (orderExists)
             {
-                additionalLocations = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.ToList();
+                orderRowForOrder = model.Order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active);
+                Debug.Assert(orderRowForOrder != null, "orderRowForOrder object should always have a value here.");
+
+                additionalLocations = orderRowForOrder.AdditionalLocation.ToList();
             }
 
             model.Topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar);
@@ -725,7 +730,7 @@ namespace CUWebinars.Web.Controllers
                     EventTitle = model.Webinar.Title,
                     idWebinar = model.Webinar.idWebinar,
                     Options = _orderManagementService.GetOptionsByWebinarId(id, false),
-                    OrderRowExists = model.Order != null && model.Order.OrderRows != null,
+                    OrderRowExists = orderRowForOrder != null,
                     WebinarDuration = model.Webinar.Duration,
                     WebinarStatus = model.Webinar.Status
                 },
@@ -738,19 +743,19 @@ namespace CUWebinars.Web.Controllers
                 WebinarStatus = model.Webinar.Status
             };
 
-            if (model.CheckoutOptionsViewModel.OrderExists)
+            if (orderExists)
             {
                 model.CheckoutOptionsViewModel.OrderStatus = model.Order.OrderStatus;
                 model.CheckoutOptionsViewModel.OrderHasId = model.Order.idOrder > 0;
-                var row = model.Order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active);
+                var row = orderRowForOrder;
 
                 if (row != null)
-                    model.CheckoutOptionsViewModel.RegistrationType = row.RegistrationType;
+                    model.CheckoutOptionsViewModel.RegistrationType = orderRowForOrder.RegistrationType;
                 else
                     row = model.Order.OrderRows.SingleOrDefault();
 
                 var additionalLocationsPricing =
-                    _orderManagementService.GetAdditionalLocationsPricing(row.AdditionalLocation,
+                    _orderManagementService.GetAdditionalLocationsPricing(orderRowForOrder.AdditionalLocation,
                         webinar.idWebinar
                         );
 
@@ -790,7 +795,7 @@ namespace CUWebinars.Web.Controllers
                         Addresses = additionalLocationsPricing.Item1,
                         OptionsCost = additionalLocationsPricing.Item2
                     },
-                    OrderRow = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active),
+                    OrderRow = orderRowForOrder,
                     RecordingLink =
                         "<a href='" + GlobalConfig.GlobalConfigSingleton.WMVRepository + webinar.RecordingUrl +
                         "' target=_blank /> Recording Playback</a>",

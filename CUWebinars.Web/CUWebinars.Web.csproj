@@ -378,7 +378,7 @@
     <Compile Include="Helpers\DomainHelpers.cs" />
     <Compile Include="Helpers\IAppHelper.cs" />
     <Compile Include="Helpers\SessionStartInfo.cs" />
-    <Compile Include="Infrastructure\Attributes\MonitorAffiliateAttribute.cs" />
+    <Compile Include="Infrastructure\Attributes\MonitorAffiliateFilter.cs" />
     <Compile Include="Models\MigrateOrderModel.cs" />
     <Compile Include="Models\RegisterFieldsDTO.cs" />
     <Compile Include="Models\ShippingDetailsModel.cs" />
@@ -1250,7 +1250,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>3538</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

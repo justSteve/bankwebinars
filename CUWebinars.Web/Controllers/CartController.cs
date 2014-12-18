@@ -33,8 +33,9 @@ namespace CUWebinars.Web.Controllers
         [HttpPost]
         public ActionResult ApplyDiscountCode(string code)
         {
+            //_cartControllerOrchestrator.ApplyDiscountCode
             
-            return Json(new { result = "100"});
+            return Json(new { Result = "100"});
         }
 
 
