@@ -9,7 +9,7 @@ using System.Xml;
 
 namespace CUWebinars.Web.Controllers
 {
-    [MonitorAffiliate]
+    //[MonitorAffiliate]
     public class HomeController : Controller
     {
 

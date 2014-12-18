@@ -23,6 +23,7 @@ namespace CUWebinars.Business.Services
             string webinarKey);
 
         void DeleteOrder(int orderId);
+        Affiliate DetermineAffiliateByAlternativeMeans(int idUser);
         void DispatchDummyOrder();
         void FireOrderSubmittedEvent(Order order);
         void FireSendConnectionInfoNotificationEvent(IList<Order> orders);

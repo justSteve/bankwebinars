@@ -145,6 +145,17 @@ namespace CUWebinars.Business.Repository
             return item.FirstOrDefault();
         }
 
+        public IList<Order> FindOrdersByUserId(int userId)
+        {
+            var userOrders = items.Include(o => o.OrderRows.Select(or => or.Webinar))
+                .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+                .Where(o => o.WebUser.idUser == userId);
+
+            return ReferenceEquals(null, userOrders) ? null : GetLoadedEntitiesForOrder(userOrders);
+
+        }
+        
         public IList<Order> FindOrdersByUserIdWithOrderRows(int userId)
         {
             var userOrders = items.Include(o => o.OrderRows.Select(or => or.Webinar))

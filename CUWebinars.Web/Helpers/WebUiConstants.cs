@@ -31,5 +31,6 @@ namespace CUWebinars.Web.Helpers
         public const string SessionId = "SessionID";
         public const string SubdomainBranding = "SubdomainBranding";
 
+        public const string Webinars = "webinars";
     }
 }

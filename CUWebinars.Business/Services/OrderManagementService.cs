@@ -271,6 +271,55 @@ namespace CUWebinars.Business.Services
             _orderRepository.DeleteOrder(orderId);
         }
 
+        public Affiliate DetermineAffiliateByAlternativeMeans(int idUser)
+        {
+            var affiliateIds = _orderRepository.FindOrdersByUserId(idUser)
+                .OrderByDescending(o => o.OrderDate)
+                .Select(o => o.idAffiliate)
+                .ToList();
+
+            if (affiliateIds.Any())
+            {
+                //  get the most recent
+                int affiliateIdForOrder, mostRecentAffiliateId;
+                affiliateIdForOrder = mostRecentAffiliateId = affiliateIds.First();
+
+                if (affiliateIds.Distinct().Count() > 1) // The history is of more than 1 affiliate
+                {
+                    // The business rule is that where there is more than one Affiliate which the 
+                    // user has made orders for, if one affiliate has been used twice as many times 
+                    // as the most recent Affiliate, then make the order for that Affiliate.
+                    var groups = affiliateIds.GroupBy(a => a);
+                    int mostUsedAffiliateId = 0;
+                    int mostUses = 0;
+                    int numberOfUsesOfMostRecentAffiliate = 0;
+                    int current = 0;
+                    
+                    foreach (var group in groups)
+                    {
+                        current = group.Count();
+
+                        if (current > mostUses)
+                        {
+                            mostUses = current;
+                            mostUsedAffiliateId = group.Key;
+                        }
+
+                        if (group.Key == mostRecentAffiliateId)
+                        {
+                            numberOfUsesOfMostRecentAffiliate = current;
+                        }
+                    }
+
+                    if (mostUses >= 2*numberOfUsesOfMostRecentAffiliate)
+                        affiliateIdForOrder = mostUsedAffiliateId;
+                }
+
+                return _affiliateRepository.FindById(affiliateIdForOrder); // use the most recent
+            }
+            return null;
+        }
+
         public void DispatchDummyOrder()
         {
             foreach (var orderSubmittedEvent in GetEvents())
