@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Models;
+﻿using System;
+using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.CQS.Commands
 {
@@ -9,10 +10,15 @@ namespace CUWebinars.Business.CQS.Commands
         public Address BillingAddress { get; set; }
         public string ConfirmChangeEmailUrl { get; set; }
         public string Email { get; set; }
+        public string AdditionalLocationsString { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public OrderRow OrderRow { get; set; }
         public Address ShippingAddress { get; set; }
+        public string Discount { get; set; }
+        public int idOrderLegacy { get; set; }
+        public int idUserLegacy { get; set; }
+        public DateTime OrderDate { get; set; }
 
         public string VerificationKey { get; set; }
         public Webinar Webinar { get; set; }

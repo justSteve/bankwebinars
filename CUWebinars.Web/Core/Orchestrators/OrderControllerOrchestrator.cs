@@ -34,13 +34,19 @@ namespace CUWebinars.Web.Core.Orchestrators
                 AdditionalLocations = migrateOrderModel.AdditionalLocations,
                 Email = email,
                 RegistrationType = migrateOrderModel.idRegType,
-                Webinar = migratorQueryResult.Webinar,
+                Webinar = migratorQueryResult.Webinar
             };
 
             _commandProcessor.Execute(addOrderRowCommand);
 
+            //if (migrateOrderModel.AdditionalLocations != null)
+            //{
+                
+            //}
+
             var migrateOrderCommand = new MigrateOrderCommand()
             {
+                
                 Affiliate = migratorQueryResult.Affiliate,
                 AffiliateComments = migrateOrderModel.AffiliateComments,
                 BillingAddress = migrateOrderModel.BillingAddress,
@@ -51,6 +57,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 OrderRow = addOrderRowCommand.OrderRow, // out parameter of addOrderRowCommand command
                 ShippingAddress = migrateOrderModel.ShippingAddress,
                 VerificationKey = verificationKey,
+                OrderDate = migrateOrderModel.OrderDate,
+                idUserLegacy = migrateOrderModel.idUserLegacy,
+                idOrderLegacy = migrateOrderModel.idOrderLegacy,
                 Webinar = migratorQueryResult.Webinar,
                 WebUser = migratorQueryResult.WebUser
             };

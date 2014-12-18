@@ -75,7 +75,7 @@ namespace CUWebinars.Business.Repository
                 newOrderRow.RowStatus = OrderRowStatus.Active;
 
                 newOrderRow.RowPrice = Convert.ToDecimal(newOrderRow.RegistrationType.Price);
-                
+
                 return newOrderRow;
 
             }
@@ -96,7 +96,7 @@ namespace CUWebinars.Business.Repository
         public void DeleteOrder(int orderId)
         {
             var orderToDelete = items.Find(orderId);
-            
+
             Remove(orderToDelete);
         }
 
@@ -253,7 +253,7 @@ namespace CUWebinars.Business.Repository
             //  
             if (webUser.Addresses == null)
                 return order;
-            
+
             var billingAddress =
                 webUser.Addresses.FirstOrDefault(a => a.AddressType == DomainConstants.BillingAddress);
             var shippingAddress =
@@ -312,27 +312,8 @@ namespace CUWebinars.Business.Repository
 
         public Order SaveOrderChanges(Order order, int? isFromSignup = null)
         {
-            //TODO: Shopping Cart Task - Is Dave satisfied with this approach?
             var error = db.GetValidationErrors().ToArray();
 
-            //this method needs to separate the 
-            // act of saving to db from the act of setting the
-            // order status to 'Submitted'. 
-            
-            //When originally coded for the 
-            // OrderImport use case, it worked ok because by the time
-            // this method executed we intented OrderStatus to be .Submitted.
-            //
-            // However, now the we are coding for the Shopping cart's use case
-            // we need to leave the order's status in the '.InProcess' state
-            // until the shopping cart's ~/Views/cart/Partials/CheckoutConfirm.cshtml
-            // partial has presented the user the fully formed Order object and given 
-            // him to a finalizing 'Confirm Order' button before changing status 
-            // to 'Submitted'.
-
-            //
-
-            // is the following 
             if (error.Any())
             {
                 foreach (var err in error)
@@ -341,13 +322,6 @@ namespace CUWebinars.Business.Repository
                 }
 
             }
-            //else
-            //{
-            //    if (isFromSignup.HasValue && isFromSignup == 0)
-            //    {
-            //        order.OrderStatus = OrderStatus.Submitted;
-            //    }
-            //}
 
             db.SaveChanges();
 
@@ -368,6 +342,21 @@ namespace CUWebinars.Business.Repository
                         )
                     .ToList();
             return !items.Any() ? 0 : 1;
+        }
+
+        public Discount FindDiscountById(int id)
+        {
+
+            //var item = items.
+            return null;
+
+        }
+
+        public Discount FindDiscountByCode(string discount)
+        {
+            return ((TTSWebinarsContext)db).Discounts.SingleOrDefault
+                (d => d.code == discount);
+
         }
 
         //public IList<AdditionalLocation> GetAdditionalLocations(int idOrder)

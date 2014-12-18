@@ -65,7 +65,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                command.RegistrationType
                );
 
-            orderRow.Discount = _orderManagementService.GetDiscount(command.Email);
+            //orderRow.Discount = _orderManagementService.GetDiscount(command.Email);
 
             _postCommitRegistrator.Committed += () =>
             {
@@ -196,12 +196,14 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             if (command == null) throw new ArgumentNullException("command");
             var importedOrder = _orderManagementService.CreateNewOrder(command.Affiliate, command.WebUser, command.Webinar, command.OrderRow);
 
-            importedOrder.AdminComments = "Mirgrate on: " + DateTime.Now.ToShortDateString();
+            importedOrder.AdminComments = "Migrated on: " + DateTime.Now.ToShortDateString();
             importedOrder.AffiliateComments = command.AffiliateComments;
             importedOrder.UserComments = "";
             importedOrder.Origin = "Migrator";
             importedOrder.OrderStatus = OrderStatus.Submitted;
-            //importedOrder.idOrderLegacy = command.
+            importedOrder.idOrderLegacy = command.idOrderLegacy;
+            importedOrder.OrderDate = command.OrderDate;
+            _orderManagementService.GetDiscountByCode(command.Discount);
 
             importedOrder.FirstName = command.FirstName;
             importedOrder.LastName = command.LastName;

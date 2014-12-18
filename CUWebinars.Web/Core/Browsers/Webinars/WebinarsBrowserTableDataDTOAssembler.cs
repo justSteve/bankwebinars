@@ -33,8 +33,7 @@ namespace CUWebinars.Web.Core.Browsers.Webinars
                                         entry.Webinar.idWebinar + "' target='_blank'>[Links]</a>";
 
 
-                //TODO: Usertype needs to be determined by Claims ---- addendum: or does it. Things seem to be working ok as is. Gratuitous change? Consistancy wins out.
-
+                
                 //deprecated method of determining usertype
                 //if (CurrentSession.Instance.CurrentWebUser.UserType == UserType.Affiliate)
                 //{

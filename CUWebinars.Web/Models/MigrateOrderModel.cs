@@ -16,6 +16,7 @@ namespace CUWebinars.Web.Models
         public int idRegType { get; set; }
         public int idWebinar { get; set; }
         public int idOrderLegacy { get; set; }
+        public int idUserLegacy { get; set; }
         public string Institution  { get; set; }
         public string Origin  { get; set; }
         public string Title { get; set; }
@@ -23,7 +24,7 @@ namespace CUWebinars.Web.Models
         public bool SendNotification { get; set; }
         public Address ShippingAddress { get; set; }
         public OrderStatus Status { get; set; }
-        public int idDiscount { get; set; }
+        public string DiscountCode{ get; set; }
         public DateTime OrderDate { get; set; }
         public DateTime ShipmentDate { get; set; }
         public decimal Total { get; set; }

@@ -96,8 +96,7 @@ namespace CUWebinars.Business.Services
             catch (Exception exception)
             {
                 _logger.ErrorException("CreateOrderRow method", exception);
-                //todo: can elmah be persuaded to fire from thic class? 
-                //Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+
                 throw;
             }
         }
@@ -152,7 +151,7 @@ namespace CUWebinars.Business.Services
             foreach (var additionalLocation in additionalLocationsEnumerated)
             {
                 emailSpanElement = string.Format("<strong>{0}</strong>", additionalLocation.Email);
-                
+
                 i++;
 
                 if (i == additionalLocationsEnumerated.Count())
@@ -336,20 +335,17 @@ namespace CUWebinars.Business.Services
             PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
             decimal totalOptionsPrice = 0M;
 
-            var row = order.OrderRows.FirstOrDefault();
+            var row = order.OrderRows.SingleOrDefault(orderRow => orderRow.RowStatus == OrderRowStatus.Active);
 
-            foreach (var orderRow in order.OrderRows.Where(orderRow => orderRow.RowStatus == OrderRowStatus.Active))
-            {
-                row = orderRow;
-            }
-            //TODO: Should this null check be a Debug.Assert instead?
-            if (row != null) row.UnitPrice = (decimal)row.RegistrationType.Price;
+
+            Debug.Assert(row != null, "Row should always have a value");
+            row.UnitPrice = (decimal)row.RegistrationType.Price;
+
 
             //Calculate row price before discount
-            //TODO: AdditionalLocationCount is coming in as null. Should it be populated or just checked?
             if (row.AdditionalLocation != null)
             {
-                totalOptionsPrice = row.AdditionalLocation.Count*optionsCost; // cost * number of additional locations
+                totalOptionsPrice = row.AdditionalLocation.Count * optionsCost; // cost * number of additional locations
             }
             row.RowPrice = row.UnitPrice + totalOptionsPrice;
             pricesAndDiscounts.UnitPrice = row.UnitPrice;
@@ -571,7 +567,7 @@ namespace CUWebinars.Business.Services
                 ProcessDiscountCodes(currentOrder);
                 CalculateOrderPrices(currentOrder, additionalLocationsPricing.Single().Item2);
 
-                var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder,  (int)currentOrder.OrderStatus);
+                var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, (int)currentOrder.OrderStatus);
 
 
                 _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
@@ -633,6 +629,12 @@ namespace CUWebinars.Business.Services
             _additionalLocationsRepository.DeleteAdditionalLocationsByOrderRowId(idOrderRow);
         }
 
+        public Discount GetDiscountByCode(string discount)
+        {
+            var myDiscount = _orderRepository.FindDiscountByCode(discount);
+            return myDiscount;
+        }
+
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink)
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
@@ -681,7 +683,7 @@ namespace CUWebinars.Business.Services
                     _logger.Info("Persisted Email for Order {0}:{1}", currentOrder.idOrder, relativePath);
 
                 }
-                
+
                 foreach (var evt in GetEvents())
                 {
                     _ttsConfig.NotificationEventBus.RaiseEvent(evt);
@@ -720,8 +722,7 @@ namespace CUWebinars.Business.Services
 
         private void ProcessDiscountCodes(Order order)
         {
-            //TODO Decide: Should Discounts have a Service dedicated to them?
-            var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+           var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             //legacy's verbetum if (row.Discount == null && String.IsNullOrEmpty(row.DiscountCode) == false)
 
             if (row.Discount != null)
@@ -752,8 +753,8 @@ namespace CUWebinars.Business.Services
 
             return true;
         }
-        
-        
+
+
         private void RedeemDiscount(OrderRow orderRow)
         {
             Discount discount = orderRow.Discount;
@@ -780,15 +781,15 @@ namespace CUWebinars.Business.Services
         {
 
             var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow);
-            //TODO: Do we need to insure that a webuser record for notauthenticated@cuwebinars.com exists?
             var email = webUser == null ? "notauthenticated@cuwebinars.com" : webUser.email;
-            _logger.Info("CreateNewOrder: " + email + "| " + orderRow.Webinar.Title + "| " + orderRow.RegistrationType.OptionLabel);
+            _logger.Info("CreateNewOrder: " + email + " | " + orderRow.Webinar.Title + " | " + orderRow.RegistrationType.OptionLabel);
             return order;
         }
 
-        public Discount GetDiscount(string email)
+        public Discount GetDiscount(int id)
         {
-            return null;
+            var discount = _orderRepository.FindDiscountById(id);
+            return discount;
         }
 
         public string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int webinarId,

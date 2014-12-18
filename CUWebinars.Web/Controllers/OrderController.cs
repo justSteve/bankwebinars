@@ -191,7 +191,8 @@ namespace CUWebinars.Web.Controllers
 
                 _logger.Info("Begin migrate: " + email);
 
-                var migratorQueryResult = _orderControllerOrchestrator.GetPreparatoryDataForMigrator(migratedOrder, email);
+                var migratorQueryResult = _orderControllerOrchestrator.GetPreparatoryDataForMigrator(migratedOrder
+                    , email);
 
                 if (ReferenceEquals(null, migratorQueryResult.WebUser))
                 {

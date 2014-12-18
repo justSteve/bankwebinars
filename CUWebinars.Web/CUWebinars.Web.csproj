@@ -596,6 +596,7 @@
     <Content Include="Views\Shared\EditorTemplates\ShippingDetails.cshtml" />
     <Content Include="Views\Home\ContactUsJF.cshtml" />
     <Content Include="Views\Cart\Partials\_DisplayRowPrice.cshtml" />
+    <Content Include="Views\Account\ThankYouConfirmed.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\packages\Selenium.WebDriver.ChromeDriver.2.9.0.0\content\chromedriver.exe">
