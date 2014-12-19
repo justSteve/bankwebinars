@@ -179,7 +179,7 @@ namespace CUWebinars.Web.App_Start
 
             kernel.Bind<ICommandProcessor>().To<CommandProcessor>().InRequestScope();
             kernel.Bind<IQueryProcessor>().To<QueryProcessor>().InRequestScope();
-            AutoRegisterType(typeof(ICommandHandler<>), kernel); // Register ICommandHandler
+            AutoRegisterType(typeof(Business.CQS.ICommandHandler<>), kernel); // Register ICommandHandler
             AutoRegisterType(typeof(IQueryHandler<,>), kernel); // Register IQueryHandler 
 
             kernel.Bind<IOrderControllerOrchestrator>().To<OrderControllerOrchestrator>().InRequestScope();

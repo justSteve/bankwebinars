@@ -43,6 +43,7 @@ namespace CUWebinars.Business.Services
         OrderRow GetOrderRowById(int idOrderRow);
         IDictionary<RegType, bool> GetRegTypesByWebinarIdFrom(int id, bool detached);
         IList<RegType> GetRegTypesForOption(int optionId);
+        WebUser GetWebUser(string email);
         WebUser GetWebUser(int id);
         IEnumerable<WebUser> GetWebusersForLiveNotifications(int idWebinar);
         OrderRow LoadOrderRow(int id);

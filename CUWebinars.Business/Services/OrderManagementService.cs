@@ -224,6 +224,13 @@ namespace CUWebinars.Business.Services
             return _regTypeRepository.FindRegTypesForOption(optionId);
         }
 
+        public WebUser GetWebUser(string email)
+        {
+            if (email == null) throw new ArgumentNullException("email");
+
+            return _webUserRepository.GetWebUserByEmail(email);
+        }
+
 
         public OrderRow GetOrderRowById(int idOrderRow)
         {
@@ -257,6 +264,7 @@ namespace CUWebinars.Business.Services
         {
             return _webUserRepository.FindByIdLoaded(id);
         }
+
         public IEnumerable<WebUser> GetWebusersForLiveNotifications(int idWebinar)
         {
             return _webUserRepository.GetWebusersForLiveNotifications(idWebinar);

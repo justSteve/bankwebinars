@@ -47,7 +47,7 @@ namespace CUWebinars.Business.Tests.IntegrationTests
             var memRebootCtx = new DefaultMembershipRebootDatabase(Constants.MembershipRebootConnectionStringName);
             var refDataRepository = new RefDataRepository();
             var config = MembershipRebootConfig.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TestConstants.UpTwoFolders), new StateService(), refDataRepository);
-            var userAccountService = new UserAccountService(config, new DefaultUserAccountRepository());
+            var userAccountService = new UserAccountService(config, new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase()));
             var logger = new Log4NetLogger(typeof(MembershipService));
 
             IMembershipService membershipService = new MembershipService(new InstitutionRepository(ctx), 
@@ -175,7 +175,7 @@ namespace CUWebinars.Business.Tests.IntegrationTests
             var config =
                 MembershipRebootConfig.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TestConstants.UpTwoFolders),
                     new StateService(), refDataRepository);
-            var userAccountService = new UserAccountService(config, new DefaultUserAccountRepository());
+            var userAccountService = new UserAccountService(config, new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase()));
             var logger = new Log4NetLogger(typeof(MembershipService));
 
             IMembershipService membershipService = new MembershipService(new InstitutionRepository(ctx),
