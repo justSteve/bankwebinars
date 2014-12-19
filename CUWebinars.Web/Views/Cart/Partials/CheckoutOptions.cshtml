@@ -1,53 +1,42 @@
 ﻿@model CheckoutOptionsViewModel
 
-    @Html.ValidationSummary("Please address the following issues in the form below, or call 800-831-0678 ext 706 for immediate assistance:", new { id = "valSummarySignUpForm" })
+@Html.ValidationSummary("Please address the following issues in the form below, or call 800-831-0678 ext 706 for immediate assistance:", new { id = "valSummarySignUpForm" })
 
-    @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new { id = "SignUpForm" }))
+@using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new { id = "SignUpForm" }))
     {
-        @Html.HiddenFor(model => model.idWebinar)
-        @Html.HiddenFor(model => model.idUser)
-        @Html.HiddenFor(model => model.OrderExists)
-        @Html.HiddenFor(model => model.OrderHasId)
-        @Html.HiddenFor(model => model.OrderStatus)
-        @Html.HiddenFor(model => model.WebinarDuration)
-        @Html.HiddenFor(model => model.WebinarStatus)
-        @Html.HiddenFor(model => model.DisplayOptionsViewModel.EventTitle)
-        
+    @Html.HiddenFor(model => model.idWebinar)
+    @Html.HiddenFor(model => model.idUser)
+    @Html.HiddenFor(model => model.OrderExists)
+    @Html.HiddenFor(model => model.OrderHasId)
+    @Html.HiddenFor(model => model.OrderStatus)
+    @Html.HiddenFor(model => model.WebinarDuration)
+    @Html.HiddenFor(model => model.WebinarStatus)
+    @Html.HiddenFor(model => model.DisplayOptionsViewModel.EventTitle)
+
         if (Model.OrderExists && Model.OrderHasId)
         {
-            //var row = Model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-
-            //var addLocations = row.AdditionalLocation.FirstOrDefault(o => o.idOrderRow == row.idOrderRow);
-
-            if (@Model.AdditionalLocations != null)
-            {
-                var RegCost = Model.AdditionalLocations;
-                var RegLabel = Model.AdditionalLocations;
-            }
             if (Model.OrderStatus == OrderStatus.Submitted
                 || Model.OrderStatus == OrderStatus.Paid
                 || Model.OrderStatus == OrderStatus.Billed)
             {
-                @*<span><i>Order# @Model.Order.OrderRows.FirstOrDefault().Order.ID<br>@RegLabel - $@RegCost<br></i></span>*@
                 if (Model.ConnectionInfoPresent)
                 {
-                    @*<blockquote style="margin-left: 150px; margin-right: 150px;" class="btn-success well">@Model.Order.OrderRows.FirstOrDefault().OrderRowRegTypes.First(o => o.idRegType == Model.Order.OrderRows.FirstOrDefault().RegistrationType).RegType.Stage2CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>*@
-                    <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn btn-success well">@Model.RegistrationType.Stage2CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
+    <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn btn-success well">@Model.RegistrationType.Stage2CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
                 }
                 else
                 {
-                    <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn btn-success well">@Model.RegistrationType.Stage1CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
+    <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn btn-success well">@Model.RegistrationType.Stage1CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
                 }
             }
             else
             {
-                <span>There is a pending order for this event that requires your confirmation.</span>
-                @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model.DisplayOptionsViewModel)
+    <span>We show a that you have pending order for this event that requires your confirmation or cancelation.</span>
+    @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model.DisplayOptionsViewModel)
             }
         }
         else
         {
-            @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model.DisplayOptionsViewModel)
+    @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model.DisplayOptionsViewModel)
         }
     }
 
@@ -57,7 +46,7 @@
         <h3 id="confirmCaption">Change Webinar Type</h3>
     </div>
     <div id="confirmResult" class="modal-body">
-        <p>The type you have selected does not include Additional Locations. If you proceed, the Additional Locations which you selected earlier will not be included in the order.</p>
+        <p>The registration type you have selected does not offer Additional Locations. If you proceed, the values which you entered (related to Additional Locations) earlier will be deleted.</p>
     </div>
     <div class="modal-footer">
         <a href="#" id="confirmTypeChange" role="button" class="btn btn-success">Continue</a>

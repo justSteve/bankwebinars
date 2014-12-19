@@ -609,8 +609,6 @@
     <Content Include="App_Data\Deploy\New-AzureStorage.ps1" />
     <Content Include="App_Data\Deploy\New-AzureWebsiteEnv.ps1" />
     <None Include="App_Data\Deploy\Publish-AzureWebsite.ps1" />
-    <Content Include="App_Data\Orders\ResetsDbForTesting.sql" />
-    <Content Include="App_Data\Orders\ResetsDb.sql" />
     <Content Include="Content\css\anytime.css" />
     <Content Include="Content\css\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\css\base\images\ui-bg_flat_75_ffffff_40x100.png" />
