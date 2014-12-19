@@ -379,6 +379,8 @@
     <Compile Include="Helpers\IAppHelper.cs" />
     <Compile Include="Helpers\SessionStartInfo.cs" />
     <Compile Include="Infrastructure\Attributes\MonitorAffiliateFilter.cs" />
+    <Compile Include="Models\EditContactInfoModel.cs" />
+    <Compile Include="Models\EditUserModel.cs" />
     <Compile Include="Models\MigrateOrderModel.cs" />
     <Compile Include="Models\RegisterFieldsDTO.cs" />
     <Compile Include="Models\ShippingDetailsModel.cs" />
@@ -598,6 +600,7 @@
     <Content Include="Views\Home\ContactUsJF.cshtml" />
     <Content Include="Views\Cart\Partials\_DisplayRowPrice.cshtml" />
     <Content Include="Views\Account\ThankYouConfirmed.cshtml" />
+    <Content Include="Views\Account\EditContactInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\packages\Selenium.WebDriver.ChromeDriver.2.9.0.0\content\chromedriver.exe">

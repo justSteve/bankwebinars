@@ -509,6 +509,41 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
         [System.Web.Mvc.AllowAnonymous]
+        public ActionResult EditContactInfo(EditContactInfoModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _accountControllerOrchestrator.EditContactInfo(model);
+                    return Json(new { Result = WebUiConstants.Success });
+                }
+                catch (DbEntityValidationException dbEx)
+                {
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
+                        }
+                    }
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException("In Manage Action", exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                    throw;
+                }
+            }
+            return this.ModelStateJson(ModelState);
+
+        
+        }
+
+
+        [System.Web.Mvc.HttpPost]
+        [ValidateAntiForgeryToken]
+        [System.Web.Mvc.AllowAnonymous]
         public ActionResult Manage(ManageModel model)
         {
             if (ModelState.IsValid)

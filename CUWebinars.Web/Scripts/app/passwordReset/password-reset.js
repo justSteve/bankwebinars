@@ -54,16 +54,16 @@ $(function () {
                     $('#NormalResetPasswordButton').hide();
                 } else {
                     if (data['Invalid']) {
-                        Rollbar.error("Invalid email address.");
-                        crunchingLabel.html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Are you sure you typed it corretly?</span>');
+                        //Rollbar.error("Invalid email address.");
+                        crunchingLabel.html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Are you sure you typed it correctly? <br>In case of continued problems, please contact us at 800-831-0678 ext 6. </span>');
                     } else {
-                        crunchingLabel.html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Error. Please retry...</span>');
+                        crunchingLabel.html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Error. Please retry...</span>In case of continued problems, please contact us at 800-831-0678 ext 707.');
                     }
                 }
 
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 // failed request; give feedback to user
-                crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;<strong>Oops!</strong> Try that again in a few moments.</span>');
+                crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;<strong>Oops!</strong> Try that again in a few moments.In case of continued problems, please contact us at 800-831-0678 ext 707.</span>');
                     // Request failed. Show error message to user. 
                     // errorThrown has error message, or "timeout" in case of timeout.
                 //appInsights.trackEvent("ResetPassword AJAX error: " + errorThrown);

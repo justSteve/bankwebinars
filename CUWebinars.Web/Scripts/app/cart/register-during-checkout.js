@@ -3,7 +3,7 @@
 
 registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, shippingAddressRequired, callback) {
 
-    Rollbar.info({ 'reg-during-check': { orderId: orderId, webinarId: webinarId, orderRowId: orderRowId, shippingAddressRequired: shippingAddressRequired } });
+    //Rollbar.info({ 'reg-during-check': { orderId: orderId, webinarId: webinarId, orderRowId: orderRowId, shippingAddressRequired: shippingAddressRequired } });
 
     cartStateManager.setCancelOrderForm($('#cancelOrder'));
     cartStateManager.setConfirmOrderForm($('#confirmOrder'));

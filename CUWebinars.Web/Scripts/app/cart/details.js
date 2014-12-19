@@ -12,7 +12,6 @@ var checkoutConfirm,
 discount = '';
 checkoutConfirm = {};
 
-
 $(function () {
 
     signUpForm = $('#SignUpForm');
@@ -26,7 +25,7 @@ $(function () {
 
         cartStateManager.getConfirmOrderForm().on('submit', function (e) {
 
-            Rollbar.info('submitting confirmOrder form');
+            //Rollbar.info('submitting confirmOrder form');
             e.preventDefault();
 
             var self = $(this);
@@ -227,6 +226,14 @@ $(function () {
         // If the user IS NOT LOGGED IN - control moves to the register-during-checkout.js script
         if (!cartStateManager.getIsUserLogged()) {
 
+var xhr = require('xhr');
+
+xhr('http://localhost:8080', function (err, resp, body) {
+  //Report unthrown error to New Relic
+  if (err) return NREUM.noticeError(err);
+  //Handle successful response
+  alert(body);
+});
             //appInsights.trackEvent("anon user hits signup");
             $.post(signUpForm.attr('action'), data, function (result) {
 

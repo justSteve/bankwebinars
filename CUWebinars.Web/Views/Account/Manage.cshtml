@@ -1,6 +1,6 @@
 ﻿@model  ManageModel
 @{
-    ViewBag.Title = "Manage Account";
+    ViewBag.Title = "Edit Contact Info";
     var identity = ((ClaimsIdentity)User.Identity)
         .Claims
         .Where(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName)
