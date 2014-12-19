@@ -136,6 +136,7 @@
     <Compile Include="CQS\CommandHandlers\OrderManagementCommandHandlers.cs" />
     <Compile Include="CQS\CommandProcessor.cs" />
     <Compile Include="CQS\Commands\MigrateOrderCommand.cs" />
+    <Compile Include="CQS\Commands\MigrateOrderRowCommand.cs" />
     <Compile Include="CQS\Commands\RegisterNewAccountCommand.cs" />
     <Compile Include="CQS\Commands\VerifyAccountCommand.cs" />
     <Compile Include="CQS\ICommandHandler.cs" />

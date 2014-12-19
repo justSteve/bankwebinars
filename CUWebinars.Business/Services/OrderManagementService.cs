@@ -96,8 +96,7 @@ namespace CUWebinars.Business.Services
             catch (Exception exception)
             {
                 _logger.ErrorException("CreateOrderRow method", exception);
-                //todo: can elmah be persuaded to fire from thic class? 
-                //Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+
                 throw;
             }
         }
@@ -173,7 +172,7 @@ namespace CUWebinars.Business.Services
             }
 
             Debug.Assert(additionalLocationsPricing.Count == 1, "There should only ever be 1 value returned for the cost of an Additionalocation for a particular Webinar");
-            // Item2 of the tuple is the price value as a decimal. Item 1 is the AdditionalLocationsLookupPrice id 
+                // Item2 of the tuple is the price value as a decimal. Item 1 is the AdditionalLocationsLookupPrice id 
             optionsCost = additionalLocationsPricing.Single().Item2;
 
             return new Tuple<string, decimal>(addresses.ToString(), optionsCost);
@@ -399,7 +398,7 @@ namespace CUWebinars.Business.Services
             //Calculate row price before discount
             if (row.AdditionalLocation != null)
             {
-                totalOptionsPrice = row.AdditionalLocation.Count*optionsCost; // cost * number of additional locations
+                totalOptionsPrice = row.AdditionalLocation.Count * optionsCost; // cost * number of additional locations
             }
 
             row.RowPrice = row.UnitPrice + totalOptionsPrice;
@@ -622,7 +621,7 @@ namespace CUWebinars.Business.Services
                 ProcessDiscountCodes(currentOrder);
                 CalculateOrderPrices(currentOrder, additionalLocationsPricing.Single().Item2);
 
-                var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder,  (int)currentOrder.OrderStatus);
+                var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, (int)currentOrder.OrderStatus);
 
 
                 _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
@@ -683,7 +682,7 @@ namespace CUWebinars.Business.Services
         {
             try
             {
-                _additionalLocationsRepository.DeleteAdditionalLocationsByOrderRowId(idOrderRow);
+            _additionalLocationsRepository.DeleteAdditionalLocationsByOrderRowId(idOrderRow);
 
                 var orderRow = _orderRepository.GetOrderRowById(idOrderRow);
                 var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
@@ -705,6 +704,12 @@ namespace CUWebinars.Business.Services
             _orderRepository.SaveOrderChanges(orderRow.Order, null);
         }
 
+        public Discount GetDiscountByCode(string discount)
+        {
+            var myDiscount = _orderRepository.FindDiscountByCode(discount);
+            return myDiscount;
+        }
+
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink)
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
@@ -718,15 +723,6 @@ namespace CUWebinars.Business.Services
 
             ProcessDiscountCodes(currentOrder);
             CalculateOrderPrices(currentOrder, optionsPrice);
-
-            //if (confirmChangeEmailLink == string.Empty)
-            //{
-            //    //we are saving a non-confirmed order
-            //    var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, 1);
-
-            //    return updatedOrder;
-
-            //}
 
             try
             {
@@ -751,7 +747,8 @@ namespace CUWebinars.Business.Services
                 var relativePath = Path.Combine(@"App_Data\Notifications",
                     string.Format("OrderNotification-{0}{1}",
                         DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm"));
-
+                if (currentOrder.Origin != "Migrator")
+                {
                 AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
                 {
                     EventObject = orderSubmittedViewModel,
@@ -759,6 +756,8 @@ namespace CUWebinars.Business.Services
                 });
 
                 _logger.Info("Persisted Email for Order {0}:{1}", currentOrder.idOrder, relativePath);
+
+                }
 
                 foreach (var evt in GetEvents())
                 {
@@ -798,7 +797,6 @@ namespace CUWebinars.Business.Services
 
         private void ProcessDiscountCodes(Order order)
         {
-            //TODO Decide: Should Discounts have a Service dedicated to them?
             var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             //legacy's verbetum if (row.Discount == null && String.IsNullOrEmpty(row.DiscountCode) == false)
 
@@ -858,15 +856,15 @@ namespace CUWebinars.Business.Services
         {
 
             var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow);
-            //TODO: Do we need to insure that a webuser record for notauthenticated@cuwebinars.com exists?
             var email = webUser == null ? "notauthenticated@cuwebinars.com" : webUser.email;
-            _logger.Info("CreateNewOrder: " + email + "| " + orderRow.Webinar.Title + "| " + orderRow.RegistrationType.OptionLabel);
+            _logger.Info("CreateNewOrder: " + email + " | " + orderRow.Webinar.Title + " | " + orderRow.RegistrationType.OptionLabel);
             return order;
         }
 
-        public Discount GetDiscount(string email)
+        public Discount GetDiscount(int id)
         {
-            return null;
+            var discount = _orderRepository.FindDiscountById(id);
+            return discount;
         }
 
         public string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int webinarId,

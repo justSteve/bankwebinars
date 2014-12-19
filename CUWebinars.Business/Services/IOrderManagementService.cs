@@ -34,7 +34,6 @@ namespace CUWebinars.Business.Services
         Affiliate GetAffiliateByDomain(string domain);
         Affiliate GetAffiliateById(int id);
         Affiliate GetAffiliateByIdLoaded(int id, params Expression<Func<Affiliate, object>>[] includeProperties);
-        Discount GetDiscount(string email);
         IDictionary<RegType, bool> GetOptionsByWebinarId(int id, bool detached);
         Order GetOrderById(int id);
         IList<Order> GetOrdersByUserId(int id);
@@ -56,5 +55,6 @@ namespace CUWebinars.Business.Services
         void UpdateOrderWithUserEmail(int orderId, string email);
         void UpdateOrderWithUserId(int orderId, int userId);
         void RemoveAdditionalLocationsForOrder(int idOrderRow);
+        Discount GetDiscountByCode(string discount);
     }
 }
