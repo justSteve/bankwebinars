@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Core;
+﻿using System.Security.Claims;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Services;
@@ -26,7 +27,6 @@ namespace CUWebinars.Web.Infrastructure.Attributes
 
         public void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            
             HttpRequestBase currentRequest = filterContext.RequestContext.HttpContext.Request;
             var currentHost = currentRequest.ServerVariables[ServerName].Split(DotCharSeparator)[0];
             var subdomainBranding = _stateService.GetValue<string>(WebUiConstants.SubdomainBranding);
@@ -45,13 +45,30 @@ namespace CUWebinars.Web.Infrastructure.Attributes
             else
             {
                 /* ATTEMPT 3: assign the Affiliate based on business rules regarding historical behaviour */
-
+                ExtractFromHistoricalUsageOfLogedInUser(filterContext);
             }
-
-            
         }
 
-        
+        private void ExtractFromHistoricalUsageOfLogedInUser(ActionExecutingContext filterContext)
+        {
+            var userIdentity = filterContext.HttpContext.User.Identity;
+
+            if (userIdentity.IsAuthenticated)
+            {
+                //var webUser =
+                //    _orderManagementService.GetWebUser(
+                //        ((ClaimsIdentity) userIdentity).Claims.Single(c => c.Type == ClaimTypes.Email).Value);
+
+                //var affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(webUser.idUser);
+
+                ////if(ReferenceEquals(null, affiliate))
+                //    // set as default affiliate
+
+                //_stateService.SetValue(WebUiConstants.CurrentAffiliate, affiliate);
+            }
+        }
+
+
         public void OnActionExecuted(ActionExecutedContext filterContext)
         {
             // Not Implemented by Design. Not an Omission.
