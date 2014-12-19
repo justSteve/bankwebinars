@@ -11,29 +11,30 @@ namespace CUWebinars.Business.Models.Mapping
             HasKey(t => t.idDiscount);
 
             // Properties
-            Property(t => t.code)
+            Property(t => t.DiscountCode)
                             .IsRequired()
                             .HasMaxLength(50);
 
-            Property(t => t.status)
+            Property(t => t.Status)
                             .IsRequired()
                             .HasMaxLength(50);
 
             // Table & Column Mappings
             ToTable("Discount");
             Property(t => t.idDiscount).HasColumnName("idDiscount");
-            Property(t => t.discountType).IsRequired();
-            Property(t => t.code).HasColumnName("code");
-            Property(t => t.percentOff).HasColumnName("percentOff");
-            Property(t => t.flatOff).HasColumnName("flatOff");
-            Property(t => t.usesNumber).HasColumnName("usesNumber");
-            Property(t => t.dateValidFrom).HasColumnName("dateValidFrom");
-            Property(t => t.dateValidTo).HasColumnName("dateValidTo");
-            Property(t => t.status).HasColumnName("status");
-            Property(t => t.dateBilled).HasColumnName("dateBilled");
-            Property(t => t.cost).HasColumnName("cost");
+            Property(t => t.DiscountType).IsRequired();
+            Property(t => t.DiscountCode).HasColumnName("DiscountCode");
+            Property(t => t.PercentOff).HasColumnName("PercentOff");
+            Property(t => t.FlatOff).HasColumnName("FlatOff");
+            Property(t => t.UsesCount).HasColumnName("usesCount");
+            Property(t => t.UsesRemain).HasColumnName("UsesRemain");
+            Property(t => t.DateValidFrom).HasColumnName("dateValidFrom");
+            Property(t => t.DateValidTo).HasColumnName("dateValidTo");
+            Property(t => t.Status).HasColumnName("status");
+            Property(t => t.DateBilled).HasColumnName("dateBilled");
+            Property(t => t.Cost).HasColumnName("cost");
             Property(t => t.Notes).HasColumnName("Notes");
-            Property(t => t.renewalTerm).HasColumnName("renewalTerm");
+            Property(t => t.RenewalTerm).HasColumnName("renewalTerm");
 
         }
     }

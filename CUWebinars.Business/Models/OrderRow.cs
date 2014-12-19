@@ -19,8 +19,8 @@ namespace CUWebinars.Business.Models
         public decimal UnitPrice { get; set; }
         public decimal RowPrice { get; set; }
         public decimal Royalty { get; set; }
-        public Nullable<System.DateTime> ShipmentDate { get; set; }
-        public Nullable<System.DateTime> AccessExpires { get; set; }
+        public DateTime? ShipmentDate { get; set; }
+        public DateTime? AccessExpires { get; set; }
         public OrderRowStatus RowStatus { get; set; }
         public Discount Discount { get; set; }
         public RegType RegistrationType { get; set; }

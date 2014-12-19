@@ -10,7 +10,7 @@ namespace CUWebinars.Web.ViewModel
         public string AdditionalLocationCaption { get; set; }
         public string AdminComments { get; set; }
         public string CCUserDetails { get; set; }
-        public string DiscountCode { get; set; }
+        public string CheckoutDiscountCode { get; set; }
         public DisplayOptionsInDropDownViewModel DisplayOptionsInDropDownViewModel { get; set; }
         public DisplayRowPriceViewModel DisplayRowPriceViewModel { get; set; }
         public int idUser { get; set; }

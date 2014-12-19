@@ -399,13 +399,13 @@ namespace CUWebinars.Business.Services
             //Calculate discount. 
             decimal discountTotal = 0;
 
-            if (row.Discount != null && row.Discount.percentOff != 0.0M)
+            if (row.Discount != null && row.Discount.PercentOff != 0.0M)
             {
-                discountTotal = row.RowPrice * row.Discount.percentOff / 100;
+                discountTotal = row.RowPrice * row.Discount.PercentOff / 100;
             }
-            else if (row.Discount != null && row.Discount.flatOff != 0.0M)
+            else if (row.Discount != null && row.Discount.FlatOff != 0.0M)
             {
-                discountTotal = row.Discount.flatOff;
+                discountTotal = row.Discount.FlatOff;
             }
 
             if (discountTotal > row.RowPrice)
@@ -826,15 +826,15 @@ namespace CUWebinars.Business.Services
         {
             Discount discount = orderRow.Discount;
 
-            if (discount.discountType != DiscountType.Subscription)
-                discount.usesNumber--;
+            if (discount.DiscountType != DiscountType.Subscription)
+                discount.UsesRemain--;
             _logger.Info("Discount was redeemed for {0}.", orderRow.idOrder);
             //TODO: Determine if OrderRow should be saved here or depend on other code in the workflow.
         }
 
         private void RejectDiscount(OrderRow orderRow)
         {
-            orderRow.Discount.usesNumber++;
+            orderRow.Discount.UsesRemain++;
             //according to legacy code but can a condition exist 
             //  a non-valid discount resulted in a decrement.
         }
@@ -853,7 +853,7 @@ namespace CUWebinars.Business.Services
             return order;
         }
 
-        public Discount GetDiscount(int id)
+        public Discount GetDiscountById(int id)
         {
             var discount = _orderRepository.FindDiscountById(id);
             return discount;
@@ -862,19 +862,10 @@ namespace CUWebinars.Business.Services
         public string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int webinarId,
             string webinarKey)
         {
-            //https://www2.gotomeeting.com/en_US/island/webinar/audio/organizers/conferenceInfo.tmpl?webinarId=495203178&role=0
-            //0 = attendee
-            //2 = panelist
-            //1 = organizer
             var webinar = _webinarRepository.FindById(webinarId);
             string orgKey = webinar.OrganizerKey;
-            //string orgKey = "922930"; //steve's
-            ////string orgKey = "901873";//marks
-            string access_token = webinar.OrganizerOAuthKey;
-            //string access_token = "5jxY3KZL48HWknOaOEP2eIzVmOTS"; //steve's
-            ////string access_token = "JIOHRkkCvmIKDY8QO0S4msbYH48N";//mark's
-
-
+            string accessToken = webinar.OrganizerOAuthKey;
+            
             string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/" + webinarKey + "/registrants";
 
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
@@ -882,7 +873,7 @@ namespace CUWebinars.Business.Services
             httpWebRequest.ContentType = "application/json";
 
             httpWebRequest.Accept = "application/vnd.citrix.g2wapi-v1.1+json";
-            httpWebRequest.Headers.Add("Authorization", "OAuth oauth_token=" + access_token);
+            httpWebRequest.Headers.Add("Authorization", "OAuth oauth_token=" + accessToken);
 
             httpWebRequest.Method = "POST";
 

@@ -620,7 +620,7 @@ namespace CUWebinars.Web.Controllers
                         AdminComments = model.Order.AdminComments,
                         AffiliateComments = model.Order.AffiliateComments,
                         //CCUserDetails = "",
-                        DiscountCode = orderRow.Discount == null ? string.Empty : orderRow.Discount.code,
+                        CheckoutDiscountCode = orderRow.Discount == null ? string.Empty : orderRow.Discount.DiscountCode,
                         // TODO: null possible?
                         DisplayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
                         {

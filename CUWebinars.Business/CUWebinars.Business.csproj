@@ -286,11 +286,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="SQLSeeding\ExecutesTheMigrationsScripts.sql" />
-    <Content Include="SQLSeeding\MigrationNotes.txt" />
-    <Content Include="SQLSeeding\Options2RegTypeSeedingScript.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\CUWebinars.NotificationSystem\CUWebinars.NotificationSystem.csproj">
       <Project>{281c6443-2348-4578-9704-2f953cd3af87}</Project>
       <Name>CUWebinars.NotificationSystem</Name>

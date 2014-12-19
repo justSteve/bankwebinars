@@ -62,7 +62,7 @@
                 <div class="row">
                     <div class="span5 offset1">
                         <input class="input input-xlarge" type="text" placeholder="How did you hear about this webinar?" name="referred" id="tbReferred" value="" />
-                        @Html.TextBoxFor(m => m.DiscountCode, new { @class = "input input-medium", placeholder = "Enter Discount Code" })<button class="btn btn-mini" role="button" id="SubmitDiscountCode">Apply Code</button>
+                        @Html.TextBoxFor(m => m.CheckoutDiscountCode, new { @class = "input input-medium", placeholder = "Enter Discount Code" })<button class="btn btn-mini" role="button" id="SubmitDiscountCode">Apply Code</button>
 
                         @Html.Raw(Model.UserComments)
                         @Html.Raw(Model.AffiliateComments)

@@ -1,6 +1,0 @@
-﻿Conventional migration still runs up against 'Address table already exists.' So manual migration proceeds by:
-
-Change connectionstring to target a new database.
-Update-Database -v -f  --creates the db locally
-Execute 'CopyTables.sql'  --copies records from Original db to V2
-

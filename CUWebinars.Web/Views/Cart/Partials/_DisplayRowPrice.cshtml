@@ -16,7 +16,7 @@
         totalDiscountElement.GenerateId("totalDiscount");
         totalDiscountElement.SetInnerText(Model.PricesAndDiscounts.TotalDiscount.ToString(CurrencyFormatToken));
 
-        outerSpan.InnerHtml = string.Concat("Discounted: ", totalDiscountElement.ToString(TagRenderMode.Normal), (Model.Discount == null ? string.Empty : string.Concat(" (", Model.Discount.code, ")")));
+        outerSpan.InnerHtml = string.Concat("Discounted: ", totalDiscountElement.ToString(TagRenderMode.Normal), (Model.Discount == null ? string.Empty : string.Concat(" (", Model.Discount.DiscountCode, ")")));
 
         return outerSpan.ToString(TagRenderMode.Normal);
     }
