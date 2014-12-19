@@ -22,7 +22,7 @@ namespace CUWebinars.Business.Tests
            return true;
        }
 
-       public override UserAccount CreateAccount(string tenant, string username, string password, string email)
+       public override UserAccount CreateAccount(string tenant, string username, string password, string email, Guid? id = null, DateTime? dateCreated = null, UserAccount account = null)
        {
            CreateAccountCalled = true;           
            return new RelationalUserAccount();

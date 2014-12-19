@@ -34,7 +34,7 @@ namespace CUWebinars.Tests.Common
             var config = MembershipRebootConfig.Create(
                 HttpRuntime.AppDomainAppPath, new StateService()
                 );
-            var userAccountService = new UserAccountService(config, new DefaultUserAccountRepository());
+            var userAccountService = new UserAccountService(config, new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase()));
 
             IMembershipService membershipService = new MembershipService(new InstitutionRepository(ctx),
                 new RefDataRepository(),

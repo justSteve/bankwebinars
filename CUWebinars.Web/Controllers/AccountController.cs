@@ -1074,6 +1074,7 @@ namespace CUWebinars.Web.Controllers
                     
                     _logger.Error("Account.Register Catch block: " + e.Message + "| Session=" +
                                   _appHelper.GetUserAuditInfo());
+                    _logger.Error("Account.Register Catch block InnerException: " + e.InnerException.Message);
                 }
             }
             else
