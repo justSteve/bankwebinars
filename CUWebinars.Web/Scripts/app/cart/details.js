@@ -30,7 +30,8 @@ $(function () {
 
             var self = $(this);
             self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
-            //appInsights.trackEvent("submitting ConfirmOrder");
+            var err = new Error('"submitting ConfirmOrder"');
+            NREUM.noticeError(err);
 
             var data = $(this).serialize();
             $('#ConfirmRegistrationBillMe').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
@@ -41,8 +42,8 @@ $(function () {
                 if (result.Result === 'Success') {
                     orderRowID = result.OrderRowID;
 
-
-                    //appInsights.trackEvent("Posted Order: " + orderRowID);
+                    var err = new Error('Posted Order: " + orderRowID');
+                    NREUM.noticeError(err);
                     $('#orderDetails').empty();
                     $('#orderDetails').append(result.Msg);
 
@@ -53,7 +54,9 @@ $(function () {
                     $('#finalLoadingSpinner').remove();
                 } else {
                     //TODO: Add code that will provide as much detail to the Failed message as can be obtained from result.
-                    //appInsights.trackEvent("FAILED posting Order: ");
+                    var err = new Error('FAILED posting Order: ');
+                    NREUM.noticeError(err);
+
                     $('.signupErrors').html('Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! ');
                 }
 
@@ -90,15 +93,18 @@ $(function () {
 
                 $.post(self.attr('action'), data, function (response, status, xhr) {
                     if (response.success) {
-                        //appInsights.trackEvent("Suceeded in canceling order");
+                        
+                        var err = new Error('Suceeded in canceling order');
+                        NREUM.noticeError(err);
 
                         var utilities = new Common.Utilities();
                         console.log('/webinar/details/' + cartStateManager.getWebinarId());
                         utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
 
                     } else {
-
-                        //appInsights.trackEvent("Cancel Order Failure");
+                        
+                        var err = new Error('Cancel Order Failure');
+                        NREUM.noticeError(err);
                         $('.signupErrors').html('Invalid Data. Try again?');
                         $('#ConfirmModal').modal('hide');
                     }
@@ -234,7 +240,10 @@ xhr('http://localhost:8080', function (err, resp, body) {
   //Handle successful response
   alert(body);
 });
-            //appInsights.trackEvent("anon user hits signup");
+            
+            var err = new Error('anon user hits signup');
+            NREUM.noticeError(err);
+
             $.post(signUpForm.attr('action'), data, function (result) {
 
                 if (result.success) {
@@ -264,7 +273,9 @@ xhr('http://localhost:8080', function (err, resp, body) {
                     cartStateManager.setOrderRowId(result.orderRowId);
                     cartStateManager.setOrderId(result.orderId);
                     cartStateManager.setWebinarId(result.webinarId);
-                    //appInsights.trackEvent("submitting ConfirmOrder" + result.userId);
+                    
+                    var err = new Error('submitting ConfirmOrder" + result.userId');
+                    NREUM.noticeError(err);
                     
                     $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
                         $('#confirmationTab a').tab('show');

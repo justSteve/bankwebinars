@@ -66,7 +66,9 @@ $(function () {
                 crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;<strong>Oops!</strong> Try that again in a few moments.In case of continued problems, please contact us at 800-831-0678 ext 707.</span>');
                     // Request failed. Show error message to user. 
                     // errorThrown has error message, or "timeout" in case of timeout.
-                //appInsights.trackEvent("ResetPassword AJAX error: " + errorThrown);
+                
+                var err = new Error("ResetPassword AJAX error: " + errorThrown);
+                NREUM.noticeError(err);
                 
                 
             });

@@ -701,15 +701,19 @@ function cancelOrder(orderId, webinarId) {
 
         $.post(cancelOrderForm.attr('action'), data, function (response, status, xhr) {
             if (response.success) {
-                //appInsights.trackEvent("Suceeded in canceling order");
+                
+                var err = new Error('Suceeded in canceling order');
+                NREUM.noticeError(err);
 
                 var utilities = new Common.Utilities();
                 console.log('/webinar/details/' + webinarId);
                 utilities.goToUrl('/webinar/details/' + webinarId);
 
             } else {
+                
+                var err = new Error('Cancel Order Failure');
+                NREUM.noticeError(err);
 
-                //appInsights.trackEvent("Cancel Order Failure");
                 $('.signupErrors').html('Invalid Data. Try again?');
                 $('#ConfirmModal').modal('hide');
             }

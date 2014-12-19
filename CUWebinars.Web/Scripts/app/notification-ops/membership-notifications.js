@@ -27,7 +27,9 @@ $(function () {
         }).fail(function (jqXHR, textStatus, errorThrown) {
             
             // errorThrown has error message, or "timeout" in case of timeout.
-            //appInsights.trackEvent("LogInAsUser AJAX error: " + errorThrown);
+            
+            var err = new Error('LogInAsUser AJAX error: " + errorThrown');
+            NREUM.noticeError(err);
             var i = 0;
 
         }).always(function () {
@@ -54,7 +56,9 @@ $(function () {
         }).fail(function (jqXHR, textStatus, errorThrown) {
             // Request failed. Show error message to user. 
             // errorThrown has error message, or "timeout" in case of timeout.
-            //appInsights.trackEvent("CreateUserButton AJAX error: " + errorThrown);
+            
+            var err = new Error('CreateUserButton AJAX error: " + errorThrown');
+            NREUM.noticeError(err);
             var i = 0;
 
         }).always(function () {
