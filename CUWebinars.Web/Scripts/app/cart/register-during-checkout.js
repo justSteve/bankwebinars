@@ -336,8 +336,9 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
         if ($('#ShippingFirstName').val() === null || $('#ShippingFirstName').val() === '') $('#ShippingFirstName').val($('#FirstName').val());
         if ($('#ShippingLastName').val() === null || $('#ShippingLastName').val() === '') $('#ShippingLastName').val($('#LastName').val());
         if ($('#RegisterFields_ShippingAddress_City').val() === null || $('#RegisterFields_ShippingAddress_City').val() === '') $('#RegisterFields_ShippingAddress_City').val($('#RegisterFields_BillingAddress_City').val());
+        if ($('#RegisterFields_ShippingAddress_Phone').val() === null || $('#RegisterFields_ShippingAddress_StreetAddress').val() === '') $('#RegisterFields_ShippingAddress_Phone').val($('#RegisterFields_BillingAddress_Phone').val());
         if ($('#RegisterFields_ShippingAddress_StreetAddress').val() === null || $('#RegisterFields_ShippingAddress_StreetAddress').val() === '') $('#RegisterFields_ShippingAddress_StreetAddress').val($('#RegisterFields_BillingAddress_StreetAddress').val());
-        if ($('#RegisterFields_ShippingAddress_StreetAddress2').val() === null || $('#RegisterFields_ShippingAddress_StreetAddress2').val() === '') $('#RegisterFields_ShippingAddress_StreetAddress2').val($('#RegisterFields_BillingAddress_StreetAddress').val());
+        if ($('#RegisterFields_ShippingAddress_StreetAddress2').val() === null || $('#RegisterFields_ShippingAddress_StreetAddress2').val() === '') $('#RegisterFields_ShippingAddress_StreetAddress2').val($('#RegisterFields_BillingAddress_StreetAddress2').val());
         if ($('#RegisterFields_ShippingAddress_State').val() === null || $('#RegisterFields_ShippingAddress_State').val() === '') $('#RegisterFields_ShippingAddress_State').val($('#RegisterFields_BillingAddress_State').val());
         if ($('#RegisterFields_ShippingAddress_Zip').val() === null || $('#RegisterFields_ShippingAddress_Zip').val() === '') $('#RegisterFields_ShippingAddress_Zip').val($('#RegisterFields_BillingAddress_Zip').val());
 
@@ -376,6 +377,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                 errorsList.append('<li style="display:none"></li>');
 
                 beigeFormArea.height(500);
+                //TODO: scroll screen upwards.
             }
         }).done(function (data) {
             //alert('done: ');
@@ -414,10 +416,18 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                             beforeSend: function () {
                                 $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
                             }
-                        }).done(function (data) {
+                        }).done(function (dataFromupdateOrderWithUserForm) {
+                            //TODO: Seek clarification on role played by this data object (if any)
+                            //Resharper complains of 'data' hiding a value from an outer scope.
+                            //but the value seems to be not to be used in the preparation of the 
+                            //$('#confirmation').load(' that follows here.
 
+                            //suggesting that unless we have explicit need of the naming pattern
+                            //  that Resharper warns let's reduce the squiggles.
 
-                            // Upon return, load the 3rd tab. And once loaded, create the MR UserAccount (but don't log the user in). 
+                            // Upon return, load the 3rd tab. And once loaded, 
+                            //create the MR UserAccount (but don't log the user in). 
+                            
                             $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
 
                                 //  MembershipReboot create user post. Needs its own headers/__RequestVerificationToken
@@ -482,7 +492,6 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                 }
             } else if (!data.isSuccessful) {
                 $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;There were some problems with the form. Please refer to the items in red.</span>');
-
                 formProcessor.lightUpValidationSummary('valSummarySignUpInCart', data);
             }
 
@@ -673,11 +682,11 @@ function completeOrder(userId, orderRowId, webinarId) {
 
             var utilities = new Common.Utilities();
             console.log('/webinar/details/' + webinarId);
-            utilities.goToUrl('/webinar/details/' + webinarId);
-
+            var err = new Error('/webinar/details/' + webinarId);
+            NREUM.noticeError(err);
+            utilities.goToUrl('/Account/OrderComplete/');
         });
     });
-
     confirmOrderForm.submit();
     confirmOrderForm.off('submit');
 }
@@ -702,8 +711,8 @@ function cancelOrder(orderId, webinarId) {
         $.post(cancelOrderForm.attr('action'), data, function (response, status, xhr) {
             if (response.success) {
                 
-                var err = new Error('Suceeded in canceling order');
-                NREUM.noticeError(err);
+                var NRerr = new Error('Suceeded in canceling order');
+                NREUM.noticeError(NRerr);
 
                 var utilities = new Common.Utilities();
                 console.log('/webinar/details/' + webinarId);
@@ -779,7 +788,10 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
             var url = $(this).attr('action');
 
             var payload = $(this).serialize();
-
+            //TODO: The payload here is highly valuable. The fact that they will be POSTed
+            // instead of GET means they don't show in the server logs, which is often nice to have.
+            // can we fire a GET to an internal address where nothing happens except that
+            // a line dumps to the server with all form values.
             $.ajax({
                 type: 'POST',
                 contentType: constants.FormPostContentType,
@@ -791,6 +803,12 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
                     $('#updateShippingMsgLabelWrap').html('<span class="label label-info">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Updating details...</span>');
             }
             }).done(function (data) {
+                //BUG:  A submitted order prematurely turns off the 'in-process' spinner.
+                // Intermittent - Can't reproduce. Is same as was earlier reported where the lag between
+                //  new user submission and the point where panel 3 displays is quite long
+                //  and does not display any 'in-process' spinner
+                // I think the cause would have to be rooted here over very near here.
+
                 if (data.Result === 'Success') {
                     var fullname = $('#RegisterFields_FirstName').val() + ' ' + $('#RegisterFields_LastName').val();
                     $('#userFullname').text(fullname);
@@ -808,15 +826,23 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
 
                     $('#updateShippingMsgLabelWrap').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details updated successfully.</span>');
                     //modalForm.modal('hide');
+                    // [sjh] - i might surmise that this is an attempt to fix the above bug 
 
                 } else if (!data.isSuccessful) {
+                    var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
+                    NREUM.noticeError(err);
+
                     $('#updateShippingMsgLabelWrap').empty();
                     formProcessor.lightUpValidationSummary('userDetailsValSummary', data);
                 } else {
+                    var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
+                    NREUM.noticeError(err);
                     $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>There has been an error in the operation.Please call us at 800-831-0678 ext. 3 to resolve.</span>');
                 }
-            }).fail(function(data) {
-                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error in the server response. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
+            }).fail(function (data) {
+                    var err = new Error('FAIL: Post to userDetailsFormUrlData ' + userDetailsFormUrlData + ' !data.isSuccessful');
+                    NREUM.noticeError(err);
+                    $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error in the server response. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
             });
         });
 
@@ -856,7 +882,7 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
 }
 
 function setUiLayout(isShippindAddressRequired) {
-
+    console.log('isShippindAddressRequired fires');
     if (isShippindAddressRequired) {
         $('#ShippingAddressContainer').hide();
         $('#HideAddShippingAddressLink').hide();
@@ -880,6 +906,7 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
         valOfTypeChosenCurrent;
 
     //  need to save state in the event that a Modal is displayed and Cancel is clicked on it.
+    //TODO: verify Resharper's warning that these vars not used
     typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
     valOfTypeChosenPrevious = valOfTypeChosenCurrent = dropDown.val();
 
@@ -947,6 +974,8 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
                 typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
                 chosenRegTypeLabel.empty().text(typeChosenCurrent);
                 valOfTypeChosenPrevious = valOfTypeChosenCurrent;
+
+            //TODO: Does update of RowPrice partial belong here?
             }
 
             if (data.shippingDetailsRqrd === 'Yes') {
@@ -954,7 +983,7 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
             } else {
                 registerDuringCheckout.shippingAddressRequired = false;
             }
-
+            //TODO: Does update of RowPrice partial belong here?
             ShowModalForShippingDetails(registerDuringCheckout.shippingAddressRequired);
         });
     });

@@ -14,10 +14,12 @@
             //}
 
             <div style="font-size: smaller;">@{ Html.RenderPartial("~/Views/Account/Partials/OrderHasAdditionalLocations.cshtml", Model.OrderHasAdditionalLocationsViewModel); }</div>
-             //TODO: Handle Discounts
+                                                //TODO: Handle Discounts
 
-             if (Model.OrderStatus == OrderStatus.InProcess)
-             {
+                                                if (Model.OrderStatus == OrderStatus.InProcess)
+                                                {
+
+                                                    <div><b>Please review this order summary and and choose billing method.</b></div>
                 <div id="inProcCart" class="well pull-right">
                     <div id="showCartPrice">
                         @{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }
@@ -30,25 +32,22 @@
                         Sales tax may be added to orders in Wisconsin or Illinois.
                     </div>
                 </div>
-                <div><b>Please review this order summary and and choose billing method.</b></div>
                 <div class="row">
                     <div class="span3 text-right" style="margin-left: 20px">Primary Contact:</div><div id="userFullname" class="span3 text-left">@Model.UserFullname</div>
                     <div class="span3 text-right">Type:</div><div id="chosenRegType" class="span3 text-left">@Model.OptionLabel</div>
                     <div class="span3 text-right">Additional Locations:</div>
                     <div id="additionalLocationsCaption" class="span3 text-left">
                         @{
-                            if (string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption))
-                            {
-                                <text>None</text>
-                            }
-                            else
-                            {
-                                @Model.AdditionalLocationCaption
-                            }
+                 if (string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption))
+                 {
+                    <text>None</text>
+                 }
+                 else
+                 {
+                    @Model.AdditionalLocationCaption
+                 }
                         }
                     </div>
-
-
 
                     <div id="userDetailsSummed" class="span5 offset1">
                         <p>@Html.Raw(@Model.UserDetails)</p>

@@ -601,6 +601,7 @@
     <Content Include="Views\Cart\Partials\_DisplayRowPrice.cshtml" />
     <Content Include="Views\Account\ThankYouConfirmed.cshtml" />
     <Content Include="Views\Account\EditContactInfo.cshtml" />
+    <Content Include="Views\Account\OrderComplete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\packages\Selenium.WebDriver.ChromeDriver.2.9.0.0\content\chromedriver.exe">
@@ -994,7 +995,6 @@
     <Content Include="Scripts\app\cart\additional-locations.js" />
     <Content Include="Scripts\app\constants.js" />
     <Content Include="Scripts\app\common.js" />
-    <Content Include="Scripts\app\cart\edit-order.js" />
     <Content Include="Scripts\app\GTW\registrationForm.js" />
     <Content Include="Scripts\app\GTW\utils.js" />
     <Content Include="Scripts\app\notification-ops\adhoc-notifications.js" />

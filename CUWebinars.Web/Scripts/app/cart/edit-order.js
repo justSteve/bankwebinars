@@ -18,9 +18,9 @@ function OrderDetails(orderID) {
 
 
 function OptionsChanged(fromInput) {
-    //alert("hit optionschanged");
+    alert("hit optionschanged");
     //handles changed order properties
-    //readyToSubmit = true;
+
     $('#regTypeForm').submit();
 }
 
@@ -65,10 +65,8 @@ $(document).ready(function () {
         $("[id^='CollectResendLocations_']").text(" ");
         $("[id^='SubmitResendConfirmation_']").hide();
 
-        //$('form [name=listOfEmails]').val(formElements.toString());
         nEvent.preventDefault();
 
-        //$("#ProgressDialogBS").modal('show');
         $.ajax({
             url: tForm.attr('action'),
             type: "POST",
@@ -77,10 +75,12 @@ $(document).ready(function () {
                 $("[id^='ModalResendHeaderText_']").html("<span class=\"label label-success\">Confirmation was sent.</span>");
             },
             error: function () {
+                var err = new Error('ERROR: tForm of edit-order.js');
+                NREUM.noticeError(err);
                 $("#" + parentForm + " .modalHeaderText").html("<span class=\"label label-warning\">Error condition detected</span>");
             },
             complete: function () {
-                //$("#ProgressDialogBS").modal('hide');
+                
             }
         });
     });
@@ -122,63 +122,8 @@ $(document).ready(function () {
 
 
 
-    //$("#ChangeAssignedUser").on('click', "input:button", function (event) {
-    //    //alert("this inputButton");
-    //    if (this.name != "addLocNumberButton") {
-    //        return false;
-    //    }
-    //    //alert("fell thru");
-    //    event.preventDefault();
-    //    var myForm = $("#changeAssignedUser form");
 
-    //    $("[name=migrateOrder]").val(this.name);
-
-    //    $("#ProgressDialogBS").modal('show');
-    //    $.post({
-    //        url: myForm.action,
-    //        type: "POST",
-    //        //data: myForm.serialize(),
-    //        success: function (data) {
-    //            $(this).closest("div").html(data);
-    //            return true;
-    //        },
-    //        error: function (jqXhr, textStatus, errorThrown) {
-    //            alert("Error '" + jqXhr.status + "' (textStatus: '" + textStatus + "', errorThrown: '" + errorThrown + "')");
-    //        },
-    //        complete: function () {
-
-    //            $("#ProgressDialogBS").modal('hide');
-    //        }
-    //    });
-
-    //    myForm.submit();
-    //});
-
-
-    $(document).on('click', "[name^='change']", function (event) {
-        var changeAllOrders = this.name;
-        var $form = $("#changeAssignedUser form");
-        var $target = $($form.attr('data-target'));
-
-        $.ajax({
-            type: $form.attr('method'),
-            url: $form.attr('action'),
-            data: $form.serialize(),
-
-            success: function (data, status) {
-                $target.html(data);
-            }
-        });
-
-        event.preventDefault();
-    });
 });
-
-
-//function isValidEmailAddress(emailAddress) {
-//    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-//    return re.test(emailAddress);
-//};
 
 
 function getRegistrationsTableCode(userID) {

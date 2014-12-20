@@ -226,6 +226,12 @@ namespace CUWebinars.Web.Controllers
             return PartialView("_LoginPartial");
         }
 
+        public ActionResult OrderComplete()
+        {
+            return View();
+
+        }
+
         public ActionResult MyWebinars()
         {
             var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();

@@ -1,36 +1,25 @@
-﻿
-//  This script correlates with the Details View.
-
-var checkoutConfirm,
-    discount,
-    cartStateManager,
-    shippingAddressRequired,
-    signUpForm,
-    signUpFormContainer,
-    storedHeight;
+﻿//  This script correlates with the Details View.
+var checkoutConfirm, discount, cartStateManager, shippingAddressRequired, signUpForm, signUpFormContainer, storedHeight;
 
 discount = '';
 checkoutConfirm = {};
 
 $(function () {
-
     signUpForm = $('#SignUpForm');
     signUpFormContainer = $('#SignUpFormContainer'); // The big beige box
 
     /* This function gets invoked when the 3rd tab is loaded and an existing user is using the cart */
     checkoutConfirm.initialize = function (userId) {
-
         cartStateManager.setCancelOrderForm($('#cancelOrder'));
         cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 
         cartStateManager.getConfirmOrderForm().on('submit', function (e) {
-
             //Rollbar.info('submitting confirmOrder form');
             e.preventDefault();
 
             var self = $(this);
             self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
-            var err = new Error('"submitting ConfirmOrder"');
+            var err = new Error('submitting ConfirmOrder' + cartStateManager.getOrderRowId());
             NREUM.noticeError(err);
 
             var data = $(this).serialize();
@@ -42,7 +31,7 @@ $(function () {
                 if (result.Result === 'Success') {
                     orderRowID = result.OrderRowID;
 
-                    var err = new Error('Posted Order: " + orderRowID');
+                    var err = new Error('Posted Order: ' + orderRowID);
                     NREUM.noticeError(err);
                     $('#orderDetails').empty();
                     $('#orderDetails').append(result.Msg);
@@ -61,23 +50,19 @@ $(function () {
                 }
 
                 $('#ConfirmRegistrationBillMe').removeAttr('disabled');
-
             }, constants.JsonDataType);
 
             $('#ConfirmModal').on('hidden', function (e) {
-
                 var utilities = new Common.Utilities();
                 console.log('/webinar/details/' + cartStateManager.getWebinarId());
                 utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
-
             });
         });
 
         var cancelOrderForm = cartStateManager.getCancelOrderForm();
 
         cancelOrderForm.on('submit', function (e) {
-
-            Rollbar.info('Submitting cancelOrderForm');
+            //Rollbar.info('Submitting cancelOrderForm');
             e.preventDefault();
 
             $('#cancelModalOrderId').val(cartStateManager.getOrderId());
@@ -93,27 +78,21 @@ $(function () {
 
                 $.post(self.attr('action'), data, function (response, status, xhr) {
                     if (response.success) {
-                        
                         var err = new Error('Suceeded in canceling order');
                         NREUM.noticeError(err);
 
                         var utilities = new Common.Utilities();
                         console.log('/webinar/details/' + cartStateManager.getWebinarId());
                         utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
-
                     } else {
-                        
                         var err = new Error('Cancel Order Failure');
                         NREUM.noticeError(err);
                         $('.signupErrors').html('Invalid Data. Try again?');
                         $('#ConfirmModal').modal('hide');
                     }
 
-
                     // enable button again upon ending operation.
                     $('#cancelRegistration').removeAttr('disabled');
-
-                    
                 }, 'json');
 
                 // unbind event so we don't get them building up each time the user clicks the Cancel Registration button.
@@ -130,9 +109,8 @@ $(function () {
 
             $('#CancelModal').modal('show');
         });
-        
     };
-    
+
     cartStateManager = new OrderRegistration.StateManager();
 
     cartStateManager.setWebinarId(webinarId); // webinarId is set in a script tab in razor view Details.cshtml
@@ -143,16 +121,15 @@ $(function () {
     cartStateManager.SetCartState();
 
     $("[id^='regTypeID_']").on("click", function (oEvent) {
-
         //TODO: In original code i had intialized the how the cart displayed the price.
-        // clearly this takes place elsewhere now adaquately but review and verify that 
-        // this is impacted by the Discount - an enitity we've yet to dance with - but this 
-        // provides the perfect opp to introduce this user story: 
+        // clearly this takes place elsewhere now adaquately but review and verify that
+        // this is impacted by the Discount - an enitity we've yet to dance with - but this
+        // provides the perfect opp to introduce this user story:
         //
-        // An existing user can posses one or more 'credits' that should be honored (acknowedged) by the shopping 
+        // An existing user can posses one or more 'credits' that should be honored (acknowedged) by the shopping
         // cart as soon as the user's identity is known. Specifically, the cart must display the amount
         // of the discount as well as ensuring that the cart's 'Total' field reflects the discount. Point being that
-        // that the cart shouldn't depend on the user to supply the discount. 
+        // that the cart shouldn't depend on the user to supply the discount.
         //
         // and....
         // absent a pre-existing discount code, the cart must suppy a form field to permit an
@@ -175,9 +152,8 @@ $(function () {
     // TODO: Note I have not touched this handler yet.
     // [dar] this handler is relevant for update/edit/view aspect of cart. Revisit when we address that.
     if (cartStateManager.getOrderRowId() > 0 && cartStateManager.getCheckoutInProcess()) {
-
         if (shippingAddressRequired && notificationsTesting === false) {
-            // Following function lives in the register-during-checkout.js script 
+            // Following function lives in the register-during-checkout.js script
             // which will be in memory at this point and thus will have been hoisted.
             hookUpModal($('#UserDetailsModal'));
         }
@@ -200,7 +176,7 @@ $(function () {
             cancelOrderForm.submit();
         });
 
-        // Following 3 functions live in the register-during-checkout.js script 
+        // Following 3 functions live in the register-during-checkout.js script
         // which will be in memory at this point and thus will be hoisted
         hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
         hookUpChangeTypeLogic($('#RegType'));
@@ -211,7 +187,6 @@ $(function () {
 
     /* Submit event for the big green SignUp button */
     signUpForm.submit(function (e) {
-
         e.preventDefault();
 
         var beigeFormArea = signUpFormContainer.find('div.well');
@@ -228,26 +203,13 @@ $(function () {
         $('#SignUpForm > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
         var spinner = $('#loadingSpinner');
 
-
         // If the user IS NOT LOGGED IN - control moves to the register-during-checkout.js script
         if (!cartStateManager.getIsUserLogged()) {
-
-var xhr = require('xhr');
-
-xhr('http://localhost:8080', function (err, resp, body) {
-  //Report unthrown error to New Relic
-  if (err) return NREUM.noticeError(err);
-  //Handle successful response
-  alert(body);
-});
-            
             var err = new Error('anon user hits signup');
             NREUM.noticeError(err);
 
             $.post(signUpForm.attr('action'), data, function (result) {
-
                 if (result.success) {
-
                     cartStateManager.setOrderRowId(result.orderRowId);
                     cartStateManager.setOrderId(result.orderId);
                     cartStateManager.setWebinarId(result.webinarId);
@@ -263,32 +225,30 @@ xhr('http://localhost:8080', function (err, resp, body) {
                     formProcessor.lightUpValidationSummary('valSummarySignUpForm', result);
                 }
             }, constants.JsonDataType);
-
-
         } else {
             // If the user IS LOGGED IN
             $.post(signUpForm.attr('action'), data, function (result) {
                 if (result.success) {
-                    Rollbar.info({ signup: { from: 'EndUser Checkout', orderRowId: result.orderRowId } });
+                    //Rollbar.info({ signup: { from: 'EndUser Checkout', orderRowId: result.orderRowId } });
                     cartStateManager.setOrderRowId(result.orderRowId);
                     cartStateManager.setOrderId(result.orderId);
                     cartStateManager.setWebinarId(result.webinarId);
-                    
-                    var err = new Error('submitting ConfirmOrder" + result.userId');
+
+                    var err = new Error('submitting ConfirmOrder' + result.orderId);
                     NREUM.noticeError(err);
-                    
+
                     $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
                         $('#confirmationTab a').tab('show');
 
                         if (shippingAddressRequired && notificationsTesting === false) {
-                            // Following function lives in the register-during-checkout.js script 
+                            // Following function lives in the register-during-checkout.js script
                             // which will be in memory at this point and thus will have been hoisted.
-                            hookUpModal($('#UserDetailsModal')); 
+                            hookUpModal($('#UserDetailsModal'));
                         }
 
                         // see top of this file
                         checkoutConfirm.initialize();
-                        
+
                         // The Bill Me button on 3rd tab
                         $('#ConfirmRegistrationBillMe').on('click', function (e) {
                             e.preventDefault();
@@ -304,16 +264,14 @@ xhr('http://localhost:8080', function (err, resp, body) {
                             cancelOrderForm.submit();
                         });
 
-                        // Following 3 functions live in the register-during-checkout.js script 
+                        // Following 3 functions live in the register-during-checkout.js script
                         // which will be in memory at this point and thus will be hoisted
                         hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
                         hookUpChangeTypeLogic($('#RegType'));
                         hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
 
                         beigeFormArea.height($('#confirmation').height() + 30);
-
                     }, constants.HtmlDataType);
-
                 } else if (result.isSuccessful === false) {
                     formProcessor.lightUpValidationSummary('valSummarySignUpForm', result);
 
@@ -327,9 +285,8 @@ xhr('http://localhost:8080', function (err, resp, body) {
 });
 
 function isShippindAddressRequired(jQueryObject) {
-    
     if ($.trim(jQueryObject.val()).toLowerCase() === 'false')
         return false;
     return true;
-
 }
+//# sourceMappingURL=details.js.map

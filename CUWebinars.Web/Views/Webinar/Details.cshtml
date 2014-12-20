@@ -86,7 +86,7 @@
 
         <div class="span3">
             <aside class="widget">
-                @if (Model.Identity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.CuWebinarsAdmin))
+                @if (Model.Identity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.Admin))
                 {
                     @Html.Partial(@"Partials/_AdminEventButtons", Model)
                 }
@@ -160,7 +160,7 @@
         {
             <div id="SignUpFormContainer" class="row-fluid">
 
-                <div class="content offset2 span8 well">
+                <div class="content offset2 span9 well">
                     <ul class="nav nav-tabs" id="regTabs">
                         <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@Model.SignUpCaption</a></li>
                         <li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
