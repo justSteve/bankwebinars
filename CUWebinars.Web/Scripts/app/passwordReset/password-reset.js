@@ -63,7 +63,7 @@ $(function () {
 
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 // failed request; give feedback to user
-                crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;<strong>Oops!</strong> Try that again in a few moments.In case of continued problems, please contact us at 800-831-0678 ext 707.</span>');
+                crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;<strong>Oops!</strong> Try that again in a few moments.In case of continued problems, please contact us at 800-831-0678 ext 707.</span>');
                     // Request failed. Show error message to user. 
                     // errorThrown has error message, or "timeout" in case of timeout.
                 

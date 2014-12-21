@@ -182,6 +182,7 @@
     <Compile Include="UserAccountServiceUnHappyPathFake.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Scripts\CreateDb.sql" />
     <Content Include="Scripts\TtsDatabase.sql" />
     <None Include="App.config">
       <SubType>Designer</SubType>

@@ -261,7 +261,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
             }).fail(function () {
                 // failed request; give feedback to user
-                $('#wrapEmail').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+                $('#wrapEmail').html('<p class="error"><i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Try that again in a few moments.</p>');
             }).always(function () {
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
             });
@@ -292,7 +292,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                 regUserStateManager.zipCodeVerified(data, zipCode);
             }).fail(function () {
                 // failed request; give feedback to user
-                $('#wrapZip').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+                $('#wrapZip').html('<p class="error"><i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Try that again in a few moments.</p>');
             }).always(function () {
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
             });
@@ -487,11 +487,11 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                     }
 
                 } else if (data.Result === 'Fail') {
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
                     regUserStateManager.setAction(RegistrationInCart.Action.SubmitRegister);
                 }
             } else if (!data.isSuccessful) {
-                $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;There were some problems with the form. Please refer to the items in red.</span>');
+                $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;There were some problems with the form. Please refer to the items in red.</span>');
                 formProcessor.lightUpValidationSummary('valSummarySignUpInCart', data);
             }
 
