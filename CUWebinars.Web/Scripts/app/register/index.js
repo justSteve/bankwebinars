@@ -192,7 +192,7 @@ $(function () {
 
             }).fail(function () {
                 // failed request; give feedback to user
-                $('#wrapEmail').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+                $('#wrapEmail').html('<p class="error"><i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Try that again in a few moments.</p>');
             }).always(function () {
                 stateManager.setInputAction(Registration.InputAction.None);
             });
@@ -223,7 +223,7 @@ $(function () {
                 stateManager.zipCodeVerified(data, zipCode);
             }).fail(function () {
                 // failed request; give feedback to user
-                $('#wrapZip').html('<p class="error"><strong>Oops!</strong> Try that again in a few moments.</p>');
+                $('#wrapZip').html('<p class="error"><i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Try that again in a few moments.</p>');
             }).always(function () {
                 stateManager.setInputAction(Registration.InputAction.None);
             });
@@ -383,12 +383,12 @@ $(function () {
                     $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
                     location.assign(path + '/'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
                 } else if (data.Result === 'Fail') {
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
                     stateManager.setAction(Registration.Action.SubmitRegister);
                 }
             } else if (!data.isSuccessful) {
                 stateManager.setAction(Registration.Action.SubmitRegister);
-                $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;There were some problems with the form. Please refer to the items in red.</span>');
+                $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;There were some problems with the form. Please refer to the items in red.</span>');
                 formProcessor.lightUpValidationSummary('registerValSummary', data);
             }
 
