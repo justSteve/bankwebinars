@@ -65,6 +65,8 @@ namespace CUWebinars.Web.Controllers
         }
 
         /// <summary>
+        /// Here is the original 'spreadsheet-based' importer
+        /// 
         /// For us to use a query string, this has to be a GET request.
         /// </summary>
         /// <param name="incomingOrderModel"></param>

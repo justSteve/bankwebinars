@@ -14,27 +14,33 @@
             //}
 
             <div style="font-size: smaller;">@{ Html.RenderPartial("~/Views/Account/Partials/OrderHasAdditionalLocations.cshtml", Model.OrderHasAdditionalLocationsViewModel); }</div>
-                                                //TODO: Handle Discounts
+             //TODO: Handle Discounts
 
-                                                if (Model.OrderStatus == OrderStatus.InProcess)
-                                                {
-
-                                                    <div><b>Please review this order summary and and choose billing method.</b></div>
+             if (Model.OrderStatus == OrderStatus.InProcess)
+             {
+                <div><b>Please review this order summary and and choose billing method.</b></div>
                 <div id="inProcCart" class="well pull-right">
                     <div id="showCartPrice">
                         @{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }
                     </div>
 
                     <div style="font-size: x-small; text-align: center;">
-                        <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button>
+                        <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button><br/>
                         <button class="btn btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button><br />
                         <a class="btn" id="Canceller">Cancel Registration</a><br />
                         Sales tax may be added to orders in Wisconsin or Illinois.
                     </div>
                 </div>
                 <div class="row">
-                    <div class="span3 text-right" style="margin-left: 20px">Primary Contact:</div><div id="userFullname" class="span3 text-left">@Model.UserFullname</div>
-                    <div class="span3 text-right">Type:</div><div id="chosenRegType" class="span3 text-left">@Model.OptionLabel</div>
+                    <div class="span3 text-right" style="margin-left: 20px">Primary Contact:</div>
+
+                    <div id="userDetailsSummed" class="span3">
+                        <p>@Html.Raw(@Model.UserDetails)</p>
+
+                        <p>@{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel); }</p>
+                        <br />
+
+                    </div>
                     <div class="span3 text-right">Additional Locations:</div>
                     <div id="additionalLocationsCaption" class="span3 text-left">
                         @{
@@ -49,13 +55,6 @@
                         }
                     </div>
 
-                    <div id="userDetailsSummed" class="span5 offset1">
-                        <p>@Html.Raw(@Model.UserDetails)</p>
-
-                        <p>@{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel); }</p>
-                        <br />
-
-                    </div>
                 </div>
 
                 <div class="row">

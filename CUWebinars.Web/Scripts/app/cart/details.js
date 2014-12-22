@@ -141,7 +141,7 @@ $(function () {
 
     /* Click event for the big green SignUp button */
     $('#AddToCart').on('click', function () {
-        storedHeight = signUpFormContainer.height();
+        //storedHeight = signUpFormContainer.height();
         signUpForm.submit();
     });
 

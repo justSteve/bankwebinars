@@ -420,7 +420,6 @@
     <Compile Include="Models\EditNameTitleModel.cs" />
     <Compile Include="Models\EditShippingAddressModel.cs" />
     <Compile Include="Models\ImportOrderResponse.cs" />
-    <Compile Include="Models\IncomingAFOOrder.cs" />
     <Compile Include="Models\JotFormModel.cs" />
     <Compile Include="Models\JotFormOrderModel.cs" />
     <Compile Include="Notification\Templates\CertOfCompletionViewModel.cs" />

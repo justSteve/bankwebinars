@@ -5,6 +5,7 @@ $(function () {
     var resetPassEmail = $('#ResetPassEmail');
 
     normalResetPasswordButton.on('click', function (e) {
+
         if ($('#EdgeCaseResetPasswordButton').data('clicked'))
             $('#EdgeCaseResetPasswordButton').removeData('clicked');
         $(this).data('clicked', true);
@@ -15,7 +16,7 @@ $(function () {
     });
 
     $('form#ResetPasswordForm').submit(function (e) {
-
+        alert("hit");
         e.preventDefault();
         
         var normalResetPasswordButtonClicked = normalResetPasswordButton.data('clicked');
