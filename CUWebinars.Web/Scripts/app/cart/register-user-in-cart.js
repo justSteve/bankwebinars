@@ -356,7 +356,7 @@ var RegistrationInCart;
         };
 
         StateManager.prototype.passResetView = function () {
-            //console.log("call passResetView");
+            console.log("call passResetView");
             $('#login').hide('slow');
 
             var showResetInput = $.Deferred(function () {
@@ -384,7 +384,7 @@ var RegistrationInCart;
         };
 
         StateManager.prototype.resetPassword = function (normalResetPasswordButton) {
-            //console.log('resetPass hit');
+            console.log('resetPass hit');
             if (normalResetPasswordButton.data('clicked'))
                 normalResetPasswordButton.removeData('clicked');
 
@@ -394,7 +394,7 @@ var RegistrationInCart;
         };
 
         StateManager.prototype.resetPasswordOrLoginView = function (email, webinarId) {
-            //console.log("call resetPasswordOrLoginView: " + email);
+            console.log("call resetPasswordOrLoginView: " + email);
             $('#Email1').val(email);
             $('#ResetPassEmail').val(email);
             $('#labelEmail').html('<span class="label label-important"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is already on file.</span>');

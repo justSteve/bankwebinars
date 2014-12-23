@@ -57,6 +57,8 @@ namespace CUWebinars.Web.Controllers
         }
 
         /// <summary>
+        /// Here is the original 'spreadsheet-based' importer
+        /// 
         /// For us to use a query string, this has to be a GET request.
         /// </summary>
         /// <param name="incomingOrderModel"></param>
@@ -159,9 +161,9 @@ namespace CUWebinars.Web.Controllers
         }
 
         /// <summary>
-        /// For us to use a query string, this has to be a GET request.
+        /// Permits migration of legacy system.
         /// </summary>
-        /// <param name="incomingOrderModel"></param>
+        /// <param name="migrateOrderModel"></param>
         /// <returns></returns>
         [HttpPost]
         public JsonResult MigrateOrder(MigrateOrderModel migratedOrder)
@@ -252,7 +254,84 @@ namespace CUWebinars.Web.Controllers
             _logger.Error(myErr);
             return myErr;
         }
+        /// <summary>
+        /// Imports orders based on form submissions from Affiliate Import Sheets.
+        /// </summary>
+        /// <param name="ImportOrderModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult ImportOrder(ImportOrderModel importedOrder)
+        {
+            int idOfLastOrder = default(int);
+            string verificationKey = string.Empty;
+            string confirmChangeEmailUrl = string.Empty;
 
+            if (!ModelState.IsValid)
+            {
+                var myError = ProcessModelStateErrors();
+                return Json(new { Result = WebUiConstants.Fail, Error = myError });
+            }
+
+
+            int idRegType = _webinarManagementService.GetRegTypeByLableAndWebinar(importedOrder.RegistrationType,
+                importedOrder.idWebinar);
+            if (idRegType == 0)
+            {
+                return Json(new { Result = WebUiConstants.Fail, Error = "Invalid Registration Type: " + importedOrder.RegistrationType });
+            }
+            importedOrder.RegistrationType = idRegType.ToString();
+            try
+            {
+                var email = importedOrder.Email.Trim();
+
+                _logger.Info("Begin import: " + email);
+
+                var importQueryResult = _orderControllerOrchestrator.GetPreparatoryDataForImporter(importedOrder
+                    , email);
+
+                if (ReferenceEquals(null, importQueryResult.WebUser))
+                {
+                    try
+                    {
+                        importQueryResult.WebUser =
+                            _orderControllerOrchestrator.ImportUser(importedOrder, email);
+
+                        verificationKey = _orderControllerOrchestrator.GetVerificationKeyForNewUserAccount();
+
+                        confirmChangeEmailUrl =
+                            _orderControllerOrchestrator.GetConfirmChangeEmailLinkForNewUserAccount();
+
+                        _orderControllerOrchestrator.FinalizeImportedRegistation(importedOrder, verificationKey);
+
+                        _logger.Info(string.Format("ImportOrder|CreateUser Succeeded: {0}", email));
+                    }
+                    catch (Exception exception)
+                    {
+                        _logger.ErrorException(
+                            string.Format("ImportOrder|CreateUser failed: {0}", exception.Message), exception);
+                        Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                        throw;
+                    }
+                }
+
+                idOfLastOrder = _orderControllerOrchestrator.ImportOrder(importedOrder, email,
+                    importQueryResult, verificationKey, confirmChangeEmailUrl);
+
+                //idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
+                _logger.Info(string.Format("ImportOrder|CreteNewOrder: {0}", idOfLastOrder));
+
+                return Json(new { Result = idOfLastOrder.ToString() }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception exception)
+            {
+                var errString = string.Format("Order creation failed on {0} - {1} with msg: {2}", importedOrder.Email, importedOrder.idWebinar, exception.Message);
+                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                _logger.ErrorException(errString, exception);
+            }
+
+            return Json(new { Result = "0" }, JsonRequestBehavior.AllowGet);
+            //return Json(new { Result = WebUiConstants.Fail });
+        }
         protected override void Dispose(bool disposing)
         {
             if (!_disposed && disposing)

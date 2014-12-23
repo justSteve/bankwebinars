@@ -23,5 +23,6 @@ namespace CUWebinars.Business.Repository
         IQueryable<Topic>  GetTopicsPerWebinar(int idWebinar);
         void Update(Webinar webinar);
         IQueryable<WebinarFile> GetWebinarFilesPerWebinar(int idWebinar);
+        int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar);
     }
 }

@@ -135,6 +135,8 @@
     <Compile Include="CQS\Commands\AddOrderRowCommand.cs" />
     <Compile Include="CQS\CommandHandlers\OrderManagementCommandHandlers.cs" />
     <Compile Include="CQS\CommandProcessor.cs" />
+    <Compile Include="CQS\Commands\ImportOrderCommand.cs" />
+    <Compile Include="CQS\Commands\ImportOrderRowCommand.cs" />
     <Compile Include="CQS\Commands\MigrateOrderCommand.cs" />
     <Compile Include="CQS\Commands\MigrateOrderRowCommand.cs" />
     <Compile Include="CQS\Commands\RegisterNewAccountCommand.cs" />
@@ -146,6 +148,8 @@
     <Compile Include="CQS\IQueryHandler.cs" />
     <Compile Include="CQS\IQueryProcessor.cs" />
     <Compile Include="CQS\PostCommitRegistratorImpl.cs" />
+    <Compile Include="CQS\Queries\ImportQuery.cs" />
+    <Compile Include="CQS\Queries\ImportQueryResult.cs" />
     <Compile Include="CQS\Queries\MigratorQuery.cs" />
     <Compile Include="CQS\Queries\MigratorQueryResult.cs" />
     <Compile Include="CQS\Queries\OrderManagementQuery.cs" />

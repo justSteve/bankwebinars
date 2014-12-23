@@ -1,7 +1,7 @@
 ﻿
 namespace CUWebinars.Business.CQS.Queries
 {
-    public class MigratorQuery : IQuery<MigratorQueryResult>
+    public class ImportQuery : IQuery<ImportQueryResult>
     {
         public int AffiliateId { get; set; }
         public string Email { get; set; }

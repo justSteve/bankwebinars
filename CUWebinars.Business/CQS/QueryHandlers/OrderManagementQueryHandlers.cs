@@ -7,7 +7,7 @@ namespace CUWebinars.Business.CQS.QueryHandlers
 {
     public class OrderManagementQueryHandlers :
         IQueryHandler<OrderManagementQuery, OrderManagementQueryResult>,
-IQueryHandler<MirgratorQuery, MigratorQueryResult>
+IQueryHandler<MigratorQuery, MigratorQueryResult>, IQueryHandler<ImportQuery, ImportQueryResult>
     {
         private readonly IMembershipService _membershipService;
         private readonly IOrderManagementService _orderManagementService;
@@ -36,7 +36,7 @@ IQueryHandler<MirgratorQuery, MigratorQueryResult>
             return orderManagementQueryResult;
         }
 
-        public MigratorQueryResult Handle(MirgratorQuery query)
+        public MigratorQueryResult Handle(MigratorQuery query)
         {
             if (query == null) throw new ArgumentNullException("query");
 
@@ -48,6 +48,19 @@ IQueryHandler<MirgratorQuery, MigratorQueryResult>
             };
 
             return migrateQueryResult;
+        }
+        public ImportQueryResult Handle(ImportQuery query)
+        {
+            if (query == null) throw new ArgumentNullException("query");
+
+            var importQueryResult = new ImportQueryResult
+            {
+                Affiliate = _orderManagementService.GetAffiliateById(query.AffiliateId),
+                WebUser = _membershipService.GetUserByEmail(query.Email),
+                Webinar = _webinarManagementService.GetWebinar(query.WebinarId)
+            };
+
+            return importQueryResult;
         }
 
         public void Dispose()

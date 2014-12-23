@@ -16,16 +16,14 @@
 
     // Next 2 inputs are a bit of a hack. We are generating passwords on the Server. But we still want ModelState to be valid.
     // So, to get around having to create a fresh ViewModel that does not include passwords, just set them to a fixed value
-    // which we will disregard at the server. Perhaps refactor later and use separate ViewModel with inheritance. Then can 
+    // which we will disregard at the server. Perhaps refactor later and use separate ViewModel with inheritance. Then can
     // remove those inputs
     <input type="hidden" id="RegisterFields_Password" name="RegisterFields.Password" value="456rty^Y" />
     <input type="hidden" id="RegisterFields.ConfirmPassword" name="RegisterFields.ConfirmPassword" value="456rty^Y" />
-    
+
 
     <div class="tab-pane" id="contactInfo">
-        User Details
         <div class="accordion" id="createUserPanes">
-
             <div class="accordion-group">
                 <div class="accordion-heading">
                     <a class="accordion-toggle" data-toggle="collapse" data-parent="#createUserPanes" href="#collapseEmail">
@@ -36,7 +34,7 @@
                     <div class="accordion-inner">
                         <div id="wrapEmail">
                             <div>
-                                @Html.TextBoxFor(model => model.RegisterFields.Email, new {style = "width: 180px;"})
+                                @Html.TextBoxFor(model => model.RegisterFields.Email, new { style = "width: 180px;" })<br />
                                 @Html.ValidationMessageFor(model => model.RegisterFields.Email)
                             </div>
                         </div>
@@ -75,8 +73,10 @@
                     <div class="accordion-inner">
                         <div>
                             <div id="getFirstLast">
-                                <label>First:</label>@Html.TextBoxFor(model => model.RegisterFields.FirstName, new {@class = "input-large"})
-                                <label>Last:</label>@Html.TextBoxFor(model => model.RegisterFields.LastName, new {@class = "input-large"})
+                                <label>First:</label>@Html.TextBoxFor(model => model.RegisterFields.FirstName)<br />
+                                <label>Last:</label>@Html.TextBoxFor(model => model.RegisterFields.LastName)
+                                @*<label>First:</label>@Html.TextBoxFor(model => model.RegisterFields.FirstName, new {@class = "input-large"})
+                                    <label>Last:</label>@Html.TextBoxFor(model => model.RegisterFields.LastName, new {@class = "input-large"})*@
                             </div>
                             <div id="getFullNameBilling">
                                 <label>Name:</label>
@@ -84,31 +84,40 @@
                             </div>
                         </div>
                         <div>
+                            <div id="wrapTitle">
+                                <label>Title:</label>@Html.TextBoxFor(model => model.RegisterFields.Title)@*, new { @class = "input-mini" })*@
+                            </div>
+                        </div>
+                        <div>
                             <div id="wrapInstitutionBilling">
-                                <label>Institution:</label>@Html.TextBoxFor(model => model.RegisterFields.Institution, new {@class = "input-large"})
-                                <label>Title:</label>@Html.TextBoxFor(model => model.RegisterFields.Title, new {@class = "input-mini"})
+                                @*<label>Institution:</label>@Html.TextBoxFor(model => model.RegisterFields.Institution, new {@class = "input-large"})*@
+                                <label>Institution:</label>@Html.TextBoxFor(model => model.RegisterFields.Institution)
                             </div>
                         </div>
                         <div>
                             <div id="wrapAddressBilling">
-
-                                <label>Address:</label> @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.StreetAddress, new {@class = "input-xxlarge"})
-                                <label>(2nd address optional):</label>@Html.TextBoxFor(model => model.RegisterFields.BillingAddress.StreetAddress2, new {@class = "input-xxlarge"})
+                                <label>Address:</label> @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.StreetAddress)@*, new { @class = "input-xxlarge" })*@
+                                <br />
+                                <label>(2nd address optional):</label>@Html.TextBoxFor(model => model.RegisterFields.BillingAddress.StreetAddress2)@*, new { @class = "input-xxlarge" })*@
                             </div>
                         </div>
                         <div>
                             <div id="wrapCityBilling">
-                                <label>City:</label> @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.City, new {@class = "input-large"})
-                                <label>State:</label> @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.State, new {@class = "input-medium"})
-                                <label>Zip:</label> @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Zip, new {@class = "input-mini"})
+                                <label>City:</label> @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.City, new { @class = "input-large" })
+                                @Html.HiddenFor(model => model.RegisterFields.BillingAddress.TypeOfAddress)
+                            </div>
+                            <div id="wrapCityBilling">
+                                <label>State:</label> @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.State, new { @class = "input-mini" })
+                                <label>Zip:</label> @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Zip, new { @class = "input-mini" })
                                 @Html.HiddenFor(model => model.RegisterFields.BillingAddress.TypeOfAddress)
                             </div>
                         </div>
                         <div>
                             <div id="wrapPhone">
-                                <label>Phone:</label>
-                                @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Phone, new {@class = "input-large"})
-
+                                      <label>Phone:</label>
+                                      @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Phone)
+                                  </div>
+                            <div id="wrapTimeZone">
                                 <label for="TimeZone" style="display: inline-block">Time Zone:</label>
                                 <select style="width: 120px" id="TimeZone" name="TimeZone">
                                     <option value="4">Eastern</option>
@@ -117,11 +126,11 @@
                                     <option value="1">Pacific</option>
                                 </select>
                             </div>
-
-                            <div id="nonUSAddressInputWrap">
+                            @*TODO: Figure out how to show this only when dealing with feriners.*@
+                            @*<div id="nonUSAddressInputWrap">
                                 <label>&nbsp;</label>
                                 <textarea name="nonUSAddressInput" rows="5" cols="100">Special Handling for Address:</textarea>
-                            </div>
+                            </div>*@
                             @Html.ValidationMessageFor(model => model.RegisterFields.FirstName)
                             @Html.ValidationMessageFor(model => model.RegisterFields.LastName)
                             @Html.ValidationMessageFor(model => model.RegisterFields.Institution)
@@ -141,7 +150,7 @@
                 <div id="collapseShipping" class=" accordion-body collapse">
                     <div class="accordion-inner">
                         <div>
-                            <label>Same As Billing?</label>@Html.HiddenFor(model => model.RegisterFields.ShippingAddress.Phone, new {@class = "input-large"})
+                            <label>Same As Billing?</label>@Html.HiddenFor(model => model.RegisterFields.ShippingAddress.Phone, new { @class = "input-large" })
 
                             <input type="checkbox" name="sameAsBilling" id="sameAsBilling" />
                         </div>
@@ -155,15 +164,15 @@
 
                         <div>
                             <div id="wrapAddressShipping">
-                                <label>Address:</label> @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.StreetAddress, new {@class = "input-xxlarge"})
-                                <label>(2nd address optional):</label>@Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.StreetAddress2, new {@class = "input-xxlarge"})
+                                <label>Address:</label> @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.StreetAddress, new { @class = "input-xxlarge" })
+                                <label>(2nd address optional):</label>@Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.StreetAddress2, new { @class = "input-xxlarge" })
                             </div>
                         </div>
                         <div>
                             <div id="wrapCityShipping">
-                                <label>City:</label>@Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.City, new {@class = "input-large"})
-                                <label>State:</label>@Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.State, new {@class = "input-medium"})
-                                <label>Zip:</label>@Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.Zip, new {@class = "input-mini"})
+                                <label>City:</label>@Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.City, new { @class = "input-large" })
+                                <label>State:</label>@Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.State, new { @class = "input-medium" })
+                                <label>Zip:</label>@Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.Zip, new { @class = "input-mini" })
                                 @Html.HiddenFor(model => model.RegisterFields.ShippingAddress.TypeOfAddress)
                             </div>
                             @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.StreetAddress)&nbsp;&nbsp;
