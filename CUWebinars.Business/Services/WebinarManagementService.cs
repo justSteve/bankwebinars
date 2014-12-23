@@ -97,6 +97,13 @@ namespace CUWebinars.Business.Services
             return null;
 
         }
+
+        public int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar)
+        {
+            var regType = _webinarRepository.GetRegTypeByLableAndWebinar(registrationType, idWebinar);
+            return regType;
+        }
+
         private IList<WebUser> GetRegistrants_CP()
         {
             return null;

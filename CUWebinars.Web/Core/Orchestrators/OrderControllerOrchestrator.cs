@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.CQS;
 using CUWebinars.Business.CQS.Commands;
@@ -68,6 +69,47 @@ namespace CUWebinars.Web.Core.Orchestrators
             return migrateOrderCommand.OrderId;
         }
 
+        public int ImportOrder(ImportOrderModel ImportOrderModel,
+                            string email,
+                            ImportQueryResult importQueryResult,
+                            string verificationKey,
+                            string confirmChangeEmailUrl)
+        {
+            var ImportOrderRowCommand = new ImportOrderRowCommand
+            {
+                AdditionalLocationsString = ImportOrderModel.AdditionalLocationsString,
+                Email = email,
+                RegistrationType = Convert.ToInt32(ImportOrderModel.RegistrationType),
+                Discount = ImportOrderModel.DiscountCode,
+                Webinar = importQueryResult.Webinar
+            };
+
+            _commandProcessor.Execute(ImportOrderRowCommand);
+
+
+            var ImportOrderCommand = new ImportOrderCommand()
+            {
+                Affiliate = importQueryResult.Affiliate,
+                AffiliateComments = ImportOrderModel.AffiliateComments,
+                BillingAddress = ImportOrderModel.BillingAddress,
+                ConfirmChangeEmailUrl = confirmChangeEmailUrl,
+                Email = email,
+                FirstName = ImportOrderModel.FirstName.Trim(),
+                LastName = ImportOrderModel.LastName.Trim(),
+                OrderRow = ImportOrderRowCommand.OrderRow, // out parameter of addOrderRowCommand command
+                ShippingAddress = ImportOrderModel.ShippingAddress,
+                VerificationKey = verificationKey,
+                Webinar = importQueryResult.Webinar,
+                WebUser = importQueryResult.WebUser,
+                AdditionalLocationsString = ImportOrderModel.AdditionalLocationsString
+            };
+
+
+            _commandProcessor.Execute(ImportOrderCommand);
+
+            return ImportOrderCommand.OrderId;
+        }
+
         public int CreateNewOrder(IncomingOrderModel incomingOrderModel,
             string email,
             OrderManagementQueryResult orderManagementQueryResult,
@@ -132,9 +174,23 @@ namespace CUWebinars.Web.Core.Orchestrators
             _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
         }
 
+        public void FinalizeImportedRegistation(ImportOrderModel importOrder, string verificationKey)
+        {
+            var verifyAccountCommand = new VerifyAccountCommand
+            {
+                TempPassword = importOrder.LastName.Trim().ToLower(),
+                VerificationKey = verificationKey
+            };
+
+            //_commandProcessor.Execute(verifyAccountCommand);
+
+            //  Now we clear the value, so TtsSmtpMessageDelivery can go back to business as usual.
+            _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
+        }
+
         public MigratorQueryResult GetPreparatoryDataForMigrator(MigrateOrderModel migrateOrderModel, string email)
         {
-            var migratorQuery = new MirgratorQuery
+            var migratorQuery = new MigratorQuery
             {
                 AffiliateId = migrateOrderModel.idAffiliate,
                 Email = email,
@@ -143,6 +199,19 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             return _queryProcessor.Process(migratorQuery);
         }
+
+        public ImportQueryResult GetPreparatoryDataForImporter(ImportOrderModel importOrderModel, string email)
+        {
+            var importQuery = new ImportQuery
+            {
+                AffiliateId = importOrderModel.idAffiliate,
+                Email = email,
+                WebinarId = importOrderModel.idWebinar
+            };
+
+            return _queryProcessor.Process(importQuery);
+        }
+
         public OrderManagementQueryResult GetPreparatoryData(IncomingOrderModel incomingOrderModel, string email)
         {
             var orderManagementQuery = new OrderManagementQuery
@@ -234,5 +303,38 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             return registerNewAccountCommand.WebUser; //  assign out parameter for later use
         }
+
+        public WebUser ImportUser(ImportOrderModel importOrder, string email)
+        {
+            var firstName = importOrder.FirstName.Trim();
+            var lastName = importOrder.LastName.Trim();
+            var tempPassword = lastName.ToLower();
+
+            //  Here, we set a value which indicates to the TtsSmtpMessageDelivery object that the user was created while importing an order.
+            //  This will be checked in TtsSmtpMessageDelivery and the notification will not be sent if this value is present.
+            //  The idea being that the Order Submitted notification will contain the info nomrally in the User Registered email.
+            _stateService.SetValue(DomainConstants.UserCreatedViaNewOrder, true);
+
+            var registerNewAccountCommand = new RegisterNewAccountCommand
+            {
+                BillingAddress = importOrder.BillingAddress,
+                Email = email,
+                FirstName = firstName,
+                LastName = lastName,
+                Institution = importOrder.Institution.Trim(),
+                ShippingAddress = importOrder.ShippingAddress,
+                TempPassword = tempPassword,
+                Tenant = globalConfig.Tenant,
+                Title = importOrder.Title == null ? null : importOrder.Title.Trim()
+            };
+
+            _commandProcessor.Execute(registerNewAccountCommand);
+
+            Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey),
+    "There's no reason session should not have a value for the VerificationKey at this point ");
+
+            return registerNewAccountCommand.WebUser; //  assign out parameter for later use
+        }
+
     }
 }

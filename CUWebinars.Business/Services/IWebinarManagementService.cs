@@ -24,5 +24,6 @@ namespace CUWebinars.Business.Services
         void UpdateWebinarFiles(IEnumerable<WebinarFile> webinarFiles);
         Webinar GetCompliancePerspectives();
 
+        int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar);
     }
 }

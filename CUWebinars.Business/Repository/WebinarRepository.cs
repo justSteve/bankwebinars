@@ -69,6 +69,22 @@ namespace CUWebinars.Business.Repository
                 .Where(t => t.idWebinar == idWebinar);
         }
 
+        public int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar)
+        {
+            var regGroups = ((TTSWebinarsContext) db).RegTypesGroupsXrefs
+                .Where(t => t.idWebinar == idWebinar)    
+                ;
+            int regType = 0;
+            foreach (var x in regGroups)
+            {
+                regType = ((TTSWebinarsContext) db).RegTypesXrefs
+                    .Where(r => r.RegType.OptionLabel == registrationType).Select(r => r.idRegType).SingleOrDefault()
+                    ;
+            }
+            return regType;
+
+        }
+
         public IQueryable<Webinar> GetAllActive()
         {
             return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
