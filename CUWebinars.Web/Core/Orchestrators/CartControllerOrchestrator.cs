@@ -479,6 +479,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             return newOrder;
         }
 
+        public RegType GetRegTypeById(int idRegType)
+        {
+            return _orderManagementService.GetRegTypesForOption(idRegType).SingleOrDefault();
+        }
+
         public OrderRow LoadOrderRow(int id, OrderStatus status)
         {
             OrderRow row = _orderManagementService.LoadOrderRow(id);
@@ -488,9 +493,12 @@ namespace CUWebinars.Web.Core.Orchestrators
             return row;
         }
 
-        public void SetOrderStatusToSubmitted(Order order)
+        public PricesAndDiscounts UpdateOrderPricing(Order order)
         {
-            _orderManagementService.UpdateOrderChanges(order);
+            PricesAndDiscounts pricesAndDiscounts = default (PricesAndDiscounts);
+            _orderManagementService.UpdateOrderChanges(order, ref pricesAndDiscounts);
+
+            return pricesAndDiscounts;
         }
 
         public void FireOrderSubmittedNotification(Order order)

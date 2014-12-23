@@ -74,6 +74,8 @@ namespace CUWebinars.Business.Repository
                 newOrderRow.RegistrationType = registrationType;
                 newOrderRow.RowStatus = OrderRowStatus.Active;
 
+                // The RowPrice is just the starting point. The full price for an 
+                // order is calculated in CalculateOrderPrices of the OrderManagementService
                 newOrderRow.RowPrice = Convert.ToDecimal(newOrderRow.RegistrationType.Price);
 
                 return newOrderRow;

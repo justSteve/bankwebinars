@@ -126,7 +126,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 VerificationKey = verificationKey
             };
 
-            //_commandProcessor.Execute(verifyAccountCommand);
+            _commandProcessor.Execute(verifyAccountCommand);
 
             //  Now we clear the value, so TtsSmtpMessageDelivery can go back to business as usual.
             _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
@@ -165,6 +165,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public string GetVerificationKeyForNewUserAccount()
         {
+            // this value was inserted into Session in the TtsTokenizer when the UserAccount was created by MR.
             var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
             _stateService.ClearValue(DomainConstants.VerificationKey);
 
@@ -197,8 +198,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             _commandProcessor.Execute(registerNewAccountCommand);
 
-            Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey),
-    "There's no reason session should not have a value for the VerificationKey at this point ");
+            Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey), "There's no reason session should not have a value for the VerificationKey at this point ");
 
             return registerNewAccountCommand.WebUser; //  assign out parameter for later use
         }

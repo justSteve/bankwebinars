@@ -1,22 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Web;
-using System.Web.Script.Serialization;
-using CUWebinars.Business.Constants;
-using CUWebinars.Business.Models;
-using CUWebinars.Business.Services;
+﻿using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Models;
-using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 using Ninject.Extensions.Logging;
 using System;
+using System.Linq;
+using System.Net;
+using System.Web;
 using System.Web.Mvc;
-using Newtonsoft.Json;
 
 namespace CUWebinars.Web.Controllers
 {
@@ -45,7 +38,6 @@ namespace CUWebinars.Web.Controllers
 
             var globals = GlobalConfig.GlobalConfigSingleton;
             var options = _orderManagementService.GetOptionsByWebinarId(idWebinar, false);
-            Object listOfOptions = new object();
 
             var result = JsonConvert.SerializeObject(options);
 
@@ -53,7 +45,7 @@ namespace CUWebinars.Web.Controllers
 
             var topics = _webinarManagementService.GetTopicsPerWebinar(webinarDetails.idWebinar);
 
-            var showTopics = "";
+            var showTopics = string.Empty;
             foreach (var topic in topics)
             {
                 showTopics = showTopics + topic.topicDesc + ", ";
@@ -151,7 +143,6 @@ namespace CUWebinars.Web.Controllers
                 idOfLastOrder = _orderControllerOrchestrator.CreateNewOrder(incomingOrderModel, email,
                     orderManagementQueryResult, verificationKey, confirmChangeEmailUrl);
 
-                //idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
                 _logger.Info(string.Format("CreateOrder|CreateNewOrder: {0}", idOfLastOrder));
 
                 return Json(new { Result = idOfLastOrder.ToString() }, JsonRequestBehavior.AllowGet);

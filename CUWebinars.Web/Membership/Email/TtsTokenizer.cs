@@ -20,8 +20,11 @@ namespace CUWebinars.Web.Membership.Email
             _stateService = stateService;
         }
 
-        public override string Tokenize(UserAccountEvent<UserAccount> accountEvent, ApplicationInformation appInfo,
-            string msg, IDictionary<string, string> values)
+        public override string Tokenize(
+            UserAccountEvent<UserAccount> accountEvent, 
+            ApplicationInformation appInfo,
+            string msg,
+            IDictionary<string, string> values)
         {
             //  create a configuration file for the template service
             var config = new FluentTemplateServiceConfiguration(c =>
@@ -32,7 +35,6 @@ namespace CUWebinars.Web.Membership.Email
                 c.IncludeNamespaces("CUWebinars.Business.Core.Helpers",
                     "CUWebinars.Business.Models",
                     "CUWebinars.Business.Notification");
-                    //"CUWebinars.Html");
             });
 
             var templateService = new TemplateService(config);
@@ -40,7 +42,7 @@ namespace CUWebinars.Web.Membership.Email
 
             var notification = new Notification
             {
-                Tenant = appInfo.ApplicationName, // This is an MR class, so we are confined to its properties. But we can set tham as we like.
+                Tenant = appInfo.ApplicationName, // This is an MR class, so we are confined to its properties. We need to call it "Tenant".
                 CancelVerificationUrl = appInfo.CancelVerificationUrl,
                 ConfirmChangeEmailUrl = appInfo.ConfirmChangeEmailUrl,
                 ConfirmPasswordResetUrl = appInfo.ConfirmPasswordResetUrl,
@@ -67,8 +69,7 @@ namespace CUWebinars.Web.Membership.Email
                     if (!_stateService.HasValue(DomainConstants.VerificationKey))
                         _stateService.SetValue(DomainConstants.VerificationKey, verificationKey);
 
-                    notification.ConfirmPasswordResetUrl = Path.Combine(notification.ConfirmPasswordResetUrl,
-                        verificationKey);
+                    notification.ConfirmPasswordResetUrl = Path.Combine(notification.ConfirmPasswordResetUrl, verificationKey);
 
                     //  "blank" is concatenated to the end so that it matches the route called EmailLinkRoute (See RouteConfig.cs). 
                     //  The "surname" part of that route is something other than "blank" when the user is registered by way of an 
@@ -77,8 +78,7 @@ namespace CUWebinars.Web.Membership.Email
                         Path.Combine(notification.ConfirmChangeEmailUrl, accountEvent.Account.Email),
                         Path.AltDirectorySeparatorChar + DomainConstants.Blank
                         );
-                    notification.CancelVerificationUrl = Path.Combine(notification.CancelVerificationUrl,
-                        verificationKey);
+                    notification.CancelVerificationUrl = Path.Combine(notification.CancelVerificationUrl, verificationKey);
 
                     //  We also add the ConfirmChangeEmailLink string to session where user is registered via an Order being imported.
                     //  This is used downstream in the flow with the creation of the Order.

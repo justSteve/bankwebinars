@@ -29,7 +29,7 @@ $(function () {
             // errorThrown has error message, or "timeout" in case of timeout.
             
             var err = new Error('LogInAsUser AJAX error: ' + errorThrown);
-            NREUM.noticeError(err);
+            //NREUM.noticeError(err);
             var i = 0;
 
         }).always(function () {
@@ -58,7 +58,7 @@ $(function () {
             // errorThrown has error message, or "timeout" in case of timeout.
             
             var err = new Error('CreateUserButton AJAX error: ' + errorThrown);
-            NREUM.noticeError(err);
+            //NREUM.noticeError(err);
             var i = 0;
 
         }).always(function () {

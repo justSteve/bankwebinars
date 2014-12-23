@@ -20,7 +20,7 @@ $(function () {
             var self = $(this);
             self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
             var err = new Error('submitting ConfirmOrder' + cartStateManager.getOrderRowId());
-            NREUM.noticeError(err);
+            //NREUM.noticeError(err);
 
             var data = $(this).serialize();
             $('#ConfirmRegistrationBillMe').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
@@ -32,7 +32,7 @@ $(function () {
                     orderRowID = result.OrderRowID;
 
                     var err = new Error('Posted Order: ' + orderRowID);
-                    NREUM.noticeError(err);
+                    //NREUM.noticeError(err);
                     $('#orderDetails').empty();
                     $('#orderDetails').append(result.Msg);
 
@@ -44,7 +44,7 @@ $(function () {
                 } else {
                     //TODO: Add code that will provide as much detail to the Failed message as can be obtained from result.
                     var err = new Error('FAILED posting Order: ');
-                    NREUM.noticeError(err);
+                    //NREUM.noticeError(err);
 
                     $('.signupErrors').html('Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! ');
                 }
@@ -79,14 +79,14 @@ $(function () {
                 $.post(self.attr('action'), data, function (response, status, xhr) {
                     if (response.success) {
                         var err = new Error('Suceeded in canceling order');
-                        NREUM.noticeError(err);
+                        //NREUM.noticeError(err);
 
                         var utilities = new Common.Utilities();
                         console.log('/webinar/details/' + cartStateManager.getWebinarId());
                         utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
                     } else {
                         var err = new Error('Cancel Order Failure');
-                        NREUM.noticeError(err);
+                        //NREUM.noticeError(err);
                         $('.signupErrors').html('Invalid Data. Try again?');
                         $('#ConfirmModal').modal('hide');
                     }
@@ -182,7 +182,8 @@ $(function () {
         hookUpChangeTypeLogic($('#RegType'));
         hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
 
-        beigeFormArea.height($('#confirmation').height() + 30);
+        //var beigeFormArea = signUpFormContainer.find('div.well');
+        //beigeFormArea.height($('#confirmation').height() + 30);
     }
 
     /* Submit event for the big green SignUp button */
@@ -206,7 +207,7 @@ $(function () {
         // If the user IS NOT LOGGED IN - control moves to the register-during-checkout.js script
         if (!cartStateManager.getIsUserLogged()) {
             var err = new Error('anon user hits signup');
-            NREUM.noticeError(err);
+            //NREUM.noticeError(err);
 
             $.post(signUpForm.attr('action'), data, function (result) {
                 if (result.success) {
@@ -235,7 +236,7 @@ $(function () {
                     cartStateManager.setWebinarId(result.webinarId);
 
                     var err = new Error('submitting ConfirmOrder' + result.orderId);
-                    NREUM.noticeError(err);
+                    //NREUM.noticeError(err);
 
                     $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
                         $('#confirmationTab a').tab('show');

@@ -41,6 +41,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 var notificationMessage = _generalFormatter.Format(orderSubmittedEvent.EventObject, "OrderSubmittedAdditionalLocation");
                 notificationMessage.PersistedName = string.Format("OrderSubmittedAdditionalLocation-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm");
 
+                /************************** Legacy, before Azure was used to store notifications as blobs **************************/
                 //var fullFilePathToPersistedNotification = Path.Combine(_environmentInformation.BaseUrl,
                 //    orderSubmittedEvent.RelativeFilePath);
                 

@@ -23,7 +23,9 @@ namespace CUWebinars.Web.Membership.Email
 
         public void Send(Message msg)
         {
-            if (_stateService.HasValue(DomainConstants.UserCreatedViaNewOrder))
+            if (_stateService.HasValue(DomainConstants.UserCreatedViaNewOrder) || 
+                _stateService.HasValue(DomainConstants.UserCreatedViaMigrator) ||
+                msg.Subject.Contains("Email Account Verified"))
             {
                 return;
             }
@@ -41,7 +43,6 @@ namespace CUWebinars.Web.Membership.Email
             var cloudQueueMessage = new CloudQueueMessage(JsonConvert.SerializeObject(msg));
             cloudQueue.EncodeMessage = true;
             cloudQueue.AddMessage(cloudQueueMessage);
-
         }
     }
 }

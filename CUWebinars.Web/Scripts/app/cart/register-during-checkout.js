@@ -683,7 +683,7 @@ function completeOrder(userId, orderRowId, webinarId) {
             var utilities = new Common.Utilities();
             console.log('/webinar/details/' + webinarId);
             var err = new Error('/webinar/details/' + webinarId);
-            NREUM.noticeError(err);
+            //NREUM.noticeError(err);
             utilities.goToUrl('/Account/OrderComplete/');
         });
     });
@@ -721,7 +721,7 @@ function cancelOrder(orderId, webinarId) {
             } else {
                 
                 var err = new Error('Cancel Order Failure');
-                NREUM.noticeError(err);
+                //NREUM.noticeError(err);
 
                 $('.signupErrors').html('Invalid Data. Try again?');
                 $('#ConfirmModal').modal('hide');
@@ -830,18 +830,18 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
 
                 } else if (!data.isSuccessful) {
                     var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
-                    NREUM.noticeError(err);
+                    //NREUM.noticeError(err);
 
                     $('#updateShippingMsgLabelWrap').empty();
                     formProcessor.lightUpValidationSummary('userDetailsValSummary', data);
                 } else {
                     var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
-                    NREUM.noticeError(err);
+                    //NREUM.noticeError(err);
                     $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>There has been an error in the operation.Please call us at 800-831-0678 ext. 3 to resolve.</span>');
                 }
             }).fail(function (data) {
                     var err = new Error('FAIL: Post to userDetailsFormUrlData ' + userDetailsFormUrlData + ' !data.isSuccessful');
-                    NREUM.noticeError(err);
+                    //NREUM.noticeError(err);
                     $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error in the server response. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
             });
         });
@@ -915,6 +915,7 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
         e.preventDefault();
 
         valOfTypeChosenCurrent = $(this).val();
+        var totalPrice = 0;
 
         var url = '/Cart/CheckIfAddLocShouldHide?optionID=' + valOfTypeChosenCurrent;
 
@@ -924,13 +925,18 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
             cache: false,
             url: url,
             dataType: constants.JsonDataType,
+            beforeSend: function() {
+                dropDown.attr('disabled', 'disabled').after('<i id="discountSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+            }
         }).done(function (data) {
+
+            // see CartController's CheckIfAddLocShouldHide method for commented explanation regarding the 'shouldShow' property.
             if (data.shouldShow === 'No') {
+
+                registerDuringCheckout.gatherPricingData();
 
                 //  First, check if there are currently any Additional Locations added to the order.
                 if (anyAddLocs === true) {
-
-                    registerDuringCheckout.gatherPricingData();
 
                     position = $('#confirmation').offset();
 
@@ -949,16 +955,16 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
                     }).done(function (data) {
 
                         if (data.Result === 'Success') {
-
+                            // This next variable is initially set in the CheckoutConfirm.cshtml razor view
+                            anyAddLocs = false;
                             $('#additionalLocationsCaption').html('None');
 
                             $('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 706 for immediate assistance').addClass('text-info');
-                            
-                            $('#addLocsText').html('Additional Locations: <span id="totalAdLocsPrice">$0.00</span>').addClass('muted');
-                            $('#totalPriceText').html('Additional Locations: <span id="totalPrice">$' + (registerDuringCheckout.totalPrice - registerDuringCheckout.addLocsPrice).toString() + '.00</span>');
 
-                            // This variable is initially set in the CheckoutConfirm.cshtml razor view
-                            anyAddLocs = false;
+                            $('#addLocsText').html('Additional Locations: <span id="totalAdLocsPrice">$0.00</span>').addClass('muted');
+                            totalPrice = registerDuringCheckout.totalPrice - registerDuringCheckout.addLocsPrice;
+
+                            updatePriceOnNewSelection(valOfTypeChosenCurrent, totalPrice, dropDown);
                         }
                     });
 
@@ -969,13 +975,14 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
                     typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
                     chosenRegTypeLabel.empty().text(typeChosenCurrent);
                     valOfTypeChosenPrevious = valOfTypeChosenCurrent;
+
+                    updatePriceOnNewSelection(valOfTypeChosenCurrent, registerDuringCheckout.totalPrice, dropDown);
                 }
             } else {
                 typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
                 chosenRegTypeLabel.empty().text(typeChosenCurrent);
                 valOfTypeChosenPrevious = valOfTypeChosenCurrent;
-
-            //TODO: Does update of RowPrice partial belong here?
+                updatePriceOnNewSelection(valOfTypeChosenCurrent, registerDuringCheckout.totalPrice, dropDown);
             }
 
             if (data.shippingDetailsRqrd === 'Yes') {
@@ -983,9 +990,44 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
             } else {
                 registerDuringCheckout.shippingAddressRequired = false;
             }
-            //TODO: Does update of RowPrice partial belong here?
-            ShowModalForShippingDetails(registerDuringCheckout.shippingAddressRequired);
         });
+    });
+}
+
+// This function's purpose is to update pricing details where the RegType DropDown has its selected value changed.
+// It also displays the Shipping Details modal form where the RegType chosen has a shipping address requirement.
+function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
+
+    registerDuringCheckout.gatherPricingData();
+
+    var url = '/Cart/UpdateOrderDetails';
+
+    var payLoad = {
+        idOrderRow: cartStateManager.getOrderRowId(),
+        idRegType: registrationTypeId
+    };
+
+    $.ajax({
+        type: 'POST',
+        contentType: constants.JsonContentType,
+        cache: false,
+        url: url,
+        dataType: constants.JsonDataType,
+        data: JSON.stringify(payLoad),
+    }).done(function(data) {
+        
+        if (data) {
+
+            $('#baseCost').html('$' + data.BasePrice + '.00');
+            $('#totalDiscount').html('$' + data.Discount + '.00').parent().addClass('muted');
+            $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '.00');
+            $('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + data.Total + '.00</span>');
+        }
+
+        dropDown.removeAttr('disabled');
+        $('#discountSpinner').remove();
+
+        ShowModalForShippingDetails(registerDuringCheckout.shippingAddressRequired);
     });
 }
 

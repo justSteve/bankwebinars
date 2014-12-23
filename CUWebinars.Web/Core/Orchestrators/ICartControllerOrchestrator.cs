@@ -23,9 +23,10 @@ namespace CUWebinars.Web.Core.Orchestrators
         Tuple<string, string> CheckIfAddLocShouldHide(int optionId);
         Order CreateOrder(CheckoutOptionsViewModel formModel);
         void FireOrderSubmittedNotification(Order order);
+        RegType GetRegTypeById(int idRegType);
         OrderRow LoadOrderRow(int id, OrderStatus status);
         void RemoveAdditionalLocationsFromOrder(int value);
-        void SetOrderStatusToSubmitted(Order order);
+        PricesAndDiscounts UpdateOrderPricing(Order order);
         void UpdateOrderWithUserId(int orderId, int userId);
     }
 }

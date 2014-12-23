@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Services;
 using Newtonsoft.Json.Linq;
@@ -17,11 +18,11 @@ using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Helpers;
-using CUWebinars.Web.Membership;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.ViewModel;
 using Newtonsoft.Json;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
+using DataOperations = CUWebinars.Web.Membership.DataOperations;
 
 namespace CUWebinars.Web.Controllers.Admin
 {
@@ -231,7 +232,10 @@ namespace CUWebinars.Web.Controllers.Admin
                         additionalLocation.JoinURL = joinUrl;
                         additionalLocation.RegistrantKey = registrantKey;
                     }
-                    var ResultOfUpdate = _orderManagementService.UpdateOrderChanges(order);
+
+                    PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts); // not needed here. Discard.
+
+                    var ResultOfUpdate = _orderManagementService.UpdateOrderChanges(order, ref pricesAndDiscounts);
                 }
             }
         }

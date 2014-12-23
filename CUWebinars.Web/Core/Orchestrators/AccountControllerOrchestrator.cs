@@ -177,21 +177,26 @@ namespace CUWebinars.Web.Core.Orchestrators
                 model.RegisterFields.Password,
                 email);
 
+            // The following Claim is added so the system knows that the User is yet to pro-actively verify its account.
+            // Note: this is a CUW/BW construct of Verified, as distinct from the MR idea of Verified (which is dealt with below)
             _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.ManualRegistration);
 
-            Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey),
-                "There's no reason session should not have a value for the VerificationKey at this point ");
+            Debug.Assert(_stateService.HasValue(DomainConstants.VerificationKey), "There's no reason session should not have a value for the VerificationKey at this point ");
 
             var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
             _stateService.ClearValue(DomainConstants.VerificationKey);
 
-            userAccount = _membershipService.VerifyEmailFromKey(
+            _membershipService.VerifyEmailFromKey(
                 verificationKey,
                 model.RegisterFields.Password
-                );
+                ); // verify the user to unlock functionality like PasswordReset
 
-            _membershipService.LogInUser(_globals.Tenant, model.RegisterFields.Email,
-                model.RegisterFields.Password, true); // log the user in.            
+            _membershipService.LogInUser(
+                _globals.Tenant, 
+                model.RegisterFields.Email,
+                model.RegisterFields.Password, 
+                true
+                ); // log the user in.            
 
         }
 
@@ -512,13 +517,17 @@ namespace CUWebinars.Web.Core.Orchestrators
                     password,
                     email);
 
+                // The following Claim is added so the system knows that the User is yet to pro-actively verify its account.
+                // Note: this is a CUW/BW construct of Verified, as distinct from the MR idea of Verified (which is dealt with below)
                 _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.CartRegistration);
 
                 var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
                 _stateService.ClearValue(DomainConstants.VerificationKey);
 
+                // take note of the fact that this registration occurred as part of the Checkout process.
                 _stateService.SetValue(DomainConstants.UserCreatedDuringCartCheckout, true);
 
+                // verify the user to unlock functionality like PasswordReset
                 _membershipService.VerifyEmailFromKey(
                     verificationKey,
                     password

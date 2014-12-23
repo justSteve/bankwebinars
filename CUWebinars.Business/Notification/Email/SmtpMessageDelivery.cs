@@ -16,7 +16,7 @@ namespace CUWebinars.Business.Notification.Email
             var mailMessage = new MailMessage();
             var tmpMsg = string.Empty;
 
-            if (String.IsNullOrWhiteSpace(notificationMessage.From))
+            if (string.IsNullOrWhiteSpace(notificationMessage.From))
             {
                 var smtp = ConfigurationManager.GetSection("system.net/mailSettings/smtp") as SmtpSection;
                 notificationMessage.From = smtp.From;
@@ -28,7 +28,7 @@ namespace CUWebinars.Business.Notification.Email
                 
                 string destinationEmailAddress = notificationMessage.To;
 
-                //  Set this AppSetting in Web.Config to true when testing i.e. not live
+                //  Set this AppSetting in Web.Config to something other than live when testing e.g. notlive
                 if (_appSettings["EmailSendingMode"] != "live")
                 {
                     destinationEmailAddress = _appSettings["TestEmailAddress"];
@@ -73,15 +73,21 @@ namespace CUWebinars.Business.Notification.Email
                     tmpMsg += " Subject: " + notificationMessage.Subject;
                     tmpMsg += " ErrorMsg: " + ex.Message;
                     tmpMsg += " Timestamp was: " + timeStamp;
+                    tmpMsg += " ExceptionType was: SmtpException";
+                    tmpMsg += string.Format(" InnerExceptionType was: {0}", ex.InnerException == null ? string.Empty : ex.InnerException.GetType().ToString());
+
                     Tracer.Error(tmpMsg);
                 }
                 catch (Exception exception)
                 {
                     System.Threading.Thread.Sleep(2000);
-                    tmpMsg = "ERROR MailerSmtpException: " + notificationMessage.To;
+                    tmpMsg = "ERROR Exception: " + notificationMessage.To;
                     tmpMsg += " Subject: " + notificationMessage.Subject;
                     tmpMsg += " ErrorMsg: " + exception.Message;
                     tmpMsg += " Timestamp was: " + timeStamp;
+                    tmpMsg += " ExceptionType was: Exception";
+                    tmpMsg += string.Format(" InnerExceptionType was: {0}", exception.InnerException == null ? string.Empty : exception.InnerException.GetType().ToString());
+
                     Tracer.Error(tmpMsg);
                 }
 

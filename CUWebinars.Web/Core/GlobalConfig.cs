@@ -47,9 +47,9 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.CreateUserQueueName = ApplicationSettingsSection["CreateUserQueueName"];
                 UniqueInstance.EmailSendingMode = ApplicationSettingsSection["EmailSendingMode"];
                 UniqueInstance.EmailSignature = ApplicationSettingsSection["EmailSignature"];
-                UniqueInstance.WMVRepository = ApplicationSettingsSection["WMVRepository"];
-                UniqueInstance.HandoutRepository = ApplicationSettingsSection["HandoutRepository"];
-                UniqueInstance.ImgRepository = ApplicationSettingsSection["ImgRepository"];
+                //UniqueInstance.WMVRepository = ApplicationSettingsSection["WMVRepository"];
+                //UniqueInstance.HandoutRepository = ApplicationSettingsSection["HandoutRepository"];
+                //UniqueInstance.ImgRepository = ApplicationSettingsSection["ImgRepository"];
                 UniqueInstance.NotificationsTesting = bool.Parse(ApplicationSettingsSection["NotificationsTesting"]);
                 UniqueInstance.RelativeLoginUrl = ApplicationSettingsSection["RelativeLoginUrl"];
                 UniqueInstance.RelativeConfirmChangeUrl = ApplicationSettingsSection["RelativeConfirmChangeUrl"];
@@ -65,7 +65,7 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.TenantPrefix = ApplicationSettingsSection["TenantPrefix"];
                 UniqueInstance.TestEmailAddress = ApplicationSettingsSection["TestEmailAddress"];
                 UniqueInstance.TestEmailAddress2 = ApplicationSettingsSection["TestEmailAddress2"];
-                UniqueInstance.UnAuthenticatedUser = ApplicationSettingsSection["UnAuthenticatedUser"];
+                //UniqueInstance.UnAuthenticatedUser = ApplicationSettingsSection["UnAuthenticatedUser"];
                 UniqueInstance.UseAzureWebjobs = bool.Parse(ApplicationSettingsSection["UseAzureWebjobs"]);
 
                 ConnectionStringSettingsCollection ConnectionStringSettings = WebConfigurationManager.ConnectionStrings;

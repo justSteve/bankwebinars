@@ -608,7 +608,7 @@ namespace CUWebinars.Business.Services
             Clear();
         }
 
-        public string UpdateOrderChanges(Order currentOrder)
+        public string UpdateOrderChanges(Order currentOrder, ref PricesAndDiscounts pricesAndDiscounts)
         {
             try
             {
@@ -619,7 +619,8 @@ namespace CUWebinars.Business.Services
                     );
 
                 ProcessDiscountCodes(currentOrder);
-                CalculateOrderPrices(currentOrder, additionalLocationsPricing.Single().Item2);
+                
+                pricesAndDiscounts = CalculateOrderPrices(currentOrder, additionalLocationsPricing.Single().Item2);
 
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, (int)currentOrder.OrderStatus);
 
@@ -728,6 +729,10 @@ namespace CUWebinars.Business.Services
             {
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, 0);
 
+                // If linkToVerifyAccount is true, then we know that the user was created during an importation. When that occurs, 
+                // we don't want to send the normal register user email. We want to roll those details into this confirmation
+                // notification (OrderSubmitted notification). So, if we have the confirmChangeEmailLink, we can include it in 
+                // the notification confirming registration for this webinar.
                 bool linkToVerifyAccount = !string.IsNullOrWhiteSpace(confirmChangeEmailLink);
 
                 _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
@@ -737,25 +742,26 @@ namespace CUWebinars.Business.Services
                 {
                     ConfirmChangeEmailUrl =
                         linkToVerifyAccount
-                            ? string.Concat(confirmChangeEmailLink.Replace(DomainConstants.Blank, string.Empty),
-                                currentOrder.WebUser.LastName.ToLower())
+                            ? string.Concat(confirmChangeEmailLink.Replace(DomainConstants.Blank, string.Empty), currentOrder.WebUser.LastName.ToLower())
                             : string.Empty,
                     Order = updatedOrder,
                     UserCreatedOnImport = linkToVerifyAccount
                 };
 
+                // This next line is largely redundant now, as the persistance is now done to Azure blobs
                 var relativePath = Path.Combine(@"App_Data\Notifications",
                     string.Format("OrderNotification-{0}{1}",
                         DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm"));
+
                 if (currentOrder.Origin != "Migrator")
                 {
-                AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
-                {
-                    EventObject = orderSubmittedViewModel,
-                    RelativeFilePath = relativePath
-                });
+                    AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
+                    {
+                        EventObject = orderSubmittedViewModel,
+                        RelativeFilePath = relativePath
+                    });
 
-                _logger.Info("Persisted Email for Order {0}:{1}", currentOrder.idOrder, relativePath);
+                    _logger.Info("Persisted Email for Order {0}:{1}", currentOrder.idOrder, relativePath);
 
                 }
 
@@ -763,9 +769,9 @@ namespace CUWebinars.Business.Services
                 {
                     _ttsConfig.NotificationEventBus.RaiseEvent(evt);
                 }
-                //what's the Clear() do?
-                // [dar] it clears the EventBus. From recollection, this was necessary in the "batch create order" scenario
+
                 Clear();
+
                 return updatedOrder;
             }
             catch (Exception exception)

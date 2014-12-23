@@ -20,11 +20,10 @@ namespace CUWebinars.Web.Membership.Email
 
         public void Send(Message msg)
         {
-            if (_stateService.HasValue(DomainConstants.UserCreatedViaNewOrder) || _stateService.HasValue(DomainConstants.UserCreatedDuringCartCheckout))
-            {
-                _stateService.ClearValue(DomainConstants.UserCreatedDuringCartCheckout);
-                return;
-            } else if (_stateService.HasValue(DomainConstants.UserCreatedViaMigrator))
+            if (_stateService.HasValue(DomainConstants.UserCreatedViaNewOrder) || 
+                _stateService.HasValue(DomainConstants.UserCreatedDuringCartCheckout) || 
+                _stateService.HasValue(DomainConstants.UserCreatedViaMigrator) ||
+                msg.Subject.Contains("Email Account Verified"))
             {
                 _stateService.ClearValue(DomainConstants.UserCreatedDuringCartCheckout);
                 return;
@@ -48,7 +47,7 @@ namespace CUWebinars.Web.Membership.Email
 
                 string destinationEmailAddress = msg.To;
 
-                //  Set this AppSetting in Web.Config to true when testing i.e. not live
+                //  Set this AppSetting in Web.Config to true when testing i.e. notlive
                 if (_globalConfig.EmailSendingMode != "live")
                 {
                     destinationEmailAddress = _globalConfig.TestEmailAddress;
@@ -96,15 +95,20 @@ namespace CUWebinars.Web.Membership.Email
                     tmpMsg += " Subject: " + msg.Subject;
                     tmpMsg += " ErrorMsg: " + ex.Message;
                     tmpMsg += " Timestamp was: " + timeStamp;
+                    tmpMsg += " ExceptionType was: SmtpException";
+                    tmpMsg += string.Format(" InnerExceptionType was: {0}", ex.InnerException == null ? string.Empty : ex.InnerException.GetType().ToString());
                     Tracing.Error(tmpMsg);
                 }
                 catch (Exception exception)
                 {
                     System.Threading.Thread.Sleep(2000);
-                    tmpMsg = "ERROR MailerSmtpException: " + msg.To;
+                    tmpMsg = "ERROR Exception: " + msg.To;
                     tmpMsg += " Subject: " + msg.Subject;
                     tmpMsg += " ErrorMsg: " + exception.Message;
                     tmpMsg += " Timestamp was: " + timeStamp;
+                    tmpMsg += " ExceptionType was: Exception";
+                    tmpMsg += string.Format(" InnerExceptionType was: {0}", exception.InnerException == null ? string.Empty : exception.InnerException.GetType().ToString());
+
                     Tracing.Error(tmpMsg);
                 }
 

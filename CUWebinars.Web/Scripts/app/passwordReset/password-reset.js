@@ -68,7 +68,7 @@ $(function () {
                     // errorThrown has error message, or "timeout" in case of timeout.
                 
                 var err = new Error("ResetPassword AJAX error: " + errorThrown);
-                NREUM.noticeError(err);
+                //NREUM.noticeError(err);
                 
                 
             });

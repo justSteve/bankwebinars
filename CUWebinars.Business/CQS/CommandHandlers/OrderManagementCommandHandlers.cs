@@ -65,8 +65,6 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                command.RegistrationType
                );
 
-            //orderRow.Discount = _orderManagementService.GetDiscount(command.Email);
-
             _postCommitRegistrator.Committed += () =>
             {
                 command.OrderRow = orderRow;
@@ -162,6 +160,8 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                 , command.Email
                 );
 
+            // The following Claim is added so the system knows that the User is yet to pro-actively verify its account.
+            // Note: this is a CUW/BW construct of Verified, as distinct from the MR idea of Verified
             _membershipService.AddAccountTypeNotVerifiedClaim(userAccount, ClaimValues.OrderImportRegistration);
 
             _postCommitRegistrator.Committed += () =>
@@ -178,10 +178,11 @@ namespace CUWebinars.Business.CQS.CommandHandlers
         public void Handle(VerifyAccountCommand command)
         {
             if (command == null) throw new ArgumentNullException("command");
-            var userAccount = _membershipService.VerifyEmailFromKey(
-                            command.VerificationKey,
-                            command.TempPassword
-                            );
+
+            _membershipService.VerifyEmailFromKey(
+                command.VerificationKey,
+                command.TempPassword
+                );
         }
 
         public void Handle(AddOrderCommand command)
@@ -214,7 +215,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             importedOrder.ShippingFirstName = command.FirstName;
             importedOrder.ShippingLastName = command.LastName;
 
-
+            // The Save is called on the DbContext in this method.
             _orderManagementService.SaveOrderChanges(importedOrder, command.VerificationKey, command.ConfirmChangeEmailUrl);
 
             _postCommitRegistrator.Committed += () =>
