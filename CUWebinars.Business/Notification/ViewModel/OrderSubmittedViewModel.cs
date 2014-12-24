@@ -6,6 +6,7 @@ namespace CUWebinars.Business.Notification.ViewModel
     {
         public string ConfirmChangeEmailUrl { get; set; }
         public Order Order { get; set; }
+        public string Password { get; set; }
         public bool UserCreatedOnImport { get; set; }
     }
 }

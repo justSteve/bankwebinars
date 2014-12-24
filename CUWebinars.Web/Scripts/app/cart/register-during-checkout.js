@@ -107,6 +107,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
         if (normalResetPasswordButton.filter(':visible').length > 0)
             inputElementTriggered = 'NormalResetPasswordInput';
 
+        // 13 is enter key
         if (event.which == 13) {
 
             if ($('#modalInstitution').filter(':visible').length > 0
@@ -387,7 +388,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                     //console.log('success: ' + data.Result);
                     regUserStateManager.setAction('');
 
-                    // This if guard may not be required
+                    // This 'if' guard may not be required
                     if (utilities.relativePathStartsWith(payload['returnUrl'])) {
                         $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;&nbsp;You have successfully registered! On to check-out...</span>');
 
@@ -416,14 +417,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                             beforeSend: function () {
                                 $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
                             }
-                        }).done(function (dataFromupdateOrderWithUserForm) {
-                            //TODO: Seek clarification on role played by this data object (if any)
-                            //Resharper complains of 'data' hiding a value from an outer scope.
-                            //but the value seems to be not to be used in the preparation of the 
-                            //$('#confirmation').load(' that follows here.
-
-                            //suggesting that unless we have explicit need of the naming pattern
-                            //  that Resharper warns let's reduce the squiggles.
+                        }).done(function () {
 
                             // Upon return, load the 3rd tab. And once loaded, 
                             //create the MR UserAccount (but don't log the user in). 
@@ -449,7 +443,10 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
                                     }
                                 }).done(function (data) {
-                                    //  do nothing.              
+
+                                    if (data.KeyForUser)
+                                        $('#keyForUserInput').val(data.KeyForUser);
+
                                 });
 
 
@@ -906,7 +903,6 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
         valOfTypeChosenCurrent;
 
     //  need to save state in the event that a Modal is displayed and Cancel is clicked on it.
-    //TODO: verify Resharper's warning that these vars not used
     typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
     valOfTypeChosenPrevious = valOfTypeChosenCurrent = dropDown.val();
 

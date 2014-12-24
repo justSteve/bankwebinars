@@ -22,7 +22,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         void CancelOrder(int idOrder);
         Tuple<string, string> CheckIfAddLocShouldHide(int optionId);
         Order CreateOrder(CheckoutOptionsViewModel formModel);
-        void FireOrderSubmittedNotification(Order order);
+        void FireOrderSubmittedNotification(Order order, string key = null);
         RegType GetRegTypeById(int idRegType);
         OrderRow LoadOrderRow(int id, OrderStatus status);
         void RemoveAdditionalLocationsFromOrder(int value);

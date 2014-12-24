@@ -93,9 +93,6 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public void RegisterAndLogInUser(RegisterViewModel model)
         {
-            if (_stateService.HasValue(DomainConstants.TempPassword))
-                _stateService.ClearValue(DomainConstants.TempPassword);
-
             var email = model.RegisterFields.Email.Trim();
             var firstName = model.RegisterFields.FirstName.Trim();
             var lastName = model.RegisterFields.LastName.Trim();
@@ -454,7 +451,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             return _membershipService.ChangePasswordFromResetKey(key, password);
         }
 
-        public void CreateUserAccountFromCart(RegisterViewModel model)
+        public string CreateUserAccountFromCart(RegisterViewModel model)
         {
             // This boolean is a toggle which live in the AppSettings of the config file.
             if (_globals.UseAzureWebjobs)
@@ -478,11 +475,14 @@ namespace CUWebinars.Web.Core.Orchestrators
                     throw new Exception("User already exists.");
                 }
 
+                var password = PasswordGenerator.GenerateRandomString(8);
+
                 var registerFieldsDto = new RegisterFieldsDTO
                 {
                     Email = email,
                     FirstName = firstName,
-                    LastName = lastName
+                    LastName = lastName,
+                    Password = password
                 };
 
 #if DEBUG
@@ -494,6 +494,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 var cloudQueueMessage = new CloudQueueMessage(payload);
                 cloudQueue.EncodeMessage = true;
                 cloudQueue.AddMessage(cloudQueueMessage);
+
+                return password;
             }
             else
             {
@@ -503,18 +505,13 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 var password = PasswordGenerator.GenerateRandomString(8);
 
-                if (_stateService.HasValue(DomainConstants.TempPassword))
-                    _stateService.ClearValue(DomainConstants.TempPassword);
-
-                _stateService.SetValue(DomainConstants.TempPassword, password);
-
                 var userAccount = _membershipService.CreateUser(
                     _globals.Tenant,
                     firstName,
                     lastName,
                     string.Empty,
                     //  Pass empty string for username because MembershipReboot assigns the email to the username field where emailIsUsername is true
-                    password,
+                    password, // use lastName as password
                     email);
 
                 // The following Claim is added so the system knows that the User is yet to pro-actively verify its account.
@@ -531,7 +528,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _membershipService.VerifyEmailFromKey(
                     verificationKey,
                     password
-                    );                
+                    );
+
+                return password;
             }
 
         }

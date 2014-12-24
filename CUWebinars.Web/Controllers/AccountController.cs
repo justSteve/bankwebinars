@@ -663,55 +663,55 @@ namespace CUWebinars.Web.Controllers
             return this.ModelStateJson(ModelState);
         }
 
-        [System.Web.Mvc.HttpPost]
-        [System.Web.Mvc.AllowAnonymous]
-        [ValidateJsonAntiForgeryToken]
-        public ActionResult SignInAfterCheckout(int? userId)
-        {
-            string userMustVerify;
+        //[System.Web.Mvc.HttpPost]
+        //[System.Web.Mvc.AllowAnonymous]
+        //[ValidateJsonAntiForgeryToken]
+        //public ActionResult SignInAfterCheckout(int? userId)
+        //{
+        //    string userMustVerify;
 
-            var email = _accountControllerOrchestrator.GetWebUserById(userId.Value).email;
+        //    var email = _accountControllerOrchestrator.GetWebUserById(userId.Value).email;
 
-            var tempPassword = _stateService.GetValue<string>(DomainConstants.TempPassword);
+        //    var tempPassword = _stateService.GetValue<string>(DomainConstants.TempPassword);
 
-            _stateService.ClearValue(DomainConstants.TempPassword);
+        //    _stateService.ClearValue(DomainConstants.TempPassword);
 
-            if (_accountControllerOrchestrator.SignUserIn(new SignInModel
-                {
-                    Email = email, 
-                    Password = tempPassword, 
-                    ReturnUrl = "/",
-                    SigninAfterCheckout = true
-                }, out userMustVerify))
-            {
-                return Json(new {result = LoggedInResult} );
-            }
+        //    if (_accountControllerOrchestrator.SignUserIn(new SignInModel
+        //        {
+        //            Email = email, 
+        //            Password = tempPassword, 
+        //            ReturnUrl = "/",
+        //            SigninAfterCheckout = true
+        //        }, out userMustVerify))
+        //    {
+        //        return Json(new {result = LoggedInResult} );
+        //    }
 
-            if (!string.IsNullOrEmpty(userMustVerify))
-            {
-                _logger.Info("Account.SignIn UserMustVerify. Session={0}, Email: {1} surname: {2}",
-                    _appHelper.GetUserAuditInfo(),
-                    email,
-                    tempPassword
-                    );
+        //    if (!string.IsNullOrEmpty(userMustVerify))
+        //    {
+        //        _logger.Info("Account.SignIn UserMustVerify. Session={0}, Email: {1} surname: {2}",
+        //            _appHelper.GetUserAuditInfo(),
+        //            email,
+        //            tempPassword
+        //            );
 
-                return Json(new {result = ConfirmedResult, email = email, surname = tempPassword });
-            }
+        //        return Json(new {result = ConfirmedResult, email = email, surname = tempPassword });
+        //    }
 
-            // If we got this far, something failed, redisplay form
-            _logger.Warn("Account.SignIn Failed. {0} | {1} Session= {2}",
-                email,
-                tempPassword,
-                _appHelper.GetUserAuditInfo()
-                );
+        //    // If we got this far, something failed, redisplay form
+        //    _logger.Warn("Account.SignIn Failed. {0} | {1} Session= {2}",
+        //        email,
+        //        tempPassword,
+        //        _appHelper.GetUserAuditInfo()
+        //        );
 
-            ModelState.AddModelError(
-                string.Empty, // Needs to be an empty string to show up in ValidationSummary as not model-level error.
-                "The user name or password provided is incorrect."
-                );
+        //    ModelState.AddModelError(
+        //        string.Empty, // Needs to be an empty string to show up in ValidationSummary as not model-level error.
+        //        "The user name or password provided is incorrect."
+        //        );
 
-            return this.ModelStateJson(ModelState);
-        }
+        //    return this.ModelStateJson(ModelState);
+        //}
         
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
@@ -1142,9 +1142,9 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
-                    _accountControllerOrchestrator.CreateUserAccountFromCart(model);
+                    var tempPassword = _accountControllerOrchestrator.CreateUserAccountFromCart(model);
 
-                    return Json(new { Result = WebUiConstants.Success });
+                    return Json(new { Result = WebUiConstants.Success, KeyForUser = tempPassword });
                 }
                 catch (MembershipCreateUserException e)
                 {
