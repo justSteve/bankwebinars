@@ -239,39 +239,46 @@ $(function () {
                     //NREUM.noticeError(err);
 
                     $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
-                        $('#confirmationTab a').tab('show');
 
-                        if (shippingAddressRequired && notificationsTesting === false) {
-                            // Following function lives in the register-during-checkout.js script
-                            // which will be in memory at this point and thus will have been hoisted.
-                            hookUpModal($('#UserDetailsModal'));
+                        if (status == 'error') {
+                            $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+                            $('#confirmationTab a').tab('show');
+                        } else {
+
+                            $('#confirmationTab a').tab('show');
+
+                            if (shippingAddressRequired && notificationsTesting === false) {
+                                // Following function lives in the register-during-checkout.js script
+                                // which will be in memory at this point and thus will have been hoisted.
+                                hookUpModal($('#UserDetailsModal'));
+                            }
+
+                            // see top of this file
+                            checkoutConfirm.initialize();
+
+                            // The Bill Me button on 3rd tab
+                            $('#ConfirmRegistrationBillMe').on('click', function(e) {
+                                e.preventDefault();
+                                var confirmOrderForm = $('#confirmOrder');
+                                confirmOrderForm.submit();
+                                confirmOrderForm.off('submit');
+                            });
+
+                            // The Cancel Registration button on 3rd tab
+                            $('#Canceller').on('click', function(e) {
+                                e.preventDefault();
+                                var cancelOrderForm = cartStateManager.getCancelOrderForm();
+                                cancelOrderForm.submit();
+                            });
+
+                            // Following 3 functions live in the register-during-checkout.js script
+                            // which will be in memory at this point and thus will be hoisted
+                            hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
+                            hookUpChangeTypeLogic($('#RegType'));
+                            hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
+
+                            beigeFormArea.height($('#confirmation').height() + 30);
                         }
-
-                        // see top of this file
-                        checkoutConfirm.initialize();
-
-                        // The Bill Me button on 3rd tab
-                        $('#ConfirmRegistrationBillMe').on('click', function (e) {
-                            e.preventDefault();
-                            var confirmOrderForm = $('#confirmOrder');
-                            confirmOrderForm.submit();
-                            confirmOrderForm.off('submit');
-                        });
-
-                        // The Cancel Registration button on 3rd tab
-                        $('#Canceller').on('click', function (e) {
-                            e.preventDefault();
-                            var cancelOrderForm = cartStateManager.getCancelOrderForm();
-                            cancelOrderForm.submit();
-                        });
-
-                        // Following 3 functions live in the register-during-checkout.js script
-                        // which will be in memory at this point and thus will be hoisted
-                        hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
-                        hookUpChangeTypeLogic($('#RegType'));
-                        hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
-
-                        beigeFormArea.height($('#confirmation').height() + 30);
                     }, constants.HtmlDataType);
                 } else if (result.isSuccessful === false) {
                     formProcessor.lightUpValidationSummary('valSummarySignUpForm', result);

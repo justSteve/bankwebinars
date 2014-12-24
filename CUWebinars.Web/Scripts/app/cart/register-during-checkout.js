@@ -424,55 +424,60 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                             
                             $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
 
-                                //  MembershipReboot create user post. Needs its own headers/__RequestVerificationToken
-                                var createUserAccountForm = $('#_CreateUserAccountForm');
-                                var tokenMr = createUserAccountForm.find('input[name=__RequestVerificationToken]').val();
-                                var headersMr = {};
-                                headersMr['__RequestVerificationToken'] = tokenMr;
-                                var urlMr = createUserAccountForm.attr('action');
+                                if (status == 'error') {
+                                    $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+                                    $('#confirmationTab a').tab('show');
+                                } else {
+                                    //  MembershipReboot create user post. Needs its own headers/__RequestVerificationToken
+                                    var createUserAccountForm = $('#_CreateUserAccountForm');
+                                    var tokenMr = createUserAccountForm.find('input[name=__RequestVerificationToken]').val();
+                                    var headersMr = {};
+                                    headersMr['__RequestVerificationToken'] = tokenMr;
+                                    var urlMr = createUserAccountForm.attr('action');
 
-                                $.ajax({
-                                    type: 'POST',
-                                    contentType: constants.JsonContentType,
-                                    cache: false,
-                                    url: urlMr,
-                                    dataType: constants.JsonDataType,
-                                    data: JSON.stringify(payload),
-                                    headers: headersMr,
-                                    beforeSend: function () {
+                                    $.ajax({
+                                        type: 'POST',
+                                        contentType: constants.JsonContentType,
+                                        cache: false,
+                                        url: urlMr,
+                                        dataType: constants.JsonDataType,
+                                        data: JSON.stringify(payload),
+                                        headers: headersMr,
+                                        beforeSend: function() {
 
+                                        }
+                                    }).done(function(data) {
+
+                                        if (data.KeyForUser)
+                                            $('#keyForUserInput').val(data.KeyForUser);
+
+                                    });
+
+
+                                    $('#ConfirmRegistrationBillMe').on('click', function(e) {
+                                        //$('#confirmation').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>');
+                                        completeOrder(userId, orderRowId, webinarId);
+                                    });
+
+                                    $('#Canceller').on('click', function(e) {
+                                        cancelOrder(orderId, webinarId);
+                                    });
+
+                                    hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
+                                    hookUpChangeTypeLogic($('#RegType'));
+                                    hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
+
+                                    if (shippingAddressRequired && notificationsTesting === 'false') {
+                                        hookUpModal($('#UserDetailsModal'));
                                     }
-                                }).done(function (data) {
 
-                                    if (data.KeyForUser)
-                                        $('#keyForUserInput').val(data.KeyForUser);
+                                    //  Now that we are on the 3rd tab, remove the 2nd tab else we'll have some fields with identical id's on both tabs (edit user fields)
+                                    $('#_CreateUserFromCartForm').remove();
 
-                                });
+                                    $('#loadingSpinner').remove();
 
-
-                                $('#ConfirmRegistrationBillMe').on('click', function (e) {
-                                    //$('#confirmation').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>');
-                                    completeOrder(userId, orderRowId, webinarId);
-                                });
-
-                                $('#Canceller').on('click', function (e) {
-                                    cancelOrder(orderId, webinarId);
-                                });
-
-                                hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
-                                hookUpChangeTypeLogic($('#RegType'));
-                                hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
-
-                                if (shippingAddressRequired && notificationsTesting === 'false') {
-                                    hookUpModal($('#UserDetailsModal'));
+                                    beigeFormArea.height($('#confirmation').height() + 30);
                                 }
-
-                                //  Now that we are on the 3rd tab, remove the 2nd tab else we'll have some fields with identical id's on both tabs (edit user fields)
-                                $('#_CreateUserFromCartForm').remove();
-
-                                $('#loadingSpinner').remove();
-
-                                beigeFormArea.height($('#confirmation').height() + 30);
                             });
 
                         });
@@ -562,30 +567,36 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
                                 if (data.Result === 'Success') {
                                     $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
-                                        $('#ConfirmRegistrationBillMe').on('click', function (e) {
-                                            e.preventDefault();
-                                            callback();
-                                            $('#confirmOrder').submit();
-                                        });
 
-                                        $('#Canceller').on('click', function (e) {
-                                            e.preventDefault();
-                                            callback();
-                                            var cancelOrderForm = cartStateManager.getCancelOrderForm();
-                                            cancelOrderForm.submit();
-                                        });
+                                        if (status == 'error') {
+                                            $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+                                            $('#confirmationTab a').tab('show');
+                                        } else {
 
-                                        hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
-                                        hookUpChangeTypeLogic($('#RegType'));
-                                        hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
+                                            $('#ConfirmRegistrationBillMe').on('click', function(e) {
+                                                e.preventDefault();
+                                                callback();
+                                                $('#confirmOrder').submit();
+                                            });
 
-                                        if (shippingAddressRequired && notificationsTesting === 'false') {
-                                            hookUpModal($('#UserDetailsModal'));
+                                            $('#Canceller').on('click', function(e) {
+                                                e.preventDefault();
+                                                callback();
+                                                var cancelOrderForm = cartStateManager.getCancelOrderForm();
+                                                cancelOrderForm.submit();
+                                            });
+
+                                            hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
+                                            hookUpChangeTypeLogic($('#RegType'));
+                                            hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
+
+                                            if (shippingAddressRequired && notificationsTesting === 'false') {
+                                                hookUpModal($('#UserDetailsModal'));
+                                            }
+
+                                            //  Now that we are on the 3rd tab, remove the 2nd tab else we'll have some fields with identical id's on both tabs (edit user fields)
+                                            $('#_CreateUserFromCartForm').remove();
                                         }
-
-                                        //  Now that we are on the 3rd tab, remove the 2nd tab else we'll have some fields with identical id's on both tabs (edit user fields)
-                                        $('#_CreateUserFromCartForm').remove();
-
                                     });
 
                                     $('#confirmationTab a').tab('show');
