@@ -38,7 +38,7 @@ module OrderRegistration {
         private orderRowID: number;
         private checkoutInProcess: boolean;
         private idWebinar: number;
-        private isUserLogged: boolean;
+        private isUserLoggedIn: boolean;
         private confirmOrderForm: JQuery;
         private cancelOrderForm: JQuery;
         private shippingAddressRequired: boolean;
@@ -58,8 +58,8 @@ module OrderRegistration {
             return this.confirmOrderForm;
         }
 
-        getIsUserLogged(): boolean {
-            return this.isUserLogged;
+        getIsUserLoggedIn(): boolean {
+            return this.isUserLoggedIn;
         }
 
         getOrderId(): number {
@@ -90,8 +90,8 @@ module OrderRegistration {
             this.confirmOrderForm = form;
         }
 
-        setIsUserLogged(val: boolean): void {
-            this.isUserLogged = val;
+        setIsUserLoggedIn(val: boolean): void {
+            this.isUserLoggedIn = val;
         }
 
         setOrderId(num: number): void {

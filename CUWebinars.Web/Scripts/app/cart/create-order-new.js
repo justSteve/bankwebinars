@@ -46,8 +46,8 @@ var OrderRegistration;
             return this.confirmOrderForm;
         };
 
-        StateManager.prototype.getIsUserLogged = function () {
-            return this.isUserLogged;
+        StateManager.prototype.getIsUserLoggedIn = function () {
+            return this.isUserLoggedIn;
         };
 
         StateManager.prototype.getOrderId = function () {
@@ -78,8 +78,8 @@ var OrderRegistration;
             this.confirmOrderForm = form;
         };
 
-        StateManager.prototype.setIsUserLogged = function (val) {
-            this.isUserLogged = val;
+        StateManager.prototype.setIsUserLoggedIn = function (val) {
+            this.isUserLoggedIn = val;
         };
 
         StateManager.prototype.setOrderId = function (num) {

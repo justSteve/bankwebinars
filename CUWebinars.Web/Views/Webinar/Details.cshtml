@@ -18,15 +18,15 @@
             };
             function upgrade(idRegType) {
                 alert("Please call us at 800-831-0678 ext. 3 and ask to upgrade @globalConfig.TenantPrefix@Model.Order.idOrder");
-
             };
         </script>
     }
 }
 
 <script type="text/javascript">
+    //TODO: Did we verify need for each of these?
     var checkoutInProcess = @(Model.CheckoutInProcess ? "true" : "false");
-    var isUserLogged = @(@Model.UserIsLoggedIn ? "true" : "false");
+    var isUserLoggedIn = @(@Model.UserIsLoggedIn ? "true" : "false");
     var webinarId = @(@Model.Webinar.idWebinar);
     var notificationsTesting = @(GlobalConfig.GlobalConfigSingleton.NotificationsTesting ? "true" : "false");
     var orderRowId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.idOrder : 0);

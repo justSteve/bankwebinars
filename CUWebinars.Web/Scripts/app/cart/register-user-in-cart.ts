@@ -35,6 +35,8 @@ module RegistrationInCart {
 
     export class Constants {
         static BillingAddressFields: string = '#RegisterFields_BillingAddress';
+        static ShippingAddressFields: string = '#RegisterFields_ShippingAddress';
+        static ShippingAddressContainer: string = '#ShippingAddressContainer';
         static City: string = '_City';
         static Country: string = '_Country';
         static ConfirmDeleteShippingAddressdialog: string = '#ConfirmDeleteShippingAddressdialog';
@@ -43,8 +45,6 @@ module RegistrationInCart {
         static JsonDataType: string = 'json';
         static HtmlDataType: string = 'html';
         static Phone: string = '_Phone';
-        static ShippingAddressFields: string = '#RegisterFields_ShippingAddress';
-        static ShippingAddressContainer: string = '#ShippingAddressContainer';
         static State: string = '_State';
         static AddShippingAddressLink: string = '#AddShippingAddressLink';
         static HideAddShippingAddressLink: string = '#HideAddShippingAddressLink';
@@ -427,7 +427,20 @@ module RegistrationInCart {
             var firstName = $('#RegisterFields_FirstName').val();
             var lastName = $('#RegisterFields_LastName').val();
 
-            if ($('#RegisterFields_LastName').val()) {
+            //attempting to fix bug similar to the missing shippingPhone
+            // saw an instance where first attempt to enter full name didn't have
+            // a space char (the first/last delimiter that full name uses to parse out to 1st/last)
+            // when code ran to copy billing values to shipping it didn't pick up the corrected
+            // lastname 
+            // this code simply attempts to ensure a db save.
+            if (!firstName) {
+                firstName = 'nonValidFirst';
+            }
+            if (!lastName) {
+                lastName = 'nonValidLast';
+            }
+
+        if ($('#RegisterFields_LastName').val()) {
                 $('#ShippingFirstName').val(firstName);
                 $('#ShippingLastName').val(lastName);
                 $('#FirstName').val(firstName);

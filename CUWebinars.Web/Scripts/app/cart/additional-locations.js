@@ -98,7 +98,7 @@ var timer; // external so it's value is held over all instances of the timer fun
     });
 
     $("[id^=AdditionalLocationContainer]").on('click', "[id^=SubmitAddLocations]", function (nEvent) {
-        alert("Hit");
+        //alert("Hit");
         var $form = $(this).closest("form");
         nEvent.preventDefault();
         $("#AddLocModal_" + formID).html("<span class=\"label label-warning\">Processing...please wait.</span>");

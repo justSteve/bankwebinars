@@ -114,39 +114,8 @@ body.tall-logo nav.user {
 }
 
 .search-wrapper {
-	float: right;
-	padding: 5px 0 0 0;
-}
-
-.search #search-trigger {
-	font-size: 0.75em;
-	font-weight: bold;
-	color: #333;
-	text-indent: -9999em;
-	display: block;
-	float: left;
-	padding: 0;
-	margin: 0;
-	width: 30px;
-	height: 30px;
-	position: relative;
-	top: 3px;
-	background: url(https://ttseast.blob.core.windows.net/images/BankWebinars/search.png) 0px 50% no-repeat;
-	cursor: pointer;
-}
-
-.search #search-trigger.active {
-	background: url(https://ttseast.blob.core.windows.net/images/BankWebinars/search.png) -30px 50% no-repeat;
-}
-
-.search input {
-	background-color: #fff;
-	width: 200px;
-	margin-left: 5px;
-	top: 3px;
-	position: relative;
-	font-size: 16px;
-	-webkit-appearance: textfield;
+	/*float: right;*/
+	/*padding: 5px 0 0 0;*/
 }
 
 .js .search input {
@@ -173,7 +142,7 @@ body.tall-logo nav.user {
 
 .preheader .notifications {
 	float: left;
-	line-height: 30px;
+	line-height: 45px;
 	border-right: 1px solid #d8dfe5;
 	margin-right: 0;
 	position: relative;
