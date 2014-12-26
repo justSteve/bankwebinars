@@ -115,7 +115,7 @@ $(function () {
 
     cartStateManager.setWebinarId(webinarId); // webinarId is set in a script tab in razor view Details.cshtml
     cartStateManager.setOrderRowId(orderRowId); // orderRowId is set at top of this file
-    cartStateManager.setIsUserLogged(isUserLogged); // isUserLogged is set in a script tab in razor view Details.cshtml
+    cartStateManager.setIsUserLoggedIn(isUserLoggedIn); // isUserLogged is set in a script tab in razor view Details.cshtml
     cartStateManager.setCheckoutInProcess(checkoutInProcess);
 
     cartStateManager.SetCartState();
@@ -205,7 +205,7 @@ $(function () {
         var spinner = $('#loadingSpinner');
 
         // If the user IS NOT LOGGED IN - control moves to the register-during-checkout.js script
-        if (!cartStateManager.getIsUserLogged()) {
+        if (!cartStateManager.getIsUserLoggedIn()) {
             var err = new Error('anon user hits signup');
             //NREUM.noticeError(err);
 
