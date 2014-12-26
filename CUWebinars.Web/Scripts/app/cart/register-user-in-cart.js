@@ -49,6 +49,8 @@ var RegistrationInCart;
         function Constants() {
         }
         Constants.BillingAddressFields = '#RegisterFields_BillingAddress';
+        Constants.ShippingAddressFields = '#RegisterFields_ShippingAddress';
+        Constants.ShippingAddressContainer = '#ShippingAddressContainer';
         Constants.City = '_City';
         Constants.Country = '_Country';
         Constants.ConfirmDeleteShippingAddressdialog = '#ConfirmDeleteShippingAddressdialog';
@@ -57,8 +59,6 @@ var RegistrationInCart;
         Constants.JsonDataType = 'json';
         Constants.HtmlDataType = 'html';
         Constants.Phone = '_Phone';
-        Constants.ShippingAddressFields = '#RegisterFields_ShippingAddress';
-        Constants.ShippingAddressContainer = '#ShippingAddressContainer';
         Constants.State = '_State';
         Constants.AddShippingAddressLink = '#AddShippingAddressLink';
         Constants.HideAddShippingAddressLink = '#HideAddShippingAddressLink';
@@ -356,7 +356,7 @@ var RegistrationInCart;
         };
 
         StateManager.prototype.passResetView = function () {
-            console.log("call passResetView");
+            //console.log("call passResetView");
             $('#login').hide('slow');
 
             var showResetInput = $.Deferred(function () {
@@ -384,7 +384,7 @@ var RegistrationInCart;
         };
 
         StateManager.prototype.resetPassword = function (normalResetPasswordButton) {
-            console.log('resetPass hit');
+            //console.log('resetPass hit');
             if (normalResetPasswordButton.data('clicked'))
                 normalResetPasswordButton.removeData('clicked');
 
@@ -394,7 +394,7 @@ var RegistrationInCart;
         };
 
         StateManager.prototype.resetPasswordOrLoginView = function (email, webinarId) {
-            console.log("call resetPasswordOrLoginView: " + email);
+            //console.log("call resetPasswordOrLoginView: " + email);
             $('#Email1').val(email);
             $('#ResetPassEmail').val(email);
             $('#labelEmail').html('<span class="label label-important"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is already on file.</span>');
@@ -430,6 +430,19 @@ var RegistrationInCart;
         StateManager.prototype.setShippingToBilling = function () {
             var firstName = $('#RegisterFields_FirstName').val();
             var lastName = $('#RegisterFields_LastName').val();
+
+            //attempting to fix bug similar to the missing shippingPhone
+            // saw an instance where first attempt to enter full name didn't have
+            // a space char (the first/last delimiter that full name uses to parse out to 1st/last)
+            // when code ran to copy billing values to shipping it didn't pick up the corrected
+            // lastname
+            // this code simply attempts to ensure a db save.
+            if (!firstName) {
+                firstName = 'nonValidFirst';
+            }
+            if (!lastName) {
+                lastName = 'nonValidLast';
+            }
 
             if ($('#RegisterFields_LastName').val()) {
                 $('#ShippingFirstName').val(firstName);
