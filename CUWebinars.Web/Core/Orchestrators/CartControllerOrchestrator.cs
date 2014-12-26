@@ -501,9 +501,9 @@ namespace CUWebinars.Web.Core.Orchestrators
             return pricesAndDiscounts;
         }
 
-        public void FireOrderSubmittedNotification(Order order)
+        public void FireOrderSubmittedNotification(Order order, string key = null)
         {
-            _orderManagementService.FireOrderSubmittedEvent(order);
+            _orderManagementService.FireOrderSubmittedEvent(order, key);
         }
 
         public void UpdateOrderWithUserId(int orderId, int userId)

@@ -1,15 +1,11 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using CUWebinars.Business.Constants;
-using CUWebinars.Business.Core.Tracing;
-using CUWebinars.Business.Models;
+﻿using CUWebinars.Business.Constants;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Notification.Formatters;
 using CUWebinars.Business.Notification.ViewModel;
 using CUWebinars.NotificationSystem.Event;
 using Ninject.Extensions.Logging;
+using System;
 
 namespace CUWebinars.Business.Notification.Handlers
 {
@@ -52,7 +48,6 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);
-
             }
             catch (NullReferenceException nullReferenceException)
             {

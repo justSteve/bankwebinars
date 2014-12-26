@@ -15,7 +15,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         void BuildCityStateTimeZoneData(Dictionary<string, string> cityStateTimeZoneData, string zipAddress);
         bool ChangePasswordFromResetKey(string key, string password);
         CreateUserConfirmedViewModel ConfirmUser(string email, string surname);
-        void CreateUserAccountFromCart(RegisterViewModel model);
+        string CreateUserAccountFromCart(RegisterViewModel model);
         WebUser CreateWebUserFromCart(RegisterViewModel model);
         Institution GetInstitutionFromEmail(string email);
         WebUser GetWebUserByEmail(string email);

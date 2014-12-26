@@ -14,7 +14,6 @@ namespace CUWebinars.Web.ViewModel
         public DisplayOptionsInDropDownViewModel DisplayOptionsInDropDownViewModel { get; set; }
         public DisplayRowPriceViewModel DisplayRowPriceViewModel { get; set; }
         public int idUser { get; set; }
-        public ShippingDetailsModel ShippingDetailsModel { get; set; }
         public bool OrderExists { get; set; }
         public OrderHasAdditionalLocationsViewModel OrderHasAdditionalLocationsViewModel { get; set; }
         public bool OrderRowExists { get; set; }
@@ -22,6 +21,7 @@ namespace CUWebinars.Web.ViewModel
         public OrderStatus OrderStatus { get; set; }
         public string Origin { get; set; }
         public string OptionLabel { get; set; }
+        public ShippingDetailsModel ShippingDetailsModel { get; set; }
         public string UserComments { get; set; }
         public string UserDetails { get; set; }
         public string UserFullname { get; set; }

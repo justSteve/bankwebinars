@@ -107,12 +107,12 @@
 
                                                                                         <br />Your account with @TenantDomain is activated.<br /><br />
                                                                                         Please confirm your receipt of this message by clicking: <b><a href="@Model.ConfirmChangeEmailUrl">@Model.ConfirmChangeEmailUrl</a></b><br />
-                                                                                        @{
+                                                                                        @*@{
                                                                                             if (!string.IsNullOrWhiteSpace(@Model.TempPassword))
                                                                                             {
                                                                                                 <text>Temporary Password:</text> @Model.TempPassword 
                                                                                             }
-                                                                                        }
+                                                                                        }*@
                                                                                     </p>
                                                                                 </td>
                                                                             </tr>

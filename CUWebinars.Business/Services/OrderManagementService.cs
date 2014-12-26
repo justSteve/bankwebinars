@@ -461,7 +461,7 @@ namespace CUWebinars.Business.Services
             throw new NotImplementedException();
         }
 
-        public void FireOrderSubmittedEvent(Order order)
+        public void FireOrderSubmittedEvent(Order order, string key = null)
         {
             _logger.Info("Adding Event for Order {0}", order.idOrder);
 
@@ -469,6 +469,7 @@ namespace CUWebinars.Business.Services
             {
                 ConfirmChangeEmailUrl = string.Empty,
                 Order = order,
+                Password = key,
                 UserCreatedOnImport = false
             };
 

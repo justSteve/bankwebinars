@@ -52,9 +52,6 @@ namespace CUWebinars.Web.Membership.Email
                 Username = user.Username
             };
 
-            if (_stateService.HasValue(DomainConstants.TempPassword))
-                notification.TempPassword = _stateService.GetValue<string>(DomainConstants.TempPassword);
-
             if (values.Any())
             {
                 var notificationType = notification.GetType();
