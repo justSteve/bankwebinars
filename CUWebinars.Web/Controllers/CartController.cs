@@ -57,7 +57,7 @@ namespace CUWebinars.Web.Controllers
 
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult ConfirmOrder( string referred, string key = null, int? id = null)
+        public ActionResult ConfirmOrder( string referred, int? id = null)
         {
             if (ModelState.IsValid)
             {
@@ -66,7 +66,15 @@ namespace CUWebinars.Web.Controllers
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
                     var orderID = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
                      model.Order.OrderStatus = OrderStatus.Submitted;
-                    _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, key);
+
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
+                    }
+                    else
+                    {
+                        _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: true);
+                    }
 
                     _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
                 

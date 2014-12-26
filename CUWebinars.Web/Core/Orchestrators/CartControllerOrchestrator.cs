@@ -472,7 +472,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             var newOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
             newOrder.AuditInfo = _appHelper.GetUserAuditInfo();
-            newOrder.Origin = "Cart";
+            newOrder.Origin = DomainConstants.Cart;
 
             newOrder = _orderManagementService.SaveOrderChanges(newOrder, string.Empty, string.Empty);
 
@@ -501,9 +501,12 @@ namespace CUWebinars.Web.Core.Orchestrators
             return pricesAndDiscounts;
         }
 
-        public void FireOrderSubmittedNotification(Order order, string key = null)
+        public void FireOrderSubmittedNotification(Order order, bool? userCreatedInCart = null)
         {
-            _orderManagementService.FireOrderSubmittedEvent(order, key);
+            if (userCreatedInCart.HasValue)
+                _orderManagementService.FireOrderSubmittedEvent(order, userCreatedInCart.Value, Request.Url);
+            else
+                _orderManagementService.FireOrderSubmittedEvent(order);
         }
 
         public void UpdateOrderWithUserId(int orderId, int userId)

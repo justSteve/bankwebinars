@@ -426,6 +426,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
                                 if (status == 'error') {
                                     $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+                                    $('#loadingSpinner').remove();
                                     $('#confirmationTab a').tab('show');
                                 } else {
                                     //  MembershipReboot create user post. Needs its own headers/__RequestVerificationToken
@@ -446,16 +447,12 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                         beforeSend: function() {
 
                                         }
-                                    }).done(function(data) {
-
-                                        if (data.KeyForUser)
-                                            $('#keyForUserInput').val(data.KeyForUser);
-
+                                    }).done(function() {
+                                        // do nothing. This is a fire and forget operation.
                                     });
 
 
                                     $('#ConfirmRegistrationBillMe').on('click', function(e) {
-                                        //$('#confirmation').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>');
                                         completeOrder(userId, orderRowId, webinarId);
                                     });
 
@@ -570,6 +567,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
                                         if (status == 'error') {
                                             $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+                                            $('#loadingSpinner').remove();
                                             $('#confirmationTab a').tab('show');
                                         } else {
 

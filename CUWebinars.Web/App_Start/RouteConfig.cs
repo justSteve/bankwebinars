@@ -39,6 +39,8 @@ namespace CUWebinars.Web.App_Start
                 name: "EmailLinkRoute",
                 url: "{controller}/{action}/{email}/{password}"
             );
+
+            
             //in the legacy system this route will catch:
             // bankwebinars.com/1522
             // and redirect to the webinarController.ConnInfo

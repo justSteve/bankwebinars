@@ -204,7 +204,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public bool SignUserIn(SignInModel model, out string userMustVerify)
         {
-            if (_membershipService.LogInUser(_globals.Tenant, model.Email, model.Password, model.RememberMe, out userMustVerify, model.SigninAfterCheckout))
+            if (_membershipService.LogInUser(_globals.Tenant, model.Email, model.Password, model.RememberMe, out userMustVerify))
             {
                 if (!ReferenceEquals(_request.ApplicationPath, null) && !ReferenceEquals(_request.Url, null))
                 {
@@ -379,6 +379,34 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         }
 
+        public void AddPasswordForCartCreatedUser(CreateUserConfirmedViewModel model)
+        {
+            _membershipService.VerifyUserByEmail(_globals.Tenant, model.Email);
+
+            _stateService.SetValue(DomainConstants.CartCreatedUserPasswordCreate, true);
+            _membershipService.ResetPassword(_globals.Tenant, model.Email);
+
+            var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
+
+            _stateService.ClearValue(DomainConstants.CartCreatedUserPasswordCreate);
+
+            try
+            {
+                _membershipService.ChangePasswordFromResetKey(verificationKey, model.NewPassword);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("ChangePasswordFromResetKey: ", exception);
+                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+            }
+
+            _stateService.ClearValue(DomainConstants.VerificationKey);
+
+            _membershipService.LogInUser(_globals.Tenant, model.Email, model.NewPassword, true);
+
+            _logger.Info("Account.Confirmed POST. Session={0}", _appHelper.GetUserAuditInfo());
+        }
+
         public EditBillingAddressModel BuildBillingAddressModel()
         {
             var model = new EditBillingAddressModel();
@@ -505,6 +533,9 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 var password = PasswordGenerator.GenerateRandomString(8);
 
+                // take note of the fact that this registration occurred as part of the Checkout process.
+                _stateService.SetValue(DomainConstants.UserCreatedDuringCartCheckout, true);
+
                 var userAccount = _membershipService.CreateUser(
                     _globals.Tenant,
                     firstName,
@@ -520,9 +551,6 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
                 _stateService.ClearValue(DomainConstants.VerificationKey);
-
-                // take note of the fact that this registration occurred as part of the Checkout process.
-                _stateService.SetValue(DomainConstants.UserCreatedDuringCartCheckout, true);
 
                 // verify the user to unlock functionality like PasswordReset
                 _membershipService.VerifyEmailFromKey(
@@ -685,6 +713,40 @@ namespace CUWebinars.Web.Core.Orchestrators
             return loginModel;
         }
 
+        public CreateUserConfirmedViewModel PrepareViewForCartUserAddingPassword(string email)
+        {
+            var changeEmailFromKeyInputModel = new CreateUserConfirmedViewModel
+            {
+                Email = email,
+                OldPassword = PasswordGenerator.RandomStringFast(5),
+                NewPassword = string.Empty,
+                ConfirmPassword = string.Empty,
+                ScreenMessage = string.Empty,
+                UserIsLoggedIn = _request.IsAuthenticated
+            };
+
+            var userAccount = _membershipService.GetUserAccountByEmail(_globals.Tenant, email);
+
+            if (ReferenceEquals(userAccount, null)) throw new Exception("User does not exist in system");
+
+            bool hasAlreadyVerifiedAccount = !userAccount.HasClaim(ClaimTypes.HasNotVerified);
+
+            if (hasAlreadyVerifiedAccount)
+            {
+                changeEmailFromKeyInputModel.ScreenMessage = "You've already created your initial password. Please use the Password Reset feature on the login page to reset your password.";
+                return changeEmailFromKeyInputModel;
+            }
+
+            if (userAccount.HasClaim(ClaimTypes.HasNotVerified, ClaimValues.CartRegistration))
+            {
+                return changeEmailFromKeyInputModel;
+            }
+
+            changeEmailFromKeyInputModel.ScreenMessage = "There has been an error at the server.";
+
+            return changeEmailFromKeyInputModel;
+        }
+        
         public CreateUserConfirmedViewModel ConfirmUser(string email, string password)
         {
             var changeEmailFromKeyInputModel = new CreateUserConfirmedViewModel

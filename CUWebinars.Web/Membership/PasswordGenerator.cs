@@ -6,6 +6,8 @@ namespace CUWebinars.Web.Membership
 {
     public class PasswordGenerator
     {
+        private static readonly Random Random = new Random((int)DateTime.Now.Ticks);
+
         public static string GenerateRandomString(int size)
         {
             var rngCryptoServiceProvider = new RNGCryptoServiceProvider();
@@ -33,6 +35,21 @@ namespace CUWebinars.Web.Membership
 
             int result = BitConverter.ToInt32(buffer, 0);
             return new Random(result).NextDouble();
+        }
+
+        /// <summary>
+        /// Taken from StackOverflow answer http://stackoverflow.com/a/1122519/540156
+        /// </summary>
+        public static string RandomStringFast(int size)
+        {
+            var builder = new StringBuilder(size);
+            for (var i = 0; i < size; i++)
+            {
+                var ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * Random.NextDouble() + 65)));
+                builder.Append(ch);
+            }
+
+            return builder.ToString();
         }
     }
 }

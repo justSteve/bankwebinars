@@ -242,6 +242,7 @@ $(function () {
 
                         if (status == 'error') {
                             $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+                            $('#loadingSpinner').remove();
                             $('#confirmationTab a').tab('show');
                         } else {
 

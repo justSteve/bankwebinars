@@ -10,6 +10,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 {
     public interface IAccountControllerOrchestrator : IDisposable
     {
+        void AddPasswordForCartCreatedUser(CreateUserConfirmedViewModel model);
         EditBillingAddressModel BuildBillingAddressModel();
         EditShippingAddressModel BuildShippingAddressModel();
         void BuildCityStateTimeZoneData(Dictionary<string, string> cityStateTimeZoneData, string zipAddress);
@@ -17,6 +18,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         CreateUserConfirmedViewModel ConfirmUser(string email, string surname);
         string CreateUserAccountFromCart(RegisterViewModel model);
         WebUser CreateWebUserFromCart(RegisterViewModel model);
+        void EditContactInfo(EditContactInfoModel editContactInfoModel);
         Institution GetInstitutionFromEmail(string email);
         WebUser GetWebUserByEmail(string email);
         WebUser GetWebUserById(int id);
@@ -26,6 +28,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         bool LogUserIn(SignInModel signInModel);
         void LogUserOut();
         int? ParseZip(string zip);
+        CreateUserConfirmedViewModel PrepareViewForCartUserAddingPassword(string email);
         void RegisterAndLogInUser(RegisterViewModel registerViewModel);
         void ResetPassword(string tenant, string email);
         bool SignUserIn(SignInModel model, out string userMustVerify);
@@ -34,6 +37,5 @@ namespace CUWebinars.Web.Core.Orchestrators
         void UpdateNameTitle(string firstName, string lastName, string email, string title);
         void UpdateUserDetails(ManageModel model);
         void UpdateShippingAddressDetails(AddressModel shippingAddressModel, int idUser);
-        void EditContactInfo(EditContactInfoModel editContactInfoModel);
     }
 }

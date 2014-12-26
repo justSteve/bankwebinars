@@ -7,6 +7,8 @@ namespace CUWebinars.Business.Constants
         public const string New = "N";
         public const string BillingAddress = "Billing";
         public const string Blank = "blank";
+        public const string Cart = "Cart";
+        public const string CartCreatedUserPasswordCreate = "CartCreatedUserPasswordCreate";
         public const string CheckoutInProcess = "CheckoutInProcess"; 
         public const string ConfirmChangeEmailLink = "ConfirmChangeEmailLink";
         public const string DateTimeLongFormat = "yyyy-MM-dd-hh-mm-ss-fff-tt";
@@ -23,6 +25,5 @@ namespace CUWebinars.Business.Constants
         public const string UsLocale = "en-US";
         public const string VerificationKey = "VerificationKey";
         public const string VerifyEmailLink = "VerifyEmailLink";
-        
     }
 }

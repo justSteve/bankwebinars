@@ -461,31 +461,33 @@ namespace CUWebinars.Business.Services
             throw new NotImplementedException();
         }
 
-        public void FireOrderSubmittedEvent(Order order, string key = null)
+        public void FireOrderSubmittedEvent(Order order, bool userCreatedInCart = false, Uri url = null)
         {
             _logger.Info("Adding Event for Order {0}", order.idOrder);
 
             var orderSubmittedViewModel = new OrderSubmittedViewModel
             {
+                AddPasswordUrl = string.Empty,
                 ConfirmChangeEmailUrl = string.Empty,
                 Order = order,
-                Password = key,
+                UserCreatedInCart = userCreatedInCart,
                 UserCreatedOnImport = false
             };
+            
+            var baseUri = new Uri(string.Concat(url.Scheme, @"://", url.Authority), UriKind.Absolute);
+            var addPasswordUrl = new Uri(
+                baseUri,
+                string.Concat(@"Account/AddPassword/", order.WebUser.email)
+                ).ToString();
 
-            var relativePath = Path.Combine(@"App_Data\Notifications", string.Format("OrderNotification-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm"));
 
             AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
             {
                 EventObject = orderSubmittedViewModel,
-                RelativeFilePath = relativePath
+                RelativePath = addPasswordUrl
             });
-
-
-            _logger.Info("Persisted Email for Order {0}:{1}", order.idOrder, relativePath);
-
-
-            foreach (var evt in GetEvents())
+            
+            foreach (var evt in GetEvents().OfType<OrderSubmittedEvent<OrderSubmittedViewModel>>())
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }
@@ -538,7 +540,7 @@ namespace CUWebinars.Business.Services
                 AddEvent(new SendRecordingPostedEvent<Order> { EventObject = order });
             }
 
-            foreach (var evt in GetEvents())
+            foreach (var evt in GetEvents().OfType<SendRecordingPostedEvent<Order>>())
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }
@@ -553,7 +555,7 @@ namespace CUWebinars.Business.Services
                 AddEvent(new SendReminderEvent<Order> { EventObject = order });
             }
 
-            foreach (var evt in GetEvents())
+            foreach (var evt in GetEvents().OfType<SendReminderEvent<Order>>())
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }
@@ -569,7 +571,7 @@ namespace CUWebinars.Business.Services
             }
 
 
-            foreach (var evt in GetEvents())
+            foreach (var evt in GetEvents().OfType<SendConnectionInfoEvent<Order>>())
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }
@@ -585,7 +587,7 @@ namespace CUWebinars.Business.Services
             }
 
 
-            foreach (var evt in GetEvents())
+            foreach (var evt in GetEvents().OfType<SendShippedOrderEvent<Order>>())
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }
@@ -601,7 +603,7 @@ namespace CUWebinars.Business.Services
             }
 
 
-            foreach (var evt in GetEvents())
+            foreach (var evt in GetEvents().OfType<SendRecordingPostedEvent<Order>>())
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }
@@ -743,27 +745,25 @@ namespace CUWebinars.Business.Services
                 {
                     ConfirmChangeEmailUrl =
                         linkToVerifyAccount
-                            ? string.Concat(confirmChangeEmailLink.Replace(DomainConstants.Blank, string.Empty), currentOrder.WebUser.LastName.ToLower())
+                            ? string.Concat(confirmChangeEmailLink.Replace(DomainConstants.Blank, string.Empty),
+                                currentOrder.WebUser.LastName.ToLower())
                             : string.Empty,
                     Order = updatedOrder,
                     UserCreatedOnImport = linkToVerifyAccount
                 };
 
-                // This next line is largely redundant now, as the persistance is now done to Azure blobs
-                var relativePath = Path.Combine(@"App_Data\Notifications",
-                    string.Format("OrderNotification-{0}{1}",
-                        DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm"));
 
-                if (currentOrder.Origin != "Migrator")
+                //  The following "if" statement suppresses the OrderSubmitted notification where anonymous user has
+                //  clicked the SignUp button or the order was migrated. That same notification will be sent when the user clicks the "Bill Me" 
+                //  button on the 3rd tab of the cart.
+                if (!currentOrder.Origin.Equals("Migrator", StringComparison.OrdinalIgnoreCase) &&
+                    !currentOrder.Origin.Equals(DomainConstants.Cart, StringComparison.OrdinalIgnoreCase))
                 {
                     AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
                     {
                         EventObject = orderSubmittedViewModel,
-                        RelativeFilePath = relativePath
+                        RelativePath = string.Empty
                     });
-
-                    _logger.Info("Persisted Email for Order {0}:{1}", currentOrder.idOrder, relativePath);
-
                 }
 
                 foreach (var evt in GetEvents())
@@ -861,7 +861,6 @@ namespace CUWebinars.Business.Services
 
         public Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow)
         {
-
             var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow);
             var email = webUser == null ? "notauthenticated@cuwebinars.com" : webUser.email;
             _logger.Info("CreateNewOrder: " + email + " | " + orderRow.Webinar.Title + " | " + orderRow.RegistrationType.OptionLabel);

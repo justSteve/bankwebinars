@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Constants;
+﻿using System.IO;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Notification.Formatters;
@@ -37,6 +38,11 @@ namespace CUWebinars.Business.Notification.Handlers
         {
             try
             {
+                if (orderSubmittedEvent.EventObject.UserCreatedInCart)
+                {
+                    orderSubmittedEvent.EventObject.AddPasswordUrl = orderSubmittedEvent.RelativePath;
+                }
+
                 var notificationMessage = _generalFormatter.Format(orderSubmittedEvent.EventObject, "OrderSubmitted");
                 notificationMessage.PersistedName = string.Format("OrderSubmitted-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm");
 

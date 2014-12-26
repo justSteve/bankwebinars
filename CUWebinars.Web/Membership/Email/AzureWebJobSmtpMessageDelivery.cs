@@ -25,6 +25,7 @@ namespace CUWebinars.Web.Membership.Email
         {
             if (_stateService.HasValue(DomainConstants.UserCreatedViaNewOrder) || 
                 _stateService.HasValue(DomainConstants.UserCreatedViaMigrator) ||
+                _stateService.HasValue(DomainConstants.CartCreatedUserPasswordCreate) ||
                 msg.Subject.Contains("Email Account Verified"))
             {
                 return;
