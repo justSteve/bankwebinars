@@ -142,7 +142,8 @@ body.tall-logo nav.user {
 
 .preheader .notifications {
 	float: left;
-	line-height: 45px;
+	line-height: 30px;
+	height: 45px;
 	border-right: 1px solid #d8dfe5;
 	margin-right: 0;
 	position: relative;

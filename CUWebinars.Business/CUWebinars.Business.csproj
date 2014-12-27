@@ -290,6 +290,7 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="SQLSeeding\SQLScripts\BankWebinarsMigration\ImportProductionDb.ps1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CUWebinars.NotificationSystem\CUWebinars.NotificationSystem.csproj">
@@ -302,6 +303,42 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="SQLSeeding\BACPACs\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\1hourRegTypes.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\2hourRegTypes.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\3PartRegTypes.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\4PartRegTypes.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\5PartRegTypes.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\AdditionalLocationsLookupPrice.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\AffiliateImporterToExcel.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\BuildCompliancePerspectivesMigration.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\BuildDiscountsMigration1.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\CPOrdersToExcel.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\Create2015OptionsGroups.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\CreateDbCreds.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\CreateTestUsers.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\deltestdata.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\DevScripts\CleansMRAccountsAndClaims.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\DevScripts\MigrateInstitution.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\DevScripts\MRStatus.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\DevScripts\SeedAffiliates.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\DevScripts\SeedOptions.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\DevScripts\SeedOptionsGroups.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\DevScripts\SeedPresenters.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\DevScripts\SeedWebUser.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\DevScripts\_SeedTopics.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\discountsWork.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\DisplaysOutput.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\GeneratesStatementsToInsertRegTypesXRef.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\GenerateTestUsersByQueryString.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\InsertTestWebinars.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\PopulateCPOrders.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\PopulateCPSubscriptions.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\UpdateAffiliates.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\updateRegTypesforBankWebinars.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\__Seeder_Ender.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\__Seeder_Runner.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
