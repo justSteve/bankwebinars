@@ -20,7 +20,7 @@
 }
 #oStatus
 {
-		background: url(https://ttseast.blob.core.windows.net/images/CUWebinars/footer_bg.png) 0 0 no-repeat;
+		background: url(http://images.ttstrain.com/images/CUWebinars/footer_bg.png) 0 0 no-repeat;
 
 	color:Black;
 	font-weight:bolder;
@@ -196,7 +196,7 @@ label.error
 	display: block;
 }
 #custom { 
-	background-image:url(https://ttseast.blob.core.windows.net/images/CUWebinars/loginFormBackground.png); 
+	background-image:url(http://images.ttstrain.com/images/CUWebinars/loginFormBackground.png); 
 	width:512px; 
 	height:531px; 
 	padding:0px; 
@@ -211,7 +211,7 @@ label.error
 div.showInProcess {
 	
 	/* growing background image */
-	background-image:url(https://ttseast.blob.core.windows.net/images/CUWebinars/inProcess.png);
+	background-image:url(http://images.ttstrain.com/images/CUWebinars/inProcess.png);
 	
 	/* dimensions after the growing animation finishes  */
 	width:320px;
@@ -228,7 +228,7 @@ div.showInProcess {
 div.showLoginBox {
 	
 	/* growing background image */
-	background-image:url(https://ttseast.blob.core.windows.net/images/CUWebinars/loginFormBackground.png);
+	background-image:url(http://images.ttstrain.com/images/CUWebinars/loginFormBackground.png);
 	
 	/* dimensions after the growing animation finishes  */
 	width:320px;
@@ -256,7 +256,7 @@ div.showLoginBox div.close {
 div.supportBox {
 	
 	/* growing background image */
-	background-image:url(https://ttseast.blob.core.windows.net/images/CUWebinars/supportFormBackground.png);
+	background-image:url(http://images.ttstrain.com/images/CUWebinars/supportFormBackground.png);
 	
 	/* dimensions after the growing animation finishes  */
 	width:320px;
@@ -440,7 +440,7 @@ a:hover
 
 blockquote, pre
 {
-	/*	background:#D3E3DB url(https://ttseast.blob.core.windows.net/images/CUWebinars/blockquote.gif) 3px 3px no-repeat; 	border:1px dashed #CCC; */
+	/*	background:#D3E3DB url(http://images.ttstrain.com/images/CUWebinars/blockquote.gif) 3px 3px no-repeat; 	border:1px dashed #CCC; */
 	padding: 8px 12px 8px 36px;
 	margin: 5px 0;
 }
@@ -513,13 +513,13 @@ blockquote, pre
 
 input.textfield, textarea
 {
-	/*background:#FFF url(https://ttseast.blob.core.windows.net/images/CUWebinars/textfield.gif) top repeat-x;*/
+	/*background:#FFF url(http://images.ttstrain.com/images/CUWebinars/textfield.gif) top repeat-x;*/
 	border: 1px solid #A6A6A6;
 	padding: 2px 1px;
 }
 .boxcaption
 {
-	background: #E3E4E6 url(https://ttseast.blob.core.windows.net/images/CUWebinars/box.gif) 0 0 no-repeat;
+	background: #E3E4E6 url(http://images.ttstrain.com/images/CUWebinars/box.gif) 0 0 no-repeat;
 	padding: 6px 12px;
 	border-bottom: 1px solid #CCC;
 }
@@ -531,13 +531,13 @@ input.textfield, textarea
 }
 .box
 {
-	background: #D3E3DB url(https://ttseast.blob.core.windows.net/images/CUWebinars/box.gif) 100% 100% no-repeat;
+	background: #D3E3DB url(http://images.ttstrain.com/images/CUWebinars/box.gif) 100% 100% no-repeat;
 	padding: 8px 12px;
 	margin-bottom: 10px;
 }
 .messagebox, .errorbox
 {
-	background: #EDEFF0 url(https://ttseast.blob.core.windows.net/images/CUWebinars/messagebox.gif) no-repeat;
+	background: #EDEFF0 url(http://images.ttstrain.com/images/CUWebinars/messagebox.gif) no-repeat;
 	padding: 0 12px;
 	height: 27px;
 	line-height: 27px;
@@ -566,7 +566,7 @@ input.textfield, textarea
 #header
 {    
 	width: 1000px;
-	background: url(https://ttseast.blob.core.windows.net/images/CUWebinars/header.jpg) -0 0 no-repeat;
+	background: url(http://images.ttstrain.com/images/CUWebinars/header.jpg) -0 0 no-repeat;
 } 
 
 #headerImg
@@ -580,14 +580,14 @@ input.textfield, textarea
 #nav_div
 {
 	width: 100%;
-	background: url(https://ttseast.blob.core.windows.net/images/CUWebinars/nav_bg.jpg) -0 0 repeat-x;
+	background: url(http://images.ttstrain.com/images/CUWebinars/nav_bg.jpg) -0 0 repeat-x;
 	height: 40px;
 }
 
 /* content START */
 #content
 {
-	/*background:#FFF url(https://ttseast.blob.core.windows.net/images/CUWebinars/sidesep.gif) right repeat-y; 	min-height:400px;*/
+	/*background:#FFF url(http://images.ttstrain.com/images/CUWebinars/sidesep.gif) right repeat-y; 	min-height:400px;*/
 	float: left;
 	background: #FFF;
 	width: 1000px;
@@ -608,7 +608,7 @@ input.textfield, textarea
 /* footer START */
 #footer
 {
-	background: url(https://ttseast.blob.core.windows.net/images/CUWebinars/footer_bg.png) 0 0 no-repeat;
+	background: url(http://images.ttstrain.com/images/CUWebinars/footer_bg.png) 0 0 no-repeat;
 	display: block;
 	height: 131px;
 	border-top: 1px solid #CCC;
@@ -620,7 +620,7 @@ input.textfield, textarea
 }
 #footerCBAO
 {
-	background: url(https://ttseast.blob.core.windows.net/images/CUWebinars/aff/cbao/footerCBAO.gif) 0 0 no-repeat;
+	background: url(http://images.ttstrain.com/images/CUWebinars/aff/cbao/footerCBAO.gif) 0 0 no-repeat;
 	display: block;
 	height: 131px;
 	border-top: 1px solid #CCC;
@@ -632,7 +632,7 @@ input.textfield, textarea
 }
 #footerCFT
 {
-	background: url(https://ttseast.blob.core.windows.net/images/CUWebinars/aff/footerCFT.gif) 0 0 no-repeat;
+	background: url(http://images.ttstrain.com/images/CUWebinars/aff/footerCFT.gif) 0 0 no-repeat;
 	display: block;
 	height: 131px;
 	border-top: 1px solid #CCC;
@@ -658,7 +658,7 @@ input.textfield, textarea
 }
 a#powered
 {
-	background: url(https://ttseast.blob.core.windows.net/images/CUWebinars/wp-logo.png) no-repeat;
+	background: url(http://images.ttstrain.com/images/CUWebinars/wp-logo.png) no-repeat;
 	display: block;
 	width: 92px;
 	height: 57px;
@@ -668,7 +668,7 @@ a#powered
 }
 a#gotop
 {
-	background: url(https://ttseast.blob.core.windows.net/images/CUWebinars/icons.gif) 0 -304px no-repeat;
+	background: url(http://images.ttstrain.com/images/CUWebinars/icons.gif) 0 -304px no-repeat;
 	float: right;
 	height: 16px;
 	line-height: 18px;

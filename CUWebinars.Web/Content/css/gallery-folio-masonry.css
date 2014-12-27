@@ -15,7 +15,7 @@
     width: 22.25%;
     margin: 0 1% 20px 1%;
     padding: 0 0 5px 0;
-    background: url(https://ttseast.blob.core.windows.net/images/CUWebinars/5p.png);
+    background: url(http://images.ttstrain.com/images/CUWebinars/5p.png);
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
@@ -34,7 +34,7 @@
     width: 100% !important;
     max-width: none;
 }
-.gallery img { background: #fff url(https://ttseast.blob.core.windows.net/images/CUWebinars/loader.gif) no-repeat 50% 50% }
+.gallery img { background: #fff url(http://images.ttstrain.com/images/CUWebinars/loader.gif) no-repeat 50% 50% }
 
 /* gallery "item" contents (summary, captions, etc) */
 .gallery li .entry-summary { padding: 0 10px }
@@ -69,7 +69,7 @@
     width: 25px;
     height: 25px;
     display: block;
-    background: #fff url(https://ttseast.blob.core.windows.net/images/CUWebinars/videoicon.png) no-repeat;
+    background: #fff url(http://images.ttstrain.com/images/CUWebinars/videoicon.png) no-repeat;
     z-index: 10;
     border-top: 1px solid #fff;
     border-left: 1px solid #fff;
@@ -208,7 +208,7 @@ ul.sort li.last:after { content:"" }
 
 
 .gallery img {
-		background-image: url(https://ttseast.blob.core.windows.net/images/CUWebinars/retina/loader_@2x.gif);
+		background-image: url(http://images.ttstrain.com/images/CUWebinars/retina/loader_@2x.gif);
             -moz-background-size:80px 10px; 
              -ie-background-size:80px 10px; 
               -o-background-size:80px 10px; 
@@ -218,7 +218,7 @@ ul.sort li.last:after { content:"" }
 }
 
 .gallery li a.videoicon span.videoicon {
-	background-image:url(https://ttseast.blob.core.windows.net/images/CUWebinars/retina/videoicon_@2x.png);
+	background-image:url(http://images.ttstrain.com/images/CUWebinars/retina/videoicon_@2x.png);
             -moz-background-size:25px 25px; 
              -ie-background-size:25px 25px;
               -o-background-size:25px 25px;
