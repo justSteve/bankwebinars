@@ -1,22 +1,20 @@
---SET NOCOUNT ON
---CREATE TABLE BankWebinars.[dbo].[AdditionalLocationsLookupPrice]
---    (
---      [idWebinar] [INT] NOT NULL ,
---      [id] [INT] IDENTITY(1, 1)
---                 NOT NULL ,
---      [cost] [MONEY] NOT NULL ,
---      CONSTRAINT [PK_AdditionalLocationsLookupPrice] PRIMARY KEY CLUSTERED
---        ( [id] ASC )
---        WITH ( PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF,
---               IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON,
---               ALLOW_PAGE_LOCKS = ON ) ON [PRIMARY]
---    )
---ON  [PRIMARY]
+SET NOCOUNT ON
+CREATE TABLE BankWebinars.[dbo].[AdditionalLocationsLookupPrice]
+    (
+      [idWebinar] [INT] NOT NULL ,
+      [id] [INT] IDENTITY(1, 1)
+                 NOT NULL ,
+      [cost] [MONEY] NOT NULL ,
+      CONSTRAINT [PK_AdditionalLocationsLookupPrice] PRIMARY KEY CLUSTERED
+        ( [id] ASC )
+        WITH ( PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF,
+               IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON,
+               ALLOW_PAGE_LOCKS = ON ) ON [PRIMARY]
+    )
+ON  [PRIMARY]
 
 
-USE BankWebinars
-GO
-
+PRINT 'Starts AdditionalLocationsLookupPrice'
 DELETE  FROM bankwebinars.dbo.AdditionalLocationsLookupPrice WHERE idWebinar > 0
 
 --SELECT  'INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES ('
@@ -476,3 +474,4 @@ SET     cost = 250
 WHERE   idWebinar = 1711
 
 GO
+PRINT 'Ends AdditionalLocationsLookupPrice'

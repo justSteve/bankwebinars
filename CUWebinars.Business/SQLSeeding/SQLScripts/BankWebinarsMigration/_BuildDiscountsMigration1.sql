@@ -1,10 +1,34 @@
+
 PRINT '--==========--'
 PRINT 'BEGINS DISCOUNT HANDLING'
 PRINT '--==========--'
 
 
+ALTER TABLE BankWebinars.dbo.[Order]
+ADD idOrderLegacy INT
+
+ALTER TABLE BankWebinars.dbo.WebUser
+ADD idUserLegacy INT
+
+GO
+
+INSERT  BankWebinars.dbo.AdditionalLocationsLookupPrice
+        ( idWebinar, cost )
+VALUES  ( 842, -- idWebinar - int
+          0  -- cost - money
+          )
+
+		  GO
+
+ALTER TABLE BankWebinars.dbo.Discount
+ADD renewalTerm INT
+
+GO
+SET NOCOUNT ON
 DROP TABLE Migrator.dbo.discounts
-SELECT * INTO Migrator.dbo.Discounts  FROM TTSWebinars2.dbo.Discounts 
+SELECT  *
+INTO    Migrator.dbo.Discounts
+FROM    TTSWebinars2.dbo.Discounts 
 
 
 DECLARE @discountType TINYINT ,
@@ -28,26 +52,32 @@ PRINT '---===================---'
 DECLARE migrate_cursor CURSOR
 FOR
     SELECT --
-idDiscounts,--@idDiscount
-discountType, -- @discountType
-code,-- @code
-percentOff,-- @percentOff
-flatOff,usesNumber, dateValidFrom,
-    dateValidTo, status, dateBilled, cost, Notes 
+            idDiscounts ,--@idDiscount
+            discountType , -- @discountType
+            code ,-- @code
+            percentOff ,-- @percentOff
+            flatOff ,
+            usesNumber ,
+            dateValidFrom ,
+            dateValidTo ,
+            status ,
+            dateBilled ,
+            cost ,
+            notes
     FROM    TTSWebinars2.[dbo].Discounts
 
 OPEN migrate_cursor
 
 
 FETCH NEXT FROM migrate_cursor
-INTO @idDiscount, @discountType, @code, @percentOff, @flatOff, @usesNumber, @dateValidFrom,
-    @dateValidTo, @status, @dateBilled, @cost, @Notes 
+INTO @idDiscount, @discountType, @code, @percentOff, @flatOff, @usesNumber,
+    @dateValidFrom, @dateValidTo, @status, @dateBilled, @cost, @Notes 
 
 WHILE @@FETCH_STATUS = 0
     BEGIN
         SET @importCount = @importCount + 1
 
-        PRINT '---------> importing: ' + CAST (@importCount AS VARCHAR)
+        --PRINT '---------> importing: ' + CAST (@importCount AS VARCHAR)
         SET IDENTITY_INSERT BankWebinars.dbo.Discount ON
         INSERT  BankWebinars.dbo.Discount
                 ( idDiscount ,
@@ -65,7 +95,7 @@ WHILE @@FETCH_STATUS = 0
                   Notes ,
                   renewalTerm
                 )
-        VALUES  ( @idDiscount,
+        VALUES  ( @idDiscount ,
                   @discountType , -- DiscountType - int
                   @code , -- DiscountCode - nvarchar(50)
                   @percentOff , -- PercentOff - decimal
