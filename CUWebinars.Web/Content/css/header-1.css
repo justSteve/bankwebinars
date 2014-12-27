@@ -793,3 +793,7 @@ body.tall-logo nav.user {
 }
 
 /*end mobile specific retina swapping */
+
+section.preheader ul {
+    margin-bottom: 0;
+}
