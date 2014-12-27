@@ -112,7 +112,7 @@ namespace CUWebinars.Web.Controllers
                 //_checkoutWorkflow.RemoveOrder(order.ID);
                 //_checkoutWorkflow.;
 
-                //TODO: this is remant of the legacy system and is surely in need of update.
+                //TODO: __address this comment during refactor of Session objects -- this is remant of the legacy system and is surely in need of update.
                 Session.Remove("LastOrderId");
                 Session.Remove("CurrentOrderId");
                 Session.Remove("CurrentOrderIds");
@@ -177,7 +177,9 @@ namespace CUWebinars.Web.Controllers
                         formModel
                         );
 
-                    // todo: if in progress, will have to show populated partial view.
+                    // todo: __sjh confirms that in-process handling appears to be implmented -- if in progress, will have to show populated partial view.
+                    //
+
                     _logger.Info("Signup2 order initialized: " + _appHelper.GetUserAuditInfo());
 
 

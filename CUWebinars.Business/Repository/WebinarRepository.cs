@@ -161,6 +161,7 @@ namespace CUWebinars.Business.Repository
                 var row = order.OrderRows.SingleOrDefault();
                 if (row == null)
                 {
+                    
                     //TODO: log this exception condition
                     continue;
                 }

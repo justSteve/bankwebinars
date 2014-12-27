@@ -232,7 +232,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public bool UserConfirmed(CreateUserConfirmedViewModel model)
         {
-            //  TODO: add try catch and reverse as should be atomic.
+            //  TODO: __Is this directive still operative? add try catch and reverse as should be atomic.
             if (_membershipService.VerifyUserByEmail(_globals.Tenant, model.Email))
             {
                 _stateService.SetValue(DomainConstants.UserCreatedViaNewOrder, true);
@@ -712,7 +712,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             
             return loginModel;
         }
-
+        //TODO: __Review intent of choice of name PrepareViewForCartUserAddingPassword
         public CreateUserConfirmedViewModel PrepareViewForCartUserAddingPassword(string email)
         {
             var changeEmailFromKeyInputModel = new CreateUserConfirmedViewModel

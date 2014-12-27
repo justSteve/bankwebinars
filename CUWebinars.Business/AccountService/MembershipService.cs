@@ -309,7 +309,7 @@ namespace CUWebinars.Business.AccountService
 
         public void UpdateNameTitle(string firstName, string lastName, string email, string title)
         {
-            // TODO: [dar] Seems to be an unfinished method. Comes down from EditNameTitle in AccountController
+            // TODO: [sjh] deal with during construct of User/Institution Editor [dar] Seems to be an unfinished method. Comes down from EditNameTitle in AccountController
             try
             {
                 var webUser = GetDetailsOfUser(email);
@@ -515,7 +515,7 @@ namespace CUWebinars.Business.AccountService
 
         public USTimeZone GetTimeZoneByZip()
         {
-            //todo: [dar] I think this method is redundant. Refer to GetCityStateFromZip inAppHelper
+            //todo: [sjh] i had no reason to doubt your conclusion. Adjust at will. [dar] I think this method is redundant. Refer to GetCityStateFromZip inAppHelper
             return USTimeZone.Central;
         }
 

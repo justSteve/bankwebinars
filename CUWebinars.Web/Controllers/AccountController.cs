@@ -943,6 +943,7 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
+        //TODO: __review context of use case this method (and other recently added changes)
         public ActionResult AddPassword(CreateUserConfirmedViewModel model)
         {
             if (ModelState.IsValid)

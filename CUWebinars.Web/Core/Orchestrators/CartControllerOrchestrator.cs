@@ -349,13 +349,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     if (Request["referred"] != null &&
                         WebUtility.HtmlDecode(Request["referred"]) != "How did you hear about this webinar?")
                     {
-                        //TODO: Review updated explaination of 'Order.Origin'
-                        //order.Origin = Request["referred"] + Environment.NewLine + order.Origin;
-                        //it was a reasonable assumption that 'referred' would be stored to 'Origin'.
-                        // however, origin property is meant to track how the order has come to be entered in the system.
-                        // e.g. was it imported, was it entered directly by the end-user? - was it entered
-                        //      by the affiliate's admin page? Or was affiliate 'Functioning As' an end-user?
-                        // 
+                        //TODO: Determine the conditions that nessitate that this question be answered
 
                         order.AdminComments += "Referred by: " + Request["referred"] + Environment.NewLine;
                         //ViewData["referred"] = Request["referred"];

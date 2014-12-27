@@ -86,7 +86,6 @@ namespace CUWebinars.Web.Infrastructure.Attributes
                 try
                 {
                     _stateService.SetValue("AffiliateSessionSource", string.Concat("Sub | ", affilliateDomain));
-                    //todo: 4BW - unit test required 
                     //   the name of the property 'ttsDomain' is the abbreviated name chosen
                     //   for use (as a shortcut or nicname) by us to refer to a given affiliate. It may or may not
                     //   be literally the Domain Name used by the given affiliate.
