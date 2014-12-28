@@ -15,9 +15,8 @@
     }
     else
     {
-        //TODO: Find correct way to reset a session
+        CUWebinars.Business.Core.Tracing.Tracer.Warning("CurrentAffiliate should always have a value. Session | {0}", new AppHelper(Request).GetUserAuditInfo());
         Debug.Assert(currentAffiliate != null, "CurrentAffiliate should always have a value.");
-        Trace.WriteLine(new AppHelper(Request).GetUserAuditInfo());
     }
 
     var currentUserID = 0;

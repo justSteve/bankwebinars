@@ -928,7 +928,7 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpGet]
         [System.Web.Mvc.AllowAnonymous]
-        public ActionResult AddPassword(string id)
+        public ActionResult AddPasswordForCartCreatedUser(string id)
         {
             // HACK: parameter is named id to match the Default route. It will actually be an email address and not an id.
             if (ModelState.IsValid)
@@ -943,7 +943,7 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
-        public ActionResult AddPassword(CreateUserConfirmedViewModel model)
+        public ActionResult AddPasswordForCartCreatedUser(CreateUserConfirmedViewModel model)
         {
             if (ModelState.IsValid)
             {

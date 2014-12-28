@@ -98,10 +98,10 @@ namespace CUWebinars.Web
             if (System.Web.HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath != "~/account/get/")
             {
                 
-                StateService.SetValue("searchTerm", string.Empty);
-                StateService.SetValue("IncludeRecorded", false);
-                StateService.SetValue("IncludeUpcoming", true);
-                StateService.SetValue("searchExtent", "Upcoming");
+                //StateService.SetValue("searchTerm", string.Empty);
+                //StateService.SetValue("IncludeRecorded", false);
+                //StateService.SetValue("IncludeUpcoming", true);
+                //StateService.SetValue("searchExtent", "Upcoming");
 
                 StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(19, a => a.WebUser));
                 StateService.SetValue("AValidInstitution", institutionRepository.FindFirst());
@@ -248,7 +248,7 @@ namespace CUWebinars.Web
                                 ? upcomingWebinar.Title.Substring(0, 35) + "..."
                                 : upcomingWebinar.Title;
 
-                        string seoTitle = upcomingWebinar.Title.RemoveIllegalCharacters().ReplaceSpacesWithHyphens().ToLower();
+                        string seoTitle = upcomingWebinar.Title.RemoveIllegalCharacters().ReplaceSpacesWithHyphens().ToLower().TrimEnd('.');
 
                         upComingPresentationListItems.Append(
                             string.Format("<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href='/{0}/{1}'", upcomingWebinar.idWebinar, seoTitle) +
