@@ -103,20 +103,6 @@ namespace CUWebinars.Web.Controllers
             if (id.HasValue)
             {
                 _cartControllerOrchestrator.CancelOrder(id.Value);
-                //var order = _checkoutWorkflow.CurrentOrder;
-
-                //_logger.Info("User Cancels order: " + order.ID);
-
-                //OrderFacade.Instance.DeleteOrderRow(order, id);
-
-                //_checkoutWorkflow.RemoveOrder(order.ID);
-                //_checkoutWorkflow.;
-
-                //TODO: __address this comment during refactor of Session objects -- this is remant of the legacy system and is surely in need of update.
-                Session.Remove("LastOrderId");
-                Session.Remove("CurrentOrderId");
-                Session.Remove("CurrentOrderIds");
-                Session.Remove("IsOrderPaid");
 
                 return Json(new
                 {

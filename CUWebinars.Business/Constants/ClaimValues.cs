@@ -3,12 +3,12 @@ namespace CUWebinars.Business.Constants
 {
     public sealed class ClaimValues
     {
-        //TODO: Input ClaimValues from textfile, spreadsheet, or dbquery (preferred) or anything else where adding/removing claims does not require re-compile
-        public const string CartRegistration = "CartRegistration";
-        public const string Admin = "Admin";
-        public const string Admin_CFTNOW = "Admin_CFTNOW";
-        public const string ManualRegistration = "ManualRegistration";
-        public const string OrderImportRegistration = "OrderImportRegistration";
-        public const string OrderMigrated = "OrderMigrated";
+        public readonly string CartRegistration = "CartRegistration";
+        public readonly string Admin = "Admin";
+        public readonly string Admin_CFTNOW = "Admin_CFTNOW";
+        public readonly string Admin_CFTWS = "Admin_CFTWS";
+        public readonly string ManualRegistration = "ManualRegistration";
+        public readonly string OrderImportRegistration = "OrderImportRegistration";
+        public readonly string OrderMigrated = "OrderMigrated";
     }
 }

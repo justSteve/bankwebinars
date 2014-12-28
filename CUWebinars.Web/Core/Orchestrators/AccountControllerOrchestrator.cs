@@ -712,7 +712,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             
             return loginModel;
         }
-        //TODO: __Review intent of choice of name PrepareViewForCartUserAddingPassword
+        
         public CreateUserConfirmedViewModel PrepareViewForCartUserAddingPassword(string email)
         {
             var changeEmailFromKeyInputModel = new CreateUserConfirmedViewModel

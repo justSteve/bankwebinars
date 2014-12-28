@@ -3,8 +3,9 @@ namespace CUWebinars.Business.Constants
 {
     public sealed class ClaimTypes
     {
-        public const string Admin = "http://cuwebinars.com/ws/2014/01/identity/claims/Admin";
-        public const string FullName = "http://cuwebinars.com/ws/2014/01/identity/claims/FullName";
-        public const string HasNotVerified = "http://cuwebinars.com/ws/2014/01/identity/claims/HasNotVerified";
+        public readonly string Admin = "http://cuwebinars.com/ws/2014/01/identity/claims/Admin";
+        public readonly string Affiliate = "http://cuwebinars.com/ws/2014/01/identity/claims/Affiliate";
+        public readonly string FullName = "http://cuwebinars.com/ws/2014/01/identity/claims/FullName";
+        public readonly string HasNotVerified = "http://cuwebinars.com/ws/2014/01/identity/claims/HasNotVerified";
     }
 }

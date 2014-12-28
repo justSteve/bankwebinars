@@ -16,7 +16,8 @@
     else
     {
         //TODO: Find correct way to reset a session
-        //Response.Redirect("/?resetSessionAff=null");
+        Debug.Assert(currentAffiliate != null, "CurrentAffiliate should always have a value.");
+        Trace.WriteLine(new AppHelper(Request).GetUserAuditInfo());
     }
 
     var currentUserID = 0;
