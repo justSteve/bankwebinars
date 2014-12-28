@@ -93,7 +93,7 @@ namespace CUWebinars.Web.Tests.UnitTests
             _appHelperMock.Setup(i => i.GetUserAuditInfo()).Returns(string.Format(AuditInfo, request.ServerVariables[TestConstants.HttpCookie], signInModel.ReturnUrl)
                 );
 
-            _membershipServiceMock.Setup(i => i.LogInUser("CUWebinars", signInModel.Email, signInModel.Password, signInModel.RememberMe, out userMustVerify, false))
+            _membershipServiceMock.Setup(i => i.LogInUser("CUWebinars", signInModel.Email, signInModel.Password, signInModel.RememberMe, out userMustVerify))
                 .Returns(true);
 
             _accountControllerOrchestrator = new AccountControllerOrchestrator(
@@ -136,7 +136,7 @@ namespace CUWebinars.Web.Tests.UnitTests
             //  This test is testing that the returnUrl is re-constructed from the HttpRequest object and passed to the logger's Info method.
             _loggerMock.Setup(i => i.Info(It.IsAny<string>(), It.IsAny<string>(), retUrl)).Verifiable();
 
-            _membershipServiceMock.Setup(i => i.LogInUser("CUWebinars", signInModel.Email, signInModel.Password, signInModel.RememberMe, out userMustVerify, false))
+            _membershipServiceMock.Setup(i => i.LogInUser("CUWebinars", signInModel.Email, signInModel.Password, signInModel.RememberMe, out userMustVerify))
                 .Returns(true);
 
             _accountControllerOrchestrator = new AccountControllerOrchestrator(
@@ -172,7 +172,7 @@ namespace CUWebinars.Web.Tests.UnitTests
             var request = new HttpRequestFake1();
 
             //  This test is testing that the returnUrl in the model cannot be null if the RequestContext's ApplicationPath and Url properties are not null.
-            _membershipServiceMock.Setup(i => i.LogInUser("CUWebinars", signInModel.Email, signInModel.Password, signInModel.RememberMe, out userMustVerify, false))
+            _membershipServiceMock.Setup(i => i.LogInUser("CUWebinars", signInModel.Email, signInModel.Password, signInModel.RememberMe, out userMustVerify))
                 .Returns(true);
 
             _accountControllerOrchestrator = new AccountControllerOrchestrator(
@@ -207,7 +207,7 @@ namespace CUWebinars.Web.Tests.UnitTests
             _appHelperMock.Setup(i => i.GetUserAuditInfo()).Returns(string.Format(AuditInfo, request.ServerVariables[TestConstants.HttpCookie], signInModel.ReturnUrl)
                 );
 
-            _membershipServiceMock.Setup(i => i.LogInUser("CUWebinars", signInModel.Email, signInModel.Password, signInModel.RememberMe, out userMustVerify, false))
+            _membershipServiceMock.Setup(i => i.LogInUser("CUWebinars", signInModel.Email, signInModel.Password, signInModel.RememberMe, out userMustVerify))
                 .Returns(false);
 
             _accountControllerOrchestrator = new AccountControllerOrchestrator(

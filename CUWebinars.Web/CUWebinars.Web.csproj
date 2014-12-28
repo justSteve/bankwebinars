@@ -423,6 +423,14 @@
     <Compile Include="Models\JotFormModel.cs" />
     <Compile Include="Models\JotFormOrderModel.cs" />
     <Compile Include="Notification\Templates\CertOfCompletionViewModel.cs" />
+    <Content Include="Content\css\BootstrapTemplates\font-awesome\font-awesome-ie7.css" />
+    <Content Include="Content\css\BootstrapTemplates\font-awesome\font-awesome.css" />
+    <Content Include="Content\css\BootstrapTemplates\font-awesome\font\fontawesome-webfont.eot" />
+    <Content Include="Content\css\BootstrapTemplates\font-awesome\font\fontawesome-webfont.svg" />
+    <Content Include="Content\css\BootstrapTemplates\font-awesome\font\fontawesome-webfont.ttf" />
+    <Content Include="Content\css\BootstrapTemplates\font-awesome\font\fontawesome-webfont.woff" />
+    <Content Include="Content\css\BootstrapTemplates\font-awesome\font\FontAwesome.otf" />
+    <Content Include="Content\css\BootstrapTemplates\font-awesome\font\README.TXT" />
     <Content Include="Content\css\calendarview.css" />
     <Content Include="Content\css\create-user-form.css" />
     <Content Include="Content\css\details.css" />
@@ -712,10 +720,6 @@
     <Content Include="Content\css\BootstrapTemplates\bootstrap\bootstrap.css" />
     <Content Include="Content\css\BootstrapTemplates\bootstrap\bootstrap.min.css" />
     <Content Include="Content\css\BootstrapTemplates\documenter_style.css" />
-    <Content Include="Content\css\BootstrapTemplates\font-awesome\font-awesome-ie7.css" />
-    <Content Include="Content\css\BootstrapTemplates\font-awesome\font-awesome.css" />
-    <Content Include="Content\css\BootstrapTemplates\font-awesome\font\fontawesome-webfont.svg" />
-    <Content Include="Content\css\BootstrapTemplates\font-awesome\font\README.TXT" />
     <Content Include="Content\css\BootstrapTemplates\img\ajax-loader.gif" />
     <Content Include="Content\css\BootstrapTemplates\img\background.png" />
     <Content Include="Content\css\BootstrapTemplates\img\blockquote.png" />
@@ -1032,10 +1036,6 @@
     <Content Include="Scripts\bootstrap-modalmanager.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Content\css\BootstrapTemplates\font-awesome\font\fontawesome-webfont.eot" />
-    <Content Include="Content\css\BootstrapTemplates\font-awesome\font\fontawesome-webfont.ttf" />
-    <Content Include="Content\css\BootstrapTemplates\font-awesome\font\fontawesome-webfont.woff" />
-    <Content Include="Content\css\BootstrapTemplates\font-awesome\font\FontAwesome.otf" />
     <Content Include="Content\css\BootstrapTemplates\style.less" />
     <Content Include="Content\css\font\fontawesome-webfont.eot" />
     <Content Include="Content\css\font\fontawesome-webfont.ttf" />
