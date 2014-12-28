@@ -147,12 +147,13 @@ namespace CUWebinars.Web.Controllers
             var webinars = _webinarManagementService.GetAllActive();
             ViewBag.TopicCaption = " ";
             ViewBag.Title = "All Listed Events for " + ConfigurationManager.AppSettings["Tenant"];
-            ;
+
             if (eventsToShow == "upcoming")
             {
                 webinars = _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date);
                 ViewBag.Title = "All Upcoming Events for " + ConfigurationManager.AppSettings["Tenant"];
             }
+
             if (eventsToShow == "recorded")
             {
                 webinars = _webinarManagementService.GetRecordedWebinars().OrderBy(w => w.Date);
@@ -160,7 +161,6 @@ namespace CUWebinars.Web.Controllers
             }
 
             return View(webinars);
-
         }
 
         public ActionResult SearchWebinars()

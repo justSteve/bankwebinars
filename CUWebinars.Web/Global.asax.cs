@@ -1,10 +1,8 @@
-﻿using System.IO;
-using CUWebinars.Business.Core;
+﻿using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Web.App_Start;
 using CUWebinars.Web.Helpers;
-using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Services;
 using log4net;
 using System;
@@ -234,30 +232,30 @@ namespace CUWebinars.Web
                 StateService.SetValue("FirstCookies", allCookies.ToString());
 
                 //setup upcoming and recorded menu contents
-                var upcomingWebinars = _reposWebinars.GetUpcoming().OrderBy(w => w.Date).Take(8).ToList();
-                var upComingPresentationListItems = new StringBuilder();
-                upComingPresentationListItems.Append(
-                    "<li role='presentation'><a  role=\"menuitem\" tabindex=\"-1\"  href='/Webinar/allActive/?eventsToShow=upcoming'>View <b>All</b> Upcoming Events</a></li>");
+                //var upcomingWebinars = _reposWebinars.GetUpcoming().OrderBy(w => w.Date).Take(8).ToList();
+                //var upComingPresentationListItems = new StringBuilder();
+                //upComingPresentationListItems.Append(
+                //    "<li role='presentation'><a  role=\"menuitem\" tabindex=\"-1\"  href='/Webinar/allActive/?eventsToShow=upcoming'>View <b>All</b> Upcoming Events</a></li>");
                 
-                if (upcomingWebinars.Count > 0)
-                {
-                    for (int i = 0; i < upcomingWebinars.Count; i++)
-                    {
-                        var upcomingWebinar = upcomingWebinars[i];
-                        string shortTitle = upcomingWebinar.Title.Length > 35
-                                ? upcomingWebinar.Title.Substring(0, 35) + "..."
-                                : upcomingWebinar.Title;
+                //if (upcomingWebinars.Count > 0)
+                //{
+                //    for (int i = 0; i < upcomingWebinars.Count; i++)
+                //    {
+                //        var upcomingWebinar = upcomingWebinars[i];
+                //        string shortTitle = upcomingWebinar.Title.Length > 35
+                //                ? upcomingWebinar.Title.Substring(0, 35) + "..."
+                //                : upcomingWebinar.Title;
 
-                        string seoTitle = upcomingWebinar.Title.RemoveIllegalCharacters().ReplaceSpacesWithHyphens().ToLower().TrimEnd('.');
+                //        string seoTitle = upcomingWebinar.Title.RemoveIllegalCharacters().ReplaceSpacesWithHyphens().ToLower().TrimEnd('.');
 
-                        upComingPresentationListItems.Append(
-                            string.Format("<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href='/{0}/{1}'", upcomingWebinar.idWebinar, seoTitle) +
-                            upcomingWebinars[i].idWebinar + "'>" + Server.HtmlEncode(shortTitle) + "</a></li>"
-                            );
-                    }
+                //        upComingPresentationListItems.Append(
+                //            string.Format("<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href='/{0}/{1}'", upcomingWebinar.idWebinar, seoTitle) +
+                //            upcomingWebinars[i].idWebinar + "'>" + Server.HtmlEncode(shortTitle) + "</a></li>"
+                //            );
+                //    }
                     
-                }
-                StateService.SetValue("upcoming", upComingPresentationListItems);
+                //}
+                //StateService.SetValue("upcoming", upComingPresentationListItems);
 
 
 

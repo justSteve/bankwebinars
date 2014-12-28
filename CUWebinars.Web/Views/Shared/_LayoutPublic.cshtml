@@ -22,19 +22,19 @@
     var currentUserID = 0;
 
     StringBuilder sessionRecorded = new StringBuilder();
-    StringBuilder sessionUpcoming = new StringBuilder();
+    //StringBuilder sessionUpcoming = new StringBuilder();
 
-    var upcomingSessions = stateService.GetValue<StringBuilder>("upcoming");
+    //var upcomingSessions = stateService.GetValue<StringBuilder>("upcoming");
 
-    if (upcomingSessions != null)
-    {
+    //if (upcomingSessions != null)
+    //{
         sessionRecorded = stateService.GetValue<StringBuilder>("rec");
-        sessionUpcoming = upcomingSessions;
-    }
-    else
-    {
-        //Response.Redirect("/?resetSession=null");
-    }
+    //    sessionUpcoming = upcomingSessions;
+    //}
+    //else
+    //{
+    //    //Response.Redirect("/?resetSession=null");
+    //}
 
     var subdomainBranding = stateService.GetValue<string>("SubdomainBranding");
     var firstPage = stateService.GetValue<string>("FirstPage");
@@ -192,7 +192,6 @@
         <!--this is the login for the user-->
         <div id="loginContainer">
             @Html.Partial("_LoginPartial")
-
         </div>
 
         <div class="phone"><a href="tel:8008310678" class="tele">800.831.0678</a></div>
@@ -251,7 +250,7 @@
                     </li>
                     <li class="parent">
                         <a href="javascript:void(0)">Upcoming Webinars<i></i></a>
-                        <ul>@Html.Raw(sessionUpcoming)</ul>
+                        <ul>@Html.Action("UpComingWebinarMenu", "Navigation")</ul>
                     </li>
                     <li class="parent">
                         <a href="javascript:void(0)">OnDemand Webinars<i></i></a>

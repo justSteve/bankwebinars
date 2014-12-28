@@ -1,0 +1,57 @@
+﻿using CUWebinars.Business.Repository;
+using CUWebinars.Web.Infrastructure.Extensions;
+using System.Linq;
+using System.Text;
+using System.Web.Mvc;
+
+namespace CUWebinars.Web.Controllers
+{
+    public class NavigationController : Controller
+    {
+        private readonly IWebinarRepository _webinarRepository;
+
+        public NavigationController(IWebinarRepository webinarRepository)
+        {
+            _webinarRepository = webinarRepository;
+        }
+
+        [OutputCache(Duration=3600)]
+        public string UpComingWebinarMenu()
+        {
+            var upcomingWebinars = _webinarRepository.GetUpcoming().OrderBy(w => w.Date).Take(8).ToList();
+            var upComingPresentationListItems = new StringBuilder();
+            upComingPresentationListItems.Append(
+                "<li role='presentation'><a  role=\"menuitem\" tabindex=\"-1\"  href='/Webinar/allActive/?eventsToShow=upcoming'>View <b>All</b> Upcoming Events</a></li>"
+                );
+
+            if (upcomingWebinars.Count > 0)
+            {
+                for (int i = 0; i < upcomingWebinars.Count; i++)
+                {
+                    var upcomingWebinar = upcomingWebinars[i];
+
+                    string shortTitle = upcomingWebinar.Title.Length > 35
+                        ? upcomingWebinar.Title.Substring(0, 35) + "..."
+                        : upcomingWebinar.Title;
+
+                    string seoTitle =
+                        upcomingWebinar.Title.RemoveIllegalCharacters()
+                            .ReplaceSpacesWithHyphens()
+                            .ToLower()
+                            .TrimEnd('.');
+
+                    upComingPresentationListItems.Append(
+                        string.Concat(string.Format(
+                            "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href='/{0}/{1}'",
+                            upcomingWebinar.idWebinar,
+                            seoTitle
+                            ),
+                            upcomingWebinars[i].idWebinar + "'>" + Server.HtmlEncode(shortTitle) + "</a></li>")
+                        );
+                }
+
+            }
+            return upComingPresentationListItems.ToString();
+        }
+    }
+}
