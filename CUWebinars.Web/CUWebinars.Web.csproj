@@ -379,17 +379,21 @@
     <Compile Include="Helpers\IAppHelper.cs" />
     <Compile Include="Helpers\SessionStartInfo.cs" />
     <Compile Include="Infrastructure\Attributes\MonitorAffiliateFilter.cs" />
+    <Compile Include="Models\DiscountModel.cs" />
     <Compile Include="Models\EditContactInfoModel.cs" />
     <Compile Include="Models\EditUserModel.cs" />
     <Compile Include="Models\ImportOrderModel.cs" />
     <Compile Include="Models\MigrateOrderModel.cs" />
     <Compile Include="Models\RegisterFieldsDTO.cs" />
     <Compile Include="Models\ShippingDetailsModel.cs" />
+    <Compile Include="ViewModel\DiscountPromotionViewModel.cs" />
+    <Compile Include="ViewModel\Discount_SubscriptionViewModel.cs" />
     <Compile Include="ViewModel\RegistrationSummaryViewModel.cs" />
     <Compile Include="ViewModel\WebinarFileViewModel.cs" />
     <Content Include="App_Data\Orders\OrderMigrator.xlsm" />
     <Content Include="App_Data\Orders\OrderImporter.xlsm" />
     <Content Include="App_Data\Orders\OrdersImporter.xlsm" />
+    <Content Include="App_Data\Orders\AffiliateOrdersImporter.xlsm" />
     <None Include="log4net.config">
       <SubType>Designer</SubType>
     </None>
