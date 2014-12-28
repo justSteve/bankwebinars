@@ -823,11 +823,11 @@ namespace CUWebinars.Web.Controllers
 
             model.TimeZone = userExists ? model.WebUser.timeZone : USTimeZone.Central;
 
-            //TODO: Check if needed. Can't the same info be obtained (within RAZOR)
+            //Check if needed. Can't the same info be obtained (within RAZOR)
             // by simply checking 'currentUser'?
             // ->
             // Not strictly needed, but more readable in the razor e.g. if(Model.UserIsLoggedIn)
-            // But not something I'd consider worth insisting on. Happy to check currentuser. 
+            // [sjh] agreed.
             model.UserIsLoggedIn = userExists;
 
             model.SignUpCaption = "Sign Up!";

@@ -132,7 +132,6 @@ namespace CUWebinars.Web
                         try
                         {
                             StateService.SetValue("AffiliateSessionSource", WebUiConstants.AffiliateId + Pipe + loadAff);
-                            //TODO 4BW unit test required of this method of loading affiliate by id
                             // determine the current affiliate
                             StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser));
                         }
@@ -163,7 +162,6 @@ namespace CUWebinars.Web
                         try
                         {
                             StateService.SetValue("AffiliateSessionSource", "Sub" + Pipe + affilliateDomain);
-                            //todo: 4BW - unit test required 
                             //   the name of the property 'ttsDomain' is the abbreviated name chosen
                             //   for use (as a shortcut or nicname) by us to refer to a given affiliate. It may or may not
                             //   be literally the Domain Name used by the given affiliate.
