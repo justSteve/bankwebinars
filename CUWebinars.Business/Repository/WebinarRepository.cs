@@ -1,4 +1,7 @@
-﻿using CUWebinars.Business.Models;
+﻿using System;
+using System.Data;
+using System.Data.SqlClient;
+using CUWebinars.Business.Models;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -71,18 +74,47 @@ namespace CUWebinars.Business.Repository
 
         public int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar)
         {
-            //var regGroups = ((TTSWebinarsContext) db).RegTypesGroupsXrefs
-            //    .Where(t => t.idWebinar == idWebinar)    
-            //    ;
-            int regType = 0;
-            //foreach (var x in regGroups)
-            //{
-            regType = ((TTSWebinarsContext)db).RegTypesXrefs
-                .Where(r => r.RegType.OptionLabel == registrationType)
-                .Select(r => r.idRegType).SingleOrDefault()
-                ;
-            //}
-            return regType;
+
+            using (var sqlConnection = new SqlConnection("Data Source=tcp:kmow9uloz6.database.windows.net,1433;Initial Catalog=BankWebinars;User Id=TTSOp@kmow9uloz6;Password=EntRisR..E121114;"))
+            {
+                sqlConnection.Open();
+
+                using (var command = new SqlCommand())
+                {
+                    command.Connection = sqlConnection;
+                    command.CommandType = CommandType.Text;
+                    command.CommandText =
+                        " SELECT  regType.idRegtype FROM    dbo.RegType regType INNER JOIN dbo.RegTypesXref rx " +
+                        "ON rx.idRegType = regType.idRegType INNER JOIN dbo.RegTypesGroups rtg " +
+                        "ON rtg.idRegTypeGroup = rx.idRegTypeGroup INNER JOIN dbo.RegTypesGroupsXref rtgX " +
+                        "ON rtgX.idRegTypeGroup = rtg.idRegTypeGroup WHERE   rtgX.idWebinar = " +
+                        idWebinar + " AND regType.RegTypeLabel = '" + registrationType + "'";
+                    
+                    command.CommandType = CommandType.Text;
+
+
+                    //SqlParameter parameterRT = new SqlParameter();
+                    //parameterRT.ParameterName = "@registrationType";
+                    //parameterRT.SqlDbType = SqlDbType.;
+                    //parameterRT.Direction = ParameterDirection.Input;
+                    //parameterRT.Value = registrationType;
+
+                    //SqlParameter parameteridWebinar = new SqlParameter
+                    //{
+                    //    ParameterName = "@idWebinar",
+                    //    SqlDbType = SqlDbType.Int,
+                    //    Direction = ParameterDirection.Input,
+                    //    Value = idWebinar
+                    //};
+
+                    //// Add the parameter to the Parameters collection. 
+                    //command.Parameters.Add(parameterRT);
+                    //command.Parameters.Add(parameteridWebinar);
+
+                    var message = command.ExecuteScalar();
+                    return Convert.ToInt32(message);
+                }
+            }
 
         }
 
