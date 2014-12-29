@@ -310,14 +310,9 @@
     <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\3PartRegTypes.sql" />
     <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\4PartRegTypes.sql" />
     <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\5PartRegTypes.sql" />
-    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\AdditionalLocationsLookupPrice.sql" />
     <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\AffiliateImporterToExcel.sql" />
-    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\BuildCompliancePerspectivesMigration.sql" />
-    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\BuildDiscountsMigration1.sql" />
     <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\CPOrdersToExcel.sql" />
     <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\Create2015OptionsGroups.sql" />
-    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\CreateDbCreds.sql" />
-    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\CreateTestUsers.sql" />
     <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\deltestdata.sql" />
     <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\DevScripts\CleansMRAccountsAndClaims.sql" />
     <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\DevScripts\MigrateInstitution.sql" />
@@ -335,8 +330,13 @@
     <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\InsertTestWebinars.sql" />
     <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\PopulateCPOrders.sql" />
     <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\PopulateCPSubscriptions.sql" />
-    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\UpdateAffiliates.sql" />
-    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\updateRegTypesforBankWebinars.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\_AdditionalLocationsLookupPrice.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\_BuildCompliancePerspectivesMigration.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\_BuildDiscountsMigration1.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\_CreateDbCreds.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\_CreateTestUsers.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\_UpdateAffiliates.sql" />
+    <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\_updateRegTypesforBankWebinars.sql" />
     <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\__Seeder_Ender.sql" />
     <Content Include="SQLSeeding\SQLScripts\BankWebinarsMigration\__Seeder_Runner.sql" />
   </ItemGroup>

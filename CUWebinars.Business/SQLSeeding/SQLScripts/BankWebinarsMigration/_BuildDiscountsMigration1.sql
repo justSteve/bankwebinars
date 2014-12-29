@@ -12,11 +12,11 @@ ADD idUserLegacy INT
 
 GO
 
-INSERT  BankWebinars.dbo.AdditionalLocationsLookupPrice
-        ( idWebinar, cost )
-VALUES  ( 842, -- idWebinar - int
-          0  -- cost - money
-          )
+--INSERT  BankWebinars.dbo.AdditionalLocationsLookupPrice
+--        ( idWebinar, cost )
+--VALUES  ( 842, -- idWebinar - int
+--          0  -- cost - money
+--          )
 
 		  GO
 

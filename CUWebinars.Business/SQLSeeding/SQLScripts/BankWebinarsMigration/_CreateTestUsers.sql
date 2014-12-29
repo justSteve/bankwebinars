@@ -1,5 +1,40 @@
 SET NOCOUNT ON 
 PRINT 'start inserting ttstester'
+
+INSERT BankWebinars.dbo.WebUser
+        ( idUser ,
+          UserType ,
+          AcctStatus ,
+          DateCreated ,
+          FirstName ,
+          LastName ,
+          Initial ,
+          idUserInstitution ,
+          email ,
+          futureMail ,
+          generalComments ,
+          taxExempt ,
+          idSubscriptionDiscount ,
+          timeZone ,
+          Title
+        )
+VALUES  ( 31656 , -- idUser - int
+          1 , -- UserType - int
+          N'A' , -- AcctStatus - nvarchar(1)
+          GETDATE() , -- DateCreated - datetime
+          N'Test' , -- FirstName - nvarchar(50)
+          N'User' , -- LastName - nvarchar(50)
+          N'' , -- Initial - nvarchar(max)
+          16113 , -- idUserInstitution - int
+          N'testuser1@cuwebinars.com' , -- email - nvarchar(150)
+          N'n' , -- futureMail - nvarchar(1)
+          N'' , -- generalComments - nvarchar(1000)
+          0 , -- taxExempt - bit
+          0 , -- idSubscriptionDiscount - int
+          2 , -- timeZone - int
+          N''  -- Title - nvarchar(200)
+        )
+
 INSERT BankWebinars.dbo.[WebUser] ([idUser], [UserType], [AcctStatus], [DateCreated], [FirstName], [LastName], [Initial], [idUserInstitution], [email], [futureMail], [generalComments], [taxExempt], [idSubscriptionDiscount], [timeZone], [Title]) VALUES (31660, 1, N'A', CAST(N'2014-12-02 18:54:27.493' AS DateTime), N'test1', N'200', NULL, 16116, N'1-1@ttstester.com', NULL, NULL, NULL, NULL, 3, N'Loan Officer')
 
 INSERT BankWebinars.dbo.[WebUser] ([idUser], [UserType], [AcctStatus], [DateCreated], [FirstName], [LastName], [Initial], [idUserInstitution], [email], [futureMail], [generalComments], [taxExempt], [idSubscriptionDiscount], [timeZone], [Title]) VALUES (31661, 1, N'A', CAST(N'2014-12-02 19:33:06.137' AS DateTime), N'test1', N'201', NULL, 16116, N'1-2@ttstester.com', NULL, NULL, NULL, NULL, 3, N'Loan Officer')
