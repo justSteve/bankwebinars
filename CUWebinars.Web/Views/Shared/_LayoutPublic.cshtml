@@ -21,14 +21,14 @@
 
     var currentUserID = 0;
 
-    StringBuilder sessionRecorded = new StringBuilder();
+    //StringBuilder sessionRecorded = new StringBuilder();
     //StringBuilder sessionUpcoming = new StringBuilder();
 
     //var upcomingSessions = stateService.GetValue<StringBuilder>("upcoming");
 
     //if (upcomingSessions != null)
     //{
-        sessionRecorded = stateService.GetValue<StringBuilder>("rec");
+        //sessionRecorded = stateService.GetValue<StringBuilder>("rec");
     //    sessionUpcoming = upcomingSessions;
     //}
     //else
@@ -254,7 +254,7 @@
                     </li>
                     <li class="parent">
                         <a href="javascript:void(0)">OnDemand Webinars<i></i></a>
-                        <ul>@Html.Raw(sessionRecorded)</ul>
+                        <ul>@Html.Action("GetRecordedWebinarMenu", "Navigation")</ul>
                     </li>
                     <li>
                         <a href="javascript:void(0)">About Us<i></i></a>

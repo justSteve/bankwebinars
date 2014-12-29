@@ -463,6 +463,8 @@ namespace CUWebinars.Business.Services
 
         public void FireOrderSubmittedEvent(Order order, bool userCreatedInCart = false, Uri url = null)
         {
+            string addPasswordUrl = string.Empty;
+
             _logger.Info("Adding Event for Order {0}", order.idOrder);
 
             var orderSubmittedViewModel = new OrderSubmittedViewModel
@@ -473,13 +475,15 @@ namespace CUWebinars.Business.Services
                 UserCreatedInCart = userCreatedInCart,
                 UserCreatedOnImport = false
             };
-            
-            var baseUri = new Uri(string.Concat(url.Scheme, @"://", url.Authority), UriKind.Absolute);
-            var addPasswordUrl = new Uri(
-                baseUri,
-                string.Concat(@"Account/AddPassword/", order.WebUser.email)
-                ).ToString();
 
+            if (!ReferenceEquals(null, url))
+            {
+                Uri baseUri = new Uri(string.Concat(url.Scheme, @"://", url.Authority), UriKind.Absolute);
+                addPasswordUrl = new Uri(
+                    baseUri,
+                    string.Concat(@"Account/AddPasswordForCartCreatedUser/", order.WebUser.email)
+                    ).ToString();
+            }
 
             AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
             {

@@ -53,5 +53,35 @@ namespace CUWebinars.Web.Controllers
             }
             return upComingPresentationListItems.ToString();
         }
+
+        [OutputCache(Duration = 3600)]
+        public string GetRecordedWebinarMenu()
+        {
+            var recordedWebinars = _webinarRepository.GetRecorded().OrderBy(w => w.Date).Take(8).ToList();
+
+            var recordedWebinarsListItems = new StringBuilder();
+
+            recordedWebinarsListItems.Append(
+                "<li role='presentation'><a  role=\"menuitem\" tabindex=\"-1\"  href='/Webinar/allActive/?eventsToShow=recorded'>View <b>All</b> Recordings</a></li>"
+                );
+
+            if (recordedWebinars.Count > 0)
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    string ShortTitle =
+                        recordedWebinars[i].Title.Length > 45
+                            ? recordedWebinars[i].Title.Substring(0, 45) + "..."
+                            : recordedWebinars[i].Title;
+
+                    recordedWebinarsListItems.Append(
+                        "<li role='presentation'><a role=\"menuitem\" tabindex=\"-1\" href='/Webinar/Details/" +
+                        recordedWebinars[i].idWebinar + "'>" + Server.HtmlEncode(ShortTitle) + "</a></li>"
+                        );
+                }
+            }
+
+            return recordedWebinarsListItems.ToString();
+        }
     }
 }
