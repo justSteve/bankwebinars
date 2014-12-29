@@ -18,7 +18,7 @@ namespace CUWebinars.Business.Core
 
         public IList<Tuple<int, decimal>> GetAdditionalLocationsPricing(int webinarId)
         {
-            using (var sqlConnection = new SqlConnection(_connectionString)) 
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 sqlConnection.Open();
 
@@ -50,10 +50,53 @@ namespace CUWebinars.Business.Core
                 }
             }
         }
-        
+
+        public int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                using (var command = new SqlCommand())
+                {
+                    command.Connection = sqlConnection;
+                    command.CommandType = CommandType.Text;
+                    command.CommandText =
+                        " SELECT  regType.idRegtype FROM    dbo.RegType regType INNER JOIN dbo.RegTypesXref rx " +
+                        " ON rx.idRegType = regType.idRegType INNER JOIN dbo.RegTypesGroups rtg " +
+                        " ON rtg.idRegTypeGroup = rx.idRegTypeGroup INNER JOIN dbo.RegTypesGroupsXref rtgX " +
+                        " ON rtgX.idRegTypeGroup = rtg.idRegTypeGroup WHERE   rtgX.idWebinar = " + idWebinar +
+                        " AND regType.RegTypeLabel = '" + registrationType + "'";
+
+                    command.CommandType = CommandType.Text;
+
+
+                    //SqlParameter parameterRT = new SqlParameter();
+                    //parameterRT.ParameterName = "@registrationType";
+                    //parameterRT.SqlDbType = SqlDbType.;
+                    //parameterRT.Direction = ParameterDirection.Input;
+                    //parameterRT.Value = registrationType;
+
+                    //SqlParameter parameteridWebinar = new SqlParameter
+                    //{
+                    //    ParameterName = "@idWebinar",
+                    //    SqlDbType = SqlDbType.Int,
+                    //    Direction = ParameterDirection.Input,
+                    //    Value = idWebinar
+                    //};
+
+                    //// Add the parameter to the Parameters collection. 
+                    //command.Parameters.Add(parameterRT);
+                    //command.Parameters.Add(parameteridWebinar);
+
+                    var message = command.ExecuteScalar();
+                    return Convert.ToInt32(message);
+                }
+            }
+        }
         public USTimeZone GetTimeZoneByZipCode(string zip)
         {
-            using (var sqlConnection = new SqlConnection(_connectionString)) 
+            using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 sqlConnection.Open();
 
@@ -82,11 +125,11 @@ namespace CUWebinars.Business.Core
 
                     int timeZoneAsInt;
                     USTimeZone timeZone = USTimeZone.Central;
-                    
-                    if (int.TryParse(timeZoneAsString, NumberStyles.AllowLeadingSign, CultureInfo.CurrentCulture,  out timeZoneAsInt))
+
+                    if (int.TryParse(timeZoneAsString, NumberStyles.AllowLeadingSign, CultureInfo.CurrentCulture, out timeZoneAsInt))
                     {
                         timeZoneAsInt += 10;
-                        timeZone = (USTimeZone) timeZoneAsInt;
+                        timeZone = (USTimeZone)timeZoneAsInt;
                     }
 
                     return timeZone;

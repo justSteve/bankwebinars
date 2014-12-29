@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Text;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -74,47 +77,9 @@ namespace CUWebinars.Business.Repository
 
         public int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar)
         {
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
-            using (var sqlConnection = new SqlConnection("Data Source=tcp:kmow9uloz6.database.windows.net,1433;Initial Catalog=BankWebinars;User Id=TTSOp@kmow9uloz6;Password=EntRisR..E121114;"))
-            {
-                sqlConnection.Open();
-
-                using (var command = new SqlCommand())
-                {
-                    command.Connection = sqlConnection;
-                    command.CommandType = CommandType.Text;
-                    command.CommandText =
-                        " SELECT  regType.idRegtype FROM    dbo.RegType regType INNER JOIN dbo.RegTypesXref rx " +
-                        "ON rx.idRegType = regType.idRegType INNER JOIN dbo.RegTypesGroups rtg " +
-                        "ON rtg.idRegTypeGroup = rx.idRegTypeGroup INNER JOIN dbo.RegTypesGroupsXref rtgX " +
-                        "ON rtgX.idRegTypeGroup = rtg.idRegTypeGroup WHERE   rtgX.idWebinar = " +
-                        idWebinar + " AND regType.RegTypeLabel = '" + registrationType + "'";
-                    
-                    command.CommandType = CommandType.Text;
-
-
-                    //SqlParameter parameterRT = new SqlParameter();
-                    //parameterRT.ParameterName = "@registrationType";
-                    //parameterRT.SqlDbType = SqlDbType.;
-                    //parameterRT.Direction = ParameterDirection.Input;
-                    //parameterRT.Value = registrationType;
-
-                    //SqlParameter parameteridWebinar = new SqlParameter
-                    //{
-                    //    ParameterName = "@idWebinar",
-                    //    SqlDbType = SqlDbType.Int,
-                    //    Direction = ParameterDirection.Input,
-                    //    Value = idWebinar
-                    //};
-
-                    //// Add the parameter to the Parameters collection. 
-                    //command.Parameters.Add(parameterRT);
-                    //command.Parameters.Add(parameteridWebinar);
-
-                    var message = command.ExecuteScalar();
-                    return Convert.ToInt32(message);
-                }
-            }
+            return dataOperations.GetRegTypeByLableAndWebinar(registrationType, idWebinar);
 
         }
 
