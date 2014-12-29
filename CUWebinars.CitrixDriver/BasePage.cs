@@ -6,7 +6,7 @@ namespace CUWebinars.CitrixDriver
     {
         protected string Url { get; set; }
 
-        protected ITestDriver SeleniumTestDriver { get; set; }
+        protected KesselRun.SeleniumCore.TestDrivers.Contracts.ITestDriver SeleniumTestDriver { get; set; }
 
         public virtual void Open()
         {

@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using CUWebinars.Business.Models;
-using CUWebinars.Selenium.Core;
+﻿using CUWebinars.Business.Models;
+using KesselRun.SeleniumCore.Enums;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Linq;
+using System.Threading;
 
 namespace CUWebinars.CitrixDriver
 {
@@ -15,7 +16,7 @@ namespace CUWebinars.CitrixDriver
         private int count = 0;
         private string _mainWindow;
 
-        public CitrixWebPage(ITestDriver seleniumTestDriver, string url)
+        public CitrixWebPage(KesselRun.SeleniumCore.TestDrivers.Contracts.ITestDriver seleniumTestDriver, string url)
         {
             Url = url;
             SeleniumTestDriver = seleniumTestDriver;
@@ -23,7 +24,7 @@ namespace CUWebinars.CitrixDriver
 
         public void Wait(int milliSeconds = 1000)
         {
-            SeleniumTestDriver.Wait(milliSeconds);
+            Thread.Sleep(milliSeconds);
         }
 
         public void OpenPage(string url)
@@ -42,10 +43,10 @@ namespace CUWebinars.CitrixDriver
             }
         }
 
-        public void ClearCookies()
-        {
-            SeleniumTestDriver.ClearFederatedCookies();
-        }
+        //public void ClearCookies()
+        //{
+        //    SeleniumTestDriver.ClearFederatedCookies();
+        //}
 
         public void GotToLoginPage()
         {
@@ -59,7 +60,7 @@ namespace CUWebinars.CitrixDriver
 
         public void EnterEmailAddress(string email)
         {
-            SeleniumTestDriver.Wait(500);
+            Wait(500);
             IWebElement emailInput = SeleniumTestDriver.FindById("emailAddress");
             emailInput.Clear();
             emailInput.SendKeys(email);
@@ -67,7 +68,7 @@ namespace CUWebinars.CitrixDriver
 
         public void EnterPasswordWhereUserExists(string password)
         {
-            SeleniumTestDriver.Wait(500);
+            Wait(500);
             IWebElement passwordInput = SeleniumTestDriver.FindById("password");
             passwordInput.Clear();
             passwordInput.SendKeys(password);
@@ -94,19 +95,19 @@ namespace CUWebinars.CitrixDriver
 
         public void GoToWebinarsPage()
         {
-            SeleniumTestDriver.FindByLinkTextClick("My Webinars");
-            _mainWindow = SeleniumTestDriver.CurrentWindowHandle;
+            SeleniumTestDriver.FindByLinkClick("My Webinars");
+            _mainWindow = SeleniumTestDriver.WebDriver.CurrentWindowHandle;
         }
 
         public void ScheduleAWebinar()
         {
-            SeleniumTestDriver.FindByLinkTextClick("Schedule a Webinar");
+            SeleniumTestDriver.FindByLinkClick("Schedule a Webinar");
         }
 
         public void ChooseWebinarTemplate()
         {
             SeleniumTestDriver.FindByIdClick("WebinarChoice");
-            SeleniumTestDriver.Wait(500);
+            Wait(500);
             SeleniumTestDriver.FindByCssSelectorClick("option[value=\"563748522|wid\"]");
         }
 
@@ -199,8 +200,8 @@ namespace CUWebinars.CitrixDriver
         private void AddPanelists(string presenter)
         {
 
-            SeleniumTestDriver.TypeText("Panelist1Name_Full", "Steve Presenter");
-            SeleniumTestDriver.TypeText("Panelist1Email", "amSteve@gmail.com");
+            SeleniumTestDriver.TypeText(FinderStrategy.Name, "Panelist1Name_Full", "Steve Presenter");
+            SeleniumTestDriver.TypeText(FinderStrategy.Name, "Panelist1Email", "amSteve@gmail.com");
         }
 
         public string ScheduleASimilarWebinar(GTWebinar webinar)
@@ -219,8 +220,8 @@ namespace CUWebinars.CitrixDriver
             });
 
 
-            SeleniumTestDriver.TypeText("WebinarTitle", webinar.Title);
-            SeleniumTestDriver.TypeText("Description", webinar.Description);
+            SeleniumTestDriver.TypeText(FinderStrategy.Name, "WebinarTitle", webinar.Title);
+            SeleniumTestDriver.TypeText(FinderStrategy.Name, "Description", webinar.Description);
 
 
             var confCallRadio = wait.Until(d =>
@@ -243,12 +244,12 @@ namespace CUWebinars.CitrixDriver
             PickDate(webinar.StartTime, true);
 
             //  Start hour
-            SeleniumTestDriver.TypeText("StartHour_0", webinar.StartHour);
+            SeleniumTestDriver.TypeText(FinderStrategy.Name, "StartHour_0", webinar.StartHour);
             var startMeridian = new SelectElement(SeleniumTestDriver.FindById("StartAMPM_0"));
             startMeridian.SelectByText(webinar.StartMeridian);
 
             //  End hour
-            SeleniumTestDriver.TypeText("EndHour_0", webinar.EndHour);
+            SeleniumTestDriver.TypeText(FinderStrategy.Name, "EndHour_0", webinar.EndHour);
             var endMeridian = new SelectElement(SeleniumTestDriver.FindById("EndAMPM_0"));
             endMeridian.SelectByText(webinar.EndMeridian);
 
@@ -279,7 +280,7 @@ namespace CUWebinars.CitrixDriver
             submitButtonContinue.Click();
 
             //  Third tab - wait a bit
-            SeleniumTestDriver.FindByLinkTextClick("Clear All");
+            SeleniumTestDriver.FindByLinkClick("Clear All");
 
             wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(1));
 
@@ -299,9 +300,9 @@ namespace CUWebinars.CitrixDriver
             SeleniumTestDriver.FindByXPathClick(xPathForType);
 
             //Switch to new window opened
-            foreach (var window in SeleniumTestDriver.Windows)
+            foreach (var window in SeleniumTestDriver.WebDriver.WindowHandles)
             {
-                SeleniumTestDriver.SwitchToWindow(window);
+                SeleniumTestDriver.WebDriver.SwitchTo().Window(window);
             }
 
             var webDriverWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(20));
@@ -319,10 +320,10 @@ namespace CUWebinars.CitrixDriver
             webinarDetails.Add("AccessCode", accessCode.Text);
 
             //Close the new window, if that window no more required
-            SeleniumTestDriver.CloseWindow();
+            SeleniumTestDriver.Quit();
 
             //Switch back to original browser (first window)
-            SeleniumTestDriver.SwitchToWindow(_mainWindow);
+            SeleniumTestDriver.WebDriver.SwitchTo().Window(_mainWindow);
         }
     }
 }
