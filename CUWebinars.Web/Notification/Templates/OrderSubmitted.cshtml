@@ -260,20 +260,15 @@
                                                                             <div style="color: black; font-family: Arial, Helvetica, sans-serif; padding: 5px; font-size: 12px;">
                                                                                 <p>
                                                                                     Dear @Model.Order.FirstName,<br /><br />
-                                                                                    Thank you for your order @TenantPrefix@row.Single().Order.idOrder for a
-                                                                                    <i>@row.Single().RegistrationType.OptionLabel</i> on the event titled <i>@row.Single().Webinar.Title</i>.
+                                                                                    Thank you for your <i>@row.Single().RegistrationType.OptionLabel</i> order for <i>@row.Single().Webinar.Title</i>.
+
                                                                                     @if (Model.UserCreatedOnImport)
                                                                                     {
-                                                                                        <span>
-                                                                                            We've created an account at <b>@TenantDomain</b> and request you establish a new password that is unqiue to this site and hard to guess. <b><a href="@Model.ConfirmChangeEmailUrl">Set My Password</a></b>.<br />
-                                                                                            If you have any problems accessing that link from inside this email you may paste this URL into your browser: <i>@Model.ConfirmChangeEmailUrl</i><br /><br />
-                                                                                        </span>
+                                                                                        <text>This order was placed for you by [affiliateName].  We've created an account at <b>@TenantDomain</b> and request that you activate the account by clicking this link <b><a href="@Model.ConfirmChangeEmailUrl">Set My Password</a></b> or paste this URL into your browser: <i>@Model.ConfirmChangeEmailUrl</i>.</text>
                                                                                     }
                                                                                     else if (Model.UserCreatedInCart)
                                                                                     {
-                                                                                        <span style="color:blue">
-                                                                                            @Model.AddPasswordUrl
-                                                                                        </span>
+                                                                                        <text>Please activate the account by clicking this link <b><a href="@Model.AddPasswordUrl">Set My Password</a></b> or paste this URL into your browser: <i>@Model.AddPasswordUrl</i>.</text>
                                                                                     }
                                                                                 </p> @connInfoPhrase
                                                                                 <p>

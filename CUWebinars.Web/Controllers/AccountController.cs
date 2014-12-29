@@ -226,12 +226,14 @@ namespace CUWebinars.Web.Controllers
             return PartialView("_LoginPartial");
         }
 
+
+        [System.Web.Mvc.AllowAnonymous]
         public ActionResult OrderComplete()
         {
+            //TODO This is a landing page for post cart submission.  
             return View();
 
         }
-
         public ActionResult MyWebinars()
         {
             var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
