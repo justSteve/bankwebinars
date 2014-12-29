@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CUWebinars.Business.Core;
+﻿using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
@@ -13,6 +7,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Ninject.Extensions.Logging;
 using Ninject.Extensions.Logging.Log4net.Infrastructure;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace CUWebinars.Business.Tests.UnitTests
 {
@@ -88,29 +85,29 @@ namespace CUWebinars.Business.Tests.UnitTests
         }
 
         [TestMethod]
-        public void AssignUserToOrderDoesSo()
+        public void AssignUserToOrderInvokesAssignWebUserToOrderOfOrderRepository()
         {
             //  Arrange
-            var order = new Order
+            var order = new Order();
+
+            WebUser aWebUser = new WebUser
             {
-                WebUser = new WebUser
-                {
-                    email = "avalidemailaddress@test.com",
-                    FirstName = "John",
-                    Institution = new Institution { InstitutionName = "ACME Inc"},
-                    LastName = "Hancock",
-                    Addresses = BusinessTestHelper.GetAddresses("John Hanckcock")
-                }
+                email = "avalidemailaddress@test.com",
+                FirstName = "John",
+                Institution = new Institution {InstitutionName = "ACME Inc"},
+                LastName = "Hancock",
+                Addresses = BusinessTestHelper.GetAddresses("John Hanckcock")
             };
 
-            //  Act
-            //_orderManagementService.AssignUserToOrder(order);
-            //attempting to depricate AssignUserToOrder
-            _orderManagementService.AssignWebUserToOrder(order.WebUser, order);
+            //  All we can test is whether the AssignWebUserToOrder method is invoked.
+            //  An integration test (elsewhere) could ensure that is working.
+            _orderRepository.Setup(r => r.AssignWebUserToOrder(aWebUser, order)).Verifiable();
+
+            //  Act 
+            _orderManagementService.AssignWebUserToOrder(aWebUser, order);
 
             //  Assert                        
-            Assert.AreEqual(order.BillingEmail, "avalidemailaddress@test.com");
-
+            _orderRepository.Verify();
         }
 
         [TestMethod]

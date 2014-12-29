@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.SqlServer.Management.Smo;
+using System;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.SqlServer.Management.Smo;
 
 namespace CUWebinars.Business.Tests.Config
 {

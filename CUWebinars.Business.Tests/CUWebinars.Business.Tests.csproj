@@ -152,6 +152,7 @@
   <ItemGroup>
     <Compile Include="BusinessTestHelper.cs" />
     <Compile Include="Config\DatabaseResources.cs" />
+    <Compile Include="Fakes\UserAccountRepositoryFake.cs" />
     <Compile Include="IntegrationTests\DataOperationsIntegrationTests.cs" />
     <Compile Include="UnitTests\CommandProcessorTests.cs" />
     <Compile Include="Config\MembershipRebootConfig.cs">
@@ -175,11 +176,11 @@
     <Compile Include="UnitTests\OrderManagementCommandHandlersTests.cs" />
     <Compile Include="UnitTests\OrderManagementServiceTests.cs" />
     <Compile Include="UnitTests\QueryProcessorTests.cs" />
-    <Compile Include="SamAuthenticationServiceFake.cs" />
+    <Compile Include="Fakes\SamAuthenticationServiceFake.cs" />
     <Compile Include="TestCategories.cs" />
     <Compile Include="UnitTests\OrderManagementQueriesTests.cs" />
-    <Compile Include="UserAccountServiceHappyPathFake.cs" />
-    <Compile Include="UserAccountServiceUnHappyPathFake.cs" />
+    <Compile Include="Fakes\UserAccountServiceHappyPathFake.cs" />
+    <Compile Include="Fakes\UserAccountServiceUnHappyPathFake.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\CreateDb.sql" />

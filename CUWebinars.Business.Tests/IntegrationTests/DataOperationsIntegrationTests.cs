@@ -27,7 +27,7 @@ namespace CUWebinars.Business.Tests.IntegrationTests
         }
 
         [TestMethod]
-        //[Ignore]
+        [TestCategory(TestCategories.DataOperationsIntegration)]
         public void GetTimeZoneByZipCodeReturnsValidTimeZone()
         {
             var dataOperations = new DataOperations(

@@ -1,6 +1,5 @@
 ﻿using CUWebinars.Business.Tests.Properties;
 using System;
-using System.Configuration;
 using System.Data.SqlClient;
 
 namespace CUWebinars.Business.Tests

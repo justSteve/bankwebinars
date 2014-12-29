@@ -1,7 +1,7 @@
 ﻿using BrockAllen.MembershipReboot;
 using BrockAllen.MembershipReboot.Relational;
 
-namespace CUWebinars.Business.Tests
+namespace CUWebinars.Business.Tests.Fakes
 {
     public class UserAccountServiceUnHappyPathFake : UserAccountService
     {

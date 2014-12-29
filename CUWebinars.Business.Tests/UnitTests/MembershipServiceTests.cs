@@ -6,6 +6,8 @@ using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
+using CUWebinars.Business.Tests.Fakes;
+using CUWebinars.Tests.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Ninject.Extensions.Logging;
@@ -42,7 +44,7 @@ namespace CUWebinars.Business.Tests.UnitTests
             institutionRepositoryMock = new Mock<IInstitutionRepository>();
             webUserRepositoryMock = new Mock<IWebUserRepository>();
             ttsWebinarsContext = new TTSWebinarsContext();
-            userAccountServiceFake = new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase()));
+            userAccountServiceFake = new UserAccountServiceHappyPathFake(new UserAccountRepositoryFake());
             samAuthenticationServiceMock = new SamAuthenticationServiceFake(userAccountServiceFake);
 
         }
@@ -78,7 +80,7 @@ namespace CUWebinars.Business.Tests.UnitTests
                 institutionRepositoryMock.Object,
                 refDataRepositoryMock.Object,
                 samAuthenticationServiceMock,
-                new UserAccountServiceUnHappyPathFake(new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase())),
+                new UserAccountServiceUnHappyPathFake(new UserAccountRepositoryFake()),
                 webUserRepositoryMock.Object,
                 logger
                 );
@@ -102,7 +104,7 @@ namespace CUWebinars.Business.Tests.UnitTests
                 institutionRepositoryMock.Object,
                 refDataRepositoryMock.Object,
                 samAuthenticationServiceMock,
-                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase())),
+                new UserAccountServiceHappyPathFake(new UserAccountRepositoryFake()),
                 webUserRepositoryMock.Object,
                 logger
                 );
@@ -126,7 +128,7 @@ namespace CUWebinars.Business.Tests.UnitTests
                 institutionRepositoryMock.Object,
                 refDataRepositoryMock.Object,
                 samAuthenticationServiceMock,
-                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase())),
+                new UserAccountServiceHappyPathFake(new UserAccountRepositoryFake()),
                 webUserRepositoryMock.Object,
                 logger
                 );
@@ -139,7 +141,7 @@ namespace CUWebinars.Business.Tests.UnitTests
 
         [TestMethod]
         [TestCategory(TestCategories.Membership)]
-        public void GetDetailsOfUserReturnsNullWhereEmailIsNull()
+        public void GetDetailsOfUserReturnsThrowsNullArgumentExceptionWhereEmailIsNull()
         {
             string email = null;
 
@@ -149,15 +151,12 @@ namespace CUWebinars.Business.Tests.UnitTests
                 institutionRepositoryMock.Object,
                 refDataRepositoryMock.Object,
                 samAuthenticationServiceMock,
-                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase())),
+                new UserAccountServiceHappyPathFake(new UserAccountRepositoryFake()),
                 webUserRepositoryMock.Object,
                 logger
                 );
-
-            var result = membershipService.GetDetailsOfUser(email);
-
-            refDataRepositoryMock.Verify(r => r.GetWebUserByEmail(email), Times.Exactly(1));
-            Assert.IsNull(result);
+            
+            ExceptionAssert.Throws<ArgumentNullException>(() => membershipService.GetDetailsOfUser(email));
         }
 
         [TestMethod]
@@ -172,7 +171,7 @@ namespace CUWebinars.Business.Tests.UnitTests
                 institutionRepositoryMock.Object,
                 refDataRepositoryMock.Object,
                 samAuthenticationServiceMock,
-                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase())),
+                new UserAccountServiceHappyPathFake(new UserAccountRepositoryFake()),
                 webUserRepositoryMock.Object,
                 logger
                 );
@@ -189,7 +188,7 @@ namespace CUWebinars.Business.Tests.UnitTests
         {
             string email = string.Empty;
             UserAccountServiceHappyPathFake userAccountService =
-                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase()));
+                userAccountServiceFake = new UserAccountServiceHappyPathFake(new UserAccountRepositoryFake());
 
             membershipService = new MembershipService(
                 institutionRepositoryMock.Object,
@@ -366,7 +365,7 @@ namespace CUWebinars.Business.Tests.UnitTests
         public void AddRegistrationTypeNotVerifiedClaimAddsClaim()
         {
             var userAccountService =
-                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase()));
+                userAccountServiceFake = new UserAccountServiceHappyPathFake(new UserAccountRepositoryFake());
 
             membershipService = new MembershipService(
                 institutionRepositoryMock.Object,
@@ -391,7 +390,7 @@ namespace CUWebinars.Business.Tests.UnitTests
         public void AddRegistrationTypeNotVerifiedClaimThrowsExceptionWhere2ndParamIsNull()
         {
             var userAccountService =
-                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase()));
+                userAccountServiceFake = new UserAccountServiceHappyPathFake(new UserAccountRepositoryFake());
 
             membershipService = new MembershipService(
                 institutionRepositoryMock.Object,
@@ -416,7 +415,7 @@ namespace CUWebinars.Business.Tests.UnitTests
         public void AddRegistrationTypeNotVerifiedClaimThrowsExceptionWhere2ndParamIsWhiteSpace()
         {
             var userAccountService =
-                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase()));
+                userAccountServiceFake = new UserAccountServiceHappyPathFake(new UserAccountRepositoryFake());
 
             membershipService = new MembershipService(
                 institutionRepositoryMock.Object,
@@ -441,7 +440,7 @@ namespace CUWebinars.Business.Tests.UnitTests
         public void AddRegistrationTypeNotVerifiedClaimThrowsExceptionWhere1stParamIsNull()
         {
             var userAccountService =
-                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase()));
+                userAccountServiceFake = new UserAccountServiceHappyPathFake(new UserAccountRepositoryFake());
 
             membershipService = new MembershipService(
                 institutionRepositoryMock.Object,

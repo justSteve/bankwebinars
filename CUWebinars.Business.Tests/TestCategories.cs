@@ -2,6 +2,8 @@
 {
     internal sealed class TestCategories
     {
+        internal const string Cqs = "CQS";
+        internal const string DataOperationsIntegration = "DataOperations Integration";
         internal const string Membership = "Membership";
         internal const string MembershipIntegration = "Membership Integration";
         internal const string OrderManagementQueries = "Order Management Queries";

@@ -6,6 +6,7 @@ using CUWebinars.Business.CQS.Commands;
 using CUWebinars.Business.CQS.QueryHandlers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
+using CUWebinars.Business.Tests.Fakes;
 using CUWebinars.Tests.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

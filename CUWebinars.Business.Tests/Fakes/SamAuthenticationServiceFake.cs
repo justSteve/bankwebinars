@@ -1,8 +1,6 @@
-﻿
-using BrockAllen.MembershipReboot;
-using CUWebinars.Business.AccountService;
+﻿using BrockAllen.MembershipReboot;
 
-namespace CUWebinars.Business.Tests
+namespace CUWebinars.Business.Tests.Fakes
 {
     public class SamAuthenticationServiceFake : AuthenticationService
     {

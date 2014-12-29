@@ -68,6 +68,9 @@ namespace CUWebinars.Business.Services
 
         public Order AssignWebUserToOrder(WebUser webUser, Order order)
         {
+            if (webUser == null) throw new ArgumentNullException("webUser");
+            if (order == null) throw new ArgumentNullException("order");
+
             return _orderRepository.AssignWebUserToOrder(webUser, order);
         }
 

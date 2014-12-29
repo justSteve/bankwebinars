@@ -20,6 +20,7 @@ namespace CUWebinars.Business.Tests.UnitTests
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.Cqs)]
         public void CommandProcessorUsesCorrectHandler()
         {
             //  Arrange
@@ -34,6 +35,7 @@ namespace CUWebinars.Business.Tests.UnitTests
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.Cqs)]
         public void CommandProcessorThrowsExceptionWhenPassedNullReference()
         {
             //  Arrange
@@ -49,6 +51,7 @@ namespace CUWebinars.Business.Tests.UnitTests
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.Cqs)]
         public void CommandProcessorThrowsExceptionWhenPassedNonCommand()
         {
             //  Arrange

@@ -26,7 +26,7 @@ namespace CUWebinars.Business.Tests.IntegrationTests
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.OrderRepositoryIntegration )]
+        [TestCategory(TestCategories.OrderRepositoryIntegration)]
         public void CreateOrderCreatesNewOrder()
         {
             //  Arrange
