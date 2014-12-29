@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{45BEE1BF-6AEB-4B89-B885-01DEB81F1782}"
 	ProjectSection(SolutionItems) = preProject
@@ -23,8 +23,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUWebinars.Selenium.Core", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{ABA220A0-4DDC-47E3-AA3C-10A4F1B48538}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUWebinars.Html", "CUWebinars.Html\CUWebinars.Html.csproj", "{317A3851-F3C8-49D2-8B34-53F1A140D653}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUWebinars.CitrixDriver", "CUWebinars.CitrixDriver\CUWebinars.CitrixDriver.csproj", "{2861DD86-EFF8-4B4B-B8DA-AFC825CCD9DA}"
 EndProject
 Global
@@ -45,10 +43,6 @@ Global
 		{12062741-74AD-4A12-A5C8-E520DC4CC118}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12062741-74AD-4A12-A5C8-E520DC4CC118}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12062741-74AD-4A12-A5C8-E520DC4CC118}.Release|Any CPU.Build.0 = Release|Any CPU
-		{317A3851-F3C8-49D2-8B34-53F1A140D653}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{317A3851-F3C8-49D2-8B34-53F1A140D653}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{317A3851-F3C8-49D2-8B34-53F1A140D653}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{317A3851-F3C8-49D2-8B34-53F1A140D653}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2861DD86-EFF8-4B4B-B8DA-AFC825CCD9DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2861DD86-EFF8-4B4B-B8DA-AFC825CCD9DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2861DD86-EFF8-4B4B-B8DA-AFC825CCD9DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
