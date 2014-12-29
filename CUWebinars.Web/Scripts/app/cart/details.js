@@ -27,7 +27,18 @@ $(function () {
 
             $('#ConfirmRegistrationBillMe').attr('disabled', 'disabled');
 
-            $.post(self.attr('action'), data, function (result, status) {
+            $.ajax({
+                type: 'POST',
+                contentType: RegistrationInCart.Constants.FormPostContentType,
+                cache: false,
+                url: self.attr('action'),
+                dataType: RegistrationInCart.Constants.JsonDataType,
+                data: data,
+                beforeSend: function () {
+                    $('#ConfirmRegistrationBillMe').attr('disabled', 'disabled');
+                    //$('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;&nbsp;Working...</span>');
+                }
+            }).done(function (result) {
                 if (result.Result === 'Success') {
                     orderRowID = result.OrderRowID;
 
@@ -40,17 +51,17 @@ $(function () {
 
                     $('#ConfirmModal').modal('show');
 
-                    $('#finalLoadingSpinner').remove();
                 } else {
-                    //TODO: Add code that will provide as much detail to the Failed message as can be obtained from result.
+
                     var err = new Error('FAILED posting Order: ');
                     //NREUM.noticeError(err);
 
-                    $('.signupErrors').html('Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! ');
+                    $('#ConfirmRegistrationBillMe').after('<span class="text-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                 }
 
+                $('#finalLoadingSpinner').remove();
                 $('#ConfirmRegistrationBillMe').removeAttr('disabled');
-            }, constants.JsonDataType);
+            });
 
             $('#ConfirmModal').on('hidden', function (e) {
                 var utilities = new Common.Utilities();
@@ -149,9 +160,9 @@ $(function () {
         $('#showDiscount').css('display', 'block');
     }
 
-    // TODO: Note I have not touched this handler yet.
-    // [dar] this handler is relevant for update/edit/view aspect of cart. Revisit when we address that.
+    //  flow goes inside this block where the order exists and is in process e.g. previously abandoned before finializing
     if (cartStateManager.getOrderRowId() > 0 && cartStateManager.getCheckoutInProcess()) {
+
         if (shippingAddressRequired && notificationsTesting === false) {
             // Following function lives in the register-during-checkout.js script
             // which will be in memory at this point and thus will have been hoisted.
@@ -172,7 +183,7 @@ $(function () {
         // The Cancel Registration button on 3rd tab
         $('#Canceller').on('click', function (e) {
             e.preventDefault();
-            var cancelOrderForm = cartStateManager.getCancelOrderForm();
+            var cancelOrderForm = $('#cancelOrder');
             cancelOrderForm.submit();
         });
 

@@ -6,6 +6,10 @@ using CUWebinars.Selenium.Core;
 using System;
 using System.Configuration;
 using CUWebinars.Selenium.Core.Firefox;
+using KesselRun.SeleniumCore.Enums;
+using KesselRun.SeleniumCore.Infrastructure;
+using KesselRun.SeleniumCore.Infrastructure.Factories;
+using KesselRun.SeleniumCore.Infrastructure.Factories.Contracts;
 
 namespace CUWebinars.CitrixDriver
 {
@@ -15,7 +19,7 @@ namespace CUWebinars.CitrixDriver
         private const string Organizer = "Organizer";
         private const string Panelist = "Panelist";
 
-        private static ITestDriver webDriver;
+        private static KesselRun.SeleniumCore.TestDrivers.Contracts.ITestDriver webDriver;
         private static CitrixWebPage citrixWebPage;
         private static TTSWebinarsContext context = new TTSWebinarsContext();
         private static DateTimeHelper dateTimeHelper = new DateTimeHelper();
@@ -23,6 +27,7 @@ namespace CUWebinars.CitrixDriver
         static void Main(string[] args)
         {
             Console.ForegroundColor = ConsoleColor.Green; // love the old green screen!
+
             PrimeAccessCodeAndPhoneBucket();
 
             var ttsWebinar = GetWebinar();
@@ -33,17 +38,23 @@ namespace CUWebinars.CitrixDriver
             {
 
                 //webDriver = new IeTestDriver { DriverPath = @ConfigurationManager.AppSettings["IeDriverPath"], DriverPort = 8889 };
-                webDriver = new FirefoxTestDriver
+
+                ITestDriverFactory foundry = new TestDriverFactory(new DriverOptions
                 {
-                    DriverPath = @ConfigurationManager.AppSettings["FireFoxBinaryPath"],
-                    DriverPort = 8889
-                };
-                webDriver.Initialize();
+                    DriverEngine = DriverEngine.AutoDetect,
+                    DriverExePath = @ConfigurationManager.AppSettings["FireFoxBinaryPath"],
+                    Port = 8889
+                });
+
+                webDriver = foundry.CreateTestDriver(DriverType.Firefox);
 
 
                 citrixWebPage = new CitrixWebPage(webDriver, ConfigurationManager.AppSettings["HomeUrl"]);
 
+                //  Open the page
                 citrixWebPage.Open();
+
+                //  Login, using the credentials in App.config
                 Login();
 
 

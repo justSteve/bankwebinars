@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq.Expressions;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
+using CUWebinars.Business.Core.Cache;
 using CUWebinars.Business.Core.Exceptions;
 using CUWebinars.Business.Migrations;
 using CUWebinars.Business.Models;
@@ -10,6 +11,7 @@ using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Notification.ViewModel;
 using CUWebinars.Business.Repository;
 using CUWebinars.NotificationSystem.Event;
+using CUWebinars.Web.Core.Cache;
 using DDay.iCal;
 using DDay.iCal.Serialization.iCalendar;
 using Newtonsoft.Json;
@@ -27,6 +29,7 @@ namespace CUWebinars.Business.Services
 {
     public class OrderManagementService : IEventSource, IOrderManagementService
     {
+        private readonly ICachingService _cachingService;
         private readonly IAffiliateRepository _affiliateRepository;
         private readonly IRegTypeRepository _regTypeRepository;
         private readonly IOrderRepository _orderRepository;
@@ -59,6 +62,7 @@ namespace CUWebinars.Business.Services
             _additionalLocationsRepository = additionalLocationsRepository;
             _logger = logger;
             _webUserRepository = webUserRepository;
+            _cachingService = new OrderCachingService();
         }
 
         public Order AssignAffiliateToOrder(Affiliate affiliate, Order order)
@@ -199,7 +203,15 @@ namespace CUWebinars.Business.Services
 
         public IDictionary<RegType, bool> GetOptionsByWebinarId(int id, bool detached)
         {
-            return _regTypeRepository.FindRegTypesByWebinarId(id, false);
+            var options = _cachingService.Get("options");
+
+            if (options == null)
+            {
+                options = _regTypeRepository.FindRegTypesByWebinarId(id, false);
+                _cachingService.Add("options", options, DateTime.Now.AddHours(1));
+            }
+
+            return (IDictionary<RegType, bool>)options;
         }
 
         public IList<Order> GetOrdersForLiveNotifications(int idWebinar)
