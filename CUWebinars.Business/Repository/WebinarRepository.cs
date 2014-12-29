@@ -58,29 +58,30 @@ namespace CUWebinars.Business.Repository
 
         public IQueryable<Topic> GetTopicsPerWebinar(int idWebinar)
         {
-            return ((TTSWebinarsContext) db).WebinarTopicXrefs
+            return ((TTSWebinarsContext)db).WebinarTopicXrefs
                 //.Include(x => x.Webinar)
                 //.Include(w => w.Topic)
                 .Where(t => t.idWebinar == idWebinar).Select(t => t.Topic);
         }
         public IQueryable<WebinarFile> GetWebinarFilesPerWebinar(int idWebinar)
         {
-            return ((TTSWebinarsContext) db).WebinarFiles
+            return ((TTSWebinarsContext)db).WebinarFiles
                 .Where(t => t.idWebinar == idWebinar);
         }
 
         public int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar)
         {
-            var regGroups = ((TTSWebinarsContext) db).RegTypesGroupsXrefs
-                .Where(t => t.idWebinar == idWebinar)    
-                ;
+            //var regGroups = ((TTSWebinarsContext) db).RegTypesGroupsXrefs
+            //    .Where(t => t.idWebinar == idWebinar)    
+            //    ;
             int regType = 0;
-            foreach (var x in regGroups)
-            {
-                regType = ((TTSWebinarsContext) db).RegTypesXrefs
-                    .Where(r => r.RegType.OptionLabel == registrationType).Select(r => r.idRegType).SingleOrDefault()
-                    ;
-            }
+            //foreach (var x in regGroups)
+            //{
+            regType = ((TTSWebinarsContext)db).RegTypesXrefs
+                .Where(r => r.RegType.OptionLabel == registrationType)
+                .Select(r => r.idRegType).SingleOrDefault()
+                ;
+            //}
             return regType;
 
         }
@@ -114,7 +115,7 @@ namespace CUWebinars.Business.Repository
 
         public IQueryable<Order> GetAllOrdersByWebinarForUser(int webinarId, int userId)
         {
-            return ((TTSWebinarsContext) db).Orders
+            return ((TTSWebinarsContext)db).Orders
                 .Where(o => o.OrderRows.FirstOrDefault().Webinar.idWebinar == webinarId && o.idUser == userId);
         }
 
@@ -161,11 +162,11 @@ namespace CUWebinars.Business.Repository
                 var row = order.OrderRows.SingleOrDefault();
                 if (row == null)
                 {
-                    
+
                     //TODO: log this exception condition
                     continue;
                 }
-                if (((TTSWebinarsContext) db).RegTypes.Find(row.RegistrationType).ShowLiveNotifications == "No"
+                if (((TTSWebinarsContext)db).RegTypes.Find(row.RegistrationType).ShowLiveNotifications == "No"
                     //&& Order.OrderStatus == OrderStatus.Abandoned
                     //|| row.Status == OrderStatus.InProcess
                     //|| row.Status == OrderStatus.Canceled
