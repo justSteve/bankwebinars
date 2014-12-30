@@ -207,11 +207,11 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
             }
         }).done(function (data) {
             if (data.Result === 'Success') {
-                $('#labelEmail').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Reset instructions have been sent. Follow instructions and come back here to log in...</span>');
+                $('#labelEmail').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Reset instructions are on the way.</span>');
             } else {
                 if (data['Invalid']) {
                     Rollbar.error("Invalid email address.");
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Are you sure you typed it corretly?</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Contact us at support@ttstrain.com if you believe this is in error.</span>');
                 } else {
                     $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Error. Please retry...</span>');
                 }

@@ -202,7 +202,7 @@ var Registration;
             $('#RegisterFields_BillingAddress_City').val(data.City);
             $('#RegisterFields_BillingAddress_State').val(data.State);
             $('#RegisterFields_BillingAddress_Zip').val(data.Zip);
-            $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;' + email.substring(email.indexOf('@')) + '</b>&nbsp; domain has been identified.</span>');
+            $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;' + email + '</b>&nbsp;</span>');
             $('#ShowInstitution').html(data.Institution + '<br>' + data.Address + '<br>' + data.City + ', ' + data.State + ' ' + data.Zip + '<br>');
             $('input[name=YesUseAddress]').focus();
         };
@@ -252,7 +252,7 @@ var Registration;
             } else {
                 $('#modalInstitution').modal('hide');
                 $('#labelEmail').fadeOut(500, function () {
-                    $(this).html('<span class="label label-success">&nbsp;&nbsp;' + $('#RegisterFields_Email').val() + ' will be used for your email address.</span>');
+                    $(this).html('<span class="label label-success">&nbsp;&nbsp;Recorded: ' + $('#RegisterFields_Email').val() + '</span>');
                     $(this).fadeIn(500);
                 });
             }

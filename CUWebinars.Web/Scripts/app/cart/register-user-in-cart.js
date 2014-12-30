@@ -93,8 +93,8 @@ var RegistrationInCart;
 
             $('#nonUSAddress').hide();
 
-            $('#getFirstLast').hide();
-
+            //commented out to accomodate GhostInspector
+            //$('#getFirstLast').hide();
             this.typeofAddressShipping = $('#RegisterFields_ShippingAddress_TypeOfAddress').val(Constants.TypeofAddressShipping);
             this.typeofAddressBilling = $('#RegisterFields_BillingAddress_TypeOfAddress').val(Constants.TypeofAddressBilling);
 
@@ -133,7 +133,9 @@ var RegistrationInCart;
                 });
 
                 $.when(showBillingInputs.resolve()).then(function () {
-                    $('#FullName').focus();
+                    //commented out to accomodate GhostInspector
+                    $('#RegisterFields_FirstName').focus();
+                    //$('#FullName').focus();
                 });
 
                 if (this.isShippindAddressRequired)
@@ -144,6 +146,7 @@ var RegistrationInCart;
                 $('#TheSubmitButton').prop('value', this.registerButtonText);
             }
 
+            // TODO Check this in FireFox. #TimeZone seems to be init because drpdwn is blank.
             //  set TimeZone to Central time if there is none.
             var timeZoneInput = $('#TimeZone');
 
@@ -228,7 +231,7 @@ var RegistrationInCart;
             $('#RegisterFields_BillingAddress_City').val(data.City);
             $('#RegisterFields_BillingAddress_State').val(data.State);
             $('#RegisterFields_BillingAddress_Zip').val(data.Zip);
-            $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;' + email.substring(email.indexOf('@')) + '</b>&nbsp; domain has been identified.</span>');
+            $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;' + email + '</b></span>');
             $('#ShowInstitution').html(data.Institution + '<br>' + data.Address + '<br>' + data.City + ', ' + data.State + ' ' + data.Zip + '<br>');
             $('input[name=YesUseAddress]').focus();
         };
@@ -273,7 +276,7 @@ var RegistrationInCart;
         StateManager.prototype.goToAddressFields = function (email) {
             ////console.log("call newPasswordView: " + email);
             if (email)
-                $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;' + $('#RegisterFields_Email').val() + ' will be used for your email address.</span>');
+                $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;Recorded: ' + $('#RegisterFields_Email').val() + ' </span>');
 
             if (this.zipCheckRequired) {
                 this.action = Action.CheckZip;
