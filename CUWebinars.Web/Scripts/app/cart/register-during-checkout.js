@@ -647,8 +647,6 @@ function completeOrder(userId, orderRowId, webinarId) {
 
     cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 
-    $('#ConfirmRegistrationBillMe').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-
     var confirmOrderForm = cartStateManager.getConfirmOrderForm();
 
     confirmOrderForm.on('submit', function (e) {
@@ -661,13 +659,26 @@ function completeOrder(userId, orderRowId, webinarId) {
         self.find('input[name="id"]').val(orderRowId);
 
         var data = $(this).serialize();
-
+        $('#ConfirmRegistrationBillMe').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
         $('#ConfirmRegistrationBillMe').attr('disabled', 'disabled');
 
-        $.post(self.attr('action'), data, function (result, status) {
+        $.ajax({
+            type: 'POST',
+            contentType: RegistrationInCart.Constants.FormPostContentType,
+            cache: false,
+            url: self.attr('action'),
+            dataType: RegistrationInCart.Constants.JsonDataType,
+            data: data,
+            beforeSend: function () {
+                $('#ConfirmRegistrationBillMe').attr('disabled', 'disabled');
+                
+            }
+        }).done(function (result) {
             if (result.Result === 'Success') {
-                cartStateManager.setOrderRowId(result.OrderRowID);
+                orderRowID = result.OrderRowID;
 
+                var err = new Error('Posted Order: ' + orderRowID);
+                //NREUM.noticeError(err);
                 $('#orderDetails').empty();
                 $('#orderDetails').append(result.Msg);
 
@@ -675,15 +686,17 @@ function completeOrder(userId, orderRowId, webinarId) {
 
                 $('#ConfirmModal').modal('show');
 
-                $('#finalLoadingSpinner').remove();
-
             } else {
-                $('.signupErrors').html('Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! ');
+
+                var err = new Error('FAILED posting Order: ');
+                //NREUM.noticeError(err);
+
+                $('#ConfirmRegistrationBillMe').after('<span class="text-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
             }
 
+            $('#finalLoadingSpinner').remove();
             $('#ConfirmRegistrationBillMe').removeAttr('disabled');
-
-        }, 'json');
+        });
 
         $('#ConfirmModal').on('hidden', function (e) {
 
@@ -718,8 +731,8 @@ function cancelOrder(orderId, webinarId) {
         $.post(cancelOrderForm.attr('action'), data, function (response, status, xhr) {
             if (response.success) {
                 
-                var NRerr = new Error('Suceeded in canceling order');
-                NREUM.noticeError(NRerr);
+                //var NRerr = new Error('Suceeded in cancelling order');
+                //NREUM.noticeError(NRerr);
 
                 var utilities = new Common.Utilities();
                 console.log('/webinar/details/' + webinarId);
@@ -730,8 +743,8 @@ function cancelOrder(orderId, webinarId) {
                 var err = new Error('Cancel Order Failure');
                 //NREUM.noticeError(err);
 
-                $('.signupErrors').html('Invalid Data. Try again?');
-                $('#ConfirmModal').modal('hide');
+                $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                $('#CancelModal').modal('hide');
             }
 
             // enable button again upon ending operation.

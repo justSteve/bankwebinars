@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc.Html;
+﻿using System.Threading;
+using System.Web.Mvc.Html;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
@@ -717,6 +718,9 @@ namespace CUWebinars.Web.Core.Orchestrators
         
         public CreateUserConfirmedViewModel PrepareViewForCartUserAddingPassword(string email, bool viaBillMePostRequest = false)
         {
+            UserAccount userAccount;
+            int retries = 0;
+
             var changeEmailFromKeyInputModel = new CreateUserConfirmedViewModel
             {
                 Email = email,
@@ -730,7 +734,15 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (viaBillMePostRequest)
                 changeEmailFromKeyInputModel.ScreenMessage = "Thank you for your order.";
 
-            var userAccount = _membershipService.GetUserAccountByEmail(_globals.Tenant, email);
+            // Try and find the user for up to 10s. If it still does not exist, chuck an exception.
+            do
+            {
+                userAccount = _membershipService.GetUserAccountByEmail(_globals.Tenant, email);
+
+                if (ReferenceEquals(userAccount, null))
+                    Thread.Sleep(500);
+
+            } while (retries++ < 20);
 
             if (ReferenceEquals(userAccount, null)) throw new Exception("User does not exist in system");
 

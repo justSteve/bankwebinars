@@ -1,2 +1,5 @@
 CUWebinars Error: 0 : Validation failed for webinar 1666 and User 32608
 CUWebinars Error: 0 : ERROR MailerSmtpException: showmesomeandroid-test40@yahoo.com.au Subject: Confirmation of Registration: Conducting Financial Investigations - What Law Enforcement Needs To Know ErrorMsg: Failure sending mail. Timestamp was: 27/12/2014 9:49:51 AM ExceptionType was: SmtpException InnerExceptionType was: System.Net.WebException
+CUWebinars Error: 0 : Validation failed for webinar 1727 and User 32588
+CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32586
+CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32586

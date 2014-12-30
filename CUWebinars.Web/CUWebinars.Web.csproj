@@ -391,8 +391,6 @@
     <Compile Include="ViewModel\RegistrationSummaryViewModel.cs" />
     <Compile Include="ViewModel\WebinarFileViewModel.cs" />
     <Content Include="App_Data\Orders\OrderMigrator.xlsm" />
-    <Content Include="App_Data\Orders\OrderImporter.xlsm" />
-    <Content Include="App_Data\Orders\OrdersImporter.xlsm" />
     <Content Include="App_Data\Orders\AffiliateOrdersImporter.xlsm" />
     <None Include="log4net.config">
       <SubType>Designer</SubType>
