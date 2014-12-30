@@ -228,12 +228,20 @@ namespace CUWebinars.Web.Controllers
 
 
         [System.Web.Mvc.AllowAnonymous]
-        public ActionResult OrderComplete()
+        public ActionResult OrderComplete(string id)
         {
-            //TODO This is a landing page for post cart submission.  
-            return View();
+            // HACK: parameter is named id to match the Default route. It will actually be an email address and not an id.
+            if (ModelState.IsValid)
+            {
+                var createUserConfirmedViewModel =
+                    _accountControllerOrchestrator.PrepareViewForCartUserAddingPassword(id, true);
 
+                return View("AddPasswordForCartCreatedUser", createUserConfirmedViewModel);
+            }
+
+            return this.ModelStateJson(ModelState);
         }
+
         public ActionResult MyWebinars()
         {
             var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();

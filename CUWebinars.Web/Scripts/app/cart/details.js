@@ -13,6 +13,8 @@ $(function () {
         cartStateManager.setCancelOrderForm($('#cancelOrder'));
         cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 
+        console.log('initialize hit');
+
         cartStateManager.getConfirmOrderForm().on('submit', function (e) {
             //Rollbar.info('submitting confirmOrder form');
             e.preventDefault();
@@ -56,7 +58,7 @@ $(function () {
                     var err = new Error('FAILED posting Order: ');
                     //NREUM.noticeError(err);
 
-                    $('#ConfirmRegistrationBillMe').after('<span class="text-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                    $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                 }
 
                 $('#finalLoadingSpinner').remove();
@@ -73,8 +75,11 @@ $(function () {
         var cancelOrderForm = cartStateManager.getCancelOrderForm();
 
         cancelOrderForm.on('submit', function (e) {
+
+            console.log('cancelOrderForm submit hit');
             //Rollbar.info('Submitting cancelOrderForm');
             e.preventDefault();
+            e.stopImmediatePropagation();
 
             $('#cancelModalOrderId').val(cartStateManager.getOrderId());
             var data = $(this).serialize();
@@ -89,7 +94,7 @@ $(function () {
 
                 $.post(self.attr('action'), data, function (response, status, xhr) {
                     if (response.success) {
-                        var err = new Error('Suceeded in canceling order');
+                        var err = new Error('Suceeded in cancelling order');
                         //NREUM.noticeError(err);
 
                         var utilities = new Common.Utilities();
@@ -98,8 +103,9 @@ $(function () {
                     } else {
                         var err = new Error('Cancel Order Failure');
                         //NREUM.noticeError(err);
-                        $('.signupErrors').html('Invalid Data. Try again?');
-                        $('#ConfirmModal').modal('hide');
+
+                        $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                        $('#CancelModal').modal('hide');
                     }
 
                     // enable button again upon ending operation.
@@ -119,13 +125,14 @@ $(function () {
             });
 
             $('#CancelModal').modal('show');
+
         });
     };
 
     cartStateManager = new OrderRegistration.StateManager();
 
     cartStateManager.setWebinarId(webinarId); // webinarId is set in a script tab in razor view Details.cshtml
-    cartStateManager.setOrderRowId(orderRowId); // orderRowId is set at top of this file
+    cartStateManager.setOrderRowId(orderRowId); // orderRowId is set in the razor view Details.cshtml
     cartStateManager.setIsUserLoggedIn(isUserLoggedIn); // isUserLogged is set in a script tab in razor view Details.cshtml
     cartStateManager.setCheckoutInProcess(checkoutInProcess);
 
@@ -169,15 +176,16 @@ $(function () {
             hookUpModal($('#UserDetailsModal'));
         }
 
+        cartStateManager.setOrderId(orderId);
+
         // see top of this file
         checkoutConfirm.initialize();
 
-        // The Bill Me button on 3rd tab
+         //The Bill Me button on 3rd tab
         $('#ConfirmRegistrationBillMe').on('click', function (e) {
             e.preventDefault();
             var confirmOrderForm = $('#confirmOrder');
             confirmOrderForm.submit();
-            confirmOrderForm.off('submit');
         });
 
         // The Cancel Registration button on 3rd tab
@@ -193,12 +201,12 @@ $(function () {
         hookUpChangeTypeLogic($('#RegType'));
         hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
 
-        //var beigeFormArea = signUpFormContainer.find('div.well');
-        //beigeFormArea.height($('#confirmation').height() + 30);
+        ////var beigeFormArea = signUpFormContainer.find('div.well');
+        ////beigeFormArea.height($('#confirmation').height() + 30);
     }
 
     /* Submit event for the big green SignUp button */
-    signUpForm.submit(function (e) {
+    signUpForm.on('submit', function (e) {
         e.preventDefault();
 
         var beigeFormArea = signUpFormContainer.find('div.well');
@@ -251,7 +259,7 @@ $(function () {
 
                     $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
 
-                        if (status == 'error') {
+                        if (status === 'error') {
                             $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
                             $('#loadingSpinner').remove();
                             $('#confirmationTab a').tab('show');
@@ -273,13 +281,12 @@ $(function () {
                                 e.preventDefault();
                                 var confirmOrderForm = $('#confirmOrder');
                                 confirmOrderForm.submit();
-                                confirmOrderForm.off('submit');
                             });
 
                             // The Cancel Registration button on 3rd tab
                             $('#Canceller').on('click', function(e) {
                                 e.preventDefault();
-                                var cancelOrderForm = cartStateManager.getCancelOrderForm();
+                                var cancelOrderForm = $('#cancelOrder');
                                 cancelOrderForm.submit();
                             });
 

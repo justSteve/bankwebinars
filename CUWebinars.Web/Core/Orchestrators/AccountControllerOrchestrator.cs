@@ -1,4 +1,6 @@
-﻿using BrockAllen.MembershipReboot;
+﻿using System.Threading;
+using System.Web.Mvc.Html;
+using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
@@ -551,6 +553,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
                 _stateService.ClearValue(DomainConstants.VerificationKey);
+                _stateService.ClearValue(DomainConstants.UserCreatedDuringCartCheckout);
 
                 // verify the user to unlock functionality like PasswordReset
                 _membershipService.VerifyEmailFromKey(
@@ -713,8 +716,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             return loginModel;
         }
         
-        public CreateUserConfirmedViewModel PrepareViewForCartUserAddingPassword(string email)
+        public CreateUserConfirmedViewModel PrepareViewForCartUserAddingPassword(string email, bool viaBillMePostRequest = false)
         {
+            UserAccount userAccount;
+            int retries = 0;
+
             var changeEmailFromKeyInputModel = new CreateUserConfirmedViewModel
             {
                 Email = email,
@@ -725,7 +731,18 @@ namespace CUWebinars.Web.Core.Orchestrators
                 UserIsLoggedIn = _request.IsAuthenticated
             };
 
-            var userAccount = _membershipService.GetUserAccountByEmail(_globals.Tenant, email);
+            if (viaBillMePostRequest)
+                changeEmailFromKeyInputModel.ScreenMessage = "Thank you for your order.";
+
+            // Try and find the user for up to 10s. If it still does not exist, chuck an exception.
+            do
+            {
+                userAccount = _membershipService.GetUserAccountByEmail(_globals.Tenant, email);
+
+                if (ReferenceEquals(userAccount, null))
+                    Thread.Sleep(500);
+
+            } while (retries++ < 20);
 
             if (ReferenceEquals(userAccount, null)) throw new Exception("User does not exist in system");
 
@@ -733,7 +750,21 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             if (hasAlreadyVerifiedAccount)
             {
-                changeEmailFromKeyInputModel.ScreenMessage = "You've already created your initial password. Please use the Password Reset feature on the login page to reset your password.";
+                var loginLinkBuilder = new TagBuilder("a");
+                loginLinkBuilder.MergeAttributes(new Dictionary<string, string>{{"href", @"/Account/Login"}});
+                loginLinkBuilder.SetInnerText("Login Page");
+
+                var para1TagBuilder = new TagBuilder("div");
+                para1TagBuilder.InnerHtml = "You've already created your initial password.";
+
+                var para2TagBuilder = new TagBuilder("div");
+                para2TagBuilder.InnerHtml =
+                    string.Format("Please use the Password Reset feature on the {0} to reset your password.", loginLinkBuilder.ToString(TagRenderMode.Normal));
+
+                changeEmailFromKeyInputModel.ScreenMessage =
+                    string.Concat(para1TagBuilder.ToString(TagRenderMode.Normal),
+                        para2TagBuilder.ToString(TagRenderMode.Normal));
+
                 return changeEmailFromKeyInputModel;
             }
 

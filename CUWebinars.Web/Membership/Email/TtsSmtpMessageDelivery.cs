@@ -24,7 +24,7 @@ namespace CUWebinars.Web.Membership.Email
                 _stateService.HasValue(DomainConstants.UserCreatedDuringCartCheckout) || 
                 _stateService.HasValue(DomainConstants.UserCreatedViaMigrator) ||
                 _stateService.HasValue(DomainConstants.CartCreatedUserPasswordCreate) ||
-                msg.Subject.Contains("Email Account Verified"))
+                msg.Subject.Equals(string.Empty))
             {
                 _stateService.ClearValue(DomainConstants.UserCreatedDuringCartCheckout);
                 return;
