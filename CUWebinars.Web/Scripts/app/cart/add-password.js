@@ -30,7 +30,11 @@ $(function() {
                 addPasswordContainer.height(containerHeight);
                 var formParent = addPasswordForm.parent();
                 addPasswordForm.fadeOut();
-                formParent.prepend('<div class="legendImitator">Password Added</div><span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;You have successfully set your password....</span>');
+                formParent.prepend('<div class="legendImitator">Password Added</div><span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;You have successfully set your password....</span><div>You have now been logged in.<div>');
+
+                $('#loginContainer').empty().load('/Account/GetLoginPartial', function(e) {
+                    //  do nothing. It just displays the name of the logged in user as a link. No further action required.
+                });
             }
         });
     });

@@ -387,6 +387,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
                     //console.log('success: ' + data.Result);
                     regUserStateManager.setAction('');
+                    registerDuringCheckout.emailOfNewUser = $.trim($('#RegisterFields_Email').val());
 
                     // This 'if' guard may not be required
                     if (utilities.relativePathStartsWith(payload['returnUrl'])) {
@@ -690,7 +691,7 @@ function completeOrder(userId, orderRowId, webinarId) {
             console.log('/webinar/details/' + webinarId);
             var err = new Error('/webinar/details/' + webinarId);
             //NREUM.noticeError(err);
-            utilities.goToUrl('/Account/OrderComplete/');
+            utilities.goToUrl('/Account/OrderComplete/' + registerDuringCheckout.emailOfNewUser);
         });
     });
     confirmOrderForm.submit();

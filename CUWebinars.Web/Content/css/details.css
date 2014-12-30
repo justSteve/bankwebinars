@@ -57,3 +57,12 @@ blockquote {
     padding: 5px;
     margin: 5px;    
 }
+
+#addPasswordDoneMessageContainer {
+    min-height: 300px;
+    margin-left: 200px;
+}
+
+#addPasswordDoneMessageContainer div{
+    margin: 10px;
+}
