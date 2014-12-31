@@ -53,6 +53,7 @@ namespace CUWebinars.Business.Tests.UnitTests
 
 
         [TestMethod]
+        [TestCategory(TestCategories.Services)]
         public void CreateOrderRowInvokesFindRegType()
         {
             //  Arrange
@@ -67,6 +68,7 @@ namespace CUWebinars.Business.Tests.UnitTests
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.Services)]
         public void CreateOrderRowInvokesCreateOrderRowOnRepository()
         {
             //  Arrange
@@ -85,6 +87,7 @@ namespace CUWebinars.Business.Tests.UnitTests
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.Services)]
         public void AssignUserToOrderInvokesAssignWebUserToOrderOfOrderRepository()
         {
             //  Arrange
@@ -111,6 +114,7 @@ namespace CUWebinars.Business.Tests.UnitTests
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.Services)]
         public void AssignUserToOrderThrowsExceptionWhenPassedNullReference()
         {
             //  Arrange

@@ -182,7 +182,7 @@ var RegistrationInCart;
 
             $('#TimeZone').val(data.TimeZone);
 
-            $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;Email and Zipcode are recorded.</span>');
+            $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;Email - Zipcode.</span>');
             $('#TheSubmitButton').prop('value', this.registerButtonText);
 
             if (this.inputAction === InputAction.EnterKeyPress)
@@ -231,7 +231,7 @@ var RegistrationInCart;
             $('#RegisterFields_BillingAddress_City').val(data.City);
             $('#RegisterFields_BillingAddress_State').val(data.State);
             $('#RegisterFields_BillingAddress_Zip').val(data.Zip);
-            $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;' + email + '</b></span>');
+            $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;' + email + '</b>&nbsp;</span>');
             $('#ShowInstitution').html(data.Institution + '<br>' + data.Address + '<br>' + data.City + ', ' + data.State + ' ' + data.Zip + '<br>');
             $('input[name=YesUseAddress]').focus();
         };
@@ -276,7 +276,7 @@ var RegistrationInCart;
         StateManager.prototype.goToAddressFields = function (email) {
             ////console.log("call newPasswordView: " + email);
             if (email)
-                $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;Recorded: ' + $('#RegisterFields_Email').val() + ' </span>');
+                $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;Recorded: ' + $('#RegisterFields_Email').val() + '.</span>');
 
             if (this.zipCheckRequired) {
                 this.action = Action.CheckZip;

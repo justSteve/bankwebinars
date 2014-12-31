@@ -415,40 +415,7 @@ namespace CUWebinars.Web.Tests.UnitTests
             //  Assert                        
             _stateServiceMock.Verify(i => i.GetValue<string>(DomainConstants.VerificationKey), Times.Once);
         }
-        
-        [TestMethod]
-        public void RegisterAndLogInUserClearsTempPasswordFromSession()
-        {
-            //  Arrange
-            var verificationKey = TestHelper.RandomStringFast(5);
-            var institution = new Institution {idInstitution = 19};
-            _stateServiceMock.Setup(i => i.HasValue(DomainConstants.TempPassword)).Returns(true);
-            _stateServiceMock.Setup(i => i.ClearValue(DomainConstants.TempPassword)).Verifiable();
-            _stateServiceMock.Setup(i => i.HasValue(DomainConstants.VerificationKey)).Returns(true);
-            _stateServiceMock.Setup(i => i.GetValue<string>(DomainConstants.VerificationKey)).Returns(verificationKey);
-            _membershipServiceMock.Setup(
-                i =>
-                    i.ProcessInstitutionForUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
-                        It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())
-                        ).Returns(institution);
-
-            var registerViewModel = TestHelper.GetRegisterViewModel();
-
-            _accountControllerOrchestrator = new AccountControllerOrchestrator(
-                _loggerMock.Object,
-                _membershipServiceMock.Object,
-                _orderManagementServiceMock.Object,
-                _stateServiceMock.Object,
-                WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
-                );
-            
-            //  Act
-            _accountControllerOrchestrator.RegisterAndLogInUser(registerViewModel);
-
-            //  Assert                        
-            _stateServiceMock.Verify();
-        }
+       
 
         [TestMethod]
         public void RegisterAndLogInUserDoesNotClearsTempPasswordFromSessionWhenNotInSession()

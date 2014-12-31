@@ -202,7 +202,7 @@ var Registration;
             $('#RegisterFields_BillingAddress_City').val(data.City);
             $('#RegisterFields_BillingAddress_State').val(data.State);
             $('#RegisterFields_BillingAddress_Zip').val(data.Zip);
-            $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;' + email + '</b>&nbsp;</span>');
+            $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;Recorded: ' + email + '</b>&nbsp;</span>');
             $('#ShowInstitution').html(data.Institution + '<br>' + data.Address + '<br>' + data.City + ', ' + data.State + ' ' + data.Zip + '<br>');
             $('input[name=YesUseAddress]').focus();
         };

@@ -64,28 +64,6 @@ namespace CUWebinars.Business.Tests.UnitTests
             _orderManagementServiceMock.Verify();
         }
         
-        [TestMethod]
-        [Ignore]
-        [TestCategory(TestCategories.OrderManagementCommandHandlers)]
-        public void AddOrderRowCommandHandlerCallsGetDiscount()
-        {
-            //  Arrange
-            //PopulateFields();
-
-            //_orderManagementServiceMock.Setup(
-            //    o => o.CreateOrderRow(_webinar, _additionalLocations, _idRegType))
-            //    .Returns(new OrderRow());
-            //_orderManagementServiceMock.Setup(o => o.GetDiscount(email)).Verifiable();
-
-
-            //var orderManagementCommandHandler = new OrderManagementCommandHandlers(_orderManagementServiceMock.Object,_membershipServiceMock.Object, new PostCommitRegistrator());
-
-            ////  Act
-            //orderManagementCommandHandler.Handle(_addOrderRowCommand);
-
-            ////  Assert
-            //_orderManagementServiceMock.Verify();
-        }
 
         [TestMethod]
         [TestCategory(TestCategories.OrderManagementCommandHandlers)]
@@ -144,7 +122,7 @@ namespace CUWebinars.Business.Tests.UnitTests
             };
 
             var userAccountService =
-                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase()));
+                new UserAccountServiceHappyPathFake(new UserAccountRepositoryFake());
 
             var userAccount = userAccountService.CreateAccount(cuwebinars, password, email);
 
@@ -199,7 +177,7 @@ namespace CUWebinars.Business.Tests.UnitTests
             };
 
             var userAccountService =
-                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase()));
+                new UserAccountServiceHappyPathFake(new UserAccountRepositoryFake());
 
             var userAccount = userAccountService.CreateAccount(cuwebinars, password, email);
 
@@ -255,7 +233,7 @@ namespace CUWebinars.Business.Tests.UnitTests
             };
 
             var userAccountService =
-                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase()));
+                new UserAccountServiceHappyPathFake(new UserAccountRepositoryFake());
 
             var userAccount = userAccountService.CreateAccount(cuwebinars, password, email);
 
@@ -312,7 +290,7 @@ namespace CUWebinars.Business.Tests.UnitTests
             };
 
             var userAccountService =
-                new UserAccountServiceHappyPathFake(new DefaultUserAccountRepository(new DefaultMembershipRebootDatabase()));
+                new UserAccountServiceHappyPathFake(new UserAccountRepositoryFake());
 
             var userAccount = userAccountService.CreateAccount(cuwebinars, password, email);
 

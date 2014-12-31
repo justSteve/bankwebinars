@@ -10,5 +10,6 @@
         internal const string OrderManagementCommandHandlers = "Order Management Command Handlers";
         internal const string OrderManagementServiceIntegration = "Order Management Service Integration";
         internal const string OrderRepositoryIntegration = "Order Repository Integration";
+        internal const string Services = "Services";
     }
 }
