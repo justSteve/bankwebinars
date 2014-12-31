@@ -4,7 +4,6 @@ using KesselRun.SeleniumCore.Infrastructure.Factories;
 using KesselRun.SeleniumCore.Infrastructure.Factories.Contracts;
 using KesselRun.SeleniumCore.TestDrivers.Browsers.Ie;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Configuration;
 using System.Globalization;
 
 namespace CUWebinars.WebUi.Tests2.Browsers.Ie

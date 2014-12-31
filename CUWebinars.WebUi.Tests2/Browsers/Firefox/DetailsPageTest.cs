@@ -575,7 +575,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         }
 
         [TestMethod]
-        [Ignore]
+        //[Ignore]
         [TestCategory(TestCategories.Notifications)]
         [TestCategory(TestCategories.Firefox)]
         public void ExistingUserLogsInAndMakesCdHardcopyOrderWith1AdditionalLocation()
