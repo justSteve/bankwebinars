@@ -742,7 +742,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 if (ReferenceEquals(userAccount, null))
                     Thread.Sleep(500);
 
-            } while (retries++ < 20);
+            } while (retries++ < _globals.RetryCount);
 
             if (ReferenceEquals(userAccount, null)) throw new Exception("User does not exist in system");
 

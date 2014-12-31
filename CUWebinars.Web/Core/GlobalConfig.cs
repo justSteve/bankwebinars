@@ -19,6 +19,7 @@ namespace CUWebinars.Web.Core
         public string RelativeConfirmChangeUrl { get; private set; }
         public string RelativeCancelVerificationUrl { get; private set; }
         public string RelativeConfirmPasswordResetUrl { get; private set; }
+        public int RetryCount{ get; private set; }
         public string StorageAccessKey { get; private set; }
         public string StorageAccountName { get; private set; }
         public string Tenant { get; private set; }
@@ -55,6 +56,7 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.RelativeConfirmChangeUrl = ApplicationSettingsSection["RelativeConfirmChangeUrl"];
                 UniqueInstance.RelativeCancelVerificationUrl = ApplicationSettingsSection["RelativeCancelVerificationUrl"];
                 UniqueInstance.RelativeConfirmPasswordResetUrl = ApplicationSettingsSection["RelativeConfirmPasswordResetUrl"];
+                UniqueInstance.RetryCount = int.Parse(ApplicationSettingsSection["RetryCount"]);
                 UniqueInstance.StorageAccessKey = ApplicationSettingsSection["StorageAccessKey"];
                 UniqueInstance.StorageAccountName = ApplicationSettingsSection["StorageAccountName"];
                 UniqueInstance.Tenant = ApplicationSettingsSection["Tenant"];
