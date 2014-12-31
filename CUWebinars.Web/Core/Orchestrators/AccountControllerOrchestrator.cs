@@ -740,7 +740,16 @@ namespace CUWebinars.Web.Core.Orchestrators
                 userAccount = _membershipService.GetUserAccountByEmail(_globals.Tenant, email);
 
                 if (ReferenceEquals(userAccount, null))
+                {
+                    // sleeping for half second, so 2 retries will result in 1s of sleeping.
                     Thread.Sleep(500);
+
+                    // Every 20 seconds, log the fact that the flow has been stuck here for the then current duration.
+                    if (retries%40 == 0)
+                    {
+                        _logger.Info(string.Format("UserAccount returning null after {0} seconds.", retries/2));
+                    }
+                }
 
             } while (retries++ < _globals.RetryCount);
 
