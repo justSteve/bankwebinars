@@ -59,12 +59,12 @@
         <script type="text/javascript">
             window.$zopim || (function (d, s) {
                 var z = $zopim = function (c) { z._.push(c) }, $ = z.s =
-                d.createElement(s), e = d.getElementsByTagName(s)[0]; z.set = function (o) {
+                                                                   d.createElement(s), e = d.getElementsByTagName(s)[0]; z.set = function (o) {
                     z.set.
-                    _.push(o)
+                        _.push(o)
                 }; z._ = []; z.set._ = []; $.async = !0; $.setAttribute('charset', 'utf-8');
                 $.src = '//v2.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU'; z.t = +new Date; $.
-                type = 'text/javascript'; e.parentNode.insertBefore($, e)
+                    type = 'text/javascript'; e.parentNode.insertBefore($, e)
             })(document, 'script');
         </script>
             <!--End of Zopim Live Chat Script-->
@@ -211,7 +211,7 @@
                 <li><i class="icon-envelope"></i></li>
             </ul>
         </div>
-        <div class="search-wrapper">
+        <div id="search-wrapper" class="search-wrapper">
             <form class="search" method="post" action="/home/search">
                 <ul class="notifications" id="userNotifications">
                     <li><i class="icon-search"></i></li>
@@ -372,7 +372,13 @@
     @Scripts.Render("~/bundles/jqueryui")
     @Scripts.Render("~/bundles/CrispApp")
 
-
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#search-wrapper").mouseover(function () {
+                $("#search-box").show();
+            });
+        });
+    </script>
     @RenderSection("scripts", required: false)
 
 </body>

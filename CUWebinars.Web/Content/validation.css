@@ -1,22 +1,28 @@
 ﻿/* styles for validation helpers */
 .field-validation-error {
-  color: #ff0000;
-  font-weight: bold;
+    color: #ff0000;
+    font-weight: bold;
+    list-style-type: none;
 }
+
 .field-validation-valid {
-  display: none;
+    display: none;
 }
+
 input.input-validation-error {
-  border: 1px solid #ff0000;
+    border: 1px solid #ff0000;
 }
+
 input[type="checkbox"].input-validation-error {
-  border: 0 none;
+    border: 0 none;
 }
+
 .validation-summary-errors {
-  color: #ff0000;
-  font-weight: bold;
-  font-size: 1.1em;
+    color: #ff0000;
+    font-weight: bold;
+    font-size: 1.1em;
 }
+
 .validation-summary-valid {
-  display: none;
+    display: none;
 }
