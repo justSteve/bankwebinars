@@ -201,7 +201,7 @@
             <li><a class="socicon small twitterbird" href="http://twitter.com/#!/ttstrain" target="_blank" data-placement="bottom" title="Follow us on Twitter"></a></li>
             <li><a class="socicon small linkedin" href="https://www.linkedin.com/company/bankwebinars.com" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
         </ul>
-        <div class="search-wrapper">
+        @*<div class="search-wrapper">
             <ul class="notifications" id="userDiscount">
                 <li><i class="icon-info-sign"></i></li>
             </ul>
@@ -210,13 +210,13 @@
             <ul class="notifications" id="userNotifications">
                 <li><i class="icon-envelope"></i></li>
             </ul>
-        </div>
+        </div>*@
         <div id="search-wrapper" class="search-wrapper">
-            <form class="search" method="post" action="/home/search">
+            <form class="search" method="post" action="/webinar/search">
                 <ul class="notifications" id="userNotifications">
                     <li><i class="icon-search"></i></li>
                 </ul>
-                <input id="search-box" type="text" placeholder="search + enter">
+                <input id="search-box" name="searchTerm" type="text" placeholder="search + enter">
             </form>
         </div>
 

@@ -59,7 +59,7 @@ h1 a:hover, h2 a:hover, h3 a:hover, h4 a:hover, .slide-to-top .trigger:hover { c
 body, input, textarea, button { font-family: "Source Sans Pro", Sans-Serif;} /* http://css-tricks.com/sans-serif/ */
 .hero-unit h1,.hero-unit h2, .short_headline, .call-to-action h3, h1, h2, h3, h4, h5, h6 {font-family:"Raleway", Sans-Serif;font-weight:300}
 .short_headline, .call-to-action h3, h2, h3, h4, h5, h6 {font-weight:500}
-blockquote, .statement, .header .tagline { font-family: Garamond, "Apple Garamond", "Palatino Linotype", Palatino, Palladio, "URW Palladio L", "Book Antiqua", Baskerville, "Bookman Old Style", "Bitstream Charter", "Nimbus Roman No9 L", "ITC Garamond Narrow", "New Century Schoolbook", "Century Schoolbook", "Century Schoolbook L", Georgia, serif;}
+/*blockquote, .statement, .header .tagline { font-family: Garamond, "Apple Garamond", "Palatino Linotype", Palatino, Palladio, "URW Palladio L", "Book Antiqua", Baskerville, "Bookman Old Style", "Bitstream Charter", "Nimbus Roman No9 L", "ITC Garamond Narrow", "New Century Schoolbook", "Century Schoolbook", "Century Schoolbook L", Georgia, serif;}*/
 
 /* Link Styles
 ================================================== */
@@ -152,13 +152,13 @@ ul.circle li { list-style-type: disc }
 ================================================== */
 blockquote {
     clear: both;
-    font-style: italic;
+    /*font-style: italic;*/
     margin-left: 0px;
     margin-right: 0px;
     padding: 10px 20px 0 50px;
     position: relative;
     quotes: none;
-    background: url(http://images.ttstrain.com/images/open-quote.png) 0 0 no-repeat;
+    /*background: url(http://images.ttstrain.com/images/open-quote.png) 0 0 no-repeat;*/
     border: 0px;
     font-size: 120%;
     line-height: 175%;
@@ -1842,11 +1842,13 @@ h2,  h3 { page-break-after: avoid; }
 {
 	color: #b94a48;	
 	padding: 10px;
+    list-style-type: none;
 }
 .validation-summary-errors
 {
 	color: #b94a48;	
 	padding: 10px;
+    list-style-type: none;
 }
 
 

@@ -609,6 +609,7 @@
     <Content Include="Views\Account\EditContactInfo.cshtml" />
     <Content Include="Views\Account\OrderComplete.cshtml" />
     <Content Include="Views\Account\AddPasswordForCartCreatedUser.cshtml" />
+    <Content Include="Views\Webinar\Search.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\packages\Selenium.WebDriver.ChromeDriver.2.9.0.0\content\chromedriver.exe">
