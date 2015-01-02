@@ -200,6 +200,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public void ResetPassword(string tenant, string email)
         {
+            _stateService.SetValue(DomainConstants.ResetPasswordRequested, true);
             _membershipService.ResetPassword(tenant, email);
         }
 

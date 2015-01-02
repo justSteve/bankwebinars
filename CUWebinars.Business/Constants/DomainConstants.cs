@@ -15,6 +15,7 @@ namespace CUWebinars.Business.Constants
         public const string JoinUrl = "joinUrl";
         public const string LoggerConnectionStringName = "LoggerConnection";
         public const string RazorExtension = ".cshtml";
+        public const string ResetPasswordRequested = "ResetPasswordRequested";
         public const string RegistrantKey = "registrantKey";
         public const string ShippingAddress = "Shipping";
         public const string ResourcePathTemplate = @"Notification\Templates";

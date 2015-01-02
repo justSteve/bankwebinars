@@ -1,5 +1,6 @@
 ﻿using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core.Exceptions;
 using CUWebinars.Business.Notification;
 using CUWebinars.Web.Services;
 using RazorEngine;
@@ -26,6 +27,12 @@ namespace CUWebinars.Web.Membership.Email
             string msg,
             IDictionary<string, string> values)
         {
+            if (accountEvent.GetType().Name.StartsWith("AccountCreatedEvent") &&
+                _stateService.GetValue<bool>(DomainConstants.ResetPasswordRequested))
+            {
+                throw new UserCreatedMembershipException("User has requested a password but an AccountCreatedEvent was added to the event bus. This happens when the user is not  yet verified by MembershipReboot. Admin intervention required.");
+            }
+
             //  create a configuration file for the template service
             var config = new FluentTemplateServiceConfiguration(c =>
             {
