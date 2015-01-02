@@ -10,55 +10,120 @@ $(function () {
         MANAGE.idOrder = orderIdInput.val();
 
         $('#orderRelatedFields').load('/Admin/GetOrderDetails/' + MANAGE.idOrder, function () {
+
+            MANAGE.locationsSpanPrefix = 'LocationSpan-';
+            MANAGE.breakSuffix = '-break';
+            
             MANAGE.primeDomVariables();
             MANAGE.wireUpHandlers();
             MANAGE.numberAddLocsLabel = $('#nrAddLocs');
             MANAGE.addLocsUnitPrice = $('#CostPerAdditionalLocation').val();
             MANAGE.addLocsTotalPrice = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions').val();
             MANAGE.retrivedAdditionalLocations = false;
+
+            MANAGE.wireUpTrashIcons();
         });
     });
-    
 });
 
+MANAGE.addAdditionalLocation = function (e) {
+
+    e.preventDefault();
+
+    var newId;
+
+    if (MANAGE.numberOfAdditionalLocations === 0) {
+        newId = 0;
+    } else {
+        // first get the last previous email input
+        var lastInput = MANAGE.wrapperDiv.find('input[type="email"]:last');
+        // get its id
+        var lastInputId = lastInput.attr('id');
+        var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
+        newId = id + 1;
+    }
+
+    var trashIconId = newId + '-AdditionLocationEmail-delete';
+    var additionalLocationEmailId = 'AdditionalLocationEmail_' + newId;
+
+    MANAGE.wrapperDiv.append('<span id="' + MANAGE.locationsSpanPrefix + newId + '"><input id="' + additionalLocationEmailId + '" name="AdditionalLocations[' + newId + '].Email" type="email" placeholder="Enter email address" aria-describedby="AdditionalLocationEmail_'+ newId +'-error" aria-invalid="false"></input>&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + trashIconId + '"></i></span> <br id="' + newId + MANAGE.breakSuffix + '">');
+
+    $('#' + trashIconId).on('click', MANAGE.deleteItem);
+    $('#' + additionalLocationEmailId).focus();
+
+    MANAGE.numberOfAdditionalLocations += 1;
+};
+
+MANAGE.deleteItem = function (e) {
+
+    e.preventDefault();
+
+    MANAGE.numberOfAdditionalLocations -= 1;
+    
+    var trashClicked = event.currentTarget.id;
+    var idx = trashClicked.substring(0, 1);
+    var spanToRemove = MANAGE.locationsSpanPrefix + idx;
+
+    $('#' + spanToRemove).hide(500, function () {
+        $(this).remove();
+    });
+
+    $('#' + idx + MANAGE.breakSuffix).hide(500, function () {
+        $(this).remove();
+    });
+};
+
+MANAGE.wireUpTrashIcons = function () {
+    
+    var trashCans = MANAGE.wrapperDiv.find('i');
+    MANAGE.numberOfAdditionalLocations = MANAGE.numberAddLocsLabel.text();
+
+    $.each(trashCans, function (idx, i) {
+        $(i).on('click', MANAGE.deleteItem);
+    });
+};
+
 MANAGE.primeDomVariables = function() {
-    MANAGE.addLocationsButton = $('#AddLocationsButton');
-    MANAGE.newLocationsContainer = $('#NewLocationsContainer'); // commented out in razor
+    MANAGE.wrapperDiv = $('#collectAdditionalLocations');
 };
 
 MANAGE.wireUpHandlers = function () {
 
-    locationsSpanPrefix = 'LocationSpan-',
-    breakSuffix = '-break';
-
-    var modalFormOptions = {
-        keyboard: true,
-        backdrop: 'static',
-        show: true
-    };
-
-
-    $('#AddLocationsButton').on('click', function (e) {
+    $('#addLocationsButton').on('click', MANAGE.addAdditionalLocation);
+    $('#editOrderSubmitButton').on('click', function (e) {
 
         e.preventDefault();
 
-        var webinarId = $('#WebinarId').val().toString();
-        var userId = $('#UserId').val().toString();
+        var emailInputs = MANAGE.wrapperDiv.find('input[type="email"]');
 
-        modalFormOptions.remote = '/Admin/GetAdditionalLocationByOrderId/' + MANAGE.idOrder;
+        $.each(emailInputs, function (idx, i) {
+            $(i).attr('name', 'AdditionalLocations[' + idx + '].Email');
+        });
 
-        if (MANAGE.retrivedAdditionalLocations) {
-            modalFormOptions.remote = '';
-        }
+        var form = $('#manageOrderForm');
 
-        $('#additionalLocationsModalDialog').modal(modalFormOptions);
-        MANAGE.retrivedAdditionalLocations = true;
+        $.ajax({
+            type: 'POST',
+            contentType: constants.FormPostContentType,
+            cache: false,
+            url: form.attr('action'),
+            dataType: constants.JsonDataType,
+            data: form.serialize(),
+            beforeSend: function() {
+                // this is where we append a loading image
+                //$('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Email...</span>');
+            }
+        }).done(function(data, bla, bla) {
+
+        }).fail(function(data, bla, bla) {
+            
+        }).always(function(data, bla, bla) {
+            
+        });
+
     });
 
-    $('#additionalLocationsModalDialog').on('shown', function() {
-        MANAGE.wireUpHandlersForModal();
-        $('#AddInputsButton').focus();
-    });
+
 };
 
 MANAGE.wireUpHandlersForModal = function() {
@@ -164,28 +229,6 @@ MANAGE.wireUpHandlersForModal = function() {
 
         });
     });
-};
-
-MANAGE.deleteItem = function (event) {
-    numberOfAdditionalLocations--;
-    MANAGE.adjustAdditionalLocationsData(numberOfAdditionalLocations);
-    var trashClicked = event.currentTarget.id;
-    var idx = trashClicked.substring(0, 1);
-    var spanToRemove = locationsSpanPrefix + idx;
-
-    $('#' + spanToRemove).hide(500, function () {
-        $(this).remove();
-    });
-
-    $('#' + idx + breakSuffix).hide(500, function () {
-        $(this).remove();
-    });
-
-    if (numberOfAdditionalLocations < 1) {
-        $('#sumbitAdditionalLocationsButton').hide(300, function () {
-            $(this).remove();
-        });
-    }
 };
 
 MANAGE.adjustAdditionalLocationsData = function(nr) {

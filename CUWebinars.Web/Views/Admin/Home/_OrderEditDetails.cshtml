@@ -92,7 +92,7 @@
         <div class="control-group">
             <div class="controls">
                 There are <span id="nrAddLocs">@Model.NumberOfAdditionalLocations</span> Additional Locations for this order.
-                <button id="AddLocationsButton" class="btn btn-default btn-small">edit?</button>
+                <button id="addLocationsButton" class="btn btn-default btn-small">add more?</button>
             </div>
             @Html.Raw(Model.AdditionalLocationsRenderer.ToString())
         </div>
@@ -142,8 +142,3 @@
     @Html.HiddenFor(m => m.UserId)
     @Html.HiddenFor(m => m.WebinarId)
 }
-
-
-
-
-

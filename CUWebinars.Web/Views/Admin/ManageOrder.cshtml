@@ -1,4 +1,13 @@
-﻿@Styles.Render("~/Content/manage-order")
+﻿@*<link href="@Url.Content("~/Content/manage-order.css")" type="text/css"/>*@ 
+<style type="text/css">
+    div.addLocsBox {
+        background-color:#4c5966;
+        padding: 5px;
+        -ms-border-radius: 6px;
+        border-radius: 6px;
+        margin-top: 10px;
+    }
+</style>
 
 @{
     ViewBag.Title = "ManageOrder";
@@ -24,13 +33,6 @@
     <div style="display: inline-block;margin-left:40px;">
         <div id="orderRelatedFields" style="margin-top: 20px;"></div>
     </div>
-</div>
-
-<!-- Modal -->
-<div id="additionalLocationsModalDialog" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-body">
-        @* modal content goes here *@
-    </div><!-- /.modal-content -->
 </div>
 
 @section scripts {
