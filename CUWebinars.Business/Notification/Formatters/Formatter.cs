@@ -37,7 +37,7 @@ namespace CUWebinars.Business.Notification.Formatters
         public INotificationMessage Format<T>(T underPinningObject, string templateName)
         {
             LoadBodyTemplate(templateName);
-
+            Console.WriteLine(templateName);
             return CreateMessage(GetSubject(underPinningObject), GetBody(underPinningObject));
         }
 

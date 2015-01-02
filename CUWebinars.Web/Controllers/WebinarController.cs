@@ -139,6 +139,25 @@ namespace CUWebinars.Web.Controllers
             //return View(dtos);
             return View(webinars);
         }
+        public ActionResult Search()
+        {
+            ViewBag.PageStyleType = "two-columns-right-sidebar";
+            var webinars = _webinarManagementService.GetAllActive();
+            ViewBag.TopicCaption = " ";
+            string searchTerm = Request["searchTerm"];
+            ViewBag.Title = "Search Results";
+            //TODO: Please have a look to see if you can add
+            webinars = webinars.Where(
+                w => w.Presenter.WebUser.LastName.Contains(searchTerm)//this term is not finding values that it should
+                     || w.Title.Contains(searchTerm)
+                     || w.DescriptionLong.Contains(searchTerm)
+                     //|| // add clause that will find 'Topics' name - e.g. if the searchTerm is 'IRA',
+                            //find events that have been tagged with the topic named 'IRA'
+                     );
+            ViewBag.Title = "Search Results" ;
+
+            return View(webinars);
+        }
 
         public ActionResult AllActive(string eventsToShow)
         {
@@ -187,13 +206,13 @@ namespace CUWebinars.Web.Controllers
                 var orders = _orderManagementService.GetOrdersForLiveNotifications(webinarId);
 
                 _orderManagementService.FireSendConnectionInfoNotificationEvent(orders);
-                return Json(new {Result = WebUiConstants.Success});
+                return Json(new { Result = WebUiConstants.Success });
             }
             catch (Exception exception)
             {
                 _logger.Error(string.Format("SendConnectionInfo Action: {0}", exception.Message), exception);
             }
-            return Json(new {Result = WebUiConstants.Fail});
+            return Json(new { Result = WebUiConstants.Fail });
         }
 
         public PartialViewResult SendRecordingPosted()
@@ -219,16 +238,16 @@ namespace CUWebinars.Web.Controllers
                 {
                     _orderManagementService.FireSendRecordingIsPostedEvent(orders);
 
-                    return Json(new {Result = WebUiConstants.Success});
+                    return Json(new { Result = WebUiConstants.Success });
                 }
 
-                return Json(new {Result = WebUiConstants.NoOrdersForWebinar});
+                return Json(new { Result = WebUiConstants.NoOrdersForWebinar });
             }
             catch (Exception exception)
             {
                 _logger.Error(string.Format("SendRecordingPosted Action: {0}", exception.Message), exception);
             }
-            return Json(new {Result = WebUiConstants.Fail});
+            return Json(new { Result = WebUiConstants.Fail });
         }
 
 
@@ -282,103 +301,6 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
-        //public ActionResult ConnectionDetails(int id)
-        //{
-        //    try
-        //    {
-        //        //string connectionInfo = NotificationFacade.Instance.PreviewNotification(
-        //        //    TemplateTypes.CONNECTION_INFORMATION, null, id, null);
-        //        //return View((object)connectionInfo);
-        //    }
-        //    catch (EntityNotFoundException)
-        //    {
-        //        return View("MissingRecord", (object)("Webinar with ID=" + id + " does not exist!"));
-        //    }
-        //}
-
-        //public ActionResult Details(int id)
-        //{
-        //    //_orderManagementService.GetOrderById(1162);
-        //    ViewBag.userHasOpenOrder = 0;
-        //    ViewBag.userOwnsThisEvent = 0;
-        //    ;
-        //    ViewBag.upList = null;
-        //    ViewBag.regList = null;
-
-
-
-        //    ViewBag.PageStyleType = "holy-grail-three-columns";
-        //    //
-        //    WebUser user = Request.IsAuthenticated ? _membershipService.GetUserByEmail(User.Identity.Name) : new WebUser();
-
-        //    var usersOrders = _orderManagementService.GetOrdersByUserId(user.idUser).Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id) != null);
-
-        //    var options = _orderManagementService.GetOptionsByWebinarId(id, false);
-
-        //    var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id);
-        //    if (webinar == null) return HttpNotFound();
-
-
-
-        //    ViewBag.topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar);
-
-        //    var model = new WebinarDetailsViewModel()
-        //    {
-        //        WebUser = user,
-        //        Webinar = webinar,
-        //        //Options = options
-        //        //,
-        //        Order = null
-        //    };
-
-        //    if (usersOrders != null && usersOrders.Any())
-        //    {
-        //        foreach (var checkOrder in usersOrders)
-        //        {
-        //            //if (checkOrder.OrderRows.Single().idWebinar == id)
-
-
-        //            // OrderRow has a idRegType (the FK)
-        //            // but does not have an instantiated RegType object.
-
-        //            var row = checkOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-        //            //if (row != null)
-        //            //    ViewBag.orderMessages = row.RegistrationType;
-        //            var webinarFiles = webinar.WebinarFiles
-        //                    .Select(f => f.fileDesc + "|" + f.fileLocation)
-        //                    .ToArray();
-
-        //            ViewBag.WebinarFiles = webinarFiles;
-
-        //            ViewBag.userOwnsThisEvent = checkOrder.idOrder;
-        //            model.Order = checkOrder;
-
-        //            //var connectionText = new StringBuilder("<p>");
-        //            //connectionText.Append(
-        //            //    row.RegistrationType.Stage2EmailConfirmationMsg.Replace(
-        //            //        " and is also available at http://www.@Tenant.com", "</p><p>"));
-
-        //            ////connectionText.Append(webinar.ConnectionInfo.Replace(Environment.NewLine, "<br>"));
-        //            //connectionText.Append("</p>");
-
-        //            //ViewBag.connectionText = connectionText;
-
-
-        //            if (checkOrder.OrderStatus == OrderStatus.InProcess && row.idWebinar != id)
-        //            {
-        //                ViewBag.userHasOpenOrder = checkOrder.idOrder;
-        //                model.Order = checkOrder;
-        //            }
-        //        }
-        //    }
-
-        //    if (model.Webinar == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    return View(model);
-        //}
-
         public ActionResult Details(int? id)
         {
             if (id.HasValue)
@@ -395,7 +317,7 @@ namespace CUWebinars.Web.Controllers
 
                 InitializeDetailsState(webinar, model, id.Value); // form state, incl. stuff that will be posted back. 
                 InitializeViewCentricProperties(model);
-                    // mostly just stuff that helps determine layout of the page on load. Not meant to be sent back here to Server from the View
+                // mostly just stuff that helps determine layout of the page on load. Not meant to be sent back here to Server from the View
 
                 var usersOrders = _orderManagementService.GetOrdersByUserId(model.WebUser.idUser)
                     .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id.Value) != null);
@@ -403,7 +325,7 @@ namespace CUWebinars.Web.Controllers
                 var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray();
                 // perf tweak: ensures no multiple enumerations of usersOrders
                 if (checkOrders.Any())
-                    // Webinar.Status > scheduled - WebinarFiles presenter files etc. Files only exist until init or activated Webinar
+                // Webinar.Status > scheduled - WebinarFiles presenter files etc. Files only exist until init or activated Webinar
                 {
                     foreach (var checkOrder in checkOrders) // assumption that there will be only 1 ?
                     {
@@ -666,11 +588,11 @@ namespace CUWebinars.Web.Controllers
 
             model.SignUpCaption = "Sign Up!";
             model.ConfirmationCaption = "Confirmation";
-            model.Identity = ((ClaimsIdentity) User.Identity);
+            model.Identity = ((ClaimsIdentity)User.Identity);
             model.TimeFormatDisplay = "<i>" + DateTimeHelper.FormatTime(model.Webinar.Date, model.TimeZone, false) +
                                       " - " +
                                       DateTimeHelper.FormatTime(
-                                          model.Webinar.Date.AddHours((double) model.Webinar.Duration), model.TimeZone,
+                                          model.Webinar.Date.AddHours((double)model.Webinar.Duration), model.TimeZone,
                                           true) + "<br /></i>";
 
             model.CeuShort = string.Empty;
@@ -889,12 +811,12 @@ namespace CUWebinars.Web.Controllers
                 // close the stream
                 tw.Close();
                 //Code for save ics file in application
-                return Json(new {success = true, result = "Successfully Created."}, JsonRequestBehavior.AllowGet);
+                return Json(new { success = true, result = "Successfully Created." }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception e)
             {
                 _logger.Error("/Webinar/CreateICSForWebinar: " + e.Message);
-                return Json(new {success = false, result = "File creation failed."}, JsonRequestBehavior.AllowGet);
+                return Json(new { success = false, result = "File creation failed." }, JsonRequestBehavior.AllowGet);
             }
 
         }
@@ -942,7 +864,7 @@ namespace CUWebinars.Web.Controllers
                 _webinarManagementService.DeleteWebinarFiles(deletedFiles);
                 _webinarManagementService.UpdateWebinarFiles(updatedFiles);
 
-                return Json(new {result = WebUiConstants.Success});
+                return Json(new { result = WebUiConstants.Success });
             }
             catch (Exception exception)
             {

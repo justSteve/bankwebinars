@@ -3,7 +3,8 @@
 {
     display: inline-block;
     width: 90px;
-    text-align: right;   
+    text-align: right;
+    margin-right: 7px;
 }
 
 #resetPart h3 {
