@@ -3,6 +3,7 @@
 <input type="hidden" name="ID" value="@Model.OrderRowId" />
 <select name="RegType" id="RegType" style="vertical-align: top;">
     @{
+        var idx = 0;
         foreach (var option in Model.Options)
         {
             var optionType = option.Key.GetType();
@@ -10,7 +11,7 @@
             {
                 string isSelected = (int)Model.OrderRowRegistrationType.idRegType == option.Key.idRegType ? "selected='selected'" : "";
 
-                <option class="radio" @isSelected value="@option.Key.idRegType">
+                <option id="@string.Concat("regTypeID_", idx++)" class="radio" @isSelected value="@option.Key.idRegType">
                     @option.Key.OptionLabel
                 </option>
             }
