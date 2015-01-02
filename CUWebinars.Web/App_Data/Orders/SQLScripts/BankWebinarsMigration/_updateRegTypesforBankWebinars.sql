@@ -3,18 +3,16 @@ SET NOCOUNT on
 UPDATE BankWebinars.dbo.RegType SET RegTypeLabel = REPLACE(RegTypeLabel,'On-Demand', 'OnDemand')
 UPDATE BankWebinars.dbo.RegType SET ShowLiveNotifications = 'Yes', ShowRecordingNotifications = 'No', ShowShippedNotifications = 'No' WHERE idRegType = 1
 SET IDENTITY_INSERT BankWebinars.dbo.RegType ON 
-DECLARE @localScript VARCHAR(100)
-SET @localScript AS @localScript + "C:\Users\Steve\Source\Repos\BankWebinars\CUWebinars.Business\SQLSeeding\SQLScripts\BankWebinarsMigration" 
-:r @localScript + "\Create2015OptionsGroups.SQL"
-:r @localScript + "\1hourRegTypes.SQL"
-:r @localScript + "\2hourRegTypes.SQL"
-:r @localScript + "\3PartRegTypes.SQL"
-:r @localScript + "\4PartRegTypes.SQL"
-:r @localScript + "\5PartRegTypes.SQL"
+:r "C:\Users\Steve\Source\Repos\BankWebinars\CUWebinars.Business\SQLSeeding\SQLScripts\BankWebinarsMigration\Create2015OptionsGroups.SQL"
+:r "C:\Users\Steve\Source\Repos\BankWebinars\CUWebinars.Business\SQLSeeding\SQLScripts\BankWebinarsMigration\1hourRegTypes.SQL"
+:r "C:\Users\Steve\Source\Repos\BankWebinars\CUWebinars.Business\SQLSeeding\SQLScripts\BankWebinarsMigration\2hourRegTypes.SQL"
+:r "C:\Users\Steve\Source\Repos\BankWebinars\CUWebinars.Business\SQLSeeding\SQLScripts\BankWebinarsMigration\3PartRegTypes.SQL"
+:r "C:\Users\Steve\Source\Repos\BankWebinars\CUWebinars.Business\SQLSeeding\SQLScripts\BankWebinarsMigration\4PartRegTypes.SQL"
+:r "C:\Users\Steve\Source\Repos\BankWebinars\CUWebinars.Business\SQLSeeding\SQLScripts\BankWebinarsMigration\5PartRegTypes.SQL"
 
 SET IDENTITY_INSERT BankWebinars.dbo.RegType Off
-:r @localScript + \GeneratesStatementsToInsertRegTypesXRef.SQL"
-:r @localScript + \InsertTestWebinars.sql"
+:r "C:\Users\Steve\Source\Repos\BankWebinars\CUWebinars.Business\SQLSeeding\SQLScripts\BankWebinarsMigration\GeneratesStatementsToInsertRegTypesXRef.SQL"
+:r "C:\Users\Steve\Source\Repos\BankWebinars\CUWebinars.Business\SQLSeeding\SQLScripts\BankWebinarsMigration\InsertTestWebinars.sql"
 
 SET NOCOUNT OFF
 

@@ -24,10 +24,7 @@
 }
 
 <script type="text/javascript">
-    //these values used in Javascript to avoid HtmlHelper, (TagBuilder etc.).
-    $(function () {$('.dt').tooltip({
-        selector: "a[rel=tooltip]"
-    })});
+    //tracking these values in Javascript preferred over HtmlHelper, (TagBuilder etc.).
     var checkoutInProcess = @(Model.CheckoutInProcess ? "true" : "false");
     var isUserLoggedIn = @(@Model.UserIsLoggedIn ? "true" : "false");
     var webinarId = @(@Model.Webinar.idWebinar);
