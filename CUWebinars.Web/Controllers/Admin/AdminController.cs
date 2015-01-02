@@ -1,7 +1,4 @@
-﻿using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
-using System.Text;
-using System.Web.Http;
-using CUWebinars.Business.AccountService;
+﻿using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
@@ -10,7 +7,6 @@ using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
-using Microsoft.Ajax.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
@@ -19,6 +15,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
@@ -74,7 +71,7 @@ namespace CUWebinars.Web.Controllers.Admin
         [System.Web.Mvc.HttpPost]
         public ActionResult ManageOrder(ManageOrderEditModel model)
         {
-            return View();
+            return Json(new { Result = WebUiConstants.Success});
         }
 
         public PartialViewResult GetAdditionalLocationByOrderId(int? id = null)
@@ -154,8 +151,8 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             const string locationsSpanPrefix = "LocationSpan-";
             string breakSuffix = "-break";
-            const string additionalLocationDeletePrefix = "-AdditionLocationEmail-delete";
-            const string additionalLocationEmailPrefix = "AdditionalLocationEmail_";
+            const string additionalLocationDeleteSuffix = "-AdditionLocationEmail-delete";
+            const string additionalLocationEmailPrefix = "AdditionalLocationEmail-";
             const string nonBreakingSpace = "&nbsp;";
             var stringBuilder = new StringBuilder();
 
@@ -163,6 +160,15 @@ namespace CUWebinars.Web.Controllers.Admin
             var spanBuilder = new TagBuilder("span");
             var inputBuilder = new TagBuilder("input");
             var iconBuilder = new TagBuilder("i");
+
+            /* The generataed element will look like this:
+            
+                <span id="LocationSpan-0">
+                   <input aria-describedby="AdditionalLocationEmail_0-error" aria-invalid="false" class="valid" id="AdditionalLocationEmail-0" name="AdditionalLocations[0].Email" placeholder="Enter email address" type="email" value="test@yahoo.com">&nbsp;
+                   <i class="icon-white icon-trash" id="0-AdditionLocationEmail-delete" style="cursor: pointer"></i>
+                   <br id="0-break">
+                </span>             
+             */
 
             for (var i = 0; i < emailAddresses.Count; i++)
             {
@@ -181,20 +187,20 @@ namespace CUWebinars.Web.Controllers.Admin
                     {"value", emailAddresses[i]},
                 });
                 inputBuilder.AddCssClass("valid");
-
-                iconBuilder.GenerateId(i + additionalLocationDeletePrefix);
+                
                 iconBuilder.AddCssClass("icon-trash");
                 iconBuilder.AddCssClass("icon-white");
                 iconBuilder.MergeAttribute("style", "cursor: pointer");
+                iconBuilder.MergeAttribute("id", string.Concat(i, additionalLocationDeleteSuffix));
                 
                 spanBuilder.GenerateId(locationsSpanPrefix + i);
-                
                 spanBuilder.InnerHtml = string.Concat(
                     inputBuilder.ToString(TagRenderMode.SelfClosing), 
                     nonBreakingSpace, 
                     iconBuilder.ToString(TagRenderMode.Normal),
                     "<br id=" + i + breakSuffix + ">"
                     );
+
                 stringBuilder.Append(spanBuilder.ToString(TagRenderMode.Normal));
             }
 

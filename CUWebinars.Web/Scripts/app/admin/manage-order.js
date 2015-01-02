@@ -9,187 +9,181 @@ $(function () {
     $('#getOrderButton').on('click', function () {
         MANAGE.idOrder = orderIdInput.val();
 
+        // loading spinner
+        orderIdInput.append('<span id="spinWrapper" class="label label-info"><i id="spinner" class="icon-spinner icon-spin"></i>&nbsp;loading...</span>');
+
         $('#orderRelatedFields').load('/Admin/GetOrderDetails/' + MANAGE.idOrder, function () {
+
+            MANAGE.locationsSpanPrefix = 'LocationSpan-';
+            MANAGE.breakSuffix = '-break';
+            
             MANAGE.primeDomVariables();
             MANAGE.wireUpHandlers();
-            MANAGE.numberAddLocsLabel = $('#nrAddLocs');
+            
             MANAGE.addLocsUnitPrice = $('#CostPerAdditionalLocation').val();
             MANAGE.addLocsTotalPrice = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions').val();
             MANAGE.retrivedAdditionalLocations = false;
+
+            MANAGE.wireUpTrashIcons();
+
+            $('#spinWrapper').remove();
         });
     });
-    
 });
 
-MANAGE.primeDomVariables = function() {
-    MANAGE.addLocationsButton = $('#AddLocationsButton');
-    MANAGE.newLocationsContainer = $('#NewLocationsContainer'); // commented out in razor
-};
+MANAGE.addAdditionalLocation = function (e) {
 
-MANAGE.wireUpHandlers = function () {
+    e.preventDefault();
 
-    locationsSpanPrefix = 'LocationSpan-',
-    breakSuffix = '-break';
+    var newId;
 
-    var modalFormOptions = {
-        keyboard: true,
-        backdrop: 'static',
-        show: true
-    };
-
-
-    $('#AddLocationsButton').on('click', function (e) {
-
-        e.preventDefault();
-
-        var webinarId = $('#WebinarId').val().toString();
-        var userId = $('#UserId').val().toString();
-
-        modalFormOptions.remote = '/Admin/GetAdditionalLocationByOrderId/' + MANAGE.idOrder;
-
-        if (MANAGE.retrivedAdditionalLocations) {
-            modalFormOptions.remote = '';
-        }
-
-        $('#additionalLocationsModalDialog').modal(modalFormOptions);
-        MANAGE.retrivedAdditionalLocations = true;
-    });
-
-    $('#additionalLocationsModalDialog').on('shown', function() {
-        MANAGE.wireUpHandlersForModal();
-        $('#AddInputsButton').focus();
-    });
-};
-
-MANAGE.wireUpHandlersForModal = function() {
-    var locationsCloned, locationsBakForCancel;
-    var collectAdditionalLocations = $('#collectAdditionalLocations');
-    var locations = collectAdditionalLocations.children();
-
-    if (locations.length > 0) {
-        locationsCloned = locations.clone();
-        locationsBakForCancel = locations.clone();
+    if (MANAGE.numberOfAdditionalLocations === 0) {
+        newId = 0;
+        var naSpan =$('#naText');
+        if (naSpan.length > 0)
+            naSpan.remove();
+    } else {
+        // first get the last previous email input
+        var lastInput = MANAGE.wrapperDiv.find('input[type="email"]:last');
+        // get its id
+        var lastInputId = lastInput.attr('id');
+        var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
+        newId = id + 1;
     }
 
-    collectAdditionalLocations.empty();
+    var trashIconId = newId + '-AdditionLocationEmail-delete';
+    var additionalLocationEmailId = 'AdditionalLocationEmail_' + newId;
 
-    var emailInputsAdded = $.Deferred(function() {
-        additionalLocationEmailWrapper = $('#AdditionalLocationEmailWrapper');
-        if (locationsCloned)
-            additionalLocationEmailWrapper.append(locationsCloned);
-    });
+    MANAGE.wrapperDiv.append('<span id="' + MANAGE.locationsSpanPrefix + newId + '"><input id="' + additionalLocationEmailId + '" name="AdditionalLocations[' + newId + '].Email" type="email" placeholder="Enter email address" aria-describedby="AdditionalLocationEmail_'+ newId +'-error" aria-invalid="false"></input>&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + trashIconId + '"></i></span> <br id="' + newId + MANAGE.breakSuffix + '">');
 
-    $.when(emailInputsAdded.resolve()).then(function() {
-        numberOfAdditionalLocations = $('#AdditionalLocationEmailWrapper input[type="email"]').length;
-        MANAGE.numberAddLocsLabel.text(numberOfAdditionalLocations);
+    $('#' + trashIconId).on('click', MANAGE.deleteItem);
+    $('#' + additionalLocationEmailId).focus();
 
-        if (numberOfAdditionalLocations < 1) {
-            //$('#sumbitAdditionalLocationsButton').off('click');
-
-        } else {
-
-            if ($('#sumbitAdditionalLocationsButton').length < 1) {
-
-                $('#AdditionalLocationEmailWrapper').after($('<button>',
-                {
-                    id: 'sumbitAdditionalLocationsButton',
-                    text: 'Submit',
-                    'class': 'btn btn-primary',
-                }));
-
-                $('#sumbitAdditionalLocationsButton').on('click', function() {
-
-                    collectAdditionalLocations.empty();
-                    collectAdditionalLocations.append(additionalLocationEmailWrapper.children());
-
-                    $('#additionalLocationsModalDialog').modal('hide');
-
-                    $(this).remove();
-                });
-                var trashCans = additionalLocationEmailWrapper.find('i');
-
-                $.each(trashCans, function(idx, i) {
-                    $(i).on('click', MANAGE.deleteItem);
-                });
-            }
-        }
-
-        $('#AddInputsButton').on('click', function() {
-
-            if (numberOfAdditionalLocations === 0) {
-                $('#AdditionalLocationEmailWrapper').after($('<button>',
-                {
-                    id: 'sumbitAdditionalLocationsButton',
-                    text: 'Submit',
-                    'class': 'btn btn-primary',
-                }));
-
-                $('#sumbitAdditionalLocationsButton').on('click', function() {
-
-                    collectAdditionalLocations.empty();
-                    collectAdditionalLocations.append(additionalLocationEmailWrapper.children());
-
-                    $('#additionalLocationsModalDialog').modal('hide');
-
-                    $(this).remove();
-                });
-            }
-
-            var newId;
-            if (numberOfAdditionalLocations === 0) {
-                newId = 0;
-            } else {
-                // first get the last previous email input
-                var lastInput = additionalLocationEmailWrapper.find('input[type="email"]:last');
-                // get its id
-                var lastInputId = lastInput.attr('id');
-                var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
-                newId = id + 1;
-            }
-            additionalLocationEmailWrapper.append('<span id="' + locationsSpanPrefix + newId + '"><input id="AdditionalLocationEmail_' + newId + '" name="AdditionalLocations[' + newId + '].Email" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + newId + '-AdditionLocationEmail-delete"></i></span> <br id="' + newId + breakSuffix + '">');
-            additionalLocationEmailWrapper.find('i#' + newId + '-AdditionLocationEmail-delete').on('click', MANAGE.deleteItem);
-            $('#AdditionalLocationEmail_' + newId).focus();
-            numberOfAdditionalLocations++;
-            MANAGE.adjustAdditionalLocationsData(numberOfAdditionalLocations);
-        });
-
-        $('#closeButton, #additionalLocationsModalDialog > div > div.modal-header > button').on('click', function(e) {
-            if (locationsBakForCancel) {
-
-                $.each(locationsBakForCancel.find('i'), function(idx, i) {
-                    $(i).on('click', MANAGE.deleteItem);
-                });
-                collectAdditionalLocations.append(locationsBakForCancel);
-            }
-
-        });
-    });
+    MANAGE.numberOfAdditionalLocations += 1;
+    MANAGE.adjustAdditionalLocationsTotal(MANAGE.numberOfAdditionalLocations);
 };
 
-MANAGE.deleteItem = function (event) {
-    numberOfAdditionalLocations--;
-    MANAGE.adjustAdditionalLocationsData(numberOfAdditionalLocations);
+MANAGE.deleteItem = function (e) {
+
+    e.preventDefault();
+
+    MANAGE.numberOfAdditionalLocations -= 1;
+    
     var trashClicked = event.currentTarget.id;
     var idx = trashClicked.substring(0, 1);
-    var spanToRemove = locationsSpanPrefix + idx;
+    var spanToRemove = MANAGE.locationsSpanPrefix + idx;
 
     $('#' + spanToRemove).hide(500, function () {
         $(this).remove();
     });
 
-    $('#' + idx + breakSuffix).hide(500, function () {
+    $('#' + idx + MANAGE.breakSuffix).hide(500, function () {
         $(this).remove();
     });
 
-    if (numberOfAdditionalLocations < 1) {
-        $('#sumbitAdditionalLocationsButton').hide(300, function () {
-            $(this).remove();
-        });
-    }
+    MANAGE.adjustAdditionalLocationsTotal(MANAGE.numberOfAdditionalLocations);
 };
 
-MANAGE.adjustAdditionalLocationsData = function(nr) {
-    var newAddLocsPrice = nr * MANAGE.addLocsUnitPrice;
-    MANAGE.numberAddLocsLabel.text(nr);
-    $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions').val(newAddLocsPrice);
+MANAGE.wireUpTrashIcons = function () {
+    
+    var trashCans = MANAGE.wrapperDiv.find('i');
+    MANAGE.numberOfAdditionalLocations = MANAGE.numberAddLocsLabel.text();
+
+    $.each(trashCans, function (idx, i) {
+        $(i).on('click', MANAGE.deleteItem);
+    });
+};
+
+MANAGE.primeDomVariables = function() {
+    MANAGE.wrapperDiv = $('#collectAdditionalLocations');
+    MANAGE.numberAddLocsLabel = $('#nrAddLocs');
+    MANAGE.addAdditionalLocationsButton = $('#addLocationsButton');
+    MANAGE.totalOptionsInput = $('DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions');
+
+};
+
+MANAGE.submitForm = function(e) {
+    e.preventDefault();
+
+    var emailInputs = MANAGE.wrapperDiv.find('input[type="email"]');
+
+    $.each(emailInputs, function (idx, i) {
+        $(i).attr('name', 'AdditionalLocations[' + idx + '].Email');
+    });
+
+    var form = $('#manageOrderForm');
+
+    $.ajax({
+        type: 'POST',
+        contentType: constants.FormPostContentType,
+        cache: false,
+        url: form.attr('action'),
+        dataType: constants.JsonDataType,
+        data: form.serialize(),
+        beforeSend: function () {
+            // this is where we append a loading image
+            //$('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Email...</span>');
+        }
+    }).done(function (data, bla, bla) {
+
+    });
+
+
+};
+
+MANAGE.changeRegType = function(e) {
+
+    e.preventDefault();
+
+    var optionId = $(this).val();
+
+    var self = this;
+
+    $.ajax({
+        url: "/cart/CheckIfAddLocShouldHide?optionID=" + optionId,
+        type: "GET",
+        cache: false,
+        dataType: constants.JsonDataType,
+
+        beforeSend: function () {
+            //console.log('beforeSend CheckIfAddLocShouldHide');
+            // no loading image needed
+        }
+    }).done(function (data) {
+        //console.log('done CheckIfAddLocShouldHide');
+        if (data.shouldShow === 'Yes') {
+            MANAGE.addAdditionalLocationsButton.removeAttr('disabled');
+        } else if (data.shouldShow === 'No') {
+            //console.log('hide  CheckIfAddLocShouldHide');
+            $('#collectAdditionalLocations').empty().html('<span id="naText" class="text text-info">Not applicable for this RegType</span>');
+            MANAGE.numberOfAdditionalLocations = 0;
+            MANAGE.numberAddLocsLabel.text(0);
+            MANAGE.addAdditionalLocationsButton.attr('disabled', 'disabled');
+        }
+
+        //if (data.shippingDetailsRqrd === 'Yes') {
+        //    self.shippingAddressRequired = true;
+        //} else {
+        //    self.shippingAddressRequired = false;
+        //}
+    }).fail(function (data) {
+        //console.log('CheckIfAddLocShouldHide failed!!! ');
+    });
+};
+
+MANAGE.wireUpHandlers = function () {
+
+    $('#addLocationsButton').on('click', MANAGE.addAdditionalLocation);
+    $('#editOrderSubmitButton').on('click', MANAGE.submitForm);
+    $('#RegType').on('change', MANAGE.changeRegType);
+};
+
+
+MANAGE.adjustAdditionalLocationsTotal = function(number) {
+
+    MANAGE.numberAddLocsLabel.text(MANAGE.numberOfAdditionalLocations);
+
+    var newPrice = number * parseFloat(MANAGE.addLocsUnitPrice);
+
+    MANAGE.totalOptionsInput.val(newPrice);
 };

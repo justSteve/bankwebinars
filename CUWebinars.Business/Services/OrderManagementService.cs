@@ -203,12 +203,15 @@ namespace CUWebinars.Business.Services
 
         public IDictionary<RegType, bool> GetOptionsByWebinarId(int id, bool detached)
         {
-            var options = _cachingService.Get("options");
+            string cachKey = "options-" + id;
+            var options = _cachingService.Get(cachKey);
 
             if (options == null)
             {
                 options = _regTypeRepository.FindRegTypesByWebinarId(id, false);
-                _cachingService.Add("options", options, DateTime.Now.AddHours(1));
+
+                // keeps options object in cache for 1 hour.
+                _cachingService.Add(cachKey, options, DateTime.Now.AddHours(1));
             }
 
             return (IDictionary<RegType, bool>)options;

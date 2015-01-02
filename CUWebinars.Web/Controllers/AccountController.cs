@@ -2,6 +2,7 @@
 using System.Text;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core.Exceptions;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
@@ -722,27 +723,48 @@ namespace CUWebinars.Web.Controllers
         {
             _logger.Info("Account.ResetPassword GET. Email = {1} Session={0}", _appHelper.GetUserAuditInfo(), email);
 
-            var errorsDictionary = new Dictionary<string, string>(StringComparer.Ordinal);
-            errorsDictionary.Add("Result", WebUiConstants.Fail);   
+            var errorsDictionary = new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                {"Result", WebUiConstants.Fail}
+            };
 
             try
             {
                 _accountControllerOrchestrator.ResetPassword(_globalConfig.Tenant, email);
-                return Json(new { Result = WebUiConstants.Success });
+                return Json(new {Result = WebUiConstants.Success});
             }
             catch (ValidationException validationException)
             {
                 if (validationException.Message.StartsWith("Invalid email", StringComparison.OrdinalIgnoreCase))
                 {
-                    errorsDictionary.Add("Invalid", "UnkownEmail");   
+                    errorsDictionary.Add("Invalid", "UnkownEmail");
                 }
-                _logger.Fatal("Account.ResetPassword GET Failed. {0}, Session = {1} on email: {2}", validationException.Message, _appHelper.GetUserAuditInfo(), email);
-            }
-            catch (Exception ex)
-            {
-                _logger.Fatal("Account.ResetPassword GET Failed. {0}, Session = {1} on email: {2}", ex.Message, _appHelper.GetUserAuditInfo(), email);
-            }
 
+                _logger.FatalException(
+                    string.Format("Account.ResetPassword GET Failed. {0}, Session = {1} on email: {2}", 
+                    validationException.Message, _appHelper.GetUserAuditInfo(), email), 
+                    validationException
+                    );
+            }
+            catch (UserCreatedMembershipException userCreatedMembershipException)
+            {
+                _logger.FatalException(
+                    string.Format(
+                    "Account.ResetPassword Failed. {0}, Session = {1} on email: {2}", 
+                    userCreatedMembershipException.Message, 
+                    _appHelper.GetUserAuditInfo(), email), 
+                    userCreatedMembershipException
+                    );
+                errorsDictionary.Add("Invalid", "UserNotVerified");
+            }
+            catch (Exception exception)
+            {
+                _logger.FatalException(
+                    string.Format("Account.ResetPassword GET Failed. {0}, Session = {1} on email: {2}", 
+                    exception.Message, _appHelper.GetUserAuditInfo(), email),
+                    exception
+                    );
+            }
 
             return Json(errorsDictionary);
         }

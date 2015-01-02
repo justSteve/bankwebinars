@@ -209,8 +209,9 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
             if (data.Result === 'Success') {
                 $('#labelEmail').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Reset instructions are on the way.</span>');
             } else {
-                if (data['Invalid']) {
-                    Rollbar.error("Invalid email address.");
+                if (data['Invalid'] === 'UserNotVerified') {
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Our system is in an in invalid state. This error is known and can be <br>easily rectified by calling us at 800-831-0678 ext. 3. Or email us at support@ttstrain.com</span>');
+                } else if (data['Invalid'] === 'UnkownEmail') {
                     $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Contact us at support@ttstrain.com if you believe this is in error.</span>');
                 } else {
                     $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Error. Please retry...</span>');

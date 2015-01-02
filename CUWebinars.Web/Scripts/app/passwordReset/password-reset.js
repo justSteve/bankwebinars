@@ -54,14 +54,14 @@ $(function () {
                     $('#wrapReset div.container').hide("slow");
                     $('#NormalResetPasswordButton').hide();
                 } else {
-                    if (data['Invalid']) {
-                        //Rollbar.error("Invalid email address.");
-                        crunchingLabel.html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Are you sure you typed it correctly? <br>In case of continued problems, please contact us at 800-831-0678 ext 6. </span>');
+                    if (data['Invalid'] === 'UserNotVerified') {
+                        crunchingLabel.html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Our system is in an in invalid state. This error is known and can be <br>easily rectified by calling us at 800-831-0678 ext. 3. Or email us at support@ttstrain.com</span>');
+                    } else if (data['Invalid'] === 'UnkownEmail') {
+                        crunchingLabel.html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Contact us at support@ttstrain.com if you believe this is in error.</span>');
                     } else {
-                        crunchingLabel.html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Error. Please retry...</span>In case of continued problems, please contact us at 800-831-0678 ext 707.');
+                        crunchingLabel.html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Error. Please retry...</span>');
                     }
                 }
-
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 // failed request; give feedback to user
                 crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;<strong>Oops!</strong> Try that again in a few moments.In case of continued problems, please contact us at 800-831-0678 ext 707.</span>');
