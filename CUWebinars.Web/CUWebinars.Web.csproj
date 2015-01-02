@@ -393,6 +393,7 @@
     <Compile Include="ViewModel\WebinarFileViewModel.cs" />
     <Content Include="App_Data\Orders\OrderMigrator.xlsm" />
     <Content Include="App_Data\Orders\AffiliateOrdersImporter.xlsm" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\ImportProductionDb.ps1" />
     <None Include="log4net.config">
       <SubType>Designer</SubType>
     </None>
@@ -427,6 +428,40 @@
     <Compile Include="Models\JotFormModel.cs" />
     <Compile Include="Models\JotFormOrderModel.cs" />
     <Compile Include="Notification\Templates\CertOfCompletionViewModel.cs" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\1hourRegTypes.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\2hourRegTypes.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\3PartRegTypes.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\4PartRegTypes.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\5PartRegTypes.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\AffiliateImporterToExcel.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\CPOrdersToExcel.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\Create2015OptionsGroups.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\deltestdata.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\DevScripts\CleansMRAccountsAndClaims.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\DevScripts\MigrateInstitution.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\DevScripts\MRStatus.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\DevScripts\SeedAffiliates.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\DevScripts\SeedOptions.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\DevScripts\SeedOptionsGroups.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\DevScripts\SeedPresenters.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\DevScripts\SeedWebUser.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\DevScripts\_SeedTopics.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\discountsWork.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\DisplaysOutput.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\GeneratesStatementsToInsertRegTypesXRef.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\GenerateTestUsersByQueryString.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\InsertTestWebinars.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\PopulateCPOrders.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\PopulateCPSubscriptions.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\_AdditionalLocationsLookupPrice.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\_BuildCompliancePerspectivesMigration.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\_BuildDiscountsMigration1.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\_CreateDbCreds.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\_CreateTestUsers.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\_UpdateAffiliates.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\_updateRegTypesforBankWebinars.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\__Seeder_Ender.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\__Seeder_Runner.sql" />
     <Content Include="Content\css\BootstrapTemplates\font-awesome\font-awesome-ie7.css" />
     <Content Include="Content\css\BootstrapTemplates\font-awesome\font-awesome.css" />
     <Content Include="Content\css\BootstrapTemplates\font-awesome\font\fontawesome-webfont.eot" />
@@ -439,6 +474,8 @@
     <Content Include="Content\css\create-user-form.css" />
     <Content Include="Content\css\details.css" />
     <Content Include="Content\css\nova.css" />
+    <Content Include="Content\css\styles\form.css" />
+    <Content Include="Content\css\styles\nova.css" />
     <Content Include="Content\js\calendarview.js" />
     <Content Include="Content\js\location.js" />
     <Content Include="Content\js\protoplus-ui-form.js" />
@@ -505,6 +542,7 @@
     <Content Include="Scripts\purl.js" />
     <Content Include="Scripts\underscore.js" />
     <Content Include="Scripts\underscore.min.js" />
+    <Content Include="Scripts\vendor\json2.js" />
     <Content Include="Views\Admin\Home\_ImportOrder.cshtml" />
     <Content Include="Views\Admin\Home\_LogInAsUser.cshtml" />
     <Content Include="Views\Admin\Home\_ManualPasswordReset.cshtml" />
@@ -613,6 +651,8 @@
     <Content Include="Views\Account\AddPasswordForCartCreatedUser.cshtml" />
     <Content Include="Views\Admin\ManageOrder.cshtml" />
     <Content Include="Views\Admin\Home\_OrderEditDetails.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\DiscountSubscription.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\DiscountGeneral.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\packages\Selenium.WebDriver.ChromeDriver.2.9.0.0\content\chromedriver.exe">

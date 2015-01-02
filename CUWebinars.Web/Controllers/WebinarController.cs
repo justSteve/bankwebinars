@@ -146,13 +146,17 @@ namespace CUWebinars.Web.Controllers
             ViewBag.TopicCaption = " ";
             string searchTerm = Request["searchTerm"];
             ViewBag.Title = "Search Results";
-            //TODO: Please have a look to see if you can add
+            //TODO: SEARCH: see if you can add support for:
+            //1. include if matched presenter's last name
+            //2. include if matched [topicDesc] field of Topic Table. 
+            //
+
+            //note that #2 might be tedious to achieve via lambda - we could turn the whole thing into TSQL if need be.
             webinars = webinars.Where(
                 w => w.Presenter.WebUser.LastName.Contains(searchTerm)//this term is not finding values that it should
                      || w.Title.Contains(searchTerm)
                      || w.DescriptionLong.Contains(searchTerm)
-                     //|| // add clause that will find 'Topics' name - e.g. if the searchTerm is 'IRA',
-                            //find events that have been tagged with the topic named 'IRA'
+                     
                      );
             ViewBag.Title = "Search Results" ;
 

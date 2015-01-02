@@ -24,8 +24,7 @@
 }
 
 <script type="text/javascript">
-    //TODO: Did we verify need for each of these? [DAR] yes. I am using them in the Javascript. I'd prefer to use a HtmlHelper,
-    // (TagBuilder etc.), but happy enough to stick with script tag.
+    //tracking these values in Javascript preferred over HtmlHelper, (TagBuilder etc.).
     var checkoutInProcess = @(Model.CheckoutInProcess ? "true" : "false");
     var isUserLoggedIn = @(@Model.UserIsLoggedIn ? "true" : "false");
     var webinarId = @(@Model.Webinar.idWebinar);

@@ -85,7 +85,7 @@ WHILE @@FETCH_STATUS = 0
     BEGIN
 SET @importCount = @importCount + 1
 
---PRINT '---------> importing: ' + CAST (@importCount AS VARCHAR)
+PRINT '---------> importing: ' + CAST (@importCount AS VARCHAR)
         INSERT  INTO BankWebinars.dbo.Discount
                 ( discountType ,
                   DiscountCode ,
@@ -127,7 +127,7 @@ SET NOCOUNT OFF
 ----where d.code = 'GARNCOMP_USER1'
 --  select * from [TTSWebinars2].dbo.Discounts where code like 'CP_%'
 PRINT 'excute statements that populate CompPers Subscriptions'
-PRINT 'following statements generated via \BankWebinarsMigration\PopulateCPSubscriptions.sql'
+PRINT 'following statements generated via C:\Users\Steve\Source\Repos\BankWebinars\CUWebinars.Business\SQLSeeding\SQLScripts\BankWebinarsMigration\PopulateCPSubscriptions.sql'
 SET NOCOUNT ON 
 SET NOCOUNT ON
 update TTSWebinars2.dbo.OrdersRows set idDiscount =  (select TTSWebinars2.dbo.Discounts.idDiscounts from TTSWebinars2.dbo.Discounts where code = 'CP_19983') where idOrder = 19983

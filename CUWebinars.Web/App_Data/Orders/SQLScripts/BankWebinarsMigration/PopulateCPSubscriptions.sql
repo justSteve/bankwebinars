@@ -1,134 +1,16 @@
+--SELECT  'update TTSWebinars2.dbo.OrdersRows set idDiscount =  (select TTSWebinars2.dbo.Discounts.idDiscounts from TTSWebinars2.dbo.Discounts where code = ''CP_'
+--        + CAST(idOrder AS VARCHAR) +
+--        ''') where idOrder = ' + CAST(idOrder AS VARCHAR)
+----
+--FROM    TTSWebinars2.dbo.OrdersRows
+--WHERE   TTSWebinars2.dbo.OrdersRows.idWebinar = 842
+--        AND ( TTSWebinars2.dbo.OrdersRows.status > 1
+--              OR TTSWebinars2.dbo.OrdersRows.status < 4
+--            )
+		 
+		 -----------------above code generates statement below------------
 
-PRINT '--==========--'
-PRINT '----UPDATE COMPLIANCE PERSPECTIVES SUBSCRIPTIONS BY IMPORTING SHEET THEN RUNNING'
-PRINT '----GENERATED DELETE CODES'
-
-PRINT '--==========--'
-
-USE [TTSWebinars2]
-GO
-
-UPDATE  Discounts
-SET     discountType = 4
-WHERE   discountType = 3
-UPDATE  Discounts
-SET     discountType = 3
-WHERE   code IN ( 'FIB0113', 'BBCSB0313', 'GRCB0313', 'CCB0413' )
-
-
-
-SET NOCOUNT ON
---DELETE  FROM [TTSWebinars2].dbo.Discounts
---WHERE   code LIKE 'CP_%'
---        AND code NOT LIKE 'CP2010'
-USE TTSWebinars2
-GO
-
-DECLARE @discountType TINYINT ,
-    @code VARCHAR(50) ,
-    @percentOff DECIMAL(5, 2) ,
-    @flatOff MONEY ,
-    @usesNumber INT ,
-    @dateValidFrom SMALLDATETIME ,
-    @dateValidTo SMALLDATETIME ,
-    @status NVARCHAR(50) ,
-    @dateBilled SMALLDATETIME ,
-    @cost MONEY ,
-    @Notes NVARCHAR(MAX) ,
-    @importCount INT,
-	@idDiscount int
-  
-SET @importCount = 0  
-PRINT '---===================---'
-PRINT 'BEGINNING COMPLIANCE SUBSCRIPTIONS IMPORT'
-PRINT '---===================---'
-DECLARE migrate_cursor CURSOR
-FOR
-    SELECT --
-            '5' ,
-            'CP_' + CAST([OrderID] AS VARCHAR) ,
-            100 ,
-            0.0 ,
-            [Renewal Term] ,
-            DATEADD(mm, -[Renewal Term], [Subscription Expires]) , -- good from
-            [Subscription Expires] , -- Expires 
-            'Active' ,
-            DATEADD(mm, -[Renewal Term], [Subscription Expires])  ,
-            ( SELECT    total
-              FROM      [TTSWebinars2].dbo.Orders o
-              WHERE     o.idOrder = OrderID
-            ) ,
-            'Institution: '
-            + ( SELECT  name
-                FROM    [TTSWebinars2].dbo.Institution
-                WHERE   idInstitution = ( SELECT    idUserInstitution
-                                          FROM      [TTSWebinars2].dbo.Users
-                                          WHERE     idUser = ( SELECT
-                                                              idUser
-                                                              FROM
-                                                              [TTSWebinars2].dbo.Orders
-                                                              WHERE
-                                                              idOrder = [OrderID]
-                                                             )
-                                        )
-              )
-    FROM    [Migrator].[dbo].['Current Clients$']
-    WHERE   [Subscription Expires] IS NOT NULL
-OPEN migrate_cursor
-
-
-FETCH NEXT FROM migrate_cursor
-INTO @discountType, @code, @percentOff, @flatOff, @usesNumber, @dateValidFrom,
-    @dateValidTo, @status, @dateBilled, @cost, @Notes 
-
-WHILE @@FETCH_STATUS = 0
-    BEGIN
-SET @importCount = @importCount + 1
-
---PRINT '---------> importing: ' + CAST (@importCount AS VARCHAR)
-        INSERT  INTO BankWebinars.dbo.Discount
-                ( discountType ,
-                  DiscountCode ,
-                  percentOff ,
-                  flatOff ,
-                  UsesCount ,
-                  dateValidFrom ,
-                  dateValidTo ,
-                  [status] ,
-                  dateBilled ,
-                  cost ,
-                  notes, renewalTerm, UsesRemain
-                )
-        VALUES  ( @discountType ,
-                  @code ,
-                  @percentOff ,
-                  @flatOff ,
-                  @usesNumber ,
-                  @dateValidFrom ,
-                  @dateValidTo ,
-                  @status ,
-                  @dateBilled ,
-                  @cost ,
-                  @Notes, @usesNumber, 0
-                )
-
-        FETCH NEXT FROM migrate_cursor
-   INTO @discountType, @code, @percentOff, @flatOff, @usesNumber,
-            @dateValidFrom, @dateValidTo, @status, @dateBilled, @cost, @Notes 
-    END
-
-CLOSE migrate_cursor
-DEALLOCATE migrate_cursor
--- select * from Discounts where idDiscounts = 105
--- select * from OrdersRows where idDiscount = 105
-----select * from OrdersRows r inner join Discounts d on r.idDiscount = d.idDiscounts
-SET NOCOUNT OFF
-
-----where d.code = 'GARNCOMP_USER1'
---  select * from [TTSWebinars2].dbo.Discounts where code like 'CP_%'
-PRINT 'excute statements that populate CompPers Subscriptions'
-PRINT 'following statements generated via \BankWebinarsMigration\PopulateCPSubscriptions.sql'
-SET NOCOUNT ON 
+		 
 SET NOCOUNT ON
 update TTSWebinars2.dbo.OrdersRows set idDiscount =  (select TTSWebinars2.dbo.Discounts.idDiscounts from TTSWebinars2.dbo.Discounts where code = 'CP_19983') where idOrder = 19983
 update TTSWebinars2.dbo.OrdersRows set idDiscount =  (select TTSWebinars2.dbo.Discounts.idDiscounts from TTSWebinars2.dbo.Discounts where code = 'CP_21253') where idOrder = 21253
@@ -191,11 +73,3 @@ update TTSWebinars2.dbo.OrdersRows set idDiscount =  (select TTSWebinars2.dbo.Di
 update TTSWebinars2.dbo.OrdersRows set idDiscount =  (select TTSWebinars2.dbo.Discounts.idDiscounts from TTSWebinars2.dbo.Discounts where code = 'CP_73878') where idOrder = 73878
 update TTSWebinars2.dbo.OrdersRows set idDiscount =  (select TTSWebinars2.dbo.Discounts.idDiscounts from TTSWebinars2.dbo.Discounts where code = 'CP_74813') where idOrder = 74813
 
-SET NOCOUNT ON 
-
-PRINT '--==========--'
-PRINT 'ENDS DISCOUNT HANDLING'
-PRINT '--==========--'
-
-USE master
-GO
