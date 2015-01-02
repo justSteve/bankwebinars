@@ -45,16 +45,17 @@
             if (!myOption.Key.SKU.Contains("Upgrade"))
             {
 
-                explainsOptionsBuilder.Append("<span><b>" + myOption.Key.OptionLabel + "</b> means " + myOption.Key.OptionExplain + " This option costs <i>$" + myOption.Key.Price.ToString().Replace(".00", "") + "</i><br></span>");
+                explainsOptionsBuilder.Append("<span><b>" + myOption.Key.OptionLabel + "</b> - " + myOption.Key.OptionExplain + " This option costs <i>$" + myOption.Key.Price.ToString().Replace(".00", "") + "</i><br></span>");
                 //explainsOptionsBuilder.Append("<span><b>"+Html.Raw(myOption.OptionLabel)+"</b> means "+Html.Raw(myOption.OptionExplain) +" This option costs <i>$" + myOption.Price.ToString().Replace(".00", "")+"</i><br></span>");
-                <dt>
+                <dt style="font-weight: normal">
                     @Html.Hidden(string.Concat("IsShippingRequired_", myOption.Key.idRegType), myOption.Value.ToString())
                     <input type="radio" class="checkbox" id='regTypeID_@(myOption.Key.idRegType)' @defaultCheck name="RegistrationTypeId"
                            value="@myOption.Key.idRegType" />
-                    &nbsp;&nbsp;@myOption.Key.OptionLabel.Replace("Five", "Five </b>(days)<b>").Replace("Six", "Six </b>(months)<b>") - $@myOption.Key.Price &nbsp;&nbsp;
-                    <a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.Key.OptionExplain) ">
-                        <i class="icon-question-sign"></i>
-                    </a>
+                    &nbsp;&nbsp;<b>
+                        @Html.Raw(myOption.Key.OptionLabel.Replace("Five", "Five </b>(days)<b>").Replace("Six", "Six </b>(months)<b>")) - $@myOption.Key.Price &nbsp;&nbsp;
+                    </b><a onclick=javascript:void(0); data-html="true" rel="tooltip" href="#" data-toggle="tooltip" title='@Html.Raw(myOption.Key.OptionExplain).ToHtmlString().Replace("<i>","").Replace("</i>","")'>
+    <i class="icon-question-sign"></i>
+</a>
                     <br />
                 </dt>
             }
@@ -71,10 +72,12 @@
                         explainsOptionsBuilder.Append("Upgrade your existing order with these options - ");
 
                     }
-                    <dt>
+                    <dt style="font-weight: normal">
                         <input type="radio" class="checkbox" id='regTypeID_@(myOption.Key.idRegType)' @defaultCheck name="regType" value="@myOption.Key.idRegType" />
-                        &nbsp;&nbsp;@myOption.Key.OptionLabel.Replace("Five", "Five </b>(days)<b>").Replace("Six", "Six </b>(months)<b>") - $@myOption.Key.Price &nbsp;&nbsp;- $
-                        @myOption.Key.Price &nbsp;
+                        &nbsp;&nbsp;<b>
+                            @Html.Raw(myOption.Key.OptionLabel.Replace("Five", "Five </b>(days)<b>").Replace("Six", "Six </b>(months)<b>")) - $@myOption.Key.Price &nbsp;&nbsp;- $
+                            @myOption.Key.Price
+                        </b>&nbsp;
                         &nbsp;<a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.Key.OptionExplain) "><i class="icon-question-sign"></i></a>
                         <br />
                     </dt>

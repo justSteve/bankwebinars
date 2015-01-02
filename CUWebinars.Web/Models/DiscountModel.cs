@@ -4,13 +4,14 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using CUWebinars.Business.Models;
 
 namespace CUWebinars.Web.Models
 {
     public class DiscountModel
     {
         [Required]
-        [Display(Name = "Full Name")]
+        [Display(Name = "Discount Code")]
         public string DiscountCode { get; set; }
 
         [Required]
@@ -57,14 +58,5 @@ namespace CUWebinars.Web.Models
         public string ClientScriptActionHint { get; set; }
     }
 
-    public enum DiscountType
-    {
-        Promotional = 0,
-        Compensatory = 1,
-        Bronze =2,
-        Silver = 3,
-        Gold = 4,
-        Subscription = 5,
-        Annual = 6
-    }
+
 }

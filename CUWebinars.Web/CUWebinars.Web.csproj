@@ -439,6 +439,8 @@
     <Content Include="Content\css\create-user-form.css" />
     <Content Include="Content\css\details.css" />
     <Content Include="Content\css\nova.css" />
+    <Content Include="Content\css\styles\form.css" />
+    <Content Include="Content\css\styles\nova.css" />
     <Content Include="Content\js\calendarview.js" />
     <Content Include="Content\js\location.js" />
     <Content Include="Content\js\protoplus-ui-form.js" />
@@ -506,6 +508,7 @@
     <Content Include="Scripts\purl.js" />
     <Content Include="Scripts\underscore.js" />
     <Content Include="Scripts\underscore.min.js" />
+    <Content Include="Scripts\vendor\json2.js" />
     <Content Include="Views\Admin\Home\_ImportOrder.cshtml" />
     <Content Include="Views\Admin\Home\_LogInAsUser.cshtml" />
     <Content Include="Views\Admin\Home\_ManualPasswordReset.cshtml" />
@@ -614,6 +617,8 @@
     <Content Include="Views\Account\AddPasswordForCartCreatedUser.cshtml" />
     <Content Include="Views\Admin\ManageOrder.cshtml" />
     <Content Include="Views\Admin\Home\_OrderEditDetails.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\DiscountSubscription.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\DiscountGeneral.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\packages\Selenium.WebDriver.ChromeDriver.2.9.0.0\content\chromedriver.exe">
