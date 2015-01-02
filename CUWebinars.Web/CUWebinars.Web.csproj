@@ -445,7 +445,6 @@
     <Content Include="Content\js\protoplus.js" />
     <Content Include="Content\js\prototype.js" />
     <Content Include="Content\js\vendor\json2.js" />
-    <Content Include="Content\manage-order.css" />
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
     <Content Include="Content\themes\base\autocomplete.css" />

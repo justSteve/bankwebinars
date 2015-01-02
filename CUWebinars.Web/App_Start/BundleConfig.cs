@@ -120,10 +120,6 @@ namespace CUWebinars.Web.App_Start
                 "~/Content/css/details.css"
                 ));
 
-            bundles.Add(new StyleBundle("~/Content/manage-order").Include(
-                "~/Content/css/manage-order.css"
-                ));
-
             bundles.Add(new StyleBundle("~/Content/register-user-styles").Include(
                 "~/Content/css/create-user-form.css"
                 ));

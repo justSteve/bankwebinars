@@ -10,22 +10,19 @@ $(function () {
         MANAGE.idOrder = orderIdInput.val();
 
         // loading spinner
-        orderIdInput.append('<span id="spinWrapper" class="label label-info"><i id="spinner" class="icon-spinner icon-spin"></i>&nbsp;loading...</span>');
+        orderIdInput.after('<span id="spinWrapper" class="label label-info"><i id="spinner" class="icon-spinner icon-spin"></i>&nbsp;loading...</span>');
 
         $('#orderRelatedFields').load('/Admin/GetOrderDetails/' + MANAGE.idOrder, function () {
-
-            MANAGE.locationsSpanPrefix = 'LocationSpan-';
-            MANAGE.breakSuffix = '-break';
             
             MANAGE.primeDomVariables();
             MANAGE.wireUpHandlers();
             
             MANAGE.addLocsUnitPrice = $('#CostPerAdditionalLocation').val();
             MANAGE.addLocsTotalPrice = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions').val();
-            MANAGE.retrivedAdditionalLocations = false;
 
             MANAGE.wireUpTrashIcons();
 
+            // remove loading spinner
             $('#spinWrapper').remove();
         });
     });
@@ -52,7 +49,7 @@ MANAGE.addAdditionalLocation = function (e) {
     }
 
     var trashIconId = newId + '-AdditionLocationEmail-delete';
-    var additionalLocationEmailId = 'AdditionalLocationEmail_' + newId;
+    var additionalLocationEmailId = 'AdditionalLocationEmail-' + newId;
 
     MANAGE.wrapperDiv.append('<span id="' + MANAGE.locationsSpanPrefix + newId + '"><input id="' + additionalLocationEmailId + '" name="AdditionalLocations[' + newId + '].Email" type="email" placeholder="Enter email address" aria-describedby="AdditionalLocationEmail_'+ newId +'-error" aria-invalid="false"></input>&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + trashIconId + '"></i></span> <br id="' + newId + MANAGE.breakSuffix + '">');
 
@@ -87,7 +84,6 @@ MANAGE.deleteItem = function (e) {
 MANAGE.wireUpTrashIcons = function () {
     
     var trashCans = MANAGE.wrapperDiv.find('i');
-    MANAGE.numberOfAdditionalLocations = MANAGE.numberAddLocsLabel.text();
 
     $.each(trashCans, function (idx, i) {
         $(i).on('click', MANAGE.deleteItem);
@@ -95,11 +91,15 @@ MANAGE.wireUpTrashIcons = function () {
 };
 
 MANAGE.primeDomVariables = function() {
+
     MANAGE.wrapperDiv = $('#collectAdditionalLocations');
     MANAGE.numberAddLocsLabel = $('#nrAddLocs');
     MANAGE.addAdditionalLocationsButton = $('#addLocationsButton');
     MANAGE.totalOptionsInput = $('DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions');
 
+    MANAGE.locationsSpanPrefix = 'LocationSpan-';
+    MANAGE.breakSuffix = '-break';
+    MANAGE.numberOfAdditionalLocations = parseInt(MANAGE.numberAddLocsLabel.text());
 };
 
 MANAGE.submitForm = function(e) {
@@ -127,8 +127,6 @@ MANAGE.submitForm = function(e) {
     }).done(function (data, bla, bla) {
 
     });
-
-
 };
 
 MANAGE.changeRegType = function(e) {
