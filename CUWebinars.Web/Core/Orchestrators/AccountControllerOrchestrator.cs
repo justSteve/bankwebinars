@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using System.Web.Mvc.Html;
-using BrockAllen.MembershipReboot;
+﻿using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
@@ -22,6 +20,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 using ClaimsExtensions = CUWebinars.Web.Helpers.ClaimsExtensions;
@@ -753,6 +752,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             } while (retries++ < _globals.RetryCount);
 
+            // if still null at this point, we have exceeded the retry limit and assume that something has gone wrong.
             if (ReferenceEquals(userAccount, null)) throw new Exception("User does not exist in system");
 
             bool hasAlreadyVerifiedAccount = !userAccount.HasClaim(ClaimTypes.HasNotVerified);

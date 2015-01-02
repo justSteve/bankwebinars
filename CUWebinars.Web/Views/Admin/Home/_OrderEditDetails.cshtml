@@ -1,0 +1,149 @@
+﻿@model ManageOrderEditModel
+
+@functions {
+    private const string CurrencyFormatToken = "c";
+    private const string DotAndTwoDecimals = ".00";
+
+    private string GetDiscountedTextSpan()
+    {
+        var outerSpan = new TagBuilder("span");
+        outerSpan.GenerateId("discountedText");
+
+        if (Model.DisplayRowPriceViewModel.PricesAndDiscounts.TotalDiscount == 0)
+            outerSpan.AddCssClass("muted");
+
+        var totalDiscountElement = new TagBuilder("span");
+        totalDiscountElement.GenerateId("totalDiscount");
+        totalDiscountElement.SetInnerText(Model.DisplayRowPriceViewModel.PricesAndDiscounts.TotalDiscount.ToString(CurrencyFormatToken));
+
+        outerSpan.InnerHtml = string.Concat("Discounted: ", totalDiscountElement.ToString(TagRenderMode.Normal), (Model.DisplayRowPriceViewModel.Discount == null ? string.Empty : string.Concat(" (", Model.DisplayRowPriceViewModel.Discount.DiscountCode, ")")));
+
+        return outerSpan.ToString(TagRenderMode.Normal);
+    }
+
+    private string GetAdditionalLocationsTextSpan()
+    {
+        var outerSpan = new TagBuilder("span");
+        outerSpan.GenerateId("addLocsText");
+
+        if (Model.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOptions == 0)
+            outerSpan.AddCssClass("muted");
+
+        var additionalLocsPriceElement = new TagBuilder("span");
+        additionalLocsPriceElement.GenerateId("totalAdLocsPrice");
+        additionalLocsPriceElement.SetInnerText(Model.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOptions.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, ""));
+
+        if (Model.DisplayRowPriceViewModel.NumberOfAdditionalLocations == 1)
+        {
+            outerSpan.InnerHtml = string.Concat("One Additional Location: ", additionalLocsPriceElement.ToString(TagRenderMode.Normal));
+        }
+        else
+        {
+            outerSpan.InnerHtml = string.Concat(Model.DisplayRowPriceViewModel.NumberOfAdditionalLocations, " Additional Locations: ", additionalLocsPriceElement.ToString(TagRenderMode.Normal));
+        }
+
+
+
+        return outerSpan.ToString(TagRenderMode.Normal);
+    }
+
+    private string GetStatusLabel(OrderStatus orderStatus)
+    {
+        var statusLabelSpan = new TagBuilder("span");
+
+        statusLabelSpan.GenerateId("orderStatusLabel");
+        statusLabelSpan.AddCssClass("label");
+
+        switch (orderStatus)
+        {
+            case OrderStatus.InProcess:
+                statusLabelSpan.AddCssClass("label-warning");
+                statusLabelSpan.SetInnerText(@OrderStatus.InProcess.ToString());
+                break;
+
+            case OrderStatus.Submitted:
+                statusLabelSpan.AddCssClass("label-info");
+                statusLabelSpan.SetInnerText(@OrderStatus.Submitted.ToString());
+                break;
+
+            case OrderStatus.Paid:
+                statusLabelSpan.AddCssClass("label-success");
+                statusLabelSpan.SetInnerText(@OrderStatus.Paid.ToString());
+                break;
+
+            case OrderStatus.AwaitingVerification:
+                statusLabelSpan.AddCssClass("label-warning");
+                statusLabelSpan.SetInnerText(@OrderStatus.AwaitingVerification.ToString());
+                break;
+        }
+
+        return statusLabelSpan.ToString(TagRenderMode.Normal);
+    }
+
+}
+
+@using (Html.BeginForm("ManageOrder", "Admin", FormMethod.Post, new { id = "manageOrderForm" }))
+{
+    <div style="display: inline-block;vertical-align: top;">
+        <label for="RegType">Select a Registration Type:</label>
+        @Html.Partial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel)
+    </div>
+    <div style="display: inline-block">
+        <div class="control-group">
+            <div class="controls">
+                There are <span id="nrAddLocs">@Model.NumberOfAdditionalLocations</span> Additional Locations for this order.
+                <button id="AddLocationsButton" class="btn btn-default btn-small">edit?</button>
+            </div>
+            @Html.Raw(Model.AdditionalLocationsRenderer.ToString())
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions">Total Additional Locations Price:</label>
+            <div class="controls">
+                @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOptions, new { disabled="disabled"}) @*read-only*@
+            </div>
+        </div>
+    </div>
+    <div style="display: inline-block">
+        <div class="control-group">
+            <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice">Base Price:</label>
+            <div class="controls">
+                @Html.EditorFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.UnitPrice)
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount">Total Discount:</label>
+            <div class="controls">
+                @Html.EditorFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalDiscount)
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice">Total Order Price:</label>
+            <div class="controls">
+                @Html.EditorFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice)
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="DisplayRowPriceViewModel_Price">Price:</label>
+            <div class="controls">
+                @Html.HiddenFor(m => m.DisplayRowPriceViewModel.Price)
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="DisplayRowPriceViewModel_RowPrice">Order Row Price:</label>
+            <div class="controls">
+                @Html.HiddenFor(m => m.DisplayRowPriceViewModel.RowPrice)
+            </div>
+        </div>
+    </div>
+    <button id="editOrderSubmitButton" class="btn btn-default">Edit Details</button>
+    
+    @Html.HiddenFor(m => m.CostPerAdditionalLocation)
+    @Html.HiddenFor(m => m.UserId)
+    @Html.HiddenFor(m => m.WebinarId)
+}
+
+
+
+
+

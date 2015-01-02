@@ -40,6 +40,10 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/cart/update-webinar-files.js"
                 ));
 
+            bundles.Add(new ScriptBundle("~/bundles/manage-order").Include(
+                "~/Scripts/app/admin/manage-order.js"
+                ));
+
             bundles.Add(new ScriptBundle("~/bundles/CommonModules").Include(
                 "~/Scripts/app/constants.js",
                 "~/Scripts/underscore.js",
@@ -114,6 +118,10 @@ namespace CUWebinars.Web.App_Start
 
             bundles.Add(new StyleBundle("~/Content/createOrderDetails").Include(
                 "~/Content/css/details.css"
+                ));
+
+            bundles.Add(new StyleBundle("~/Content/manage-order").Include(
+                "~/Content/css/manage-order.css"
                 ));
 
             bundles.Add(new StyleBundle("~/Content/register-user-styles").Include(

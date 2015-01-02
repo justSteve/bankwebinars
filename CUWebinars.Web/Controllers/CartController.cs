@@ -4,11 +4,9 @@ using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.ViewModel;
-using DDay.iCal;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -48,8 +46,7 @@ namespace CUWebinars.Web.Controllers
                 // AdditionalLocations = order.OrderRows.First().AdditionalLocation.ToList()
                 AdditionalLocations = new List<AdditionalLocation>(),
                 OrderExists = false,
-                Emails = new[]{""}
-
+                Emails = new string [0]
             };
 
             return PartialView("~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml", addAdditionalLocationViewModel);

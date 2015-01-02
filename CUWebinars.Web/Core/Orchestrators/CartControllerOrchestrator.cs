@@ -489,7 +489,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public PricesAndDiscounts UpdateOrderPricing(Order order)
         {
-            PricesAndDiscounts pricesAndDiscounts = default (PricesAndDiscounts);
+            PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
             _orderManagementService.UpdateOrderChanges(order, ref pricesAndDiscounts);
 
             return pricesAndDiscounts;

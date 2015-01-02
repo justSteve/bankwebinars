@@ -1,0 +1,38 @@
+﻿@Styles.Render("~/Content/manage-order")
+
+@{
+    ViewBag.Title = "ManageOrder";
+}
+
+<div class="container">
+    <div class="legendImitator">Manage Order</div>
+    
+    <div style="display: inline-block;vertical-align: top;">
+        <div class="control-group">
+            <label class="control-label" for="orderIdInput">Enter the order id:</label>
+            <div class="controls">
+                <input type="text" id="orderIdInput" />
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <button id="getOrderButton" class="btn">Get Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: inline-block;margin-left:40px;">
+        <div id="orderRelatedFields" style="margin-top: 20px;"></div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="additionalLocationsModalDialog" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-body">
+        @* modal content goes here *@
+    </div><!-- /.modal-content -->
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundles/manage-order")
+}

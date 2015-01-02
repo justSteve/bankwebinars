@@ -1,7 +1,7 @@
 ﻿@model DisplayOptionsInDropDownViewModel
            
 <input type="hidden" name="ID" value="@Model.OrderRowId" />
-<select name="RegType" id="RegType">
+<select name="RegType" id="RegType" style="vertical-align: top;">
     @{
         foreach (var option in Model.Options)
         {

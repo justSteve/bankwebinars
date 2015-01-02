@@ -128,6 +128,7 @@
     <Compile Include="Core\Cache\ICachingService.cs" />
     <Compile Include="Core\Cache\OrderCachingService.cs" />
     <Compile Include="Core\DataOperations.cs" />
+    <Compile Include="Core\Exceptions\UserCreatedMembershipException.cs" />
     <Compile Include="Core\Helpers\DateTimeHelper.cs" />
     <Compile Include="Core\Helpers\GenericHelpers.cs" />
     <Compile Include="Core\Helpers\ValidationHelper.cs" />

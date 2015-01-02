@@ -1,34 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Security.Claims;
-using CUWebinars.Business.Core;
-using CUWebinars.Business.Services;
-using CUWebinars.Web.Services;
-using Newtonsoft.Json.Linq;
-using Ninject.Extensions.Logging;
-using System.Web;
-using System.Web.Helpers;
-using System.Web.Mvc;
-using BrockAllen.MembershipReboot;
+﻿using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
+using System.Text;
+using System.Web.Http;
 using CUWebinars.Business.AccountService;
-using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
+using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Models;
+using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
+using Microsoft.Ajax.Utilities;
 using Newtonsoft.Json;
-using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
+using Newtonsoft.Json.Linq;
+using Ninject.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Security.Claims;
+using System.Web;
+using System.Web.Helpers;
+using System.Web.Mvc;
 using DataOperations = CUWebinars.Web.Membership.DataOperations;
 
 namespace CUWebinars.Web.Controllers.Admin
 {
 
     [ElmahHandleError]
-    [Authorize]
+    [System.Web.Mvc.Authorize]
 
     public class AdminController : Controller
     {
@@ -38,7 +38,7 @@ namespace CUWebinars.Web.Controllers.Admin
         private readonly ILogger _logger;
         private readonly IWebinarManagementService _webinarManagementService;
         private readonly IStateService _stateService;
-        private GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+        private readonly GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
         private bool _disposed;
 
         //
@@ -50,7 +50,13 @@ namespace CUWebinars.Web.Controllers.Admin
 
         //
         // GET: /Admin/
-        public AdminController(IMembershipService membershipService, ILogger logger, IStateService stateService, IWebinarManagementService webinarManagementService, IOrderManagementService orderManagementService, IAppHelper appHelper)
+        public AdminController(
+            IMembershipService membershipService, 
+            ILogger logger, 
+            IStateService stateService, 
+            IWebinarManagementService webinarManagementService, 
+            IOrderManagementService orderManagementService, 
+            IAppHelper appHelper)
         {
             _membershipService = membershipService;
             _logger = logger;
@@ -59,6 +65,149 @@ namespace CUWebinars.Web.Controllers.Admin
             _orderManagementService = orderManagementService;
             _appHelper = appHelper;
         }
+
+        public ActionResult ManageOrder()
+        {
+            return View();
+        }
+
+        [System.Web.Mvc.HttpPost]
+        public ActionResult ManageOrder(ManageOrderEditModel model)
+        {
+            return View();
+        }
+
+        public PartialViewResult GetAdditionalLocationByOrderId(int? id = null)
+        {
+            if (id.HasValue)
+            {
+                var order = _orderManagementService.GetOrderById(id.Value);
+                var additionalLocations =
+                    order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.ToList();
+
+                var addAdditionalLocationViewModel = new AdditionalLocationOfferViewModel
+                {
+                    AdditionalLocations = additionalLocations,
+                    OrderExists = true,
+                    Emails = additionalLocations.Select( al => al.Email).ToList()
+                };
+
+                return PartialView(
+                    "~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml",
+                    addAdditionalLocationViewModel
+                    );
+            }
+            return null;// todo: return something.
+        }
+
+        public PartialViewResult GetOrderDetails(int? id = null)
+        {
+            if (id.HasValue)
+            {
+                var order = _orderManagementService.GetOrderById(id.Value);
+                var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+                var additionalLocationsPricing =
+                    _orderManagementService.GetAdditionalLocationsPricing(
+                        orderRow.AdditionalLocation,
+                        orderRow.idWebinar
+                        );
+                var additionalLocations = orderRow.AdditionalLocation;
+                var additionalLocationsCount = additionalLocations.Count;
+
+                var manageOrderEditModel = new ManageOrderEditModel
+                {
+                    AdditionalLocations = additionalLocations,
+                    AdditionalLocationsRenderer = GetRenderer(additionalLocations.Select(al => al.Email).ToList()),
+                    CostPerAdditionalLocation = additionalLocationsPricing.Item2,
+                    DisplayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
+                    {
+                        Options = _orderManagementService.GetOptionsByWebinarId(
+                            order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar,
+                            false),
+                        OrderRowId = orderRow.idOrderRow,
+                        OrderRowRegistrationType = orderRow.RegistrationType
+                    },
+                    DisplayRowPriceViewModel = new DisplayRowPriceViewModel
+                    {
+                        Discount = orderRow.Discount,
+                        NumberOfAdditionalLocations = additionalLocationsCount,
+                        OrderStatus = order.OrderStatus,
+                        Price = orderRow.RegistrationType.Price,
+                        PricesAndDiscounts =
+                            _orderManagementService.CalculateOrderPrices(order, additionalLocationsPricing.Item2),
+                        RegistrationType = orderRow.RegistrationType,
+                        RowPrice = orderRow.RowPrice
+                    },
+                    NumberOfAdditionalLocations = additionalLocationsCount,
+                    UserId = order.idUser,
+                    WebinarId = orderRow.idWebinar
+                };
+
+
+                return PartialView("~/Views/Admin/Home/_OrderEditDetails.cshtml", manageOrderEditModel);
+            }
+
+            return null;
+        }
+
+        private TagBuilder GetRenderer(IList<string> emailAddresses)
+        {
+            const string locationsSpanPrefix = "LocationSpan-";
+            string breakSuffix = "-break";
+            const string additionalLocationDeletePrefix = "-AdditionLocationEmail-delete";
+            const string additionalLocationEmailPrefix = "AdditionalLocationEmail_";
+            const string nonBreakingSpace = "&nbsp;";
+            var stringBuilder = new StringBuilder();
+
+    
+            var spanBuilder = new TagBuilder("span");
+            var inputBuilder = new TagBuilder("input");
+            var iconBuilder = new TagBuilder("i");
+
+            for (var i = 0; i < emailAddresses.Count; i++)
+            {
+                spanBuilder = new TagBuilder("span");
+                inputBuilder = new TagBuilder("input");
+                iconBuilder = new TagBuilder("i");
+
+                inputBuilder.GenerateId(additionalLocationEmailPrefix + i);
+                inputBuilder.MergeAttributes(new Dictionary<string, string>
+                {
+                    {"name", "AdditionalLocations[" + i + "].Email"},
+                    {"type", "email"},
+                    {"placeholder", "Enter email address"},
+                    {"aria-invalid", "false"},
+                    {"aria-describedby", "AdditionalLocationEmail_" + i + "-error"},
+                    {"value", emailAddresses[i]},
+                });
+                inputBuilder.AddCssClass("valid");
+
+                iconBuilder.GenerateId(i + additionalLocationDeletePrefix);
+                iconBuilder.AddCssClass("icon-trash");
+                iconBuilder.AddCssClass("icon-white");
+                iconBuilder.MergeAttribute("style", "cursor: pointer");
+                
+                spanBuilder.GenerateId(locationsSpanPrefix + i);
+                
+                spanBuilder.InnerHtml = string.Concat(
+                    inputBuilder.ToString(TagRenderMode.SelfClosing), 
+                    nonBreakingSpace, 
+                    iconBuilder.ToString(TagRenderMode.Normal),
+                    "<br id=" + i + breakSuffix + ">"
+                    );
+                stringBuilder.Append(spanBuilder.ToString(TagRenderMode.Normal));
+            }
+
+
+            var div = new TagBuilder("div");
+            div.GenerateId("collectAdditionalLocations");
+            div.AddCssClass("addLocsBox");
+            div.InnerHtml = stringBuilder.ToString();
+
+            return div;
+
+        }
+
         public PartialViewResult ResendOrderConfirmation()
         {
             var model = new ResendOrderInformationViewModel
@@ -69,7 +218,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return PartialView("~/Views/Admin/Home/_resendOrderConfirmation.cshtml", model);
         }
 
-        [HttpPost]
+        [System.Web.Mvc.HttpPost]
         public ActionResult ResendOrderConfirmation(int orderId)
         {
             var order = _orderManagementService.GetOrderById(orderId);
@@ -93,7 +242,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return PartialView("~/Views/Admin/Home/_resendConnectionInfo.cshtml", model);
         }
 
-        [HttpPost]
+        [System.Web.Mvc.HttpPost]
         public ActionResult ResendConnectionInfo(int orderId)
         {
             var order = _orderManagementService.GetOrderById(orderId);
@@ -117,7 +266,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return PartialView("~/Views/Admin/Home/_adHocNotification.cshtml", model);
         }
 
-        [HttpPost]
+        [System.Web.Mvc.HttpPost]
         public ActionResult SendAdhocEvent(int webinarId)
         {
             var regTypes = EventInvokerHelpers.GetRegTypesForWebinarAsSelectListItems(webinarId, _webinarManagementService);
@@ -135,7 +284,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return PartialView("~/Views/Admin/Home/_SendReminder.cshtml", model);
         }
 
-        [HttpPost]
+        [System.Web.Mvc.HttpPost]
         public JsonResult SendReminder(int webinarId)
         {
             var orders = _orderManagementService.GetOrdersForLiveNotifications(webinarId);
@@ -161,7 +310,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return PartialView("~/Views/Admin/Home/_SendConnectionInfo.cshtml", model);
         }
 
-        [HttpPost]
+        [System.Web.Mvc.HttpPost]
         public JsonResult SendConnectionInfo(int webinarId)
         {
             var orders = _orderManagementService.GetOrdersForLiveNotifications(webinarId);
@@ -233,7 +382,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         additionalLocation.RegistrantKey = registrantKey;
                     }
 
-                    PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts); // not needed here. Discard.
+                    var pricesAndDiscounts = default(PricesAndDiscounts); // not needed here. Discard.
 
                     var ResultOfUpdate = _orderManagementService.UpdateOrderChanges(order, ref pricesAndDiscounts);
                 }
@@ -250,7 +399,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return PartialView("~/Views/Admin/Home/_SendRecordingPosted.cshtml", model);
         }
 
-        [HttpPost]
+        [System.Web.Mvc.HttpPost]
         public JsonResult SendRecordingPosted(int webinarId)
         {
             var orders = _orderManagementService.GetOrdersForRecordedNotifications(webinarId);
@@ -278,7 +427,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return PartialView("~/Views/Admin/Home/_SendShippedOrder.cshtml", model);
         }
 
-        [HttpPost]
+        [System.Web.Mvc.HttpPost]
         public JsonResult SendShippedOrder(int orderId)
         {
             var order = _orderManagementService.GetOrderById(orderId);
@@ -300,7 +449,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return PartialView("~/Views/Admin/Home/_LogInAsUser.cshtml", logInAsOtherUserViewModel);
         }
 
-        [HttpPost]
+        [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult LogInAsUser(LogInAsOtherUserViewModel model)
         {
@@ -309,7 +458,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 var adminUser = User.Identity as ClaimsIdentity;
                 var adminUserEmail =
                     adminUser.Claims.Single(c => c.Type == System.IdentityModel.Claims.ClaimTypes.Email).Value;
-                var impersonatedUserAccount = _membershipService.GetUserAccountByEmail(globalConfig.Tenant, model.Email);
+                var impersonatedUserAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, model.Email);
 
                 if (ReferenceEquals(null, impersonatedUserAccount))
                 {
@@ -325,7 +474,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 _stateService.SetValue(WebUiConstants.AdminUserEmail, adminUserEmail);
 
-                _membershipService.LogInAdminUserAsOtherUser(globalConfig.Tenant,
+                _membershipService.LogInAdminUserAsOtherUser(_globalConfig.Tenant,
                     adminUserEmail.Trim(), model.Password.Trim(),
                     impersonatedUserAccount
                     );
@@ -349,13 +498,13 @@ namespace CUWebinars.Web.Controllers.Admin
 
         }
 
-        [HttpPost]
+        [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
         public JsonResult ManualPasswordReset(ManualPasswordResetViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var userAccount = _membershipService.GetUserAccountByEmail(globalConfig.Tenant, model.Email);
+                var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, model.Email);
                 if (userAccount == null)
 
                     return Json(new { Result = WebUiConstants.InvalidEmail });
@@ -383,7 +532,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(new { Result = WebUiConstants.Fail + myErr });
         }
 
-        [AllowAnonymous]
+        [System.Web.Mvc.AllowAnonymous]
         public PartialViewResult PasswordResetOperation()
         {
             var resetPasswordModel = new ResetPasswordModel
@@ -395,8 +544,8 @@ namespace CUWebinars.Web.Controllers.Admin
             return PartialView("~/Views/Admin/Home/_ResetPasswordPartial.cshtml", resetPasswordModel);
         }
 
-        [HttpPost]
-        [AllowAnonymous]
+        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
         public JsonResult ResetPassword(string email)
         {
             var globals = GlobalConfig.GlobalConfigSingleton;
@@ -424,7 +573,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return PartialView("~/Views/Admin/Home/_PasswordResetConfirm.cshtml", changePasswordFromResetKeyInputModel);
         }
 
-        [HttpPost]
+        [System.Web.Mvc.HttpPost]
         public JsonResult FirePasswordResetEvent(ChangePasswordFromResetKeyInputModel model, string verificationKey)
         {
             if (_membershipService.ChangePasswordFromResetKey(verificationKey, model.Password))
@@ -531,8 +680,5 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return new List<Address> { billingAddress, shippingAddress };
         }
-
-
     }
-
 }

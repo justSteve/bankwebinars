@@ -1,11 +1,4 @@
-﻿using System.Configuration;
-using System.Diagnostics;
-using System.IO;
-using System.Security.Claims;
-using System.Web.Hosting;
-using CUWebinars.Business.AccountService;
-using CUWebinars.Business.Constants;
-using CUWebinars.Business.Core.Exceptions;
+﻿using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
@@ -18,8 +11,13 @@ using CUWebinars.Web.ViewModel;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
+using System.Web.Hosting;
 using System.Web.Mvc;
 
 

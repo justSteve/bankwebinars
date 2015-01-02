@@ -383,6 +383,7 @@
     <Compile Include="Models\EditContactInfoModel.cs" />
     <Compile Include="Models\EditUserModel.cs" />
     <Compile Include="Models\ImportOrderModel.cs" />
+    <Compile Include="Models\ManageOrderEditModel.cs" />
     <Compile Include="Models\MigrateOrderModel.cs" />
     <Compile Include="Models\RegisterFieldsDTO.cs" />
     <Compile Include="Models\ShippingDetailsModel.cs" />
@@ -444,6 +445,7 @@
     <Content Include="Content\js\protoplus.js" />
     <Content Include="Content\js\prototype.js" />
     <Content Include="Content\js\vendor\json2.js" />
+    <Content Include="Content\manage-order.css" />
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
     <Content Include="Content\themes\base\autocomplete.css" />
@@ -474,6 +476,7 @@
     <Content Include="newrelic\NewRelic.Agent.Core.dll" />
     <Content Include="newrelic\NewRelic.Agent.Extensions.dll" />
     <Content Include="newrelic\NewRelic.Profiler.dll" />
+    <Content Include="Scripts\app\admin\manage-order.js" />
     <Content Include="Scripts\app\cart\add-password.js" />
     <Content Include="Scripts\app\cart\update-webinar-files.js" />
     <Content Include="Scripts\app\cart\create-order-new.js" />
@@ -609,6 +612,8 @@
     <Content Include="Views\Account\EditContactInfo.cshtml" />
     <Content Include="Views\Account\OrderComplete.cshtml" />
     <Content Include="Views\Account\AddPasswordForCartCreatedUser.cshtml" />
+    <Content Include="Views\Admin\ManageOrder.cshtml" />
+    <Content Include="Views\Admin\Home\_OrderEditDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\packages\Selenium.WebDriver.ChromeDriver.2.9.0.0\content\chromedriver.exe">
