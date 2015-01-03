@@ -152,12 +152,9 @@ namespace CUWebinars.Web.Controllers
             //
 
             //note that #2 might be tedious to achieve via lambda - we could turn the whole thing into TSQL if need be.
-            webinars = webinars.Where(
-                w => w.Presenter.WebUser.LastName.Contains(searchTerm)//this term is not finding values that it should
-                     || w.Title.Contains(searchTerm)
-                     || w.DescriptionLong.Contains(searchTerm)
-                     
-                     );
+
+            webinars = _webinarManagementService.GetWebinarByPresenterLastName(searchTerm);
+
             ViewBag.Title = "Search Results" ;
 
             return View(webinars);

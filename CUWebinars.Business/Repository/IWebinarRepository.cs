@@ -11,6 +11,7 @@ namespace CUWebinars.Business.Repository
         void Delete(Webinar webinar);
         Webinar FindById(int id);
         Webinar FindByIdLoaded(int id);
+        IEnumerable<Webinar> FindByPresenterLastName(string lastName);
         IQueryable<Webinar> GetUpcoming();
         IQueryable<Webinar> GetRecorded();
         IQueryable<Webinar> GetAllActive();
@@ -20,7 +21,7 @@ namespace CUWebinars.Business.Repository
         List<RegType> GetCurrentOptions(int idWebinar);
         IList<Order> GetOrdersByWebinarForConnectionInfo(int id);
         Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id);
-        IQueryable<Topic>  GetTopicsPerWebinar(int idWebinar);
+        IQueryable<Topic> GetTopicsPerWebinar(int idWebinar);
         void Update(Webinar webinar);
         IQueryable<WebinarFile> GetWebinarFilesPerWebinar(int idWebinar);
         int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar);

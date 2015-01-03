@@ -42,6 +42,11 @@ namespace CUWebinars.Business.Repository
             return webinar.FirstOrDefault();
         }
 
+        public IEnumerable<Webinar> FindByPresenterLastName(string lastName)
+        {
+            return items.Where(w => w.Presenter.WebUser.LastName.ToLower().Contains(lastName.ToLower()));
+        }
+
         public IQueryable<Webinar> GetUpcoming()
         {
             return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))

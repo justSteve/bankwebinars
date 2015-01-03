@@ -71,6 +71,11 @@ namespace CUWebinars.Web.Controllers.Admin
         [System.Web.Mvc.HttpPost]
         public ActionResult ManageOrder(ManageOrderEditModel model)
         {
+            if (ModelState.IsValid)
+            {
+                
+            }
+
             return Json(new { Result = WebUiConstants.Success});
         }
 
