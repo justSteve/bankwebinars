@@ -47,6 +47,19 @@ namespace CUWebinars.Business.Repository
             return items.Where(w => w.Presenter.WebUser.LastName.ToLower().Contains(lastName.ToLower()));
         }
 
+        public IEnumerable<Webinar> FindByTopicDescription(string topicDescription)
+        {
+            var stronglyTypedContext = (TTSWebinarsContext)db;
+
+            // 1st get all topics with the topicDescription
+            var topicsOfSearch = stronglyTypedContext.Topics.Where(t => t.topicDesc.ToLower().Contains(topicDescription.ToLower())).ToList();
+
+            // project that into a list of webinars
+            var result = topicsOfSearch.SelectMany(t => t.WebinarTopicXrefs).Select(w => w.Webinar).AsEnumerable();
+
+            return result;
+        }
+
         public IQueryable<Webinar> GetUpcoming()
         {
             return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))

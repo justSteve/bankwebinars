@@ -12,6 +12,7 @@ namespace CUWebinars.Business.Repository
         Webinar FindById(int id);
         Webinar FindByIdLoaded(int id);
         IEnumerable<Webinar> FindByPresenterLastName(string lastName);
+        IEnumerable<Webinar> FindByTopicDescription(string topicDescription);
         IQueryable<Webinar> GetUpcoming();
         IQueryable<Webinar> GetRecorded();
         IQueryable<Webinar> GetAllActive();

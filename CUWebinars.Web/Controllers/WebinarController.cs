@@ -153,7 +153,9 @@ namespace CUWebinars.Web.Controllers
 
             //note that #2 might be tedious to achieve via lambda - we could turn the whole thing into TSQL if need be.
 
-            webinars = _webinarManagementService.GetWebinarByPresenterLastName(searchTerm);
+            // TODO: incomplete, but under way ...
+            //webinars = _webinarManagementService.GetWebinarByPresenterLastName(searchTerm);
+            webinars = _webinarManagementService.GetWebinarByTopicDescription(searchTerm);
 
             ViewBag.Title = "Search Results" ;
 

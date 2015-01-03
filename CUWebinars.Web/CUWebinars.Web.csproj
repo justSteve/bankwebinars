@@ -655,9 +655,6 @@
     <Content Include="Views\Shared\DisplayTemplates\DiscountGeneral.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\packages\Selenium.WebDriver.ChromeDriver.2.9.0.0\content\chromedriver.exe">
-      <Link>chromedriver.exe</Link>
-    </Content>
     <Content Include="App_Data\Calendar\iCalFromCitrix.txt" />
     <Content Include="App_Data\Deploy\New-AzureSql.ps1" />
     <Content Include="App_Data\Deploy\New-AzureStorage.ps1" />

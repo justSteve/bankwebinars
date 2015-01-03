@@ -136,6 +136,11 @@ namespace CUWebinars.Business.Services
             return _webinarRepository.FindByPresenterLastName(lastName);
         }
 
+        public IEnumerable<Webinar> GetWebinarByTopicDescription(string topicDescription)
+        {
+            return _webinarRepository.FindByTopicDescription(topicDescription);
+        }
+
         public Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id)
         {
             try
