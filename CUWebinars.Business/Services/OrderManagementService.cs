@@ -736,6 +736,16 @@ namespace CUWebinars.Business.Services
             return myDiscount;
         }
 
+        public decimal GetPriceOfAdditionalLocation(int idWebinar)
+        {
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+            var addLocPrice = dataOperations.GetAdditionalLocationsPricing(idWebinar);
+            var tuple = addLocPrice.SingleOrDefault();
+
+            return tuple.Item2;
+
+        }
+
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink)
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);

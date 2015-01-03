@@ -157,7 +157,7 @@ namespace CUWebinars.Web.Controllers
             webinars = _webinarManagementService.GetWebinarByPresenterLastName(searchTerm);
             var webinarsByTopic = _webinarManagementService.GetWebinarByTopicDescription(searchTerm);
 
-            ViewBag.Title = "Search Results" ;
+            ViewBag.Title = "Search Results";
 
             return View(webinars.Union(webinarsByTopic));
         }
@@ -473,7 +473,7 @@ namespace CUWebinars.Web.Controllers
             model.Topics = _webinarManagementService.GetTopicsPerWebinar(webinar.idWebinar);
 
             model.WebinarFiles = _webinarManagementService.GetWebinarFilesPerWebinar(webinar.idWebinar);
-
+            var AddLocPrice = _orderManagementService.GetPriceOfAdditionalLocation(webinar.idWebinar);
             model.CheckoutOptionsViewModel = new CheckoutOptionsViewModel
             {
                 DisplayOptionsViewModel = new DisplayOptionsViewModel
@@ -483,7 +483,8 @@ namespace CUWebinars.Web.Controllers
                         AdditionalLocations = additionalLocations,
                         //AdditionalLocationAddViewModel property is assigned further below as more data comes to hand. 
                         OrderExists = orderExists,
-                        Webinar = webinar
+                        Webinar = webinar,
+                        Price = AddLocPrice
                     },
                     // DisplayRowPriceViewModel property is assigned further below as more data comes to hand. 
                     EventTitle = model.Webinar.Title,

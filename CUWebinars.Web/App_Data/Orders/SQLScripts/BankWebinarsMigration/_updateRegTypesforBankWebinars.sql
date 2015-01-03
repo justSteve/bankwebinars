@@ -71,34 +71,69 @@ WHERE   idWebinar IN ( SELECT   idWebinar
                        WHERE    Status = 3
                                 AND Duration = 2 )
 
+
+--5 parter
 UPDATE  dbo.RegType
 SET     RegTypeLabel = 'Live Plus Five' ,
-        RegTypeExplain = 'Register for the live event and get five days access to the OnDemand Playback. You''ll have opportunity to ask questions during the presentation <i>and</i> be free to review the content for the next 5 (business) days.  Registration also includes links to presenter materials, handouts, and pdfs.'
-WHERE   idRegType = 205
+        RegTypeExplain = 'Register for all five events and get five days access to the OnDemand Playback. You''ll have opportunity to ask questions during the presentation <i>and</i> be free to review the content for the next 5 (business) days.  Registration also includes links to presenter materials, handouts, and pdfs.'
+WHERE   idRegType = 221--79
 
 UPDATE  dbo.RegType
 SET     RegTypeLabel = 'OnDemand Recording Only' ,
         RegTypeExplain = 'Interested in the topic but unable to attend the regularly scheduled event? Purchase the recorded version and receive OnDemand playback for 6 months (includes presenter materials).'
-WHERE   idRegType = 206
+WHERE   idRegType = 222--80
 
 
 UPDATE  dbo.RegType
 SET     RegTypeLabel = 'Live Plus Six' ,
         RegTypeExplain = 'Attend live; includes six <i>months</i> access to OnDemand playback. Combine the advantages of live attendance with an unlimited number of replays for the next six months.' ,
         SortOrder = 4
-WHERE   idRegType = 207
+WHERE   idRegType = 223--82
 
 UPDATE  dbo.RegType
 SET     RegTypeLabel = 'CD-ROM and Hardcopy Handouts' ,
         RegTypeExplain = 'CD-ROM plus Hardcopy Handouts. This option includes 6-months OnDemand playback but does <i>not</i> include live session.' ,
         SortOrder = 3
-WHERE   idRegType = 208
+WHERE   idRegType = 224--81
 
 UPDATE  dbo.RegType
 SET     RegTypeLabel = 'Premier Package' ,
         RegTypeExplain = 'Includes all three options above.  Live, OnDemand playback, <i>and</i> CD-ROM plus Hardcopy Handouts.' ,
         SortOrder = 5
-WHERE   idRegType = 209
+WHERE   idRegType = 225--83
+
+
+
+
+--adjust 2 hour events
+UPDATE  dbo.RegType
+SET     RegTypeLabel = 'Live Plus Five' ,
+        RegTypeExplain = 'Register for the live event and get five days access to the OnDemand Playback. You''ll have opportunity to ask questions during the presentation <i>and</i> be free to review the content for the next 5 (business) days.  Registration also includes links to presenter materials, handouts, and pdfs.'
+WHERE   idRegType = 205--
+
+UPDATE  dbo.RegType
+SET     RegTypeLabel = 'OnDemand Recording Only' ,
+        RegTypeExplain = 'Interested in the topic but unable to attend the regularly scheduled event? Purchase the recorded version and receive OnDemand playback for 6 months (includes presenter materials).'
+WHERE   idRegType = 206 -- 16
+
+
+UPDATE  dbo.RegType
+SET     RegTypeLabel = 'Live Plus Six' ,
+        RegTypeExplain = 'Attend live; includes six <i>months</i> access to OnDemand playback. Combine the advantages of live attendance with an unlimited number of replays for the next six months.' ,
+        SortOrder = 4
+WHERE   idRegType = 207--3
+
+UPDATE  dbo.RegType
+SET     RegTypeLabel = 'CD-ROM and Hardcopy Handouts' ,
+        RegTypeExplain = 'CD-ROM plus Hardcopy Handouts. This option includes 6-months OnDemand playback but does <i>not</i> include live session.' ,
+        SortOrder = 3
+WHERE   idRegType = 208 --17
+
+UPDATE  dbo.RegType
+SET     RegTypeLabel = 'Premier Package' ,
+        RegTypeExplain = 'Includes all three options above.  Live, OnDemand playback, <i>and</i> CD-ROM plus Hardcopy Handouts.' ,
+        SortOrder = 5
+WHERE   idRegType = 209--18
 
 
 PRINT 'update 1hour upcoming'
@@ -112,7 +147,7 @@ SET     RegTypeLabel = ( SELECT RegTypeLabel
                            WHERE    idRegType = 205
                          ) ,
         SortOrder = 1
-WHERE   idRegType = 200
+WHERE   idRegType = 200--27
 
 
 UPDATE  dbo.RegType
@@ -125,7 +160,7 @@ SET     RegTypeLabel = ( SELECT RegTypeLabel
                            WHERE    idRegType = 206
                          ) ,
         SortOrder = 2
-WHERE   idRegType = 201
+WHERE   idRegType = 201--32
 
 
 
@@ -139,7 +174,7 @@ SET     RegTypeLabel = ( SELECT RegTypeLabel
                            WHERE    idRegType = 207
                          ) ,
         SortOrder = 4
-WHERE   idRegType = 203
+WHERE   idRegType = 203--35
 
 UPDATE  dbo.RegType
 SET     RegTypeLabel = ( SELECT RegTypeLabel
@@ -151,7 +186,7 @@ SET     RegTypeLabel = ( SELECT RegTypeLabel
                            WHERE    idRegType = 208
                          ) ,
         SortOrder = 3
-WHERE   idRegType = 202
+WHERE   idRegType = 202--33
 
 UPDATE  dbo.RegType
 SET     RegTypeLabel = ( SELECT RegTypeLabel
@@ -163,7 +198,7 @@ SET     RegTypeLabel = ( SELECT RegTypeLabel
                            WHERE    idRegType = 209
                          ) ,
         SortOrder = 5
-WHERE   idRegType = 204
+WHERE   idRegType = 204--36
 
 UPDATE  BankWebinars.dbo.RegTypesGroupsXref
 SET     idRegTypeGroup = ( SELECT   idRegTypeGroup
