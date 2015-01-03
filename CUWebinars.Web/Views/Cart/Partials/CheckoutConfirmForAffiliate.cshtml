@@ -1,0 +1,163 @@
+﻿@model CheckoutConfirmViewModel
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#AdjustOrder').collapse('hide');
+        $('#AdjustDiscount').collapse('hide');
+        $('#AdjustAddLoc').collapse('hide');
+    });
+
+</script>
+@{
+    if (Model.OrderExists)
+    {
+        var orderRowID = 0;
+        var orderID = 0;
+        if (Model.OrderRowExists && Model.OrderRowHasId)
+        {
+            if (Model.OrderStatus == OrderStatus.InProcess)
+            {
+                <b>Please review this order summary and and choose billing method.</b>
+
+                <div class="row">
+                    <div class="offset1 span10">Primary Contact:</div>
+                    <div id="userDetailsSummed" class="span10 offset2">
+                        <p>@Html.Raw(@Model.UserDetails)</p>
+                    </div>
+                </div>
+                <div id="AdjustDiscount" class="row">
+                    <div class="offset2 span9 ">
+                        <div id="EnterDiscountCode" class="clear pull-right">
+                            @Html.TextBoxFor(m => m.CheckoutDiscountCode, new { @class = "input input-medium", placeholder = "Enter Discount Code" })
+                            <button class="btn btn-mini" role="button" id="SubmitDiscountCode">Apply Code</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="AdjustAddLoc" class="row">
+                    <div class="offset2 span9 ">
+                        <div id="additionalLocationsCaption" class="clear pull-right">
+                            Additional Locations:
+                            <div style="font-size: smaller;">
+                                @{ Html.RenderPartial("~/Views/Account/Partials/OrderHasAdditionalLocations.cshtml", Model.OrderHasAdditionalLocationsViewModel); }
+                            </div>
+                            @{
+                if (!string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption))
+                {
+                    @Model.AdditionalLocationCaption
+                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div id="AdjustOrder" class="row">
+                    <div class="offset2 span9 ">
+                        <div id="RegTypeChanger" class="clear pull-right">
+                            @{
+                Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel);
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div id="inProcCart" class="well text-center">
+                        <div id="showCartPrice">
+                            @{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }
+                        </div>
+                        <div style="font-size: x-small; text-align: center;">
+                            <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button><br />
+                            <button class="btn btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button><br />
+                            <a class="btn" id="Canceller">Cancel Registration</a><br />
+                            Sales tax may be added to orders in Wisconsin or Illinois.
+                        </div>
+                    </div>
+                </div>
+
+                @*<div class="row">
+                        <div class="span5 offset1">
+                            <input class="input input-xlarge" type="text" placeholder="How did you hear about this webinar?" name="referred" id="tbReferred" value="" />
+
+                            @Html.Raw(Model.UserComments)
+                            @Html.Raw(Model.AffiliateComments)
+                            @if (Model.UserType == UserType.Admin)
+                            {
+                                <br />
+                                @Html.Raw(Model.AdminComments)
+                                <br />
+                                @Html.Raw(Model.Origin)
+                            }
+                        </div>
+                        <div class="span2 offset1">&nbsp;</div>
+                    </div>
+                    <div class="row">
+                        <div class="span5 offset1">
+                            <a href=""></a> a comment or question for our staff?<br />
+                        </div>
+                    </div>*@
+            }
+
+
+
+            if (Model.OrderStatus != OrderStatus.InProcess)
+            {
+                Model.UserDetails += " - <a id='editUserDetails' role='button' class='btn btn-mini' target='new'> Edit?</a>";
+
+                <div id="postCheckout" class="well pull-right">
+                    <div id="showCartPrice">@{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }</div>
+                    @if (Model.OrderStatus != OrderStatus.Paid)
+                    {
+                        <span style="font-size: small; text-align: center;">
+                            To be invoiced after the event or
+                        </span>
+                        <button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>
+                        <br />
+                    }
+                </div>
+                <div class="row">
+                    <div class="span2 offset1 alignright">
+                        Primary Contact:<br />
+                        <br />
+
+                        Type:<br />
+
+                    </div>
+                    <div class="span4">
+                        @Html.Raw(@Model.UserDetails)<br />
+
+                        @Model.OptionLabel<br />
+                        Additional Locations:<br />@Html.Raw(Model.AdditionalLocationCaption)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="pull-right">
+                        <a class="btn btn-mini btn-success" href="#ResendConfirmationModal" data-toggle="modal" id="ConfirmationResender">Resend/Forward Order Summary</a>
+                    </div>
+                </div>
+            }
+        }
+    }
+}
+
+@{
+    Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
+    Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml");
+    Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
+
+}
+
+<script type="text/javascript">var anyAddLocs = @(string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption) ? "false" : "true");</script>
+
+@*
+    @{
+        if (orderRowID > 0)
+        {
+            <div id="AddLocation_@(orderRowID)" class="modal hide fade">
+                @Html.Partial("~/Views/Shared/AddLocationsView.cshtml", row)
+            </div>
+            if (Model.Order.OrderStatus != OrderStatus.InProcess)
+            {
+                <div id="ResendConfirmationModal" class="modal hide fade">
+                    @Html.Partial("~/Views/Shared/ResendConfirmationView.cshtml", row)
+                </div>
+            }
+        }
+    }*@
+

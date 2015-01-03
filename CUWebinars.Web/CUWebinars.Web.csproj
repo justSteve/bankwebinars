@@ -653,6 +653,7 @@
     <Content Include="Views\Admin\Home\_OrderEditDetails.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\DiscountSubscription.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\DiscountGeneral.cshtml" />
+    <Content Include="Views\Cart\Partials\CheckoutConfirmForAffiliate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Calendar\iCalFromCitrix.txt" />
