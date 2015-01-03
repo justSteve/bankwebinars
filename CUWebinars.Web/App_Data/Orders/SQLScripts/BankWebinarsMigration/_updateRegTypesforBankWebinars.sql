@@ -1,18 +1,25 @@
 
-SET NOCOUNT on
-UPDATE BankWebinars.dbo.RegType SET RegTypeLabel = REPLACE(RegTypeLabel,'On-Demand', 'OnDemand')
-UPDATE BankWebinars.dbo.RegType SET ShowLiveNotifications = 'Yes', ShowRecordingNotifications = 'No', ShowShippedNotifications = 'No' WHERE idRegType = 1
+SET NOCOUNT ON
+UPDATE  BankWebinars.dbo.RegType
+SET     RegTypeLabel = REPLACE(RegTypeLabel, 'On-Demand', 'OnDemand')
+UPDATE  BankWebinars.dbo.RegType
+SET     ShowLiveNotifications = 'Yes' ,
+        ShowRecordingNotifications = 'No' ,
+        ShowShippedNotifications = 'No'
+WHERE   idRegType = 1
 SET IDENTITY_INSERT BankWebinars.dbo.RegType ON 
-:r "C:\Users\Steve\Source\Repos\BankWebinars\CUWebinars.Business\SQLSeeding\SQLScripts\BankWebinarsMigration\Create2015OptionsGroups.SQL"
-:r "C:\Users\Steve\Source\Repos\BankWebinars\CUWebinars.Business\SQLSeeding\SQLScripts\BankWebinarsMigration\1hourRegTypes.SQL"
-:r "C:\Users\Steve\Source\Repos\BankWebinars\CUWebinars.Business\SQLSeeding\SQLScripts\BankWebinarsMigration\2hourRegTypes.SQL"
-:r "C:\Users\Steve\Source\Repos\BankWebinars\CUWebinars.Business\SQLSeeding\SQLScripts\BankWebinarsMigration\3PartRegTypes.SQL"
-:r "C:\Users\Steve\Source\Repos\BankWebinars\CUWebinars.Business\SQLSeeding\SQLScripts\BankWebinarsMigration\4PartRegTypes.SQL"
-:r "C:\Users\Steve\Source\Repos\BankWebinars\CUWebinars.Business\SQLSeeding\SQLScripts\BankWebinarsMigration\5PartRegTypes.SQL"
+DECLARE @localPath NVARCHAR(300)
+
+:r "C:\Users\Steve\Source\Repos\BankWebinars2\CUWebinars.Web\App_Data\Orders\SQLScripts\BankWebinarsMigration\Create2015OptionsGroups.SQL"
+:r "C:\Users\Steve\Source\Repos\BankWebinars2\CUWebinars.Web\App_Data\Orders\SQLScripts\BankWebinarsMigration\1hourRegTypes.SQL"
+:r "C:\Users\Steve\Source\Repos\BankWebinars2\CUWebinars.Web\App_Data\Orders\SQLScripts\BankWebinarsMigration\2hourRegTypes.SQL"
+:r "C:\Users\Steve\Source\Repos\BankWebinars2\CUWebinars.Web\App_Data\Orders\SQLScripts\BankWebinarsMigration\3PartRegTypes.SQL"
+:r "C:\Users\Steve\Source\Repos\BankWebinars2\CUWebinars.Web\App_Data\Orders\SQLScripts\BankWebinarsMigration\4PartRegTypes.SQL"
+:r "C:\Users\Steve\Source\Repos\BankWebinars2\CUWebinars.Web\App_Data\Orders\SQLScripts\BankWebinarsMigration\5PartRegTypes.SQL"
 
 SET IDENTITY_INSERT BankWebinars.dbo.RegType Off
-:r "C:\Users\Steve\Source\Repos\BankWebinars\CUWebinars.Business\SQLSeeding\SQLScripts\BankWebinarsMigration\GeneratesStatementsToInsertRegTypesXRef.SQL"
-:r "C:\Users\Steve\Source\Repos\BankWebinars\CUWebinars.Business\SQLSeeding\SQLScripts\BankWebinarsMigration\InsertTestWebinars.sql"
+:r "C:\Users\Steve\Source\Repos\BankWebinars2\CUWebinars.Web\App_Data\Orders\SQLScripts\BankWebinarsMigration\GeneratesStatementsToInsertRegTypesXRef.SQL"
+:r "C:\Users\Steve\Source\Repos\BankWebinars2\CUWebinars.Web\App_Data\Orders\SQLScripts\BankWebinarsMigration\InsertTestWebinars.sql"
 
 SET NOCOUNT OFF
 
@@ -103,7 +110,8 @@ SET     RegTypeLabel = ( SELECT RegTypeLabel
         RegTypeExplain = ( SELECT   RegTypeExplain
                            FROM     BankWebinars.dbo.RegType
                            WHERE    idRegType = 205
-                         ),SortOrder = 1
+                         ) ,
+        SortOrder = 1
 WHERE   idRegType = 200
 
 
@@ -111,11 +119,12 @@ UPDATE  dbo.RegType
 SET     RegTypeLabel = ( SELECT RegTypeLabel
                          FROM   BankWebinars.dbo.RegType
                          WHERE  idRegType = 206
-                       ) ,SortOrder = 2
+                       ) ,
         RegTypeExplain = ( SELECT   RegTypeExplain
                            FROM     BankWebinars.dbo.RegType
                            WHERE    idRegType = 206
-                         )
+                         ) ,
+        SortOrder = 2
 WHERE   idRegType = 201
 
 
@@ -124,11 +133,12 @@ UPDATE  dbo.RegType
 SET     RegTypeLabel = ( SELECT RegTypeLabel
                          FROM   BankWebinars.dbo.RegType
                          WHERE  idRegType = 207
-                       ) 
+                       ) ,
         RegTypeExplain = ( SELECT   RegTypeExplain
                            FROM     BankWebinars.dbo.RegType
                            WHERE    idRegType = 207
-                         ),SortOrder = 4
+                         ) ,
+        SortOrder = 4
 WHERE   idRegType = 203
 
 UPDATE  dbo.RegType
@@ -139,7 +149,8 @@ SET     RegTypeLabel = ( SELECT RegTypeLabel
         RegTypeExplain = ( SELECT   RegTypeExplain
                            FROM     BankWebinars.dbo.RegType
                            WHERE    idRegType = 208
-                         ),SortOrder = 3
+                         ) ,
+        SortOrder = 3
 WHERE   idRegType = 202
 
 UPDATE  dbo.RegType
@@ -150,7 +161,8 @@ SET     RegTypeLabel = ( SELECT RegTypeLabel
         RegTypeExplain = ( SELECT   RegTypeExplain
                            FROM     BankWebinars.dbo.RegType
                            WHERE    idRegType = 209
-                         ),SortOrder = 5
+                         ) ,
+        SortOrder = 5
 WHERE   idRegType = 204
 
 UPDATE  BankWebinars.dbo.RegTypesGroupsXref
