@@ -1,13 +1,13 @@
 ﻿@if (Request.IsAuthenticated)
 {
     <nav class="user clearfix">
-        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new {id = "logoutForm"}))
         {
             Claim identity;
 
             if (ReferenceEquals(null, ViewBag.LoggedInUserIdentity))
             {
-                identity = ((ClaimsIdentity)User.Identity)
+                identity = ((ClaimsIdentity) User.Identity)
                     .Claims
                     .FirstOrDefault(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName);
             }
@@ -21,7 +21,7 @@
                 @Html.AntiForgeryToken()
                 @*
                     @Html.ActionLink(identity.Value, "EditContactInfo", "Account", routeValues: null, htmlAttributes: new { title = "Manage", id = "btnLogin" })*@
-                @Html.ActionLink(identity.Value, "Manage", "Account", routeValues: null, htmlAttributes: new { title = "Edit Billing", id = "btnLogin" })
+                @Html.ActionLink(identity.Value, "Manage", "Account", routeValues: null, htmlAttributes: new {title = "Edit Billing", id = "btnLogin"})
                 @*<span>@identity.Value</span>*@
 
                 if (ReferenceEquals(Session["AdminUserEmail"], null))
@@ -37,7 +37,23 @@
             {
                 <a id="btnLogin" href="@Url.Action("Login", "Account")"><i class="icon-user"></i> Login</a>
             }
+
+            if (!ReferenceEquals(null, ViewBag.UserHasDiscount))
+            {
+                <div class="search-wrapper">
+                    @Html.Partial("_DiscountPartial")
+                </div>
+            }
+            if (!ReferenceEquals(null, ViewBag.UserHasMessages))
+            {
+                <div class="search-wrapper">
+                    @Html.Partial("_MessagesPartial")
+                </div>
+            }
+
+
         }
+
     </nav>
 }
 else

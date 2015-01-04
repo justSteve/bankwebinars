@@ -212,6 +212,11 @@ UPDATE  BankWebinars.dbo.RegTypesGroupsXref
 SET     idRegTypeGroup = 38
 WHERE   idWebinar IN ( 842 ) 
 
+UPDATE BankWebinars.dbo.AdditionalLocationsLookupPrice SET cost = 75 WHERE idWebinar IN (SELECT idWebinar FROM dbo.Webinar WHERE Duration = 2)
+UPDATE BankWebinars.dbo.AdditionalLocationsLookupPrice SET cost = 50 WHERE idWebinar IN (SELECT idWebinar FROM dbo.Webinar WHERE Duration = 1)
+UPDATE BankWebinars.dbo.AdditionalLocationsLookupPrice SET cost = 250 WHERE idWebinar IN (1711)
+
+
 --SELECT DISTINCT
 --       reg.*
 --FROM    BankWebinars.dbo.RegType reg

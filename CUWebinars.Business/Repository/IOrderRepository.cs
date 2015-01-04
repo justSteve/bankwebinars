@@ -29,5 +29,6 @@ namespace CUWebinars.Business.Repository
         //IList<AdditionalLocation> GetAdditionalLocations(int idOrder);
         Discount FindDiscountById(int id);
         Discount FindDiscountByCode(string discountCode);
+        Discount FindDiscountByUser(WebUser currentUser);
     }
 }

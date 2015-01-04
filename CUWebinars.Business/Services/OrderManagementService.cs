@@ -746,6 +746,12 @@ namespace CUWebinars.Business.Services
 
         }
 
+        public Discount GetDiscountByUser(WebUser currentUser)
+        {
+            var myDiscount = _orderRepository.FindDiscountByUser(currentUser);
+            return myDiscount;
+        }
+
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink)
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);

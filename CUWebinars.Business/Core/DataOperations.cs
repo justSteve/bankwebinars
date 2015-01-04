@@ -16,6 +16,7 @@ namespace CUWebinars.Business.Core
             _connectionString = connectionString;
         }
 
+
         public IList<Tuple<int, decimal>> GetAdditionalLocationsPricing(int webinarId)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
@@ -50,7 +51,12 @@ namespace CUWebinars.Business.Core
                 }
             }
         }
-
+        /// <summary>
+        /// This method permits affiliates to show friendly label on importer
+        /// </summary>
+        /// <param name="idWebinar"></param>
+        /// <param name="registrationType">Friendly Lable</param>
+        
         public int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))

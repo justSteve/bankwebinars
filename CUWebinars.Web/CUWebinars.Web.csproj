@@ -387,6 +387,8 @@
     <Compile Include="Models\MigrateOrderModel.cs" />
     <Compile Include="Models\RegisterFieldsDTO.cs" />
     <Compile Include="Models\ShippingDetailsModel.cs" />
+    <Compile Include="Models\ShowDiscountsModel.cs" />
+    <Compile Include="Models\ShowMessagesModel.cs" />
     <Compile Include="ViewModel\DiscountPromotionViewModel.cs" />
     <Compile Include="ViewModel\Discount_SubscriptionViewModel.cs" />
     <Compile Include="ViewModel\RegistrationSummaryViewModel.cs" />
@@ -654,6 +656,9 @@
     <Content Include="Views\Shared\DisplayTemplates\DiscountSubscription.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\DiscountGeneral.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutConfirmForAffiliate.cshtml" />
+    <Content Include="Views\Shared\_LayoutAffiliate.cshtml" />
+    <Content Include="Views\Shared\_MessagesPartial.cshtml" />
+    <Content Include="Views\Shared\_DiscountPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Calendar\iCalFromCitrix.txt" />

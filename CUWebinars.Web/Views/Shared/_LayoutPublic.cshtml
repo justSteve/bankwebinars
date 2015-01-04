@@ -7,7 +7,7 @@
 
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
-
+    //TODO: following on the idea of a fundamentally spaghettized aspect of the Details page, let's replace these 'if' tests for both admins and affiliates. Instead, redirect the given role to a corresponding _LayoutPage.
     var currentAffiliate = stateService.GetValue<Affiliate>("CurrentAffiliate");
     if (currentAffiliate != null)
     {
@@ -28,7 +28,7 @@
 
     //if (upcomingSessions != null)
     //{
-        //sessionRecorded = stateService.GetValue<StringBuilder>("rec");
+    //sessionRecorded = stateService.GetValue<StringBuilder>("rec");
     //    sessionUpcoming = upcomingSessions;
     //}
     //else
@@ -60,9 +60,9 @@
             window.$zopim || (function (d, s) {
                 var z = $zopim = function (c) { z._.push(c) }, $ = z.s =
                                                                    d.createElement(s), e = d.getElementsByTagName(s)[0]; z.set = function (o) {
-                    z.set.
-                        _.push(o)
-                }; z._ = []; z.set._ = []; $.async = !0; $.setAttribute('charset', 'utf-8');
+                                                                       z.set.
+                                                                           _.push(o)
+                                                                   }; z._ = []; z.set._ = []; $.async = !0; $.setAttribute('charset', 'utf-8');
                 $.src = '//v2.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU'; z.t = +new Date; $.
                     type = 'text/javascript'; e.parentNode.insertBefore($, e)
             })(document, 'script');
@@ -201,16 +201,15 @@
             <li><a class="socicon small twitterbird" href="http://twitter.com/#!/ttstrain" target="_blank" data-placement="bottom" title="Follow us on Twitter"></a></li>
             <li><a class="socicon small linkedin" href="https://www.linkedin.com/company/bankwebinars.com" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
         </ul>
-        @*<div class="search-wrapper">
-            <ul class="notifications" id="userDiscount">
-                <li><i class="icon-info-sign"></i></li>
-            </ul>
-        </div>
-        <div class="search-wrapper">
-            <ul class="notifications" id="userNotifications">
-                <li><i class="icon-envelope"></i></li>
-            </ul>
-        </div>*@
+        @*@{
+            if (Request.IsAuthenticated)
+            {
+                if (Model.)
+                //if (Model.WebUser.UserType == UserType.Affiliate || Model.WebUser.UserType == UserType.Admin)
+                //{
+                //}
+            }
+        }*@
         <div id="search-wrapper" class="search-wrapper">
             <form class="search" method="post" action="/webinar/search">
                 <ul class="notifications" id="userNotifications">
