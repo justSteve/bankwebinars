@@ -86,6 +86,10 @@ namespace CUWebinars.Web.Controllers.Admin
             var order = _orderManagementService.GetOrderById(model.Id);
             var orderRow = order.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
 
+            order.Total = model.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice;
+            orderRow.RowPrice = order.Total;
+            orderRow.UnitPrice = model.DisplayRowPriceViewModel.PricesAndDiscounts.UnitPrice;
+
             orderRow.AdditionalLocation.Clear();
 
             if (!ReferenceEquals(null, model.AdditionalLocations))

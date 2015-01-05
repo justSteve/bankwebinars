@@ -1,22 +1,5 @@
 USE TTSWebinars2
 GO
-SELECT  DISTINCT
-        registrationType , 
-        ( SELECT    priceToAdd
-          FROM      dbo.Options
-          WHERE     idOption = registrationType
-        ),         ( SELECT    optionLabel
-          FROM      dbo.Options
-          WHERE     idOption = registrationType
-        )
-
-FROM    dbo.OrdersRows
-WHERE   idWebinar IN ( SELECT   idWebinar
-                       FROM     dbo.Webinar
-                       WHERE    status > 1
-                                AND status < 4 )
-        
-
 
 DECLARE @idwebinar INT
 SET @idwebinar = 1720

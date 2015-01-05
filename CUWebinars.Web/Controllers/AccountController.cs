@@ -1341,5 +1341,20 @@ namespace CUWebinars.Web.Controllers
                     );
             }
         }
+
+        public ActionResult GetUserDiscount(string s)
+        {
+            if (_stateService.HasValue(Constants.CurrentUser)){
+                var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
+
+                var userDiscount = _orderManagementService.GetDiscountByUser(currentUser);
+            }
+            return PartialView("_DiscountPartial");
+        }
+
+        public ActionResult GetUserMessages(string s)
+        {
+            return PartialView("_MessagesPartial");
+        }
     }
 }

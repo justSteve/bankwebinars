@@ -372,6 +372,16 @@ namespace CUWebinars.Business.Repository
 
         }
 
+        public Discount FindDiscountByUser(WebUser currentUser)
+        {
+            Discount myDiscount = null;
+            if (currentUser.idSubscriptionDiscount != null)
+            {
+                myDiscount = FindDiscountById(currentUser.idSubscriptionDiscount.Value);
+            }
+            return myDiscount;
+        }
+
         //public IList<AdditionalLocation> GetAdditionalLocations(int idOrder)
         //{
         //    var additionalLocations = items
