@@ -193,9 +193,10 @@ namespace CUWebinars.Web.Controllers
             if (ModelState.IsValid)
             {
                 // CheckIfAddLocShouldHide checks whether a particular RegType can have AdditionalLocations or not. 
+                // It also checks whether a particular RegType has materials that are required to be posted (snail mail). 
                 // The 1st string in the tuple is either 'yes' or 'no' and is an instruction to the View whether to show the
                 // AdditionalLocationContainer on the 1st tab. The 2nd string in the tuple is an instruction to the
-                // View whether or no to display the modal popup upon entering the 3rd tab which displays an edit
+                // View whether or not to display the modal popup upon entering the 3rd tab which displays an edit
                 // form for the user's shipping details. This is because that RegType will have associated materials
                 // that are posted via traditional mail e.g. handouts.
                 Tuple<string,string> showPlusShip = _cartControllerOrchestrator.CheckIfAddLocShouldHide(optionID);

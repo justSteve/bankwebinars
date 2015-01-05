@@ -57,5 +57,6 @@ namespace CUWebinars.Business.Services
         void RemoveAdditionalLocationsForOrder(int idOrderRow);
         Discount GetDiscountByCode(string discount);
         decimal GetPriceOfAdditionalLocation(int idWebinar);
+        void UpdateOrderByAdmin(Order order);
     }
 }

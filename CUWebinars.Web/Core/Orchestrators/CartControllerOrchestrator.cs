@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
-using System.Web.Mvc;
-using CUWebinars.Business.AccountService;
+﻿using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
@@ -13,10 +9,10 @@ using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Ninject.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web;
-using DataOperations = CUWebinars.Web.Membership.DataOperations;
 
 namespace CUWebinars.Web.Core.Orchestrators
 {
@@ -86,7 +82,6 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     var displayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
                     {
-                        //Options = null, // todo: this could be sent to the server from the client. Already know the options. No need hit database.
                         Options = _orderManagementService.GetOptionsByWebinarId(orderRow.idWebinar, true),
                         OrderRowId = idOrderRow.Value,
                         OrderRowRegistrationType = orderRow.RegistrationType
@@ -260,7 +255,6 @@ namespace CUWebinars.Web.Core.Orchestrators
                             checkoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
                                 BuildDisplayRowPriceViewModel(null, idOrderRow);
                         }
-
                     }
 
                     return checkoutOptionsViewModel;

@@ -7,6 +7,7 @@ using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
+using DotNetOpenAuth.Messaging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
@@ -73,10 +74,24 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             if (ModelState.IsValid)
             {
-                
+                var order = ApplyModelChangesToOrder(model);
+                _orderManagementService.UpdateOrderByAdmin(order);
             }
 
             return Json(new { Result = WebUiConstants.Success});
+        }
+
+        private Order ApplyModelChangesToOrder(ManageOrderEditModel model)
+        {
+            var order = _orderManagementService.GetOrderById(model.Id);
+            var orderRow = order.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
+
+            orderRow.AdditionalLocation.Clear();
+
+            if (!ReferenceEquals(null, model.AdditionalLocations))
+                orderRow.AdditionalLocation.AddRange(model.AdditionalLocations);
+
+            return order;
         }
 
         public PartialViewResult GetAdditionalLocationByOrderId(int? id = null)
@@ -140,6 +155,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         RegistrationType = orderRow.RegistrationType,
                         RowPrice = orderRow.RowPrice
                     },
+                    Id = order.idOrder,
                     NumberOfAdditionalLocations = additionalLocationsCount,
                     UserId = order.idUser,
                     WebinarId = orderRow.idWebinar
@@ -393,9 +409,9 @@ namespace CUWebinars.Web.Controllers.Admin
                         additionalLocation.RegistrantKey = registrantKey;
                     }
 
-                    var pricesAndDiscounts = default(PricesAndDiscounts); // not needed here. Discard.
+                    var pricesAndDiscounts = default(PricesAndDiscounts); // not needed here. Just used b/c ref parameter required below.
 
-                    var ResultOfUpdate = _orderManagementService.UpdateOrderChanges(order, ref pricesAndDiscounts);
+                    var resultOfUpdate = _orderManagementService.UpdateOrderChanges(order, ref pricesAndDiscounts);
                 }
             }
         }

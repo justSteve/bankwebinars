@@ -380,7 +380,6 @@ namespace CUWebinars.Web.Controllers
                         AffiliateComments = model.Order.AffiliateComments,
                         //CCUserDetails = "",
                         CheckoutDiscountCode = orderRow.Discount == null ? string.Empty : orderRow.Discount.DiscountCode,
-                        // TODO: null possible?
                         DisplayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
                         {
                             Options = _orderManagementService.GetOptionsByWebinarId(orderRow.idWebinar, true),

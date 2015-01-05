@@ -28,6 +28,7 @@ namespace CUWebinars.Web.Membership.Email
             IDictionary<string, string> values)
         {
             if (accountEvent.GetType().Name.StartsWith("AccountCreatedEvent") &&
+                _stateService.HasValue(DomainConstants.ResetPasswordRequested) &&
                 _stateService.GetValue<bool>(DomainConstants.ResetPasswordRequested))
             {
                 throw new UserCreatedMembershipException("User has requested a password but an AccountCreatedEvent was added to the event bus. This happens when the user is not  yet verified by MembershipReboot. Admin intervention required.");

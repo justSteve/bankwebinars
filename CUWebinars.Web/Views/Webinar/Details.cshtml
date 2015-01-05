@@ -48,6 +48,7 @@
     </div>
 </div>
 <!--close hero-unit-->
+
 <div class="container clearfix" id="main-content">
     <!--begin main content-->
 
@@ -144,10 +145,10 @@
                     </div> <!-- closes SignUpFormContainer div-->
 
                     if (Model.Webinar.Status != WebinarStatus.Archived
-                && Model.Webinar.Status != WebinarStatus.Deleted
-                && Model.Webinar.Status != WebinarStatus.Pending
-                && Model.Identity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.Admin)
-                && Model.Identity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Affiliate, CUWebinars.Business.Constants.ClaimValues.Affiliate)
+                        && Model.Webinar.Status != WebinarStatus.Deleted
+                        && Model.Webinar.Status != WebinarStatus.Pending
+                        && Model.Identity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.Admin)
+                        && Model.Identity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Affiliate, CUWebinars.Business.Constants.ClaimValues.Affiliate)
                 )
                     {
                         <div id="SignUpFormContainerForAffiliate" class="row-fluid">

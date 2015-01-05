@@ -14,7 +14,7 @@ namespace CUWebinars.Web.Models
 
         public TagBuilder AdditionalLocationsRenderer { get; set; }
         public int NumberOfAdditionalLocations { get; set; }
-        public int ID { get; set; }
+        public int Id { get; set; }
         public int RegType { get; set; }
         public int UserId { get; set; }
         public int WebinarId { get; set; }

@@ -746,6 +746,11 @@ namespace CUWebinars.Business.Services
 
         }
 
+        public void UpdateOrderByAdmin(Order order)
+        {
+            var updatedOrder = _orderRepository.SaveOrderChanges(order, 0);
+        }
+
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink)
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
