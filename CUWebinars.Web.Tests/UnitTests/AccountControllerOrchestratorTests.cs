@@ -499,8 +499,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                         It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())
                         ).Returns(institution);
 
-            _stateServiceMock.Setup(i => i.HasValue(Constants.CurrentUser)).Returns(false);
-            _stateServiceMock.Setup(i => i.SetValue(Constants.CurrentUser, It.IsAny<WebUser>())).Verifiable();
+            _stateServiceMock.Setup(i => i.HasValue(WebUiConstants.CurrentUser)).Returns(false);
+            _stateServiceMock.Setup(i => i.SetValue(WebUiConstants.CurrentUser, It.IsAny<WebUser>())).Verifiable();
 
             var registerViewModel = TestHelper.GetRegisterViewModel();
 
@@ -517,7 +517,7 @@ namespace CUWebinars.Web.Tests.UnitTests
             _accountControllerOrchestrator.RegisterAndLogInUser(registerViewModel);
 
             //  Assert                        
-            _stateServiceMock.Verify(i => i.SetValue(Constants.CurrentUser, It.IsAny<WebUser>()), Times.Once);
+            _stateServiceMock.Verify(i => i.SetValue(WebUiConstants.CurrentUser, It.IsAny<WebUser>()), Times.Once);
         }
 
         [TestMethod]

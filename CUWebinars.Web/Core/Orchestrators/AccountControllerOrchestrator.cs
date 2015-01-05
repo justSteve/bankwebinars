@@ -163,8 +163,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 , DomainConstants.Active
                 );
 
-            if (!_stateService.HasValue(Constants.CurrentUser))
-                _stateService.SetValue(Constants.CurrentUser, webUser);
+            if (!_stateService.HasValue(WebUiConstants.CurrentUser))
+                _stateService.SetValue(WebUiConstants.CurrentUser, webUser);
 
             var userAccount = _membershipService.CreateUser(
                 _globals.Tenant,
@@ -639,8 +639,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 , DomainConstants.Active
                 );
 
-            if (!_stateService.HasValue(Constants.CurrentUser))
-                _stateService.SetValue(Constants.CurrentUser, webUser);
+            if (!_stateService.HasValue(WebUiConstants.CurrentUser))
+                _stateService.SetValue(WebUiConstants.CurrentUser, webUser);
 
             return webUser;
         }
