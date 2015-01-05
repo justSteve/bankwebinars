@@ -178,8 +178,8 @@ namespace CUWebinars.Web.Controllers
                         );
 
 
-                    if (!_stateService.HasValue(Constants.CurrentUser))
-                        _stateService.SetValue(Constants.CurrentUser, webUser);
+                    if (!_stateService.HasValue(WebUiConstants.CurrentUser))
+                        _stateService.SetValue(WebUiConstants.CurrentUser, webUser);
 
                     var userAccount = _membershipService.CreateUser(
                         _globalConfig.Tenant,
@@ -1344,7 +1344,7 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult GetUserDiscount(string s)
         {
-            if (_stateService.HasValue(Constants.CurrentUser)){
+            if (_stateService.HasValue(WebUiConstants.CurrentUser)){
                 var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
 
                 var userDiscount = _orderManagementService.GetDiscountByUser(currentUser);
