@@ -20,7 +20,6 @@ namespace CUWebinars.Business.Models
         public decimal? Cost { get; set; }
         public string Notes { get; set; }
         public int RenewalTerm { get; set; }
-        public int idWebUserDiscount { get; set; }
         public WebUserDiscountXref  WebUserDiscountXref { get; set; }
 
     }
