@@ -35,7 +35,6 @@ namespace CUWebinars.Business.Models
         public virtual Institution Institution { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual Presenter Presenter { get; set; }
-        
-        
+        public WebUserDiscountXref WebUserDiscountXref { get; set; }        
     }
 }

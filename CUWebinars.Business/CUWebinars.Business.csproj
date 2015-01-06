@@ -166,6 +166,8 @@
     <Compile Include="Models\GTWebinar.cs" />
     <Compile Include="Models\IncomingAdditionalLocation.cs" />
     <Compile Include="Models\Mapping\GTWebinarMap.cs" />
+    <Compile Include="Models\Mapping\WebUserDiscountXrefMap.cs" />
+    <Compile Include="Models\WebUserDiscountXref.cs" />
     <Compile Include="Notification\Email\AzureCuwWebJobSmtpMessageDelivery.cs" />
     <Compile Include="Notification\Events\OrderSubmittedAdditionalLocationEvent.cs" />
     <Compile Include="Notification\Events\SendConnectionInfoEvent.cs" />
