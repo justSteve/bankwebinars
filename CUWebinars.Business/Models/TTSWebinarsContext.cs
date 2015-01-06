@@ -62,7 +62,7 @@ namespace CUWebinars.Business.Models
             modelBuilder.Configurations.Add(new WebinarFileMap());
             modelBuilder.Configurations.Add(new WebinarTopicXrefMap());
             modelBuilder.Configurations.Add(new WebUserMap());
-
+            modelBuilder.Configurations.Add(new WebUserDiscountXrefMap());
         }
     }
 }
