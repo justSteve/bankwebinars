@@ -1,12 +1,5 @@
 ﻿@model CheckoutConfirmViewModel
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('#AdjustOrder').collapse('hide');
-        $('#AdjustDiscount').collapse('hide');
-        $('#AdjustAddLoc').collapse('hide');
-    });
 
-</script>
 @{
     if (Model.OrderExists)
     {
@@ -25,7 +18,7 @@
                         <p>@Html.Raw(@Model.UserDetails)</p>
                     </div>
                 </div>
-                <div id="AdjustDiscount" class="row">
+                <div id="AdjustDiscount" class="row initialHide">
                     <div class="offset2 span9 ">
                         <div id="EnterDiscountCode" class="clear pull-right">
                             @Html.TextBoxFor(m => m.CheckoutDiscountCode, new { @class = "input input-medium", placeholder = "Enter Discount Code" })
@@ -33,7 +26,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="AdjustAddLoc" class="row">
+                <div id="AdjustAddLoc" class="row initialHide">
                     <div class="offset2 span9 ">
                         <div id="additionalLocationsCaption" class="clear pull-right">
                             Additional Locations:
@@ -41,19 +34,19 @@
                                 @{ Html.RenderPartial("~/Views/Account/Partials/OrderHasAdditionalLocations.cshtml", Model.OrderHasAdditionalLocationsViewModel); }
                             </div>
                             @{
-                if (!string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption))
-                {
-                    @Model.AdditionalLocationCaption
-                }
+                            if (!string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption))
+                            {
+                                @Model.AdditionalLocationCaption
+                            }
                             }
                         </div>
                     </div>
                 </div>
-                <div id="AdjustOrder" class="row">
+                <div id="AdjustOrder" class="row initialHide">
                     <div class="offset2 span9 ">
                         <div id="RegTypeChanger" class="clear pull-right">
                             @{
-                Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel);
+                            Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel);
                             }
                         </div>
                     </div>
