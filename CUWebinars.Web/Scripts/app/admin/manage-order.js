@@ -1,8 +1,7 @@
 ﻿var MANAGE = {};
 
-
 $(function () {
-
+    
     var orderIdInput = $('#orderIdInput');
     orderIdInput.focus();
 
@@ -12,15 +11,19 @@ $(function () {
         // loading spinner
         orderIdInput.after('<span id="spinWrapper" class="label label-info"><i id="spinner" class="icon-spinner icon-spin"></i>&nbsp;loading...</span>');
 
-        $('#orderRelatedFields').load('/Admin/GetOrderDetails/' + MANAGE.idOrder, function () {
-            
-            MANAGE.primeDomVariables();
-            MANAGE.wireUpHandlers();
-            
-            MANAGE.addLocsUnitPrice = $('#CostPerAdditionalLocation').val();
-            MANAGE.addLocsTotalPrice = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions').val();
+        $('#orderRelatedFields').load('/Admin/GetOrderDetails/' + MANAGE.idOrder, function (response, status, xhr) {
 
-            MANAGE.wireUpTrashIcons();
+            if (status === 'error') {
+                $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+            } else {
+                MANAGE.primeDomVariables();
+                MANAGE.wireUpHandlers();
+
+                MANAGE.addLocsUnitPrice = $('#CostPerAdditionalLocation').val();
+                MANAGE.addLocsTotalPrice = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions').val();
+
+                MANAGE.wireUpTrashIcons();
+            }
 
             // remove loading spinner
             $('#spinWrapper').remove();
@@ -144,8 +147,12 @@ MANAGE.changeRegType = function(e) {
         dataType: constants.JsonDataType,
 
         beforeSend: function () {
-            //console.log('beforeSend CheckIfAddLocShouldHide');
-            // no loading image needed
+            var valSummary = $('#manageOrderFormValSummary');
+            valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
+
+            var errorsList = valSummary.find('ul');
+            errorsList.empty();
+            errorsList.append('<li style="display:none"></li>');
         }
     }).done(function (data) {
         //console.log('done CheckIfAddLocShouldHide');
@@ -157,15 +164,11 @@ MANAGE.changeRegType = function(e) {
             MANAGE.numberOfAdditionalLocations = 0;
             MANAGE.numberAddLocsLabel.text(0);
             MANAGE.addAdditionalLocationsButton.attr('disabled', 'disabled');
+        } else if (!data.isSuccessful) {
+            formProcessor.lightUpValidationSummary('manageOrderFormValSummary', data);
         }
-
-        //if (data.shippingDetailsRqrd === 'Yes') {
-        //    self.shippingAddressRequired = true;
-        //} else {
-        //    self.shippingAddressRequired = false;
-        //}
     }).fail(function (data) {
-        //console.log('CheckIfAddLocShouldHide failed!!! ');
+        $('#orderRelatedFields').html('<div class="text-error">There has been a transport-level error, please call 800-831-0678 ext 706 for immediate assistance.</div>');
     });
 };
 

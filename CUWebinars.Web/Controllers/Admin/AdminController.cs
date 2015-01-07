@@ -1,9 +1,11 @@
-﻿using CUWebinars.Business.AccountService;
+﻿using System.Web.Http;
+using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
@@ -70,6 +72,7 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
         [System.Web.Mvc.HttpPost]
+        [ValidateJsonAntiForgeryToken]
         public ActionResult ManageOrder(ManageOrderEditModel model)
         {
             if (ModelState.IsValid)
@@ -121,7 +124,7 @@ namespace CUWebinars.Web.Controllers.Admin
             return null;// todo: return something.
         }
 
-        public PartialViewResult GetOrderDetails(int? id = null)
+        public ActionResult GetOrderDetails(int? id = null)
         {
             if (id.HasValue)
             {
@@ -169,7 +172,9 @@ namespace CUWebinars.Web.Controllers.Admin
                 return PartialView("~/Views/Admin/Home/_OrderEditDetails.cshtml", manageOrderEditModel);
             }
 
-            return null;
+            _logger.Error("The value posted to the server was not a valid interger. {0}", _appHelper.GetUserAuditInfo());
+
+            return new HttpStatusCodeResult(500, "The value posted to the server was not a valid interger."); // if reach here, we are in error state.
         }
 
         private TagBuilder GetRenderer(IList<string> emailAddresses)

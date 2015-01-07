@@ -163,9 +163,9 @@ $(function () {
         signUpForm.submit();
     });
 
-    //if (!discount == "none") {
-    //    $('#showDiscount').css('display', 'block');
-    //}
+    if (discount !== 'none') {
+        $('#showDiscount').css('display', 'block');
+    }
 
     //  flow goes inside this block where the order exists and is in process e.g. previously abandoned before finializing
     if (cartStateManager.getOrderRowId() > 0 && cartStateManager.getCheckoutInProcess()) {

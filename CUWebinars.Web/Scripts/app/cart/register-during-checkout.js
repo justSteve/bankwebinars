@@ -854,7 +854,7 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
                     // [sjh] - i might surmise that this is an attempt to fix the above bug 
 
                 } else if (!data.isSuccessful) {
-                    var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
+                    //var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
                     //NREUM.noticeError(err);
 
                     $('#updateShippingMsgLabelWrap').empty();
