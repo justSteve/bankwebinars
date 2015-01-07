@@ -208,6 +208,17 @@ SET     idRegTypeGroup = ( SELECT   idRegTypeGroup
 WHERE   idWebinar IN ( 1711 ) 
 
 
+		--WHEN 1 THEN 205
+		--WHEN 16 THEN 206
+		--WHEN 3 then 207
+		--WHEN 18 THEN 209
+		----1hr
+		--WHEN 27 THEN 200
+		--WHEN 32 THEN 206
+		--WHEN 35 THEN 207
+		--WHEN 33 THEN 208
+		--when 36 THEN 209
+
 UPDATE  BankWebinars.dbo.RegTypesGroupsXref
 SET     idRegTypeGroup = 38
 WHERE   idWebinar IN ( 842 ) 

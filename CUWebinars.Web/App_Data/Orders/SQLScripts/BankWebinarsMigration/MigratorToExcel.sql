@@ -11,10 +11,26 @@ SELECT  o.idOrder ,
           WHERE     idWebinar = @idwebinar
         ) AS Webinar ,
         @idwebinar AS ID ,
-        ( SELECT    registrationType
-          FROM      dbo.OrdersRows
-          WHERE     o.idOrder = idOrder
-        ) AS RegistrationType ,
+        CASE ( SELECT   registrationType
+               FROM     dbo.OrdersRows
+               WHERE    o.idOrder = idOrder
+			   AND o.orderDate > '01/01/2015'
+             )
+          WHEN 1 THEN 205
+          WHEN 16 THEN 206
+          WHEN 3 THEN 207
+          WHEN 17 THEN 208
+          WHEN 18 THEN 209
+		  --1hr
+          WHEN 27 THEN 200
+          WHEN 32 THEN 206
+          WHEN 35 THEN 207
+          WHEN 33 THEN 208
+          WHEN 36 THEN 209
+          ELSE (SELECT   registrationType
+               FROM     dbo.OrdersRows
+               WHERE    o.idOrder = idOrder)
+        END AS RegistrationType ,
         o.firstName ,
         o.lastName ,
         ISNULL(o.customerInstitution, ( SELECT  name
@@ -65,6 +81,7 @@ WHERE   r.idWebinar = @idwebinar
         AND ( r.status > 1
               AND r.status < 5
             )
+        --AND orderDate > '01/01/2015'
 ORDER BY orderDate DESC
 
 		 -----------------above code generates statement below------------
