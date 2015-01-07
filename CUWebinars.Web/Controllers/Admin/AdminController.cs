@@ -128,53 +128,61 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             if (id.HasValue)
             {
-                var order = _orderManagementService.GetOrderById(id.Value);
-                var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-                var additionalLocationsPricing =
-                    _orderManagementService.GetAdditionalLocationsPricing(
-                        orderRow.AdditionalLocation,
-                        orderRow.idWebinar
-                        );
-                var additionalLocations = orderRow.AdditionalLocation;
-                var additionalLocationsCount = additionalLocations.Count;
-
-                var manageOrderEditModel = new ManageOrderEditModel
+                try
                 {
-                    AdditionalLocations = additionalLocations,
-                    AdditionalLocationsRenderer = GetRenderer(additionalLocations.Select(al => al.Email).ToList()),
-                    CostPerAdditionalLocation = additionalLocationsPricing.Item2,
-                    DisplayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
+                    var order = _orderManagementService.GetOrderById(id.Value);
+                    var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+                    var additionalLocationsPricing =
+                        _orderManagementService.GetAdditionalLocationsPricing(
+                            orderRow.AdditionalLocation,
+                            orderRow.idWebinar
+                            );
+                    var additionalLocations = orderRow.AdditionalLocation;
+                    var additionalLocationsCount = additionalLocations.Count;
+
+                    var manageOrderEditModel = new ManageOrderEditModel
                     {
-                        Options = _orderManagementService.GetOptionsByWebinarId(
-                            order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar,
-                            false),
-                        OrderRowId = orderRow.idOrderRow,
-                        OrderRowRegistrationType = orderRow.RegistrationType
-                    },
-                    DisplayRowPriceViewModel = new DisplayRowPriceViewModel
-                    {
-                        Discount = orderRow.Discount,
+                        AdditionalLocations = additionalLocations,
+                        AdditionalLocationsRenderer = GetRenderer(additionalLocations.Select(al => al.Email).ToList()),
+                        CostPerAdditionalLocation = additionalLocationsPricing.Item2,
+                        DisplayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
+                        {
+                            Options = _orderManagementService.GetOptionsByWebinarId(
+                                order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar,
+                                false),
+                            OrderRowId = orderRow.idOrderRow,
+                            OrderRowRegistrationType = orderRow.RegistrationType
+                        },
+                        DisplayRowPriceViewModel = new DisplayRowPriceViewModel
+                        {
+                            Discount = orderRow.Discount,
+                            NumberOfAdditionalLocations = additionalLocationsCount,
+                            OrderStatus = order.OrderStatus,
+                            Price = orderRow.RegistrationType.Price,
+                            PricesAndDiscounts =
+                                _orderManagementService.CalculateOrderPrices(order, additionalLocationsPricing.Item2),
+                            RegistrationType = orderRow.RegistrationType,
+                            RowPrice = orderRow.RowPrice
+                        },
+                        Id = order.idOrder,
                         NumberOfAdditionalLocations = additionalLocationsCount,
-                        OrderStatus = order.OrderStatus,
-                        Price = orderRow.RegistrationType.Price,
-                        PricesAndDiscounts =
-                            _orderManagementService.CalculateOrderPrices(order, additionalLocationsPricing.Item2),
-                        RegistrationType = orderRow.RegistrationType,
-                        RowPrice = orderRow.RowPrice
-                    },
-                    Id = order.idOrder,
-                    NumberOfAdditionalLocations = additionalLocationsCount,
-                    UserId = order.idUser,
-                    WebinarId = orderRow.idWebinar
-                };
+                        UserId = order.idUser,
+                        WebinarId = orderRow.idWebinar
+                    };
 
 
-                return PartialView("~/Views/Admin/Home/_OrderEditDetails.cshtml", manageOrderEditModel);
+                    return PartialView("~/Views/Admin/Home/_OrderEditDetails.cshtml", manageOrderEditModel);
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException(string.Format("GetOrderDetails | Session {0}", _appHelper.GetUserAuditInfo()), exception);
+                    return new HttpStatusCodeResult(500); // if reach here, we are in error state.
+                }
             }
 
-            _logger.Error("The value posted to the server was not a valid interger. {0}", _appHelper.GetUserAuditInfo());
+            _logger.Error("The value posted to the server was not a valid interger. GetOrderDetails {0}", _appHelper.GetUserAuditInfo());
 
-            return new HttpStatusCodeResult(500, "The value posted to the server was not a valid interger."); // if reach here, we are in error state.
+            return new HttpStatusCodeResult(500, "The value posted to the server was not a valid integer."); // if reach here, we are in error state.
         }
 
         private TagBuilder GetRenderer(IList<string> emailAddresses)

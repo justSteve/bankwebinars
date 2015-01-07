@@ -10,11 +10,13 @@ $(function () {
 
         // loading spinner
         orderIdInput.after('<span id="spinWrapper" class="label label-info"><i id="spinner" class="icon-spinner icon-spin"></i>&nbsp;loading...</span>');
+        if ($('#errorDiv').length > 0)
+            $('#errorDiv').remove();
 
         $('#orderRelatedFields').load('/Admin/GetOrderDetails/' + MANAGE.idOrder, function (response, status, xhr) {
 
             if (status === 'error') {
-                $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+                $(this).html('<div id="errorDiv" class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance. <br />' + (xhr.statusText === 'Internal Server Error' ? '' : xhr.statusText) + '</div>');
             } else {
                 MANAGE.primeDomVariables();
                 MANAGE.wireUpHandlers();

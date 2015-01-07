@@ -269,7 +269,13 @@ $(function () {
         }).done(function (data) {
             if (data.result === 'LoggedIn') {
                 $('#signingInMsg').html('<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Redirecting you now ...');
-                utilities.goToUrl('/Account/MyWebinars');
+
+                if (data.returnUrl !== '/') {
+                    utilities.goToUrl(data.returnUrl);
+                } else {
+                    utilities.goToUrl('/Account/MyWebinars');
+                }
+
             } else if (data.result === 'Confirmed') {
                 //  if here, user has to verify before they can log in
                 utilities.goToUrl('/Account/Confirmed?email=' + data.email + '&password=' + data.password);
