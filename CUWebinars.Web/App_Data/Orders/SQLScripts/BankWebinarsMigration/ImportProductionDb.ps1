@@ -10,6 +10,7 @@ $localScript= "C:\Users\Steve\Source\Repos\BankWebinars2\CUWebinars.Web\App_Data
 
 & sqlcmd -S "(local)\" -i $localScript'BankWebinarsMigration\__Seeder_Runner.sql'
 
+& sqlcmd -S "(local)\" -i $localScript'BankWebinarsMigration\_CreateBankWebinars.sql'
 & sqlcmd -S "(local)\" -i $localScript'BankWebinarsMigration\_updateRegTypesforBankWebinars.sql'
 & sqlcmd -S "(local)\" -i $localScript'BankWebinarsMigration\_CreateTestUsers.sql'
 & sqlcmd -S "(local)\" -i $localScript'BankWebinarsMigration\_AdditionalLocationsLookupPrice.sql'

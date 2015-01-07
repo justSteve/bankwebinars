@@ -206,13 +206,13 @@ namespace CUWebinars.Business.Services
             string cachKey = "options-" + id;
             var options = _cachingService.Get(cachKey);
 
-            if (options == null)
-            {
-                options = _regTypeRepository.FindRegTypesByWebinarId(id, false);
+            //if (options == null)
+            //{
+               options = _regTypeRepository.FindRegTypesByWebinarId(id, false);
 
-                // keeps options object in cache for 1 hour.
-                _cachingService.Add(cachKey, options, DateTime.Now.AddHours(1));
-            }
+            //    // keeps options object in cache for 1 hour.
+            //    _cachingService.Add(cachKey, options, DateTime.Now.AddHours(1));
+            //}
 
             return (IDictionary<RegType, bool>)options;
         }

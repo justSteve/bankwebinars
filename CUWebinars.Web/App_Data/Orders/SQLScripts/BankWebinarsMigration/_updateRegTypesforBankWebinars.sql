@@ -214,7 +214,14 @@ WHERE   idWebinar IN ( 842 )
 
 UPDATE BankWebinars.dbo.AdditionalLocationsLookupPrice SET cost = 75 WHERE idWebinar IN (SELECT idWebinar FROM dbo.Webinar WHERE Duration = 2)
 UPDATE BankWebinars.dbo.AdditionalLocationsLookupPrice SET cost = 50 WHERE idWebinar IN (SELECT idWebinar FROM dbo.Webinar WHERE Duration = 1)
-UPDATE BankWebinars.dbo.AdditionalLocationsLookupPrice SET cost = 250 WHERE idWebinar IN (1711)
+UPDATE BankWebinars.dbo.AdditionalLocationsLookupPrice SET cost = 325 WHERE idWebinar IN (1711)
+
+
+							 
+UPDATE dbo.RegType SET Price = 215  WHERE idRegType= 202
+UPDATE dbo.RegType SET price = 235  WHERE idRegType= 203
+UPDATE dbo.RegType SET SortOrder = 4  WHERE idRegType= 223
+UPDATE dbo.RegType SET SortOrder = 3 WHERE idRegType= 224
 
 
 --SELECT DISTINCT

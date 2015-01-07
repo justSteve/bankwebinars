@@ -4,26 +4,6 @@ PRINT 'BEGINS DISCOUNT HANDLING'
 PRINT '--==========--'
 
 
-ALTER TABLE BankWebinars.dbo.[Order]
-ADD idOrderLegacy INT
-
-ALTER TABLE BankWebinars.dbo.WebUser
-ADD idUserLegacy INT
-
-GO
-
---INSERT  BankWebinars.dbo.AdditionalLocationsLookupPrice
---        ( idWebinar, cost )
---VALUES  ( 842, -- idWebinar - int
---          0  -- cost - money
---          )
-
-		  GO
-
-ALTER TABLE BankWebinars.dbo.Discount
-ADD renewalTerm INT
-
-GO
 SET NOCOUNT ON
 DROP TABLE Migrator.dbo.discounts
 SELECT  *

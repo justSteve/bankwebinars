@@ -395,6 +395,7 @@
     <Compile Include="ViewModel\WebinarFileViewModel.cs" />
     <Content Include="App_Data\Orders\OrderMigrator.xlsm" />
     <Content Include="App_Data\Orders\AffiliateOrdersImporter.xlsm" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\_CreateBankWebinars.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\ImportProductionDb.ps1" />
     <None Include="log4net.config">
       <SubType>Designer</SubType>
