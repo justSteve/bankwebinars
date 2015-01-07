@@ -632,7 +632,9 @@ namespace CUWebinars.Web.Controllers
 
                 if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
                 {
-                    return Json(new {result = LoggedInResult});
+                    var returnUrl = Server.HtmlDecode(model.ReturnUrl);
+
+                    return Json(new {result = LoggedInResult, returnUrl = returnUrl });
                 }
 
                 if (!string.IsNullOrEmpty(userMustVerify))
