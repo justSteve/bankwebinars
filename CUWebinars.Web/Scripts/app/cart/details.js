@@ -134,7 +134,7 @@ $(function () {
     cartStateManager.setWebinarId(webinarId); // webinarId is set in a script tab in razor view Details.cshtml
     cartStateManager.setOrderRowId(orderRowId); // orderRowId is set in the razor view Details.cshtml
     cartStateManager.setIsUserLoggedIn(isUserLoggedIn); // isUserLogged is set in a script tab in razor view Details.cshtml
-    cartStateManager.setCheckoutInProcess(checkoutInProcess);
+    cartStateManager.setCheckoutInProcess(checkoutInProcess); // checkoutInProcess is set in a script tab in razor view Details.cshtml
 
     cartStateManager.SetCartState();
 
@@ -163,9 +163,9 @@ $(function () {
         signUpForm.submit();
     });
 
-    if (!discount == "none") {
-        $('#showDiscount').css('display', 'block');
-    }
+    //if (!discount == "none") {
+    //    $('#showDiscount').css('display', 'block');
+    //}
 
     //  flow goes inside this block where the order exists and is in process e.g. previously abandoned before finializing
     if (cartStateManager.getOrderRowId() > 0 && cartStateManager.getCheckoutInProcess()) {
@@ -194,6 +194,8 @@ $(function () {
             var cancelOrderForm = $('#cancelOrder');
             cancelOrderForm.submit();
         });
+
+        setUpEditButtons();
 
         // Following 3 functions live in the register-during-checkout.js script
         // which will be in memory at this point and thus will be hoisted
@@ -290,6 +292,8 @@ $(function () {
                                 cancelOrderForm.submit();
                             });
 
+                            setUpEditButtons();
+
                             // Following 3 functions live in the register-during-checkout.js script
                             // which will be in memory at this point and thus will be hoisted
                             hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
@@ -317,3 +321,19 @@ function isShippindAddressRequired(jQueryObject) {
     return true;
 }
 //# sourceMappingURL=details.js.map
+function setUpEditButtons() {
+    $('#revealOptions').on('click', function (e) {
+        e.preventDefault();
+        $('#AdjustOrder').slideToggle();
+    });
+
+    $('#revealDiscountInput').on('click', function (e) {
+        e.preventDefault();
+        $('#AdjustDiscount').slideToggle();
+    });
+
+    $('#revealAddLocsPanel').on('click', function (e) {
+        e.preventDefault();
+        $('#AdjustAddLoc').slideToggle();
+    });
+}

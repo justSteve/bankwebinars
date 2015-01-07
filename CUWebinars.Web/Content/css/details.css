@@ -67,3 +67,7 @@ blockquote {
 #addPasswordDoneMessageContainer div{
     margin: 10px;
 }
+
+.initialHide {
+    display: none;
+}
