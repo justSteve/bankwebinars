@@ -41,7 +41,7 @@
             if (!ReferenceEquals(null, ViewBag.UserHasDiscount))
             {
                 <div class="search-wrapper">
-                    @Html.Partial("_DiscountPartial")
+                    @Html.Action("DiscountInfo", "Account")
                 </div>
             }
             if (!ReferenceEquals(null, ViewBag.UserHasMessages))

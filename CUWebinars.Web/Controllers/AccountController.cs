@@ -1344,7 +1344,7 @@ namespace CUWebinars.Web.Controllers
             }
         }
 
-        public ActionResult GetUserDiscount(string s)
+        public ActionResult GetUserDiscount()
         {
             if (_stateService.HasValue(WebUiConstants.CurrentUser)){
                 var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
@@ -1354,7 +1354,7 @@ namespace CUWebinars.Web.Controllers
             return PartialView("_DiscountPartial");
         }
 
-        public ActionResult GetUserMessages(string s)
+        public ActionResult GetUserMessages()
         {
             return PartialView("_MessagesPartial");
         }
