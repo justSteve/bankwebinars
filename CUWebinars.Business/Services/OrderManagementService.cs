@@ -742,8 +742,15 @@ namespace CUWebinars.Business.Services
             var addLocPrice = dataOperations.GetAdditionalLocationsPricing(idWebinar);
             var tuple = addLocPrice.SingleOrDefault();
 
-            return tuple.Item2;
-
+            if (tuple != null)
+            {
+                return tuple.Item2;
+            }
+            else
+            {
+                _logger.Warn("AdditionalLocation price not set for: {0}", idWebinar);
+                return 0;
+            }
         }
 
         public void UpdateOrderByAdmin(Order order)

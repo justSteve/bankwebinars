@@ -393,6 +393,7 @@
     <Compile Include="ViewModel\Discount_SubscriptionViewModel.cs" />
     <Compile Include="ViewModel\RegistrationSummaryViewModel.cs" />
     <Compile Include="ViewModel\WebinarFileViewModel.cs" />
+    <Content Include="App_Data\Orders\MirgratorToExcel.sql" />
     <Content Include="App_Data\Orders\OrderMigrator.xlsm" />
     <Content Include="App_Data\Orders\AffiliateOrdersImporter.xlsm" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\_CreateBankWebinars.sql" />
@@ -436,7 +437,7 @@
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\3PartRegTypes.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\4PartRegTypes.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\5PartRegTypes.sql" />
-    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\AffiliateImporterToExcel.sql" />
+    <Content Include="App_Data\Orders\AffiliateImporterToExcel.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\CPOrdersToExcel.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\Create2015OptionsGroups.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\deltestdata.sql" />
@@ -451,7 +452,6 @@
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\DevScripts\_SeedTopics.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\discountsWork.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\DisplaysOutput.sql" />
-    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\GeneratesStatementsToInsertRegTypesXRef.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\GenerateTestUsersByQueryString.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\InsertTestWebinars.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\PopulateCPOrders.sql" />
