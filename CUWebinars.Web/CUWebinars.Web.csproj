@@ -465,6 +465,17 @@
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\_updateRegTypesforBankWebinars.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\__Seeder_Ender.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\__Seeder_Runner.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\upgradesCUWebinarDb.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\_AdditionalLocationsLookupPrice.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\_BuildCompliancePerspectivesMigration.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\_BuildDiscountsMigration1.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\_CreateBankWebinars.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\_CreateDbCreds.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\_CreateTestUsers.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\_UpdateAffiliates.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\_updateRegTypesforBankWebinars.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\__Seeder_Ender.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\__Seeder_Runner.sql" />
     <Content Include="Content\css\BootstrapTemplates\font-awesome\font-awesome-ie7.css" />
     <Content Include="Content\css\BootstrapTemplates\font-awesome\font-awesome.css" />
     <Content Include="Content\css\BootstrapTemplates\font-awesome\font\fontawesome-webfont.eot" />

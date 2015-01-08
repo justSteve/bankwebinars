@@ -14,7 +14,7 @@ SELECT  o.idOrder ,
         CASE ( SELECT   registrationType
                FROM     dbo.OrdersRows
                WHERE    o.idOrder = idOrder
-			   AND o.orderDate > '01/01/2015'
+                        AND o.orderDate > '01/01/2015'
              )
           WHEN 1 THEN 205
           WHEN 16 THEN 206
@@ -27,9 +27,10 @@ SELECT  o.idOrder ,
           WHEN 35 THEN 207
           WHEN 33 THEN 208
           WHEN 36 THEN 209
-          ELSE (SELECT   registrationType
-               FROM     dbo.OrdersRows
-               WHERE    o.idOrder = idOrder)
+          ELSE ( SELECT registrationType
+                 FROM   dbo.OrdersRows
+                 WHERE  o.idOrder = idOrder
+               )
         END AS RegistrationType ,
         o.firstName ,
         o.lastName ,
