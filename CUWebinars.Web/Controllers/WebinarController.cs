@@ -26,6 +26,7 @@ namespace CUWebinars.Web.Controllers
     public class WebinarController : Controller
     {
         private IStateService _stateService;
+        private readonly IAppHelper _appHelper;
 
         //Steve added MembershipService dependancy to allow for 'currentUser' in Details.
         private readonly IMembershipService _membershipService;
@@ -39,13 +40,15 @@ namespace CUWebinars.Web.Controllers
             IOrderManagementService orderManagementService,
             IWebinarManagementService webinarManagementService,
             ILogger logger,
-            IStateService stateService)
+            IStateService stateService,
+            IAppHelper appHelper)
         {
             _membershipService = membershipService;
             _orderManagementService = orderManagementService;
             _webinarManagementService = webinarManagementService;
             _logger = logger;
             _stateService = stateService;
+            _appHelper = appHelper;
         }
 
         //
@@ -141,25 +144,31 @@ namespace CUWebinars.Web.Controllers
         }
         public ActionResult Search()
         {
-            ViewBag.PageStyleType = "two-columns-right-sidebar";
-            var webinars = _webinarManagementService.GetAllActive();
-            ViewBag.TopicCaption = " ";
-            string searchTerm = Request["searchTerm"];
-            ViewBag.Title = "Search Results";
-            //TODO: SEARCH: see if you can add support for:
-            //1. include if matched presenter's last name
-            //2. include if matched [topicDesc] field of Topic Table. 
-            //
+            try
+            {
+                ViewBag.PageStyleType = "two-columns-right-sidebar";
+                var webinars = _webinarManagementService.GetAllActive(); //TODO: [dar] can this be deleted now? Not being used.
+                ViewBag.TopicCaption = " ";
+                string searchTerm = Request["searchTerm"];
+                ViewBag.Title = "Search Results";
+                //TODO: SEARCH: see if you can add support for:
+                //1. include if matched presenter's last name
+                //2. include if matched [topicDesc] field of Topic Table. 
+                //
+                webinars = _webinarManagementService.GetWebinarByPresenterLastName(searchTerm);
+                var webinarsByTopic = _webinarManagementService.GetWebinarByTopicDescription(searchTerm);
+                var unionOfResultSets = webinars.Union(webinarsByTopic);
 
-            //note that #2 might be tedious to achieve via lambda - we could turn the whole thing into TSQL if need be.
+                ViewBag.Title = "Search Results";
 
-            // [dar] May need to review to see if efficiency could be improved.
-            webinars = _webinarManagementService.GetWebinarByPresenterLastName(searchTerm);
-            var webinarsByTopic = _webinarManagementService.GetWebinarByTopicDescription(searchTerm);
-
-            ViewBag.Title = "Search Results";
-
-            return View(webinars.Union(webinarsByTopic));
+                return View(unionOfResultSets);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException(string.Format("Search | Session {0}", _appHelper.GetUserAuditInfo()), exception);
+                ModelState.AddModelError(string.Empty, "There's been an error at the server. If the error recurs, please call 800-831-0678 ext 706 for immediate assistance.");
+                throw;
+            }
         }
 
         public ActionResult AllActive(string eventsToShow)

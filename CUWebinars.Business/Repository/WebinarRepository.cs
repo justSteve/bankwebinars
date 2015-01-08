@@ -52,7 +52,7 @@ namespace CUWebinars.Business.Repository
             var stronglyTypedContext = (TTSWebinarsContext)db;
 
             // 1st get all topics with the topicDescription
-            var topicsOfSearch = stronglyTypedContext.Topics.Where(t => t.topicDesc.ToLower().Contains(topicDescription.ToLower())).ToList();
+            var topicsOfSearch = stronglyTypedContext.Topics.Where(t => t.topicDesc.ToLower().Contains(topicDescription.ToLower()));
 
             // project that into a list of webinars
             var result = topicsOfSearch.SelectMany(t => t.WebinarTopicXrefs).Select(w => w.Webinar).AsEnumerable();
