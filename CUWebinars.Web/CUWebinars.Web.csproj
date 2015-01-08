@@ -661,6 +661,7 @@
     <Content Include="Views\Shared\_DiscountPartial.cshtml" />
     <Content Include="Views\Webinar\DetailsAdmin.cshtml" />
     <Content Include="Views\Webinar\DetailsAffiliate.cshtml" />
+    <Content Include="Views\Webinar\Search.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Calendar\iCalFromCitrix.txt" />

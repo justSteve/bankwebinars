@@ -669,7 +669,7 @@ namespace CUWebinars.Web.Controllers
                 ModelState.AddModelError(
                     string.Empty,
                     // Needs to be an empty string to show up in ValidationSummary as not model-level error.
-                    "There was an error at the server which has been logged. It the error recurs, please call 800-831-0678 ext 706 for immediate assistance."
+                    "There was an error at the server which has been logged. If the error recurs, please call 800-831-0678 ext 706 for immediate assistance."
                     );
             }
 

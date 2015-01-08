@@ -85,7 +85,7 @@ namespace CUWebinars.Business.Tests.IntegrationTests
         [TestCategory(TestCategories.WebinarRepositoryIntegration)]
         public void FindByTopicDescriptionReturnsNoWebinarsWhereDescriptionNotExist()
         {
-            //  Arrange
+            //  Arrangeo
             var ctx = new TTSWebinarsContext(Constants.LocalDbConnectionStringName);
             webinarRepository = new WebinarRepository(ctx);
 
