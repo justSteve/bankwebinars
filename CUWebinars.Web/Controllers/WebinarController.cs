@@ -146,9 +146,8 @@ namespace CUWebinars.Web.Controllers
         {
             try
             {
-                //throw new Exception("Sucks");
                 ViewBag.PageStyleType = "two-columns-right-sidebar";
-                var webinars = _webinarManagementService.GetAllActive();
+                var webinars = _webinarManagementService.GetAllActive(); //TODO: [dar] can this be deleted now? Not being used.
                 ViewBag.TopicCaption = " ";
                 string searchTerm = Request["searchTerm"];
                 ViewBag.Title = "Search Results";
@@ -156,23 +155,20 @@ namespace CUWebinars.Web.Controllers
                 //1. include if matched presenter's last name
                 //2. include if matched [topicDesc] field of Topic Table. 
                 //
-
-                //note that #2 might be tedious to achieve via lambda - we could turn the whole thing into TSQL if need be.
-
                 webinars = _webinarManagementService.GetWebinarByPresenterLastName(searchTerm);
                 var webinarsByTopic = _webinarManagementService.GetWebinarByTopicDescription(searchTerm);
+                var unionOfResultSets = webinars.Union(webinarsByTopic);
 
                 ViewBag.Title = "Search Results";
 
-                return View(webinars.Union(webinarsByTopic));
+                return View(unionOfResultSets);
             }
             catch (Exception exception)
             {
                 _logger.ErrorException(string.Format("Search | Session {0}", _appHelper.GetUserAuditInfo()), exception);
                 ModelState.AddModelError(string.Empty, "There's been an error at the server. If the error recurs, please call 800-831-0678 ext 706 for immediate assistance.");
+                throw;
             }
-
-            return new HttpStatusCodeResult(500);
         }
 
         public ActionResult AllActive(string eventsToShow)

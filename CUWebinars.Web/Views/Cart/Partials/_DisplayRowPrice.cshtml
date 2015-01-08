@@ -87,7 +87,7 @@
     {
         var rowAmount = new StringBuilder();
 
-        rowAmount.Append("<button type='button' class='btn btn-mini btn-default' data-toggle='collapse' data-target='#AdjustOrder'> cange?</button> " + Model.RegistrationType.OptionLabel + ": <span id='baseCost'>" + Model.PricesAndDiscounts.UnitPrice.ToString("c0") + "</span><br />");
+        rowAmount.Append("<button id='revealOptions' class='btn btn-mini btn-default'> change?</button> " + Model.RegistrationType.OptionLabel + ": <span id='baseCost'>" + Model.PricesAndDiscounts.UnitPrice.ToString("c0") + "</span><br />");
 
         rowAmount.Append("<button id='revealDiscountInput' class='btn btn-mini btn-default'> add discount?</button> " + GetDiscountedTextSpan() + "<br />");
 
