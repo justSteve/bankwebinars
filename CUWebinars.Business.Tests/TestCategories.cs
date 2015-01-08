@@ -11,5 +11,7 @@
         internal const string OrderManagementServiceIntegration = "Order Management Service Integration";
         internal const string OrderRepositoryIntegration = "Order Repository Integration";
         internal const string Services = "Services";
+        internal const string WebinarRepositoryIntegration = "WebinarRepositoryIntegration";
+
     }
 }

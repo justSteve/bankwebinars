@@ -154,6 +154,7 @@
     <Compile Include="Config\DatabaseResources.cs" />
     <Compile Include="Fakes\UserAccountRepositoryFake.cs" />
     <Compile Include="IntegrationTests\DataOperationsIntegrationTests.cs" />
+    <Compile Include="IntegrationTests\WebinarRepositoryIntegrationTests.cs" />
     <Compile Include="UnitTests\CommandProcessorTests.cs" />
     <Compile Include="Config\MembershipRebootConfig.cs">
       <SubType>Code</SubType>
