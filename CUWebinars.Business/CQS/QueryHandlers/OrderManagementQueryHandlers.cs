@@ -1,5 +1,6 @@
 ﻿using CUWebinars.Business.AccountService;
 using CUWebinars.Business.CQS.Queries;
+using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using System;
 
@@ -39,11 +40,14 @@ IQueryHandler<MigratorQuery, MigratorQueryResult>, IQueryHandler<ImportQuery, Im
         public MigratorQueryResult Handle(MigratorQuery query)
         {
             if (query == null) throw new ArgumentNullException("query");
-
+            //TODO: Why is affiliate not being instantiated here.
             var migrateQueryResult = new MigratorQueryResult
             {
-                Affiliate = _orderManagementService.GetAffiliateById(query.AffiliateId),
+                Affiliate = _orderManagementService.GetAffiliateByIdLoaded(query.AffiliateId),
+                //Affiliate = _orderManagementService.GetAffiliateById(query.AffiliateId),
                 WebUser = _membershipService.GetUserByEmail(query.Email),
+                LegacyOrderId = query.LegacyOrderId,
+                LegacyUserId = query.LegacyUserId,
                 Webinar = _webinarManagementService.GetWebinar(query.WebinarId)
             };
 

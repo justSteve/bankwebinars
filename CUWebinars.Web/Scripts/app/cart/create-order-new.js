@@ -165,8 +165,8 @@ var OrderRegistration;
                 $("#confirmationTabForAffiliate").hide();
             } else if (cartType === 'admin') {
             } else {
-                $("#signUpTab").hide();
-                $("#contactInfoTab").hide();
+            $("#signUpTab").hide();
+            $("#contactInfoTab").hide();
                 $("#confirmationTab").hide();
             }
 

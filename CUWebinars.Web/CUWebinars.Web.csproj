@@ -465,6 +465,17 @@
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\_updateRegTypesforBankWebinars.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\__Seeder_Ender.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\__Seeder_Runner.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\upgradesCUWebinarDb.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\_AdditionalLocationsLookupPrice.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\_BuildCompliancePerspectivesMigration.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\_BuildDiscountsMigration1.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\_CreateBankWebinars.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\_CreateDbCreds.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\_CreateTestUsers.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\_UpdateAffiliates.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\_updateRegTypesforBankWebinars.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\__Seeder_Ender.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\__Seeder_Runner.sql" />
     <Content Include="Content\css\BootstrapTemplates\font-awesome\font-awesome-ie7.css" />
     <Content Include="Content\css\BootstrapTemplates\font-awesome\font-awesome.css" />
     <Content Include="Content\css\BootstrapTemplates\font-awesome\font\fontawesome-webfont.eot" />
@@ -535,6 +546,7 @@
     <None Include="Properties\PublishProfiles\BankWebinars31 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars31 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars31.pubxml" />
+    <None Include="Properties\PublishProfiles\CUWebinars31.pubxml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\jquery-1.11.1.js" />
     <Content Include="Scripts\jquery-1.11.1.min.js" />

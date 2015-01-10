@@ -1,4 +1,6 @@
-UPDATE orders SET state = NULL WHERE state = ''
+USE TTSWebinars2
+GO
+
 --80477
 SELECT  o.idOrder ,
         orderDate ,

@@ -18,7 +18,7 @@ namespace CUWebinars.Business.CQS.Commands
         public Address ShippingAddress { get; set; }
         
         public int idOrderLegacy { get; set; }
-        public int idUserLegacy { get; set; }
+        //public int idUserLegacy { get; set; }
         public DateTime OrderDate { get; set; }
 
         public string VerificationKey { get; set; }

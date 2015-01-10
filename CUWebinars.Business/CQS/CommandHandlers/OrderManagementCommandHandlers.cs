@@ -316,7 +316,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
             migratedOrder.AdminComments = string.Format("MigratedOn: {0}\r\n", DateTime.Now.ToShortDateString());
             migratedOrder.AdminComments += string.Format("OrginalTotal: {0}\r\n", command.Total);
-            migratedOrder.AdminComments += string.Format("OrginalUserID: {0}\r\n", command.idUserLegacy);
+            //migratedOrder.AdminComments += string.Format("OrginalUserID: {0}\r\n", command.idUserLegacy);
             migratedOrder.AffiliateComments = command.AffiliateComments;
             migratedOrder.UserComments = "";
             migratedOrder.Origin = "Migrator";

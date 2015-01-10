@@ -36,6 +36,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 Email = email,
                 RegistrationType = migrateOrderModel.idRegType,
                 Discount = migrateOrderModel.DiscountCode,
+                
                 Webinar = migratorQueryResult.Webinar
             };
 
@@ -56,7 +57,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 VerificationKey = verificationKey,
                 OrderDate = migrateOrderModel.OrderDate,
                 Total = migrateOrderModel.Total,
-                idUserLegacy = migrateOrderModel.idUserLegacy,
+                //idUserLegacy = migrateOrderModel.idUserLegacy,
                 idOrderLegacy = migrateOrderModel.idOrderLegacy,
                 Webinar = migratorQueryResult.Webinar,
                 WebUser = migratorQueryResult.WebUser,
@@ -194,6 +195,9 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 AffiliateId = migrateOrderModel.idAffiliate,
                 Email = email,
+                LegacyOrderId =  migrateOrderModel.idOrderLegacy,
+                //LegacyUserId=  migrateOrderModel.idUserLegacy,
+
                 WebinarId = migrateOrderModel.idWebinar
             };
 

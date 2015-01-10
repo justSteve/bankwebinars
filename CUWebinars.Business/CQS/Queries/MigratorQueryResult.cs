@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Models;
+﻿using System;
+using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.CQS.Queries
 {
@@ -7,5 +8,8 @@ namespace CUWebinars.Business.CQS.Queries
         public Affiliate Affiliate { get; set; }
         public Webinar Webinar { get; set; }
         public WebUser WebUser { get; set; }
+        public int LegacyUserId { get; set; }
+        public int LegacyOrderId { get; set; }
+        public DateTime OrderDate { get; set; }
     }
 }
