@@ -16,7 +16,7 @@ namespace CUWebinars.Web.Models
         public int idRegType { get; set; }
         public int idWebinar { get; set; }
         public int idOrderLegacy { get; set; }
-        public int idUserLegacy { get; set; }
+        //public int idUserLegacy { get; set; }
         public string Institution  { get; set; }
         public string Origin  { get; set; }
         public string Title { get; set; }

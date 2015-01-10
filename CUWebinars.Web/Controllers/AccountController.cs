@@ -1358,5 +1358,10 @@ namespace CUWebinars.Web.Controllers
         {
             return PartialView("_MessagesPartial");
         }
+
+        public ActionResult DiscountInfo()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,7 +1,7 @@
 USE TTSWebinars2
 GO
 DECLARE @idwebinar INT
-SET @idwebinar = 1720
+SET @idwebinar = 1726
 SELECT  ( SELECT    o.idAffiliate
           FROM      dbo.OrdersRows
           WHERE     o.idOrder = idOrder
@@ -10,21 +10,22 @@ SELECT  ( SELECT    o.idAffiliate
           FROM      dbo.OrdersRows
           WHERE     o.idOrder = idOrder
         ) AS WebinarID ,
-        ( SELECT    CASE ( SELECT   optionLabel
-                           FROM     dbo.Options
-                           WHERE    idOption = dbo.OrdersRows.registrationType
-                                    AND o.idOrder = idOrder
-                         )
-                      WHEN 'Live Session Only' THEN 'Live Plus Five'
-                      WHEN 'CD-ROM and Hardcopy Handouts' THEN 'CD-ROM and Hardcopy Handouts'
-                      WHEN 'OnDemand Recording Only' THEN 'OnDemand Recording Only'
-                      WHEN '6-Month OnDemand Weblink' THEN 'OnDemand Recording Only'
-                      WHEN 'Live plus OnDemand Weblinks' THEN 'Live Plus Six'
-                      WHEN 'Premier Package' THEN 'Premier Package'
-                    END
-          FROM      dbo.OrdersRows
-          WHERE     o.idOrder = idOrder
-        ) AS RegistrationType ,
+		r.registrationType AS idRegType,
+        --( SELECT    CASE ( SELECT   optionLabel
+        --                   FROM     dbo.Options
+        --                   WHERE    idOption = dbo.OrdersRows.registrationType
+        --                            AND o.idOrder = idOrder
+        --                 )
+        --              WHEN 'Live Session Only' THEN 'Live Plus Five'
+        --              WHEN 'CD-ROM and Hardcopy Handouts' THEN 'CD-ROM and Hardcopy Handouts'
+        --              WHEN 'OnDemand Recording Only' THEN 'OnDemand Recording Only'
+        --              WHEN '6-Month OnDemand Weblink' THEN 'OnDemand Recording Only'
+        --              WHEN 'Live plus OnDemand Weblinks' THEN 'Live Plus Six'
+        --              WHEN 'Premier Package' THEN 'Premier Package'
+        --            END
+        --  FROM      dbo.OrdersRows
+        --  WHERE     o.idOrder = idOrder
+        --) AS RegistrationType ,
         o.firstName AS FirstName ,
         o.lastName AS LastName ,
         'na' AS Title ,
@@ -54,7 +55,13 @@ SELECT  ( SELECT    o.idAffiliate
         o.shippingAddress ,
         o.shippingCity ,
         o.shippingState ,
-        o.shippingZip
+        o.shippingZip,
+		o.total,
+		r.shipmentDate,
+		o.storeCommentsPriv,
+		o.idOrder,
+		o.orderDate,
+		r.status
 FROM    TTSWebinars2.dbo.Orders o
         INNER JOIN dbo.OrdersRows r ON r.idOrder = o.idOrder
 WHERE   r.idWebinar = @idwebinar

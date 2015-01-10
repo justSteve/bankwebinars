@@ -225,6 +225,8 @@ namespace CUWebinars.Web.Controllers
                 var errString = string.Format("Order creation failed on {0} - {1} with msg: {2}", migratedOrder.Email, migratedOrder.idWebinar, exception.Message);
                 Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 _logger.ErrorException(errString, exception);
+
+                return Json(new { Result = errString }, JsonRequestBehavior.AllowGet);
             }
 
             return Json(new { Result = "0" }, JsonRequestBehavior.AllowGet);
@@ -234,8 +236,7 @@ namespace CUWebinars.Web.Controllers
         private string ProcessModelStateErrors()
         {
             //Please use this general pattern when logging ModelState errors.
-            var myErr = "ProcessModelStateErrors found errors. Session Info: " + Environment.NewLine;
-            myErr += _appHelper.GetUserAuditInfo();
+            var myErr = "ProcessModelStateErrors found errors.";
 
             foreach (ModelState modelState in ViewData.ModelState.Values)
             {
@@ -244,6 +245,9 @@ namespace CUWebinars.Web.Controllers
                     myErr += error.ErrorMessage + Environment.NewLine;
                 }
             }
+            myErr += "Session Info: " + Environment.NewLine;
+            myErr += _appHelper.GetUserAuditInfo();
+
             //a better implementation:
             //http://stackoverflow.com/questions/2845852/asp-net-mvc-how-to-convert-modelstate-errors-to-json
             //var errorList = ModelState.ToDictionary(
