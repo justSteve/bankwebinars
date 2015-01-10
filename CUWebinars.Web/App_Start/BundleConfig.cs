@@ -62,13 +62,18 @@ namespace CUWebinars.Web.App_Start
                 //,"~/Scripts/app/cart/edit-order.js"
                         ));
 
-            bundles.Add(new ScriptBundle("~/bundles/createOrder").Include(
+            bundles.Add(new ScriptBundle("~/bundles/create-order").Include(
                 //"~/Scripts/app/cart/additional-locations.js",
                          "~/Scripts/app/cart/create-order-new.js",
                          "~/Scripts/app/cart/register-during-checkout.js",
                          "~/Scripts/app/cart/details.js",
                          "~/Scripts/app/cart/register-user-in-cart.js"
                 //,"~/Scripts/app/cart/edit-order.js"
+                        ));
+
+            bundles.Add(new ScriptBundle("~/bundles/create-order-affiliate").Include(
+                         "~/Scripts/app/cart/create-order-new.js",
+                         "~/Scripts/app/cart/details-affiliate.js"
                         ));
 
 
@@ -116,7 +121,7 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/web-user-details-register.js"
             ));
 
-            bundles.Add(new StyleBundle("~/Content/createOrderDetails").Include(
+            bundles.Add(new StyleBundle("~/Content/create-order-details").Include(
                 "~/Content/css/details.css"
                 ));
 

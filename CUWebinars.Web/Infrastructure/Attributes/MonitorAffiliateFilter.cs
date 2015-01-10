@@ -55,16 +55,18 @@ namespace CUWebinars.Web.Infrastructure.Attributes
 
             if (userIdentity.IsAuthenticated)
             {
-                //var webUser =
-                //    _orderManagementService.GetWebUser(
-                //        ((ClaimsIdentity) userIdentity).Claims.Single(c => c.Type == ClaimTypes.Email).Value);
+                var webUser =
+                    _orderManagementService.GetWebUser(
+                        ((ClaimsIdentity)userIdentity).Claims.Single(c => c.Type == ClaimTypes.Email).Value
+                        );
 
-                //var affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(webUser.idUser);
+                var affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(webUser.idUser);
 
-                ////if(ReferenceEquals(null, affiliate))
-                //    // set as default affiliate
-
-                //_stateService.SetValue(WebUiConstants.CurrentAffiliate, affiliate);
+                // if null returned, just use whatever is stored in Session for CurrentAffiliate. O/w, set that value.
+                if (!ReferenceEquals(null, affiliate))
+                {
+                    _stateService.SetValue(WebUiConstants.CurrentAffiliate, affiliate);
+                }
             }
         }
 

@@ -298,10 +298,19 @@ namespace CUWebinars.Business.Services
 
         public Affiliate DetermineAffiliateByAlternativeMeans(int idUser)
         {
-            var affiliateIds = _orderRepository.FindOrdersByUserId(idUser)
-                .OrderByDescending(o => o.OrderDate)
-                .Select(o => o.idAffiliate)
-                .ToList();
+            string cachKey = "webUserId-" + idUser;
+            var affiliateIds = _cachingService.Get(cachKey) as IList<int>;
+
+            if (affiliateIds == null)
+            {
+                affiliateIds = _orderRepository.FindOrdersByUserId(idUser)
+                                    .OrderByDescending(o => o.OrderDate)
+                                    .Select(o => o.idAffiliate)
+                                    .ToList();
+
+                // keeps affiliateIds object in cache for 1 hour.
+                _cachingService.Add(cachKey, affiliateIds, DateTime.Now.AddHours(1));
+            }
 
             if (affiliateIds.Any())
             {
@@ -340,7 +349,17 @@ namespace CUWebinars.Business.Services
                         affiliateIdForOrder = mostUsedAffiliateId;
                 }
 
-                return _affiliateRepository.FindById(affiliateIdForOrder); // use the most recent
+                cachKey = "affiliateId-" + affiliateIdForOrder;
+                var affiliate = _cachingService.Get(cachKey) as Affiliate;
+
+                if (affiliate == null)
+                {
+                    affiliate = _affiliateRepository.FindByIdWithIncluding(affiliateIdForOrder, a => a.WebUser); // use the most recent
+                    // keeps Affiliate object in cache for 1 hour.
+                    _cachingService.Add(cachKey, affiliate, DateTime.Now.AddHours(1));
+                }
+
+                return affiliate;
             }
             return null;
         }

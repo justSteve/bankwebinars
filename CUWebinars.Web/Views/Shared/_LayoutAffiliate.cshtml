@@ -4,7 +4,7 @@
     var PageStyleType = ViewBag.PageStyleType;
     IStateService stateService = new StateService();
 
-    var currentAffiliate = stateService.GetValue<Affiliate>("CurrentAffiliate");
+    var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
 
     var currentUserID = 0;
     var currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
@@ -15,22 +15,6 @@
     //    currentUserID = currentUser.ID;
     //    currentUserAffiliateFullName = currentUser.Affiliate.FullName;
     //}
-
-    StringBuilder sessionRecorded = new StringBuilder();
-
-    StringBuilder sessionUpcoming = new StringBuilder();
-
-    var upcomingSessions = stateService.GetValue<StringBuilder>("upcoming");
-
-    if (upcomingSessions != null)
-    {
-        sessionRecorded = stateService.GetValue<StringBuilder>("rec");
-        sessionUpcoming = upcomingSessions;
-    }
-    else
-    {
-        Response.Redirect("/");
-    }
 
     var subdomainBranding = stateService.GetValue<string>("SubdomainBranding");
     var firstPage = stateService.GetValue<string>("FirstPage");
@@ -44,27 +28,6 @@
     //HResult=-2147467262
     //Message=Unable to cast object of type 'System.Web.HttpValueCollection' to type 'System.String'.
 
-
-    var includeUpcoming = stateService.GetValue<bool>("IncludeUpcoming");
-
-    if (includeUpcoming == null)
-    {
-        stateService.SetValue("IncludeUpcoming", true);
-    }
-
-    var includeRecorded = stateService.GetValue<bool>("IncludeRecorded");
-
-    if (includeRecorded == null)
-    {
-        stateService.SetValue("IncludeRecorded", false);
-    }
-
-    //var includeArchived = stateService.GetValue<bool>("IncludeArchived");
-
-    //if (includeArchived == null)
-    //{
-    //    stateService.SetValue("IncludeArchived", false);
-    //}
 }
 <!doctype html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en" dir="ltr"> <![endif]-->
@@ -74,9 +37,6 @@
 <html class="no-js" lang="en" dir="ltr">
 <!--<![endif]-->
     <head>
-
-
-
         <!--Start of Zopim Live Chat Script -->
             <script type="text/javascript">
         window.$zopim || (function (d, s) {
@@ -198,14 +158,12 @@
                         </ul>
                     </li>
                     <li class="parent">
-                        <a href="javascript:void(0)">Upcoming Events<i></i></a>
-                        <ul>@Html.Raw(sessionUpcoming)</ul>
-                        @*<ul></ul>*@
+                        <a href="javascript:void(0)">Upcoming Webinars<i></i></a>
+                        <ul>@Html.Action("UpComingWebinarMenu", "Navigation")</ul>
                     </li>
                     <li class="parent">
-                        <a href="javascript:void(0)">OnDemand Events<i></i></a>
-                        <ul>@Html.Raw(sessionRecorded)</ul>
-                        @*<ul></ul>*@
+                        <a href="javascript:void(0)">OnDemand Webinars<i></i></a>
+                        <ul>@Html.Action("GetRecordedWebinarMenu", "Navigation")</ul>
                     </li>
                     <li class="parent">
                         <a href="javascript:void(0)">About Us<i></i></a>

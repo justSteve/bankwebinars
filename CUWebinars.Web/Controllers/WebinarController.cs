@@ -443,16 +443,14 @@ namespace CUWebinars.Web.Controllers
 
                 ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity) User.Identity;
 
-                if (claimsIdentityOfAuthenticatedUser.HasClaim(Business.Constants.ClaimTypes.Admin,
-                    Business.Constants.ClaimValues.Admin))
+                if (claimsIdentityOfAuthenticatedUser.HasClaim(Business.Constants.ClaimTypes.Admin, Business.Constants.ClaimValues.Admin))
                 {
                     return View("DetailsAdmin", model);
                 }
                 
-                if (claimsIdentityOfAuthenticatedUser.HasClaim(Business.Constants.ClaimTypes.Affiliate,
-                    Business.Constants.ClaimValues.Affiliate))
+                if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
                 {
-                    return View("DetailsAffiliate", model);
+                    return PartialView("DetailsAffiliate", model);
                 }
 
                 return View(model);
