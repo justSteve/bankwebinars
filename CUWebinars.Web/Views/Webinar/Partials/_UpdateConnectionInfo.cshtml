@@ -55,12 +55,19 @@
                         @Html.ValidationMessageFor(model => model.WebinarKey)
                     </div>
                 </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CitrixRegisterURL, htmlAttributes: new { @class = "control-label " })
+                    <div>
+                        @Html.EditorFor(model => model.CitrixRegisterURL, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.CitrixRegisterURL)
+                    </div>
+                </div>
 
                 <div class="form-group">
-                    @Html.LabelFor(model => model.AccessPhonePresenter, htmlAttributes: new { @class = "control-label " })
+                    @Html.LabelFor(model => model.AccessPhone, htmlAttributes: new { @class = "control-label " })
                     <div>
-                        @Html.EditorFor(model => model.AccessPhonePresenter, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.AccessPhonePresenter)
+                        @Html.EditorFor(model => model.AccessPhone, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.AccessPhone)
                     </div>
                 </div>
 
@@ -71,14 +78,7 @@
                         @Html.ValidationMessageFor(model => model.AccessCodePresenter)
                     </div>
                 </div>
-                <div class="form-group">
-                    @Html.LabelFor(model => model.AccessPhoneAttendee, htmlAttributes: new { @class = "control-label " })
-                    <div>
-                        @Html.EditorFor(model => model.AccessPhoneAttendee, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.AccessPhoneAttendee)
-                    </div>
-                </div>
-
+ 
                 <div class="form-group">
                     @Html.LabelFor(model => model.AccessCodeAttendee, htmlAttributes: new { @class = "control-label " })
                     <div>
@@ -86,14 +86,7 @@
                         @Html.ValidationMessageFor(model => model.AccessCodeAttendee)
                     </div>
                 </div>
-                <div class="form-group">
-                    @Html.LabelFor(model => model.AccessPhoneOrganizer, htmlAttributes: new { @class = "control-label " })
-                    <div>
-                        @Html.EditorFor(model => model.AccessPhoneOrganizer, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.AccessPhoneOrganizer)
-                    </div>
-                </div>
-
+                
                 <div class="form-group">
                     @Html.LabelFor(model => model.AccessCodeOrganizer, htmlAttributes: new { @class = "control-label " })
                     <div>

@@ -88,11 +88,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
--- =============================================
--- Author:		sjh
--- Create date: 5/14
--- Description:	Updates webinar table with GTW connection info
--- =============================================
+
 CREATE PROCEDURE [dbo].[InsertGTWConnectionInfo] 
 	-- Add the parameters for the stored procedure here
     @idWebinar INT, 
@@ -100,11 +96,10 @@ CREATE PROCEDURE [dbo].[InsertGTWConnectionInfo]
     @WebinarKey NVARCHAR(MAX) ,
     @OrganizerKey NVARCHAR(MAX) ,
     @OrganizerOAuthKey NVARCHAR(MAX) ,
-    @AccessPhoneAttendee NVARCHAR(MAX) ,
+    @CitrixURL NVARCHAR(MAX) ,
+    @AccessPhone NVARCHAR(MAX) ,
     @AccessCodeAttendee NVARCHAR(MAX) ,
-    @AccessPhonePresenter NVARCHAR(MAX) ,
     @AccessCodePresenter NVARCHAR(MAX) ,
-    @AccessPhoneOrganizer NVARCHAR(MAX) ,
     @AccessCodeOrganizer NVARCHAR(MAX)
 AS
 BEGIN
@@ -116,13 +111,15 @@ BEGIN
       ,[WebinarKey] = @WebinarKey
       ,[OrganizerKey] = @OrganizerKey
       ,[OrganizerOAuthKey] = @OrganizerOAuthKey
-      ,[AccessPhoneAttendee] = @AccessPhoneAttendee
+      ,[CitrixRegisterUrl] = @CitrixURL
+      ,[AccessPhone] = @AccessPhone
       ,[AccessCodeAttendee] = @AccessCodeAttendee
-      ,[AccessPhonePresenter] = @AccessPhonePresenter
       ,[AccessCodePresenter] = @AccessCodePresenter
-      ,[AccessPhoneOrganizer] = @AccessPhoneOrganizer
       ,[AccessCodeOrganizer] = @AccessCodeOrganizer
 	  WHERE idWebinar = @idWebinar
+
+END
+GO
 
 END
 GO
@@ -509,11 +506,10 @@ CREATE TABLE [dbo].[Webinar](
 	[ConnectionInfo] [nvarchar](max) NULL,
 	[DateCreated] [datetime] NOT NULL,
 	[DateChanged] [datetime] NOT NULL,
-	[AccessPhoneAttendee] [nvarchar](max) NULL,
+	[CitrixRegisterURL] [nvarchar](max) NULL,
+	[AccessPhone] [nvarchar](max) NULL,
 	[AccessCodeAttendee] [nvarchar](max) NULL,
-	[AccessPhonePresenter] [nvarchar](max) NULL,
 	[AccessCodePresenter] [nvarchar](max) NULL,
-	[AccessPhoneOrganizer] [nvarchar](max) NULL,
 	[AccessCodeOrganizer] [nvarchar](max) NULL,
  CONSTRAINT [PK_dbo.Webinar] PRIMARY KEY CLUSTERED 
 (
@@ -590,8 +586,106 @@ ALTER DATABASE [BankWebinars] SET  READ_WRITE
 GO
 USE [BankWebinars]
 SET IDENTITY_INSERT [dbo].[Webinar] ON
-INSERT [dbo].[Webinar] ([idWebinar], [Description], [DescriptionLong], [ImageUrl], [SmallImageUrl], [Status], [Title], [Date], [LearnCaption], [LearnBody], [WhoAttend], [Duration], [RecordingUrl], [idPresenter], [WebinarKey], [OrganizerKey], [OrganizerOAuthKey], [ceu], [ConnectionInfo], [DateCreated], [DateChanged]) VALUES (404, N'<p>Your member passed away yesterday and the family is grieving. Yet, in the midst of all the remembering and honoring of a life, the legal and compliance clock is ticking. In most states, checks can be paid for 10 days after the date of death.</p><p>When your account holder dies, many issues and questions arise. Who can have information on the account? Who owns the account? Who has access to the account? What happens with powers of attorney and authorized signers on account? Can the spouse of the sole proprietor continue to access the account? What about that last tax refund check? Is the account still insured? Can a check be written to a funeral home? What about the checks coming in to pay funeral expense? Learn about checks, IRAs, deposit ownership, trusts, UTMA, affidavits of heirship and other complex issues that can occur when a member dies. </p>', N'<p>Your member passed away yesterday and the family is grieving. Yet, in the midst of all the remembering and honoring of a life, the legal and compliance clock is ticking. In most states, checks can be paid for 10 days after the date of death.</p><p>When your account holder dies, many issues and questions arise. Who can have information on the account? Who owns the account? Who has access to the account? What happens with powers of attorney and authorized signers on account? Can the spouse of the sole proprietor continue to access the account? What about that last tax refund check? Is the account still insured? Can a check be written to a funeral home? What about the checks coming in to pay funeral expense? Learn about checks, IRAs, deposit ownership, trusts, UTMA, affidavits of heirship and other complex issues that can occur when a member dies. </p>', N'', N'', 2, N'10 Lessons Learned When Your Member Dies', CAST(0x0000A34800A4CB80 AS DateTime), N'Covered Topics', N'<ul><li>Probate versus non-probate transfers</li><li>When does the will govern and when does the signature card?</li><li>What bypasses a will? PODs, IRAs, JTWROS?</li><li>Living trusts and successor trustees</li><li>When do we know that a customer is deceased?</li><li>When can we use small estate affidavits?</li><li>What happens to powers of attorney, authorized signers, etc.</li><li>How are IRAs, HSAs and UTMAs affected?</li><li>Do sole proprietorships cease at death?</li><li>NCUSIF insurance issues</li></ul>', N'This informative session is designed for customer service representatives, branch administration, branch managers, tellers, training and development staff, compliance personnel, and anyone who handles customer accounts.', CAST(1.00 AS Decimal(18, 2)), N'', 10568, NULL, N'922930', N'5jxY3KZL48HWknOaOEP2eIzVmOTS', N'1.25 CE Credits|Recommended for 1.25 CE Credit Hours. After attending this webinar, each attendee can receive a Certificate of Attendance for self-reporting of CE Credits.', NULL, CAST(0x0000A2EB01477614 AS DateTime), CAST(0x0000A2EB01477614 AS DateTime))
-INSERT [dbo].[Webinar] ([idWebinar], [Description], [DescriptionLong], [ImageUrl], [SmallImageUrl], [Status], [Title], [Date], [LearnCaption], [LearnBody], [WhoAttend], [Duration], [RecordingUrl], [idPresenter], [WebinarKey], [OrganizerKey], [OrganizerOAuthKey], [ceu], [ConnectionInfo], [DateCreated], [DateChanged], [AccessPhoneAttendee], [AccessCodeAttendee], [AccessPhonePresenter], [AccessCodePresenter], [AccessPhoneOrganizer], [AccessCodeOrganizer]) VALUES (1568, N'<p>Attend this webinar to know more about the ins and outs of resolutions and authorizations.</p>', N'<p>Some of our best and most profitable financial institution customers are legal entities. Unfortunately, establishing relationships with business entities can be confusing, and if done incorrectly, they can become costly liabilities. One of the most effective ways for a financial institution to protect itself from business entity liability is by obtaining a well-drafted, properly-executed resolution or similar authorization from the business. Attend this webinar to know more about the ins and outs of resolutions and authorizations.</p>', N'http://bankwebinars.com/content/images/bg.jpg', N'http://bankwebinars.com/content/images/bg.jpg', 3, N'How to Use Business Resolutions and Authorizations to Protect Your Financial Institution', CAST(N'2014-06-26 10:00:00.000' AS DateTime), N'Topics Will Include:', N'<ul>  <li>What is the purpose of a resolution or authorization?   </li><li>What language should be contained in a resolution or authorization?   </li><li>Who should sign a business entity resolution or authorization form in order to make it binding on the business?   </li><li>What are the differences between financial institution-prepared and customer-prepared resolutions and authorizations?   </li><li>What are the risks of accepting customer-prepared forms?</li></ul>', N'<p>Lenders and new account personnel responsible for loan and deposit account documentation.</p>', CAST(2.00 AS Decimal(18, 2)), N'BusResolutionsHM062614.wmv', 10568, N'0', N'0', N'', N'2.5 CE Credits|Recommended for 2.5 CE Credit Hours. After attending this webinar, each attendee can receive a Certificate of Attendance for self-reporting of CE Credits.', N'', CAST(N'2014-03-13 14:25:00.000' AS DateTime), CAST(N'2014-03-13 14:27:00.000' AS DateTime), NULL, NULL, NULL, NULL, NULL, NULL)
+INSERT  [dbo].[Webinar]
+        ( [idWebinar] ,
+          [Description] ,
+          [DescriptionLong] ,
+          [ImageUrl] ,
+          [SmallImageUrl] ,
+          [Status] ,
+          [Title] ,
+          [Date] ,
+          [LearnCaption] ,
+          [LearnBody] ,
+          [WhoAttend] ,
+          [Duration] ,
+          [RecordingUrl] ,
+          [idPresenter] ,
+          [WebinarKey] ,
+          [OrganizerKey] ,
+          [OrganizerOAuthKey] ,
+          [ceu] ,
+          [ConnectionInfo] ,
+          [DateCreated] ,
+          [DateChanged]
+        )
+VALUES  ( 404 ,
+          N'<p>Your member passed away yesterday and the family is grieving. Yet, in the midst of all the remembering and honoring of a life, the legal and compliance clock is ticking. In most states, checks can be paid for 10 days after the date of death.</p><p>When your account holder dies, many issues and questions arise. Who can have information on the account? Who owns the account? Who has access to the account? What happens with powers of attorney and authorized signers on account? Can the spouse of the sole proprietor continue to access the account? What about that last tax refund check? Is the account still insured? Can a check be written to a funeral home? What about the checks coming in to pay funeral expense? Learn about checks, IRAs, deposit ownership, trusts, UTMA, affidavits of heirship and other complex issues that can occur when a member dies. </p>' ,
+          N'<p>Your member passed away yesterday and the family is grieving. Yet, in the midst of all the remembering and honoring of a life, the legal and compliance clock is ticking. In most states, checks can be paid for 10 days after the date of death.</p><p>When your account holder dies, many issues and questions arise. Who can have information on the account? Who owns the account? Who has access to the account? What happens with powers of attorney and authorized signers on account? Can the spouse of the sole proprietor continue to access the account? What about that last tax refund check? Is the account still insured? Can a check be written to a funeral home? What about the checks coming in to pay funeral expense? Learn about checks, IRAs, deposit ownership, trusts, UTMA, affidavits of heirship and other complex issues that can occur when a member dies. </p>' ,
+          N'' ,
+          N'' ,
+          2 ,
+          N'10 Lessons Learned When Your Member Dies' ,
+          CAST(0x0000A34800A4CB80 AS DATETIME) ,
+          N'Covered Topics' ,
+          N'<ul><li>Probate versus non-probate transfers</li><li>When does the will govern and when does the signature card?</li><li>What bypasses a will? PODs, IRAs, JTWROS?</li><li>Living trusts and successor trustees</li><li>When do we know that a customer is deceased?</li><li>When can we use small estate affidavits?</li><li>What happens to powers of attorney, authorized signers, etc.</li><li>How are IRAs, HSAs and UTMAs affected?</li><li>Do sole proprietorships cease at death?</li><li>NCUSIF insurance issues</li></ul>' ,
+          N'This informative session is designed for customer service representatives, branch administration, branch managers, tellers, training and development staff, compliance personnel, and anyone who handles customer accounts.' ,
+          CAST(1.00 AS DECIMAL(18, 2)) ,
+          N'' ,
+          10568 ,
+          NULL ,
+          N'922930' ,
+          N'5jxY3KZL48HWknOaOEP2eIzVmOTS' ,
+          N'1.25 CE Credits|Recommended for 1.25 CE Credit Hours. After attending this webinar, each attendee can receive a Certificate of Attendance for self-reporting of CE Credits.' ,
+          NULL ,
+          CAST(0x0000A2EB01477614 AS DATETIME) ,
+          CAST(0x0000A2EB01477614 AS DATETIME)
+        )
+INSERT  [dbo].[Webinar]
+        ( [idWebinar] ,
+          [Description] ,
+          [DescriptionLong] ,
+          [ImageUrl] ,
+          [SmallImageUrl] ,
+          [Status] ,
+          [Title] ,
+          [Date] ,
+          [LearnCaption] ,
+          [LearnBody] ,
+          [WhoAttend] ,
+          [Duration] ,
+          [RecordingUrl] ,
+          [idPresenter] ,
+          [WebinarKey] ,
+          [OrganizerKey] ,
+          [OrganizerOAuthKey] ,
+          [ceu] ,
+          [ConnectionInfo] ,
+          [DateCreated] ,
+          [DateChanged] ,
+		  [CitrixRegisterURL],
+          [AccessPhone] ,
+          [AccessCodeAttendee] ,
+          [AccessCodePresenter] ,
+          [AccessCodeOrganizer]
+        )
+VALUES  ( 1568 ,
+          N'<p>Attend this webinar to know more about the ins and outs of resolutions and authorizations.</p>' ,
+          N'<p>Some of our best and most profitable financial institution customers are legal entities. Unfortunately, establishing relationships with business entities can be confusing, and if done incorrectly, they can become costly liabilities. One of the most effective ways for a financial institution to protect itself from business entity liability is by obtaining a well-drafted, properly-executed resolution or similar authorization from the business. Attend this webinar to know more about the ins and outs of resolutions and authorizations.</p>' ,
+          N'http://bankwebinars.com/content/images/bg.jpg' ,
+          N'http://bankwebinars.com/content/images/bg.jpg' ,
+          3 ,
+          N'How to Use Business Resolutions and Authorizations to Protect Your Financial Institution' ,
+          CAST(N'2014-06-26 10:00:00.000' AS DATETIME) ,
+          N'Topics Will Include:' ,
+          N'<ul>  <li>What is the purpose of a resolution or authorization?   </li><li>What language should be contained in a resolution or authorization?   </li><li>Who should sign a business entity resolution or authorization form in order to make it binding on the business?   </li><li>What are the differences between financial institution-prepared and customer-prepared resolutions and authorizations?   </li><li>What are the risks of accepting customer-prepared forms?</li></ul>' ,
+          N'<p>Lenders and new account personnel responsible for loan and deposit account documentation.</p>' ,
+          CAST(2.00 AS DECIMAL(18, 2)) ,
+          N'BusResolutionsHM062614.wmv' ,
+          10568 ,
+          N'0' ,
+          N'0' ,
+          N'' ,
+          N'2.5 CE Credits|Recommended for 2.5 CE Credit Hours. After attending this webinar, each attendee can receive a Certificate of Attendance for self-reporting of CE Credits.' ,
+          N'' ,
+          CAST(N'2014-03-13 14:25:00.000' AS DATETIME) ,
+          CAST(N'2014-03-13 14:27:00.000' AS DATETIME) ,
+          NULL ,
+          NULL ,
+          NULL ,
+          NULL , null
+        )
+
 SET IDENTITY_INSERT [dbo].[Webinar] OFF
 INSERT [dbo].[Affiliate] ([idUserAff], [CommissionModel], [URL], [WebBanner], [WebFooter], [EmailBanner], [EmailFooter], [ttsDomain], [GAPass], [supportEmail], [DisplayTitle], [BillingModel], [Logo], [ContactPerson], [ContactPhone], [ContactEmail], [ContactFax], [ContactAddress], [TechEmail], [TechPhone], [TechName], [EmailPromo]) VALUES (19, 1, N'http://www.ttstrain.com/', N'
 		<div class="container" id="header" style="margin-bottom: 0;">

@@ -744,9 +744,7 @@ namespace CUWebinars.Web.Controllers
             webinar.AccessCodeAttendee = model.AccessCodeAttendee;
             webinar.AccessCodeOrganizer = model.AccessCodeOrganizer;
             webinar.AccessCodePresenter = model.AccessCodePresenter;
-            webinar.AccessPhoneAttendee = model.AccessPhoneAttendee;
-            webinar.AccessPhoneOrganizer = model.AccessPhoneOrganizer;
-            webinar.AccessPhonePresenter = model.AccessPhonePresenter;
+            webinar.CitrixRegisterUrl = model.CitrixRegisterURL;
             webinar.OrganizerOAuthKey = model.OrganizerOAuthKey;
             webinar.OrganizerKey = model.OrganizerKey;
             webinar.WebinarKey = model.WebinarKey;

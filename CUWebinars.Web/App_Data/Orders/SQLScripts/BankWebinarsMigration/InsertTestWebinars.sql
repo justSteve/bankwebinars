@@ -23,11 +23,10 @@ INSERT  dbo.Webinar
           ConnectionInfo ,
           DateCreated ,
           DateChanged ,
-          AccessPhoneAttendee ,
+          AccessPhone ,
+          CitrixRegisterUrl ,
           AccessCodeAttendee ,
-          AccessPhonePresenter ,
           AccessCodePresenter ,
-          AccessPhoneOrganizer ,
           AccessCodeOrganizer
         )
 VALUES  ( 1 ,
@@ -51,11 +50,10 @@ VALUES  ( 1 ,
           N'' , -- ConnectionInfo - nvarchar(max)
           GETDATE() , -- DateCreated - datetime
           GETDATE() , -- DateChanged - datetime
-          N'' , -- AccessPhoneAttendee - nvarchar(max)
+          N'' , -- AccessPhone - nvarchar(max)
+          N'' , -- CitrixRegisterURL - nvarchar(max)
           N'' , -- AccessCodeAttendee - nvarchar(max)
-          N'' , -- AccessPhonePresenter - nvarchar(max)
           N'' , -- AccessCodePresenter - nvarchar(max)
-          N'' , -- AccessPhoneOrganizer - nvarchar(max)
           N''  -- AccessCodeOrganizer - nvarchar(max)
         )
 		
@@ -93,11 +91,10 @@ INSERT  dbo.Webinar
           ConnectionInfo ,
           DateCreated ,
           DateChanged ,
-          AccessPhoneAttendee ,
+          AccessPhone ,
+          CitrixRegisterUrl ,
           AccessCodeAttendee ,
-          AccessPhonePresenter ,
           AccessCodePresenter ,
-          AccessPhoneOrganizer ,
           AccessCodeOrganizer
         )
 VALUES  ( 2 ,
@@ -105,9 +102,9 @@ VALUES  ( 2 ,
           N'DescriptionLong' , -- DescriptionLong - nvarchar(max)
           N'ImageUrl' , -- ImageUrl - nvarchar(50)
           N'SmallImageUrl' , -- SmallImageUrl - nvarchar(50)
-          3 , -- Status - int
-          N'Tester 1 hour Post' , -- Title - nvarchar(125)
-          DATEADD(DAY, -10, GETDATE()) , -- Date - datetime
+          2 , -- Status - int
+          N'Tester 1 hour Pre' , -- Title - nvarchar(125)
+          DATEADD(DAY, 10, GETDATE()) , -- Date - datetime
           N'LearnCaption' , -- LearnCaption - nvarchar(255)
           N'LearnBody' , -- LearnBody - nvarchar(max)
           N'WhoAttend' , -- WhoAttend - nvarchar(max)
@@ -121,13 +118,13 @@ VALUES  ( 2 ,
           N'' , -- ConnectionInfo - nvarchar(max)
           GETDATE() , -- DateCreated - datetime
           GETDATE() , -- DateChanged - datetime
-          N'' , -- AccessPhoneAttendee - nvarchar(max)
+          N'' , -- AccessPhone - nvarchar(max)
+          N'' , -- CitrixRegisterURL - nvarchar(max)
           N'' , -- AccessCodeAttendee - nvarchar(max)
-          N'' , -- AccessPhonePresenter - nvarchar(max)
           N'' , -- AccessCodePresenter - nvarchar(max)
-          N'' , -- AccessPhoneOrganizer - nvarchar(max)
           N''  -- AccessCodeOrganizer - nvarchar(max)
         )
+
           
 INSERT  dbo.WebinarTopicXref
         ( idWebinar, idTopic )
@@ -163,11 +160,10 @@ INSERT  dbo.Webinar
           ConnectionInfo ,
           DateCreated ,
           DateChanged ,
-          AccessPhoneAttendee ,
+          AccessPhone ,
+          CitrixRegisterUrl ,
           AccessCodeAttendee ,
-          AccessPhonePresenter ,
           AccessCodePresenter ,
-          AccessPhoneOrganizer ,
           AccessCodeOrganizer
         )
 VALUES  ( 3 ,
@@ -176,8 +172,8 @@ VALUES  ( 3 ,
           N'ImageUrl' , -- ImageUrl - nvarchar(50)
           N'SmallImageUrl' , -- SmallImageUrl - nvarchar(50)
           2 , -- Status - int
-          N'Tester 2 hour Pre' , -- Title - nvarchar(125)
-          DATEADD(DAY, 11, GETDATE()) , -- Date - datetime
+          N'Tester 1 hour Pre' , -- Title - nvarchar(125)
+          DATEADD(DAY, 10, GETDATE()) , -- Date - datetime
           N'LearnCaption' , -- LearnCaption - nvarchar(255)
           N'LearnBody' , -- LearnBody - nvarchar(max)
           N'WhoAttend' , -- WhoAttend - nvarchar(max)
@@ -191,11 +187,10 @@ VALUES  ( 3 ,
           N'' , -- ConnectionInfo - nvarchar(max)
           GETDATE() , -- DateCreated - datetime
           GETDATE() , -- DateChanged - datetime
-          N'' , -- AccessPhoneAttendee - nvarchar(max)
+          N'' , -- AccessPhone - nvarchar(max)
+          N'' , -- CitrixRegisterURL - nvarchar(max)
           N'' , -- AccessCodeAttendee - nvarchar(max)
-          N'' , -- AccessPhonePresenter - nvarchar(max)
           N'' , -- AccessCodePresenter - nvarchar(max)
-          N'' , -- AccessPhoneOrganizer - nvarchar(max)
           N''  -- AccessCodeOrganizer - nvarchar(max)
         )
           
@@ -233,11 +228,10 @@ INSERT  dbo.Webinar
           ConnectionInfo ,
           DateCreated ,
           DateChanged ,
-          AccessPhoneAttendee ,
+          AccessPhone ,
+          CitrixRegisterUrl ,
           AccessCodeAttendee ,
-          AccessPhonePresenter ,
           AccessCodePresenter ,
-          AccessPhoneOrganizer ,
           AccessCodeOrganizer
         )
 VALUES  ( 4 ,
@@ -245,9 +239,9 @@ VALUES  ( 4 ,
           N'DescriptionLong' , -- DescriptionLong - nvarchar(max)
           N'ImageUrl' , -- ImageUrl - nvarchar(50)
           N'SmallImageUrl' , -- SmallImageUrl - nvarchar(50)
-          3 , -- Status - int
-          N'Tester 2 hour Post' , -- Title - nvarchar(125)
-          DATEADD(DAY, -11, GETDATE()) , -- Date - datetime
+          2 , -- Status - int
+          N'Tester 1 hour Pre' , -- Title - nvarchar(125)
+          DATEADD(DAY, 10, GETDATE()) , -- Date - datetime
           N'LearnCaption' , -- LearnCaption - nvarchar(255)
           N'LearnBody' , -- LearnBody - nvarchar(max)
           N'WhoAttend' , -- WhoAttend - nvarchar(max)
@@ -261,13 +255,13 @@ VALUES  ( 4 ,
           N'' , -- ConnectionInfo - nvarchar(max)
           GETDATE() , -- DateCreated - datetime
           GETDATE() , -- DateChanged - datetime
-          N'' , -- AccessPhoneAttendee - nvarchar(max)
+          N'' , -- AccessPhone - nvarchar(max)
+          N'' , -- CitrixRegisterURL - nvarchar(max)
           N'' , -- AccessCodeAttendee - nvarchar(max)
-          N'' , -- AccessPhonePresenter - nvarchar(max)
           N'' , -- AccessCodePresenter - nvarchar(max)
-          N'' , -- AccessPhoneOrganizer - nvarchar(max)
           N''  -- AccessCodeOrganizer - nvarchar(max)
         )
+
           
 INSERT  dbo.WebinarTopicXref
         ( idWebinar, idTopic )
@@ -303,11 +297,10 @@ INSERT  dbo.Webinar
           ConnectionInfo ,
           DateCreated ,
           DateChanged ,
-          AccessPhoneAttendee ,
+          AccessPhone ,
+          CitrixRegisterUrl ,
           AccessCodeAttendee ,
-          AccessPhonePresenter ,
           AccessCodePresenter ,
-          AccessPhoneOrganizer ,
           AccessCodeOrganizer
         )
 VALUES  ( 5 ,
@@ -316,8 +309,8 @@ VALUES  ( 5 ,
           N'ImageUrl' , -- ImageUrl - nvarchar(50)
           N'SmallImageUrl' , -- SmallImageUrl - nvarchar(50)
           2 , -- Status - int
-          N'Tester 3 Part Pre' , -- Title - nvarchar(125)
-          DATEADD(DAY, 12, GETDATE()) , -- Date - datetime
+          N'Tester 1 hour Pre' , -- Title - nvarchar(125)
+          DATEADD(DAY, 10, GETDATE()) , -- Date - datetime
           N'LearnCaption' , -- LearnCaption - nvarchar(255)
           N'LearnBody' , -- LearnBody - nvarchar(max)
           N'WhoAttend' , -- WhoAttend - nvarchar(max)
@@ -331,11 +324,10 @@ VALUES  ( 5 ,
           N'' , -- ConnectionInfo - nvarchar(max)
           GETDATE() , -- DateCreated - datetime
           GETDATE() , -- DateChanged - datetime
-          N'' , -- AccessPhoneAttendee - nvarchar(max)
+          N'' , -- AccessPhone - nvarchar(max)
+          N'' , -- CitrixRegisterURL - nvarchar(max)
           N'' , -- AccessCodeAttendee - nvarchar(max)
-          N'' , -- AccessPhonePresenter - nvarchar(max)
           N'' , -- AccessCodePresenter - nvarchar(max)
-          N'' , -- AccessPhoneOrganizer - nvarchar(max)
           N''  -- AccessCodeOrganizer - nvarchar(max)
         )
           
@@ -373,11 +365,10 @@ INSERT  dbo.Webinar
           ConnectionInfo ,
           DateCreated ,
           DateChanged ,
-          AccessPhoneAttendee ,
+          AccessPhone ,
+          CitrixRegisterUrl ,
           AccessCodeAttendee ,
-          AccessPhonePresenter ,
           AccessCodePresenter ,
-          AccessPhoneOrganizer ,
           AccessCodeOrganizer
         )
 VALUES  ( 6 ,
@@ -385,9 +376,9 @@ VALUES  ( 6 ,
           N'DescriptionLong' , -- DescriptionLong - nvarchar(max)
           N'ImageUrl' , -- ImageUrl - nvarchar(50)
           N'SmallImageUrl' , -- SmallImageUrl - nvarchar(50)
-          3 , -- Status - int
-          N'Tester 3 Part Post' , -- Title - nvarchar(125)
-          DATEADD(DAY, -12, GETDATE()) , -- Date - datetime
+          2 , -- Status - int
+          N'Tester 1 hour Pre' , -- Title - nvarchar(125)
+          DATEADD(DAY, 10, GETDATE()) , -- Date - datetime
           N'LearnCaption' , -- LearnCaption - nvarchar(255)
           N'LearnBody' , -- LearnBody - nvarchar(max)
           N'WhoAttend' , -- WhoAttend - nvarchar(max)
@@ -401,11 +392,10 @@ VALUES  ( 6 ,
           N'' , -- ConnectionInfo - nvarchar(max)
           GETDATE() , -- DateCreated - datetime
           GETDATE() , -- DateChanged - datetime
-          N'' , -- AccessPhoneAttendee - nvarchar(max)
+          N'' , -- AccessPhone - nvarchar(max)
+          N'' , -- CitrixRegisterURL - nvarchar(max)
           N'' , -- AccessCodeAttendee - nvarchar(max)
-          N'' , -- AccessPhonePresenter - nvarchar(max)
           N'' , -- AccessCodePresenter - nvarchar(max)
-          N'' , -- AccessPhoneOrganizer - nvarchar(max)
           N''  -- AccessCodeOrganizer - nvarchar(max)
         )
           
@@ -444,11 +434,10 @@ INSERT  dbo.Webinar
           ConnectionInfo ,
           DateCreated ,
           DateChanged ,
-          AccessPhoneAttendee ,
+          AccessPhone ,
+          CitrixRegisterUrl ,
           AccessCodeAttendee ,
-          AccessPhonePresenter ,
           AccessCodePresenter ,
-          AccessPhoneOrganizer ,
           AccessCodeOrganizer
         )
 VALUES  ( 7 ,
@@ -457,8 +446,8 @@ VALUES  ( 7 ,
           N'ImageUrl' , -- ImageUrl - nvarchar(50)
           N'SmallImageUrl' , -- SmallImageUrl - nvarchar(50)
           2 , -- Status - int
-          N'Tester 4 Part Pre' , -- Title - nvarchar(125)
-          DATEADD(DAY, 13, GETDATE()) , -- Date - datetime
+          N'Tester 1 hour Pre' , -- Title - nvarchar(125)
+          DATEADD(DAY, 10, GETDATE()) , -- Date - datetime
           N'LearnCaption' , -- LearnCaption - nvarchar(255)
           N'LearnBody' , -- LearnBody - nvarchar(max)
           N'WhoAttend' , -- WhoAttend - nvarchar(max)
@@ -472,11 +461,10 @@ VALUES  ( 7 ,
           N'' , -- ConnectionInfo - nvarchar(max)
           GETDATE() , -- DateCreated - datetime
           GETDATE() , -- DateChanged - datetime
-          N'' , -- AccessPhoneAttendee - nvarchar(max)
+          N'' , -- AccessPhone - nvarchar(max)
+          N'' , -- CitrixRegisterURL - nvarchar(max)
           N'' , -- AccessCodeAttendee - nvarchar(max)
-          N'' , -- AccessPhonePresenter - nvarchar(max)
           N'' , -- AccessCodePresenter - nvarchar(max)
-          N'' , -- AccessPhoneOrganizer - nvarchar(max)
           N''  -- AccessCodeOrganizer - nvarchar(max)
         )
           
@@ -514,11 +502,10 @@ INSERT  dbo.Webinar
           ConnectionInfo ,
           DateCreated ,
           DateChanged ,
-          AccessPhoneAttendee ,
+          AccessPhone ,
+          CitrixRegisterUrl ,
           AccessCodeAttendee ,
-          AccessPhonePresenter ,
           AccessCodePresenter ,
-          AccessPhoneOrganizer ,
           AccessCodeOrganizer
         )
 VALUES  ( 8 ,
@@ -526,9 +513,9 @@ VALUES  ( 8 ,
           N'DescriptionLong' , -- DescriptionLong - nvarchar(max)
           N'ImageUrl' , -- ImageUrl - nvarchar(50)
           N'SmallImageUrl' , -- SmallImageUrl - nvarchar(50)
-          3 , -- Status - int
-          N'Tester 4 Part Post' , -- Title - nvarchar(125)
-          DATEADD(DAY, -13, GETDATE()) , -- Date - datetime
+          2 , -- Status - int
+          N'Tester 1 hour Pre' , -- Title - nvarchar(125)
+          DATEADD(DAY, 10, GETDATE()) , -- Date - datetime
           N'LearnCaption' , -- LearnCaption - nvarchar(255)
           N'LearnBody' , -- LearnBody - nvarchar(max)
           N'WhoAttend' , -- WhoAttend - nvarchar(max)
@@ -542,13 +529,13 @@ VALUES  ( 8 ,
           N'' , -- ConnectionInfo - nvarchar(max)
           GETDATE() , -- DateCreated - datetime
           GETDATE() , -- DateChanged - datetime
-          N'' , -- AccessPhoneAttendee - nvarchar(max)
+          N'' , -- AccessPhone - nvarchar(max)
+          N'' , -- CitrixRegisterURL - nvarchar(max)
           N'' , -- AccessCodeAttendee - nvarchar(max)
-          N'' , -- AccessPhonePresenter - nvarchar(max)
           N'' , -- AccessCodePresenter - nvarchar(max)
-          N'' , -- AccessPhoneOrganizer - nvarchar(max)
           N''  -- AccessCodeOrganizer - nvarchar(max)
         )
+
           
 INSERT  dbo.WebinarTopicXref
         ( idWebinar, idTopic )
@@ -585,11 +572,10 @@ INSERT  dbo.Webinar
           ConnectionInfo ,
           DateCreated ,
           DateChanged ,
-          AccessPhoneAttendee ,
+          AccessPhone ,
+          CitrixRegisterUrl ,
           AccessCodeAttendee ,
-          AccessPhonePresenter ,
           AccessCodePresenter ,
-          AccessPhoneOrganizer ,
           AccessCodeOrganizer
         )
 VALUES  ( 9 ,
@@ -598,8 +584,8 @@ VALUES  ( 9 ,
           N'ImageUrl' , -- ImageUrl - nvarchar(50)
           N'SmallImageUrl' , -- SmallImageUrl - nvarchar(50)
           2 , -- Status - int
-          N'Tester 5 Part Pre' , -- Title - nvarchar(125)
-          DATEADD(DAY, 14, GETDATE()) , -- Date - datetime
+          N'Tester 1 hour Pre' , -- Title - nvarchar(125)
+          DATEADD(DAY, 10, GETDATE()) , -- Date - datetime
           N'LearnCaption' , -- LearnCaption - nvarchar(255)
           N'LearnBody' , -- LearnBody - nvarchar(max)
           N'WhoAttend' , -- WhoAttend - nvarchar(max)
@@ -613,11 +599,10 @@ VALUES  ( 9 ,
           N'' , -- ConnectionInfo - nvarchar(max)
           GETDATE() , -- DateCreated - datetime
           GETDATE() , -- DateChanged - datetime
-          N'' , -- AccessPhoneAttendee - nvarchar(max)
+          N'' , -- AccessPhone - nvarchar(max)
+          N'' , -- CitrixRegisterURL - nvarchar(max)
           N'' , -- AccessCodeAttendee - nvarchar(max)
-          N'' , -- AccessPhonePresenter - nvarchar(max)
           N'' , -- AccessCodePresenter - nvarchar(max)
-          N'' , -- AccessPhoneOrganizer - nvarchar(max)
           N''  -- AccessCodeOrganizer - nvarchar(max)
         )
           
@@ -655,11 +640,10 @@ INSERT  dbo.Webinar
           ConnectionInfo ,
           DateCreated ,
           DateChanged ,
-          AccessPhoneAttendee ,
+          AccessPhone ,
+          CitrixRegisterUrl ,
           AccessCodeAttendee ,
-          AccessPhonePresenter ,
           AccessCodePresenter ,
-          AccessPhoneOrganizer ,
           AccessCodeOrganizer
         )
 VALUES  ( 10 ,
@@ -667,9 +651,9 @@ VALUES  ( 10 ,
           N'DescriptionLong' , -- DescriptionLong - nvarchar(max)
           N'ImageUrl' , -- ImageUrl - nvarchar(50)
           N'SmallImageUrl' , -- SmallImageUrl - nvarchar(50)
-          3 , -- Status - int
-          N'Tester 5 Part Post' , -- Title - nvarchar(125)
-          DATEADD(DAY, -14, GETDATE()) , -- Date - datetime
+          2 , -- Status - int
+          N'Tester 1 hour Pre' , -- Title - nvarchar(125)
+          DATEADD(DAY, 10, GETDATE()) , -- Date - datetime
           N'LearnCaption' , -- LearnCaption - nvarchar(255)
           N'LearnBody' , -- LearnBody - nvarchar(max)
           N'WhoAttend' , -- WhoAttend - nvarchar(max)
@@ -683,11 +667,10 @@ VALUES  ( 10 ,
           N'' , -- ConnectionInfo - nvarchar(max)
           GETDATE() , -- DateCreated - datetime
           GETDATE() , -- DateChanged - datetime
-          N'' , -- AccessPhoneAttendee - nvarchar(max)
+          N'' , -- AccessPhone - nvarchar(max)
+          N'' , -- CitrixRegisterURL - nvarchar(max)
           N'' , -- AccessCodeAttendee - nvarchar(max)
-          N'' , -- AccessPhonePresenter - nvarchar(max)
           N'' , -- AccessCodePresenter - nvarchar(max)
-          N'' , -- AccessPhoneOrganizer - nvarchar(max)
           N''  -- AccessCodeOrganizer - nvarchar(max)
         )
           
