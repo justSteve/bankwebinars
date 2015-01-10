@@ -8,10 +8,11 @@
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
     //TODO: following on the idea of a fundamentally spaghettized aspect of the Details page, let's replace these 'if' tests for both admins and affiliates. Instead, redirect the given role to a corresponding _LayoutPage.
-    var currentAffiliate = stateService.GetValue<Affiliate>("CurrentAffiliate");
+    var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+    string currentUserAffiliateFullName = string.Empty;
     if (currentAffiliate != null)
     {
-        var currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
+        currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
     }
     else
     {

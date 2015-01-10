@@ -159,12 +159,20 @@ var OrderRegistration;
             this.confirmOrderForm.submit();
         };
 
-        StateManager.prototype.SetCartState = function () {
-            $("#connectionsCount").val(0);
+        StateManager.prototype.SetCartState = function (cartType) {
+            if (cartType === 'affiliate') {
+                $("#findUserTab").hide();
+                $("#confirmationTabForAffiliate").hide();
+            } else if (cartType === 'admin') {
+            } else {
+                $("#signUpTab").hide();
+                $("#contactInfoTab").hide();
+                $("#confirmationTab").hide();
+            }
+
+            //$("#connectionsCount").val(0);
             $('#collectAdditionalLocation').html('');
-            $("#confirmationTab").hide();
-            $("#signUpTab").hide();
-            $("#contactInfoTab").hide();
+
             $('#AddToCart').attr({ disabled: false, value: 'Sign Up' });
             $('#AddToCart1').attr({ disabled: false, value: 'Sign Up' });
         };

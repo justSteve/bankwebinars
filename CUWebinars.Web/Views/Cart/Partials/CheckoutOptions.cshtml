@@ -21,22 +21,22 @@
             {
                 if (Model.ConnectionInfoPresent)
                 {
-    <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn btn-success well">@Model.RegistrationType.Stage2CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
+                    <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn btn-success well">@Model.RegistrationType.OptionExplain.Replace(" Only", " ") </blockquote>
                 }
                 else
                 {
-    <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn btn-success well">@Model.RegistrationType.Stage1CheckoutConfirmationMsg.Replace(" Only", " ") </blockquote>
+                    <blockquote style="margin-left: 150px; margin-right: 150px;" class="btn btn-success well">@Model.RegistrationType.OptionExplain.Replace(" Only", " ") </blockquote>
                 }
             }
             else
             {
-    <span>We show a that you have pending order for this event that requires your confirmation or cancelation.</span>
-    @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model.DisplayOptionsViewModel)
+                <span>We show a that you have pending order for this event that requires your confirmation or cancelation.</span>
+                @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model.DisplayOptionsViewModel)
             }
         }
         else
         {
-    @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model.DisplayOptionsViewModel)
+            @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model.DisplayOptionsViewModel)
         }
     }
 

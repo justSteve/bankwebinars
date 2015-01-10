@@ -175,14 +175,24 @@ module OrderRegistration {
             this.confirmOrderForm.submit();
         }
 
-        SetCartState(): void {
-            $("#connectionsCount").val(0);
+        SetCartState(cartType: string): void {
+
+            if (cartType === 'affiliate') {
+                $("#findUserTab").hide();
+                $("#confirmationTabForAffiliate").hide();
+            } else if (cartType === 'admin') {
+
+            } else {
+                $("#signUpTab").hide();
+                $("#contactInfoTab").hide();
+                $("#confirmationTab").hide();
+            }
+
+            //$("#connectionsCount").val(0);
             $('#collectAdditionalLocation').html('');
-            $("#confirmationTab").hide();
-            $("#signUpTab").hide();
-            $("#contactInfoTab").hide();
-            $('#AddToCart').attr({ disabled: false, value: 'SignUp' });
-            $('#AddToCart1').attr({ disabled: false, value: 'SignUp' });            
+            
+            $('#AddToCart').attr({ disabled: false, value: 'Sign Up' });
+            $('#AddToCart1').attr({ disabled: false, value: 'Sign Up' });            
         }
 
     };

@@ -1,27 +1,30 @@
-﻿//  This script correlates with the Details View.
-var checkoutConfirm, discount, cartStateManager, shippingAddressRequired, signUpForm, signUpFormContainer, storedHeight;
+﻿//  This script correlates with the DetailsAffiliate View.
 
-discount = '';
-checkoutConfirm = {};
+var ORDERCREATIONAFFILIATE = {}; // object which lives in Global namespace
+var OCA = ORDERCREATIONAFFILIATE; // shortcut alias to ORDERCREATIONAFFILIATE object (to reduce filesize)
+
+var discount, shippingAddressRequired, storedHeight;
+
+OCA.checkoutConfirm = {};
 
 $(function () {
-    signUpForm = $('#SignUpForm');
-    signUpFormContainer = $('#SignUpFormContainer'); // The big beige box
+    OCA.signUpForm = $('#SignUpForm');
+    OCA.signUpFormContainer = $('#SignUpFormContainer'); // The big beige box
 
     /* This function gets invoked when the 3rd tab is loaded and an existing user is using the cart */
-    checkoutConfirm.initialize = function (userId) {
-        cartStateManager.setCancelOrderForm($('#cancelOrder'));
-        cartStateManager.setConfirmOrderForm($('#confirmOrder'));
+    OCA.checkoutConfirm.initialize = function (userId) {
+        OCA.cartStateManager.setCancelOrderForm($('#cancelOrder'));
+        OCA.cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 
         console.log('initialize hit');
 
-        cartStateManager.getConfirmOrderForm().on('submit', function (e) {
+        OCA.cartStateManager.getConfirmOrderForm().on('submit', function (e) {
             //Rollbar.info('submitting confirmOrder form');
             e.preventDefault();
 
             var self = $(this);
-            self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
-            var err = new Error('submitting ConfirmOrder' + cartStateManager.getOrderRowId());
+            self.find('input[name="id"]').val(OCA.cartStateManager.getOrderRowId());
+            var err = new Error('submitting ConfirmOrder' + OCA.cartStateManager.getOrderRowId());
             //NREUM.noticeError(err);
 
             var data = $(this).serialize();
@@ -71,12 +74,12 @@ $(function () {
 
             $('#ConfirmModal').on('hidden', function (e) {
                 var utilities = new Common.Utilities();
-                console.log('/webinar/details/' + cartStateManager.getWebinarId());
-                utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
+                console.log('/webinar/details/' + OCA.cartStateManager.getWebinarId());
+                utilities.goToUrl('/webinar/details/' + OCA.cartStateManager.getWebinarId());
             });
         });
 
-        var cancelOrderForm = cartStateManager.getCancelOrderForm();
+        var cancelOrderForm = OCA.cartStateManager.getCancelOrderForm();
 
         cancelOrderForm.on('submit', function (e) {
 
@@ -85,7 +88,7 @@ $(function () {
             e.preventDefault();
             e.stopImmediatePropagation();
 
-            $('#cancelModalOrderId').val(cartStateManager.getOrderId());
+            $('#cancelModalOrderId').val(OCA.cartStateManager.getOrderId());
             var data = $(this).serialize();
 
             var self = $(this);
@@ -104,8 +107,8 @@ $(function () {
                             //NREUM.noticeError(err);
 
                             var utilities = new Common.Utilities();
-                            console.log('/webinar/details/' + cartStateManager.getWebinarId());
-                            utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
+                            console.log('/webinar/details/' + OCA.cartStateManager.getWebinarId());
+                            utilities.goToUrl('/webinar/details/' + OCA.cartStateManager.getWebinarId());
                         } else {
                             var err = new Error('Cancel Order Failure');
                             //NREUM.noticeError(err);
@@ -139,46 +142,28 @@ $(function () {
         });
     };
 
-    cartStateManager = new OrderRegistration.StateManager();
+    OCA.cartStateManager = new OrderRegistration.StateManager();
 
-    cartStateManager.setWebinarId(webinarId); // webinarId is set in a script tab in razor view Details.cshtml
-    cartStateManager.setOrderRowId(orderRowId); // orderRowId is set in the razor view Details.cshtml
-    cartStateManager.setIsUserLoggedIn(isUserLoggedIn); // isUserLogged is set in a script tab in razor view Details.cshtml
-    cartStateManager.setCheckoutInProcess(checkoutInProcess); // checkoutInProcess is set in a script tab in razor view Details.cshtml
+    OCA.cartStateManager.setWebinarId(webinarId); // webinarId is set in a script tab in razor view DetailsAffiliate.cshtml
+    OCA.cartStateManager.setOrderRowId(orderRowId); // orderRowId is set in the razor view DetailsAffiliate.cshtml
+    OCA.cartStateManager.setIsUserLoggedIn(isUserLoggedIn); // isUserLogged is set in a script tab in razor view DetailsAffiliate.cshtml
+    OCA.cartStateManager.setCheckoutInProcess(checkoutInProcess); // checkoutInProcess is set in a script tab in razor view DetailsAffiliate.cshtml
 
-    cartStateManager.SetCartState();
+    OCA.cartStateManager.SetCartState('affiliate');
 
     $("[id^='regTypeID_']").on("click", function (oEvent) {
-        //TODO: In original code i had intialized the how the cart displayed the price.
-        // clearly this takes place elsewhere now adaquately but review and verify that
-        // this is impacted by the Discount - an enitity we've yet to dance with - but this
-        // provides the perfect opp to introduce this user story:
-        //
-        // An existing user can posses one or more 'credits' that should be honored (acknowedged) by the shopping
-        // cart as soon as the user's identity is known. Specifically, the cart must display the amount
-        // of the discount as well as ensuring that the cart's 'Total' field reflects the discount. Point being that
-        // that the cart shouldn't depend on the user to supply the discount.
-        //
-        // and....
-        // absent a pre-existing discount code, the cart must suppy a form field to permit an
-        // ajax call to the server to validate anything entered by the user on the Confirmation Tab.
-        //
-        //cartStateManager.BuildPreRegPrice(oEvent, cartStateManager.getOrderRowId());
-        cartStateManager.CheckIfAddLocShouldHide(oEvent.currentTarget.value);
+
+        OCA.cartStateManager.CheckIfAddLocShouldHide(oEvent.currentTarget.value);
     });
 
     /* Click event for the big green SignUp button */
     $('#AddToCart').on('click', function () {
         $(this).attr('disabled', 'disabled');
-        signUpForm.submit();
+        OCA.signUpForm.submit();
     });
 
-    if (discount !== 'none') {
-        $('#showDiscount').css('display', 'block');
-    }
-
     //  flow goes inside this block where the order exists and is in process e.g. previously abandoned before finializing
-    if (cartStateManager.getOrderRowId() > 0 && cartStateManager.getCheckoutInProcess()) {
+    if (OCA.cartStateManager.getOrderRowId() > 0 && OCA.cartStateManager.getCheckoutInProcess()) {
 
         if (shippingAddressRequired && notificationsTesting === false) {
             // Following function lives in the register-during-checkout.js script
@@ -186,10 +171,10 @@ $(function () {
             hookUpModal($('#UserDetailsModal'));
         }
 
-        cartStateManager.setOrderId(orderId);
+        OCA.cartStateManager.setOrderId(orderId);
 
         // see top of this file
-        checkoutConfirm.initialize();
+        OCA.checkoutConfirm.initialize();
 
          //The Bill Me button on 3rd tab
         $('#ConfirmRegistrationBillMe').on('click', function (e) {
@@ -215,10 +200,10 @@ $(function () {
     }
 
     /* Submit event for the big green SignUp button */
-    signUpForm.on('submit', function (e) {
+    OCA.signUpForm.on('submit', function (e) {
         e.preventDefault();
 
-        var beigeFormArea = signUpFormContainer.find('div.well');
+        var beigeFormArea = OCA.signUpFormContainer.find('div.well');
 
         $('#loginEmail').val($('#Email1').val());
         $('#loginPassword').val($('#Password1').val());
@@ -227,26 +212,26 @@ $(function () {
         //  valu comes from a hidden impact in the radio btn list next to the relevant radio button (previous-sibling)
         shippingAddressRequired = isShippindAddressRequired($('#RegistrationType > dl dt input:checked').prev());
 
-        var data = signUpForm.serialize();
+        var data = OCA.signUpForm.serialize();
 
         $('#SignUpForm > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
         var spinner = $('#loadingSpinner');
 
         // If the user IS NOT LOGGED IN - control moves to the register-during-checkout.js script
-        if (!cartStateManager.getIsUserLoggedIn()) {
+        if (!OCA.cartStateManager.getIsUserLoggedIn()) {
             var err = new Error('anon user hits signup');
             //NREUM.noticeError(err);
 
-            $.post(signUpForm.attr('action'), data, function (response, status, xhr) {
+            $.post(OCA.signUpForm.attr('action'), data, function (response, status, xhr) {
                 if (status !== 'error') {
                     if (xhr.responseJSON['success']) {
-                        cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
-                        cartStateManager.setOrderId(xhr.responseJSON['orderId']);
-                        cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
+                        OCA.cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
+                        OCA.cartStateManager.setOrderId(xhr.responseJSON['orderId']);
+                        OCA.cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
                         $('#contactInfo').load('/Cart/CheckoutContactDetails', function (response, status, xhr) {
                             if (status !== 'error') {
-                                $('#_CreateUserForm input[name="returnUrl"]').val('/Webinar/Details/' + cartStateManager.getWebinarId());
-                                registerDuringCheckout.initialize(cartStateManager.getOrderId(), cartStateManager.getWebinarId(), cartStateManager.getOrderRowId(), shippingAddressRequired, checkoutConfirm.initialize);
+                                $('#_CreateUserForm input[name="returnUrl"]').val('/Webinar/Details2/' + xhr.responseJSON['webinarId']);
+                                registerDuringCheckout.initialize(xhr.responseJSON['orderId'], xhr.responseJSON['webinarId'], xhr.responseJSON['orderRowId'], shippingAddressRequired, OCA.checkoutConfirm.initialize);
                             } else {
                                 $('#labelEmail').html('<span class="label label-important">&nbsp;Server error. Try again or call 800-831-0678 ext 706 for immediate assistance!</span>');
                             }
@@ -263,18 +248,18 @@ $(function () {
             }, constants.JsonDataType);
         } else {
             // If the user IS LOGGED IN
-            $.post(signUpForm.attr('action'), data, function (response, status, xhr) {
+            $.post(OCA.signUpForm.attr('action'), data, function (response, status, xhr) {
                 if (status !== 'error') {
                     if (xhr.responseJSON['success']) {
                         //Rollbar.info({ signup: { from: 'EndUser Checkout', orderRowId: data.orderRowId } });
-                        cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
-                        cartStateManager.setOrderId(xhr.responseJSON['orderId']);
-                        cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
+                        OCA.cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
+                        OCA.cartStateManager.setOrderId(xhr.responseJSON['orderId']);
+                        OCA.cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
 
                         var err = new Error('submitting ConfirmOrder' + xhr.responseJSON['orderId']);
                         //NREUM.noticeError(err);
 
-                        $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function(response, status, xhr) {
+                        $('#confirmation').load('/cart/checkoutConfirm/' + OCA.cartStateManager.getOrderRowId(), function(response, status, xhr) {
 
                             if (status === 'error') {
                                 $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
@@ -291,7 +276,7 @@ $(function () {
                                 }
 
                                 // see top of this file
-                                checkoutConfirm.initialize();
+                                OCA.checkoutConfirm.initialize();
 
                                 // The Bill Me button on 3rd tab
                                 $('#ConfirmRegistrationBillMe').on('click', function(e) {
