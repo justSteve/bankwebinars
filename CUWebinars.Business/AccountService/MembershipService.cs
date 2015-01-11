@@ -67,6 +67,11 @@ namespace CUWebinars.Business.AccountService
             return _webUserRepository.FindById(userId);
         }
 
+        public IEnumerable<WebUser> GetWebUsersByLastName(string lastName)
+        {
+            return _webUserRepository.GetWebUsersByLastName(lastName);
+        }
+
         public UserAccount GetUserAccountByEmail(string tenant, string email)
         {
             if (tenant == null) throw new ArgumentNullException("tenant");

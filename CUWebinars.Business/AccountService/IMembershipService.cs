@@ -43,6 +43,7 @@ namespace CUWebinars.Business.AccountService
         WebUser GetUserByEmail(string email);
         WebUser GetUserByEmailLoadedWithOrdersData(string email);
         WebUser GetWebUserById(int userId);
+        IEnumerable<WebUser> GetWebUsersByLastName(string lastName);
         bool HasPassword(string tenant, string emailAddress);
         bool LogInUser(string tenant, string emailAddress, string password, bool persistent);
         bool LogInUser(string tenant, string emailAddress, string password, bool persistent, out string userMustVerify);

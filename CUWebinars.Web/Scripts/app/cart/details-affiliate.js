@@ -3,22 +3,147 @@
 var ORDERCREATIONAFFILIATE = {}; // object which lives in Global namespace
 var OCA = ORDERCREATIONAFFILIATE; // shortcut alias to ORDERCREATIONAFFILIATE object (to reduce filesize)
 
-var discount, shippingAddressRequired, storedHeight;
-
+OCA.shippingAddressRequired = {};
 OCA.checkoutConfirm = {};
 
-$(function () {
-    OCA.signUpForm = $('#SignUpForm');
-    OCA.signUpFormContainer = $('#SignUpFormContainer'); // The big beige box
+OCA.initializeFunctions = function () {
+
+    //OCA.hookUpChangeTypeLogic = function(dropDown, shippingAddressRequired) {
+
+    //    //var changeTypeConfirmModal = $('#changeTypeConfirmModal');
+    //    var chosenRegTypeLabel = $('#chosenRegType');
+    //    var position,
+    //        typeChosenCurrent,
+    //        typeChosenPrevious,
+    //        valOfTypeChosenPrevious,
+    //        valOfTypeChosenCurrent;
+
+    //    dropDown.on('change', function(e) {
+
+    //        e.preventDefault();
+
+    //        valOfTypeChosenCurrent = $(this).val();
+    //        var totalPrice = 0;
+
+    //        var url = '/Cart/CheckIfAddLocShouldHide?optionID=' + valOfTypeChosenCurrent;
+
+    //        $.ajax({
+    //            type: 'GET',
+    //            contentType: constants.FormPostContentType,
+    //            cache: false,
+    //            url: url,
+    //            dataType: constants.JsonDataType,
+    //            beforeSend: function() {
+    //                dropDown.attr('disabled', 'disabled').after('<i id="discountSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+    //            }
+    //        }).done(function(data) {
+
+    //            // see CartController's CheckIfAddLocShouldHide method for commented explanation regarding the 'shouldShow' property.
+    //            if (data.shouldShow === 'No') {
+
+    //                registerDuringCheckout.gatherPricingData(); /* BUTTONS DIFFERENT HERE*/
+
+    //                //  First, check if there are currently any Additional Locations added to the order.
+    //                if (anyAddLocs === true) {
+
+    //                    position = $('#confirmation').offset();
+
+    //                    var url = '/Cart/RemoveAdditionalLocationsFromOrder';
+    //                    var payLoad = {
+    //                        idOrderRow: OCA.cartStateManager.getOrderRowId()
+    //                    };
+
+    //                    $.ajax({
+    //                        type: 'POST',
+    //                        contentType: constants.JsonContentType,
+    //                        cache: false,
+    //                        url: url,
+    //                        dataType: constants.JsonDataType,
+    //                        data: JSON.stringify(payLoad),
+    //                    }).done(function(data) {
+
+    //                        if (data.Result === 'Success') {
+    //                            // This next variable is initially set in the CheckoutConfirm.cshtml razor view
+    //                            anyAddLocs = false;
+    //                            $('#additionalLocationsCaption').html('None');
+
+    //                            $('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 706 for immediate assistance').addClass('text-info');
+
+    //                            $('#addLocsText').html('Additional Locations: <span id="totalAdLocsPrice">$0.00</span>').addClass('muted');
+    //                            totalPrice = registerDuringCheckout.totalPrice - registerDuringCheckout.addLocsPrice;
+
+    //                            updatePriceOnNewSelection(valOfTypeChosenCurrent, totalPrice, dropDown);
+    //                        }
+    //                    });
+
+    //                    valOfTypeChosenCurrent = valOfTypeChosenPrevious = dropDown.val();
+    //                    typeChosenCurrent = typeChosenPrevious = $.trim($('#RegType option:selected').text());
+    //                    chosenRegTypeLabel.empty().text(typeChosenCurrent);
+    //                } else {
+    //                    typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
+    //                    chosenRegTypeLabel.empty().text(typeChosenCurrent);
+    //                    valOfTypeChosenPrevious = valOfTypeChosenCurrent;
+
+    //                    updatePriceOnNewSelection(valOfTypeChosenCurrent, registerDuringCheckout.totalPrice, dropDown);
+    //                }
+    //            } else {
+    //                typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
+    //                chosenRegTypeLabel.empty().text(typeChosenCurrent);
+    //                valOfTypeChosenPrevious = valOfTypeChosenCurrent;
+    //                updatePriceOnNewSelection(valOfTypeChosenCurrent, registerDuringCheckout.totalPrice, dropDown);
+    //            }
+
+    //            if (data.shippingDetailsRqrd === 'Yes') {
+    //                registerDuringCheckout.shippingAddressRequired = true;
+    //            } else {
+    //                registerDuringCheckout.shippingAddressRequired = false;
+    //            }
+    //        });
+    //    });
+    //};
+
+    OCA.setUpEditButtons = function() {
+        $('#revealOptions').on('click', function(e) {
+            e.preventDefault();
+            $('#AdjustOrder').slideToggle();
+        });
+
+        $('#revealAddLocsPanel').on('click', function(e) {
+            e.preventDefault();
+            $('#AdjustAddLoc').slideToggle();
+        });
+    };
+
+    OCA.isShippindAddressRequired = function(jQueryObject) {
+        if ($.trim(jQueryObject.val()).toLowerCase() === 'false')
+            return false;
+        return true;
+    };
+
+    OCA.wireUpMainButtonsOn3rdTab = function() {
+        // The Bill Me button on 3rd tab
+        $('#ConfirmRegistrationBillMe').on('click', function(e) {
+            e.preventDefault();
+            var confirmOrderForm = $('#confirmOrder');
+            confirmOrderForm.submit();
+        });
+
+        // The Cancel Registration button on 3rd tab
+        $('#Canceller').on('click', function(e) {
+            e.preventDefault();
+            var cancelOrderForm = $('#cancelOrder');
+            cancelOrderForm.submit();
+        });
+    };
 
     /* This function gets invoked when the 3rd tab is loaded and an existing user is using the cart */
-    OCA.checkoutConfirm.initialize = function (userId) {
+    OCA.checkoutConfirm.initialize = function(userId) {
         OCA.cartStateManager.setCancelOrderForm($('#cancelOrder'));
         OCA.cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 
         console.log('initialize hit');
 
-        OCA.cartStateManager.getConfirmOrderForm().on('submit', function (e) {
+        OCA.cartStateManager.getConfirmOrderForm().on('submit', function(e) {
             //Rollbar.info('submitting confirmOrder form');
             e.preventDefault();
 
@@ -39,11 +164,11 @@ $(function () {
                 url: self.attr('action'),
                 dataType: RegistrationInCart.Constants.JsonDataType,
                 data: data,
-                beforeSend: function () {
+                beforeSend: function() {
                     $('#ConfirmRegistrationBillMe').attr('disabled', 'disabled');
                     //$('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Working...</span>');
                 }
-            }).done(function (data) {
+            }).done(function(data) {
                 if (data.Result === 'Success') {
                     orderRowID = data.OrderRowID;
 
@@ -72,7 +197,7 @@ $(function () {
                 $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
             });
 
-            $('#ConfirmModal').on('hidden', function (e) {
+            $('#ConfirmModal').on('hidden', function(e) {
                 var utilities = new Common.Utilities();
                 console.log('/webinar/details/' + OCA.cartStateManager.getWebinarId());
                 utilities.goToUrl('/webinar/details/' + OCA.cartStateManager.getWebinarId());
@@ -81,7 +206,7 @@ $(function () {
 
         var cancelOrderForm = OCA.cartStateManager.getCancelOrderForm();
 
-        cancelOrderForm.on('submit', function (e) {
+        cancelOrderForm.on('submit', function(e) {
 
             console.log('cancelOrderForm submit hit');
             //Rollbar.info('Submitting cancelOrderForm');
@@ -93,13 +218,13 @@ $(function () {
 
             var self = $(this);
 
-            $('#cancelRegistration').on('click', function (e) {
+            $('#cancelRegistration').on('click', function(e) {
                 e.preventDefault();
 
                 // disable button while operation in progress
                 $('#cancelRegistration').attr('disabled', 'disabled');
 
-                $.post(self.attr('action'), data, function (response, status, xhr) {
+                $.post(self.attr('action'), data, function(response, status, xhr) {
 
                     if (status !== 'error') {
                         if (xhr.responseJSON['success']) {
@@ -130,7 +255,7 @@ $(function () {
                 $('#rtn').off('click');
             });
 
-            $('#rtn').on('click', function (e) {
+            $('#rtn').on('click', function(e) {
                 e.preventDefault();
                 $('#CancelModal').modal('hide');
                 $(this).off('click');
@@ -141,6 +266,16 @@ $(function () {
 
         });
     };
+};
+
+OCA.initializeState = function() {
+
+    OCA.signUpForm = $('#SignUpForm');
+    OCA.signUpFormContainer = $('#SignUpFormContainer'); // The big beige box
+    OCA.lastNameInput = $('#lastName');
+    OCA.searchWebUsersButton = $('#searchWebUsersButton');
+    OCA.foundUsersList = $('#userResults');
+    OCA.users = {};
 
     OCA.cartStateManager = new OrderRegistration.StateManager();
 
@@ -151,53 +286,23 @@ $(function () {
 
     OCA.cartStateManager.SetCartState('affiliate');
 
-    $("[id^='regTypeID_']").on("click", function (oEvent) {
+};
 
-        OCA.cartStateManager.CheckIfAddLocShouldHide(oEvent.currentTarget.value);
-    });
+OCA.wireUpHandlers = function() {
+
+    /*  not reqd as adlocs off table */
+    // click event for the RadioButton group
+    //$("[id^='regTypeID_']").on("click", function (oEvent) {
+
+    //    OCA.cartStateManager.CheckIfAddLocShouldHide(oEvent.currentTarget.value);
+
+    //});
 
     /* Click event for the big green SignUp button */
     $('#AddToCart').on('click', function () {
         $(this).attr('disabled', 'disabled');
         OCA.signUpForm.submit();
     });
-
-    //  flow goes inside this block where the order exists and is in process e.g. previously abandoned before finializing
-    if (OCA.cartStateManager.getOrderRowId() > 0 && OCA.cartStateManager.getCheckoutInProcess()) {
-
-        if (shippingAddressRequired && notificationsTesting === false) {
-            // Following function lives in the register-during-checkout.js script
-            // which will be in memory at this point and thus will have been hoisted.
-            hookUpModal($('#UserDetailsModal'));
-        }
-
-        OCA.cartStateManager.setOrderId(orderId);
-
-        // see top of this file
-        OCA.checkoutConfirm.initialize();
-
-         //The Bill Me button on 3rd tab
-        $('#ConfirmRegistrationBillMe').on('click', function (e) {
-            e.preventDefault();
-            var confirmOrderForm = $('#confirmOrder');
-            confirmOrderForm.submit();
-        });
-
-        // The Cancel Registration button on 3rd tab
-        $('#Canceller').on('click', function (e) {
-            e.preventDefault();
-            var cancelOrderForm = $('#cancelOrder');
-            cancelOrderForm.submit();
-        });
-
-        setUpEditButtons();
-
-        // Following 3 functions live in the register-during-checkout.js script
-        // which will be in memory at this point and thus will be hoisted
-        hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
-        hookUpChangeTypeLogic($('#RegType'));
-        hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
-    }
 
     /* Submit event for the big green SignUp button */
     OCA.signUpForm.on('submit', function (e) {
@@ -209,57 +314,28 @@ $(function () {
         $('#loginPassword').val($('#Password1').val());
 
         //  value converted to a Boolean in isShippindAddressRequired function
-        //  valu comes from a hidden impact in the radio btn list next to the relevant radio button (previous-sibling)
-        shippingAddressRequired = isShippindAddressRequired($('#RegistrationType > dl dt input:checked').prev());
+        //  value comes from a hidden input in the radio btn list next to the relevant radio button (previous-sibling)
+        //OCA.shippingAddressRequired = OCA.isShippindAddressRequired($('#RegistrationType > dl dt input:checked').prev());
 
         var data = OCA.signUpForm.serialize();
 
         $('#SignUpForm > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
         var spinner = $('#loadingSpinner');
 
-        // If the user IS NOT LOGGED IN - control moves to the register-during-checkout.js script
+        // If the user IS NOT LOGGED IN - direct them to. But they should not be able to make it to this page if they are anonymous.
+        // The controller would direct them to the vanilla Details page if anonymous.
         if (!OCA.cartStateManager.getIsUserLoggedIn()) {
-            var err = new Error('anon user hits signup');
-            //NREUM.noticeError(err);
-
-            $.post(OCA.signUpForm.attr('action'), data, function (response, status, xhr) {
-                if (status !== 'error') {
-                    if (xhr.responseJSON['success']) {
-                        OCA.cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
-                        OCA.cartStateManager.setOrderId(xhr.responseJSON['orderId']);
-                        OCA.cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
-                        $('#contactInfo').load('/Cart/CheckoutContactDetails', function (response, status, xhr) {
-                            if (status !== 'error') {
-                                $('#_CreateUserForm input[name="returnUrl"]').val('/Webinar/Details2/' + xhr.responseJSON['webinarId']);
-                                registerDuringCheckout.initialize(xhr.responseJSON['orderId'], xhr.responseJSON['webinarId'], xhr.responseJSON['orderRowId'], shippingAddressRequired, OCA.checkoutConfirm.initialize);
-                            } else {
-                                $('#labelEmail').html('<span class="label label-important">&nbsp;Server error. Try again or call 800-831-0678 ext 706 for immediate assistance!</span>');
-                            }
-                        });
-
-                        $('#contactInfoTab a').tab('show');
-                    } else if (!xhr.responseJSON['isSuccessful']) {
-                        $('#labelEmail').html('<span class="label label-important">&nbsp;There were some problems with the form. Please refer to the items in red.</span>');
-                        formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
-                    }
-                } else {
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;Server error. Try again or call 800-831-0678 ext 706 for immediate assistance!</span>');
-                }
-            }, constants.JsonDataType);
+            alert('log in');
         } else {
-            // If the user IS LOGGED IN
+            // So the user IS LOGGED IN
             $.post(OCA.signUpForm.attr('action'), data, function (response, status, xhr) {
                 if (status !== 'error') {
                     if (xhr.responseJSON['success']) {
-                        //Rollbar.info({ signup: { from: 'EndUser Checkout', orderRowId: data.orderRowId } });
                         OCA.cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
                         OCA.cartStateManager.setOrderId(xhr.responseJSON['orderId']);
                         OCA.cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
 
-                        var err = new Error('submitting ConfirmOrder' + xhr.responseJSON['orderId']);
-                        //NREUM.noticeError(err);
-
-                        $('#confirmation').load('/cart/checkoutConfirm/' + OCA.cartStateManager.getOrderRowId(), function(response, status, xhr) {
+                        $('#confirmation').load('/cart/checkoutConfirm/' + OCA.cartStateManager.getOrderRowId(), function (response, status, xhr) {
 
                             if (status === 'error') {
                                 $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
@@ -269,7 +345,7 @@ $(function () {
 
                                 $('#confirmationTab a').tab('show');
 
-                                if (shippingAddressRequired && notificationsTesting === false) {
+                                if (OCA.shippingAddressRequired && notificationsTesting === false) {
                                     // Following function lives in the register-during-checkout.js script
                                     // which will be in memory at this point and thus will have been hoisted.
                                     hookUpModal($('#UserDetailsModal'));
@@ -278,29 +354,11 @@ $(function () {
                                 // see top of this file
                                 OCA.checkoutConfirm.initialize();
 
-                                // The Bill Me button on 3rd tab
-                                $('#ConfirmRegistrationBillMe').on('click', function(e) {
-                                    e.preventDefault();
-                                    var confirmOrderForm = $('#confirmOrder');
-                                    confirmOrderForm.submit();
-                                });
+                                OCA.wireUpMainButtonsOn3rdTab();
 
-                                // The Cancel Registration button on 3rd tab
-                                $('#Canceller').on('click', function(e) {
-                                    e.preventDefault();
-                                    var cancelOrderForm = $('#cancelOrder');
-                                    cancelOrderForm.submit();
-                                });
+                                OCA.setUpEditButtons();
 
-                                setUpEditButtons();
-
-                                // Following 3 functions live in the register-during-checkout.js script
-                                // which will be in memory at this point and thus will be hoisted
-                                hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
-                                hookUpChangeTypeLogic($('#RegType'));
-                                hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
-
-                                beigeFormArea.height($('#confirmation').height() + 30);
+                                beigeFormArea.height($('#confirmation').height() + 25);
                             }
 
                             spinner.remove();
@@ -321,27 +379,86 @@ $(function () {
         }
         return false;
     });
+
+    OCA.lastNameInput.typeahead({
+        source: function (query, process) {
+            OCA.foundUsersList.hide();
+
+            var searchTerm = OCA.lastNameInput.val();            
+
+            $.ajax({
+                type: 'GET',
+                contentType: constants.FormPostContentType,
+                cache: false,
+                url: '/Cart/SearchWebUsers',
+                dataType: constants.JsonDataType,
+                data: { lastName: searchTerm },
+                beforeSend: function () {
+                    // this is where we append a loading image
+                    //$('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Email...</span>');
+                }
+            }).done(function (data) {
+                OCA.users = data.people;
+            });
+
+            var results = _.map(OCA.users, function (user) {
+                return { id: user.id, lastname: user.lastname, firstname: user.firstname };
+            });
+            process(results);
+        },
+
+        matcher: function (item) {
+            return true;
+        },
+
+        highlighter: function (obj) {
+            var user = _.find(OCA.users, function (webUser) {
+                return webUser.id == obj['id'];
+            });
+            return user.lastname + ', ' + user.firstname;
+        },
+
+        sorter: function (items) {
+            return items;
+        },
+
+        updater: function (id) {
+            var user = _.find(OCA.users, function (p) {
+                return p.id == id['id'];
+            });
+            OCA.setSelectedProduct(user);
+            return user.name;
+        }
+
+    });
+
+    OCA.foundUsersList.hide();
+    OCA.setSelectedProduct = function(webUser) {
+        OCA.foundUsersList.html(webUser.firstname + ', ' + webUser.lastname).show();
+    };
+
+};
+
+// $(document).ready function
+$(function () {
+
+    OCA.initializeFunctions();
+
+    OCA.initializeState();
+
+    OCA.wireUpHandlers();
+
+    //  flow goes inside this block where the order exists and is in process e.g. previously abandoned before finializing
+    if (OCA.cartStateManager.getOrderRowId() > 0 && OCA.cartStateManager.getCheckoutInProcess()) {
+
+        OCA.cartStateManager.setOrderId(orderId);
+
+        // see top of this file
+        OCA.checkoutConfirm.initialize();
+
+        OCA.wireUpMainButtonsOn3rdTab();
+
+        OCA.setUpEditButtons();
+    }
 });
 
-function isShippindAddressRequired(jQueryObject) {
-    if ($.trim(jQueryObject.val()).toLowerCase() === 'false')
-        return false;
-    return true;
-}
-
-function setUpEditButtons() {
-    $('#revealOptions').on('click', function (e) {
-        e.preventDefault();
-        $('#AdjustOrder').slideToggle();
-    });
-
-    $('#revealDiscountInput').on('click', function (e) {
-        e.preventDefault();
-        $('#AdjustDiscount').slideToggle();
-    });
-
-    $('#revealAddLocsPanel').on('click', function (e) {
-        e.preventDefault();
-        $('#AdjustAddLoc').slideToggle();
-    });
-}

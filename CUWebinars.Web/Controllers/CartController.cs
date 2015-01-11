@@ -187,6 +187,16 @@ namespace CUWebinars.Web.Controllers
             return this.ModelStateJson(ModelState);
         }
 
+        public ActionResult SearchWebUsers(string lastName)
+        {
+            if (!string.IsNullOrWhiteSpace(lastName))
+            {
+                var webUsers = _cartControllerOrchestrator.GetWebUsersByLastName(lastName).Select(w => new { id = w.idUser, lastname = w.LastName, firstname = w.FirstName });
+                return Json(new { people = webUsers }, JsonRequestBehavior.AllowGet);
+            }
+            return View();
+        }
+
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult CheckIfAddLocShouldHide(int optionID)
         {

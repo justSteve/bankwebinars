@@ -76,6 +76,13 @@ namespace CUWebinars.Business.Repository
                 .Where(w => w.email == email).SingleOrDefault();
         }
 
+        public IEnumerable<WebUser> GetWebUsersByLastName(string lastName)
+        {
+            return items.Where(webUser => webUser.LastName.ToLower().Contains(lastName))
+                .OrderBy(webUser => webUser.LastName)
+                .ThenBy(webUser => webUser.FirstName);
+        }
+
         public WebUser GetWebUserByEmailLoadedWithOrdersData(string email)
         {
             return items
