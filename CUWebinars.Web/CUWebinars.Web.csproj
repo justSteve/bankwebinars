@@ -397,7 +397,6 @@
     <Content Include="App_Data\Orders\MirgratorToAffiliate.sql" />
     <Content Include="App_Data\Orders\MirgratorToExcel.sql" />
     <Content Include="App_Data\Orders\OrderMigrator.xlsm" />
-    <Content Include="App_Data\Orders\AffiliateOrdersImporter.xlsm" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\GeneratesStatementsToInsertRegTypesXRef.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\_CreateBankWebinars.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\ImportProductionDb.ps1" />
@@ -414,6 +413,7 @@
     <Content Include="App_Data\Orders\SubscriptionsOut.csv" />
     <Content Include="App_Data\Orders\SubsFromCSV.dtsx" />
     <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\ImportProductionDb.ps1" />
+    <Content Include="App_Data\Orders\OrdersImporter.xlsm" />
     <None Include="log4net.config">
       <SubType>Designer</SubType>
     </None>
@@ -491,6 +491,7 @@
     <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\_updateRegTypesforBankWebinars.sql" />
     <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\__Seeder_Ender.sql" />
     <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\__Seeder_Runner.sql" />
+    <Content Include="App_Data\Orders\UpdatesBWPostDeploy.sql" />
     <Content Include="Content\css\BootstrapTemplates\font-awesome\font-awesome-ie7.css" />
     <Content Include="Content\css\BootstrapTemplates\font-awesome\font-awesome.css" />
     <Content Include="Content\css\BootstrapTemplates\font-awesome\font\fontawesome-webfont.eot" />

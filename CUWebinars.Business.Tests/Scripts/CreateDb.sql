@@ -81,21 +81,16 @@ GO
 --GO
 --sys.sp_addrolemember @rolename = N'db_owner', @membername = N'Dave'
 --GO
-/****** Object:  StoredProcedure [dbo].[InsertGTWConnectionInfo]    Script Date: 29/12/2014 4:03:48 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-CREATE PROCEDURE [dbo].[InsertGTWConnectionInfo] 
+-- =============================================
+-- Author:		sjh
+-- Create date: 5/14
+-- Description:	Updates webinar table with GTW connection info
+-- =============================================
+alter PROCEDURE [dbo].[InsertGTWConnectionInfo] 
 	-- Add the parameters for the stored procedure here
     @idWebinar INT, 
 	@Status INT ,
     @WebinarKey NVARCHAR(MAX) ,
-    @OrganizerKey NVARCHAR(MAX) ,
-    @OrganizerOAuthKey NVARCHAR(MAX) ,
     @CitrixURL NVARCHAR(MAX) ,
     @AccessPhone NVARCHAR(MAX) ,
     @AccessCodeAttendee NVARCHAR(MAX) ,
@@ -109,17 +104,14 @@ BEGIN
 	UPDATE [dbo].[Webinar]
    SET [Status] = 7
       ,[WebinarKey] = @WebinarKey
-      ,[OrganizerKey] = @OrganizerKey
-      ,[OrganizerOAuthKey] = @OrganizerOAuthKey
+      ,[OrganizerKey] = '901873'
+      ,[OrganizerOAuthKey] = '8SSOAgpL2WMxa4iUyQUn1h9bGEmJ' 
       ,[CitrixRegisterUrl] = @CitrixURL
       ,[AccessPhone] = @AccessPhone
       ,[AccessCodeAttendee] = @AccessCodeAttendee
       ,[AccessCodePresenter] = @AccessCodePresenter
       ,[AccessCodeOrganizer] = @AccessCodeOrganizer
 	  WHERE idWebinar = @idWebinar
-
-END
-GO
 
 END
 GO

@@ -548,7 +548,7 @@ Create table CUWebinars.dbo.[Webinar](
 	[ConnectionInfo] [nvarchar](max) NULL,
 	[DateCreated] [datetime] NOT NULL,
 	[DateChanged] [datetime] NOT NULL,
-	[CitrixRegisterUrl] [nvarchar](50) NULL,
+	[CitrixRegisterUrl] [nvarchar](500) NULL,
 	[AccessPhone] [nvarchar](50) NULL,
 	[AccessCodeAttendee] [nvarchar](50) NULL,
 	[AccessCodePresenter] [nvarchar](50) NULL,
@@ -882,13 +882,11 @@ go
 -- Create date: 5/14
 -- Description:	Updates webinar table with GTW connection info
 -- =============================================
-CREATE PROCEDURE [dbo].[InsertGTWConnectionInfo] 
+alter PROCEDURE [dbo].[InsertGTWConnectionInfo] 
 	-- Add the parameters for the stored procedure here
     @idWebinar INT, 
 	@Status INT ,
     @WebinarKey NVARCHAR(MAX) ,
-    @OrganizerKey NVARCHAR(MAX) ,
-    @OrganizerOAuthKey NVARCHAR(MAX) ,
     @CitrixURL NVARCHAR(MAX) ,
     @AccessPhone NVARCHAR(MAX) ,
     @AccessCodeAttendee NVARCHAR(MAX) ,
@@ -902,17 +900,14 @@ BEGIN
 	UPDATE [dbo].[Webinar]
    SET [Status] = 7
       ,[WebinarKey] = @WebinarKey
-      ,[OrganizerKey] = @OrganizerKey
-      ,[OrganizerOAuthKey] = @OrganizerOAuthKey
+      ,[OrganizerKey] = '901873'
+      ,[OrganizerOAuthKey] = '8SSOAgpL2WMxa4iUyQUn1h9bGEmJ' 
       ,[CitrixRegisterUrl] = @CitrixURL
       ,[AccessPhone] = @AccessPhone
       ,[AccessCodeAttendee] = @AccessCodeAttendee
       ,[AccessCodePresenter] = @AccessCodePresenter
       ,[AccessCodeOrganizer] = @AccessCodeOrganizer
 	  WHERE idWebinar = @idWebinar
-
-END
-GO
 
 END
 GO

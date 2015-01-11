@@ -48,13 +48,13 @@ SELECT  ( SELECT    o.idAffiliate
            FROM     dbo.OrdersRowsOptions
            WHERE    r.idOrderRow = idOrderRow)
         ) AS AdditionalLocations ,
-        o.shippingFirstName ,
-        o.shippingLastName ,
-        o.shippingPhone ,
-        o.shippingAddress ,
-        o.shippingCity ,
-        o.shippingState ,
-        o.shippingZip
+        ISNULL(o.shippingFirstName, '') ,
+        ISNULL(o.shippingLastName, '') ,
+        ISNULL(o.shippingPhone, '') ,
+        ISNULL(o.shippingAddress, '') ,
+        ISNULL(o.shippingCity, '') ,
+        ISNULL(o.shippingState, '') ,
+        ISNULL(o.shippingZip, '')
 FROM    TTSWebinars2.dbo.Orders o
         INNER JOIN dbo.OrdersRows r ON r.idOrder = o.idOrder
 WHERE   r.idWebinar = @idwebinar
