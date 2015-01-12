@@ -13,7 +13,7 @@
                         select orderRow;
         var thisWebinar = orderRows.Single().Webinar;
     }
-    Confirmation of Registration: @thisWebinar.Title
+     Confirmation of Registration: @thisWebinar.Title
 </title>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -145,7 +145,7 @@
 
     if (joinURL == null)
     {
-        joinURL = "https://www2.gotomeeting.com/join/" + webinar.WebinarKey;
+        joinURL = webinar.CitrixRegisterUrl;
     }
     if (webinar.AccessCodeAttendee != null)
     {
@@ -160,9 +160,9 @@
     string TenantLogo = TtsTemplateHelperObject.TenantLogo();
     string TenantPrefix = TtsTemplateHelperObject.TenantPrefix();
 
-    if (webinar.AccessPhoneAttendee != null)
+    if (webinar.AccessPhone != null)
     {
-        phone = webinar.AccessPhoneAttendee;
+        phone = webinar.AccessPhone;
     }
     var HeaderText = "Confirmation of Registration for<br />" + webinar.Title;
     var BannerText = "Order Number: " + TenantPrefix + Model.Order.idOrder + "<br />Type: " + row.Single().RegistrationType.OptionLabel;

@@ -10,6 +10,7 @@ namespace CUWebinars.Web.Models
 
         public string AffiliateComments { get; set; }
         
+        public int idAffiliate { get; set; }
         public int idWebinar { get; set; }
         public string RegistrationType { get; set; }
         public string FirstName { get; set; }
@@ -19,9 +20,10 @@ namespace CUWebinars.Web.Models
         public string Email { get; set; }
         public Address BillingAddress { get; set; }
         public Address ShippingAddress { get; set; }
-        public int idAffiliate { get; set; }
         public string DiscountCode { get; set; }
         public string AdditionalLocations { get; set; }
+        public string Source { get; set; }
+        public string Version { get; set; }
 
     }
 

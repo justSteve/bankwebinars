@@ -21,14 +21,18 @@ namespace CUWebinars.Business.Notification.Email
 
         public void Notify(INotificationMessage notificationMessage)
         {
+
+            EnsureMessage(notificationMessage);
+
+            //TODO: error tossed Invalid length for a Base-64 char array or string. 
+            //Initially i had changed the location of the storage container (defined in Web.config). 
+            //But I've changed it back. -- the values passed look correct.
             var storageCredentials = new StorageCredentials(_storageAccountName, _storageAccessKey);
             var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
 
             _queueClient = cloudStorageAccount.CreateCloudQueueClient();
 
             CloudQueue cloudQueue = _queueClient.GetQueueReference("tts-cuw-notifications-queue");
-
-            EnsureMessage(notificationMessage);
 
             var cloudQueueMessage = new CloudQueueMessage(JsonConvert.SerializeObject(notificationMessage));
             cloudQueue.EncodeMessage = true;

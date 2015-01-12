@@ -322,13 +322,13 @@ namespace CUWebinars.Web.Controllers
                     importQueryResult, verificationKey, confirmChangeEmailUrl);
 
                 //idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
-                _logger.Info(string.Format("ImportOrder|CreteNewOrder: {0}", idOfLastOrder));
+                _logger.Info(string.Format("ImportOrder from {0} produced: {1}",importedOrder.Source + "-"+ importedOrder.Version, idOfLastOrder));
 
                 return Json(new { Result = idOfLastOrder.ToString() }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception exception)
             {
-                var errString = string.Format("Order creation failed on {0} - {1} with msg: {2}", importedOrder.Email, importedOrder.idWebinar, exception.Message);
+                var errString = string.Format("ImportOrder from {3} failed on {0} - {1} with msg: {2}", importedOrder.Email, importedOrder.idWebinar, exception.Message, importedOrder.Source +"-" +importedOrder.Version);
                 Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 _logger.ErrorException(errString, exception);
             }
