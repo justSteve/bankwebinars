@@ -379,6 +379,7 @@
     <Compile Include="Helpers\IAppHelper.cs" />
     <Compile Include="Helpers\SessionStartInfo.cs" />
     <Compile Include="Infrastructure\Attributes\MonitorAffiliateFilter.cs" />
+    <Compile Include="Models\AddClaimInputModel.cs" />
     <Compile Include="Models\DiscountModel.cs" />
     <Compile Include="Models\EditContactInfoModel.cs" />
     <Compile Include="Models\EditUserModel.cs" />
@@ -542,6 +543,7 @@
     <Content Include="newrelic\NewRelic.Agent.Core.dll" />
     <Content Include="newrelic\NewRelic.Agent.Extensions.dll" />
     <Content Include="newrelic\NewRelic.Profiler.dll" />
+    <Content Include="Scripts\app\admin\claims-management.js" />
     <Content Include="Scripts\app\admin\manage-order.js" />
     <Content Include="Scripts\app\cart\add-password.js" />
     <Content Include="Scripts\app\cart\details-affiliate.js" />
@@ -693,6 +695,7 @@
     <Content Include="Views\Webinar\Search.cshtml" />
     <Content Include="Views\Webinar\Partials\DisplayOptionsAffiliate.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutOptionsForAffiliate.cshtml" />
+    <Content Include="Views\Admin\ClaimsManagement.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Calendar\iCalFromCitrix.txt" />

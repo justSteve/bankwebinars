@@ -44,6 +44,10 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/admin/manage-order.js"
                 ));
 
+            bundles.Add(new ScriptBundle("~/bundles/manage-claims").Include(
+                "~/Scripts/app/admin/claims-management.js"
+                ));
+
             bundles.Add(new ScriptBundle("~/bundles/CommonModules").Include(
                 "~/Scripts/app/constants.js",
                 "~/Scripts/underscore.js",

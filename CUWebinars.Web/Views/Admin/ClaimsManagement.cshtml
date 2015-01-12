@@ -1,0 +1,40 @@
+﻿@model AddClaimInputModel
+
+@{
+    ViewBag.Title = "ClaimsManagement";
+}
+@Styles.Render("~/Content/create-order-details")
+
+<div id="mainContentWrap" class="container">
+
+    <div class="legendImitator">ClaimsManagement</div>
+
+    @using (Html.BeginForm("ClaimsManagement", "Admin", FormMethod.Post, new { id = "addClaimForm" }))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.HiddenFor(m => m.NewClaimType)
+
+        <div id="stockClaimsWrapper">
+            @Html.LabelFor(m => m.ClaimTypes)
+            @Html.DropDownListFor(m => m.SelectedClaimType, new SelectList(Model.ClaimTypes, "Value", "Text"), "Choose a Claim", new { @class = "darkText" })
+        </div>
+        <div id="customClaimWrapper" class="initialHide">
+            @Html.LabelFor(m => m.CustomClaimType)
+            @Html.EditorFor(m => m.CustomClaimType)
+        </div>
+
+        <text>or <a id="addClaimLabel" class="label label-warning">Add custom claim</a></text>
+
+
+        @Html.LabelFor(m => m.NewClaimValue)
+        @Html.EditorFor(m => m.NewClaimValue)
+
+        <button id="createClaimButton" class="btn btn-default">Create Claim</button><div id="addClaimMsgLabelWrap" class="initialHide"></div>
+
+    }
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundles/manage-claims")
+}

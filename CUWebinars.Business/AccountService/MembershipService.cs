@@ -281,6 +281,15 @@ namespace CUWebinars.Business.AccountService
             }
         }
 
+        public void AddClaim(UserAccount userAccount, string claimType, string claimValue)
+        {
+            _userAccountService.AddClaim(
+                userAccount.ID,
+                claimType,
+                claimValue
+                );
+        }
+
         public void AddAccountTypeNotVerifiedClaim(UserAccount userAccount, string accountType)
         {
             if (userAccount == null)

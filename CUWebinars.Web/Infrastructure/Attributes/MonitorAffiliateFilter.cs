@@ -45,11 +45,11 @@ namespace CUWebinars.Web.Infrastructure.Attributes
             else
             {
                 /* ATTEMPT 3: assign the Affiliate based on business rules regarding historical behaviour */
-                ExtractFromHistoricalUsageOfLogedInUser(filterContext);
+                ExtractFromHistoricalUsageOfLoggedInUser(filterContext);
             }
         }
 
-        private void ExtractFromHistoricalUsageOfLogedInUser(ActionExecutingContext filterContext)
+        private void ExtractFromHistoricalUsageOfLoggedInUser(ActionExecutingContext filterContext)
         {
             var userIdentity = filterContext.HttpContext.User.Identity;
 

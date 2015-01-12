@@ -1,4 +1,5 @@
 ﻿using System.Web.Http;
+using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
@@ -6,6 +7,7 @@ using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
+using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
@@ -22,6 +24,7 @@ using System.Text;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
+using ClaimsExtensions = CUWebinars.Web.Helpers.ClaimsExtensions;
 using DataOperations = CUWebinars.Web.Membership.DataOperations;
 
 namespace CUWebinars.Web.Controllers.Admin
@@ -99,6 +102,50 @@ namespace CUWebinars.Web.Controllers.Admin
                 orderRow.AdditionalLocation.AddRange(model.AdditionalLocations);
 
             return order;
+        }
+
+        public ActionResult ClaimsManagement()
+        {
+            var claimTypes = typeof(ClaimTypes).GetFields().Where(f => f.IsLiteral).ToList();
+            var typesAsSelectList = new List<SelectListItem>(claimTypes.Count);
+            string rawConstant;
+
+            foreach (var claimType in claimTypes)
+            {
+                rawConstant = claimType.GetRawConstantValue().ToString();
+
+                typesAsSelectList.Add(new SelectListItem
+                {
+                    Text = rawConstant.SubstringFromRight(rawConstant.Length - rawConstant.LastIndexOf(Path.AltDirectorySeparatorChar) - 1),
+                    Value = claimType.GetRawConstantValue().ToString()
+                });
+            }
+            
+            var model = new AddClaimInputModel
+            {
+                ClaimTypes = typesAsSelectList,
+            };
+
+            return View(model);
+        }
+
+        [System.Web.Mvc.HttpPost]
+        public ActionResult ClaimsManagement(AddClaimInputModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var userAccount =
+                    _membershipService.GetUserAccountByUserId(ClaimsExtensions.GetUserID(User));
+
+                _membershipService.AddClaim(
+                    userAccount,
+                    model.NewClaimType,
+                    model.NewClaimValue
+                    );
+                return Json(new { Result = "success" });
+            }
+
+            return this.ModelStateJson(ModelState);
         }
 
         public PartialViewResult GetAdditionalLocationByOrderId(int? id = null)

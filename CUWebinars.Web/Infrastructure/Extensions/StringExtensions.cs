@@ -61,5 +61,22 @@ namespace CUWebinars.Web.Infrastructure.Extensions
                 return string.Empty;
             }
         }
+
+        /// <summary>
+        /// This simple string extension is based on the VB6 "Right" function which returns a certain number of characters, counting from the right.
+        /// </summary>
+        public static string SubstringFromRight(this string source, int numberOfChars)
+        {
+            if (string.IsNullOrEmpty(source))
+                return source;
+
+            if (source.Length > numberOfChars)
+            {
+                return source.Substring(source.Length - numberOfChars, numberOfChars);
+            }
+
+            throw new ArgumentOutOfRangeException("numberOfChars",
+                string.Format("The string \"{0}\" has a length which is less than {1} characters.", source, numberOfChars));
+        }
     }
 }
