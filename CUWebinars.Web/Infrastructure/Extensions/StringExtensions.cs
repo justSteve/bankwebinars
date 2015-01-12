@@ -28,7 +28,7 @@ namespace CUWebinars.Web.Infrastructure.Extensions
             try
             {
                 return Regex.Replace(
-                    stringToClean,
+                    stringToClean.Replace("'", string.Empty),
                     @"[<>:\""/\\|?*,]", // These are illegal for file/directory naming purposes in Windows.
                     string.Empty,
                     RegexOptions.None,
