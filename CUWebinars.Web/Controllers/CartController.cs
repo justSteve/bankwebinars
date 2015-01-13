@@ -129,6 +129,11 @@ namespace CUWebinars.Web.Controllers
             var model = _cartControllerOrchestrator.BuildCheckoutConfirmViewModel(ID);
             return PartialView("Partials/CheckoutConfirm", model);
         }
+        public ActionResult CheckoutConfirmForAffiliate(int? ID = null)
+        {
+            var model = _cartControllerOrchestrator.BuildCheckoutConfirmViewModel(ID);
+            return PartialView("Partials/CheckoutConfirmForAffiliate", model);
+        }
         public ActionResult CheckoutDisplayRowPrice(int ID)
         {
             var model = _cartControllerOrchestrator.BuildDisplayRowPriceViewModel(null, ID);
@@ -165,6 +170,41 @@ namespace CUWebinars.Web.Controllers
 
                     _logger.Info("Signup2 order initialized: " + _appHelper.GetUserAuditInfo());
 
+
+                    return Json(new
+                    {
+                        success = "success",
+                        orderId = order.idOrder,
+                        orderRowId = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow,
+                        webinarId = formModel.idWebinar
+                    }, JsonRequestBehavior.AllowGet);
+
+                }
+                catch (Exception exception)
+                {
+                    ModelState.AddModelError(string.Empty,
+                        "There has been an error at the server which has been logged.");
+                    _logger.FatalException("Signup2 order excepted: ", exception);
+
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                }
+            }
+            return this.ModelStateJson(ModelState);
+        }
+
+        [HttpPost]
+        public ActionResult AffiliateSignup(CheckoutOptionsViewModel formModel)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _logger.Info("Signup2 Enters: " + _appHelper.GetUserAuditInfo());
+                    var order = _cartControllerOrchestrator.CreateOrder(
+                        formModel
+                        );
+
+                    _logger.Info("Signup2 order initialized: " + _appHelper.GetUserAuditInfo());
 
                     return Json(new
                     {

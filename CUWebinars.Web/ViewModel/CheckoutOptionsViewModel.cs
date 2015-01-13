@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.Generic;
+using System.Web.Mvc;
 using CUWebinars.Business.Models;
 
 namespace CUWebinars.Web.ViewModel
@@ -16,6 +17,11 @@ namespace CUWebinars.Web.ViewModel
         public OrderStatus OrderStatus { get; set; }
         public int RegistrationTypeId { get; set; }
         public RegType RegistrationType { get; set; }
+        /// <summary>
+        /// This property only relevant for Affiliate and Admin cart checkouts.
+        /// </summary>
+        [HiddenInput]
+        public int SelectedWebUser { get; set; }
         public decimal WebinarDuration { get; set; }
         public WebinarStatus WebinarStatus { get; set; }
     }

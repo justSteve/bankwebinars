@@ -521,6 +521,7 @@ namespace CUWebinars.Web.Controllers
                 idWebinar = model.Webinar.idWebinar,
                 idUser = model.WebUser.idUser,
                 OrderExists = orderExists,
+                SelectedWebUser = -1,
                 WebinarStatus = model.Webinar.Status
             };
 

@@ -2,7 +2,7 @@
 
 @Html.ValidationSummary("Please address the following issues in the form below, or call 800-831-0678 ext 706 for immediate assistance:", new { id = "valSummarySignUpForm" })
 
-@using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new { id = "SignUpForm" }))
+@using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new { id = "affiliateSignUpForm" }))
     {
     @Html.HiddenFor(model => model.idWebinar)
     @Html.HiddenFor(model => model.idUser)
@@ -37,8 +37,10 @@
         else
         {
             <p ><label for="user_search">User Search: </label></p>
-                <input type="text" id="lastName" class="input input-medium" data-provide="typeahead" />
-                <div id="userResults" style="border-width:1px; padding: 5px; border-style: solid"></div>
+            <p><input type="text" id="lastName" class="input input-medium" data-provide="typeahead" autocomplete="off" />
+            <span id="chosenUserName" class="text text-info"></span></p>
+                @Html.HiddenFor(m => m.SelectedWebUser)
+                
 
             @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptionsAffiliate.cshtml", model: Model.DisplayOptionsViewModel)
         }

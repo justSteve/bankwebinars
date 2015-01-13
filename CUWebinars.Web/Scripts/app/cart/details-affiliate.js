@@ -107,11 +107,6 @@ OCA.initializeFunctions = function () {
             e.preventDefault();
             $('#AdjustOrder').slideToggle();
         });
-
-        $('#revealAddLocsPanel').on('click', function(e) {
-            e.preventDefault();
-            $('#AdjustAddLoc').slideToggle();
-        });
     };
 
     OCA.isShippindAddressRequired = function(jQueryObject) {
@@ -270,11 +265,14 @@ OCA.initializeFunctions = function () {
 
 OCA.initializeState = function() {
 
-    OCA.signUpForm = $('#SignUpForm');
+    OCA.signUpForm = $('#affiliateSignUpForm');
     OCA.signUpFormContainer = $('#SignUpFormContainer'); // The big beige box
     OCA.lastNameInput = $('#lastName');
     OCA.searchWebUsersButton = $('#searchWebUsersButton');
     OCA.foundUsersList = $('#userResults');
+    OCA.selectedWebUserInput = $('#SelectedWebUser');
+    OCA.chosenUserNameSpan = $('#chosenUserName');
+    OCA.webUserIdInput= $('#idUser');
     OCA.users = {};
 
     OCA.cartStateManager = new OrderRegistration.StateManager();
@@ -290,14 +288,6 @@ OCA.initializeState = function() {
 
 OCA.wireUpHandlers = function() {
 
-    /*  not reqd as adlocs off table */
-    // click event for the RadioButton group
-    //$("[id^='regTypeID_']").on("click", function (oEvent) {
-
-    //    OCA.cartStateManager.CheckIfAddLocShouldHide(oEvent.currentTarget.value);
-
-    //});
-
     /* Click event for the big green SignUp button */
     $('#AddToCart').on('click', function () {
         $(this).attr('disabled', 'disabled');
@@ -307,6 +297,8 @@ OCA.wireUpHandlers = function() {
     /* Submit event for the big green SignUp button */
     OCA.signUpForm.on('submit', function (e) {
         e.preventDefault();
+
+        var confirmationForAffiliateDiv = $('#confirmationForAffiliate');
 
         var beigeFormArea = OCA.signUpFormContainer.find('div.well');
 
@@ -319,7 +311,7 @@ OCA.wireUpHandlers = function() {
 
         var data = OCA.signUpForm.serialize();
 
-        $('#SignUpForm > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
+        $('#affiliateSignUpForm > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
         var spinner = $('#loadingSpinner');
 
         // If the user IS NOT LOGGED IN - direct them to. But they should not be able to make it to this page if they are anonymous.
@@ -335,20 +327,22 @@ OCA.wireUpHandlers = function() {
                         OCA.cartStateManager.setOrderId(xhr.responseJSON['orderId']);
                         OCA.cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
 
-                        $('#confirmation').load('/cart/checkoutConfirm/' + OCA.cartStateManager.getOrderRowId(), function (response, status, xhr) {
+                        confirmationForAffiliateDiv.load('/cart/CheckoutConfirmForAffiliate/' + OCA.cartStateManager.getOrderRowId(), function (response, status, xhr) {
 
                             if (status === 'error') {
                                 $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
                                 $('#loadingSpinner').remove();
-                                $('#confirmationTab a').tab('show');
+                                $('#confirmationTabForAffiliate a').tab('show');
                             } else {
 
-                                $('#confirmationTab a').tab('show');
+                                $('#confirmationTabForAffiliate a').tab('show');
+
+                                $('#AdjustOrder').hide();
 
                                 if (OCA.shippingAddressRequired && notificationsTesting === false) {
                                     // Following function lives in the register-during-checkout.js script
                                     // which will be in memory at this point and thus will have been hoisted.
-                                    hookUpModal($('#UserDetailsModal'));
+                                    //hookUpModal($('#UserDetailsModal'));
                                 }
 
                                 // see top of this file
@@ -358,7 +352,7 @@ OCA.wireUpHandlers = function() {
 
                                 OCA.setUpEditButtons();
 
-                                beigeFormArea.height($('#confirmation').height() + 25);
+                                beigeFormArea.height(confirmationForAffiliateDiv.height() + 25);
                             }
 
                             spinner.remove();
@@ -371,7 +365,7 @@ OCA.wireUpHandlers = function() {
                     }
                 } else {
                     spinner.remove();
-                    $('#confirmation').html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+                    confirmationForAffiliateDiv.html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
                 }
             }, constants.JsonDataType);
 
@@ -379,43 +373,55 @@ OCA.wireUpHandlers = function() {
         }
         return false;
     });
+    
+    var searchPeople = _.debounce(function( query, process ){
 
-    OCA.lastNameInput.typeahead({
-        source: function (query, process) {
-            OCA.foundUsersList.hide();
+        OCA.foundUsersList.hide();
 
-            var searchTerm = OCA.lastNameInput.val();            
+        var searchTerm = OCA.lastNameInput.val();
 
-            $.ajax({
-                type: 'GET',
-                contentType: constants.FormPostContentType,
-                cache: false,
-                url: '/Cart/SearchWebUsers',
-                dataType: constants.JsonDataType,
-                data: { lastName: searchTerm },
-                beforeSend: function () {
-                    // this is where we append a loading image
-                    //$('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Email...</span>');
-                }
-            }).done(function (data) {
-                OCA.users = data.people;
-            });
+        $.ajax({
+            type: 'GET',
+            contentType: constants.FormPostContentType,
+            cache: false,
+            url: '/Cart/SearchWebUsers',
+            dataType: constants.JsonDataType,
+            data: { lastName: searchTerm },
+            beforeSend: function () {
+                OCA.users = null; // dereference whatever is currently in 'users'. 
+
+                // this is where we append a loading image
+                //$('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Email...</span>');
+            }
+        }).done(function (data) {
+            OCA.users = data.people;
 
             var results = _.map(OCA.users, function (user) {
                 return user.id;
             });
             process(results);
+        });
+
+        }, 200);
+
+    OCA.lastNameInput.typeahead({
+        source: function (query, process) {
+            searchPeople(query, process);
         },
 
         matcher: function (item) {
+
             return true;
         },
 
         highlighter: function (id) {
             var user = _.find(OCA.users, function (webUser) {
-                return webUser.id == id;
+                return webUser.id === id;
             });
-            return user.lastname + ', ' + user.firstname;
+
+            if (user !== null && typeof user !== 'undefined') {
+                return user.lastname + ', ' + user.firstname;
+            }
         },
 
         sorter: function (items) {
@@ -424,17 +430,23 @@ OCA.wireUpHandlers = function() {
 
         updater: function (id) {
             var user = _.find(OCA.users, function (p) {
-                return p.id == id['id'];
+                return p['id'] == id;
             });
-            OCA.setSelectedProduct(user);
-            return user.name;
+
+            if (typeof user !== 'undefined') {
+                OCA.setSelectedProduct(user);
+            }
         }
 
     });
 
     OCA.foundUsersList.hide();
-    OCA.setSelectedProduct = function(webUser) {
-        OCA.foundUsersList.html(webUser.firstname + ', ' + webUser.lastname).show();
+
+    OCA.setSelectedProduct = function (webUser) {
+
+        OCA.chosenUserNameSpan.text(webUser.firstname + ', ' + webUser.lastname);
+        OCA.selectedWebUserInput.val(webUser.id);
+        OCA.webUserIdInput.val(webUser.id);
     };
 
 };

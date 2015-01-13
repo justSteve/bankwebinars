@@ -696,6 +696,7 @@
     <Content Include="Views\Webinar\Partials\DisplayOptionsAffiliate.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutOptionsForAffiliate.cshtml" />
     <Content Include="Views\Admin\ClaimsManagement.cshtml" />
+    <Content Include="Views\Cart\Partials\_DisplayRowPriceForAffiliate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Calendar\iCalFromCitrix.txt" />

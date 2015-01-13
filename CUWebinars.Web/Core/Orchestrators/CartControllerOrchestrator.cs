@@ -432,9 +432,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             var currentAffiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate");
             _orderManagementService.AttachAffiliate(currentAffiliate);
 
-            // At this point, user may not be registered. So, when creating the Order, if user is: 
-            // a) existing user and not logged in, then create the order against userId 26739 (a dummy user). Update Order when user logs in.
-            // b) not yet a registered user, then create a new user and update the Order with the UserId
+            // At this point, user may not be registered. So, when creating the Order, if user 
+            // does not exist, a dummy user with an email of notauthenticated@cuwebinars.com will be created.
             var webUser = _orderManagementService.GetWebUser(formModel.idUser);
 
             return CreateNewOrder(currentAffiliate, webUser, webinar, newOrderRow);
