@@ -5,8 +5,10 @@ using CUWebinars.Business.CQS;
 using CUWebinars.Business.CQS.Commands;
 using CUWebinars.Business.CQS.Queries;
 using CUWebinars.Business.Models;
+using CUWebinars.Web.Membership;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
+using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Web.Core.Orchestrators
 {
@@ -16,12 +18,14 @@ namespace CUWebinars.Web.Core.Orchestrators
         private readonly IQueryProcessor _queryProcessor;
         private readonly ICommandProcessor _commandProcessor;
         private readonly IStateService _stateService;
+        private readonly ILogger _logger;
 
-        public OrderControllerOrchestrator(IQueryProcessor queryProcessor, ICommandProcessor commandProcessor, IStateService stateService)
+        public OrderControllerOrchestrator(IQueryProcessor queryProcessor, ICommandProcessor commandProcessor, IStateService stateService, ILogger logger)
         {
             _queryProcessor = queryProcessor;
             _commandProcessor = commandProcessor;
             _stateService = stateService;
+            _logger = logger;
         }
 
         public int MigrateOrder(MigrateOrderModel migrateOrderModel,
@@ -280,11 +284,14 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             var firstName = migrateOrder.FirstName.Trim();
             var lastName = migrateOrder.LastName.Trim();
-            var tempPassword = lastName.ToLower();
+
+            // HACK: We are logging the temppassword as a means of persisting it to enable Admins to email it to the imported user. 
+            // It is logged at Error level b/c that level will always be logged (but Info-level may be turned off). 
+            var tempPassword = PasswordGenerator.GenerateRandomString(6);
+            _logger.Error("TempPassword for migrated user | {0} : {1}", email, tempPassword);
 
             //  Here, we set a value which indicates to the TtsSmtpMessageDelivery object that the user was created while importing an order.
             //  This will be checked in TtsSmtpMessageDelivery and the notification will not be sent if this value is present.
-            //  The idea being that the Order Submitted notification will contain the info nomrally in the User Registered email.
             _stateService.SetValue(DomainConstants.UserCreatedViaNewOrder, true);
 
             var registerNewAccountCommand = new RegisterNewAccountCommand
