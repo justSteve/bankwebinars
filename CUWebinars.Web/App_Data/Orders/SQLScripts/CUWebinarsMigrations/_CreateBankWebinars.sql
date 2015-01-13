@@ -136,11 +136,7 @@ GO
 ALTER DATABASE [CUWebinars] SET  READ_WRITE 
 GO
 
-/****** Object:  StoredProcedure [dbo].[InsertGTWConnectionInfo]    Script Date: 7/7/2014 7:53:31 AM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
+
 
 /****** Object:  Table [dbo].[__MigrationHistory]    Script Date: 7/7/2014 7:53:31 AM ******/
 SET ANSI_NULLS ON
@@ -882,7 +878,7 @@ go
 -- Create date: 5/14
 -- Description:	Updates webinar table with GTW connection info
 -- =============================================
-alter PROCEDURE [dbo].[InsertGTWConnectionInfo] 
+create PROCEDURE [dbo].[InsertGTWConnectionInfo] 
 	-- Add the parameters for the stored procedure here
     @idWebinar INT, 
 	@Status INT ,

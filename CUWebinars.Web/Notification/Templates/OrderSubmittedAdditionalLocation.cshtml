@@ -89,9 +89,9 @@
     string TenantLogo = TtsTemplateHelperObject.TenantLogo();
     string TenantPrefix = TtsTemplateHelperObject.TenantPrefix();
 
-    if (webinar.AccessPhoneAttendee != null)
+    if (webinar.AccessPhone != null)
     {
-        phone = webinar.AccessPhoneAttendee;
+        phone = webinar.AccessPhone;
     }
     var HeaderText = "Confirmation of Additional Location for<br />" + webinar.Title;
     var BannerText = "Order Number: " + TenantPrefix + Model.Order.idOrder + "<br />Type: " + row.Single().RegistrationType.OptionLabel;

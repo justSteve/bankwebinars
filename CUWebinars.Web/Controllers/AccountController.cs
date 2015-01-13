@@ -276,14 +276,17 @@ namespace CUWebinars.Web.Controllers
                                 new NullReferenceException("Attempt to CreateRegistrantKey failed on Webinar: " +
                                                            row.Webinar.idWebinar + " email: " + order.BillingEmail));
 
-                        JObject parsedJsonObject = JObject.Parse(regKeyResponse);
-                        if (regKeyResponse != null && parsedJsonObject[WebUiConstants.RegistrantKey] != null)
+                        if (regKeyResponse != null)
                         {
-                            var registrantKey = parsedJsonObject[WebUiConstants.RegistrantKey].ToString();
-                            var joinUrl = parsedJsonObject[WebUiConstants.JoinUrl].ToString();
+                            JObject parsedJsonObject = JObject.Parse(regKeyResponse);
+                            if (regKeyResponse != null && parsedJsonObject[WebUiConstants.RegistrantKey] != null)
+                            {
+                                var registrantKey = parsedJsonObject[WebUiConstants.RegistrantKey].ToString();
+                                var joinUrl = parsedJsonObject[WebUiConstants.JoinUrl].ToString();
 
-                            row.RegistrantKey = registrantKey;
-                            row.JoinURL = joinUrl;
+                                row.RegistrantKey = registrantKey;
+                                row.JoinURL = joinUrl;
+                            }
                         }
                         //else
                         // devise better handling

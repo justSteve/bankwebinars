@@ -874,44 +874,6 @@ ALTER TABLE BankWebinars.[dbo].[WebUserDiscountXref] CHECK CONSTRAINT [FK_WebUse
 GO
 
 
-
-USE BankWebinars
-go
--- =============================================
--- Author:		sjh
--- Create date: 5/14
--- Description:	Updates webinar table with GTW connection info
--- =============================================
-alter PROCEDURE [dbo].[InsertGTWConnectionInfo] 
-	-- Add the parameters for the stored procedure here
-    @idWebinar INT, 
-	@Status INT ,
-    @WebinarKey NVARCHAR(MAX) ,
-    @CitrixURL NVARCHAR(MAX) ,
-    @AccessPhone NVARCHAR(MAX) ,
-    @AccessCodeAttendee NVARCHAR(MAX) ,
-    @AccessCodePresenter NVARCHAR(MAX) ,
-    @AccessCodeOrganizer NVARCHAR(MAX)
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-    SET NOCOUNT ON;
-	UPDATE [dbo].[Webinar]
-   SET [Status] = 7
-      ,[WebinarKey] = @WebinarKey
-      ,[OrganizerKey] = '901873'
-      ,[OrganizerOAuthKey] = '8SSOAgpL2WMxa4iUyQUn1h9bGEmJ' 
-      ,[CitrixRegisterUrl] = @CitrixURL
-      ,[AccessPhone] = @AccessPhone
-      ,[AccessCodeAttendee] = @AccessCodeAttendee
-      ,[AccessCodePresenter] = @AccessCodePresenter
-      ,[AccessCodeOrganizer] = @AccessCodeOrganizer
-	  WHERE idWebinar = @idWebinar
-
-END
-GO
-
 ALTER TABLE BankWebinars.dbo.[Order]
 ADD idOrderLegacy INT
 

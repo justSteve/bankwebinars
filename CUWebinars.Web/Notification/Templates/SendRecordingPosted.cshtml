@@ -44,9 +44,9 @@
     string TenantLogo = TtsTemplateHelperObject.TenantLogo();
     string TenantCom = TenantDomain + ".com";
 
-    if (webinar.AccessPhoneAttendee != null)
+    if (webinar.AccessPhone != null)
     {
-        phone = webinar.AccessPhoneAttendee;
+        phone = webinar.AccessPhone;
     }
     var HeaderText = "Your Recording is posted!";
     var BannerText = "Order Number: "+TenantPrefix + Model.idOrder + "<br />Attendance Type: " + row.Single().RegistrationType.OptionLabel;

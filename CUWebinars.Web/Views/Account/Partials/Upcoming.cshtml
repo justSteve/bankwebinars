@@ -149,7 +149,7 @@
                             var eventID = row.Webinar.WebinarKey;
                             eventID = eventID.Insert(6, "-").Insert(3, "-");
                             //var eventPass = "Pass";
-                            var teleconf = row.Webinar.AccessPhoneAttendee;
+                            var teleconf = row.Webinar.AccessPhone;
                             var accessCode = row.Webinar.AccessCodeAttendee;
 
                             if (row.RegistrationType.ShowLiveNotifications == "Yes")

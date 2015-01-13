@@ -9,12 +9,12 @@ namespace CUWebinars.Business.Core.Tracing
         
         public override void Write(string message)
         {
-            _log4NetLogger.Info(message);
+            _log4NetLogger.Warn(message);
         }
 
         public override void WriteLine(string message)
         {
-            _log4NetLogger.Info(message);
+            _log4NetLogger.Warn(message);
         }
     }
 }

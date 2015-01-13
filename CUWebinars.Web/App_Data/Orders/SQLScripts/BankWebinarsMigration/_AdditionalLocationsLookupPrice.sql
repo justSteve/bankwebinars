@@ -2,30 +2,137 @@ SET NOCOUNT ON
 
 
 PRINT 'Starts AdditionalLocationsLookupPrice'
-DELETE  FROM bankwebinars.dbo.AdditionalLocationsLookupPrice WHERE idWebinar > 0
---SELECT  'INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES ('
---        + CAST(idWebinar AS VARCHAR) + ',50.00)'
---FROM    dbo.Webinar
---WHERE   idWebinar IN ( SELECT   idWebinar
---                           FROM     dbo.Webinar WHERE status = 2 AND duration = 1)
---SELECT  'INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES ('
---        + CAST(idWebinar AS VARCHAR) + ',75.00)'
---FROM    dbo.Webinar
---WHERE   idWebinar IN ( SELECT   idWebinar
---                           FROM     dbo.Webinar WHERE status = 2 AND duration = 2)
-
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1711,325.00)
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (883,50.00)
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1236,50.00)
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1727,50.00)
+DELETE  FROM BankWebinars.dbo.AdditionalLocationsLookupPrice
+WHERE   idWebinar > 0
+SELECT  'INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES ('
+        + CAST(idWebinar AS VARCHAR) + ',50.00)'
+FROM    dbo.Webinar
+WHERE   idWebinar IN ( SELECT   idWebinar
+                       FROM     dbo.Webinar
+                       WHERE    Duration = 1 )
+SELECT  'INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES ('
+        + CAST(idWebinar AS VARCHAR) + ',75.00)'
+FROM    dbo.Webinar
+WHERE   idWebinar IN ( SELECT   idWebinar
+                       FROM     dbo.Webinar
+                       WHERE    Duration = 2 )
+					   INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1,50.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (2,50.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (3,50.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (4,50.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (5,50.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (6,50.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (7,50.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (8,50.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (9,50.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (10,50.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (842,50.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1609,50.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1704,50.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1625,50.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1638,50.00)
 INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1740,50.00)
 INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1741,50.00)
-        INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1710,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1727,50.00)
+
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1486,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1579,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1582,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1585,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1586,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1587,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1592,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1594,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1595,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1596,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1599,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1601,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1602,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1603,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1604,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1605,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1606,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1607,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1608,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1610,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1611,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1612,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1613,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1614,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1615,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1617,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1618,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1619,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1620,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1621,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1622,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1623,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1624,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1626,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1627,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1628,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1630,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1631,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1632,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1633,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1635,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1636,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1637,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1639,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1640,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1641,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1643,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1644,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1645,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1646,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1647,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1648,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1649,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1650,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1651,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1655,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1656,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1657,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1658,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1659,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1660,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1661,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1662,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1663,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1664,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1665,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1666,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1667,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1668,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1669,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1670,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1671,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1672,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1674,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1675,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1676,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1677,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1678,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1679,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1680,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1681,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1682,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1683,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1701,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1702,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1703,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1705,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1706,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1707,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1708,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1709,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1710,75.00)
 INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1711,75.00)
 INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1712,75.00)
 INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1717,75.00)
 INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1718,75.00)
 INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1719,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1720,75.00)
 INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1721,75.00)
 INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1722,75.00)
 INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1723,75.00)
@@ -48,6 +155,21 @@ INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost])
 INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1744,75.00)
 INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1745,75.00)
 
+UPDATE bankwebinars.[dbo].[AdditionalLocationsLookupPrice] SET [cost] = 325 WHERE idWebinar = 1711
+
+
+IF EXISTS (SELECT * FROM dbo.Webinar WHERE idWebinar NOT IN (SELECT idWebinar FROM dbo.AdditionalLocationsLookupPrice))
+BEGIN 
+PRINT '-----------------------------'
+PRINT 'WARNING - ADDITIONAL LOCATIONS PRICES MISSING'
+PRINT '-----------------------------'
+PRINT '-----------------------------'
+SELECT * FROM dbo.Webinar WHERE idWebinar NOT IN (SELECT idWebinar FROM dbo.AdditionalLocationsLookupPrice)
+PRINT '-----------------------------'
+PRINT 'WARNING - ADDITIONAL LOCATIONS PRICES MISSING'
+PRINT '-----------------------------'
+PRINT '-----------------------------'
+END
 
 GO
 PRINT '____________Ends AdditionalLocationsLookupPrice'

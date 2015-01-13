@@ -45,9 +45,9 @@
     string TenantPrefix = TtsTemplateHelperObject.TenantPrefix();
     string TenantCom = TenantDomain + ".com";
     
-    if (webinar.AccessPhoneAttendee != null)
+    if (webinar.AccessPhone != null)
     {
-        phone = webinar.AccessPhoneAttendee;
+        phone = webinar.AccessPhone;
     }
     var HeaderText = "REMINDER: Your Connection Information";
     var BannerText = "Order Number: "+TenantPrefix + Model.idOrder + "<br />Type: " + row.Single().RegistrationType.OptionLabel;
