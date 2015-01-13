@@ -402,7 +402,7 @@ OCA.wireUpHandlers = function() {
             });
 
             var results = _.map(OCA.users, function (user) {
-                return { id: user.id, lastname: user.lastname, firstname: user.firstname };
+                return user.id;
             });
             process(results);
         },
@@ -411,9 +411,9 @@ OCA.wireUpHandlers = function() {
             return true;
         },
 
-        highlighter: function (obj) {
+        highlighter: function (id) {
             var user = _.find(OCA.users, function (webUser) {
-                return webUser.id == obj['id'];
+                return webUser.id == id;
             });
             return user.lastname + ', ' + user.firstname;
         },
