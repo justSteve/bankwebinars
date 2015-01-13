@@ -109,3 +109,9 @@ CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32531
 CUWebinars Error: 0 : Validation failed for webinar 1722 and User 10593
 CUWebinars Error: 0 : Validation failed for webinar 1722 and User 29
 CUWebinars Error: 0 : Validation failed for webinar 1722 and User 29
+CUWebinars Error: 0 : Validation failed for webinar 1730 and User 29
+CUWebinars Error: 0 : Validation failed for webinar 1729 and User 29
+CUWebinars Error: 0 : Validation failed for webinar 1722 and User 29
+CUWebinars Error: 0 : Validation failed for webinar 1727 and User 29
+CUWebinars Error: 0 : Validation failed for webinar 1726 and User 29
+CUWebinars Error: 0 : Validation failed for webinar 1727 and User 29

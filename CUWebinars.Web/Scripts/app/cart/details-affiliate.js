@@ -107,6 +107,8 @@ OCA.initializeFunctions = function () {
             e.preventDefault();
             $('#AdjustOrder').slideToggle();
         });
+
+        OCA.hookUpEditUserLogic($('#editUserDetails'));
     };
 
     OCA.isShippindAddressRequired = function(jQueryObject) {
@@ -128,6 +130,152 @@ OCA.initializeFunctions = function () {
             e.preventDefault();
             var cancelOrderForm = $('#cancelOrder');
             cancelOrderForm.submit();
+        });
+    };
+
+    OCA.displayModal = function(modalForm) {
+
+        modalForm.modal('show');
+    };
+
+    OCA.setUiLayout = function(isShippindAddressRequired) {
+        console.log('isShippindAddressRequired fires');
+        if (isShippindAddressRequired) {
+            $('#ShippingAddressContainer').hide();
+            $('#HideAddShippingAddressLink').hide();
+            $('#linksToAddShippingFields').show();
+            $('#AddShippingAddressLink').show();
+        } else {
+            $('#ShippingAddressContainer, #linksToAddShippingFields, #AddShippingAddressLink').hide();
+        }
+
+        $('#updateShippingMsgLabelWrap').empty();
+    };
+
+    OCA.hookUpEditUserLogic = function (button) {
+
+        var modalForm = $('#UserDetailsModal');
+
+        button.on('click', function (e) {
+
+            e.preventDefault();
+
+            OCA.displayModal(modalForm);
+        });
+
+        modalForm.on('shown', function (e) {
+
+            OCA.setUiLayout(OCA.shippingAddressRequired);
+
+            $('#saveChangesButton').on('click', function () {
+                e.preventDefault();
+
+                $('#userDetailsForm').submit();
+            });
+
+            $('#userDetailsForm').on('submit', function (e) {
+                e.preventDefault();
+
+                var url = $(this).attr('action');
+
+                var payload = $(this).serialize();
+                //TODO: The payload here is highly valuable. The fact that they will be POSTed
+                // instead of GET means they don't show in the server logs, which is often nice to have.
+                // can we fire a GET to an internal address where nothing happens except that
+                // a line dumps to the server with all form values.
+                $.ajax({
+                    type: 'POST',
+                    contentType: constants.FormPostContentType,
+                    data: payload,
+                    cache: false,
+                    url: url,
+                    dataType: constants.JsonDataType,
+                    beforeSend: function(xhr){
+                        $('#updateShippingMsgLabelWrap').html('<span class="label label-info">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Updating details...</span>');
+
+                        var valSummary = $('#userDetailsValSummary');
+                        valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
+
+                        var errorsList = valSummary.find('ul');
+                        errorsList.empty();
+                        errorsList.append('<li style="display:none"></li>');
+
+                    }
+                }).done(function (data) {
+                    //BUG:  A submitted order prematurely turns off the 'in-process' spinner.
+                    // Intermittent - Can't reproduce. Is same as was earlier reported where the lag between
+                    //  new user submission and the point where panel 3 displays is quite long
+                    //  and does not display any 'in-process' spinner
+                    // I think the cause would have to be rooted here over very near here.
+
+                    if (data.Result === 'Success') {
+                        //var fullname = $('#ShippingAddress_Name').val();
+
+                        //var userNameInsuranceAndButton = $('#userDetailsSummed > p:nth-child(1)');
+                        //userNameInsuranceAndButton.empty();
+                        //userNameInsuranceAndButton.html(fullname + ' - ' + $('#RegisterFields_Institution').val() + '<br> ' + $('#RegisterFields_Email').val() + ' - <a id="editUserDetails" role="button" class="btn btn-mini" target="new"> Edit?</a>');
+
+                        $('#editUserDetails').on('click', function (e) {
+
+                            e.preventDefault();
+
+                            OCA.displayModal(modalForm);
+                        });
+
+                        $('#updateShippingMsgLabelWrap').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details updated successfully.</span>');
+                        //modalForm.modal('hide');
+                        // [sjh] - i might surmise that this is an attempt to fix the above bug 
+
+                    } else if (!data.isSuccessful) {
+                        //var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
+                        //NREUM.noticeError(err);
+
+                        $('#updateShippingMsgLabelWrap').empty();
+                        formProcessor.lightUpValidationSummary('userDetailsValSummary', data);
+                    } else {
+                        var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
+                        //NREUM.noticeError(err);
+                        $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>There has been an error in the operation.Please call us at 800-831-0678 ext. 3 to resolve.</span>');
+                    }
+                }).fail(function (data) {
+                    var err = new Error('FAIL: Post to userDetailsFormUrlData ' + userDetailsFormUrlData + ' !data.isSuccessful');
+                    //NREUM.noticeError(err);
+                    $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error in the server response. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
+                });
+            });
+
+            $('#HideAddShippingAddressLink').on('click', function (e) {
+                e.preventDefault();
+
+                $(this).fadeOut('500', function () {
+                    $('#ShippingAddressContainer').fadeOut('500', function () {
+                        $('#AddShippingAddressLink').fadeIn('500');
+                    });
+                });
+
+            });
+
+            $('#AddShippingAddressLink').on('click', function (e) {
+                e.preventDefault();
+
+                $(this).fadeOut('500', function () {
+                    $('#ShippingAddressContainer').fadeIn('500', function () {
+                        $('#HideAddShippingAddressLink').fadeIn('500');
+                    });
+                });
+            });
+
+            $('#passwordWrapper').remove();
+
+            if ($('#RegisterFields_Password').length < 1) {
+                $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields_Password" name="RegisterFields.Password" value="456rty^Y" />');
+                $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields.ConfirmPassword" name="RegisterFields.ConfirmPassword" value="456rty^Y" />');
+            }
+        });
+
+        modalForm.on('hidden', function (e) {
+            $('#saveChangesButton').off('click');
+            $('#userDetailsForm').off('submit');
         });
     };
 
@@ -307,7 +455,7 @@ OCA.wireUpHandlers = function() {
 
         //  value converted to a Boolean in isShippindAddressRequired function
         //  value comes from a hidden input in the radio btn list next to the relevant radio button (previous-sibling)
-        //OCA.shippingAddressRequired = OCA.isShippindAddressRequired($('#RegistrationType > dl dt input:checked').prev());
+        OCA.shippingAddressRequired = OCA.isShippindAddressRequired($('#RegistrationType > dl dt input:checked').prev());
 
         var data = OCA.signUpForm.serialize();
 
@@ -340,9 +488,7 @@ OCA.wireUpHandlers = function() {
                                 $('#AdjustOrder').hide();
 
                                 if (OCA.shippingAddressRequired && notificationsTesting === false) {
-                                    // Following function lives in the register-during-checkout.js script
-                                    // which will be in memory at this point and thus will have been hoisted.
-                                    //hookUpModal($('#UserDetailsModal'));
+                                    OCA.displayModal($('#UserDetailsModal'));
                                 }
 
                                 // see top of this file
