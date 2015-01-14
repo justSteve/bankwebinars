@@ -248,6 +248,80 @@ BEGIN
     
 END
 GO
+USE BankWebinars
+GO
+ CREATE PROCEDURE updateRegGroups AS begin
+UPDATE  dbo.[Order]
+SET     idAffiliate = 383
+WHERE   idAffiliate = 395
+
+UPDATE  dbo.[Order]
+SET     idAffiliate = 62
+WHERE   idAffiliate = 379
+	
+--SELECT * from TTSWebinars2_.dbo.OptionsGroups WHERE  idWebinarRegTypeGroup = 27
+--SELECT * FROM dbo.RegTypesGroupsXref WHERE idRegTypeGroup = 13
+
+UPDATE dbo.Webinar SET recordingUrl = '' WHERE idWebinar IN (SELECT idWebinar FROM	dbo.Webinar WHERE date > GETDATE() AND recordingUrl != '')
+
+
+
+--change scheduled webinars to recorded
+UPDATE  Webinar
+SET     status = 3 --Recorded
+WHERE   date < GETDATE()
+        AND status = 2
+  --Scheduled
+
+  --change recorded to archived
+UPDATE  Webinar
+SET     status = 4 --ARCHIVED
+WHERE   ( DATEADD(MONTH, -6, GETDATE()) > [date]
+          AND status = 3
+        ) 	
+	 -- move compliance pers.
+        OR ( [date] < DATEADD(MONTH, -1, GETDATE())
+             AND status = 3
+           )
+        AND title LIKE '%Compliance Perspectives%'
+  
+  
+  --SELECT * FROM TTSWebinars2.dbo.OptionsGroups
+
+--legacy OPTIONS GROUPS
+UPDATE  RegTypesGroupsXref
+SET      idRegTypeGroup = 46
+WHERE    idRegTypeGroup = 45
+        AND idWebinar IN ( SELECT   w.idWebinar
+                           FROM     Webinar w
+                           WHERE    w.status = 3
+                                    AND w.duration = 1 )
+
+UPDATE  RegTypesGroupsXref
+SET      idRegTypeGroup = 44
+WHERE    idRegTypeGroup = 43
+        AND idWebinar IN ( SELECT   w.idWebinar
+                           FROM     Webinar w
+                           WHERE    w.status = 3
+                                    AND w.duration = 2 )
+
+END 
+GO
+
+EXEC updateRegGroups
+
+DELETE FROM MembershipReboot.dbo.UserAccounts WHERE email IN ('MigrateSteve@ttstrain.com' ,'MigrateSteve1@ttstrain.com' ,'MigrateSteve2@ttstrain.com','MigrateSteve3@ttstrain.com','steve@ttstrain.com','steve1@ttstrain.com','steve2@ttstrain.com','steve21@ttstrain.com')
+UPDATE dbo.Webinar SET [OrganizerKey] = '922930',[OrganizerOAuthKey] = 'A93DZ8hhX8JAqKNVAm04uZLDJckD' 
+
+EXEC dbo.InsertGTWConnectionInfo @idWebinar = 1719, -- int
+    @Status = 0, -- int
+    @WebinarKey = N'127193450', -- nvarchar(max)
+    @CitrixURL = N'https://attendee.gotowebinar.com/register/100000000065846026', -- nvarchar(max)
+    @AccessPhone = N'877 309 2074', -- nvarchar(max)
+    @AccessCodeAttendee = N'283-313-444', -- nvarchar(max)
+    @AccessCodePresenter = N'626-564-899', -- nvarchar(max)
+    @AccessCodeOrganizer = N'421-322-267' -- nvarchar(max)
+
 
 
 PRINT '-----------------Seeder '

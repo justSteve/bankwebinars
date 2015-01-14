@@ -262,39 +262,7 @@ namespace CUWebinars.Web.Controllers
                 var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
                 if (row.Webinar.Status == WebinarStatus.Active)
                 {
-                    if (row.JoinURL == null && row.RegistrationType.ShowLiveNotifications == "Yes")
-                    {
-                        var regKeyResponse = _orderManagementService.CreateRegistrantKey(order.FirstName, order.LastName
-                            , order.BillingEmail, row.Webinar.idWebinar, row.Webinar.WebinarKey);
-
-                        if (ReferenceEquals(null, regKeyResponse))
-                            //instead of throwing exception and halting execution
-                            //throw new NullReferenceException("The Registration Key Response from the Citrix API resulted in a null response.");
-                            _logger.ErrorException(
-                                "Attempt to CreateRegistrantKey failed on Webinar: " + row.Webinar.idWebinar +
-                                " email: " + order.BillingEmail,
-                                new NullReferenceException("Attempt to CreateRegistrantKey failed on Webinar: " +
-                                                           row.Webinar.idWebinar + " email: " + order.BillingEmail));
-
-                        if (regKeyResponse != null)
-                        {
-                            JObject parsedJsonObject = JObject.Parse(regKeyResponse);
-                            if (regKeyResponse != null && parsedJsonObject[WebUiConstants.RegistrantKey] != null)
-                            {
-                                var registrantKey = parsedJsonObject[WebUiConstants.RegistrantKey].ToString();
-                                var joinUrl = parsedJsonObject[WebUiConstants.JoinUrl].ToString();
-
-                                row.RegistrantKey = registrantKey;
-                                row.JoinURL = joinUrl;
-                            }
-                        }
-                        //else
-                        // devise better handling
-                        //{
-                        //    throw new NullReferenceException("Attempt to CreateRegistrantKey failed on Webinar: " +
-                        //                                     row.Webinar.idWebinar + " email: " + order.BillingEmail);
-                        //}
-                    }
+                   _orderManagementService.GetJoinUrl(row);
                 }
 
             }
@@ -302,6 +270,7 @@ namespace CUWebinars.Web.Controllers
 
             return View("MyWebinars", model);
         }
+
 
         [System.Web.Mvc.AllowAnonymous]
         [System.Web.Mvc.HttpPost]

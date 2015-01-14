@@ -320,7 +320,7 @@ namespace CUWebinars.Web.Controllers
 
                 idOfLastOrder = _orderControllerOrchestrator.ImportOrder(importedOrder, email,
                     importQueryResult, verificationKey, confirmChangeEmailUrl);
-
+                
                 //idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
                 _logger.Info(string.Format("ImportOrder from {0} produced: {1}",importedOrder.Source + "-"+ importedOrder.Version, idOfLastOrder));
 

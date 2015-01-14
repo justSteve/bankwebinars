@@ -5,9 +5,11 @@ using CUWebinars.Business.CQS;
 using CUWebinars.Business.CQS.Commands;
 using CUWebinars.Business.CQS.Queries;
 using CUWebinars.Business.Models;
+using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Membership;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
+using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Web.Core.Orchestrators
@@ -108,8 +110,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 WebUser = importQueryResult.WebUser,
                 AdditionalLocationsString = ImportOrderModel.AdditionalLocationsString
             };
-
-
+            
             _commandProcessor.Execute(ImportOrderCommand);
 
             return ImportOrderCommand.OrderId;

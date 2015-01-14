@@ -59,5 +59,6 @@ namespace CUWebinars.Business.Services
         decimal GetPriceOfAdditionalLocation(int idWebinar);
         void UpdateOrderByAdmin(Order order);
         Discount GetDiscountByUser(WebUser currentUser);
+        void GetJoinUrl(OrderRow row);
     }
 }
