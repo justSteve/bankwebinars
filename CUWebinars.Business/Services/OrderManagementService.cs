@@ -15,6 +15,7 @@ using CUWebinars.Web.Core.Cache;
 using DDay.iCal;
 using DDay.iCal.Serialization.iCalendar;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -158,7 +159,7 @@ namespace CUWebinars.Business.Services
             foreach (var additionalLocation in additionalLocationsEnumerated)
             {
                 emailSpanElement = string.Format("<strong>{0}</strong>", additionalLocation.Email);
-                
+
                 i++;
 
                 if (i == additionalLocationsEnumerated.Count())
@@ -179,7 +180,7 @@ namespace CUWebinars.Business.Services
             }
 
             Debug.Assert(additionalLocationsPricing.Count == 1, "There should only ever be 1 value returned for the cost of an Additionalocation for a particular Webinar");
-                // Item2 of the tuple is the price value as a decimal. Item 1 is the AdditionalLocationsLookupPrice id 
+            // Item2 of the tuple is the price value as a decimal. Item 1 is the AdditionalLocationsLookupPrice id 
             optionsCost = additionalLocationsPricing.Single().Item2;
 
             return new Tuple<string, decimal>(addresses.ToString(), optionsCost);
@@ -208,7 +209,7 @@ namespace CUWebinars.Business.Services
 
             //if (options == null)
             //{
-               options = _regTypeRepository.FindRegTypesByWebinarId(id, false);
+            options = _regTypeRepository.FindRegTypesByWebinarId(id, false);
 
             //    // keeps options object in cache for 1 hour.
             //    _cachingService.Add(cachKey, options, DateTime.Now.AddHours(1));
@@ -328,7 +329,7 @@ namespace CUWebinars.Business.Services
                     int mostUses = 0;
                     int numberOfUsesOfMostRecentAffiliate = 0;
                     int current = 0;
-                    
+
                     foreach (var group in groups)
                     {
                         current = group.Count();
@@ -345,7 +346,7 @@ namespace CUWebinars.Business.Services
                         }
                     }
 
-                    if (mostUses >= 2*numberOfUsesOfMostRecentAffiliate)
+                    if (mostUses >= 2 * numberOfUsesOfMostRecentAffiliate)
                         affiliateIdForOrder = mostUsedAffiliateId;
                 }
 
@@ -527,7 +528,7 @@ namespace CUWebinars.Business.Services
                 EventObject = orderSubmittedViewModel,
                 RelativePath = addPasswordUrl
             });
-            
+
             foreach (var evt in GetEvents().OfType<OrderSubmittedEvent<OrderSubmittedViewModel>>())
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
@@ -663,7 +664,7 @@ namespace CUWebinars.Business.Services
                     );
 
                 ProcessDiscountCodes(currentOrder);
-                
+
                 pricesAndDiscounts = CalculateOrderPrices(currentOrder, additionalLocationsPricing.Single().Item2);
 
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, (int)currentOrder.OrderStatus);
@@ -727,12 +728,12 @@ namespace CUWebinars.Business.Services
         {
             try
             {
-            _additionalLocationsRepository.DeleteAdditionalLocationsByOrderRowId(idOrderRow);
+                _additionalLocationsRepository.DeleteAdditionalLocationsByOrderRowId(idOrderRow);
 
                 var orderRow = _orderRepository.GetOrderRowById(idOrderRow);
                 var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
                 var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(orderRow.idWebinar);
-         
+
                 var totalOptionsDeletedCost = additionalLocationsPricing.First().Item2 * orderRow.AdditionalLocation.Count;
                 SetTotalPrice(totalOptionsDeletedCost, orderRow);
             }
@@ -781,6 +782,39 @@ namespace CUWebinars.Business.Services
         {
             var myDiscount = _orderRepository.FindDiscountByUser(currentUser);
             return myDiscount;
+        }
+
+
+        public void GetJoinUrl(OrderRow row)
+        {
+            Order order = row.Order;
+            if (row.JoinURL == null && row.RegistrationType.ShowLiveNotifications == "Yes")
+            {
+                var regKeyResponse = CreateRegistrantKey(order.FirstName, order.LastName
+                    , order.BillingEmail, row.Webinar.idWebinar, row.Webinar.WebinarKey);
+
+                if (ReferenceEquals(null, regKeyResponse))
+                {
+                    _logger.ErrorException("CreateRegistrantKey failed on Webinar: " + row.Webinar.idWebinar + " email: " + order.BillingEmail, new NullReferenceException("Attempt to CreateRegistrantKey failed on Webinar: " + row.Webinar.idWebinar + " email: " + order.BillingEmail));
+                }
+
+                JObject parsedJsonObject = JObject.Parse(regKeyResponse);
+                if (parsedJsonObject[DomainConstants.RegistrantKey] != null)
+                {
+                    var registrantKey = parsedJsonObject[DomainConstants.RegistrantKey].ToString();
+                    var joinUrl = parsedJsonObject[DomainConstants.JoinUrl].ToString();
+
+                    row.RegistrantKey = registrantKey;
+                    row.JoinURL = joinUrl;
+                }
+
+                //else
+                // devise better handling
+                //{
+                //    throw new NullReferenceException("Attempt to CreateRegistrantKey failed on Webinar: " +
+                //                                     row.Webinar.idWebinar + " email: " + order.BillingEmail);
+                //}
+            }
         }
 
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink)
@@ -904,8 +938,8 @@ namespace CUWebinars.Business.Services
 
             return true;
         }
-        
-        
+
+
         private void RedeemDiscount(OrderRow orderRow)
         {
             Discount discount = orderRow.Discount;
@@ -948,7 +982,7 @@ namespace CUWebinars.Business.Services
             var webinar = _webinarRepository.FindById(webinarId);
             string orgKey = webinar.OrganizerKey;
             string accessToken = webinar.OrganizerOAuthKey;
-            
+
             string url = "https://api.citrixonline.com/G2W/rest/organizers/" + orgKey + "/webinars/" + webinarKey + "/registrants";
 
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);

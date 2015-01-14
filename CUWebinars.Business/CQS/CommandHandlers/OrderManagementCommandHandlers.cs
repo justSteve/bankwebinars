@@ -294,7 +294,8 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             importedOrder.ShippingZip = command.ShippingAddress.Zip;
             importedOrder.ShippingFirstName = command.FirstName;
             importedOrder.ShippingLastName = command.LastName;
-
+            
+            _orderManagementService.GetJoinUrl(command.OrderRow);
 
             _orderManagementService.SaveOrderChanges(importedOrder, command.VerificationKey, command.ConfirmChangeEmailUrl);
 
