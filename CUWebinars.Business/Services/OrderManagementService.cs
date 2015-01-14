@@ -795,25 +795,24 @@ namespace CUWebinars.Business.Services
 
                 if (ReferenceEquals(null, regKeyResponse))
                 {
-                    _logger.ErrorException("CreateRegistrantKey failed on Webinar: " + row.Webinar.idWebinar + " email: " + order.BillingEmail, new NullReferenceException("Attempt to CreateRegistrantKey failed on Webinar: " + row.Webinar.idWebinar + " email: " + order.BillingEmail));
+                    _logger.ErrorException(
+                        "CreateRegistrantKey failed on Webinar: " + row.Webinar.idWebinar + " email: " +
+                        order.BillingEmail,
+                        new NullReferenceException("Attempt to CreateRegistrantKey failed on Webinar: {0} email: {1}" +
+                                                   row.Webinar.idWebinar + " email: " + order.BillingEmail));
                 }
-
-                JObject parsedJsonObject = JObject.Parse(regKeyResponse);
-                if (parsedJsonObject[DomainConstants.RegistrantKey] != null)
+                else
                 {
-                    var registrantKey = parsedJsonObject[DomainConstants.RegistrantKey].ToString();
-                    var joinUrl = parsedJsonObject[DomainConstants.JoinUrl].ToString();
+                    JObject parsedJsonObject = JObject.Parse(regKeyResponse);
+                    if (parsedJsonObject[DomainConstants.RegistrantKey] != null)
+                    {
+                        var registrantKey = parsedJsonObject[DomainConstants.RegistrantKey].ToString();
+                        var joinUrl = parsedJsonObject[DomainConstants.JoinUrl].ToString();
 
-                    row.RegistrantKey = registrantKey;
-                    row.JoinURL = joinUrl;
+                        row.RegistrantKey = registrantKey;
+                        row.JoinURL = joinUrl;
+                    }
                 }
-
-                //else
-                // devise better handling
-                //{
-                //    throw new NullReferenceException("Attempt to CreateRegistrantKey failed on Webinar: " +
-                //                                     row.Webinar.idWebinar + " email: " + order.BillingEmail);
-                //}
             }
         }
 

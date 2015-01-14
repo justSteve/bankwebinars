@@ -14,9 +14,9 @@ $localScript= "C:\Users\Steve\Source\Repos\BankWebinars2\CUWebinars.Web\App_Data
 & sqlcmd -S "(local)\" -i $localScript'BankWebinarsMigration\_updateRegTypesforBankWebinars.sql'
 & sqlcmd -S "(local)\" -i $localScript'BankWebinarsMigration\_CreateTestUsers.sql'
 & sqlcmd -S "(local)\" -i $localScript'BankWebinarsMigration\_AdditionalLocationsLookupPrice.sql'
-
 & sqlcmd -S "(local)\" -i $localScript'BankWebinarsMigration\_BuildDiscountsMigration1.sql'
 & sqlcmd -S "(local)\" -i $localScript'BankWebinarsMigration\_BuildCompliancePerspectivesMigration.sql'
 & sqlcmd -S "(local)\" -i $localScript'BankWebinarsMigration\_UpdateAffiliates.sql'
 & sqlcmd -S "(local)\" -i $localScript'BankWebinarsMigration\_CreateDbCreds.sql'
+& sqlcmd -S "(local)\" -i $localScript'BankWebinarsMigration\_Deltestdata.sql'
 & sqlcmd -S "(local)\" -i $localScript'BankWebinarsMigration\__Seeder_Ender.sql'

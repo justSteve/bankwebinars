@@ -74,7 +74,7 @@ namespace CUWebinars.Business.Tests.IntegrationTests
             webinarRepository = new WebinarRepository(ctx);
 
             //  Act
-            var webinars = webinarRepository.FindByTopicDescription(TopicDescription);
+            var webinars = webinarRepository.FindByDescription(TopicDescription);
             var title = webinars.Where(webinar => webinar.Title == WebinarTitleOfWebinarWithOperationsDesc).Select(webinar => webinar.Title).First();
 
             //  Assert                 
@@ -90,7 +90,7 @@ namespace CUWebinars.Business.Tests.IntegrationTests
             webinarRepository = new WebinarRepository(ctx);
 
             //  Act
-            var webinars = webinarRepository.FindByTopicDescription("InvalidDescription");
+            var webinars = webinarRepository.FindByDescription("InvalidDescription");
 
             //  Assert                 
             Assert.IsFalse(webinars.Any());
@@ -105,7 +105,7 @@ namespace CUWebinars.Business.Tests.IntegrationTests
             webinarRepository = new WebinarRepository(ctx);
 
             //  Act
-            var webinars = webinarRepository.FindByTopicDescription(TopicDescription);
+            var webinars = webinarRepository.FindByDescription(TopicDescription);
             var title = webinars.Where(webinar => webinar.Title == WebinarTitleOfWebinarWithOperationsDesc).Select(webinar => webinar.Title).First();
 
             //  Assert                 
@@ -123,7 +123,7 @@ namespace CUWebinars.Business.Tests.IntegrationTests
             webinarRepository = new WebinarRepository(ctx);
 
             //  Act
-            var webinarsByTopic = webinarRepository.FindByTopicDescription(TopicDescription);
+            var webinarsByTopic = webinarRepository.FindByDescription(TopicDescription);
             var webinarsByPresenterLastName = webinarRepository.FindByPresenterLastName(PresenterLastName);
 
             var unionOfRetrievedWebinars = webinarsByTopic.Union(webinarsByPresenterLastName);

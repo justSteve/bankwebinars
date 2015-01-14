@@ -401,6 +401,7 @@
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\GeneratesStatementsToInsertRegTypesXRef.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\_CreateBankWebinars.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\ImportProductionDb.ps1" />
+    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\_Deltestdata.sql" />
     <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\1hourRegTypes.sql" />
     <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\2hourRegTypes.sql" />
     <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\3PartRegTypes.sql" />
@@ -457,7 +458,6 @@
     <Content Include="App_Data\Orders\AffiliateImporterToExcel.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\CPOrdersToExcel.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\Create2015OptionsGroups.sql" />
-    <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\deltestdata.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\DevScripts\CleansMRAccountsAndClaims.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\DevScripts\MigrateInstitution.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\DevScripts\MRStatus.sql" />
