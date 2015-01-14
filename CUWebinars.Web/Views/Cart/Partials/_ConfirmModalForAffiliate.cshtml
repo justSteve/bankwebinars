@@ -1,0 +1,19 @@
+﻿<div id="ConfirmModal" class="modal hide fade">
+    @using (Html.BeginForm("confirmOrderForAffiliate", "Cart", null, FormMethod.Post, new { id = "confirmOrderForAffiliateForm" }))
+    {
+        @Html.AntiForgeryToken()
+        
+        <input type="hidden" name="id" />
+        <input type="hidden" id="Step2_BillMeFormReferred" name="referred" value="" />
+        <div class="modal-header">
+            <h3 id="confirmCaption"></h3>
+        </div>
+        <div id="orderDetails" class="modal-body">
+            <p>Registration is Confirmed</p>
+        </div>
+        <div class="modal-footer">
+            <a href="#" id="confirmRegistration" role="button" data-dismiss="modal" class="btn btn-success">Continue</a>
+        </div>
+
+    }
+</div>

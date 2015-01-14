@@ -8,99 +8,77 @@ OCA.checkoutConfirm = {};
 
 OCA.initializeFunctions = function () {
 
-    //OCA.hookUpChangeTypeLogic = function(dropDown, shippingAddressRequired) {
+    OCA.hookUpChangeTypeLogic = function(dropDown) {
+        
+        dropDown.on('change', function(e) {
 
-    //    //var changeTypeConfirmModal = $('#changeTypeConfirmModal');
-    //    var chosenRegTypeLabel = $('#chosenRegType');
-    //    var position,
-    //        typeChosenCurrent,
-    //        typeChosenPrevious,
-    //        valOfTypeChosenPrevious,
-    //        valOfTypeChosenCurrent;
+            e.preventDefault();
 
-    //    dropDown.on('change', function(e) {
+            var valOfTypeChosenCurrent = $(this).val();
+            var totalPrice = 0;
 
-    //        e.preventDefault();
+            var url = '/Cart/CheckIfAddLocShouldHide?optionID=' + valOfTypeChosenCurrent;
 
-    //        valOfTypeChosenCurrent = $(this).val();
-    //        var totalPrice = 0;
+            $.ajax({
+                type: 'GET',
+                contentType: constants.FormPostContentType,
+                cache: false,
+                url: url,
+                dataType: constants.JsonDataType,
+                beforeSend: function() {
+                    dropDown.attr('disabled', 'disabled').after('<i id="discountSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+                }
+            }).done(function(data) {
 
-    //        var url = '/Cart/CheckIfAddLocShouldHide?optionID=' + valOfTypeChosenCurrent;
+                // see CartController's CheckIfAddLocShouldHide method for commented explanation regarding the 'shouldShow' property.
+                if (data) {
 
-    //        $.ajax({
-    //            type: 'GET',
-    //            contentType: constants.FormPostContentType,
-    //            cache: false,
-    //            url: url,
-    //            dataType: constants.JsonDataType,
-    //            beforeSend: function() {
-    //                dropDown.attr('disabled', 'disabled').after('<i id="discountSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-    //            }
-    //        }).done(function(data) {
+                    if (data.shippingDetailsRqrd === 'Yes') {
+                        OCA.shippingAddressRequired = true;
+                    } else {
+                        OCA.shippingAddressRequired = false;
+                    }
 
-    //            // see CartController's CheckIfAddLocShouldHide method for commented explanation regarding the 'shouldShow' property.
-    //            if (data.shouldShow === 'No') {
+                    OCA.updatePriceOnNewSelection(valOfTypeChosenCurrent, totalPrice, dropDown);
+                }
+            });
+        });
+    };
 
-    //                registerDuringCheckout.gatherPricingData(); /* BUTTONS DIFFERENT HERE*/
+    // This function's purpose is to update pricing details where the RegType DropDown has its selected value changed.
+    // It also displays the Shipping Details modal form where the RegType chosen has a shipping address requirement.
+    OCA.updatePriceOnNewSelection = function (registrationTypeId, totalPrice, dropDown) {
 
-    //                //  First, check if there are currently any Additional Locations added to the order.
-    //                if (anyAddLocs === true) {
+        var url = '/Cart/UpdateOrderDetails';
 
-    //                    position = $('#confirmation').offset();
+        var payLoad = {
+            idOrderRow: OCA.cartStateManager.getOrderRowId(),
+            idRegType: registrationTypeId
+        };
 
-    //                    var url = '/Cart/RemoveAdditionalLocationsFromOrder';
-    //                    var payLoad = {
-    //                        idOrderRow: OCA.cartStateManager.getOrderRowId()
-    //                    };
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: url,
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payLoad),
+        }).done(function (data) {
 
-    //                    $.ajax({
-    //                        type: 'POST',
-    //                        contentType: constants.JsonContentType,
-    //                        cache: false,
-    //                        url: url,
-    //                        dataType: constants.JsonDataType,
-    //                        data: JSON.stringify(payLoad),
-    //                    }).done(function(data) {
+            if (data) {
 
-    //                        if (data.Result === 'Success') {
-    //                            // This next variable is initially set in the CheckoutConfirm.cshtml razor view
-    //                            anyAddLocs = false;
-    //                            $('#additionalLocationsCaption').html('None');
+                $('#baseCost').html('$' + data.BasePrice + '.00');
+                $('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + data.Total + '.00</span>');
+            }
 
-    //                            $('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 706 for immediate assistance').addClass('text-info');
+            dropDown.removeAttr('disabled');
+            $('#discountSpinner').remove();
 
-    //                            $('#addLocsText').html('Additional Locations: <span id="totalAdLocsPrice">$0.00</span>').addClass('muted');
-    //                            totalPrice = registerDuringCheckout.totalPrice - registerDuringCheckout.addLocsPrice;
-
-    //                            updatePriceOnNewSelection(valOfTypeChosenCurrent, totalPrice, dropDown);
-    //                        }
-    //                    });
-
-    //                    valOfTypeChosenCurrent = valOfTypeChosenPrevious = dropDown.val();
-    //                    typeChosenCurrent = typeChosenPrevious = $.trim($('#RegType option:selected').text());
-    //                    chosenRegTypeLabel.empty().text(typeChosenCurrent);
-    //                } else {
-    //                    typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
-    //                    chosenRegTypeLabel.empty().text(typeChosenCurrent);
-    //                    valOfTypeChosenPrevious = valOfTypeChosenCurrent;
-
-    //                    updatePriceOnNewSelection(valOfTypeChosenCurrent, registerDuringCheckout.totalPrice, dropDown);
-    //                }
-    //            } else {
-    //                typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
-    //                chosenRegTypeLabel.empty().text(typeChosenCurrent);
-    //                valOfTypeChosenPrevious = valOfTypeChosenCurrent;
-    //                updatePriceOnNewSelection(valOfTypeChosenCurrent, registerDuringCheckout.totalPrice, dropDown);
-    //            }
-
-    //            if (data.shippingDetailsRqrd === 'Yes') {
-    //                registerDuringCheckout.shippingAddressRequired = true;
-    //            } else {
-    //                registerDuringCheckout.shippingAddressRequired = false;
-    //            }
-    //        });
-    //    });
-    //};
+            if (OCA.shippingAddressRequired) {
+                OCA.displayModal($('#UserDetailsModal'));
+            }
+        });
+    };
 
     OCA.setUpEditButtons = function() {
         $('#revealOptions').on('click', function(e) {
@@ -121,7 +99,7 @@ OCA.initializeFunctions = function () {
         // The Bill Me button on 3rd tab
         $('#ConfirmRegistrationBillMe').on('click', function(e) {
             e.preventDefault();
-            var confirmOrderForm = $('#confirmOrder');
+            var confirmOrderForm = $('#confirmOrderForAffiliateForm');
             confirmOrderForm.submit();
         });
 
@@ -209,11 +187,6 @@ OCA.initializeFunctions = function () {
                     // I think the cause would have to be rooted here over very near here.
 
                     if (data.Result === 'Success') {
-                        //var fullname = $('#ShippingAddress_Name').val();
-
-                        //var userNameInsuranceAndButton = $('#userDetailsSummed > p:nth-child(1)');
-                        //userNameInsuranceAndButton.empty();
-                        //userNameInsuranceAndButton.html(fullname + ' - ' + $('#RegisterFields_Institution').val() + '<br> ' + $('#RegisterFields_Email').val() + ' - <a id="editUserDetails" role="button" class="btn btn-mini" target="new"> Edit?</a>');
 
                         $('#editUserDetails').on('click', function (e) {
 
@@ -223,8 +196,6 @@ OCA.initializeFunctions = function () {
                         });
 
                         $('#updateShippingMsgLabelWrap').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details updated successfully.</span>');
-                        //modalForm.modal('hide');
-                        // [sjh] - i might surmise that this is an attempt to fix the above bug 
 
                     } else if (!data.isSuccessful) {
                         //var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
@@ -280,67 +251,59 @@ OCA.initializeFunctions = function () {
     };
 
     /* This function gets invoked when the 3rd tab is loaded and an existing user is using the cart */
-    OCA.checkoutConfirm.initialize = function(userId) {
-        OCA.cartStateManager.setCancelOrderForm($('#cancelOrder'));
-        OCA.cartStateManager.setConfirmOrderForm($('#confirmOrder'));
+    OCA.checkoutConfirm.initialize = function (userId) {
 
-        console.log('initialize hit');
+        OCA.cartStateManager.setCancelOrderForm($('#cancelOrder'));
+        OCA.cartStateManager.setConfirmOrderForm($('#confirmOrderForAffiliateForm'));
+        var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
+        var confirmModal = $('#ConfirmModal');
 
         OCA.cartStateManager.getConfirmOrderForm().on('submit', function(e) {
-            //Rollbar.info('submitting confirmOrder form');
+            
             e.preventDefault();
 
             var self = $(this);
             self.find('input[name="id"]').val(OCA.cartStateManager.getOrderRowId());
-            var err = new Error('submitting ConfirmOrder' + OCA.cartStateManager.getOrderRowId());
-            //NREUM.noticeError(err);
 
             var data = $(this).serialize();
-            $('#ConfirmRegistrationBillMe').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-
-            $('#ConfirmRegistrationBillMe').attr('disabled', 'disabled');
+            confirmRegistrationBillMe.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
 
             $.ajax({
                 type: 'POST',
-                contentType: RegistrationInCart.Constants.FormPostContentType,
+                contentType: constants.FormPostContentType,
                 cache: false,
                 url: self.attr('action'),
-                dataType: RegistrationInCart.Constants.JsonDataType,
+                dataType: constants.JsonDataType,
                 data: data,
                 beforeSend: function() {
-                    $('#ConfirmRegistrationBillMe').attr('disabled', 'disabled');
+                    confirmRegistrationBillMe.attr('disabled', 'disabled');
                     //$('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Working...</span>');
                 }
             }).done(function(data) {
                 if (data.Result === 'Success') {
                     orderRowID = data.OrderRowID;
 
-                    var err = new Error('Posted Order: ' + orderRowID);
-                    //NREUM.noticeError(err);
                     $('#orderDetails').empty();
                     $('#orderDetails').append(data.Msg);
 
                     $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
 
-                    $('#ConfirmModal').modal('show');
+                    confirmModal.modal('show');
 
                 } else {
-
-                    var err = new Error('FAILED posting Order: ');
-                    //NREUM.noticeError(err);
-
-                    $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                    confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                 }
 
                 $('#finalLoadingSpinner').remove();
-                $('#ConfirmRegistrationBillMe').removeAttr('disabled');
+                confirmRegistrationBillMe.removeAttr('disabled');
+
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 $('#finalLoadingSpinner').remove();
-                $('#ConfirmRegistrationBillMe').removeAttr('disabled');
-                $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                confirmRegistrationBillMe.removeAttr('disabled');
+                confirmRegistrationBillMe.after('<span class="field-validation-error">Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
             });
 
-            $('#ConfirmModal').on('hidden', function(e) {
+            confirmModal.on('hidden', function (e) {
                 var utilities = new Common.Utilities();
                 console.log('/webinar/details/' + OCA.cartStateManager.getWebinarId());
                 utilities.goToUrl('/webinar/details/' + OCA.cartStateManager.getWebinarId());
@@ -381,14 +344,14 @@ OCA.initializeFunctions = function () {
                             var err = new Error('Cancel Order Failure');
                             //NREUM.noticeError(err);
 
-                            $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                            confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                             $('#CancelModal').modal('hide');
                         }
 
                         // enable button again upon ending operation.
                         $('#cancelRegistration').removeAttr('disabled');
                     } else {
-                        $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Server Error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                        confirmRegistrationBillMe.after('<span class="field-validation-error">Server Error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                         $('#CancelModal').modal('hide');
                     }
                 }, 'json');
@@ -491,7 +454,8 @@ OCA.wireUpHandlers = function() {
                                     OCA.displayModal($('#UserDetailsModal'));
                                 }
 
-                                // see top of this file
+                                OCA.hookUpChangeTypeLogic($('#RegType'));
+                                
                                 OCA.checkoutConfirm.initialize();
 
                                 OCA.wireUpMainButtonsOn3rdTab();

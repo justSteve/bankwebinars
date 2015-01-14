@@ -94,6 +94,49 @@ namespace CUWebinars.Web.Controllers
             return this.ModelStateJson(ModelState);
         }
 
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult ConfirmOrderForAffiliate(string referred, int? id = null)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
+                    var orderID = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
+                    model.Order.OrderStatus = OrderStatus.Submitted;
+                    model.Order.Origin = "Cart";
+
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
+                    }
+                    else
+                    {
+                        _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: true);
+                    }
+
+                    _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
+                
+
+                    return Json(new
+                    {
+                        Result = WebUiConstants.Success,
+                        OrderRowID = orderID,
+                        Msg = string.Format("<p>Your Order ID is {0}. Please check your email for connection information for the webinar.</p>", orderID)
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                catch (Exception exception)
+                {
+                    ModelState.AddModelError(string.Empty, "There was a problem at the server. Please contact the administrator.");
+                    _logger.ErrorException("ConfirmOrder|ConfirmOrder failed ", exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                }
+            }
+
+            return this.ModelStateJson(ModelState);
+        }
+
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult CancelOrder(int? id = null)
         {
