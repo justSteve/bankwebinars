@@ -13,7 +13,7 @@
                         select orderRow;
         var thisWebinar = orderRows.Single().Webinar;
     }
-     Confirmation of Registration: @thisWebinar.Title
+    Confirmation of Registration: @thisWebinar.Title
 </title>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -33,13 +33,46 @@
     var notiShipped = rowRegType.ShowShippedNotifications;
 
 
+    System.Text.StringBuilder thankYouPhrase = new System.Text.StringBuilder();
     System.Text.StringBuilder connInfoPhrase = new System.Text.StringBuilder();
     var locations = myRow.AdditionalLocation;
     System.Text.StringBuilder addLocs = new System.Text.StringBuilder();
 
     var isFirstOrderForThisUser = true;
 
-    //var orderCount = CUWebinars.Business.Services.OrderManagementService.
+    thankYouPhrase.Append("Dear @Model.Order.FirstName,<br /><br />Thank you for your <i>{0}</i> order for <b>:");
+    thankYouPhrase.Append(row.Single().RegistrationType.OptionLabel);
+    thankYouPhrase.Append("</b> of <i>" + row.Single().Webinar.Title + "</i>");
+    //TODO: We need to distingush between _Orders_ created via the importer and _NewUserAccounts_ created by the importer.
+    // an imported order (vs. shopping cart based) present 2 distinct contingencies when composing the confirmation message.
+    // it appears that isFirstOrderForThisUser is otherwise unused and so obviously, added for just this purpose.
+    // even so...
+
+    // let us consider the lexicon behind 'UserCreatedOnImport' vs. 'OrderCreatedOnImport' .
+    // To aid future maintenance let's code to a case/switch instead of nested Ifs
+    // Therefore, each of these 4 possible contingencies should fully compose the 'ThankYouPhrase'
+    
+    // ImportedForNewUser
+    // ImportedForExistingUser
+    // CartByNewUser
+    // CartByExistingUser
+    
+    if (Model.UserCreatedOnImport)
+    {
+        thankYouPhrase.Append(" - placed for you by " + Model.Order.Affiliate.DisplayTitle + ". ");
+
+        if (isFirstOrderForThisUser)
+        {
+
+            thankYouPhrase.Append(". We've created an account and request that you confirm this transaction by visiting (or pasting this address to your browser) <b><a href=" + Model.ConfirmChangeEmailUrl + ">" + Model.ConfirmChangeEmailUrl + "</b></a>");
+
+        }
+    }
+    else if (Model.UserCreatedInCart)
+    {
+        thankYouPhrase.Append("When your order was submitted, we created an account and requested that you enter a new password. In case you missed that prompt or don't recall entering a password, please visit <b><a href=" + Model.AddPasswordUrl + ">Set My Password</a></b> or paste this URL into your browser:<i>@Model.AddPasswordUrl</i>.</text>");
+    }
+
 
     if (locations.Count != 0)
     {
@@ -258,19 +291,8 @@
                                                                     <tr>
                                                                         <td colspan="2" style="text-align: left; margin-left: 6px; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: small">
                                                                             <div style="color: black; font-family: Arial, Helvetica, sans-serif; padding: 5px; font-size: 12px;">
-                                                                                <p>
-                                                                                    Dear @Model.Order.FirstName,<br /><br />
-                                                                                    Thank you for your <i>@row.Single().RegistrationType.OptionLabel</i> order for <i>@row.Single().Webinar.Title</i>.
-
-                                                                                    @if (Model.UserCreatedOnImport)
-                                                                                    {
-                                                                                        <text>This order was placed for you by [affiliateName].  We've created an account at <b>@TenantDomain</b> and request that you activate the account by clicking this link <b><a href="@Model.ConfirmChangeEmailUrl">Set My Password</a></b> or paste this URL into your browser: <i>@Model.ConfirmChangeEmailUrl</i>.</text>
-                                                                                    }
-                                                                                    else if (Model.UserCreatedInCart)
-                                                                                    {
-                                                                                        <text>Please activate the account by clicking this link <b><a href="@Model.AddPasswordUrl">Set My Password</a></b> or paste this URL into your browser: <i>@Model.AddPasswordUrl</i>.</text>
-                                                                                    }
-                                                                                </p> @connInfoPhrase
+                                                                                @thankYouPhrase
+                                                                                @connInfoPhrase
                                                                                 <p>
                                                                                     Again, thank you very much for your patronage and don't hesitate to let us know how we can serve you better!<br /><br />Sincerely,<br />The @Tenant Staff<br /><br />
                                                                                 </p>
