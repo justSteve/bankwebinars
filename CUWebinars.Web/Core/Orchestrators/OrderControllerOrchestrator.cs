@@ -170,9 +170,11 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             var verifyAccountCommand = new VerifyAccountCommand
             {
-                TempPassword = migrateOrder.LastName.Trim().ToLower(),
+                TempPassword = _stateService.GetValue<string>("tempPassword"),
                 VerificationKey = verificationKey
             };
+
+            _stateService.ClearValue("tempPassword");
 
             _commandProcessor.Execute(verifyAccountCommand);
 
@@ -184,11 +186,13 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             var verifyAccountCommand = new VerifyAccountCommand
             {
-                TempPassword = importOrder.LastName.Trim().ToLower(),
+                TempPassword = _stateService.GetValue<string>("tempPassword"),
                 VerificationKey = verificationKey
             };
 
-            //_commandProcessor.Execute(verifyAccountCommand);
+            _stateService.ClearValue("tempPassword");
+
+            _commandProcessor.Execute(verifyAccountCommand);
 
             //  Now we clear the value, so TtsSmtpMessageDelivery can go back to business as usual.
             _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
@@ -291,6 +295,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             var tempPassword = PasswordGenerator.GenerateRandomString(6);
             _logger.Error("TempPassword for migrated user | {0} : {1}", email, tempPassword);
 
+            _stateService.SetValue("tempPassword", tempPassword);
+
             //  Here, we set a value which indicates to the TtsSmtpMessageDelivery object that the user was created while importing an order.
             //  This will be checked in TtsSmtpMessageDelivery and the notification will not be sent if this value is present.
             _stateService.SetValue(DomainConstants.UserCreatedViaNewOrder, true);
@@ -320,7 +326,14 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             var firstName = importOrder.FirstName.Trim();
             var lastName = importOrder.LastName.Trim();
-            var tempPassword = lastName.ToLower();
+
+            // HACK: We are logging the temppassword as a means of persisting it to enable Admins to email it to the imported user. 
+            // It is logged at Error level b/c that level will always be logged (but Info-level may be turned off). 
+            var tempPassword = PasswordGenerator.GenerateRandomString(6);
+            _logger.Error("TempPassword for imported user | {0} : {1}", email, tempPassword);
+
+            _stateService.SetValue("tempPassword", tempPassword);
+
 
             //  Here, we set a value which indicates to the TtsSmtpMessageDelivery object that the user was created while importing an order.
             //  This will be checked in TtsSmtpMessageDelivery and the notification will not be sent if this value is present.
