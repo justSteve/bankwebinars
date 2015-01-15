@@ -311,7 +311,6 @@ GO
 EXEC updateRegGroups
 
 DELETE FROM MembershipReboot.dbo.UserAccounts WHERE email IN ('MigrateSteve@ttstrain.com' ,'MigrateSteve1@ttstrain.com' ,'MigrateSteve2@ttstrain.com','MigrateSteve3@ttstrain.com','steve@ttstrain.com','steve1@ttstrain.com','steve2@ttstrain.com','steve21@ttstrain.com')
-UPDATE dbo.Webinar SET [OrganizerKey] = '922930',[OrganizerOAuthKey] = 'A93DZ8hhX8JAqKNVAm04uZLDJckD' 
 
 EXEC dbo.InsertGTWConnectionInfo @idWebinar = 1719, -- int
     @Status = 0, -- int
@@ -322,7 +321,8 @@ EXEC dbo.InsertGTWConnectionInfo @idWebinar = 1719, -- int
     @AccessCodePresenter = N'626-564-899', -- nvarchar(max)
     @AccessCodeOrganizer = N'421-322-267' -- nvarchar(max)
 
-
+UPDATE BankWebinars.dbo.Webinar SET OrganizerKey = '922930', OrganizerOAuthKey  = 'A93DZ8hhX8JAqKNVAm04uZLDJckD'
+UPDATE BankWebinars.dbo.Webinar SET OrganizerKey = '643333405148919814', OrganizerOAuthKey  = 'bcDzWKEHfnJAWb9FQGCRcAwuqf25'
 
 PRINT '-----------------Seeder '
 PRINT 'finished '

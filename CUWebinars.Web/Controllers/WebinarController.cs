@@ -147,16 +147,12 @@ namespace CUWebinars.Web.Controllers
             try
             {
                 ViewBag.PageStyleType = "two-columns-right-sidebar";
-                var webinars = _webinarManagementService.GetAllActive(); //TODO: [dar] can this be deleted now? Not being used.
                 ViewBag.TopicCaption = " ";
                 string searchTerm = Request["searchTerm"];
-                ViewBag.Title = "Search Results";
-                //TODO: SEARCH: see if you can add support for:
-                //1. include if matched presenter's last name
-                //2. include if matched [topicDesc] field of Topic Table. 
-                //
-                webinars = _webinarManagementService.GetWebinarByPresenterLastName(searchTerm);
-                var webinarsByTopic = _webinarManagementService.GetWebinarByTopicDescription(searchTerm);
+                //TODO: [UPDATED SEARCH TASK]: 
+                // my original search code included a way
+                var webinars = _webinarManagementService.GetWebinarByPresenterLastName(searchTerm);
+                var webinarsByTopic = _webinarManagementService.GetWebinarByDescription(searchTerm);
                 var unionOfResultSets = webinars.Union(webinarsByTopic);
 
                 ViewBag.Title = "Search Results";

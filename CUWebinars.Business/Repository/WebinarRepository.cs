@@ -44,19 +44,44 @@ namespace CUWebinars.Business.Repository
 
         public IEnumerable<Webinar> FindByPresenterLastName(string lastName)
         {
-            return items.Where(w => w.Presenter.WebUser.LastName.ToLower().Contains(lastName.ToLower()));
+            return items.Where(w => w.Presenter.WebUser.LastName.ToLower()
+                .Contains(lastName.ToLower())
+                && (w.Status == WebinarStatus.Active
+                    || w.Status == WebinarStatus.InProgress
+                    || w.Status == WebinarStatus.Recorded));
         }
 
-        public IEnumerable<Webinar> FindByTopicDescription(string topicDescription)
+        public IEnumerable<Webinar> FindByDescription(string searchTerm)
         {
             var stronglyTypedContext = (TTSWebinarsContext)db;
 
             // 1st get all topics with the topicDescription
-            var topicsOfSearch = stronglyTypedContext.Topics.Where(t => t.topicDesc.ToLower().Contains(topicDescription.ToLower()));
+            var topicsOfSearch = stronglyTypedContext.Topics
+                .Where(t => t.topicDesc.ToLower()
+                    .Contains(searchTerm.ToLower()));
 
             // project that into a list of webinars
-            var result = topicsOfSearch.SelectMany(t => t.WebinarTopicXrefs).Select(w => w.Webinar).AsEnumerable();
+            var searchTopics = topicsOfSearch.SelectMany(t => t.WebinarTopicXrefs)
+                .Select(w => w.Webinar)
+                .Where(w => w.Status == WebinarStatus.Active
+                    || w.Status == WebinarStatus.InProgress
+                    || w.Status == WebinarStatus.Recorded
+                    )
+                    .AsEnumerable();
 
+
+            var searchDesc = stronglyTypedContext.Webinars
+                .Where(w => w.DescriptionLong.ToLower().Contains(searchTerm)
+                        || w.Title.ToLower().Contains(searchTerm)
+                    || w.WhoAttend.ToLower().Contains(searchTerm)
+                    || w.LearnBody.ToLower().Contains(searchTerm)
+                    && (w.Status == WebinarStatus.Active
+                    || w.Status == WebinarStatus.InProgress
+                    || w.Status == WebinarStatus.Recorded)
+
+                    ).AsEnumerable(); ;
+
+            var result = searchTopics.Union(searchDesc);
             return result;
         }
 
