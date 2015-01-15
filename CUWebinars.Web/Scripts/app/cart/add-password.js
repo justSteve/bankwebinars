@@ -35,6 +35,8 @@ $(function() {
                 $('#loginContainer').empty().load('/Account/GetLoginPartial', function(e) {
                     //  do nothing. It just displays the name of the logged in user as a link. No further action required.
                 });
+
+                $('#main_menu ul.primary_menu').append('<li><a href="/Account/MyWebinars">My Webinars</a></li>');
             }
         });
     });
