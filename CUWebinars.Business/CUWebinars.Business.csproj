@@ -294,7 +294,6 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <EmbeddedResource Include="Notification\Templates\OrderSubmitted.cshtml" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

@@ -37,7 +37,7 @@ namespace CUWebinars.Business.Notification.Formatters
         public INotificationMessage Format<T>(T underPinningObject, string templateName)
         {
             LoadBodyTemplate(templateName);
-            Console.WriteLine(templateName);
+
             return CreateMessage(GetSubject(underPinningObject), GetBody(underPinningObject));
         }
 
@@ -76,13 +76,10 @@ namespace CUWebinars.Business.Notification.Formatters
 
         private void LoadTemplate(string name)
         {
-            var templatePath = "CUWebinars.Business.Notification.Templates." + name;
-
-            var assembly = typeof(Formatter).Assembly;
-
+            var templatePath = Path.Combine(EnvironmentInformation.BaseUrl, DomainConstants.ResourcePathTemplate, name);
             var settings = new XmlReaderSettings { ConformanceLevel = ConformanceLevel.Fragment };
 
-            using (XmlReader reader = XmlReader.Create(assembly.GetManifestResourceStream(templatePath), settings))
+            using (XmlReader reader = XmlReader.Create(templatePath, settings))
             {
                 while (reader.Read())
                 {
@@ -101,7 +98,7 @@ namespace CUWebinars.Business.Notification.Formatters
                     if (div != null)
                         _emailBody = div.ToString();
                 }
-            } 
+            }
         }
     }
 }
