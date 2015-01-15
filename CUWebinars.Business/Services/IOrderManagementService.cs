@@ -47,7 +47,8 @@ namespace CUWebinars.Business.Services
         WebUser GetWebUser(int id);
         IEnumerable<WebUser> GetWebusersForLiveNotifications(int idWebinar);
         OrderRow LoadOrderRow(int id);
-        Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink);
+
+        Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink, OrderGenesis orderGenesis = OrderGenesis.ImportedForExistingUser);
         IList<Order> SelectOrdersWithArchivedWebinars(int idUser);
         IList<Order> SelectOrdersWithRecordedWebinars(int idUser);
         IList<Order> SelectOrdersWithScheduledWebinars(int idUser);

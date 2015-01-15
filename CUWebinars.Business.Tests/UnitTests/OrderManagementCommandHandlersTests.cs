@@ -1,5 +1,6 @@
 ﻿using BrockAllen.MembershipReboot.Ef;
 using CUWebinars.Business.AccountService;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.CQS;
 using CUWebinars.Business.CQS.CommandHandlers;
 using CUWebinars.Business.CQS.Commands;
@@ -428,7 +429,7 @@ namespace CUWebinars.Business.Tests.UnitTests
                     .Returns(newOrder);
 
             _orderManagementServiceMock.Setup(
-                o => o.SaveOrderChanges(newOrder, _addOrderCommand.VerificationKey, _addOrderCommand.ConfirmChangeEmailUrl))
+                o => o.SaveOrderChanges(newOrder, _addOrderCommand.VerificationKey, _addOrderCommand.ConfirmChangeEmailUrl, OrderGenesis.ImportedForNewUser))
                 .Verifiable();
 
 

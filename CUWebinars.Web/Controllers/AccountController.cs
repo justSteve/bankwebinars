@@ -290,7 +290,6 @@ namespace CUWebinars.Web.Controllers
         {
             try
             {
-
                 var changeEmailFromKeyInputModel = _accountControllerOrchestrator.ConfirmUser(email, password);
 
                 return string.IsNullOrEmpty(changeEmailFromKeyInputModel.ScreenMessage)

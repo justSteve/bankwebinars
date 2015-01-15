@@ -132,6 +132,7 @@
     <Compile Include="Core\Helpers\DateTimeHelper.cs" />
     <Compile Include="Core\Helpers\GenericHelpers.cs" />
     <Compile Include="Core\Helpers\ValidationHelper.cs" />
+    <Compile Include="Core\OrderGenesis.cs" />
     <Compile Include="Core\PricesAndDiscounts.cs" />
     <Compile Include="Core\Tracing\Log4NetTracer.cs" />
     <Compile Include="Core\Tracing\Tracer.cs" />
@@ -293,6 +294,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <EmbeddedResource Include="Notification\Templates\OrderSubmitted.cshtml" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

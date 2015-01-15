@@ -173,8 +173,8 @@ var OrderRegistration;
             //$("#connectionsCount").val(0);
             $('#collectAdditionalLocation').html('');
 
-            $('#AddToCart').attr({ disabled: false, value: 'Sign Up' });
-            $('#AddToCart1').attr({ disabled: false, value: 'Sign Up' });
+            $('#AddToCart').attr({ disabled: false, text: 'Sign Up' });
+            $('#AddToCart1').attr({ disabled: false, text: 'Sign Up' });
         };
         return StateManager;
     })();

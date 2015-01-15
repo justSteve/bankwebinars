@@ -117,10 +117,14 @@ namespace CUWebinars.Web.Controllers
 
                 var orderManagementQueryResult = _orderControllerOrchestrator.GetPreparatoryData(incomingOrderModel, email);
 
+                bool userAlreadyExists = true;
+
                 if (ReferenceEquals(null, orderManagementQueryResult.WebUser))
                 {
                     try
                     {
+                        userAlreadyExists = false;
+
                         orderManagementQueryResult.WebUser =
                             _orderControllerOrchestrator.ProcessNewUser(incomingOrderModel, email);
 
@@ -143,7 +147,7 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 idOfLastOrder = _orderControllerOrchestrator.CreateNewOrder(incomingOrderModel, email,
-                    orderManagementQueryResult, verificationKey, confirmChangeEmailUrl);
+                    orderManagementQueryResult, verificationKey, confirmChangeEmailUrl, userAlreadyExists);
 
                 _logger.Info(string.Format("CreateOrder|CreateNewOrder: {0}", idOfLastOrder));
 
@@ -293,10 +297,15 @@ namespace CUWebinars.Web.Controllers
                 var importQueryResult = _orderControllerOrchestrator.GetPreparatoryDataForImporter(importedOrder
                     , email);
 
+                bool userAlreadyExists = true;
+
+                // If WebUser is null, it is a new user that will be created upon importation of this order.
                 if (ReferenceEquals(null, importQueryResult.WebUser))
                 {
                     try
                     {
+                        userAlreadyExists = false;
+
                         importQueryResult.WebUser =
                             _orderControllerOrchestrator.ImportUser(importedOrder, email);
 
@@ -305,7 +314,7 @@ namespace CUWebinars.Web.Controllers
                         confirmChangeEmailUrl =
                             _orderControllerOrchestrator.GetConfirmChangeEmailLinkForNewUserAccount();
 
-                        _orderControllerOrchestrator.FinalizeImportedRegistation(importedOrder, verificationKey);
+                        _orderControllerOrchestrator.FinalizeImportedRegistation(verificationKey);
 
                         _logger.Info(string.Format("ImportOrder|CreateUser Succeeded: {0}", email));
                     }
@@ -319,7 +328,7 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 idOfLastOrder = _orderControllerOrchestrator.ImportOrder(importedOrder, email,
-                    importQueryResult, verificationKey, confirmChangeEmailUrl);
+                    importQueryResult, verificationKey, confirmChangeEmailUrl, userAlreadyExists);
                 
                 //idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
                 _logger.Info(string.Format("ImportOrder from {0} produced: {1}",importedOrder.Source + "-"+ importedOrder.Version, idOfLastOrder));

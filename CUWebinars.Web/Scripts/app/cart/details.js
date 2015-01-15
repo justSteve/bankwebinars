@@ -63,9 +63,11 @@ $(function () {
 
                 $('#finalLoadingSpinner').remove();
                 $('#ConfirmRegistrationBillMe').removeAttr('disabled');
+                $('#signUpSpinner').remove();
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 $('#finalLoadingSpinner').remove();
                 $('#ConfirmRegistrationBillMe').removeAttr('disabled');
+                $('#signUpSpinner').remove();
                 $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
             });
 
@@ -169,7 +171,7 @@ $(function () {
 
     /* Click event for the big green SignUp button */
     $('#AddToCart').on('click', function () {
-        $(this).attr('disabled', 'disabled');
+        $(this).prepend('<i id="signUpSpinner" class="icon-spinner icon-spin"></i>').attr('disabled', 'disabled');
         signUpForm.submit();
     });
 
@@ -229,8 +231,8 @@ $(function () {
 
         var data = signUpForm.serialize();
 
-        $('#SignUpForm > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
-        var spinner = $('#loadingSpinner');
+        $('#SignUpForm > div');
+        var spinner = $('#signUpSpinner');
 
         // If the user IS NOT LOGGED IN - control moves to the register-during-checkout.js script
         if (!cartStateManager.getIsUserLoggedIn()) {

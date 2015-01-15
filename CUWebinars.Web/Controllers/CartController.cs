@@ -117,7 +117,6 @@ namespace CUWebinars.Web.Controllers
                     }
 
                     _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
-                
 
                     return Json(new
                     {

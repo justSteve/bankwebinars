@@ -76,10 +76,13 @@ namespace CUWebinars.Business.Notification.Formatters
 
         private void LoadTemplate(string name)
         {
-            var templatePath = Path.Combine(EnvironmentInformation.BaseUrl, DomainConstants.ResourcePathTemplate, name);
+            var templatePath = "CUWebinars.Business.Notification.Templates." + name;
+
+            var assembly = typeof(Formatter).Assembly;
+
             var settings = new XmlReaderSettings { ConformanceLevel = ConformanceLevel.Fragment };
 
-            using (XmlReader reader = XmlReader.Create(templatePath, settings))
+            using (XmlReader reader = XmlReader.Create(assembly.GetManifestResourceStream(templatePath), settings))
             {
                 while (reader.Read())
                 {

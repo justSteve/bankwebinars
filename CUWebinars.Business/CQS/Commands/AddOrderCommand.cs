@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Models;
+﻿using CUWebinars.Business.Core;
+using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.CQS.Commands
 {
@@ -12,6 +13,7 @@ namespace CUWebinars.Business.CQS.Commands
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public OrderRow OrderRow { get; set; }
+        public OrderGenesis OrderGenesis { get; set; }
         public Address ShippingAddress { get; set; }
 
         public string VerificationKey { get; set; }

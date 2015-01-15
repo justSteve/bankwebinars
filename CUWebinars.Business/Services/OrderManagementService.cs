@@ -510,13 +510,14 @@ namespace CUWebinars.Business.Services
                 AddPasswordUrl = string.Empty,
                 ConfirmChangeEmailUrl = string.Empty,
                 Order = order,
+                OrderGenesis = userCreatedInCart ? OrderGenesis.CreatedViaCartByNewUser : OrderGenesis.CreatedViaCartByExistingUser,
                 UserCreatedInCart = userCreatedInCart,
                 UserCreatedOnImport = false
             };
 
             if (!ReferenceEquals(null, url))
             {
-                Uri baseUri = new Uri(string.Concat(url.Scheme, @"://", url.Authority), UriKind.Absolute);
+                var baseUri = new Uri(string.Concat(url.Scheme, @"://", url.Authority), UriKind.Absolute);
                 addPasswordUrl = new Uri(
                     baseUri,
                     string.Concat(@"Account/AddPasswordForCartCreatedUser/", order.WebUser.email)
@@ -816,7 +817,7 @@ namespace CUWebinars.Business.Services
             }
         }
 
-        public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink)
+        public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink, OrderGenesis orderGenesis = OrderGenesis.ImportedForExistingUser)
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
             var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(currentOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar);
@@ -851,13 +852,14 @@ namespace CUWebinars.Business.Services
                                 currentOrder.WebUser.LastName.ToLower())
                             : string.Empty,
                     Order = updatedOrder,
+                    OrderGenesis = orderGenesis,
                     UserCreatedOnImport = linkToVerifyAccount
                 };
 
 
                 //  The following "if" statement suppresses the OrderSubmitted notification where anonymous user has
-                //  clicked the SignUp button or the order was migrated. That same notification will be sent when the user clicks the "Bill Me" 
-                //  button on the 3rd tab of the cart.
+                //  clicked the SignUp button or the order was migrated. The notification is still sent, it is just that
+                //  it will be sent when the user clicks the "Bill Me" button on the 3rd tab of the cart. Not now.
                 if (!currentOrder.Origin.Equals("Migrator", StringComparison.OrdinalIgnoreCase) &&
                     !currentOrder.Origin.Equals(DomainConstants.Cart, StringComparison.OrdinalIgnoreCase))
                 {

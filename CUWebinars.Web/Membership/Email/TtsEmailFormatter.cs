@@ -45,9 +45,11 @@ namespace CUWebinars.Web.Membership.Email
 
         private string LoadTemplate(string name)
         {
-            name = Path.Combine(_pathToTemplates, name);
+            name = "CUWebinars.Web.Membership.Email.EmailTemplates." + name;
+
+            var assembly = typeof(TtsEmailFormatter).Assembly;
                         
-            using (var s = File.OpenRead(name))
+            using (var s = assembly.GetManifestResourceStream(name))
             {
                 if (s == null) throw new FileNotFoundException("Unable to find template.", name);
 

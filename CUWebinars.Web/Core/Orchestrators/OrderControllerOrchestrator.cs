@@ -1,16 +1,15 @@
-﻿using System;
-using System.Diagnostics;
-using CUWebinars.Business.Constants;
+﻿using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.CQS;
 using CUWebinars.Business.CQS.Commands;
 using CUWebinars.Business.CQS.Queries;
 using CUWebinars.Business.Models;
-using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Membership;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
-using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
+using System;
+using System.Diagnostics;
 
 namespace CUWebinars.Web.Core.Orchestrators
 {
@@ -77,10 +76,11 @@ namespace CUWebinars.Web.Core.Orchestrators
         }
 
         public int ImportOrder(ImportOrderModel ImportOrderModel,
-                            string email,
-                            ImportQueryResult importQueryResult,
-                            string verificationKey,
-                            string confirmChangeEmailUrl)
+            string email,
+            ImportQueryResult importQueryResult,
+            string verificationKey,
+            string confirmChangeEmailUrl,
+            bool existingUser)
         {
             var ImportOrderRowCommand = new ImportOrderRowCommand
             {
@@ -103,6 +103,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 Email = email,
                 FirstName = ImportOrderModel.FirstName.Trim(),
                 LastName = ImportOrderModel.LastName.Trim(),
+                OrderGenesis = existingUser ? OrderGenesis.ImportedForExistingUser : OrderGenesis.ImportedForNewUser,
                 OrderRow = ImportOrderRowCommand.OrderRow, // out parameter of addOrderRowCommand command
                 ShippingAddress = ImportOrderModel.ShippingAddress,
                 VerificationKey = verificationKey,
@@ -116,11 +117,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             return ImportOrderCommand.OrderId;
         }
 
-        public int CreateNewOrder(IncomingOrderModel incomingOrderModel,
-            string email,
-            OrderManagementQueryResult orderManagementQueryResult,
-            string verificationKey,
-            string confirmChangeEmailUrl)
+        public int CreateNewOrder(IncomingOrderModel incomingOrderModel, string email, OrderManagementQueryResult orderManagementQueryResult, string verificationKey, string confirmChangeEmailUrl, bool userAlreadyExists)
         {
             var addOrderRowCommand = new AddOrderRowCommand
             {
@@ -141,6 +138,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 FirstName = incomingOrderModel.FirstName.Trim(),
                 LastName = incomingOrderModel.LastName.Trim(),
                 OrderRow = addOrderRowCommand.OrderRow, // out parameter of addOrderRowCommand command
+                OrderGenesis = userAlreadyExists ? OrderGenesis.CreatedViaCartByExistingUser : OrderGenesis.CreatedViaCartByNewUser,
                 ShippingAddress = incomingOrderModel.ShippingAddress,
                 VerificationKey = verificationKey,
                 Webinar = orderManagementQueryResult.Webinar,
@@ -182,7 +180,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
         }
 
-        public void FinalizeImportedRegistation(ImportOrderModel importOrder, string verificationKey)
+        public void FinalizeImportedRegistation(string verificationKey)
         {
             var verifyAccountCommand = new VerifyAccountCommand
             {

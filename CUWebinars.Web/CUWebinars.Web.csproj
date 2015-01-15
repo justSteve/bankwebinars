@@ -1069,8 +1069,8 @@
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
-    <Content Include="Membership\Email\EmailTemplates\AccountCreatedEvent_Body.cshtml" />
-    <Content Include="Membership\Email\EmailTemplates\AccountCreatedEvent_Subject.cshtml" />
+    <EmbeddedResource Include="Membership\Email\EmailTemplates\AccountCreatedEvent_Body.cshtml" />
+    <EmbeddedResource Include="Membership\Email\EmailTemplates\AccountCreatedEvent_Subject.cshtml" />
     <Content Include="App_Data\Orders\SampleData.csv" />
     <Content Include="App_Data\Orders\SampleData.xlsx" />
     <Content Include="favicon.ico" />
@@ -1146,22 +1146,22 @@
     <Content Include="Content\css\BootstrapTemplates\style.css.map">
       <DependentUpon>style.css</DependentUpon>
     </Content>
-    <Content Include="Membership\Email\EmailTemplates\PasswordResetRequestedEvent_Body.cshtml" />
-    <Content Include="Membership\Email\EmailTemplates\PasswordChangedEvent_Body.cshtml" />
-    <Content Include="Membership\Email\EmailTemplates\PasswordChangedEvent_Subject.cshtml" />
-    <Content Include="Membership\Email\EmailTemplates\PasswordResetRequestedEvent_Subject.cshtml" />
-    <Content Include="Notification\Templates\OrderSubmitted.cshtml" />
-    <Content Include="Membership\Email\EmailTemplates\EmailVerifiedEvent_Subject.cshtml" />
-    <Content Include="Membership\Email\EmailTemplates\EmailVerifiedEvent_Body.cshtml" />
+    <EmbeddedResource Include="Membership\Email\EmailTemplates\PasswordResetRequestedEvent_Body.cshtml" />
+    <EmbeddedResource Include="Membership\Email\EmailTemplates\PasswordChangedEvent_Body.cshtml" />
+    <EmbeddedResource Include="Membership\Email\EmailTemplates\PasswordChangedEvent_Subject.cshtml" />
+    <EmbeddedResource Include="Membership\Email\EmailTemplates\PasswordResetRequestedEvent_Subject.cshtml" />
+    <EmbeddedResource Include="Notification\Templates\OrderSubmitted.cshtml" />
+    <EmbeddedResource Include="Membership\Email\EmailTemplates\EmailVerifiedEvent_Subject.cshtml" />
+    <EmbeddedResource Include="Membership\Email\EmailTemplates\EmailVerifiedEvent_Body.cshtml" />
     <Content Include="Notification\Templates\SendShippedOrder.cshtml" />
     <Content Include="Notification\Templates\SendRecordingPosted.cshtml" />
     <Content Include="Notification\Templates\SendReminder.cshtml" />
     <Content Include="Scripts\Autocomplete\css\ui-lightness\images\Thumbs.db" />
     <Content Include="App_Data\Deploy\DeployScript.ps1" />
     <Content Include="Notification\Templates\SendConnectionInfo.cshtml" />
-    <Content Include="Membership\Email\EmailTemplates\EmailChangedEvent_Subject.cshtml" />
-    <Content Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Body.cshtml" />
-    <Content Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Subject.cshtml" />
+    <EmbeddedResource Include="Membership\Email\EmailTemplates\EmailChangedEvent_Subject.cshtml" />
+    <EmbeddedResource Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Body.cshtml" />
+    <EmbeddedResource Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Subject.cshtml" />
     <Content Include="App_Data\Orders\ImportSampleOrders.xlsm" />
     <None Include="Properties\PublishProfiles\cuwebinars.pubxml" />
     <None Include="Properties\PublishProfiles\cuwebinars1 - FTP %282%29.pubxml" />

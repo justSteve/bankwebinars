@@ -99,7 +99,7 @@
                                 @if (Model.UserOwnsThisEvent < 1)
                                 {
                                     <div class="tab-pane active" id="signUp">
-                                        <input type="button" class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
+                                        <button type="button" class="btn-success btn btn-large pull-right" id="AddToCart"> Sign Up </button>
                                         @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)
                                     </div>
                                     <div class="tab-pane" id="contactInfo">

@@ -6,12 +6,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 {
     public interface IOrderControllerOrchestrator
     {
-        int CreateNewOrder(IncomingOrderModel incomingOrderModel,
-            string email,
-            OrderManagementQueryResult orderManagementQueryResult,
-            string verificationKey,
-            string confirmChangeEmailUrl
-            );
+        int CreateNewOrder(IncomingOrderModel incomingOrderModel, string email, OrderManagementQueryResult orderManagementQueryResult, string verificationKey, string confirmChangeEmailUrl, bool userAlreadyExists);
         int MigrateOrder(MigrateOrderModel migrateOrderModel,
             string email,
             MigratorQueryResult migratorQueryResult,
@@ -22,11 +17,12 @@ namespace CUWebinars.Web.Core.Orchestrators
             string email,
             ImportQueryResult importQueryResult,
             string verificationKey,
-            string confirmChangeEmailUrl
+            string confirmChangeEmailUrl,
+            bool existingUser
             );
         void FinalizeNewRegistration(IncomingOrderModel incomingOrderModel, string verificationKey);
         void FinalizeMigratedRegistation(MigrateOrderModel migrateOrder, string verificationKey);
-        void FinalizeImportedRegistation(ImportOrderModel importOrder, string verificationKey);
+        void FinalizeImportedRegistation(string verificationKey);
         OrderManagementQueryResult GetPreparatoryData(IncomingOrderModel incomingOrderModel, string email);
         MigratorQueryResult GetPreparatoryDataForMigrator(MigrateOrderModel migrateOrder, string email);
         ImportQueryResult GetPreparatoryDataForImporter(ImportOrderModel importOrder, string email);
