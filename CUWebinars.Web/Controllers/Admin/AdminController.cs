@@ -409,13 +409,13 @@ namespace CUWebinars.Web.Controllers.Admin
             foreach (var order in orders)
             {
                 AdditionalLocation nuller = new AdditionalLocation();
-                GenerateRegistrantKey(order, nuller);
+               if (string.IsNullOrEmpty(order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).JoinURL)) GenerateRegistrantKey(order, nuller);
 
                 if (order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count > 0)
                 {
                     foreach (var additionalLocation in order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)
                     {
-                        GenerateRegistrantKey(order, additionalLocation);
+                        if (string.IsNullOrEmpty(order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).JoinURL)) GenerateRegistrantKey(order, additionalLocation);
                     }
                 }
             }
@@ -460,6 +460,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 if (parsedJsonObject[WebUiConstants.RegistrantKey] != null)
                 {
+                    _logger.Info("RegKey for ." + order.idOrder+ " = " + regKeyResponse);
+
                     var registrantKey = parsedJsonObject[WebUiConstants.RegistrantKey].ToString();
                     var joinUrl = parsedJsonObject[WebUiConstants.JoinUrl].ToString();
                     if (additionalLocation.Email == null)

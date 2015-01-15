@@ -43,7 +43,7 @@ namespace CUWebinars.Business.Core
             config.AddEventHandler(new SendShippedOrderHandler(genericFormatter, notificationDelivery,
                 sendShippedOrderHandlerLogger));
             config.AddEventHandler(new SendConnectionInfoHandler(genericFormatter, notificationDelivery,
-                sendConnectionInfoHandlerLogger));
+                notificationOrderHandlerLogger, notificationPersister, new EnvironmentInformation { BaseUrl = baseUrl }));
             config.AddEventHandler(new SendReminderHandler(genericFormatter, notificationDelivery,
                 sendReminderHandlerLogger));
             config.AddEventHandler(new SendRecordingPostedHandler(genericFormatter, notificationDelivery,

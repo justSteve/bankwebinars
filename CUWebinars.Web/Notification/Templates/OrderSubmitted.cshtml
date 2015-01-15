@@ -42,29 +42,16 @@
 
     var isFirstOrderForThisUser = true;
 
-    thankYouPhrase.Append("Dear @Model.Order.FirstName,<br /><br />Thank you for your <i>{0}</i> order for <b>:");
+    thankYouPhrase.Append("Dear @Model.Order.FirstName,<br /><br />Thank you for your order for <b>:");
     thankYouPhrase.Append(row.Single().RegistrationType.OptionLabel);
     thankYouPhrase.Append("</b> of <i>" + row.Single().Webinar.Title + "</i>");
-    //TODO: We need to distingush between _Orders_ created via the importer and _NewUserAccounts_ created by the importer.
-    // an imported order (vs. shopping cart based) present 2 distinct contingencies when composing the confirmation message.
-    // it appears that isFirstOrderForThisUser is otherwise unused and so obviously, added for just this purpose.
-    // even so...
-
-    // let us consider the lexicon behind 'UserCreatedOnImport' vs. 'OrderCreatedOnImport' .
-    // To aid future maintenance let's code to a case/switch instead of nested Ifs
-    // Therefore, each of these 4 possible contingencies should fully compose the 'ThankYouPhrase'
-
-    // ImportedForNewUser
-    // ImportedForExistingUser
-    // CartByNewUser
-    // CartByExistingUser
 
     switch (Model.OrderGenesis)
     {
         case OrderGenesis.CreatedViaCartByExistingUser:
             break;
         case OrderGenesis.CreatedViaCartByNewUser:
-            thankYouPhrase.Append(". When your order was submitted, we created an account and requested that you enter a new password. In case you missed that prompt or don't recall entering a password, please visit <b><a href=" + Model.AddPasswordUrl + ">Set My Password</a></b> or paste this URL into your browser:<i>@Model.AddPasswordUrl</i>.</text>");
+            thankYouPhrase.Append(". When your order was submitted, we created an account and requested that you enter a new password. In case you missed that prompt or don't recall entering a password, please visit <b><a href=" + Model.AddPasswordUrl + ">Set My Password</a></b> or paste this URL into your browser:<i>" +Model.AddPasswordUrl + "</i>.</text>");
             break;
         case OrderGenesis.ImportedForExistingUser:
             break;

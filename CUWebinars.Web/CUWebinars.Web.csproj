@@ -412,6 +412,7 @@
     <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\GeneratesStatementsToInsertRegTypesXRef.sql" />
     <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\MRScratch.sql" />
     <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\populatesMR.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\migrateWebinarsForCU.sql" />
     <Content Include="App_Data\Orders\SubscriptionsOut.csv" />
     <Content Include="App_Data\Orders\SubsFromCSV.dtsx" />
     <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\ImportProductionDb.ps1" />

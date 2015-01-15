@@ -1,59 +1,201 @@
-﻿@using System.Diagnostics
+﻿@using System.Configuration
+@using System.Globalization
 @using System.Linq
+@using System.Text
 @using System.Web.Mvc.Html
+@using CUWebinars.Business.Core
 @using CUWebinars.Business.Models
-@model Order
+@using CUWebinars.Business.Notification.ViewModel
+@model CUWebinars.Business.Notification.ViewModel.OrderSubmittedViewModel
 
 <title>
     @{
-        var orderRows = from orderRow in Model.OrderRows
+        var orderRows = from orderRow in Model.Order.OrderRows
                         where orderRow.RowStatus == OrderRowStatus.Active
                         select orderRow;
         var thisWebinar = orderRows.Single().Webinar;
     }
-    Connection Information for @thisWebinar.Title
+    Confirmation of Registration: @thisWebinar.Title
 </title>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 @{
-    var handoutRepo = "http://ondemand.cuwebinars.com";
-    var row = from orderRow in Model.OrderRows
+
+    var row = from orderRow in Model.Order.OrderRows
               where orderRow.RowStatus == OrderRowStatus.Active
               select orderRow;
     var webinar = row.Single().Webinar;
+    var rowRegType = row.Single().RegistrationType;
+    var joinURL = row.Single().JoinURL;
     var myRow = row.Single();
-
-    var joinURL = myRow.JoinURL;
     var phone = "TBA";
     var code = "TBA";
+    var notiConnectionInfo = rowRegType.ShowLiveNotifications;
+    var notiRecordingPosted = rowRegType.ShowRecordingNotifications;
+    var notiShipped = rowRegType.ShowShippedNotifications;
+
+
+    var thankYouPhrase = new StringBuilder();
+    var connInfoPhrase = new StringBuilder();
+    var locations = myRow.AdditionalLocation;
+    var addLocs = new StringBuilder();
+
+    var isFirstOrderForThisUser = true;
+
+    thankYouPhrase.Append("Dear @Model.Order.FirstName,<br /><br />Thank you for your order for <b>:");
+    thankYouPhrase.Append(row.Single().RegistrationType.OptionLabel);
+    thankYouPhrase.Append("</b> of <i>" + row.Single().Webinar.Title + "</i>");
+
+    switch (Model.OrderGenesis)
+    {
+        case OrderGenesis.CreatedViaCartByExistingUser:
+            break;
+        case OrderGenesis.CreatedViaCartByNewUser:
+            thankYouPhrase.Append(". When your order was submitted, we created an account and requested that you enter a new password. In case you missed that prompt or don't recall entering a password, please visit <b><a href=" + Model.AddPasswordUrl + ">Set My Password</a></b> or paste this URL into your browser:<i>" + Model.AddPasswordUrl + "</i>.</text>");
+            break;
+        case OrderGenesis.ImportedForExistingUser:
+            break;
+        case OrderGenesis.ImportedForNewUser:
+            thankYouPhrase.Append(" - placed for you by " + Model.Order.Affiliate.DisplayTitle + ". ");
+
+            if (isFirstOrderForThisUser)
+            {
+
+                thankYouPhrase.Append(". We've created an account and request that you confirm this transaction by visiting (or pasting this address to your browser) <a href=" + Model.ConfirmChangeEmailUrl + "><b>" + Model.ConfirmChangeEmailUrl + "</b></a>");
+
+            }
+            break;
+    }
+
+
+    if (locations.Count != 0)
+    {
+        //redo this code to address lack of comparison operator
+        //  lessThan sign doesn't work with the processor
+        System.Text.StringBuilder addresses = new System.Text.StringBuilder();
+        int optionsCost = 0;
+        var iterator = 0;
+        if (locations.Count == 1)
+        {
+            addLocs.Append("The registration includes a single additional location for " + @locations.First().Email + " costing " + locations.First().Price.ToString("C").Replace(".00", "") + ". ");
+        }
+        if (locations.Count == 2)
+        {
+            foreach (var addLoc in locations)
+            {
+                iterator++;
+                if (iterator == 2)
+                {
+                    addresses.Append(addLoc.Email);
+                }
+                if (iterator == 1)
+                {
+                    {
+                        addresses.Append(addLoc.Email + " and ");
+                    }
+                }
+                optionsCost = optionsCost + Convert.ToInt32(addLoc.Price);
+            }
+            addLocs.Append(" This registration also includes " + locations.Count + " additional locations (total added cost is " + optionsCost.ToString("C").Replace(".00", "") + ") for " + addresses + ".");
+            addLocs.Append(" Each of these addresses will receive individualized connection information.");
+        }
+    }
+
+    if (webinar.Status == WebinarStatus.Scheduled)
+    {
+
+        if (notiConnectionInfo == "Yes")
+        {
+            connInfoPhrase.Append("<p>Two to three days prior to the event ");
+            connInfoPhrase.Append("we'll send connection instructions and links to handouts or other materials. </p>");
+
+            if (notiRecordingPosted == "Yes")
+            {
+                connInfoPhrase.Append("<p> Shortly following the conclusion you'll receive notification when the recording is posted");
+
+
+                if (notiShipped == "Yes")
+                {
+                    connInfoPhrase.Append(" - then again 3-5 days later informing you that we've shipped your CD and printouts");
+                }
+                connInfoPhrase.Append(".</p>");
+            }
+            connInfoPhrase.Append("<p>" + addLocs + "</p>");
+        }
+        else
+        {
+            connInfoPhrase.Append("<p>Because this order doesn't include the <i>live</i> session ");
+            connInfoPhrase.Append("we'll only be sending you a notification when the OnDemand Recording is posted");
+            if (notiShipped == "Yes")
+            {
+                connInfoPhrase.Append(" and then another after your CD and printouts have shipped");
+            }
+            connInfoPhrase.Append(".</p>");
+        }
+    }
+
+
+    if (webinar.Status == WebinarStatus.Active)
+    {
+        connInfoPhrase.Append("<p>");
+        if (notiConnectionInfo == "Yes")
+        {
+            connInfoPhrase.Append(" This order confirmation includes a link to connect directly to the webinar.");
+        }
+        if (notiRecordingPosted == "Yes")
+        {
+            connInfoPhrase.Append(" Shortly following the conclusion you'll receive another notification that the recording is posted");
+
+            if (notiShipped == "Yes")
+            {
+                connInfoPhrase.Append(" - then again 3-5 days later that we've shipped your CD and printouts");
+            }
+            connInfoPhrase.Append(".</p>");
+        }
+    }
+
+
+    if (webinar.Status == WebinarStatus.Recorded)
+    {
+        connInfoPhrase.Append("<p>");
+        if (notiRecordingPosted == "Yes")
+        {
+            connInfoPhrase.Append(" See below for a link to access your recording and event materials.");
+        }
+        if (notiShipped == "Yes")
+        {
+            connInfoPhrase.Append(" Over the next 3-5 days you'll see a notification that we've shipped your physical materials.");
+        }
+        connInfoPhrase.Append("</p>");
+    }
+
 
     if (joinURL == null)
     {
-        joinURL = "https://www2.gotomeeting.com/join/" + webinar.WebinarKey;
+        joinURL = webinar.CitrixRegisterUrl;
     }
     if (webinar.AccessCodeAttendee != null)
     {
         code = webinar.AccessCodeAttendee;
     }
 
-    string DateTimeString = TtsTemplateHelperObject.FormatTimeWithDuration(webinar.Date, Model.WebUser.timeZone, true, webinar.Duration);
+    string DateTimeString = TtsTemplateHelperObject.FormatTimeWithDuration(webinar.Date, Model.Order.WebUser.timeZone, true, webinar.Duration);
     string Tenant = TtsTemplateHelperObject.Tenant();
     string TenantEmail = TtsTemplateHelperObject.TenantEmail();
     string TenantDomain = TtsTemplateHelperObject.TenantDomain();
     string TenantURL = TtsTemplateHelperObject.TenantURL();
     string TenantLogo = TtsTemplateHelperObject.TenantLogo();
     string TenantPrefix = TtsTemplateHelperObject.TenantPrefix();
-    string TenantCom = TenantDomain + ".com";
 
     if (webinar.AccessPhone != null)
     {
         phone = webinar.AccessPhone;
     }
-    var HeaderText = "Your Connection Information";
-    var BannerText = "Order Number: "+TenantPrefix + Model.idOrder + "<br />Type: " + myRow.RegistrationType.OptionLabel;
+    var HeaderText = "Confirmation of Registration for<br />" + webinar.Title;
+    var BannerText = "Order Number: " + TenantPrefix + Model.Order.idOrder + "<br />Type: " + row.Single().RegistrationType.OptionLabel;
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Connection Information</title>
+        <title>[@Tenant]: Confirmation of Registration for @webinar.Title</title>
         <style type="text/css">
             .auto-style1 {
                 height: 10px;
@@ -91,12 +233,12 @@
                                 </tr>
                                 <tr>
                                     <td width="462px" bgcolor="#344a58" valign="top">
-                                        <img align="middle" alt="Site Logo" border="0" height="50" hspace="25" margin="0px 0px 0px 0px" src="@TenantLogo" style="width: 332px; height: 50px; display: block;" title="Site Logo" vspace="25" width="332" />
+                                        <img align="middle" alt="SiteLogo" border="0" height="50" hspace="25" margin="0px 0px 0px 0px" src="@TenantLogo" style="width: 332px; height: 50px; display: block;" title="Site Logo" vspace="25" width="332" />
                                     </td>
                                     <td align="left" bgcolor="#344a58" style="padding: 0px 15px 0px 0px; border-right-color: rgb(52, 74, 88); border-right-width: 1px; border-right-style: solid;">
-                                        <span style="text-align: center; color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                        <p style="text-align: center; color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
                                             @BannerText
-                                        </span>
+                                        </p>
                                     </td>
                                 </tr>
                             </tbody>
@@ -106,7 +248,6 @@
                         <img alt="right_shadow.jpg" border="0" height="1" margin="0px 0px 0px 0px" src="http://images.ttstrain.com/images/vrLocal/right_shadow.jpg" style="width: 5px; height: 1px; display: block;" width="5" />
                     </td>
                 </tr>
-
 
                 <tr style="background-color: #B4D1EC">
                     <td style="padding: 15px 0px; border-right-color: rgb(52, 74, 88); border-left-color: rgb(52, 74, 88); border-right-width: 1px; border-left-width: 1px; border-right-style: solid; border-left-style: solid;">
@@ -125,231 +266,287 @@
                                 </tr>
                                 <tr>
                                     <td colspan="2" style="background-color: #344a58">
-                                        <table width="630px" border="0" align="center" cellpadding="0" cellspacing="0">
+                                        <table width="500px" border="0" align="center" cellpadding="0" cellspacing="0">
                                             <tr>
-                                                <td colspan="2">
-                                                    <table width="550px" border="0" align="center" cellpadding="0" cellspacing="0">
+                                                <td width="50px" style="text-align: right;  background-color: #000000; padding-right: 6px; font-size: small"> </td>
+                                                <td width="500px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;"> </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="text-align: right; width: 50px; background-color: #000000; padding-right: 6px; font-size: small"></td>
+                                                <td width="500px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
+                                                    <table border="0" cellpadding="0" cellspacing="0" style="width: 500px;">
                                                         <tr>
-                                                            <td style="text-align: right; width: 50px; background-color: #000000; padding-right: 6px; font-size: smaller"></td>
-                                                            <td width="500px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
-                                                                <table border="0" cellpadding="0" cellspacing="0" style="width: 500px;">
+                                                            <td colspan="2" style="background-color: #344a58">
+                                                                <table border="0" align="center" cellpadding="0" cellspacing="0">
                                                                     <tr>
-                                                                        <td colspan="2" style="background-color: #344a58">
-                                                                            <table border="0" align="center" cellpadding="0" cellspacing="0">
-                                                                                <tr>
-                                                                                    <td colspan="2" style="text-align: left; margin-left: 6px; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller">
-                                                                                        <span style="color: black; font-family: Arial, Helvetica, sans-serif; padding: 5px; font-size: 12px;">
-                                                                                            <br />Dear @Model.FirstName,<br />
-                                                                                            Please find below the information required to attend the upcoming webinar<br /> <b><i>@webinar.Title</i></b><br /><br />
-                                                                                        </span>
-                                                                                    </td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller">
-                                                                                        <span align="right" style="vert-align: top; font-size: smaller">
-                                                                                            Presenter:
-                                                                                        </span>
-                                                                                    </td>
-                                                                                    <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
-                                                                                        <span style="vert-align: top; color: black; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
-                                                                                            @webinar.Presenter.WebUser.FullName<br />
-                                                                                        </span>
-                                                                                    </td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller">
-                                                                                        <span align="right" style="vert-align: top; font-size: smaller">
-                                                                                            Date:
-                                                                                        </span>
-                                                                                    </td>
-                                                                                    <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
-                                                                                        <span style="color: #000000;vert-align: top; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
-                                                                                            <b>
-                                                                                                @webinar.Date.ToString("dddd, MMMM d"), @webinar.Date.ToString("yyyy")
-                                                                                            </b>
-                                                                                        </span>
-                                                                                    </td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller">
-                                                                                        <span align="right" style="vert-align: top; font-size: smaller">
-                                                                                            Time:
-                                                                                        </span>
-                                                                                    </td>
-                                                                                    <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
-                                                                                        <span style="color: #000000; vert-align: top; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
-                                                                                            <b>
-                                                                                                @DateTimeString
-                                                                                            </b>
-                                                                                        </span>
-                                                                                    </td>
-                                                                                </tr>
-
-                                                                                <tr>
-                                                                                    <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller">
-                                                                                        <span align="right" style="vert-align: top; font-size: smaller">
-                                                                                            Event Materials:
-                                                                                        </span>
-                                                                                    </td>
-                                                                                    <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
-                                                                                        <span style="color: #000000; vert-align: top; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
-                                                                                            @{
-                                                                                                if (webinar.WebinarFiles.Count == 0)
-                                                                                                {
-                                                                                                    <span>Opps...still waiting on that. Will be provided in followup email.</span>
-                                                                                                }
-                                                                                                else
-                                                                                                {
-                                                                                                    foreach (var i in webinar.WebinarFiles)
-                                                                                                    {
-                                                                                                        <a href='@handoutRepo/@i.fileLocation'>@i.fileDesc</a><br />
-                                                                                                    }
-                                                                                                }
-                                                                                            }
-                                                                                            <br /><br />
-                                                                                        </span>
-                                                                                    </td>
-                                                                                </tr>
-
-                                                                                @{
-                                                                                    <tr>
-                                                                                        <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller">
-                                                                                            <span align="right" style="vert-align: top; font-family: Arial, Helvetica, sans-serif; font-size: smaller">
-                                                                                                JoinURL:
-                                                                                            </span>
-                                                                                        </td>
-                                                                                        <td width="350px" style="font-size: smaller; text-align: left; background-color: #B4D1EC; padding-left: 6px;">
-                                                                                            <span style="vert-align: top; font-size: smaller; font-family: Arial, Helvetica, sans-serif;">
-                                                                                                <a href="@joinURL">Click this link 10-15 minutes prior to the scheduled start time.</a>
-                                                                                            </span>
-                                                                                        </td>
-                                                                                    </tr>
-
-                                                                                    <tr>
-                                                                                        <td colspan="2" style="text-align: left; background-color: #B4D1EC; padding-left: 6px; padding-top: 6px; padding-bottom: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller">
-                                                                                            <span align="center" style="vert-align: top; font-family: Arial, Helvetica, sans-serif; font-size: smaller; ">
-                                                                                                The event's audio will stream via your internet connection. <br />
-                                                                                                Alternatively, you may use this phone number and access code to listen over your phone line.
-                                                                                            </span>
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller;">
-                                                                                            <span align="right" style="vert-align: top; font-family: Arial, Helvetica, sans-serif; font-size: smaller">
-                                                                                                Phone:
-                                                                                            </span>
-                                                                                        </td>
-                                                                                        <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller">
-                                                                                            <span style="vert-align: top; font-family: Arial, Helvetica, sans-serif; font-size: smaller; ">
-                                                                                                @phone
-                                                                                            </span>
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller">
-                                                                                            <span align="right" style="vert-align: top; font-size: smaller">
-                                                                                                Access Code:
-                                                                                            </span>
-                                                                                        </td>
-                                                                                        <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller;">
-                                                                                            <span style="vert-align: top; font-size: smaller">
-                                                                                                @code
-                                                                                            </span>
-                                                                                        </td>
-                                                                                    </tr>
-
-                                                                                    if (row.Single().RegistrationType.ShowShippedNotifications == "Yes")
-                                                                                    {
-                                                                                        if (webinar.RecordingUrl == "")
-                                                                                        {
-                                                                                            <tr>
-                                                                                                <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller;">
-                                                                                                    <span align="right" style="vert-align: top; font-size: smaller; ">
-                                                                                                        CD-ROM:
-                                                                                                    </span>
-                                                                                                </td>
-                                                                                                <td style="width: 350px;  text-align: left; font-size: smaller; background-color: #B4D1EC; padding-left: 6px;">
-                                                                                                    <span align="center" style="vert-align: top; font-size: smaller; font-family: Arial, Helvetica, sans-serif; ">
-                                                                                                        The CD-ROM and handouts will ship 7-10 business days following the event.<br />
-                                                                                                        Your order also includes six months access to the OnDemand Recording.
-                                                                                                    </span>
-                                                                                                </td>
-                                                                                            </tr>
-                                                                                            <tr>
-                                                                                                <td style="text-align: right; width: 130px; background-color: #CCCCCC; padding-right: 6px; font-size: smaller"></td>
-                                                                                                <td style="text-align: left; background-color: #B4D1EC; padding-left: 6px; font-family: Arial, Helvetica, sans-serif; "></td>
-                                                                                            </tr>
-                                                                                        }
-                                                                                        else
-                                                                                        {
-                                                                                            <tr>
-                                                                                                <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller">
-                                                                                                    <span align="right" style="vert-align: top; font-size: smaller; font-family: Arial, Helvetica, sans-serif; ">
-                                                                                                        CD-ROM:
-                                                                                                    </span>
-                                                                                                </td>
-                                                                                                <td style="width: 350px; text-align: left; font-size: smaller; background-color: #B4D1EC; padding-left: 6px;">
-                                                                                                    <span align="center" style="vert-align: top; font-size: smaller; font-family: Arial, Helvetica, sans-serif; ">
-                                                                                                        The CD-ROM and handouts  will ship in 7-10 business days.<br />
-                                                                                                        Your order also includes six months access to the OnDemand Recording.
-                                                                                                    </span>
-                                                                                                </td>
-                                                                                            </tr>
-                                                                                            <tr>
-                                                                                                <td style="text-align: right; width: 130px; background-color: #CCCCCC; padding: 6px; font-size: smaller"></td>
-                                                                                                <td style="text-align: left; width: 350px; background-color: #B4D1EC; padding: 6px;"></td>
-                                                                                            </tr>
-                                                                                        }
-                                                                                    }
-                                                                                    if (row.Single().RegistrationType.ShowRecordingNotifications == "Yes")
-                                                                                    {
-                                                                                        if (webinar.RecordingUrl == "")
-                                                                                        {
-                                                                                            <tr>
-                                                                                                <td valign="top" style="text-align: right; width: 130px; background-color: #CCCCCC; padding: 6px; font-size: smaller">
-                                                                                                    <span align="right" style="vert-align: top; font-size: smaller; font-family: Arial, Helvetica, sans-serif; ">
-                                                                                                        OnDemand Recording:
-                                                                                                    </span>
-                                                                                                </td>
-                                                                                                <td style="table-layout: fixed; width: 350px; white-space: nowrap; text-align: left; background-color: #B4D1EC; padding: 6px; font-size: smaller;">
-                                                                                                    <span align="center" style="vert-align: top; font-size: smaller; font-family: Arial, Helvetica, sans-serif; ">
-                                                                                                        Recordings are posted within 24 hours following the event.<br />
-                                                                                                        Watch your email (or visit MyWebinars) for more information.
-                                                                                                    </span>
-                                                                                                </td>
-                                                                                            </tr>
-                                                                                        }
-                                                                                        else
-                                                                                        {
-                                                                                            <tr>
-                                                                                                <td valign="top" style="text-align: right; vert-align: top; width: 130px; background-color: #CCCCCC; padding: 6px; font-size: smaller">
-                                                                                                    <span align="right" style=" font-size: smaller; font-family: Arial, Helvetica, sans-serif; ">
-                                                                                                        OnDemand Recording:
-                                                                                                    </span>
-                                                                                                </td>
-                                                                                                <td style="table-layout: fixed; width: 350px; white-space: nowrap; text-align: left; background-color: #B4D1EC; padding: 6px;">
-                                                                                                    <span align="center" style="vert-align: top; font-size: smaller; font-family: Arial, Helvetica, sans-serif; ">
-                                                                                                        Your OnDemand Recording is ready to view. Visit \MyWebinars for complete details.
-                                                                                                    </span>
-                                                                                                </td>
-                                                                                            </tr>
-                                                                                        }
-                                                                                    }
-                                                                                }
-                                                                            </table>
+                                                                        <td width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: small"> </td>
+                                                                        <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;"> </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan="2" style="text-align: left; margin-left: 6px; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: small">
+                                                                            <div style="color: black; font-family: Arial, Helvetica, sans-serif; padding: 5px; font-size: 12px;">
+                                                                                @thankYouPhrase
+                                                                                @connInfoPhrase
+                                                                                <p>
+                                                                                    Again, thank you very much for your patronage and don't hesitate to let us know how we can serve you better!<br /><br />Sincerely,<br />The @Tenant Staff<br /><br />
+                                                                                </p>
+                                                                            </div>
                                                                         </td>
                                                                     </tr>
+                                                                    @*<tr>
+                                                                            <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px"><p align="right" style="vert-align: top; font-size: small">Presenter:</p></td>
+                                                                            <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
+                                                                                <p style="color: black; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                                                                    @webinar.Presenter.WebUser.FullName<br />
+                                                                                </p>
+                                                                            </td>
+                                                                        </tr>*@
+                                                                    <tr>
+                                                                        <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px">
+                                                                            <span align="right" style="vert-align: top; font-size: 10px;">
+                                                                                Title:
+                                                                            </span>
+                                                                        </td>
+                                                                        <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
+                                                                            <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                                                                <b>
+                                                                                    @webinar.Title
+                                                                                </b>
+                                                                            </span>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px">
+                                                                            <span align="right" style="vert-align: top; font-size: 10px;">
+                                                                                Attendance Type:
+                                                                            </span>
+                                                                        </td>
+                                                                        <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
+                                                                            <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                                                                <b>
+                                                                                    @row.Single().RegistrationType.OptionLabel
+                                                                                </b>
+                                                                            </span>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px">
+                                                                            <span align="right" style="vert-align: top; font-size: 10px;">
+                                                                                Date:
+                                                                            </span>
+                                                                        </td>
+                                                                        <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
+                                                                            <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                                                                <b>
+                                                                                    @webinar.Date.ToString("dddd, MMMM d"), @webinar.Date.ToString("yyyy")
+                                                                                </b>
+                                                                            </span>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px">
+                                                                            <span align="right" style="vert-align: top; font-size: 10px;">
+                                                                                Time:
+                                                                            </span>
+                                                                        </td>
+                                                                        <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
+
+                                                                            <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                                                                <b>
+                                                                                    @DateTimeString
+                                                                                </b>
+                                                                            </span>
+                                                                        </td>
+                                                                    </tr>
+                                                                    @{
+                                                                        if (webinar.Status == WebinarStatus.Active)
+                                                                        {
+                                                                            <tr>
+                                                                                <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px">
+                                                                                    <span align="right" style="vert-align: top; font-size: 10px;">
+                                                                                        Event Materials:
+                                                                                    </span>
+                                                                                </td>
+                                                                                <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
+                                                                                    <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+
+                                                                                        @if (webinar.WebinarFiles.Count == 0)
+                                                                                        {
+                                                                                            <span>Opps...still waiting on that. Will be provided in followup email.</span>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            foreach (var i in webinar.WebinarFiles)
+                                                                                            {
+                                                                                                <a href='http://ondemand.cuwebinars.com/@i.fileLocation'>@i.fileDesc</a>
+                                                                                                <br />
+                                                                                            }
+                                                                                        }
+                                                                                        <br />
+                                                                                    </span>
+                                                                                </td>
+                                                                            </tr>
+                                                                            if (rowRegType.ShowLiveNotifications == "Yes")
+                                                                            {
+                                                                                <tr>
+                                                                                    <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px;">
+                                                                                        <span align="right" style="vert-align: top; font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
+                                                                                            JoinURL:
+                                                                                        </span>
+                                                                                    </td>
+                                                                                    <td width="350px" style="font-size: small; text-align: left; background-color: #B4D1EC; padding-left: 6px;">
+                                                                                        <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                                                                            <a style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;' href="@joinURL">Click this link 10-15 minutes prior to the scheduled start time.</a>
+                                                                                        </span>
+                                                                                    </td>
+                                                                                </tr>
+
+                                                                                <tr>
+                                                                                    <td colspan="2" style="text-align: center; background-color: #B4D1EC; padding-left: 6px; padding-top: 6px; padding-bottom: 6px; font-family: Arial, Helvetica, sans-serif; font-size: small">
+                                                                                        <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                                                                            The event's audio will stream via your internet connection. <br />
+                                                                                            Alternatively, you may use this phone number and access code to listen over your phone line.
+                                                                                        </span>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px;">
+                                                                                        <span align="right" style="vert-align: top; font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
+                                                                                            Phone:
+                                                                                        </span>
+                                                                                    </td>
+                                                                                    <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px; font-family: Arial, Helvetica, sans-serif; font-size: small">
+                                                                                        <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                                                                            @phone
+                                                                                        </span>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px">
+                                                                                        <span align="right" style="vert-align: top; font-size: 10px;">
+                                                                                            Access Code:
+                                                                                        </span>
+                                                                                    </td>
+                                                                                    <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px; font-family: Arial, Helvetica, sans-serif; font-size: small;">
+                                                                                        <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                                                                            @code
+                                                                                        </span>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            }
+                                                                        } // end 'if webinar active' branch
+                                                                        else
+                                                                        {
+                                                                            if (rowRegType.ShowLiveNotifications == "Yes")
+                                                                            {
+                                                                                <tr>
+                                                                                    <td style="text-align: right; width: 130px; background-color: #CCCCCC; padding-right: 6px; font-size: small"></td>
+                                                                                    <td style="text-align: left; background-color: #B4D1EC; padding-left: 6px;"></td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td valign="top" colspan="2" style="text-align: center; background-color: #CCCCCC; padding-right: 6px; padding-top: 6px; padding-bottom: 6px; font-family: Arial, Helvetica, sans-serif; font-size: small;">
+                                                                                        <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                                                                            The connection information will be generated 2-3 days prior to the scheduled starting time. Watch your email or log into http://www.@TenantDomain/MyWebinars for detailed instructions.
+                                                                                        </span>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td style="text-align: right; width: 130px; background-color: #CCCCCC; padding-right: 6px; font-size: small"></td>
+                                                                                    <td style="text-align: left; width: 400px; background-color: #B4D1EC; padding-left: 6px;"></td>
+                                                                                </tr>
+
+                                                                            }
+                                                                        }
+
+
+                                                                        if (rowRegType.ShowShippedNotifications == "Yes")
+                                                                        {
+                                                                            if (webinar.RecordingUrl == "")
+                                                                            {
+                                                                                <tr>
+                                                                                    <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: small;">
+                                                                                        <span align="right" style="vert-align: top; font-size: 10px">
+                                                                                            CD-ROM:
+                                                                                        </span>
+                                                                                    </td>
+                                                                                    <td style="width: 350px;  text-align: left; font-size: small; background-color: #B4D1EC; padding-left: 6px;">
+                                                                                        <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                                                                            The CD-ROM and handouts will arrive 7-10 business days following the event. Your order also includes six months access to the OnDemand Playback.
+                                                                                        </span>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td style="text-align: right; width: 130px; background-color: #CCCCCC; padding-right: 6px; font-size: small"></td>
+                                                                                    <td style="text-align: left; background-color: #B4D1EC; padding-left: 6px; font-family: Arial, Helvetica, sans-serif; "></td>
+                                                                                </tr>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <tr>
+                                                                                    <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px">
+                                                                                        <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
+                                                                                            CD-ROM:
+                                                                                        </span>
+                                                                                    </td>
+                                                                                    <td style="width: 350px; text-align: left; font-size: small; background-color: #B4D1EC; padding-left: 6px;">
+                                                                                        <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                                                                            The CD-ROM and handouts will arrive 7-10 business days following the event. Your order also includes six months access to the OnDemand Playback.<br />
+                                                                                        </span>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td style="text-align: right; width: 130px; background-color: #CCCCCC; padding: 6px; font-size: small"></td>
+                                                                                    <td style="text-align: left; width: 350px; background-color: #B4D1EC; padding: 6px;"></td>
+                                                                                </tr>
+                                                                            }
+                                                                        }
+                                                                        if (rowRegType.ShowRecordingNotifications == "Yes")
+                                                                        {
+                                                                            if (webinar.RecordingUrl == "")
+                                                                            {
+                                                                                <tr>
+                                                                                    <td valign="top" style="text-align: right; width: 130px; background-color: #CCCCCC; padding: 6px; ">
+                                                                                        <span align="right" style="vert-align: top; font-size: 10px; font-family: Arial, Helvetica, sans-serif; ">
+                                                                                            OnDemand Recording:
+                                                                                        </span>
+                                                                                    </td>
+                                                                                    <td style="table-layout: fixed; width: 350px; white-space: nowrap; text-align: left; background-color: #B4D1EC; padding: 6px;">
+                                                                                        <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                                                                            Recordings are posted within 24 hours following the event.<br />
+                                                                                            Watch your email or log into http://www.@TenantDomain/MyWebinars.
+                                                                                        </span>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <tr>
+                                                                                    <td valign="top" style="text-align: right; vert-align: top; width: 130px; background-color: #CCCCCC; padding: 6px;">
+                                                                                        <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
+                                                                                            OnDemand Recording:
+                                                                                        </span>
+                                                                                    </td>
+                                                                                    <td style="table-layout: fixed; width: 350px; white-space: nowrap; text-align: left; background-color: #B4D1EC; padding: 6px;">
+                                                                                        <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                                                                            Log into http://www.@TenantDomain/MyWebinars <br /> to access the recording, other event materials plus <br />
+                                                                                            details about your registration.
+                                                                                        </span>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            }
+                                                                        }
+                                                                    }
                                                                 </table>
                                                             </td>
                                                         </tr>
-                                                        <tr>
-                                                            <td style="text-align: right; width: 50px; background-color: #000000; padding-right: 6px; font-size: smaller"></td>
-                                                            <td width="500px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
-                                                                <br />
-                                                                <br />
-                                                            </td>
-                                                        </tr>
                                                     </table>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="text-align: right; width: 50px; background-color: #000000; padding-right: 6px; font-size: small"></td>
+                                                <td width="500px" style="text-align: left; background-color: #CCCCCC; padding-left: 6px;">
+                                                    <br />
+                                                    <br />
                                                 </td>
                                             </tr>
                                         </table>
@@ -391,7 +588,6 @@
                 </tr>
             </tbody>
         </table>
-
     </body>
 }
 </html>

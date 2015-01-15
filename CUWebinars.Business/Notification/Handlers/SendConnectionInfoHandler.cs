@@ -13,20 +13,31 @@ namespace CUWebinars.Business.Notification.Handlers
     public class SendConnectionInfoHandler<T> : IEventHandler<SendConnectionInfoEvent<T>>
         where T : Order
     {
+        private readonly INotificationPersister _notificationPersister;
+        private readonly EnvironmentInformation _environmentInformation;
         private readonly IFormatter _generalFormatter;
         private readonly INotificationDelivery _notificationDelivery;
         private readonly ILogger _logger;
 
-        public SendConnectionInfoHandler(IFormatter generalFormatter, ILogger logger)
-            : this(generalFormatter, new SmtpMessageDelivery(), logger)
+        public SendConnectionInfoHandler(IFormatter generalFormatter, ILogger logger
+            , INotificationPersister notificationPersister
+            , EnvironmentInformation environmentInformation)
+            : this(generalFormatter, new SmtpMessageDelivery()
+                , logger, notificationPersister, environmentInformation)
         {
 
         }
-        public SendConnectionInfoHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger)
+        public SendConnectionInfoHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery
+            , ILogger logger
+            , INotificationPersister notificationPersister
+            , EnvironmentInformation environmentInformation)
         {
+            _notificationPersister = notificationPersister;
+            _environmentInformation = environmentInformation;
             _generalFormatter = generalFormatter;
             _notificationDelivery = notificationDelivery;
             _logger = logger;
+
         }
 
         public virtual void Process(SendConnectionInfoEvent<T> sendConnectionInfoEvent)
@@ -90,14 +101,14 @@ namespace CUWebinars.Business.Notification.Handlers
 
     public class SendConnectionInfoHandler : SendConnectionInfoHandler<Order>
     {
-        public SendConnectionInfoHandler(IFormatter generalFormatter, ILogger logger)
-            : base(generalFormatter, logger)
+        public SendConnectionInfoHandler(IFormatter generalFormatter, ILogger logger, INotificationPersister notificationPersister, EnvironmentInformation environmentInformation)
+            : base(generalFormatter, logger, notificationPersister, environmentInformation)
         {
 
         }
 
-        public SendConnectionInfoHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger)
-            : base(generalFormatter, notificationDelivery, logger)
+        public SendConnectionInfoHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger, INotificationPersister notificationPersister, EnvironmentInformation environmentInformation)
+            : base(generalFormatter, notificationDelivery, logger, notificationPersister, environmentInformation)
         {
         }
 

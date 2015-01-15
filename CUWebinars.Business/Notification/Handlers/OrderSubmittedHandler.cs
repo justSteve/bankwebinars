@@ -19,19 +19,28 @@ namespace CUWebinars.Business.Notification.Handlers
         private readonly INotificationDelivery _notificationDelivery;
         private readonly ILogger _logger;
 
-        public OrderSubmittedHandler(IFormatter generalFormatter, ILogger logger, INotificationPersister notificationPersister, EnvironmentInformation environmentInformation)
-            : this(generalFormatter, new SmtpMessageDelivery(), logger, notificationPersister, environmentInformation)
+        public OrderSubmittedHandler(IFormatter generalFormatter
+            , ILogger logger
+            , INotificationPersister notificationPersister
+            , EnvironmentInformation environmentInformation)
+            : this(generalFormatter, new SmtpMessageDelivery()
+                , logger, notificationPersister, environmentInformation)
         {
 
         }
 
-        public OrderSubmittedHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger, INotificationPersister notificationPersister, EnvironmentInformation environmentInformation)
+        public OrderSubmittedHandler(IFormatter generalFormatter
+            , INotificationDelivery notificationDelivery
+            , ILogger logger
+            , INotificationPersister notificationPersister
+            , EnvironmentInformation environmentInformation)
         {
             _notificationPersister = notificationPersister;
             _environmentInformation = environmentInformation;
             _generalFormatter = generalFormatter;
             _notificationDelivery = notificationDelivery;
             _logger = logger;
+
         }
 
         public virtual void Process(OrderSubmittedEvent<T> orderSubmittedEvent)

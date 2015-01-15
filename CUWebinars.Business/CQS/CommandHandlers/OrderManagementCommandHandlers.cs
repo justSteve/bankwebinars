@@ -350,6 +350,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             migratedOrder.ShippingFirstName = command.FirstName;
             migratedOrder.ShippingLastName = command.LastName;
 
+            _orderManagementService.GetJoinUrl(command.OrderRow);
 
             _orderManagementService.SaveOrderChanges(migratedOrder, command.VerificationKey, command.ConfirmChangeEmailUrl);
             if (command.Total != migratedOrder.Total)

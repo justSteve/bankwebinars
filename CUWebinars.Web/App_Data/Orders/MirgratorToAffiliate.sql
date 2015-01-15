@@ -1,21 +1,15 @@
 USE TTSWebinars2
 GO
-
-DELETE MembershipReboot.dbo.UserAccounts WHERE Tenant = 'bankwebinars' AND Email NOT IN ('affiliate@ttstrain.com')
-
-DELETE BankWebinars.dbo.Affiliate WHERE idUserAff > 19
-DELETE BankWebinars.dbo.[Order] WHERE idUser > 19
-DELETE BankWebinars.dbo.WebUser WHERE email NOT IN ('affiliate@ttstrain.com') AND UserType <> 3
-
-
+SELECT idWebinar FROM dbo.Webinar WHERE status = 2
 DECLARE @idwebinar INT
 
-SET @idwebinar = ( SELECT TOP 1
-                            idWebinar
-                   FROM     dbo.Webinar
-                   WHERE    status = 2
-                   ORDER BY date
-                 )
+SET @idwebinar = 1730
+-- ( SELECT TOP 1
+--                            idWebinar
+--                   FROM     dbo.Webinar
+--                   WHERE    status = 2
+--                   ORDER BY date
+--                 )
 DECLARE @idUser INT
 DECLARE @importCount INT
 
@@ -89,5 +83,4 @@ CLOSE migrate_cursor
 DEALLOCATE migrate_cursor
 
 GO
-
 
