@@ -30,16 +30,25 @@ $(function() {
                 addPasswordContainer.height(containerHeight);
                 var formParent = addPasswordForm.parent();
                 addPasswordForm.fadeOut();
-                formParent.prepend('<div class="legendImitator">Password Added</div><span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;You have successfully set your password....</span><div>You have now been logged in.<div>');
+                formParent.prepend('<div class="legendImitator">Password Added</div><span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;You have successfully set your password....</span><div><a href="/Account/Login">Click here</a> to log in.<div>');
 
-                $('#loginContainer').empty().load('/Account/GetLoginPartial', function(e) {
-                    //  do nothing. It just displays the name of the logged in user as a link. No further action required.
-                });
+                //$('#loginContainer').empty().load('/Account/GetLoginPartial', function(e) {
+                //    //  do nothing. It just displays the name of the logged in user as a link. No further action required.
+                //});
+
+                //$.ajax({
+                //    type: 'GET',
+                //    contentType: constants.FormPostContentType,
+                //    cache: false,
+                //    url: '/Account/GetLoginPartial',
+                //    dataType: constants.HtmlDataType,
+                //    data: null,
+                //}).done(function(data) {
+                //    $('#loginContainer').empty().html(data);
+                //});
 
                 $('#main_menu ul.primary_menu').append('<li><a href="/Account/MyWebinars">My Webinars</a></li>');
             }
         });
     });
-
-
 });

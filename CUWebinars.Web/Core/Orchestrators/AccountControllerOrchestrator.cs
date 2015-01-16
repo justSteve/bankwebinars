@@ -431,7 +431,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             _stateService.ClearValue(DomainConstants.VerificationKey);
 
-            _membershipService.LogInUser(_globals.Tenant, model.Email, model.NewPassword, true);
+            //_membershipService.LogInUser(_globals.Tenant, model.Email, model.NewPassword, true);
 
             _logger.Info("Account.Confirmed POST. Session={0}", _appHelper.GetUserAuditInfo());
         }

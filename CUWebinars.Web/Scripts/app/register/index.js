@@ -270,7 +270,7 @@ $(function () {
             if (data.result === 'LoggedIn') {
                 $('#signingInMsg').html('<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Redirecting you now ...');
 
-                if (data.returnUrl !== '/') {
+                if (data.returnUrl !== '/' && !data.returnUrl.indexOf('OrderComplete') > 0) {
                     utilities.goToUrl(data.returnUrl);
                 } else {
                     utilities.goToUrl('/Account/MyWebinars');
