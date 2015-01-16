@@ -19,6 +19,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         string CreateUserAccountFromCart(RegisterViewModel model);
         WebUser CreateWebUserFromCart(RegisterViewModel model);
         void EditContactInfo(EditContactInfoModel editContactInfoModel);
+        CreateUserConfirmedViewModel GetCreateUserConfirmedViewModel(string email, bool viaBillMePostRequest = false);
         Institution GetInstitutionFromEmail(string email);
         WebUser GetWebUserByEmail(string email);
         WebUser GetWebUserById(int id);
