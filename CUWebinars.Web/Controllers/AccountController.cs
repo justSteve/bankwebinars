@@ -233,7 +233,7 @@ namespace CUWebinars.Web.Controllers
             if (ModelState.IsValid)
             {
                 var createUserConfirmedViewModel =
-                    _accountControllerOrchestrator.PrepareViewForCartUserAddingPassword(id, true);
+                    _accountControllerOrchestrator.GetCreateUserConfirmedViewModel(id, true);
 
                 return View("AddPasswordForCartCreatedUser", createUserConfirmedViewModel);
             }

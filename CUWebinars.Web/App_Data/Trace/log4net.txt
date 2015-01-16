@@ -119,3 +119,6 @@ CUWebinars Error: 0 : Validation failed for webinar 1728 and User 384
 CUWebinars Error: 0 : Validation failed for webinar 1722 and User 385
 CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32625
 CUWebinars Error: 0 : Validation failed for webinar 1729 and User 32625
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test26@yahoo.com.au Subject: Confirmation of Registration: Conducting Financial Investigations - What Law Enforcement Needs To Know Timestamp was: 16/01/2015 10:49:35 AM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test27@yahoo.com.au Subject: Confirmation of Registration: Dealing with Subpoenas, Summonses, Garnishments, Tax Levies, Etc. Timestamp was: 16/01/2015 10:57:23 AM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test28@yahoo.com.au Subject: Confirmation of Registration: When Your Customer's Name and TIN Do Not Match Timestamp was: 16/01/2015 11:00:46 AM

@@ -383,6 +383,33 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public void AddPasswordForCartCreatedUser(CreateUserConfirmedViewModel model)
         {
+            UserAccount userAccount;
+            int retries = 0;
+
+            // Try and find the user for up to 20s. If it still does not exist, chuck an exception.
+            do
+            {
+                userAccount = _membershipService.GetUserAccountByEmail(_globals.Tenant, model.Email);
+
+                if (ReferenceEquals(userAccount, null))
+                {
+                    // sleeping for half second, so 2 retries will result in 1s of sleeping.
+                    Thread.Sleep(500);
+
+                    // Every 20 seconds, log the fact that the flow has been stuck here for the then current duration.
+                    if (retries%40 == 0 && retries > 0)
+                    {
+                        _logger.Info(string.Format("UserAccount returning null after {0} seconds.", retries/2));
+                    }
+                }
+                else
+                {
+                    break;
+                }
+
+
+            } while (retries++ < _globals.RetryCount);
+
             _membershipService.VerifyUserByEmail(_globals.Tenant, model.Email);
 
             _stateService.SetValue(DomainConstants.CartCreatedUserPasswordCreate, true);
@@ -734,7 +761,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (viaBillMePostRequest)
                 changeEmailFromKeyInputModel.ScreenMessage = "Thank you for your order.";
 
-            // Try and find the user for up to 10s. If it still does not exist, chuck an exception.
+             // Try and find the user for up to 10s. If it still does not exist, chuck an exception.
             do
             {
                 userAccount = _membershipService.GetUserAccountByEmail(_globals.Tenant, email);
@@ -745,7 +772,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     Thread.Sleep(500);
 
                     // Every 20 seconds, log the fact that the flow has been stuck here for the then current duration.
-                    if (retries%40 == 0)
+                    if (retries%40 == 0 && retries > 0)
                     {
                         _logger.Info(string.Format("UserAccount returning null after {0} seconds.", retries/2));
                     }
@@ -753,7 +780,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             } while (retries++ < _globals.RetryCount);
 
-            // if still null at this point, we have exceeded the retry limit and assume that something has gone wrong.
+             //if still null at this point, we have exceeded the retry limit and assume that something has gone wrong.
             if (ReferenceEquals(userAccount, null)) throw new Exception("User does not exist in system");
 
             bool hasAlreadyVerifiedAccount = !userAccount.HasClaim(ClaimTypes.HasNotVerified);
@@ -772,8 +799,10 @@ namespace CUWebinars.Web.Core.Orchestrators
                     string.Format("Please use the Password Reset feature on the {0} to reset your password.", loginLinkBuilder.ToString(TagRenderMode.Normal));
 
                 changeEmailFromKeyInputModel.ScreenMessage =
-                    string.Concat(para1TagBuilder.ToString(TagRenderMode.Normal),
-                        para2TagBuilder.ToString(TagRenderMode.Normal));
+                    string.Concat(
+                        para1TagBuilder.ToString(TagRenderMode.Normal),
+                        para2TagBuilder.ToString(TagRenderMode.Normal)
+                        );
 
                 return changeEmailFromKeyInputModel;
             }
@@ -784,6 +813,28 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
 
             changeEmailFromKeyInputModel.ScreenMessage = "There has been an error at the server.";
+
+            return changeEmailFromKeyInputModel;
+        }
+
+        public CreateUserConfirmedViewModel GetCreateUserConfirmedViewModel(string email, bool viaBillMePostRequest = false)
+        {
+            UserAccount userAccount;
+            int retries = 0;
+
+            var changeEmailFromKeyInputModel = new CreateUserConfirmedViewModel
+            {
+                Email = email,
+                OldPassword = PasswordGenerator.RandomStringFast(5),
+                NewPassword = string.Empty,
+                ConfirmPassword = string.Empty,
+                ScreenMessage = string.Empty,
+                UserIsLoggedIn = _request.IsAuthenticated
+            };
+
+            if (viaBillMePostRequest)
+                changeEmailFromKeyInputModel.ScreenMessage = "Thank you for your order.";
+
 
             return changeEmailFromKeyInputModel;
         }
