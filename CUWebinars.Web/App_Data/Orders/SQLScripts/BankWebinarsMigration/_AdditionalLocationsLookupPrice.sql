@@ -4,40 +4,19 @@ SET NOCOUNT ON
 PRINT 'Starts AdditionalLocationsLookupPrice'
 DELETE  FROM BankWebinars.dbo.AdditionalLocationsLookupPrice
 WHERE   idWebinar > 0
-SELECT  'INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES ('
-        + CAST(idWebinar AS VARCHAR) + ',50.00)'
-FROM    dbo.Webinar
-WHERE   idWebinar IN ( SELECT   idWebinar
-                       FROM     dbo.Webinar
-                       WHERE    Duration = 1 )
-SELECT  'INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES ('
-        + CAST(idWebinar AS VARCHAR) + ',75.00)'
-FROM    dbo.Webinar
-WHERE   idWebinar IN ( SELECT   idWebinar
-                       FROM     dbo.Webinar
-                       WHERE    Duration = 2 )
-					   INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1,50.00)
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (2,50.00)
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (3,50.00)
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (4,50.00)
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (5,50.00)
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (6,50.00)
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (7,50.00)
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (8,50.00)
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (9,50.00)
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (10,50.00)
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (842,50.00)
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1609,50.00)
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1704,50.00)
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1625,50.00)
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1638,50.00)
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1740,50.00)
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1741,50.00)
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1727,50.00)
+--SELECT  'INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES ('
+--        + CAST(idWebinar AS VARCHAR) + ',50.00)'
+--FROM    dbo.Webinar
+--WHERE   idWebinar IN ( SELECT   idWebinar
+--                       FROM    TTSWebinars2.dbo.Webinar
+--                       WHERE    Duration = 1 )
+--SELECT  'INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES ('
+--        + CAST(idWebinar AS VARCHAR) + ',75.00)'
+--FROM    dbo.Webinar
+--WHERE   idWebinar IN ( SELECT   idWebinar
+--                       FROM     TTSWebinars2.dbo.Webinar
+--                       WHERE    Duration = 2 )
 
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1486,75.00)
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1579,75.00)
-INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1582,75.00)
 INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1585,75.00)
 INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1586,75.00)
 INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1587,75.00)
@@ -154,22 +133,25 @@ INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost])
 INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1743,75.00)
 INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1744,75.00)
 INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1745,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1746,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1753,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1754,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1755,75.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1756,75.00)
+
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (842,50.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1609,50.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1625,50.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1638,50.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1704,50.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1727,50.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1740,50.00)
+INSERT bankwebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES (1741,50.00)
+
 
 UPDATE bankwebinars.[dbo].[AdditionalLocationsLookupPrice] SET [cost] = 325 WHERE idWebinar = 1711
 
 
-IF EXISTS (SELECT * FROM dbo.Webinar WHERE idWebinar NOT IN (SELECT idWebinar FROM dbo.AdditionalLocationsLookupPrice))
-BEGIN 
-PRINT '-----------------------------'
-PRINT 'WARNING - ADDITIONAL LOCATIONS PRICES MISSING'
-PRINT '-----------------------------'
-PRINT '-----------------------------'
-SELECT * FROM dbo.Webinar WHERE idWebinar NOT IN (SELECT idWebinar FROM dbo.AdditionalLocationsLookupPrice)
-PRINT '-----------------------------'
-PRINT 'WARNING - ADDITIONAL LOCATIONS PRICES MISSING'
-PRINT '-----------------------------'
-PRINT '-----------------------------'
-END
 
 GO
 PRINT '____________Ends AdditionalLocationsLookupPrice'

@@ -817,6 +817,12 @@ namespace CUWebinars.Business.Services
             }
         }
 
+        public Discount ApplyDiscountCode(string code)
+        {
+            var thisDiscount = GetDiscountByCode(code);
+            return thisDiscount;
+        }
+
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink, OrderGenesis orderGenesis = OrderGenesis.ImportedForExistingUser)
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
@@ -1011,7 +1017,7 @@ namespace CUWebinars.Business.Services
 
             try
             {
-                _logger.Info("CreateRegistrantKey starts: " + billingEmail + ", " + webinarKey);
+                _logger.Info("CreateRegistrantKey starts: " + billingEmail + ", webinarKey = " + webinarKey + ", OrgKey = " + orgKey + ", oauth_token=" + accessToken);
                 HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse();
                 // Get the stream associated with the response.
                 Stream receiveStream = response.GetResponseStream();

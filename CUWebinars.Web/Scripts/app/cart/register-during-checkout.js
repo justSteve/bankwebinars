@@ -446,19 +446,19 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                         dataType: constants.JsonDataType,
                                         data: JSON.stringify(payload),
                                         headers: headersMr,
-                                        beforeSend: function() {
+                                        beforeSend: function () {
 
                                         }
-                                    }).done(function() {
+                                    }).done(function () {
                                         // do nothing. This is a fire and forget operation.
                                     });
 
 
-                                    $('#ConfirmRegistrationBillMe').on('click', function(e) {
+                                    $('#ConfirmRegistrationBillMe').on('click', function (e) {
                                         completeOrder(userId, orderRowId, webinarId);
                                     });
 
-                                    $('#Canceller').on('click', function(e) {
+                                    $('#Canceller').on('click', function (e) {
                                         cancelOrder(orderId, webinarId);
                                     });
 
@@ -575,13 +575,13 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                             $('#confirmationTab a').tab('show');
                                         } else {
 
-                                            $('#ConfirmRegistrationBillMe').on('click', function(e) {
+                                            $('#ConfirmRegistrationBillMe').on('click', function (e) {
                                                 e.preventDefault();
                                                 callback();
                                                 $('#confirmOrder').submit();
                                             });
 
-                                            $('#Canceller').on('click', function(e) {
+                                            $('#Canceller').on('click', function (e) {
                                                 e.preventDefault();
                                                 callback();
                                                 var cancelOrderForm = cartStateManager.getCancelOrderForm();
@@ -640,7 +640,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
 };
 
-registerDuringCheckout.gatherPricingData = function() {
+registerDuringCheckout.gatherPricingData = function () {
     registerDuringCheckout.addLocsPrice = parseInt($('#totalAdLocsPrice').text().slice(1));
     registerDuringCheckout.totalPrice = parseInt($('#totalPrice').text().slice(1));
     registerDuringCheckout.totalDiscount = parseInt($('#totalDiscount').text().slice(1));
@@ -824,7 +824,7 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
                 cache: false,
                 url: url,
                 dataType: constants.JsonDataType,
-                beforeSend: function(xhr){
+                beforeSend: function (xhr) {
                     $('#updateShippingMsgLabelWrap').html('<span class="label label-info">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Updating details...</span>');
             }
             }).done(function (data) {
@@ -949,7 +949,7 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
             cache: false,
             url: url,
             dataType: constants.JsonDataType,
-            beforeSend: function() {
+            beforeSend: function () {
                 dropDown.attr('disabled', 'disabled').after('<i id="discountSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
             }
         }).done(function (data) {
@@ -1038,7 +1038,7 @@ function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
         url: url,
         dataType: constants.JsonDataType,
         data: JSON.stringify(payLoad),
-    }).done(function(data) {
+    }).done(function (data) {
         
         if (data) {
 
@@ -1077,7 +1077,8 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
         if (registerDuringCheckout.totalPrice < 1) {
             return;
         }
-
+        //TODO: Pass orderId to ApplyDiscount controller method
+        //
         var url = '/cart/ApplyDiscountCode';
         var payload = { code: $('#DiscountCode').val(), orderRowId: orderRowId };
         var self = this;
@@ -1096,7 +1097,14 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
         }).done(function (data) {
             //  do stuff here with discount.              
 
+            //registerDuringCheckout.totalDiscount = data.Result;
+            if (data.Result.indexOf('%') !== -1) {
+                var amount2Discount = data.Result.replace(".00%", "") / 100;
+                registerDuringCheckout.totalDiscount = registerDuringCheckout.totalPrice * amount2Discount;
+            } else {
             registerDuringCheckout.totalDiscount = data.Result;
+            }
+
             var newTotalPrice = registerDuringCheckout.totalPrice - registerDuringCheckout.totalDiscount;
 
             if (newTotalPrice < 0)

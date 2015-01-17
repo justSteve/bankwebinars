@@ -252,6 +252,9 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             importedOrder.ShippingLastName = command.LastName;
 
 
+            _orderManagementService.GetJoinUrl(command.OrderRow);
+
+
             _orderManagementService.SaveOrderChanges(importedOrder, command.VerificationKey, command.ConfirmChangeEmailUrl, command.OrderGenesis);
 
             _postCommitRegistrator.Committed += () =>

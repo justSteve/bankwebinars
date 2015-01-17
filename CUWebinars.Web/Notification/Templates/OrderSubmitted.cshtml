@@ -14,16 +14,17 @@
                         where orderRow.RowStatus == OrderRowStatus.Active
                         select orderRow;
         var thisWebinar = orderRows.Single().Webinar;
+        string TenantHead = TtsTemplateHelperObject.Tenant();
     }
-    Confirmation of Registration: @thisWebinar.Title
+    [preview-@TenantHead] Confirmation of Registration: @thisWebinar.Title
 </title>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 @{
-
     var row = from orderRow in Model.Order.OrderRows
               where orderRow.RowStatus == OrderRowStatus.Active
               select orderRow;
+    var affiliate = row.Single().Order.Affiliate.DisplayTitle;
     var webinar = row.Single().Webinar;
     var rowRegType = row.Single().RegistrationType;
     var joinURL = row.Single().JoinURL;
@@ -42,7 +43,7 @@
 
     var isFirstOrderForThisUser = true;
 
-    thankYouPhrase.Append("Dear @Model.Order.FirstName,<br /><br />Thank you for your order for <b>:");
+    thankYouPhrase.Append("Dear " + Model.Order.FirstName + ",<br /><br />Thank you for your order for <b>");
     thankYouPhrase.Append(row.Single().RegistrationType.OptionLabel);
     thankYouPhrase.Append("</b> of <i>" + row.Single().Webinar.Title + "</i>");
 
@@ -51,7 +52,7 @@
         case OrderGenesis.CreatedViaCartByExistingUser:
             break;
         case OrderGenesis.CreatedViaCartByNewUser:
-            thankYouPhrase.Append(". When your order was submitted, we created an account and requested that you enter a new password. In case you missed that prompt or don't recall entering a password, please visit <b><a href=" + Model.AddPasswordUrl + ">Set My Password</a></b> or paste this URL into your browser:<i>" +Model.AddPasswordUrl + "</i>.");
+            thankYouPhrase.Append(". When your order was submitted, we created an account and requested that you enter a new password. In case you missed that prompt or don't recall entering a password, please visit <b><a href=" + Model.AddPasswordUrl + ">Set My Password</a></b> or paste this URL into your browser:<i>" + Model.AddPasswordUrl + "</i>.");
             break;
         case OrderGenesis.ImportedForExistingUser:
             break;
@@ -106,14 +107,11 @@
 
         if (notiConnectionInfo == "Yes")
         {
-            connInfoPhrase.Append("<p>Two to three days prior to the event ");
-            connInfoPhrase.Append("we'll send connection instructions and links to handouts or other materials. </p>");
+            connInfoPhrase.Append("<p>Two to three days prior to the event we'll send connection instructions and links to handouts and other materials. </p>");
 
             if (notiRecordingPosted == "Yes")
             {
                 connInfoPhrase.Append("<p> Shortly following the conclusion you'll receive notification when the recording is posted");
-
-
                 if (notiShipped == "Yes")
                 {
                     connInfoPhrase.Append(" - then again 3-5 days later informing you that we've shipped your CD and printouts");
@@ -124,8 +122,7 @@
         }
         else
         {
-            connInfoPhrase.Append("<p>Because this order doesn't include the <i>live</i> session ");
-            connInfoPhrase.Append("we'll only be sending you a notification when the OnDemand Recording is posted");
+            connInfoPhrase.Append("<p>Because this order doesn't include the <i>live</i> session we'll only be sending you a notification when the OnDemand Recording is posted");
             if (notiShipped == "Yes")
             {
                 connInfoPhrase.Append(" and then another after your CD and printouts have shipped");
@@ -135,16 +132,16 @@
     }
 
 
-    if (webinar.Status == WebinarStatus.Active)
+    if (webinar.Status == WebinarStatus.Active || webinar.Status == WebinarStatus.InProgress)
     {
         connInfoPhrase.Append("<p>");
         if (notiConnectionInfo == "Yes")
         {
-            connInfoPhrase.Append(" This order confirmation includes a link to connect directly to the webinar.");
+            connInfoPhrase.Append(" Below you will find a link to connect directly to the webinar.");
         }
         if (notiRecordingPosted == "Yes")
         {
-            connInfoPhrase.Append(" Shortly following the conclusion you'll receive another notification that the recording is posted");
+            connInfoPhrase.Append(" Shortly following the conclusion you'll receive notification that the recording is posted");
 
             if (notiShipped == "Yes")
             {
@@ -155,7 +152,7 @@
     }
 
 
-    if (webinar.Status == WebinarStatus.Recorded)
+    if (webinar.Status == WebinarStatus.Recorded || webinar.Status == WebinarStatus.Archived)
     {
         connInfoPhrase.Append("<p>");
         if (notiRecordingPosted == "Yes")
@@ -210,9 +207,9 @@
         <table width="660px" border="0" cellspacing="0" cellpadding="0">
             <tbody>
                 @*<tr style="background-color: #344a58">
-                        <td colspan="3">
-                            <img alt="top_shadow.jpg" border="0" height="6" margin="0px 0px 0px 0px" src="http://images.ttstrain.com/images/vrLocal/top_shadow.jpg" style="width: 100%; height: 6px; display: block;" width="660" />
-                        </td>
+                    <td colspan="3">
+                    <img alt="top_shadow.jpg" border="0" height="6" margin="0px 0px 0px 0px" src="http://images.ttstrain.com/images/vrLocal/top_shadow.jpg" style="width: 100%; height: 6px; display: block;" width="660" />
+                    </td>
                     </tr>*@
                 <tr style="background-color: #344a58">
                     <td background="http://images.ttstrain.com/images/vrLocal/left_shadow.jpg" rowspan="3" valign="top" width="5">
@@ -325,6 +322,20 @@
                                                                             <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
                                                                                 <b>
                                                                                     @row.Single().RegistrationType.OptionLabel
+                                                                                </b>
+                                                                            </span>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px">
+                                                                            <span align="right" style="vert-align: top; font-size: 10px;">
+                                                                                Cost:
+                                                                            </span>
+                                                                        </td>
+                                                                        <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
+                                                                            <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                                                                <b>
+                                                                                    @row.Single().Order.Total
                                                                                 </b>
                                                                             </span>
                                                                         </td>
@@ -571,6 +582,11 @@
                         <table align="center" cellpadding="0" cellspacing="0" width="630">
                             <tbody>
                                 <tr>
+                                    <td align="left" style="padding-top: 10px;">
+                                        <div style="color: rgb(255, 255, 255); font-size: 11px;">
+                                            <p>Courtesy of <b>@affiliate.</b></p>
+                                        </div>
+                                    </td>
                                     <td align="right" style="padding-top: 10px;">
                                         <div style="color: rgb(255, 255, 255); font-size: 11px;">
                                             <img align="none" alt="footer" border="0" height="59" hspace="0" src="http://images.ttstrain.com/images/vrLocal/footer.gif" style="width: 274px; height: 59px;" title="footer" vspace="0" width="274" />

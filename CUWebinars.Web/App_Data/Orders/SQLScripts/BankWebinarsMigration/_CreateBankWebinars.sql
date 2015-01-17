@@ -376,6 +376,7 @@ Create table BankWebinars.dbo.[Order](
 	[AdminComments] [nvarchar](max) NULL,
 	[TaxExempt] [bit] NOT NULL,
 	[Origin] [nvarchar](max) NULL,
+	[NotificationStorage] [nvarchar](max) NULL,
  CONSTRAINT [PK_dbo.Order] PRIMARY KEY CLUSTERED 
 (
 	[idOrder] ASC
