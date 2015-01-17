@@ -1,3 +1,4 @@
+
 UPDATE  dbo.Presenter
 SET     BiographyLong = REPLACE(BiographyLong,
                                 'https://ttseast.blob.core.windows.net',
@@ -329,22 +330,25 @@ EXEC updateRegGroups
 
 DELETE FROM MembershipReboot.dbo.UserAccounts WHERE email IN ('MigrateSteve@ttstrain.com' ,'MigrateSteve1@ttstrain.com' ,'MigrateSteve2@ttstrain.com','MigrateSteve3@ttstrain.com','steve@ttstrain.com','steve1@ttstrain.com','steve2@ttstrain.com','steve21@ttstrain.com')
 
---EXEC dbo.InsertGTWConnectionInfo @idWebinar = 1719, -- int
---    @Status = 0, -- int
---    @WebinarKey = N'127193450', -- nvarchar(max)
---    @CitrixURL = N'https://attendee.gotowebinar.com/register/100000000065846026', -- nvarchar(max)
---    @AccessPhone = N'877 309 2074', -- nvarchar(max)
---    @AccessCodeAttendee = N'283-313-444', -- nvarchar(max)
---    @AccessCodePresenter = N'626-564-899', -- nvarchar(max)
---    @AccessCodeOrganizer = N'421-322-267' -- nvarchar(max)
 
+EXEC dbo.InsertGTWConnectionInfo @idWebinar = 0, -- int
+    @Status = 0, -- int
+    @WebinarKey = N'104748459', -- nvarchar(max)
+    @CitrixURL = N' https://attendee.gotowebinar.com/register/9148449479400801282', -- nvarchar(max)
+    @AccessPhone = N'1 866 901 6455', -- nvarchar(max)
+    @AccessCodeAttendee = N'310-370-039', -- nvarchar(max)
+    @AccessCodePresenter = N'393-790-834', -- nvarchar(max)
+    @AccessCodeOrganizer = N'320-925-813' -- nvarchar(max)
+
+UPDATE dbo.Institution SET domainName = 'ttstrain.com' WHERE idInstitution = 3549
 UPDATE BankWebinars.dbo.Webinar SET OrganizerKey = '922930', OrganizerOAuthKey  = 'A93DZ8hhX8JAqKNVAm04uZLDJckD'
 --UPDATE BankWebinars.dbo.Webinar SET OrganizerKey = '643333405148919814', OrganizerOAuthKey  = 'bcDzWKEHfnJAWb9FQGCRcAwuqf25'
-
+UPDATE dbo.RegType SET RegTypeExplain = REPLACE(RegTypeExplain, 'll have opportunity', 'll have an opportunity')
+UPDATE dbo.Presenter SET PhotoFull = '', PhotoThumb = '', BiographyLong = '<p><img class="alignleft" src="https://images.ttstrain.com/images/presenters/shelton.jpg" alt="Photo of Honey Shelton" />Honey Shelton brings the best of both worlds to her speaking and training engagements. She has 25 years of experience as a training and quality improvement consultant for banks and banking associations across the country. Her banking background includes spending three years as Executive Vice President/Chief Retail Banking Officer with First Victoria National Bank. </p><p>Nationally recognized as an outstanding speaker, over a half million bankers have participated in programs Honey has presented. Her depth of knowledge, enthusiasm, and compelling personality has left her lasting mark on InterAction Training, the firm she founded in 1983. </p><p>As a graduate of the School of Bank Marketing from the University of Colorado, she realizes the value of quality education. Honey invests time as a faculty member for banking schools around the country. She is a repeat presenter for most of the state banking associations. </p><p>Honey continues in her own personal pursuit of excellence and is a member of the American Society of Training and Development (ASTD). Currently she is pursuing a self study program on Six Sigma. She has obtained certification in Reality Therapy from the William Glasser Institute as well as certification from the Training and Development Program at Texas A &amp; M. </p>' WHERE idUser = 25
+SELECT * FROM dbo.Presenter WHERE idUser IN (SELECT idUser FROM dbo.WebUser WHERE LastName = 'Shelton')
 PRINT '-----------------Seeder '
 PRINT 'finished '
 SELECT TOP 1 date, LTRIM(RTRIM(Title)), idWebinar FROM BankWebinars.dbo.Webinar WHERE Status = 2 ORDER BY Date
-
 
 
 
