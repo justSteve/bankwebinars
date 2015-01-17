@@ -61,5 +61,6 @@ namespace CUWebinars.Business.Services
         void UpdateOrderByAdmin(Order order);
         Discount GetDiscountByUser(WebUser currentUser);
         void GetJoinUrl(OrderRow row);
+        Discount ApplyDiscountCode(string code);
     }
 }

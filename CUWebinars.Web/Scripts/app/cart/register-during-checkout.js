@@ -423,7 +423,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
                             // Upon return, load the 3rd tab. And once loaded, 
                             //create the MR UserAccount (but don't log the user in). 
-                            
+
                             $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
 
                                 if (status == 'error') {
@@ -446,19 +446,19 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                         dataType: constants.JsonDataType,
                                         data: JSON.stringify(payload),
                                         headers: headersMr,
-                                        beforeSend: function() {
+                                        beforeSend: function () {
 
                                         }
-                                    }).done(function() {
+                                    }).done(function () {
                                         // do nothing. This is a fire and forget operation.
                                     });
 
 
-                                    $('#ConfirmRegistrationBillMe').on('click', function(e) {
+                                    $('#ConfirmRegistrationBillMe').on('click', function (e) {
                                         completeOrder(userId, orderRowId, webinarId);
                                     });
 
-                                    $('#Canceller').on('click', function(e) {
+                                    $('#Canceller').on('click', function (e) {
                                         cancelOrder(orderId, webinarId);
                                     });
 
@@ -575,13 +575,13 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                             $('#confirmationTab a').tab('show');
                                         } else {
 
-                                            $('#ConfirmRegistrationBillMe').on('click', function(e) {
+                                            $('#ConfirmRegistrationBillMe').on('click', function (e) {
                                                 e.preventDefault();
                                                 callback();
                                                 $('#confirmOrder').submit();
                                             });
 
-                                            $('#Canceller').on('click', function(e) {
+                                            $('#Canceller').on('click', function (e) {
                                                 e.preventDefault();
                                                 callback();
                                                 var cancelOrderForm = cartStateManager.getCancelOrderForm();
@@ -640,7 +640,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
 };
 
-registerDuringCheckout.gatherPricingData = function() {
+registerDuringCheckout.gatherPricingData = function () {
     registerDuringCheckout.addLocsPrice = parseInt($('#totalAdLocsPrice').text().slice(1));
     registerDuringCheckout.totalPrice = parseInt($('#totalPrice').text().slice(1));
     registerDuringCheckout.totalDiscount = parseInt($('#totalDiscount').text().slice(1));
@@ -676,7 +676,7 @@ function completeOrder(userId, orderRowId, webinarId) {
             data: data,
             beforeSend: function () {
                 $('#ConfirmRegistrationBillMe').attr('disabled', 'disabled');
-                
+
             }
         }).done(function (result) {
             if (result.Result === 'Success') {
@@ -735,7 +735,7 @@ function cancelOrder(orderId, webinarId) {
 
         $.post(cancelOrderForm.attr('action'), data, function (response, status, xhr) {
             if (response.success) {
-                
+
                 //var NRerr = new Error('Suceeded in cancelling order');
                 //NREUM.noticeError(NRerr);
 
@@ -744,7 +744,7 @@ function cancelOrder(orderId, webinarId) {
                 utilities.goToUrl('/webinar/details/' + webinarId);
 
             } else {
-                
+
                 var err = new Error('Cancel Order Failure');
                 //NREUM.noticeError(err);
 
@@ -824,9 +824,9 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
                 cache: false,
                 url: url,
                 dataType: constants.JsonDataType,
-                beforeSend: function(xhr){
+                beforeSend: function (xhr) {
                     $('#updateShippingMsgLabelWrap').html('<span class="label label-info">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Updating details...</span>');
-            }
+                }
             }).done(function (data) {
                 //BUG:  A submitted order prematurely turns off the 'in-process' spinner.
                 // Intermittent - Can't reproduce. Is same as was earlier reported where the lag between
@@ -865,9 +865,9 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
                     $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>There has been an error in the operation.Please call us at 800-831-0678 ext. 3 to resolve.</span>');
                 }
             }).fail(function (data) {
-                    var err = new Error('FAIL: Post to userDetailsFormUrlData ' + userDetailsFormUrlData + ' !data.isSuccessful');
-                    //NREUM.noticeError(err);
-                    $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error in the server response. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
+                var err = new Error('FAIL: Post to userDetailsFormUrlData ' + userDetailsFormUrlData + ' !data.isSuccessful');
+                //NREUM.noticeError(err);
+                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error in the server response. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
             });
         });
 
@@ -949,7 +949,7 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
             cache: false,
             url: url,
             dataType: constants.JsonDataType,
-            beforeSend: function() {
+            beforeSend: function () {
                 dropDown.attr('disabled', 'disabled').after('<i id="discountSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
             }
         }).done(function (data) {
@@ -1038,8 +1038,8 @@ function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
         url: url,
         dataType: constants.JsonDataType,
         data: JSON.stringify(payLoad),
-    }).done(function(data) {
-        
+    }).done(function (data) {
+
         if (data) {
 
             $('#baseCost').html('$' + data.BasePrice + '.00');
@@ -1077,9 +1077,10 @@ function hookUpApplyDiscountLogic(btn) {
         if (registerDuringCheckout.totalPrice < 1) {
             return;
         }
-
+        //TODO: Pass orderId to ApplyDiscount controller method
+        //
         var url = '/cart/ApplyDiscountCode';
-        var payload = { code: $('#DiscountCode').val() };
+        var payload = { code: $('#CheckoutDiscountCode').val(), orderid: orderId };
         var self = this;
 
         $.ajax({
@@ -1096,7 +1097,14 @@ function hookUpApplyDiscountLogic(btn) {
         }).done(function (data) {
             //  do stuff here with discount.              
 
-            registerDuringCheckout.totalDiscount = data.Result;
+            //registerDuringCheckout.totalDiscount = data.Result;
+            if (data.Result.indexOf('%') !== -1) {
+                var amount2Discount = data.Result.replace(".00%", "") / 100;
+                registerDuringCheckout.totalDiscount = registerDuringCheckout.totalPrice * amount2Discount;
+            } else {
+                registerDuringCheckout.totalDiscount = data.Result;
+            }
+
             var newTotalPrice = registerDuringCheckout.totalPrice - registerDuringCheckout.totalDiscount;
 
             if (newTotalPrice < 0)

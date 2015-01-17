@@ -102,6 +102,7 @@ var OrderRegistration;
             //permits a 'preReg' pricing scheme to handle
             //computation of discounts and addl locations prior
             //to stepping to confirmation.
+            alert("hit");
             var $form = $("#BuildPrice");
 
             oEvent.preventDefault();

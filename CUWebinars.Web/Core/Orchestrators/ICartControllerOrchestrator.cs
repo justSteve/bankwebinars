@@ -30,5 +30,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         void RemoveAdditionalLocationsFromOrder(int value);
         PricesAndDiscounts UpdateOrderPricing(Order order);
         void UpdateOrderWithUserId(int orderId, int userId);
+        Discount ApplyDiscountCode(string code);
     }
 }
