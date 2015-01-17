@@ -1011,7 +1011,7 @@ namespace CUWebinars.Business.Services
 
             try
             {
-                _logger.Info("CreateRegistrantKey starts: " + billingEmail + ", " + webinarKey);
+                _logger.Info("CreateRegistrantKey starts: " + billingEmail + ", webinarKey = " + webinarKey + ", OrgKey = " + orgKey + ", oauth_token=" + accessToken);
                 HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse();
                 // Get the stream associated with the response.
                 Stream receiveStream = response.GetResponseStream();

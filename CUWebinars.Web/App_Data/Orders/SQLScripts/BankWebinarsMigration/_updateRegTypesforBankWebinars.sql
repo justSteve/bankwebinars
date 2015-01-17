@@ -21,8 +21,6 @@ SET IDENTITY_INSERT BankWebinars.dbo.RegType Off
 :r "C:\Users\Steve\Source\Repos\BankWebinars2\CUWebinars.Web\App_Data\Orders\SQLScripts\BankWebinarsMigration\GeneratesStatementsToInsertRegTypesXRef.SQL"
 :r "C:\Users\Steve\Source\Repos\BankWebinars2\CUWebinars.Web\App_Data\Orders\SQLScripts\BankWebinarsMigration\InsertTestWebinars.sql"
 
-SET NOCOUNT OFF
-
 
 --SELECT  * FROM    BankWebinars.dbo.RegTypesGroups
 USE BankWebinars
@@ -223,9 +221,6 @@ UPDATE  BankWebinars.dbo.RegTypesGroupsXref
 SET     idRegTypeGroup = 38
 WHERE   idWebinar IN ( 842 ) 
 
-UPDATE BankWebinars.dbo.AdditionalLocationsLookupPrice SET cost = 75 WHERE idWebinar IN (SELECT idWebinar FROM dbo.Webinar WHERE Duration = 2)
-UPDATE BankWebinars.dbo.AdditionalLocationsLookupPrice SET cost = 50 WHERE idWebinar IN (SELECT idWebinar FROM dbo.Webinar WHERE Duration = 1)
-UPDATE BankWebinars.dbo.AdditionalLocationsLookupPrice SET cost = 325 WHERE idWebinar IN (1711)
 
 
 							 
@@ -234,7 +229,7 @@ UPDATE dbo.RegType SET price = 235  WHERE idRegType= 203
 UPDATE dbo.RegType SET SortOrder = 4  WHERE idRegType= 223
 UPDATE dbo.RegType SET SortOrder = 3 WHERE idRegType= 224
 
-
+PRINT '------------------END _updateRegTypesforBankwebinars'
 --SELECT DISTINCT
 --       reg.*
 --FROM    BankWebinars.dbo.RegType reg
