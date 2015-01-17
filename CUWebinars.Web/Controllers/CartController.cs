@@ -29,14 +29,21 @@ namespace CUWebinars.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult ApplyDiscountCode(string code, int orderid)
+        public ActionResult ApplyDiscountCode(string code, int id)
         {
             var myDiscount = _cartControllerOrchestrator.ApplyDiscountCode(code);
+            var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id); 
+
+            var row = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+
             var amountToDiscount = myDiscount.FlatOff.ToString();
             if (myDiscount.PercentOff > 0)
             {
                 amountToDiscount = myDiscount.PercentOff.ToString() + "%";
             }
+            row.Discount = myDiscount;
+            _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
+            
             return Json(new { Result = amountToDiscount});
         }
 
