@@ -464,7 +464,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
                                     setUpEditButtons();
 
-                                    hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
+                                    hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
                                     hookUpChangeTypeLogic($('#RegType'));
                                     hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
 
@@ -590,7 +590,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
                                             setUpEditButtons();
 
-                                            hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
+                                            hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
                                             hookUpChangeTypeLogic($('#RegType'));
                                             hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
 
@@ -1066,7 +1066,7 @@ function ShowModalForShippingDetails(shippingDetailsRqrd) {
     }
 }
 
-function hookUpApplyDiscountLogic(btn) {
+function hookUpApplyDiscountLogic(btn, orderRowId) {
 
     btn.on('click', function (e) {
 
@@ -1079,7 +1079,7 @@ function hookUpApplyDiscountLogic(btn) {
         }
 
         var url = '/cart/ApplyDiscountCode';
-        var payload = { code: $('#DiscountCode').val() };
+        var payload = { code: $('#DiscountCode').val(), orderRowId: orderRowId };
         var self = this;
 
         $.ajax({
