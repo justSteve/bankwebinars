@@ -85,14 +85,15 @@ namespace CUWebinars.Business.Services
             return _affiliateRepository.Exists(item) ? item : _affiliateRepository.AttachItem(item);
         }
 
-        public string BuildConnectionInfo(OrderRow orderRow)
-        {
-            // add code here to build string
+        //TODO: remove if nothing bad happens by it's absence.
+        //public string BuildConnectionInfo(OrderRow orderRow)
+        //{
+        //    // add code here to build string
 
-            //var option = _RegTypeRepository.FindRegType(orderRow.RegistrationType);
+        //    //var option = _RegTypeRepository.FindRegType(orderRow.RegistrationType);
 
-            return string.Empty;
-        }
+        //    return string.Empty;
+        //}
 
         public OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, int registrationType)
         {
@@ -140,8 +141,10 @@ namespace CUWebinars.Business.Services
             }
         }
 
-        public Tuple<string, decimal> GetAdditionalLocationsPricing(IEnumerable<AdditionalLocation> additionalLocations, int idWebinar)
+        public Tuple<string, decimal> GetCostOfAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations, int idWebinar)
         {
+            //so renamed to reflect that we are building the cost of a user's list of added seats. Not
+            // how much does it cost per seat.
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
             var addresses = new StringBuilder();
             var i = 0;
@@ -233,14 +236,18 @@ namespace CUWebinars.Business.Services
             return null;
         }
 
-        public IDictionary<RegType, bool> GetRegTypesByWebinarIdFrom(int id, bool detached)
+        public IDictionary<RegType, bool> GetRegTypesByWebinarId(int id, bool detached)
         {
             return _regTypeRepository.FindRegTypesByWebinarId(id, false);
         }
 
-        public IList<RegType> GetRegTypesForOption(int optionId)
+        //TODO: Review Naming convention 
+        //- in my frame of reference, as relates to 'RegType' and 'Option' - they are synonyms 
+        //  and to use both in a name seems redundant. --not nitpicking on names just probing for 
+        //  a mismatch between our frames of reference.
+        public IList<RegType> GetRegTypeOption(int optionId)
         {
-            return _regTypeRepository.FindRegTypesForOption(optionId);
+            return _regTypeRepository.FindRegTypeOption(optionId);
         }
 
         public WebUser GetWebUser(string email)
@@ -275,7 +282,7 @@ namespace CUWebinars.Business.Services
             }
             catch (Exception exception)
             {
-                _logger.ErrorException("GetOrdersByUserId", exception);
+                _logger.ErrorException("GetOrdersByUserId = " + id, exception);
                 throw;
             }
         }
@@ -325,6 +332,7 @@ namespace CUWebinars.Business.Services
                     // user has made orders for, if one affiliate has been used twice as many times 
                     // as the most recent Affiliate, then make the order for that Affiliate.
                     var groups = affiliateIds.GroupBy(a => a);
+                    //TODO: Express groups in a string seperated by comma for logging purposes.
                     int mostUsedAffiliateId = 0;
                     int mostUses = 0;
                     int numberOfUsesOfMostRecentAffiliate = 0;
@@ -348,6 +356,8 @@ namespace CUWebinars.Business.Services
 
                     if (mostUses >= 2 * numberOfUsesOfMostRecentAffiliate)
                         affiliateIdForOrder = mostUsedAffiliateId;
+
+                    _logger.Error("Total affiliates considered: {\" +[convert groups to comma delim list + } for idUser = " + idUser);
                 }
 
                 cachKey = "affiliateId-" + affiliateIdForOrder;
@@ -384,6 +394,7 @@ namespace CUWebinars.Business.Services
             }
             catch (ArgumentException ex)
             {
+                _logger.FatalException("ERROR at LoadOrderRow=" + id, ex);
                 throw new EntityNotFoundException(ex.Message, ex);
             }
         }
@@ -398,6 +409,7 @@ namespace CUWebinars.Business.Services
             }
             catch (ArgumentException ex)
             {
+                _logger.FatalException("ERROR at LoadOrder=" + id, ex);
                 throw new EntityNotFoundException(ex.Message, ex);
             }
         }
@@ -423,7 +435,7 @@ namespace CUWebinars.Business.Services
                 _events.Add(orderEvent);
             }
         }
-        public PricesAndDiscounts CalculateOrderPrices(Order order, decimal optionsCost)
+        public PricesAndDiscounts CalculateOrderCost(Order order, decimal optionsCost)
         {
             PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
             decimal totalOptionsPrice = 0M;
@@ -461,7 +473,7 @@ namespace CUWebinars.Business.Services
 
             row.RowPrice -= discountTotal;
             pricesAndDiscounts.TotalDiscount = discountTotal;
-            pricesAndDiscounts.TotalOptions = totalOptionsPrice;
+            pricesAndDiscounts.TotalCostOfOptions = totalOptionsPrice;
 
             //Calculate order total
             order.Total = row.RowPrice;
@@ -477,7 +489,7 @@ namespace CUWebinars.Business.Services
         //    ////    return 0.0M;
         //    ////}
 
-        //    //var additionalLocationsPricingForWebinar = GetAdditionalLocationsPricing(row.idWebinar);
+        //    //var additionalLocationsPricingForWebinar = GetCostOfAdditionalLocations(row.idWebinar);
 
         //    //decimal optionsTotal = 0.0M;
 
@@ -666,7 +678,7 @@ namespace CUWebinars.Business.Services
 
                 ProcessDiscountCodes(currentOrder);
 
-                pricesAndDiscounts = CalculateOrderPrices(currentOrder, additionalLocationsPricing.Single().Item2);
+                pricesAndDiscounts = CalculateOrderCost(currentOrder, additionalLocationsPricing.Single().Item2);
 
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, (int)currentOrder.OrderStatus);
 
@@ -695,7 +707,7 @@ namespace CUWebinars.Business.Services
         {
             var user = _webUserRepository.FindByIdLoaded(userId);
             var order = _orderRepository.FindById(orderId);
-            order.AuditInfo = "Placeholder user is replaced by " + user.email + Environment.NewLine + order.AuditInfo;
+            order.AuditInfo = "anon user is updated with " + user.email + Environment.NewLine + order.AuditInfo;
             order.idUser = userId;
 
             var billingAddress = user.Addresses.Where(a => a.AddressType == DomainConstants.BillingAddress).Single();
@@ -804,14 +816,21 @@ namespace CUWebinars.Business.Services
                 }
                 else
                 {
+
                     JObject parsedJsonObject = JObject.Parse(regKeyResponse);
                     if (parsedJsonObject[DomainConstants.RegistrantKey] != null)
                     {
+                        _logger.Error("Successful CreateRegistrantKey");
                         var registrantKey = parsedJsonObject[DomainConstants.RegistrantKey].ToString();
                         var joinUrl = parsedJsonObject[DomainConstants.JoinUrl].ToString();
 
                         row.RegistrantKey = registrantKey;
                         row.JoinURL = joinUrl;
+                    }
+                    else
+                    {
+                        _logger.Error("ERROR at CreateRegistrantKey on " + row.Order.idOrder);
+
                     }
                 }
             }
@@ -819,8 +838,7 @@ namespace CUWebinars.Business.Services
 
         public Discount ApplyDiscountCode(string code)
         {
-            var thisDiscount = GetDiscountByCode(code);
-            return thisDiscount;
+            return GetDiscountByCode(code);
         }
 
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink, OrderGenesis orderGenesis = OrderGenesis.ImportedForExistingUser)
@@ -835,7 +853,7 @@ namespace CUWebinars.Business.Services
                 optionsPrice = tuple.Item2;
 
             ProcessDiscountCodes(currentOrder);
-            CalculateOrderPrices(currentOrder, optionsPrice);
+            CalculateOrderCost(currentOrder, optionsPrice);
 
             try
             {
@@ -843,8 +861,10 @@ namespace CUWebinars.Business.Services
 
                 // If linkToVerifyAccount is true, then we know that the user was created during an importation. When that occurs, 
                 // we don't want to send the normal register user email. We want to roll those details into this confirmation
-                // notification (OrderSubmitted notification). So, if we have the confirmChangeEmailLink, we can include it in 
-                // the notification confirming registration for this webinar.
+                // notification (OrderSubmitted notification). 
+                //  TODO: verify that this condition is still operative and point to an instance where used?
+                //So, if we have the confirmChangeEmailLink, we can include it in 
+                // the notification confirming registration for this webinar.  
                 bool linkToVerifyAccount = !string.IsNullOrWhiteSpace(confirmChangeEmailLink);
 
                 _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
@@ -924,21 +944,8 @@ namespace CUWebinars.Business.Services
             }
             else
             {
-                var aHolder = "";
-                //_logger.Error("ERROR: Rejected Discount On Order: " + order.idOrder);
+                _logger.Error("ERROR: Rejected Discount On Order: " + order.idOrder);
             }
-            //legacy: tracks error condition 
-            //else if (row.Discount != null && row.Discount.Code != row.DiscountCode)
-            //{
-            //    RejectDiscount(row);
-            //    _logger.Error("ERROR: Rejected Discount On Order: " + order.ID);
-
-            //    if (String.IsNullOrEmpty(row.DiscountCode) == false)
-            //    {
-            //        RedeemDiscount(row);
-            //    }
-            //}
-
         }
         public virtual bool IsDiscountCodeValid(string discountCode)
         {
@@ -964,10 +971,10 @@ namespace CUWebinars.Business.Services
             //  a non-valid discount resulted in a decrement.
         }
 
-        public void AddOrderRow(Order currentOrder, OrderRow orderRow)
-        {
-            throw new NotImplementedException();
-        }
+        //public void AddOrderRow(Order currentOrder, OrderRow orderRow)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow)
         {
@@ -1014,10 +1021,10 @@ namespace CUWebinars.Business.Services
                 requestStream.Write(requestBytes, 0, requestBytes.Length);
                 requestStream.Close();
             }
-
+            
+            _logger.Info("CreateRegistrantKey starts: " + billingEmail + ", webinarKey = " + webinarKey + ", OrgKey = " + orgKey + ", oauth_token=" + accessToken);
             try
             {
-                _logger.Info("CreateRegistrantKey starts: " + billingEmail + ", webinarKey = " + webinarKey + ", OrgKey = " + orgKey + ", oauth_token=" + accessToken);
                 HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse();
                 // Get the stream associated with the response.
                 Stream receiveStream = response.GetResponseStream();
@@ -1036,7 +1043,7 @@ namespace CUWebinars.Business.Services
             }
             catch (WebException webException)
             {
-                _logger.ErrorException(string.Format("CreateRegistrantKey WebException: {0}, {1}. ExceptionMsg = {2}", billingEmail, webinarKey, webException.Message), webException);
+                _logger.ErrorException(string.Format("WebException CreateRegistrantKey: {0}, {1}. ExceptionMsg = {2}", billingEmail, webinarKey, webException.Message), webException);
                 var httpWebResponse = webException.Response as HttpWebResponse;
 
                 if (httpWebResponse != null &&
@@ -1055,8 +1062,7 @@ namespace CUWebinars.Business.Services
             }
             catch (Exception exception)
             {
-                _logger.ErrorException(string.Format("CreateRegistrantKey Exception: {0}, {1}. ExceptionMsg = {2}", billingEmail, webinarKey, exception.Message), exception);
-
+                _logger.ErrorException(string.Format("Exception CreateRegistrantKey: {0}, {1}. ExceptionMsg = {2}", billingEmail, webinarKey, exception.Message), exception);
                 return "error";
             }
             return null;

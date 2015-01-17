@@ -21,8 +21,9 @@ namespace CUWebinars.Business.Repository
             return i;
         }
 
-        public IList<RegType> FindRegTypesForOption(int optionId)
+        public IList<RegType> FindRegTypeOption(int optionId)
         {
+            //TODO: review naming convention and clarify under what conditions the relation between an Option and a RegType would ever be 1:N (iow, why's this a list?)
             return items.Where(o => o.idRegType == optionId).ToList();
         }
 

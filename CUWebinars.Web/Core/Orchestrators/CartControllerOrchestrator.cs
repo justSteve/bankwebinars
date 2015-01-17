@@ -302,7 +302,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         OrderStatus = orderRow.Order.OrderStatus,
                         Price = orderRow.RegistrationType.Price,
                         PricesAndDiscounts =
-                            _orderManagementService.CalculateOrderPrices(orderRow.Order, optionsCost.Value),
+                            _orderManagementService.CalculateOrderCost(orderRow.Order, optionsCost.Value),
                         RowPrice = orderRow.RowPrice,
                         RegistrationType = orderRow.RegistrationType
                     };
@@ -374,7 +374,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     _logger.Info("Building OrderHasAdditionalLocationsViewModel for: " + orderRow.Order.idOrder);
 
                     var addressesAndOptionsCost =
-                        _orderManagementService.GetAdditionalLocationsPricing(orderRow.AdditionalLocation,
+                        _orderManagementService.GetCostOfAdditionalLocations(orderRow.AdditionalLocation,
                             orderRow.idWebinar);
 
                     var orderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
@@ -403,7 +403,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public Tuple<string, string> CheckIfAddLocShouldHide(int optionId)
         {
-            var firstOrDefault = _orderManagementService.GetRegTypesForOption(optionId)
+            var firstOrDefault = _orderManagementService.GetRegTypeOption(optionId)
                 .Select(o => new {Show = o.ShowLiveNotifications, Ship = o.ShowShippedNotifications})
                 .FirstOrDefault();
 
@@ -473,7 +473,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public RegType GetRegTypeById(int idRegType)
         {
-            return _orderManagementService.GetRegTypesForOption(idRegType).SingleOrDefault();
+            return _orderManagementService.GetRegTypeOption(idRegType).SingleOrDefault();
         }
 
         public OrderRow LoadOrderRow(int id, OrderStatus status)

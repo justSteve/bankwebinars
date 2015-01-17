@@ -355,7 +355,7 @@ namespace CUWebinars.Web.Controllers
                             {
                                 BasePrice = pricesAndDiscounts.UnitPrice,
                                 Discount = pricesAndDiscounts.TotalDiscount,
-                                OptionsPrice = pricesAndDiscounts.TotalOptions,
+                                OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,
                                 Total = pricesAndDiscounts.TotalOrderPrice
                             });
                 }

@@ -273,7 +273,7 @@ namespace CUWebinars.Web.Tests.UnitTests
             };
 
             _orderManagementServiceMock.Setup(i => i.GetOrderRowById(It.IsAny<int>())).Returns(orderRow).Verifiable();
-            _orderManagementServiceMock.Setup(i => i.GetAdditionalLocationsPricing(It.IsAny<IEnumerable<AdditionalLocation>>(),orderRow.idWebinar)).Returns(addressesAndAddLocsPrice);
+            _orderManagementServiceMock.Setup(i => i.GetCostOfAdditionalLocations(It.IsAny<IEnumerable<AdditionalLocation>>(),orderRow.idWebinar)).Returns(addressesAndAddLocsPrice);
 
 
             _cartControllerOrchestrator = new CartControllerOrchestrator(
@@ -321,7 +321,7 @@ namespace CUWebinars.Web.Tests.UnitTests
             };
 
             _orderManagementServiceMock.Setup(i => i.GetOrderRowById(It.IsAny<int>())).Returns(orderRow);
-            _orderManagementServiceMock.Setup(i => i.GetAdditionalLocationsPricing(It.IsAny<IEnumerable<AdditionalLocation>>(),orderRow.idWebinar)).Returns(addressesAndAddLocsPrice);
+            _orderManagementServiceMock.Setup(i => i.GetCostOfAdditionalLocations(It.IsAny<IEnumerable<AdditionalLocation>>(),orderRow.idWebinar)).Returns(addressesAndAddLocsPrice);
 
             var request = WebTestHelpers.GetMockedHttpContext().Request;
             
@@ -374,7 +374,7 @@ namespace CUWebinars.Web.Tests.UnitTests
             };
 
             _orderManagementServiceMock.Setup(i => i.GetOrderRowById(idOrderRow)).Returns(orderRow);
-            _orderManagementServiceMock.Setup(i => i.GetAdditionalLocationsPricing(It.IsAny<IEnumerable<AdditionalLocation>>(), orderRow.idWebinar)).Returns(addressesAndAddLocsPrice);
+            _orderManagementServiceMock.Setup(i => i.GetCostOfAdditionalLocations(It.IsAny<IEnumerable<AdditionalLocation>>(), orderRow.idWebinar)).Returns(addressesAndAddLocsPrice);
 
             _cartControllerOrchestrator = new CartControllerOrchestrator(
                 _membershipServiceMock.Object,
@@ -427,7 +427,7 @@ namespace CUWebinars.Web.Tests.UnitTests
             };
 
             _orderManagementServiceMock.Setup(i => i.GetOrderRowById(idOrderRow)).Returns(orderRow);
-            _orderManagementServiceMock.Setup(i => i.GetAdditionalLocationsPricing(It.IsAny<IEnumerable<AdditionalLocation>>(), orderRow.idWebinar)).Returns(addressesAndAddLocsPrice);
+            _orderManagementServiceMock.Setup(i => i.GetCostOfAdditionalLocations(It.IsAny<IEnumerable<AdditionalLocation>>(), orderRow.idWebinar)).Returns(addressesAndAddLocsPrice);
 
             _cartControllerOrchestrator = new CartControllerOrchestrator(
                 _membershipServiceMock.Object,
@@ -481,7 +481,7 @@ namespace CUWebinars.Web.Tests.UnitTests
             };
 
             _orderManagementServiceMock.Setup(i => i.GetOrderRowById(idOrderRow)).Returns(orderRow);
-            _orderManagementServiceMock.Setup(i => i.GetAdditionalLocationsPricing(It.IsAny<IEnumerable<AdditionalLocation>>(), orderRow.idWebinar)).Returns(addressesAndAddLocsPrice);
+            _orderManagementServiceMock.Setup(i => i.GetCostOfAdditionalLocations(It.IsAny<IEnumerable<AdditionalLocation>>(), orderRow.idWebinar)).Returns(addressesAndAddLocsPrice);
 
             _cartControllerOrchestrator = new CartControllerOrchestrator(
                 _membershipServiceMock.Object,
