@@ -59,6 +59,7 @@ namespace CUWebinars.CitrixDriver
 
 
                 var newWebinarKey = ScheduleASimilarWebinar(webinar);
+
                 citrixWebPage.ClickViewLinkForAccessCodeAndPhoneNumbers();
 
                 //  First get Organizer details

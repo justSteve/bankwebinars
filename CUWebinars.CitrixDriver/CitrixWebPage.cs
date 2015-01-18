@@ -95,8 +95,11 @@ namespace CUWebinars.CitrixDriver
 
         public void GoToWebinarsPage()
         {
-            SeleniumTestDriver.FindByLinkClick("My Webinars");
-            _mainWindow = SeleniumTestDriver.WebDriver.CurrentWindowHandle;
+            SeleniumTestDriver.FindByIdClick("menu-toggle", ExpectedCondition.ElementIsVisible, 15);
+            SeleniumTestDriver.FindByCssSelectorClick("#gotowebinar > a");
+            SeleniumTestDriver.FindByXPathClick(@"//*[@href='#pastWebinars']", ExpectedCondition.ElementIsVisible, 10);
+            //SeleniumTestDriver.FindByPartialLinkTextClick("My Webinars", ExpectedCondition.ElementIsVisible, 10);
+            //_mainWindow = SeleniumTestDriver.WebDriver.CurrentWindowHandle;
         }
 
         public void ScheduleAWebinar()
@@ -113,39 +116,45 @@ namespace CUWebinars.CitrixDriver
 
         public void PickDate(DateTime date, bool firstRun)
         {
-            var dateWidget = SeleniumTestDriver.FindByCssSelectorClick("div#floatcal table");
-            var monthHeader = SeleniumTestDriver.FindByCssSelectorClick("div#floatcal div.head");
-            var nextButton = SeleniumTestDriver.FindByCssSelectorClick("div#floatcal div.head img.next");
-            var prevButton = SeleniumTestDriver.FindByCssSelectorClick("div#floatcal div.head img.prev");
+//            var dateWidget = SeleniumTestDriver.FindByCssSelectorClick("div#floatcal table");
+            var monthHeader = SeleniumTestDriver.FindByXPath("//*[@id='ui-datepicker-div']/div[1]/div/span[1]"); // month header of popup calendar
+            var nextButton = SeleniumTestDriver.FindByXPath("//*[@id='ui-datepicker-div']/div[1]/a[2]/span"); // "next month" button of popup calendar
+//            var prevButton = SeleniumTestDriver.FindByCssSelectorClick("div#floatcal div.head img.prev");
             var month = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(date.Month);
             var year = date.Year;
             var day = date.Day;
 
-            if (!firstRun)
-            {
-                while (count > 0)
-                {
-                    count--;
-                    prevButton.Click();
-                }
-            }
+            //if (!firstRun)
+            //{
+            //    while (count > 0)
+            //    {
+            //        count--;
+            //        prevButton.Click();
+            //    }
+            //}
             //ClickMonth(monthHeader, month, year, prevButton);
-
-            while (monthHeader.Text != string.Format("{0} {1}", month, year))
+            
+            //*[@id="ui-datepicker-div"]/div[1]/div/span[2]
+            
+            while (monthHeader.Text != month)
             {
                 count--;
-                prevButton.Click();
+                nextButton.Click();
             }
 
-            ReadOnlyCollection<IWebElement> rows = dateWidget.FindElements(By.TagName("tr"));
-            ReadOnlyCollection<IWebElement> cols = dateWidget.FindElements(By.TagName("td"));
+            SeleniumTestDriver.FindByXPath("//*[@id='ui-datepicker-div']/table/tbody/tr[4]/td[@data-month='0']/a[child::text()='15']");
 
-            //  Lets choose the 28th of the current month
-            foreach (IWebElement colWebElement in cols.Where(colWebElement => colWebElement.Text.Equals(day.ToString())))
-            {
-                colWebElement.Click();
-                break;
-            }
+            //*[@id="ui-datepicker-div"]/table/tbody/tr[3]/td[4]/a
+            //*[@id="ui-datepicker-div"]/table/tbody/tr[4]/td[@data-month="0"]/a[child::text()=15]
+            //ReadOnlyCollection<IWebElement> rows = dateWidget.FindElements(By.TagName("tr"));
+            //ReadOnlyCollection<IWebElement> cols = dateWidget.FindElements(By.TagName("td"));
+
+            ////  Lets choose the 28th of the current month
+            //foreach (IWebElement colWebElement in cols.Where(colWebElement => colWebElement.Text.Equals(day.ToString())))
+            //{
+            //    colWebElement.Click();
+            //    break;
+            //}
         }
 
         private static void ClickMonth(IWebElement monthHeader, string month, int year, IWebElement prevButton)
@@ -206,40 +215,42 @@ namespace CUWebinars.CitrixDriver
 
         public string ScheduleASimilarWebinar(GTWebinar webinar)
         {
-            var div = SeleniumTestDriver.FindByXPath(@"//span/b[contains(text(), '" + webinar.TemplateTitle + "')]/parent::span/parent::p/parent::div/parent::div/parent::div");
-            var footer = div.FindElement(By.XPath(@"/self::node()/descendant::div[@class='scheduleAnotherFooter']"));
-            var scheduleSimilarLink = footer.FindElement(By.XPath(@"/self::node()/descendant::p/descendant::span/descendant::a[contains(text(), 'Schedule Similar Webinar')]"));
-            scheduleSimilarLink.Click();
+            //var div = SeleniumTestDriver.FindByXPath(@"//span/b[contains(text(), '" + webinar.TemplateTitle + "')]/parent::span/parent::p/parent::div/parent::div/parent::div");
+            //var footer = div.FindElement(By.XPath(@"/self::node()/descendant::div[@class='scheduleAnotherFooter']"));
+            SeleniumTestDriver.WebDriver.FindElements(By.PartialLinkText("BaseLive Event Clone")).First().Click();
+            SeleniumTestDriver.FindByIdClick("scheduleSimilar");
+            //var scheduleSimilarLink = footer.FindElement(By.XPath(@"/self::node()/descendant::p/descendant::span/descendant::a[contains(text(), 'Schedule Similar Webinar')]"));
+            //scheduleSimilarLink.Click();
 
             var wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(5));
 
-            var webinarTitleText = wait.Until(d =>
-            {
-                var webinarTitleTextInput = SeleniumTestDriver.FindByIdClick("WebinarTitle");
-                return webinarTitleTextInput;
-            });
+            //var webinarTitleText = wait.Until(d =>
+            //{
+            //    var webinarTitleTextInput = SeleniumTestDriver.FindByIdClick("WebinarTitle");
+            //    return webinarTitleTextInput;
+            //});
 
 
-            SeleniumTestDriver.TypeText(FinderStrategy.Name, "WebinarTitle", webinar.Title);
-            SeleniumTestDriver.TypeText(FinderStrategy.Name, "Description", webinar.Description);
+            SeleniumTestDriver.TypeText(FinderStrategy.Id, "name", webinar.Title);
+            SeleniumTestDriver.TypeText(FinderStrategy.Id, "description", webinar.Description);
 
 
-            var confCallRadio = wait.Until(d =>
-            {
-                var confCallRadioButton = SeleniumTestDriver.FindByIdClick("confCallRadio");
-                return confCallRadioButton;
-            });
+            //var confCallRadio = wait.Until(d =>
+            //{
+            //    var confCallRadioButton = SeleniumTestDriver.FindByIdClick("confCallRadio");
+            //    return confCallRadioButton;
+            //});
 
-            confCallRadio.Click();
+            //confCallRadio.Click();
 
 
 
-            SeleniumTestDriver.FindByIdClick("StartDate_Cal_0");
+            SeleniumTestDriver.FindByIdClick("webinarTimesForm.dateTimes_0.baseDate");
 
-            wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(5));
+            //wait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(5));
 
-            var calendarImage = wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("img.next")));
-            calendarImage.Click();
+            //var calendarImage = wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("img.next")));
+            //calendarImage.Click();
 
             PickDate(webinar.StartTime, true);
 
