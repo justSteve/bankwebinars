@@ -478,7 +478,7 @@ namespace CUWebinars.Business.Services
             //Calculate order total
             order.Total = row.RowPrice;
             pricesAndDiscounts.TotalOrderPrice = order.Total;
-
+            //TODO: Is there a reason to not fire an orderSave at this point?
             return pricesAndDiscounts;
         }
 
@@ -676,7 +676,9 @@ namespace CUWebinars.Business.Services
                     currentOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar
                     );
 
-                ProcessDiscountCodes(currentOrder);
+                // this method is just a wrapper to 'RedeemDiscount' and should not be allowed
+                // to fire from an update method to avoid multiple decrements.
+                //ProcessDiscountCodes(currentOrder);
 
                 pricesAndDiscounts = CalculateOrderCost(currentOrder, additionalLocationsPricing.Single().Item2);
 
@@ -830,15 +832,22 @@ namespace CUWebinars.Business.Services
                     else
                     {
                         _logger.Error("ERROR at CreateRegistrantKey on " + row.Order.idOrder);
-
                     }
                 }
             }
         }
 
-        public Discount ApplyDiscountCode(string code)
+        public Discount ApplyDiscountCode(string code, OrderRow row)
         {
-            return GetDiscountByCode(code);
+            var thisDiscount = GetDiscountByCode(code);
+
+            if (!ReferenceEquals(null, thisDiscount))
+            {
+                row.Discount = thisDiscount;
+                RedeemDiscount(thisDiscount);
+            }
+
+            return thisDiscount;
         }
 
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink, OrderGenesis orderGenesis = OrderGenesis.ImportedForExistingUser)
@@ -851,7 +860,8 @@ namespace CUWebinars.Business.Services
             // If no data is stored for AdditionalLocations pricing in db, price will be $0. Up to us to ensure pricing is available.
             if (!ReferenceEquals(null, tuple))
                 optionsPrice = tuple.Item2;
-
+            //TODO: can we verify that SaveOrderChanges is only going to be called once? 
+            //   else, what prevents multiple decrements to Discount.Uses?
             ProcessDiscountCodes(currentOrder);
             CalculateOrderCost(currentOrder, optionsPrice);
 
@@ -935,11 +945,10 @@ namespace CUWebinars.Business.Services
         private void ProcessDiscountCodes(Order order)
         {
             var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-            //legacy's verbetum if (row.Discount == null && String.IsNullOrEmpty(row.DiscountCode) == false)
-
+            //
             if (row.Discount != null)
             {
-                RedeemDiscount(row);
+                RedeemDiscount(row.Discount);
                 _logger.Info("Redeemed Discount On Order: " + order.idOrder);
             }
             else
@@ -954,14 +963,14 @@ namespace CUWebinars.Business.Services
         }
 
 
-        private void RedeemDiscount(OrderRow orderRow)
+        private void RedeemDiscount(Discount discount)
         {
-            Discount discount = orderRow.Discount;
+//            Discount discount = orderRow.Discount;
 
             if (discount.DiscountType != DiscountType.Subscription)
                 discount.UsesRemain--;
-            _logger.Info("Discount was redeemed for {0}.", orderRow.idOrder);
-            //TODO: Determine if OrderRow should be saved here or depend on other code in the workflow.
+            _logger.Info("Discount was redeemed for {0}.", discount.DiscountCode);
+            
         }
 
         private void RejectDiscount(OrderRow orderRow)

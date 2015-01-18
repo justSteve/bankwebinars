@@ -506,9 +506,9 @@ namespace CUWebinars.Web.Core.Orchestrators
             _orderManagementService.UpdateOrderWithUserId(orderId, userId);
         }
 
-        public Discount ApplyDiscountCode(string code)
+        public Discount ApplyDiscountCode(string code, OrderRow row)
         {
-           return _orderManagementService.ApplyDiscountCode(code);
+           return _orderManagementService.ApplyDiscountCode(code, row);
         }
 
         public void RemoveAdditionalLocationsFromOrder(int idOrderRow)
