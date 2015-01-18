@@ -29,10 +29,10 @@ namespace CUWebinars.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult ApplyDiscountCode(string code, int id)
+        public ActionResult ApplyDiscountCode(string code, int orderRowId)
         {
             var myDiscount = _cartControllerOrchestrator.ApplyDiscountCode(code);
-            var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id); 
+            var model = _cartControllerOrchestrator.BuildCheckOutViewModel(orderRowId); 
 
             var row = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
 

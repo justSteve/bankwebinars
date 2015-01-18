@@ -211,7 +211,7 @@ $(function () {
 
         // Following 3 functions live in the register-during-checkout.js script
         // which will be in memory at this point and thus will be hoisted
-        hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
+        hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
         hookUpChangeTypeLogic($('#RegType'));
         hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
     }
@@ -313,7 +313,7 @@ $(function () {
 
                                 // Following 3 functions live in the register-during-checkout.js script
                                 // which will be in memory at this point and thus will be hoisted
-                                hookUpApplyDiscountLogic($('#SubmitDiscountCode'));
+                                hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
                                 hookUpChangeTypeLogic($('#RegType'));
                                 hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
 
