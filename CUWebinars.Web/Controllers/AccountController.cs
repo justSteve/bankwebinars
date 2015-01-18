@@ -822,29 +822,28 @@ namespace CUWebinars.Web.Controllers
                     else
                     {
                         if (_accountControllerOrchestrator.ChangePasswordFromResetKey(model.Key, model.Password))
-                            model.ChangePasswordSucceeded = true;
-                        else
                         {
-                            _logger.Error("_accountControllerOrchestrator.ChangePasswordFromResetKey tossed error.");
-                            ModelState.AddModelError(string.Empty,
-                                "We've logged an error. Please attempt the password reset procedure again. In case of persisant failures contact us at support@ttstrain.com - or, for immediate assistance contact us at 800-831-0678 ext. 707.");
+                            model.ChangePasswordSucceeded = true;
+                            return Json(new { Result = "Success"});
                         }
+
+                        _logger.Error("_accountControllerOrchestrator.ChangePasswordFromResetKey tossed error.");
+                        ModelState.AddModelError(string.Empty,
+                            "We've logged an error. Please attempt the password reset procedure again. In case of persisant failures contact us at support@ttstrain.com - or, for immediate assistance contact us at 800-831-0678 ext. 707.");
                     }
                     _logger.Info("Account.PasswordResetConfirm Post. Session=" + _appHelper.GetUserAuditInfo());
-
-                    return View(model);
                 }
-                    _logger.Error("Invalid ModelState in PasswordResetConfirm");
-                    ProcessModelStateErrors();
-                }
+                _logger.Error("Invalid ModelState in PasswordResetConfirm");
+            }
             catch (ValidationException validationException)
             {
 
-                _logger.Fatal("Account.ResetPassword. " + validationException.Message + " Session=" + _appHelper.GetUserAuditInfo());
+                _logger.Fatal("Account.ResetPassword. " + validationException.Message + " Session=" +
+                              _appHelper.GetUserAuditInfo());
                 ModelState.AddModelError(string.Empty, "The new password must be different than the old password.");
             }
 
-            return View(model);
+            return this.ModelStateJson(ModelState);
         }
 
         //

@@ -112,6 +112,11 @@ namespace CUWebinars.Web.App_Start
                         "~/Scripts/app/web-user-details-manage.js"
                         ));
 
+            bundles.Add(new ScriptBundle("~/bundles/reset-password-form").Include(
+                        "~/Scripts/app/constants.js",
+                        "~/Scripts/app/passwordReset/password-reset-submitter.js"
+            ));
+
             bundles.Add(new ScriptBundle("~/bundles/app-processing-register").Include(
                         "~/Scripts/app/constants.js",
                         "~/Scripts/app/common.js",

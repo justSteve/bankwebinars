@@ -554,6 +554,7 @@
     <Content Include="Scripts\app\cart\details.js" />
     <Content Include="Scripts\app\cart\register-user-in-cart.js" />
     <Content Include="Scripts\app\form-processor.js" />
+    <Content Include="Scripts\app\passwordReset\password-reset-submitter.js" />
     <Content Include="Scripts\app\utilities.js" />
     <Content Include="newrelic\newrelic.config" />
     <Content Include="newrelic\extensions\extension.xsd">
