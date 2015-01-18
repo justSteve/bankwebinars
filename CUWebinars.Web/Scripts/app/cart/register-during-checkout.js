@@ -1080,7 +1080,7 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
         //TODO: Pass orderId to ApplyDiscount controller method
         //
         var url = '/cart/ApplyDiscountCode';
-        var payload = { code: $('#DiscountCode').val(), orderRowId: orderRowId };
+        var payload = { code: $('#CheckoutDiscountCode').val(), orderRowId: orderRowId };
         var self = this;
 
         $.ajax({
