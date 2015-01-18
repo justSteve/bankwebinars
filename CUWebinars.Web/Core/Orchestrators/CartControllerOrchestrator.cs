@@ -281,7 +281,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     if (ReferenceEquals(orderRow, null))
                         orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
-
+                    //TODO: Pinpoints where the 'disappearing discount' takes place. When flow enters this method, the Row has the discount.
                     if (orderRow.RowStatus != OrderRowStatus.Active)
                         return null;
 
@@ -292,7 +292,15 @@ namespace CUWebinars.Web.Core.Orchestrators
                         var dataOperations =
                             new Business.Core.DataOperations(GlobalConfig.GlobalConfigSingleton.DefaultConnectionString);
                         var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(orderRow.idWebinar);
-                        optionsCost = additionalLocationsPricing.Single().Item2;
+                        if (additionalLocationsPricing == null)
+                        {
+                            _logger.Warn("AdditionalLocation lacks price on: " + orderRow.idWebinar);
+                            optionsCost = 0;
+                        }
+                        else
+                        {
+                            optionsCost = additionalLocationsPricing.Single().Item2;
+                        }
                     }
 
                     var displayRowPriceViewModel = new DisplayRowPriceViewModel
@@ -404,7 +412,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         public Tuple<string, string> CheckIfAddLocShouldHide(int optionId)
         {
             var firstOrDefault = _orderManagementService.GetRegTypeOption(optionId)
-                .Select(o => new {Show = o.ShowLiveNotifications, Ship = o.ShowShippedNotifications})
+                .Select(o => new { Show = o.ShowLiveNotifications, Ship = o.ShowShippedNotifications })
                 .FirstOrDefault();
 
             if (firstOrDefault != null)
@@ -456,7 +464,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     USTimeZone.Central,
                     UserType.Customer,
                     _stateService.GetValue<int>("AValidInstitution"),
-                    null, 
+                    null,
                     "Mr",
                     null,
                     null);
@@ -508,7 +516,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public Discount ApplyDiscountCode(string code, OrderRow row)
         {
-           return _orderManagementService.ApplyDiscountCode(code, row);
+            return _orderManagementService.ApplyDiscountCode(code, row);
         }
 
         public void RemoveAdditionalLocationsFromOrder(int idOrderRow)

@@ -395,33 +395,34 @@ PRINT 'WARNING - ADDITIONAL LOCATIONS PRICES MISSING'
 PRINT '-----------------------------'
 PRINT '-----------------------------'
 END
+UPDATE dbo.Discount SET DiscountType = 4 WHERE idDiscount > 0
+UPDATE dbo.Discount SET DiscountType = 3 WHERE DiscountCode LIKE 'CP_%'
+--SELECT  *
+--FROM    dbo.Webinar
+--WHERE   idWebinar NOT IN ( SELECT   idWebinar
+--                           FROM     dbo.WebinarTopicXref )
 
-SELECT  *
-FROM    dbo.Webinar
-WHERE   idWebinar NOT IN ( SELECT   idWebinar
-                           FROM     dbo.WebinarTopicXref )
+--SELECT  *
+--FROM    dbo.WebinarTopicXref
+--WHERE   idWebinar NOT IN ( SELECT   idWebinar
+--                           FROM     dbo.Webinar )
 
-SELECT  *
-FROM    dbo.WebinarTopicXref
-WHERE   idWebinar NOT IN ( SELECT   idWebinar
-                           FROM     dbo.Webinar )
+--SELECT  *
+--FROM    dbo.RegTypesGroupsXref
+--WHERE   idWebinar NOT IN ( SELECT   idWebinar
+--                           FROM     dbo.Webinar )
 
-SELECT  *
-FROM    dbo.RegTypesGroupsXref
-WHERE   idWebinar NOT IN ( SELECT   idWebinar
-                           FROM     dbo.Webinar )
+--SELECT  *
+--FROM    dbo.WebUser
+--WHERE   UserType = 3
+--        AND idUser NOT IN ( SELECT  idUser
+--                            FROM    dbo.Presenter )
+--        AND idUser NOT IN ( SELECT  idPresenter
+--                            FROM    dbo.Webinar )
 
-SELECT  *
-FROM    dbo.WebUser
-WHERE   UserType = 3
-        AND idUser NOT IN ( SELECT  idUser
-                            FROM    dbo.Presenter )
-        AND idUser NOT IN ( SELECT  idPresenter
-                            FROM    dbo.Webinar )
-
-SELECT  *
-FROM    dbo.WebUser
-WHERE   UserType = 2
-        AND idUser NOT IN ( SELECT  idUser
-                            FROM    dbo.Affiliate )
+--SELECT  *
+--FROM    dbo.WebUser
+--WHERE   UserType = 2
+--        AND idUser NOT IN ( SELECT  idUser
+--                            FROM    dbo.Affiliate )
         

@@ -437,6 +437,7 @@ namespace CUWebinars.Business.Services
         }
         public PricesAndDiscounts CalculateOrderCost(Order order, decimal optionsCost)
         {
+            //how is default determined?
             PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
             decimal totalOptionsPrice = 0M;
 
@@ -477,8 +478,11 @@ namespace CUWebinars.Business.Services
 
             //Calculate order total
             order.Total = row.RowPrice;
+            pricesAndDiscounts.Discount = row.Discount;
             pricesAndDiscounts.TotalOrderPrice = order.Total;
-            //TODO: Is there a reason to not fire an orderSave at this point?
+
+            //TODO: This seems like a save point but would create circular reference?
+            //SaveOrderChanges(order, string.Empty, string.Empty);
             return pricesAndDiscounts;
         }
 
@@ -860,8 +864,7 @@ namespace CUWebinars.Business.Services
             // If no data is stored for AdditionalLocations pricing in db, price will be $0. Up to us to ensure pricing is available.
             if (!ReferenceEquals(null, tuple))
                 optionsPrice = tuple.Item2;
-            //TODO: can we verify that SaveOrderChanges is only going to be called once? 
-            //   else, what prevents multiple decrements to Discount.Uses?
+
             ProcessDiscountCodes(currentOrder);
             CalculateOrderCost(currentOrder, optionsPrice);
 
@@ -965,10 +968,11 @@ namespace CUWebinars.Business.Services
 
         private void RedeemDiscount(Discount discount)
         {
-//            Discount discount = orderRow.Discount;
-
             if (discount.DiscountType != DiscountType.Subscription)
+             
+                discount.UsesCount ++;
                 discount.UsesRemain--;
+
             _logger.Info("Discount was redeemed for {0}.", discount.DiscountCode);
             
         }
@@ -989,6 +993,7 @@ namespace CUWebinars.Business.Services
         {
             var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow);
             var email = webUser == null ? "notauthenticated@cuwebinars.com" : webUser.email;
+
             _logger.Info("CreateNewOrder: " + email + " | " + orderRow.Webinar.Title + " | " + orderRow.RegistrationType.OptionLabel);
             return order;
         }

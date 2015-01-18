@@ -1,9 +1,13 @@
 
+using CUWebinars.Business.Models;
+
 namespace CUWebinars.Business.Core
 {
     public struct PricesAndDiscounts
     {
         public decimal FlatOff { get; set; }
+        public Discount Discount { get; set; }
+
         public decimal UnitPrice { get; set; }
         public decimal TotalDiscount { get; set; }
         //renamed to help

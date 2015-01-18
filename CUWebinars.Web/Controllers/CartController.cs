@@ -39,7 +39,7 @@ namespace CUWebinars.Web.Controllers
             _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
 
             //return PartialView("~/Views/Webinar/Partials/_ShowAppliedDiscount.cshtml", showAppliedDiscountViewModel);
-            
+
             var amountToDiscount = myDiscount.FlatOff.ToString();
             if (myDiscount.PercentOff > 0)
             {
@@ -47,8 +47,8 @@ namespace CUWebinars.Web.Controllers
             }
             row.Discount = myDiscount;
             _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
-            
-            return Json(new { Result = amountToDiscount});
+
+            return Json(new { Result = amountToDiscount });
         }
 
 
@@ -78,7 +78,7 @@ namespace CUWebinars.Web.Controllers
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
                     var orderID = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
                     model.Order.OrderStatus = OrderStatus.Submitted;
-                    
+
 
                     if (User.Identity.IsAuthenticated)
                     {
@@ -214,20 +214,17 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                _logger.Info("Signup2 Enters: " + _appHelper.GetUserAuditInfo());
+
+                //_logger.Info("Signup2 order initialized: " + _appHelper.GetUserAuditInfo());
+
                 //var telemetry = new TelemetryClient();
                 //telemetry.TrackEvent("Signup2Start");
                 try
                 {
-                    _logger.Info("Signup2 Enters: " + _appHelper.GetUserAuditInfo());
                     var order = _cartControllerOrchestrator.CreateOrder(
                         formModel
                         );
-
-                    // todo: __sjh confirms that in-process handling appears to be implmented -- if in progress, will have to show populated partial view.
-                    //
-
-                    _logger.Info("Signup2 order initialized: " + _appHelper.GetUserAuditInfo());
-
 
                     return Json(new
                     {
