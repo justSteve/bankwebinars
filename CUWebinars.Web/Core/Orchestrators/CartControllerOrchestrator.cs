@@ -281,7 +281,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     if (ReferenceEquals(orderRow, null))
                         orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
-
+                    //TODO: Pinpoints where the 'disappearing discount' takes place. When flow enters this method, the Row has the discount.
                     if (orderRow.RowStatus != OrderRowStatus.Active)
                         return null;
 
@@ -292,7 +292,15 @@ namespace CUWebinars.Web.Core.Orchestrators
                         var dataOperations =
                             new Business.Core.DataOperations(GlobalConfig.GlobalConfigSingleton.DefaultConnectionString);
                         var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(orderRow.idWebinar);
-                        optionsCost = additionalLocationsPricing.Single().Item2;
+                        if (additionalLocationsPricing == null)
+                        {
+                            _logger.Warn("AdditionalLocation lacks price on: " + orderRow.idWebinar);
+                            optionsCost = 0;
+                        }
+                        else
+                        {
+                            optionsCost = additionalLocationsPricing.Single().Item2;
+                        }
                     }
 
                     var displayRowPriceViewModel = new DisplayRowPriceViewModel
@@ -302,7 +310,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         OrderStatus = orderRow.Order.OrderStatus,
                         Price = orderRow.RegistrationType.Price,
                         PricesAndDiscounts =
-                            _orderManagementService.CalculateOrderPrices(orderRow.Order, optionsCost.Value),
+                            _orderManagementService.CalculateOrderCost(orderRow.Order, optionsCost.Value),
                         RowPrice = orderRow.RowPrice,
                         RegistrationType = orderRow.RegistrationType
                     };
@@ -374,7 +382,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     _logger.Info("Building OrderHasAdditionalLocationsViewModel for: " + orderRow.Order.idOrder);
 
                     var addressesAndOptionsCost =
-                        _orderManagementService.GetAdditionalLocationsPricing(orderRow.AdditionalLocation,
+                        _orderManagementService.GetCostOfAdditionalLocations(orderRow.AdditionalLocation,
                             orderRow.idWebinar);
 
                     var orderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
@@ -403,8 +411,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public Tuple<string, string> CheckIfAddLocShouldHide(int optionId)
         {
-            var firstOrDefault = _orderManagementService.GetRegTypesForOption(optionId)
-                .Select(o => new {Show = o.ShowLiveNotifications, Ship = o.ShowShippedNotifications})
+            var firstOrDefault = _orderManagementService.GetRegTypeOption(optionId)
+                .Select(o => new { Show = o.ShowLiveNotifications, Ship = o.ShowShippedNotifications })
                 .FirstOrDefault();
 
             if (firstOrDefault != null)
@@ -456,7 +464,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     USTimeZone.Central,
                     UserType.Customer,
                     _stateService.GetValue<int>("AValidInstitution"),
-                    null, 
+                    null,
                     "Mr",
                     null,
                     null);
@@ -473,7 +481,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public RegType GetRegTypeById(int idRegType)
         {
-            return _orderManagementService.GetRegTypesForOption(idRegType).SingleOrDefault();
+            return _orderManagementService.GetRegTypeOption(idRegType).SingleOrDefault();
         }
 
         public OrderRow LoadOrderRow(int id, OrderStatus status)
@@ -506,9 +514,9 @@ namespace CUWebinars.Web.Core.Orchestrators
             _orderManagementService.UpdateOrderWithUserId(orderId, userId);
         }
 
-        public Discount ApplyDiscountCode(string code)
+        public Discount ApplyDiscountCode(string code, OrderRow row)
         {
-           return _orderManagementService.ApplyDiscountCode(code);
+            return _orderManagementService.ApplyDiscountCode(code, row);
         }
 
         public void RemoveAdditionalLocationsFromOrder(int idOrderRow)

@@ -7,7 +7,7 @@ namespace CUWebinars.Business.Repository
     public interface IRegTypeRepository : IDisposable
     {
         RegType FindRegType(int idRegType);
-        IList<RegType> FindRegTypesForOption(int optionId);
+        IList<RegType> FindRegTypeOption(int optionId);
         IDictionary<RegType, bool> FindRegTypesByWebinarId(int id, bool detached);
         bool IsShippingAddressRequired(int regTypeId);
     }

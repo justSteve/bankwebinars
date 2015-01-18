@@ -11,8 +11,8 @@ namespace CUWebinars.Business.Services
         Order AssignAffiliateToOrder(Affiliate affiliate, Order order);
         Order AssignWebUserToOrder(WebUser webUser, Order order);
         Affiliate AttachAffiliate(Affiliate item);
-        string BuildConnectionInfo(OrderRow orderRow);
-        PricesAndDiscounts CalculateOrderPrices(Order order, decimal optionsCost);
+        //string BuildConnectionInfo(OrderRow orderRow);
+        PricesAndDiscounts CalculateOrderCost(Order order, decimal optionsCost);
         int CheckUserForRecordingAccess(int i, int i1);
         AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullname);
 
@@ -30,7 +30,7 @@ namespace CUWebinars.Business.Services
         void FireSendOrderShippedNotificationEvent(IList<Order> orders);
         void FireSendRecordingIsPostedEvent(IList<Order> orders);
         void FireSendReminderNotificationEvent(IList<Order> orders);
-        Tuple<string, decimal> GetAdditionalLocationsPricing(IEnumerable<AdditionalLocation> additionalLocations, int idWebinar);
+        Tuple<string, decimal> GetCostOfAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations, int idWebinar);
         Affiliate GetAffiliateByDomain(string domain);
         Affiliate GetAffiliateById(int id);
         Affiliate GetAffiliateByIdLoaded(int id, params Expression<Func<Affiliate, object>>[] includeProperties);
@@ -41,8 +41,8 @@ namespace CUWebinars.Business.Services
         IList<Order> GetOrdersForRecordedNotifications(int idWebinar);
         IEnumerable<Order> GetOrdersForShippedNotification();
         OrderRow GetOrderRowById(int idOrderRow);
-        IDictionary<RegType, bool> GetRegTypesByWebinarIdFrom(int id, bool detached);
-        IList<RegType> GetRegTypesForOption(int optionId);
+        IDictionary<RegType, bool> GetRegTypesByWebinarId(int id, bool detached);
+        IList<RegType> GetRegTypeOption(int optionId);
         WebUser GetWebUser(string email);
         WebUser GetWebUser(int id);
         IEnumerable<WebUser> GetWebusersForLiveNotifications(int idWebinar);
@@ -61,6 +61,6 @@ namespace CUWebinars.Business.Services
         void UpdateOrderByAdmin(Order order);
         Discount GetDiscountByUser(WebUser currentUser);
         void GetJoinUrl(OrderRow row);
-        Discount ApplyDiscountCode(string code);
+        Discount ApplyDiscountCode(string code, OrderRow row);
     }
 }

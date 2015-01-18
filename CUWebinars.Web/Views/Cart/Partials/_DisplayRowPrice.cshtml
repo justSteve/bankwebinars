@@ -26,12 +26,12 @@
         var outerSpan = new TagBuilder("span");
         outerSpan.GenerateId("addLocsText");
         
-        if(Model.PricesAndDiscounts.TotalOptions == 0)
+        if(Model.PricesAndDiscounts.TotalCostOfOptions == 0)
             outerSpan.AddCssClass("muted");
 
         var additionalLocsPriceElement = new TagBuilder("span");
         additionalLocsPriceElement.GenerateId("totalAdLocsPrice");
-        additionalLocsPriceElement.SetInnerText(Model.PricesAndDiscounts.TotalOptions.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, ""));
+        additionalLocsPriceElement.SetInnerText(Model.PricesAndDiscounts.TotalCostOfOptions.ToString(CurrencyFormatToken).Replace(DotAndTwoDecimals, ""));
 
         if (Model.NumberOfAdditionalLocations == 1)
         {

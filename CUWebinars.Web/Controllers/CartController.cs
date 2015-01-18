@@ -31,10 +31,14 @@ namespace CUWebinars.Web.Controllers
         [HttpPost]
         public ActionResult ApplyDiscountCode(string code, int orderRowId)
         {
-            var myDiscount = _cartControllerOrchestrator.ApplyDiscountCode(code);
-            var model = _cartControllerOrchestrator.BuildCheckOutViewModel(orderRowId); 
+            var model = _cartControllerOrchestrator.BuildCheckOutViewModel(orderRowId);
 
             var row = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+            var myDiscount = _cartControllerOrchestrator.ApplyDiscountCode(code, row);
+
+            _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
+
+            //return PartialView("~/Views/Webinar/Partials/_ShowAppliedDiscount.cshtml", showAppliedDiscountViewModel);
 
             var amountToDiscount = myDiscount.FlatOff.ToString();
             if (myDiscount.PercentOff > 0)
@@ -43,8 +47,8 @@ namespace CUWebinars.Web.Controllers
             }
             row.Discount = myDiscount;
             _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
-            
-            return Json(new { Result = amountToDiscount});
+
+            return Json(new { Result = amountToDiscount });
         }
 
 
@@ -52,20 +56,20 @@ namespace CUWebinars.Web.Controllers
         {
             //var order = _orderManagementService.GetOrdersByUserId(webUserId);
 
-             var addAdditionalLocationViewModel = new AdditionalLocationOfferViewModel
-            {
-                // AdditionalLocations = order.OrderRows.First().AdditionalLocation.ToList()
-                AdditionalLocations = new List<AdditionalLocation>(),
-                OrderExists = false,
-                Emails = new string [0]
-            };
+            var addAdditionalLocationViewModel = new AdditionalLocationOfferViewModel
+           {
+               // AdditionalLocations = order.OrderRows.First().AdditionalLocation.ToList()
+               AdditionalLocations = new List<AdditionalLocation>(),
+               OrderExists = false,
+               Emails = new string[0]
+           };
 
             return PartialView("~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml", addAdditionalLocationViewModel);
         }
 
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult ConfirmOrder( string referred, int? id = null)
+        public ActionResult ConfirmOrder(string referred, int? id = null)
         {
             if (ModelState.IsValid)
             {
@@ -73,7 +77,8 @@ namespace CUWebinars.Web.Controllers
                 {
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
                     var orderID = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
-                     model.Order.OrderStatus = OrderStatus.Submitted;
+                    model.Order.OrderStatus = OrderStatus.Submitted;
+
 
                     if (User.Identity.IsAuthenticated)
                     {
@@ -85,7 +90,7 @@ namespace CUWebinars.Web.Controllers
                     }
 
                     _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
-                
+
 
                     return Json(new
                     {
@@ -190,7 +195,7 @@ namespace CUWebinars.Web.Controllers
         public ActionResult CheckoutDisplayRowPrice(int ID)
         {
             var model = _cartControllerOrchestrator.BuildDisplayRowPriceViewModel(null, ID);
-            return PartialView("Partials/_DisplayRowPrice", model); 
+            return PartialView("Partials/_DisplayRowPrice", model);
         }
 
         public PartialViewResult CheckoutContactDetails()
@@ -209,20 +214,17 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                _logger.Info("Signup2 Enters: " + _appHelper.GetUserAuditInfo());
+
+                //_logger.Info("Signup2 order initialized: " + _appHelper.GetUserAuditInfo());
+
                 //var telemetry = new TelemetryClient();
                 //telemetry.TrackEvent("Signup2Start");
                 try
                 {
-                    _logger.Info("Signup2 Enters: " + _appHelper.GetUserAuditInfo());
                     var order = _cartControllerOrchestrator.CreateOrder(
                         formModel
                         );
-
-                    // todo: __sjh confirms that in-process handling appears to be implmented -- if in progress, will have to show populated partial view.
-                    //
-
-                    _logger.Info("Signup2 order initialized: " + _appHelper.GetUserAuditInfo());
-
 
                     return Json(new
                     {
@@ -304,7 +306,7 @@ namespace CUWebinars.Web.Controllers
                     // View whether or not to display the modal popup upon entering the 3rd tab which displays an edit
                     // form for the user's shipping details. This is because that RegType will have associated materials
                     // that are posted via traditional mail e.g. handouts.
-                    Tuple<string,string> showPlusShip = _cartControllerOrchestrator.CheckIfAddLocShouldHide(optionID);
+                    Tuple<string, string> showPlusShip = _cartControllerOrchestrator.CheckIfAddLocShouldHide(optionID);
                     return Json(new { shouldShow = showPlusShip.Item1, shippingDetailsRqrd = showPlusShip.Item2 }, JsonRequestBehavior.AllowGet);
                 }
                 catch (Exception exception)
@@ -333,7 +335,7 @@ namespace CUWebinars.Web.Controllers
 
                 return Json(new { Result = WebUiConstants.Success });
             }
-            return Json(new {});
+            return Json(new { });
         }
 
         [HttpPost]
@@ -355,7 +357,7 @@ namespace CUWebinars.Web.Controllers
                             {
                                 BasePrice = pricesAndDiscounts.UnitPrice,
                                 Discount = pricesAndDiscounts.TotalDiscount,
-                                OptionsPrice = pricesAndDiscounts.TotalOptions,
+                                OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,
                                 Total = pricesAndDiscounts.TotalOrderPrice
                             });
                 }
@@ -366,9 +368,9 @@ namespace CUWebinars.Web.Controllers
                     Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 }
 
-                return Json(new {Result = WebUiConstants.Success});
+                return Json(new { Result = WebUiConstants.Success });
             }
-            return Json(new {});
+            return Json(new { });
         }
 
         //[Authorize(Roles = AppRoles.Admin)]
@@ -390,7 +392,7 @@ namespace CUWebinars.Web.Controllers
             {
                 _cartControllerOrchestrator.UpdateOrderWithUserId(orderId.Value, userId.Value);
 
-                return Json(new {Result = WebUiConstants.Success});
+                return Json(new { Result = WebUiConstants.Success });
             }
 
             return View();

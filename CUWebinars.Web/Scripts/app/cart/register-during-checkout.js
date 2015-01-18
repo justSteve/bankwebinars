@@ -423,7 +423,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
                             // Upon return, load the 3rd tab. And once loaded, 
                             //create the MR UserAccount (but don't log the user in). 
-                            
+
                             $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
 
                                 if (status == 'error') {
@@ -676,7 +676,7 @@ function completeOrder(userId, orderRowId, webinarId) {
             data: data,
             beforeSend: function () {
                 $('#ConfirmRegistrationBillMe').attr('disabled', 'disabled');
-                
+
             }
         }).done(function (result) {
             if (result.Result === 'Success') {
@@ -735,7 +735,7 @@ function cancelOrder(orderId, webinarId) {
 
         $.post(cancelOrderForm.attr('action'), data, function (response, status, xhr) {
             if (response.success) {
-                
+
                 //var NRerr = new Error('Suceeded in cancelling order');
                 //NREUM.noticeError(NRerr);
 
@@ -744,7 +744,7 @@ function cancelOrder(orderId, webinarId) {
                 utilities.goToUrl('/webinar/details/' + webinarId);
 
             } else {
-                
+
                 var err = new Error('Cancel Order Failure');
                 //NREUM.noticeError(err);
 
@@ -813,10 +813,6 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
             var url = $(this).attr('action');
 
             var payload = $(this).serialize();
-            //TODO: The payload here is highly valuable. The fact that they will be POSTed
-            // instead of GET means they don't show in the server logs, which is often nice to have.
-            // can we fire a GET to an internal address where nothing happens except that
-            // a line dumps to the server with all form values.
             $.ajax({
                 type: 'POST',
                 contentType: constants.FormPostContentType,
@@ -826,14 +822,9 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
                 dataType: constants.JsonDataType,
                 beforeSend: function (xhr) {
                     $('#updateShippingMsgLabelWrap').html('<span class="label label-info">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Updating details...</span>');
-            }
+                }
             }).done(function (data) {
-                //BUG:  A submitted order prematurely turns off the 'in-process' spinner.
-                // Intermittent - Can't reproduce. Is same as was earlier reported where the lag between
-                //  new user submission and the point where panel 3 displays is quite long
-                //  and does not display any 'in-process' spinner
-                // I think the cause would have to be rooted here over very near here.
-
+                
                 if (data.Result === 'Success') {
                     var fullname = $('#RegisterFields_FirstName').val() + ' ' + $('#RegisterFields_LastName').val();
                     $('#userFullname').text(fullname);
@@ -851,7 +842,6 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
 
                     $('#updateShippingMsgLabelWrap').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details updated successfully.</span>');
                     //modalForm.modal('hide');
-                    // [sjh] - i might surmise that this is an attempt to fix the above bug 
 
                 } else if (!data.isSuccessful) {
                     //var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
@@ -860,14 +850,14 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
                     $('#updateShippingMsgLabelWrap').empty();
                     formProcessor.lightUpValidationSummary('userDetailsValSummary', data);
                 } else {
-                    var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
+                    //var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
                     //NREUM.noticeError(err);
                     $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>There has been an error in the operation.Please call us at 800-831-0678 ext. 3 to resolve.</span>');
                 }
             }).fail(function (data) {
-                    var err = new Error('FAIL: Post to userDetailsFormUrlData ' + userDetailsFormUrlData + ' !data.isSuccessful');
-                    //NREUM.noticeError(err);
-                    $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error in the server response. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
+                //var err = new Error('FAIL: Post to userDetailsFormUrlData ' + userDetailsFormUrlData + ' !data.isSuccessful');
+                //NREUM.noticeError(err);
+                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error in the server response. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
             });
         });
 
@@ -1039,7 +1029,7 @@ function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
         dataType: constants.JsonDataType,
         data: JSON.stringify(payLoad),
     }).done(function (data) {
-        
+
         if (data) {
 
             $('#baseCost').html('$' + data.BasePrice + '.00');
@@ -1077,8 +1067,7 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
         if (registerDuringCheckout.totalPrice < 1) {
             return;
         }
-        //TODO: Pass orderId to ApplyDiscount controller method
-        //
+
         var url = '/cart/ApplyDiscountCode';
         var payload = { code: $('#CheckoutDiscountCode').val(), orderRowId: orderRowId };
         var self = this;
@@ -1095,14 +1084,12 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
                 $(self).attr('disabled', 'disabled');
             }
         }).done(function (data) {
-            //  do stuff here with discount.              
 
-            //registerDuringCheckout.totalDiscount = data.Result;
             if (data.Result.indexOf('%') !== -1) {
                 var amount2Discount = data.Result.replace(".00%", "") / 100;
                 registerDuringCheckout.totalDiscount = registerDuringCheckout.totalPrice * amount2Discount;
             } else {
-            registerDuringCheckout.totalDiscount = data.Result;
+                registerDuringCheckout.totalDiscount = data.Result;
             }
 
             var newTotalPrice = registerDuringCheckout.totalPrice - registerDuringCheckout.totalDiscount;
@@ -1110,9 +1097,9 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
             if (newTotalPrice < 0)
                 newTotalPrice = 0;
 
-            $('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 706 for immediate assistance').addClass('text-info');
+            $('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 3.').addClass('text-info');
 
-            $('#discountedText').html('Discounted: <span id="totalDiscount">$' + registerDuringCheckout.totalDiscount + '.00</span>').removeClass('muted');
+            $('#discountedText').html('Discounted: <span id="totalDiscount">$' + registerDuringCheckout.totalDiscount + '</span>').removeClass('muted');
             $('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
 
         }).always(function (e) {

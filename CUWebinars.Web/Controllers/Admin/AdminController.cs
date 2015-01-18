@@ -180,7 +180,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     var order = _orderManagementService.GetOrderById(id.Value);
                     var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
                     var additionalLocationsPricing =
-                        _orderManagementService.GetAdditionalLocationsPricing(
+                        _orderManagementService.GetCostOfAdditionalLocations(
                             orderRow.AdditionalLocation,
                             orderRow.idWebinar
                             );
@@ -207,7 +207,7 @@ namespace CUWebinars.Web.Controllers.Admin
                             OrderStatus = order.OrderStatus,
                             Price = orderRow.RegistrationType.Price,
                             PricesAndDiscounts =
-                                _orderManagementService.CalculateOrderPrices(order, additionalLocationsPricing.Item2),
+                                _orderManagementService.CalculateOrderCost(order, additionalLocationsPricing.Item2),
                             RegistrationType = orderRow.RegistrationType,
                             RowPrice = orderRow.RowPrice
                         },

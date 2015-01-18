@@ -53,6 +53,7 @@
                     <div id="wrapReset">
                         <div class="container">
                             <div id="LoginPart" class="span4">
+                                <p id="loginErrorSummary"></p>
                                 <h3>Login to existing account?</h3>
                                 <p style="text-align: right;">
                                     Email: <input id="Email1" name="Email1" value="" type="text"> <br>
@@ -60,14 +61,11 @@
 
                                     @*<input type="button" class="btn-success btn" name="submitLogin" value="Login" />*@
                                 </p>
-                                <p id="loginErrorSummary"></p>
                             </div>
-                            <div class="span2"><h3 style="text-align: center; background-color: blanchedalmond">Or...</h3></div>
-                            <div id="ResetPart" class="span4">
-                                <p style="margin-top: 50px;">
+                            <div><h3>Or...</h3></div>
+                            <div id="ResetPart">
                                     We can email you a link that will reset your password.
                                     <input id="EdgeCaseResetPasswordButton" type="button" class="btn btn-danger" name="resetPass" value="Reset Password" />
-                                </p>
                             </div>
                         </div>
 
