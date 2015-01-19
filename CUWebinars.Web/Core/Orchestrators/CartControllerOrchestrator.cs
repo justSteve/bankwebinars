@@ -447,6 +447,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             return CreateNewOrder(currentAffiliate, webUser, webinar, newOrderRow);
         }
 
+        public OrderRow GetOrderRowLoaded(int idOrderRow)
+        {
+            return _orderManagementService.GetOrderRowById(idOrderRow);
+        }
+
         public IEnumerable<WebUser> GetWebUsersByLastName(string lastName)
         {
             return _membershipService.GetWebUsersByLastName(lastName);

@@ -8,6 +8,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 {
     public interface ICartControllerOrchestrator : IDisposable
     {
+        Discount ApplyDiscountCode(string code, OrderRow row);
         DisplayRowPriceViewModel BuildDisplayRowPriceViewModel(OrderRow orderRow, int? idOrderRow, decimal? optionsCost = null);
         RegisterViewModel BuildRegisterViewModel();
         CheckoutConfirmViewModel BuildCheckoutConfirmViewModel(int? idOrderRow);
@@ -23,6 +24,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         void CancelOrder(int idOrder);
         Tuple<string, string> CheckIfAddLocShouldHide(int optionId);
         Order CreateOrder(CheckoutOptionsViewModel formModel);
+        OrderRow GetOrderRowLoaded(int idOrderRow);
         IEnumerable<WebUser> GetWebUsersByLastName(string lastName);
         void FireOrderSubmittedNotification(Order order, bool? userCreatedInCart = null);
         RegType GetRegTypeById(int idRegType);
@@ -30,6 +32,5 @@ namespace CUWebinars.Web.Core.Orchestrators
         void RemoveAdditionalLocationsFromOrder(int value);
         PricesAndDiscounts UpdateOrderPricing(Order order);
         void UpdateOrderWithUserId(int orderId, int userId);
-        Discount ApplyDiscountCode(string code, OrderRow row);
     }
 }

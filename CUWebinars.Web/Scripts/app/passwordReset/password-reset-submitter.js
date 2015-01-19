@@ -4,6 +4,7 @@ $(function () {
     var submitNewPasswordButton = $('#submitNewPasswordButton');
     var form = $('#LogInContainer form');
     var formParent = form.parent();
+    $('#Password').focus();
 
     submitNewPasswordButton.on('click', function (e) {
         

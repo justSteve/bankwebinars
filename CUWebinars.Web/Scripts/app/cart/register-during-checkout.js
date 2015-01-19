@@ -1102,6 +1102,8 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
             $('#discountedText').html('Discounted: <span id="totalDiscount">$' + registerDuringCheckout.totalDiscount + '</span>').removeClass('muted');
             $('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
 
+            $('#discountSpinner').remove();
+
         }).always(function (e) {
             $('#discountSpinner').remove();
             $(self).removeAttr('disabled');

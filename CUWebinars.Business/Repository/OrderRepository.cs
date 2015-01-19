@@ -236,6 +236,7 @@ namespace CUWebinars.Business.Repository
                 .Include(or => or.Order.Affiliate)
                 .Include(or => or.RegistrationType)
                 .Include(or => or.AdditionalLocation)
+                .Include(or => or.Discount)
                 .SingleOrDefault(or => or.idOrderRow == idOrderRow);
         }
 

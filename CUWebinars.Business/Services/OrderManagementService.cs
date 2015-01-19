@@ -437,7 +437,7 @@ namespace CUWebinars.Business.Services
         }
         public PricesAndDiscounts CalculateOrderCost(Order order, decimal optionsCost)
         {
-            //how is default determined?
+            //how is default determined? [dar] It is same as writing PricesAndDiscounts pricesAndDiscounts; For int, it would be 'int i = 0';
             PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
             decimal totalOptionsPrice = 0M;
 
@@ -481,8 +481,6 @@ namespace CUWebinars.Business.Services
             pricesAndDiscounts.Discount = row.Discount;
             pricesAndDiscounts.TotalOrderPrice = order.Total;
 
-            //TODO: This seems like a save point but would create circular reference?
-            //SaveOrderChanges(order, string.Empty, string.Empty);
             return pricesAndDiscounts;
         }
 
@@ -679,10 +677,6 @@ namespace CUWebinars.Business.Services
                 var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(
                     currentOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar
                     );
-
-                // this method is just a wrapper to 'RedeemDiscount' and should not be allowed
-                // to fire from an update method to avoid multiple decrements.
-                //ProcessDiscountCodes(currentOrder);
 
                 pricesAndDiscounts = CalculateOrderCost(currentOrder, additionalLocationsPricing.Single().Item2);
 
@@ -971,7 +965,9 @@ namespace CUWebinars.Business.Services
             if (discount.DiscountType != DiscountType.Subscription)
              
                 discount.UsesCount ++;
-                discount.UsesRemain--;
+
+                if (discount.UsesRemain > 0)
+                    discount.UsesRemain--;
 
             _logger.Info("Discount was redeemed for {0}.", discount.DiscountCode);
             
