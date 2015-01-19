@@ -44,11 +44,13 @@ namespace CUWebinars.Business.Repository
 
         public IEnumerable<Webinar> FindByPresenterLastName(string lastName)
         {
-            return items.Where(w => w.Presenter.WebUser.LastName.ToLower()
-                .Contains(lastName.ToLower())
-                && (w.Status == WebinarStatus.Active
+            return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
+                .Include(w => w.Presenter.WebUser)
+                .Where(w => w.Presenter.WebUser.LastName.ToLower().Contains(lastName.ToLower())
+                    && (w.Status == WebinarStatus.Active
                     || w.Status == WebinarStatus.InProgress
-                    || w.Status == WebinarStatus.Recorded));
+                    || w.Status == WebinarStatus.Recorded)
+                    );
         }
 
         public IEnumerable<Webinar> FindByDescription(string searchTerm)
@@ -57,20 +59,23 @@ namespace CUWebinars.Business.Repository
 
             // 1st get all topics with the topicDescription
             var topicsOfSearch = stronglyTypedContext.Topics
-                .Where(t => t.topicDesc.ToLower()
-                    .Contains(searchTerm.ToLower()));
+                .Include(t => t.WebinarTopicXrefs.Select(wtx => wtx.Webinar))
+                .Where(t => t.topicDesc.ToLower().Contains(searchTerm.ToLower()));
 
             // project that into a list of webinars
             var searchTopics = topicsOfSearch.SelectMany(t => t.WebinarTopicXrefs)
                 .Select(w => w.Webinar)
+                .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
+                .Include(w => w.Presenter.WebUser)
                 .Where(w => w.Status == WebinarStatus.Active
                     || w.Status == WebinarStatus.InProgress
                     || w.Status == WebinarStatus.Recorded
-                    )
-                    .AsEnumerable();
+                    );
 
 
             var searchDesc = stronglyTypedContext.Webinars
+                .Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
+                .Include(w => w.Presenter.WebUser)
                 .Where(w => w.DescriptionLong.ToLower().Contains(searchTerm)
                         || w.Title.ToLower().Contains(searchTerm)
                     || w.WhoAttend.ToLower().Contains(searchTerm)
@@ -79,7 +84,7 @@ namespace CUWebinars.Business.Repository
                     || w.Status == WebinarStatus.InProgress
                     || w.Status == WebinarStatus.Recorded)
 
-                    ).AsEnumerable(); ;
+                    );
 
             var result = searchTopics.Union(searchDesc);
             return result;
