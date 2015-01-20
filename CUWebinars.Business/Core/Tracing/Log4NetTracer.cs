@@ -6,6 +6,7 @@ namespace CUWebinars.Business.Core.Tracing
     public class Log4NetTracer :  DefaultTraceListener
     {
         private readonly Log4NetLogger _log4NetLogger = new Log4NetLogger(typeof(Log4NetTracer));
+        private readonly string _tracingLevel = TtsConfig.TracingLevel;
         
         public override void Write(string message)
         {

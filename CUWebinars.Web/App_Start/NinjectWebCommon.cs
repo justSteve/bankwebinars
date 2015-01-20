@@ -100,7 +100,8 @@ namespace CUWebinars.Web.App_Start
                 baseUrl, 
                 globalConfig.UseAzureWebjobs,
                 globalConfig.StorageAccountName, 
-                globalConfig.StorageAccessKey
+                globalConfig.StorageAccessKey,
+                globalConfig.TraceLevel
                 )).InRequestScope();
 
             kernel.Bind<IAppHelper>().To<AppHelper>().InRequestScope().WithConstructorArgument(Request, x => new HttpRequestWrapper(HttpContext.Current.Request));

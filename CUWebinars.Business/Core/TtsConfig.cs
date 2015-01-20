@@ -11,9 +11,17 @@ namespace CUWebinars.Business.Core
     public class TtsConfig
     {
         public static string DefaultConnectionString { get; private set; }
-        public static TtsConfiguration Create(string baseUrl, bool useAzureWebjobs, string storageAccountName, string storageAccessKey)
+        public static string TracingLevel { get; private set; }
+        public static TtsConfiguration Create(
+            string baseUrl, 
+            bool useAzureWebjobs, 
+            string storageAccountName, 
+            string storageAccessKey, 
+            string tracingLevel)
         {
             InitializeConfig();
+
+            TracingLevel = tracingLevel;
 
             var config = new TtsConfiguration();
 
