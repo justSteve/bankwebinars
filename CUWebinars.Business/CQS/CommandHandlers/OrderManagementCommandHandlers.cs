@@ -268,14 +268,14 @@ namespace CUWebinars.Business.CQS.CommandHandlers
         public void Handle(ImportOrderCommand command)
         {
             if (command == null) throw new ArgumentNullException("command");
+            
             var importedOrder = _orderManagementService.CreateNewOrder(command.Affiliate, command.WebUser,
-                command.Webinar, command.OrderRow);
+                command.Webinar, command.OrderRow, DomainConstants.OriginImported);
 
 
             importedOrder.AdminComments = string.Format("Imported On: {0}\r\n", DateTime.Now.ToShortDateString());
             importedOrder.AffiliateComments = command.AffiliateComments;
             importedOrder.UserComments = "";
-            importedOrder.Origin = "Imported";
             importedOrder.OrderStatus = OrderStatus.Submitted;
             importedOrder.FirstName = command.FirstName;
             importedOrder.LastName = command.LastName;
@@ -319,7 +319,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
         {
             if (command == null) throw new ArgumentNullException("command");
             var migratedOrder = _orderManagementService.CreateNewOrder(command.Affiliate, command.WebUser,
-                command.Webinar, command.OrderRow);
+                command.Webinar, command.OrderRow, DomainConstants.OriginMigrated);
 
             migratedOrder.Total = command.Total;
 
@@ -328,7 +328,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             //migratedOrder.AdminComments += string.Format("OrginalUserID: {0}\r\n", command.idUserLegacy);
             migratedOrder.AffiliateComments = command.AffiliateComments;
             migratedOrder.UserComments = "";
-            migratedOrder.Origin = "Migrator";
+            
             migratedOrder.OrderStatus = OrderStatus.Submitted;
             migratedOrder.idOrderLegacy = command.idOrderLegacy;
             migratedOrder.OrderDate = command.OrderDate;

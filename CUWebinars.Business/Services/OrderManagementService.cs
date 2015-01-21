@@ -398,6 +398,12 @@ namespace CUWebinars.Business.Services
                 throw new EntityNotFoundException(ex.Message, ex);
             }
         }
+
+        public int SaveChanges()
+        {
+            return _orderRepository.SaveChanges();
+        }
+
         public Order LoadOrder(int id)
         {
             try
@@ -847,7 +853,7 @@ namespace CUWebinars.Business.Services
 
             return thisDiscount;
         }
-
+        
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink, OrderGenesis orderGenesis = OrderGenesis.ImportedForExistingUser)
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
@@ -985,9 +991,9 @@ namespace CUWebinars.Business.Services
         //    throw new NotImplementedException();
         //}
 
-        public Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow)
+        public Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null)
         {
-            var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow);
+            var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow, origin);
             var email = webUser == null ? "notauthenticated@cuwebinars.com" : webUser.email;
 
             _logger.Info("CreateNewOrder: " + email + " | " + orderRow.Webinar.Title + " | " + orderRow.RegistrationType.OptionLabel);

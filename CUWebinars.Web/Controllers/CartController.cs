@@ -317,6 +317,21 @@ namespace CUWebinars.Web.Controllers
             return this.ModelStateJson(ModelState);
         }
 
+        [HttpGet]
+        public ActionResult PreviewEmail(int? id)
+        {
+            if (id.HasValue)
+            {
+                var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
+                
+                var message = _cartControllerOrchestrator.GenerateMessagePreview(model.Order);
+
+                return File(message.Body.GenerateStreamFromString(), "text/html");
+            }
+
+            return View();
+        }
+
         [HttpPost]
         public ActionResult RemoveAdditionalLocationsFromOrder(int? idOrderRow = null)
         {

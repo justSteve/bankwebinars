@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -78,5 +79,16 @@ namespace CUWebinars.Web.Infrastructure.Extensions
             throw new ArgumentOutOfRangeException("numberOfChars",
                 string.Format("The string \"{0}\" has a length which is less than {1} characters.", source, numberOfChars));
         }
+
+        public static Stream GenerateStreamFromString(this string source)
+        {
+            var stream = new MemoryStream();
+            var writer = new StreamWriter(stream);
+            writer.Write(source);
+            writer.Flush();
+            stream.Position = 0;
+            return stream;
+        }
+
     }
 }

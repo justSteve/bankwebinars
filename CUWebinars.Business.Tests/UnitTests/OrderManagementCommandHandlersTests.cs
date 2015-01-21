@@ -398,7 +398,7 @@ namespace CUWebinars.Business.Tests.UnitTests
             PopulateFields();
             _orderManagementServiceMock.Setup(o =>
                 o.CreateNewOrder(_addOrderCommand.Affiliate, _addOrderCommand.WebUser, _addOrderCommand.Webinar,
-                    _addOrderCommand.OrderRow))
+                    _addOrderCommand.OrderRow, null))
                     .Returns(newOrder)
                     .Verifiable();
 
@@ -425,7 +425,7 @@ namespace CUWebinars.Business.Tests.UnitTests
             PopulateFields();
             _orderManagementServiceMock.Setup(o =>
                 o.CreateNewOrder(_addOrderCommand.Affiliate, _addOrderCommand.WebUser, _addOrderCommand.Webinar,
-                    _addOrderCommand.OrderRow))
+                    _addOrderCommand.OrderRow, null))
                     .Returns(newOrder);
 
             _orderManagementServiceMock.Setup(
@@ -455,7 +455,7 @@ namespace CUWebinars.Business.Tests.UnitTests
             PopulateFields();
             _orderManagementServiceMock.Setup(o =>
                 o.CreateNewOrder(_addOrderCommand.Affiliate, _addOrderCommand.WebUser, _addOrderCommand.Webinar,
-                    _addOrderCommand.OrderRow)).Returns(newOrder);
+                    _addOrderCommand.OrderRow, null)).Returns(newOrder);
             
             var orderManagementCommandHandler = new OrderManagementCommandHandlers(
                 _orderManagementServiceMock.Object,

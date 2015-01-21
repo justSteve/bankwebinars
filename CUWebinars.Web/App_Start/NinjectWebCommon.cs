@@ -5,6 +5,8 @@ using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.CQS;
 using CUWebinars.Business.Models;
+using CUWebinars.Business.Notification;
+using CUWebinars.Business.Notification.Formatters;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
@@ -87,6 +89,7 @@ namespace CUWebinars.Web.App_Start
             GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
             string baseUrl = HttpRuntime.AppDomainAppPath;
 
+            kernel.Bind<IFormatter>().ToMethod(ctx => new Formatter(new EnvironmentInformation {BaseUrl = baseUrl}));
             kernel.Bind<IStateService>().To<StateService>().InSingletonScope();
             kernel.Bind<IRefDataRepository>().To<RefDataRepository>().InRequestScope();
             kernel.Bind<TTSWebinarsContext>().ToSelf().InRequestScope();

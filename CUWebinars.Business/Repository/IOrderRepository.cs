@@ -10,7 +10,7 @@ namespace CUWebinars.Business.Repository
         Order AssignAffiliate(Affiliate affiliate, Order order);
         Order AssignWebUserToOrder(WebUser webUser, Order order);
         AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullName);
-        Order CreateOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow);
+        Order CreateOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null);
         OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, RegType registrationType);
         void DeleteOrder(int orderId);
         Order FindOrderByIdWithOrderRows(int id);
@@ -21,6 +21,7 @@ namespace CUWebinars.Business.Repository
         IList<Order> GetOrdersForRecordedEventNotifications(int idWebinar);
         IList<Order> GetOrdersForShippedEventNotifications();
         OrderRow GetOrderRowById(int idOrderRow);
+        int SaveChanges();
         Order SaveOrderChanges(Order order, int? isFromSignup);
         IList<Order> SelectOrdersWithArchivedWebinars(int idUser);
         IList<Order> SelectOrdersWithRecordedWebinars(int idUser);

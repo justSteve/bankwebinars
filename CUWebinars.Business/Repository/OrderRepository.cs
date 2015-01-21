@@ -23,7 +23,7 @@ namespace CUWebinars.Business.Repository
             _orderValidator = new CreateOrderValidator(new WebinarRepository((TTSWebinarsContext)db));
         }
 
-        public Order CreateOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow)
+        public Order CreateOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null)
         {
 
             var newOrder = items.Create();
@@ -32,6 +32,7 @@ namespace CUWebinars.Business.Repository
             newOrder.Affiliate = affiliate;
             newOrder.BillingEmail = webUser.email;
             newOrder.idUser = webUser.idUser;
+            newOrder.Origin = origin;
 
             newOrder = AssignWebUserToOrder(webUser, newOrder);
 
@@ -315,16 +316,31 @@ namespace CUWebinars.Business.Repository
                 }
             }
 
+            if (order.Origin != null)
+            {
+                switch (order.Origin)
+                {
+                    case DomainConstants.OriginMigrated:
+                    case DomainConstants.OriginImported:
+                        return order;
+                }
+            }
+
             if (db.SaveChanges() > 0)
             {
                 //db.Entry(order).Reference(o => o.WebUser).Load();
                 return order;
             }
 
-            return order;
+            return null;
         }
 
-        public Order    SaveOrderChanges(Order order, int? isFromSignup = null)
+        public int SaveChanges()
+        {
+            return db.SaveChanges();
+        }
+
+        public Order SaveOrderChanges(Order order, int? isFromSignup = null)
         {
             var error = db.GetValidationErrors().ToArray();
 

@@ -16,6 +16,7 @@ using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Web.Tests.UnitTests
 {
+    /*
     [TestClass]
     public class CartControllerOrchestratorTests
     {
@@ -503,4 +504,5 @@ namespace CUWebinars.Web.Tests.UnitTests
         }
 
     }
+     */
 }

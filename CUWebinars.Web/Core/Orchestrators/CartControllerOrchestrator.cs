@@ -2,6 +2,9 @@
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
+using CUWebinars.Business.Notification;
+using CUWebinars.Business.Notification.Formatters;
+using CUWebinars.Business.Notification.ViewModel;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Models;
@@ -26,6 +29,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         private readonly IMembershipService _membershipService;
         private readonly ILogger _logger;
         private readonly IAppHelper _appHelper;
+        private readonly IFormatter _generalFormatter;
         private readonly IOrderManagementService _orderManagementService;
         private readonly IWebinarManagementService _webinarManagementService;
         private bool _disposed;
@@ -36,12 +40,14 @@ namespace CUWebinars.Web.Core.Orchestrators
             IStateService stateService,
             ILogger logger,
             HttpRequestBase request,
-            IAppHelper appHelper)
+            IAppHelper appHelper,
+            IFormatter generalFormatter)
         {
             Request = request;
             _membershipService = membershipService;
             _logger = logger;
             _appHelper = appHelper;
+            _generalFormatter = generalFormatter;
             _orderManagementService = orderManagementService;
             _webinarManagementService = webinarManagementService;
             _stateService = stateService;
@@ -517,6 +523,21 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void UpdateOrderWithUserId(int orderId, int userId)
         {
             _orderManagementService.UpdateOrderWithUserId(orderId, userId);
+        }
+
+        public INotificationMessage GenerateMessagePreview(Order order)
+        {
+            var orderSubmittedViewModel = new OrderSubmittedViewModel
+            {
+                AddPasswordUrl = string.Empty,
+                ConfirmChangeEmailUrl = string.Empty,
+                Order = order,
+                OrderGenesis = OrderGenesis.CreatedViaCartByExistingUser,
+                UserCreatedInCart = false,
+                UserCreatedOnImport = false
+            };
+
+            return _generalFormatter.Format(orderSubmittedViewModel, "OrderSubmitted");
         }
 
         public Discount ApplyDiscountCode(string code, OrderRow row)

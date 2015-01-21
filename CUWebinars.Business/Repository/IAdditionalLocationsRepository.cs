@@ -1,4 +1,6 @@
-﻿namespace CUWebinars.Business.Repository
+﻿using CUWebinars.Business.Models;
+
+namespace CUWebinars.Business.Repository
 {
     public interface IAdditionalLocationsRepository
     {
