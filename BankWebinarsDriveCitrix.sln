@@ -25,6 +25,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{ABA220A0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUWebinars.CitrixDriver", "CUWebinars.CitrixDriver\CUWebinars.CitrixDriver.csproj", "{2861DD86-EFF8-4B4B-B8DA-AFC825CCD9DA}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "CitrixInstaller", "CitrixInstaller\CitrixInstaller.vdproj", "{3614BC3F-4416-4B82-80BF-C6E179D5CCFE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,8 @@ Global
 		{2861DD86-EFF8-4B4B-B8DA-AFC825CCD9DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2861DD86-EFF8-4B4B-B8DA-AFC825CCD9DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2861DD86-EFF8-4B4B-B8DA-AFC825CCD9DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3614BC3F-4416-4B82-80BF-C6E179D5CCFE}.Debug|Any CPU.ActiveCfg = Debug
+		{3614BC3F-4416-4B82-80BF-C6E179D5CCFE}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

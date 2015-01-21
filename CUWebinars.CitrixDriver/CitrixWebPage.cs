@@ -1,4 +1,5 @@
 ﻿using System.CodeDom;
+using System.Configuration;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -56,7 +57,7 @@ namespace CUWebinars.CitrixDriver
         {
             var webDriverWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(20));
 
-            var loginLink = webDriverWait.Until(ExpectedConditions.ElementIsVisible(By.PartialLinkText("Log In")));
+            var loginLink = webDriverWait.Until(ExpectedConditions.ElementIsVisible(By.PartialLinkText("Sign In")));
 
             loginLink.SendKeys(Keys.Enter);
         }
@@ -217,8 +218,8 @@ namespace CUWebinars.CitrixDriver
 
         public WebinarDetails ScheduleASimilarWebinar(GTWebinar webinar)
         {
-            // click the first webinar found with the title "BaseLive Event Clone"
-            SeleniumTestDriver.WebDriver.FindElements(By.PartialLinkText("BaseLive Event Clone")).First().Click();
+            // click the first webinar found with the title "BaseLine Event Clone"
+            SeleniumTestDriver.WebDriver.FindElements(By.PartialLinkText(ConfigurationManager.AppSettings["TemplateTitle"])).First().Click();
 
             // Click the link Schedule a Similar Webinar
             SeleniumTestDriver.FindByIdClick("scheduleSimilar");
