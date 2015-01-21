@@ -33,7 +33,7 @@ namespace CUWebinars.Business.Tests.IntegrationTests
                 new AdditionalLocationRepository(ctx),
                 new Ninject.Extensions.Logging.Log4net.Infrastructure.Log4NetLogger(typeof (OrderManagementService)),
                 TtsConfig.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, TestConstants.UpTwoFolders),
-                    Globals.UseAzureWebjobs, Globals.StorageAccountName, Globals.StorageAccessKey));
+                    Globals.UseAzureWebjobs, Globals.StorageAccountName, Globals.StorageAccessKey, Globals.TraceLevel));
 
 
             //  Act

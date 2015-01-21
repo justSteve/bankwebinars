@@ -13,6 +13,7 @@ namespace CUWebinars.Business.Tests
         private static bool _useAzureWebjobs;
         private static string _storageAccountName;
         private static string _storageAccessKey;
+        private static string _traceLevel;
 
 
         static Globals()
@@ -25,6 +26,7 @@ namespace CUWebinars.Business.Tests
             _localDbConnectionString = ConfigurationManager.ConnectionStrings[Constants.LocalDbConnectionStringName].ConnectionString;
             _membershipRebootConnectionString = ConfigurationManager.ConnectionStrings[Constants.MembershipRebootConnectionStringName].ConnectionString;
             _ttsDatabaseLocal= ConfigurationManager.ConnectionStrings[Constants.TtsDatabaseLocalName].ConnectionString;
+            _traceLevel = "Verbose";
         }
 
         public static string LocalDbConnectionString
@@ -60,6 +62,11 @@ namespace CUWebinars.Business.Tests
         public static string StorageAccessKey
         {
             get { return _storageAccessKey; }
+        }
+
+        public static string TraceLevel
+        {
+            get { return _traceLevel; }
         }
     }
 }

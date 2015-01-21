@@ -1,6 +1,10 @@
 ﻿using System.Collections.Specialized;
 using System.Configuration;
+using System.Diagnostics;
+using System.Linq;
+using System.ServiceModel.Configuration;
 using System.Web.Configuration;
+using System.Xml;
 
 namespace CUWebinars.Web.Core
 {
@@ -30,6 +34,7 @@ namespace CUWebinars.Web.Core
         public string TenantPrefix { get; private set; }
         public string TestEmailAddress { get; private set; }
         public string TestEmailAddress2 { get; private set; }
+        public string TraceLevel { get; set; }
         public string UnAuthenticatedUser { get; private set; }
         public bool UseAzureWebjobs { get; private set; }
         public string WMVRepository { get; private set; }
@@ -67,6 +72,7 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.TenantPrefix = ApplicationSettingsSection["TenantPrefix"];
                 UniqueInstance.TestEmailAddress = ApplicationSettingsSection["TestEmailAddress"];
                 UniqueInstance.TestEmailAddress2 = ApplicationSettingsSection["TestEmailAddress2"];
+                UniqueInstance.TraceLevel = GetTraceLevel();
                 //UniqueInstance.UnAuthenticatedUser = ApplicationSettingsSection["UnAuthenticatedUser"];
                 UniqueInstance.UseAzureWebjobs = bool.Parse(ApplicationSettingsSection["UseAzureWebjobs"]);
 
@@ -74,6 +80,21 @@ namespace CUWebinars.Web.Core
 
                 UniqueInstance.DefaultConnectionString = ConnectionStringSettings["DefaultConnection"].ConnectionString;
                 UniqueInstance.MembershipConnectionString = ConnectionStringSettings["MembershipReboot"].ConnectionString;
+            }
+
+            private static string GetTraceLevel()
+            {
+                var diagnosticSection = WebConfigurationManager.GetSection("system.diagnostics") as ConfigurationSection;
+
+                ConfigurationElementCollection sources =
+                    diagnosticSection.ElementInformation.Properties["sources"].Value as ConfigurationElementCollection;
+
+                Debug.Assert(sources != null, "Web.config must contain a Tracing section.");
+
+                return (
+                    from ConfigurationElement source in sources 
+                    select source.ElementInformation.Properties["switchValue"].Value.ToString())
+                    .FirstOrDefault();
             }
 
             // Private object instantiated with private constructor
