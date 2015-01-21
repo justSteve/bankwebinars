@@ -22,9 +22,11 @@ namespace CUWebinars.Web.ViewModel
         public string Origin { get; set; }
         public string OptionLabel { get; set; }
         public ShippingDetailsModel ShippingDetailsModel { get; set; }
+        public DiscountDetailsModel DiscountDetailsModel { get; set; }
         public string UserComments { get; set; }
         public string UserDetails { get; set; }
         public string UserFullname { get; set; }
         public UserType UserType { get; set; }
+
     }
 }

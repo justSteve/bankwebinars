@@ -56,7 +56,7 @@ namespace CUWebinars.CitrixDriver
         {
             var webDriverWait = new WebDriverWait(SeleniumTestDriver.WebDriver, TimeSpan.FromSeconds(20));
 
-            var loginLink = webDriverWait.Until(ExpectedConditions.ElementIsVisible(By.PartialLinkText("Log In")));
+            var loginLink = webDriverWait.Until(ExpectedConditions.ElementIsVisible(By.PartialLinkText("Sign In")));
 
             loginLink.SendKeys(Keys.Enter);
         }

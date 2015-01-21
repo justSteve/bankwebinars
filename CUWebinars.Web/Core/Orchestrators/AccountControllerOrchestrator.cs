@@ -335,6 +335,31 @@ namespace CUWebinars.Web.Core.Orchestrators
             _membershipService.UpdateShippingAddressDetails(shippingAddress);
         }
 
+        public void UpdateDiscountDetails(DiscountModel discountModel, int idUser)
+        {
+            var discount = new Discount
+            {
+                Cost = discountModel.Cost,
+                DateBilled= discountModel.DateBilled,
+                 DateValidFrom= discountModel.DateValidFrom,
+                //idUser = idUser,
+                DateValidTo= discountModel.DateValidTo,
+                DiscountCode = discountModel.DiscountCode,
+                DiscountType= discountModel.TypeOfDiscount,
+                FlatOff= discountModel.FlatOff,
+                Notes= discountModel.Notes,
+                PercentOff= discountModel.PercentOff,
+                RenewalTerm= discountModel.RenewalTerm,
+                Status= discountModel.Status,
+                UsesCount= discountModel.UsesCount,
+                UsesRemain= discountModel.UsesRemain,
+                //WebUserDiscountXref = 
+                //idDiscount = 
+            };
+
+            //_membershipService.UpdateDiscountDetails(discount);
+        }
+
         public void EditContactInfo(EditContactInfoModel model)
         {
             var updateFields = model.RegisterFields;

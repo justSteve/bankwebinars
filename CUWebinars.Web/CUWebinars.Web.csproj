@@ -721,7 +721,6 @@
     <Content Include="Views\Admin\ClaimsManagement.cshtml" />
     <Content Include="Views\Cart\Partials\_DisplayRowPriceForAffiliate.cshtml" />
     <Content Include="Views\Cart\Partials\_ConfirmModalForAffiliate.cshtml" />
-    <Content Include="Views\Cart\Partials\_ShowSubscriptionStatus.cshtml" />
     <Content Include="Views\Cart\Partials\_DisplayAppliedDiscount.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DiscountDetails.cshtml" />
   </ItemGroup>

@@ -1,4 +1,4 @@
-﻿@model ShowDiscountsModel
+﻿@model DiscountDetailsModel
 
 <div id="UserDetailsModal" class="modal hide fade">
 
@@ -17,8 +17,8 @@
                     @Html.AntiForgeryToken()
                     @Html.ValidationSummary("Please address the following problems:", new { id = "userDetailsValSummary" })
 
-                    @Html.HiddenFor(m => m.Discount.idDiscount)
-                    @Html.EditorFor(m => m.ShippingAddress)
+                    @Html.HiddenFor(m => m.UserId)
+                    @Html.EditorFor(m => m.Discount)
 
                     <button id="saveChangesButton" type="button" class="btn btn-primary offset2">Save changes</button>
                     <div id="updateShippingMsgLabelWrap" style="display:inline-block"></div>
