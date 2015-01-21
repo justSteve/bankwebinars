@@ -62,7 +62,8 @@ $(function () {
     waitIndicator = $('#WaitIndicator');
     waitIndicator.hide();
 
-    getSendConnectionInfoEventHtmlButton.on('click', function(eventArgs) {
+    getSendConnectionInfoEventHtmlButton.on('click', function (eventArgs) {
+        alert("hit");
         DEW.PageObjects.InputFormFieldsDiv().empty();
         DEW.PageObjects.ButtonsContainer().fadeOut(500, function() {
             DEW.PageObjects.InputFormFieldsDiv().fadeIn(500);
