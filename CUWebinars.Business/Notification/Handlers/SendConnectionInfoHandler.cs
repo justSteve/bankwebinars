@@ -42,15 +42,18 @@ namespace CUWebinars.Business.Notification.Handlers
 
         public virtual void Process(SendConnectionInfoEvent<T> sendConnectionInfoEvent)
         {
+            _logger.Info("mailer is processing " + sendConnectionInfoEvent.EventObject.OrderRows
+                .Single(or => or.RowStatus == OrderRowStatus.Active));
 
+            var notificationMessage = _generalFormatter.Format(sendConnectionInfoEvent.EventObject, "SendConnectionInfo");
+            var isAdditionalLocation =
+                sendConnectionInfoEvent.EventObject.OrderRows
+                .Single(or => or.RowStatus == OrderRowStatus.Active)
+                .AdditionalLocation;
             try
             {
-                var notificationMessage = _generalFormatter.Format(sendConnectionInfoEvent.EventObject, "SendConnectionInfo");
                 notificationMessage.PersistedName = string.Format("SendConnectionInfo-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm");
 
-                var isAdditionalLocation =
-                    sendConnectionInfoEvent.EventObject.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
-                        .AdditionalLocation;
                 if (isAdditionalLocation.Count != 0)
                 {
                     //send a notification to each of any additional locations records
