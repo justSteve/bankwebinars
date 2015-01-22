@@ -12,7 +12,7 @@ namespace CUWebinars.Business.Tests.IntegrationTests
     [TestClass]
     public class WebinarRepositoryIntegrationTests
     {
-        private const string WebinarTitle = "10 Lessons Learned When Your Member Dies";
+        private const string WebinarTitle = "How to Use Business Resolutions and Authorizations to Protect Your Financial Institution";
         private const string TopicDescription = "Operations";
         private const string PresenterLastName = "Crawford";
         private const string WebinarTitleOfWebinarWithOperationsDesc = "How to Use Business Resolutions and Authorizations to Protect Your Financial Institution";
@@ -47,7 +47,7 @@ namespace CUWebinars.Business.Tests.IntegrationTests
 
             //  Assert                 
             Assert.AreEqual(title, WebinarTitle);
-            Assert.IsTrue(webinars.Count() == 2);
+            Assert.IsTrue(webinars.Count() == 1);
         }
 
         [TestMethod]
@@ -129,7 +129,7 @@ namespace CUWebinars.Business.Tests.IntegrationTests
             var unionOfRetrievedWebinars = webinarsByTopic.Union(webinarsByPresenterLastName);
 
             //  Assert                 
-            Assert.IsTrue(unionOfRetrievedWebinars.Count() == 2);
+            Assert.IsTrue(unionOfRetrievedWebinars.Count() == 1);
         }
 
 
