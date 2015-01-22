@@ -64,6 +64,25 @@ namespace CUWebinars.Web.Infrastructure.Extensions
         }
 
         /// <summary>
+        /// Replace invalid characters in a string with empty strings. 
+        /// </summary>
+        /// <param name="stringToClean">Type: System.String. The string to parse for illegal characters.</param>
+        /// <returns>Type: System.String. A string stripped of the illegal characters.</returns>
+        public static string ReplaceAmpersandsWithAnd(this string stringToTransform)
+        {
+            if (stringToTransform == null) throw new ArgumentNullException("stringToTransform");
+            try
+            {
+                return stringToTransform.Replace("&", "and");
+            }
+            catch (Exception exception)
+            {
+                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                return string.Empty;
+            }
+        }
+
+        /// <summary>
         /// This simple string extension is based on the VB6 "Right" function which returns a certain number of characters, counting from the right.
         /// </summary>
         public static string SubstringFromRight(this string source, int numberOfChars)
