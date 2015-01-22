@@ -38,5 +38,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         void UpdateNameTitle(string firstName, string lastName, string email, string title);
         void UpdateUserDetails(ManageModel model);
         void UpdateShippingAddressDetails(AddressModel shippingAddressModel, int idUser);
+        void UpdateDiscountDetails(DiscountModel discount, int userId);
     }
 }

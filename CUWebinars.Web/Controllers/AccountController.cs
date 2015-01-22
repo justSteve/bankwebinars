@@ -1331,5 +1331,39 @@ namespace CUWebinars.Web.Controllers
         {
             throw new NotImplementedException();
         }
+
+        public ActionResult UpdateSubscriptionDetails(DiscountDetailsModel discountDetailsModel)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _accountControllerOrchestrator.UpdateDiscountDetails(discountDetailsModel.Discount,
+                        discountDetailsModel.UserId);
+                    return Json(new { Result = WebUiConstants.Success });
+                }
+                catch (DbEntityValidationException dbEntityValidationException)
+                {
+                    var stringBuilder = new StringBuilder();
+
+                    foreach (var validationErrors in dbEntityValidationException.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
+                            stringBuilder.AppendFormat("Property: {0} Error: {1} ", validationError.PropertyName, validationError.ErrorMessage);
+                        }
+                    }
+                    _logger.Error("UpdateDiscountDetails dbEntityValidationException errors | {0}", stringBuilder.ToString());
+                }
+
+                catch (Exception e)
+                {
+                    _logger.Error("UpdateDiscountDetails Catch block: {0} | Session = {1} | UserId: {2}", e.Message, _appHelper.GetUserAuditInfo(), discountDetailsModel.UserId);
+                }
+                return Json(new { Result = WebUiConstants.Fail });
+            }
+            return this.ModelStateJson(ModelState);
+        }
     }
 }

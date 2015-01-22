@@ -376,6 +376,7 @@ namespace CUWebinars.Web.Controllers
                     var addresses = webUser.Addresses.ToArray();
                     var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
                     var shippingAddress = addresses.FirstOrDefault(a => a.AddressType == WebUiConstants.ShippingAddress);
+                    //var CheckoutDiscount = orderRow.Discount == null ? string.Empty : _orderManagementService.GetDiscountByCode()
 
 
                     model.CheckoutConfirmViewModel = new CheckoutConfirmViewModel
@@ -394,6 +395,31 @@ namespace CUWebinars.Web.Controllers
                         DisplayRowPriceViewModel =
                             model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel,
                         idUser = model.Order.idUser,
+                        DiscountDetailsModel = new DiscountDetailsModel()
+                        {
+                            UserId = webUser.idUser,
+                            Discount = orderRow.Discount == null
+                                ? new DiscountModel()
+                                 : new DiscountModel()
+                                 {
+                                     //Cost = discountModel.Cost,
+                                     //DateBilled = discountModel.DateBilled,
+                                     //DateValidFrom = discountModel.DateValidFrom,
+                                     ////idUser = idUser,
+                                     //DateValidTo = discountModel.DateValidTo,
+                                     //DiscountCode = discountModel.DiscountCode,
+                                     //DiscountType = discountModel.TypeOfDiscount,
+                                     //FlatOff = discountModel.FlatOff,
+                                     //Notes = discountModel.Notes,
+                                     //PercentOff = discountModel.PercentOff,
+                                     //RenewalTerm = discountModel.RenewalTerm,
+                                     //Status = discountModel.Status,
+                                     //UsesCount = discountModel.UsesCount,
+                                     //UsesRemain = discountModel.UsesRemain,
+                                     ////WebUserDiscountXref = 
+                                     ////idDiscount = 
+                                 },
+                        },
                         ShippingDetailsModel = new ShippingDetailsModel()
                         {
                             UserId = webUser.idUser,
@@ -437,13 +463,13 @@ namespace CUWebinars.Web.Controllers
                     return HttpNotFound();
                 }
 
-                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity) User.Identity;
+                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
 
                 if (claimsIdentityOfAuthenticatedUser.HasClaim(Business.Constants.ClaimTypes.Admin, Business.Constants.ClaimValues.Admin))
                 {
                     return View("DetailsAdmin", model);
                 }
-                
+
                 if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
                 {
                     return PartialView("DetailsAffiliate", model);

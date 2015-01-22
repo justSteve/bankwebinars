@@ -3,11 +3,7 @@ SET NOCOUNT ON
 
 PRINT 'Starts AdditionalLocationsLookupPrice'
 DELETE  FROM CUWebinars.dbo.AdditionalLocationsLookupPrice WHERE idWebinar > 0
---SELECT  'INSERT CUWebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES ('
---        + CAST(idWebinar AS VARCHAR) + ',50.00)'
---FROM    dbo.Webinar
---WHERE   idWebinar IN ( SELECT   idWebinar
---                           FROM     dbo.Webinar WHERE status = 2 AND duration = 1)
+
 --SELECT  'INSERT CUWebinars.[dbo].[AdditionalLocationsLookupPrice] ([idWebinar], [cost]) VALUES ('
 --        + CAST(idWebinar AS VARCHAR) + ',75.00)'
 --FROM    dbo.Webinar

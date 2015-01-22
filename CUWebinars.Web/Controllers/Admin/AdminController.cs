@@ -404,8 +404,9 @@ namespace CUWebinars.Web.Controllers.Admin
         [System.Web.Mvc.HttpPost]
         public JsonResult SendConnectionInfo(int webinarId)
         {
+            _logger.Info("Begins SendConnectionInfo");
             var orders = _orderManagementService.GetOrdersForLiveNotifications(webinarId);
-
+            
             foreach (var order in orders)
             {
                 AdditionalLocation nuller = new AdditionalLocation();
@@ -421,6 +422,7 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             _orderManagementService.FireSendConnectionInfoNotificationEvent(orders);
 
+            _logger.Info("Concludes SendConnectionInfo");
             return Json(new { Result = WebUiConstants.Success });
         }
 

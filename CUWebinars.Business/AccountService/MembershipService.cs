@@ -529,7 +529,7 @@ namespace CUWebinars.Business.AccountService
 
         public USTimeZone GetTimeZoneByZip()
         {
-            //todo: [sjh] i had no reason to doubt your conclusion. Adjust at will. [dar] I think this method is redundant. Refer to GetCityStateFromZip inAppHelper
+            //todo: [sjh] REMOVING THIS BRAKES Handle(RegisterNewAccountCommand command)  - can we refactor? [dar] I think this method is redundant. Refer to GetCityStateFromZip inAppHelper
             return USTimeZone.Central;
         }
 
@@ -564,6 +564,12 @@ namespace CUWebinars.Business.AccountService
                 _logger.ErrorException("UpdateShippingAddressDetails", exception);
             }
         }
+
+        public void UpdateDiscountDetails(Discount discount)
+        {
+            throw new NotImplementedException();
+        }
+
 
         public IEnumerable<Address> GetAddressesForUser(int id)
         {

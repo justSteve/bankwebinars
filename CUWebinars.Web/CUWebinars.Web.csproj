@@ -388,13 +388,14 @@
     <Compile Include="Models\MigrateOrderModel.cs" />
     <Compile Include="Models\RegisterFieldsDTO.cs" />
     <Compile Include="Models\ShippingDetailsModel.cs" />
-    <Compile Include="Models\ShowDiscountsModel.cs" />
+    <Compile Include="Models\DiscountDetailsModel.cs" />
     <Compile Include="Models\ShowMessagesModel.cs" />
     <Compile Include="ViewModel\DiscountPromotionViewModel.cs" />
     <Compile Include="ViewModel\Discount_SubscriptionViewModel.cs" />
     <Compile Include="ViewModel\RegistrationSummaryViewModel.cs" />
     <Compile Include="ViewModel\WebinarFileViewModel.cs" />
     <Content Include="App_Data\Orders\MigrateCUToUpdatedDb.sql" />
+    <Content Include="App_Data\Orders\MirgratorTo1730.sql" />
     <Content Include="App_Data\Orders\MirgratorToAffiliate.sql" />
     <Content Include="App_Data\Orders\MirgratorToExcel.sql" />
     <Content Include="App_Data\Orders\OrderMigrator.xlsm" />
@@ -402,6 +403,24 @@
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\_CreateBankWebinars.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\ImportProductionDb.ps1" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\_Deltestdata.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\BuildProductionDiscounts.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\bw_kmo.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CU2\BuildDirectorSeriesAttendanceReport.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CU2\deleter.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CU2\insert1.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CU2\insert10OrderRow.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CU2\Insert11RegTypesFromBW.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CU2\insert12Final.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CU2\insert2.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CU2\insert3.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CU2\insert4.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CU2\insert5.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CU2\insert5aWebUser.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CU2\insert6Order.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CU2\insert8Presenter.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CU2\insert9Webinar.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CU2\_addAbramson.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\CU2\_updatesLegacyTemplate.sql" />
     <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\1hourRegTypes.sql" />
     <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\2hourRegTypes.sql" />
     <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\3PartRegTypes.sql" />
@@ -412,7 +431,9 @@
     <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\GeneratesStatementsToInsertRegTypesXRef.sql" />
     <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\MRScratch.sql" />
     <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\populatesMR.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\DeleteTestData.sql" />
     <Content Include="App_Data\Orders\SQLScripts\migrateWebinarsForCU.sql" />
+    <Content Include="App_Data\Orders\SQLScripts\upgradesCUWebinarDb.sql" />
     <Content Include="App_Data\Orders\SubscriptionsOut.csv" />
     <Content Include="App_Data\Orders\SubsFromCSV.dtsx" />
     <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\ImportProductionDb.ps1" />
@@ -701,8 +722,8 @@
     <Content Include="Views\Admin\ClaimsManagement.cshtml" />
     <Content Include="Views\Cart\Partials\_DisplayRowPriceForAffiliate.cshtml" />
     <Content Include="Views\Cart\Partials\_ConfirmModalForAffiliate.cshtml" />
-    <Content Include="Views\Cart\Partials\_ShowSubscriptionStatus.cshtml" />
     <Content Include="Views\Cart\Partials\_DisplayAppliedDiscount.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DiscountDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Calendar\iCalFromCitrix.txt" />
