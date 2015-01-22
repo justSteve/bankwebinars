@@ -326,13 +326,9 @@ namespace CUWebinars.Business.Repository
                 }
             }
 
-            if (db.SaveChanges() > 0)
-            {
-                //db.Entry(order).Reference(o => o.WebUser).Load();
-                return order;
-            }
+            db.SaveChanges();
 
-            return null;
+            return order;
         }
 
         public int SaveChanges()

@@ -8,6 +8,7 @@ namespace CUWebinars.Web.Controllers
 {
     public class NavigationController : Controller
     {
+        private const string YadaYadaYada = "...";
         private readonly IWebinarRepository _webinarRepository;
 
         public NavigationController(IWebinarRepository webinarRepository)
@@ -31,7 +32,7 @@ namespace CUWebinars.Web.Controllers
                     var upcomingWebinar = upcomingWebinars[i];
 
                     string shortTitle = upcomingWebinar.Title.Length > 35
-                        ? upcomingWebinar.Title.Substring(0, 35) + "..."
+                        ? upcomingWebinar.Title.Substring(0, 35) + YadaYadaYada
                         : upcomingWebinar.Title;
 
                     string seoTitle =
@@ -71,7 +72,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     string ShortTitle =
                         recordedWebinars[i].Title.Length > 45
-                            ? recordedWebinars[i].Title.Substring(0, 45) + "..."
+                            ? recordedWebinars[i].Title.Substring(0, 45) + YadaYadaYada
                             : recordedWebinars[i].Title;
 
                     recordedWebinarsListItems.Append(
