@@ -109,6 +109,34 @@ OCA.initializeFunctions = function () {
             var cancelOrderForm = $('#cancelOrder');
             cancelOrderForm.submit();
         });
+
+        // The Preview Email button on 3rd tab
+        //$('#PreviewEmail').on('click', function (e) {
+        //    e.preventDefault();
+
+        //    var url = '/Cart/PreviewEmail/' + OCA.cartStateManager.getOrderRowId();
+
+        //    $.ajax({
+        //        type: 'GET',
+        //        contentType: constants.FormPostContentType,
+        //        cache: false,
+        //        url: url,
+        //        dataType: constants.JsonDataType,
+        //        beforeSend: function(xhr) {
+        //            $('#updateShippingMsgLabelWrap').html('<span class="label label-info">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Updating details...</span>');
+
+        //            var valSummary = $('#userDetailsValSummary');
+        //            valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
+
+        //            var errorsList = valSummary.find('ul');
+        //            errorsList.empty();
+        //            errorsList.append('<li style="display:none"></li>');
+
+        //        }
+        //    }).done(function(data) {
+                
+        //    });
+        //});
     };
 
     OCA.displayModal = function(modalForm) {
@@ -371,6 +399,9 @@ OCA.initializeFunctions = function () {
             $('#CancelModal').modal('show');
 
         });
+
+        $('#previewEmailButton').attr('href', '/Cart/PreviewEmail/' + OCA.cartStateManager.getOrderRowId());
+
     };
 };
 

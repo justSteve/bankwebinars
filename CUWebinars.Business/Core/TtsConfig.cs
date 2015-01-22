@@ -37,10 +37,10 @@ namespace CUWebinars.Business.Core
             var notificationPersister = new FileBasedNotificationPersister();
 
             var notificationOrderHandlerLogger = new Log4NetLogger(typeof (OrderSubmittedHandler));
-            var notificationOrderAdditionalLocationHandlerLogger =
-                new Log4NetLogger(typeof (OrderSubmittedAdditionalLocationHandler));
+            //var notificationOrderAdditionalLocationHandlerLogger =
+            //    new Log4NetLogger(typeof (OrderSubmittedAdditionalLocationHandler));
             var sendShippedOrderHandlerLogger = new Log4NetLogger(typeof (SendShippedOrderHandler));
-            var sendConnectionInfoHandlerLogger = new Log4NetLogger(typeof (SendConnectionInfoHandler));
+            //var sendConnectionInfoHandlerLogger = new Log4NetLogger(typeof (SendConnectionInfoHandler));
             var sendReminderHandlerLogger = new Log4NetLogger(typeof (SendReminderHandler));
             var sendRecordingPostedHandlerLogger = new Log4NetLogger(typeof (SendRecordingPostedHandler));
 

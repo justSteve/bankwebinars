@@ -614,7 +614,9 @@
     <Content Include="Scripts\jquery-1.11.1.min.map" />
     <Content Include="Views\Cart\Partials\_CancelModal.cshtml" />
     <Content Include="Views\Cart\Partials\_AddCCModal.cshtml" />
-    <Content Include="Views\Cart\Partials\_DisplayRowPrice.cshtml" />
+    <Content Include="Views\Cart\Partials\_DisplayRowPrice.cshtml">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="Views\Cart\Partials\_LogsModal.cshtml" />
     <Content Include="Views\Cart\Partials\_UserDetailsModal.cshtml" />
     <Content Include="Views\Home\robots.txt" />
@@ -700,7 +702,6 @@
     <Content Include="Views\Cart\Partials\_ConfirmModal.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\ShippingDetails.cshtml" />
     <Content Include="Views\Home\ContactUsJF.cshtml" />
-    <Content Include="Views\Cart\Partials\_DisplayRowPrice.cshtml" />
     <Content Include="Views\Account\ThankYouConfirmed.cshtml" />
     <Content Include="Views\Account\EditContactInfo.cshtml" />
     <Content Include="Views\Account\OrderComplete.cshtml" />

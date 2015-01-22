@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
+using CUWebinars.Business.Notification;
 using CUWebinars.Web.ViewModel;
 using System;
 
@@ -27,6 +28,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         OrderRow GetOrderRowLoaded(int idOrderRow);
         IEnumerable<WebUser> GetWebUsersByLastName(string lastName);
         void FireOrderSubmittedNotification(Order order, bool? userCreatedInCart = null);
+        INotificationMessage GenerateMessagePreview(Order order);
         RegType GetRegTypeById(int idRegType);
         OrderRow LoadOrderRow(int id, OrderStatus status);
         void RemoveAdditionalLocationsFromOrder(int value);

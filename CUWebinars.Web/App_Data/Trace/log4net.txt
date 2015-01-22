@@ -158,3 +158,19 @@ CUWebinars Information: 0 : MailerSent: testuser1@cuwebinars.com Subject: [previ
 CUWebinars Information: 0 : MailerSent: testuser1@cuwebinars.com Subject: [preview-BankWebinars] Confirmation of Registration: Conducting Financial Investigations - What Law Enforcement Needs To Know Timestamp was: 20/01/2015 9:48:40 AM
 CUWebinars Information: 0 : MailerSent: testuser1@cuwebinars.com Subject: [preview-BankWebinars] Confirmation of Registration: Conducting Financial Investigations - What Law Enforcement Needs To Know Timestamp was: 20/01/2015 9:49:41 AM
 CUWebinars Information: 0 : MailerSent: testuser1@cuwebinars.com Subject: [preview-BankWebinars] Confirmation of Registration: Conducting Financial Investigations - What Law Enforcement Needs To Know Timestamp was: 20/01/2015 9:50:07 AM
+CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32725
+CUWebinars Information: 0 : MailerSent: MigrateSteve3@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Conducting Financial Investigations - What Law Enforcement Needs To Know Timestamp was: 21/01/2015 3:56:15 PM
+CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32725
+CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32726
+CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32727
+CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32728
+CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32725
+CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32725
+CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32726
+CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32727
+CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32728
+CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32725
+CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32726
+CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32727
+CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32728
+CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32725
