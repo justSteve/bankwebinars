@@ -45,7 +45,7 @@ namespace CUWebinars.Business.Core
             var sendRecordingPostedHandlerLogger = new Log4NetLogger(typeof (SendRecordingPostedHandler));
 
             config.AddEventHandler(new OrderSubmittedHandler(genericFormatter, notificationDelivery,
-                notificationOrderHandlerLogger, notificationPersister, new EnvironmentInformation {BaseUrl = baseUrl}));
+                notificationOrderHandlerLogger));
             config.AddEventHandler(new OrderSubmittedAdditionalLocationHandler(genericFormatter, notificationDelivery,
                 notificationOrderHandlerLogger, notificationPersister, new EnvironmentInformation {BaseUrl = baseUrl}));
             config.AddEventHandler(new SendShippedOrderHandler(genericFormatter, notificationDelivery,

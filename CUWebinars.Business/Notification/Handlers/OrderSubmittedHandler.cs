@@ -1,5 +1,4 @@
-﻿using System.IO;
-using CUWebinars.Business.Constants;
+﻿using CUWebinars.Business.Constants;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Notification.Formatters;
@@ -13,30 +12,23 @@ namespace CUWebinars.Business.Notification.Handlers
     public class OrderSubmittedHandler<T> : IEventHandler<OrderSubmittedEvent<T>>
         where T : OrderSubmittedViewModel
     {
-        private readonly INotificationPersister _notificationPersister;
-        private readonly EnvironmentInformation _environmentInformation;
         private readonly IFormatter _generalFormatter;
         private readonly INotificationDelivery _notificationDelivery;
         private readonly ILogger _logger;
 
         public OrderSubmittedHandler(IFormatter generalFormatter
             , ILogger logger
-            , INotificationPersister notificationPersister
-            , EnvironmentInformation environmentInformation)
+            )
             : this(generalFormatter, new SmtpMessageDelivery()
-                , logger, notificationPersister, environmentInformation)
+                , logger)
         {
 
         }
 
         public OrderSubmittedHandler(IFormatter generalFormatter
             , INotificationDelivery notificationDelivery
-            , ILogger logger
-            , INotificationPersister notificationPersister
-            , EnvironmentInformation environmentInformation)
+            , ILogger logger)
         {
-            _notificationPersister = notificationPersister;
-            _environmentInformation = environmentInformation;
             _generalFormatter = generalFormatter;
             _notificationDelivery = notificationDelivery;
             _logger = logger;
@@ -54,12 +46,6 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 var notificationMessage = _generalFormatter.Format(orderSubmittedEvent.EventObject, "OrderSubmitted");
                 notificationMessage.PersistedName = string.Format("OrderSubmitted-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm");
-
-                /************************** Legacy, before Azure was used to store notifications as blobs **************************/
-                //var fullFilePathToPersistedNotification = Path.Combine(_environmentInformation.BaseUrl,
-                //    orderSubmittedEvent.RelativeFilePath);
-                //_notificationPersister.PersistNotification(notificationMessage.Body, fullFilePathToPersistedNotification);
-                /************************** ************************************************************* **************************/
 
                 notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);
@@ -93,14 +79,14 @@ namespace CUWebinars.Business.Notification.Handlers
 
     public class OrderSubmittedHandler : OrderSubmittedHandler<OrderSubmittedViewModel>
     {
-        public OrderSubmittedHandler(IFormatter generalFormatter, ILogger logger, INotificationPersister notificationPersister, EnvironmentInformation environmentInformation)
-            : base(generalFormatter, logger, notificationPersister, environmentInformation)
+        public OrderSubmittedHandler(IFormatter generalFormatter, ILogger logger)
+            : base(generalFormatter, logger)
         {
 
         }
 
-        public OrderSubmittedHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger, INotificationPersister notificationPersister, EnvironmentInformation environmentInformation)
-            : base(generalFormatter, notificationDelivery, logger, notificationPersister, environmentInformation)
+        public OrderSubmittedHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger)
+            : base(generalFormatter, notificationDelivery, logger)
         {
         }
 

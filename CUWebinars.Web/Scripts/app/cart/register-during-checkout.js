@@ -680,9 +680,9 @@ function completeOrder(userId, orderRowId, webinarId) {
             }
         }).done(function (result) {
             if (result.Result === 'Success') {
-                orderRowID = result.OrderRowID;
+                orderRowId = result.OrderRowId;
 
-                var err = new Error('Posted Order: ' + orderRowID);
+                var err = new Error('Posted Order: ' + orderRowId);
                 //NREUM.noticeError(err);
                 $('#orderDetails').empty();
                 $('#orderDetails').append(result.Msg);

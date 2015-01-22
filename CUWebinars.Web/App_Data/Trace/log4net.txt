@@ -174,3 +174,11 @@ CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32726
 CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32727
 CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32728
 CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32725
+CUWebinars Error: 0 : Validation failed for webinar 1728 and User 19741
+CUWebinars Error: 0 : Validation failed for webinar 1727 and User 19741
+CUWebinars Error: 0 : Validation failed for webinar 1722 and User 19741
+CUWebinars Error: 0 : Validation failed for webinar 1729 and User 19741
+CUWebinars Information: 0 : MailerSent: shannon@cftum.org Subject: [preview-BankWebinars] Confirmation of Registration: Alert! FFIEC BSA / Anti-Money Laundering Examination Manual Timestamp was: 22/01/2015 10:27:32 PM
+CUWebinars Information: 0 : MailerSent: stracy@nhbankers.com Subject: [preview-BankWebinars] Confirmation of Registration: Understanding CCC Loans for Ag Lenders Timestamp was: 22/01/2015 11:31:18 PM
+CUWebinars Information: 0 : MailerSent: Sandy@cftncs.org Subject: [preview-BankWebinars] Confirmation of Registration: Understanding CCC Loans for Ag Lenders Timestamp was: 22/01/2015 11:37:18 PM
+CUWebinars Information: 0 : MailerSent: dbaker@cftgpr.org Subject: [preview-BankWebinars] Confirmation of Registration: IRA Update 2015 - What's on the Horizon? Timestamp was: 22/01/2015 11:49:25 PM

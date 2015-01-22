@@ -42,9 +42,9 @@ $(function () {
                 }
             }).done(function (data) {
                 if (data.Result === 'Success') {
-                    orderRowID = data.OrderRowID;
+                    orderRowId = data.OrderRowId;
 
-                    var err = new Error('Posted Order: ' + orderRowID);
+                    var err = new Error('Posted Order: ' + orderRowId);
                     //NREUM.noticeError(err);
                     $('#orderDetails').empty();
                     $('#orderDetails').append(data.Msg);
