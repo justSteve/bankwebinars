@@ -377,7 +377,7 @@ OCA.initializeFunctions = function () {
                         }
 
                         // enable button again upon ending operation.
-                        $('#cancelRegistration').removeAttr('disabled');
+                        //$('#cancelRegistration').removeAttr('disabled');  // [dar] NO. On staging, redirect is slow and button enabled again. User could have clicked it again.
                     } else {
                         confirmRegistrationBillMe.after('<span class="field-validation-error">Server Error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                         $('#CancelModal').modal('hide');
@@ -433,6 +433,14 @@ OCA.wireUpHandlers = function() {
     /* Click event for the big green SignUp button */
     $('#AddToCart').on('click', function () {
         $(this).attr('disabled', 'disabled');
+
+        var valSummary = $('#valSummarySignUpForm');
+        valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
+
+        var errorsList = valSummary.find('ul');
+        errorsList.empty();
+        errorsList.append('<li style="display:none"></li>');
+
         OCA.signUpForm.submit();
     });
 
@@ -504,12 +512,16 @@ OCA.wireUpHandlers = function() {
                     } else if (xhr.responseJSON['isSuccessful'] === false) {
                         formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
 
-                        spinner.remove();
+                        
+                        $('#AddToCart').removeAttr('disabled');
                     }
+                    $('#loadingSpinner').remove();
                 } else {
-                    spinner.remove();
                     confirmationForAffiliateDiv.html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+                    $('#loadingSpinner').remove();
                 }
+                $('#loadingSpinner').remove();
+
             }, constants.JsonDataType);
 
             return false;

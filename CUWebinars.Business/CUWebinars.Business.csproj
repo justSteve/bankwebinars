@@ -125,6 +125,7 @@
     <Compile Include="AccountService\IMembershipService.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="Constants\ClaimValues.cs" />
+    <Compile Include="Constants\ErrorMessageConstants.cs" />
     <Compile Include="Core\Cache\ICachingService.cs" />
     <Compile Include="Core\Cache\OrderCachingService.cs" />
     <Compile Include="Core\DataOperations.cs" />

@@ -182,3 +182,32 @@ CUWebinars Information: 0 : MailerSent: shannon@cftum.org Subject: [preview-Bank
 CUWebinars Information: 0 : MailerSent: stracy@nhbankers.com Subject: [preview-BankWebinars] Confirmation of Registration: Understanding CCC Loans for Ag Lenders Timestamp was: 22/01/2015 11:31:18 PM
 CUWebinars Information: 0 : MailerSent: Sandy@cftncs.org Subject: [preview-BankWebinars] Confirmation of Registration: Understanding CCC Loans for Ag Lenders Timestamp was: 22/01/2015 11:37:18 PM
 CUWebinars Information: 0 : MailerSent: dbaker@cftgpr.org Subject: [preview-BankWebinars] Confirmation of Registration: IRA Update 2015 - What's on the Horizon? Timestamp was: 22/01/2015 11:49:25 PM
+CUWebinars Error: 0 : ERROR MailerSmtpException: stracy@nhbankers.com Subject: [preview-BankWebinars] Confirmation of Registration: Conducting Financial Investigations - What Law Enforcement Needs To Know ErrorMsg: Failure sending mail. Timestamp was: 23/01/2015 6:24:46 PM ExceptionType was: SmtpException InnerExceptionType was: System.Net.WebException
+CUWebinars Information: 0 : MailerSent: stracy@nhbankers.com Subject: [preview-BankWebinars] Confirmation of Registration: Conducting Financial Investigations - What Law Enforcement Needs To Know Timestamp was: 23/01/2015 6:24:46 PM
+CUWebinars Error: 0 : Validation failed for webinar 1729 and User 17152
+CUWebinars Error: 0 : Validation failed for webinar 1729 and User 17152
+CUWebinars Error: 0 : Validation failed for webinar 1729 and User 17152
+CUWebinars Error: 0 : Validation failed for webinar 1729 and User 17152
+CUWebinars Error: 0 : Validation failed for webinar 1729 and User 17152
+CUWebinars Error: 0 : Validation failed for webinar 1729 and User 17152
+CUWebinars Error: 0 : Validation failed for webinar 1729 and User 17152
+CUWebinars Error: 0 : Validation failed for webinar 1729 and User 17152
+CUWebinars Error: 0 : Validation failed for webinar 1729 and User 17152
+CUWebinars Error: 0 : Validation failed for webinar 1729 and User 17152
+CUWebinars Error: 0 : Validation failed for webinar 1729 and User 17152
+CUWebinars Error: 0 : Validation failed for webinar 1729 and User 17152
+CUWebinars Error: 0 : Validation failed for webinar 1729 and User 17152
+CUWebinars Error: 0 : Validation failed for webinar 1729 and User 17152
+CUWebinars Error: 0 : Validation failed for webinar 1727 and User 17152
+CUWebinars Error: 0 : Validation failed for webinar 1727 and User 17152
+CUWebinars Error: 0 : Validation failed for webinar 1727 and User 17152
+CUWebinars Error: 0 : Validation failed for webinar 1727 and User 17152
+CUWebinars Error: 0 : Validation failed for webinar 1727 and User 17152
+CUWebinars Error: 0 : Validation failed for webinar 1727 and User 17152
+CUWebinars Error: 0 : Validation failed for webinar 1727 and User 17152
+CUWebinars Error: 0 : Validation failed for webinar 1727 and User 17152
+CUWebinars Information: 0 : MailerSent: mataylor@cbao.com Subject: [preview-BankWebinars] Confirmation of Registration: Understanding CCC Loans for Ag Lenders Timestamp was: 23/01/2015 7:05:49 PM
+CUWebinars Error: 0 : Validation failed for webinar 1727 and User 375
+CUWebinars Error: 0 : Validation failed for webinar 1727 and User 375
+CUWebinars Information: 0 : MailerSent: rhondap@cftws.org Subject: [preview-BankWebinars] Confirmation of Registration: Understanding CCC Loans for Ag Lenders Timestamp was: 23/01/2015 7:12:33 PM
+CUWebinars Error: 0 : Validation failed for webinar 1727 and User 380

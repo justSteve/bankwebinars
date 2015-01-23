@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Models;
+﻿using CUWebinars.Business.Constants;
+using CUWebinars.Business.Models;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
@@ -269,7 +270,10 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     ModelState.AddModelError(string.Empty,
-                        "There has been an error at the server which has been logged.");
+                        exception.Message.Contains(ErrorMessageConstants.ExistingNonCancelledOrderMessage)
+                            ? ErrorMessageConstants.ExistingNonCancelledOrderMessage
+                            : "There has been an error at the server which has been logged.");
+
                     _logger.FatalException("Signup2 order excepted: ", exception);
 
                     Elmah.ErrorSignal.FromCurrentContext().Raise(exception);

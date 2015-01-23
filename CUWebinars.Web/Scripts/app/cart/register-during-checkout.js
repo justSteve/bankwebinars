@@ -757,7 +757,7 @@ function cancelOrder(orderId, webinarId) {
             }
 
             // enable button again upon ending operation.
-            $('#cancelRegistration').removeAttr('disabled');
+            //$('#cancelRegistration').removeAttr('disabled');  // [dar] NO. On staging, redirect is slow and button enabled again. User could have clicked it again.
 
         }, 'json');
 

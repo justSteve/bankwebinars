@@ -117,7 +117,8 @@ $(function () {
                         }
 
                         // enable button again upon ending operation.
-                        $('#cancelRegistration').removeAttr('disabled');
+                        //$('#cancelRegistration').removeAttr('disabled');  // [dar] NO. On staging, redirect is slow and button enabled again. User could have clicked it again.
+
                     } else {
                         $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Server Error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                         $('#CancelModal').modal('hide');
