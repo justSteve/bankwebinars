@@ -174,3 +174,17 @@ CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32726
 CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32727
 CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32728
 CUWebinars Error: 0 : Validation failed for webinar 1720 and User 32725
+CUWebinars Error: 0 : Validation failed for webinar 842 and User 33288
+CUWebinars Error: 0 : Validation failed for webinar 842 and User 33121
+CUWebinars Error: 0 : Validation failed for webinar 842 and User 33118
+CUWebinars Error: 0 : Validation failed for webinar 842 and User 33146
+CUWebinars Error: 0 : Validation failed for webinar 842 and User 33112
+CUWebinars Error: 0 : Validation failed for webinar 842 and User 33102
+CUWebinars Error: 0 : Validation failed for webinar 842 and User 33152
+CUWebinars Error: 0 : Validation failed for webinar 842 and User 33129
+CUWebinars Error: 0 : Validation failed for webinar 842 and User 33140
+CUWebinars Error: 0 : Validation failed for webinar 842 and User 33149
+CUWebinars Error: 0 : Validation failed for webinar 842 and User 33101
+CUWebinars Error: 0 : Validation failed for webinar 842 and User 33127
+CUWebinars Error: 0 : Validation failed for webinar 842 and User 33136
+CUWebinars Error: 0 : Validation failed for webinar 842 and User 33120
