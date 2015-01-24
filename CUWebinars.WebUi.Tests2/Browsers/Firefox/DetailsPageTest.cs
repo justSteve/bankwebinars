@@ -35,7 +35,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         private const string RegisterfieldsBillingaddressPhone = "RegisterFields_BillingAddress_Phone";
         private const string CommonDomain = "yahoo.com.au";
         private const string TestUserPassword = "Password1";
-        private readonly string TestEmailAddress = "auser@" + CommonDomain;
+        //private readonly string TestEmailAddress = "auser@" + CommonDomain;
 
 
         [TestMethod]
@@ -833,7 +833,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
                             page.PickRegType(regType);
                             page.Wait(500);
                         }
-                        catch (Exception exception)
+                        catch (Exception)
                         {
                             Trace.Write(string.Format("Failed to pick radio button for regType {0}", regType));
                         }

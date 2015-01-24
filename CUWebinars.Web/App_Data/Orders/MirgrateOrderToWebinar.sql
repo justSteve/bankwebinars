@@ -1,16 +1,21 @@
 USE TTSWebinars2
 GO
+--UPDATE dbo.users SET userType =2  WHERE idUser = 33194
+--UPDATE dbo.users SET userType =3  WHERE idUser = 33192
+--SELECT * FROM dbo.Users WHERE idUser = 33194
 
-
-
+--SELECT * FROM dbo.Options WHERE idOption = (SELECT registrationType FROM dbo.OrdersRows WHERE idOrder = 71270)
 --DELETE FROM dbo.Orders WHERE idOrder = 74973  
---UPDATE dbo.OrdersRows SET rowPrice = 1749, unitPrice = 1749, idDiscount = NULL, idWebinar = 842 WHERE idOrder = 21274 
+--UPDATE dbo.OrdersRows SET rowPrice = 1749, unitPrice = 1749, WHERE idOrder = 71270  
 --UPDATE dbo.Orders SET total = 1749 WHERE idOrder = 21274
 --SELECT r.* FROM dbo.Orders o INNER JOIN dbo.OrdersRows r ON r.idOrder = o.idOrder WHERE o.idOrder = 21274  
-
+SELECT * FROM dbo.Webinar WHERE status = 2 AND duration = 1
 --SELECT FirstName, LastName, 'na', 'TTS', REPLACE(email, 'admin', ''), * FROM dbo.USERS WHERE UserType = 4 and email LIKE '%ttstrain.com'
 DECLARE @idwebinar INT
-SET @idwebinar = 842
+SET @idwebinar = 1736
+
+
+--SELECT * INTO '+ GEtdate() 
 
 SELECT  ( SELECT    o.idAffiliate
           FROM      dbo.OrdersRows
@@ -23,7 +28,7 @@ SELECT  ( SELECT    o.idAffiliate
 		r.registrationType AS idRegType,
         o.firstName AS FirstName ,
         o.lastName AS LastName ,
-        'na' AS Title ,
+        '' AS Title ,
         ISNULL(o.customerInstitution, ( SELECT  name
                                         FROM    dbo.Institution
                                         WHERE   idInstitution = ( SELECT    idUserInstitution
@@ -65,7 +70,7 @@ WHERE   r.idWebinar = @idwebinar
               AND r.status > 1
             )
 
-ORDER BY LastName
+ORDER BY orderDate desc
 GO
 
 

@@ -42,7 +42,7 @@ namespace CUWebinars.Web.Controllers.Admin
         private readonly IWebinarManagementService _webinarManagementService;
         private readonly IStateService _stateService;
         private readonly GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
-        private bool _disposed;
+        //private bool _disposed;
 
         //
         // GET: /Admin/

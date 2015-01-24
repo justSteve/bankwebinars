@@ -844,8 +844,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public CreateUserConfirmedViewModel GetCreateUserConfirmedViewModel(string email, bool viaBillMePostRequest = false)
         {
-            UserAccount userAccount;
-            int retries = 0;
+            //UserAccount userAccount;
+            //int retries = 0;
 
             var changeEmailFromKeyInputModel = new CreateUserConfirmedViewModel
             {

@@ -1,4 +1,6 @@
 ﻿using System.Configuration;
+using System.Diagnostics;
+using System.Runtime.Caching.Configuration;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
@@ -82,6 +84,67 @@ namespace CUWebinars.Business.CQS.CommandHandlers
         {
             if (command == null) throw new ArgumentNullException("command");
             IList<AdditionalLocation> additionalLocations = new List<AdditionalLocation>();
+
+
+            //         for idRegType mapping from legacy to new
+            //200	Live Plus Five	Live_Session_Only_1Hr_165_97
+            //201	OnDemand Recording Only	OnDemand_Recording_Only_1Hr_185_201
+            //202	CD-ROM and Hardcopy Handouts	Live_Plus_OnDemand_Weblinks_1Hr_235_202
+            //203	Live Plus Six	CD-ROM_and_Hardcopy_Handouts_1Hr_215_203
+            //204	Premier Package	Premier_Package_1Hr_265_204
+            //205	Live Plus Five	Live_Session_Only_2Hr_265_205
+            //206	OnDemand Recording Only	On-Demand_Recording_Only_2Hr_295_206
+            //207	Live Plus Six	Live_Plus_OnDemand_Weblinks_2Hr_365_207
+            //208	CD-ROM and Hardcopy Handouts	CD-ROM_and_Hardcopy_Handouts_2Hr_325_208
+            //209	Premier Package	Premier_Package_2Hr_395_209
+
+            if (command.OrderDate < Convert.ToDateTime("01-01-2015"))
+            {
+                try
+                {
+                    int idRegType = Convert.ToInt32(command.OrderRow.RegistrationType);
+                    switch (idRegType)
+                    {
+                        case 1:
+                            { idRegType = 205; }
+                            break
+                            ;
+                        case 16: { idRegType = 206; break; }
+                            ;
+                        case 3: { idRegType = 207; break; }
+                            ;
+                        case 17: { idRegType = 208; break; }
+                            ;
+                        case 18: { idRegType = 209; break; }
+                            ;
+                        ////1hr
+                        case 27: { idRegType = 200; break; }
+                            ;
+                        case 32: { idRegType = 201; break; }
+                            ;
+                        case 35: { idRegType = 202; break; }
+                            ;
+                        case 33: { idRegType = 203; break; }
+                            ;
+                        case 36: { idRegType = 204; break; }
+                            ;
+                        default:
+                            // You can use the default case.
+                            idRegType = 0;
+                            ;
+                            break;
+
+
+                    }
+                    command.RegistrationType = idRegType;
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+
+            }
 
             if (!string.IsNullOrWhiteSpace(command.AdditionalLocationsString) && command.AdditionalLocationsString != "NULL")
             {
@@ -268,7 +331,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
         public void Handle(ImportOrderCommand command)
         {
             if (command == null) throw new ArgumentNullException("command");
-            
+
             var importedOrder = _orderManagementService.CreateNewOrder(command.Affiliate, command.WebUser,
                 command.Webinar, command.OrderRow, DomainConstants.OriginImported);
 
@@ -297,13 +360,13 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             importedOrder.ShippingZip = command.ShippingAddress.Zip;
             importedOrder.ShippingFirstName = command.FirstName;
             importedOrder.ShippingLastName = command.LastName;
-            
+
             _orderManagementService.GetJoinUrl(command.OrderRow);
 
             _orderManagementService.SaveOrderChanges(
-                importedOrder, 
-                command.VerificationKey, 
-                command.ConfirmChangeEmailUrl, 
+                importedOrder,
+                command.VerificationKey,
+                command.ConfirmChangeEmailUrl,
                 command.OrderGenesis
                 );
 
@@ -328,7 +391,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             //migratedOrder.AdminComments += string.Format("OrginalUserID: {0}\r\n", command.idUserLegacy);
             migratedOrder.AffiliateComments = command.AffiliateComments;
             migratedOrder.UserComments = "";
-            
+
             migratedOrder.OrderStatus = OrderStatus.Submitted;
             migratedOrder.idOrderLegacy = command.idOrderLegacy;
             migratedOrder.OrderDate = command.OrderDate;
@@ -356,11 +419,6 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             _orderManagementService.GetJoinUrl(command.OrderRow);
 
             _orderManagementService.SaveOrderChanges(migratedOrder, command.VerificationKey, command.ConfirmChangeEmailUrl);
-            if (command.Total != migratedOrder.Total)
-            {
-                var i = 1;
-                //logMe
-            }
 
             _postCommitRegistrator.Committed += () =>
             {

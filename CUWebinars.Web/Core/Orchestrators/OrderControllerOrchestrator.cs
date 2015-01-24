@@ -41,7 +41,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 Email = email,
                 RegistrationType = migrateOrderModel.idRegType,
                 Discount = migrateOrderModel.DiscountCode,
-                
+                OrderDate =  migrateOrderModel.OrderDate,
                 Webinar = migratorQueryResult.Webinar
             };
 

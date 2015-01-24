@@ -15,7 +15,7 @@ namespace CUWebinars.Business.Repository
     public class WebUserRepository : TTSWebinarsRepository<TTSWebinarsContext, WebUser>, IWebUserRepository
     {
         public RefDataRepository RefContext { get; set; }
-        private readonly ILogger _logger;
+        //private readonly ILogger _logger;
 
         public WebUserRepository(ILogger logger)
         {
@@ -120,7 +120,7 @@ namespace CUWebinars.Business.Repository
                         errorMsg.Append(string.Format("- Property: \"{0}\", Error: \"{1}\"",
                             ve.PropertyName, ve.ErrorMessage));
                     }
-                    loggerForOrderManagementService.Error(errorMsg.ToString());
+                    loggerForOrderManagementService.Error("From catch block of UpdateAddresses " + errorMsg.ToString());
                 }
                 throw;
             }

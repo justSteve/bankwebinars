@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.CQS.Commands
@@ -10,6 +11,7 @@ namespace CUWebinars.Business.CQS.Commands
         public int RegistrationType { get; set; }
         public Webinar Webinar { get; set; }
         public string Discount { get; set; }
+        public DateTime OrderDate { get; set; }
         // output property
         public OrderRow OrderRow { get; internal set; }
     }
