@@ -125,6 +125,7 @@
     <Compile Include="AccountService\IMembershipService.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="Constants\ClaimValues.cs" />
+    <Compile Include="Constants\ErrorMessageConstants.cs" />
     <Compile Include="Core\Cache\ICachingService.cs" />
     <Compile Include="Core\Cache\OrderCachingService.cs" />
     <Compile Include="Core\DataOperations.cs" />
@@ -171,7 +172,7 @@
     <Compile Include="Models\WebUserDiscountXref.cs" />
     <Compile Include="Notification\Email\AzureCuwWebJobSmtpMessageDelivery.cs" />
     <Compile Include="Notification\Events\OrderSubmittedAdditionalLocationEvent.cs" />
-    <Compile Include="Notification\Events\PreviewOrderEvent.cs" />
+    <Compile Include="Notification\Events\EmailOrderEvent.cs" />
     <Compile Include="Notification\Events\SendConnectionInfoEvent.cs" />
     <Compile Include="Notification\Events\SendRecordingPostedEvent.cs" />
     <Compile Include="Notification\Events\SendReminderEvent.cs" />
@@ -181,7 +182,7 @@
     <Compile Include="Notification\Formatters\IFormatter.cs" />
     <Compile Include="Notification\Handlers\OrderSubmittedAdditionalLocationHandler.cs" />
     <Compile Include="Notification\Handlers\OrderSubmittedHandler.cs" />
-    <Compile Include="Notification\Handlers\PreviewOrderHandler.cs" />
+    <Compile Include="Notification\Handlers\EmailOrderHandler.cs" />
     <Compile Include="Notification\Handlers\SendConnectionInfoHandler.cs" />
     <Compile Include="Notification\Handlers\SendRecordingPostedHandler.cs" />
     <Compile Include="Notification\Handlers\SendReminderHandler.cs" />

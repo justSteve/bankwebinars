@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Configuration;
 using System.Linq;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core.Tracing;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
@@ -15,11 +16,11 @@ namespace CUWebinars.Business.Validation.Order
         {
             _webinarRepository = webinarRepository;
 
-            RuleFor(o => o.idUser).GreaterThanOrEqualTo(1).WithMessage("The WebUserId was less than 1.");
+            RuleFor(o => o.idUser).GreaterThanOrEqualTo(1).WithMessage(ErrorMessageConstants.IdLessThan1Message);
 
             RuleFor(o => o.idUser)
                 .Must(UserHasExistingWebinarInNonCancelledState)
-                .WithMessage("The WebUser already has at least 1 order which is in a non-cancelled state");
+                .WithMessage(ErrorMessageConstants.ExistingNonCancelledOrderMessage);
         }
 
         private bool UserHasExistingWebinarInNonCancelledState(Models.Order order, int userId)

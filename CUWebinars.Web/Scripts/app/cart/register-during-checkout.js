@@ -54,7 +54,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
         regUserStateManager.setInputAction(RegistrationInCart.InputAction.ButtonClick);
 
         if (regUserStateManager.getAction() === '') {
-            $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;There registration has encountered a problem. Please refresh the page and re-start the registration process or call Tech Support at 800-831-0678 ext. 706.</span>');
+            $('#labelEmail').html('<span class="label label-important">&nbsp;There registration has encountered a problem. Please refresh the page and re-start the registration process or call Tech Support at 800-831-0678 ext. 706.</span>');
 
             return false;
         }
@@ -203,7 +203,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
             dataType: RegistrationInCart.Constants.JsonDataType,
             data: JSON.stringify(jsonPayload),
             beforeSend: function () {
-                $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;&nbsp;Working...</span>');
+                $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Working...</span>');
             }
         }).done(function (data) {
             if (data.Result === 'Success') {
@@ -242,7 +242,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                 data: { email: email, disregardInstitutionDomain: regUserStateManager.getDisregardIntitutionDomain(), orderId: orderId },
                 beforeSend: function () {
                     // this is where we append a loading image
-                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Email...</span>');
+                    $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Checking that Email...</span>');
                 }
             }).done(function (data) {
 
@@ -258,7 +258,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                 } else if (data.email === 'wasNotFound') {
                     regUserStateManager.goToAddressFields(email);
                 } else if (data.error === 'Fail') {
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;&nbsp;An error has occurred at the server. Please contact the administrator.</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;An error has occurred at the server. Please contact the administrator.</span>');
                 }
 
             }).fail(function () {
@@ -287,7 +287,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                 data: { Zip: zipCode },
                 beforeSend: function () {
                     // this is where we append a loading image
-                    $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Zip...</span>');
+                    $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Checking that Zip...</span>');
                 }
             }).done(function (data) {
                 // successful request; do something with the data
@@ -369,7 +369,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
             beforeSend: function () {
                 //console.log('beforeSend Register Details');
                 // this is where we append a loading image
-                $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Registering new user...</span>');
+                $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Registering new user...</span>');
 
                 var valSummary = $('#valSummarySignUpForm');
                 valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
@@ -392,7 +392,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
                     // This 'if' guard may not be required
                     if (utilities.relativePathStartsWith(payload['returnUrl'])) {
-                        $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;&nbsp;You have successfully registered! On to check-out...</span>');
+                        $('#labelEmail').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;You have successfully registered! On to check-out...</span>');
 
                         // The next POST updates the Order number with the newly create id of the WebUser
                         var updateOrderWithUserForm = $('#_UpdateOrderWithUserId');
@@ -486,7 +486,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                         $('#confirmationTab a').tab('show');
 
                     } else {
-                        $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;You have successfully registered!</span>');
+                        $('#labelEmail').html('<span class="label label-success">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;You have successfully registered!</span>');
                     }
 
                 } else if (data.Result === 'Fail') {
@@ -526,7 +526,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
             dataType: constants.JsonDataType,
             data: data,
             beforeSend: function () {
-                $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Logging you in...</span>');
+                $('#labelEmail').html('<span class="label label-info">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Logging you in...</span>');
                 $('#loginErrorSummary').empty();
             }
         }).done(function (data) {
@@ -536,8 +536,9 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                     var userId = data.UserId;
                     regUserStateManager.setAction('');
 
-
-                    $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;&nbsp;You have successfully logged in!</span>');
+                    $('#labelEmail').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;You have successfully logged in!</span>').fadeOut(500, function() {
+                        $(this).html('<span class="label label-info">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Processing order...</span>').fadeIn(100);
+                    });
 
                     $('#loginContainer').empty().load('/Account/GetLoginPartial', function (e) {
 
@@ -567,11 +568,13 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                             }).done(function (data) {
 
                                 if (data.Result === 'Success') {
+
+                                    $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
+
                                     $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
 
-                                        if (status == 'error') {
+                                    if (status == 'error') {
                                             $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
-                                            $('#loadingSpinner').remove();
                                             $('#confirmationTab a').tab('show');
                                         } else {
 
@@ -601,8 +604,9 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                             //  Now that we are on the 3rd tab, remove the 2nd tab else we'll have some fields with identical id's on both tabs (edit user fields)
                                             $('#_CreateUserFromCartForm').remove();
                                         }
+                                        $('#loadingSpinner').remove();
                                     });
-
+                                    
                                     $('#confirmationTab a').tab('show');
                                 }
                             });
@@ -680,9 +684,9 @@ function completeOrder(userId, orderRowId, webinarId) {
             }
         }).done(function (result) {
             if (result.Result === 'Success') {
-                orderRowID = result.OrderRowID;
+                orderRowId = result.OrderRowId;
 
-                var err = new Error('Posted Order: ' + orderRowID);
+                var err = new Error('Posted Order: ' + orderRowId);
                 //NREUM.noticeError(err);
                 $('#orderDetails').empty();
                 $('#orderDetails').append(result.Msg);
@@ -753,7 +757,7 @@ function cancelOrder(orderId, webinarId) {
             }
 
             // enable button again upon ending operation.
-            $('#cancelRegistration').removeAttr('disabled');
+            //$('#cancelRegistration').removeAttr('disabled');  // [dar] NO. On staging, redirect is slow and button enabled again. User could have clicked it again.
 
         }, 'json');
 
@@ -821,7 +825,7 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
                 url: url,
                 dataType: constants.JsonDataType,
                 beforeSend: function (xhr) {
-                    $('#updateShippingMsgLabelWrap').html('<span class="label label-info">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Updating details...</span>');
+                    $('#updateShippingMsgLabelWrap').html('<span class="label label-info">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Updating details...</span>');
                 }
             }).done(function (data) {
                 
@@ -1074,6 +1078,7 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
 
         $.ajax({
             type: 'POST',
+
             contentType: constants.JsonContentType,
             cache: false,
             url: url,

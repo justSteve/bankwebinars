@@ -309,7 +309,7 @@ OCA.initializeFunctions = function () {
                 }
             }).done(function(data) {
                 if (data.Result === 'Success') {
-                    orderRowID = data.OrderRowID;
+                    orderRowId = data.OrderRowId;
 
                     $('#orderDetails').empty();
                     $('#orderDetails').append(data.Msg);
@@ -377,7 +377,7 @@ OCA.initializeFunctions = function () {
                         }
 
                         // enable button again upon ending operation.
-                        $('#cancelRegistration').removeAttr('disabled');
+                        //$('#cancelRegistration').removeAttr('disabled');  // [dar] NO. On staging, redirect is slow and button enabled again. User could have clicked it again.
                     } else {
                         confirmRegistrationBillMe.after('<span class="field-validation-error">Server Error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                         $('#CancelModal').modal('hide');
@@ -414,7 +414,7 @@ OCA.initializeState = function() {
     OCA.foundUsersList = $('#userResults');
     OCA.selectedWebUserInput = $('#SelectedWebUser');
     OCA.chosenUserNameSpan = $('#chosenUserName');
-    OCA.webUserIdInput= $('#idUser');
+    OCA.webUserIdInput = $('#idUser');
     OCA.users = {};
 
     OCA.cartStateManager = new OrderRegistration.StateManager();
@@ -433,6 +433,14 @@ OCA.wireUpHandlers = function() {
     /* Click event for the big green SignUp button */
     $('#AddToCart').on('click', function () {
         $(this).attr('disabled', 'disabled');
+
+        var valSummary = $('#valSummarySignUpForm');
+        valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
+
+        var errorsList = valSummary.find('ul');
+        errorsList.empty();
+        errorsList.append('<li style="display:none"></li>');
+
         OCA.signUpForm.submit();
     });
 
@@ -493,6 +501,8 @@ OCA.wireUpHandlers = function() {
 
                                 OCA.setUpEditButtons();
 
+                                $('#EmailOrderButton').on('click', OCA.emailOrderButtonHandler);
+
                                 beigeFormArea.height(confirmationForAffiliateDiv.height() + 25);
                             }
 
@@ -502,12 +512,16 @@ OCA.wireUpHandlers = function() {
                     } else if (xhr.responseJSON['isSuccessful'] === false) {
                         formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
 
-                        spinner.remove();
+                        
+                        $('#AddToCart').removeAttr('disabled');
                     }
+                    $('#loadingSpinner').remove();
                 } else {
-                    spinner.remove();
                     confirmationForAffiliateDiv.html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+                    $('#loadingSpinner').remove();
                 }
+                $('#loadingSpinner').remove();
+
             }, constants.JsonDataType);
 
             return false;
@@ -580,6 +594,54 @@ OCA.wireUpHandlers = function() {
         }
 
     });
+
+    OCA.emailOrderButtonHandler = function (e) {
+
+        e.preventDefault();
+
+        $('#emailPanel').fadeIn();
+
+        $('#dispatchButton').on('click', function (e) {
+
+            e.preventDefault();
+
+            var self = this;
+            var payload = { emails: $('#EmailAddressesInput').val() };
+
+            $.ajax({
+                type: 'POST',
+                contentType: constants.JsonContentType,
+                cache: false,
+                url: '/Cart/EmailOrder/' + OCA.cartStateManager.getOrderRowId(),
+                dataType: constants.JsonDataType,
+                data: JSON.stringify(payload),
+                beforeSend: function () {
+                    $(self).prepend('<i id="emailSendingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+                    $(self).attr('disabled', 'disabled');
+                    if ($('#resultLabel').length > 0)
+                        $('#resultLabel').remove();
+                }
+            }).done(function (data) {
+                if (data.Result === 'Success') {
+                    orderRowId = data.OrderRowId;
+                    $(self).after('<span id="resultLabel" class="label label-success" style="margin-left:5px">&nbsp;Email sent</span>');
+
+                } else {
+
+                    $(self).after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                }
+
+                $('#emailSendingSpinner').remove();
+                $(self).removeAttr('disabled');
+                
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                $('#emailSendingSpinner').remove();
+                $(self).removeAttr('disabled');
+                
+                $(self).after('<span class="field-validation-error">Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+            });
+        });
+    };
 
     OCA.foundUsersList.hide();
 

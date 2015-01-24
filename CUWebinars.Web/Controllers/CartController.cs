@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Models;
+﻿using CUWebinars.Business.Constants;
+using CUWebinars.Business.Models;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
@@ -202,6 +203,38 @@ namespace CUWebinars.Web.Controllers
             return PartialView("~/Views/cart/Partials/CheckoutContact.cshtml", _cartControllerOrchestrator.BuildRegisterViewModel());
         }
 
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public ActionResult EmailOrder(int? id, string emails)
+        {
+            if (id.HasValue)
+            {
+                try
+                {
+                    var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
+                    var orderRowId = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
+
+                    _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
+
+                    return Json(new
+                    {
+                        Result = WebUiConstants.Success,
+                        OrderRowId = orderRowId,
+                        Msg = string.Format("<p>Your Order ID is {0}. Please check your email for connection information for the webinar.</p>", orderRowId)
+                    });
+                }
+                catch (Exception exception)
+                {
+                    ModelState.AddModelError(string.Empty, "There was a problem at the server. Please contact the administrator.");
+                    _logger.ErrorException("ConfirmOrder|ConfirmOrder failed ", exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                }
+            }
+
+            return this.ModelStateJson(ModelState);
+
+        }
+
         public PartialViewResult UpdateOrderWithUserIdForm()
         {
             return PartialView("~/Views/cart/Partials/_UpdateOrderWithUserId.cshtml");
@@ -237,7 +270,10 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     ModelState.AddModelError(string.Empty,
-                        "There has been an error at the server which has been logged.");
+                        exception.Message.Contains(ErrorMessageConstants.ExistingNonCancelledOrderMessage)
+                            ? ErrorMessageConstants.ExistingNonCancelledOrderMessage
+                            : "There has been an error at the server which has been logged.");
+
                     _logger.FatalException("Signup2 order excepted: ", exception);
 
                     Elmah.ErrorSignal.FromCurrentContext().Raise(exception);

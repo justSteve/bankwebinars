@@ -494,6 +494,11 @@ namespace CUWebinars.Web.Controllers
             IEnumerable<AdditionalLocation> additionalLocations = null;
             OrderRow orderRowForOrder = null;
 
+            if (Request.IsAuthenticated)
+            {
+                
+            }
+
             model.WebUser = Request.IsAuthenticated
                 ? _membershipService.GetUserByEmailLoadedWithOrdersData(User.Identity.Name)
                 : new WebUser();
