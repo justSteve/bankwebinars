@@ -173,11 +173,13 @@
     <Compile Include="Notification\Email\AzureCuwWebJobSmtpMessageDelivery.cs" />
     <Compile Include="Notification\Events\OrderSubmittedAdditionalLocationEvent.cs" />
     <Compile Include="Notification\Events\EmailOrderEvent.cs" />
+    <Compile Include="Notification\Events\PreviewConnectionInfoEvent.cs" />
     <Compile Include="Notification\Events\SendConnectionInfoEvent.cs" />
     <Compile Include="Notification\Events\SendRecordingPostedEvent.cs" />
     <Compile Include="Notification\Events\SendReminderEvent.cs" />
     <Compile Include="Notification\Events\SendShippedOrderEvent.cs" />
     <Compile Include="Notification\Events\TtsBusEvent.cs" />
+    <Compile Include="Notification\Formatters\PreviewFormatter.cs" />
     <Compile Include="Notification\Formatters\Formatter.cs" />
     <Compile Include="Notification\Formatters\IFormatter.cs" />
     <Compile Include="Notification\Handlers\OrderSubmittedAdditionalLocationHandler.cs" />

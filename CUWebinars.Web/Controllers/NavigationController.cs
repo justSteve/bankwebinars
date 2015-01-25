@@ -38,6 +38,7 @@ namespace CUWebinars.Web.Controllers
                     string seoTitle =
                         upcomingWebinar.Title.RemoveIllegalCharacters()
                             .ReplaceSpacesWithHyphens()
+                            .ReplaceAmpersandsWithAnd()
                             .ToLower()
                             .TrimEnd('.');
 

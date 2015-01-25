@@ -27,23 +27,14 @@
 //  Create a namespace. PageObjects is getting polluted across js files.
 var OENS = {
     PageObjects: {
-        getResendConnectionInfoHtmlButton: function () {
-            return getResendConnectionInfoHtmlButton || $('#GetResendConnectionInfoHtmlButton');
-        },
         GetResendOrderConfirmationHtmlButton: function () {
             return getResendOrderConfirmationHtmlButton|| $('#GetResendOrderConfirmationHtmlButton');
-        },
-        GetSendConnectionInfoEventHtmlButton: function () {
-            return getSendConnectionInfoEventHtmlButton || $('#GetSendConnectionInfoEventHtmlButton');
         },
         GetSendRecordingPostedEventHtmlButton: function () {
             return getSendRecordingPostedEventHtmlButton || $('#GetSendRecordingPostedEventHtmlButton');
         },
         GetSendReminderEventHtmlButton: function () {
             return getSendReminderEventHtmlButton || $('#GetSendReminderEventHtmlButton');
-        },
-        InputFormFields: function() {
-            return InputFormFields || $('#InputFormFields');
         },
         RegTypesCheckBoxesDiv: function () {
             return regTypesCheckBoxesDiv || $('#RegTypesCheckBoxes').find('.controls');
@@ -78,7 +69,7 @@ $(function () {
 
     getResendConnectionInfoHtmlButton = $('#GetResendConnectionInfoHtmlButton');
     getResendOrderConfirmationHtmlButton = $('#GetResendOrderConfirmationHtmlButton');
-    getSendConnectionInfoEventHtmlButton = $('#GetSendConnectionInfoEventHtmlButton');
+    
     getSendRecordingPostedEventHtmlButton = $('#GetSendRecordingPostedEventHtmlButton');
     getSendReminderEventHtmlButton = $('#GetSendReminderEventHtmlButton');
     sendShippedOrderNotificationButton = $('#SendShippedOrderNotificationButton');
@@ -89,9 +80,9 @@ $(function () {
 
     getResendConnectionInfoHtmlButton.on('click', function(eventArgs) {
         eventArgs.preventDefault();
-        OENS.PageObjects.InputFormFields().empty();
+        $('#InputFormFields').empty();
 
-        OENS.PageObjects.InputFormFields().load(resendConnectionInfoUrl, function () {
+        $('#InputFormFields').load(resendConnectionInfoUrl, function () {
 
             $('#ResendConnectionInfoButton').on('click', function () {
 
@@ -112,9 +103,9 @@ $(function () {
                 }).done(function (result) {
 
                     if (result.Result === 'Success') {
-                        OENS.PageObjects.InputFormFields().append(successScreenMessage);
+                        $('#InputFormFields').append(successScreenMessage);
                     } else if (result.Result === 'Fail') {
-                        OENS.PageObjects.InputFormFields().append(noOrderScreenMessage);
+                        $('#InputFormFields').append(noOrderScreenMessage);
                     }
 
                 }).fail(function () {
@@ -129,9 +120,9 @@ $(function () {
             
     getResendOrderConfirmationHtmlButton.on('click', function(eventArgs) {
         eventArgs.preventDefault();
-        OENS.PageObjects.InputFormFields().empty();
+        $('#InputFormFields').empty();
 
-        OENS.PageObjects.InputFormFields().load(resendOrderConfirmationUrl, function () {
+        $('#InputFormFields').load(resendOrderConfirmationUrl, function () {
 
             $('#ResendOrderConfirmationButton').on('click', function () {
 
@@ -152,9 +143,9 @@ $(function () {
                 }).done(function(result) {
 
                     if (result.Result === 'Success') {
-                        OENS.PageObjects.InputFormFields().append(successScreenMessage);
+                        $('#InputFormFields').append(successScreenMessage);
                     } else if (result.Result === 'Fail') {
-                        OENS.PageObjects.InputFormFields().append(noOrderScreenMessage);
+                        $('#InputFormFields').append(noOrderScreenMessage);
                     }
 
 
@@ -168,9 +159,9 @@ $(function () {
     });
 
     getAdhocEventsHtmlButton.on('click', function(eventArgs) {
-        OENS.PageObjects.InputFormFields().empty();
+        $('#InputFormFields').empty();
 
-        OENS.PageObjects.InputFormFields().load(sendAdhocEventUrl, function () {
+        $('#InputFormFields').load(sendAdhocEventUrl, function () {
             $('#RegTypesCheckBoxes').hide();
             adhocNotificationForm = $('#AdhocNotificationForm');
             selectedUpcomingWebinarIdDropDown = $('#SelectedWebinarId');
@@ -258,13 +249,14 @@ $(function () {
 
     
     sendShippedOrderNotificationButton.on('click', function(evtArgs) {
+        
+        $('#InputFormFields').empty().load(sendOrderShippedUrl, function () {
 
-        OENS.PageObjects.InputFormFields().empty();
-        OENS.PageObjects.InputFormFields().load(sendOrderShippedUrl, function () {
+            var selectedOrderId = $('#SelectedOrderId'); 
 
             $('#GetSendShippedOrderNotificationButton').on('click', function (eventArgs) {
 
-                var payload = $('#SelectedOrderId').val();
+                var payload = selectedOrderId.val();
 
                 $.ajax({
                     type: 'POST',
@@ -281,25 +273,48 @@ $(function () {
                     labelCheckRemove();
 
                     if (result.Result === 'Success') {
-                        OENS.PageObjects.InputFormFields().append(successScreenMessage);
+                        $('#InputFormFields').append(successScreenMessage);
                     } else if (result.Result === 'No Orders to send for that webinar') {
-                        OENS.PageObjects.InputFormFields().append(noOrdersScreenMessage);
+                        $('#InputFormFields').append(noOrdersScreenMessage);
                     }
                 }).fail(function () {
                     labelCheckRemove();
-                    OENS.PageObjects.InputFormFields().append(failedScreenMessage);
+                    $('#InputFormFields').append(failedScreenMessage);
                 }).always(function () {
                     OENS.PageObjects.WaitIndicator().hide();
                 });;
             });
+
+            $('#PreviewShippedOrderEmailButton').on('click', function (e) {
+                e.preventDefault();
+
+                var url = '/Admin/PreviewShippedOrder/' + selectedOrderId.val();
+
+                var modalPreview = $('#previewModal'),
+                    modalFormOptionsOnPageLoad = {
+                        keyboard: true,
+                        backdrop: 'static',
+                        show: true,
+                    };
+                
+                $.get(url, function (data) {
+                    $('#emailContent').html(data);
+
+                    modalPreview.modal(modalFormOptionsOnPageLoad);
+                    modalPreview.modal();
+
+                });
+
+            });
+
         });
 
     });
 
     getSendReminderEventHtmlButton.on('click', function(eventArgs) {
-        OENS.PageObjects.InputFormFields().empty();
+        $('#InputFormFields').empty();
 
-        OENS.PageObjects.InputFormFields().load(sendReminderUrl, function() {
+        $('#InputFormFields').load(sendReminderUrl, function() {
 
             $('#FireSendReminderEventButton').on('click', function (eventArgs) {
                 
@@ -320,13 +335,13 @@ $(function () {
                     labelCheckRemove();
 
                     if (result.Result === 'Success') {
-                        OENS.PageObjects.InputFormFields().append(successScreenMessage);
+                        $('#InputFormFields').append(successScreenMessage);
                     } else if (result.Result === 'No Orders to send for that webinar') {
-                        OENS.PageObjects.InputFormFields().append(noOrdersScreenMessage);
+                        $('#InputFormFields').append(noOrdersScreenMessage);
                     }
                 }).fail(function () {
                     labelCheckRemove();
-                    OENS.PageObjects.InputFormFields().append(failedScreenMessage);
+                    $('#InputFormFields').append(failedScreenMessage);
                 }).always(function () {
                     OENS.PageObjects.WaitIndicator().hide();
                 });;
@@ -334,11 +349,9 @@ $(function () {
         });
     });
 
-    getSendConnectionInfoEventHtmlButton.on('click', function (eventArgs) {
-
-        OENS.PageObjects.InputFormFields().empty();
-
-        OENS.PageObjects.InputFormFields().load(sendConnectionInfoUrl, function () {
+    $('#GetSendConnectionInfoEventHtmlButton').on('click', function (eventArgs) {
+        
+        $('#InputFormFields').empty().load(sendConnectionInfoUrl, function () {
         
             $('#GetSendConnectionInfoRecipientsButton').on('click', function (eventArgs) {
                 
@@ -359,16 +372,16 @@ $(function () {
                     labelCheckRemove();
 
                     if (result.Result === 'Success') {
-                        OENS.PageObjects.InputFormFields().append(successScreenMessage);
+                        $('#InputFormFields').append(successScreenMessage);
                     } else if (result.Result === 'No Orders to send for that webinar') {
-                        OENS.PageObjects.InputFormFields().append(noOrdersScreenMessage);
+                        $('#InputFormFields').append(noOrdersScreenMessage);
                     }
 
                 }).fail(function () {
 
                     labelCheckRemove();
 
-                    OENS.PageObjects.InputFormFields().append(failedScreenMessage);
+                    $('#InputFormFields').append(failedScreenMessage);
                 }).always(function () {
                     OENS.PageObjects.WaitIndicator().hide();
                 });;
@@ -378,10 +391,10 @@ $(function () {
 
     getSendRecordingPostedEventHtmlButton.on('click', function (eventArgs) {
         eventArgs.preventDefault();
-        OENS.PageObjects.InputFormFields().empty();
+        $('#InputFormFields').empty();
 
         
-        OENS.PageObjects.InputFormFields().load(sendRecordingPostedUrl, function () {
+        $('#InputFormFields').load(sendRecordingPostedUrl, function () {
             
             $('#GetSendRecordingPostedRecipientsButton').on('click', function (eventArgs) {
                 
@@ -402,15 +415,15 @@ $(function () {
                     labelCheckRemove();
 
                     if (result.Result === 'Success') {
-                        OENS.PageObjects.InputFormFields().append(successScreenMessage);
+                        $('#InputFormFields').append(successScreenMessage);
                     } else if (result.Result === 'No Orders to send for that webinar') {
-                        OENS.PageObjects.InputFormFields().append(noOrdersScreenMessage);
+                        $('#InputFormFields').append(noOrdersScreenMessage);
                     }
 
                 }).fail(function () {
                     labelCheckRemove();
 
-                    OENS.PageObjects.InputFormFields().append(failedScreenMessage);
+                    $('#InputFormFields').append(failedScreenMessage);
                 }).always(function () {
                     OENS.PageObjects.WaitIndicator().hide();
                 });
@@ -426,6 +439,6 @@ $(function () {
     };
 
     var removeInnerHandlers = function() {
-        $('#ResendConnectionInfoButton').off('click', OENS.PageObjects.InputFormFields());
+        $('#ResendConnectionInfoButton').off('click', $('#InputFormFields'));
     };
 });

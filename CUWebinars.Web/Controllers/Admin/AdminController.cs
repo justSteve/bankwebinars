@@ -3,6 +3,8 @@ using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
+using CUWebinars.Business.Notification;
+using CUWebinars.Business.Notification.Formatters;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Helpers;
@@ -530,6 +532,15 @@ namespace CUWebinars.Web.Controllers.Admin
             _orderManagementService.FireSendOrderShippedNotificationEvent(new Order[] { order });
 
             return Json(new { Result = WebUiConstants.Success });
+        }
+
+
+        public ActionResult PreviewShippedOrder(int id)
+        {
+            var order = _orderManagementService.GetOrderById(id);
+            var formatter = new PreviewFormatter(new EnvironmentInformation { BaseUrl = HttpRuntime.AppDomainAppPath });
+
+            return File(formatter.FormatToString(order, "PreviewShippedOrder").GenerateStreamFromString(), "text/html");
         }
 
 

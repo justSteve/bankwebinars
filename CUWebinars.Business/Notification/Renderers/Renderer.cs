@@ -20,7 +20,6 @@ namespace CUWebinars.Business.Notification.Renderers
                     "CUWebinars.Business.Models",
                     "CUWebinars.Business.Notification",
                     "System.Text");
-                    //"CUWebinars.Html");
             });
 
             // create a new TemplateService and pass in the configuration to the constructor
