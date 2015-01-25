@@ -223,7 +223,7 @@ namespace CUWebinars.WebUi.Tests2.Pages
 
                 subMenuItem.Click();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 SeleniumTestDriver.MouseOverElementUsingScript("$('#main_menu > ul > li:nth-child(3) > a').mouseenter();");
 

@@ -956,7 +956,7 @@ namespace CUWebinars.Business.Services
             }
             else
             {
-                _logger.Error("ERROR: Rejected Discount On Order: " + order.idOrder);
+                //_logger.Error("ERROR: Rejected Discount On Order: " + order.idOrder);
             }
         }
         public virtual bool IsDiscountCodeValid(string discountCode)

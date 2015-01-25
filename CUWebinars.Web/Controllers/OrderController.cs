@@ -233,8 +233,6 @@ namespace CUWebinars.Web.Controllers
                 return Json(new { Result = errString }, JsonRequestBehavior.AllowGet);
             }
 
-            return Json(new { Result = "0" }, JsonRequestBehavior.AllowGet);
-            //return Json(new { Result = WebUiConstants.Fail });
         }
 
         private string ProcessModelStateErrors()

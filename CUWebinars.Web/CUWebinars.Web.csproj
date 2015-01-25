@@ -590,6 +590,7 @@
     <None Include="Properties\PublishProfiles\BankWebinars31 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars31 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars31.pubxml" />
+    <None Include="Properties\PublishProfiles\BWOnSteadfast.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars31.pubxml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\jquery-1.11.1.js" />

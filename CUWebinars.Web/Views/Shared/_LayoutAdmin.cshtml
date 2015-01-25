@@ -22,12 +22,7 @@
     var affiliateSessionSource = stateService.GetValue<string>("AffiliateSessionSource");
 
 
-    //var initialQueryString = stateService.GetValue<string>("InitialQueryString");
-    //TODO: Why's this?
-    // System.InvalidCastException was unhandled by user code
-    //HResult=-2147467262
-    //Message=Unable to cast object of type 'System.Web.HttpValueCollection' to type 'System.String'.
-
+    
 }
 <!doctype html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en" dir="ltr"> <![endif]-->
@@ -62,6 +57,7 @@
 
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/CommonModules")
     @Scripts.Render("~/bundles/myApp")
     @Styles.Render("~/Content/CrispCSS")
 
@@ -177,7 +173,7 @@
 
                     @if (Request.IsAuthenticated)
                     {
-                        <li><a href="/Account/MyWebinars">My Webinars</a></li>
+                        <li><a href="/Admin">Admin</a></li>
                     }
                 </ul>
             </nav>

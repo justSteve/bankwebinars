@@ -17,8 +17,8 @@ namespace CUWebinars.Business.Tests.Config
         private const string MembershipReboot = "MembershipReboot";
         private string _dbMembershipRebootFileName;
         private string _dbMembershipRebootFullPath;
-        private string _dbTTSDatabaseFileName;
-        private string _dbTTSDatabaseFullPath;
+        //private string _dbTTSDatabaseFileName;
+        //private string _dbTTSDatabaseFullPath;
         private string _dbCUWebinarsFileName;
         private string _dbCUWebinarsFullPath;
         private string _dbCUWebinarsMemshipFileName;
