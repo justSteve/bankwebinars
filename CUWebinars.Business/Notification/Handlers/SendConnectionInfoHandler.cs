@@ -43,7 +43,7 @@ namespace CUWebinars.Business.Notification.Handlers
         public virtual void Process(SendConnectionInfoEvent<T> sendConnectionInfoEvent)
         {
             _logger.Info("mailer is processing " + sendConnectionInfoEvent.EventObject.OrderRows
-                .Single(or => or.RowStatus == OrderRowStatus.Active));
+                .Single(or => or.RowStatus == OrderRowStatus.Active).idOrder);
 
             var notificationMessage = _generalFormatter.Format(sendConnectionInfoEvent.EventObject, "SendConnectionInfo");
             var isAdditionalLocation =
@@ -60,6 +60,7 @@ namespace CUWebinars.Business.Notification.Handlers
                     notificationMessage.To = sendConnectionInfoEvent.EventObject.BillingEmail;
                     foreach (var additionalLocation in isAdditionalLocation)
                     {
+                        _logger.Info("Sending Connection Info: " + additionalLocation.Email);
                         //override the order's Name property so that additional locations addressees 
                         // get correct name. order isn't saved so after execution, the property reverts.
                         sendConnectionInfoEvent.EventObject.FirstName = additionalLocation.FullName;

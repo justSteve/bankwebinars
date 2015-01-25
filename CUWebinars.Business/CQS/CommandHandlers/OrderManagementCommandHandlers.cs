@@ -98,16 +98,14 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             //208	CD-ROM and Hardcopy Handouts	CD-ROM_and_Hardcopy_Handouts_2Hr_325_208
             //209	Premier Package	Premier_Package_2Hr_395_209
 
-            if (command.OrderDate < Convert.ToDateTime("01-01-2015"))
+            if (command.OrderDate > Convert.ToDateTime("01-01-2015") && command.RegistrationType < 200)
             {
                 try
                 {
-                    int idRegType = Convert.ToInt32(command.OrderRow.RegistrationType);
+                    int idRegType = Convert.ToInt32(command.RegistrationType);
                     switch (idRegType)
                     {
-                        case 1:
-                            { idRegType = 205; }
-                            break
+                        case 1: { idRegType = 205; break; }
                             ;
                         case 16: { idRegType = 206; break; }
                             ;
@@ -128,14 +126,9 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                             ;
                         case 36: { idRegType = 204; break; }
                             ;
-                        default:
-                            // You can use the default case.
-                            idRegType = 0;
-                            ;
-                            break;
-
-
+                        default: { idRegType = 0; break; }
                     }
+
                     command.RegistrationType = idRegType;
                 }
                 catch (Exception)
