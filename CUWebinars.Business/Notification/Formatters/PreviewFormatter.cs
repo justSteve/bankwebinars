@@ -8,19 +8,19 @@ using System.Xml.Linq;
 
 namespace CUWebinars.Business.Notification.Formatters
 {
-    public class Formatter : IFormatter
+    public class PreviewFormatter : IFormatter
     {
         private readonly Lazy<EnvironmentInformation> _environmentInformation;
         private string _emailSubject;
         private string _emailBody;
 
-        public Formatter(EnvironmentInformation environmentInformation)
+        public PreviewFormatter(EnvironmentInformation environmentInformation)
         {
             if (environmentInformation == null) throw new ArgumentNullException("environmentInformation");
             _environmentInformation = new Lazy<EnvironmentInformation>(() => environmentInformation);
         }
 
-        public Formatter(Lazy<EnvironmentInformation> environmentInformation)
+        public PreviewFormatter(Lazy<EnvironmentInformation> environmentInformation)
         {
             if (environmentInformation == null) throw new ArgumentNullException("environmentInformation");
             _environmentInformation = environmentInformation;
@@ -36,14 +36,13 @@ namespace CUWebinars.Business.Notification.Formatters
 
         public INotificationMessage Format<T>(T underPinningObject, string templateName)
         {
-            LoadBodyTemplate(templateName);
-
-            return CreateMessage(GetSubject(underPinningObject), GetBody(underPinningObject));
+            throw new NotImplementedException();
         }
 
         public string FormatToString<T>(T objectOfMessage, string templateName)
         {
-            throw new NotImplementedException();
+            LoadBodyTemplate("PreviewShippedOrder");
+            return GetBody(objectOfMessage);
         }
 
         protected INotificationMessage CreateMessage(string subject, string body)
@@ -81,7 +80,7 @@ namespace CUWebinars.Business.Notification.Formatters
 
         private void LoadTemplate(string name)
         {
-            var templatePath = Path.Combine(EnvironmentInformation.BaseUrl, DomainConstants.ResourcePathTemplate, name);
+            var templatePath = Path.Combine(EnvironmentInformation.BaseUrl, DomainConstants.ResourcePathPreviewTemplate, name);
             var settings = new XmlReaderSettings { ConformanceLevel = ConformanceLevel.Fragment };
 
             using (XmlReader reader = XmlReader.Create(templatePath, settings))
@@ -97,7 +96,7 @@ namespace CUWebinars.Business.Notification.Formatters
 
                 while (reader.Read())
                 {
-                    if (!reader.Name.Equals("html", StringComparison.OrdinalIgnoreCase)) continue;
+                    if (!reader.Name.Equals("div", StringComparison.OrdinalIgnoreCase)) continue;
                     var div = XNode.ReadFrom(reader) as XElement;
 
                     if (div != null)

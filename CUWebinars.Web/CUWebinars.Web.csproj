@@ -555,6 +555,7 @@
     <Content Include="Content\themes\base\tabs.css" />
     <Content Include="Content\themes\base\theme.css" />
     <Content Include="Content\themes\base\tooltip.css" />
+    <Content Include="Content\notification-ops.css" />
     <Content Include="newrelic\extensions\CoreInstrumentation.xml" />
     <Content Include="newrelic\extensions\Providers\TransactionContext\Asp\NewRelic.Agent.Extensions.dll" />
     <Content Include="newrelic\extensions\Providers\TransactionContext\Asp\NewRelic.Providers.TransactionContext.Asp.Repacked.dll" />
@@ -584,6 +585,8 @@
     <None Include="newrelic\newrelic.xsd">
       <SubType>Designer</SubType>
     </None>
+    <Content Include="Notification\PreviewTemplates\PreviewConnectionInfo.cshtml" />
+    <Content Include="Notification\PreviewTemplates\PreviewShippedOrder.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars31 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars31 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars31.pubxml" />
@@ -715,7 +718,6 @@
     <Content Include="Views\Shared\_LayoutAffiliate.cshtml" />
     <Content Include="Views\Shared\_MessagesPartial.cshtml" />
     <Content Include="Views\Shared\_DiscountPartial.cshtml" />
-    <Content Include="Views\Webinar\DetailsAdmin.cshtml" />
     <Content Include="Views\Webinar\DetailsAffiliate.cshtml" />
     <Content Include="Views\Webinar\Search.cshtml" />
     <Content Include="Views\Webinar\Partials\DisplayOptionsAffiliate.cshtml" />
@@ -725,6 +727,7 @@
     <Content Include="Views\Cart\Partials\_ConfirmModalForAffiliate.cshtml" />
     <Content Include="Views\Cart\Partials\_DisplayAppliedDiscount.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DiscountDetails.cshtml" />
+    <Content Include="Views\Admin\Home\Partials\_SendShippedPreviewModal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Calendar\iCalFromCitrix.txt" />
