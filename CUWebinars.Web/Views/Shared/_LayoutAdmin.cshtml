@@ -136,52 +136,46 @@
                 <ul class="primary_menu">
                     @*<li><a href="/home">Home</a></li>*@
 
-                    @*<li><a href="webinar/calendar">calendar</a></li>*@
+                    <li><a href="webinar/calendar">calendar</a></li>
                     <li class="parent">
                         <a href="javascript:void(0)">topics<i></i></a>
                         <ul>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/15">Compliance</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/26">Risk Management</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/16">IRA</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/17">Customer Service</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/19">Operations</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/18">Security</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/20">Auditing</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/21">Sales</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/22">Lending</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/23">Human Resources</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/27">Teller</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="1" href="/Webinar/ListByTopic/15">Compliance</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="2" href="/Webinar/ListByTopic/26">Risk Management</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="3" href="/Webinar/ListByTopic/16">IRA</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="4" href="/Webinar/ListByTopic/17">Customer Service</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="5" href="/Webinar/ListByTopic/19">Operations</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="6" href="/Webinar/ListByTopic/18">Security</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="7" href="/Webinar/ListByTopic/20">Auditing</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="8" href="/Webinar/ListByTopic/21">Sales</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="9" href="/Webinar/ListByTopic/22">Lending</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="10" href="/Webinar/ListByTopic/23">Human Resources</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="11" href="/Webinar/ListByTopic/27">Teller</a></li>
                         </ul>
                     </li>
                     <li class="parent">
-                        <a href="javascript:void(0)">Upcoming Webinars<i></i></a>
+                        <a href="javascript:void(0)">Upcoming Webinars</a>
                         <ul>@Html.Action("UpComingWebinarMenu", "Navigation")</ul>
                     </li>
                     <li class="parent">
-                        <a href="javascript:void(0)">OnDemand Webinars<i></i></a>
+                        <a href="javascript:void(0)">OnDemand Webinars</a>
                         <ul>@Html.Action("GetRecordedWebinarMenu", "Navigation")</ul>
                     </li>
                     <li class="parent">
-                        <a href="javascript:void(0)">About Us<i></i></a>
+                        <a href="javascript:void(0)">Admin<i></i></a>
                         <ul>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/WhatIsAWebinar">What Is A Webinar?</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/CommonQuestions">Commonly Asked Questions</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/DetailedConnectionInstructions">Connecting to Your Webinar</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/contactus">Contact Us</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="1" href="/Admin/Orders/@model">What Is A Webinar?</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="2" href="/Admin/Users">Commonly Asked Questions</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="3" href="/Admin/Edit">Customer Service</a></li>
                         </ul>
                     </li>
 
-                    @if (Request.IsAuthenticated)
-                    {
-                        <li><a href="/Admin">Admin</a></li>
-                    }
                 </ul>
             </nav>
             <!-- close / #main_menu -->
-            <!-- begin #logo -->
-            <div id="logo" style='background:  url("http://images.ttstrain.com/images/logoCU.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0)'> <a href="/Home"><img alt="" src="http://images.ttstrain.com/images/BankWebinars/trans.gif" /><em> Webinars</em><!--effing ie7 support--></a> </div>
-            <!-- end #logo -->
-            `
+            
+            <div id="logo" style='background:  url("@currentAffiliate.Logo") no-repeat scroll 0 0 rgba(0, 0, 0, 0)'> <a href="/Home"><img alt="" src="http://images.ttstrain.com/images/BankWebinars/trans.gif" /><em> Webinars</em><!--effing ie7 support--></a> </div>
+            
         </div>
         <!-- close / .container-->
     </header>
@@ -189,10 +183,6 @@
     <div id="page">
 
         @RenderBody()
-
-        @*        @{Html.RenderPartial("LoginBoxBootstrap");}
-            @{Html.RenderPartial("ShowSearchBox");}*@
-
     </div>
 
     <div id="ProgressDialogBS" class="modal hide fade">
@@ -212,11 +202,11 @@
             <div class="row-fluid">
                 <div class="span4">
                     <h4>
-                        @{Html.RenderPartial("Partials/_AddToMailingBox");}
+                        @{Html.RenderPartial("/Admin/_Last5Error");}
                     </h4>
                 </div>
                 <!-- close .span4 -->
-                <!--section containing newsletter signup and recent images-->
+                <!--section -->
                 <div class="span4">
                     <section>
                         <h4>Administrative Contacts</h4>
