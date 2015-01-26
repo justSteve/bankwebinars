@@ -803,14 +803,88 @@ namespace CUWebinars.Business.Services
             return myDiscount;
         }
 
+        public void GenerateRegistrantKey(Order order, AdditionalLocation additionalLocation)
+        {
+            var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+            var regKeyResponse = "";
+            if (additionalLocation.Email == null)
+            {
+                if (row.JoinURL == null && row.RegistrationType.ShowLiveNotifications == "Yes")
+                {
+                    regKeyResponse = CreateRegistrantKey(order.FirstName, order.LastName
+                        , order.BillingEmail, row.Webinar.idWebinar, row.Webinar.WebinarKey);
+                }
+            }
+            else
+            {
+                var contents = additionalLocation.FullName.Split(' ').ToString();
+                var lastName = contents.Skip(1).ToString();
+
+                regKeyResponse = CreateRegistrantKey(additionalLocation.FullName.Split(' ')[0],
+                    lastName, additionalLocation.Email, row.Webinar.idWebinar, row.Webinar.WebinarKey);
+            }
+
+            JObject parsedJsonObject;
+
+            if (ReferenceEquals(null, regKeyResponse))
+            {
+                //throw new NullReferenceException(
+                //    "The Registration Key Response from the Citrix API resulted in a null response.");
+                _logger.FatalException("The Registration Key creation failed.", new NullReferenceException("The Registration Key Response from the Citrix API resulted in a null response."));
+
+            }
+            else
+            {
+                parsedJsonObject = JObject.Parse(regKeyResponse);
+
+                if (parsedJsonObject[DomainConstants.RegistrantKey] != null)
+                {
+                    _logger.Info("RegKey for ." + order.idOrder + " = " + regKeyResponse);
+
+                    var registrantKey = parsedJsonObject[DomainConstants.RegistrantKey].ToString();
+                    var joinUrl = parsedJsonObject[DomainConstants.JoinUrl].ToString();
+                    if (additionalLocation.Email == null)
+                    {
+                        row.RegistrantKey = registrantKey;
+                        row.JoinURL = joinUrl;
+                    }
+                    else
+                    {
+                        additionalLocation.JoinURL = joinUrl;
+                        additionalLocation.RegistrantKey = registrantKey;
+                    }
+
+                    var pricesAndDiscounts = default(PricesAndDiscounts); // not needed here. Just used b/c ref parameter required below.
+
+                    var resultOfUpdate = UpdateOrderChanges(order, ref pricesAndDiscounts);
+                }
+            }
+        }
+
 
         public void GetJoinUrl(OrderRow row)
         {
             Order order = row.Order;
+
+
             if (row.JoinURL == null && row.RegistrationType.ShowLiveNotifications == "Yes")
             {
                 var regKeyResponse = CreateRegistrantKey(order.FirstName, order.LastName
                     , order.BillingEmail, row.Webinar.idWebinar, row.Webinar.WebinarKey);
+
+                if (order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count > 0)
+                {
+                    foreach (var additionalLocation in order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)
+                    {
+                        if (
+                            string.IsNullOrEmpty(
+                                order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).JoinURL))
+                        {
+                            //Blows up where with 
+                            GenerateRegistrantKey(order, additionalLocation); 
+                        }
+                    }
+                }
 
                 if (ReferenceEquals(null, regKeyResponse))
                 {
@@ -853,7 +927,7 @@ namespace CUWebinars.Business.Services
 
             return thisDiscount;
         }
-        
+
         public Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink, OrderGenesis orderGenesis = OrderGenesis.ImportedForExistingUser)
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
@@ -969,14 +1043,14 @@ namespace CUWebinars.Business.Services
         private void RedeemDiscount(Discount discount)
         {
             if (discount.DiscountType != DiscountType.Subscription)
-             
-                discount.UsesCount ++;
 
-                if (discount.UsesRemain > 0)
-                    discount.UsesRemain--;
+                discount.UsesCount++;
+
+            if (discount.UsesRemain > 0)
+                discount.UsesRemain--;
 
             _logger.Info("Discount was redeemed for {0}.", discount.DiscountCode);
-            
+
         }
 
         private void RejectDiscount(OrderRow orderRow)
@@ -1037,7 +1111,7 @@ namespace CUWebinars.Business.Services
                 requestStream.Write(requestBytes, 0, requestBytes.Length);
                 requestStream.Close();
             }
-            
+
             _logger.Info("CreateRegistrantKey starts: " + billingEmail + ", webinarKey = " + webinarKey + ", OrgKey = " + orgKey + ", oauth_token=" + accessToken);
             try
             {

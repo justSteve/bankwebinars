@@ -48,30 +48,10 @@
 
     var isFirstOrderForThisUser = true;
 
-    thankYouPhrase.Append("Dear " + Model.Order.FirstName + ",<br /><br />Thank you for your order for <b>");
+    thankYouPhrase.Append("Dear " + Model.Order.FirstName + ",<br /><br />The following contains connection information for the <i>Addition Location</i>");
     thankYouPhrase.Append(row.Single().RegistrationType.OptionLabel);
-    thankYouPhrase.Append("</b> of <i>" + row.Single().Webinar.Title + "</i>");
+    thankYouPhrase.Append(" for <b>" + row.Single().Webinar.Title + "</b>");
 
-    switch (Model.OrderGenesis)
-    {
-        case OrderGenesis.CreatedViaCartByExistingUser:
-            break;
-        case OrderGenesis.CreatedViaCartByNewUser:
-            thankYouPhrase.Append(". When your order was submitted, we created an account and requested that you enter a new password. In case you missed that prompt or don't recall entering a password, please visit <b><a href=" + Model.AddPasswordUrl + ">Set My Password</a></b> or paste this URL into your browser:<i>" + Model.AddPasswordUrl + "</i>.");
-            break;
-        case OrderGenesis.ImportedForExistingUser:
-            break;
-        case OrderGenesis.ImportedForNewUser:
-            thankYouPhrase.Append(" - placed for you by " + Model.Order.Affiliate.DisplayTitle + ". ");
-
-            if (isFirstOrderForThisUser)
-            {
-
-                thankYouPhrase.Append(". We've created an account and request that you confirm this transaction by visiting (or pasting this address to your browser) <a href=" + Model.ConfirmChangeEmailUrl + "><b>" + Model.ConfirmChangeEmailUrl + "</b></a>");
-
-            }
-            break;
-    }
 
 
     if (locations.Count != 0)
@@ -85,7 +65,7 @@
         {
             addLocs.Append("The registration includes a single additional location for " + @locations.First().Email + " costing " + locations.First().Price.ToString("C").Replace(".00", "") + ". ");
         }
-        if (locations.Count == 2)
+        else
         {
             foreach (var addLoc in locations)
             {
@@ -193,7 +173,7 @@
     {
         phone = webinar.AccessPhone;
     }
-    var HeaderText = "Confirmation of Additional Location for<br />" + webinar.Title;
+    var HeaderText = "Confirmation of Registration for<br />" + webinar.Title;
     var BannerText = "Order Number: " + TenantPrefix + displayOrderNumber + "<br />Type: " + row.Single().RegistrationType.OptionLabel;
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />

@@ -56,11 +56,11 @@ namespace CUWebinars.Web.Controllers.Admin
         //
         // GET: /Admin/
         public AdminController(
-            IMembershipService membershipService, 
-            ILogger logger, 
-            IStateService stateService, 
-            IWebinarManagementService webinarManagementService, 
-            IOrderManagementService orderManagementService, 
+            IMembershipService membershipService,
+            ILogger logger,
+            IStateService stateService,
+            IWebinarManagementService webinarManagementService,
+            IOrderManagementService orderManagementService,
             IAppHelper appHelper)
         {
             _membershipService = membershipService;
@@ -86,7 +86,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 _orderManagementService.UpdateOrderByAdmin(order);
             }
 
-            return Json(new { Result = WebUiConstants.Success});
+            return Json(new { Result = WebUiConstants.Success });
         }
 
         private Order ApplyModelChangesToOrder(ManageOrderEditModel model)
@@ -122,7 +122,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     Value = claimType.GetRawConstantValue().ToString()
                 });
             }
-            
+
             var model = new AddClaimInputModel
             {
                 ClaimTypes = typesAsSelectList,
@@ -162,7 +162,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     AdditionalLocations = additionalLocations,
                     OrderExists = true,
-                    Emails = additionalLocations.Select( al => al.Email).ToList()
+                    Emails = additionalLocations.Select(al => al.Email).ToList()
                 };
 
                 return PartialView(
@@ -243,7 +243,7 @@ namespace CUWebinars.Web.Controllers.Admin
             const string nonBreakingSpace = "&nbsp;";
             var stringBuilder = new StringBuilder();
 
-    
+
             var spanBuilder = new TagBuilder("span");
             var inputBuilder = new TagBuilder("input");
             var iconBuilder = new TagBuilder("i");
@@ -274,16 +274,16 @@ namespace CUWebinars.Web.Controllers.Admin
                     {"value", emailAddresses[i]},
                 });
                 inputBuilder.AddCssClass("valid");
-                
+
                 iconBuilder.AddCssClass("icon-trash");
                 iconBuilder.AddCssClass("icon-white");
                 iconBuilder.MergeAttribute("style", "cursor: pointer");
                 iconBuilder.MergeAttribute("id", string.Concat(i, additionalLocationDeleteSuffix));
-                
+
                 spanBuilder.GenerateId(locationsSpanPrefix + i);
                 spanBuilder.InnerHtml = string.Concat(
-                    inputBuilder.ToString(TagRenderMode.SelfClosing), 
-                    nonBreakingSpace, 
+                    inputBuilder.ToString(TagRenderMode.SelfClosing),
+                    nonBreakingSpace,
                     iconBuilder.ToString(TagRenderMode.Normal),
                     "<br id=" + i + breakSuffix + ">"
                     );
@@ -321,6 +321,15 @@ namespace CUWebinars.Web.Controllers.Admin
                 return Json(new { Result = WebUiConstants.Fail });
             }
 
+            if (order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count > 0)
+            {
+                foreach (var additionalLocation in order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)
+                {
+                    if (string.IsNullOrEmpty(order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).JoinURL)) _orderManagementService.GenerateRegistrantKey(order, additionalLocation);
+                }
+            }
+
+            //TODO: orders that have been migrated are going to have the OrderGenisis over-written by FireOrderSubmittedEvent
             _orderManagementService.FireOrderSubmittedEvent(order);
             return Json(new { Result = WebUiConstants.Success });
         }
@@ -343,6 +352,17 @@ namespace CUWebinars.Web.Controllers.Admin
             if (ReferenceEquals(null, order))
             {
                 return Json(new { Result = WebUiConstants.Fail });
+            }
+            AdditionalLocation nuller = new AdditionalLocation();
+            if (string.IsNullOrEmpty(order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).JoinURL))
+               _orderManagementService.GenerateRegistrantKey(order, nuller);
+            
+            if (order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count > 0)
+            {
+                foreach (var additionalLocation in order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)
+                {
+                    if (string.IsNullOrEmpty(order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).JoinURL)) _orderManagementService.GenerateRegistrantKey(order, additionalLocation);
+                }
             }
 
             _orderManagementService.FireSendConnectionInfoNotificationEvent(new Order[] { order });
@@ -408,17 +428,17 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             _logger.Info("Begins SendConnectionInfo");
             var orders = _orderManagementService.GetOrdersForLiveNotifications(webinarId);
-            
+
             foreach (var order in orders)
             {
                 AdditionalLocation nuller = new AdditionalLocation();
-               if (string.IsNullOrEmpty(order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).JoinURL)) GenerateRegistrantKey(order, nuller);
+                if (string.IsNullOrEmpty(order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).JoinURL)) _orderManagementService.GenerateRegistrantKey(order, nuller);
 
                 if (order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count > 0)
                 {
                     foreach (var additionalLocation in order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)
                     {
-                        if (string.IsNullOrEmpty(order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).JoinURL)) GenerateRegistrantKey(order, additionalLocation);
+                        if (string.IsNullOrEmpty(order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).JoinURL)) _orderManagementService.GenerateRegistrantKey(order, additionalLocation);
                     }
                 }
             }
@@ -426,64 +446,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
             _logger.Info("Concludes SendConnectionInfo");
             return Json(new { Result = WebUiConstants.Success });
-        }
-
-        private void GenerateRegistrantKey(Order order, AdditionalLocation additionalLocation)
-        {
-            var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-            var regKeyResponse = "";
-            if (additionalLocation.Email == null)
-            {
-                if (row.JoinURL == null && row.RegistrationType.ShowLiveNotifications == "Yes")
-                {
-                    regKeyResponse = _orderManagementService.CreateRegistrantKey(order.FirstName, order.LastName
-                        , order.BillingEmail, row.Webinar.idWebinar, row.Webinar.WebinarKey);
-                }
-            }
-            else
-            {
-                var contents = additionalLocation.FullName.Split(' ').ToString();
-                var lastName = contents.Skip(1).ToString();
-
-                regKeyResponse = _orderManagementService.CreateRegistrantKey(additionalLocation.FullName.Split(' ')[0],
-                    lastName, additionalLocation.Email, row.Webinar.idWebinar, row.Webinar.WebinarKey);
-            }
-
-            JObject parsedJsonObject;
-
-            if (ReferenceEquals(null, regKeyResponse))
-            {
-                //throw new NullReferenceException(
-                //    "The Registration Key Response from the Citrix API resulted in a null response.");
-                _logger.FatalException("The Registration Key creation failed.", new NullReferenceException("The Registration Key Response from the Citrix API resulted in a null response."));
-
-            }
-            else
-            {
-                parsedJsonObject = JObject.Parse(regKeyResponse);
-
-                if (parsedJsonObject[WebUiConstants.RegistrantKey] != null)
-                {
-                    _logger.Info("RegKey for ." + order.idOrder+ " = " + regKeyResponse);
-
-                    var registrantKey = parsedJsonObject[WebUiConstants.RegistrantKey].ToString();
-                    var joinUrl = parsedJsonObject[WebUiConstants.JoinUrl].ToString();
-                    if (additionalLocation.Email == null)
-                    {
-                        row.RegistrantKey = registrantKey;
-                        row.JoinURL = joinUrl;
-                    }
-                    else
-                    {
-                        additionalLocation.JoinURL = joinUrl;
-                        additionalLocation.RegistrantKey = registrantKey;
-                    }
-
-                    var pricesAndDiscounts = default(PricesAndDiscounts); // not needed here. Just used b/c ref parameter required below.
-
-                    var resultOfUpdate = _orderManagementService.UpdateOrderChanges(order, ref pricesAndDiscounts);
-                }
-            }
         }
 
         public PartialViewResult SendRecordingPosted()
