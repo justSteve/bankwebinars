@@ -1,55 +1,21 @@
 ﻿var adhocNotificationForm,
-    InputFormFields,
     failedScreenMessage,
     getAdhocEventsHtmlButton,
-    getResendConnectionInfoHtmlButton,
-    getResendOrderConfirmationHtmlButton,
-    getSendConnectionInfoEventHtmlButton,
-    getSendRecordingPostedEventHtmlButton,
-    getSendReminderEventHtmlButton,
     noOrderScreenMessage,
     noOrdersScreenMessage,
     getRecipientsButton,
-    regTypesCheckBoxesDiv,
     resendConnectionInfoUrl,
     resendOrderConfirmationUrl,
     selectedUpcomingWebinarId,
-    selectedUpcomingWebinarIdDropDown,
     sendAdhocEventUrl,
     sendConnectionInfoUrl,
     sendOrderShippedUrl,
     sendRecordingPostedUrl,
     sendReminderUrl,
-    sendShippedOrderNotificationButton,
-    successScreenMessage,
-    waitIndicator;
+    successScreenMessage;
 
-//  Create a namespace. PageObjects is getting polluted across js files.
-var OENS = {
-    PageObjects: {
-        GetResendOrderConfirmationHtmlButton: function () {
-            return getResendOrderConfirmationHtmlButton|| $('#GetResendOrderConfirmationHtmlButton');
-        },
-        GetSendRecordingPostedEventHtmlButton: function () {
-            return getSendRecordingPostedEventHtmlButton || $('#GetSendRecordingPostedEventHtmlButton');
-        },
-        GetSendReminderEventHtmlButton: function () {
-            return getSendReminderEventHtmlButton || $('#GetSendReminderEventHtmlButton');
-        },
-        RegTypesCheckBoxesDiv: function () {
-            return regTypesCheckBoxesDiv || $('#RegTypesCheckBoxes').find('.controls');
-        },
-        SelectedUpcomingWebinarIdDropDown: function () {
-            return selectedUpcomingWebinarIdDropDown || $('#SelectedWebinarId');
-        },
-        SendShippedOrderNotificationButton: function() {
-            return sendShippedOrderNotificationButton || $('#SendShippedOrderNotificationButton');
-        },
-        WaitIndicator: function () {
-            return waitIndicator || $('#WaitIndicator');
-        }
-    }
-};
+//  Create a namespace.
+var OENS = {};
 
 $(function () {
 
@@ -67,18 +33,10 @@ $(function () {
     resendOrderConfirmationUrl = '/Admin/ResendOrderConfirmation';
     sendOrderShippedUrl = '/Admin/SendShippedOrder';
 
-    getResendConnectionInfoHtmlButton = $('#GetResendConnectionInfoHtmlButton');
-    getResendOrderConfirmationHtmlButton = $('#GetResendOrderConfirmationHtmlButton');
-    
-    getSendRecordingPostedEventHtmlButton = $('#GetSendRecordingPostedEventHtmlButton');
-    getSendReminderEventHtmlButton = $('#GetSendReminderEventHtmlButton');
-    sendShippedOrderNotificationButton = $('#SendShippedOrderNotificationButton');
-    InputFormFields = $('#InputFormFields');
-    waitIndicator = $('#WaitIndicator');
-    waitIndicator.hide();
+    $('#WaitIndicator').hide();
 
 
-    getResendConnectionInfoHtmlButton.on('click', function(eventArgs) {
+    $('#GetResendConnectionInfoHtmlButton').on('click', function (eventArgs) {
         eventArgs.preventDefault();
         $('#InputFormFields').empty();
 
@@ -98,7 +56,7 @@ $(function () {
                     dataType: constants.JsonDataType,
                     data: JSON.stringify({ orderId: orderId }),
                     beforeSend: function () {
-                        OENS.PageObjects.WaitIndicator().show();
+                        $('#WaitIndicator').show();
                     }
                 }).done(function (result) {
 
@@ -111,14 +69,14 @@ $(function () {
                 }).fail(function () {
 
                 }).always(function () {
-                    OENS.PageObjects.WaitIndicator().hide();
+                    $('#WaitIndicator').hide();
                 });
             });
 
         });
     });
             
-    getResendOrderConfirmationHtmlButton.on('click', function(eventArgs) {
+    $('#GetResendOrderConfirmationHtmlButton').on('click', function (eventArgs) {
         eventArgs.preventDefault();
         $('#InputFormFields').empty();
 
@@ -138,7 +96,7 @@ $(function () {
                     dataType: constants.JsonDataType,
                     data: JSON.stringify({ orderId: orderId }),
                     beforeSend: function() {
-                        OENS.PageObjects.WaitIndicator().show();
+                        $('#WaitIndicator').show();
                     }
                 }).done(function(result) {
 
@@ -152,7 +110,7 @@ $(function () {
                 }).fail(function() {
                     
                 }).always(function() {
-                    OENS.PageObjects.WaitIndicator().hide();
+                    $('#WaitIndicator').hide();
                 });
             });
         });
@@ -166,7 +124,7 @@ $(function () {
             adhocNotificationForm = $('#AdhocNotificationForm');
             selectedUpcomingWebinarIdDropDown = $('#SelectedWebinarId');
 
-            OENS.PageObjects.SelectedUpcomingWebinarIdDropDown().on('change', function (args) {
+            selectedUpcomingWebinarIdDropDown.on('change', function (args) {
                 selectedUpcomingWebinarId = $(this).val();
                 $('#RegTypesCheckBoxes').show(100);
                 
@@ -182,16 +140,16 @@ $(function () {
                         //pageObjects.labelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</span>');
                     }
                 }).done(function (data) {
+
                     // successful request; do something with the data
-                    //pageObjects.RegTypesCheckBoxesDiv().empty();
                     regTypesCheckBoxesDiv = $('#RegTypesCheckBoxes').find('.controls');
 
 
                     $.each(data, function (idx, value) {
-                        OENS.PageObjects.RegTypesCheckBoxesDiv().append('<label class="checkbox-inline"><input type="checkbox" id="inlineCheckbox_' + idx + '" value="' + value["Value"] + '">' + value["Text"] + '</label>');
+                        regTypesCheckBoxesDiv.append('<label class="checkbox-inline"><input type="checkbox" id="inlineCheckbox_' + idx + '" value="' + value["Value"] + '">' + value["Text"] + '</label>');
                     });
 
-                    OENS.PageObjects.RegTypesCheckBoxesDiv().append('<button id="GetRecipientsButton" class="btn" style="margin-top:10px;">Get Recipients</button>');
+                    regTypesCheckBoxesDiv.append('<button id="GetRecipientsButton" class="btn" style="margin-top:10px;">Get Recipients</button>');
                     getRecipientsButton = $('#GetRecipientsButton');
 
                     getRecipientsButton.on('click', function (evtArgs) {
@@ -230,9 +188,9 @@ $(function () {
 
                             recipientsEmailAddresses = recipientsEmailAddresses.substring(0, recipientsEmailAddresses.length - 1);
 
-                            OENS.PageObjects.RegTypesCheckBoxesDiv().append('<br /><input type="Text" id="SubjectInput" class="input-xxlarge" style="margin-top:10px;" placeholder="Enter Subject" />');
-                            OENS.PageObjects.RegTypesCheckBoxesDiv().append('<input type="Text" id="RecipientsInput" style="width:100%;margin-top:10px;clear:left" value="' + recipientsEmailAddresses + '" />');
-                            OENS.PageObjects.RegTypesCheckBoxesDiv().append('<button id="SendNotificationButton" class="btn btn-primary" style="margin-top:10px;">Send Notification</button>');
+                            regTypesCheckBoxesDiv.append('<br /><input type="Text" id="SubjectInput" class="input-xxlarge" style="margin-top:10px;" placeholder="Enter Subject" />');
+                            regTypesCheckBoxesDiv.append('<input type="Text" id="RecipientsInput" style="width:100%;margin-top:10px;clear:left" value="' + recipientsEmailAddresses + '" />');
+                            regTypesCheckBoxesDiv.append('<button id="SendNotificationButton" class="btn btn-primary" style="margin-top:10px;">Send Notification</button>');
                         });
 
                     });
@@ -248,7 +206,7 @@ $(function () {
     });
 
     
-    sendShippedOrderNotificationButton.on('click', function(evtArgs) {
+    $('#SendShippedOrderNotificationButton').on('click', function (evtArgs) {
         
         $('#InputFormFields').empty().load(sendOrderShippedUrl, function () {
 
@@ -266,7 +224,7 @@ $(function () {
                     dataType: constants.JsonDataType,
                     data: JSON.stringify({ orderId: payload }),
                     beforeSend: function () {
-                        OENS.PageObjects.WaitIndicator().show();
+                        $('#WaitIndicator').show();
                     }
                 }).done(function (result) {
 
@@ -281,7 +239,7 @@ $(function () {
                     labelCheckRemove();
                     $('#InputFormFields').append(failedScreenMessage);
                 }).always(function () {
-                    OENS.PageObjects.WaitIndicator().hide();
+                    $('#WaitIndicator').hide();
                 });;
             });
 
@@ -311,7 +269,7 @@ $(function () {
 
     });
 
-    getSendReminderEventHtmlButton.on('click', function(eventArgs) {
+    $('#GetSendReminderEventHtmlButton').on('click', function (eventArgs) {
         $('#InputFormFields').empty();
 
         $('#InputFormFields').load(sendReminderUrl, function() {
@@ -328,7 +286,7 @@ $(function () {
                     dataType: constants.JsonDataType,
                     data: JSON.stringify({ webinarId: payload }),
                     beforeSend: function() {
-                        OENS.PageObjects.WaitIndicator().show();
+                        $('#WaitIndicator').show();
                     }
                 }).done(function (result) {
 
@@ -343,7 +301,7 @@ $(function () {
                     labelCheckRemove();
                     $('#InputFormFields').append(failedScreenMessage);
                 }).always(function () {
-                    OENS.PageObjects.WaitIndicator().hide();
+                    $('#WaitIndicator').hide();
                 });;
             });
         });
@@ -365,7 +323,7 @@ $(function () {
                     dataType: constants.JsonDataType,
                     data: JSON.stringify({ webinarId: payload }),
                     beforeSend: function () {
-                        OENS.PageObjects.WaitIndicator().show();
+                        $('#WaitIndicator').show();
                     }
                 }).done(function (result) {
 
@@ -383,13 +341,13 @@ $(function () {
 
                     $('#InputFormFields').append(failedScreenMessage);
                 }).always(function () {
-                    OENS.PageObjects.WaitIndicator().hide();
+                    $('#WaitIndicator').hide();
                 });;
             });
         });
     });
 
-    getSendRecordingPostedEventHtmlButton.on('click', function (eventArgs) {
+    $('#GetSendRecordingPostedEventHtmlButton').on('click', function (eventArgs) {
         eventArgs.preventDefault();
         $('#InputFormFields').empty();
 
@@ -408,7 +366,7 @@ $(function () {
                     dataType: constants.JsonDataType,
                     data: JSON.stringify({ webinarId: payload }),
                     beforeSend: function () {
-                        OENS.PageObjects.WaitIndicator().show();
+                        $('#WaitIndicator').show();
                     }
                 }).done(function (result) {
 
@@ -425,7 +383,7 @@ $(function () {
 
                     $('#InputFormFields').append(failedScreenMessage);
                 }).always(function () {
-                    OENS.PageObjects.WaitIndicator().hide();
+                    $('#WaitIndicator').hide();
                 });
             });
         });
