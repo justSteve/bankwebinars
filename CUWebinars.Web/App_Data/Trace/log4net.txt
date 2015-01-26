@@ -240,3 +240,5 @@ CUWebinars Information: 0 : MailerSent: mataylor@cbao.com Subject: Connection In
 CUWebinars Error: 0 : ERROR MailerSmtpException: rhondap@cftws.org Subject: Connection Information for Understanding CCC Loans for Ag Lenders ErrorMsg: Failure sending mail. Timestamp was: 25/01/2015 10:43:14 AM ExceptionType was: SmtpException InnerExceptionType was: System.Net.WebException
 CUWebinars Information: 0 : MailerSent: rhondap@cftws.org Subject: Connection Information for Understanding CCC Loans for Ag Lenders Timestamp was: 25/01/2015 10:43:14 AM
 CUWebinars Information: 0 : MailerSent: MigrateSteve1@ttstrain.com Subject: [BankWebinars] Order is Shipped: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 25/01/2015 11:33:40 AM
+CUWebinars Information: 0 : MailerSent: kami.taylor@arkbankers.org Subject: Connection Information for Conducting Financial Investigations - What Law Enforcement Needs To Know Timestamp was: 26/01/2015 9:59:35 AM
+CUWebinars Information: 0 : MailerSent: stracy@nhbankers.com Subject: Connection Information for Conducting Financial Investigations - What Law Enforcement Needs To Know Timestamp was: 26/01/2015 9:59:41 AM
