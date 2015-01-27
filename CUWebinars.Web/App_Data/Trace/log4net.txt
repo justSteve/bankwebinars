@@ -241,3 +241,7 @@ CUWebinars Error: 0 : ERROR MailerSmtpException: rhondap@cftws.org Subject: Conn
 CUWebinars Information: 0 : MailerSent: rhondap@cftws.org Subject: Connection Information for Understanding CCC Loans for Ag Lenders Timestamp was: 25/01/2015 10:43:14 AM
 CUWebinars Information: 0 : MailerSent: MigrateSteve1@ttstrain.com Subject: [BankWebinars] Order is Shipped: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 25/01/2015 11:33:40 AM
 CUWebinars Error: 0 : Validation failed for webinar 1736 and User 33203
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test2@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Conducting Financial Investigations - What Law Enforcement Needs To Know Timestamp was: 26/01/2015 11:50:54 AM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test2@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Conducting Financial Investigations - What Law Enforcement Needs To Know Timestamp was: 26/01/2015 11:51:02 AM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test2@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Conducting Financial Investigations - What Law Enforcement Needs To Know Timestamp was: 26/01/2015 11:51:08 AM
+CUWebinars Error: 0 : Validation failed for webinar 1736 and User 32729

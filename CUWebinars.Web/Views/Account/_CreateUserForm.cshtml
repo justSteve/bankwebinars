@@ -166,7 +166,6 @@
                             </select>
 
                         </div>
-                        @Html.HiddenFor(model => model.RegisterFields.BillingAddress.TypeOfAddress)
                     </div>
                 </div>
 
@@ -181,6 +180,7 @@
                 @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.City)
                 @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.State)
                 @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.Zip)
+                @Html.HiddenFor(model => model.RegisterFields.BillingAddress.TypeOfAddress)
             </div>
         </div>
         <div class="accordion-group">
@@ -230,7 +230,6 @@
                             &nbsp;&nbsp; Zip:   @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.Zip, new { style = "width: 50px;" })
 
                         </div>
-                        @Html.HiddenFor(model => model.RegisterFields.ShippingAddress.TypeOfAddress)
                     </div>
                     @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.StreetAddress)&nbsp;&nbsp;
                     @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.City)
@@ -239,7 +238,7 @@
 
                     @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.Zip)
 
-
+                    @Html.HiddenFor(model => model.RegisterFields.ShippingAddress.TypeOfAddress)
                 </div>
 
             </div>

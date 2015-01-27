@@ -265,6 +265,54 @@ $(function () {
 
             });
 
+            $('#EmailOrderButton').on('click', function (e) {
+
+                e.preventDefault();
+
+                $('#emailPanel').fadeIn();
+
+                $('#dispatchButton').on('click', function (e) {
+
+                    e.preventDefault();
+
+                    var self = this;
+                    var payload = { emails: $('#EmailAddressesInput').val() };
+
+                    $.ajax({
+                        type: 'POST',
+                        contentType: constants.JsonContentType,
+                        cache: false,
+                        url: '/Cart/EmailOrder/' + selectedOrderId.val(),
+                        dataType: constants.JsonDataType,
+                        data: JSON.stringify(payload),
+                        beforeSend: function () {
+                            $(self).prepend('<i id="emailSendingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+                            $(self).attr('disabled', 'disabled');
+                            if ($('#resultLabel').length > 0)
+                                $('#resultLabel').remove();
+                        }
+                    }).done(function (data) {
+                        if (data.Result === 'Success') {
+                            orderRowId = data.OrderRowId;
+                            $(self).after('<span id="resultLabel" class="label label-success" style="margin-left:5px">&nbsp;Email sent</span>');
+
+                        } else {
+
+                            $(self).after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                        }
+
+                        $('#emailSendingSpinner').remove();
+                        $(self).removeAttr('disabled');
+
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        $('#emailSendingSpinner').remove();
+                        $(self).removeAttr('disabled');
+
+                        $(self).after('<span class="field-validation-error">Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                    });
+                });
+            });
+
         });
 
     });

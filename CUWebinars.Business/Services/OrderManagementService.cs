@@ -806,10 +806,10 @@ namespace CUWebinars.Business.Services
         public void GenerateRegistrantKey(Order order, AdditionalLocation additionalLocation)
         {
             var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-            var regKeyResponse = "";
+            var regKeyResponse = string.Empty;
             if (additionalLocation.Email == null)
             {
-                if (row.JoinURL == null && row.RegistrationType.ShowLiveNotifications == "Yes")
+                if (row.JoinURL == null && row.RegistrationType.ShowLiveNotifications.TrimEnd().Equals("Yes", StringComparison.OrdinalIgnoreCase))
                 {
                     regKeyResponse = CreateRegistrantKey(order.FirstName, order.LastName
                         , order.BillingEmail, row.Webinar.idWebinar, row.Webinar.WebinarKey);

@@ -13,7 +13,11 @@
     <div class="controls">
         <button id="PreviewShippedOrderEmailButton" class="btn">Preview</button>
     </div>
+    <div class="controls">
+        <button class="btn btn-small btn-info" id="EmailOrderButton">Email Order</button>
+        <div id="emailPanel" class="initialHide"><input id="EmailAddressesInput" class="input input-large" type="text" /><button id="dispatchButton" class="btn btn-small" style="vertical-align:top; margin-left: 5px">Send</button></div>
+    </div>
 </div>
-@Html.Partial("~/Views/Admin/Home/Partials/_SendShippedPreviewModal.cshtml")
+@Html.Partial("~/Views/Admin/Home/Modals/_SendShippedPreviewModal.cshtml")
 
 

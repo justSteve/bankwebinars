@@ -34,14 +34,8 @@
                         <div style="font-size: x-small; text-align: center;">
                             <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">Bill Me!</button><br />
                             <button class="btn btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button><br />
-                            @*<button class="btn btn-success" id="PreviewEmail">Preview Email</button><br />*@
-                            @Html.ActionLink("Preview Email", "PreviewEmail", "Cart", new { id="previewEmailButton", @class="btn btn-success" })
                             <a class="btn" id="Canceller">Cancel Registration</a><br />
                             Sales tax may be added to orders in Wisconsin or Illinois.
-                        </div>
-                        <div style="font-size: x-small; text-align: center; margin: 5px;">
-                            <button class="btn btn-small btn-info" id="EmailOrderButton">Email Order</button>
-                            <div id="emailPanel" class="initialHide"><input id="EmailAddressesInput" class="input input-large" type="text" /><button id="dispatchButton" class="btn btn-small" style="vertical-align:top; margin-left: 5px">Send</button></div>
                         </div>
                     </div>
                 </div>

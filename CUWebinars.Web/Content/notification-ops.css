@@ -10,3 +10,7 @@
 #previewModal {
     min-width: 670px;
 }
+
+.initialHide {
+    display: none;
+}
