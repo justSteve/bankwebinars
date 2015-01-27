@@ -409,7 +409,8 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             migratedOrder.ShippingFirstName = command.FirstName;
             migratedOrder.ShippingLastName = command.LastName;
 
-            _orderManagementService.GetJoinUrl(command.OrderRow);
+            //x-out until AddLoc fixed for click2join
+            // _orderManagementService.GetJoinUrl(command.OrderRow);
 
             _orderManagementService.SaveOrderChanges(migratedOrder, command.VerificationKey, command.ConfirmChangeEmailUrl);
 

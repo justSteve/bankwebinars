@@ -624,6 +624,7 @@
     <Content Include="Views\Cart\Partials\_LogsModal.cshtml" />
     <Content Include="Views\Cart\Partials\_UserDetailsModal.cshtml" />
     <Content Include="Views\Home\robots.txt" />
+    <Content Include="Views\Shared\EditorTemplates\DiscountDetails.cshtml" />
     <Content Include="Views\Webinar\Details.cshtml" />
     <Content Include="Notification\Templates\OrderSubmittedAdditionalLocation.cshtml" />
     <Compile Include="ViewModel\AdditionalLocationAddViewModel.cs" />
@@ -728,6 +729,7 @@
     <Content Include="Views\Cart\Partials\_DisplayAppliedDiscount.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DiscountDetails.cshtml" />
     <Content Include="Views\Admin\Home\Modals\_SendShippedPreviewModal.cshtml" />
+    <Content Include="Views\Shared\Admin\_Last5Error.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Calendar\iCalFromCitrix.txt" />

@@ -5,7 +5,21 @@
 
 @{
     ViewBag.Title = Model.Webinar.Title + " - Presented by: " + Model.Webinar.Presenter.WebUser.FullName;
-    Layout = "/Views/Shared/_LayoutPublic.cshtml";
+
+    if (Model.Identity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.Admin))
+    {
+        Layout = "/Views/Shared/_LayoutAdmin.cshtml";
+    }
+    else if (Model.Identity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.Admin))
+    {
+        Layout = "/Views/Shared/_LayoutAffiliate.cshtml";
+    }
+    else
+    {
+        //i am just a user.
+        Layout = "/Views/Shared/_LayoutPublic.cshtml";
+    }
+
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
 
@@ -56,10 +70,10 @@
         <section class="span3 sidebar">
             <aside class="widget well-large">
                 @{
-                        <h5 class="short_headline"><span>@Model.Webinar.Presenter.WebUser.FullName</span></h5>
-                        @Html.Raw(Model.Webinar.Presenter.BiographyLong)
-                        @Html.Partial("Partials/_OtherEventsBySpeaker")
-                    }
+                    <h5 class="short_headline"><span>@Model.Webinar.Presenter.WebUser.FullName</span></h5>
+                    @Html.Raw(Model.Webinar.Presenter.BiographyLong)
+                    @Html.Partial("Partials/_OtherEventsBySpeaker")
+                }
             </aside>
             <!--close aside widget-->
         </section>
@@ -79,6 +93,7 @@
             @Html.Raw(Model.Webinar.WhoAttend)
             <hr />
             @{
+                //begins public signup container
                 if (Model.Webinar.Status != WebinarStatus.Archived
                     && Model.Webinar.Status != WebinarStatus.Deleted
                     && Model.Webinar.Status != WebinarStatus.Pending
@@ -140,11 +155,11 @@
                     </div> <!-- closes SignUpFormContainer div-->
 
                     if (Model.Webinar.Status != WebinarStatus.Archived
-                && Model.Webinar.Status != WebinarStatus.Deleted
-                && Model.Webinar.Status != WebinarStatus.Pending
-                && Model.Identity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.Admin)
-                && Model.Identity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Affiliate, CUWebinars.Business.Constants.ClaimValues.Affiliate)
-                )
+        && Model.Webinar.Status != WebinarStatus.Deleted
+        && Model.Webinar.Status != WebinarStatus.Pending
+        && Model.Identity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.Admin)
+        && Model.Identity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Affiliate, CUWebinars.Business.Constants.ClaimValues.Affiliate)
+        )
                     {
                         <div id="SignUpFormContainerForAffiliate" class="row-fluid">
 
@@ -181,14 +196,14 @@
                             <form id="nonUSForm"><input type="hidden" name="AddressText" id="AddressText" /></form>
                             <form id="checkInstitution"><input type="hidden" name="InstitutionChecker" id="InstitutionChecker" /></form>
 
-                        </div> <!-- closes SignUpFormContainer div-->
+                        </div> <!-- closes public SignUpFormContainer div-->
 
                     }
                 }
             }
         </div>
-
-
+        <!-- opens Container div-->
+        
         <div class="span3">
             <aside class="widget">
                 @if (Model.Identity.HasClaim(CUWebinars.Business.Constants.ClaimTypes.Admin, CUWebinars.Business.Constants.ClaimValues.Admin))
@@ -221,8 +236,7 @@
             </aside>
             @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())
             <!-- close .widget -->
-            <!-- For certificate file widget -->
-            <!-- Close certificat widget -->
+
             <!-- For Generate ics file widget -->
             @*<aside class="widget">
                     <h5 class="short_headline"><span>iCalendar</span></h5>
@@ -262,9 +276,3 @@
     </div>
 
 </div> <!-- closes main-content -->
-@{
-    if (Model.WebUser.UserType == UserType.Admin)
-    {
-        @Html.Partial("Partials/_LogsModal")
-    }
-}

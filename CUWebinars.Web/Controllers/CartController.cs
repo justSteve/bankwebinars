@@ -40,15 +40,15 @@ namespace CUWebinars.Web.Controllers
 
             //return PartialView("~/Views/Webinar/Partials/_ShowAppliedDiscount.cshtml", showAppliedDiscountViewModel);
 
-            //var amountToDiscount = myDiscount.FlatOff.ToString();
-            //if (myDiscount.PercentOff > 0)
-            //{
-            //    amountToDiscount = myDiscount.PercentOff.ToString() + "%";
-            //}
+            var amountToDiscount = myDiscount.FlatOff.ToString();
+            if (myDiscount.PercentOff > 0)
+            {
+                amountToDiscount = myDiscount.PercentOff.ToString() + "%";
+            }
             //row.Discount = myDiscount;
             //_cartControllerOrchestrator.UpdateOrderPricing(model.Order);
 
-            return Json(new { Result = myDiscount.FlatOff });
+            return Json(new { Result = amountToDiscount });
         }
 
 
