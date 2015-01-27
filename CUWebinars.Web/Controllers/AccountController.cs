@@ -219,6 +219,27 @@ namespace CUWebinars.Web.Controllers
             return "error";
         }
 
+        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
+        public ActionResult GetInstitutionsByName(string institutionName)
+        {
+            if (!string.IsNullOrWhiteSpace(institutionName))
+            {
+                try
+                {
+                    var institutions = _accountControllerOrchestrator.GetInstitutionsByName(institutionName);
+
+                    return Json(new { institutions = institutions.Select(i => i.InstitutionName) });
+                }
+                catch (Exception exception)
+                {
+
+                }
+            }
+
+            return Json(new { });
+        }
+
 
         public PartialViewResult GetLoginPartial()
         {

@@ -537,7 +537,6 @@ OCA.wireUpHandlers = function() {
         },
 
         matcher: function (item) {
-
             return true;
         },
 
@@ -634,18 +633,5 @@ $(function () {
     OCA.initializeState();
 
     OCA.wireUpHandlers();
-
-    //  flow goes inside this block where the order exists and is in process e.g. previously abandoned before finializing
-    if (OCA.cartStateManager.getOrderRowId() > 0 && OCA.cartStateManager.getCheckoutInProcess()) {
-
-        OCA.cartStateManager.setOrderId(orderId);
-
-        // see top of this file
-        OCA.checkoutConfirm.initialize();
-
-        OCA.wireUpMainButtonsOn3rdTab();
-
-        OCA.setUpEditButtons();
-    }
 });
 

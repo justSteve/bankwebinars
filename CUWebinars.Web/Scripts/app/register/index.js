@@ -1,8 +1,13 @@
 ﻿var formProcessor,
+    institutionInput,
+    institutionNames,
     stateManager,
     utilities;
 
 $(function () {
+
+    institutionInput = $('#RegisterFields_Institution');
+    institutionNames = {};
 
     //setup ajax error handling
     $.ajaxSetup({
@@ -419,5 +424,50 @@ $(function () {
         }
     });
 
+    $('#RegisterFields_Institution').typeahead({
+        source: function (query, process) {
+            searchInstitution(query, process);
+        },
+
+        matcher: function (item) {
+            return true;
+        },
+
+        highlighter: function (name) {
+            return name;
+        },
+
+        sorter: function (items) {
+            return items;
+        },
+
+        updater: function (name) {
+            return name;
+        }
+
+    });
+
     $('#Email').focus();
 });
+
+var searchInstitution = _.debounce(function (query, process) {
+
+    var searchTerm = institutionInput.val();
+
+    $.ajax({
+        type: 'POST',
+        contentType: constants.FormPostContentType,
+        cache: false,
+        url: '/Account/GetInstitutionsByName',
+        dataType: constants.JsonDataType,
+        data: { institutionName: searchTerm },
+        beforeSend: function () {
+            institutionNames = null; // dereference whatever is currently in 'users'. 
+        }
+    }).done(function (data) {
+        institutionNames = data.institutions;
+
+        process(institutionNames);
+    });
+
+}, 200);

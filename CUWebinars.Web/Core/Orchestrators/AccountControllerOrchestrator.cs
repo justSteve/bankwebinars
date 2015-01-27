@@ -703,6 +703,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             return _membershipService.GetInstitutionByDomain(domain);
         }
 
+        public IEnumerable<Institution> GetInstitutionsByName(string name)
+        {
+            return _membershipService.GetInstitutionsByName(name);
+        }
+
         public WebUser GetWebUserByEmail(string email)
         {
             return _membershipService.GetUserByEmail(email);

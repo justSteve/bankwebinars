@@ -39,6 +39,7 @@ namespace CUWebinars.Business.AccountService
 
         WebUser GetDetailsOfUser(string email);
         Institution GetInstitutionByDomain(string domain);
+        IEnumerable<Institution> GetInstitutionsByName(string name);
         UserAccount GetUserAccountByEmail(string tenant, string email);
         UserAccount GetUserAccountByUserId(Guid userId);
         WebUser GetUserByEmail(string email);

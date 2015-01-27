@@ -21,5 +21,10 @@ namespace CUWebinars.Business.Repository
         {
             return items.Where(i => i.InstitutionName == name && i.Zip == zip);
         }
+
+        public IEnumerable<Institution> GetInstitutionsByName(string name)
+        {
+            return items.Where(i => i.InstitutionName.ToLower().Contains(name.ToLower()));
+        }
     }
 }
