@@ -43,6 +43,7 @@ namespace CUWebinars.Business.Core
             //var sendConnectionInfoHandlerLogger = new Log4NetLogger(typeof (SendConnectionInfoHandler));
             var sendReminderHandlerLogger = new Log4NetLogger(typeof (SendReminderHandler));
             var sendRecordingPostedHandlerLogger = new Log4NetLogger(typeof (SendRecordingPostedHandler));
+            var emailOrderHandlerLogger = new Log4NetLogger(typeof (EmailOrderHandler));
 
             config.AddEventHandler(new OrderSubmittedHandler(genericFormatter, notificationDelivery,
                 notificationOrderHandlerLogger));
@@ -56,6 +57,7 @@ namespace CUWebinars.Business.Core
                 sendReminderHandlerLogger));
             config.AddEventHandler(new SendRecordingPostedHandler(genericFormatter, notificationDelivery,
                 sendRecordingPostedHandlerLogger));
+            config.AddEventHandler(new EmailOrderHandler(genericFormatter, emailOrderHandlerLogger, notificationDelivery));
 
             return config;
         }

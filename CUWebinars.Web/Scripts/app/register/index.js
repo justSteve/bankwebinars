@@ -448,6 +448,8 @@ $(function () {
     });
 
     $('#Email').focus();
+
+    $('#RegisterFields_Institution').attr('autocorrect', 'off');
 });
 
 var searchInstitution = _.debounce(function (query, process) {
@@ -462,7 +464,7 @@ var searchInstitution = _.debounce(function (query, process) {
         dataType: constants.JsonDataType,
         data: { institutionName: searchTerm },
         beforeSend: function () {
-            institutionNames = null; // dereference whatever is currently in 'users'. 
+            institutionNames = null; // dereference whatever is currently in 'institutionNames'. 
         }
     }).done(function (data) {
         institutionNames = data.institutions;

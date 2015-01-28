@@ -566,6 +566,19 @@ namespace CUWebinars.Business.Services
             }
         }
 
+        public void FireEmailSendShippedOrderEvent(Order order, IEnumerable<string> recipients)
+        {
+            AddEvent(new EmailOrderEvent<Order> { EventObject = order, Recipients = recipients });
+
+
+            foreach (var evt in GetEvents().OfType<EmailOrderEvent<Order>>())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            Clear();
+        }
+
         public void FireOrderSubmittedAdditionalLocationEvent(Order order, string address)
         {
             _logger.Info("Adding Event for Order with Additional Location {0} - {1}", order.idOrder, address);
@@ -817,11 +830,8 @@ namespace CUWebinars.Business.Services
             }
             else
             {
-                var contents = additionalLocation.FullName.Split(' ').ToString();
-                var lastName = contents.Skip(1).ToString();
-
-                regKeyResponse = CreateRegistrantKey(additionalLocation.FullName.Split(' ')[0],
-                    lastName, additionalLocation.Email, row.Webinar.idWebinar, row.Webinar.WebinarKey);
+                regKeyResponse = CreateRegistrantKey("CareOf",//DomainConstants.CareOfString,
+                    order.LastName, additionalLocation.Email, row.Webinar.idWebinar, row.Webinar.WebinarKey);
             }
 
             JObject parsedJsonObject;

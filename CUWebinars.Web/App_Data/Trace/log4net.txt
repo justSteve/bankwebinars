@@ -246,3 +246,21 @@ CUWebinars Information: 0 : MailerSent: showmesomeandroid-test2@yahoo.com.au Sub
 CUWebinars Information: 0 : MailerSent: showmesomeandroid-test2@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Conducting Financial Investigations - What Law Enforcement Needs To Know Timestamp was: 26/01/2015 11:51:08 AM
 CUWebinars Error: 0 : Validation failed for webinar 1736 and User 32729
 CUWebinars Information: 0 : MailerSent: manfred@mann.com Subject: [preview-BankWebinars] Confirmation of Registration: Conducting Financial Investigations - What Law Enforcement Needs To Know Timestamp was: 27/01/2015 4:16:09 PM
+CUWebinars Information: 0 : MailerSent: MigrateSteve3@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 28/01/2015 9:56:18 AM
+CUWebinars Information: 0 : MailerSent: MigrateSteve3@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 28/01/2015 9:56:25 AM
+CUWebinars Information: 0 : MailerSent: MigrateSteve3@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 28/01/2015 9:57:15 AM
+CUWebinars Information: 0 : MailerSent: MigrateSteve3@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 28/01/2015 9:57:21 AM
+CUWebinars Information: 0 : MailerSent: MigrateSteve3@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 28/01/2015 9:57:30 AM
+CUWebinars Information: 0 : MailerSent: MigrateSteve3@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 28/01/2015 9:57:36 AM
+CUWebinars Information: 0 : MailerSent: MigrateSteve3@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 28/01/2015 10:03:46 AM
+CUWebinars Information: 0 : MailerSent: MigrateSteve3@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 28/01/2015 10:03:54 AM
+CUWebinars Information: 0 : MailerSent: dave@dave.com Subject: [BankWebinars] Order is Shipped: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 28/01/2015 10:56:43 AM
+CUWebinars Information: 0 : MailerSent: dave@dave.com Subject: [BankWebinars] Order is Shipped: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 28/01/2015 10:57:25 AM
+CUWebinars Information: 0 : MailerSent: a@b.com Subject: [BankWebinars] Order is Shipped: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 28/01/2015 11:02:17 AM
+CUWebinars Information: 0 : MailerSent: a@b.com Subject: [BankWebinars] Order is Shipped: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 28/01/2015 11:14:13 AM
+CUWebinars Information: 0 : MailerSent: a@c.com Subject: [BankWebinars] Order is Shipped: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 28/01/2015 11:14:16 AM
+CUWebinars Information: 0 : MailerSent: a@d.com Subject: [BankWebinars] Order is Shipped: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 28/01/2015 11:14:17 AM
+CUWebinars Information: 0 : MailerSent: a@b.com Subject: [BankWebinars] Order is Shipped: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 28/01/2015 11:24:51 AM
+CUWebinars Information: 0 : MailerSent: a@d.com Subject: [BankWebinars] Order is Shipped: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 28/01/2015 11:24:54 AM
+CUWebinars Information: 0 : MailerSent: a@c.com Subject: [BankWebinars] Order is Shipped: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 28/01/2015 11:24:55 AM
+CUWebinars Error: 0 : Validation failed for webinar 1736 and User 32730
