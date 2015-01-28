@@ -246,6 +246,10 @@ $(function () {
             $('#PreviewShippedOrderEmailButton').on('click', function (e) {
                 e.preventDefault();
 
+                $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+
+                var that = this;
+
                 var url = '/Admin/PreviewShippedOrder/' + selectedOrderId.val();
 
                 var modalPreview = $('#previewModal'),
@@ -257,6 +261,7 @@ $(function () {
                 
                 $.get(url, function (data) {
                     $('#emailContent').html(data);
+                    $('#loadingSpinner').remove();
 
                     modalPreview.modal(modalFormOptionsOnPageLoad);
                     modalPreview.modal();
@@ -445,9 +450,5 @@ $(function () {
             $('#ScreenMessageSpan').siblings('br').remove();
             $('#ScreenMessageSpan').remove();
         }
-    };
-
-    var removeInnerHandlers = function() {
-        $('#ResendConnectionInfoButton').off('click', $('#InputFormFields'));
     };
 });
