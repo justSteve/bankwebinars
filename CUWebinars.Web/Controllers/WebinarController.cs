@@ -465,10 +465,10 @@ namespace CUWebinars.Web.Controllers
 
                 ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
 
-                if (claimsIdentityOfAuthenticatedUser.HasClaim(Business.Constants.ClaimTypes.Admin, Business.Constants.ClaimValues.Admin))
-                {
-                    return View("DetailsAdmin", model);
-                }
+                //if (claimsIdentityOfAuthenticatedUser.HasClaim(Business.Constants.ClaimTypes.Admin, Business.Constants.ClaimValues.Admin))
+                //{
+                //    return View("DetailsAdmin", model);
+                //}
 
                 if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
                 {
