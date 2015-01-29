@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using CUWebinars.WebUi.Tests2.Infrastructure;
 using KesselRun.SeleniumCore.Enums;
@@ -23,7 +24,8 @@ namespace CUWebinars.WebUi.Tests2.Pages
         {
             get
             {
-                return !SeleniumTestDriver.FindById("AddToCart", ExpectedCondition.ElementIsVisible, 1).Displayed;
+                Wait(2000); //
+                return !SeleniumTestDriver.WebDriver.FindElements(By.Id("AddToCart")).Any();
             }
         }
 
@@ -45,11 +47,14 @@ namespace CUWebinars.WebUi.Tests2.Pages
         public void ClickAddAdditionalLocationButton()
         {
             SeleniumTestDriver.FindByIdClick("AddLocationsButton", ExpectedCondition.ElementIsVisible, 5);
+            Wait();
         }
 
         public void ClickTheClickToAddMoreButton()
         {
+            Wait();
             SeleniumTestDriver.FindByIdClick("AddInputsButton", ExpectedCondition.ElementIsVisible, 5);
+            Wait();
         }
 
         public void ClickSubmitAdditionalLocationsButton()

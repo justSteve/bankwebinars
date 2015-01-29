@@ -335,7 +335,7 @@ $(function () {
             $('#RegisterFields_LastName').val(tempName[1]);
         } else {
             $('#RegisterFields_FirstName').val(tempName[0]);
-            $('#RegisterFields_LastName').val(tempName[1]);
+            //$('#RegisterFields_LastName').val(tempName[1]);
             $('#getFull').hide();
             $('#getFirstLast').show();
             $('#RegisterFields_LastName').focus();

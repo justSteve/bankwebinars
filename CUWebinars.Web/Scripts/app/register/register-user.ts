@@ -7,30 +7,30 @@ module Registration {
 	declare var $;
 
 	export class Button {
-		static EnterDiffAddress : string = 'EnterDiffAddress';
-		static nonUSAddressBtn : string = 'nonUSAddressBtn';
-		static NotInstitution : string = 'NotInstitution';
-		static ResetPass : string = 'resetPass';
-		static SignInButton : string = 'SignInButton';
-		static TheSubmit : string = 'TheSubmit';
-		static YesUseAddress : string = 'YesUseAddress';
+		static EnterDiffAddress: string = 'EnterDiffAddress';
+		static nonUSAddressBtn: string = 'nonUSAddressBtn';
+		static NotInstitution: string = 'NotInstitution';
+		static ResetPass: string = 'resetPass';
+		static SignInButton: string = 'SignInButton';
+		static TheSubmit: string = 'TheSubmit';
+		static YesUseAddress: string = 'YesUseAddress';
 	};
 
 	export class InputAction {
-		static EnterKeyPress : string = 'EnterKeyPress';
-		static ButtonClick : string = 'ButtonClick';
-		static None : string = 'None';
+		static EnterKeyPress: string = 'EnterKeyPress';
+		static ButtonClick: string = 'ButtonClick';
+		static None: string = 'None';
 	};
 
 	export class Action {
-		static CheckEmail : string = 'CheckEmail';
-		static CheckZip : string = 'CheckZip';
-		static GetPassword : string = 'GetPassword';
-		static LogIn : string = 'LogIn';
-		static PostCreateAccount : string = 'PostCreateAccount';
-		static SubmitLogin : string = 'SubmitLogin';
-		static SubmitRegister : string = 'SubmitRegister';
-		static DisplayBillingAddressFields : string = 'DisplayBillingAddressFields';
+		static CheckEmail: string = 'CheckEmail';
+		static CheckZip: string = 'CheckZip';
+		static GetPassword: string = 'GetPassword';
+		static LogIn: string = 'LogIn';
+		static PostCreateAccount: string = 'PostCreateAccount';
+		static SubmitLogin: string = 'SubmitLogin';
+		static SubmitRegister: string = 'SubmitRegister';
+		static DisplayBillingAddressFields: string = 'DisplayBillingAddressFields';
 	};
 
 	export class Constants {

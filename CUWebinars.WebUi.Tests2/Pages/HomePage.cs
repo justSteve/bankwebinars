@@ -27,7 +27,7 @@ namespace CUWebinars.WebUi.Tests2.Pages
 
         public void ClickLoginLink()
         {
-            SeleniumTestDriver.FindByLinkClick(TestConstants.LoginLinkText, ExpectedCondition.ElementIsVisible, 5);
+            SeleniumTestDriver.FindByLinkClick(TestConstants.LoginLinkText, ExpectedCondition.ElementIsVisible, 15);
         }
 
         public void LogInToSite(string sitTestEmailAddress, string sitTestPassword)
@@ -101,8 +101,10 @@ namespace CUWebinars.WebUi.Tests2.Pages
         {
             get
             {
-                return SeleniumTestDriver.FindByXPath(@"//*[@id='crunchingLabel']/span[contains(text(),'Reset Instructions sent!')]",
-                    ExpectedCondition.ElementIsVisible, 5).Displayed;
+                var label = SeleniumTestDriver.FindByXPath(@"//*[@id='crunchingLabel']/span/i",
+                    ExpectedCondition.ElementIsVisible, 15);
+
+                return label.Displayed;
             }
 
         }
@@ -151,7 +153,8 @@ namespace CUWebinars.WebUi.Tests2.Pages
 
         public void TabAwayFromInput(string id)
         {
-            SeleniumTestDriver.FindById(id).SendKeys(Keys.Tab);
+            var oi = SeleniumTestDriver.FindById(id);
+            oi.SendKeys(Keys.Tab);
         }
 
         public void WaitForLabel(string message)

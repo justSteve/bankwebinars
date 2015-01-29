@@ -1,4 +1,5 @@
-﻿using CUWebinars.WebUi.Tests2.Infrastructure;
+﻿using System.Threading;
+using CUWebinars.WebUi.Tests2.Infrastructure;
 using CUWebinars.WebUi.Tests2.Pages;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics;
@@ -31,7 +32,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             home.ClickLoginLink();
             home.LogInToSite(TestConstants.SitTestEmailAddress, TestConstants.SitTestPassword);
 
-            Assert.IsTrue(home.LoginLinkIsPresentOnPage);
+            Assert.IsTrue(home.LogoutLinkIsPresentOnPage);
 
             home.LogOff();
         }
@@ -280,6 +281,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
 
             home.EnterDetail(TestConstants.SitTestFirstName, TestConstants.FullNameInput);
             home.TabAwayFromInput(TestConstants.FullNameInput);
+            Thread.Sleep(250);
             home.EnterDetail(TestConstants.SitTestLastName, TestConstants.RegisterFieldsLastName);
             home.EnterDetail(TestConstants.Title, TestConstants.RegisterFieldsTitle);
             home.EnterDetail(institutionName, TestConstants.RegisterFieldsInstitution);
@@ -326,6 +328,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
         [TestMethod]
         [TestCategory(TestCategories.Gui)]
         [TestCategory(TestCategories.Firefox)]
+        [Ignore]
         public void NavigateToWebinarDetailsPageListedByTopics()
         {
             var home = NavigateToHomeIndexPage();
@@ -333,6 +336,10 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             var newPageDisplayed = home.ClickTopicsMenuItem();
 
             home.ClickMoreButtonOnTopicsPage();
+            
+            /* BROKEN TEST
+             * There is no longer a "more" button for each Webinar listed
+             */
 
             Assert.IsTrue(home.WebinarTitleIsDisplayedOnWebinarDetailsPage);
         }

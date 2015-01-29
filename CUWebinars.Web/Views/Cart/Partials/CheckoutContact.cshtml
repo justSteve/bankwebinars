@@ -5,10 +5,8 @@
 @using (Html.BeginForm("RegisterFromCart", "Account", null, FormMethod.Post, new { id = "_CreateUserFromCartForm", name = "createUser" }))
 {
     @Html.AntiForgeryToken()
-    <input type="hidden" id="FirstName" name="FirstName" />
-    <input type="hidden" id="LastName" name="LastName" />
-    <input type="hidden" id="ShippingFirstName" name="ShippingFirstName" />
-    <input type="hidden" id="ShippingLastName" name="ShippingLastName" />
+    <input type="hidden" id="RegisterFields_BillingAddress_Name" name="RegisterFields.BillingAddress.Name" />
+    <input type="hidden" id="RegisterFields_ShippingAddress_Name" name="RegisterFields.ShippingAddress.Name" />
     <input type="hidden" id="RegisterFields_BillingAddress_Country" name="RegisterFields.BillingAddress.Country" value="US" />
     <input type="hidden" id="RegisterFields_ShippingAddress_Country" name="RegisterFields.ShippingAddress.Country" value="US" />
     <input type="hidden" name="returnUrl" />
