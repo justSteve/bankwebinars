@@ -170,14 +170,6 @@
                 <div class="span1" id="nonUSAddressInput">
                     <textarea name="nonUSAddressInput" rows="5" cols="100">Special Handling for Address:</textarea>
                 </div>
-                @Html.ValidationMessageFor(model => model.RegisterFields.FirstName)
-                @Html.ValidationMessageFor(model => model.RegisterFields.LastName)
-                @Html.ValidationMessageFor(model => model.RegisterFields.Institution)
-                @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.Phone)
-                @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.StreetAddress)
-                @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.City)
-                @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.State)
-                @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.Zip)
                 @Html.HiddenFor(model => model.RegisterFields.BillingAddress.TypeOfAddress)
             </div>
         </div>
