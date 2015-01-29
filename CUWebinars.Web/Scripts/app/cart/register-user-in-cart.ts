@@ -126,10 +126,8 @@ module RegistrationInCart {
                 });
 
                 $.when(showBillingInputs.resolve()).then(function () {
-                    
-            //commented out to accomodate GhostInspector
-                    $('#RegisterFields_FirstName').focus();
-                    //$('#FullName').focus();
+            
+                    $('#FullName').focus();
                 });
 
                 if (this.isShippindAddressRequired)

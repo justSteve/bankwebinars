@@ -333,13 +333,18 @@ $(function () {
         if (tempName.length == 2) {
             $('#RegisterFields_FirstName').val(tempName[0]);
             $('#RegisterFields_LastName').val(tempName[1]);
+            $('#RegisterFields_Title').focus();
         } else {
             $('#RegisterFields_FirstName').val(tempName[0]);
-            //$('#RegisterFields_LastName').val(tempName[1]);
             $('#getFull').hide();
             $('#getFirstLast').show();
             $('#RegisterFields_LastName').focus();
         }
+    });
+
+    $('#getFirstLast').on('blur', '#RegisterFields_FirstName, #RegisterFields_LastName', function () {
+        var fullNameInput = $('#FullName');
+        fullNameInput.val($('#RegisterFields_FirstName').val() + ' ' + $('#RegisterFields_LastName').val());
     });
 
     $('#modalInstitution').on('hidden', function (e) {
@@ -358,10 +363,15 @@ $(function () {
         event.preventDefault();
 
         var createUserForm = $(this);
+
+        var fullNameShipping = $('#FullNameShipping');
+        var nameBilling = $('#RegisterFields_BillingAddress_Name');
+        var nameShipping = $('#RegisterFields_ShippingAddress_Name');
+
+        if (!fullNameShipping.val()) fullNameShipping.val($('#FullName').val());
+        if (!nameBilling.val()) nameBilling.val($('#FullName').val());
+        if (!nameShipping.val()) nameShipping.val($('#FullName').val());
         
-        if ($('#FullNameShipping').val() === null || $('#FullNameShipping').val() === '') $('#FullNameShipping').val($('#FullName').val());
-        if ($('#ShippingFirstName').val() === null || $('#ShippingFirstName').val() === '') $('#ShippingFirstName').val($('#FirstName'));
-        if ($('#ShippingLastName').val() === null || $('#ShippingLastName').val() === '') $('#ShippingLastName').val($('#LastName'));
         if ($('#RegisterFields_ShippingAddress_City').val() === null || $('#RegisterFields_ShippingAddress_City').val() === '') $('#RegisterFields_ShippingAddress_City').val($('#RegisterFields_BillingAddress_City').val());
         if ($('#RegisterFields_ShippingAddress_StreetAddress').val() === null || $('#RegisterFields_ShippingAddress_StreetAddress').val() === '') $('#RegisterFields_ShippingAddress_StreetAddress').val($('#RegisterFields_BillingAddress_StreetAddress').val());
         if ($('#RegisterFields_ShippingAddress_StreetAddress2').val() === null || $('#RegisterFields_ShippingAddress_StreetAddress2').val() === '') $('#RegisterFields_ShippingAddress_StreetAddress2').val($('#RegisterFields_BillingAddress_StreetAddress').val());

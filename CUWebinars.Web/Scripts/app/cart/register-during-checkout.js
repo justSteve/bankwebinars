@@ -1,7 +1,8 @@
 ﻿var registerDuringCheckout = {};
+registerDuringCheckout.institutionNames = {};
 
 
-registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, shippingAddressRequired, callback) {
+registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shippingAddressRequired, callback) {
 
     //Rollbar.info({ 'reg-during-check': { orderId: orderId, webinarId: webinarId, orderRowId: orderRowId, shippingAddressRequired: shippingAddressRequired } });
 
@@ -14,7 +15,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
     //setup ajax error handling
     $.ajaxSetup({
-        error: function (x, status, error) {
+        error: function(x, status, error) {
             if (x.status == 403) {
                 alert('Sorry, your session has expired. Please login again to continue');
                 window.location.href = '/Account/Login';
@@ -29,7 +30,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
     regUserStateManager.setAction(RegistrationInCart.Action.CheckEmail); // starting off with CheckEmail action.
     regUserStateManager.setIsShippindAddressRequired(shippingAddressRequired);
 
-    $('#RegisterFields_Email').bind('change keyup', function () {
+    $('#RegisterFields_Email').bind('change keyup', function() {
         regUserStateManager.ensureFormValidatorParsed();
         if ($(this).valid() == true) {
             $('#TheSubmitButton').removeClass('button_disabled').attr('disabled', false);
@@ -38,12 +39,12 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
         }
     });
 
-    $('[name="RegisterFields.ConfirmPassword"]').on('focus', function (event) {
+    $('[name="RegisterFields.ConfirmPassword"]').on('focus', function(event) {
         $(this).next('span').removeAttr('class').attr('class', 'field-validation-valid');
         $(this).next('span span').remove();
     });
 
-    $('body').on('click', 'input:button', (function (e, data) {
+    $('body').on('click', 'input:button', (function(e, data) {
 
         if (e.currentTarget.value === 'Create New Account?') // called directly in the razor partial view
             return false;
@@ -73,33 +74,33 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
         // NotInstitution
 
         switch (clickedButton) {
-            case RegistrationInCart.Button.SignInButton:
-                regUserStateManager.logIn();
-                break;
-            case RegistrationInCart.Button.TheSubmit:
-                //console.log('ActionForTheSubmit = ' + regUserStateManager.action);
-                regUserStateManager.submit();
-                break;
-            case RegistrationInCart.Button.nonUSAddressBtn:
-                regUserStateManager.nonUsAdddressInvoked();
-                break;
-            case RegistrationInCart.Button.ResetPass:
-                regUserStateManager.resetPassword(normalResetPasswordButton);
-                break;
-            case RegistrationInCart.Button.YesUseAddress:
-                regUserStateManager.useRegisteredAddress();
-                break;
-            case RegistrationInCart.Button.EnterDiffAddress:
-                regUserStateManager.enterDifferentAddress();
-                break;
-            case RegistrationInCart.Button.NotInstitution:
-                regUserStateManager.notInstitutionAddress();
-                break;
-            default:
+        case RegistrationInCart.Button.SignInButton:
+            regUserStateManager.logIn();
+            break;
+        case RegistrationInCart.Button.TheSubmit:
+            //console.log('ActionForTheSubmit = ' + regUserStateManager.action);
+            regUserStateManager.submit();
+            break;
+        case RegistrationInCart.Button.nonUSAddressBtn:
+            regUserStateManager.nonUsAdddressInvoked();
+            break;
+        case RegistrationInCart.Button.ResetPass:
+            regUserStateManager.resetPassword(normalResetPasswordButton);
+            break;
+        case RegistrationInCart.Button.YesUseAddress:
+            regUserStateManager.useRegisteredAddress();
+            break;
+        case RegistrationInCart.Button.EnterDiffAddress:
+            regUserStateManager.enterDifferentAddress();
+            break;
+        case RegistrationInCart.Button.NotInstitution:
+            regUserStateManager.notInstitutionAddress();
+            break;
+        default:
         }
     }));
 
-    $('input').keypress(function (event) {
+    $('input').keypress(function(event) {
 
         var inputElementTriggered = event.currentTarget.name;
         var normalResetPasswordButton = $('#NormalResetPasswordButton');
@@ -120,52 +121,52 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
             regUserStateManager.setInputAction(RegistrationInCart.InputAction.EnterKeyPress);
 
             switch (inputElementTriggered) {
-                case 'Password':
-                case 'Email':
-                case RegistrationInCart.Button.SignInButton:
-                    regUserStateManager.logIn();
-                    break;
-                case 'RegisterFields.Password':
-                case 'RegisterFields.ConfirmPassword':
-                case 'RegisterFields.Email':
-                case 'getZip':
-                case 'Password1':
-                case 'Email1':
-                case RegistrationInCart.Button.TheSubmit:
-                    //console.log('ActionForTheSubmit = ' + regUserStateManager.action);
-                    regUserStateManager.submit();
-                    break;
-                case RegistrationInCart.Button.nonUSAddressBtn:
-                    regUserStateManager.nonUsAdddressInvoked();
-                    break;
-                case 'NormalResetPasswordInput':
-                case 'NormalResetPasswordButton':
-                    if ($('#EdgeCaseResetPasswordButton').data('clicked'))
-                        $('#EdgeCaseResetPasswordButton').removeData('clicked');
-                    $('#NormalResetPasswordButton').data('clicked', true);
-                    $('form#ResetPasswordForm').submit();
-                    break;
-                case '#EdgeCaseResetPasswordButton':
-                case RegistrationInCart.Button.ResetPass:
-                    regUserStateManager.resetPassword(normalResetPasswordButton);
-                    break;
-                case RegistrationInCart.Button.YesUseAddress:
-                    regUserStateManager.useRegisteredAddress();
-                    break;
-                case RegistrationInCart.Button.EnterDiffAddress:
-                    regUserStateManager.enterDifferentAddress();
-                    break;
-                case RegistrationInCart.Button.NotInstitution:
-                    regUserStateManager.notInstitutionAddress();
-                    break;
-                default:
-                    if ($('#TheSubmitButton').val() === regUserStateManager.getRegisterButtonText()) {
-                        if ($(regUserStateManager.getSameAsBillingCheckedFilter()).val()) {
-                            regUserStateManager.setShippingToBilling();
-                        }
-                        regUserStateManager.setAction(RegistrationInCart.Action.SubmitRegister);
-                        regUserStateManager.submit();
+            case 'Password':
+            case 'Email':
+            case RegistrationInCart.Button.SignInButton:
+                regUserStateManager.logIn();
+                break;
+            case 'RegisterFields.Password':
+            case 'RegisterFields.ConfirmPassword':
+            case 'RegisterFields.Email':
+            case 'getZip':
+            case 'Password1':
+            case 'Email1':
+            case RegistrationInCart.Button.TheSubmit:
+                //console.log('ActionForTheSubmit = ' + regUserStateManager.action);
+                regUserStateManager.submit();
+                break;
+            case RegistrationInCart.Button.nonUSAddressBtn:
+                regUserStateManager.nonUsAdddressInvoked();
+                break;
+            case 'NormalResetPasswordInput':
+            case 'NormalResetPasswordButton':
+                if ($('#EdgeCaseResetPasswordButton').data('clicked'))
+                    $('#EdgeCaseResetPasswordButton').removeData('clicked');
+                $('#NormalResetPasswordButton').data('clicked', true);
+                $('form#ResetPasswordForm').submit();
+                break;
+            case '#EdgeCaseResetPasswordButton':
+            case RegistrationInCart.Button.ResetPass:
+                regUserStateManager.resetPassword(normalResetPasswordButton);
+                break;
+            case RegistrationInCart.Button.YesUseAddress:
+                regUserStateManager.useRegisteredAddress();
+                break;
+            case RegistrationInCart.Button.EnterDiffAddress:
+                regUserStateManager.enterDifferentAddress();
+                break;
+            case RegistrationInCart.Button.NotInstitution:
+                regUserStateManager.notInstitutionAddress();
+                break;
+            default:
+                if ($('#TheSubmitButton').val() === regUserStateManager.getRegisterButtonText()) {
+                    if ($(regUserStateManager.getSameAsBillingCheckedFilter()).val()) {
+                        regUserStateManager.setShippingToBilling();
                     }
+                    regUserStateManager.setAction(RegistrationInCart.Action.SubmitRegister);
+                    regUserStateManager.submit();
+                }
             }
 
             //console.log(regUserStateManager.action);
@@ -174,19 +175,19 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
         }
     });
 
-    $('#collapseShipping').on('shown', function () {
+    $('#collapseShipping').on('shown', function() {
         if ($(regUserStateManager.getSameAsBillingCheckedFilter()).val()) {
             regUserStateManager.setShippingToBilling();
         }
     });
 
-    $('#TheSubmitButton').on('mouseenter', function () {
+    $('#TheSubmitButton').on('mouseenter', function() {
         if ($('#TheSubmitButton').val() === regUserStateManager.getRegisterButtonText() && $(regUserStateManager.getSameAsBillingCheckedFilter()).val()) {
             regUserStateManager.setShippingToBilling();
         }
     });
 
-    $('#ResetPasswordForm').on('submit', function (e) {
+    $('#ResetPasswordForm').on('submit', function(e) {
 
         var hiddenInput = $('#ResetPassEmail');
 
@@ -202,10 +203,10 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
             url: jsonUrl,
             dataType: RegistrationInCart.Constants.JsonDataType,
             data: JSON.stringify(jsonPayload),
-            beforeSend: function () {
+            beforeSend: function() {
                 $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Working...</span>');
             }
-        }).done(function (data) {
+        }).done(function(data) {
             if (data.Result === 'Success') {
                 $('#labelEmail').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Reset instructions are on the way.</span>');
             } else {
@@ -217,13 +218,13 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                     $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Error. Please retry...</span>');
                 }
             }
-        }).always(function (data) {
+        }).always(function(data) {
 
         });
 
     });
 
-    $('form#checkEmail').submit(function (e) {
+    $('form#checkEmail').submit(function(e) {
 
         e.preventDefault();
 
@@ -240,11 +241,11 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                 url: jsonUrl,
                 dataType: RegistrationInCart.Constants.JsonDataType,
                 data: { email: email, disregardInstitutionDomain: regUserStateManager.getDisregardIntitutionDomain(), orderId: orderId },
-                beforeSend: function () {
+                beforeSend: function() {
                     // this is where we append a loading image
                     $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Checking that Email...</span>');
                 }
-            }).done(function (data) {
+            }).done(function(data) {
 
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
 
@@ -261,16 +262,16 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                     $('#labelEmail').html('<span class="label label-important">&nbsp;An error has occurred at the server. Please contact the administrator.</span>');
                 }
 
-            }).fail(function () {
+            }).fail(function() {
                 // failed request; give feedback to user
                 $('#wrapEmail').html('<p class="error"><i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Try that again in a few moments.</p>');
-            }).always(function () {
+            }).always(function() {
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
             });
         }
     });
 
-    $('form#checkZip').submit(function () {
+    $('form#checkZip').submit(function() {
 
         var jsonUrl = '/Account/CheckZip';
         var zipCode = $('#ZipChecker').val();
@@ -285,24 +286,24 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                 url: jsonUrl,
                 dataType: RegistrationInCart.Constants.JsonDataType,
                 data: { Zip: zipCode },
-                beforeSend: function () {
+                beforeSend: function() {
                     // this is where we append a loading image
                     $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Checking that Zip...</span>');
                 }
-            }).done(function (data) {
+            }).done(function(data) {
                 // successful request; do something with the data
                 regUserStateManager.zipCodeVerified(data, zipCode);
-            }).fail(function () {
+            }).fail(function() {
                 // failed request; give feedback to user
                 $('#wrapZip').html('<p class="error"><i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Try that again in a few moments.</p>');
-            }).always(function () {
+            }).always(function() {
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
             });
         }
         return false;
     });
 
-    $('#FullName').blur(function () {
+    $('#FullName').blur(function() {
         var tempName = $('#FullName').val().split(' ');
         if (tempName.length == 2) {
             $('#RegisterFields_FirstName').val(tempName[0]);
@@ -310,19 +311,18 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
             $('#RegisterFields_Title').focus();
         } else {
             $('#RegisterFields_FirstName').val(tempName[0]);
-            //$('#RegisterFields_LastName').val(tempName[1]);
             $('#getFullNameBilling').hide();
             $('#getFirstLast').show();
             $('#RegisterFields_LastName').focus();
         }
     });
 
-    $('#getFirstLast').on('blur', '#RegisterFields_FirstName, #RegisterFields_LastName', function () {
+    $('#getFirstLast').on('blur', '#RegisterFields_FirstName, #RegisterFields_LastName', function() {
         var fullNameInput = $('#FullName');
-            fullNameInput.val($('#RegisterFields_FirstName').val() + ' ' + $('#RegisterFields_LastName').val());
-        });
+        fullNameInput.val($('#RegisterFields_FirstName').val() + ' ' + $('#RegisterFields_LastName').val());
+    });
 
-    $('#modalInstitution').on('hidden', function (e) {
+    $('#modalInstitution').on('hidden', function(e) {
 
         regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
 
@@ -334,7 +334,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
     //  This handler was colliding with one by the same name in create-user.
     //  It is now invoked from the register-user-in-cart.js script.
-    $('#_CreateUserFromCartForm').on('submit', function (event) {
+    $('#_CreateUserFromCartForm').on('submit', function(event) {
         event.preventDefault();
 
         var createUserForm = $(this);
@@ -377,7 +377,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
             headers: headers,
-            beforeSend: function () {
+            beforeSend: function() {
                 //console.log('beforeSend Register Details');
                 // this is where we append a loading image
                 $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Registering new user...</span>');
@@ -392,7 +392,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                 beigeFormArea.height(500);
                 //TODO: scroll screen upwards.
             }
-        }).done(function (data) {
+        }).done(function(data) {
             //alert('done: ');
             if (data.Result) {
                 if (data.Result === 'Success') {
@@ -427,15 +427,15 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                             dataType: constants.JsonDataType,
                             data: JSON.stringify(payloadForUpdate),
                             headers: headers,
-                            beforeSend: function () {
+                            beforeSend: function() {
                                 $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
                             }
-                        }).done(function () {
+                        }).done(function() {
 
                             // Upon return, load the 3rd tab. And once loaded, 
                             //create the MR UserAccount (but don't log the user in). 
 
-                            $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
+                            $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function(response, status, xhr) {
 
                                 if (status == 'error') {
                                     $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
@@ -457,19 +457,19 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                         dataType: constants.JsonDataType,
                                         data: JSON.stringify(payload),
                                         headers: headersMr,
-                                        beforeSend: function () {
+                                        beforeSend: function() {
 
                                         }
-                                    }).done(function () {
+                                    }).done(function() {
                                         // do nothing. This is a fire and forget operation.
                                     });
 
 
-                                    $('#ConfirmRegistrationBillMe').on('click', function (e) {
+                                    $('#ConfirmRegistrationBillMe').on('click', function(e) {
                                         completeOrder(userId, orderRowId, webinarId);
                                     });
 
-                                    $('#Canceller').on('click', function (e) {
+                                    $('#Canceller').on('click', function(e) {
                                         cancelOrder(orderId, webinarId);
                                     });
 
@@ -509,14 +509,14 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                 formProcessor.lightUpValidationSummary('valSummarySignUpInCart', data);
             }
 
-        }).fail(function (data) {
+        }).fail(function(data) {
             //console.log('failed: ' + data);
-        }).always(function () {
+        }).always(function() {
             regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
         });
     });
 
-    $('#frmSignIn').on('submit', function (event) {
+    $('#frmSignIn').on('submit', function(event) {
 
         event.preventDefault();
 
@@ -536,11 +536,11 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
             url: url,
             dataType: constants.JsonDataType,
             data: data,
-            beforeSend: function () {
+            beforeSend: function() {
                 $('#labelEmail').html('<span class="label label-info">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Logging you in...</span>');
                 $('#loginErrorSummary').empty();
             }
-        }).done(function (data) {
+        }).done(function(data) {
             if (data.result) {
                 if (data.result === 'LoggedIn') {
 
@@ -551,10 +551,10 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                         $(this).html('<span class="label label-info">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Processing order...</span>').fadeIn(100);
                     });
 
-                    $('#loginContainer').empty().load('/Account/GetLoginPartial', function (e) {
+                    $('#loginContainer').empty().load('/Account/GetLoginPartial', function(e) {
 
                         $('#updateOrderWithUserIdWrapper').empty();
-                        $('#updateOrderWithUserIdWrapper').load('/Cart/UpdateOrderWithUserIdForm', function (response, status, xhr) {
+                        $('#updateOrderWithUserIdWrapper').load('/Cart/UpdateOrderWithUserIdForm', function(response, status, xhr) {
 
                             var updateOrderWithUserForm = $('#_UpdateOrderWithUserId');
                             var url = updateOrderWithUserForm.attr('action');
@@ -576,26 +576,26 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                 dataType: constants.JsonDataType,
                                 data: JSON.stringify(payloadForUpdate),
                                 headers: headers,
-                            }).done(function (data) {
+                            }).done(function(data) {
 
                                 if (data.Result === 'Success') {
 
                                     $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
 
-                                    $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
+                                    $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function(response, status, xhr) {
 
-                                    if (status == 'error') {
+                                        if (status == 'error') {
                                             $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
                                             $('#confirmationTab a').tab('show');
                                         } else {
 
-                                            $('#ConfirmRegistrationBillMe').on('click', function (e) {
+                                            $('#ConfirmRegistrationBillMe').on('click', function(e) {
                                                 e.preventDefault();
                                                 callback();
                                                 $('#confirmOrder').submit();
                                             });
 
-                                            $('#Canceller').on('click', function (e) {
+                                            $('#Canceller').on('click', function(e) {
                                                 e.preventDefault();
                                                 callback();
                                                 var cancelOrderForm = cartStateManager.getCancelOrderForm();
@@ -617,7 +617,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                                         }
                                         $('#loadingSpinner').remove();
                                     });
-                                    
+
                                     $('#confirmationTab a').tab('show');
                                 }
                             });
@@ -642,13 +642,36 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                 }
             }
 
-        }).fail(function (data) {
+        }).fail(function(data) {
             //console.log('failed: ' + data);
-        }).always(function () {
+        }).always(function() {
             regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
         });
 
         return false;
+    });
+
+    $('#RegisterFields_Institution').typeahead({
+        source: function(query, process) {
+            registerDuringCheckout.searchInstitution(query, process);
+        },
+
+        matcher: function(item) {
+            return true;
+        },
+
+        highlighter: function(name) {
+            return name;
+        },
+
+        sorter: function(items) {
+            return items;
+        },
+
+        updater: function(name) {
+            return name;
+        }
+
     });
 
     $('#loadingSpinner').remove();
@@ -660,6 +683,28 @@ registerDuringCheckout.gatherPricingData = function () {
     registerDuringCheckout.totalPrice = parseInt($('#totalPrice').text().slice(1));
     registerDuringCheckout.totalDiscount = parseInt($('#totalDiscount').text().slice(1));
 };
+
+registerDuringCheckout.searchInstitution = _.debounce(function (query, process) {
+
+    var searchTerm = $('#RegisterFields_Institution').val();
+
+    $.ajax({
+        type: 'POST',
+        contentType: constants.FormPostContentType,
+        cache: false,
+        url: '/Account/GetInstitutionsByName',
+        dataType: constants.JsonDataType,
+        data: { institutionName: searchTerm },
+        beforeSend: function () {
+            registerDuringCheckout.institutionNames = null; // dereference whatever is currently in 'institutionNames'. 
+        }
+    }).done(function (data) {
+        registerDuringCheckout.institutionNames = data.institutions;
+
+        process(registerDuringCheckout.institutionNames);
+    });
+
+}, 200);
 
 function completeOrder(userId, orderRowId, webinarId) {
 
