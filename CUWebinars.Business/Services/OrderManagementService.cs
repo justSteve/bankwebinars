@@ -568,10 +568,10 @@ namespace CUWebinars.Business.Services
 
         public void FireEmailSendShippedOrderEvent(Order order, IEnumerable<string> recipients)
         {
-            AddEvent(new EmailOrderEvent<Order> { EventObject = order, Recipients = recipients });
+            AddEvent(new EmailSendShippedOrderEvent<Order> { EventObject = order, Recipients = recipients });
 
 
-            foreach (var evt in GetEvents().OfType<EmailOrderEvent<Order>>())
+            foreach (var evt in GetEvents().OfType<EmailSendShippedOrderEvent<Order>>())
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }

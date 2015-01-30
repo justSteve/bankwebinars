@@ -216,6 +216,9 @@ $(function () {
 
                 var payload = selectedOrderId.val();
 
+                if (!payload)
+                    $('#EmailOrderButton').after('<span id="resultLabel" class="label label-success" style="margin-left:5px">&nbsp;Email sent</span>');
+
                 $.ajax({
                     type: 'POST',
                     contentType: constants.JsonContentType,
@@ -244,10 +247,23 @@ $(function () {
             });
 
             $('#PreviewShippedOrderEmailButton').on('click', function (e) {
+
                 e.preventDefault();
 
-                $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+                var resultLabel = $('#resultLabel');
+                if (resultLabel.length > 0)
+                    resultLabel.remove();
 
+                var payload = selectedOrderId.val();
+
+                if (!payload) {
+                    $('#EmailOrderButton').after('<span id="resultLabel" class="label label-important" style="margin-left:5px"><i class="icon icon-exclamation-sign"></i>&nbsp;You need to select an Order from the Dropdown List.</span>');
+                    return;
+                }
+
+
+                $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+                
                 var that = this;
 
                 var url = '/Admin/PreviewShippedOrder/' + selectedOrderId.val();
@@ -273,6 +289,17 @@ $(function () {
             $('#EmailOrderButton').on('click', function (e) {
 
                 e.preventDefault();
+
+                var resultLabel = $('#resultLabel');
+                if (resultLabel.length > 0)
+                    resultLabel.remove();
+
+                var payload = selectedOrderId.val();
+
+                if (!payload) {
+                    $('#EmailOrderButton').after('<span id="resultLabel" class="label label-important" style="margin-left:5px"><i class="icon icon-exclamation-sign"></i>&nbsp;You need to select an Order from the Dropdown List.</span>');
+                    return;
+                }
 
                 $('#emailPanel').fadeIn();
 
@@ -304,9 +331,9 @@ $(function () {
                         if (data.Result === 'Success') {
                             $(self).after('<span id="resultLabel" class="label label-success" style="margin-left:5px">&nbsp;Email sent</span>');
                         } else if (data.Result === 'Fail') {
-                            $(self).after('<span id="errorText" class="field-validation-error">' + data.Msg + ' </span>');
+                            $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;' + data.Msg + ' </span>');
                         } else {
-                            $(self).after('<span id="errorText" class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                            $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                         }
 
                         $('#emailSendingSpinner').remove();
@@ -316,7 +343,7 @@ $(function () {
                         $('#emailSendingSpinner').remove();
                         $(self).removeAttr('disabled');
 
-                        $(self).after('<span id="errorText" class="field-validation-error">Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                        $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                     });
                 });
             });
