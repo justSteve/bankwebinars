@@ -14,10 +14,8 @@
 {
     <legend>Creating Account</legend>
     @Html.AntiForgeryToken()
-    <input type="hidden" id="FirstName" name="FirstName" />
-    <input type="hidden" id="LastName" name="LastName" />
-    <input type="hidden" id="ShippingFirstName" name="ShippingFirstName" />
-    <input type="hidden" id="ShippingLastName" name="ShippingLastName" />
+    <input type="hidden" id="RegisterFields_BillingAddress_Name" name="RegisterFields.BillingAddress.Name" />
+    <input type="hidden" id="RegisterFields_ShippingAddress_Name" name="RegisterFields.ShippingAddress.Name" />
     <input type="hidden" id="RegisterFields_BillingAddress_Country" name="RegisterFields.BillingAddress.Country" value="US" />
     <input type="hidden" id="RegisterFields_ShippingAddress_Country" name="RegisterFields.ShippingAddress.Country" value="US" />
     <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
@@ -166,21 +164,13 @@
                             </select>
 
                         </div>
-                        @Html.HiddenFor(model => model.RegisterFields.BillingAddress.TypeOfAddress)
                     </div>
                 </div>
 
                 <div class="span1" id="nonUSAddressInput">
                     <textarea name="nonUSAddressInput" rows="5" cols="100">Special Handling for Address:</textarea>
                 </div>
-                @Html.ValidationMessageFor(model => model.RegisterFields.FirstName)
-                @Html.ValidationMessageFor(model => model.RegisterFields.LastName)
-                @Html.ValidationMessageFor(model => model.RegisterFields.Institution)
-                @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.Phone)
-                @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.StreetAddress)
-                @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.City)
-                @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.State)
-                @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.Zip)
+                @Html.HiddenFor(model => model.RegisterFields.BillingAddress.TypeOfAddress)
             </div>
         </div>
         <div class="accordion-group">
@@ -230,7 +220,6 @@
                             &nbsp;&nbsp; Zip:   @Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.Zip, new { style = "width: 50px;" })
 
                         </div>
-                        @Html.HiddenFor(model => model.RegisterFields.ShippingAddress.TypeOfAddress)
                     </div>
                     @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.StreetAddress)&nbsp;&nbsp;
                     @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.City)
@@ -239,7 +228,7 @@
 
                     @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.Zip)
 
-
+                    @Html.HiddenFor(model => model.RegisterFields.ShippingAddress.TypeOfAddress)
                 </div>
 
             </div>

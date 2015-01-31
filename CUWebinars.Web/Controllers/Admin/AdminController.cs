@@ -642,6 +642,46 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
         [System.Web.Mvc.HttpPost]
+        //[ValidateAntiForgeryToken]
+        public ActionResult EmailOrder(int? id, string emails)
+        {
+            if (id.HasValue)
+            {
+                try
+                {
+                    var order = _orderManagementService.GetOrderById(id.Value);
+
+                    if(emails.Contains(","))
+                        _orderManagementService.FireEmailSendShippedOrderEvent(order, emails.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
+                    else if (emails.Contains(";"))
+                        _orderManagementService.FireEmailSendShippedOrderEvent(order, emails.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
+                    else
+                        _orderManagementService.FireEmailSendShippedOrderEvent(order, new string[] { emails }); // this is where a single email is specified
+
+
+                    return Json(new
+                    {
+                        Result = WebUiConstants.Success,
+                        Msg = string.Format("<p>Your Order ID is {0}. Please check your email for connection information for the webinar.</p>", id)
+                    });
+                }
+                catch (Exception exception)
+                {
+                    ModelState.AddModelError(string.Empty, "There was a problem at the server. Please contact the administrator.");
+                    _logger.ErrorException("ConfirmOrder|ConfirmOrder failed ", exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                }
+                return this.ModelStateJson(ModelState);
+            }
+
+            return Json(new
+            {
+                Result = WebUiConstants.Fail,
+                Msg = "You need to select an Order from the DropDownList"
+            });
+        }
+
+        [System.Web.Mvc.HttpPost]
         public JsonResult FirePasswordResetEvent(ChangePasswordFromResetKeyInputModel model, string verificationKey)
         {
             if (_membershipService.ChangePasswordFromResetKey(verificationKey, model.Password))

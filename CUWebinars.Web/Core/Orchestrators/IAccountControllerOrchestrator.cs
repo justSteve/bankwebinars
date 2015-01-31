@@ -21,6 +21,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         void EditContactInfo(EditContactInfoModel editContactInfoModel);
         CreateUserConfirmedViewModel GetCreateUserConfirmedViewModel(string email, bool viaBillMePostRequest = false);
         Institution GetInstitutionFromEmail(string email);
+        IEnumerable<Institution> GetInstitutionsByName(string name);
         WebUser GetWebUserByEmail(string email);
         WebUser GetWebUserById(int id);
         WebUser GetWebUserFromIPrincipal();

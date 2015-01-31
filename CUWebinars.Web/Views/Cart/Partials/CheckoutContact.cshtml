@@ -5,10 +5,8 @@
 @using (Html.BeginForm("RegisterFromCart", "Account", null, FormMethod.Post, new { id = "_CreateUserFromCartForm", name = "createUser" }))
 {
     @Html.AntiForgeryToken()
-    <input type="hidden" id="FirstName" name="FirstName" />
-    <input type="hidden" id="LastName" name="LastName" />
-    <input type="hidden" id="ShippingFirstName" name="ShippingFirstName" />
-    <input type="hidden" id="ShippingLastName" name="ShippingLastName" />
+    <input type="hidden" id="RegisterFields_BillingAddress_Name" name="RegisterFields.BillingAddress.Name" />
+    <input type="hidden" id="RegisterFields_ShippingAddress_Name" name="RegisterFields.ShippingAddress.Name" />
     <input type="hidden" id="RegisterFields_BillingAddress_Country" name="RegisterFields.BillingAddress.Country" value="US" />
     <input type="hidden" id="RegisterFields_ShippingAddress_Country" name="RegisterFields.ShippingAddress.Country" value="US" />
     <input type="hidden" name="returnUrl" />
@@ -104,12 +102,10 @@
                         <div>
                             <div id="wrapCityBilling">
                                 <label>City:</label> @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.City, new { @class = "input-large" })
-                                @Html.HiddenFor(model => model.RegisterFields.BillingAddress.TypeOfAddress)
                             </div>
                             <div id="wrapCityBilling">
                                 <label>State:</label> @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.State, new { @class = "input-mini" })
                                 <label>Zip:</label> @Html.TextBoxFor(model => model.RegisterFields.BillingAddress.Zip, new { @class = "input-mini" })
-                                @Html.HiddenFor(model => model.RegisterFields.BillingAddress.TypeOfAddress)
                             </div>
                         </div>
                         <div>
@@ -139,6 +135,7 @@
                             @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.City)
                             @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.State)
                             @Html.ValidationMessageFor(model => model.RegisterFields.BillingAddress.Zip)
+                            @Html.HiddenFor(model => model.RegisterFields.BillingAddress.TypeOfAddress)
                         </div>
                     </div>
                 </div>
@@ -173,13 +170,13 @@
                                 <label>City:</label>@Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.City, new { @class = "input-large" })
                                 <label>State:</label>@Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.State, new { @class = "input-medium" })
                                 <label>Zip:</label>@Html.TextBoxFor(model => model.RegisterFields.ShippingAddress.Zip, new { @class = "input-mini" })
-                                @Html.HiddenFor(model => model.RegisterFields.ShippingAddress.TypeOfAddress)
                             </div>
                             @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.StreetAddress)&nbsp;&nbsp;
                             @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.City)
                             @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.State)
                             @Html.ValidationMessageFor(model => model.RegisterFields.ShippingAddress.Zip)
                         </div>
+                        @Html.HiddenFor(model => model.RegisterFields.ShippingAddress.TypeOfAddress)
                     </div>
                 </div>
             </div>

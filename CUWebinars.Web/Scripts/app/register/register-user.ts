@@ -7,30 +7,30 @@ module Registration {
 	declare var $;
 
 	export class Button {
-		static EnterDiffAddress : string = 'EnterDiffAddress';
-		static nonUSAddressBtn : string = 'nonUSAddressBtn';
-		static NotInstitution : string = 'NotInstitution';
-		static ResetPass : string = 'resetPass';
-		static SignInButton : string = 'SignInButton';
-		static TheSubmit : string = 'TheSubmit';
-		static YesUseAddress : string = 'YesUseAddress';
+		static EnterDiffAddress: string = 'EnterDiffAddress';
+		static nonUSAddressBtn: string = 'nonUSAddressBtn';
+		static NotInstitution: string = 'NotInstitution';
+		static ResetPass: string = 'resetPass';
+		static SignInButton: string = 'SignInButton';
+		static TheSubmit: string = 'TheSubmit';
+		static YesUseAddress: string = 'YesUseAddress';
 	};
 
 	export class InputAction {
-		static EnterKeyPress : string = 'EnterKeyPress';
-		static ButtonClick : string = 'ButtonClick';
-		static None : string = 'None';
+		static EnterKeyPress: string = 'EnterKeyPress';
+		static ButtonClick: string = 'ButtonClick';
+		static None: string = 'None';
 	};
 
 	export class Action {
-		static CheckEmail : string = 'CheckEmail';
-		static CheckZip : string = 'CheckZip';
-		static GetPassword : string = 'GetPassword';
-		static LogIn : string = 'LogIn';
-		static PostCreateAccount : string = 'PostCreateAccount';
-		static SubmitLogin : string = 'SubmitLogin';
-		static SubmitRegister : string = 'SubmitRegister';
-		static DisplayBillingAddressFields : string = 'DisplayBillingAddressFields';
+		static CheckEmail: string = 'CheckEmail';
+		static CheckZip: string = 'CheckZip';
+		static GetPassword: string = 'GetPassword';
+		static LogIn: string = 'LogIn';
+		static PostCreateAccount: string = 'PostCreateAccount';
+		static SubmitLogin: string = 'SubmitLogin';
+		static SubmitRegister: string = 'SubmitRegister';
+		static DisplayBillingAddressFields: string = 'DisplayBillingAddressFields';
 	};
 
 	export class Constants {
@@ -433,14 +433,19 @@ module Registration {
             var firstName = $('#RegisterFields_FirstName').val();
             var lastName = $('#RegisterFields_LastName').val();
 
+            if (!firstName) {
+                firstName = 'nonValidFirst';
+            }
+            if (!lastName) {
+                lastName = 'nonValidLast';
+            }
+
             if ($('#RegisterFields_LastName').val()) {
-                $('#ShippingFirstName').val(firstName);
-                $('#ShippingLastName').val(lastName);
-                $('#FirstName').val(firstName);
-                $('#LastName').val(lastName);
                 $('#FullNameShipping').val(firstName + ' ' + lastName);
+                $('#RegisterFields_ShippingAddress_Name').val(firstName + ' ' + lastName);
             } else {
                 $('#FullNameShipping').val($('#FullName').val());
+                $('#RegisterFields_ShippingAddress_Name').val($('#FullName').val());
             }
 
 			$('#RegisterFields_ShippingAddress_City').val($('#RegisterFields_BillingAddress_City').val());

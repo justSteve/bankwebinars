@@ -727,7 +727,8 @@
     <Content Include="Views\Cart\Partials\_DisplayRowPriceForAffiliate.cshtml" />
     <Content Include="Views\Cart\Partials\_ConfirmModalForAffiliate.cshtml" />
     <Content Include="Views\Cart\Partials\_DisplayAppliedDiscount.cshtml" />
-    <Content Include="Views\Admin\Home\Partials\_SendShippedPreviewModal.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DiscountDetails.cshtml" />
+    <Content Include="Views\Admin\Home\Modals\_SendShippedPreviewModal.cshtml" />
     <Content Include="Views\Shared\Admin\_Last5Error.cshtml" />
   </ItemGroup>
   <ItemGroup>

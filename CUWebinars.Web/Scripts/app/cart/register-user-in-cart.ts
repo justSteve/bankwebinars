@@ -85,7 +85,7 @@ module RegistrationInCart {
             $('#nonUSAddress').hide();
 
             //commented out to accomodate GhostInspector
-            //$('#getFirstLast').hide();
+            $('#getFirstLast').hide();
 
             this.typeofAddressShipping = $('#RegisterFields_ShippingAddress_TypeOfAddress').val(Constants.TypeofAddressShipping);
             this.typeofAddressBilling = $('#RegisterFields_BillingAddress_TypeOfAddress').val(Constants.TypeofAddressBilling);
@@ -126,10 +126,8 @@ module RegistrationInCart {
                 });
 
                 $.when(showBillingInputs.resolve()).then(function () {
-                    
-            //commented out to accomodate GhostInspector
-                    $('#RegisterFields_FirstName').focus();
-                    //$('#FullName').focus();
+            
+                    $('#FullName').focus();
                 });
 
                 if (this.isShippindAddressRequired)
@@ -445,14 +443,12 @@ module RegistrationInCart {
                 lastName = 'nonValidLast';
             }
 
-        if ($('#RegisterFields_LastName').val()) {
-                $('#ShippingFirstName').val(firstName);
-                $('#ShippingLastName').val(lastName);
-                $('#FirstName').val(firstName);
-                $('#LastName').val(lastName);
+            if ($('#RegisterFields_LastName').val()) {
                 $('#FullNameShipping').val(firstName + ' ' + lastName);
+                $('#RegisterFields_ShippingAddress_Name').val(firstName + ' ' + lastName);
             } else {
                 $('#FullNameShipping').val($('#FullName').val());
+                $('#RegisterFields_ShippingAddress_Name').val($('#FullName').val());
             }
 
             $('#RegisterFields_ShippingAddress_City').val($('#RegisterFields_BillingAddress_City').val());

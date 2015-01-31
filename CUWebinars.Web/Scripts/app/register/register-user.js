@@ -435,14 +435,19 @@ var Registration;
             var firstName = $('#RegisterFields_FirstName').val();
             var lastName = $('#RegisterFields_LastName').val();
 
+            if (!firstName) {
+                firstName = 'nonValidFirst';
+            }
+            if (!lastName) {
+                lastName = 'nonValidLast';
+            }
+
             if ($('#RegisterFields_LastName').val()) {
-                $('#ShippingFirstName').val(firstName);
-                $('#ShippingLastName').val(lastName);
-                $('#FirstName').val(firstName);
-                $('#LastName').val(lastName);
                 $('#FullNameShipping').val(firstName + ' ' + lastName);
+                $('#RegisterFields_ShippingAddress_Name').val(firstName + ' ' + lastName);
             } else {
                 $('#FullNameShipping').val($('#FullName').val());
+                $('#RegisterFields_ShippingAddress_Name').val($('#FullName').val());
             }
 
             $('#RegisterFields_ShippingAddress_City').val($('#RegisterFields_BillingAddress_City').val());

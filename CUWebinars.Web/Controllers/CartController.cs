@@ -202,38 +202,7 @@ namespace CUWebinars.Web.Controllers
         {
             return PartialView("~/Views/cart/Partials/CheckoutContact.cshtml", _cartControllerOrchestrator.BuildRegisterViewModel());
         }
-
-        [HttpPost]
-        //[ValidateAntiForgeryToken]
-        public ActionResult EmailOrder(int? id, string emails)
-        {
-            if (id.HasValue)
-            {
-                try
-                {
-                    var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
-                    var orderRowId = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
-
-                    _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
-
-                    return Json(new
-                    {
-                        Result = WebUiConstants.Success,
-                        OrderRowId = orderRowId,
-                        Msg = string.Format("<p>Your Order ID is {0}. Please check your email for connection information for the webinar.</p>", orderRowId)
-                    });
-                }
-                catch (Exception exception)
-                {
-                    ModelState.AddModelError(string.Empty, "There was a problem at the server. Please contact the administrator.");
-                    _logger.ErrorException("ConfirmOrder|ConfirmOrder failed ", exception);
-                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
-                }
-            }
-
-            return this.ModelStateJson(ModelState);
-
-        }
+        
 
         public PartialViewResult UpdateOrderWithUserIdForm()
         {

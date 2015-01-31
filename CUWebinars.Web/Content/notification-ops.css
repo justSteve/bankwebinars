@@ -4,9 +4,29 @@
     border-radius: 6px;
     border: 2px solid #3e3c3c;
     min-width: 660px;
-    background-color:#808080
+    background-color: #808080;
+    margin-top: 10px;
 }
 
 #previewModal {
     min-width: 670px;
+}
+
+.initialHide {
+    display: none;
+}
+
+ul.nav li a {
+    cursor: pointer;
+}
+
+div#SubPanel {
+    padding: 10px;
+    border: 1px solid #d4d4d4;
+    -ms-border-radius: 10px;
+    border-radius: 10px;
+}
+
+div#emailPanel {
+    margin-top: 10px;
 }

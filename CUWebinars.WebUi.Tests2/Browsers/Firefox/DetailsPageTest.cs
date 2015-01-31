@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using CUWebinars.Tests.Common;
+﻿using CUWebinars.Tests.Common;
 using CUWebinars.WebUi.Tests2.Infrastructure;
 using CUWebinars.WebUi.Tests2.Pages;
 using KesselRun.SeleniumCore.TestDrivers.Browsers.Firefox;
 using KesselRun.SeleniumCore.TestDrivers.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Diagnostics;
+using System.Linq;
 
 
 namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
@@ -400,7 +396,7 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             page.ClickTheClickToAddMoreButton();
             page.EnterDetail("drogersbox-test2@yahoo.com.au", "AdditionalLocationEmail_3");
             page.ClickCancelAdditionalLocationsModalButton();
-            page.Wait(10000);
+            page.Wait(1500);
             Assert.AreEqual(1, page.GetNumberOfAdditionalLocationTextBoxes());
             /********************************************************/
         }
@@ -418,11 +414,15 @@ namespace CUWebinars.WebUi.Tests2.Browsers.Firefox
             page.EnterDetail("drogersbox-test1@yahoo.com.au", "AdditionalLocationEmail_0");
             page.ClickTheClickToAddMoreButton();
             page.EnterDetail("drogersbox-test2@yahoo.com.au", "AdditionalLocationEmail_1");
+            page.Wait();
             page.ClickSubmitAdditionalLocationsButton();
             page.Wait(500);
             page.ClickAddAdditionalLocationButton();
+            page.Wait(500);
             page.DeleteAdditionalLocation(id);
+            page.Wait(500);
             page.DeleteAdditionalLocation(id + 1);
+            page.Wait(2000);
 
             Assert.IsTrue(page.SumbitAdditionalLocationsButtonIsNotThere);
             /********************************************************/

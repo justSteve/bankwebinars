@@ -1,19 +1,26 @@
 ﻿@model AdhocNotificationViewModel
 
-<div class="control-group">
-    <label class="control-label">Orders</label>
-    <div class="controls">
-        @Html.DropDownListFor(m => m.SelectedOrderId, new SelectList(Model.OrdersList, "Value", "Text"), "Choose an Order for Shipping", new { @class = "input-xlarge" })
+<div id="SubPanel">
+    <div class="control-group">
+        <label class="control-label" title="Select an Order">Orders</label>
+        <div class="controls">
+            @Html.DropDownListFor(m => m.SelectedOrderId, new SelectList(Model.OrdersList, "Value", "Text"), "Choose an Order for Shipping", new { @class = "input-xlarge" })
+        </div>
+    </div>
+    <div class="control-group">
+        <div class="controls">
+            <button id="GetSendShippedOrderNotificationButton" class="btn">Send Shipped Order Notification</button>
+            <button id="PreviewShippedOrderEmailButton" class="btn">Preview</button>
+            <button class="btn btn-small btn-info" id="EmailOrderButton">Email Order</button>
+        </div>
+        <div class="controls">
+            <div id="emailPanel" class="initialHide">
+                <input id="EmailAddressesInput" class="input input-xxlarge" type="text" placeholder="Enter email address/es. Separate them with commas or semi-colons." />
+                <button id="dispatchButton" class="btn btn-small" style="vertical-align: top; margin-left: 5px">Send</button>
+            </div>
+        </div>
     </div>
 </div>
-<div class="control-group">
-    <div class="controls">
-        <button id="GetSendShippedOrderNotificationButton" class="btn">Send Shipped Order Notification</button>
-    </div>
-    <div class="controls">
-        <button id="PreviewShippedOrderEmailButton" class="btn">Preview</button>
-    </div>
-</div>
-@Html.Partial("~/Views/Admin/Home/Partials/_SendShippedPreviewModal.cshtml")
+@Html.Partial("~/Views/Admin/Home/Modals/_SendShippedPreviewModal.cshtml")
 
 
