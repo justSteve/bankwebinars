@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Linq;
 using System.Net.Configuration;
 using System.Net.Mail;
 using CUWebinars.Business.Core.Tracing;
@@ -36,6 +37,14 @@ namespace CUWebinars.Business.Notification.Email
                 }
 
                 mailMessage.To.Add(destinationEmailAddress);
+
+                if (!ReferenceEquals(null, notificationMessage.Addresses) && notificationMessage.Addresses.Any())
+                {
+                    foreach (var address in notificationMessage.Addresses)
+                    {
+                        mailMessage.CC.Add(address);
+                    }
+                }
                 
                 try
                 {

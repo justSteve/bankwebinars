@@ -566,6 +566,19 @@ namespace CUWebinars.Business.Services
             }
         }
 
+        public void FireEmailSendShippedOrderEvent(Order order, IEnumerable<string> recipients)
+        {
+            AddEvent(new EmailSendShippedOrderEvent<Order> { EventObject = order, Recipients = recipients });
+
+
+            foreach (var evt in GetEvents().OfType<EmailSendShippedOrderEvent<Order>>())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            Clear();
+        }
+
         public void FireOrderSubmittedAdditionalLocationEvent(Order order, string address)
         {
             _logger.Info("Adding Event for Order with Additional Location {0} - {1}", order.idOrder, address);
@@ -806,10 +819,10 @@ namespace CUWebinars.Business.Services
         public void GenerateRegistrantKey(Order order, AdditionalLocation additionalLocation)
         {
             var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-            var regKeyResponse = "";
+            var regKeyResponse = string.Empty;
             if (additionalLocation.Email == null)
             {
-                if (row.JoinURL == null && row.RegistrationType.ShowLiveNotifications == "Yes")
+                if (row.JoinURL == null && row.RegistrationType.ShowLiveNotifications.TrimEnd().Equals("Yes", StringComparison.OrdinalIgnoreCase))
                 {
                     regKeyResponse = CreateRegistrantKey(order.FirstName, order.LastName
                         , order.BillingEmail, row.Webinar.idWebinar, row.Webinar.WebinarKey);
@@ -817,11 +830,8 @@ namespace CUWebinars.Business.Services
             }
             else
             {
-                var contents = additionalLocation.FullName.Split(' ').ToString();
-                var lastName = contents.Skip(1).ToString();
-
-                regKeyResponse = CreateRegistrantKey(additionalLocation.FullName.Split(' ')[0],
-                    lastName, additionalLocation.Email, row.Webinar.idWebinar, row.Webinar.WebinarKey);
+                regKeyResponse = CreateRegistrantKey("CareOf",//DomainConstants.CareOfString,
+                    order.LastName, additionalLocation.Email, row.Webinar.idWebinar, row.Webinar.WebinarKey);
             }
 
             JObject parsedJsonObject;
@@ -1136,16 +1146,11 @@ namespace CUWebinars.Business.Services
                 _logger.ErrorException(string.Format("WebException CreateRegistrantKey: {0}, {1}. ExceptionMsg = {2}", billingEmail, webinarKey, webException.Message), webException);
                 var httpWebResponse = webException.Response as HttpWebResponse;
 
-                if (httpWebResponse != null &&
-                    (httpWebResponse.StatusCode == HttpStatusCode.Conflict ||
-                     httpWebResponse.StatusCode == HttpStatusCode.NotFound))
+                if (!ReferenceEquals(httpWebResponse, null))
                 {
-                    string responsePayload = string.Empty;
+                    string responsePayload = ProcessErrorByStatusCode(httpWebResponse);
 
-                    using (var responsStream = new StreamReader(httpWebResponse.GetResponseStream()))
-                    {
-                        responsePayload = responsStream.ReadToEnd();
-                    }
+                    _logger.Error("Citrix Message: {0}", responsePayload);
 
                     return responsePayload;
                 }
@@ -1156,6 +1161,103 @@ namespace CUWebinars.Business.Services
                 return "error";
             }
             return null;
+        }
+
+        /// <summary>
+        /// Error messages for codes taken from https://developer.citrixonline.com/citrix-api-http-status-codes
+        /// </summary>
+        private static string ProcessErrorByStatusCode(HttpWebResponse httpWebResponse)
+        {
+            string responsePayload = string.Empty;
+                    
+            switch (httpWebResponse.StatusCode)
+            {
+                case HttpStatusCode.BadRequest:
+                {
+                    responsePayload =
+                        @"The request is invalid. This can be caused by an incorrect argument such as 'time' instead of'times' or may be caused by trying to book sessions that overlap in time, dates beyond one year, and if the calls fail to find the requested data.";
+                    break;
+                }
+                case HttpStatusCode.Unauthorized:
+                {
+                    responsePayload =
+                        @"This response alerts you that there is a problem with your account. The account_token could be incomplete or incorrect, your account could be expired, or the authorization token (oauth_token) may be invalid.";
+                    break;
+                }
+                case HttpStatusCode.Forbidden:
+                {
+                    if (httpWebResponse.StatusDescription.Trim().Equals("Forbidden", StringComparison.OrdinalIgnoreCase))
+                    {
+                        responsePayload =
+                            "This response is received when internal rules or limits have been reached. For example, in the PUT or CREATE calls, this will be returned if an incorrect data key is used, the collaboration session is full, or if the event has ended.";
+                    }
+                    else if (httpWebResponse.StatusDescription.Trim().Equals("Access Denied", StringComparison.OrdinalIgnoreCase))
+                    {
+                        responsePayload =
+                            "The user making this call is not authorized to make the call. A user with appropriate admin roles must make the call.";
+                    }
+                    break;
+                }
+                case HttpStatusCode.NotFound:
+                {
+                    responsePayload =
+                        "Occurs when an incorrect key value, a non-existent or deleted data key, or a key for an event in the past is passed.";
+                    break;
+                }
+                case HttpStatusCode.MethodNotAllowed:
+                {
+                    responsePayload =
+                        "Can occur if your calls pass through an ISP that does not allow POST methods. If this error arises, contact your ISP.";
+                    break;
+                }
+                case HttpStatusCode.Conflict:
+                {
+                    responsePayload = "This occurs if you attempt to create a duplicate of a unique resource.";
+                    break;
+                }
+                case HttpStatusCode.InternalServerError:
+                {
+                    responsePayload =
+                        "There is an internal server error. This could be caused by a failed or partial connection, or other transitory conditions. The request may be retried, but it may have the same result.";
+                    break;
+                }
+                case HttpStatusCode.BadGateway:
+                {
+                    if (httpWebResponse.StatusDescription.Trim().Equals("Bad Gateway"))
+                    {
+                        responsePayload =
+                            "The server, while acting as a gateway or proxy, received an invalid response from the upstream server it accessed in attempting to fulfill the request. Simplify the data request and ensure post requests are within available periods.";
+                    }
+                    else if (httpWebResponse.StatusDescription.Trim().Equals("Illegal Account"))
+                    {
+                        responsePayload =
+                            "Accounts without billing IDs for which tollFreeProvisioned is true. This is a hard error on the account. Contact developer-support@citrixonline.com to clear the error and reset your account.";
+                    }
+                    break;
+                }
+                case HttpStatusCode.GatewayTimeout:
+                {
+                    responsePayload =
+                        "The server, while acting as a gateway or proxy, did not receive a timely response from the upstream server.";
+                    break;
+                }
+
+                default:
+                {
+                    if (httpWebResponse.StatusDescription.Trim().Equals("Unprocessable Entity")) // 422
+                    {
+                        responsePayload =
+                            "The request was formed correctly but was unable to be followed due to semantic errors.";
+                    }
+                    else if (httpWebResponse.StatusDescription.Trim().Equals("Too Many Requests")) // 429
+                    {
+                        responsePayload =
+                            "The broker returns this code if, for a given user account, too many requests are received in a specific time frame. Calls can be tried again later.";
+                    }
+                }
+                    break;
+            }
+            return responsePayload;
         }
 
 
