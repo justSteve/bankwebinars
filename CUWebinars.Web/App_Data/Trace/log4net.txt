@@ -21,3 +21,6 @@ CUWebinars Information: 0 : MailerSent: ron@june.com Subject: [BankWebinars] Ord
 CUWebinars Information: 0 : MailerSent: ron@june.com Subject: [BankWebinars] Order is Shipped: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 30/01/2015 11:31:01 AM
 CUWebinars Information: 0 : MailerSent:  jerry@j.com Subject: [BankWebinars] Order is Shipped: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 30/01/2015 11:31:01 AM
 CUWebinars Information: 0 : MailerSent: ghjh@jhkl.com Subject: [BankWebinars] Order is Shipped: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 30/01/2015 11:55:34 AM
+CUWebinars Error: 0 : Validation failed for webinar 1710 and User 33257
+CUWebinars Error: 0 : Validation failed for webinar 1736 and User 34502
+CUWebinars Error: 0 : Validation failed for webinar 1736 and User 34502

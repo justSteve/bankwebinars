@@ -728,7 +728,6 @@
     <Content Include="Views\Cart\Partials\_ConfirmModalForAffiliate.cshtml" />
     <Content Include="Views\Cart\Partials\_DisplayAppliedDiscount.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DiscountDetails.cshtml" />
-    <Content Include="Views\Admin\Home\Modals\_SendShippedPreviewModal.cshtml" />
     <Content Include="Views\Shared\Admin\_Last5Error.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -1327,6 +1326,7 @@
     <Folder Include="Infrastructure\apis\citrix\GTW\" />
     <Folder Include="Notification\Delivery\" />
     <Folder Include="Scripts\app\types\" />
+    <Folder Include="Views\Admin\Home\Modals\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
