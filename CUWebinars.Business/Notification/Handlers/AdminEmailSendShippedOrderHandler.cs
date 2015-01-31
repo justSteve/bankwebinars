@@ -8,21 +8,21 @@ using System.Linq;
 
 namespace CUWebinars.Business.Notification.Handlers
 {
-    public class EmailSendShippedOrderHandler<T> : IEventHandler<EmailSendShippedOrderEvent<T>>
+    public class AdminEmailSendShippedOrderHandler<T> : IEventHandler<AdminEmailSendShippedOrderEvent<T>>
         where T : Order
     {
         private readonly IFormatter _generalFormatter;
         private readonly ILogger _logger;
         private readonly INotificationDelivery _notificationDelivery;
 
-        public EmailSendShippedOrderHandler(IFormatter generalFormatter, ILogger logger, INotificationDelivery notificationDelivery)
+        public AdminEmailSendShippedOrderHandler(IFormatter generalFormatter, ILogger logger, INotificationDelivery notificationDelivery)
         {
             _generalFormatter = generalFormatter;
             _logger = logger;
             _notificationDelivery = notificationDelivery;
         }
 
-        public void Handle(EmailSendShippedOrderEvent<T> emailOrderEvent)
+        public void Handle(AdminEmailSendShippedOrderEvent<T> emailOrderEvent)
         {
             try
             {
@@ -63,9 +63,9 @@ namespace CUWebinars.Business.Notification.Handlers
         }
     }
 
-    public class EmailSendShippedOrderHandler : EmailSendShippedOrderHandler<Order>
+    public class AdminEmailSendShippedOrderHandler : AdminEmailSendShippedOrderHandler<Order>
     {
-        public EmailSendShippedOrderHandler(IFormatter generalFormatter, ILogger logger, INotificationDelivery notificationDelivery)
+        public AdminEmailSendShippedOrderHandler(IFormatter generalFormatter, ILogger logger, INotificationDelivery notificationDelivery)
             : base(generalFormatter, logger, notificationDelivery)
         {
 

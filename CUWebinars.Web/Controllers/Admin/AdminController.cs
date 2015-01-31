@@ -37,6 +37,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
     public class AdminController : Controller
     {
+        public const string HtmlMimeType = "text/html";
         private readonly IOrderManagementService _orderManagementService;
         private readonly IAppHelper _appHelper;
         private readonly IMembershipService _membershipService;
@@ -502,7 +503,34 @@ namespace CUWebinars.Web.Controllers.Admin
             var order = _orderManagementService.GetOrderById(id);
             var formatter = new PreviewFormatter(new EnvironmentInformation { BaseUrl = HttpRuntime.AppDomainAppPath });
 
-            return File(formatter.FormatToString(order, "PreviewShippedOrder").GenerateStreamFromString(), "text/html");
+            return File(formatter.FormatToString(order, "PreviewShippedOrder").GenerateStreamFromString(), HtmlMimeType);
+        }
+
+        public ActionResult PreviewRecordingPosted(int id)
+        {
+            //  id is a WebinarId
+            var firstRetrievedOrderForWebinar = _orderManagementService.GetOrdersForRecordedNotifications(id).FirstOrDefault();
+
+            if (ReferenceEquals(null, firstRetrievedOrderForWebinar))
+                return File("<html>fail</html>".GenerateStreamFromString(), HtmlMimeType);
+
+
+            var formatter = new PreviewFormatter(new EnvironmentInformation { BaseUrl = HttpRuntime.AppDomainAppPath });
+
+            return File(formatter.FormatToString(firstRetrievedOrderForWebinar, "PreviewRecordingPosted").GenerateStreamFromString(), HtmlMimeType);
+        }
+
+        public ActionResult PreviewConnectionInfo(int id)
+        {
+            //  id is a WebinarId
+            var firstRetrievedOrderForWebinar = _orderManagementService.GetOrdersForLiveNotifications(id).FirstOrDefault();
+
+            if (ReferenceEquals(null, firstRetrievedOrderForWebinar))
+                return File("<html>fail</html>".GenerateStreamFromString(), HtmlMimeType);
+            
+            var formatter = new PreviewFormatter(new EnvironmentInformation { BaseUrl = HttpRuntime.AppDomainAppPath });
+
+            return File(formatter.FormatToString(firstRetrievedOrderForWebinar, "PreviewConnectionInfo").GenerateStreamFromString(), HtmlMimeType);
         }
 
 
@@ -652,12 +680,52 @@ namespace CUWebinars.Web.Controllers.Admin
                     var order = _orderManagementService.GetOrderById(id.Value);
 
                     if(emails.Contains(","))
-                        _orderManagementService.FireEmailSendShippedOrderEvent(order, emails.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
+                        _orderManagementService.FireAdminEmailSendShippedOrderEvent(order, emails.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
                     else if (emails.Contains(";"))
-                        _orderManagementService.FireEmailSendShippedOrderEvent(order, emails.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
+                        _orderManagementService.FireAdminEmailSendShippedOrderEvent(order, emails.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
                     else
-                        _orderManagementService.FireEmailSendShippedOrderEvent(order, new string[] { emails }); // this is where a single email is specified
+                        _orderManagementService.FireAdminEmailSendShippedOrderEvent(order, new string[] { emails }); // this is where a single email is specified
 
+
+                    return Json(new
+                    {
+                        Result = WebUiConstants.Success,
+                        Msg = string.Format("<p>Your Order ID is {0}. Please check your email for connection information for the webinar.</p>", id)
+                    });
+                }
+                catch (Exception exception)
+                {
+                    ModelState.AddModelError(string.Empty, "There was a problem at the server. Please contact the administrator.");
+                    _logger.ErrorException("ConfirmOrder|ConfirmOrder failed ", exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                }
+                return this.ModelStateJson(ModelState);
+            }
+
+            return Json(new
+            {
+                Result = WebUiConstants.Fail,
+                Msg = "You need to select an Order from the DropDownList"
+            });
+        }
+
+        [System.Web.Mvc.HttpPost]
+        //[ValidateAntiForgeryToken]
+        public ActionResult EmailOrderConnectionInfo(int? id, string emails)
+        {
+            if (id.HasValue)
+            {
+                try
+                {
+                    //  id is a WebinarId
+                    var firstRetrievedOrderForWebinar = _orderManagementService.GetOrdersForLiveNotifications(id.Value).FirstOrDefault();
+
+                    if(emails.Contains(","))
+                        _orderManagementService.FireAdminEmailConnectionInfoHandler(firstRetrievedOrderForWebinar, emails.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
+                    else if (emails.Contains(";"))
+                        _orderManagementService.FireAdminEmailConnectionInfoHandler(firstRetrievedOrderForWebinar, emails.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
+                    else
+                        _orderManagementService.FireAdminEmailConnectionInfoHandler(firstRetrievedOrderForWebinar, new string[] { emails }); // this is where a single email is specified
 
                     return Json(new
                     {

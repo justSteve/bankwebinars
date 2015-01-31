@@ -1,14 +1,25 @@
 ﻿@model AdhocNotificationViewModel
 
-<div class="control-group">
-    <label class="control-label" for="inputEmail">Webinars</label>
-    <div class="controls">
-        @Html.DropDownListFor(m => m.SelectedWebinarId, new SelectList(Model.Webinars, "Value", "Text"), "Choose an Upcoming Webinar", new { @class = "input-xlarge" })
+<div id="SubPanel">
+    <div class="control-group">
+        <label class="control-label" for="inputEmail">Webinars</label>
+        <div class="controls">
+            @Html.DropDownListFor(m => m.SelectedWebinarId, new SelectList(Model.Webinars, "Value", "Text"), "Choose an Upcoming Webinar", new { @class = "input-xlarge" })
+        </div>
     </div>
-</div>
-<div class="control-group">
-    <div class="controls">
-        <button id="GetSendConnectionInfoRecipientsButton" class="btn">Send Connection Info</button>
+    <div class="control-group">
+        <div class="controls">
+            <button id="SendConnectionInfoRecipientsButton" class="btn">Send Connection Info</button>
+            <button id="PreviewSendConnectionInfoEmailButton" class="btn">Preview</button>
+            <button class="btn btn-small btn-info" id="EmailConnectionInfo">Email Connection Info</button>
+        </div>
+        <div class="controls">
+            <div id="emailPanel" class="initialHide">
+                <input id="EmailAddressesInput" class="input input-xxlarge" type="text" placeholder="Enter email address/es. Separate them with commas or semi-colons." />
+                <button id="dispatchButton" class="btn btn-small" style="vertical-align: top; margin-left: 5px">Send</button>
+            </div>
+        </div>
     </div>
+    <div id="EmailInputAndFireEventButton"></div>
 </div>
-<div id="EmailInputAndFireEventButton"></div>
+@Html.Partial("~/Views/Admin/Home/Modals/_SendShippedPreviewModal.cshtml")

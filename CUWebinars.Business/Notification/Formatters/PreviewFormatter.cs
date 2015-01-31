@@ -41,7 +41,7 @@ namespace CUWebinars.Business.Notification.Formatters
 
         public string FormatToString<T>(T objectOfMessage, string templateName)
         {
-            LoadBodyTemplate("PreviewShippedOrder");
+            LoadBodyTemplate(templateName);
             return GetBody(objectOfMessage);
         }
 
