@@ -172,6 +172,7 @@
     <Compile Include="Models\WebUserDiscountXref.cs" />
     <Compile Include="Notification\Email\AzureCuwWebJobSmtpMessageDelivery.cs" />
     <Compile Include="Notification\Events\AdminEmailConnectionInfoEvent.cs" />
+    <Compile Include="Notification\Events\AdminEmailRecordingPostedEvent.cs" />
     <Compile Include="Notification\Events\AdminEmailSendShippedOrderEvent.cs" />
     <Compile Include="Notification\Events\OrderSubmittedAdditionalLocationEvent.cs" />
     <Compile Include="Notification\Events\AdminEmailEvent.cs" />
@@ -185,6 +186,7 @@
     <Compile Include="Notification\Formatters\Formatter.cs" />
     <Compile Include="Notification\Formatters\IFormatter.cs" />
     <Compile Include="Notification\Handlers\AdminEmailConnectionInfoHandler.cs" />
+    <Compile Include="Notification\Handlers\AdminEmailRecordingPostedHandler.cs" />
     <Compile Include="Notification\Handlers\OrderSubmittedAdditionalLocationHandler.cs" />
     <Compile Include="Notification\Handlers\OrderSubmittedHandler.cs" />
     <Compile Include="Notification\Handlers\AdminEmailSendShippedOrderHandler.cs" />

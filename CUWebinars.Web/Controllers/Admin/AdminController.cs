@@ -501,6 +501,11 @@ namespace CUWebinars.Web.Controllers.Admin
         public ActionResult PreviewShippedOrder(int id)
         {
             var order = _orderManagementService.GetOrderById(id);
+
+            if (ReferenceEquals(null, order))
+                return File("<html>fail</html>".GenerateStreamFromString(), HtmlMimeType);
+
+
             var formatter = new PreviewFormatter(new EnvironmentInformation { BaseUrl = HttpRuntime.AppDomainAppPath });
 
             return File(formatter.FormatToString(order, "PreviewShippedOrder").GenerateStreamFromString(), HtmlMimeType);
@@ -721,6 +726,45 @@ namespace CUWebinars.Web.Controllers.Admin
                     var firstRetrievedOrderForWebinar = _orderManagementService.GetOrdersForLiveNotifications(id.Value).FirstOrDefault();
 
                     if(emails.Contains(","))
+                        _orderManagementService.FireAdminEmailConnectionInfoHandler(firstRetrievedOrderForWebinar, emails.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
+                    else if (emails.Contains(";"))
+                        _orderManagementService.FireAdminEmailConnectionInfoHandler(firstRetrievedOrderForWebinar, emails.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
+                    else
+                        _orderManagementService.FireAdminEmailConnectionInfoHandler(firstRetrievedOrderForWebinar, new string[] { emails }); // this is where a single email is specified
+
+                    return Json(new
+                    {
+                        Result = WebUiConstants.Success,
+                        Msg = string.Format("<p>Your Order ID is {0}. Please check your email for connection information for the webinar.</p>", id)
+                    });
+                }
+                catch (Exception exception)
+                {
+                    ModelState.AddModelError(string.Empty, "There was a problem at the server. Please contact the administrator.");
+                    _logger.ErrorException("ConfirmOrder|ConfirmOrder failed ", exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                }
+                return this.ModelStateJson(ModelState);
+            }
+
+            return Json(new
+            {
+                Result = WebUiConstants.Fail,
+                Msg = "You need to select an Order from the DropDownList"
+            });
+        }
+
+        [System.Web.Mvc.HttpPost]
+        public ActionResult EmailRecordingPosted(int? id, string emails)
+        {
+            if (id.HasValue)
+            {
+                try
+                {
+                    //  id is a WebinarId
+                    var firstRetrievedOrderForWebinar = _orderManagementService.GetOrdersForRecordedNotifications(id.Value).FirstOrDefault();
+
+                    if (emails.Contains(","))
                         _orderManagementService.FireAdminEmailConnectionInfoHandler(firstRetrievedOrderForWebinar, emails.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
                     else if (emails.Contains(";"))
                         _orderManagementService.FireAdminEmailConnectionInfoHandler(firstRetrievedOrderForWebinar, emails.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));

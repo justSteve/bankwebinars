@@ -45,6 +45,7 @@ namespace CUWebinars.Business.Core
             var sendRecordingPostedHandlerLogger = new Log4NetLogger(typeof (SendRecordingPostedHandler));
             var emailOrderHandlerLogger = new Log4NetLogger(typeof(AdminEmailSendShippedOrderHandler));
             var emailConnectionInfoHandlerLogger = new Log4NetLogger(typeof(AdminEmailConnectionInfoHandler));
+            var emailRecordingPostedHandlerLogger = new Log4NetLogger(typeof(AdminEmailRecordingPostedHandler));
 
             config.AddEventHandler(new OrderSubmittedHandler(genericFormatter, notificationDelivery,
                 notificationOrderHandlerLogger));
@@ -60,6 +61,7 @@ namespace CUWebinars.Business.Core
                 sendRecordingPostedHandlerLogger));
             config.AddEventHandler(new AdminEmailSendShippedOrderHandler(genericFormatter, emailOrderHandlerLogger, notificationDelivery));
             config.AddEventHandler(new AdminEmailConnectionInfoHandler(genericFormatter, emailConnectionInfoHandlerLogger, notificationDelivery));
+            config.AddEventHandler(new AdminEmailRecordingPostedHandler(genericFormatter, emailRecordingPostedHandlerLogger, notificationDelivery));
 
             return config;
         }

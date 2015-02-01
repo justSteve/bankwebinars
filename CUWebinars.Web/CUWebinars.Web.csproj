@@ -374,11 +374,15 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\NavigationController.cs" />
+    <Compile Include="Controllers\StaticContentController.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Helpers\DomainHelpers.cs" />
     <Compile Include="Helpers\IAppHelper.cs" />
     <Compile Include="Helpers\SessionStartInfo.cs" />
     <Compile Include="Infrastructure\Attributes\MonitorAffiliateFilter.cs" />
+    <Compile Include="Infrastructure\ErrorResponse.cs" />
+    <Compile Include="Infrastructure\ErrorResponseCommand.cs" />
+    <Compile Include="Infrastructure\IErrorResponseCommand.cs" />
     <Compile Include="Models\AddClaimInputModel.cs" />
     <Compile Include="Models\DiscountModel.cs" />
     <Compile Include="Models\EditContactInfoModel.cs" />
@@ -731,6 +735,8 @@
     <Content Include="Views\Shared\EditorTemplates\DiscountDetails.cshtml" />
     <Content Include="Views\Admin\Home\Modals\_SendShippedPreviewModal.cshtml" />
     <Content Include="Views\Shared\Admin\_Last5Error.cshtml" />
+    <Content Include="Views\StaticContent\PageNotFound.cshtml" />
+    <Content Include="Views\StaticContent\ServerError.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Calendar\iCalFromCitrix.txt" />

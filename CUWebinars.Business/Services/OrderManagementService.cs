@@ -592,6 +592,19 @@ namespace CUWebinars.Business.Services
             Clear();
         }
 
+        public void FireAdminEmailRecordingPostedHandler(Order order, IEnumerable<string> recipients)
+        {
+            AddEvent(new AdminEmailRecordingPostedEvent<Order> { EventObject = order, Recipients = recipients });
+
+
+            foreach (var evt in GetEvents().OfType<AdminEmailRecordingPostedEvent<Order>>())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            Clear();
+        }
+
         public void FireOrderSubmittedAdditionalLocationEvent(Order order, string address)
         {
             _logger.Info("Adding Event for Order with Additional Location {0} - {1}", order.idOrder, address);

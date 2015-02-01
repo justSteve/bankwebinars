@@ -27,7 +27,7 @@ namespace CUWebinars.Business.Notification.Handlers
         {
             try
             {
-                var notificationMessage = _generalFormatter.Format(adminEmailConnectionInfoEvent.EventObject, "SendConnectionInfo");
+                var notificationMessage = _generalFormatter.Format(adminEmailConnectionInfoEvent.EventObject, "SendRecordingPosted");
 
                 notificationMessage.To = adminEmailConnectionInfoEvent.Recipients.First();
 
