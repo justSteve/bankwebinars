@@ -39,6 +39,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 AdditionalLocationsString = migrateOrderModel.AdditionalLocationsString,
                 Email = email,
+                Name = "c/o " + migrateOrderModel.FirstName + " " + migrateOrderModel.LastName,
                 RegistrationType = migrateOrderModel.idRegType,
                 Discount = migrateOrderModel.DiscountCode,
                 OrderDate =  migrateOrderModel.OrderDate,

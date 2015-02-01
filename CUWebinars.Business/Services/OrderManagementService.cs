@@ -856,7 +856,7 @@ namespace CUWebinars.Business.Services
             }
             else
             {
-                regKeyResponse = CreateRegistrantKey("CareOf",//DomainConstants.CareOfString,
+                regKeyResponse = CreateRegistrantKey("c/o " + order.FirstName,//DomainConstants.CareOfString,
                     order.LastName, additionalLocation.Email, row.Webinar.idWebinar, row.Webinar.WebinarKey);
             }
 
