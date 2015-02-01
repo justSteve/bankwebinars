@@ -566,12 +566,38 @@ namespace CUWebinars.Business.Services
             }
         }
 
-        public void FireEmailSendShippedOrderEvent(Order order, IEnumerable<string> recipients)
+        public void FireAdminEmailSendShippedOrderEvent(Order order, IEnumerable<string> recipients)
         {
-            AddEvent(new EmailSendShippedOrderEvent<Order> { EventObject = order, Recipients = recipients });
+            AddEvent(new AdminEmailSendShippedOrderEvent<Order> { EventObject = order, Recipients = recipients });
 
 
-            foreach (var evt in GetEvents().OfType<EmailSendShippedOrderEvent<Order>>())
+            foreach (var evt in GetEvents().OfType<AdminEmailSendShippedOrderEvent<Order>>())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            Clear();
+        }
+
+        public void FireAdminEmailConnectionInfoHandler(Order order, IEnumerable<string> recipients)
+        {
+            AddEvent(new AdminEmailConnectionInfoEvent<Order> { EventObject = order, Recipients = recipients });
+
+
+            foreach (var evt in GetEvents().OfType<AdminEmailConnectionInfoEvent<Order>>())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            Clear();
+        }
+
+        public void FireAdminEmailRecordingPostedHandler(Order order, IEnumerable<string> recipients)
+        {
+            AddEvent(new AdminEmailRecordingPostedEvent<Order> { EventObject = order, Recipients = recipients });
+
+
+            foreach (var evt in GetEvents().OfType<AdminEmailRecordingPostedEvent<Order>>())
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }

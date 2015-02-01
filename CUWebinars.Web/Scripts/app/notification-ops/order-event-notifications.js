@@ -283,7 +283,6 @@ $(function () {
                     modalPreview.modal();
 
                 });
-
             });
 
             $('#EmailOrderButton').on('click', function (e) {
@@ -393,10 +392,12 @@ $(function () {
     $('#GetSendConnectionInfoEventHtmlButton').on('click', function (eventArgs) {
         
         $('#InputFormFields').empty().load(sendConnectionInfoUrl, function () {
-        
-            $('#GetSendConnectionInfoRecipientsButton').on('click', function (eventArgs) {
+
+            var webinarsDropdownList = $('#SelectedWebinarId');
+
+            $('#SendConnectionInfoRecipientsButton').on('click', function (eventArgs) {
                 
-                var payload = $('#SelectedWebinarId').val();
+                var payload = webinarsDropdownList.val();
 
                 $.ajax({
                     type: 'POST',
@@ -427,19 +428,120 @@ $(function () {
                     $('#WaitIndicator').hide();
                 });;
             });
+
+            $('#PreviewSendConnectionInfoEmailButton').on('click', function (e) {
+
+                e.preventDefault();
+
+                var resultLabel = $('#resultLabel');
+                if (resultLabel.length > 0)
+                    resultLabel.remove();
+
+                var webinar = webinarsDropdownList.val();
+
+                if (!webinar) {
+                    $('#EmailConnectionInfo').after('<span id="resultLabel" class="label label-important" style="margin-left:5px"><i class="icon icon-exclamation-sign"></i>&nbsp;You need to select an Order from the Dropdown List.</span>');
+                    return;
+                }
+
+
+                $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+
+                var url = '/Admin/PreviewConnectionInfo/' + webinar;
+
+                var modalPreview = $('#previewModal'),
+                    modalFormOptionsOnPageLoad = {
+                        keyboard: true,
+                        backdrop: 'static',
+                        show: true,
+                    };
+
+                $.get(url, function (data) {
+                    $('#emailContent').html(data);
+                    $('#loadingSpinner').remove();
+
+                    modalPreview.modal(modalFormOptionsOnPageLoad);
+                    modalPreview.modal();
+
+                });
+            });
+
+            $('#EmailConnectionInfo').on('click', function (e) {
+
+                e.preventDefault();
+
+                var resultLabel = $('#resultLabel');
+                if (resultLabel.length > 0)
+                    resultLabel.remove();
+
+                var webinar = webinarsDropdownList.val();
+
+                if (!webinar) {
+                    $('#EmailConnectionInfo').after('<span id="resultLabel" class="label label-important" style="margin-left:5px"><i class="icon icon-exclamation-sign"></i>&nbsp;You need to select an Order from the Dropdown List.</span>');
+                    return;
+                }
+
+                $('#emailPanel').fadeIn();
+
+                $('#dispatchButton').on('click', function (e) {
+
+                    e.preventDefault();
+
+                    var self = this;
+                    var payload = { emails: $('#EmailAddressesInput').val() };
+
+                    $.ajax({
+                        type: 'POST',
+                        contentType: constants.JsonContentType,
+                        cache: false,
+                        url: '/Admin/EmailOrderConnectionInfo/' + webinar,
+                        dataType: constants.JsonDataType,
+                        data: JSON.stringify(payload),
+                        beforeSend: function () {
+                            $(self).prepend('<i id="emailSendingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+                            $(self).attr('disabled', 'disabled');
+                            var resultLabel = $('#resultLabel');
+                            var errorText = $('#errorText');
+                            if (resultLabel.length > 0)
+                                resultLabel.remove();
+                            if (errorText.length > 0)
+                                errorText.remove();
+                        }
+                    }).done(function (data) {
+                        if (data.Result === 'Success') {
+                            $(self).after('<span id="resultLabel" class="label label-success" style="margin-left:5px">&nbsp;Email sent</span>');
+                        } else if (data.Result === 'Fail') {
+                            $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;' + data.Msg + ' </span>');
+                        } else {
+                            $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                        }
+
+                        $('#emailSendingSpinner').remove();
+                        $(self).removeAttr('disabled');
+
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        $('#emailSendingSpinner').remove();
+                        $(self).removeAttr('disabled');
+
+                        $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                    });
+                });
+            });
+
         });
     });
 
     $('#GetSendRecordingPostedEventHtmlButton').on('click', function (eventArgs) {
         eventArgs.preventDefault();
         $('#InputFormFields').empty();
-
         
         $('#InputFormFields').load(sendRecordingPostedUrl, function () {
+
+            var webinarsDropdownList = $('#SelectedWebinarId');
             
-            $('#GetSendRecordingPostedRecipientsButton').on('click', function (eventArgs) {
+            $('#SendRecordingPostedButton').on('click', function (eventArgs) {
                 
-                var payload = $('#SelectedWebinarId').val();
+                var payload = webinarsDropdownList.val();
 
                 $.ajax({
                     type: 'POST',
@@ -469,6 +571,107 @@ $(function () {
                     $('#WaitIndicator').hide();
                 });
             });
+
+            $('#PreviewSendRecordingPostedButton').on('click', function (e) {
+
+                e.preventDefault();
+
+                var resultLabel = $('#resultLabel');
+                if (resultLabel.length > 0)
+                    resultLabel.remove();
+
+                var webinar = webinarsDropdownList.val();
+
+                if (!webinar) {
+                    $('#EmailPostedRecording').after('<span id="resultLabel" class="label label-important" style="margin-left:5px"><i class="icon icon-exclamation-sign"></i>&nbsp;You need to select an Order from the Dropdown List.</span>');
+                    return;
+                }
+
+
+                $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+
+                var url = '/Admin/PreviewRecordingPosted/' + webinar;
+
+                var modalPreview = $('#previewModal'),
+                    modalFormOptionsOnPageLoad = {
+                        keyboard: true,
+                        backdrop: 'static',
+                        show: true,
+                    };
+
+                $.get(url, function (data) {
+                    $('#emailContent').html(data);
+                    $('#loadingSpinner').remove();
+
+                    modalPreview.modal(modalFormOptionsOnPageLoad);
+                    modalPreview.modal();
+
+                });
+            });
+
+            $('#EmailPostedRecording').on('click', function (e) {
+
+                e.preventDefault();
+
+                var resultLabel = $('#resultLabel');
+                if (resultLabel.length > 0)
+                    resultLabel.remove();
+
+                var webinar = webinarsDropdownList.val();
+
+                if (!webinar) {
+                    $('#EmailPostedRecording').after('<span id="resultLabel" class="label label-important" style="margin-left:5px"><i class="icon icon-exclamation-sign"></i>&nbsp;You need to select an Order from the Dropdown List.</span>');
+                    return;
+                }
+
+                $('#emailPanel').fadeIn();
+
+                $('#dispatchButton').on('click', function (e) {
+
+                    e.preventDefault();
+
+                    var self = this;
+                    var payload = { emails: $('#EmailAddressesInput').val() };
+
+                    $.ajax({
+                        type: 'POST',
+                        contentType: constants.JsonContentType,
+                        cache: false,
+                        url: '/Admin/EmailRecordingPosted/' + webinar,
+                        dataType: constants.JsonDataType,
+                        data: JSON.stringify(payload),
+                        beforeSend: function () {
+                            $(self).prepend('<i id="emailSendingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+                            $(self).attr('disabled', 'disabled');
+                            var resultLabel = $('#resultLabel');
+                            var errorText = $('#errorText');
+                            if (resultLabel.length > 0)
+                                resultLabel.remove();
+                            if (errorText.length > 0)
+                                errorText.remove();
+                        }
+                    }).done(function (data) {
+                        if (data.Result === 'Success') {
+                            $(self).after('<span id="resultLabel" class="label label-success" style="margin-left:5px">&nbsp;Email sent</span>');
+                        } else if (data.Result === 'Fail') {
+                            $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;' + data.Msg + ' </span>');
+                        } else {
+                            $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                        }
+
+                        $('#emailSendingSpinner').remove();
+                        $(self).removeAttr('disabled');
+
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        $('#emailSendingSpinner').remove();
+                        $(self).removeAttr('disabled');
+
+                        $(self).after('<span id="errorText" class="field-validation-error"><i class="icon icon-exclamation-sign"></i>&nbsp;Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                    });
+                });
+            });
+
+
         });
     });
 

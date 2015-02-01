@@ -1,5 +1,6 @@
 ﻿using System.Web.Mvc;
 using System.Web.Routing;
+using CUWebinars.Web.Helpers;
 
 namespace CUWebinars.Web.App_Start
 {
@@ -40,7 +41,13 @@ namespace CUWebinars.Web.App_Start
                 url: "{controller}/{action}/{email}/{password}"
             );
 
-            
+            //  Catch-all, for any routes which do not exist.
+            routes.MapRoute(
+                "404PageNotFound",
+                "{*url}",
+                new { controller = WebUiConstants.StaticContent, action = WebUiConstants.PageNotFound }
+                );
+
             //in the legacy system this route will catch:
             // bankwebinars.com/1522
             // and redirect to the webinarController.ConnInfo

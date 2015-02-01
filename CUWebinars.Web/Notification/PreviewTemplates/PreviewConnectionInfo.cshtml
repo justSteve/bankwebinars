@@ -14,51 +14,57 @@
     Connection Information for @thisWebinar.Title
 </title>
 
+<div style="font-family: Verdana, Arial, Helvetica, sans-serif">
+    @{
+        var handoutRepo = "http://ondemand.cuwebinars.com";
+        var row = from orderRow in Model.OrderRows
+                  where orderRow.RowStatus == OrderRowStatus.Active
+                  select orderRow;
+        var webinar = row.Single().Webinar;
+        var myRow = row.Single();
 
-@{
-    var handoutRepo = "http://ondemand.cuwebinars.com";
-    var row = from orderRow in Model.OrderRows
-              where orderRow.RowStatus == OrderRowStatus.Active
-              select orderRow;
-    var webinar = row.Single().Webinar;
-    var myRow = row.Single();
+        var joinURL = myRow.JoinURL;
+        var phone = "TBA";
+        var code = "TBA";
 
-    var joinURL = myRow.JoinURL;
-    var phone = "TBA";
-    var code = "TBA";
+        if (joinURL == null)
+        {
+            joinURL = webinar.CitrixRegisterUrl;
+        }
 
-    if (joinURL == null)
-    {
-        joinURL = "https://www2.gotomeeting.com/join/" + webinar.WebinarKey;
+        if (myRow.RegistrationType.ShowLiveNotifications == "No")
+        {
+            joinURL = "This is a Recorded Only order. Please call 800-831-0678 ext 3 if you wish to upgrade.";
+        }
+
+        if (webinar.AccessCodeAttendee != null)
+        {
+            code = webinar.AccessCodeAttendee;
+        }
+
+        string DateTimeString = TtsTemplateHelperObject.FormatTimeWithDuration(webinar.Date, Model.WebUser.timeZone, true, webinar.Duration);
+        string Tenant = TtsTemplateHelperObject.Tenant();
+        string TenantEmail = TtsTemplateHelperObject.TenantEmail();
+        string TenantDomain = TtsTemplateHelperObject.TenantDomain();
+        string TenantURL = TtsTemplateHelperObject.TenantURL();
+        string TenantLogo = TtsTemplateHelperObject.TenantLogo();
+        string TenantPrefix = TtsTemplateHelperObject.TenantPrefix();
+        string TenantCom = TenantDomain + ".com";
+
+        if (webinar.AccessPhone != null)
+        {
+            phone = webinar.AccessPhone;
+        }
+        var displayOrderNumber = Model.idOrder;
+
+        if (Model.idOrderLegacy != 0)
+        {
+            displayOrderNumber = Model.idOrderLegacy;
+        }
+        var HeaderText = "Your Connection Information";
+        var BannerText = "Order Number: " + TenantPrefix + displayOrderNumber + "<br />Type: " + myRow.RegistrationType.OptionLabel;
     }
-    if (webinar.AccessCodeAttendee != null)
-    {
-        code = webinar.AccessCodeAttendee;
-    }
-
-    string DateTimeString = TtsTemplateHelperObject.FormatTimeWithDuration(webinar.Date, Model.WebUser.timeZone, true, webinar.Duration);
-    string Tenant = TtsTemplateHelperObject.Tenant();
-    string TenantEmail = TtsTemplateHelperObject.TenantEmail();
-    string TenantDomain = TtsTemplateHelperObject.TenantDomain();
-    string TenantURL = TtsTemplateHelperObject.TenantURL();
-    string TenantLogo = TtsTemplateHelperObject.TenantLogo();
-    string TenantPrefix = TtsTemplateHelperObject.TenantPrefix();
-    string TenantCom = TenantDomain + ".com";
-
-    if (webinar.AccessPhone != null)
-    {
-        phone = webinar.AccessPhone;
-    }
-    var displayOrderNumber = Model.idOrder;
-    
-    if (Model.idOrderLegacy != 0)
-    {
-        displayOrderNumber = Model.idOrderLegacy;
-    }
-    var HeaderText = "Your Connection Information";
-    var BannerText = "Order Number: " + TenantPrefix + displayOrderNumber + "<br />Type: " + myRow.RegistrationType.OptionLabel;
-
-    <div style="font-family: Verdana, Arial, Helvetica, sans-serif">
+    @{
         <table width="660px" border="0" cellspacing="0" cellpadding="0">
             <tbody>
                 @*<tr style="background-color: #344a58">
@@ -186,11 +192,11 @@
                                                                                         </span>
                                                                                     </td>
                                                                                     <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
-                                                                                        <span style="color: #000000; vert-align: top; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                                                                        <p style="color: #000000; vert-align: top; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
                                                                                             @{
                                                                                                 if (webinar.WebinarFiles.Count == 0)
                                                                                                 {
-                                                                                                    <span>Opps...still waiting on that. Will be provided in followup email.</span>
+                                                                                                    <span>Event materials not yet published.</span>
                                                                                                 }
                                                                                                 else
                                                                                                 {
@@ -200,8 +206,7 @@
                                                                                                     }
                                                                                                 }
                                                                                             }
-                                                                                            <br /><br />
-                                                                                        </span>
+                                                                                        </p>
                                                                                     </td>
                                                                                 </tr>
 
@@ -370,7 +375,7 @@
                                 <tr>
                                     <td align="right" style="padding-top: 10px;">
                                         <div style="color: rgb(255, 255, 255); font-size: 11px;">
-                                            <p style="width: 274px; height: 59px;" title="footer" vspace="0" width="274" >Tel: 800-831-0678<br/>Fax: 800-831-3776</p>
+                                            <p style="width: 274px; height: 59px;" title="footer" vspace="0" width="274">Tel: 800-831-0678<br />Fax: 800-831-3776</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -385,6 +390,5 @@
                 </tr>
             </tbody>
         </table>
-
-    </div>
-}
+    }
+</div>

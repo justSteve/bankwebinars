@@ -374,11 +374,15 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\NavigationController.cs" />
+    <Compile Include="Controllers\StaticContentController.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Helpers\DomainHelpers.cs" />
     <Compile Include="Helpers\IAppHelper.cs" />
     <Compile Include="Helpers\SessionStartInfo.cs" />
     <Compile Include="Infrastructure\Attributes\MonitorAffiliateFilter.cs" />
+    <Compile Include="Infrastructure\ErrorResponse.cs" />
+    <Compile Include="Infrastructure\ErrorResponseCommand.cs" />
+    <Compile Include="Infrastructure\IErrorResponseCommand.cs" />
     <Compile Include="Models\AddClaimInputModel.cs" />
     <Compile Include="Models\DiscountModel.cs" />
     <Compile Include="Models\EditContactInfoModel.cs" />
@@ -587,6 +591,7 @@
     </None>
     <Content Include="Notification\PreviewTemplates\PreviewConnectionInfo.cshtml" />
     <Content Include="Notification\PreviewTemplates\PreviewShippedOrder.cshtml" />
+    <Content Include="Notification\PreviewTemplates\PreviewRecordingPosted.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars31 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars31 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars31.pubxml" />
@@ -729,6 +734,8 @@
     <Content Include="Views\Cart\Partials\_DisplayAppliedDiscount.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DiscountDetails.cshtml" />
     <Content Include="Views\Shared\Admin\_Last5Error.cshtml" />
+    <Content Include="Views\StaticContent\PageNotFound.cshtml" />
+    <Content Include="Views\StaticContent\ServerError.cshtml" />
     <Content Include="Views\Shared\Partials\_ShowClickToJoinLink.cshtml" />
     <Content Include="Views\Shared\Partials\_ShareEventInfo.cshtml" />
   </ItemGroup>

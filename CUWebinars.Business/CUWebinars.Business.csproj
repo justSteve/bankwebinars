@@ -171,8 +171,11 @@
     <Compile Include="Models\Mapping\WebUserDiscountXrefMap.cs" />
     <Compile Include="Models\WebUserDiscountXref.cs" />
     <Compile Include="Notification\Email\AzureCuwWebJobSmtpMessageDelivery.cs" />
+    <Compile Include="Notification\Events\AdminEmailConnectionInfoEvent.cs" />
+    <Compile Include="Notification\Events\AdminEmailRecordingPostedEvent.cs" />
+    <Compile Include="Notification\Events\AdminEmailSendShippedOrderEvent.cs" />
     <Compile Include="Notification\Events\OrderSubmittedAdditionalLocationEvent.cs" />
-    <Compile Include="Notification\Events\EmailOrderEvent.cs" />
+    <Compile Include="Notification\Events\AdminEmailEvent.cs" />
     <Compile Include="Notification\Events\PreviewConnectionInfoEvent.cs" />
     <Compile Include="Notification\Events\SendConnectionInfoEvent.cs" />
     <Compile Include="Notification\Events\SendRecordingPostedEvent.cs" />
@@ -182,9 +185,11 @@
     <Compile Include="Notification\Formatters\PreviewFormatter.cs" />
     <Compile Include="Notification\Formatters\Formatter.cs" />
     <Compile Include="Notification\Formatters\IFormatter.cs" />
+    <Compile Include="Notification\Handlers\AdminEmailConnectionInfoHandler.cs" />
+    <Compile Include="Notification\Handlers\AdminEmailRecordingPostedHandler.cs" />
     <Compile Include="Notification\Handlers\OrderSubmittedAdditionalLocationHandler.cs" />
     <Compile Include="Notification\Handlers\OrderSubmittedHandler.cs" />
-    <Compile Include="Notification\Handlers\EmailOrderHandler.cs" />
+    <Compile Include="Notification\Handlers\AdminEmailSendShippedOrderHandler.cs" />
     <Compile Include="Notification\Handlers\SendConnectionInfoHandler.cs" />
     <Compile Include="Notification\Handlers\SendRecordingPostedHandler.cs" />
     <Compile Include="Notification\Handlers\SendReminderHandler.cs" />

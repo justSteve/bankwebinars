@@ -2,7 +2,9 @@
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Web.App_Start;
+using CUWebinars.Web.Controllers;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Infrastructure;
 using CUWebinars.Web.Services;
 using log4net;
 using System;
@@ -24,6 +26,7 @@ namespace CUWebinars.Web
 
     public class MvcApplication : HttpApplication
     {
+        readonly IErrorResponseCommand errorResponseCommand = new ErrorResponseCommand();
         public static ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private static TTSWebinarsContext ctx = new TTSWebinarsContext();
         private static readonly IAffiliateRepository affiliateRepository = new AffiliateRepository(ctx);
@@ -57,37 +60,62 @@ namespace CUWebinars.Web
             AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.Email;
         }
         //https://www.simple-talk.com/dotnet/asp.net/handling-errors-effectively-in-asp.net-mvc/
-        //protected void Application_Error(object sender, EventArgs e)
-        //{
-        //    var ex = Server.GetLastError().GetBaseException();
+        protected void Application_Error(object sender, EventArgs e)
+        {
+            //  Variables related to error and context.
+            var httpContext = ((MvcApplication)sender).Context;
+            Exception exception = Server.GetLastError();
+            var httpException = exception as HttpException;
 
-        //    var routeData = new RouteData();
-        //    if (ex.GetType() == typeof(HttpException))
-        //    {
-        //        var httpException = (HttpException)ex;
+            //  Variables for the error controller and action.
+            var controller = new StaticContentController();
 
-        //        switch (httpException.GetHttpCode())
-        //        {
-        //            case 404:
-        //                routeData.Values.Add("action", "PageNotFound");
-        //                break;
-        //            default:
-        //                routeData.Values.Add("action", "GeneralError");
-        //                break;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        routeData.Values.Add("action", "GeneralError");
-        //    }
+            var newRouteData = new RouteData();
+            var errorResponse = new ErrorResponse
+            {
+                Controller = controller,
+                HttpContext = httpContext,
+                ExceptionInstance = exception,
+                NewrouteData = newRouteData
+            };
 
-        //    routeData.Values.Add("controller", "Error");
-        //    routeData.Values.Add("error", ex);
 
-        //    IController errorController = new ErrorController();
-        //    errorController.Execute(new RequestContext(new HttpContextWrapper(Context), routeData));
+            newRouteData.Values[WebUiConstants.Controller] = WebUiConstants.StaticContent;
 
-        //}
+            Response.TrySkipIisCustomErrors = true;
+
+
+            if (httpException != null)
+            {
+                switch (httpException.GetHttpCode())
+                {
+                    case 404:
+                        Response.StatusCode = 404;
+                        newRouteData.Values[WebUiConstants.Action] = WebUiConstants.PageNotFound;
+                        errorResponseCommand.Execute(errorResponse);
+                        break;
+
+                    case 500:
+                        Response.StatusCode = 500;
+                        newRouteData.Values[WebUiConstants.Action] = WebUiConstants.ServerErrorPage;
+                        errorResponseCommand.Execute(errorResponse);
+                        break;
+
+                    default:
+                        Response.StatusCode = 500;
+                        newRouteData.Values[WebUiConstants.Action] = WebUiConstants.ServerErrorPage;
+                        errorResponseCommand.Execute(errorResponse);
+                        break;
+                }
+            }
+            else
+            {
+                Response.StatusCode = 500;
+                newRouteData.Values[WebUiConstants.Action] = WebUiConstants.ServerErrorPage;
+                errorResponseCommand.Execute(errorResponse);
+            }
+
+        }
 
 
         private void Session_Start(object sender, EventArgs e)

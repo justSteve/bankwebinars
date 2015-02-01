@@ -29,7 +29,7 @@ using System.Web.Security;
 namespace CUWebinars.Web.Controllers
 {
     [ElmahHandleError]
-    [System.Web.Mvc.Authorize]
+    //[System.Web.Mvc.Authorize]
     public class AccountController : Controller
     {
         private const string ManageActionName = "Manage";
