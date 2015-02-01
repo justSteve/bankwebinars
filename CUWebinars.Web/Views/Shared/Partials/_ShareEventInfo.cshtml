@@ -1,0 +1,26 @@
+﻿@using System.Configuration
+
+
+
+<script language="javascript" type="text/javascript">
+    function openJWindow() {
+        window.open('@url' + $("#getEmail").val(), 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');
+    }
+</script>
+
+<section>
+    <p style="font-size: small;">
+        Forwards this page to the submitted email.<br />
+        @*<form action="/account/shareInfo" method="post">*@
+        <span class="input-append">
+            <input type="email" id="getEmail" placeholder="Email Address" class="span6" name="email" />
+            <button onclick="javascript: openJWindow();" class="btn btn-primary">Send</button>
+
+        </span>
+        @*</form>*@
+
+
+    </p>
+</section>
+
+

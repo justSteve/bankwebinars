@@ -2,7 +2,9 @@
 @model  OrderHasAdditionalLocationsViewModel
 
 @{
-    var nfi = new CultureInfo(DomainConstants.UsLocale, false).NumberFormat;
+    //var nfi = new CultureInfo(DomainConstants.UsLocale, false).NumberFormat;
+
+    NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
 
     if (Model.AdditionalLocations != null)
     {
@@ -12,11 +14,14 @@
         {
             if (numberOfAdditionalLocations == 1)
             {
-                <span id="addlocSpiel" class="text-info">The registration includes a single additional location for <span class="muted">@Model.AdditionalLocations.First().Email</span> costing @Model.AdditionalLocations.First().Price.ToString("C", nfi). </span>
+                <span id="addlocSpiel">The registration includes a single additional location for <span class="muted">@Model.AdditionalLocations.First().Email</span>. This address will be notified with an individualized <i>Click-To-Join</i> link. </span>
             }
             else
             {
-                <span id="addlocSpiel" class="text-info">The registration includes @numberOfAdditionalLocations additional locations (total added cost is @Model.OptionsCost.ToString("C", nfi)) for @Html.Raw(@Model.Addresses)</span><text>.</text>
+                <span id="addlocSpiel">
+                    The registration includes @numberOfAdditionalLocations additional locations for @Html.Raw(@Model.Addresses)<text>.</text>
+                    Each address will be notified with an individualized <i>Click-To-Join</i> link.
+                </span>
             }
         }
     }

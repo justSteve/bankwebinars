@@ -34,36 +34,49 @@
                 <div class=" container-fluid">
                     @{
                 var row = recorded.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-                var upOnDemandCost = 40;
-                var upPremium = 100;
+                var upOnDemandCost = 100;
+                var upPremium = 140;
+
+                if (row.Webinar.Duration == 1)
+                {
+                    upOnDemandCost = 70;
+                    upPremium = 100;
+                }
 
                 var expiresDate = row.Webinar.Date.AddMonths(6);
                 var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
+                var accessPhrase = "will be accessible ";
 
+                if (row.RegistrationType.ShowRecordingNotifications == "No")
+                {
+                    accessPhrase = "would be accessible (with upgrade) ";
+                }
 
                     }
                     <h4 class="span12" id="recorded-@row.idWebinar">@row.Webinar.Title</h4>
                     <div class="row-fluid">
-                        <div class="span6">
+                        <div class="span8">
                             <div style="font-size: small;">
-                                This event was recorded on @Html.DisplayDate(row.Webinar.Date) and will be accessible until @Html.DisplayDate(expiresDate)
+                                This event was recorded on @Html.DisplayDate(row.Webinar.Date) and @accessPhrase until @Html.DisplayDate(expiresDate)
                                 - @remainingDays more days.
                                 <br />
-                                @if (row.ShipmentDate.HasValue)
+                                @if (row.RegistrationType.ShowRecordingNotifications == "No")
                                 {
-                                    <text>This order shipped on:<b>@Html.DisplayDate(row.ShipmentDate.Value)</b></text>
-                                }
-                                <i>Order ID:</i> @globalConfig.TenantPrefix@row.Order.idOrder<br />
-                                <i>Date Ordered:</i> @row.Order.OrderDate.ToShortDateString()
+                                    <p style="font-size: small;">
+                                        <span class="btn btn-success btn-mini" id="upgradeRegistration_@row.idOrder">Upgrade</span> this registration with an <i>OnDemand Recording package</i> for @upOnDemandCost.ToString("C", nfi) or our <i>Premium package</i> for @upPremium.ToString("C", nfi)!<br />
+                                    </p>
+                                }       
                             </div>
 
                         </div>
-                        <div style="font-size: small; " class=" span6">
+                        <div style="font-size: small; " class="well well-small span4">
+                            <i>Order ID:</i> @globalConfig.TenantPrefix@row.Order.idOrder<br />
+                            <i>Date Ordered:</i> @row.Order.OrderDate.ToShortDateString()<br />
                             <i>Type of Attendance:</i> @row.RegistrationType.OptionLabel<br />
-                            @{
-                                var addLocModel = new OrderHasAdditionalLocationsViewModel { };
-                                Html.RenderPartial("Partials/OrderHasAdditionalLocations", addLocModel);
-                            }<br />
+                            @if (row.ShipmentDate.HasValue)
+                            {
+                                <text>This order shipped on:<b>@Html.DisplayDate(row.ShipmentDate.Value)</b></text>
+                            }
                             <i>Total Cost:</i> @row.Order.Total.ToString("C", nfi)
                         </div>
                     </div>
@@ -98,14 +111,6 @@
                                     </div>
                                 }
 
-                            </div>
-                        }
-                        else
-                        {
-                            <div>
-                                <p style="font-size: small;">
-                                    <span class="btn btn-success btn-mini" id="upgradeRegistration_@row.idOrder">Upgrade</span> this registration with an <i>OnDemand Recording package</i> for @upOnDemandCost.ToString("C", nfi) or our <i>Premium package</i> for @upPremium.ToString("C", nfi)!<br />
-                                </p>
                             </div>
                         }
                         @if (row.Webinar.Status == WebinarStatus.Recorded || row.Webinar.Status == WebinarStatus.Archived)

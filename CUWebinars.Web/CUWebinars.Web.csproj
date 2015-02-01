@@ -729,6 +729,8 @@
     <Content Include="Views\Cart\Partials\_DisplayAppliedDiscount.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DiscountDetails.cshtml" />
     <Content Include="Views\Shared\Admin\_Last5Error.cshtml" />
+    <Content Include="Views\Shared\Partials\_ShowClickToJoinLink.cshtml" />
+    <Content Include="Views\Shared\Partials\_ShareEventInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Calendar\iCalFromCitrix.txt" />
