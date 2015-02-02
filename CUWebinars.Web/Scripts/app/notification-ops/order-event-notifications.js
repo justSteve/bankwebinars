@@ -48,6 +48,8 @@ $(function () {
 
                 var orderId = $.trim($('#OrderId').val());
 
+                $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+
                 $.ajax({
                     type: 'POST',
                     contentType: constants.JsonContentType,
@@ -69,7 +71,7 @@ $(function () {
                 }).fail(function () {
 
                 }).always(function () {
-                    $('#WaitIndicator').hide();
+                    $('#loadingSpinner').remove();
                 });
             });
 
@@ -87,6 +89,8 @@ $(function () {
                 labelCheckRemove();
 
                 var orderId = $.trim($('#OrderId').val());
+
+                $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
 
                 $.ajax({
                     type: 'POST',
@@ -110,7 +114,7 @@ $(function () {
                 }).fail(function() {
                     
                 }).always(function() {
-                    $('#WaitIndicator').hide();
+                    $('#loadingSpinner').remove();
                 });
             });
         });
@@ -219,6 +223,8 @@ $(function () {
                 if (!payload)
                     $('#EmailOrderButton').after('<span id="resultLabel" class="label label-success" style="margin-left:5px">&nbsp;Email sent</span>');
 
+                $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+
                 $.ajax({
                     type: 'POST',
                     contentType: constants.JsonContentType,
@@ -227,7 +233,7 @@ $(function () {
                     dataType: constants.JsonDataType,
                     data: JSON.stringify({ orderId: payload }),
                     beforeSend: function () {
-                        $('#WaitIndicator').show();
+                        
                     }
                 }).done(function (result) {
 
@@ -242,7 +248,8 @@ $(function () {
                     labelCheckRemove();
                     $('#InputFormFields').append(failedScreenMessage);
                 }).always(function () {
-                    $('#WaitIndicator').hide();
+                    $('#loadingSpinner').remove();
+
                 });;
             });
 
@@ -360,6 +367,9 @@ $(function () {
                 
                 var payload = $('#SelectedWebinarId').val();
 
+                $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+
+
                 $.ajax({
                     type: 'POST',
                     contentType: constants.JsonContentType,
@@ -383,7 +393,7 @@ $(function () {
                     labelCheckRemove();
                     $('#InputFormFields').append(failedScreenMessage);
                 }).always(function () {
-                    $('#WaitIndicator').hide();
+                    $('#loadingSpinner').remove();
                 });;
             });
         });
@@ -398,6 +408,8 @@ $(function () {
             $('#SendConnectionInfoRecipientsButton').on('click', function (eventArgs) {
                 
                 var payload = webinarsDropdownList.val();
+
+                $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
 
                 $.ajax({
                     type: 'POST',
@@ -425,7 +437,7 @@ $(function () {
 
                     $('#InputFormFields').append(failedScreenMessage);
                 }).always(function () {
-                    $('#WaitIndicator').hide();
+                    $('#loadingSpinner').remove();
                 });;
             });
 
@@ -543,6 +555,8 @@ $(function () {
                 
                 var payload = webinarsDropdownList.val();
 
+                $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+
                 $.ajax({
                     type: 'POST',
                     contentType: constants.JsonContentType,
@@ -568,7 +582,7 @@ $(function () {
 
                     $('#InputFormFields').append(failedScreenMessage);
                 }).always(function () {
-                    $('#WaitIndicator').hide();
+                    $('#loadingSpinner').hide();
                 });
             });
 

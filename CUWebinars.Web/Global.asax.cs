@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Core;
+﻿using System.Configuration;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Web.App_Start;
@@ -28,10 +29,6 @@ namespace CUWebinars.Web
     {
         readonly IErrorResponseCommand errorResponseCommand = new ErrorResponseCommand();
         public static ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private static TTSWebinarsContext ctx = new TTSWebinarsContext();
-        private static readonly IAffiliateRepository affiliateRepository = new AffiliateRepository(ctx);
-        private static readonly IWebinarRepository _reposWebinars = new WebinarRepository(ctx);
-        private static readonly IInstitutionRepository institutionRepository = new InstitutionRepository(ctx);
         private static readonly IStateService StateService = new StateService();
 
         const string HtmlBreak = "<br />";
@@ -70,7 +67,9 @@ namespace CUWebinars.Web
             //  Variables for the error controller and action.
             var controller = new StaticContentController();
 
-            var newRouteData = new RouteData();
+            // this will hold data about the new route to the custom error page
+            var newRouteData = new RouteData(); 
+
             var errorResponse = new ErrorResponse
             {
                 Controller = controller,
@@ -82,8 +81,11 @@ namespace CUWebinars.Web
 
             newRouteData.Values[WebUiConstants.Controller] = WebUiConstants.StaticContent;
 
+            // This instructs IIS to ignore it's own default error pages, allowing us to use our own.
+            // Note: in Web.config, httpErrors is as follows: <httpErrors existingResponse="PassThrough" />
+            // This is required (or set existingResponse to "auto"), otherwise Response.TrySkipIisCustomErrors
+            // is ignored.
             Response.TrySkipIisCustomErrors = true;
-
 
             if (httpException != null)
             {
@@ -123,86 +125,103 @@ namespace CUWebinars.Web
             //avoids session state when the WebAPI method is invoked.
             if (System.Web.HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath != "~/account/get/")
             {
-                
-                //StateService.SetValue("searchTerm", string.Empty);
-                //StateService.SetValue("IncludeRecorded", false);
-                //StateService.SetValue("IncludeUpcoming", true);
-                //StateService.SetValue("searchExtent", "Upcoming");
-
-                StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(19, a => a.WebUser));
-                StateService.SetValue("AValidInstitution", institutionRepository.FindFirst());
-
-                //This session var lets us understand the origin of the Affiliate session - 
-                //...answers the question - How was the Session Affiliate determined?
-                //Here we the initial value to 'default' ... later code will
-                // override if conditions dictate.
-                StateService.SetValue("AffiliateSessionSource", "default" + Pipe + AppConst.DEFAULT_AFFILIATE);
-                StateService.SetValue(WebUiConstants.SubdomainBranding, @System.Configuration.ConfigurationManager.AppSettings[AppConst.TESTING_URL]);
-
-                //following are values to be stored for audit purposes.
-                if (HttpContext.Current.Request.UrlReferrer != null)
-                    StateService.SetValue(WebUiConstants.SubdomainBranding, HttpContext.Current.Request.UrlReferrer.ToString().Trim());
-                StateService.SetValue("FirstPage", HttpContext.Current.Request.Url.ToString().Trim());
-                StateService.SetValue("InitialQueryString", Request.Url.Query);
-                StateService.SetValue(WebUiConstants.SessionId, HttpContext.Current.Session.SessionID);
-
-                //DETERMINE CURRENT AFFILIATE
-                //MEHTOD 1: VIA QUERY STRING -- idAff=[idUserAff]   
-                if (!string.IsNullOrEmpty(Request.QueryString[WebUiConstants.AffiliateId]))
+                TTSWebinarsContext ttsWebinarsContext = new TTSWebinarsContext();
+                try
                 {
+                    IAffiliateRepository affiliateRepository = new AffiliateRepository(ttsWebinarsContext);
+                    IWebinarRepository _reposWebinars = new WebinarRepository(ttsWebinarsContext);
+                    IInstitutionRepository institutionRepository = new InstitutionRepository(ttsWebinarsContext);
 
-                    int loadAff;
+                    //StateService.SetValue("searchTerm", string.Empty);
+                    //StateService.SetValue("IncludeRecorded", false);
+                    //StateService.SetValue("IncludeUpcoming", true);
+                    //StateService.SetValue("searchExtent", "Upcoming");
 
-                    if (int.TryParse(Request.QueryString[WebUiConstants.AffiliateId], out loadAff))
+                    StateService.SetValue(WebUiConstants.CurrentAffiliate,
+                        affiliateRepository.FindByIdWithIncluding(19, a => a.WebUser));
+                    StateService.SetValue("AValidInstitution", institutionRepository.FindFirst());
+
+                    //This session var lets us understand the origin of the Affiliate session - 
+                    //...answers the question - How was the Session Affiliate determined?
+                    //Here we the initial value to 'default' ... later code will
+                    // override if conditions dictate.
+                    StateService.SetValue("AffiliateSessionSource", "default" + Pipe + AppConst.DEFAULT_AFFILIATE);
+                    StateService.SetValue(WebUiConstants.SubdomainBranding,
+                        ConfigurationManager.AppSettings[AppConst.TESTING_URL]);
+
+                    //following are values to be stored for audit purposes.
+                    if (HttpContext.Current.Request.UrlReferrer != null)
+                        StateService.SetValue(WebUiConstants.SubdomainBranding,
+                            HttpContext.Current.Request.UrlReferrer.ToString().Trim());
+                    StateService.SetValue("FirstPage", HttpContext.Current.Request.Url.ToString().Trim());
+                    StateService.SetValue("InitialQueryString", Request.Url.Query);
+                    StateService.SetValue(WebUiConstants.SessionId, HttpContext.Current.Session.SessionID);
+
+                    //DETERMINE CURRENT AFFILIATE
+                    //MEHTOD 1: VIA QUERY STRING -- idAff=[idUserAff]   
+                    if (!string.IsNullOrEmpty(Request.QueryString[WebUiConstants.AffiliateId]))
                     {
-                        try
+
+                        int loadAff;
+
+                        if (int.TryParse(Request.QueryString[WebUiConstants.AffiliateId], out loadAff))
                         {
-                            StateService.SetValue("AffiliateSessionSource", WebUiConstants.AffiliateId + Pipe + loadAff);
-                            // determine the current affiliate
-                            StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser));
+                            try
+                            {
+                                StateService.SetValue("AffiliateSessionSource",
+                                    WebUiConstants.AffiliateId + Pipe + loadAff);
+                                // determine the current affiliate
+                                StateService.SetValue(WebUiConstants.CurrentAffiliate,
+                                    affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser));
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.Fatal(ex);
+                                logger.Info(SessionStartError + "failed to load idAff code: " +
+                                            HttpContext.Current.Request.Url.ToString());
+                                throw;
+                            }
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            logger.Fatal(ex);
-                            logger.Info(SessionStartError + "failed to load idAff code: " + HttpContext.Current.Request.Url.ToString());
-                            throw;
+                            logger.Error(SessionStartError + "Non-numeric idAff: " +
+                                         HttpContext.Current.Request.QueryString.ToString());
                         }
                     }
-                    else
+
+
+                    var subdomainBranding = StateService.GetValue<string>(WebUiConstants.SubdomainBranding);
+                    //METHOD 2: VIA THE DOMAIN NAME BEING RUN
+                    //e.g. http://webinars.cftws.org - means CurrentAffiliate should be 'cftws'
+                    if (!string.IsNullOrEmpty(subdomainBranding))
                     {
-                        logger.Error(SessionStartError + "Non-numeric idAff: " + HttpContext.Current.Request.QueryString.ToString());
-                    }
-                }
-
-
-                var subdomainBranding = StateService.GetValue<string>(WebUiConstants.SubdomainBranding);
-                //METHOD 2: VIA THE DOMAIN NAME BEING RUN
-                //e.g. http://webinars.cftws.org - means CurrentAffiliate should be 'cftws'
-                if (!string.IsNullOrEmpty(subdomainBranding))
-                {
-                    var subdomainBrandType = subdomainBranding.Split('.').FirstOrDefault();
-                    if (!string.IsNullOrEmpty(subdomainBrandType) && subdomainBrandType.Equals(WebUiConstants.Webinars, StringComparison.OrdinalIgnoreCase))
-                    {
-                        //we discover we are running with an affiliate's subdomain
-                        string affilliateDomain = @System.Configuration.ConfigurationManager.AppSettings[AppConst.TESTING_URL].Split('.')[1];
-                        try
+                        var subdomainBrandType = subdomainBranding.Split('.').FirstOrDefault();
+                        if (!string.IsNullOrEmpty(subdomainBrandType) &&
+                            subdomainBrandType.Equals(WebUiConstants.Webinars, StringComparison.OrdinalIgnoreCase))
                         {
-                            StateService.SetValue("AffiliateSessionSource", "Sub" + Pipe + affilliateDomain);
-                            //   the name of the property 'ttsDomain' is the abbreviated name chosen
-                            //   for use (as a shortcut or nicname) by us to refer to a given affiliate. It may or may not
-                            //   be literally the Domain Name used by the given affiliate.
+                            //we discover we are running with an affiliate's subdomain
+                            string affilliateDomain =
+                                ConfigurationManager.AppSettings[AppConst.TESTING_URL].Split('.')[1];
+                            try
+                            {
+                                StateService.SetValue("AffiliateSessionSource", "Sub" + Pipe + affilliateDomain);
+                                //   the name of the property 'ttsDomain' is the abbreviated name chosen
+                                //   for use (as a shortcut or nicname) by us to refer to a given affiliate. It may or may not
+                                //   be literally the Domain Name used by the given affiliate.
 
-                            StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.LoadByTTSDomain(affilliateDomain) ?? affiliateRepository.LoadByTTSDomain("bennett"));
-                        }
-                        catch (Exception ex)
-                        {
-                            logger.Fatal(ex);
-                            throw;
+                                StateService.SetValue(WebUiConstants.CurrentAffiliate,
+                                    affiliateRepository.LoadByTTSDomain(affilliateDomain) ??
+                                    affiliateRepository.LoadByTTSDomain("bennett"));
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.Fatal(ex);
+                                throw;
+                            }
                         }
                     }
-                }
 
-                /*METHOD 3: VIA THE SUBDOMAIN -- implementation of this method is on hold pending SEO considerations.
+                    /*METHOD 3: VIA THE SUBDOMAIN -- implementation of this method is on hold pending SEO considerations.
                 //  when passed 'cftws.bankwebinars.com' this method
                  
                 //  set the Session Affiliate to 380
@@ -224,90 +243,100 @@ namespace CUWebinars.Web
                 //    
                 //}
                 */
-                logger.Info("Start Session: " + StateService.GetValue<string>(WebUiConstants.SessionId));
+                    logger.Info("Start Session: " + StateService.GetValue<string>(WebUiConstants.SessionId));
 
-                var allCookies = new StringBuilder();
+                    var allCookies = new StringBuilder();
 
-                for (var i = 0; i < Request.Cookies.Count; i++)
-                {
-                    HttpCookie aCookie = Request.Cookies[i];
-
-                    if (aCookie != null)
+                    for (var i = 0; i < Request.Cookies.Count; i++)
                     {
-                        allCookies.Append("Name = " + aCookie.Name + HtmlBreak);
+                        HttpCookie aCookie = Request.Cookies[i];
 
-                        if (aCookie.HasKeys)
+                        if (aCookie != null)
                         {
-                            NameValueCollection cookieValues = aCookie.Values;
+                            allCookies.Append("Name = " + aCookie.Name + HtmlBreak);
 
-                            string[] cookieValueNames = cookieValues.AllKeys;
-
-                            for (int j = 0; j < cookieValues.Count; j++)
+                            if (aCookie.HasKeys)
                             {
-                                string subkeyName = Server.HtmlEncode(cookieValueNames[j]);
-                                string subkeyValue = Server.HtmlEncode(cookieValues[j]);
-                                allCookies.Append("Subkey name = " + subkeyName + HtmlBreak);
-                                allCookies.Append("Subkey value = " + subkeyValue + HtmlBreak + HtmlBreak);
+                                NameValueCollection cookieValues = aCookie.Values;
+
+                                string[] cookieValueNames = cookieValues.AllKeys;
+
+                                for (int j = 0; j < cookieValues.Count; j++)
+                                {
+                                    string subkeyName = Server.HtmlEncode(cookieValueNames[j]);
+                                    string subkeyValue = Server.HtmlEncode(cookieValues[j]);
+                                    allCookies.Append("Subkey name = " + subkeyName + HtmlBreak);
+                                    allCookies.Append("Subkey value = " + subkeyValue + HtmlBreak + HtmlBreak);
+                                }
+                            }
+                            else
+                            {
+                                allCookies.Append("Value = " + Server.HtmlEncode(aCookie.Value) + HtmlBreak + HtmlBreak);
                             }
                         }
-                        else
-                        {
-                            allCookies.Append("Value = " + Server.HtmlEncode(aCookie.Value) + HtmlBreak + HtmlBreak);
-                        }
                     }
+
+                    StateService.SetValue("FirstCookies", allCookies.ToString());
+
+                    //setup upcoming and recorded menu contents
+                    //var upcomingWebinars = _reposWebinars.GetUpcoming().OrderBy(w => w.Date).Take(8).ToList();
+                    //var upComingPresentationListItems = new StringBuilder();
+                    //upComingPresentationListItems.Append(
+                    //    "<li role='presentation'><a  role=\"menuitem\" tabindex=\"-1\"  href='/Webinar/allActive/?eventsToShow=upcoming'>View <b>All</b> Upcoming Events</a></li>");
+
+                    //if (upcomingWebinars.Count > 0)
+                    //{
+                    //    for (int i = 0; i < upcomingWebinars.Count; i++)
+                    //    {
+                    //        var upcomingWebinar = upcomingWebinars[i];
+                    //        string shortTitle = upcomingWebinar.Title.Length > 35
+                    //                ? upcomingWebinar.Title.Substring(0, 35) + "..."
+                    //                : upcomingWebinar.Title;
+
+                    //        string seoTitle = upcomingWebinar.Title.RemoveIllegalCharacters().ReplaceSpacesWithHyphens().ToLower().TrimEnd('.');
+
+                    //        upComingPresentationListItems.Append(
+                    //            string.Format("<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href='/{0}/{1}'", upcomingWebinar.idWebinar, seoTitle) +
+                    //            upcomingWebinars[i].idWebinar + "'>" + Server.HtmlEncode(shortTitle) + "</a></li>"
+                    //            );
+                    //    }
+
+                    //}
+                    //StateService.SetValue("upcoming", upComingPresentationListItems);
+
+
+
+                    //var recordedWebinars = _reposWebinars.GetRecorded().OrderBy( w => w.Date).Take(8).ToList();
+                    //StringBuilder recordedWebinarsListItems = new StringBuilder();
+                    //recordedWebinarsListItems.Append(
+                    //    "<li role='presentation'><a  role=\"menuitem\" tabindex=\"-1\"  href='/Webinar/allActive/?eventsToShow=recorded'>View <b>All</b> Recordings</a></li>");
+                    //if (recordedWebinars.Count > 0)
+                    //{
+                    //    for (int i = 0; i < 8; i++)
+                    //    {
+                    //        string ShortTitle =
+                    //            recordedWebinars[i].Title.Length > 45
+                    //                ? recordedWebinars[i].Title.Substring(0, 45) + "..."
+                    //                : recordedWebinars[i].Title;
+
+                    //        recordedWebinarsListItems.Append(
+                    //            "<li role='presentation'><a role=\"menuitem\" tabindex=\"-1\" href='/Webinar/Details/" +
+                    //            recordedWebinars[i].idWebinar + "'>" + Server.HtmlEncode(ShortTitle) + "</a></li>"
+                    //            );
+                    //    }
+
+                    //}
+                    //StateService.SetValue("rec", recordedWebinarsListItems);
                 }
-
-                StateService.SetValue("FirstCookies", allCookies.ToString());
-
-                //setup upcoming and recorded menu contents
-                //var upcomingWebinars = _reposWebinars.GetUpcoming().OrderBy(w => w.Date).Take(8).ToList();
-                //var upComingPresentationListItems = new StringBuilder();
-                //upComingPresentationListItems.Append(
-                //    "<li role='presentation'><a  role=\"menuitem\" tabindex=\"-1\"  href='/Webinar/allActive/?eventsToShow=upcoming'>View <b>All</b> Upcoming Events</a></li>");
-                
-                //if (upcomingWebinars.Count > 0)
-                //{
-                //    for (int i = 0; i < upcomingWebinars.Count; i++)
-                //    {
-                //        var upcomingWebinar = upcomingWebinars[i];
-                //        string shortTitle = upcomingWebinar.Title.Length > 35
-                //                ? upcomingWebinar.Title.Substring(0, 35) + "..."
-                //                : upcomingWebinar.Title;
-
-                //        string seoTitle = upcomingWebinar.Title.RemoveIllegalCharacters().ReplaceSpacesWithHyphens().ToLower().TrimEnd('.');
-
-                //        upComingPresentationListItems.Append(
-                //            string.Format("<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href='/{0}/{1}'", upcomingWebinar.idWebinar, seoTitle) +
-                //            upcomingWebinars[i].idWebinar + "'>" + Server.HtmlEncode(shortTitle) + "</a></li>"
-                //            );
-                //    }
-                    
-                //}
-                //StateService.SetValue("upcoming", upComingPresentationListItems);
-
-
-
-                //var recordedWebinars = _reposWebinars.GetRecorded().OrderBy( w => w.Date).Take(8).ToList();
-                //StringBuilder recordedWebinarsListItems = new StringBuilder();
-                //recordedWebinarsListItems.Append(
-                //    "<li role='presentation'><a  role=\"menuitem\" tabindex=\"-1\"  href='/Webinar/allActive/?eventsToShow=recorded'>View <b>All</b> Recordings</a></li>");
-                //if (recordedWebinars.Count > 0)
-                //{
-                //    for (int i = 0; i < 8; i++)
-                //    {
-                //        string ShortTitle =
-                //            recordedWebinars[i].Title.Length > 45
-                //                ? recordedWebinars[i].Title.Substring(0, 45) + "..."
-                //                : recordedWebinars[i].Title;
-
-                //        recordedWebinarsListItems.Append(
-                //            "<li role='presentation'><a role=\"menuitem\" tabindex=\"-1\" href='/Webinar/Details/" +
-                //            recordedWebinars[i].idWebinar + "'>" + Server.HtmlEncode(ShortTitle) + "</a></li>"
-                //            );
-                //    }
-                    
-                //}
-                //StateService.SetValue("rec", recordedWebinarsListItems);
+                catch (Exception exception)
+                {
+                    Console.WriteLine(exception);
+                }
+                finally
+                {
+                    //ttsWebinarsContext.Database.Connection.Close(); --> PROBABLY NOT NECESSARY. DISPOSE SHOULD DO THIS FOR US.
+                    ttsWebinarsContext.Dispose();
+                }
             }
         }
     }
