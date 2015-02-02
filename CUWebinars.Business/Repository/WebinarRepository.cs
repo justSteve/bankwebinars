@@ -1,9 +1,4 @@
-﻿using System;
-using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
-using System.Text;
-using CUWebinars.Business.Core;
+﻿using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -28,7 +23,7 @@ namespace CUWebinars.Business.Repository
         {
             items.Remove(webinar);
             db.SaveChanges();
-        }//
+        }
 
         public Webinar FindByIdLoaded(int id)
         {

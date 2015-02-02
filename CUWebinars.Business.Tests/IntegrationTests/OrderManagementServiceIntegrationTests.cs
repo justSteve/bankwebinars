@@ -10,6 +10,7 @@ using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
 using CUWebinars.Tests.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Ninject.Extensions.Logging.Log4net.Infrastructure;
 
 namespace CUWebinars.Business.Tests.IntegrationTests
 {
@@ -28,7 +29,7 @@ namespace CUWebinars.Business.Tests.IntegrationTests
                 new RegTypeRepository(ctx),
                 new OrderRepository(ctx),
                 new RefDataRepository(),
-                new WebUserRepository(ctx),
+                new WebUserRepository(ctx, new Log4NetLogger(typeof(OrderManagementService))),
                 new WebinarRepository(ctx),
                 new AdditionalLocationRepository(ctx),
                 new Ninject.Extensions.Logging.Log4net.Infrastructure.Log4NetLogger(typeof (OrderManagementService)),

@@ -54,7 +54,7 @@ namespace CUWebinars.Business.Tests.IntegrationTests
                 new RefDataRepository(), 
                 new SamAuthenticationService(userAccountService),
                 userAccountService,
-                new WebUserRepository(ctx),
+                new WebUserRepository(ctx, new Log4NetLogger(typeof(MembershipService))),
                 logger
                 );
 
@@ -182,7 +182,7 @@ namespace CUWebinars.Business.Tests.IntegrationTests
                 new RefDataRepository(),
                 new SamAuthenticationService(userAccountService),
                 userAccountService,
-                new WebUserRepository(ctx),
+                new WebUserRepository(ctx, new Log4NetLogger(typeof(MembershipService))),
                 logger
                 );
             return membershipService;
