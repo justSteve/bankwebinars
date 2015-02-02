@@ -612,7 +612,6 @@ namespace CUWebinars.Web.Controllers
         [HandleJsonException]
         public ActionResult SignIn(SignInModel model)
         {
-            throw new Exception("bad");
             if (!ModelState.IsValid)
             {
                 return this.ModelStateJson(ModelState);
