@@ -379,6 +379,7 @@
     <Compile Include="Helpers\DomainHelpers.cs" />
     <Compile Include="Helpers\IAppHelper.cs" />
     <Compile Include="Helpers\SessionStartInfo.cs" />
+    <Compile Include="Infrastructure\Attributes\HandleJsonExceptionAttribute.cs" />
     <Compile Include="Infrastructure\Attributes\MonitorAffiliateFilter.cs" />
     <Compile Include="Infrastructure\ErrorResponse.cs" />
     <Compile Include="Infrastructure\ErrorResponseCommand.cs" />
@@ -1336,7 +1337,6 @@
     <Folder Include="Infrastructure\apis\citrix\GTW\" />
     <Folder Include="Notification\Delivery\" />
     <Folder Include="Scripts\app\types\" />
-    <Folder Include="Views\Admin\Home\Modals\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

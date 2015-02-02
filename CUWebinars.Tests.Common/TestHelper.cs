@@ -40,7 +40,7 @@ namespace CUWebinars.Tests.Common
                 new RefDataRepository(),
                 new SamAuthenticationService(userAccountService),
                 userAccountService,
-                new WebUserRepository(ctx),
+                new WebUserRepository(ctx, new Log4NetLogger(typeof(MembershipService))),
                 logger
                 );
 
@@ -56,7 +56,7 @@ namespace CUWebinars.Tests.Common
                 new RegTypeRepository(ctx),
                 new OrderRepository(ctx),
                 new RefDataRepository(),
-                new WebUserRepository(ctx),
+                new WebUserRepository(ctx, new Log4NetLogger(typeof(OrderManagementService))),
                 new WebinarRepository(ctx),
                 new AdditionalLocationRepository(ctx),
                 new Log4NetLogger(typeof (OrderManagementService)),

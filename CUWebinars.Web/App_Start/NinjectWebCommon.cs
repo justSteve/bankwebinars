@@ -126,7 +126,7 @@ namespace CUWebinars.Web.App_Start
                 return new WebinarManagementService(
                     new RegTypeRepository(sharedContext),
                     new RefDataRepository(),
-                    new WebUserRepository(sharedContext),
+                    new WebUserRepository(sharedContext, loggerForWebinarManagementService),
                     new WebinarRepository(sharedContext),
                     new WebinarFileRepository(sharedContext),
                     loggerForWebinarManagementService,
@@ -143,7 +143,7 @@ namespace CUWebinars.Web.App_Start
                     new RegTypeRepository(sharedContext),
                     new OrderRepository(sharedContext),
                     new RefDataRepository(),
-                    new WebUserRepository(sharedContext),
+                    new WebUserRepository(sharedContext, loggerForOrderManagementService),
                     new WebinarRepository(sharedContext),
                     new AdditionalLocationRepository(sharedContext), 
                     loggerForOrderManagementService,
@@ -173,7 +173,7 @@ namespace CUWebinars.Web.App_Start
                     new RefDataRepository(),
                     new SamAuthenticationService(userAccountService),
                     userAccountService,
-                    new WebUserRepository(sharedContext),
+                    new WebUserRepository(sharedContext, loggerForMembershipService),
                     loggerForMembershipService
                     );
             }).InRequestScope();

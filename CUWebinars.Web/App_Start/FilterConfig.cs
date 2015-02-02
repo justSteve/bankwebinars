@@ -19,7 +19,7 @@ namespace CUWebinars.Web.App_Start
                 new RegTypeRepository(sc),
                 new OrderRepository(sc),
                 new RefDataRepository(),
-                new WebUserRepository(sc),
+                new WebUserRepository(sc, new Log4NetLogger(typeof(OrderManagementService))),
                 new WebinarRepository(sc),
                 new AdditionalLocationRepository(sc),
                 new Log4NetLogger(typeof(OrderManagementService)),

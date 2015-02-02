@@ -901,12 +901,6 @@ namespace CUWebinars.Business.Services
                     // Return result is actually not required. Do nothing with it, unless want to log something.
                     var resultOfUpdate = UpdateOrderChanges(order, ref pricesAndDiscounts);
                 }
-                else if (parsedJsonObject["error"] != null)
-                {
-                    // log the citrix specific code which came from https://developer.citrixonline.com/citrix-api-http-status-codes . 
-                    // See ProcessErrorByStatusCode method.
-                    _logger.Error("Citrix error status info - " + parsedJsonObject["error"]);
-                }
             }
         }
 
@@ -949,8 +943,12 @@ namespace CUWebinars.Business.Services
                 }
                 else
                 {
-                    //BUG: The updated Citrix is returning a flat string (the error message) instead of the expected json format.
+                    // If in error, there'll be no braces. In such a case, make the error a Json object.
+                    if (!regKeyResponse.Contains("{"))
+                        regKeyResponse = string.Concat("{ \"error\": \"", regKeyResponse, "\"}"); 
+
                     JObject parsedJsonObject = JObject.Parse(regKeyResponse);
+
                     if (parsedJsonObject[DomainConstants.RegistrantKey] != null)
                     {
                         _logger.Error("Successful CreateRegistrantKey");

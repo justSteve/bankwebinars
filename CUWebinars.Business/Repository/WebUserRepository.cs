@@ -1,35 +1,27 @@
-﻿using System.Collections.Generic;
-using System.Data.Entity.Validation;
-using System.Diagnostics;
-using System.Text;
-using CUWebinars.Business.Models;
-using System.Data.Entity;
-using System.Linq;
-using CUWebinars.Business.Services;
-using log4net.Repository.Hierarchy;
+﻿using CUWebinars.Business.Models;
 using Ninject.Extensions.Logging;
-using Ninject.Extensions.Logging.Log4net.Infrastructure;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Validation;
+using System.Linq;
+using System.Text;
 
 namespace CUWebinars.Business.Repository
 {
     public class WebUserRepository : TTSWebinarsRepository<TTSWebinarsContext, WebUser>, IWebUserRepository
     {
-        public RefDataRepository RefContext { get; set; }
-        //private readonly ILogger _logger;
+        private readonly ILogger _logger;
 
-        public WebUserRepository(ILogger logger)
+        public WebUserRepository()
         {
-            RefContext = new RefDataRepository();
-            //_logger = logger;
-        }
-
-        public WebUserRepository(TTSWebinarsContext ctx)
-            : base(ctx)
-        {
-            RefContext = new RefDataRepository();
             
         }
-        ILogger loggerForOrderManagementService = new Log4NetLogger(typeof(OrderManagementService));
+
+        public WebUserRepository(TTSWebinarsContext ctx, ILogger logger)
+            : base(ctx)
+        {
+            _logger = logger;
+        }
 
         /// <summary>
         /// Finds the Highest Id currently in use so newly created WebUser objects have an Id.
@@ -40,7 +32,7 @@ namespace CUWebinars.Business.Repository
         /// <returns></returns>
         public int FindHighestUserId()
         {
-            int nextId = RefContext.GetWebUsers()
+            int nextId = items
                 .OrderByDescending(i => i.idUser)
                 .Select(i => i.idUser).Single();
 
@@ -49,7 +41,7 @@ namespace CUWebinars.Business.Repository
 
         public int? FindInstitution(string zip, string institutionName)
         {
-            int myInst = RefContext.GetInstitutions()
+            int myInst = ((TTSWebinarsContext)db).Institutions
                 .Where(i => i.InstitutionName == institutionName && i.Zip == zip)
                 .Select(i => i.idInstitution)
                 .SingleOrDefault();
@@ -120,7 +112,7 @@ namespace CUWebinars.Business.Repository
                         errorMsg.Append(string.Format("- Property: \"{0}\", Error: \"{1}\"",
                             ve.PropertyName, ve.ErrorMessage));
                     }
-                    loggerForOrderManagementService.Error("From catch block of UpdateAddresses " + errorMsg.ToString());
+                    _logger.Error("From catch block of UpdateAddresses " + errorMsg);
                 }
                 throw;
             }
