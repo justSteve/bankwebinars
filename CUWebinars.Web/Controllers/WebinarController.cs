@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.AccountService;
+﻿using System.Web.Routing;
+using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
@@ -479,8 +480,8 @@ namespace CUWebinars.Web.Controllers
             }
 
             _logger.Error("Details Action invoked with null 'id' parameter");
-            ModelState.AddModelError(string.Empty, "No id was sent to the Server. Please try the operation again.");
-            return this.ModelStateJson(ModelState);
+
+            return RedirectToAction("allActive", new RouteValueDictionary( new { controller = "Webinar", action = "allActive", eventsToShow = "upcoming" } ));
         }
 
         /// <summary>
