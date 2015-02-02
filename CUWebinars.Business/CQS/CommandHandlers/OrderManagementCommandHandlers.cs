@@ -143,12 +143,15 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             {
 
                 string[] addLocs = command.AdditionalLocationsString.Split(',');
+
+                var addLocPrice = _orderManagementService.GetPriceOfAdditionalLocation(command.Webinar.idWebinar);
+
                 foreach (var additionalLocationEmail in addLocs)
                 {
                     additionalLocations.Add(_orderManagementService.CreateAdditionalLocation(
                         additionalLocationEmail,
-                        0,
-                        null) // field for FullName
+                        addLocPrice,
+                        command.Name) // field for FullName
                         );
                 }
             }

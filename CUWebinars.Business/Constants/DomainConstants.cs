@@ -11,7 +11,7 @@ namespace CUWebinars.Business.Constants
         public const string CheckoutInProcess = "CheckoutInProcess"; 
         public const string ConfirmChangeEmailLink = "ConfirmChangeEmailLink";
         public const string DateTimeLongFormat = "yyyy-MM-dd-hh-mm-ss-fff-tt";
-        public const string CareOfString = "Care of";
+        public const string CareOfString = "c/o ";
         public const string JoinUrl = "joinUrl";
         public const string LoggerConnectionStringName = "LoggerConnection";
         public const string New = "N";

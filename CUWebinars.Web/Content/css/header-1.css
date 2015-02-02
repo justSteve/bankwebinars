@@ -37,10 +37,10 @@ body.tall-logo nav.user {
 }
 
 #logo {
-	padding: 0 0 10px 0;
+	/*padding: 0 0 10px 0;*/
 	float: left;
 	position: relative;
-	margin-top: 10px;
+	/*margin-top: 10px;*/
 }
 /* ie 7 fix*/
 .lt-ie8 #logo {

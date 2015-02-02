@@ -54,7 +54,7 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.EmailSendingMode = ApplicationSettingsSection["EmailSendingMode"];
                 UniqueInstance.EmailSignature = ApplicationSettingsSection["EmailSignature"];
                 //UniqueInstance.WMVRepository = ApplicationSettingsSection["WMVRepository"];
-                //UniqueInstance.HandoutRepository = ApplicationSettingsSection["HandoutRepository"];
+                UniqueInstance.HandoutRepository = ApplicationSettingsSection["HandoutRepository"];
                 //UniqueInstance.ImgRepository = ApplicationSettingsSection["ImgRepository"];
                 UniqueInstance.NotificationsTesting = bool.Parse(ApplicationSettingsSection["NotificationsTesting"]);
                 UniqueInstance.RelativeLoginUrl = ApplicationSettingsSection["RelativeLoginUrl"];

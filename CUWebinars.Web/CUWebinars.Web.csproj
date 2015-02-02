@@ -736,6 +736,8 @@
     <Content Include="Views\Shared\Admin\_Last5Error.cshtml" />
     <Content Include="Views\StaticContent\PageNotFound.cshtml" />
     <Content Include="Views\StaticContent\ServerError.cshtml" />
+    <Content Include="Views\Shared\Partials\_ShowClickToJoinLink.cshtml" />
+    <Content Include="Views\Shared\Partials\_ShareEventInfo.cshtml" />
     <Content Include="Views\Admin\Home\Modals\_SendShippedPreviewModal.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -1334,6 +1336,7 @@
     <Folder Include="Infrastructure\apis\citrix\GTW\" />
     <Folder Include="Notification\Delivery\" />
     <Folder Include="Scripts\app\types\" />
+    <Folder Include="Views\Admin\Home\Modals\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

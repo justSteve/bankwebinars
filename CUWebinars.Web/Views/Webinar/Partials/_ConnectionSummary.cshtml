@@ -3,39 +3,42 @@
 @model OrderRow
 
 @{
-    //var eventPass = "Pass";
-    var teleconf = Model.Webinar.AccessPhone;
-    var accessCode = Model.Webinar.AccessCodeAttendee;
+
+
+    <div id="showConnectionInfo">
+        <table style="font-size: smaller;" width="250">
+            <tr>
+                <td colspan="2">
+                    @{
+                        if (@Model.JoinURL == null)
+                        {
+                            <p class="btn btn-warning btn-mini">Click-To-Join link generation is pending.</p>
+                        }
+                        else
+                        {
+                            if (Model.Webinar.Status == WebinarStatus.InProgress)
+                            {
+                                <a href="@Model.JoinURL"><b>Join the webinar.</b></a>
+                            }
+                            else
+                            {
+                                <p>Please use this link 15-20 minutes prior to the scheduled start time of the event:<br /> <input type="text" width="90px" value="@Model.JoinURL"></p>
+                            }
+                        }
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="audio" colspan="2"><font size="-2">Audio is delivered directly to your workstation. Or use the information below to connect via your telephone.</font></td>
+            </tr>
+            <tr>
+                <td class="propLabel">Teleconference:</td>
+                <td class="propValue">@Model.Webinar.AccessPhone</td>
+            </tr>
+            <tr>
+                <td class="propLabel">Access Code:</td>
+                <td class="propValue">@Model.Webinar.AccessCodeAttendee</td>
+            </tr>
+        </table>
+    </div>
 }
-
-<div id="showConnectionInfo">
-    <table style="font-size: smaller;" width="250">
-        <tr>
-            <td colspan="2">
-                @{
-                    if (@Model.JoinURL == null)
-                    {
-                        <p>This link will become active 15-20 minutes prior to the scheduled start time of the event and connect you directly into the webinar:<br /> <b><a href="https://www2.gotomeeting.com/join/@Model.Webinar.WebinarKey" target="_JoinWebinar">https://www2.gotomeeting.com/join/@Model.Webinar.WebinarKey</a></b></p>
-
-                    }
-                    else
-                    {
-                        <p>This link will become active 15-20 minutes prior to the scheduled start time of the event and connect you directly into the webinar:<br /> <b><a href="@Model.JoinURL" target="_JoinWebinar">@Model.JoinURL</a></b></p>
-
-                    }
-                }
-            </td>
-        </tr>
-        <tr>
-            <td class="audio" colspan="2"><font size="-2">Audio is delivered directly to your workstation. Or use the information below to connect via your telephone.</font></td>
-        </tr>
-        <tr>
-            <td class="propLabel side_td1">Teleconference:</td>
-            <td class="propValue side_td2">@teleconf</td>
-        </tr>
-        <tr>
-            <td class="propLabel bottom_td1">Access Code:</td>
-            <td class="propValue bottom_td2">@accessCode</td>
-        </tr>
-    </table>
-</div>

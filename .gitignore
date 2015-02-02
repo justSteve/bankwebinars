@@ -165,9 +165,10 @@ CUWebinars.Selenium.Core/*.exe
 CUWebinars.WebUi.Tests/*.exe
 
 # =========================
-# Persisted Notifications
+# Persisted Notifications and Trace
 # =========================
 CUWebinars.Web/App_Data/Notifications/
+CUWebinars.Web/App_Data/Trace/
 
 # =========================
 # Any 3rd Party Binaries Not Available on Nuget

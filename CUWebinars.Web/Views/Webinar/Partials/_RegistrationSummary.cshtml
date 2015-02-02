@@ -4,12 +4,12 @@
 @{
     NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
-
+    nfi.CurrencyDecimalDigits = 0;
 
     if (Model.UserOwnsThisEvent > 0)
     {
         RegType orderMsgs = Model.OrderRow.RegistrationType;
-        
+
         Order order = Model.OrderRow.Order;
         var showShipped = string.Empty;
         if (Model.WebinarStatus != WebinarStatus.Recorded || Model.OrderRow.RegistrationType.ShowRecordingNotifications == "No")
@@ -25,8 +25,6 @@
         {
             string itemDesc = webinarFile.Split('|')[0];
             string itemPath = globalConfig.WMVRepository + webinarFile.Split('|')[1];
-            //string itemDesc = webinarFile.fileDesc;
-            //string itemPath = webinarFile.fileLocation;
             wf.Append("<a href='" + itemPath + "' target=_blank >" + itemDesc + "</a><br>");
         }
 
@@ -44,23 +42,26 @@
         {
             <aside style="width: 100%" class="widget clearfix">
                 <div class="dropdown">
-                    <a class="dropdown-toggle btn btn-success" data-toggle="dropdown" href="#">Your Order# <b>@globalConfig.TenantPrefix@order.idOrder</b> Summary</a>
+                    <a class="dropdown-toggle btn btn-success" data-toggle="dropdown" href="#">Your Order #<b>@globalConfig.TenantPrefix@order.idOrder</b> Summary</a>
                     <ul style="width: 100%; padding-left: 10px;" class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                         <li>Ordered on: @order.OrderDate.ToShortDateString()</li>
                         <li>@orderMsgs.OptionLabel</li>
-                        <li>$@order.Total</li>
+                        <li>@order.Total.ToString("C", nfi)</li>
                         @Html.Raw(@showShipped)
                         <div style="font-size: smaller;">@{ Html.RenderPartial("~/Views/Account/Partials/OrderHasAdditionalLocations.cshtml", Model.OrderHasAdditionalLocationsViewModel); }</div>
                         <li><a class="btn btn-success btn-mini" href='#' onclick=' upgrade(idRegType); '>Upgrade order?</a></li>
                     </ul>
                 </div>
             </aside>
-            if (Model.WebinarStatus == WebinarStatus.Scheduled || Model.WebinarStatus == WebinarStatus.Active || Model.WebinarStatus == WebinarStatus.InProgress)
+            if (Model.WebinarStatus == WebinarStatus.Scheduled
+                || Model.WebinarStatus == WebinarStatus.Active
+                || Model.WebinarStatus == WebinarStatus.InProgress)
             {
                 <h5 class="short_headline"><span>Connection Information</span></h5>
                 if (orderMsgs.ShowLiveNotifications == "Yes")
                 {
-                    if (Model.WebinarStatus == WebinarStatus.Active || Model.WebinarStatus == WebinarStatus.InProgress)
+                    if (Model.WebinarStatus == WebinarStatus.Active
+                        || Model.WebinarStatus == WebinarStatus.InProgress)
                     {
                         <aside style="width: 100%" class="widget clearfix">
                             @Html.Partial("Partials/_ConnectionSummary", Model.OrderRow)
@@ -69,7 +70,7 @@
                     else
                     {
                         <aside style="width: 100%" class="widget clearfix">
-                            Please check back for connection info 2-3 days prior to the event.
+                            Please check back for connection info.
                         </aside>
                     }
                 }

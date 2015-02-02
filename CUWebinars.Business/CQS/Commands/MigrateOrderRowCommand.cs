@@ -8,6 +8,7 @@ namespace CUWebinars.Business.CQS.Commands
     {
         public string AdditionalLocationsString { get; set; }
         public string Email { get; set; }
+        public string Name { get; set; }
         public int RegistrationType { get; set; }
         public Webinar Webinar { get; set; }
         public string Discount { get; set; }
