@@ -609,8 +609,10 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
         [ValidateAntiForgeryToken]
+        [HandleJsonException]
         public ActionResult SignIn(SignInModel model)
         {
+            throw new Exception("bad");
             if (!ModelState.IsValid)
             {
                 return this.ModelStateJson(ModelState);

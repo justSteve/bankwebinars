@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using Elmah;
 using System.Web.Mvc;
-using Elmah;
 
 namespace CUWebinars.Web
 {
@@ -15,43 +11,48 @@ namespace CUWebinars.Web
 
             var e = context.Exception;
             if (!context.ExceptionHandled   // if unhandled, will be logged anyhow
-                || RaiseErrorSignal(e)      // prefer signaling, if possible
+                || RaiseErrorSignal(context)      // prefer signaling, if possible
                 || IsFiltered(context))     // filtered?
                 return;
 
-            LogException(e);
+            LogException(context);
         }
 
-        private static bool RaiseErrorSignal(Exception e)
+        private static bool RaiseErrorSignal(ExceptionContext context)
         {
-            var context = HttpContext.Current;
-            if (context == null)
+            var httpContext = context.HttpContext.ApplicationInstance.Context;
+
+            if (httpContext == null)
                 return false;
-            var signal = ErrorSignal.FromContext(context);
+
+            var signal = ErrorSignal.FromContext(httpContext);
+
             if (signal == null)
                 return false;
-            signal.Raise(e, context);
+
+            signal.Raise(context.Exception, httpContext);
             return true;
         }
 
         private static bool IsFiltered(ExceptionContext context)
         {
-            var config = context.HttpContext.GetSection("elmah/errorFilter")
-                         as ErrorFilterConfiguration;
+            var config = context.HttpContext.GetSection("elmah/errorFilter") as ErrorFilterConfiguration;
 
             if (config == null)
                 return false;
 
             var testContext = new ErrorFilterModule.AssertionHelperContext(
-                                      context.Exception, HttpContext.Current);
+                                      context.Exception, context.HttpContext.ApplicationInstance.Context
+                                      );
 
             return config.Assertion.Test(testContext);
         }
 
-        private static void LogException(Exception e)
+        private static void LogException(ExceptionContext context)
         {
-            var context = HttpContext.Current;
-            ErrorLog.GetDefault(context).Log(new Error(e, context));
+            var httpContext = context.HttpContext.ApplicationInstance.Context;
+            var error = new Error(context.Exception, httpContext);
+            ErrorLog.GetDefault(httpContext).Log(error);
         }
     }
 }
