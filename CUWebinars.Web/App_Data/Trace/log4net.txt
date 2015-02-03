@@ -33,3 +33,4 @@ CUWebinars Information: 0 : MailerSent: showmesomeandroid-test3@yahoo.com.au Sub
 CUWebinars Information: 0 : MailerSent: showmesomeandroid-test1004@yahoo.com.au Subject: Connection Information for Do's and Don'ts of Signature Card Contracts Timestamp was: 2/02/2015 10:54:04 PM
 CUWebinars Information: 0 : MailerSent: showmesomeandroid-test1030@yahoo.com.au Subject: Connection Information for Do's and Don'ts of Signature Card Contracts Timestamp was: 2/02/2015 10:54:08 PM
 CUWebinars Information: 0 : MailerSent: showmesomeandroid-test1036@yahoo.com.au Subject: Connection Information for Do's and Don'ts of Signature Card Contracts Timestamp was: 2/02/2015 10:54:12 PM
+CUWebinars Error: 0 : Validation failed for webinar 1712 and User 34523
