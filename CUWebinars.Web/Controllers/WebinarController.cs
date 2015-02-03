@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.AccountService;
+﻿using System.Web.Routing;
+using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
@@ -27,6 +28,7 @@ namespace CUWebinars.Web.Controllers
     {
         private IStateService _stateService;
         private readonly IAppHelper _appHelper;
+        private GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingletonCreator.UniqueInstance;
 
         //Steve added MembershipService dependancy to allow for 'currentUser' in Details.
         private readonly IMembershipService _membershipService;
@@ -89,51 +91,51 @@ namespace CUWebinars.Web.Controllers
             {
                 case "16":
                     ViewBag.TopicCaption = "IRA ";
-                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to IRAs ";
+                    ViewBag.Title = _globalConfig.Tenant + " related to IRAs ";
                     break;
                 case "15":
                     ViewBag.TopicCaption = "Compliance ";
-                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to Compliance ";
+                    ViewBag.Title = _globalConfig.Tenant + " related to Compliance ";
                     break;
                 case "17":
                     ViewBag.TopicCaption = "Customer Service ";
-                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to Customer Service ";
+                    ViewBag.Title = _globalConfig.Tenant + " related to Customer Service ";
                     break;
                 case "18":
                     ViewBag.TopicCaption = "Security ";
-                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to Security ";
+                    ViewBag.Title = _globalConfig.Tenant + " related to Security ";
                     break;
                 case "19":
                     ViewBag.TopicCaption = "Operations ";
-                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to Operations ";
+                    ViewBag.Title = _globalConfig.Tenant + " related to Operations ";
                     break;
                 case "20":
                     ViewBag.TopicCaption = "Auditing ";
-                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to Auditing ";
+                    ViewBag.Title = _globalConfig.Tenant + " related to Auditing ";
                     break;
                 case "21":
                     ViewBag.TopicCaption = "Sales ";
-                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to Sales ";
+                    ViewBag.Title = _globalConfig.Tenant + " related to Sales ";
                     break;
                 case "22":
                     ViewBag.TopicCaption = "Lending ";
-                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to Lending ";
+                    ViewBag.Title = _globalConfig.Tenant + " related to Lending ";
                     break;
                 case "23":
                     ViewBag.TopicCaption = "Human Resources ";
-                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to Human Resources ";
+                    ViewBag.Title = _globalConfig.Tenant + " related to Human Resources ";
                     break;
                 case "25":
                     ViewBag.TopicCaption = "Computer Skills ";
-                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to Computer Skills ";
+                    ViewBag.Title = _globalConfig.Tenant + " related to Computer Skills ";
                     break;
                 case "26":
                     ViewBag.TopicCaption = "Risk Management ";
-                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to Risk Management ";
+                    ViewBag.Title = _globalConfig.Tenant + " related to Risk Management ";
                     break;
                 case "27":
                     ViewBag.TopicCaption = "Teller ";
-                    ViewBag.Title = ConfigurationManager.AppSettings["Tenant"] + " related to Teller ";
+                    ViewBag.Title = _globalConfig.Tenant + " related to Teller ";
                     break;
             }
 
@@ -171,18 +173,18 @@ namespace CUWebinars.Web.Controllers
         {
             var webinars = _webinarManagementService.GetAllActive();
             ViewBag.TopicCaption = " ";
-            ViewBag.Title = "All Listed Events for " + ConfigurationManager.AppSettings["Tenant"];
+            ViewBag.Title = "All Listed Events for " + _globalConfig.Tenant;
 
             if (eventsToShow == "upcoming")
             {
                 webinars = _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date);
-                ViewBag.Title = "All Upcoming Events for " + ConfigurationManager.AppSettings["Tenant"];
+                ViewBag.Title = "All Upcoming Events for " + _globalConfig.Tenant;
             }
 
             if (eventsToShow == "recorded")
             {
                 webinars = _webinarManagementService.GetRecordedWebinars().OrderBy(w => w.Date);
-                ViewBag.Title = "All Recorded Events for " + ConfigurationManager.AppSettings["Tenant"];
+                ViewBag.Title = "All Recorded Events for " + _globalConfig.Tenant;
             }
 
             return View(webinars);
@@ -479,8 +481,8 @@ namespace CUWebinars.Web.Controllers
             }
 
             _logger.Error("Details Action invoked with null 'id' parameter");
-            ModelState.AddModelError(string.Empty, "No id was sent to the Server. Please try the operation again.");
-            return this.ModelStateJson(ModelState);
+
+            return RedirectToAction("allActive", new { eventsToShow = "upcoming" } );
         }
 
         /// <summary>
