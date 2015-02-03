@@ -45,7 +45,16 @@ namespace CUWebinars.Business.Notification.Handlers
                 }
 
                 var notificationMessage = _generalFormatter.Format(orderSubmittedEvent.EventObject, "OrderSubmitted");
-                notificationMessage.PersistedName = string.Format("OrderSubmitted-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm");
+
+                var persistedNamePrefix = orderSubmittedEvent.ResendEvent
+                    ? "ReSendConnectionInfo"
+                    : "SendConnectionInfo";
+
+                notificationMessage.PersistedName = string.Format("{0}-{1}{2}", 
+                    persistedNamePrefix,
+                    DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), 
+                    ".htm"
+                    );
 
                 notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);

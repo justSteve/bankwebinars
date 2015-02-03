@@ -479,7 +479,7 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
                                     hookUpChangeTypeLogic($('#RegType'));
                                     hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
 
-                                    if (shippingAddressRequired && notificationsTesting === 'false') {
+                                    if (shippingAddressRequired && notificationsTesting.toString() === 'false') {
                                         hookUpModal($('#UserDetailsModal'));
                                     }
 
@@ -608,7 +608,7 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
                                             hookUpChangeTypeLogic($('#RegType'));
                                             hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
 
-                                            if (shippingAddressRequired && notificationsTesting === 'false') {
+                                            if (shippingAddressRequired && notificationsTesting.toString() === 'false') {
                                                 hookUpModal($('#UserDetailsModal'));
                                             }
 
@@ -834,12 +834,6 @@ function cancelOrder(orderId, webinarId) {
 }
 
 function hookUpModal(modalForm) {
-
-    //var modalFormOptions = {
-    //    keyboard: true,
-    //    backdrop: 'static',
-    //    show: true,
-    //};
 
     modalForm.modal('show');
 }

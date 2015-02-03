@@ -1168,8 +1168,10 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
+        [HandleJsonException]
         public ActionResult UpdateShippingDetails(ShippingDetailsModel shippingDetailsModel)
         {
+            throw new Exception("Very bad");
             if (ModelState.IsValid)
             {
                 try

@@ -152,21 +152,7 @@ $(function () {
     cartStateManager.SetCartState();
 
     $("[id^='regTypeID_']").on("click", function (oEvent) {
-        //TODO: In original code i had intialized the how the cart displayed the price.
-        // clearly this takes place elsewhere now adaquately but review and verify that
-        // this is impacted by the Discount - an enitity we've yet to dance with - but this
-        // provides the perfect opp to introduce this user story:
-        //
-        // An existing user can posses one or more 'credits' that should be honored (acknowedged) by the shopping
-        // cart as soon as the user's identity is known. Specifically, the cart must display the amount
-        // of the discount as well as ensuring that the cart's 'Total' field reflects the discount. Point being that
-        // that the cart shouldn't depend on the user to supply the discount.
-        //
-        // and....
-        // absent a pre-existing discount code, the cart must suppy a form field to permit an
-        // ajax call to the server to validate anything entered by the user on the Confirmation Tab.
-        //
-        //cartStateManager.BuildPreRegPrice(oEvent, cartStateManager.getOrderRowId());
+
         cartStateManager.CheckIfAddLocShouldHide(oEvent.currentTarget.value);
     });
 
@@ -183,7 +169,7 @@ $(function () {
     //  flow goes inside this block where the order exists and is in process e.g. previously abandoned before finializing
     if (cartStateManager.getOrderRowId() > 0 && cartStateManager.getCheckoutInProcess()) {
 
-        if (shippingAddressRequired && notificationsTesting === false) {
+        if (shippingAddressRequired && notificationsTesting.toString() === 'false') {
             // Following function lives in the register-during-checkout.js script
             // which will be in memory at this point and thus will have been hoisted.
             hookUpModal($('#UserDetailsModal'));
@@ -287,7 +273,7 @@ $(function () {
 
                                 $('#confirmationTab a').tab('show');
 
-                                if (shippingAddressRequired && notificationsTesting === false) {
+                                if (shippingAddressRequired && notificationsTesting.toString() === 'false') {
                                     // Following function lives in the register-during-checkout.js script
                                     // which will be in memory at this point and thus will have been hoisted.
                                     hookUpModal($('#UserDetailsModal'));
@@ -316,7 +302,7 @@ $(function () {
                                 // which will be in memory at this point and thus will be hoisted
                                 hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
                                 hookUpChangeTypeLogic($('#RegType'));
-                                hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
+                                hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired); // in register-during-checkout.js
 
                                 beigeFormArea.height($('#confirmation').height() + 30);
                             }

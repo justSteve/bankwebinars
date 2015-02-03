@@ -26,9 +26,9 @@ namespace CUWebinars.Business.Services
         Affiliate DetermineAffiliateByAlternativeMeans(int idUser);
         void DispatchDummyOrder();
         void FireAdminEmailConnectionInfoHandler(Order order, IEnumerable<string> recipients);
-        void FireAdminEmailSendShippedOrderEvent(Order order, IEnumerable<string> recipients);
-        void FireOrderSubmittedEvent(Order order, bool userCreatedInCart = false, Uri url = null);
-        void FireSendConnectionInfoNotificationEvent(IList<Order> orders);
+        void FireAdminEmailSendShippedOrderEvent(Order order, IEnumerable<string> recipients, bool resending = false);
+        void FireOrderSubmittedEvent(Order order, bool userCreatedInCart = false, bool resending = false, Uri url = null);
+        void FireSendConnectionInfoNotificationEvent(IList<Order> orders, bool resending);
         void FireSendOrderShippedNotificationEvent(IList<Order> orders);
         void FireSendRecordingIsPostedEvent(IList<Order> orders);
         void FireSendReminderNotificationEvent(IList<Order> orders);

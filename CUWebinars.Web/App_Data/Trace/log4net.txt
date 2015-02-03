@@ -33,3 +33,22 @@ CUWebinars Information: 0 : MailerSent: showmesomeandroid-test3@yahoo.com.au Sub
 CUWebinars Information: 0 : MailerSent: showmesomeandroid-test1004@yahoo.com.au Subject: Connection Information for Do's and Don'ts of Signature Card Contracts Timestamp was: 2/02/2015 10:54:04 PM
 CUWebinars Information: 0 : MailerSent: showmesomeandroid-test1030@yahoo.com.au Subject: Connection Information for Do's and Don'ts of Signature Card Contracts Timestamp was: 2/02/2015 10:54:08 PM
 CUWebinars Information: 0 : MailerSent: showmesomeandroid-test1036@yahoo.com.au Subject: Connection Information for Do's and Don'ts of Signature Card Contracts Timestamp was: 2/02/2015 10:54:12 PM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test1051@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Alert! FFIEC BSA / Anti-Money Laundering Examination Manual Timestamp was: 3/02/2015 4:02:12 PM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test1053@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Understanding CCC Loans for Ag Lenders Timestamp was: 3/02/2015 4:19:22 PM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test1@yahoo.com.au Subject: Connection Information for Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 3/02/2015 10:50:03 PM
+CUWebinars Information: 0 : MailerSent: MigrateSteve2@ttstrain.com Subject: Connection Information for Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 3/02/2015 10:50:04 PM
+CUWebinars Information: 0 : MailerSent: MigrateSteve2@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 3/02/2015 10:50:31 PM
+CUWebinars Information: 0 : MailerSent: MigrateSteve2@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Best-Ever Compliance Checklists for Consumer Loans Timestamp was: 3/02/2015 10:50:35 PM
+CUWebinars Information: 0 : MailerSent: laurie@appel-enterprises.com Subject: Connection Information for Understanding CCC Loans for Ag Lenders Timestamp was: 3/02/2015 10:51:14 PM
+CUWebinars Information: 0 : MailerSent: kami.taylor@arkbankers.org Subject: Connection Information for Understanding CCC Loans for Ag Lenders Timestamp was: 3/02/2015 10:51:20 PM
+CUWebinars Information: 0 : MailerSent: impacttc@msn.com Subject: Connection Information for Understanding CCC Loans for Ag Lenders Timestamp was: 3/02/2015 10:51:24 PM
+CUWebinars Information: 0 : MailerSent: stracy@nhbankers.com Subject: Connection Information for Understanding CCC Loans for Ag Lenders Timestamp was: 3/02/2015 10:51:27 PM
+CUWebinars Information: 0 : MailerSent: Sandy@cftncs.org Subject: Connection Information for Understanding CCC Loans for Ag Lenders Timestamp was: 3/02/2015 10:51:30 PM
+CUWebinars Information: 0 : MailerSent: mataylor@cbao.com Subject: Connection Information for Understanding CCC Loans for Ag Lenders Timestamp was: 3/02/2015 10:51:34 PM
+CUWebinars Information: 0 : MailerSent: rhondap@cftws.org Subject: Connection Information for Understanding CCC Loans for Ag Lenders Timestamp was: 3/02/2015 10:51:37 PM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test1007@yahoo.com.au Subject: Connection Information for Understanding CCC Loans for Ag Lenders Timestamp was: 3/02/2015 10:51:41 PM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test1031@yahoo.com.au Subject: Connection Information for Understanding CCC Loans for Ag Lenders Timestamp was: 3/02/2015 10:51:44 PM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test1032@yahoo.com.au Subject: Connection Information for Understanding CCC Loans for Ag Lenders Timestamp was: 3/02/2015 10:51:48 PM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test1035@yahoo.com.au Subject: Connection Information for Understanding CCC Loans for Ag Lenders Timestamp was: 3/02/2015 10:51:51 PM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test1031@yahoo.com.au Subject: Connection Information for Understanding CCC Loans for Ag Lenders Timestamp was: 3/02/2015 10:51:55 PM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test1051@yahoo.com.au Subject: Connection Information for Understanding CCC Loans for Ag Lenders Timestamp was: 3/02/2015 10:51:58 PM

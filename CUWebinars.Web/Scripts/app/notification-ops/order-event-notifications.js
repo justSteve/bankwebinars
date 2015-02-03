@@ -287,7 +287,6 @@ $(function () {
                     $('#loadingSpinner').remove();
 
                     modalPreview.modal(modalFormOptionsOnPageLoad);
-                    modalPreview.modal();
 
                 });
             });
@@ -473,8 +472,6 @@ $(function () {
                     $('#loadingSpinner').remove();
 
                     modalPreview.modal(modalFormOptionsOnPageLoad);
-                    modalPreview.modal();
-
                 });
             });
 
@@ -618,8 +615,6 @@ $(function () {
                     $('#loadingSpinner').remove();
 
                     modalPreview.modal(modalFormOptionsOnPageLoad);
-                    modalPreview.modal();
-
                 });
             });
 
