@@ -617,6 +617,8 @@ namespace CUWebinars.Business.AccountService
 
         public bool VerifyUserByEmail(string tenant, string email)
         {
+            if (tenant == null) throw new ArgumentNullException("tenant");
+            if (email == null) throw new ArgumentNullException("email");
             try
             {
                 var account = _userAccountService.GetByEmail(tenant, email);

@@ -742,7 +742,7 @@ function completeOrder(userId, orderRowId, webinarId) {
             if (result.Result === 'Success') {
                 orderRowId = result.OrderRowId;
 
-                var err = new Error('Posted Order: ' + orderRowId);
+                //var err = new Error('Posted Order: ' + orderRowId);
                 //NREUM.noticeError(err);
                 $('#orderDetails').empty();
                 $('#orderDetails').append(result.Msg);
@@ -753,7 +753,7 @@ function completeOrder(userId, orderRowId, webinarId) {
 
             } else {
 
-                var err = new Error('FAILED posting Order: ');
+                //var err = new Error('FAILED posting Order: ');
                 //NREUM.noticeError(err);
 
                 $('#ConfirmRegistrationBillMe').after('<span class="text-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
@@ -767,7 +767,7 @@ function completeOrder(userId, orderRowId, webinarId) {
 
             var utilities = new Common.Utilities();
             console.log('/webinar/details/' + webinarId);
-            var err = new Error('/webinar/details/' + webinarId);
+            //var err = new Error('/webinar/details/' + webinarId);
             //NREUM.noticeError(err);
             utilities.goToUrl('/Account/OrderComplete/' + registerDuringCheckout.emailOfNewUser);
         });

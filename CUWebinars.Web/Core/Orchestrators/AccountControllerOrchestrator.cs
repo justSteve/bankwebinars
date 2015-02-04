@@ -414,6 +414,9 @@ namespace CUWebinars.Web.Core.Orchestrators
             // Try and find the user for up to 20s. If it still does not exist, chuck an exception.
             do
             {
+                if (retries >= _globals.RetryCount - 1)
+                    _logger.Error("Retry count reached for AddPasswordForCartCreatedUser method.");
+
                 userAccount = _membershipService.GetUserAccountByEmail(_globals.Tenant, model.Email);
 
                 if (ReferenceEquals(userAccount, null))
@@ -438,25 +441,53 @@ namespace CUWebinars.Web.Core.Orchestrators
             _membershipService.VerifyUserByEmail(_globals.Tenant, model.Email);
 
             _stateService.SetValue(DomainConstants.CartCreatedUserPasswordCreate, true);
-            _membershipService.ResetPassword(_globals.Tenant, model.Email);
+
+            
+            retries = 0; // re-use and re-set retries.
+            
+            do
+            {
+                try
+                {
+                    _membershipService.ResetPassword(_globals.Tenant, model.Email);
+                    break; // reached if no exception is thrown
+                }
+                catch(Exception exception)
+                {
+                    _logger.ErrorException("ResetPassword: ", exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                }
+                Thread.Sleep(500);
+            } while (retries++ < _globals.RetryCount);
 
             var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
 
+            _logger.Info("verificationKey is {0}", verificationKey);
+
             _stateService.ClearValue(DomainConstants.CartCreatedUserPasswordCreate);
 
-            try
+
+            
+            retries = 0; // re-use and re-set retries.
+
+            do
             {
-                _membershipService.ChangePasswordFromResetKey(verificationKey, model.NewPassword);
-            }
-            catch (Exception exception)
-            {
-                _logger.ErrorException("ChangePasswordFromResetKey: ", exception);
-                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
-            }
+                try
+                {
+                    _membershipService.ChangePasswordFromResetKey(verificationKey, model.NewPassword);
+                    break; // reached if no exception is thrown
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException("ChangePasswordFromResetKey: ", exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                }
+
+                Thread.Sleep(500);
+
+            } while (retries++ < _globals.RetryCount);
 
             _stateService.ClearValue(DomainConstants.VerificationKey);
-
-            //_membershipService.LogInUser(_globals.Tenant, model.Email, model.NewPassword, true);
 
             _logger.Info("Account.Confirmed POST. Session={0}", _appHelper.GetUserAuditInfo());
         }
