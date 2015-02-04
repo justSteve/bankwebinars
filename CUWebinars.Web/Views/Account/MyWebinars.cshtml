@@ -10,7 +10,7 @@
 
     WebUser currentUser = Model.WebUser;
     var EditResult = "<span>&nbsp;</span>";
-
+    var userSubscription = Model.Subscription;
     if (TempData["EditResult"] != null && (string)TempData["EditResult"] != "")
     {
         EditResult = TempData["EditResult"].ToString();
@@ -51,18 +51,26 @@
       };}
     @*<span style="margin-left: 25px;"><input type="button" class="btn-small btn btn-link" onclick="javascript: stateManager.passResetView(); return false;" value="Forgot Password?" /></span>
         Html.Partial("~/Views/Admin/_ResetPasswordPartial.cshtml", pModel)*@
-    @*@if (thisDiscount != null)
-        {
-            <span>Discount found with @thisDiscount.UsesRemaining credits remaining.</span>
-        }*@
-    <div class="row-fluid">
-        @{Html.RenderPartial("Partials/Subscription");}
-    </div>
+    @if (userSubscription != null)
+    {
+        <div class="row-fluid">
+            @{Html.RenderPartial("Partials/Subscription");}
+        </div>
+    }
+    @if (userPackage != null)
+    {
+        <div class="row-fluid">
+            @{Html.RenderPartial("Partials/Package");}
+        </div>
+    }
     <div class="row-fluid">
         @{Html.RenderPartial("Partials/Upcoming");}
     </div>
     <div class="row-fluid">
         @{Html.RenderPartial("Partials/Recorded");}
+    </div>
+    <div class="row-fluid">
+        @{Html.RenderPartial("Partials/Messages");}
     </div>
     <br />
     <div class="clear" />

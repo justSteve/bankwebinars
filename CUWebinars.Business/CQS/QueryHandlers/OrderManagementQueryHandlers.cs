@@ -40,7 +40,6 @@ IQueryHandler<MigratorQuery, MigratorQueryResult>, IQueryHandler<ImportQuery, Im
         public MigratorQueryResult Handle(MigratorQuery query)
         {
             if (query == null) throw new ArgumentNullException("query");
-            //TODO: Why is affiliate not being instantiated here.
             var migrateQueryResult = new MigratorQueryResult
             {
                 Affiliate = _orderManagementService.GetAffiliateByIdLoaded(query.AffiliateId),

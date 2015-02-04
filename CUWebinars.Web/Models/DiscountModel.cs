@@ -52,10 +52,16 @@ namespace CUWebinars.Web.Models
         public int RenewalTerm { get; set; }
 
         [HiddenInput]
+        public int idDiscount { get; set; }
+        
+        [HiddenInput]
         public DiscountType TypeOfDiscount { get; set; }
+        
+        [HiddenInput]
+        public WebUserDiscountXref WebUserDiscountXref { get; set; }
 
-        [ScaffoldColumn(false)]
-        public string ClientScriptActionHint { get; set; }
+        //[ScaffoldColumn(false)]
+        //public string ClientScriptActionHint { get; set; }
     }
 
 
