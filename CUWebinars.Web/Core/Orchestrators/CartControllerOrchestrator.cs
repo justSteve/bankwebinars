@@ -176,10 +176,6 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                         if (checkoutConfirmViewModel.OrderRowHasId)
                             checkoutConfirmViewModel.OptionLabel = orderRow.RegistrationType.OptionLabel;
-
-                        if (orderRow.Order.OrderStatus == OrderStatus.InProcess)
-                            checkoutConfirmViewModel.UserDetails +=
-                                " - <a id='editUserDetails' role='button' class='btn btn-mini' target='new'> Edit?</a>";
                     }
 
                     if (Request["referred"] != null &&

@@ -52,3 +52,8 @@ CUWebinars Information: 0 : MailerSent: showmesomeandroid-test1032@yahoo.com.au 
 CUWebinars Information: 0 : MailerSent: showmesomeandroid-test1035@yahoo.com.au Subject: Connection Information for Understanding CCC Loans for Ag Lenders Timestamp was: 3/02/2015 10:51:51 PM
 CUWebinars Information: 0 : MailerSent: showmesomeandroid-test1031@yahoo.com.au Subject: Connection Information for Understanding CCC Loans for Ag Lenders Timestamp was: 3/02/2015 10:51:55 PM
 CUWebinars Information: 0 : MailerSent: showmesomeandroid-test1051@yahoo.com.au Subject: Connection Information for Understanding CCC Loans for Ag Lenders Timestamp was: 3/02/2015 10:51:58 PM
+CUWebinars Information: 0 : MailerSent: james@bond.com Subject: [preview-BankWebinars] Confirmation of Registration: Conducting Financial Investigations - What Law Enforcement Needs To Know Timestamp was: 4/02/2015 9:55:44 AM
+CUWebinars Information: 0 : MailerSent: james@bond.com Subject: [preview-BankWebinars] Confirmation of Registration: Understanding CCC Loans for Ag Lenders Timestamp was: 4/02/2015 9:56:37 AM
+CUWebinars Information: 0 : MailerSent: james@bond.com Subject: [preview-BankWebinars] Confirmation of Registration: Alert! FFIEC BSA / Anti-Money Laundering Examination Manual Timestamp was: 4/02/2015 10:32:24 AM
+CUWebinars Information: 0 : MailerSent: blow@feld.com Subject: [preview-BankWebinars] Confirmation of Registration: Conducting Financial Investigations - What Law Enforcement Needs To Know Timestamp was: 4/02/2015 10:33:28 AM
+CUWebinars Information: 0 : MailerSent: blow@feld.com Subject: [preview-BankWebinars] Confirmation of Registration: Do's and Don'ts of Signature Card Contracts Timestamp was: 4/02/2015 10:35:12 AM

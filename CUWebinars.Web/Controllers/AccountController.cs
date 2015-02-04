@@ -1171,7 +1171,6 @@ namespace CUWebinars.Web.Controllers
         [HandleJsonException]
         public ActionResult UpdateShippingDetails(ShippingDetailsModel shippingDetailsModel)
         {
-            throw new Exception("Very bad");
             if (ModelState.IsValid)
             {
                 try

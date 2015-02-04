@@ -477,7 +477,7 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
 
                                     hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
                                     hookUpChangeTypeLogic($('#RegType'));
-                                    hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
+                                    hookUpEditUserLogic(null, shippingAddressRequired);
 
                                     if (shippingAddressRequired && notificationsTesting.toString() === 'false') {
                                         hookUpModal($('#UserDetailsModal'));
@@ -606,7 +606,7 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
 
                                             hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
                                             hookUpChangeTypeLogic($('#RegType'));
-                                            hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
+                                            hookUpEditUserLogic(null, shippingAddressRequired);
 
                                             if (shippingAddressRequired && notificationsTesting.toString() === 'false') {
                                                 hookUpModal($('#UserDetailsModal'));
@@ -844,12 +844,15 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
 
     var modalForm = $('#UserDetailsModal');
 
-    button.on('click', function (e) {
+    // There may be times where a button does not trigger the modal.
+    if (button) {
+        button.on('click', function(e) {
 
-        e.preventDefault();
+            e.preventDefault();
 
-        hookUpModal(modalForm);
-    });
+            hookUpModal(modalForm);
+        });
+    }
 
     modalForm.on('shown', function (e) {
 
@@ -886,13 +889,6 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
                     var userNameInsuranceAndButton = $('#userDetailsSummed > p:nth-child(1)');
                     userNameInsuranceAndButton.empty();
                     userNameInsuranceAndButton.html(fullname + ' - ' + $('#RegisterFields_Institution').val() + '<br> ' + $('#RegisterFields_Email').val() + ' - <a id="editUserDetails" role="button" class="btn btn-mini" target="new"> Edit?</a>');
-
-                    $('#editUserDetails').on('click', function (e) {
-
-                        e.preventDefault();
-
-                        hookUpModal(modalForm);
-                    });
 
                     $('#updateShippingMsgLabelWrap').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details updated successfully.</span>');
                     //modalForm.modal('hide');

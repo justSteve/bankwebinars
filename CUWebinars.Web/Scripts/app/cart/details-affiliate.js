@@ -85,8 +85,6 @@ OCA.initializeFunctions = function () {
             e.preventDefault();
             $('#AdjustOrder').slideToggle();
         });
-
-        OCA.hookUpEditUserLogic($('#editUserDetails'));
     };
 
     OCA.isShippindAddressRequired = function(jQueryObject) {
@@ -187,13 +185,6 @@ OCA.initializeFunctions = function () {
                     // I think the cause would have to be rooted here over very near here.
 
                     if (data.Result === 'Success') {
-
-                        $('#editUserDetails').on('click', function (e) {
-
-                            e.preventDefault();
-
-                            OCA.displayModal(modalForm);
-                        });
 
                         $('#updateShippingMsgLabelWrap').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details updated successfully.</span>');
 

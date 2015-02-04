@@ -200,7 +200,7 @@ $(function () {
         // which will be in memory at this point and thus will be hoisted
         hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
         hookUpChangeTypeLogic($('#RegType'));
-        hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
+        hookUpEditUserLogic(null, shippingAddressRequired);
     }
 
     /* Submit event for the big green SignUp button */
@@ -302,7 +302,7 @@ $(function () {
                                 // which will be in memory at this point and thus will be hoisted
                                 hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
                                 hookUpChangeTypeLogic($('#RegType'));
-                                hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired); // in register-during-checkout.js
+                                hookUpEditUserLogic(null, shippingAddressRequired); 
 
                                 beigeFormArea.height($('#confirmation').height() + 30);
                             }
