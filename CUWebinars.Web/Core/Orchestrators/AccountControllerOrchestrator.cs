@@ -465,8 +465,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             _logger.Info("verificationKey is {0}", verificationKey);
 
             _stateService.ClearValue(DomainConstants.CartCreatedUserPasswordCreate);
-
-
             
             retries = 0; // re-use and re-set retries.
 
