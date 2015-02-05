@@ -4,6 +4,7 @@ using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
+using CUWebinars.Web.Models;
 using CUWebinars.Web.ViewModel;
 using Ninject.Extensions.Logging;
 using System;
@@ -35,6 +36,8 @@ namespace CUWebinars.Web.Controllers
             var row = _cartControllerOrchestrator.GetOrderRowLoaded(orderRowId);
 
             var myDiscount = _cartControllerOrchestrator.ApplyDiscountCode(code, row);
+            var b = new DiscountModel();
+            AutoMapper.Mapper.Engine.Map(myDiscount, b);
 
             _cartControllerOrchestrator.UpdateOrderPricing(row.Order);
 

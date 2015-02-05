@@ -27,7 +27,7 @@ namespace CUWebinars.Web
 
     public class MvcApplication : HttpApplication
     {
-        readonly IErrorResponseCommand errorResponseCommand = new ErrorResponseCommand();
+        readonly IErrorResponseCommand _errorResponseCommand = new ErrorResponseCommand();
         public static ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly IStateService StateService = new StateService();
 
@@ -56,7 +56,9 @@ namespace CUWebinars.Web
             log4net.Config.XmlConfigurator.Configure();
 
             AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.Email;
+            logger.Info(string.Format("Spinning up application"));
         }
+
         //https://www.simple-talk.com/dotnet/asp.net/handling-errors-effectively-in-asp.net-mvc/
         protected void Application_Error(object sender, EventArgs e)
         {
@@ -95,19 +97,14 @@ namespace CUWebinars.Web
                     case 404:
                         Response.StatusCode = 404;
                         newRouteData.Values[WebUiConstants.Action] = WebUiConstants.PageNotFound;
-                        errorResponseCommand.Execute(errorResponse);
+                        _errorResponseCommand.Execute(errorResponse);
                         break;
 
                     case 500:
-                        Response.StatusCode = 500;
-                        newRouteData.Values[WebUiConstants.Action] = WebUiConstants.ServerErrorPage;
-                        errorResponseCommand.Execute(errorResponse);
-                        break;
-
                     default:
                         Response.StatusCode = 500;
                         newRouteData.Values[WebUiConstants.Action] = WebUiConstants.ServerErrorPage;
-                        errorResponseCommand.Execute(errorResponse);
+                        _errorResponseCommand.Execute(errorResponse);
                         break;
                 }
             }
@@ -115,7 +112,7 @@ namespace CUWebinars.Web
             {
                 Response.StatusCode = 500;
                 newRouteData.Values[WebUiConstants.Action] = WebUiConstants.ServerErrorPage;
-                errorResponseCommand.Execute(errorResponse);
+                _errorResponseCommand.Execute(errorResponse);
             }
 
         }
@@ -126,11 +123,10 @@ namespace CUWebinars.Web
             //avoids session state when the WebAPI method is invoked.
             if (System.Web.HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath != "~/account/get/")
             {
-                TTSWebinarsContext ttsWebinarsContext = new TTSWebinarsContext();
+                var ttsWebinarsContext = new TTSWebinarsContext();
                 try
                 {
                     IAffiliateRepository affiliateRepository = new AffiliateRepository(ttsWebinarsContext);
-                    IWebinarRepository _reposWebinars = new WebinarRepository(ttsWebinarsContext);
                     IInstitutionRepository institutionRepository = new InstitutionRepository(ttsWebinarsContext);
 
                     //StateService.SetValue("searchTerm", string.Empty);
@@ -138,8 +134,7 @@ namespace CUWebinars.Web
                     //StateService.SetValue("IncludeUpcoming", true);
                     //StateService.SetValue("searchExtent", "Upcoming");
 
-                    StateService.SetValue(WebUiConstants.CurrentAffiliate,
-                        affiliateRepository.FindByIdWithIncluding(19, a => a.WebUser));
+                    StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(AppConst.DEFAULT_AFFILIATE, a => a.WebUser));
                     StateService.SetValue("AValidInstitution", institutionRepository.FindFirst());
 
                     //This session var lets us understand the origin of the Affiliate session - 
@@ -147,13 +142,13 @@ namespace CUWebinars.Web
                     //Here we the initial value to 'default' ... later code will
                     // override if conditions dictate.
                     StateService.SetValue("AffiliateSessionSource", "default" + Pipe + AppConst.DEFAULT_AFFILIATE);
-                    StateService.SetValue(WebUiConstants.SubdomainBranding,
-                        ConfigurationManager.AppSettings[AppConst.TESTING_URL]);
+                    //StateService.SetValue(WebUiConstants.SubdomainBranding, ConfigurationManager.AppSettings[AppConst.TESTING_URL]);  //TODO: [dar] I think this can be deleted
 
                     //following are values to be stored for audit purposes.
                     if (HttpContext.Current.Request.UrlReferrer != null)
                         StateService.SetValue(WebUiConstants.SubdomainBranding,
                             HttpContext.Current.Request.UrlReferrer.ToString().Trim());
+
                     StateService.SetValue("FirstPage", HttpContext.Current.Request.Url.ToString().Trim());
                     StateService.SetValue("InitialQueryString", Request.Url.Query);
                     StateService.SetValue(WebUiConstants.SessionId, HttpContext.Current.Session.SessionID);
@@ -169,11 +164,11 @@ namespace CUWebinars.Web
                         {
                             try
                             {
-                                StateService.SetValue("AffiliateSessionSource",
-                                    WebUiConstants.AffiliateId + Pipe + loadAff);
+                                StateService.SetValue("AffiliateSessionSource", WebUiConstants.AffiliateId + Pipe + loadAff);
                                 // determine the current affiliate
-                                StateService.SetValue(WebUiConstants.CurrentAffiliate,
-                                    affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser));
+                                StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser));
+                                logger.Info(string.Format("Resolving Affiliate via query string with id {0}", loadAff));
+
                             }
                             catch (Exception ex)
                             {
@@ -185,8 +180,7 @@ namespace CUWebinars.Web
                         }
                         else
                         {
-                            logger.Error(SessionStartError + "Non-numeric idAff: " +
-                                         HttpContext.Current.Request.QueryString.ToString());
+                            logger.Error(SessionStartError + "Non-numeric idAff: " + HttpContext.Current.Request.QueryString.ToString());
                         }
                     }
 
@@ -196,6 +190,8 @@ namespace CUWebinars.Web
                     //e.g. http://webinars.cftws.org - means CurrentAffiliate should be 'cftws'
                     if (!string.IsNullOrEmpty(subdomainBranding))
                     {
+                        logger.Info(string.Format("Resolving Affiliate via subdomainBranding {0}", subdomainBranding));
+
                         var subdomainBrandType = subdomainBranding.Split('.').FirstOrDefault();
                         if (!string.IsNullOrEmpty(subdomainBrandType) &&
                             subdomainBrandType.Equals(WebUiConstants.Webinars, StringComparison.OrdinalIgnoreCase))
@@ -216,6 +212,7 @@ namespace CUWebinars.Web
                             }
                             catch (Exception ex)
                             {
+                                logger.Error(string.Format("Failed to resolving Affiliate via subdomainBranding {0}", subdomainBranding));
                                 logger.Fatal(ex);
                                 throw;
                             }
@@ -279,55 +276,6 @@ namespace CUWebinars.Web
 
                     StateService.SetValue("FirstCookies", allCookies.ToString());
 
-                    //setup upcoming and recorded menu contents
-                    //var upcomingWebinars = _reposWebinars.GetUpcoming().OrderBy(w => w.Date).Take(8).ToList();
-                    //var upComingPresentationListItems = new StringBuilder();
-                    //upComingPresentationListItems.Append(
-                    //    "<li role='presentation'><a  role=\"menuitem\" tabindex=\"-1\"  href='/Webinar/allActive/?eventsToShow=upcoming'>View <b>All</b> Upcoming Events</a></li>");
-
-                    //if (upcomingWebinars.Count > 0)
-                    //{
-                    //    for (int i = 0; i < upcomingWebinars.Count; i++)
-                    //    {
-                    //        var upcomingWebinar = upcomingWebinars[i];
-                    //        string shortTitle = upcomingWebinar.Title.Length > 35
-                    //                ? upcomingWebinar.Title.Substring(0, 35) + "..."
-                    //                : upcomingWebinar.Title;
-
-                    //        string seoTitle = upcomingWebinar.Title.RemoveIllegalCharacters().ReplaceSpacesWithHyphens().ToLower().TrimEnd('.');
-
-                    //        upComingPresentationListItems.Append(
-                    //            string.Format("<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href='/{0}/{1}'", upcomingWebinar.idWebinar, seoTitle) +
-                    //            upcomingWebinars[i].idWebinar + "'>" + Server.HtmlEncode(shortTitle) + "</a></li>"
-                    //            );
-                    //    }
-
-                    //}
-                    //StateService.SetValue("upcoming", upComingPresentationListItems);
-
-
-
-                    //var recordedWebinars = _reposWebinars.GetRecorded().OrderBy( w => w.Date).Take(8).ToList();
-                    //StringBuilder recordedWebinarsListItems = new StringBuilder();
-                    //recordedWebinarsListItems.Append(
-                    //    "<li role='presentation'><a  role=\"menuitem\" tabindex=\"-1\"  href='/Webinar/allActive/?eventsToShow=recorded'>View <b>All</b> Recordings</a></li>");
-                    //if (recordedWebinars.Count > 0)
-                    //{
-                    //    for (int i = 0; i < 8; i++)
-                    //    {
-                    //        string ShortTitle =
-                    //            recordedWebinars[i].Title.Length > 45
-                    //                ? recordedWebinars[i].Title.Substring(0, 45) + "..."
-                    //                : recordedWebinars[i].Title;
-
-                    //        recordedWebinarsListItems.Append(
-                    //            "<li role='presentation'><a role=\"menuitem\" tabindex=\"-1\" href='/Webinar/Details/" +
-                    //            recordedWebinars[i].idWebinar + "'>" + Server.HtmlEncode(ShortTitle) + "</a></li>"
-                    //            );
-                    //    }
-
-                    //}
-                    //StateService.SetValue("rec", recordedWebinarsListItems);
                 }
                 catch (Exception exception)
                 {
@@ -335,7 +283,7 @@ namespace CUWebinars.Web
                 }
                 finally
                 {
-                    //ttsWebinarsContext.Database.Connection.Close(); --> PROBABLY NOT NECESSARY. DISPOSE SHOULD DO THIS FOR US.
+                    //ttsWebinarsContext.Database.Connection.Close(); --> THIS LINE PROBABLY NOT NECESSARY. DISPOSE SHOULD DO THIS FOR US.
                     ttsWebinarsContext.Dispose();
                 }
             }
