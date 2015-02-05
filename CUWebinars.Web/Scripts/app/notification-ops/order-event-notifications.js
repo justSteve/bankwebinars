@@ -38,9 +38,10 @@ $(function () {
 
     $('#GetResendConnectionInfoHtmlButton').on('click', function (eventArgs) {
         eventArgs.preventDefault();
-        $('#InputFormFields').empty();
 
-        $('#InputFormFields').load(resendConnectionInfoUrl, function () {
+        $('#OrdersMenuHeader').after('<i id="getHtmlSpinner" class="icon-spinner icon-spin"></i>');
+        
+        $('#InputFormFields').empty().load(resendConnectionInfoUrl, function () {
 
             $('#ResendConnectionInfoButton').on('click', function () {
 
@@ -75,14 +76,19 @@ $(function () {
                 });
             });
 
+            $('#getHtmlSpinner').remove();
+
         });
+
     });
             
     $('#GetResendOrderConfirmationHtmlButton').on('click', function (eventArgs) {
-        eventArgs.preventDefault();
-        $('#InputFormFields').empty();
 
-        $('#InputFormFields').load(resendOrderConfirmationUrl, function () {
+        eventArgs.preventDefault();
+
+        $('#OrdersMenuHeader').after('<i id="getHtmlSpinner" class="icon-spinner icon-spin"></i>');
+        
+        $('#InputFormFields').empty().load(resendOrderConfirmationUrl, function () {
 
             $('#ResendOrderConfirmationButton').on('click', function () {
 
@@ -117,13 +123,18 @@ $(function () {
                     $('#loadingSpinner').remove();
                 });
             });
+
+            $('#getHtmlSpinner').remove();
         });
+
+       
     });
 
-    getAdhocEventsHtmlButton.on('click', function(eventArgs) {
-        $('#InputFormFields').empty();
+    getAdhocEventsHtmlButton.on('click', function (eventArgs) {
 
-        $('#InputFormFields').load(sendAdhocEventUrl, function () {
+        eventArgs.preventDefault();
+        
+        $('#InputFormFields').empty().load(sendAdhocEventUrl, function () {
             $('#RegTypesCheckBoxes').hide();
             adhocNotificationForm = $('#AdhocNotificationForm');
             selectedUpcomingWebinarIdDropDown = $('#SelectedWebinarId');
@@ -211,6 +222,10 @@ $(function () {
 
     
     $('#SendShippedOrderNotificationButton').on('click', function (evtArgs) {
+
+        evtArgs.preventDefault();
+
+        $('#OrdersMenuHeader').after('<i id="getHtmlSpinner" class="icon-spinner icon-spin"></i>');
         
         $('#InputFormFields').empty().load(sendOrderShippedUrl, function () {
 
@@ -353,14 +368,18 @@ $(function () {
                 });
             });
 
+            $('#getHtmlSpinner').remove();
         });
 
     });
 
     $('#GetSendReminderEventHtmlButton').on('click', function (eventArgs) {
-        $('#InputFormFields').empty();
 
-        $('#InputFormFields').load(sendReminderUrl, function() {
+        eventArgs.preventDefault();
+
+        $('#OrdersMenuHeader').after('<i id="getHtmlSpinner" class="icon-spinner icon-spin"></i>');
+
+        $('#InputFormFields').empty().load(sendReminderUrl, function () {
 
             $('#FireSendReminderEventButton').on('click', function (eventArgs) {
                 
@@ -395,11 +414,17 @@ $(function () {
                     $('#loadingSpinner').remove();
                 });;
             });
+
+            $('#getHtmlSpinner').remove();
         });
     });
 
     $('#GetSendConnectionInfoEventHtmlButton').on('click', function (eventArgs) {
-        
+
+        eventArgs.preventDefault();
+
+        $('#OrdersMenuHeader').after('<i id="getHtmlSpinner" class="icon-spinner icon-spin"></i>');
+
         $('#InputFormFields').empty().load(sendConnectionInfoUrl, function () {
 
             var webinarsDropdownList = $('#SelectedWebinarId');
@@ -537,14 +562,17 @@ $(function () {
                 });
             });
 
+            $('#getHtmlSpinner').remove();
+
         });
     });
 
     $('#GetSendRecordingPostedEventHtmlButton').on('click', function (eventArgs) {
         eventArgs.preventDefault();
-        $('#InputFormFields').empty();
+
+        $('#OrdersMenuHeader').after('<i id="getHtmlSpinner" class="icon-spinner icon-spin"></i>');
         
-        $('#InputFormFields').load(sendRecordingPostedUrl, function () {
+        $('#InputFormFields').empty().load(sendRecordingPostedUrl, function () {
 
             var webinarsDropdownList = $('#SelectedWebinarId');
             
@@ -680,8 +708,9 @@ $(function () {
                 });
             });
 
-
+            $('#getHtmlSpinner').remove();
         });
+        
     });
 
     var labelCheckRemove = function() {

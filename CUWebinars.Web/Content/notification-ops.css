@@ -30,3 +30,7 @@ div#SubPanel {
 div#emailPanel {
     margin-top: 10px;
 }
+
+#getHtmlSpinner {
+    margin-top: 10px;
+}
