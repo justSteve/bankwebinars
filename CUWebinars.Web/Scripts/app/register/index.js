@@ -402,7 +402,7 @@ $(function () {
                     //console.log('success: ' + data.Result);
                     stateManager.setAction('');
                     $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;You have successfully registered! Please wait while we log you in...</span>');
-                    location.assign(path + '/'); //recommend using url lib whose name I've forgotten to build this url. Remind me if this comment is till here
+                    utilities.goToUrl('/');
                 } else if (data.Result === 'Fail') {
                     $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
                     stateManager.setAction(Registration.Action.SubmitRegister);
