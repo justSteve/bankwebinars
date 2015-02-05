@@ -477,9 +477,9 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
 
                                     hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
                                     hookUpChangeTypeLogic($('#RegType'));
-                                    hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
+                                    hookUpEditUserLogic(null, shippingAddressRequired);
 
-                                    if (shippingAddressRequired && notificationsTesting === 'false') {
+                                    if (shippingAddressRequired && notificationsTesting.toString() === 'false') {
                                         hookUpModal($('#UserDetailsModal'));
                                     }
 
@@ -606,9 +606,9 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
 
                                             hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
                                             hookUpChangeTypeLogic($('#RegType'));
-                                            hookUpEditUserLogic($('#editUserDetails'), shippingAddressRequired);
+                                            hookUpEditUserLogic(null, shippingAddressRequired);
 
-                                            if (shippingAddressRequired && notificationsTesting === 'false') {
+                                            if (shippingAddressRequired && notificationsTesting.toString() === 'false') {
                                                 hookUpModal($('#UserDetailsModal'));
                                             }
 
@@ -742,7 +742,7 @@ function completeOrder(userId, orderRowId, webinarId) {
             if (result.Result === 'Success') {
                 orderRowId = result.OrderRowId;
 
-                var err = new Error('Posted Order: ' + orderRowId);
+                //var err = new Error('Posted Order: ' + orderRowId);
                 //NREUM.noticeError(err);
                 $('#orderDetails').empty();
                 $('#orderDetails').append(result.Msg);
@@ -753,7 +753,7 @@ function completeOrder(userId, orderRowId, webinarId) {
 
             } else {
 
-                var err = new Error('FAILED posting Order: ');
+                //var err = new Error('FAILED posting Order: ');
                 //NREUM.noticeError(err);
 
                 $('#ConfirmRegistrationBillMe').after('<span class="text-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
@@ -767,7 +767,7 @@ function completeOrder(userId, orderRowId, webinarId) {
 
             var utilities = new Common.Utilities();
             console.log('/webinar/details/' + webinarId);
-            var err = new Error('/webinar/details/' + webinarId);
+            //var err = new Error('/webinar/details/' + webinarId);
             //NREUM.noticeError(err);
             utilities.goToUrl('/Account/OrderComplete/' + registerDuringCheckout.emailOfNewUser);
         });
@@ -835,12 +835,6 @@ function cancelOrder(orderId, webinarId) {
 
 function hookUpModal(modalForm) {
 
-    //var modalFormOptions = {
-    //    keyboard: true,
-    //    backdrop: 'static',
-    //    show: true,
-    //};
-
     modalForm.modal('show');
 }
 
@@ -850,12 +844,15 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
 
     var modalForm = $('#UserDetailsModal');
 
-    button.on('click', function (e) {
+    // There may be times where a button does not trigger the modal.
+    if (button) {
+        button.on('click', function(e) {
 
-        e.preventDefault();
+            e.preventDefault();
 
-        hookUpModal(modalForm);
-    });
+            hookUpModal(modalForm);
+        });
+    }
 
     modalForm.on('shown', function (e) {
 
@@ -892,13 +889,6 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
                     var userNameInsuranceAndButton = $('#userDetailsSummed > p:nth-child(1)');
                     userNameInsuranceAndButton.empty();
                     userNameInsuranceAndButton.html(fullname + ' - ' + $('#RegisterFields_Institution').val() + '<br> ' + $('#RegisterFields_Email').val() + ' - <a id="editUserDetails" role="button" class="btn btn-mini" target="new"> Edit?</a>');
-
-                    $('#editUserDetails').on('click', function (e) {
-
-                        e.preventDefault();
-
-                        hookUpModal(modalForm);
-                    });
 
                     $('#updateShippingMsgLabelWrap').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details updated successfully.</span>');
                     //modalForm.modal('hide');

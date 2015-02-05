@@ -94,8 +94,6 @@
 
             if (Model.OrderStatus != OrderStatus.InProcess)
             {
-                Model.UserDetails += " - <a id='editUserDetails' role='button' class='btn btn-mini' target='new'> Edit?</a>";
-
                 <div id="postCheckout" class="well pull-right">
                     <div id="showCartPrice">@{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }</div>
                     @if (Model.OrderStatus != OrderStatus.Paid)

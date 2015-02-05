@@ -215,7 +215,7 @@ namespace CUWebinars.Web.Controllers
             {
                 var orders = _orderManagementService.GetOrdersForLiveNotifications(webinarId);
 
-                _orderManagementService.FireSendConnectionInfoNotificationEvent(orders);
+                _orderManagementService.FireSendConnectionInfoNotificationEvent(orders, false);
                 return Json(new { Result = WebUiConstants.Success });
             }
             catch (Exception exception)

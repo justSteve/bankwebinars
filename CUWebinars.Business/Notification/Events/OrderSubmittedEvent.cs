@@ -3,7 +3,7 @@ using CUWebinars.NotificationSystem.Event;
 
 namespace CUWebinars.Business.Notification.Events
 {
-    public class OrderSubmittedEvent<T> : TtsBusEvent<T>, IAllowMultiple
+    public class OrderSubmittedEvent<T> : NotificationResendableEvent<T>, IAllowMultiple
         where T : OrderSubmittedViewModel
     {
         public string RelativePath { get; set; }

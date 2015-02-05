@@ -265,21 +265,34 @@ namespace CUWebinars.Web.Controllers
         public ActionResult MyWebinars()
         {
             var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
-            //var userDiscount = (DiscountModel)_orderManagementService.GetDiscountByUser(currentUser);
+            var userDiscount = _orderManagementService.GetDiscountByUser(currentUser);
+
+            var discountModel = new DiscountModel();
+            AutoMapper.Mapper.Engine.Map(userDiscount, discountModel);
+
+            if (discountModel.TypeOfDiscount == DiscountType.ComplianceSeries)
+            {
+
+            }
+
             var model = new MyWebinarsDTO
             {
                 WebUser = currentUser,
                 OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel()
                     {
 
-                    },
-                    Package = null,
-                    Subscription = new DiscountModel(){
-                        //
-                        //DiscountCode = userDiscount.DiscountCode,
                     }
             };
 
+            if (discountModel.TypeOfDiscount == DiscountType.ComplianceSeries)
+            {
+                model.Subscription = discountModel;
+            }
+
+            if (discountModel.TypeOfDiscount == DiscountType.Package)
+            {
+                model.Package = discountModel;
+            }
             ViewData["DiscountMsg"] = string.Empty;
 
             model.Scheduled = _orderManagementService.SelectOrdersWithScheduledWebinars(currentUser.idUser);
@@ -1178,6 +1191,7 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
+        [HandleJsonException]
         public ActionResult UpdateShippingDetails(ShippingDetailsModel shippingDetailsModel)
         {
             if (ModelState.IsValid)
@@ -1397,6 +1411,11 @@ namespace CUWebinars.Web.Controllers
                 return Json(new { Result = WebUiConstants.Fail });
             }
             return this.ModelStateJson(ModelState);
+        }
+
+        public ActionResult EditCpSubscription(string s)
+        {
+            throw new NotImplementedException();
         }
     }
 }

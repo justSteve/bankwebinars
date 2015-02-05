@@ -9,14 +9,18 @@
 }
 
 @{
-    //WebUser currentUser = Model.WebUser.
-    //GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+    //this page displayed when WebUser.idSubscriptionDiscount maps to a CP subscription.
+    //SQL would be:
+    //UPDATE dbo.WebUser SET idSubscriptionDiscount = 353 WHERE email = 'you'
+    
+    //WebUser currentUser = Model.WebUser
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
     //USTimeZone timeZ = currentUser.timeZone;
     //string email = Model.WebUser.email;
     //NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
 
-   // nfi.CurrencyDecimalDigits = 0;
+    // nfi.CurrencyDecimalDigits = 0;
 }
 <style type="text/css">
     .audio {
@@ -36,10 +40,20 @@
         <!--begin row-fluid-->
         <div class="span10">
             <h3>
-                Subscription Details <span style="font-weight: normal; font-size: small; color: Green;">
-
-                </span>
+                Subscription Details
             </h3>
+            @using (Html.BeginForm("UpdateSubscriptionDetails", "Account", null, FormMethod.Post, new { id = "userDetailsForm", @class = "form-horizontal" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary("Please address the following problems:", new { id = "userDetailsValSummary" })
+
+                @Html.HiddenFor(m => m.UserId)
+                //Editor does not render any controls.
+                @Html.EditorFor(m => m.Discount)
+
+                <button id="saveChangesButton" type="button" class="btn btn-primary offset2">Save changes</button>
+                <div id="updateShippingMsgLabelWrap" style="display:inline-block"></div>
+            }
         </div>
     </div>
 </div>

@@ -1,7 +1,4 @@
-﻿using System.Web.Http;
-using BrockAllen.MembershipReboot;
-using CUWebinars.Business.AccountService;
-using CUWebinars.Business.Core;
+﻿using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification;
 using CUWebinars.Business.Notification.Formatters;
@@ -15,7 +12,6 @@ using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using DotNetOpenAuth.Messaging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -331,7 +327,7 @@ namespace CUWebinars.Web.Controllers.Admin
             }
 
             //TODO: orders that have been migrated are going to have the OrderGenisis over-written by FireOrderSubmittedEvent
-            _orderManagementService.FireOrderSubmittedEvent(order);
+            _orderManagementService.FireOrderSubmittedEvent(order, resending:true);
             return Json(new { Result = WebUiConstants.Success });
         }
 
@@ -354,7 +350,9 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 return Json(new { Result = WebUiConstants.Fail });
             }
+
             AdditionalLocation nuller = new AdditionalLocation();
+
             if (string.IsNullOrEmpty(order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).JoinURL))
                _orderManagementService.GenerateRegistrantKey(order, nuller);
             
@@ -366,7 +364,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
             }
 
-            _orderManagementService.FireSendConnectionInfoNotificationEvent(new Order[] { order });
+            _orderManagementService.FireSendConnectionInfoNotificationEvent(new[] { order }, resending: true);
             return Json(new { Result = WebUiConstants.Success });
         }
 
@@ -443,7 +441,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     }
                 }
             }
-            _orderManagementService.FireSendConnectionInfoNotificationEvent(orders);
+            _orderManagementService.FireSendConnectionInfoNotificationEvent(orders, resending: false);
 
             _logger.Info("Concludes SendConnectionInfo");
             return Json(new { Result = WebUiConstants.Success });
@@ -514,7 +512,9 @@ namespace CUWebinars.Web.Controllers.Admin
         public ActionResult PreviewRecordingPosted(int id)
         {
             //  id is a WebinarId
-            var firstRetrievedOrderForWebinar = _orderManagementService.GetOrdersForRecordedNotifications(id).FirstOrDefault();
+            var firstRetrievedOrderForWebinar = _orderManagementService.GetOrdersForRecordedNotifications(id).FirstOrDefault(
+                    o => o.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType.ShowLiveNotifications.ToLower() == "yes"
+                );
 
             if (ReferenceEquals(null, firstRetrievedOrderForWebinar))
                 return File("<html>fail</html>".GenerateStreamFromString(), HtmlMimeType);
@@ -528,7 +528,10 @@ namespace CUWebinars.Web.Controllers.Admin
         public ActionResult PreviewConnectionInfo(int id)
         {
             //  id is a WebinarId
-            var firstRetrievedOrderForWebinar = _orderManagementService.GetOrdersForLiveNotifications(id).FirstOrDefault();
+            var firstRetrievedOrderForWebinar = _orderManagementService.GetOrdersForLiveNotifications(id)
+                .FirstOrDefault(
+                    o => o.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType.ShowLiveNotifications.ToLower() == "yes"
+                );
 
             if (ReferenceEquals(null, firstRetrievedOrderForWebinar))
                 return File("<html>fail</html>".GenerateStreamFromString(), HtmlMimeType);
@@ -723,7 +726,10 @@ namespace CUWebinars.Web.Controllers.Admin
                 try
                 {
                     //  id is a WebinarId
-                    var firstRetrievedOrderForWebinar = _orderManagementService.GetOrdersForLiveNotifications(id.Value).FirstOrDefault();
+                    var firstRetrievedOrderForWebinar = _orderManagementService.GetOrdersForLiveNotifications(id.Value)
+                        .FirstOrDefault(
+                            o => o.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType.ShowLiveNotifications.ToLower() == "yes"
+                        );
 
                     if(emails.Contains(","))
                         _orderManagementService.FireAdminEmailConnectionInfoHandler(firstRetrievedOrderForWebinar, emails.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
@@ -762,7 +768,9 @@ namespace CUWebinars.Web.Controllers.Admin
                 try
                 {
                     //  id is a WebinarId
-                    var firstRetrievedOrderForWebinar = _orderManagementService.GetOrdersForRecordedNotifications(id.Value).FirstOrDefault();
+                    var firstRetrievedOrderForWebinar = _orderManagementService.GetOrdersForRecordedNotifications(id.Value).FirstOrDefault(
+                        o => o.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType.ShowLiveNotifications.ToLower() == "yes"
+                    );
 
                     if (emails.Contains(","))
                         _orderManagementService.FireAdminEmailConnectionInfoHandler(firstRetrievedOrderForWebinar, emails.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));

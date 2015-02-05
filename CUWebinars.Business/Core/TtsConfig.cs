@@ -40,7 +40,7 @@ namespace CUWebinars.Business.Core
             //var notificationOrderAdditionalLocationHandlerLogger =
             //    new Log4NetLogger(typeof (OrderSubmittedAdditionalLocationHandler));
             var sendShippedOrderHandlerLogger = new Log4NetLogger(typeof (SendShippedOrderHandler));
-            //var sendConnectionInfoHandlerLogger = new Log4NetLogger(typeof (SendConnectionInfoHandler));
+            var sendConnectionInfoHandlerLogger = new Log4NetLogger(typeof (SendConnectionInfoHandler));
             var sendReminderHandlerLogger = new Log4NetLogger(typeof (SendReminderHandler));
             var sendRecordingPostedHandlerLogger = new Log4NetLogger(typeof (SendRecordingPostedHandler));
             var emailOrderHandlerLogger = new Log4NetLogger(typeof(AdminEmailSendShippedOrderHandler));
@@ -53,8 +53,9 @@ namespace CUWebinars.Business.Core
                 notificationOrderHandlerLogger, notificationPersister, new EnvironmentInformation {BaseUrl = baseUrl}));
             config.AddEventHandler(new SendShippedOrderHandler(genericFormatter, notificationDelivery,
                 sendShippedOrderHandlerLogger));
-            config.AddEventHandler(new SendConnectionInfoHandler(genericFormatter, notificationDelivery,
-                notificationOrderHandlerLogger, notificationPersister, new EnvironmentInformation { BaseUrl = baseUrl }));
+            config.AddEventHandler(new SendConnectionInfoHandler(
+                    genericFormatter, notificationDelivery, sendConnectionInfoHandlerLogger, new EnvironmentInformation { BaseUrl = baseUrl })
+                    );
             config.AddEventHandler(new SendReminderHandler(genericFormatter, notificationDelivery,
                 sendReminderHandlerLogger));
             config.AddEventHandler(new SendRecordingPostedHandler(genericFormatter, notificationDelivery,

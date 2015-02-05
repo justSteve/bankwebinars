@@ -176,10 +176,6 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                         if (checkoutConfirmViewModel.OrderRowHasId)
                             checkoutConfirmViewModel.OptionLabel = orderRow.RegistrationType.OptionLabel;
-
-                        if (orderRow.Order.OrderStatus == OrderStatus.InProcess)
-                            checkoutConfirmViewModel.UserDetails +=
-                                " - <a id='editUserDetails' role='button' class='btn btn-mini' target='new'> Edit?</a>";
                     }
 
                     if (Request["referred"] != null &&
@@ -515,7 +511,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void FireOrderSubmittedNotification(Order order, bool? userCreatedInCart = null)
         {
             if (userCreatedInCart.HasValue)
-                _orderManagementService.FireOrderSubmittedEvent(order, userCreatedInCart.Value, Request.Url);
+                _orderManagementService.FireOrderSubmittedEvent(order, userCreatedInCart.Value, url: Request.Url);
             else
                 _orderManagementService.FireOrderSubmittedEvent(order);
         }

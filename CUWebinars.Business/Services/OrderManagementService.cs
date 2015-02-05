@@ -520,7 +520,7 @@ namespace CUWebinars.Business.Services
             throw new NotImplementedException();
         }
 
-        public void FireOrderSubmittedEvent(Order order, bool userCreatedInCart = false, Uri url = null)
+        public void FireOrderSubmittedEvent(Order order, bool userCreatedInCart = false, bool resending = false, Uri url = null)
         {
             string addPasswordUrl = string.Empty;
 
@@ -548,7 +548,8 @@ namespace CUWebinars.Business.Services
             AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
             {
                 EventObject = orderSubmittedViewModel,
-                RelativePath = addPasswordUrl
+                RelativePath = addPasswordUrl,
+                ResendEvent = resending
             });
 
             foreach (var evt in GetEvents().OfType<OrderSubmittedEvent<OrderSubmittedViewModel>>())
@@ -562,14 +563,14 @@ namespace CUWebinars.Business.Services
             {
                 foreach (var addLoc in order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)
                 {
-                    FireOrderSubmittedAdditionalLocationEvent(order, addLoc.Email);
+                    FireOrderSubmittedAdditionalLocationEvent(order, addLoc.Email, resending);
                 }
             }
         }
 
-        public void FireAdminEmailSendShippedOrderEvent(Order order, IEnumerable<string> recipients)
+        public void FireAdminEmailSendShippedOrderEvent(Order order, IEnumerable<string> recipients, bool resending = false)
         {
-            AddEvent(new AdminEmailSendShippedOrderEvent<Order> { EventObject = order, Recipients = recipients });
+            AddEvent(new AdminEmailSendShippedOrderEvent<Order> { EventObject = order, Recipients = recipients, ResendEvent = resending});
 
 
             foreach (var evt in GetEvents().OfType<AdminEmailSendShippedOrderEvent<Order>>())
@@ -606,7 +607,7 @@ namespace CUWebinars.Business.Services
             Clear();
         }
 
-        public void FireOrderSubmittedAdditionalLocationEvent(Order order, string address)
+        public void FireOrderSubmittedAdditionalLocationEvent(Order order, string address, bool resending)
         {
             _logger.Info("Adding Event for Order with Additional Location {0} - {1}", order.idOrder, address);
 
@@ -623,7 +624,8 @@ namespace CUWebinars.Business.Services
             AddEvent(new OrderSubmittedAdditionalLocationEvent<OrderSubmittedAdditionalLocationViewModel>
             {
                 EventObject = orderSubmittedAdditionalLocationViewModel,
-                RelativeFilePath = relativePath
+                RelativeFilePath = relativePath,
+                ResendEvent = resending
             });
 
             _logger.Info("Persisted Email for Order w/AddLoc {0}-{1} :{2}", order.idOrder, address, relativePath);
@@ -666,11 +668,11 @@ namespace CUWebinars.Business.Services
             Clear();
         }
 
-        public void FireSendConnectionInfoNotificationEvent(IList<Order> orders)
+        public void FireSendConnectionInfoNotificationEvent(IList<Order> orders, bool resending)
         {
             foreach (var order in orders)
             {
-                AddEvent(new SendConnectionInfoEvent<Order> { EventObject = order });
+                AddEvent(new SendConnectionInfoEvent<Order> { EventObject = order, ResendEvent = resending });
             }
 
 

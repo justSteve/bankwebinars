@@ -176,7 +176,7 @@
                                             <b>Event Materials</b>
 
                                             @{
-                                            Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar);
+                                        Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar);
                                             }
                                         </div>
                                     }
@@ -199,7 +199,8 @@
                             </div>
                         </div>
 
-                        @if (row.Webinar.Status != WebinarStatus.Active && row.Webinar.Status != WebinarStatus.InProgress)
+                        @if (row.Webinar.Status != WebinarStatus.Active &&
+                            row.Webinar.Status != WebinarStatus.InProgress)
                         {
                             <div class="container-fluid">
                                 <div class="span10">

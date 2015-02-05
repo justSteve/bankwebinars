@@ -13,26 +13,23 @@ namespace CUWebinars.Business.Notification.Handlers
     public class SendConnectionInfoHandler<T> : IEventHandler<SendConnectionInfoEvent<T>>
         where T : Order
     {
-        private readonly INotificationPersister _notificationPersister;
         private readonly EnvironmentInformation _environmentInformation;
         private readonly IFormatter _generalFormatter;
         private readonly INotificationDelivery _notificationDelivery;
         private readonly ILogger _logger;
 
-        public SendConnectionInfoHandler(IFormatter generalFormatter, ILogger logger
-            , INotificationPersister notificationPersister
-            , EnvironmentInformation environmentInformation)
-            : this(generalFormatter, new SmtpMessageDelivery()
-                , logger, notificationPersister, environmentInformation)
+        public SendConnectionInfoHandler(IFormatter generalFormatter, 
+            ILogger logger, 
+            EnvironmentInformation environmentInformation)
+                : this(generalFormatter, new SmtpMessageDelivery(), logger, environmentInformation)
         {
 
         }
-        public SendConnectionInfoHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery
-            , ILogger logger
-            , INotificationPersister notificationPersister
-            , EnvironmentInformation environmentInformation)
+        public SendConnectionInfoHandler(IFormatter generalFormatter, 
+            INotificationDelivery notificationDelivery, 
+            ILogger logger, 
+            EnvironmentInformation environmentInformation)
         {
-            _notificationPersister = notificationPersister;
             _environmentInformation = environmentInformation;
             _generalFormatter = generalFormatter;
             _notificationDelivery = notificationDelivery;
@@ -46,13 +43,23 @@ namespace CUWebinars.Business.Notification.Handlers
                 .Single(or => or.RowStatus == OrderRowStatus.Active).idOrder);
 
             var notificationMessage = _generalFormatter.Format(sendConnectionInfoEvent.EventObject, "SendConnectionInfo");
+
             var isAdditionalLocation =
                 sendConnectionInfoEvent.EventObject.OrderRows
                 .Single(or => or.RowStatus == OrderRowStatus.Active)
                 .AdditionalLocation;
+
             try
             {
-                notificationMessage.PersistedName = string.Format("SendConnectionInfo-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm");
+                var persistedNamePrefix = sendConnectionInfoEvent.ResendEvent
+                    ? "ReSendConnectionInfo"
+                    : "SendConnectionInfo";
+                
+                notificationMessage.PersistedName = string.Format("{0}-{1}{2}", 
+                    persistedNamePrefix, 
+                    DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), 
+                    ".htm"
+                    );
 
                 if (isAdditionalLocation.Count != 0)
                 {
@@ -105,14 +112,14 @@ namespace CUWebinars.Business.Notification.Handlers
 
     public class SendConnectionInfoHandler : SendConnectionInfoHandler<Order>
     {
-        public SendConnectionInfoHandler(IFormatter generalFormatter, ILogger logger, INotificationPersister notificationPersister, EnvironmentInformation environmentInformation)
-            : base(generalFormatter, logger, notificationPersister, environmentInformation)
+        public SendConnectionInfoHandler(IFormatter generalFormatter, ILogger logger, EnvironmentInformation environmentInformation)
+            : base(generalFormatter, logger, environmentInformation)
         {
 
         }
 
-        public SendConnectionInfoHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger, INotificationPersister notificationPersister, EnvironmentInformation environmentInformation)
-            : base(generalFormatter, notificationDelivery, logger, notificationPersister, environmentInformation)
+        public SendConnectionInfoHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger, EnvironmentInformation environmentInformation)
+            : base(generalFormatter, notificationDelivery, logger, environmentInformation)
         {
         }
 
