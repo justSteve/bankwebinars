@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Models;
+﻿using CUWebinars.Business.Constants;
+using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Notification.Formatters;
 using CUWebinars.NotificationSystem.Event;
@@ -11,6 +12,7 @@ namespace CUWebinars.Business.Notification.Handlers
     public class AdminEmailSendShippedOrderHandler<T> : IEventHandler<AdminEmailSendShippedOrderEvent<T>>
         where T : Order
     {
+        public const string NotificationName = "SendShippedOrder";
         private readonly IFormatter _generalFormatter;
         private readonly ILogger _logger;
         private readonly INotificationDelivery _notificationDelivery;
@@ -26,9 +28,15 @@ namespace CUWebinars.Business.Notification.Handlers
         {
             try
             {
-                var notificationMessage = _generalFormatter.Format(emailOrderEvent.EventObject, "SendShippedOrder");
+                var notificationMessage = _generalFormatter.Format(emailOrderEvent.EventObject, NotificationName);
 
                 notificationMessage.To = emailOrderEvent.Recipients.First();
+
+                notificationMessage.PersistedName = string.Format("{0}-{1}{2}",
+                    string.Concat(DomainConstants.AdminEmailedPrefix, NotificationName),
+                    DateTime.Now.ToString(DomainConstants.DateTimeLongFormat),
+                    ".htm"
+                    );
                 
                 _notificationDelivery.Notify(notificationMessage);
 

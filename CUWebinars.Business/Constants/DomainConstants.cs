@@ -3,6 +3,7 @@ namespace CUWebinars.Business.Constants
 {
     public sealed class DomainConstants
     {
+        public const string AdminEmailedPrefix = "AdminEmailed-";
         public const string Active = "A";
         public const string BillingAddress = "Billing";
         public const string Blank = "blank";
