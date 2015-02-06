@@ -1,7 +1,7 @@
 ﻿@model ConnectionInfoModel
 
 @{
-    ViewBag.Title = "Update Connection Info";
+    ViewBag.Title = "List Event Orders";
 }
 <style>
     .form-horizontal .control-label {
@@ -19,20 +19,18 @@
         border-radius: 4px;
         height: 20px;
     }
-
-
 </style>
 <script type="text/javascript">
     $(document).ready(function () {
-        
+
         $(".control-label").append(":");
-        
+
     });
 </script>
-<a href="#UpdateConnectionInfoModal" role="button" class="btn" data-toggle="modal">Set Connection Info?</a>
+<a href="#ListOrdersModal" role="button" class="btn" data-toggle="modal">List Orders</a>
 
-<div id="UpdateConnectionInfoModal" class="modal hide " tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    @using (Html.BeginForm("UpdateConnectionInfo", "Webinar", FormMethod.Post, new { id = "_UpdateConnectionInfo" }))
+<div id="ListOrdersModal" class="modal hide " tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    @using (Html.BeginForm("ListOrders", "Webinar", FormMethod.Post, new { id = "_ListOrders" }))
     {
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>

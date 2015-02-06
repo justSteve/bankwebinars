@@ -16,10 +16,6 @@
     {
         EditResult = TempData["EditResult"].ToString();
     }
-    string genComments = "";
-    string storeComments = "";
-    string privateComments = "";
-    string origin = "";
 
     if (@Html.ValidationMessage("GeneralError") != null)
     {
@@ -54,7 +50,7 @@
         Html.Partial("~/Views/Admin/_ResetPasswordPartial.cshtml", pModel)*@
 
     <div class="accordion" id="mywebinars">
-        @if (userSubscription != null)
+        @*@if (userSubscription != null)
         {
             <div class="accordion-group">
                 <div class="accordion-heading">
@@ -69,7 +65,7 @@
                     </div>
                 </div>
             </div>
-        }
+        }*@
         @*
         //still needs backing objects.        
         @if (userPackage != null)
@@ -90,7 +86,7 @@
         <div class="accordion-group">
             <div class="accordion-heading">
                 <a class="accordion-toggle" data-toggle="collapse" data-parent="#mywebinars" href="#upcoming1">
-                    Upcoming Events
+                    Upcoming Events @Model.Scheduled.Count found
                 </a>
                 <div id="upcoming1" class="accordion-body collapse in">
                     <div class="accordion-inner">
@@ -115,12 +111,12 @@
         </div>
         <div class="accordion-group">
             <div class="accordion-heading">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#mywebinars" href="#recorded1">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#mywebinars" href="#editBilling">
                     Manage My Account
                 </a>
-                <div id="recorded1" class="accordion-body collapse out">
+                <div id="editBilling" class="accordion-body collapse out">
                     <div class="accordion-inner">
-                        @{Html.RenderPartial("/Account/Manage.cshtml");}
+                        @*@{Html.RenderPartial("Partials/_EditBillingAddress");}*@
                     </div>
                 </div>
             </div>
