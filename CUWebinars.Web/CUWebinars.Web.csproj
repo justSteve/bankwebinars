@@ -753,6 +753,9 @@
     <Content Include="Views\Shared\Partials\_ShowClickToJoinLink.cshtml" />
     <Content Include="Views\Shared\Partials\_ShareEventInfo.cshtml" />
     <Content Include="Views\Admin\Home\Modals\_SendShippedPreviewModal.cshtml" />
+    <Content Include="Views\Account\Partials\Subscription.cshtml" />
+    <Content Include="Views\Webinar\DetailsAdmin.cshtml" />
+    <Content Include="Views\Webinar\Partials\_ListOrders.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Calendar\iCalFromCitrix.txt" />

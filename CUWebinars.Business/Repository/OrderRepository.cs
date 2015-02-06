@@ -372,9 +372,8 @@ namespace CUWebinars.Business.Repository
 
         public Discount FindDiscountById(int id)
         {
-
-            //var item = items.
-            return null;
+            return ((TTSWebinarsContext)db).Discounts.SingleOrDefault
+                (d => d.idDiscount == id);
 
         }
 

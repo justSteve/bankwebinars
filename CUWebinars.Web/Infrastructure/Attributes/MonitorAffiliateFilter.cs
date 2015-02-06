@@ -60,6 +60,8 @@ namespace CUWebinars.Web.Infrastructure.Attributes
                         ((ClaimsIdentity)userIdentity).Claims.Single(c => c.Type == ClaimTypes.Email).Value
                         );
 
+                
+
                 var affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(webUser.idUser);
 
                 // if null returned, just use whatever is stored in Session for CurrentAffiliate. O/w, set that value.

@@ -104,7 +104,7 @@ namespace CUWebinars.Business.Services
             }
             catch (Exception exception)
             {
-                _logger.ErrorException("CreateOrderRow method", exception);
+                _logger.ErrorException("overload of CreateOrderRow method webinar:  " +webinar.idWebinar + " regType: " + registrationType , exception);
 
                 throw;
             }
@@ -118,7 +118,8 @@ namespace CUWebinars.Business.Services
             }
             catch (Exception exception)
             {
-                _logger.ErrorException("CreateOrderRow  method", exception);
+                _logger.ErrorException("CreateOrderRow method webinar:  " + webinar.idWebinar + " regType: " + registrationType.idRegType, exception);
+
             }
 
             return null;

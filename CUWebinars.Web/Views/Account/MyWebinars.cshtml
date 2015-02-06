@@ -10,15 +10,12 @@
 
     WebUser currentUser = Model.WebUser;
     var EditResult = "<span>&nbsp;</span>";
-
+    var userSubscription = new DiscountDetailsModel() { Discount = Model.Subscription, UserId = currentUser.idUser };
+    var userPackage = new DiscountDetailsModel() { Discount = Model.Package, UserId = currentUser.idUser };
     if (TempData["EditResult"] != null && (string)TempData["EditResult"] != "")
     {
         EditResult = TempData["EditResult"].ToString();
     }
-    string genComments = "";
-    string storeComments = "";
-    string privateComments = "";
-    string origin = "";
 
     if (@Html.ValidationMessage("GeneralError") != null)
     {
@@ -50,18 +47,85 @@
           EmailSent = false
       };}
     @*<span style="margin-left: 25px;"><input type="button" class="btn-small btn btn-link" onclick="javascript: stateManager.passResetView(); return false;" value="Forgot Password?" /></span>
-    Html.Partial("~/Views/Admin/_ResetPasswordPartial.cshtml", pModel)*@
-    @*@if (thisDiscount != null)
+        Html.Partial("~/Views/Admin/_ResetPasswordPartial.cshtml", pModel)*@
+
+    <div class="accordion" id="mywebinars">
+        @*@if (userSubscription != null)
         {
-            <span>Discount found with @thisDiscount.UsesRemaining credits remaining.</span>
+            <div class="accordion-group">
+                <div class="accordion-heading">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#mywebinars" href="#subscription">
+                        Compliance Perspectives Subscription
+                    </a>
+
+                    <div id="subscription" class="accordion-body collapse out">
+                        <div class="accordion-inner">
+                            @{Html.RenderPartial("Partials/Subscription", userSubscription);}
+                        </div>
+                    </div>
+                </div>
+            </div>
         }*@
-    <div class="row-fluid">
-        @{Html.RenderPartial("Partials/Upcoming");}
+        @*
+        //still needs backing objects.        
+        @if (userPackage != null)
+            {
+                <div class="accordion-group">
+                    <div class="accordion-heading">
+                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#mywebinars" href="#package">
+                            Package Subscription
+                        </a>
+                        <div id="package" class="accordion-body collapse out">
+                            <div class="accordion-inner">
+                                @{Html.RenderPartial("Partials/Package", userPackage);}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }*@
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#mywebinars" href="#upcoming1">
+                    Upcoming Events @Model.Scheduled.Count found
+                </a>
+                <div id="upcoming1" class="accordion-body collapse in">
+                    <div class="accordion-inner">
+                        @{Html.RenderPartial("Partials/upcoming");}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#mywebinars" href="#recorded1">
+                    Recorded Events
+                </a>
+                <div id="recorded1" class="accordion-body collapse out">
+                    <div class="accordion-inner">
+                        @{Html.RenderPartial("Partials/Recorded");}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#mywebinars" href="#editBilling">
+                    Manage My Account
+                </a>
+                <div id="editBilling" class="accordion-body collapse out">
+                    <div class="accordion-inner">
+                        @*@{Html.RenderPartial("Partials/_EditBillingAddress");}*@
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*<div class="row-fluid">
+                @{Html.RenderPartial("Partials/Messages");}
+            </div>*@
+        <br />
     </div>
-    <div class="row-fluid">
-        @{Html.RenderPartial("Partials/Recorded");}
-    </div>
-    <br />
     <div class="clear" />
     @*@{Html.RenderPartial("Partials/Archived");}*@
     @*<div class="modalOverlay" id="modalOverlay2">

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using CUWebinars.Business.Models;
+using CUWebinars.Web.Models;
 using CUWebinars.Web.ViewModel;
 
 namespace CUWebinars.Web.Core
@@ -10,7 +11,9 @@ namespace CUWebinars.Web.Core
         public IList<Order> Scheduled { get; set; }
         public IList<Order> Recorded { get; set; }
         public IList<Order> Archived { get; set; }
-
+        public DiscountModel Subscription { get; set; }
+        public DiscountModel Package { get; set; }
+         
         public WebUser WebUser { get; set; }
     }
 }

@@ -57,14 +57,56 @@
         <section class="span3 sidebar">
             <aside class="widget well-large">
                 @{
-                        <h5 class="short_headline"><span>@Model.Webinar.Presenter.WebUser.FullName</span></h5>
-                        @Html.Raw(Model.Webinar.Presenter.BiographyLong)
-                        @Html.Partial("Partials/_OtherEventsBySpeaker")
-                    }
+                    <h5 class="short_headline"><span>@Model.Webinar.Presenter.WebUser.FullName</span></h5>
+                    @Html.Raw(Model.Webinar.Presenter.BiographyLong)
+                    @Html.Partial("Partials/_OtherEventsBySpeaker")
+                }
             </aside>
             <!--close aside widget-->
         </section>
         <div class="span6">
+            @{
+                if (Model.Webinar.Status != WebinarStatus.Archived
+                                    && Model.Webinar.Status != WebinarStatus.Deleted
+                                    && Model.Webinar.Status != WebinarStatus.Pending)
+                {
+                    <div id="SignUpFormContainer" class="row-fluid">
+
+                        <div class="content span12 well">
+                            <ul class="nav nav-tabs" id="regTabs">
+                                <li id="findUserTab" class="active"><a href="#findUserForAffiliate" data-toggle="tab">@Model.SignUpCaption</a></li>
+                                <li id="confirmationTabForAffiliate"><a href="#confirmationForAffiliate" data-toggle="tab">@Model.ConfirmationCaption</a></li>
+                            </ul>
+
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="findUserForAffiliate">
+                                    <input type="button" class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
+                                    @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptionsForAffiliate.cshtml", model: Model.CheckoutOptionsViewModel)
+                                </div>
+                                <div class="tab-pane" id="confirmationForAffiliate"></div>
+                            </div>
+                        </div>
+                        <!-- The following forms are positioned here so that they are not nested in the form in the CheckoutOptions View. -->
+                        @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
+                        {
+                            <input id="loginEmail" name="Email" type="hidden" value="">
+                            <input id="loginPassword" name="Password" type="hidden">
+                            <input id="loginRememberMe" type="hidden" value="true" name="RememberMe">
+                            <input type="hidden" name="returnUrl" value="/Webinar/Details/@Model.Webinar.idWebinar" />
+                        }
+
+                        @using (Html.BeginForm("ResetPassword", "Account", FormMethod.Post, new { id = "ResetPasswordForm" }))
+                        {
+                            <input id="ResetPassEmail" name="emailForReset" type="hidden" value="">
+                        }
+                        <form id="checkEmail"><input type="hidden" name="emailChecker" id="emailChecker" /></form>
+                        <form id="checkZip"><input type="hidden" name="ZipChecker" id="ZipChecker" /></form>
+                        <form id="nonUSForm"><input type="hidden" name="AddressText" id="AddressText" /></form>
+                        <form id="checkInstitution"><input type="hidden" name="InstitutionChecker" id="InstitutionChecker" /></form>
+
+                    </div> <!-- closes SignUpFormContainer div-->
+                }
+            }
             @Html.Raw(Model.Webinar.DescriptionLong)
             <h2 class="short_headline">
                 <span>
@@ -79,55 +121,12 @@
             </h2>
             @Html.Raw(Model.Webinar.WhoAttend)
             <hr />
-            @{
-                    if (Model.Webinar.Status != WebinarStatus.Archived
-                            && Model.Webinar.Status != WebinarStatus.Deleted
-                            && Model.Webinar.Status != WebinarStatus.Pending)
-                    {
-                        <div id="SignUpFormContainer" class="row-fluid">
-
-                            <div class="content span12 well">
-                                <ul class="nav nav-tabs" id="regTabs">
-                                    <li id="findUserTab" class="active"><a href="#findUserForAffiliate" data-toggle="tab">@Model.SignUpCaption</a></li>
-                                    <li id="confirmationTabForAffiliate"><a href="#confirmationForAffiliate" data-toggle="tab">@Model.ConfirmationCaption</a></li>
-                                </ul>
-
-                                <div class="tab-content">
-                                    <div class="tab-pane active" id="findUserForAffiliate">
-                                        <input type="button" class="btn-success btn btn-large pull-right" value=" Sign Up " id="AddToCart" />
-                                        @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptionsForAffiliate.cshtml", model: Model.CheckoutOptionsViewModel)
-                                    </div>
-                                    <div class="tab-pane" id="confirmationForAffiliate"></div>
-                                </div>
-                            </div>
-                            <!-- The following forms are positioned here so that they are not nested in the form in the CheckoutOptions View. -->
-                            @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
-                            {
-                                <input id="loginEmail" name="Email" type="hidden" value="">
-                                <input id="loginPassword" name="Password" type="hidden">
-                                <input id="loginRememberMe" type="hidden" value="true" name="RememberMe">
-                                <input type="hidden" name="returnUrl" value="/Webinar/Details/@Model.Webinar.idWebinar" />
-                            }
-
-                            @using (Html.BeginForm("ResetPassword", "Account", FormMethod.Post, new { id = "ResetPasswordForm" }))
-                            {
-                                <input id="ResetPassEmail" name="emailForReset" type="hidden" value="">
-                            }
-                            <form id="checkEmail"><input type="hidden" name="emailChecker" id="emailChecker" /></form>
-                            <form id="checkZip"><input type="hidden" name="ZipChecker" id="ZipChecker" /></form>
-                            <form id="nonUSForm"><input type="hidden" name="AddressText" id="AddressText" /></form>
-                            <form id="checkInstitution"><input type="hidden" name="InstitutionChecker" id="InstitutionChecker" /></form>
-
-                        </div> <!-- closes SignUpFormContainer div-->
-                    }
-                }
         </div>
 
 
         <div class="span3">
             <aside class="widget">
-                @Html.Partial(@"Partials/_AdminEventButtons", Model)
-                
+
                 <h5 class="short_headline"><span>Date/Time</span></h5>
 
                 @if (Model.Webinar.Status == WebinarStatus.Recorded)
@@ -195,7 +194,6 @@
     </div>
 
 </div> <!-- closes main-content -->
-
 @{
     if (Model.WebUser.UserType == UserType.Admin)
     {

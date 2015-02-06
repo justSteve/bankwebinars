@@ -135,7 +135,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     var billingAddress = new Address
                     {
-                        AddressType = Enum.GetName(typeof (AddressType), 0),
+                        AddressType = Enum.GetName(typeof(AddressType), 0),
                         City = Request.QueryString["City"],
                         Country = Request.QueryString["Country"],
                         Name = model.FirstName + ' ' + model.LastName,
@@ -148,7 +148,7 @@ namespace CUWebinars.Web.Controllers
 
                     var shippingAddress = new Address
                     {
-                        AddressType = Enum.GetName(typeof (AddressType), 1),
+                        AddressType = Enum.GetName(typeof(AddressType), 1),
                         City = Request.QueryString["City"],
                         Country = Request.QueryString["Country"],
                         Name = model.FirstName + ' ' + model.LastName,
@@ -159,7 +159,7 @@ namespace CUWebinars.Web.Controllers
                         Zip = Request.QueryString["Zip"]
                     };
 
-                    IList<Address> addresses = new List<Address> {billingAddress, shippingAddress};
+                    IList<Address> addresses = new List<Address> { billingAddress, shippingAddress };
 
                     var webUser = _membershipService.CreateWebUser(_globalConfig.Tenant,
                         firstName
@@ -265,11 +265,34 @@ namespace CUWebinars.Web.Controllers
         public ActionResult MyWebinars()
         {
             var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
-            var model = new MyWebinarsDTO {WebUser = currentUser, OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel()
-            {
-                
-            }};
+            var userDiscount = _orderManagementService.GetDiscountByUser(currentUser);
 
+            var discountModel = new DiscountModel();
+            AutoMapper.Mapper.Engine.Map(userDiscount, discountModel);
+
+            if (discountModel.TypeOfDiscount == DiscountType.ComplianceSeries)
+            {
+
+            }
+
+            var model = new MyWebinarsDTO
+            {
+                WebUser = currentUser,
+                OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel()
+                    {
+
+                    }
+            };
+
+            if (discountModel.TypeOfDiscount == DiscountType.ComplianceSeries)
+            {
+                model.Subscription = discountModel;
+            }
+
+            if (discountModel.TypeOfDiscount == DiscountType.Package)
+            {
+                model.Package = discountModel;
+            }
             ViewData["DiscountMsg"] = string.Empty;
 
             model.Scheduled = _orderManagementService.SelectOrdersWithScheduledWebinars(currentUser.idUser);
@@ -281,7 +304,7 @@ namespace CUWebinars.Web.Controllers
                 var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
                 if (row.Webinar.Status == WebinarStatus.Active)
                 {
-                   _orderManagementService.GetJoinUrl(row);
+                    _orderManagementService.GetJoinUrl(row);
                 }
 
             }
@@ -298,7 +321,7 @@ namespace CUWebinars.Web.Controllers
             var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
 
             var currentOrder = _orderManagementService.GetOrderById(orderID);
-            var model = new CertOfCompletionViewModel {CurrentUser = currentUser, Order = currentOrder};
+            var model = new CertOfCompletionViewModel { CurrentUser = currentUser, Order = currentOrder };
 
 
             return View("MyCertificate", model);
@@ -544,7 +567,7 @@ namespace CUWebinars.Web.Controllers
             }
             return this.ModelStateJson(ModelState);
 
-        
+
         }
 
 
@@ -625,7 +648,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     var returnUrl = Server.HtmlDecode(model.ReturnUrl);
 
-                    return Json(new {result = LoggedInResult, returnUrl = returnUrl });
+                    return Json(new { result = LoggedInResult, returnUrl = returnUrl });
                 }
 
                 if (!string.IsNullOrEmpty(userMustVerify))
@@ -636,7 +659,7 @@ namespace CUWebinars.Web.Controllers
                         model.Password
                         );
 
-                    return Json(new {result = ConfirmedResult, email = model.Email, password = model.Password});
+                    return Json(new { result = ConfirmedResult, email = model.Email, password = model.Password });
                 }
 
                 // If we got this far, something failed, redisplay form
@@ -666,7 +689,7 @@ namespace CUWebinars.Web.Controllers
 
             return this.ModelStateJson(ModelState);
         }
-        
+
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
         public ActionResult SignInFromCart(SignInModel model)
@@ -724,7 +747,7 @@ namespace CUWebinars.Web.Controllers
             try
             {
                 _accountControllerOrchestrator.ResetPassword(_globalConfig.Tenant, email);
-                return Json(new {Result = WebUiConstants.Success});
+                return Json(new { Result = WebUiConstants.Success });
             }
             catch (ValidationException validationException)
             {
@@ -734,8 +757,8 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 _logger.FatalException(
-                    string.Format("Account.ResetPassword GET Failed. {0}, Session = {1} on email: {2}", 
-                    validationException.Message, _appHelper.GetUserAuditInfo(), email), 
+                    string.Format("Account.ResetPassword GET Failed. {0}, Session = {1} on email: {2}",
+                    validationException.Message, _appHelper.GetUserAuditInfo(), email),
                     validationException
                     );
             }
@@ -743,9 +766,9 @@ namespace CUWebinars.Web.Controllers
             {
                 _logger.FatalException(
                     string.Format(
-                    "Account.ResetPassword Failed. {0}, Session = {1} on email: {2}", 
-                    userCreatedMembershipException.Message, 
-                    _appHelper.GetUserAuditInfo(), email), 
+                    "Account.ResetPassword Failed. {0}, Session = {1} on email: {2}",
+                    userCreatedMembershipException.Message,
+                    _appHelper.GetUserAuditInfo(), email),
                     userCreatedMembershipException
                     );
                 errorsDictionary.Add("Invalid", "UserNotVerified");
@@ -753,7 +776,7 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 _logger.FatalException(
-                    string.Format("Account.ResetPassword GET Failed. {0}, Session = {1} on email: {2}", 
+                    string.Format("Account.ResetPassword GET Failed. {0}, Session = {1} on email: {2}",
                     exception.Message, _appHelper.GetUserAuditInfo(), email),
                     exception
                     );
@@ -846,7 +869,7 @@ namespace CUWebinars.Web.Controllers
                         if (_accountControllerOrchestrator.ChangePasswordFromResetKey(model.Key, model.Password))
                         {
                             model.ChangePasswordSucceeded = true;
-                            return Json(new { Result = "Success"});
+                            return Json(new { Result = "Success" });
                         }
 
                         _logger.Error("_accountControllerOrchestrator.ChangePasswordFromResetKey tossed error.");
@@ -944,7 +967,7 @@ namespace CUWebinars.Web.Controllers
 
             //  Build and return the good fields
             _accountControllerOrchestrator.BuildCityStateTimeZoneData(resultObject, zipAddress);
-            
+
             //resultObject.Add("TimeZone", 3.ToString());
 
             return Json(resultObject, JsonRequestBehavior.AllowGet);
@@ -1022,7 +1045,7 @@ namespace CUWebinars.Web.Controllers
 
                 var institution = _accountControllerOrchestrator.GetInstitutionFromEmail(email);
 
-                if ( institution == null)
+                if (institution == null)
                     return Json(resultObject, JsonRequestBehavior.AllowGet);
 
                 //  if we have a match between user's email (domain)
@@ -1062,7 +1085,7 @@ namespace CUWebinars.Web.Controllers
 
                     _logger.Info("Account.Register UserAdded: {0}", model.RegisterFields.Email);
 
-                    return Json(new {Result = WebUiConstants.Success, UserId = webUser.idUser, Email = webUser.email});
+                    return Json(new { Result = WebUiConstants.Success, UserId = webUser.idUser, Email = webUser.email });
 
                 }
                 catch (Exception exception)
@@ -1088,7 +1111,7 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _logger.Info("Account.Register: " + model.RegisterFields.Email.Trim() + 
+                _logger.Info("Account.Register: " + model.RegisterFields.Email.Trim() +
                     "| Session=" + _appHelper.GetUserAuditInfo());
 
                 try
@@ -1101,21 +1124,21 @@ namespace CUWebinars.Web.Controllers
                 catch (MembershipCreateUserException e)
                 {
                     ModelState.AddModelError(string.Empty, ErrorCodeToString(e.StatusCode));
-                    
+
                     _logger.Error("Account.Register Catch block: " + e.Message + "| Session=" +
                                   _appHelper.GetUserAuditInfo());
                 }
                 catch (ValidationException validationException)
                 {
                     ModelState.AddModelError(string.Empty, validationException.Message);
-                    
+
                     _logger.Error("Account.Register Catch block: " + validationException.Message + "| Session=" +
                                   _appHelper.GetUserAuditInfo());
                 }
                 catch (Exception e)
                 {
                     ModelState.AddModelError(string.Empty, "An error has occurred at the server and it has been logged. Please try again, or contact us so we can resolve the problem.");
-                    
+
                     _logger.Error("Account.Register Catch block: " + e.Message + "| Session=" +
                                   _appHelper.GetUserAuditInfo());
                     _logger.Error("Account.Register Catch block InnerException: " + (e.InnerException == null ? string.Empty : e.InnerException.Message));
@@ -1151,8 +1174,8 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (MembershipCreateUserException e)
                 {
-                    _logger.Error("CreateUserAccountFromCart Catch block: {0} | Session= {1}", 
-                        e.Message,_appHelper.GetUserAuditInfo());
+                    _logger.Error("CreateUserAccountFromCart Catch block: {0} | Session= {1}",
+                        e.Message, _appHelper.GetUserAuditInfo());
                 }
                 catch (Exception e)
                 {
@@ -1162,7 +1185,7 @@ namespace CUWebinars.Web.Controllers
             }
 
             _logger.Fatal("CreateUserAccountFromCart failed! Session=" + _appHelper.GetUserAuditInfo());
-            
+
             return Json(new { Result = WebUiConstants.Fail }); // This actually gets discarded by view.           
         }
 
@@ -1237,7 +1260,7 @@ namespace CUWebinars.Web.Controllers
         //
         // POST: /Account/ExternalLogin
 
-        
+
 
         #region Helpers
         private ActionResult RedirectToLocal(string returnUrl)
@@ -1328,7 +1351,7 @@ namespace CUWebinars.Web.Controllers
             {
                 Debug.WriteLine(error.ErrorMessage);
 
-                _logger.Error("Account.Register ModelError: {0} | Session={1}", 
+                _logger.Error("Account.Register ModelError: {0} | Session={1}",
                     error.ErrorMessage,
                     _appHelper.GetUserAuditInfo()
                     );
@@ -1337,7 +1360,8 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult GetUserDiscount()
         {
-            if (_stateService.HasValue(WebUiConstants.CurrentUser)){
+            if (_stateService.HasValue(WebUiConstants.CurrentUser))
+            {
                 var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
 
                 var userDiscount = _orderManagementService.GetDiscountByUser(currentUser);
@@ -1387,6 +1411,11 @@ namespace CUWebinars.Web.Controllers
                 return Json(new { Result = WebUiConstants.Fail });
             }
             return this.ModelStateJson(ModelState);
+        }
+
+        public ActionResult EditCpSubscription(string s)
+        {
+            throw new NotImplementedException();
         }
     }
 }
