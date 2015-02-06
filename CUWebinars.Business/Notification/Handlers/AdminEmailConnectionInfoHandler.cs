@@ -12,7 +12,7 @@ namespace CUWebinars.Business.Notification.Handlers
     public class AdminEmailConnectionInfoHandler<T> : IEventHandler<AdminEmailConnectionInfoEvent<T>>
         where T : Order
     {
-        private const string NotificationName = "SendRecordingPosted";
+        private const string NotificationName = "SendConnectionInfo";
         private readonly IFormatter _generalFormatter;
         private readonly ILogger _logger;
         private readonly INotificationDelivery _notificationDelivery;

@@ -2,9 +2,8 @@
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
-using System.ServiceModel.Configuration;
+using System.Reflection;
 using System.Web.Configuration;
-using System.Xml;
 
 namespace CUWebinars.Web.Core
 {
@@ -108,6 +107,19 @@ namespace CUWebinars.Web.Core
             get
             {
                 return GlobalConfigSingletonCreator.UniqueInstance;
+            }
+        }
+
+        internal string PropertiesAsString
+        {
+            // nb: this property is internal to prevent StackOverflow exception. 
+            // If public, it would recursively call itself ad finitem.
+            // Iterator hits all public methods which are non-static.
+            get
+            {
+                var valueNames = (from propertyInfo in GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance) let value = propertyInfo.GetValue(GlobalConfigSingletonCreator.UniqueInstance) where value != null select string.Concat(propertyInfo.Name, ":", value.ToString())).ToList();
+
+                return string.Join(";", valueNames);
             }
         }
     }
