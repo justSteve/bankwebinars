@@ -40,14 +40,26 @@
                             };
                             //Active means the connection info has been generated. This form shows
                             // the relevant fields and offers to update them
-                            <ul class="nav">
-                                <li class="active">
-                                    @Html.Partial(@"Partials/_UpdateConnectionInfo", connInfoModel)
-                                </li>
-                                <li>
-                                    @Html.Partial(@"Partials/_UpdateWebinarFiles", connInfoModel)
-                                </li>
-                            </ul>
+
+                            <div class="navbar">
+                                <div class="navbar-inner">
+                                    <ul class="nav">
+                                        <li class="active">
+                                            @Html.Partial(@"Partials/_UpdateConnectionInfo", connInfoModel)
+                                        </li>
+                                        <li>
+                                            @Html.Partial(@"Partials/_UpdateWebinarFiles", connInfoModel)
+                                        </li>
+                                        <li>
+                                            @Html.Partial(@"Partials/_ListOrders", connInfoModel)
+                                        </li>
+                                        @*<li>
+                                            @Html.Partial(@"Partials/_EditWebinar", connInfoModel)
+                                        </li>*@
+                                        
+                                    </ul>
+                                </div>
+                            </div>
                             break;
                         }
                     case WebinarStatus.Scheduled:
@@ -83,12 +95,8 @@
                             break;
                         }
                 }
-                <div style="display:inline-block"><a href="clone">Clone this event.</a></div>
             }
-
         </div>
-
-
     </div>
 </section>
 

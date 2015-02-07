@@ -110,5 +110,13 @@ $(function() {
 }(UWF));
 
 function getNewFileDetailsFragment(id) {
-    return '<div id="fileDetails_' + id + '" class="webinarFileDetails"><i class="icon-trash icon-white pull-right" style="cursor: pointer" id="' + id + '-Filedetails-delete"></i><input type="hidden" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].idWebinarFile" value="' + id + '" /><input type="hidden" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].idWebinar" value="' + cartStateManager.getWebinarId() + '" /><div id="fileLocationDiv_' + id + '"><span class="control-label">File Name</span><input type="text" class="form-control" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].fileLocation" /><i class="icon-book icon-white"></i></div><div id="fileDescDiv_' + id + '"><span class="control-label">Label</span><input type="text" class="form-control" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].fileDesc" /><br /></div></div>';
+    return '<div id="fileDetails_' + id + '" class="webinarFileDetails">' +
+        '<i class="icon-trash icon-white pull-right" style="cursor: pointer" id="' + id + '-Filedetails-delete"></i>' +
+        '<input type="hidden" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].idWebinarFile" value="' + id + '" />' +
+        '<input type="hidden" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].idWebinar" value="' + webinarId + '" />' +
+        '<div id="fileLocationDiv_' + id + '"><span class="control-label">File Name</span>' +
+        '<input type="text" class="form-control" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].fileLocation" />' +
+        '<i class="icon-book icon-white"></i></div>' +
+        '<div id="fileDescDiv_' + id + '"><span class="control-label">Label</span>' +
+        '  <input type="text" class="form-control" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].fileDesc" /><br /></div></div>';
 }

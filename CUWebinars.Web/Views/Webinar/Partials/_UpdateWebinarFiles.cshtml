@@ -20,7 +20,13 @@
         border-radius: 4px;
         height: 20px;
     }
+
+    #UpdateWebinarHandoutsModal {
+        margin: 0;
+    }
 </style>
+<script type="text/javascript" src="/Scripts/bootstrap-filestyle.min.js"> </script>
+@*http://markusslima.github.io/bootstrap-filestyle/#Getstart*@
 <a href="#UpdateWebinarHandoutsModal" role="button" class="btn" data-toggle="modal">Manage Handouts</a>
 
     <div id="UpdateWebinarHandoutsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -30,7 +36,7 @@
             <h3 id="myModalLabel">Update Webinar Handouts</h3>
         </div>
         <div class="modal-body">
-        @using (Html.BeginForm("UpdateWebinarFiles", "Webinar", FormMethod.Post, new {id = "_UpdateWebinarFiles"}))
+        @using (Html.BeginForm("UpdateWebinarFiles", "Webinar", FormMethod.Post, new { enctype="multipart/form-data", id = "_UpdateWebinarFiles"}))
         {
             @Html.AntiForgeryToken()
 

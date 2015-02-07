@@ -1,4 +1,5 @@
-﻿using System.Web.Routing;
+﻿using System.Net;
+using System.Web.Routing;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
@@ -61,7 +62,7 @@ namespace CUWebinars.Web.Controllers
             var webinar = _webinarManagementService.GetWebinar(ID);
 
             IList<Webinar> webinarsList = _webinarManagementService.GetUpcomingWebinars().ToList();
-            
+
             DateTime cDate = Convert.ToDateTime(Request["cDate"]).AddHours(22);
 
             StringBuilder upcoming = new StringBuilder();
@@ -146,9 +147,9 @@ namespace CUWebinars.Web.Controllers
         {
 
             IEnumerable<int> featured = AppHelper.StringToIntList(Request["featuredWebinars"]);
-           
+
             IList<Webinar> webinarsList = _webinarManagementService.GetUpcomingWebinars().ToList();
-            
+
             DateTime cDate;
             cDate = Convert.ToDateTime(Request["cDate"]).AddHours(5);
             StringBuilder upcoming = new StringBuilder();
@@ -659,7 +660,7 @@ namespace CUWebinars.Web.Controllers
 
             _logger.Error("Details Action invoked with null 'id' parameter");
 
-            return RedirectToAction("allActive", new { eventsToShow = "upcoming" } );
+            return RedirectToAction("allActive", new { eventsToShow = "upcoming" });
         }
 
         /// <summary>
@@ -675,7 +676,7 @@ namespace CUWebinars.Web.Controllers
 
             if (Request.IsAuthenticated)
             {
-                
+
             }
 
             model.WebUser = Request.IsAuthenticated
@@ -1090,6 +1091,15 @@ namespace CUWebinars.Web.Controllers
                     connectionInfoModel.WebinarFiles.Where(f => f.idWebinarFile > 0 && !f.fileDesc.EndsWith("-D"))
                         .ToList();
 
+                foreach (var webinarFile in newFiles)
+                {
+                    var checkThatNewFilesExist = CheckThatFilesExists(webinarFile);
+                    if (!checkThatNewFilesExist)
+                    {
+                        return Json(new {result = webinarFile + "does not exist."});
+                    }
+                }
+                
                 _webinarManagementService.AddWebinarFiles(newFiles);
                 _webinarManagementService.DeleteWebinarFiles(deletedFiles);
                 _webinarManagementService.UpdateWebinarFiles(updatedFiles);
@@ -1105,6 +1115,46 @@ namespace CUWebinars.Web.Controllers
             }
 
             return this.ModelStateJson(ModelState);
+        }
+
+        class MyClient : WebClient
+        {
+            public bool HeadOnly { get; set; }
+            protected override WebRequest GetWebRequest(Uri address)
+            {
+                WebRequest req = base.GetWebRequest(address);
+                if (HeadOnly && req.Method == "GET")
+                {
+                    req.Method = "HEAD";
+                }
+                return req;
+            }
+        }
+
+        private bool CheckThatFilesExists(WebinarFile newFile)
+        {
+            var handoutRepo = "http://ondemand.cuwebinars.com/";
+            //http://stackoverflow.com/questions/153451/how-to-check-if-system-net-webclient-downloaddata-is-downloading-a-binary-file#156750
+
+            using (MyClient client = new MyClient())
+            {
+                client.HeadOnly = true;
+                string uri = handoutRepo + newFile.fileLocation;
+                byte[] body = client.DownloadData(uri); // note should be 0-length
+                string type = client.ResponseHeaders["content-type"];
+                client.HeadOnly = false;
+                //
+                //there's probably a better way to test that the file exists
+                if (type.Contains(@"/"))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
         }
     }
 }
