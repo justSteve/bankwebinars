@@ -8,6 +8,7 @@ using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
+using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Notification.Templates;
 using CUWebinars.Web.Services;
@@ -43,6 +44,7 @@ namespace CUWebinars.Web.Controllers
         private readonly IMembershipService _membershipService;
         private readonly IStateService _stateService;
         private readonly IAppHelper _appHelper;
+        private readonly IUniversalMapper _universalMapper;
         private readonly IOrderManagementService _orderManagementService;
         private bool _disposed;
 
@@ -52,7 +54,8 @@ namespace CUWebinars.Web.Controllers
             IMembershipService membershipService,
             IOrderManagementService orderManagementService,
             IStateService stateService,
-            IAppHelper appHelper)
+            IAppHelper appHelper,
+            IUniversalMapper universalMapper)
         {
             _accountControllerOrchestrator = accountControllerOrchestrator;
             _logger = logger;
@@ -60,6 +63,7 @@ namespace CUWebinars.Web.Controllers
             _orderManagementService = orderManagementService;
             _stateService = stateService;
             _appHelper = appHelper;
+            _universalMapper = universalMapper;
         }
 
         public ActionResult COC(int idWebinar, string displayName)
@@ -268,7 +272,8 @@ namespace CUWebinars.Web.Controllers
             var userDiscount = _orderManagementService.GetDiscountByUser(currentUser);
 
             var discountModel = new DiscountModel();
-            AutoMapper.Mapper.Engine.Map(userDiscount, discountModel);
+
+            _universalMapper.Map(userDiscount, discountModel);
 
             if (discountModel.TypeOfDiscount == DiscountType.ComplianceSeries)
             {

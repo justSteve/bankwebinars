@@ -1,9 +1,12 @@
 ﻿using System.Configuration;
+using System.Diagnostics;
+using System.Reflection;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using CUWebinars.Web.App_Start;
 using CUWebinars.Web.Controllers;
+using CUWebinars.Web.Core;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure;
 using CUWebinars.Web.Services;
@@ -56,7 +59,22 @@ namespace CUWebinars.Web
             log4net.Config.XmlConfigurator.Configure();
 
             AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.Email;
+            
+            LogStartupDetails();
+        }
+
+        private static void LogStartupDetails()
+        {
             logger.Info(string.Format("Spinning up application"));
+            logger.Info(string.Format("Config Properties - {0}", GlobalConfig.GlobalConfigSingleton.PropertiesAsString));
+            logger.Info(string.Format("AppInfo:{0}", GetAppVersionInfo()));
+        }
+
+        private static string GetAppVersionInfo()
+        {
+            Assembly asm = Assembly.GetExecutingAssembly();
+            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(asm.Location);
+            return fileVersionInfo.FileVersion;
         }
 
         //https://www.simple-talk.com/dotnet/asp.net/handling-errors-effectively-in-asp.net-mvc/
