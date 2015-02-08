@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Text.RegularExpressions;
 using System.Web.Routing;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
@@ -944,21 +945,87 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
+        [ValidateInput(false)]
         public ActionResult UpdateConnectionInfo(ConnectionInfoModel model)
         {
+
+            //using (var client = new System.Net.WebClient())
+            //{
+            //TODO: Figure out how to authenticate and then pass URL
+
+            //var filename = System.IO.Path.GetTempFileName();
+
+            //client.DownloadFile(model.ManageURL, filename);
+
+            var doc = new HtmlAgilityPack.HtmlDocument();
+            //doc.Load(filename);
+            doc.LoadHtml(model.ManageURL);
+
+            var root = doc.DocumentNode;
+            var audio_node = root.SelectNodes("//*[text()[contains(., 'Access')]]");
+
+            var citrixRegisterUrl = "";
+            var accessCodeAttendee = "";
+            var accessCodePresenter = "";
+            var accessCodeOrganizer = "";
+            var webinarKey = "";
+            var accessPhone = "";
+
+            webinarKey = root.SelectSingleNode("//span[contains(@id,'WebinarInfoID')]").InnerHtml;
+            webinarKey = webinarKey.Replace("-","").Trim();
+            accessPhone = root.SelectSingleNode("//*[text()[contains(., 'Toll-')]]").InnerHtml;
+            accessPhone = Regex.Split(accessPhone, @"\<br\>")[1].Replace("Toll-free: 1 ", "").Trim().Replace(" ", "-");
+
+
+            citrixRegisterUrl = root.SelectSingleNode("//a[contains(@id,'registrationURL')]").InnerHtml;
+            foreach (var a_node in audio_node.Nodes())
+            {
+                if (a_node.InnerHtml.Contains("Panelist"))
+                {
+                    accessCodePresenter = a_node.ParentNode.OuterHtml.Split(':')[1].Trim().Split(' ')[0];
+                }
+                if (a_node.InnerHtml.Contains("Organizer"))
+                {
+                    accessCodeOrganizer = a_node.ParentNode.OuterHtml.Split(':')[1].Trim().Split(' ')[0];
+                }
+
+                if (a_node.InnerHtml.Contains("Attendee"))
+                {
+                    accessCodeAttendee = a_node.ParentNode.OuterHtml.Split(':')[1].Trim().Split(' ')[0];
+                }
+            }
+            //}
+
+            //Console.ReadKey();
+
             var webinar = _webinarManagementService.GetWebinar(model.idWebinar);
-            webinar.AccessCodeAttendee = model.AccessCodeAttendee;
-            webinar.AccessCodeOrganizer = model.AccessCodeOrganizer;
-            webinar.AccessCodePresenter = model.AccessCodePresenter;
-            webinar.CitrixRegisterUrl = model.CitrixRegisterURL;
+            webinar.AccessCodeAttendee = accessCodeAttendee;
+            webinar.AccessCodeOrganizer = accessCodeOrganizer;
+            webinar.AccessCodePresenter = accessCodePresenter;
+            webinar.AccessPhone = accessPhone;
+            webinar.CitrixRegisterUrl = citrixRegisterUrl;
             webinar.OrganizerOAuthKey = model.OrganizerOAuthKey;
             webinar.OrganizerKey = model.OrganizerKey;
-            webinar.WebinarKey = model.WebinarKey;
+            webinar.WebinarKey = webinarKey.Trim();
 
 
             _webinarManagementService.UpdateWebinar(webinar);
+            if (citrixRegisterUrl == "" ||
+                accessCodeAttendee == "" ||
+                accessCodePresenter == "" ||
+                accessCodeOrganizer == "" ||
+                webinarKey == "" ||
+                accessPhone == "")
+            {
 
-            return PartialView("Partials/_UpdateConnectionInfo", model);
+
+                return Json(new { success = false, result = "Invalid Connection Info detected." }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { success = true, result = "Connection Info is set." }, JsonRequestBehavior.AllowGet);
+            }
+            //return PartialView("Partials/_UpdateConnectionInfo", model);
         }
 
         public ActionResult CreateICSForWebinar(int id)
@@ -1074,6 +1141,9 @@ namespace CUWebinars.Web.Controllers
         public ActionResult UpdateWebinarFiles(ConnectionInfoModel connectionInfoModel)
         {
             /*
+             * 
+             * Dear David - this is really cool code i stole from your AddLoc thingie (i thinkie)
+             * 
                 This is a batch update operation. The WebinarFiles collection contains the webinar files to be updated. 
                 The three possibilities are updated, deleted and created. (Even if a file was unchanged at the client, it will be treated as updated.)
                     * If the idWebinar in the WebinarFiles is a positive number and does not end with -D, it is updated
@@ -1096,10 +1166,10 @@ namespace CUWebinars.Web.Controllers
                     var checkThatNewFilesExist = CheckThatFilesExists(webinarFile);
                     if (!checkThatNewFilesExist)
                     {
-                        return Json(new {result = webinarFile + "does not exist."});
+                        return Json(new { result = webinarFile + "does not exist." });
                     }
                 }
-                
+
                 _webinarManagementService.AddWebinarFiles(newFiles);
                 _webinarManagementService.DeleteWebinarFiles(deletedFiles);
                 _webinarManagementService.UpdateWebinarFiles(updatedFiles);

@@ -16,6 +16,7 @@ namespace CUWebinars.Web.Models
         public string WebinarKey { get; set; }
         public string OrganizerKey { get; set; }
         public string OrganizerOAuthKey { get; set; }
+        public string ManageURL { get; set; }
         public string CitrixRegisterURL { get; set; }
 
         [Display(Name = "Webinar Phone Number")]

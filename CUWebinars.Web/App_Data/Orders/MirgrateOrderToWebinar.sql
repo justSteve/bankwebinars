@@ -3,10 +3,10 @@ GO
 
 
 DECLARE @idwebinar INT
-SET @idwebinar = 1712
+SET @idwebinar = 1753
 
 
-SELECT  ( SELECT    o.idAffiliate
+SELECT TOP 1000 ( SELECT    o.idAffiliate
           FROM      dbo.OrdersRows
           WHERE     o.idOrder = idOrder
         ) AS AffiliateID ,
@@ -54,7 +54,7 @@ SELECT  ( SELECT    o.idAffiliate
         r.status
 FROM    TTSWebinars2.dbo.Orders o
         INNER JOIN dbo.OrdersRows r ON r.idOrder = o.idOrder
-WHERE   r.idWebinar = @idwebinar
+WHERE  r.idWebinar = @idwebinar
         AND ( r.status < 5
               AND r.status > 1
             )
