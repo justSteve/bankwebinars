@@ -425,7 +425,7 @@ namespace CUWebinars.Web.Controllers.Admin
         [System.Web.Mvc.HttpPost]
         public JsonResult SendConnectionInfo(int webinarId)
         {
-            _logger.Info("Begins SendConnectionInfo");
+            //_logger.Info("Begins SendConnectionInfo");
             var orders = _orderManagementService.GetOrdersForLiveNotifications(webinarId);
 
             foreach (var order in orders)

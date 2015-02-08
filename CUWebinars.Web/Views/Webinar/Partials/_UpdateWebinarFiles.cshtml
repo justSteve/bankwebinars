@@ -20,18 +20,25 @@
         border-radius: 4px;
         height: 20px;
     }
+
+    #UpdateWebinarHandoutsModal {
+        margin: 0;
+    }
 </style>
+<script type="text/javascript" src="/Scripts/bootstrap-filestyle.min.js"> </script>
+@*http://markusslima.github.io/bootstrap-filestyle/#Getstart*@
+<a href="#UpdateWebinarHandoutsModal" role="button" class="btn" data-toggle="modal">Manage Handouts</a>
 
     <a id="UpdateWebinarHandoutsModalButton" class="btn btn-default">Manage Handouts</a>
 
     <div id="UpdateWebinarHandoutsModal" class="modal modalCenterV hide fade">
 
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Update Webinar Handouts</h3>
-    </div>
-    <div class="modal-body">
-        @using (Html.BeginForm("UpdateWebinarFiles", "Webinar", FormMethod.Post, new { id = "_UpdateWebinarFiles" }))
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Update Webinar Handouts</h3>
+        </div>
+        <div class="modal-body">
+        @using (Html.BeginForm("UpdateWebinarFiles", "Webinar", FormMethod.Post, new { enctype="multipart/form-data", id = "_UpdateWebinarFiles"}))
         {
             @Html.AntiForgeryToken()
 
@@ -46,10 +53,10 @@
                     <div class="well well-large form-group">
                         <div align="center">Webinar Files</div>
                         <div id="manageFilesWrapper">
-
-                            @{
-                    int idx = 0;
-                            }
+                        
+                        @{
+                            int idx = 0;
+                        }
                             @foreach (var file in Model.WebinarFiles)
                             {
                                 <div id="fileDetails_@file.idWebinarFile" class="webinarFileDetails">
@@ -81,12 +88,12 @@
 
             </div>
         }
-    </div> <!-- closes modal-body -->
+        </div> <!-- closes modal-body -->
 
-    <div class="modal-footer">
+        <div class="modal-footer">
         <button id="updateWebinarFilesButton" class="btn btn-primary pull-left">Save</button>&nbsp;
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-    </div>
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>
 
-</div>
+    </div>
 

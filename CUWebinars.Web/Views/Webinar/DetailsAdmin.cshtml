@@ -5,7 +5,7 @@
 
 @{
     ViewBag.Title = Model.Webinar.Title + " - Presented by: " + Model.Webinar.Presenter.WebUser.FullName;
-    Layout = "/Views/Shared/_LayoutPublic.cshtml";
+    Layout = "/Views/Shared/_LayoutAdmin.cshtml";
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
 
@@ -44,7 +44,8 @@
 <div class="hero-unit">
     <div id="webinarTitle" class="container">
         <div class="span10">
-            <h1>@Model.Webinar.Title</h1>
+            @Html.Partial(@"Partials/_AdminEventButtons", Model)
+            <h3>@Model.Webinar.Title</h3>
         </div>
     </div>
 </div>
@@ -65,14 +66,12 @@
             </aside>
             <!--close aside widget-->
         </section>
-        <div class="span6">
-            @Html.Partial(@"Partials/_AdminEventButtons", Model)
-        </div>
+
         <div class="span6">
             @{
                 if (Model.Webinar.Status != WebinarStatus.Archived
-                    && Model.Webinar.Status != WebinarStatus.Deleted
-                    && Model.Webinar.Status != WebinarStatus.Pending)
+                                            && Model.Webinar.Status != WebinarStatus.Deleted
+                                            && Model.Webinar.Status != WebinarStatus.Pending)
                 {
                     <div id="SignUpFormContainer" class="row-fluid">
 
@@ -184,8 +183,8 @@
             </aside>
             <!--close aside .widget -->
             <aside class="widget">
-                <h5 class="short_headline"><span>Stay Updated</span></h5>
-                @{Html.RenderPartial("Partials/_AddToMailingBox");}
+                <h5 class="short_headline"><span>Send Promo To Affiliates</span></h5>
+                @*@{Html.RenderPartial("Partials/_SendPromoToAffiliates");}*@
             </aside>
             <!--close aside .widget -->
             @*<aside class="widget">

@@ -128,6 +128,10 @@
     <Reference Include="Glimpse.Ninject">
       <HintPath>..\packages\Glimpse.Ninject.0.9.0\lib\net4\Glimpse.Ninject.dll</HintPath>
     </Reference>
+    <Reference Include="HtmlAgilityPack, Version=1.4.9.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
@@ -613,6 +617,7 @@
     <None Include="Properties\PublishProfiles\BWOnSteadfast.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars31.pubxml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
+    <Content Include="Scripts\bootstrap-filestyle.min.js" />
     <Content Include="Scripts\jquery-1.11.1.js" />
     <Content Include="Scripts\jquery-1.11.1.min.js" />
     <Content Include="Scripts\jquery-ui-1.11.1.js" />

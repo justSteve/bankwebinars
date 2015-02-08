@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Net;
+using System.Threading;
 using System.Web.Routing;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
@@ -661,7 +662,7 @@ namespace CUWebinars.Web.Controllers
 
             _logger.Error("Details Action invoked with null 'id' parameter");
 
-            return RedirectToAction("allActive", new { eventsToShow = "upcoming" } );
+            return RedirectToAction("allActive", new { eventsToShow = "upcoming" });
         }
 
         /// <summary>
@@ -951,14 +952,14 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
-                    var webinar = _webinarManagementService.GetWebinar(model.idWebinar);
-                    webinar.AccessCodeAttendee = model.AccessCodeAttendee;
-                    webinar.AccessCodeOrganizer = model.AccessCodeOrganizer;
-                    webinar.AccessCodePresenter = model.AccessCodePresenter;
-                    webinar.CitrixRegisterUrl = model.CitrixRegisterURL;
-                    webinar.OrganizerOAuthKey = model.OrganizerOAuthKey;
-                    webinar.OrganizerKey = model.OrganizerKey;
-                    webinar.WebinarKey = model.WebinarKey;
+            var webinar = _webinarManagementService.GetWebinar(model.idWebinar);
+            webinar.AccessCodeAttendee = model.AccessCodeAttendee;
+            webinar.AccessCodeOrganizer = model.AccessCodeOrganizer;
+            webinar.AccessCodePresenter = model.AccessCodePresenter;
+            webinar.CitrixRegisterUrl = model.CitrixRegisterURL;
+            webinar.OrganizerOAuthKey = model.OrganizerOAuthKey;
+            webinar.OrganizerKey = model.OrganizerKey;
+            webinar.WebinarKey = model.WebinarKey;
 
                     _webinarManagementService.UpdateWebinar(webinar);
 
@@ -1104,6 +1105,15 @@ namespace CUWebinars.Web.Controllers
                     connectionInfoModel.WebinarFiles.Where(f => f.idWebinarFile > 0 && !f.fileDesc.EndsWith("-D"))
                         .ToList();
 
+                foreach (var webinarFile in newFiles)
+                {
+                    var checkThatNewFilesExist = CheckThatFilesExists(webinarFile);
+                    if (!checkThatNewFilesExist)
+                    {
+                        return Json(new {result = webinarFile + "does not exist."});
+                    }
+                }
+                
                 _webinarManagementService.AddWebinarFiles(newFiles);
                 _webinarManagementService.DeleteWebinarFiles(deletedFiles);
                 _webinarManagementService.UpdateWebinarFiles(updatedFiles);
@@ -1119,6 +1129,46 @@ namespace CUWebinars.Web.Controllers
             }
 
             return this.ModelStateJson(ModelState);
+        }
+
+        class MyClient : WebClient
+        {
+            public bool HeadOnly { get; set; }
+            protected override WebRequest GetWebRequest(Uri address)
+            {
+                WebRequest req = base.GetWebRequest(address);
+                if (HeadOnly && req.Method == "GET")
+                {
+                    req.Method = "HEAD";
+                }
+                return req;
+            }
+        }
+
+        private bool CheckThatFilesExists(WebinarFile newFile)
+        {
+            var handoutRepo = "http://ondemand.cuwebinars.com/";
+            //http://stackoverflow.com/questions/153451/how-to-check-if-system-net-webclient-downloaddata-is-downloading-a-binary-file#156750
+
+            using (MyClient client = new MyClient())
+            {
+                client.HeadOnly = true;
+                string uri = handoutRepo + newFile.fileLocation;
+                byte[] body = client.DownloadData(uri); // note should be 0-length
+                string type = client.ResponseHeaders["content-type"];
+                client.HeadOnly = false;
+                //
+                //there's probably a better way to test that the file exists
+                if (type.Contains(@"/"))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
         }
     }
 }

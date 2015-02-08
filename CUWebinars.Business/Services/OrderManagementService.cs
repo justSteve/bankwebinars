@@ -930,7 +930,6 @@ namespace CUWebinars.Business.Services
                             string.IsNullOrEmpty(
                                 order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).JoinURL))
                         {
-                            //Blows up where with 
                             GenerateRegistrantKey(order, additionalLocation);
                         }
                     }
@@ -948,13 +947,14 @@ namespace CUWebinars.Business.Services
                 {
                     // If in error, there'll be no braces. In such a case, make the error a Json object.
                     if (!regKeyResponse.Contains("{"))
-                        regKeyResponse = string.Concat("{ \"error\": \"", regKeyResponse, "\"}"); 
+                        regKeyResponse = string.Concat("{ \"error\": \"", regKeyResponse, "\"}");
+                    
 
                     JObject parsedJsonObject = JObject.Parse(regKeyResponse);
 
                     if (parsedJsonObject[DomainConstants.RegistrantKey] != null)
                     {
-                        _logger.Error("Successful CreateRegistrantKey");
+                        //_logger.Info("Successful CreateRegistrantKey");
                         var registrantKey = parsedJsonObject[DomainConstants.RegistrantKey].ToString();
                         var joinUrl = parsedJsonObject[DomainConstants.JoinUrl].ToString();
 
@@ -963,7 +963,12 @@ namespace CUWebinars.Business.Services
                     }
                     else
                     {
-                        _logger.Error("ERROR at CreateRegistrantKey on " + row.Order.idOrder);
+                        if (!regKeyResponse.Contains("(409) Conflict."))
+                        {
+                            //409 conflict means email already registered
+                            // no need to log multiple citrix hits
+                            _logger.Error("ERROR at CreateRegistrantKey on " + row.Order.idOrder);
+                        }
                     }
                 }
             }

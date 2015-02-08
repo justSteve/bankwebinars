@@ -110,14 +110,14 @@
     <section class="container preheader">
         <!--this is the login for the user-->
         @Html.Partial("_LoginPartial")
-        close user nav
+        
         <div class="search-wrapper">
             <form class="search" method="post" action="/home/search">
                 <div id="search-trigger">Search:</div>
                 <input id="search-box" type="text" placeholder="search + enter">
             </form>
         </div>
-        <div class="phone"><a href="tel:8008310678" class="tele">800.831.0678</a></div>
+        <div class="phone">[ADMIN TEMPLATE]</div>
         <ul class="social">
             @*<li><a class="socicon small rss" href="#" data-placement="bottom" title="Subscribe to our RSS feed"></a></li>*@
             <li><a class="socicon small facebook" href="http://www.facebook.com/home.php#!/pages/Total-Training-Solutions/300546163412" target="_blank" data-placement="bottom" title="Follow us on Facebook"></a></li>
@@ -185,15 +185,6 @@
         @RenderBody()
     </div>
 
-    <div id="ProgressDialogBS" class="modal hide fade">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3 id="progressCaption">...updating status...</h3>
-        </div>
-        <div id="progressResult" class="modal-body">
-            <i class="icon-spinner icon-spin icon-4x "></i>
-        </div>
-    </div>
     <!--begin footer -->
     <footer id="footer" class="clearfix">
         <div class="container">
