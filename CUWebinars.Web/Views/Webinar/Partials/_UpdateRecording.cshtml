@@ -1,0 +1,71 @@
+﻿@model WebinarDetailsViewModel
+
+@{
+    ViewBag.Title = "Manage Handouts for this event";
+
+}
+<style>
+    .form-horizontal .control-label {
+        float: left;
+        padding-top: 0;
+        text-align: right;
+        width: 140px;
+        margin-top: 10px;
+    }
+
+    .form-horizontal .form-control {
+        margin-left: 10px;
+        vert-align: top;
+        margin-top: 10px;
+        border-radius: 4px;
+        height: 20px;
+    }
+
+    #UpdateWebinarRecordingModal {
+        margin: 0;
+    }
+</style>
+@*<script type="text/javascript" src="/Scripts/bootstrap-filestyle.min.js"> </script>
+    http://markusslima.github.io/bootstrap-filestyle/#Getstart
+*@
+<a href="#UpdateWebinarRecordingModal" role="button" class="btn" data-toggle="modal">Set Webinar Recording</a>
+
+@*<a id="UpdateWebinarRecordingModalButton" class="btn btn-default">Manage Handouts</a>*@
+
+<div id="UpdateWebinarRecordingModal" class="modal modalCenterV hide fade">
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Update Recording</h3>
+    </div>
+    <div class="modal-body">
+        @using (Html.BeginForm("UpdateWebinarRecording", "Webinar", FormMethod.Post, new { enctype = "multipart/form-data", id = "_UpdateWebinarRecording" }))
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.HiddenFor(model => model.Webinar.idWebinar)
+
+            <div class="form-horizontal">
+                @Html.ValidationSummary("There have been some errors:", new { id = "updateFilesValSummary" })
+
+                <div class="well well-large form-group">
+                    <div align="center">Webinar Recording</div>
+                    <div id="manageFilesWrapper">
+                        <i class="icon-trash icon-white pull-right" style="cursor: pointer" id="Filedetails-delete"></i>
+                        <div id="fileLocationDiv_">
+                            <span class="control-label">File Name</span>
+                            <input type="text" class="form-control" name="Webinar.RecordingUrl" value="@Model.Webinar.RecordingUrl" />
+                            <i class="icon-book icon-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- closes modal-body -->
+
+            <div class="modal-footer">
+                <button id="updateWebinarRecordingButton" class="btn btn-primary pull-left">Save</button>&nbsp;
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            </div>
+        }
+    </div>
+</div>

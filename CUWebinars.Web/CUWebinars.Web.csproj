@@ -408,10 +408,13 @@
     <Compile Include="Models\ImportOrderModel.cs" />
     <Compile Include="Models\ManageOrderEditModel.cs" />
     <Compile Include="Models\MigrateOrderModel.cs" />
+    <Compile Include="Models\PostEventInfoModel.cs" />
     <Compile Include="Models\RegisterFieldsDTO.cs" />
     <Compile Include="Models\ShippingDetailsModel.cs" />
     <Compile Include="Models\DiscountDetailsModel.cs" />
     <Compile Include="Models\ShowMessagesModel.cs" />
+    <Compile Include="Models\TTSAttendance.cs" />
+    <Compile Include="Models\TTSQuiz.cs" />
     <Compile Include="ViewModel\DiscountPromotionViewModel.cs" />
     <Compile Include="ViewModel\Discount_SubscriptionViewModel.cs" />
     <Compile Include="ViewModel\RegistrationSummaryViewModel.cs" />
@@ -593,6 +596,7 @@
     <Content Include="Scripts\app\cart\add-password.js" />
     <Content Include="Scripts\app\cart\details-affiliate.js" />
     <Content Include="Scripts\app\cart\update-connection-info.js" />
+    <Content Include="Scripts\app\cart\update-recording.js" />
     <Content Include="Scripts\app\cart\update-webinar-files.js" />
     <Content Include="Scripts\app\cart\create-order-new.js" />
     <Content Include="Scripts\app\cart\register-during-checkout.js" />
@@ -762,6 +766,8 @@
     <Content Include="Views\Account\Partials\Subscription.cshtml" />
     <Content Include="Views\Webinar\DetailsAdmin.cshtml" />
     <Content Include="Views\Webinar\Partials\_ListOrders.cshtml" />
+    <Content Include="Views\Webinar\Partials\_UpdateRecording.cshtml" />
+    <Content Include="Views\Webinar\Partials\_ShippingReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Calendar\iCalFromCitrix.txt" />

@@ -428,12 +428,11 @@ namespace CUWebinars.Web.Controllers
         }
 
         [System.Web.Mvc.HttpPost]
-        public JsonResult SendRecordingPosted(int webinarId, string fileName)
+        public JsonResult SendRecordingPosted(int webinarId)
         {
             try
             {
-                //  Do something here with the file. Very exists in Azure. Also build connectionstring and save in OrderRow ?
-
+                
                 var orders = _orderManagementService.GetOrdersForRecordedNotifications(webinarId);
 
                 if (orders.Any())
@@ -1044,7 +1043,7 @@ namespace CUWebinars.Web.Controllers
             }
             else
             {
-                
+
                 return Json(new { Result = WebUiConstants.Success });
                 //_logger.ErrorException(
                 //    string.Format("UpdateConnectionInfo | Session {0}", _appHelper.GetUserAuditInfo()), exception);
@@ -1253,6 +1252,64 @@ namespace CUWebinars.Web.Controllers
                 }
 
             }
+        }
+
+        private bool CheckThatRecordingExists(string checkFile)
+        {
+            var handoutRepo = "http://ondemand.cuwebinars.com/";
+            //http://stackoverflow.com/questions/153451/how-to-check-if-system-net-webclient-downloaddata-is-downloading-a-binary-file#156750
+
+            using (MyClient client = new MyClient())
+            {
+                client.HeadOnly = true;
+                string uri = handoutRepo + checkFile;
+                byte[] body = client.DownloadData(uri); // note should be 0-length
+                string type = client.ResponseHeaders["content-type"];
+                client.HeadOnly = false;
+                //
+                //there's probably a better way to test that the file exists
+                if (type.Contains(@"/"))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+        }
+        public ActionResult UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel)
+        {
+
+            Webinar webinar = _webinarManagementService.GetWebinar(webinarDetailsViewModel.Webinar.idWebinar);
+            try
+            {
+                var checkThatNewFilesExist = CheckThatRecordingExists(webinarDetailsViewModel.Webinar.RecordingUrl);
+                if (!checkThatNewFilesExist)
+                {
+                    return Json(new { result = webinarDetailsViewModel.Webinar.RecordingUrl + "does not exist." });
+                }
+
+                webinar.RecordingUrl = webinarDetailsViewModel.Webinar.RecordingUrl;
+                
+                webinar.Status = WebinarStatus.Recorded;
+                
+                //var sendRecording = SendRecordingPosted();
+
+                _webinarManagementService.UpdateWebinar(webinar);
+
+                return Json(new { result = WebUiConstants.Success });
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException(
+                    string.Format("UpdateWebinarRecording| UpdateWebinarRecording failed {0}", exception.Message), exception);
+                ModelState.AddModelError(string.Empty,
+                    "There was a problem with the update operation. Please consult with the system administrator to resolve the issue.");
+            }
+
+            return this.ModelStateJson(ModelState);
         }
     }
 }

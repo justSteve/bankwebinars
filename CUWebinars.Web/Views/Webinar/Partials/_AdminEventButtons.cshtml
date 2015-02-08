@@ -1,12 +1,16 @@
 ﻿@using CUWebinars.Web.Core
 @model WebinarDetailsViewModel
 
+@functions {
+
+}
+
 @{
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 }
 
 <section>
-    <div style="width: 100%; margin: 10px auto; padding: 0">
+    <div id="AdminButtonsContainer">
         <div><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>
         <div id="ButtonsContainer">
             @{
@@ -15,18 +19,35 @@
                 {
                     case WebinarStatus.Recorded:
                         {
-                            if (string.IsNullOrEmpty(Model.Webinar.RecordingUrl))
+                            var recInfoModel = new PostEventInfoModel
                             {
-                                <input id="WebinarFileInput" type="text" placeholder="Enter File Name" />
-                                <div style="display: inline-block"><button id="SendRecordingPostedEventHtmlButton" class="btn btn-primary btn-small">Send Recording</button></div>
-                            }
-                            else
-                            {
-                                <a href="@globalConfig.WMVRepository@Model.Webinar.RecordingUrl">@globalConfig.WMVRepository@Model.Webinar.RecordingUrl </a>
-                                <div>
-                                    @{ Html.RenderPartial("DisplayTemplates/HandoutsListing", Model.Webinar); }
+                                idWebinar = Model.Webinar.idWebinar,
+                                OrganizerKey = Model.Webinar.OrganizerKey,
+                                OrganizerOAuthKey = Model.Webinar.OrganizerOAuthKey,
+                                RecordingURL = Model.Webinar.RecordingUrl,
+                                WebinarFiles = Model.Webinar.WebinarFiles
+                            };
+
+
+                            <div class="navbar">
+                                <div class="navbar-inner">
+                                    <ul class="nav">
+                                        <li>
+                                            <a href="@globalConfig.WMVRepository@Model.Webinar.RecordingUrl">@globalConfig.WMVRepository@Model.Webinar.RecordingUrl </a>
+                                        </li>
+                                        <li>
+                                            @Html.Partial(@"Partials/_ShippingReport", recInfoModel)
+                                        </li>
+                                        <li>
+                                                @{ Html.RenderPartial("DisplayTemplates/HandoutsListing", Model.Webinar); }
+                                            
+                                        </li>
+                                        <li>
+                                            @Html.Partial(@"Partials/_UpdateRecording")
+                                        </li>
+                                    </ul>
                                 </div>
-                            }
+                            </div>
                             break;
                         }
                     case WebinarStatus.Active:
@@ -53,10 +74,10 @@
                                         <li>
                                             @Html.Partial(@"Partials/_ListOrders", connInfoModel)
                                         </li>
-                                        @*<li>
-                                            @Html.Partial(@"Partials/_EditWebinar", connInfoModel)
-                                        </li>*@
-                                        
+                                        <li>
+                                            @Html.Partial(@"Partials/_UpdateRecording")
+                                        </li>
+
                                     </ul>
                                 </div>
                             </div>

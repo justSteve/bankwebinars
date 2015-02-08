@@ -43,10 +43,10 @@
 
 <div class="hero-unit">
     <div id="webinarTitle" class="container">
-        <div class="span10">
+        <div class="pull-right">
             @Html.Partial(@"Partials/_AdminEventButtons", Model)
-            <h3>@Model.Webinar.Title</h3>
         </div>
+        <h3>@Model.Webinar.Title</h3>
     </div>
 </div>
 <!--close hero-unit-->
@@ -58,6 +58,42 @@
         <!--begin row-fluid-->
         <section class="span3 sidebar">
             <aside class="widget well-large">
+                
+                <h5 class="short_headline"><span>Date/Time</span></h5>
+
+                @if (Model.Webinar.Status == WebinarStatus.Recorded)
+                {
+                    var expiresDate = Model.Webinar.Date.AddMonths(6);
+                    var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
+
+                    <div style="font-size: smaller; text-align: center;">
+                        This event was recorded on @Html.DisplayDate(Model.Webinar.Date) and is available for OnDemand Playback until @Html.DisplayDate(expiresDate)
+                        - @remainingDays.ToString() more days.
+                    </div>
+                }
+                else
+                {
+                    <b>@Html.DisplayDate(Model.Webinar.Date)</b>
+                    <br />
+                    <span>@Html.Raw(Model.TimeFormatDisplay)</span>
+                }
+                <div id="ceu">
+                    <a href="#" title="@Model.CeuStatement ">
+                        @Html.Raw(Model.CeuShort)
+                    </a>
+                </div>
+                <h5 class="short_headline">
+                    <span>Topics</span>
+                </h5>
+                <ul>
+                    @foreach (var webinarTopic in Model.Topics)
+                    {
+                        <li>
+                            @webinarTopic.topicDesc
+                        </li>
+                    }
+                </ul>
+
                 @{
                     <h5 class="short_headline"><span>@Model.Webinar.Presenter.WebUser.FullName</span></h5>
                     @Html.Raw(Model.Webinar.Presenter.BiographyLong)
@@ -70,8 +106,8 @@
         <div class="span6">
             @{
                 if (Model.Webinar.Status != WebinarStatus.Archived
-                                            && Model.Webinar.Status != WebinarStatus.Deleted
-                                            && Model.Webinar.Status != WebinarStatus.Pending)
+                                                                    && Model.Webinar.Status != WebinarStatus.Deleted
+                                                                    && Model.Webinar.Status != WebinarStatus.Pending)
                 {
                     <div id="SignUpFormContainer" class="row-fluid">
 
@@ -132,29 +168,6 @@
             <aside class="widget">
 
                 <div class=" pull-right label label-success">@Model.Webinar.Status.ToString()</div>
-                <h5 class="short_headline"><span>Date/Time</span></h5>
-
-                @if (Model.Webinar.Status == WebinarStatus.Recorded)
-                {
-                    var expiresDate = Model.Webinar.Date.AddMonths(6);
-                    var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
-
-                    <div style="font-size: smaller; text-align: center;">
-                        This event was recorded on @Html.DisplayDate(Model.Webinar.Date) and is available for OnDemand Playback until @Html.DisplayDate(expiresDate)
-                        - @remainingDays.ToString() more days.
-                    </div>
-                }
-                else
-                {
-                    <b>@Html.DisplayDate(Model.Webinar.Date)</b>
-                    <br />
-                    <span>@Html.Raw(Model.TimeFormatDisplay)</span>
-                }
-                <div id="ceu">
-                    <a href="#" title="@Model.CeuStatement ">
-                        @Html.Raw(Model.CeuShort)
-                    </a>
-                </div>
             </aside>
             @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())
             <!-- close .widget -->
@@ -168,19 +181,6 @@
                     <div id="InputFormFields" style="margin-top: 20px;"></div>
                 </aside>*@
             <!-- Close ics file widget -->
-            <aside class="widget">
-                <h5 class="short_headline">
-                    <span>Topics</span>
-                </h5>
-                <ul>
-                    @foreach (var webinarTopic in Model.Topics)
-                    {
-                        <li>
-                            @webinarTopic.topicDesc
-                        </li>
-                    }
-                </ul>
-            </aside>
             <!--close aside .widget -->
             <aside class="widget">
                 <h5 class="short_headline"><span>Send Promo To Affiliates</span></h5>

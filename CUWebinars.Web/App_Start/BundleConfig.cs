@@ -38,6 +38,7 @@ namespace CUWebinars.Web.App_Start
 
             bundles.Add(new ScriptBundle("~/bundles/manage-webinar-files").Include(
                 "~/Scripts/app/cart/update-connection-info.js",
+                "~/Scripts/app/cart/update-recording.js",
                 "~/Scripts/app/cart/update-webinar-files.js"
                 ));
 
