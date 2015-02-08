@@ -496,7 +496,7 @@
     <Compile Include="Models\ImportOrderResponse.cs" />
     <Compile Include="Models\JotFormModel.cs" />
     <Compile Include="Models\JotFormOrderModel.cs" />
-    <Compile Include="Notification\Templates\CertOfCompletionViewModel.cs" />
+    <Compile Include="ViewModel\CertOfCompletionViewModel.cs" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\1hourRegTypes.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\2hourRegTypes.sql" />
     <Content Include="App_Data\Orders\SQLScripts\BankWebinarsMigration\3PartRegTypes.sql" />
@@ -591,6 +591,10 @@
     <Content Include="newrelic\NewRelic.Agent.Core.dll" />
     <Content Include="newrelic\NewRelic.Agent.Extensions.dll" />
     <Content Include="newrelic\NewRelic.Profiler.dll" />
+    <Content Include="Notification\Templates\SendPerDayPromo.cshtml" />
+    <Content Include="Notification\Templates\SendPerWeekPromo.cshtml">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="Scripts\app\admin\claims-management.js" />
     <Content Include="Scripts\app\admin\manage-order.js" />
     <Content Include="Scripts\app\cart\add-password.js" />

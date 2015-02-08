@@ -1,6 +1,6 @@
 ﻿using CUWebinars.Business.Models;
 
-namespace CUWebinars.Web.Notification.Templates
+namespace CUWebinars.Web.ViewModel
 {
     public class CertOfCompletionViewModel
     {

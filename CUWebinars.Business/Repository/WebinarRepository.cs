@@ -203,7 +203,6 @@ namespace CUWebinars.Business.Repository
                 if (row == null)
                 {
 
-                    //TODO: log this exception condition
                     continue;
                 }
                 if (((TTSWebinarsContext)db).RegTypes.Find(row.RegistrationType).ShowLiveNotifications == "No"

@@ -283,7 +283,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     if (ReferenceEquals(orderRow, null))
                         orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
-                    //TODO: Pinpoints where the 'disappearing discount' takes place. When flow enters this method, the Row has the discount.
+                    
                     if (orderRow.RowStatus != OrderRowStatus.Active)
                         return null;
 
@@ -353,8 +353,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     if (Request["referred"] != null &&
                         WebUtility.HtmlDecode(Request["referred"]) != "How did you hear about this webinar?")
                     {
-                        //TODO: Determine the conditions that nessitate that this question be answered
-
+                        //
                         order.AdminComments += "Referred by: " + Request["referred"] + Environment.NewLine;
                         //ViewData["referred"] = Request["referred"];
                     }

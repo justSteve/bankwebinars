@@ -1,0 +1,248 @@
+﻿@using System.Configuration
+@using System.Globalization
+@using System.Linq
+@using System.Text
+@using System.Web.Mvc.Html
+@using CUWebinars.Business.Core
+@using CUWebinars.Business.Models
+@using CUWebinars.Business.Notification.ViewModel
+@model CUWebinars.Business.Notification.ViewModel.OrderSubmittedViewModel
+
+<title>
+    @{
+        var orderRows = from orderRow in Model.Order.OrderRows
+            where orderRow.RowStatus == OrderRowStatus.Active
+            select orderRow;
+        var thisWebinar = orderRows.Single().Webinar;
+        string TenantHead = TtsTemplateHelperObject.Tenant();
+    }
+    [preview-@TenantHead] Confirmation of Registration: @thisWebinar.Title
+</title>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <style type="text/css">
+        /*<![CDATA[*/
+        .sideBarBody {
+            font-family: trebuchet ms;
+            text-align: center;
+            font-size: 8px;
+            color: #000000;
+        }
+
+        .sideBarHead {
+            font-family: trebuchet ms;
+            font-weight: bold;
+            text-align: center;
+            font-size: 10px;
+            color: #FF6600;
+            font-weight: bold;
+        }
+
+        .headerTop {
+            background-color: #FFCC66;
+            border-top: 0px solid #000000;
+            border-bottom: 1px solid #FFFFFF;
+            text-align: center;
+        }
+
+        .adminText {
+            font-size: 10px;
+            color: #996600;
+            line-height: 200%;
+            font-family: trebuchet ms;
+            text-decoration: none;
+        }
+
+        .headerBar {
+            background-color: #FFFFFF;
+            border-top: 0px solid #333333;
+            border-bottom: 10px solid #FFFFFF;
+        }
+
+        .title {
+        }
+
+        .subTitle {
+            font-size: 11px;
+            font-weight: normal;
+            color: #666666;
+            font-style: italic;
+            font-family: trebuchet ms;
+        }
+
+        td {
+            font-size: 12px;
+            color: #000000;
+            line-height: 100%;
+            font-family: trebuchet ms;
+        }
+
+        .sideColumn {
+            background-color: #FFFFFF;
+            border-left: 1px dashed #CCCCCC;
+            text-align: left;
+        }
+
+        .sideColumnText {
+            font-size: 11px;
+            font-weight: normal;
+            color: #999999;
+            font-family: trebuchet ms;
+            line-height: 150%;
+        }
+
+        .sideColumnTitle {
+            font-size: 15px;
+            font-weight: bold;
+            color: #333333;
+            font-family: trebuchet ms;
+            line-height: 150%;
+        }
+
+        .footerRow {
+            background-color: #FFFFCC;
+            border-top: 10px solid #FFFFFF;
+        }
+
+        .footerText {
+            font-size: 10px;
+            color: #996600;
+            line-height: 100%;
+            font-family: trebuchet ms;
+        }
+
+        ul {
+            line-height: 100%;
+        }
+
+        p {
+            font-size: 12px;
+            color: #000000;
+            line-height: 100%;
+            font-family: trebuchet ms;
+        }
+        /*]]>*/
+    </style>
+
+    <title></title>
+</head>
+
+<body leftmargin="0" marginwidth="0" topmargin="0" marginheight="0"
+      offset="0" bgcolor="#FFFFFF">
+    <table width="95%" cellpadding="0" cellspacing="0" bgcolor="#B9D4F2">
+        <tr>
+            <td valign="top" align="center">
+                <p>&#160;</p>#logo#
+            </td>
+        </tr>
+
+        <tr>
+            <td align="center">
+                <table width="600px" cellpadding="20px" cellspacing="0"
+                       bgcolor="#FFFFFF">
+                    <tr>
+                        <td width="400px" valign="top" bordercolor="#000000"
+                            bgcolor="#FFFFFF">
+                            <span style="line-height:150%">#upcomingDetailed#</span>
+                        </td>
+
+                        <td width="200" valign="top" style="background-color:#FFFFFF;border-left:1px dashed #CCCCCC;text-align:left;">
+                            <p>
+                                <a href="http://www.bankwebinars.com/Webinar/Calendar?idaff=#idAffiliate#">
+                                    <img alt="Upcoming.jpg" border="0" src="http://www.ttstrain.com/images/email/upcomingwebinars.jpg" />
+                                </a>
+                            </p>
+
+                            <p>#upcoming#</p>
+                            <hr />
+
+                            <p align="center" class="sideBarHead">
+                                <b>
+                                    Compliance
+                                    Perspectives:&#160; Monthly Update
+                                </b>
+                            </p>
+
+                            <p class="sideBarBody">
+                                We are pleased to offer a
+                                monthly webinar series to help you keep up with
+                                changes and deadlines in the compliance area.&#160;
+                                <a href="http://www.bankwebinars.com/Webinar/Details/883?idaff=#idAffiliate#">
+                                    Click here for more information!
+                                </a>
+                            </p>
+                            <hr />
+
+                            <p align="center" class="sideBarHead">
+                                <b>
+                                    Webinar
+                                    Subscription Packages
+                                </b>
+                            </p>
+
+                            <p class="sideBarBody">
+                                Would you and your colleagues
+                                like to attend webinars at a lower price?&#160; With
+                                a Webinar Subscription Package, we can help you
+                                greatly reduce that expense.&#160; <a href="http://www.bankwebinars.com/handouts/WebinarFlyer2012-1.pdf">
+                                    Click here to learn more about this cost-saving
+                                    option.
+                                </a>
+                            </p>
+                            <hr />
+
+                            <p align="center" class="sideBarHead">
+                                <b>
+                                    On-Demand
+                                    Webinars Available
+                                </b>
+                            </p>
+
+                            <p class="sideBarBody">
+                                Unable to attend the live
+                                session, or interested in a topic of a past
+                                webinar?&#160; Not a problem.&#160; Get the recording
+                                that includes online access to the webinar for six
+                                months as well as an audio CD and materials for
+                                offline viewing. <a href="http://www.bankwebinars.com/Webinar/Recorded?idaff=#idAffiliate#">
+                                    Click here to see all our On-Demand
+                                    Recordings.
+                                </a>
+                            </p>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td valign="top" bordercolor="#000000" bgcolor="#FFFFFF">
+                            &#160;
+                        </td>
+
+                        <td valign="top">
+                            <p>#social#</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <table align="center" width="600px" cellpadding="0"
+                       cellspacing="0">
+                    <tr>
+                        <td align="center" width="600px" style="background-color:#FFFFCC;border-top:10px solid #FFFFFF;"
+                            valign="top">
+                            <p>
+                                <span style="font-size:10px;color:#996600;line-height:100%;font-family:trebuchet ms;">
+                                    #footer#
+                                </span>
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

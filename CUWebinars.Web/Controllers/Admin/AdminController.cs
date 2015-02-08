@@ -167,7 +167,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     addAdditionalLocationViewModel
                     );
             }
-            return null;// todo: return something.
+            return null;
         }
 
         public ActionResult GetOrderDetails(int? id = null)

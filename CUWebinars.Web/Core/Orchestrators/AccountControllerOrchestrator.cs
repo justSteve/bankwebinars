@@ -234,7 +234,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public bool UserConfirmed(CreateUserConfirmedViewModel model)
         {
-            //  TODO: __Is this directive still operative? add try catch and reverse as should be atomic.
+            
             if (_membershipService.VerifyUserByEmail(_globals.Tenant, model.Email))
             {
                 _stateService.SetValue(DomainConstants.UserCreatedViaNewOrder, true);

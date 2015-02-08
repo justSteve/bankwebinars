@@ -85,16 +85,6 @@ namespace CUWebinars.Business.Services
             return _affiliateRepository.Exists(item) ? item : _affiliateRepository.AttachItem(item);
         }
 
-        //TODO: remove if nothing bad happens by it's absence.
-        //public string BuildConnectionInfo(OrderRow orderRow)
-        //{
-        //    // add code here to build string
-
-        //    //var option = _RegTypeRepository.FindRegType(orderRow.RegistrationType);
-
-        //    return string.Empty;
-        //}
-
         public OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, int registrationType)
         {
             try
@@ -104,7 +94,7 @@ namespace CUWebinars.Business.Services
             }
             catch (Exception exception)
             {
-                _logger.ErrorException("overload of CreateOrderRow method webinar:  " +webinar.idWebinar + " regType: " + registrationType , exception);
+                _logger.ErrorException("overload of CreateOrderRow method webinar:  " + webinar.idWebinar + " regType: " + registrationType, exception);
 
                 throw;
             }
@@ -242,10 +232,6 @@ namespace CUWebinars.Business.Services
             return _regTypeRepository.FindRegTypesByWebinarId(id, false);
         }
 
-        //TODO: Review Naming convention 
-        //- in my frame of reference, as relates to 'RegType' and 'Option' - they are synonyms 
-        //  and to use both in a name seems redundant. --not nitpicking on names just probing for 
-        //  a mismatch between our frames of reference.
         public IList<RegType> GetRegTypeOption(int optionId)
         {
             return _regTypeRepository.FindRegTypeOption(optionId);
@@ -326,14 +312,15 @@ namespace CUWebinars.Business.Services
                 //  get the most recent
                 int affiliateIdForOrder, mostRecentAffiliateId;
                 affiliateIdForOrder = mostRecentAffiliateId = affiliateIds.First();
-
-                if (affiliateIds.Distinct().Count() > 1) // The history is of more than 1 affiliate
+                
+                // The history is of more than 1 affiliate
+                if (affiliateIds.Distinct().Count() > 1) 
                 {
                     // The business rule is that where there is more than one Affiliate which the 
                     // user has made orders for, if one affiliate has been used twice as many times 
                     // as the most recent Affiliate, then make the order for that Affiliate.
                     var groups = affiliateIds.GroupBy(a => a);
-                    //TODO: Express groups in a string seperated by comma for logging purposes.
+                    //
                     int mostUsedAffiliateId = 0;
                     int mostUses = 0;
                     int numberOfUsesOfMostRecentAffiliate = 0;
@@ -570,7 +557,7 @@ namespace CUWebinars.Business.Services
 
         public void FireAdminEmailSendShippedOrderEvent(Order order, IEnumerable<string> recipients, bool resending = false)
         {
-            AddEvent(new AdminEmailSendShippedOrderEvent<Order> { EventObject = order, Recipients = recipients, ResendEvent = resending});
+            AddEvent(new AdminEmailSendShippedOrderEvent<Order> { EventObject = order, Recipients = recipients, ResendEvent = resending });
 
 
             foreach (var evt in GetEvents().OfType<AdminEmailSendShippedOrderEvent<Order>>())
@@ -651,6 +638,27 @@ namespace CUWebinars.Business.Services
             }
 
             Clear();
+        }
+        public void FireSendPerDayPromoEvent(IList<Affiliate> affiliates, Webinar webinar)
+        {
+            foreach (var aff in affiliates)
+            {
+                //AddEvent(new SendPreDayPromoEvent<WebinarPromoViewModel> { EventObject = aff });
+                //TODO: Unable to resolve SendPreDayPromoEvent
+                //AddEvent(new SendPreDayPromoEvent<WebinarPromoViewModel>());
+            }
+
+            foreach (var evt in GetEvents().OfType<SendRecordingPostedEvent<Order>>())
+            {
+                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+            }
+
+            Clear();
+        }
+
+        public void FireSendPerWeekPromoEvent(IList<Affiliate> affiliates, Webinar webinar)
+        {
+            throw new NotImplementedException();
         }
 
         public void FireSendReminderNotificationEvent(IList<Order> orders)
@@ -876,7 +884,7 @@ namespace CUWebinars.Business.Services
             {
                 // If in error, there'll be no braces. In such a case, make the error a Json object.
                 if (!regKeyResponse.Contains("{"))
-                    regKeyResponse = string.Concat("{ \"error\": \"", regKeyResponse, "\"}"); 
+                    regKeyResponse = string.Concat("{ \"error\": \"", regKeyResponse, "\"}");
 
                 parsedJsonObject = JObject.Parse(regKeyResponse);
 
@@ -948,7 +956,7 @@ namespace CUWebinars.Business.Services
                     // If in error, there'll be no braces. In such a case, make the error a Json object.
                     if (!regKeyResponse.Contains("{"))
                         regKeyResponse = string.Concat("{ \"error\": \"", regKeyResponse, "\"}");
-                    
+
 
                     JObject parsedJsonObject = JObject.Parse(regKeyResponse);
 
@@ -1008,7 +1016,7 @@ namespace CUWebinars.Business.Services
                 // If linkToVerifyAccount is true, then we know that the user was created during an importation. When that occurs, 
                 // we don't want to send the normal register user email. We want to roll those details into this confirmation
                 // notification (OrderSubmitted notification). 
-                //  TODO: verify that this condition is still operative and point to an instance where used?
+                
                 //So, if we have the confirmChangeEmailLink, we can include it in 
                 // the notification confirming registration for this webinar.  
                 bool linkToVerifyAccount = !string.IsNullOrWhiteSpace(confirmChangeEmailLink);

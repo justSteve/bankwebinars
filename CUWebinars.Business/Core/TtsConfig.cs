@@ -13,10 +13,10 @@ namespace CUWebinars.Business.Core
         public static string DefaultConnectionString { get; private set; }
         public static string TracingLevel { get; private set; }
         public static TtsConfiguration Create(
-            string baseUrl, 
-            bool useAzureWebjobs, 
-            string storageAccountName, 
-            string storageAccessKey, 
+            string baseUrl,
+            bool useAzureWebjobs,
+            string storageAccountName,
+            string storageAccessKey,
             string tracingLevel)
         {
             InitializeConfig();
@@ -33,33 +33,31 @@ namespace CUWebinars.Business.Core
             else
                 notificationDelivery = new SmtpMessageDelivery();
 
-            var genericFormatter = new Formatter(new EnvironmentInformation {BaseUrl = baseUrl});
+            var genericFormatter = new Formatter(new EnvironmentInformation { BaseUrl = baseUrl });
             var notificationPersister = new FileBasedNotificationPersister();
 
-            var notificationOrderHandlerLogger = new Log4NetLogger(typeof (OrderSubmittedHandler));
+            var notificationOrderHandlerLogger = new Log4NetLogger(typeof(OrderSubmittedHandler));
             //var notificationOrderAdditionalLocationHandlerLogger =
             //    new Log4NetLogger(typeof (OrderSubmittedAdditionalLocationHandler));
-            var sendShippedOrderHandlerLogger = new Log4NetLogger(typeof (SendShippedOrderHandler));
-            var sendConnectionInfoHandlerLogger = new Log4NetLogger(typeof (SendConnectionInfoHandler));
-            var sendReminderHandlerLogger = new Log4NetLogger(typeof (SendReminderHandler));
-            var sendRecordingPostedHandlerLogger = new Log4NetLogger(typeof (SendRecordingPostedHandler));
+            var sendShippedOrderHandlerLogger = new Log4NetLogger(typeof(SendShippedOrderHandler));
+            var sendConnectionInfoHandlerLogger = new Log4NetLogger(typeof(SendConnectionInfoHandler));
+            var sendReminderHandlerLogger = new Log4NetLogger(typeof(SendReminderHandler));
+            var sendRecordingPostedHandlerLogger = new Log4NetLogger(typeof(SendRecordingPostedHandler));
             var emailOrderHandlerLogger = new Log4NetLogger(typeof(AdminEmailSendShippedOrderHandler));
             var emailConnectionInfoHandlerLogger = new Log4NetLogger(typeof(AdminEmailConnectionInfoHandler));
             var emailRecordingPostedHandlerLogger = new Log4NetLogger(typeof(AdminEmailRecordingPostedHandler));
+            var sendPerDayPromoHandlerLogger = new Log4NetLogger(typeof(SendPerDayPromoHandler));
+            var sendPerWeekPromoHandlerLogger = new Log4NetLogger(typeof(SendPerWeekPromoHandler));
 
-            config.AddEventHandler(new OrderSubmittedHandler(genericFormatter, notificationDelivery,
-                notificationOrderHandlerLogger));
-            config.AddEventHandler(new OrderSubmittedAdditionalLocationHandler(genericFormatter, notificationDelivery,
-                notificationOrderHandlerLogger, notificationPersister, new EnvironmentInformation {BaseUrl = baseUrl}));
-            config.AddEventHandler(new SendShippedOrderHandler(genericFormatter, notificationDelivery,
-                sendShippedOrderHandlerLogger));
-            config.AddEventHandler(new SendConnectionInfoHandler(
-                    genericFormatter, notificationDelivery, sendConnectionInfoHandlerLogger, new EnvironmentInformation { BaseUrl = baseUrl })
-                    );
-            config.AddEventHandler(new SendReminderHandler(genericFormatter, notificationDelivery,
-                sendReminderHandlerLogger));
-            config.AddEventHandler(new SendRecordingPostedHandler(genericFormatter, notificationDelivery,
-                sendRecordingPostedHandlerLogger));
+
+            config.AddEventHandler(new SendPerDayPromoHandler(genericFormatter, notificationDelivery,sendPerDayPromoHandlerLogger));
+            config.AddEventHandler(new SendPerWeekPromoHandler(genericFormatter, notificationDelivery, sendPerWeekPromoHandlerLogger));
+            config.AddEventHandler(new OrderSubmittedHandler(genericFormatter, notificationDelivery,notificationOrderHandlerLogger));
+            config.AddEventHandler(new OrderSubmittedAdditionalLocationHandler(genericFormatter, notificationDelivery,notificationOrderHandlerLogger, notificationPersister, new EnvironmentInformation { BaseUrl = baseUrl }));
+            config.AddEventHandler(new SendShippedOrderHandler(genericFormatter, notificationDelivery,sendShippedOrderHandlerLogger));
+            config.AddEventHandler(new SendConnectionInfoHandler(genericFormatter, notificationDelivery, sendConnectionInfoHandlerLogger, new EnvironmentInformation { BaseUrl = baseUrl }));
+            config.AddEventHandler(new SendReminderHandler(genericFormatter, notificationDelivery, sendReminderHandlerLogger));
+            config.AddEventHandler(new SendRecordingPostedHandler(genericFormatter, notificationDelivery, sendRecordingPostedHandlerLogger));
             config.AddEventHandler(new AdminEmailSendShippedOrderHandler(genericFormatter, emailOrderHandlerLogger, notificationDelivery));
             config.AddEventHandler(new AdminEmailConnectionInfoHandler(genericFormatter, emailConnectionInfoHandlerLogger, notificationDelivery));
             config.AddEventHandler(new AdminEmailRecordingPostedHandler(genericFormatter, emailRecordingPostedHandlerLogger, notificationDelivery));
@@ -70,7 +68,7 @@ namespace CUWebinars.Business.Core
         private static void InitializeConfig()
         {
             NameValueCollection applicationSettingsSection = ConfigurationManager.AppSettings;
-            ConnectionStringSettingsCollection connectionStringSettingsCollection  = ConfigurationManager.ConnectionStrings;
+            ConnectionStringSettingsCollection connectionStringSettingsCollection = ConfigurationManager.ConnectionStrings;
 
             DefaultConnectionString = connectionStringSettingsCollection["DefaultConnection"].ConnectionString;
         }

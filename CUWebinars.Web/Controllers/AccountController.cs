@@ -10,7 +10,6 @@ using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models;
-using CUWebinars.Web.Notification.Templates;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Ninject.Extensions.Logging;
