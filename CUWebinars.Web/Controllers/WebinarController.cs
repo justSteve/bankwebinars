@@ -1,10 +1,12 @@
-﻿using System.Web.Routing;
+﻿using System.Threading;
+using System.Web.Routing;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Browsers.Webinars;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
@@ -341,7 +343,7 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 _logger.ErrorException(string.Format("Search | Session {0}", _appHelper.GetUserAuditInfo()), exception);
-                ModelState.AddModelError(string.Empty, "There's been an error at the server. If the error recurs, please call 800-831-0678 ext 706 for immediate assistance.");
+                ModelState.AddModelError(string.Empty, WebUiConstants.ServerErrorWithAssistNumber);
                 throw;
             }
         }
@@ -942,22 +944,34 @@ namespace CUWebinars.Web.Controllers
         }
 
         [System.Web.Mvc.HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateJsonAntiForgeryToken]
         public ActionResult UpdateConnectionInfo(ConnectionInfoModel model)
         {
-            var webinar = _webinarManagementService.GetWebinar(model.idWebinar);
-            webinar.AccessCodeAttendee = model.AccessCodeAttendee;
-            webinar.AccessCodeOrganizer = model.AccessCodeOrganizer;
-            webinar.AccessCodePresenter = model.AccessCodePresenter;
-            webinar.CitrixRegisterUrl = model.CitrixRegisterURL;
-            webinar.OrganizerOAuthKey = model.OrganizerOAuthKey;
-            webinar.OrganizerKey = model.OrganizerKey;
-            webinar.WebinarKey = model.WebinarKey;
+            if(ModelState.IsValid)
+            {
+                try
+                {
+                    var webinar = _webinarManagementService.GetWebinar(model.idWebinar);
+                    webinar.AccessCodeAttendee = model.AccessCodeAttendee;
+                    webinar.AccessCodeOrganizer = model.AccessCodeOrganizer;
+                    webinar.AccessCodePresenter = model.AccessCodePresenter;
+                    webinar.CitrixRegisterUrl = model.CitrixRegisterURL;
+                    webinar.OrganizerOAuthKey = model.OrganizerOAuthKey;
+                    webinar.OrganizerKey = model.OrganizerKey;
+                    webinar.WebinarKey = model.WebinarKey;
 
+                    _webinarManagementService.UpdateWebinar(webinar);
 
-            _webinarManagementService.UpdateWebinar(webinar);
+                    return Json(new { Result = WebUiConstants.Success });
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException(string.Format("UpdateConnectionInfo | Session {0}", _appHelper.GetUserAuditInfo()), exception);
+                    ModelState.AddModelError(string.Empty, WebUiConstants.ServerErrorWithAssistNumber);
+                }
+            }
 
-            return PartialView("Partials/_UpdateConnectionInfo", model);
+            return this.ModelStateJson(ModelState);
         }
 
         public ActionResult CreateICSForWebinar(int id)

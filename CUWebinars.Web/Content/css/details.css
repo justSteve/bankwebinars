@@ -67,3 +67,11 @@ blockquote {
 .initialHide {
     display: none;
 }
+
+.block {
+    display: inline-block;
+}
+
+.buttonAdjacentLabel {
+    margin: 5px;
+}
