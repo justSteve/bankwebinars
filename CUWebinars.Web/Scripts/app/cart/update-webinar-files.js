@@ -12,6 +12,26 @@ var addFilesButton,
 $(function() {
     UWF.primeDomVariables();
     UWF.wireUpHandlersForAddFilesModal();
+
+    var updateWebinarHandoutsModalButton = $('#UpdateWebinarHandoutsModalButton');
+    var updateWebinarHandoutsModal = $('#UpdateWebinarHandoutsModal');
+    var modalFormOptionsOnPageLoad = {
+        keyboard: true,
+        backdrop: 'static',
+        show: true,
+    };
+
+    updateWebinarHandoutsModalButton.on('click', function (e) {
+        e.preventDefault();
+        clearValidationSummary();
+        $('#result').remove();
+        updateWebinarHandoutsModal.modal(modalFormOptionsOnPageLoad);
+
+});
+
+    updateWebinarHandoutsModal.on('shown', function() {
+        
+    });
 });
 
 (function (ns) {
@@ -73,7 +93,9 @@ $(function() {
 
         });
 
-        $('#updateWebinarFilesButton').on('click', function (e) {
+        var updateWebinarFilesButton = $('#updateWebinarFilesButton');
+
+        updateWebinarFilesButton.on('click', function (e) {
             $('#_UpdateWebinarFiles').submit();
         });
 
@@ -92,16 +114,22 @@ $(function() {
                 dataType: 'json',
                 data: payload,
                 beforeSend: function () {
-                    $('#updateWebinarFilesButton').after().html('<span class="label label-info">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Updating...</span>');
+
+                    $('#result').remove();
+
+                    clearValidationSummary();
+
+                    updateWebinarFilesButton.append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
                 }
             }).done(function (data) {
                 if (data.result === 'Success') {
-                    
+                    var label = $('<div id="result" class="label label-success pull-left block buttonAdjacentLabel">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Files Updated</div>');
+                    label.hide().insertAfter(updateWebinarFilesButton).fadeIn(500);
                 } else {
-                    
+                    formProcessor.lightUpValidationSummary('updateFilesValSummary', data);
                 }
             }).always(function (data) {
-                $('#updateWebinarFilesButton').after().html('<span class="label label-info">&nbsp;&nbsp;&nbsp;&nbsp;done...</span>');
+                $('#waitSpinner').remove();
             });
 
         });
@@ -119,4 +147,14 @@ function getNewFileDetailsFragment(id) {
         '<i class="icon-book icon-white"></i></div>' +
         '<div id="fileDescDiv_' + id + '"><span class="control-label">Label</span>' +
         '  <input type="text" class="form-control" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].fileDesc" /><br /></div></div>';
+    return '<div id="fileDetails_' + id + '" class="webinarFileDetails"><i class="icon-trash icon-white pull-right" style="cursor: pointer" id="' + id + '-Filedetails-delete"></i><input type="hidden" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].idWebinarFile" value="' + id + '" /><input type="hidden" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].idWebinar" value="' + OCA.cartStateManager.getWebinarId() + '" /><div id="fileLocationDiv_' + id + '"><span class="control-label">File Name</span><input type="text" class="form-control" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].fileLocation" /><i class="icon-book icon-white"></i></div><div id="fileDescDiv_' + id + '"><span class="control-label">Label</span><input type="text" class="form-control" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].fileDesc" /><br /></div></div>';
+}
+
+function clearValidationSummary() {
+    var valSummary = $('#updateFilesValSummary');
+    valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
+
+    var errorsList = valSummary.find('ul');
+    errorsList.empty();
+    errorsList.append('<li style="display:none"></li>');
 }

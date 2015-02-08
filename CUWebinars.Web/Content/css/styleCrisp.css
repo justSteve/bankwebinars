@@ -2644,6 +2644,10 @@ html[xmlns] .slides, .no-js .slides > li:first-child {
     left: 50%;
 }
 
+.modalCenterV  {
+    top: 50% !important;
+}
+
 .legendImitator {
     display: block;
     width: 100%;

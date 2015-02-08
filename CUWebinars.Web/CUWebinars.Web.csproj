@@ -592,6 +592,7 @@
     <Content Include="Scripts\app\admin\manage-order.js" />
     <Content Include="Scripts\app\cart\add-password.js" />
     <Content Include="Scripts\app\cart\details-affiliate.js" />
+    <Content Include="Scripts\app\cart\update-connection-info.js" />
     <Content Include="Scripts\app\cart\update-webinar-files.js" />
     <Content Include="Scripts\app\cart\create-order-new.js" />
     <Content Include="Scripts\app\cart\register-during-checkout.js" />

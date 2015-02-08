@@ -25,11 +25,14 @@
         margin: 0;
     }
 </style>
-<script type="text/javascript" src="/Scripts/bootstrap-filestyle.min.js"> </script>
-@*http://markusslima.github.io/bootstrap-filestyle/#Getstart*@
+@*<script type="text/javascript" src="/Scripts/bootstrap-filestyle.min.js"> </script>
+    http://markusslima.github.io/bootstrap-filestyle/#Getstart
+    *@
 <a href="#UpdateWebinarHandoutsModal" role="button" class="btn" data-toggle="modal">Manage Handouts</a>
 
-    <div id="UpdateWebinarHandoutsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    @*<a id="UpdateWebinarHandoutsModalButton" class="btn btn-default">Manage Handouts</a>*@
+
+    <div id="UpdateWebinarHandoutsModal" class="modal modalCenterV hide fade">
 
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -45,7 +48,7 @@
             <p><button id="addFilesButton" class="btn btn-success">Click to Add More</button></p>
 
             <div class="form-horizontal">
-                @Html.ValidationSummary(true)
+                @Html.ValidationSummary("There have been some errors:", new { id = "updateFilesValSummary" })
                 @if (Model.WebinarFiles != null && Model.WebinarFiles.Count > 0)
                 {
                     <div class="well well-large form-group">
@@ -89,8 +92,9 @@
         </div> <!-- closes modal-body -->
 
         <div class="modal-footer">
-            <input id="updateWebinarFilesButton" type="submit" value="Save" class="btn btn-primary pull-left" />
+        <button id="updateWebinarFilesButton" class="btn btn-primary pull-left">Save</button>&nbsp;
             <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
         </div>
 
     </div>
+

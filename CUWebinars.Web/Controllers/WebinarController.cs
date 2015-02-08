@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Threading;
 using System.Text.RegularExpressions;
 using System.Web.Routing;
 using CUWebinars.Business.AccountService;
@@ -7,6 +8,7 @@ using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Browsers.Webinars;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
@@ -73,7 +75,8 @@ namespace CUWebinars.Web.Controllers
                 if (x.idWebinar != ID && i < 5 && x.Date > cDate)
                 {
                     i++;
-                    upcoming.Append("<p><a href=\"http://www.bankwebinars.com/Webinar/Details/" + x.idWebinar + "?idaff=" + Request["idAffiliate"].ToString() + "\">");
+                    upcoming.Append("<p><a href=\"http://www.bankwebinars.com/Webinar/Details/" + x.idWebinar +
+                                    "?idaff=" + Request["idAffiliate"].ToString() + "\">");
                     upcoming.Append(x.Title + "</a><br><font size='-3'> (" + x.Date.ToLongDateString() + ")</font></p>");
                 }
             }
@@ -179,13 +182,21 @@ namespace CUWebinars.Web.Controllers
                 var webinar = _webinarManagementService.GetWebinar(w);
 
                 string wDate = "<b>" + DateTimeHelper.FormatDate(webinar.Date) + "</b><br>";
-                wDate = wDate + DateTimeHelper.FormatTimeWithDuration(webinar.Date, tz, false, webinar.Duration) + "<br>";
+                wDate = wDate + DateTimeHelper.FormatTimeWithDuration(webinar.Date, tz, false, webinar.Duration) +
+                        "<br>";
 
-                upcomingDetail.Append("<p style='font-size:20px; font-weight:bold; color:#CC6600; font-family:trebuchet ms;'><a href='http://www.bankwebinars.com/Webinar/Details/" + webinar.idWebinar + "?idaff=#idAffiliate#'>" + webinar.Title + "</a></p>");
-                upcomingDetail.Append("<p style='color:#FFFF99; padding-bottom:5px; padding-top:5px; background-color:#333333; text-align:center; font-size:9px'>" + wDate + "</p>");
+                upcomingDetail.Append(
+                    "<p style='font-size:20px; font-weight:bold; color:#CC6600; font-family:trebuchet ms;'><a href='http://www.bankwebinars.com/Webinar/Details/" +
+                    webinar.idWebinar + "?idaff=#idAffiliate#'>" + webinar.Title + "</a></p>");
+                upcomingDetail.Append(
+                    "<p style='color:#FFFF99; padding-bottom:5px; padding-top:5px; background-color:#333333; text-align:center; font-size:9px'>" +
+                    wDate + "</p>");
                 upcomingDetail.Append("<p style='font-family:trebuchet ms;'>" + webinar.Description + "</p>");
-                upcomingDetail.Append("<p style='font-family:trebuchet ms;'><b>" + webinar.Presenter.WebUser.FullName + "</b></p>");
-                upcomingDetail.Append("<p font-family:trebuchet ms;'><a href='http://www.bankwebinars.com/Webinar/Details/" + webinar.idWebinar + "?idaff=#idAffiliate#'>Click here for more info!</a></p>");
+                upcomingDetail.Append("<p style='font-family:trebuchet ms;'><b>" + webinar.Presenter.WebUser.FullName +
+                                      "</b></p>");
+                upcomingDetail.Append(
+                    "<p font-family:trebuchet ms;'><a href='http://www.bankwebinars.com/Webinar/Details/" +
+                    webinar.idWebinar + "?idaff=#idAffiliate#'>Click here for more info!</a></p>");
             }
 
 
@@ -196,8 +207,10 @@ namespace CUWebinars.Web.Controllers
                 if (!featured.Contains(x.idWebinar) && i < 5 && x.Date > cDate)
                 {
                     i++;
-                    upcoming.Append("<p><a href=\"http://www.bankwebinars.com/Webinar/Details/" + x.idWebinar + "?idaff=" + Request["idAffiliate"].ToString() + "\">");
-                    upcoming.Append(x.Title + "<br><font size='smaller'> (" + x.Date.ToLongDateString() + ")</font></a></p>");
+                    upcoming.Append("<p><a href=\"http://www.bankwebinars.com/Webinar/Details/" + x.idWebinar +
+                                    "?idaff=" + Request["idAffiliate"].ToString() + "\">");
+                    upcoming.Append(x.Title + "<br><font size='smaller'> (" + x.Date.ToLongDateString() +
+                                    ")</font></a></p>");
                 }
             }
 
@@ -323,6 +336,7 @@ namespace CUWebinars.Web.Controllers
             //return View(dtos);
             return View(webinars);
         }
+
         public ActionResult Search()
         {
             try
@@ -330,8 +344,7 @@ namespace CUWebinars.Web.Controllers
                 ViewBag.PageStyleType = "two-columns-right-sidebar";
                 ViewBag.TopicCaption = " ";
                 string searchTerm = Request["searchTerm"];
-                //TODO: [UPDATED SEARCH TASK]: 
-                // my original search code included a way
+
                 var webinars = _webinarManagementService.GetWebinarByPresenterLastName(searchTerm);
                 var webinarsByTopic = _webinarManagementService.GetWebinarByDescription(searchTerm);
                 var unionOfResultSets = webinars.Union(webinarsByTopic);
@@ -343,7 +356,7 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 _logger.ErrorException(string.Format("Search | Session {0}", _appHelper.GetUserAuditInfo()), exception);
-                ModelState.AddModelError(string.Empty, "There's been an error at the server. If the error recurs, please call 800-831-0678 ext 706 for immediate assistance.");
+                ModelState.AddModelError(string.Empty, WebUiConstants.ServerErrorWithAssistNumber);
                 throw;
             }
         }
@@ -623,7 +636,9 @@ namespace CUWebinars.Web.Controllers
                         OrderExists = true,
                         OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel
                         {
-                            AdditionalLocations = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation,
+                            AdditionalLocations =
+                                model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active)
+                                    .AdditionalLocation,
                             Addresses = additionalLocationsViewModel.Addresses,
                             OptionsCost = additionalLocationsViewModel.OptionsCost,
                         },
@@ -646,12 +661,16 @@ namespace CUWebinars.Web.Controllers
 
                 ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
 
-                if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
+                if (
+                    claimsIdentityOfAuthenticatedUser.HasClaim(
+                        (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
                 {
                     return PartialView("DetailsAdmin", model);
                 }
 
-                if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
+                if (
+                    claimsIdentityOfAuthenticatedUser.HasClaim(
+                        (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
                 {
                     return PartialView("DetailsAffiliate", model);
                 }
@@ -686,7 +705,9 @@ namespace CUWebinars.Web.Controllers
 
             if (Request.IsAuthenticated && model.WebUser.Orders.FirstOrDefault() != null)
             {
-                model.Order = model.WebUser.Orders.FirstOrDefault(o => o.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar == id);
+                model.Order =
+                    model.WebUser.Orders.FirstOrDefault(
+                        o => o.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar == id);
             }
 
             var orderExists = model.Order != null;
@@ -944,7 +965,8 @@ namespace CUWebinars.Web.Controllers
         }
 
         [System.Web.Mvc.HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
+        [ValidateJsonAntiForgeryToken]
         [ValidateInput(false)]
         public ActionResult UpdateConnectionInfo(ConnectionInfoModel model)
         {
@@ -972,7 +994,7 @@ namespace CUWebinars.Web.Controllers
             var accessPhone = "";
 
             webinarKey = root.SelectSingleNode("//span[contains(@id,'WebinarInfoID')]").InnerHtml;
-            webinarKey = webinarKey.Replace("-","").Trim();
+            webinarKey = webinarKey.Replace("-", "").Trim();
             accessPhone = root.SelectSingleNode("//*[text()[contains(., 'Toll-')]]").InnerHtml;
             accessPhone = Regex.Split(accessPhone, @"\<br\>")[1].Replace("Toll-free: 1 ", "").Trim().Replace(" ", "-");
 
@@ -1008,7 +1030,6 @@ namespace CUWebinars.Web.Controllers
             webinar.OrganizerKey = model.OrganizerKey;
             webinar.WebinarKey = webinarKey.Trim();
 
-
             _webinarManagementService.UpdateWebinar(webinar);
             if (citrixRegisterUrl == "" ||
                 accessCodeAttendee == "" ||
@@ -1019,13 +1040,19 @@ namespace CUWebinars.Web.Controllers
             {
 
 
-                return Json(new { success = false, result = "Invalid Connection Info detected." }, JsonRequestBehavior.AllowGet);
+                return Json(new { Result = WebUiConstants.Success });
             }
             else
             {
-                return Json(new { success = true, result = "Connection Info is set." }, JsonRequestBehavior.AllowGet);
+                
+                return Json(new { Result = WebUiConstants.Success });
+                //_logger.ErrorException(
+                //    string.Format("UpdateConnectionInfo | Session {0}", _appHelper.GetUserAuditInfo()), exception);
+                //ModelState.AddModelError(string.Empty, WebUiConstants.ServerErrorWithAssistNumber);
             }
-            //return PartialView("Partials/_UpdateConnectionInfo", model);
+
+
+            return this.ModelStateJson(ModelState);
         }
 
         public ActionResult CreateICSForWebinar(int id)
@@ -1187,9 +1214,10 @@ namespace CUWebinars.Web.Controllers
             return this.ModelStateJson(ModelState);
         }
 
-        class MyClient : WebClient
+        private class MyClient : WebClient
         {
             public bool HeadOnly { get; set; }
+
             protected override WebRequest GetWebRequest(Uri address)
             {
                 WebRequest req = base.GetWebRequest(address);

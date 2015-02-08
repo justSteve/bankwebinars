@@ -40,5 +40,7 @@ namespace CUWebinars.Web.Helpers
         public const string SubdomainBranding = "SubdomainBranding";
 
         public const string Webinars = "webinars";
+        
+        public const string ServerErrorWithAssistNumber = "There's been an error at the server. If the error recurs, please call 800-831-0678 ext 706 for immediate assistance.";
     }
 }
