@@ -68,6 +68,11 @@ $(function() {
         numberOfWebinarFiles = $('#manageFilesWrapper div[id^="fileDetails_"]').length;
         newFileId = numberOfWebinarFiles++;
 
+        if (!UWF.manageFilesWrapper) {
+            UWF.manageFilesWrapper = $('#manageFilesWrapper');
+            UWF.webinarFilesSelected = $('#webinarFilesSelected');
+        }
+
         if (numberOfWebinarFiles < 1) {
             //$('#sumbitAdditionalLocationsButton').off('click');
 
@@ -83,9 +88,12 @@ $(function() {
         $('#addFilesButton').on('click', function(e) {
 
             e.preventDefault();
+
+            var newFile = UWF.getNewFileDetailsFragment(newFileId + 'N');
+
             // Add 'N' suffix so at server we can tell that it is a new file. The identifier is just for client-side purposes and for the form submission.
-            $(getNewFileDetailsFragment(newFileId + 'N')).hide().appendTo(manageFilesWrapper).fadeIn(500, function(e) {
-                $(this).find('i').on('click', ns.deleteItem);
+            $(newFile).hide().appendTo(manageFilesWrapper).fadeIn(500, function (e) {
+                $(this).find('i.icon-trash').on('click', ns.deleteItem);
             }); 
 
             numberOfWebinarFiles++;
@@ -115,6 +123,8 @@ $(function() {
                 data: payload,
                 beforeSend: function () {
 
+                    UWF.webinarFilesSelected.empty();
+
                     $('#result').remove();
 
                     clearValidationSummary();
@@ -125,30 +135,40 @@ $(function() {
                 if (data.result === 'Success') {
                     var label = $('<div id="result" class="label label-success pull-left block buttonAdjacentLabel">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Files Updated</div>');
                     label.hide().insertAfter(updateWebinarFilesButton).fadeIn(500);
+                    
+                    var hiddenInputs = UWF.manageFilesWrapper.find('input[type="text"]');
+
+                    $.each(hiddenInputs, function (idx, i) {
+                        var clone = $(i).clone();
+                        UWF.webinarFilesSelected.append(clone);
+                    });
+
+
                 } else {
                     formProcessor.lightUpValidationSummary('updateFilesValSummary', data);
                 }
             }).always(function (data) {
                 $('#waitSpinner').remove();
+                formProcessor.lightUpValidationSummary('updateFilesValSummary', data);
             });
 
         });
     };
 
+    ns.getNewFileDetailsFragment = function(id) {
+        return '<div id="fileDetails_' + id + '" class="webinarFileDetails">' +
+            '<i class="icon-trash icon-white pull-right" style="cursor: pointer" id="' + id + '-Filedetails-delete"></i>' +
+            '<input type="hidden" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].idWebinarFile" value="' + id + '" />' +
+            '<input type="hidden" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].idWebinar" value="' + webinarId + '" />' +
+            '<div id="fileLocationDiv_' + id + '"><span class="control-label">File Name</span>' +
+            '<input type="text" class="form-control" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].fileLocation" />' +
+            '<i class="icon-book icon-white"></i></div>' +
+            '<div id="fileDescDiv_' + id + '"><span class="control-label">Label</span>' +
+            '  <input type="text" class="form-control" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].fileDesc" /><br /></div></div>';
+        //return '<div id="fileDetails_' + id + '" class="webinarFileDetails"><i class="icon-trash icon-white pull-right" style="cursor: pointer" id="' + id + '-Filedetails-delete"></i><input type="hidden" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].idWebinarFile" value="' + id + '" /><input type="hidden" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].idWebinar" value="' + OCA.cartStateManager.getWebinarId() + '" /><div id="fileLocationDiv_' + id + '"><span class="control-label">File Name</span><input type="text" class="form-control" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].fileLocation" /><i class="icon-book icon-white"></i></div><div id="fileDescDiv_' + id + '"><span class="control-label">Label</span><input type="text" class="form-control" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].fileDesc" /><br /></div></div>';
+    };
+    
 }(UWF));
-
-function getNewFileDetailsFragment(id) {
-    return '<div id="fileDetails_' + id + '" class="webinarFileDetails">' +
-        '<i class="icon-trash icon-white pull-right" style="cursor: pointer" id="' + id + '-Filedetails-delete"></i>' +
-        '<input type="hidden" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].idWebinarFile" value="' + id + '" />' +
-        '<input type="hidden" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].idWebinar" value="' + webinarId + '" />' +
-        '<div id="fileLocationDiv_' + id + '"><span class="control-label">File Name</span>' +
-        '<input type="text" class="form-control" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].fileLocation" />' +
-        '<i class="icon-book icon-white"></i></div>' +
-        '<div id="fileDescDiv_' + id + '"><span class="control-label">Label</span>' +
-        '  <input type="text" class="form-control" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].fileDesc" /><br /></div></div>';
-    return '<div id="fileDetails_' + id + '" class="webinarFileDetails"><i class="icon-trash icon-white pull-right" style="cursor: pointer" id="' + id + '-Filedetails-delete"></i><input type="hidden" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].idWebinarFile" value="' + id + '" /><input type="hidden" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].idWebinar" value="' + OCA.cartStateManager.getWebinarId() + '" /><div id="fileLocationDiv_' + id + '"><span class="control-label">File Name</span><input type="text" class="form-control" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].fileLocation" /><i class="icon-book icon-white"></i></div><div id="fileDescDiv_' + id + '"><span class="control-label">Label</span><input type="text" class="form-control" name="connectionInfoModel.WebinarFiles[' + id.substring(0, 1) + '].fileDesc" /><br /></div></div>';
-}
 
 function clearValidationSummary() {
     var valSummary = $('#updateFilesValSummary');

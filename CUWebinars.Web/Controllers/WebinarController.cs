@@ -977,7 +977,7 @@ namespace CUWebinars.Web.Controllers
             //var filename = System.IO.Path.GetTempFileName();
 
             //client.DownloadFile(model.ManageURL, filename);
-
+            
             var doc = new HtmlAgilityPack.HtmlDocument();
             //doc.Load(filename);
             doc.LoadHtml(model.ManageURL);
@@ -1016,7 +1016,7 @@ namespace CUWebinars.Web.Controllers
                 }
             }
             //}
-
+            
             //Console.ReadKey();
 
             var webinar = _webinarManagementService.GetWebinar(model.idWebinar);
