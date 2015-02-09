@@ -967,7 +967,7 @@ namespace CUWebinars.Web.Controllers
         //[ValidateAntiForgeryToken]
         [ValidateJsonAntiForgeryToken]
         [ValidateInput(false)]
-        public ActionResult UpdateConnectionInfo(ConnectionInfoModel model)
+        public ActionResult UpdateConnectionInfo(ConnectionInfoModel connectionInfoModel)
         {
 
             //using (var client = new System.Net.WebClient())
@@ -980,7 +980,7 @@ namespace CUWebinars.Web.Controllers
             
             var doc = new HtmlAgilityPack.HtmlDocument();
             //doc.Load(filename);
-            doc.LoadHtml(model.ManageURL);
+            doc.LoadHtml(connectionInfoModel.ManageURL);
 
             var root = doc.DocumentNode;
             var audio_node = root.SelectNodes("//*[text()[contains(., 'Access')]]");
@@ -1019,14 +1019,14 @@ namespace CUWebinars.Web.Controllers
             
             //Console.ReadKey();
 
-            var webinar = _webinarManagementService.GetWebinar(model.idWebinar);
+            var webinar = _webinarManagementService.GetWebinar(connectionInfoModel.idWebinar);
             webinar.AccessCodeAttendee = accessCodeAttendee;
             webinar.AccessCodeOrganizer = accessCodeOrganizer;
             webinar.AccessCodePresenter = accessCodePresenter;
             webinar.AccessPhone = accessPhone;
             webinar.CitrixRegisterUrl = citrixRegisterUrl;
-            webinar.OrganizerOAuthKey = model.OrganizerOAuthKey;
-            webinar.OrganizerKey = model.OrganizerKey;
+            webinar.OrganizerOAuthKey = connectionInfoModel.OrganizerOAuthKey;
+            webinar.OrganizerKey = connectionInfoModel.OrganizerKey;
             webinar.WebinarKey = webinarKey.Trim();
 
             _webinarManagementService.UpdateWebinar(webinar);
@@ -1192,7 +1192,7 @@ namespace CUWebinars.Web.Controllers
                     var checkThatNewFilesExist = CheckThatFilesExists(webinarFile);
                     if (!checkThatNewFilesExist)
                     {
-                        return Json(new { result = webinarFile + "does not exist." });
+                        return Json(new { Result = webinarFile + "does not exist." });
                     }
                 }
 
@@ -1200,7 +1200,7 @@ namespace CUWebinars.Web.Controllers
                 _webinarManagementService.DeleteWebinarFiles(deletedFiles);
                 _webinarManagementService.UpdateWebinarFiles(updatedFiles);
 
-                return Json(new { result = WebUiConstants.Success });
+                return Json(new { Result = WebUiConstants.Success });
             }
             catch (Exception exception)
             {

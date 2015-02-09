@@ -132,7 +132,7 @@ $(function() {
                     updateWebinarFilesButton.append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
                 }
             }).done(function (data) {
-                if (data.result === 'Success') {
+                if (data['Result'] === 'Success') {
                     var label = $('<div id="result" class="label label-success pull-left block buttonAdjacentLabel">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Files Updated</div>');
                     label.hide().insertAfter(updateWebinarFilesButton).fadeIn(500);
                     
@@ -140,6 +140,7 @@ $(function() {
 
                     $.each(hiddenInputs, function (idx, i) {
                         var clone = $(i).clone();
+                        clone.val($(i).val());
                         UWF.webinarFilesSelected.append(clone);
                     });
 
@@ -149,7 +150,15 @@ $(function() {
                 }
             }).always(function (data) {
                 $('#waitSpinner').remove();
-                formProcessor.lightUpValidationSummary('updateFilesValSummary', data);
+
+                if (data.status && data.status === 500) {
+                    data.data = {};
+                    data.data.error = 'Please call us at 800-831-0678 ext. 3 to resolve.';
+                }
+
+                if (!data['Result']){
+                    formProcessor.lightUpValidationSummary('updateFilesValSummary', data);
+                }
             });
 
         });
