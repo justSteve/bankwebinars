@@ -1,4 +1,4 @@
-﻿@model  Webinar
+﻿@model  PlayModel
 @using System.Configuration
 @using System.Globalization
 @using System.Text
@@ -9,18 +9,20 @@
 @{
     NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
-    string ceuShort = String.Empty;
-    string ceuStmt = String.Empty;
-    if (String.IsNullOrEmpty(Model.ceu) == false)
+    string ceuShort = string.Empty;
+    string ceuStmt = string.Empty;
+    
+    if (string.IsNullOrEmpty(Model.Webinar.ceu) == false)
     {
-        string[] ceu = Model.ceu.Split('|');
+        string[] ceu = Model.Webinar.ceu.Split('|');
         ceuShort = ceu[0];
         ceuStmt = ceu[1];
     }
+    
     ViewBag.Title = "My Webinars";
     Layout = "~/Views/Shared/_LayoutPublic.cshtml";
 
-    //WebUser currentUser = Model.WebUser;
+    //WebUser currentUser = Model.Webinar.WebUser;
     var EditResult = "<span>&nbsp;</span>";
 
 
@@ -32,7 +34,7 @@
 <div class="hero-unit">
     <div id="webinarTitle" class="container">
         <div class="span10">
-            <h1>@Model.Title</h1>
+            <h1>@Model.Webinar.Title</h1>
         </div>    <!--close container-->
     </div>
 
@@ -43,8 +45,8 @@
     <!--begin row-fluid-->
     <section class="span3 sidebar">
         <aside class="widget well-large">
-            <h5 class="short_headline"><span>@ViewBag.Presenter.WebUser.FullName</span></h5>
-            @Html.Raw(ViewBag.Presenter.BiographyLong)
+            <h5 class="short_headline"><span>@Model.Presenter.WebUser.FullName</span></h5>
+            @Html.Raw(Model.Presenter.BiographyLong)
             @*@Html.Partial("Partials/_OtherEventsBySpeaker")*@
         </aside>
         <!--close aside widget-->
@@ -59,7 +61,7 @@
                 //begin file/handout listing
                 StringBuilder filesList = new StringBuilder();
                 var handLoc = globalConfig.WMVRepository;
-                foreach (string file in ViewBag.webinarFiles)
+                foreach (string file in Model.WebinarFiles)
                 {
                     string fileLocation = file.Split('|')[1];
                     string fileDesc = file.Split('|')[0];
@@ -71,20 +73,20 @@
         </table>
         <h3 class="short_headline"> OnDemand Recording</h3>
         <p style="text-align: center; font-family: arial, helvetica, sans-serif; font-size: larger;">
-            <a target="_blank" href="@globalConfig.WMVRepository@Model.RecordingUrl">Click here to view the Webinar.</a>
+            <a target="_blank" href="@globalConfig.WMVRepository@Model.Webinar.RecordingUrl">Click here to view the Webinar.</a>
             <br />
         </p>
 
         <div class="description">
-            @Html.Raw(Model.DescriptionLong)
+            @Html.Raw(Model.Webinar.DescriptionLong)
         </div>
         <div class="description">
             <h2 class="short_headline">
                 <span>
-                    @Html.Raw(Model.LearnCaption)
+                    @Html.Raw(Model.Webinar.LearnCaption)
                 </span>
             </h2>
-            @Html.Raw(Model.LearnBody)
+            @Html.Raw(Model.Webinar.LearnBody)
         </div>
         <div class="description">
             <h2 class="short_headline">
@@ -92,7 +94,7 @@
                     Who Should Attend?
                 </span>
             </h2>
-            @Html.Raw(Model.WhoAttend)
+            @Html.Raw(Model.Webinar.WhoAttend)
         </div>
 
         <hr />
@@ -103,7 +105,7 @@
 
             <h5 class="short_headline"><span>Date/Time</span></h5>
 
-            <b>@Html.DisplayDate(Model.Date)</b><br />
+            <b>@Html.DisplayDate(Model.Webinar.Date)</b><br />
             <div id="ceu">
                 <a href="#" title="@ceuStmt ">
                     @Html.Raw(ceuShort)

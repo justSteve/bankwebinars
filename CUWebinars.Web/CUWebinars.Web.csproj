@@ -411,6 +411,7 @@
     <Compile Include="Models\ImportOrderModel.cs" />
     <Compile Include="Models\ManageOrderEditModel.cs" />
     <Compile Include="Models\MigrateOrderModel.cs" />
+    <Compile Include="Models\PlayModel.cs" />
     <Compile Include="Models\PostEventInfoModel.cs" />
     <Compile Include="Models\RegisterFieldsDTO.cs" />
     <Compile Include="Models\ShippingDetailsModel.cs" />
