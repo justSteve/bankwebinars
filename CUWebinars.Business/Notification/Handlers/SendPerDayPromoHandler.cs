@@ -41,7 +41,7 @@ namespace CUWebinars.Business.Notification.Handlers
             string sPattern = @"<img[^>]+/>";
             Regex rgx = new Regex(sPattern);
             Match m = rgx.Match(sendPerDayPromoEvent.EventObject.Webinar.Presenter.BiographyLong);
-
+            //HACK: Parse out the photo from the bio and carry the result via the no longer used EventBody.
             if (m.Success)
                 sendPerDayPromoEvent.EventObject.EventBody = rgx.Replace(sendPerDayPromoEvent.EventObject.Webinar.Presenter.BiographyLong, "");
             try

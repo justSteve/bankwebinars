@@ -39,12 +39,8 @@ namespace CUWebinars.Business.Notification.Handlers
         {
             try
             {
-                var persistedNamePrefix = "SendPerWeekPromo";
-                if (sendPerWeekPromoEvent.EventObject.TemplateType == "PerWeek")
-                {
-                    persistedNamePrefix = "SendPerWeekPromo";
-                }
-
+                var persistedNamePrefix = "PerWeekPromo" + '_' + sendPerWeekPromoEvent.EventObject.Affiliate.ttsDomain + '_';
+                
                 var notificationMessage = _generalFormatter
                     .Format(sendPerWeekPromoEvent.EventObject, "SendPerWeekPromo");
 
@@ -55,7 +51,7 @@ namespace CUWebinars.Business.Notification.Handlers
                     ".htm"
                     );
 
-                //                notificationMessage.To = sendPerWeekPromoEvent.EventObject.Affiliate.WebUser.email;
+                //notificationMessage.To = sendPerWeekPromoEvent.EventObject.Affiliate.WebUser.email;
                 notificationMessage.To = "steve@ttstrain.com";
                 _notificationDelivery.Notify(notificationMessage);
             }
