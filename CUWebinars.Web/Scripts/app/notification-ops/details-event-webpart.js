@@ -14,36 +14,6 @@
     waitIndicator,
     webinarFileInput;
 
-//  Create a namespace. PageObjects is getting polluted across js files.
-var DEW = {
-    PageObjects: {
-        ButtonsContainer: function () {
-            return buttonsContainer || $('#ButtonsContainer');
-        },
-        GetSendConnectionInfoEventHtmlButton: function () {
-            return getSendConnectionInfoEventHtmlButton || $('#GetSendConnectionInfoEventHtmlButton');
-        },
-        SendRecordingPostedEventHtmlButton: function () {
-            return sendRecordingPostedEventHtmlButton || $('#SendRecordingPostedEventHtmlButton');
-        },
-        InputFormFieldsDiv: function() {
-            return inputFormFieldsDiv || $('#InputFormFieldsDiv');
-        },
-        ResetButton: function () {
-            return resetButton || $('#ResetButton');
-        },
-        SelectedUpcomingWebinarIdDropDown: function () {
-            return selectedUpcomingWebinarIdDropDown || $('#SelectedWebinarId');
-        },
-        WebinarFileInput: function () {
-            return webinarFileInput || $('#WebinarFileInput');
-        },
-        WaitIndicator: function () {
-            return waitIndicator || $('#WaitIndicator');
-        }
-    }
-};
-
 $(function () {
 
     inputFormFieldsDiv = $('#InputFormFieldsDiv');
@@ -64,12 +34,12 @@ $(function () {
 
     getSendConnectionInfoEventHtmlButton.on('click', function (eventArgs) {
         alert("hit");
-        DEW.PageObjects.InputFormFieldsDiv().empty();
-        DEW.PageObjects.ButtonsContainer().fadeOut(500, function() {
-            DEW.PageObjects.InputFormFieldsDiv().fadeIn(500);
+        inputFormFieldsDiv.empty();
+        buttonsContainer.fadeOut(500, function() {
+            inputFormFieldsDiv.fadeIn(500);
         });
 
-        DEW.PageObjects.InputFormFieldsDiv().load(sendConnectionInfoUrl, function () {
+        inputFormFieldsDiv.load(sendConnectionInfoUrl, function () {
 
             resetButton = $('#ResetButton');
             resetButton.hide();
@@ -86,31 +56,31 @@ $(function () {
                     dataType: constants.JsonDataType,
                     data: JSON.stringify({ webinarId: payload }),
                     beforeSend: function () {
-                        DEW.PageObjects.WaitIndicator().show();
+                        waitIndicator.show();
                     }
                 }).done(function (result) {
 
                     labelCheckRemove();
 
                     if (result.Result === 'Success') {
-                        DEW.PageObjects.InputFormFieldsDiv().append(successScreenMessage);
+                        inputFormFieldsDiv.append(successScreenMessage);
                     } else if (result.Result === 'No Orders to send for that webinar') {
-                        DEW.PageObjects.InputFormFieldsDiv().append(noOrdersScreenMessage);
+                        inputFormFieldsDiv.append(noOrdersScreenMessage);
                     }
 
                 }).fail(function () {
 
                     labelCheckRemove();
 
-                    DEW.PageObjects.InputFormFieldsDiv().append(failedScreenMessage);
+                    inputFormFieldsDiv.append(failedScreenMessage);
                 }).always(function () {
-                    DEW.PageObjects.WaitIndicator().hide();
-                    DEW.PageObjects.ResetButton().show();
+                    waitIndicator.hide();
+                    resetButton.show();
                 });;
             });
 
-            DEW.PageObjects.ResetButton().on('click', function (eventArgs) {
-                DEW.PageObjects.InputFormFieldsDiv().fadeOut(500, resetEventFirePanel);
+            resetButton.on('click', function (eventArgs) {
+                inputFormFieldsDiv.fadeOut(500, resetEventFirePanel);
             });
 
         });
@@ -119,12 +89,7 @@ $(function () {
     sendRecordingPostedEventHtmlButton.on('click', function (eventArgs) {
         eventArgs.preventDefault();
 
-        //DEW.PageObjects.InputFormFieldsDiv().empty();
-        //DEW.PageObjects.ButtonsContainer().fadeOut(500, function () {
-        //    DEW.PageObjects.InputFormFieldsDiv().fadeIn(500);
-        //});
-
-        var webinarFileName = DEW.PageObjects.WebinarFileInput().val();
+        var webinarFileName = webinarFileInput().val();
 
         $.ajax({
             type: 'POST',
@@ -134,26 +99,26 @@ $(function () {
             dataType: constants.JsonDataType,
             data: JSON.stringify({ webinarId: EvtWebPart.RecordedWebinar, fileName: webinarFileName }),
             beforeSend: function () {
-                DEW.PageObjects.WaitIndicator().show();
+                waitIndicator.show();
             }
         }).done(function (result) {
 
             labelCheckRemove();
 
             if (result.Result === 'Success') {
-                DEW.PageObjects.InputFormFieldsDiv().append(successScreenMessage);
+                inputFormFieldsDiv.append(successScreenMessage);
             } else if (result.Result === 'No Orders to send for that webinar') {
-                DEW.PageObjects.InputFormFieldsDiv().append(noOrdersScreenMessage);
+                inputFormFieldsDiv.append(noOrdersScreenMessage);
             }
 
         }).fail(function () {
             labelCheckRemove();
 
-            DEW.PageObjects.InputFormFieldsDiv().append(failedScreenMessage);
+            inputFormFieldsDiv.append(failedScreenMessage);
         }).always(function () {
-            DEW.PageObjects.WaitIndicator().hide();
+            waitIndicator.hide();
         });        
-        //DEW.PageObjects.InputFormFieldsDiv().load(sendRecordingPostedUrl, function () {
+        //inputFormFieldsDiv.load(sendRecordingPostedUrl, function () {
             
         //    $('#FireSendRecordedWebinarButton').on('click', function (eventArgs) {
                 
@@ -170,31 +135,31 @@ $(function () {
         //            dataType: constants.JsonDataType,
         //            data: JSON.stringify({ webinarId: payload }),
         //            beforeSend: function () {
-        //                DEW.PageObjects.WaitIndicator().show();
+        //                waitIndicator.show();
         //            }
         //        }).done(function (result) {
 
         //            labelCheckRemove();
 
         //            if (result.Result === 'Success') {
-        //                DEW.PageObjects.InputFormFieldsDiv().append(successScreenMessage);
+        //                inputFormFieldsDiv.append(successScreenMessage);
         //            } else if (result.Result === 'No Orders to send for that webinar') {
-        //                DEW.PageObjects.InputFormFieldsDiv().append(noOrdersScreenMessage);
+        //                inputFormFieldsDiv.append(noOrdersScreenMessage);
         //            }
 
         //        }).fail(function () {
         //            labelCheckRemove();
 
-        //            DEW.PageObjects.InputFormFieldsDiv().append(failedScreenMessage);
+        //            inputFormFieldsDiv.append(failedScreenMessage);
         //        }).always(function () {
-        //            DEW.PageObjects.WaitIndicator().hide();
-        //            DEW.PageObjects.ResetButton().show();
+        //            waitIndicator.hide();
+        //            resetButton.show();
 
         //        });
         //    });
 
-        //    DEW.PageObjects.ResetButton().on('click', function (eventArgs) {
-        //        DEW.PageObjects.InputFormFieldsDiv().fadeOut(500, resetEventFirePanel);
+        //    resetButton.on('click', function (eventArgs) {
+        //        inputFormFieldsDiv.fadeOut(500, resetEventFirePanel);
         //    });
         //});
     });
@@ -207,6 +172,6 @@ $(function () {
     };
 
     var resetEventFirePanel = function() {
-        DEW.PageObjects.ButtonsContainer().fadeIn(500);
+        buttonsContainer.fadeIn(500);
     };
 });
