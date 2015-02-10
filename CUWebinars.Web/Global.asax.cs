@@ -61,6 +61,33 @@ namespace CUWebinars.Web
             AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.Email;
             
             LogStartupDetails();
+
+            InvokeGhostTests();
+        }
+
+        private static void InvokeGhostTests()
+        {
+            int retryCount = 0;
+            int retryLimit = GlobalConfig.GlobalConfigSingleton.GhostRequestRetryLimit;
+
+            do
+            {
+                try
+                {
+                    using (var request = new TtsWebClient())
+                    {
+                        var response = request.DownloadString("" /* replace empty string with Ghost test suite uri here */);
+
+                        retryCount++;
+
+                        break;
+                    }
+                }
+                catch (Exception exception)
+                {
+                    logger.ErrorFormat(string.Format("GhostInvoker job failed. Retry number:{0}", retryCount), exception);
+                }
+            } while (retryCount < retryLimit);
         }
 
         private static void LogStartupDetails()

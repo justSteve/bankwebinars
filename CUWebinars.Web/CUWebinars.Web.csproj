@@ -395,6 +395,9 @@
     <Compile Include="Infrastructure\ErrorResponse.cs" />
     <Compile Include="Infrastructure\ErrorResponseCommand.cs" />
     <Compile Include="Infrastructure\IErrorResponseCommand.cs" />
+    <Compile Include="Infrastructure\TtsWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Mapping\Configuration\IMappingInitializer.cs" />
     <Compile Include="Mapping\Configuration\MappingBase.cs" />
     <Compile Include="Mapping\Configuration\ViewModelMappings.cs" />
