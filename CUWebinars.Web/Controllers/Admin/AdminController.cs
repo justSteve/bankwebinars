@@ -1,7 +1,10 @@
-﻿using CUWebinars.Business.AccountService;
+﻿using System.ServiceModel.Syndication;
+using System.Xml;
+using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification;
 using CUWebinars.Business.Notification.Formatters;
+using CUWebinars.Business.Notification.ViewModel;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Helpers;
@@ -551,6 +554,186 @@ namespace CUWebinars.Web.Controllers.Admin
             };
 
             return PartialView("~/Views/Admin/Home/_LogInAsUser.cshtml", logInAsOtherUserViewModel);
+        }
+
+
+        [HttpPost]
+        public JsonResult PromoGenerate(WebinarPromoViewModel model)
+        {
+            model.Webinars = _webinarManagementService.GetUpcomingWebinars().ToList();
+
+            var includedAffiliates = Request.Params.AllKeys
+                  .Where(x => x.StartsWith("cb_"))
+                  .Where(x => Request.Params[x] != null && Request.Params[x].ToString().Length > 0)
+                  .Select(x => new { key = x.Replace(@"cb_", ""), value = Request.Params[x] })
+                  .ToDictionary(x => int.Parse(x.key), x => x.value);
+
+            //if (UserFacade.Instance.GetCurrentUser().UserType == UserType.Affiliate)
+            //{
+            //    includedAffiliates.Clear();
+            //    includedAffiliates.Add(UserFacade.Instance.GetCurrentUser().ID, "on");
+
+            //}
+            var msg = "";
+            int i = model.Webinar.idWebinar;
+            model.SendDate = Convert.ToDateTime(model.SendDate);
+
+            //model.GeneratedMessages = new List<AffPromoMsgViewModel>();
+            foreach (var aff in includedAffiliates)
+            {
+                if (aff.Value != "on") break;
+                
+                model.TimeZone = USTimeZone.Central; // UserFacade.Instance.Load(aff.Key).TimeZone;
+                model.Affiliate = new CUWebinars.Business.Repository.AffiliateRepository().FindByIdWithIncluding(Convert.ToInt32(aff.Key));
+                model.Webinar = _webinarManagementService.GetWebinar(i);
+                model.From = model.Affiliate.ContactEmail;
+                model.Affiliates = new List<Affiliate>();
+
+                IEnumerable<int> featured1 = AppHelper.StringToIntList(Request.Form["listOfEvents"]);
+
+                StringBuilder upcoming = new StringBuilder();
+                int i1 = 0;
+
+                var q = from a in model.Webinars.Take(15)
+                        where a.idWebinar != model.Webinar.idWebinar && a.Date > model.SendDate
+                        //where !(list2.Any(item2 => item2.Email == item1.Email))
+                        orderby a.Date
+                        select new
+                        {
+                            featuredItem =
+                         "<p><a style=\"color: bisque; text-decoration: none; border-bottom: 1px dotted bisque;\" href=\"http://www.bankwebinars.com/Webinar/Details/" +
+                         a.idWebinar + "?idaff=" + model.Affiliate.idUserAff + "\">" + a.Title + "</a><br><font size='-3'> (" + a.Date.ToLongDateString() + ")</font></p>"
+                        };
+
+                string wDate = "<b>" + DateTimeHelper.FormatDate(model.Webinar.Date) + "</b><br>" +
+                               DateTimeHelper.FormatTimeWithDuration(model.Webinar.Date, model.TimeZone, false,
+                                                                     model.Webinar.Duration) + "<br>";
+
+                string ceu = "";
+                if (String.IsNullOrEmpty(model.Webinar.ceu) == false)
+                {
+                    string[] ceufull = model.Webinar.ceu.Split('|');
+                    ceu = ceufull[0].ToString();
+                }
+
+                IEnumerable<int> featured = AppHelper.StringToIntList(model.UpcomingListing);
+                StringBuilder upcomingDetail = new StringBuilder();
+
+                if (Request.Form["TemplateVersion"] == "Daily")
+                {
+                    foreach (var ID in q)
+                    {
+                        if (i1 < 5)
+                        {
+                            upcoming.Append(ID.featuredItem.ToString());
+                        }
+                        i1++;
+                    }
+
+                    model.UpcomingListing = "<h3>Upcoming Webinars</h3>" + upcoming.ToString();
+
+                    model.EventBody = model.Webinar.DescriptionLong + "<h2>" + model.Webinar.LearnCaption + "</h2>" + model.Webinar.LearnBody + "<h2>Who Should Attend</h2>" + model.Webinar.WhoAttend + "<h2>" + "About " + model.Webinar.Presenter.WebUser.FullName + "</h2>" + model.Webinar.Presenter.BiographyLong;
+                    
+                    _orderManagementService.FireSendPerDayPromoEvent(model);
+                    var genMsg = new AffPromoMsgViewModel(model.Affiliate.idUserAff, "string here");
+                    //if (model.GeneratedMessages != null) model.GeneratedMessages.Add(genMsg);
+                }
+                //else
+                //{
+                //    List<int> featureWebinarIDs = new List<int>();
+
+                //    foreach (int w in featured)
+                //    {
+                //        var webinar = _webinarManagementService.GetWebinar(w);
+                //        featureWebinarIDs.Add(webinar.idWebinar);
+                //        string eDate = "<b>" + DateTimeHelper.FormatDate(webinar.Date) + "</b><br />";
+                //        eDate = eDate + DateTimeHelper.FormatTimeWithDuration(webinar.Date, model.TimeZone, false, webinar.Duration) + "<br />";
+
+                //        upcomingDetail.Append("<p style='font-size:20px; font-weight:bold; font-family:trebuchet ms;'><a href='http://www.bankwebinars.com/Webinar/Details/" + webinar.idWebinar + "?idaff=" + model.Affiliate.idUserAff + "'>" + webinar.Title + "</a><br />");
+                //        upcomingDetail.Append("<span style='font-size:12px'>" + eDate + "</span></p>");
+                //        upcomingDetail.Append("<div style='font-family:trebuchet ms;'>" + webinar.Description + "</div>");
+                //        upcomingDetail.Append("<p style='font-family:trebuchet ms;'><b>" + webinar.Presenter.WebUser.FullName + "</b></p>");
+                //        upcomingDetail.Append("<p font-family:trebuchet ms;'><a href='http://www.bankwebinars.com/Webinar/Details/" + webinar.idWebinar + "?idaff=" + model.Affiliate.idUserAff + "'>Click here for more info!</a></p>");
+                //        upcomingDetail.Append("<hr style='width:50%; height: 10px;' />");
+                //    }
+
+                //    q = model.Webinars.Where(a => a.idWebinar != model.Webinar.idWebinar && a.Date > model.SendDate).Where(
+                //            a => !(featureWebinarIDs.Any(item2 => item2 == a.idWebinar))).OrderBy(a => a.Date).Take(12).Select(a =>
+                //            new
+                //            {
+                //                featuredItem =
+                //                "<p><a style=\"color: bisque; text-decoration: none; border-bottom: 1px dotted bisque;\" href=\"http://www.bankwebinars.com/Webinar/Details/" +
+                //                a.idWebinar + "?idaff=" + model.Affiliate.idUserAff + "\">" + a.Title + "</a><br><font size='-3'> (" +
+                //                a.Date.ToLongDateString() + ")</font></p>"
+                //            });
+
+                //    foreach (var ID in q)
+                //    {
+                //        if (i1 < 5)
+                //        {
+                //            upcoming.Append(ID.featuredItem.ToString());
+                //        }
+                //        i1++;
+                //    }
+                //    model.UpcomingListing = "<h3>Upcoming Webinars</h3>" + upcoming.ToString();
+
+                //    model.EventBody = upcomingDetail.ToString();
+                //    var genMsg = new AffPromoMsgViewModel(model.Affiliate.idUserAff, "mail msg");
+                //    if (model.GeneratedMessages != null) model.GeneratedMessages.Add(genMsg);
+                //}
+            }
+            return null;
+        }
+        [HttpGet]
+        public ActionResult PerWeekPromo(int id)
+        {
+            ViewBag.NumberOfOrders = _orderManagementService.GetNumberOfOrdersPerWebinar(id);
+
+            WebinarPromoViewModel model = new WebinarPromoViewModel()
+            {
+
+            };
+            model.SendDate = DateTime.Now;
+            model.Webinars = _webinarManagementService.GetUpcomingWebinars().ToList();
+            model.Webinar = _webinarManagementService.GetWebinar(id);
+            model.TimeZone = USTimeZone.Eastern;
+            model.Affiliates = new CUWebinars.Business.Repository.AffiliateRepository().GetAffiliatesByPromoType("Daily").ToList();
+            
+            return View(model);
+
+        }
+
+        [HttpGet]
+        public ActionResult PerDayPromo(int id)
+        {
+            WebinarPromoViewModel model = new WebinarPromoViewModel()
+            {
+
+            };
+            model.SendDate = DateTime.Now;
+            model.Webinars = _webinarManagementService.GetUpcomingWebinars().ToList();
+            model.Webinar = _webinarManagementService.GetWebinar(id);
+            model.TimeZone = USTimeZone.Eastern;
+            model.Affiliates = new CUWebinars.Business.Repository.AffiliateRepository().GetAffiliatesByPromoType("Daily").ToList();
+            //model.Affiliates = AffiliateFacade.Instance.FindNonDailyPromoSubscribers();
+
+            return View(model);
+
+        }
+
+        public ActionResult RssFeedOfAddedEvents()
+        {
+            //http://office.microsoft.com/en-us/office365-sharepoint-online-small-business-help/basic-tasks-in-sharepoint-online-for-office-365-for-professionals-and-small-businesses-HA101988906.aspx#_Toc272147708
+
+            string strFeed =
+                "https://totaltrainingsolutions-public.sharepoint.com/_layouts/15/listfeed.aspx?List={09364DB1-2255-406E-9CB6-45FE64C0D341}";
+
+            using (XmlReader reader = XmlReader.Create(strFeed))
+            {
+                SyndicationFeed rssData = SyndicationFeed.Load(reader);
+
+                return PartialView(rssData);
+            }
         }
 
         [System.Web.Mvc.HttpPost]

@@ -312,9 +312,9 @@ namespace CUWebinars.Business.Services
                 //  get the most recent
                 int affiliateIdForOrder, mostRecentAffiliateId;
                 affiliateIdForOrder = mostRecentAffiliateId = affiliateIds.First();
-                
+
                 // The history is of more than 1 affiliate
-                if (affiliateIds.Distinct().Count() > 1) 
+                if (affiliateIds.Distinct().Count() > 1)
                 {
                     // The business rule is that where there is more than one Affiliate which the 
                     // user has made orders for, if one affiliate has been used twice as many times 
@@ -639,16 +639,11 @@ namespace CUWebinars.Business.Services
 
             Clear();
         }
-        public void FireSendPerDayPromoEvent(IList<Affiliate> affiliates, Webinar webinar)
+        public void FireSendPerDayPromoEvent(WebinarPromoViewModel webinarPromoViewModel)
         {
-            foreach (var aff in affiliates)
-            {
-                //AddEvent(new SendPreDayPromoEvent<WebinarPromoViewModel> { EventObject = aff });
-                //TODO: Unable to resolve SendPreDayPromoEvent
-                //AddEvent(new SendPreDayPromoEvent<WebinarPromoViewModel>());
-            }
-
-            foreach (var evt in GetEvents().OfType<SendRecordingPostedEvent<Order>>())
+            AddEvent(new SendPerDayPromoEvent<WebinarPromoViewModel> { EventObject = webinarPromoViewModel });
+            
+            foreach (var evt in GetEvents().OfType<SendPerDayPromoEvent<WebinarPromoViewModel>>())
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }
@@ -915,6 +910,11 @@ namespace CUWebinars.Business.Services
             }
         }
 
+        public int GetNumberOfOrdersPerWebinar(int id)
+        {
+            return _orderRepository.GetNumberOfOrdersPerWebinar(id);
+        }
+
 
         public void GetJoinUrl(OrderRow row)
         {
@@ -1016,7 +1016,7 @@ namespace CUWebinars.Business.Services
                 // If linkToVerifyAccount is true, then we know that the user was created during an importation. When that occurs, 
                 // we don't want to send the normal register user email. We want to roll those details into this confirmation
                 // notification (OrderSubmitted notification). 
-                
+
                 //So, if we have the confirmChangeEmailLink, we can include it in 
                 // the notification confirming registration for this webinar.  
                 bool linkToVerifyAccount = !string.IsNullOrWhiteSpace(confirmChangeEmailLink);

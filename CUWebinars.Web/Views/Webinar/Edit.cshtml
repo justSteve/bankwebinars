@@ -1,13 +1,16 @@
 ﻿@model Webinar
 
 @{
-    ViewBag.Title = "Editing "+ Model.Title;
+    ViewBag.Title = "Editing " + Model.Title;
 }
 
 <script type="text/javascript" src="/Scripts/cleditor/jquery.cleditor.min.js"></script>
 <script type="text/javascript" src="/Scripts/cleditor/jquery.cleditor.xhtml.min.js"></script>
 <script type="text/javascript">
-    $(document).ready(function () { $("#input").cleditor(); });
+    $(document).ready(
+        function() {
+             $("#input").cleditor();
+        });
 </script>
 <link rel="stylesheet" type="text/css" href="/Scripts/cleditor/jquery.cleditor.css" />
 <script language="javascript">
@@ -72,7 +75,7 @@
                 @Html.LabelFor(model => model.Title)
             </div>
             <div class="editor-field">
-                
+
                 @Html.ValidationMessageFor(model => model.Title)
             </div>
 
@@ -96,9 +99,9 @@
                 @Html.LabelFor(model => model.Description)
             </div>
             <div class="editor-field">
-                
+
                 @Html.TextAreaFor(model => model.Description)
-                    @Html.ValidationMessageFor(model => model.Description)
+                @Html.ValidationMessageFor(model => model.Description)
             </div>
 
             <div class="editor-label">
@@ -107,7 +110,7 @@
             <div class="editor-field">
                 <textarea id="ta_DescriptionLong" rows="10" cols="40">@Html.Raw(Model.DescriptionLong)</textarea>
                 @*@Html.EditorFor(model => model.DescriptionLong)
-                @Html.ValidationMessageFor(model => model.DescriptionLong)*@
+                    @Html.ValidationMessageFor(model => model.DescriptionLong)*@
             </div>
 
 
@@ -125,7 +128,7 @@
             <div class="editor-field">
                 <textarea id="ta_LearnBody" rows="10" cols="40">@Html.Raw(Model.LearnBody)</textarea>
                 @*@Html.EditorFor(model => model.LearnBody)
-                @Html.ValidationMessageFor(model => model.LearnBody)*@
+                    @Html.ValidationMessageFor(model => model.LearnBody)*@
             </div>
 
             <div class="editor-label">
@@ -151,7 +154,7 @@
             <div class="editor-field">
                 <input type="text" name="idPresenter" value="@Model.idPresenter" />
                 @*@Html.DropDownList("idPresenter", String.Empty)*@
-                    @*@Html.ValidationMessageFor(model => model.PresenterId)*@
+                @*@Html.ValidationMessageFor(model => model.PresenterId)*@
             </div>
 
             <div class="editor-label">

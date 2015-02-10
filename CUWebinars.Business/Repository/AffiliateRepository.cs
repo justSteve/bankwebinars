@@ -36,6 +36,13 @@ namespace CUWebinars.Business.Repository
             return items.Where(a => a.WebUser.UserType == UserType.Affiliate);
         }
 
+        public IQueryable<Affiliate> GetAffiliatesByPromoType(string promoType)
+        {
+            var found = items.Where(a => a.EmailPromo == promoType);
+            return found;
+
+        }
+
         public Affiliate GetCurrentAffiliate()
         {
             return items.Single(a => a.WebUser.email == "Mark_Bennett@ttstrain.com"); 
