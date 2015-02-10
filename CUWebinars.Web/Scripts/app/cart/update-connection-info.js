@@ -53,7 +53,7 @@ $(function() {
             var token = UCI.updateConnectionInfoForm.find('input[name=__RequestVerificationToken]').val();
             var headers = {};
             headers['__RequestVerificationToken'] = token;
-            alert("hit" + UCI.updateConnectionInfoForm.attr('action'));
+            
             $.ajax({
                 type: 'POST',
                 contentType: constants.JsonContentType,

@@ -478,28 +478,33 @@ namespace CUWebinars.Web.Controllers
         }
 
         //[AcceptVerbs(HttpVerbs.Get)]
-        public ActionResult Play(int w, int u)
+        public ActionResult Play(int? w, int? u)
         {
-            if (_orderManagementService.CheckUserForRecordingAccess(u, w) > 0 || u == 19)
+            if (w.HasValue && u.HasValue)
             {
-                Webinar webinar = _webinarManagementService.GetWebinar(w);
+                if (_orderManagementService.CheckUserForRecordingAccess(u.Value, w.Value) > 0 || u == 19)
+                {
+                    var playModel = new PlayModel
+                    {
+                        Webinar = _webinarManagementService.GetWebinar(w.Value)
+                    };
 
-                //how do I ensure that all child objects are included?
-                var webinarFiles = webinar.WebinarFiles.Where(f => f.idWebinar == w)
-                    .Select(f => f.fileDesc + "|" + f.fileLocation)
-                    .ToArray();
+                    //how do I ensure that all child objects are included?
+                    playModel.WebinarFiles = playModel.Webinar.WebinarFiles.Where(f => f.idWebinar == w)
+                        .Select(f => f.fileDesc + "|" + f.fileLocation)
+                        .ToArray();
 
-                ViewBag.WebinarFiles = webinarFiles;
+                    playModel.Presenter = playModel.Webinar.Presenter;
 
-                Presenter presenter = webinar.Presenter;
+                    return View(playModel);
+                }
 
-                ViewBag.Presenter = presenter;
-
-                return View(webinar);
+                ViewData["Expired"] = "This recording has expired. ";
+                    // [dar] how are we using this? Do we have plans for it?
+                return View();
+                
             }
-
-            ViewData["Expired"] = "This recording has expired. ";
-            return View();
+            return null;
         }
 
         public ActionResult Details(int? id)
@@ -964,7 +969,6 @@ namespace CUWebinars.Web.Controllers
         }
 
         [System.Web.Mvc.HttpPost]
-        //[ValidateAntiForgeryToken]
         [ValidateJsonAntiForgeryToken]
         [ValidateInput(false)]
         public ActionResult UpdateConnectionInfo(ConnectionInfoModel connectionInfoModel)
@@ -1167,9 +1171,6 @@ namespace CUWebinars.Web.Controllers
         public ActionResult UpdateWebinarFiles(ConnectionInfoModel connectionInfoModel)
         {
             /*
-             * 
-             * Dear David - this is really cool code i stole from your AddLoc thingie (i thinkie)
-             * 
                 This is a batch update operation. The WebinarFiles collection contains the webinar files to be updated. 
                 The three possibilities are updated, deleted and created. (Even if a file was unchanged at the client, it will be treated as updated.)
                     * If the idWebinar in the WebinarFiles is a positive number and does not end with -D, it is updated
