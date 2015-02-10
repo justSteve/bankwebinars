@@ -62,7 +62,7 @@ namespace CUWebinars.Web
             
             LogStartupDetails();
 
-            InvokeGhostTests();
+            //InvokeGhostTests();
         }
 
         private static void InvokeGhostTests()
