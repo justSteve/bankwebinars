@@ -1213,6 +1213,18 @@ namespace CUWebinars.Web.Controllers
             return this.ModelStateJson(ModelState);
         }
 
+
+        public ActionResult GetWebinarFile(int? idWebinarFile)
+        {
+            if (idWebinarFile.HasValue)
+            {
+                var webinarFile = _webinarManagementService.GetWebinarFile(idWebinarFile.Value);
+
+                return Redirect(webinarFile.fileLocation);
+            }
+            return View();
+        }
+
         private class MyClient : WebClient
         {
             public bool HeadOnly { get; set; }
