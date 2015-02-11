@@ -3,7 +3,7 @@ GO
 
 
 DECLARE @idwebinar INT
-SET @idwebinar = 1753
+SET @idwebinar = 1743
 
 
 SELECT TOP 1000 ( SELECT    o.idAffiliate

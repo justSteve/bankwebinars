@@ -89,3 +89,7 @@ CUWebinars Error: 0 : ERROR MailerSmtpException: steve@ttstrain.com Subject: [pr
 CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 11:42:36 AM
 CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 11:45:05 AM
 CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 11:52:05 AM
+CUWebinars Error: 0 : Validation failed for webinar 1718 and User 35845
+CUWebinars Error: 0 : Validation failed for webinar 1718 and User 35846
+CUWebinars Error: 0 : Validation failed for webinar 1718 and User 35850
+CUWebinars Error: 0 : Validation failed for webinar 1718 and User 35851

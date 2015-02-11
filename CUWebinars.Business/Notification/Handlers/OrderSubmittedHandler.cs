@@ -47,16 +47,16 @@ namespace CUWebinars.Business.Notification.Handlers
                 var notificationMessage = _generalFormatter.Format(orderSubmittedEvent.EventObject, "OrderSubmitted");
 
                 var persistedNamePrefix = orderSubmittedEvent.ResendEvent
-                    ? "ReSendConnectionInfo"
-                    : "SendConnectionInfo";
+                    ? "ReSend_" + orderSubmittedEvent.EventObject.Order.idOrder
+                    : "Send_" + orderSubmittedEvent.EventObject.Order.idOrder;
 
-                notificationMessage.PersistedName = string.Format("{0}-{1}{2}", 
+                notificationMessage.PersistedName = string.Format("{0}_{1}{2}", 
                     persistedNamePrefix,
                     DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), 
                     ".htm"
                     );
 
-                notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail;
+                notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail + ", steve@ttstrain.com";
                 _notificationDelivery.Notify(notificationMessage);
             }
             catch (NullReferenceException nullReferenceException)

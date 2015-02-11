@@ -41,14 +41,14 @@
         <div class="modal-body">
 
             @Html.AntiForgeryToken()
-            @Html.HiddenFor(model => model.idWebinar)
+            @Html.EditorFor(model => model.idWebinar)
             @Html.HiddenFor(model => model.OrganizerKey)
             @Html.HiddenFor(model => model.OrganizerOAuthKey)
 
             <div class="form-horizontal">
                 @Html.ValidationSummary("There have been some errors:", new { id = "updateConnInfoValSummary" })
                 <div class="form-group">
-                    @*@Html.LabelFor(model => model.ManageURL, htmlAttributes: new { @class = "control-label " })*@
+                    @Html.LabelFor(model => model.ManageURL, htmlAttributes: new { @class = "control-label " })
                     Paste Citrix Page Source
                     <div>
                         @Html.EditorFor(model => model.ManageURL, new { htmlAttributes = new { @class = "form-control" } })
