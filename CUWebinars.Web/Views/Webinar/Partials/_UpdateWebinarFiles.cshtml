@@ -62,16 +62,16 @@
                             {
                                 <div id="fileDetails_@file.idWebinarFile" class="webinarFileDetails">
                                     <i class="icon-trash icon-white pull-right" style="cursor: pointer" id="@file.idWebinarFile-Filedetails-delete"></i>
-                                    <input type="hidden" name="connectionInfoModel.WebinarFiles[@idx].idWebinarFile" value="@file.idWebinarFile" />
-                                    <input type="hidden" name="connectionInfoModel.WebinarFiles[@idx].idWebinar" value="@file.idWebinar" />
+                                    <input type="hidden" name="WebinarFiles[@idx].idWebinarFile" value="@file.idWebinarFile" />
+                                    <input type="hidden" name="WebinarFiles[@idx].idWebinar" value="@file.idWebinar" />
                                     <div id="fileLocationDiv_@file.idWebinarFile">
                                         <span class="control-label">File Name</span>
-                                        <input type="text" class="form-control" name="connectionInfoModel.WebinarFiles[@idx].fileLocation" value="@file.fileLocation" />
+                                        <input type="text" class="form-control" name="WebinarFiles[@idx].fileLocation" value="@file.fileLocation" />
                                         <i class="icon-book icon-white"></i>
                                     </div>
                                     <div id="fileDescDiv_@file.idWebinarFile">
                                         <span class="control-label">Label</span>
-                                        <input type="text" class="form-control" name="connectionInfoModel.WebinarFiles[@idx].fileDesc" value="@file.fileDesc" /><br />
+                                        <input type="text" class="form-control" name="WebinarFiles[@idx].fileDesc" value="@file.fileDesc" /><br />
                                     </div>
                                 </div>
                                 idx++;
