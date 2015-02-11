@@ -8,6 +8,7 @@ namespace CUWebinars.Business.Repository
     {
         void AddRange(IEnumerable<WebinarFile> webinarFiles);
         void DeleteRange(IEnumerable<WebinarFile> webinarFiles);
+        WebinarFile FindById(int id);
         void UpdateRange(IEnumerable<WebinarFile> webinarFiles);
     }
 }

@@ -152,7 +152,6 @@ $(function () {
                     data: JSON.stringify({ webinarId: selectedUpcomingWebinarId }),
                     beforeSend: function () {
                         // this is where we append a loading image
-                        //pageObjects.labelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</span>');
                     }
                 }).done(function (data) {
 
@@ -192,7 +191,6 @@ $(function () {
                             data: JSON.stringify(payload),
                             beforeSend: function () {
                                 // this is where we append a loading image
-                                //OENS.PageObjects.labelEmail().html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Checking that Email...</span>');
                             }
                         }).done(function (emails) {
 

@@ -21,6 +21,7 @@ namespace CUWebinars.Business.Services
         Webinar GetWebinar(int id);
         IEnumerable<Webinar> GetWebinarByPresenterLastName(string lastName);
         IEnumerable<Webinar> GetWebinarByDescription(string topicDescription);
+        WebinarFile GetWebinarFile(int idWebinarFile);
         Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id);
         void UpdateWebinar(Webinar webinar);
         void UpdateWebinarFiles(IEnumerable<WebinarFile> webinarFiles);

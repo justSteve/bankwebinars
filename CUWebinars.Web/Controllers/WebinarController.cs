@@ -970,10 +970,9 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpPost]
         [ValidateJsonAntiForgeryToken]
-        [ValidateInput(false)]
-        public ActionResult UpdateConnectionInfo(ConnectionInfoModel connectionInfoModel)
+        //[ValidateInput(false)]
+        public ActionResult UpdateConnectionInfo(ConnectionInfoEditModel connectionInfoModel)
         {
-
             //using (var client = new System.Net.WebClient())
             //{
             //TODO: Figure out how to authenticate and then pass URL
@@ -1212,6 +1211,18 @@ namespace CUWebinars.Web.Controllers
             }
 
             return this.ModelStateJson(ModelState);
+        }
+
+
+        public ActionResult GetWebinarFile(int? idWebinarFile)
+        {
+            if (idWebinarFile.HasValue)
+            {
+                var webinarFile = _webinarManagementService.GetWebinarFile(idWebinarFile.Value);
+
+                return Redirect(webinarFile.fileLocation);
+            }
+            return View();
         }
 
         private class MyClient : WebClient

@@ -220,6 +220,7 @@ $(function () {
 
         $('#SignUpForm > div');
         var spinner = $('#signUpSpinner');
+        $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
 
         // If the user IS NOT LOGGED IN - control moves to the register-during-checkout.js script
         if (!cartStateManager.getIsUserLoggedIn()) {
@@ -249,6 +250,8 @@ $(function () {
                 } else {
                     $('#labelEmail').html('<span class="label label-important">&nbsp;Server error. Try again or call 800-831-0678 ext 706 for immediate assistance!</span>');
                 }
+
+                $('#loadingSpinner').remove();
             }, constants.JsonDataType);
         } else {
             // If the user IS LOGGED IN
@@ -308,6 +311,7 @@ $(function () {
                             }
 
                             spinner.remove();
+                            $('#loadingSpinner').remove();
 
                         }, constants.HtmlDataType);
                     } else if (xhr.responseJSON['isSuccessful'] === false) {

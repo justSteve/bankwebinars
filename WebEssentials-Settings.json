@@ -2,12 +2,14 @@
   "BrowserLink": {
     "CssIgnorePatterns": "bootstrap*; reset.css; normalize.css; jquery*; toastr*; foundation*; animate*; inuit*; elements*; ratchet*; hint*; flat-ui*; 960*; skeleton*",
     "EnableMenu": true,
-    "EnablePixelPushing": true,
+    "EnablePixelPushing": false,
     "ShowMenu": true
   },
   "CodeGen": {
     "CamelCasePropertyNames": true,
-    "CamelCaseTypeNames": false
+    "CamelCaseTypeNames": false,
+    "AddTypeScriptReferencePath": true,
+    "CamelCaseEnumerationValues": false
   },
   "CoffeeScript": {
     "CompileOnBuild": true,
@@ -15,7 +17,12 @@
     "GenerateSourceMaps": true,
     "OutputDirectory": null,
     "ShowPreviewPane": true,
-    "WrapClosure": true
+    "WrapClosure": true,
+    "LintOnBuild": false,
+    "LintOnSave": true,
+    "LintResultLocation": "Message",
+    "MinifyInPlace": false,
+    "ProcessSourceMapsForEditorEnhancements": true
   },
   "Css": {
     "AdjustRelativePaths": true,
@@ -30,12 +37,21 @@
     "ValidateStarSelector": true,
     "ValidateVendorSpecifics": true,
     "ValidateZeroUnit": true,
-    "ValidationLocation": "Messages"
+    "ValidationLocation": "Messages",
+    "Autoprefix": false,
+    "AutoprefixerBrowsers": null,
+    "GenerateRtlSourceMaps": true,
+    "MakeMinified": true,
+    "OutputDirectory": null,
+    "RtlCss": false,
+    "RunOnBuild": false,
+    "SyncBase64ImageValues": true
   },
   "General": {
     "AllMessagesToOutputWindow": false,
     "KeepImportantComments": true,
-    "SvgPreviewPane": true
+    "SvgPreviewPane": true,
+    "ShowWEIgnoreLogs": true
   },
   "Html": {
     "AutoMinify": false,
@@ -59,7 +75,17 @@
         "HtmlFormat": "<div style=\"background-image=url('{0}')\"></div>",
         "Name": "Inline CSS"
       }
-    ]
+    ],
+    "AttributeQuotesRemovalMode": "KeepQuotes",
+    "CustomAngularDirectiveList": null,
+    "EnableBootstrapValidation": true,
+    "EnableFoundationValidation": true,
+    "MakeMinified": true,
+    "MinifyAngularBindingExpressions": false,
+    "MinifyKnockoutBindingExpressions": false,
+    "OutputDirectory": null,
+    "ProcessableScriptTypeList": null,
+    "RunOnBuild": false
   },
   "JavaScript": {
     "AutoMinify": false,
@@ -68,14 +94,24 @@
     "GzipMinifiedFiles": false,
     "LintOnBuild": false,
     "LintOnSave": false,
-    "LintResultLocation": "Message"
+    "LintResultLocation": "Message",
+    "EvalTreatment": "MakeImmediateSafe",
+    "MakeMinified": true,
+    "OutputDirectory": null,
+    "RootDirectory": "/Scripts/",
+    "RunOnBuild": false,
+    "TermSemicolons": true
   },
   "Less": {
     "CompileOnBuild": true,
     "CompileOnSave": true,
     "GenerateSourceMaps": true,
     "OutputDirectory": null,
-    "ShowPreviewPane": true
+    "ShowPreviewPane": true,
+    "EnableChainCompilation": true,
+    "MinifyInPlace": false,
+    "ProcessSourceMapsForEditorEnhancements": true,
+    "StrictMath": false
   },
   "Markdown": {
     "AutoHyperlink": false,
@@ -87,7 +123,8 @@
     "LinkEmails": false,
     "OutputDirectory": null,
     "ShowPreviewPane": true,
-    "StrictBoldItalic": false
+    "StrictBoldItalic": false,
+    "MinifyInPlace": false
   },
   "Sass": {
     "CompileOnBuild": true,
@@ -101,6 +138,56 @@
     "LintOnBuild": true,
     "LintOnSave": true,
     "LintResultLocation": "Message",
+    "ShowPreviewPane": true
+  },
+  "Handlebars": {
+    "CompileOnBuild": false,
+    "CompileOnSave": true,
+    "MinifyInPlace": false,
+    "OutputDirectory": null
+  },
+  "LiveScript": {
+    "CompileOnBuild": false,
+    "CompileOnSave": true,
+    "GenerateSourceMaps": true,
+    "MinifyInPlace": false,
+    "OutputDirectory": null,
+    "ProcessSourceMapsForEditorEnhancements": true,
+    "ShowPreviewPane": true,
+    "WrapClosure": true
+  },
+  "Scss": {
+    "CompileOnBuild": false,
+    "CompileOnSave": true,
+    "EnableChainCompilation": true,
+    "GenerateSourceMaps": true,
+    "MinifyInPlace": false,
+    "NumberPrecision": 5,
+    "OutputDirectory": null,
+    "OutputStyle": "Expanded",
+    "ProcessSourceMapsForEditorEnhancements": true,
+    "ShowPreviewPane": true,
+    "UseRubyRuntime": false
+  },
+  "Sprite": {
+    "CssOutputDirectory": null,
+    "IsVertical": true,
+    "LessOutputDirectory": null,
+    "Margin": 1,
+    "Optimize": true,
+    "OutputDirectory": null,
+    "RunOnBuild": false,
+    "ScssOutputDirectory": null,
+    "UseAbsoluteUrl": false,
+    "UseFullPathForIdentifierName": true
+  },
+  "SweetJs": {
+    "CompileOnBuild": false,
+    "CompileOnSave": true,
+    "GenerateSourceMaps": true,
+    "MinifyInPlace": false,
+    "OutputDirectory": null,
+    "ProcessSourceMapsForEditorEnhancements": true,
     "ShowPreviewPane": true
   }
 }

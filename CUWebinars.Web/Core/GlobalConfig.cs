@@ -16,6 +16,8 @@ namespace CUWebinars.Web.Core
         public string HandoutRepository { get; private set; }
         public string ImgRepository { get; private set; }
         public string DefaultConnectionString { get; private set; }
+        public int GhostRequestRetryLimit { get; private set; }
+        public int GhostRequestTimeout { get; private set; }
         public string MembershipConnectionString { get; private set; }
         public bool NotificationsTesting { get; private set; }
         public string RelativeLoginUrl { get; private set; }
@@ -54,6 +56,8 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.EmailSignature = ApplicationSettingsSection["EmailSignature"];
                 //UniqueInstance.WMVRepository = ApplicationSettingsSection["WMVRepository"];
                 UniqueInstance.HandoutRepository = ApplicationSettingsSection["HandoutRepository"];
+                UniqueInstance.GhostRequestRetryLimit = int.Parse(ApplicationSettingsSection["GhostRequestRetryLimit"]);
+                UniqueInstance.GhostRequestTimeout = int.Parse(ApplicationSettingsSection["GhostRequestTimeout"]);
                 //UniqueInstance.ImgRepository = ApplicationSettingsSection["ImgRepository"];
                 UniqueInstance.NotificationsTesting = bool.Parse(ApplicationSettingsSection["NotificationsTesting"]);
                 UniqueInstance.RelativeLoginUrl = ApplicationSettingsSection["RelativeLoginUrl"];
