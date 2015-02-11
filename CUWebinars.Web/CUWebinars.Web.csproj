@@ -405,6 +405,7 @@
     <Compile Include="Mapping\Mappers\UniversalMapper.cs" />
     <Compile Include="Mapping\Profiles\TtsProfile.cs" />
     <Compile Include="Models\AddClaimInputModel.cs" />
+    <Compile Include="Models\ConnectionInfoEditModel.cs" />
     <Compile Include="Models\DiscountModel.cs" />
     <Compile Include="Models\EditContactInfoModel.cs" />
     <Compile Include="Models\EditUserModel.cs" />
