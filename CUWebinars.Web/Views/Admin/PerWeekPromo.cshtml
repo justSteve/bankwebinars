@@ -1,0 +1,182 @@
+﻿@using FluentDate
+@using FluentDateTime
+@using Newtonsoft.Json
+@model CUWebinars.Business.Notification.ViewModel.WebinarPromoViewModel
+
+@{
+
+    IList<Webinar> webinars = Model.Webinars;
+    var promoEvent = Model.Webinar;
+    
+    Layout = "/Views/Shared/_LayoutAdmin.cshtml";
+
+    string wDate = "<b>" + DateTimeHelper.FormatDate(Model.Webinar.Date) + "</b><br>";
+    wDate = wDate + DateTimeHelper.FormatTimeWithDuration(Model.Webinar.Date, Model.TimeZone, false, Model.Webinar.Duration) + "<br>";
+
+    ViewBag.Title = "Send VR - Weekly: " + @promoEvent.Title;
+
+    var minDay = 1.Days().Since(DateTime.Now);
+    var maxDay = DateTime.Now.NextMonth();
+
+
+
+    var query = from webinar in webinars
+                select new {label = (webinar.Title.Substring(0, Math.Min(webinar.Title.Length, 20)) + " <b>(" + ViewBag.NumberOfOrders + "</b>) " + webinar.Date.ToShortDateString()).ToString(),
+                               value = (Webinar.idWebinarWebinar).ToString()};
+
+    var json = JsonConvert.SerializeObject(query.ToArray());
+
+
+}
+
+<style type="text/css">
+    #list {
+        height: 200px;
+        width: 300px;
+    }
+
+    #listInput {
+        width: 150px;
+        padding: 5px;
+    }
+</style>
+<script id="scriptInit" type="text/javascript">
+
+    $(function () {
+        
+        $("#submit").bind('click', function () {
+
+            GenerateMessages();
+        });
+
+    });
+    
+
+    function GenerateMessages() {
+
+        $("#SendDate").val($("#_SendDate").val());
+
+        $("#listOfEvents").val($("#listInput").val());
+
+        $.ajax({
+            url: '/Home/PromoGenerate',
+            type: 'POST',
+            data: $('#mailer').serialize(),
+            dataType: "json",
+            //contentType: "application/json",
+            success: function (result) {
+                $('[id^="aff"]').hide();
+
+                $.each(result, function (id, msg) {
+                    $("#aff" + msg.AffID).show();
+                    $("#send" + msg.AffID).show();
+                    $("#edit" + msg.AffID).html(msg.MsgBody);
+                    //alert(item.ImageUrl);
+                });
+
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus + " " + errorThrown);
+            }
+        });
+    }
+
+    function ISODateString(d) {
+        function pad(n) { return n < 10 ? '0' + n : n; }
+        return pad(d.getUTCMonth() + 1)
+            + '-' + pad(d.getUTCDate())
+            + '-' + d.getUTCFullYear()
+        ;
+    
+    }
+
+    function GetDaily() {
+        window.location.href = "/Home/PromoDailySend/@Model.Webinar.idWebinar";
+    }
+    function GetWeekly() {
+        window.location.href = "/Home/PromoWeeklySend/@Model.Webinar.idWebinar";
+    }
+
+
+    function selectButtonClick(select) {
+        var list = $("#list").data('wijlist');
+        var indices = $('#indices').val().split(',');
+        var newArray = [];
+        $.each(indices, function (index, value) {
+            newArray[newArray.length] = parseInt(value);
+        });
+        if (select) {
+            list.selectItems(newArray);
+        }
+        else {
+            list.unselectItems(newArray);
+        }
+    }
+
+</script>
+<p align="right">
+    <input type="button" onclick="javascript: GetDaily();" value="Show Daily List" />
+
+</p>
+<h2>
+    @Model.Webinar.Title
+</h2>
+<p>
+    @Model.Webinar.Presenter.WebUser.FullName<br />
+    @Html.Raw(wDate)<br />
+</p>
+
+<div id="pages">
+    <ul>
+        <li>
+            <h1>Events</h1>
+            Upcoming Events
+        </li>
+
+        <li>
+            <h1>Date</h1>
+            Promo Date
+        </li>
+        <li>
+            <h1>Affiliates</h1>
+            Generate Email
+        </li>
+    </ul>
+
+    <div>
+
+        <input readonly="readonly" id="listInput" type="text" class="ui-widget-content ui-corner-all" />
+        <div id="list">
+        </div>
+
+
+    </div>
+    <div>
+
+        <p>
+            Date to Send Promo:
+            <input type="text" id="_SendDate" value="@(Model.SendDate.ToShortDateString())" />
+        </p>
+
+        <div id="calendar1">
+        </div>
+
+    </div>
+    <div>
+        @{
+            using (Html.BeginForm(null, null, FormMethod.Post, new { id = "mailer" }))
+            {
+
+                @Html.Hidden("TemplateVersion", "Weekly")
+                @Html.Hidden("Webinar.idWebinar", Model.Webinar.idWebinar)
+                @Html.Hidden("SendDate", Model.Webinar.idWebinar)
+                @Html.Hidden("listOfEvents", Model.Webinar.idWebinar)
+
+
+                <input type="button" id="submit" value="Submit" />
+            }
+
+        }
+    </div>
+</div>
+

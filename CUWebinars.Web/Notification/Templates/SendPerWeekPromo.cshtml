@@ -6,243 +6,263 @@
 @using CUWebinars.Business.Core
 @using CUWebinars.Business.Models
 @using CUWebinars.Business.Notification.ViewModel
-@model CUWebinars.Business.Notification.ViewModel.OrderSubmittedViewModel
+@model CUWebinars.Business.Notification.ViewModel.WebinarPromoViewModel
 
 <title>
     @{
-        var orderRows = from orderRow in Model.Order.OrderRows
-            where orderRow.RowStatus == OrderRowStatus.Active
-            select orderRow;
-        var thisWebinar = orderRows.Single().Webinar;
+        
         string TenantHead = TtsTemplateHelperObject.Tenant();
     }
-    [preview-@TenantHead] Confirmation of Registration: @thisWebinar.Title
+    [@TenantHead] Promo for: @Model.Webinar.Title
 </title>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <style type="text/css">
-        /*<![CDATA[*/
-        .sideBarBody {
-            font-family: trebuchet ms;
-            text-align: center;
-            font-size: 8px;
-            color: #000000;
-        }
+@{
 
-        .sideBarHead {
-            font-family: trebuchet ms;
-            font-weight: bold;
-            text-align: center;
-            font-size: 10px;
-            color: #FF6600;
-            font-weight: bold;
-        }
+    var webinar = Model.Webinar;
+    var aff = Model.Affiliate;
+    //int currentUserID = UserFacade.Instance.GetCurrentUserID();
 
-        .headerTop {
-            background-color: #FFCC66;
-            border-top: 0px solid #000000;
-            border-bottom: 1px solid #FFFFFF;
-            text-align: center;
-        }
 
-        .adminText {
-            font-size: 10px;
-            color: #996600;
-            line-height: 200%;
-            font-family: trebuchet ms;
-            text-decoration: none;
-        }
+    var ceuStmt = "";
+    var ceuShort = "";
 
-        .headerBar {
-            background-color: #FFFFFF;
-            border-top: 0px solid #333333;
-            border-bottom: 10px solid #FFFFFF;
-        }
+    if (String.IsNullOrEmpty(webinar.ceu) == false)
+    {
+        string[] ceu = webinar.ceu.Split('|');
+        ceuShort = ceu[0];
+        ceuStmt = ceu[1];
+    }
+    var UpcomingListing = Model.UpcomingListing;
 
-        .title {
-        }
+    string DateTimeString = TtsTemplateHelperObject.FormatTimeWithDuration(webinar.Date, aff.WebUser.timeZone, true, webinar.Duration);
+    string Tenant = TtsTemplateHelperObject.Tenant();
+    string TenantEmail = TtsTemplateHelperObject.TenantEmail();
+    string TenantDomain = TtsTemplateHelperObject.TenantDomain();
+    string TenantURL = TtsTemplateHelperObject.TenantURL();
+    string TenantLogo = TtsTemplateHelperObject.TenantLogo();
+    string TenantPrefix = TtsTemplateHelperObject.TenantPrefix();
+    string TenantCom = TenantDomain + ".com";
 
-        .subTitle {
-            font-size: 11px;
-            font-weight: normal;
-            color: #666666;
-            font-style: italic;
-            font-family: trebuchet ms;
-        }
 
-        td {
-            font-size: 12px;
-            color: #000000;
-            line-height: 100%;
-            font-family: trebuchet ms;
-        }
+    <head>
+        <style type="text/css">
+            /*<![CDATA[*/
+            .sideBarBody {
+                font-family: trebuchet ms;
+                text-align: center;
+                font-size: 8px;
+                color: #000000;
+            }
 
-        .sideColumn {
-            background-color: #FFFFFF;
-            border-left: 1px dashed #CCCCCC;
-            text-align: left;
-        }
+            .sideBarHead {
+                font-family: trebuchet ms;
+                font-weight: bold;
+                text-align: center;
+                font-size: 10px;
+                color: #FF6600;
+                font-weight: bold;
+            }
 
-        .sideColumnText {
-            font-size: 11px;
-            font-weight: normal;
-            color: #999999;
-            font-family: trebuchet ms;
-            line-height: 150%;
-        }
+            .headerTop {
+                background-color: #FFCC66;
+                border-top: 0px solid #000000;
+                border-bottom: 1px solid #FFFFFF;
+                text-align: center;
+            }
 
-        .sideColumnTitle {
-            font-size: 15px;
-            font-weight: bold;
-            color: #333333;
-            font-family: trebuchet ms;
-            line-height: 150%;
-        }
+            .adminText {
+                font-size: 10px;
+                color: #996600;
+                line-height: 200%;
+                font-family: trebuchet ms;
+                text-decoration: none;
+            }
 
-        .footerRow {
-            background-color: #FFFFCC;
-            border-top: 10px solid #FFFFFF;
-        }
+            .headerBar {
+                background-color: #FFFFFF;
+                border-top: 0px solid #333333;
+                border-bottom: 10px solid #FFFFFF;
+            }
 
-        .footerText {
-            font-size: 10px;
-            color: #996600;
-            line-height: 100%;
-            font-family: trebuchet ms;
-        }
+            .title {
+            }
 
-        ul {
-            line-height: 100%;
-        }
+            .subTitle {
+                font-size: 11px;
+                font-weight: normal;
+                color: #666666;
+                font-style: italic;
+                font-family: trebuchet ms;
+            }
 
-        p {
-            font-size: 12px;
-            color: #000000;
-            line-height: 100%;
-            font-family: trebuchet ms;
-        }
-        /*]]>*/
-    </style>
+            td {
+                font-size: 12px;
+                color: #000000;
+                line-height: 100%;
+                font-family: trebuchet ms;
+            }
 
-    <title></title>
-</head>
+            .sideColumn {
+                background-color: #FFFFFF;
+                border-left: 1px dashed #CCCCCC;
+                text-align: left;
+            }
 
-<body leftmargin="0" marginwidth="0" topmargin="0" marginheight="0"
-      offset="0" bgcolor="#FFFFFF">
-    <table width="95%" cellpadding="0" cellspacing="0" bgcolor="#B9D4F2">
-        <tr>
-            <td valign="top" align="center">
-                <p>&#160;</p>#logo#
-            </td>
-        </tr>
+            .sideColumnText {
+                font-size: 11px;
+                font-weight: normal;
+                color: #999999;
+                font-family: trebuchet ms;
+                line-height: 150%;
+            }
 
-        <tr>
-            <td align="center">
-                <table width="600px" cellpadding="20px" cellspacing="0"
-                       bgcolor="#FFFFFF">
-                    <tr>
-                        <td width="400px" valign="top" bordercolor="#000000"
-                            bgcolor="#FFFFFF">
-                            <span style="line-height:150%">#upcomingDetailed#</span>
-                        </td>
+            .sideColumnTitle {
+                font-size: 15px;
+                font-weight: bold;
+                color: #333333;
+                font-family: trebuchet ms;
+                line-height: 150%;
+            }
 
-                        <td width="200" valign="top" style="background-color:#FFFFFF;border-left:1px dashed #CCCCCC;text-align:left;">
-                            <p>
-                                <a href="http://www.bankwebinars.com/Webinar/Calendar?idaff=#idAffiliate#">
-                                    <img alt="Upcoming.jpg" border="0" src="http://www.ttstrain.com/images/email/upcomingwebinars.jpg" />
-                                </a>
-                            </p>
+            .footerRow {
+                background-color: #FFFFCC;
+                border-top: 10px solid #FFFFFF;
+            }
 
-                            <p>#upcoming#</p>
-                            <hr />
+            .footerText {
+                font-size: 10px;
+                color: #996600;
+                line-height: 100%;
+                font-family: trebuchet ms;
+            }
 
-                            <p align="center" class="sideBarHead">
-                                <b>
-                                    Compliance
-                                    Perspectives:&#160; Monthly Update
-                                </b>
-                            </p>
+            ul {
+                line-height: 100%;
+            }
 
-                            <p class="sideBarBody">
-                                We are pleased to offer a
-                                monthly webinar series to help you keep up with
-                                changes and deadlines in the compliance area.&#160;
-                                <a href="http://www.bankwebinars.com/Webinar/Details/883?idaff=#idAffiliate#">
-                                    Click here for more information!
-                                </a>
-                            </p>
-                            <hr />
+            p {
+                font-size: 12px;
+                color: #000000;
+                line-height: 100%;
+                font-family: trebuchet ms;
+            }
+            /*]]>*/
+        </style>
 
-                            <p align="center" class="sideBarHead">
-                                <b>
-                                    Webinar
-                                    Subscription Packages
-                                </b>
-                            </p>
+        <title></title>
+    </head>
 
-                            <p class="sideBarBody">
-                                Would you and your colleagues
-                                like to attend webinars at a lower price?&#160; With
-                                a Webinar Subscription Package, we can help you
-                                greatly reduce that expense.&#160; <a href="http://www.bankwebinars.com/handouts/WebinarFlyer2012-1.pdf">
-                                    Click here to learn more about this cost-saving
-                                    option.
-                                </a>
-                            </p>
-                            <hr />
+    <body leftmargin="0" marginwidth="0" topmargin="0" marginheight="0" offset="0" bgcolor="#FFFFFF">
 
-                            <p align="center" class="sideBarHead">
-                                <b>
-                                    On-Demand
-                                    Webinars Available
-                                </b>
-                            </p>
+        <div style="width: 900px; margin: 0 auto 0 auto; font-family: Arial, Helvetica, sans-serif">
+            <table align="center" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td bgcolor="#212226" colspan="2">
+                        <table align="center" cellpadding="0" cellspacing="0" width="900">
+                            <tbody>
+                                <tr>
+                                    <td align="left" bgcolor="#586B73" style="padding: 10px 0px 0px 15px" width="620">
+                                        <div style="font-size: 20px; color: #ffffff; font-weight: bold; font-family: Arial, Helvetica, sans-serif">
+                                            Featured Events! @aff.DisplayTitle
+                                        </div>
+                                    </td>
+                                    <td align="right" bgcolor="#232B2E" style="padding: 0px 5px 0px 5px" width="280">
+                                        <div style="font-size: 12px; color: #ffffff; font-weight: bold; font-family: Arial, Helvetica, sans-serif">
+                                            @DateTimeString
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <table align="center" cellpadding="0" cellspacing="0" width="900">
+                            <tr bgcolor="#586B73">
+                                <td width="470">
+                                    <img src="http://www.bankwebinars.com/Content/images/email/@aff.ttsDomain/banner.jpg" />
+                                </td>
+                                <td width="230">
+                                    <img src="http://www.bankwebinars.com/Content/images/email/@aff.ttsDomain/bannerCaption1.jpg" />
+                                </td>
+                                <td width="200">
+                                    <p>
+                                        <a href="http://www.bankwebinars.com/Webinar/Calendar?idaff=@aff.idUserAff">
+                                            <img alt="Upcoming.jpg" border="0" src="http://www.bankwebinars.com/Content/images/email/upcomingwebinars1.jpg" />
+                                        </a>
+                                    </p>
+                                </td>
 
-                            <p class="sideBarBody">
-                                Unable to attend the live
-                                session, or interested in a topic of a past
-                                webinar?&#160; Not a problem.&#160; Get the recording
-                                that includes online access to the webinar for six
-                                months as well as an audio CD and materials for
-                                offline viewing. <a href="http://www.bankwebinars.com/Webinar/Recorded?idaff=#idAffiliate#">
-                                    Click here to see all our On-Demand
-                                    Recordings.
-                                </a>
-                            </p>
-                        </td>
-                    </tr>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
 
-                    <tr>
-                        <td valign="top" bordercolor="#000000" bgcolor="#FFFFFF">
-                            &#160;
-                        </td>
+                <tr>
+                    <td style="border: 1px solid #000000; vertical-align: top;" width="620">
+                        <table align="center" border="0" cellpadding="0" cellspacing="0">
+                            <tbody>
+                                <tr>
+                                    <td style="padding: 0px 5px 0px 5px">
+                                        <div id="eventBody">
+                                            <p>Greetings {FIRST_NAME}, </p>
+                                            @Html.Raw(Model.EventBody)
+                                        </div>
 
-                        <td valign="top">
-                            <p>#social#</p>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td style="border-right: 1px solid #000000; vertical-align: top; padding: 0px 5px 0px 5px" bgcolor="#232B2E" width="280">
+                        <table align="center" border="0" cellpadding="0" cellspacing="0" width="250">
+                            <tbody>
+                                <tr>
+                                    <td style="padding: 10px 0px; vertical-align: top; color: bisque;">
 
-        <tr>
-            <td>
-                <table align="center" width="600px" cellpadding="0"
-                       cellspacing="0">
-                    <tr>
-                        <td align="center" width="600px" style="background-color:#FFFFCC;border-top:10px solid #FFFFFF;"
-                            valign="top">
-                            <p>
-                                <span style="font-size:10px;color:#996600;line-height:100%;font-family:trebuchet ms;">
-                                    #footer#
-                                </span>
-                            </p>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-</body>
+                                        @Html.Raw(UpcomingListing)
+                                        <hr />
+                                        <p align="center" class="sideBarHead"><b>Compliance Perspectives: Monthly Update</b></p>
+                                        <p class="sideBarBody">We are pleased to offer a monthly webinar series to help you keep up with changes and deadlines in the compliance area. <a href="http://www.bankwebinars.com/Webinar/Details/883?idaff=@aff.idUserAff" style="color: red; text-decoration: none; border-bottom: 1px dotted red; font-style: italic;">Click here for more information!</a></p>
+                                        <hr />
+                                        <p align="center" class="sideBarHead"><b>Webinar Subscription Packages</b></p>
+                                        <p class="sideBarBody">Would you and your colleagues like to attend webinars at a lower price? With a Webinar Subscription Package, we can help you greatly reduce that expense. <a href="http://www.bankwebinars.com/handouts/WebinarFlyer2012-1.pdf" style="color: red; text-decoration: none; border-bottom: 1px dotted red; font-style: italic;">Click here to learn more about this cost-saving option.</a> </p>
+                                        <hr />
+                                        <p align="center" class="sideBarHead"><b>On-Demand Webinars Available</b></p>
+                                        <p class="sideBarBody">Unable to attend the live session, or interested in a topic of a past webinar? Not a problem. Get the recording that includes online access to the webinar for six months as well as an audio CD and materials for offline viewing. <a href="http://www.bankwebinars.com/Webinar/Recorded?idaff=@aff.idUserAff" style="color: red; text-decoration: none; border-bottom: 1px dotted red; font-style: italic;">Click here to see all our On-Demand Recordings.</a></p>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td bgcolor="#586B73" colspan="2">
+                        <table align="center" cellpadding="10" cellspacing="0" width="640">
+                            <tbody>
+                                <tr>
+                                    <td align="center">
+
+                                        <p>
+                                            A Production of TTS - BankWebinars.com<br />
+
+                                            @aff.ContactPerson - <a style="color: bisque; text-decoration: none; border-bottom: 1px dotted red;" href='mailto:@aff.ContactEmail'>@aff.ContactEmail</a> - @aff.ContactPhone<br />
+                                            <br />
+                                        </p>
+
+                                        @aff.EmailFooter
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </body>
+}
 </html>

@@ -3,6 +3,7 @@ using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using System;
 using System.Collections.Generic;
+using CUWebinars.Business.Notification.ViewModel;
 
 namespace CUWebinars.Business.Services
 {
@@ -31,7 +32,7 @@ namespace CUWebinars.Business.Services
         void FireSendConnectionInfoNotificationEvent(IList<Order> orders, bool resending);
         void FireSendOrderShippedNotificationEvent(IList<Order> orders);
         void FireSendRecordingIsPostedEvent(IList<Order> orders);
-        void FireSendPerDayPromoEvent(IList<Affiliate> affiliates, Webinar webinar);
+        void FireSendPerDayPromoEvent(WebinarPromoViewModel webinarPromoViewModel);
         void FireSendPerWeekPromoEvent(IList<Affiliate> affiliates, Webinar webinar);
         void FireSendReminderNotificationEvent(IList<Order> orders);
         Tuple<string, decimal> GetCostOfAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations, int idWebinar);
@@ -68,5 +69,6 @@ namespace CUWebinars.Business.Services
         void GetJoinUrl(OrderRow row);
         Discount ApplyDiscountCode(string code, OrderRow row);
         void GenerateRegistrantKey(Order order, AdditionalLocation nuller);
+        int GetNumberOfOrdersPerWebinar(int id);
     }
 }

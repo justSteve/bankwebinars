@@ -64,3 +64,32 @@ CUWebinars Information: 0 : MailerSent: showmesomeandroid-test4@yahoo.com.au Sub
 CUWebinars Information: 0 : MailerSent: showmesomeandroid-test3@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Commandments Effective Trainers Live By Timestamp was: 4/02/2015 6:50:47 PM
 CUWebinars Information: 0 : MailerSent: showmesomeandroid-test1@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Opening Accounts for Nonresident Aliens: New W-8BEN, W-8BEN E and Due Diligence Rules Timestamp was: 4/02/2015 6:54:10 PM
 CUWebinars Information: 0 : MailerSent: showmesomeandroid-test2@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Commandments Effective Trainers Live By Timestamp was: 4/02/2015 7:05:32 PM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 7:37:51 AM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 7:48:03 AM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 10:18:20 AM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 10:20:36 AM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 10:22:46 AM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 10:23:17 AM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 10:26:34 AM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 10:41:21 AM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 10:41:34 AM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 10:44:46 AM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 10:45:50 AM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 10:52:29 AM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 10:53:13 AM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 10:57:43 AM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 10:58:43 AM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 11:01:02 AM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 11:25:57 AM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 11:28:31 AM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 11:31:56 AM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 11:34:02 AM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 11:38:49 AM
+CUWebinars Error: 0 : ERROR MailerSmtpException: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By ErrorMsg: The operation has timed out. Timestamp was: 2/9/2015 11:42:36 AM ExceptionType was: SmtpException InnerExceptionType was: 
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 11:42:36 AM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 11:45:05 AM
+CUWebinars Information: 0 : MailerSent: steve@ttstrain.com Subject: [preview-BankWebinars] promo: Commandments Effective Trainers Live By Timestamp was: 2/9/2015 11:52:05 AM
+CUWebinars Error: 0 : Validation failed for webinar 1718 and User 35845
+CUWebinars Error: 0 : Validation failed for webinar 1718 and User 35846
+CUWebinars Error: 0 : Validation failed for webinar 1718 and User 35850
+CUWebinars Error: 0 : Validation failed for webinar 1718 and User 35851

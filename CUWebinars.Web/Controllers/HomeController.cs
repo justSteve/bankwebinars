@@ -1,6 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using CUWebinars.Business.Core;
+using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
+using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
+using CUWebinars.Web.ViewModel;
 using Ninject.Extensions.Logging;
 using System.Linq;
 using System.ServiceModel.Syndication;
@@ -23,21 +29,6 @@ namespace CUWebinars.Web.Controllers
             _logger = logger;
         }
 
-
-        public ActionResult RssFeedOfAddedEvents()
-        {
-            //http://office.microsoft.com/en-us/office365-sharepoint-online-small-business-help/basic-tasks-in-sharepoint-online-for-office-365-for-professionals-and-small-businesses-HA101988906.aspx#_Toc272147708
-
-            string strFeed =
-                "https://totaltrainingsolutions-public.sharepoint.com/_layouts/15/listfeed.aspx?List={09364DB1-2255-406E-9CB6-45FE64C0D341}";
-
-            using (XmlReader reader = XmlReader.Create(strFeed))
-            {
-                SyndicationFeed rssData = SyndicationFeed.Load(reader);
-
-                return PartialView(rssData);
-            }
-        }
         public ActionResult PrivacyStatement()
         {
             ViewBag.PageStyleType = "two-columns-right-sidebar";
@@ -73,7 +64,7 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
-    public ActionResult ContactUs()
+        public ActionResult ContactUs()
         {
             ViewBag.PageStyleType = "two-columns-right-sidebar";
             return View();

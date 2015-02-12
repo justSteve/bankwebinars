@@ -48,27 +48,27 @@
 
     var isFirstOrderForThisUser = true;
 
-    thankYouPhrase.Append("Dear " + Model.Order.FirstName + ",<br /><br />Thank you for your order for <b>");
+    thankYouPhrase.Append("Dear " + Model.Order.FirstName + ",<br /><br />Thank you for the <b>");
     thankYouPhrase.Append(row.Single().RegistrationType.OptionLabel);
-    thankYouPhrase.Append("</b> of <i>" + row.Single().Webinar.Title + "</i>");
+    thankYouPhrase.Append("</b> registration to <i>" + row.Single().Webinar.Title + "</i>");
 
     switch (Model.OrderGenesis)
     {
         case OrderGenesis.CreatedViaCartByExistingUser:
+            thankYouPhrase.Append(". ");
             break;
         case OrderGenesis.CreatedViaCartByNewUser:
             thankYouPhrase.Append(". When your order was submitted, we created an account and requested that you enter a new password. In case you missed that prompt or don't recall entering a password, please visit <b><a href=" + Model.AddPasswordUrl + ">Set My Password</a></b> or paste this URL into your browser:<i>" + Model.AddPasswordUrl + "</i>.");
             break;
         case OrderGenesis.ImportedForExistingUser:
+            thankYouPhrase.Append(" - placed for you by " + Model.Order.Affiliate.DisplayTitle + ". ");
             break;
         case OrderGenesis.ImportedForNewUser:
             thankYouPhrase.Append(" - placed for you by " + Model.Order.Affiliate.DisplayTitle + ". ");
 
             if (isFirstOrderForThisUser)
             {
-
-                thankYouPhrase.Append(". We've created an account and request that you confirm this transaction by visiting (or pasting this address to your browser) <a href=" + Model.ConfirmChangeEmailUrl + "><b>" + Model.ConfirmChangeEmailUrl + "</b></a>");
-
+                thankYouPhrase.Append("We've created an account and request that you confirm this transaction by visiting (or pasting this address to your browser) <a href=" + Model.ConfirmChangeEmailUrl + "><b>" + Model.ConfirmChangeEmailUrl + "</b></a>.");
             }
             break;
     }
@@ -340,7 +340,7 @@
                                                                         <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
                                                                             <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
                                                                                 <b>
-                                                                                    @row.Single().Order.Total
+                                                                                    $@row.Single().Order.Total.ToString().Replace(".0000", "")
                                                                                 </b>
                                                                             </span>
                                                                         </td>
@@ -594,7 +594,7 @@
                                     </td>
                                     <td align="right" style="padding-top: 10px;">
                                         <div style="color: rgb(255, 255, 255); font-size: 11px;">
-                                            <p style="width: 274px; height: 59px;" title="footer" vspace="0" width="274" >Tel: 800-831-0678<br/>Fax: 800-831-3776</p>
+                                            <p style="width: 274px; height: 59px;" title="footer" vspace="0" width="274">Tel: 800-831-0678<br />Fax: 800-831-3776</p>
                                         </div>
                                     </td>
                                 </tr>

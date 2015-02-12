@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Constants;
+﻿using System.Text.RegularExpressions;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Notification.Formatters;
@@ -37,25 +38,26 @@ namespace CUWebinars.Business.Notification.Handlers
 
         public virtual void Process(SendPerDayPromoEvent<T> sendPerDayPromoEvent)
         {
+            string sPattern = @"<img[^>]+/>";
+            Regex rgx = new Regex(sPattern);
+            Match m = rgx.Match(sendPerDayPromoEvent.EventObject.Webinar.Presenter.BiographyLong);
+            //HACK: Parse out the photo from the bio and carry the result via the no longer used EventBody.
+            if (m.Success)
+                sendPerDayPromoEvent.EventObject.EventBody = rgx.Replace(sendPerDayPromoEvent.EventObject.Webinar.Presenter.BiographyLong, "");
             try
             {
-                var persistedNamePrefix = "SendPerWeekPromo";                
-                if (sendPerDayPromoEvent.EventObject.TemplateType == "PerDay")
-                {
-                    persistedNamePrefix = "SendPerDayPromo";
-                }
-
+                var persistedNamePrefix = "PerWeekPromo" + '_' + sendPerDayPromoEvent.EventObject.Affiliate.ttsDomain + '_';
                 var notificationMessage = _generalFormatter
                     .Format(sendPerDayPromoEvent.EventObject, "SendPerDayPromo");
 
-                
+
                 notificationMessage.PersistedName = string.Format("{0}-{1}{2}",
                     persistedNamePrefix,
                     DateTime.Now.ToString(DomainConstants.DateTimeLongFormat),
                     ".htm"
                     );
 
-//                notificationMessage.To = sendPerDayPromoEvent.EventObject.Affiliate.WebUser.email;
+                //                notificationMessage.To = sendPerDayPromoEvent.EventObject.Affiliate.WebUser.email;
                 notificationMessage.To = "steve@ttstrain.com";
                 _notificationDelivery.Notify(notificationMessage);
             }

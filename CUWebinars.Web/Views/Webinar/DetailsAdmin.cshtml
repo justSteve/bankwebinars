@@ -37,6 +37,8 @@
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/create-order-affiliate")
     @Scripts.Render("~/bundles/manage-webinar-files")
+    <script src="@Url.Content("~/Scripts/app/notification-ops/order-event-notifications.js")"></script>
+    <script src="@Url.Content("~/Scripts/app/notification-ops/membership-notifications.js")"></script>
 }
 
 @Styles.Render("~/Content/create-order-details")
@@ -58,7 +60,7 @@
         <!--begin row-fluid-->
         <section class="span3 sidebar">
             <aside class="widget well-large">
-                
+
                 <h5 class="short_headline"><span>Date/Time</span></h5>
 
                 @if (Model.Webinar.Status == WebinarStatus.Recorded)
@@ -106,8 +108,8 @@
         <div class="span6">
             @{
                 if (Model.Webinar.Status != WebinarStatus.Archived
-                                                                    && Model.Webinar.Status != WebinarStatus.Deleted
-                                                                    && Model.Webinar.Status != WebinarStatus.Pending)
+                                                                                            && Model.Webinar.Status != WebinarStatus.Deleted
+                                                                                            && Model.Webinar.Status != WebinarStatus.Pending)
                 {
                     <div id="SignUpFormContainer" class="row-fluid">
 

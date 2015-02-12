@@ -432,7 +432,7 @@ namespace CUWebinars.Web.Controllers
         {
             try
             {
-                
+
                 var orders = _orderManagementService.GetOrdersForRecordedNotifications(webinarId);
 
                 if (orders.Any())
@@ -500,9 +500,9 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 ViewData["Expired"] = "This recording has expired. ";
-                    // [dar] how are we using this? Do we have plans for it?
+                // [dar] how are we using this? Do we have plans for it?
                 return View();
-                
+
             }
             return null;
         }
@@ -973,88 +973,94 @@ namespace CUWebinars.Web.Controllers
         //[ValidateInput(false)]
         public ActionResult UpdateConnectionInfo(ConnectionInfoEditModel connectionInfoModel)
         {
-            //using (var client = new System.Net.WebClient())
-            //{
-            //TODO: Figure out how to authenticate and then pass URL
-
-            //var filename = System.IO.Path.GetTempFileName();
-
-            //client.DownloadFile(model.ManageURL, filename);
-            
-            var doc = new HtmlAgilityPack.HtmlDocument();
-            //doc.Load(filename);
-            doc.LoadHtml(connectionInfoModel.ManageURL);
-
-            var root = doc.DocumentNode;
-            var audio_node = root.SelectNodes("//*[text()[contains(., 'Access')]]");
-
-            var citrixRegisterUrl = "";
-            var accessCodeAttendee = "";
-            var accessCodePresenter = "";
-            var accessCodeOrganizer = "";
-            var webinarKey = "";
-            var accessPhone = "";
-
-            webinarKey = root.SelectSingleNode("//span[contains(@id,'WebinarInfoID')]").InnerHtml;
-            webinarKey = webinarKey.Replace("-", "").Trim();
-            accessPhone = root.SelectSingleNode("//*[text()[contains(., 'Toll-')]]").InnerHtml;
-            accessPhone = Regex.Split(accessPhone, @"\<br\>")[1].Replace("Toll-free: 1 ", "").Trim().Replace(" ", "-");
-
-
-            citrixRegisterUrl = root.SelectSingleNode("//a[contains(@id,'registrationURL')]").InnerHtml;
-            foreach (var a_node in audio_node.Nodes())
+            try
             {
-                if (a_node.InnerHtml.Contains("Panelist"))
+                //using (var client = new System.Net.WebClient())
+                //{
+                //TODO: Figure out how to authenticate and then pass URL
+
+                //var filename = System.IO.Path.GetTempFileName();
+
+                //client.DownloadFile(model.ManageURL, filename);
+
+                var doc = new HtmlAgilityPack.HtmlDocument();
+                //doc.Load(filename);
+                doc.LoadHtml(connectionInfoModel.ManageURL);
+
+                var root = doc.DocumentNode;
+                var audio_node = root.SelectNodes("//*[text()[contains(., 'Access')]]");
+
+                var citrixRegisterUrl = "";
+                var accessCodeAttendee = "";
+                var accessCodePresenter = "";
+                var accessCodeOrganizer = "";
+                var webinarKey = "";
+                var accessPhone = "";
+
+                webinarKey = root.SelectSingleNode("//span[contains(@id,'WebinarInfoID')]").InnerHtml;
+                webinarKey = webinarKey.Replace("-", "").Trim();
+                accessPhone = root.SelectSingleNode("//*[text()[contains(., 'Toll-')]]").InnerHtml;
+                accessPhone = Regex.Split(accessPhone, @"\<br\>")[1].Replace("Toll-free: 1 ", "").Trim().Replace(" ", "-");
+
+
+                citrixRegisterUrl = root.SelectSingleNode("//a[contains(@id,'registrationURL')]").InnerHtml;
+                foreach (var a_node in audio_node.Nodes())
                 {
-                    accessCodePresenter = a_node.ParentNode.OuterHtml.Split(':')[1].Trim().Split(' ')[0];
+                    if (a_node.InnerHtml.Contains("Panelist"))
+                    {
+                        accessCodePresenter = a_node.ParentNode.OuterHtml.Split(':')[1].Trim().Split(' ')[0];
+                    }
+                    if (a_node.InnerHtml.Contains("Organizer"))
+                    {
+                        accessCodeOrganizer = a_node.ParentNode.OuterHtml.Split(':')[1].Trim().Split(' ')[0];
+                    }
+
+                    if (a_node.InnerHtml.Contains("Attendee"))
+                    {
+                        accessCodeAttendee = a_node.ParentNode.OuterHtml.Split(':')[1].Trim().Split(' ')[0];
+                    }
                 }
-                if (a_node.InnerHtml.Contains("Organizer"))
+                //}
+
+                //Console.ReadKey();
+
+                var webinar = _webinarManagementService.GetWebinar(connectionInfoModel.idWebinar);
+                webinar.AccessCodeAttendee = accessCodeAttendee;
+                webinar.AccessCodeOrganizer = accessCodeOrganizer;
+                webinar.AccessCodePresenter = accessCodePresenter;
+                webinar.AccessPhone = accessPhone;
+                webinar.CitrixRegisterUrl = citrixRegisterUrl;
+                webinar.OrganizerOAuthKey = connectionInfoModel.OrganizerOAuthKey;
+                webinar.OrganizerKey = connectionInfoModel.OrganizerKey;
+                webinar.WebinarKey = webinarKey.Trim();
+
+                if (citrixRegisterUrl == "" ||
+                    accessCodeAttendee == "" ||
+                    accessCodePresenter == "" ||
+                    accessCodeOrganizer == "" ||
+                    webinarKey == "" ||
+                    accessPhone == "")
                 {
-                    accessCodeOrganizer = a_node.ParentNode.OuterHtml.Split(':')[1].Trim().Split(' ')[0];
+
+
+                    return Json(new { Result = WebUiConstants.Fail });
                 }
 
-                if (a_node.InnerHtml.Contains("Attendee"))
-                {
-                    accessCodeAttendee = a_node.ParentNode.OuterHtml.Split(':')[1].Trim().Split(' ')[0];
-                }
-            }
-            //}
-            
-            //Console.ReadKey();
+                webinar.Status = WebinarStatus.Active;
 
-            var webinar = _webinarManagementService.GetWebinar(connectionInfoModel.idWebinar);
-            webinar.AccessCodeAttendee = accessCodeAttendee;
-            webinar.AccessCodeOrganizer = accessCodeOrganizer;
-            webinar.AccessCodePresenter = accessCodePresenter;
-            webinar.AccessPhone = accessPhone;
-            webinar.CitrixRegisterUrl = citrixRegisterUrl;
-            webinar.OrganizerOAuthKey = connectionInfoModel.OrganizerOAuthKey;
-            webinar.OrganizerKey = connectionInfoModel.OrganizerKey;
-            webinar.WebinarKey = webinarKey.Trim();
-
-            _webinarManagementService.UpdateWebinar(webinar);
-            if (citrixRegisterUrl == "" ||
-                accessCodeAttendee == "" ||
-                accessCodePresenter == "" ||
-                accessCodeOrganizer == "" ||
-                webinarKey == "" ||
-                accessPhone == "")
-            {
-
-
+                _webinarManagementService.UpdateWebinar(webinar);
                 return Json(new { Result = WebUiConstants.Success });
+
             }
-            else
+            catch (Exception exception)
             {
+                _logger.ErrorException(
+                    string.Format("UpdateConnectionInfo | Session {0}", _appHelper.GetUserAuditInfo()), exception);
+                ModelState.AddModelError(string.Empty, WebUiConstants.ServerErrorWithAssistNumber);
 
-                return Json(new { Result = WebUiConstants.Success });
-                //_logger.ErrorException(
-                //    string.Format("UpdateConnectionInfo | Session {0}", _appHelper.GetUserAuditInfo()), exception);
-                //ModelState.AddModelError(string.Empty, WebUiConstants.ServerErrorWithAssistNumber);
+                return Json(new { Result = WebUiConstants.Fail });
             }
 
-
-            return this.ModelStateJson(ModelState);
         }
 
         public ActionResult CreateICSForWebinar(int id)
@@ -1293,6 +1299,7 @@ namespace CUWebinars.Web.Controllers
         }
         public ActionResult UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel)
         {
+            // 
 
             Webinar webinar = _webinarManagementService.GetWebinar(webinarDetailsViewModel.Webinar.idWebinar);
             try
@@ -1319,9 +1326,9 @@ namespace CUWebinars.Web.Controllers
                     );
 
                 webinar.RecordingUrl = webinarDetailsViewModel.Webinar.RecordingUrl;
-                
+
                 webinar.Status = WebinarStatus.Recorded;
-                
+
                 //var sendRecording = SendRecordingPosted();
 
                 _webinarManagementService.UpdateWebinar(webinar);

@@ -394,6 +394,16 @@ namespace CUWebinars.Business.Repository
             return myDiscount;
         }
 
+        public int GetNumberOfOrdersPerWebinar(int id)
+        {
+
+            return items.Count(o => o.OrderRows.FirstOrDefault().RowStatus == OrderRowStatus.Active &&  (o.OrderStatus == OrderStatus.Submitted
+                || o.OrderStatus == OrderStatus.Paid
+                || o.OrderStatus == OrderStatus.Billed
+                ));
+
+        }
+
         //public IList<AdditionalLocation> GetAdditionalLocations(int idOrder)
         //{
         //    var additionalLocations = items
