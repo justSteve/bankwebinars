@@ -62,7 +62,8 @@
                                 AccessCodeAttendee= Model.Webinar.AccessCodeAttendee,
                                 AccessCodeOrganizer= Model.Webinar.AccessCodeOrganizer,
                                 CitrixRegisterURL= Model.Webinar.CitrixRegisterUrl,
-                                AccessCodePresenter= Model.Webinar.AccessCodePresenter
+                                AccessPhone= Model.Webinar.AccessPhone,
+                                AccessCodePresenter = Model.Webinar.AccessCodePresenter
                             };
                             //Active means the connection info has been generated. This form shows
                             // the relevant fields and offers to update them
@@ -76,12 +77,12 @@
                                         <li>
                                             @Html.Partial(@"Partials/_UpdateWebinarFiles", connInfoModel)
                                         </li>
-                                        <li>
+                                        @*<li>
                                             @Html.Partial(@"Partials/_ListOrders", connInfoModel)
-                                        </li>
-                                        <li>
+                                        </li>*@
+                                        @*<li>
                                             @Html.Partial(@"Partials/_UpdateRecording")
-                                        </li>
+                                        </li>*@
 
                                     </ul>
                                 </div>
