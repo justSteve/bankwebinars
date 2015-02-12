@@ -4,8 +4,34 @@
 @functions {
 
 }
-
 @{
+    var editWebinarFiles = new WebinarFilesEditModel
+    {
+        WebinarFiles = Model.Webinar.WebinarFiles
+    };
+    
+    var connectionInfoEditModel = new ConnectionInfoEditModel
+    {
+        idWebinar = Model.Webinar.idWebinar,
+        OrganizerKey = Model.Webinar.OrganizerKey,
+        OrganizerOAuthKey = Model.Webinar.OrganizerOAuthKey,
+        WebinarKey = Model.Webinar.WebinarKey,
+        AccessCodeAttendee = Model.Webinar.AccessCodeAttendee,
+        AccessCodeOrganizer = Model.Webinar.AccessCodeOrganizer,
+        CitrixRegisterURL = Model.Webinar.CitrixRegisterUrl,
+        AccessPhone = Model.Webinar.AccessPhone,
+        AccessCodePresenter = Model.Webinar.AccessCodePresenter
+    };
+
+    var postEventInfoModel = new PostEventInfoModel
+    {
+        idWebinar = Model.Webinar.idWebinar,
+        OrganizerKey = Model.Webinar.OrganizerKey,
+        OrganizerOAuthKey = Model.Webinar.OrganizerOAuthKey,
+        RecordingURL = Model.Webinar.RecordingUrl,
+        WebinarFiles = Model.Webinar.WebinarFiles
+    };
+
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 }
 
@@ -19,14 +45,7 @@
                 {
                     case WebinarStatus.Recorded:
                         {
-                            var recInfoModel = new PostEventInfoModel
-                            {
-                                idWebinar = Model.Webinar.idWebinar,
-                                OrganizerKey = Model.Webinar.OrganizerKey,
-                                OrganizerOAuthKey = Model.Webinar.OrganizerOAuthKey,
-                                RecordingURL = Model.Webinar.RecordingUrl,
-                                WebinarFiles = Model.Webinar.WebinarFiles
-                            };
+
 
 
                             <div class="navbar">
@@ -36,11 +55,10 @@
                                             <a href="@globalConfig.WMVRepository@Model.Webinar.RecordingUrl">@globalConfig.WMVRepository@Model.Webinar.RecordingUrl </a>
                                         </li>
                                         <li>
-                                            @Html.Partial(@"Partials/_ShippingReport", recInfoModel)
+                                            @Html.Partial(@"Partials/_ShippingReport", postEventInfoModel)
                                         </li>
                                         <li>
-                                                @{ Html.RenderPartial("DisplayTemplates/HandoutsListing", Model.Webinar); }
-                                            
+                                            @Html.Partial(@"DisplayTemplates/HandoutsListing", editWebinarFiles); 
                                         </li>
                                         <li>
                                             @Html.Partial(@"Partials/_UpdateRecording")
@@ -48,23 +66,11 @@
                                     </ul>
                                 </div>
                             </div>
-                            break;
+                                             break;
                         }
                     case WebinarStatus.Active:
                         {
-                            var connInfoModel = new ConnectionInfoModel
-                            {
-                                idWebinar = Model.Webinar.idWebinar,
-                                OrganizerKey = Model.Webinar.OrganizerKey,
-                                OrganizerOAuthKey = Model.Webinar.OrganizerOAuthKey,
-                                WebinarFiles = Model.Webinar.WebinarFiles,
-                                WebinarKey = Model.Webinar.WebinarKey,
-                                AccessCodeAttendee= Model.Webinar.AccessCodeAttendee,
-                                AccessCodeOrganizer= Model.Webinar.AccessCodeOrganizer,
-                                CitrixRegisterURL= Model.Webinar.CitrixRegisterUrl,
-                                AccessPhone= Model.Webinar.AccessPhone,
-                                AccessCodePresenter = Model.Webinar.AccessCodePresenter
-                            };
+
                             //Active means the connection info has been generated. This form shows
                             // the relevant fields and offers to update them
 
@@ -72,17 +78,17 @@
                                 <div class="navbar-inner">
                                     <ul class="nav">
                                         <li class="active">
-                                            @Html.Partial(@"Partials/_UpdateConnectionInfo", connInfoModel)
+                                            @Html.Partial(@"Partials/_UpdateConnectionInfo", connectionInfoEditModel)
                                         </li>
                                         <li>
-                                            @Html.Partial(@"Partials/_UpdateWebinarFiles", connInfoModel)
+                                            @Html.Partial(@"Partials/_UpdateWebinarFiles", editWebinarFiles)
                                         </li>
                                         @*<li>
-                                            @Html.Partial(@"Partials/_ListOrders", connInfoModel)
-                                        </li>*@
+                                                @Html.Partial(@"Partials/_ListOrders", connInfoModel)
+                                            </li>*@
                                         @*<li>
-                                            @Html.Partial(@"Partials/_UpdateRecording")
-                                        </li>*@
+                                                @Html.Partial(@"Partials/_UpdateRecording")
+                                            </li>*@
 
                                     </ul>
                                 </div>
@@ -91,25 +97,18 @@
                         }
                     case WebinarStatus.Scheduled:
                         {
-                            var connInfoModel = new ConnectionInfoModel
-                            {
-                                idWebinar = Model.Webinar.idWebinar,
-                                OrganizerKey = Model.Webinar.OrganizerKey,
-                                OrganizerOAuthKey = Model.Webinar.OrganizerOAuthKey,
-                                WebinarFiles = Model.Webinar.WebinarFiles
-                            };
                             <div class="navbar">
                                 <div class="navbar-inner">
                                     <ul class="nav">
                                         <li class="active">
-                                            @Html.Partial(@"Partials/_UpdateConnectionInfo", connInfoModel)
+                                            @Html.Partial(@"Partials/_UpdateConnectionInfo", connectionInfoEditModel)
                                         </li>
                                         <li>
-                                            @Html.Partial(@"Partials/_UpdateWebinarFiles", connInfoModel)
+                                            @Html.Partial(@"Partials/_UpdateWebinarFiles")
                                         </li>
-                                        <li>
-                                            @Html.Partial(@"Partials/_ListOrders", connInfoModel)
-                                        </li>
+                                        @*<li>
+                                            @Html.Partial(@"Partials/_ListOrders", connectionInfoEditModel)
+                                        </li>*@
                                     </ul>
                                 </div>
                             </div>
@@ -126,6 +125,8 @@
         </div>
     </div>
 </section>
+
+
 
 <script type="text/javascript">
 
