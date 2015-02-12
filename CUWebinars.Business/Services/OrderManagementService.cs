@@ -539,6 +539,7 @@ namespace CUWebinars.Business.Services
 
             AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
             {
+                Details = order.NotificationStorage,
                 EventObject = orderSubmittedViewModel,
                 RelativePath = addPasswordUrl,
                 ResendEvent = resending

@@ -10,6 +10,7 @@ namespace CUWebinars.Web.Helpers
         /// <returns>City | State based on input zipcode</returns>
         string GetCityStateFromZip(int zipCode);
 
+        SessionStartInfo GetSessionStartInfo();
         string GetUserAuditInfo();
         List<string> InstitutionAutoComplete(string name, string zip);
     }

@@ -10,6 +10,7 @@ using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
+using Newtonsoft.Json;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -509,6 +510,13 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public void FireOrderSubmittedNotification(Order order, bool? userCreatedInCart = null)
         {
+            var notificationStorage = new NotificationStorage
+            {
+                idOrder = order.idOrder,
+                SessionStartInfo = _appHelper.GetSessionStartInfo()
+            };
+            
+            order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
 
             if (userCreatedInCart.HasValue)
                 _orderManagementService.FireOrderSubmittedEvent(order, userCreatedInCart.Value, url: Request.Url);

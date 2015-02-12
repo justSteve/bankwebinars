@@ -93,3 +93,8 @@ CUWebinars Error: 0 : Validation failed for webinar 1718 and User 35845
 CUWebinars Error: 0 : Validation failed for webinar 1718 and User 35846
 CUWebinars Error: 0 : Validation failed for webinar 1718 and User 35850
 CUWebinars Error: 0 : Validation failed for webinar 1718 and User 35851
+CUWebinars Error: 0 : ERROR MailerSmtpException: showmesomeandroid-test997@yahoo.com.au, steve@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Excel Explained: Internal Control ErrorMsg: The operation has timed out. Timestamp was: 12/02/2015 10:08:05 PM ExceptionType was: SmtpException InnerExceptionType was: 
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test997@yahoo.com.au, steve@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Excel Explained: Internal Control Timestamp was: 12/02/2015 10:08:05 PM
+CUWebinars Error: 0 : ERROR MailerSmtpException: showmesomeandroid-test996@yahoo.com.au, steve@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Appraisal Review for Residential Mortgage Decisions ErrorMsg: The operation has timed out. Timestamp was: 12/02/2015 10:15:58 PM ExceptionType was: SmtpException InnerExceptionType was: 
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test996@yahoo.com.au, steve@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Appraisal Review for Residential Mortgage Decisions Timestamp was: 12/02/2015 10:15:58 PM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test995@yahoo.com.au, steve@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: For Sales Managers: How to Hire Better Bankers Who Can Sell Timestamp was: 12/02/2015 10:47:10 PM

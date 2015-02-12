@@ -4,6 +4,7 @@ using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Notification.Formatters;
 using CUWebinars.Business.Notification.ViewModel;
 using CUWebinars.NotificationSystem.Event;
+using Newtonsoft.Json;
 using Ninject.Extensions.Logging;
 using System;
 
@@ -55,6 +56,10 @@ namespace CUWebinars.Business.Notification.Handlers
                     DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), 
                     ".htm"
                     );
+
+                string details = orderSubmittedEvent.Details;
+                orderSubmittedEvent.Details = 
+                    details.Insert(details.Length - 1, string.Concat(",", @"""Msg", '"', @":", '"', notificationMessage.PersistedName, '"'));
 
                 notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail + ", steve@ttstrain.com";
                 _notificationDelivery.Notify(notificationMessage);
