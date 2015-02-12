@@ -232,6 +232,11 @@ namespace CUWebinars.Business.Services
             return _regTypeRepository.FindRegTypesByWebinarId(id, false);
         }
 
+        public RegType GetRegTypeOfOrderRow(int idRegType)
+        {
+            return _regTypeRepository.FindRegType(idRegType);
+        }
+
         public IList<RegType> GetRegTypeOption(int optionId)
         {
             return _regTypeRepository.FindRegTypeOption(optionId);

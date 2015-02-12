@@ -1303,6 +1303,21 @@ namespace CUWebinars.Web.Controllers
                     return Json(new { result = webinarDetailsViewModel.Webinar.RecordingUrl + "does not exist." });
                 }
 
+                var webUserOrderer = _orderManagementService.GetWebUser(webinarDetailsViewModel.Order.idUser);
+                
+                var userAccountOfOrderer = _membershipService.GetUserAccountByEmail(
+                    _globalConfig.Tenant,
+                    webUserOrderer.email
+                    );
+
+                var expiryDate = GetPostEventMaterialsAccessExpiry(webinarDetailsViewModel.Order);
+
+                _membershipService.AddClaim(
+                    userAccountOfOrderer, 
+                    Business.Constants.ClaimTypes.DisplayPostEventMaterials, 
+                    string.Concat(webinarDetailsViewModel.Order.idOrder,":", expiryDate.ToString("yyyy-MM-dd"))
+                    );
+
                 webinar.RecordingUrl = webinarDetailsViewModel.Webinar.RecordingUrl;
                 
                 webinar.Status = WebinarStatus.Recorded;
@@ -1322,6 +1337,20 @@ namespace CUWebinars.Web.Controllers
             }
 
             return this.ModelStateJson(ModelState);
+        }
+
+        private DateTime GetPostEventMaterialsAccessExpiry(Order order)
+        {
+            if (order == null) throw new ArgumentNullException("order");
+            
+            var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active); // let exception be thrown if there is not a single 
+
+            var regType = _orderManagementService.GetRegTypeOfOrderRow(orderRow.idRegType);
+
+            if (regType.ShowRecordingNotifications.Equals("yes", StringComparison.OrdinalIgnoreCase))
+                return DateTime.Today.AddMonths(6);
+
+            return DateTime.Today.AddDays(5);
         }
     }
 }
