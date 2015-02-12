@@ -1173,7 +1173,7 @@ namespace CUWebinars.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult UpdateWebinarFiles(ConnectionInfoModel connectionInfoModel)
+        public ActionResult UpdateWebinarFiles(WebinarFilesEditModel webinarFilesEditModel)
         {
             /*
                 This is a batch update operation. The WebinarFiles collection contains the webinar files to be updated. 
@@ -1185,12 +1185,12 @@ namespace CUWebinars.Web.Controllers
 
             try
             {
-                var deletedFiles = connectionInfoModel.WebinarFiles.Where(f => f.fileDesc.EndsWith("-D")).ToList();
+                var deletedFiles = webinarFilesEditModel.WebinarFiles.Where(f => f.fileDesc.EndsWith("-D")).ToList();
                 var newFiles =
-                    connectionInfoModel.WebinarFiles.Where(f => f.idWebinarFile == 0 && !f.fileDesc.EndsWith("-ND"))
+                    webinarFilesEditModel.WebinarFiles.Where(f => f.idWebinarFile == 0 && !f.fileDesc.EndsWith("-ND"))
                         .ToList();
                 var updatedFiles =
-                    connectionInfoModel.WebinarFiles.Where(f => f.idWebinarFile > 0 && !f.fileDesc.EndsWith("-D"))
+                    webinarFilesEditModel.WebinarFiles.Where(f => f.idWebinarFile > 0 && !f.fileDesc.EndsWith("-D"))
                         .ToList();
 
                 foreach (var webinarFile in newFiles)

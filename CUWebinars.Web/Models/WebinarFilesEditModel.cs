@@ -4,8 +4,10 @@ using CUWebinars.Business.Models;
 
 namespace CUWebinars.Web.Models
 {
-    public class ConnectionInfoModel
+    public class WebinarFilesEditModel
     {
+
+        public int idWebinar { get; set; }
         public ICollection<WebinarFile> WebinarFiles { get; set; }
     }
 }

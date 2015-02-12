@@ -498,7 +498,7 @@
     <Compile Include="Membership\Email\AzureWebJobSmtpMessageDelivery.cs" />
     <Compile Include="Membership\PasswordGenerator.cs" />
     <Compile Include="Models\AdminDTO.cs" />
-    <Compile Include="Models\ConnectionInfoModel.cs" />
+    <Compile Include="Models\WebinarFilesEditModel.cs" />
     <Compile Include="Models\EditBillingAddressModel.cs" />
     <Compile Include="Models\EditInstitionModel.cs" />
     <Compile Include="Models\EditNameTitleModel.cs" />
