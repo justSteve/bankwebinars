@@ -64,6 +64,7 @@ namespace CUWebinars.Business.Models.Mapping
             Property(t => t.TaxExempt).HasColumnName("TaxExempt");
             Property(t => t.ShippingPhone).HasColumnName("ShippingPhone");
             Property(t => t.Origin).HasColumnName("Origin");
+            Property(t => t.NotificationStorage).HasColumnName("NotificationStorage");
 
             
             

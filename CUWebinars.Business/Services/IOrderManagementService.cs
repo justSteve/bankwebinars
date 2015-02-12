@@ -46,7 +46,7 @@ namespace CUWebinars.Business.Services
         IEnumerable<Order> GetOrdersForShippedNotification();
         OrderRow GetOrderRowById(int idOrderRow);
         IDictionary<RegType, bool> GetRegTypesByWebinarId(int id, bool detached);
-        RegType GetRegTypeOfOrderRow(int idOrderRow);
+        RegType GetRegTypeOfOrderRow(int idRegType);
         IList<RegType> GetRegTypeOption(int optionId);
         WebUser GetWebUser(string email);
         WebUser GetWebUser(int id);

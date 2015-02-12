@@ -1,5 +1,4 @@
-﻿using CUWebinars.Business.Models;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace CUWebinars.Web.Models
 {
@@ -10,6 +9,17 @@ namespace CUWebinars.Web.Models
         public string OrganizerKey { get; set; }
         public string OrganizerOAuthKey { get; set; }
 
-        public ICollection<WebinarFile> WebinarFiles { get; set; }
+        [Display(Name = "Citrix Key")]
+        public string WebinarKey { get; set; }
+        public string CitrixRegisterURL { get; set; }
+
+        [Display(Name = "Webinar Phone Number")]
+        public string AccessPhone { get; set; }
+        [Display(Name = "Attendee Code")]
+        public string AccessCodeAttendee { get; set; }
+        [Display(Name = "Presenter Code")]
+        public string AccessCodePresenter { get; set; }
+        [Display(Name = "Organizer Code")]
+        public string AccessCodeOrganizer { get; set; }
     }
 }

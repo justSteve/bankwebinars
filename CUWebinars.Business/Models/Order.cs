@@ -45,7 +45,6 @@ namespace CUWebinars.Business.Models
         public virtual Affiliate Affiliate { get; set; }
         public virtual ICollection<OrderRow> OrderRows { get; set; }
         public virtual WebUser WebUser { get; set; }
-
-
+        public string NotificationStorage { get; set; }
     }
 }

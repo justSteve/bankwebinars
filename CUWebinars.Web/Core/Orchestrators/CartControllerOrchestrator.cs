@@ -509,6 +509,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public void FireOrderSubmittedNotification(Order order, bool? userCreatedInCart = null)
         {
+
             if (userCreatedInCart.HasValue)
                 _orderManagementService.FireOrderSubmittedEvent(order, userCreatedInCart.Value, url: Request.Url);
             else

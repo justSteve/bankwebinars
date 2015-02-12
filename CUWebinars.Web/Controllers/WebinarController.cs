@@ -1300,7 +1300,7 @@ namespace CUWebinars.Web.Controllers
                 var checkThatNewFilesExist = CheckThatRecordingExists(webinarDetailsViewModel.Webinar.RecordingUrl);
                 if (!checkThatNewFilesExist)
                 {
-                    return Json(new { result = webinarDetailsViewModel.Webinar.RecordingUrl + "does not exist." });
+                    return Json(new { result = webinarDetailsViewModel.Webinar.RecordingUrl + " does not exist." });
                 }
 
                 var webUserOrderer = _orderManagementService.GetWebUser(webinarDetailsViewModel.Order.idUser);

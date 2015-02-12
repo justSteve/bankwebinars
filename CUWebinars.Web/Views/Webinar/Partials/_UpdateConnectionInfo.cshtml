@@ -54,20 +54,6 @@
                         @Html.ValidationMessageFor(model => model.ManageURL)
                     </div>
                 </div>
-                                
-                <div id="webinarFilesSelected" class="hidden">
-                    @{
-                        int idx = 0;
-                    }
-                    @foreach (var file in Model.WebinarFiles)
-                    {
-                            <input type="hidden" name="WebinarFiles[@idx].idWebinarFile" value="@file.idWebinarFile" />
-                            <input type="hidden" name="WebinarFiles[@idx].idWebinar" value="@file.idWebinar" />
-                            <input type="text" class="form-control" name="WebinarFiles[@idx].fileLocation" value="@file.fileLocation" />
-                            <input type="text" class="form-control" name="WebinarFiles[@idx].fileDesc" value="@file.fileDesc" /><br />
-                        idx++;
-                    }
-                </div>
 
                 <div class="modal-footer">
                     <button id="saveDetailsButton" class="btn btn-default pull-left">Save</button>

@@ -144,16 +144,20 @@ namespace CUWebinars.Web.Helpers
             }
             return value;
         }
-        public static SessionStartInfo GetSessionStartInfo()
+        public SessionStartInfo GetSessionStartInfo()
         {
-
             //TODO: time to transition the legacy xml object to a native class.
             HttpRequest request = HttpContext.Current.Request;
-            SessionStartInfo info = new SessionStartInfo();
+            var info = new SessionStartInfo
+            {
+                RemoteAddress = _request.ServerVariables["REMOTE_ADDR"],
+                RemoteHost = _request.ServerVariables["REMOTE_HOST"],
+                RemoteUser = _request.ServerVariables["REMOTE_USER"],
+                UserAgent = _request.ServerVariables["HTTP_USER_AGENT"],
+                UserCookie = _request.ServerVariables["HTTP_COOKIE"]
+            };
 
-            //and so on....
-            return null;
-
+            return info;
         }
 
 
