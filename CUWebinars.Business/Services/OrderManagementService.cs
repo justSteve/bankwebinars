@@ -550,6 +550,8 @@ namespace CUWebinars.Business.Services
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }
 
+            int rows = _orderRepository.SaveChanges();
+
             Clear(); // need to clear at this point, otherwise the OrderSubmittedEvent will be fired again when 
 
             if (order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count != 0)

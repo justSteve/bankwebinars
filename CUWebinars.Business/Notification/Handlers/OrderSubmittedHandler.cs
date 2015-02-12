@@ -58,7 +58,7 @@ namespace CUWebinars.Business.Notification.Handlers
                     );
 
                 string details = orderSubmittedEvent.Details;
-                orderSubmittedEvent.Details = 
+                orderSubmittedEvent.EventObject.Order.NotificationStorage = 
                     details.Insert(details.Length - 1, string.Concat(",", @"""Msg", '"', @":", '"', notificationMessage.PersistedName, '"'));
 
                 notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail + ", steve@ttstrain.com";
