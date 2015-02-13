@@ -40,7 +40,7 @@
         <div class="modal-body">
 
             @Html.AntiForgeryToken()
-            @Html.EditorFor(model => model.idWebinar)
+            @Html.HiddenFor(model => model.idWebinar)
             @Html.HiddenFor(model => model.OrganizerKey)
             @Html.HiddenFor(model => model.OrganizerOAuthKey)
 

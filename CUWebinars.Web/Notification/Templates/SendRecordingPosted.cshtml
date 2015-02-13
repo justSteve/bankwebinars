@@ -1,11 +1,14 @@
 ﻿@using System.Linq
+@using System.Text
 @using System.Web.Mvc.Html
+@using CUWebinars.Business.Core
 @using CUWebinars.Business.Models
-@model Order
+@model CUWebinars.Web.ViewModel.PostEventPublishModel
+
 
 <title>
     @{
-        var orderRows = from orderRow in Model.OrderRows
+        var orderRows = from orderRow in Model.Order.OrderRows
                         where orderRow.RowStatus == OrderRowStatus.Active
                         select orderRow;
         var thisWebinar = orderRows.Single().Webinar;
@@ -16,7 +19,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 @{
     var handoutRepo = "http://ondemand.cuwebinars.com";
-    var row = from orderRow in Model.OrderRows
+    var row = from orderRow in Model.Order.OrderRows
               where orderRow.RowStatus == OrderRowStatus.Active
               select orderRow;
     var webinar = row.Single().Webinar;
@@ -35,7 +38,7 @@
         code = webinar.AccessCodeAttendee;
     }
 
-    string DateTimeString = TtsTemplateHelperObject.FormatTimeWithDuration(webinar.Date, Model.WebUser.timeZone, true, webinar.Duration);
+    string DateTimeString = TtsTemplateHelperObject.FormatTimeWithDuration(webinar.Date, Model.Order.WebUser.timeZone, true, webinar.Duration);
     string Tenant = TtsTemplateHelperObject.Tenant();
     string TenantEmail = TtsTemplateHelperObject.TenantEmail();
     string TenantDomain = TtsTemplateHelperObject.TenantDomain();
@@ -49,163 +52,261 @@
         phone = webinar.AccessPhone;
     }
     var HeaderText = "Your Recording is posted!";
-    var BannerText = "Order Number: "+TenantPrefix + Model.idOrder + "<br />Attendance Type: " + row.Single().RegistrationType.OptionLabel;
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Connection Information</title>
-        <style type="text/css">
-            .auto-style1 {
-                height: 10px;
+    var BannerText = "Order Number: " + TenantPrefix + Model.idOrder + "<br />Attendance Type: " + row.Single().RegistrationType.OptionLabel;
+
+    var thankYouPhrase = new StringBuilder();
+    var connInfoPhrase = new StringBuilder();
+    var locations = myRow.AdditionalLocation;
+    var addLocs = new StringBuilder();
+
+    var isFirstOrderForThisUser = true;
+    if (myRow.RegistrationType.ShowRecordingNotifications == "No")
+    {
+        
+    }
+    
+    thankYouPhrase.Append("Dear " + Model.Order.FirstName + ",<br /><br />Thank you for the <b>");
+    thankYouPhrase.Append(row.Single().RegistrationType.OptionLabel);
+    thankYouPhrase.Append("</b> registration to <i>" + row.Single().Webinar.Title + "</i>");
+
+
+}
+
+    if (webinar.Status == WebinarStatus.Scheduled)
+    {
+
+        if (notiConnectionInfo == "Yes")
+        {
+            connInfoPhrase.Append("
+<p>Two to three days prior to the event we'll send connection instructions and links to handouts and other materials. </p>");
+
+            if (notiRecordingPosted == "Yes")
+            {
+                connInfoPhrase.Append("
+<p>
+    Shortly following the conclusion you'll receive notification when the recording is posted");
+    if (notiShipped == "Yes")
+    {
+    connInfoPhrase.Append(" - then again 3-5 days later informing you that we've shipped your CD and printouts");
+    }
+    connInfoPhrase.Append(".
+</p>");
             }
+            connInfoPhrase.Append("
+<p>" + addLocs + "</p>");
+        }
+        else
+        {
+            connInfoPhrase.Append("
+<p>
+    Because this order doesn't include the <i>live</i> session we'll only be sending you a notification when the OnDemand Recording is posted");
+    if (notiShipped == "Yes")
+    {
+    connInfoPhrase.Append(" and then another after your CD and printouts have shipped");
+    }
+    connInfoPhrase.Append(".
+</p>");
+        }
+    }
 
-            .auto-style2 {
-                height: 50px;
-            }
-        </style>
-    </head>
-    <body style="font-family: Verdana, Arial, Helvetica, sans-serif">
-        <table width="660px" border="0" cellspacing="0" cellpadding="0">
-            <tbody>
-                @*<tr style="background-color: #344a58">
-                        <td colspan="3">
-                            <img alt="top_shadow.jpg" border="0" height="6" margin="0px 0px 0px 0px" src="http://images.ttstrain.com/images/vrLocal/top_shadow.jpg" style="width: 100%; height: 6px; display: block;" width="660" />
-                        </td>
-                    </tr>*@
-                <tr style="background-color: #344a58">
-                    <td background="http://images.ttstrain.com/images/vrLocal/left_shadow.jpg" rowspan="3" valign="top" width="5">
-                        <img alt="left_shadow.jpg" border="0" height="1" margin="0px 0px 0px 0px" src="http://images.ttstrain.com/images/vrLocal/left_shadow.jpg" style="width: 5px; height: 1px; display: block;" width="5px" />
+
+    if (webinar.Status == WebinarStatus.Active || webinar.Status == WebinarStatus.InProgress)
+    {
+        connInfoPhrase.Append("
+<p>
+    ");
+    if (notiConnectionInfo == "Yes")
+    {
+    connInfoPhrase.Append(" Below you will find a link to connect directly to the webinar.");
+    }
+    if (notiRecordingPosted == "Yes")
+    {
+    connInfoPhrase.Append(" Shortly following the conclusion you'll receive notification that the recording is posted");
+
+    if (notiShipped == "Yes")
+    {
+    connInfoPhrase.Append(" - then again 3-5 days later that we've shipped your CD and printouts");
+    }
+    connInfoPhrase.Append(".
+</p>");
+        }
+    }
+
+
+    if (webinar.Status == WebinarStatus.Recorded || webinar.Status == WebinarStatus.Archived)
+    {
+        connInfoPhrase.Append("
+<p>
+    ");
+    if (notiRecordingPosted == "Yes")
+    {
+    connInfoPhrase.Append(" See below for a link to access your recording and event materials.");
+    }
+    if (notiShipped == "Yes")
+    {
+    connInfoPhrase.Append(" Over the next 3-5 days you'll see a notification that we've shipped your physical materials.");
+    }
+    connInfoPhrase.Append("
+</p>");
+    }
+
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Connection Information</title>
+    <style type="text/css">
+        .auto-style1 {
+            height: 10px;
+        }
+
+        .auto-style2 {
+            height: 50px;
+        }
+    </style>
+</head>
+<body style="font-family: Verdana, Arial, Helvetica, sans-serif">
+    <table width="660px" border="0" cellspacing="0" cellpadding="0">
+        <tbody>
+            @*<tr style="background-color: #344a58">
+                    <td colspan="3">
+                        <img alt="top_shadow.jpg" border="0" height="6" margin="0px 0px 0px 0px" src="http://images.ttstrain.com/images/vrLocal/top_shadow.jpg" style="width: 100%; height: 6px; display: block;" width="660" />
                     </td>
-                    <td>
-                        <table align="center" border="0" cellpadding="0" cellspacing="0" height="115" width="645px">
-                            <tbody>
-                                <tr>
-                                    <td bgcolor="#01232a" width="364">
-                                        <img alt="http://images.ttstrain.com/images/vrLocal/hardware_2_header_1.jpg" border="0" height="36" margin="0px 0px 0px 0px" src="http://images.ttstrain.com/images/vrLocal/hardware_2_header_1.jpg" style="width: 374px; height: 36px; display: block;" width="374" />
-                                    </td>
-                                    <td align="right" bgcolor="#01232a" style="padding-right: 15px; border-top-color: rgb(52, 74, 88); border-right-color: rgb(52, 74, 88); border-top-width: 1px; border-right-width: 1px; border-top-style: solid; border-right-style: solid;" width="286">
-                                        <div style="color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold;">
-                                            @HeaderText
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td width="462px" bgcolor="#344a58" valign="top">
-                                        <img align="middle" alt="Site Logo" border="0" height="50" hspace="25" margin="0px 0px 0px 0px" src="@TenantLogo" style="width: 332px; height: 50px; display: block;" title="Site Logo" vspace="25" width="332" />
-                                    </td>
-                                    <td bgcolor="#344a58" style="padding: 0px 15px 0px 0px; border-right-color: rgb(52, 74, 88); border-right-width: 1px; border-right-style: solid;">
-                                        <span style="text-align: center; color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
-                                            @BannerText
-                                        </span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                    <td background="http://images.ttstrain.com/images/vrLocal/right_shadow.jpg" rowspan="3" valign="top" width="5">
-                        <img alt="right_shadow.jpg" border="0" height="1" margin="0px 0px 0px 0px" src="http://images.ttstrain.com/images/vrLocal/right_shadow.jpg" style="width: 5px; height: 1px; display: block;" width="5" />
-                    </td>
-                </tr>
+                </tr>*@
+            <tr style="background-color: #344a58">
+                <td background="http://images.ttstrain.com/images/vrLocal/left_shadow.jpg" rowspan="3" valign="top" width="5">
+                    <img alt="left_shadow.jpg" border="0" height="1" margin="0px 0px 0px 0px" src="http://images.ttstrain.com/images/vrLocal/left_shadow.jpg" style="width: 5px; height: 1px; display: block;" width="5px" />
+                </td>
+                <td>
+                    <table align="center" border="0" cellpadding="0" cellspacing="0" height="115" width="645px">
+                        <tbody>
+                            <tr>
+                                <td bgcolor="#01232a" width="364">
+                                    <img alt="http://images.ttstrain.com/images/vrLocal/hardware_2_header_1.jpg" border="0" height="36" margin="0px 0px 0px 0px" src="http://images.ttstrain.com/images/vrLocal/hardware_2_header_1.jpg" style="width: 374px; height: 36px; display: block;" width="374" />
+                                </td>
+                                <td align="right" bgcolor="#01232a" style="padding-right: 15px; border-top-color: rgb(52, 74, 88); border-right-color: rgb(52, 74, 88); border-top-width: 1px; border-right-width: 1px; border-top-style: solid; border-right-style: solid;" width="286">
+                                    <div style="color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold;">
+                                        @HeaderText
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="462px" bgcolor="#344a58" valign="top">
+                                    <img align="middle" alt="Site Logo" border="0" height="50" hspace="25" margin="0px 0px 0px 0px" src="@TenantLogo" style="width: 332px; height: 50px; display: block;" title="Site Logo" vspace="25" width="332" />
+                                </td>
+                                <td bgcolor="#344a58" style="padding: 0px 15px 0px 0px; border-right-color: rgb(52, 74, 88); border-right-width: 1px; border-right-style: solid;">
+                                    <span style="text-align: center; color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                        @BannerText
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+                <td background="http://images.ttstrain.com/images/vrLocal/right_shadow.jpg" rowspan="3" valign="top" width="5">
+                    <img alt="right_shadow.jpg" border="0" height="1" margin="0px 0px 0px 0px" src="http://images.ttstrain.com/images/vrLocal/right_shadow.jpg" style="width: 5px; height: 1px; display: block;" width="5" />
+                </td>
+            </tr>
 
 
-                <tr style="background-color: #B4D1EC">
-                    <td style="padding: 15px 0px; border-right-color: rgb(52, 74, 88); border-left-color: rgb(52, 74, 88); border-right-width: 1px; border-left-width: 1px; border-right-style: solid; border-left-style: solid;">
-                        <table align="center" cellpadding="0" cellspacing="0">
-                            <tbody>
-                                @*<tr style="background-color: #344a58">
-                                        <td colspan="2" height="6">
-                                            <img alt="large_box_top.gif" border="0" height="6" margin="0px 0px 0px 0px" src="http://images.ttstrain.com/images/vrLocal/large_box_top.gif" style="width: 630px; height: 6px; display: block;" />
-                                        </td>
-                                    </tr>*@
-
-                                <tr style="background-color: #000000;">
-                                    <td colspan="2">
-                                        <img alt="spacer.gif" height="10" src="http://images.ttstrain.com/images/vrLocal/spacer.gif" style="width: 1px; height: 10px; display: block;" width="1" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2" style="background-color: #344a58">
-                                        <table width="630px" border="0" align="center" cellpadding="0" cellspacing="0">
-                                            <tr>
-                                                <td colspan="2">
-                                                    <table width="550px" border="0" align="center" cellpadding="0" cellspacing="0">
-                                                        <tr>
-                                                            <td style="text-align: right; width: 50px; background-color: #000000; padding-right: 6px; font-size: smaller"></td>
-                                                            <td width="500px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
-                                                                <table border="0" cellpadding="0" cellspacing="0" style="width: 500px;">
-                                                                    <tr>
-                                                                        <td colspan="2" style="background-color: #344a58">
-                                                                            <table border="0" align="center" cellpadding="0" cellspacing="0">
-                                                                                <tr>
-                                                                                    <td colspan="2" style="text-align: left; margin-left: 6px; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller">
-                                                                                        <span style="color: black; font-family: Arial, Helvetica, sans-serif; padding: 5px; font-size: 12px;">
-                                                                                            <br />Dear @Model.FirstName,<br />
-                                                                                            The OnDemand Recording included in your registration of <b><i>@webinar.Title</i></b> is posted and available for playback. <br /><br />Please visit http://www.cuwebinars.com/MyWebinars for links to the recording and all event materials.<br /><br />
-                                                                                            @{
-                                                                                                if (row.Single().RegistrationType.ShowShippedNotifications == "Yes")
-                                                                                                {
-                                                                                                    <span>The remainder of your order, the CD-ROM and handouts will be shipped in 7-10 business days.<br /></span>
-                                                                                                }
-                                                                                            }
-                                                                                        </span>
-                                                                                    </td>
-                                                                                </tr>
-
-                                                                            </table>
-                                                                        </td>
-                                                                    </tr>
-                                                                </table>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="text-align: right; width: 50px; background-color: #000000; padding-right: 6px; font-size: smaller"></td>
-                                                            <td width="500px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
-                                                                <br />
-                                                                <br />
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td style="background-color: #344a58; color: #FFFFCC; padding: 10px;" colspan="2"> </td>
-                                </tr>
-                                <tr style="background-color: #344a58">
+            <tr style="background-color: #B4D1EC">
+                <td style="padding: 15px 0px; border-right-color: rgb(52, 74, 88); border-left-color: rgb(52, 74, 88); border-right-width: 1px; border-left-width: 1px; border-right-style: solid; border-left-style: solid;">
+                    <table align="center" cellpadding="0" cellspacing="0">
+                        <tbody>
+                            @*<tr style="background-color: #344a58">
                                     <td colspan="2" height="6">
-                                        <img alt="large_box_bottom.gif" border="0" height="6" margin="0px 0px 0px 0px" src="http://images.ttstrain.com/images/vrLocal/large_box_bottom.gif" style="width: 630px; height: 6px; display: block;" />
+                                        <img alt="large_box_top.gif" border="0" height="6" margin="0px 0px 0px 0px" src="http://images.ttstrain.com/images/vrLocal/large_box_top.gif" style="width: 630px; height: 6px; display: block;" />
                                     </td>
-                                </tr>
+                                </tr>*@
 
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td bgcolor="#344a58">
-                        <table align="center" cellpadding="0" cellspacing="0" width="630">
-                            <tbody>
-                                <tr>
-                                    <td align="right" style="padding-top: 10px;">
-                                        <div style="color: rgb(255, 255, 255); font-size: 11px;">
-                                            <p style="width: 274px; height: 59px;" title="footer" vspace="0" width="274" >Tel: 800-831-0678<br/>Fax: 800-831-3776</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="3" height="23">
-                        <img alt="hardware_2_footer.jpg" border="0" height="23" margin="0px 0px 0px 0px" src="http://images.ttstrain.com/images/vrLocal/hardware_2_footer.jpg" style="width: 660px; height: 23px; display: block;" width="660" />
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                            <tr style="background-color: #000000;">
+                                <td colspan="2">
+                                    <img alt="spacer.gif" height="10" src="http://images.ttstrain.com/images/vrLocal/spacer.gif" style="width: 1px; height: 10px; display: block;" width="1" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="background-color: #344a58">
+                                    <table width="630px" border="0" align="center" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td colspan="2">
+                                                <table width="550px" border="0" align="center" cellpadding="0" cellspacing="0">
+                                                    <tr>
+                                                        <td style="text-align: right; width: 50px; background-color: #000000; padding-right: 6px; font-size: smaller"></td>
+                                                        <td width="500px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
+                                                            <table border="0" cellpadding="0" cellspacing="0" style="width: 500px;">
+                                                                <tr>
+                                                                    <td colspan="2" style="background-color: #344a58">
+                                                                        <table border="0" align="center" cellpadding="0" cellspacing="0">
+                                                                            <tr>
+                                                                                <td colspan="2" style="text-align: left; margin-left: 6px; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller">
+                                                                                    <span style="color: black; font-family: Arial, Helvetica, sans-serif; padding: 5px; font-size: 12px;">
+                                                                                        <br />Dear @Model.FirstName,<br />
+                                                                                        The OnDemand Recording included in your registration of <b><i>@webinar.Title</i></b> is posted and available for playback. <br /><br />Please visit http://www.cuwebinars.com/MyWebinars for links to the recording and all event materials.<br /><br />
+                                                                                        @{
+                                                                                            if (row.Single().RegistrationType.ShowShippedNotifications == "Yes")
+                                                                                            {
+                                                                                                <span>The remainder of your order, the CD-ROM and handouts will be shipped in 7-10 business days.<br /></span>
+                                                                                            }
+                                                                                        }
+                                                                                    </span>
+                                                                                </td>
+                                                                            </tr>
 
-    </body>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="text-align: right; width: 50px; background-color: #000000; padding-right: 6px; font-size: smaller"></td>
+                                                        <td width="500px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
+                                                            <br />
+                                                            <br />
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="background-color: #344a58; color: #FFFFCC; padding: 10px;" colspan="2"> </td>
+                            </tr>
+                            <tr style="background-color: #344a58">
+                                <td colspan="2" height="6">
+                                    <img alt="large_box_bottom.gif" border="0" height="6" margin="0px 0px 0px 0px" src="http://images.ttstrain.com/images/vrLocal/large_box_bottom.gif" style="width: 630px; height: 6px; display: block;" />
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td bgcolor="#344a58">
+                    <table align="center" cellpadding="0" cellspacing="0" width="630">
+                        <tbody>
+                            <tr>
+                                <td align="right" style="padding-top: 10px;">
+                                    <div style="color: rgb(255, 255, 255); font-size: 11px;">
+                                        <p style="width: 274px; height: 59px;" title="footer" vspace="0" width="274">Tel: 800-831-0678<br />Fax: 800-831-3776</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3" height="23">
+                    <img alt="hardware_2_footer.jpg" border="0" height="23" margin="0px 0px 0px 0px" src="http://images.ttstrain.com/images/vrLocal/hardware_2_footer.jpg" style="width: 660px; height: 23px; display: block;" width="660" />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
 }
 </html>
