@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Text.RegularExpressions;
 using System.Web.Routing;
+using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
@@ -24,6 +25,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Web.Hosting;
 using System.Web.Mvc;
+using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
 
 namespace CUWebinars.Web.Controllers
@@ -482,7 +484,40 @@ namespace CUWebinars.Web.Controllers
         {
             if (w.HasValue && u.HasValue)
             {
-                if (_orderManagementService.CheckUserForRecordingAccess(u.Value, w.Value) > 0 || u == 19)
+                bool accessPermitted = false;
+
+                if (u.Value == 19)
+                {
+                    accessPermitted = true;
+                }
+                else
+                {
+                    var webUser = _membershipService.GetWebUserById(u.Value);
+                    var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, webUser.email);
+
+                    if (userAccount.HasClaim(ClaimTypes.DisplayPostEventMaterials))
+                    {
+                        var claimsForOrder = userAccount.Claims.FirstOrDefault(c => c.Value.ToLower().Contains(w.Value.ToString()));
+
+                        // extract the date
+                        if (claimsForOrder != null)
+                        {
+                            var expiryAsString = claimsForOrder.Value.Substring(claimsForOrder.Value.IndexOf(":") + 1);
+
+                            DateTime expiryDate;
+
+                            if (DateTime.TryParse(expiryAsString, out expiryDate))
+                            {
+                                if (DateTime.Today <= expiryDate)
+                                {
+                                    accessPermitted = true;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (accessPermitted)
                 {
                     var playModel = new PlayModel
                     {
@@ -496,11 +531,10 @@ namespace CUWebinars.Web.Controllers
 
                     playModel.Presenter = playModel.Webinar.Presenter;
 
-                    return View(playModel);
+                    return View(playModel);                    
                 }
 
                 ViewData["Expired"] = "This recording has expired. ";
-                // [dar] how are we using this? Do we have plans for it?
                 return View();
 
             }
