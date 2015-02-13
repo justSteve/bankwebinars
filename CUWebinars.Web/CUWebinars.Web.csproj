@@ -389,6 +389,8 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\NavigationController.cs" />
     <Compile Include="Controllers\StaticContentController.cs" />
+    <Compile Include="Core\Orchestrators\IWebinarControllerOrchestrator.cs" />
+    <Compile Include="Core\Orchestrators\WebinarControllerOrchestrator.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Helpers\DomainHelpers.cs" />
     <Compile Include="Helpers\IAppHelper.cs" />

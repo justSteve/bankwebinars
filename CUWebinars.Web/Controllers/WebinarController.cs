@@ -8,6 +8,7 @@ using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Browsers.Webinars;
+using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
@@ -33,6 +34,7 @@ namespace CUWebinars.Web.Controllers
     public class WebinarController : Controller
     {
         private IStateService _stateService;
+        private readonly IWebinarControllerOrchestrator _webinarControllerOrchestrator;
         private readonly IAppHelper _appHelper;
         private GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingletonCreator.UniqueInstance;
 
@@ -49,6 +51,7 @@ namespace CUWebinars.Web.Controllers
             IWebinarManagementService webinarManagementService,
             ILogger logger,
             IStateService stateService,
+            IWebinarControllerOrchestrator webinarControllerOrchestrator,
             IAppHelper appHelper)
         {
             _membershipService = membershipService;
@@ -56,6 +59,7 @@ namespace CUWebinars.Web.Controllers
             _webinarManagementService = webinarManagementService;
             _logger = logger;
             _stateService = stateService;
+            _webinarControllerOrchestrator = webinarControllerOrchestrator;
             _appHelper = appHelper;
         }
 
@@ -1007,94 +1011,36 @@ namespace CUWebinars.Web.Controllers
         //[ValidateInput(false)]
         public ActionResult UpdateConnectionInfo(ConnectionInfoEditModel connectionInfoModel)
         {
-            try
+            if (ModelState.IsValid)
             {
-                //using (var client = new System.Net.WebClient())
-                //{
-                //TODO: Figure out how to authenticate and then pass URL
-
-                //var filename = System.IO.Path.GetTempFileName();
-
-                //client.DownloadFile(model.ManageURL, filename);
-
-                var doc = new HtmlAgilityPack.HtmlDocument();
-                //doc.Load(filename);
-                doc.LoadHtml(connectionInfoModel.ManageURL);
-
-                var root = doc.DocumentNode;
-                var audio_node = root.SelectNodes("//*[text()[contains(., 'Access')]]");
-
-                var citrixRegisterUrl = "";
-                var accessCodeAttendee = "";
-                var accessCodePresenter = "";
-                var accessCodeOrganizer = "";
-                var webinarKey = "";
-                var accessPhone = "";
-
-                webinarKey = root.SelectSingleNode("//span[contains(@id,'WebinarInfoID')]").InnerHtml;
-                webinarKey = webinarKey.Replace("-", "").Trim();
-                accessPhone = root.SelectSingleNode("//*[text()[contains(., 'Toll-')]]").InnerHtml;
-                accessPhone = Regex.Split(accessPhone, @"\<br\>")[1].Replace("Toll-free: 1 ", "").Trim().Replace(" ", "-");
-
-
-                citrixRegisterUrl = root.SelectSingleNode("//a[contains(@id,'registrationURL')]").InnerHtml;
-                foreach (var a_node in audio_node.Nodes())
+                try
                 {
-                    if (a_node.InnerHtml.Contains("Panelist"))
+                    bool detailsValid;
+                    var webinar = _webinarControllerOrchestrator.PopulateWebinarFromViewModel(connectionInfoModel, out detailsValid);
+
+                    if (detailsValid)
                     {
-                        accessCodePresenter = a_node.ParentNode.OuterHtml.Split(':')[1].Trim().Split(' ')[0];
-                    }
-                    if (a_node.InnerHtml.Contains("Organizer"))
-                    {
-                        accessCodeOrganizer = a_node.ParentNode.OuterHtml.Split(':')[1].Trim().Split(' ')[0];
+                        return Json(new {Result = WebUiConstants.Fail});
                     }
 
-                    if (a_node.InnerHtml.Contains("Attendee"))
-                    {
-                        accessCodeAttendee = a_node.ParentNode.OuterHtml.Split(':')[1].Trim().Split(' ')[0];
-                    }
+                    webinar.Status = WebinarStatus.Active;
+
+                    _webinarControllerOrchestrator.UpdateWebinar(webinar);
+
+                    return Json(new {Result = WebUiConstants.Success});
+
                 }
-                //}
-
-                //Console.ReadKey();
-
-                var webinar = _webinarManagementService.GetWebinar(connectionInfoModel.idWebinar);
-                webinar.AccessCodeAttendee = accessCodeAttendee;
-                webinar.AccessCodeOrganizer = accessCodeOrganizer;
-                webinar.AccessCodePresenter = accessCodePresenter;
-                webinar.AccessPhone = accessPhone;
-                webinar.CitrixRegisterUrl = citrixRegisterUrl;
-                webinar.OrganizerOAuthKey = connectionInfoModel.OrganizerOAuthKey;
-                webinar.OrganizerKey = connectionInfoModel.OrganizerKey;
-                webinar.WebinarKey = webinarKey.Trim();
-
-                if (citrixRegisterUrl == "" ||
-                    accessCodeAttendee == "" ||
-                    accessCodePresenter == "" ||
-                    accessCodeOrganizer == "" ||
-                    webinarKey == "" ||
-                    accessPhone == "")
+                catch (Exception exception)
                 {
+                    _logger.ErrorException(
+                        string.Format("UpdateConnectionInfo | Session {0}", _appHelper.GetUserAuditInfo()), exception
+                        );
+                    ModelState.AddModelError(string.Empty, WebUiConstants.ServerErrorWithAssistNumber);
 
-
-                    return Json(new { Result = WebUiConstants.Fail });
+                    return Json(new {Result = WebUiConstants.Fail});
                 }
-
-                webinar.Status = WebinarStatus.Active;
-
-                _webinarManagementService.UpdateWebinar(webinar);
-                return Json(new { Result = WebUiConstants.Success });
-
             }
-            catch (Exception exception)
-            {
-                _logger.ErrorException(
-                    string.Format("UpdateConnectionInfo | Session {0}", _appHelper.GetUserAuditInfo()), exception);
-                ModelState.AddModelError(string.Empty, WebUiConstants.ServerErrorWithAssistNumber);
-
-                return Json(new { Result = WebUiConstants.Fail });
-            }
-
+            return this.ModelStateJson(ModelState);
         }
 
         public ActionResult CreateICSForWebinar(int id)
