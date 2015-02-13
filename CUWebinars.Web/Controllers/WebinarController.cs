@@ -15,6 +15,7 @@ using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
+using Newtonsoft.Json;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -413,7 +414,19 @@ namespace CUWebinars.Web.Controllers
             {
                 var orders = _orderManagementService.GetOrdersForLiveNotifications(webinarId);
 
+                orders.ToList().ForEach((order) =>
+                {
+                    var notificationStorage = new NotificationStorage
+                    {
+                        idOrder = order.idOrder,
+                        SessionStartInfo = _appHelper.GetSessionStartInfo()
+                    };
+
+                    order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
+                });
+
                 _orderManagementService.FireSendConnectionInfoNotificationEvent(orders, false);
+
                 return Json(new { Result = WebUiConstants.Success });
             }
             catch (Exception exception)
