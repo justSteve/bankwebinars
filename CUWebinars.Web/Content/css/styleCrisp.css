@@ -282,7 +282,7 @@ hr {
     border: 0px;
     clear: both;
     margin: 30px 0 40px;
-    background: url(http://images.ttstrain.com/images/hr.png) repeat-x;
+    background: url(http://ttsmedia.ttstrain.com/images/hr.png) repeat-x;
     height: 3px;
 }
 
@@ -296,7 +296,7 @@ pre {
     padding: 3%;
     display: block;
     clear: both;
-    background: url(http://images.ttstrain.com/images/5p.png) repeat;
+    background: url(http://ttsmedia.ttstrain.com/images/5p.png) repeat;
     border: 0px;
 }
 
@@ -337,7 +337,7 @@ blockquote {
     padding: 10px 20px 0 50px;
     position: relative;
     quotes: none;
-    /*background: url(http://images.ttstrain.com/images/open-quote.png) 0 0 no-repeat;*/
+    /*background: url(http://ttsmedia.ttstrain.com/images/open-quote.png) 0 0 no-repeat;*/
     border: 0px;
     font-size: 120%;
     line-height: 175%;
@@ -512,7 +512,7 @@ figcaption {
     clear: both;
     font-size: 90%;
     font-style: italic;
-    background: url(http://images.ttstrain.com/images/hr.png) 0 100% repeat-x;
+    background: url(http://ttsmedia.ttstrain.com/images/hr.png) 0 100% repeat-x;
 }
 
     figcaption p:last-child {
@@ -552,7 +552,7 @@ span.plus {
     width: 100%;
     display: none;
     height: 100%;
-    background: url(http://images.ttstrain.com/images/plus.png) 50% 50% no-repeat;
+    background: url(http://ttsmedia.ttstrain.com/images/plus.png) 50% 50% no-repeat;
     left: 0;
     top: 0;
     opacity: 0;
@@ -806,7 +806,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
     .hero-unit h1,
     .hero-unit h2 {
         margin: 0;
-        background: url(http://images.ttstrain.com/images/hr.png) 0 100% repeat-x;
+        background: url(http://ttsmedia.ttstrain.com/images/hr.png) 0 100% repeat-x;
         padding-bottom: 20px;
         font-size: 200%;
         font-weight: 300;
@@ -920,7 +920,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
         height: 50px;
         text-indent: -9999px;
         display: block;
-        background: #4c5966 url(http://images.ttstrain.com/images/sliderarrows.png) -80px 50% no-repeat;
+        background: #4c5966 url(http://ttsmedia.ttstrain.com/images/sliderarrows.png) -80px 50% no-repeat;
     }
 
     .image-slider.flexslider .flex-direction-nav .flex-prev {
@@ -939,7 +939,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
         clear: both;
         font-size: 90%;
         font-style: italic;
-        background: url(http://images.ttstrain.com/images/hr.png) 0 100% repeat-x;
+        background: url(http://ttsmedia.ttstrain.com/images/hr.png) 0 100% repeat-x;
     }
 
         .image-slider.flexslider .caption.no-border {
@@ -992,7 +992,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 }
 
 .sidebar-left {
-    background-image: url(http://images.ttstrain.com/images/rule.png);
+    background-image: url(http://ttsmedia.ttstrain.com/images/rule.png);
     background-position: 23.5% 0;
     background-repeat: repeat-y;
 }
@@ -1003,7 +1003,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 
 /****** right sidebar layout ******/
 .sidebar-right {
-    background-image: url(http://images.ttstrain.com/images/rule.png);
+    background-image: url(http://ttsmedia.ttstrain.com/images/rule.png);
     background-position: 76.5% 0;
     background-repeat: repeat-y;
 }
@@ -1014,7 +1014,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 
 /******  contemporary 3 columns layout ******/
 .contemp-three-cols {
-    background-image: url(http://images.ttstrain.com/images/rule.png), url(http://images.ttstrain.com/images/rule.png);
+    background-image: url(http://ttsmedia.ttstrain.com/images/rule.png), url(http://ttsmedia.ttstrain.com/images/rule.png);
     background-position: 50.75% 0, 76% 0;
     background-repeat: repeat-y;
 }
@@ -1046,7 +1046,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 }
 
 .holy-grail {
-    background-image: url(http://images.ttstrain.com/images/rule.png), url(http://images.ttstrain.com/images/rule.png);
+    background-image: url(http://ttsmedia.ttstrain.com/images/rule.png), url(http://ttsmedia.ttstrain.com/images/rule.png);
     background-position: 23.5% 0, 76.5% 0;
     background-repeat: repeat-y;
 }
@@ -1061,7 +1061,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 
 /******  ie support  ******/
 .lt-ie9 .widget {
-    background: url(http://images.ttstrain.com/images/5p.png);
+    background: url(http://ttsmedia.ttstrain.com/images/5p.png);
     padding: 15px;
 }
 
@@ -1104,7 +1104,7 @@ ul.navigation {
         padding: 3px 0 3px 13px;
         list-style: none;
         display: block;
-        background: url(http://images.ttstrain.com/images/sidebar-list-icon.png) 0 8px no-repeat;
+        background: url(http://ttsmedia.ttstrain.com/images/sidebar-list-icon.png) 0 8px no-repeat;
     }
 
         ul.navigation li a {
@@ -1481,7 +1481,7 @@ ul.image-widget {
         height: 50px;
         display: block;
         margin: 0;
-        background: #53a3b7 url(http://images.ttstrain.com/images/top.png) no-repeat center center;
+        background: #53a3b7 url(http://ttsmedia.ttstrain.com/images/top.png) no-repeat center center;
     }
 
         .backToTop a:hover {
@@ -1563,7 +1563,7 @@ ul.image-widget {
     border: none;
     text-indent: -9999px;
     display: block;
-    background: #758694 url(http://images.ttstrain.com/images/sliderarrows.png) -280px 50% no-repeat;
+    background: #758694 url(http://ttsmedia.ttstrain.com/images/sliderarrows.png) -280px 50% no-repeat;
 }
 
 .clientlogos .flex-direction-nav .flex-prev {
@@ -1599,7 +1599,7 @@ ul.image-widget {
 }
 
     .login-box .login-wrapper {
-        background-image: url(http://images.ttstrain.com/images/rule.png);
+        background-image: url(http://ttsmedia.ttstrain.com/images/rule.png);
         background-position: 50% 0;
         background-repeat: repeat-y;
     }
@@ -1699,7 +1699,7 @@ ul.image-widget {
     }
 
         .testimonial-gallery li.highlight blockquote {
-            background-image: url(http://images.ttstrain.com/images/open-quote-white.png);
+            background-image: url(http://ttsmedia.ttstrain.com/images/open-quote-white.png);
         }
 
 /*	rotating testimonials (VARIOUS PAGES)
@@ -1952,7 +1952,7 @@ html[xmlns] .slides, .no-js .slides > li:first-child {
     }
 
     .widget ul.navigation li {
-        background: url(http://images.ttstrain.com/images/sidebar-list-icon.png) 0 10px no-repeat;
+        background: url(http://ttsmedia.ttstrain.com/images/sidebar-list-icon.png) 0 10px no-repeat;
     }
     /*** Sidebar sponsors ***/
     .span4 .widget .sponsors li {
@@ -2112,7 +2112,7 @@ html[xmlns] .slides, .no-js .slides > li:first-child {
 
     .widget {
         margin: 0 0 1.5% 0 !important;
-        background: url(http://images.ttstrain.com/images/5p.png);
+        background: url(http://ttsmedia.ttstrain.com/images/5p.png);
         padding: 15px !important;
     }
 
@@ -2425,7 +2425,7 @@ html[xmlns] .slides, .no-js .slides > li:first-child {
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 3/2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
 
     hr, figcaption, .hero-unit h1, .hero-unit h2, .image-slider.flexslider .caption {
-        background-image: url(http://images.ttstrain.com/images/retina/hr_@2x.png);
+        background-image: url(http://ttsmedia.ttstrain.com/images/retina/hr_@2x.png);
         -moz-background-size: 3px 3px;
         /*w & h of total ORIGINAL 72dpi image*/
         -ie-background-size: 3px 3px;
@@ -2435,7 +2435,7 @@ html[xmlns] .slides, .no-js .slides > li:first-child {
     }
 
     blockquote {
-        background-image: url(http://images.ttstrain.com/images/retina/open-quote_@2x.png);
+        background-image: url(http://ttsmedia.ttstrain.com/images/retina/open-quote_@2x.png);
         -moz-background-size: 38px 38px;
         -ie-background-size: 38px 38px;
         -o-background-size: 38px 38px;
@@ -2444,7 +2444,7 @@ html[xmlns] .slides, .no-js .slides > li:first-child {
     }
 
     span.plus {
-        background-image: url(http://images.ttstrain.com/images/retina/plus_@2x.png);
+        background-image: url(http://ttsmedia.ttstrain.com/images/retina/plus_@2x.png);
         -moz-background-size: 50px 50px;
         -ie-background-size: 50px 50px;
         -o-background-size: 50px 50px;
@@ -2453,7 +2453,7 @@ html[xmlns] .slides, .no-js .slides > li:first-child {
     }
 
     .testimonial-gallery li.highlight blockquote {
-        background-image: url(http://images.ttstrain.com/images/retina/open-quote-white_@2x.png);
+        background-image: url(http://ttsmedia.ttstrain.com/images/retina/open-quote-white_@2x.png);
         -moz-background-size: 38px 38px;
         -ie-background-size: 38px 38px;
         -o-background-size: 38px 38px;
@@ -2462,7 +2462,7 @@ html[xmlns] .slides, .no-js .slides > li:first-child {
     }
 
     .backToTop a {
-        background-image: url(http://images.ttstrain.com/images/retina/top_@2x.png);
+        background-image: url(http://ttsmedia.ttstrain.com/images/retina/top_@2x.png);
         -moz-background-size: 50px 50px;
         -ie-background-size: 50px 50px;
         -o-background-size: 50px 50px;
@@ -2471,7 +2471,7 @@ html[xmlns] .slides, .no-js .slides > li:first-child {
     }
 
     .flex-direction-nav a, .clientlogos .flex-direction-nav a {
-        background-image: url(http://images.ttstrain.com/images/retina/sliderarrows_@2x.png);
+        background-image: url(http://ttsmedia.ttstrain.com/images/retina/sliderarrows_@2x.png);
         -moz-background-size: 360px 100px;
         -ie-background-size: 360px 100px;
         -o-background-size: 360px 100px;
@@ -2480,7 +2480,7 @@ html[xmlns] .slides, .no-js .slides > li:first-child {
     }
 
     ul.navigation li, .widget ul.navigation li {
-        background-image: url(http://images.ttstrain.com/images/retina/sidebar-list-icon_@2x.png);
+        background-image: url(http://ttsmedia.ttstrain.com/images/retina/sidebar-list-icon_@2x.png);
         -moz-background-size: 6px 8px;
         -ie-background-size: 6px 8px;
         -o-background-size: 6px 8px;

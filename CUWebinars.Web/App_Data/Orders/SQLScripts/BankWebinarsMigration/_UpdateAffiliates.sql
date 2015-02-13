@@ -18,7 +18,7 @@ WHERE   idUserAff = 19
 UPDATE  dbo.Affiliate a
 SET     ttsDomain = LOWER(ttsDomain) ,
         WebBanner = '' ,
-        Logo = 'http://images.ttstrain.com/images/logo_' + LOWER(ttsDomain) + '.png' ,
+        Logo = 'http://ttsmedia.ttstrain.com/images/logo_' + LOWER(ttsDomain) + '.png' ,
         WebFooter = '<p>' + DisplayTitle
         + ' .  ' + (SELECT City FROM dbo.WebUser WHERE idUser = a.idUserAff) + 'Waunakee, Wisconsin . 53597<br><strong>phone:</strong> <a href="tel:8008310678" class="tele">800.831.0678</a><br><strong>fax:</strong> 800.831.3776<br><strong>email:</strong> <a href="mailto:support@bankwebinars.com">support@bankwebinars.com</a></p>~<ul class="social"><li><a class="socicon small facebook" href="http://www.facebook.com/home.php#!/pages/Total-Training-Solutions/300546163412" target="_blank" data-placement="bottom" title="Follow us on Facebook"></a></li><li><a class="socicon small twitterbird" href="http://twitter.com/#!/ttstrain" target="_blank" data-placement="bottom" title="Follow us on Twitter"></a></li><li><a class="socicon small linkedin" href="https://www.linkedin.com/company/bankwebinars.com" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li></ul>'
 WHERE   idUserAff > 0

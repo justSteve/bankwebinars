@@ -81,7 +81,7 @@
 }
 
 .blog-summary .entry-post {
-    background: url(http://images.ttstrain.com/images/CUWebinars/hr.png) 0 100% repeat-x;
+    background: url(http://ttsmedia.ttstrain.com/images/CUWebinars/hr.png) 0 100% repeat-x;
     padding-bottom:10px;
     margin-bottom:3%;
 }
@@ -126,7 +126,7 @@
 
 /****** entry header ******/
 .blog-detail .entry-header {
-    background: url(http://images.ttstrain.com/images/CUWebinars/hr.png) 0 100% repeat-x;
+    background: url(http://ttsmedia.ttstrain.com/images/CUWebinars/hr.png) 0 100% repeat-x;
     padding-bottom: 10px;
     margin-bottom: 3%;
     position: relative;
@@ -163,7 +163,7 @@
 .blog-summary-grid li h4 { clear: both }
 .blog-summary-grid li.quotes .entry-summary blockquote {
     color: #fff;
-    background-image: url(http://images.ttstrain.com/images/CUWebinars/open-quote-white.png);
+    background-image: url(http://ttsmedia.ttstrain.com/images/CUWebinars/open-quote-white.png);
     font-size: 180%;
 }
 .blog-summary-grid li.quotes .entry-summary blockquote footer { font-size: 50% }
@@ -173,7 +173,7 @@
 /* Entry Comments
 ================================================== */
 .entry-comments {
-    background: url(http://images.ttstrain.com/images/CUWebinars/5p.png);
+    background: url(http://ttsmedia.ttstrain.com/images/CUWebinars/5p.png);
     padding: 2% 3%;
 }
 .entry-comments h3 a { text-decoration: none }
@@ -185,7 +185,7 @@
 .entry-comments li {
     padding: 10px 0 10px 0;
     margin: 0 0 10px 0;
-    background: url(http://images.ttstrain.com/images/CUWebinars/hr.png) 0 100% repeat-x;
+    background: url(http://ttsmedia.ttstrain.com/images/CUWebinars/hr.png) 0 100% repeat-x;
 }
 .entry-comments ul ul {
     list-style: none;
@@ -391,7 +391,7 @@
 
 
 .blog-summary .entry-post, .blog-detail .entry-header {
-		background-image:url(http://images.ttstrain.com/images/CUWebinars/retina/hr_@2x.png);
+		background-image:url(http://ttsmedia.ttstrain.com/images/CUWebinars/retina/hr_@2x.png);
 	    	-moz-background-size:3px 3px; /*w & h of total ORIGINAL 72dpi image*/
              -ie-background-size:3px 3px;
               -o-background-size:3px 3px;

@@ -1228,7 +1228,7 @@ namespace CUWebinars.Web.Controllers
 
         private bool CheckThatFilesExists(WebinarFile newFile)
         {
-            var handoutRepo = "http://ondemand.cuwebinars.com/";
+            var handoutRepo = "http://ttsmedia.ttstrain.com/";
             //http://stackoverflow.com/questions/153451/how-to-check-if-system-net-webclient-downloaddata-is-downloading-a-binary-file#156750
 
             using (MyClient client = new MyClient())
@@ -1254,7 +1254,7 @@ namespace CUWebinars.Web.Controllers
 
         private bool CheckThatRecordingExists(string checkFile)
         {
-            var handoutRepo = "http://ondemand.cuwebinars.com/";
+            var handoutRepo = "http://ttsmedia.ttstrain.com/";
             //http://stackoverflow.com/questions/153451/how-to-check-if-system-net-webclient-downloaddata-is-downloading-a-binary-file#156750
 
             using (MyClient client = new MyClient())

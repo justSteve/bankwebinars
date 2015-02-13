@@ -80,7 +80,7 @@ body.tall-logo nav.user {
 	margin-top: 0;
 	padding: 0;
 	top: -47px;
-	background-image: url(http://images.ttstrain.com/images/tall-logo-desktop.png);
+	background-image: url(http://ttsmedia.ttstrain.com/images/tall-logo-desktop.png);
 	background-color: transparent;
 	background-position: 50% 50%;
 	background-repeat: no-repeat;
@@ -215,7 +215,7 @@ body.tall-logo nav.user {
 
 /* arrow background images */
 .primary_menu li.parent i {
-	background: url(http://images.ttstrain.com/images/menu_arrow.png) 0 0 no-repeat;
+	background: url(http://ttsmedia.ttstrain.com/images/menu_arrow.png) 0 0 no-repeat;
 	display: inline-block;
 	width: 5px;
 	margin-left: 8px;
@@ -541,7 +541,7 @@ body.tall-logo nav.user {
 		position: absolute;
 		left: 10px;
 		top: 0px;
-		background: url(http://images.ttstrain.com/images/BankWebinars/navtriggerbg.png) -20px 50% no-repeat;
+		background: url(http://ttsmedia.ttstrain.com/images/BankWebinars/navtriggerbg.png) -20px 50% no-repeat;
 	}
 	
 	.mobile_nav a.active span {
@@ -660,7 +660,7 @@ body.tall-logo nav.user {
 	}
 	
 	body.tall-logo #logo {
-		background-image: url(http://images.ttstrain.com/images/tall-logo-mobile.png);
+		background-image: url(http://ttsmedia.ttstrain.com/images/tall-logo-mobile.png);
 		/*notice that this image changes on mobile */
 		background-color: transparent!important;
 		background-position: 0 0;
@@ -719,7 +719,7 @@ body.tall-logo nav.user {
  	only screen and (min--moz-device-pixel-ratio: 2),
 	only screen and (min-device-pixel-ratio: 2) {
 	#logo {
-		background-image: url(http://images.ttstrain.com/images/BankWebinars/retina/logo_@2x.png);
+		background-image: url(http://ttsmedia.ttstrain.com/images/BankWebinars/retina/logo_@2x.png);
 		-moz-background-size: 140px 59px;
 		/*w & h of total ORIGINAL 72dpi image*/
 		-ie-background-size: 140px 59px;
@@ -729,7 +729,7 @@ body.tall-logo nav.user {
 	}
 	
 	.tall-logo #logo {
-		background-image: url(http://images.ttstrain.com/images/BankWebinars/retina/tall-logo-mobile_@2x.png);
+		background-image: url(http://ttsmedia.ttstrain.com/images/BankWebinars/retina/tall-logo-mobile_@2x.png);
 		-moz-background-size: 170px 185px;
 		/*w & h of total image 72dpi image*/
 		-ie-background-size: 170px 185px;
@@ -739,7 +739,7 @@ body.tall-logo nav.user {
 	}
 	
 	.search #search-trigger {
-		background-image: url(http://images.ttstrain.com/images/BankWebinars/retina/search_@2x.png);
+		background-image: url(http://ttsmedia.ttstrain.com/images/BankWebinars/retina/search_@2x.png);
 		-moz-background-size: 60px 30px;
 		/*w & h of total ORIGINAL 72dpi image*/
 		-ie-background-size: 60px 30px;
@@ -749,7 +749,7 @@ body.tall-logo nav.user {
 	}
 	
 	#main_menu li.parent i {
-		background-image: url(http://images.ttstrain.com/images/BankWebinars/retina/menu_arrow_@2x.png);
+		background-image: url(http://ttsmedia.ttstrain.com/images/BankWebinars/retina/menu_arrow_@2x.png);
 		-moz-background-size: 20px 5px;
 		/*w & h of total ORIGINAL 72dpi image*/
 		-ie-background-size: 20px 5px;
@@ -772,7 +772,7 @@ body.tall-logo nav.user {
  	only screen and (max-width: 767px) and (min--moz-device-pixel-ratio: 2),
 	only screen and (max-width: 767px) and (min-device-pixel-ratio: 2) {
 	.tall-logo #logo {
-		background-image: url(http://images.ttstrain.com/images/BankWebinars/retina/tall-logo-mobile_@2x.png);
+		background-image: url(http://ttsmedia.ttstrain.com/images/BankWebinars/retina/tall-logo-mobile_@2x.png);
 		-moz-background-size: 78px 85px;
 		/*w & h of total image 72dpi image*/
 		-ie-background-size: 78px 85px;
@@ -782,7 +782,7 @@ body.tall-logo nav.user {
 	}
 	
 	.mobile_nav a span {
-		background-image: url(http://images.ttstrain.com/images/BankWebinars/retina/navtriggerbg_@2x.png);
+		background-image: url(http://ttsmedia.ttstrain.com/images/BankWebinars/retina/navtriggerbg_@2x.png);
 		-moz-background-size: 80px 40px;
 		/*w & h of total sprite 72dpi image*/
 		-ie-background-size: 80px 40px;
