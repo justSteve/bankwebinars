@@ -18,5 +18,11 @@ namespace CUWebinars.Web.Models
         [DisplayName("Value of New Claim")]
         public string NewClaimValue { get; set; }
         public string SelectedClaimType { get; set; }
+        [DisplayName("TTS ClaimTypes")]
+        public IEnumerable<SelectListItem> TtsClaimTypes { get; set; }
+        [Required]
+        [DisplayName("Email of User")]
+        [EmailAddress]
+        public string UserEmail { get; set; }
     }
 }
