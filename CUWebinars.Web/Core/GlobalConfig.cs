@@ -54,11 +54,11 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.CreateUserQueueName = ApplicationSettingsSection["CreateUserQueueName"];
                 UniqueInstance.EmailSendingMode = ApplicationSettingsSection["EmailSendingMode"];
                 UniqueInstance.EmailSignature = ApplicationSettingsSection["EmailSignature"];
-                //UniqueInstance.WMVRepository = ApplicationSettingsSection["WMVRepository"];
+                UniqueInstance.WMVRepository = ApplicationSettingsSection["WMVRepository"];
                 UniqueInstance.HandoutRepository = ApplicationSettingsSection["HandoutRepository"];
                 UniqueInstance.GhostRequestRetryLimit = int.Parse(ApplicationSettingsSection["GhostRequestRetryLimit"]);
                 UniqueInstance.GhostRequestTimeout = int.Parse(ApplicationSettingsSection["GhostRequestTimeout"]);
-                //UniqueInstance.ImgRepository = ApplicationSettingsSection["ImgRepository"];
+                UniqueInstance.ImgRepository = ApplicationSettingsSection["ImgRepository"];
                 UniqueInstance.NotificationsTesting = bool.Parse(ApplicationSettingsSection["NotificationsTesting"]);
                 UniqueInstance.RelativeLoginUrl = ApplicationSettingsSection["RelativeLoginUrl"];
                 UniqueInstance.RelativeConfirmChangeUrl = ApplicationSettingsSection["RelativeConfirmChangeUrl"];

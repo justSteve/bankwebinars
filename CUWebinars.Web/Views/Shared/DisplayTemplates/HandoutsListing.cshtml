@@ -1,13 +1,13 @@
 ﻿@using CUWebinars.Web.Core
-@model WebinarFilesEditModel
+@model Webinar
 
 <div id="showHandouts-@Model.idWebinar ">
     @{
         foreach (var file in Model.WebinarFiles)
         {
 @*            <a style="margin: 6px;" class="btn btn-info" href='@GlobalConfig.GlobalConfigSingleton.HandoutRepository@file.fileLocation' target='_blank'>@file.fileDesc</a>*@
-            var href = "/webinar/GetWebinarFile/GetWebinarFile?idWebinarFile=" + file.idWebinarFile;
-              <a style="margin: 6px;" class="btn btn-info" href=@href target='_blank'>@file.fileDesc</a>
+            var href = "/webinar/GetWebinarFile?idWebinarFile=" + file.idWebinarFile;
+              <a style="margin: 6px;" href=@href target='_blank'>@file.fileDesc</a>
 
             <br />
         }

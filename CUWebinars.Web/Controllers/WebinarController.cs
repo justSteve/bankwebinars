@@ -483,7 +483,7 @@ namespace CUWebinars.Web.Controllers
             return Json(data, JsonRequestBehavior.AllowGet);
         }
 
-        //[AcceptVerbs(HttpVerbs.Get)]
+        [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult Play(int? w, int? u)
         {
             if (w.HasValue && u.HasValue)
@@ -1018,14 +1018,10 @@ namespace CUWebinars.Web.Controllers
                     bool detailsValid;
                     var webinar = _webinarControllerOrchestrator.PopulateWebinarFromViewModel(connectionInfoModel, out detailsValid);
 
-                    if (detailsValid)
+                    if (!detailsValid)
                     {
                         return Json(new {Result = WebUiConstants.Fail});
                     }
-
-                    webinar.Status = WebinarStatus.Active;
-
-                    _webinarControllerOrchestrator.UpdateWebinar(webinar);
 
                     return Json(new {Result = WebUiConstants.Success});
 
@@ -1200,13 +1196,14 @@ namespace CUWebinars.Web.Controllers
         }
 
 
+
         public ActionResult GetWebinarFile(int? idWebinarFile)
         {
             if (idWebinarFile.HasValue)
             {
                 var webinarFile = _webinarManagementService.GetWebinarFile(idWebinarFile.Value);
 
-                return Redirect(webinarFile.fileLocation);
+                return Redirect(_globalConfig.WMVRepository  + webinarFile.fileLocation);
             }
             return View();
         }

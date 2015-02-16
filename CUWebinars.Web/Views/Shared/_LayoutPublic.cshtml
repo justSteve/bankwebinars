@@ -7,7 +7,6 @@
 
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
-    //TODO: following on the idea of a fundamentally spaghettized aspect of the Details page, let's replace these 'if' tests for both admins and affiliates. Instead, redirect the given role to a corresponding _LayoutPage.
     var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
     string currentUserAffiliateFullName = string.Empty;
     if (currentAffiliate != null)
@@ -20,23 +19,14 @@
         Debug.Assert(currentAffiliate != null, "CurrentAffiliate should always have a value.");
     }
 
-    var currentUserID = 0;
-
-    //StringBuilder sessionRecorded = new StringBuilder();
-    //StringBuilder sessionUpcoming = new StringBuilder();
-
-    //var upcomingSessions = stateService.GetValue<StringBuilder>("upcoming");
-
-    //if (upcomingSessions != null)
-    //{
-    //sessionRecorded = stateService.GetValue<StringBuilder>("rec");
-    //    sessionUpcoming = upcomingSessions;
-    //}
-    //else
-    //{
-    //    //Response.Redirect("/?resetSession=null");
-    //}
-
+    var footAddress = currentAffiliate.WebFooter.Split('~')[0];
+    var footSocial = "";
+    if (currentAffiliate.WebFooter.Split('~').Length > 1)
+    {
+        footSocial = currentAffiliate.WebFooter.Split('~')[1];
+    }
+    
+    
     var subdomainBranding = stateService.GetValue<string>("SubdomainBranding");
     var firstPage = stateService.GetValue<string>("FirstPage");
     var sessionID = stateService.GetValue<string>(WebUiConstants.SessionId);
@@ -282,11 +272,10 @@
                     </section>
                 </div>
                 <!-- close .span4 -->
-                @*<div class="span4">
+                <div class="span4">
                     <section>
-                    http://ttsmedia.ttstrain.com/images/TTS-logoPreHeader.jpg
                         <h4>Contact Us</h4>
-                        @Html.Raw(currentAffiliate.WebFooter.Split('~')[0])
+                        @Html.Raw(footAddress)
                     </section>
                     <!--close section-->
                 </div>
@@ -294,7 +283,7 @@
                 <div class="span4">
                     <section>
                         <h4>Follow Us</h4>
-                        @Html.Raw(currentAffiliate.WebFooter.Split('~')[1])
+                        @Html.Raw(footSocial)
 
                         @{
                             if (currentAffiliate.idUserAff > 19)
@@ -302,7 +291,7 @@
                                 <p style="margin-top: 10px;" align="center">This site is managed for @currentAffiliate.DisplayTitle by @globalConfig.TenantDomain and Total Training Solutions - TTSTrain.com.</p>
                             }
                         }
-                    </section>*@
+                    </section>
 
                 </div>
                 <!-- close .span4 -->

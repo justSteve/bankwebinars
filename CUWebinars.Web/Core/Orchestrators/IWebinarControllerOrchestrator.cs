@@ -7,5 +7,6 @@ namespace CUWebinars.Web.Core.Orchestrators
     {
         Webinar PopulateWebinarFromViewModel(ConnectionInfoEditModel connectionInfoEditModel, out bool detailsValid);
         void UpdateWebinar(Webinar webinar);
+        string PublishStateChange(string stateFromTo, Webinar webinar);
     }
 }

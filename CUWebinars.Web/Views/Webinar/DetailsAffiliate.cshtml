@@ -194,9 +194,3 @@
     </div>
 
 </div> <!-- closes main-content -->
-@{
-    if (Model.WebUser.UserType == UserType.Admin)
-    {
-        @Html.Partial("Partials/_LogsModal")
-    }
-}

@@ -9,24 +9,30 @@
     if (Model.UserOwnsThisEvent > 0)
     {
         RegType orderMsgs = Model.OrderRow.RegistrationType;
-
+        var row = from orderRow in Model.OrderRow.Order.OrderRows
+                  where orderRow.RowStatus == OrderRowStatus.Active
+                  select orderRow;
+        
+        var myRow = row.Single();
+        
         Order order = Model.OrderRow.Order;
         var showShipped = string.Empty;
-        if (Model.WebinarStatus != WebinarStatus.Recorded || Model.OrderRow.RegistrationType.ShowRecordingNotifications == "No")
+        if (Model.WebinarStatus != WebinarStatus.Recorded 
+            || //needs to be replaced with a Claims check
+            Model.OrderRow.RegistrationType.ShowRecordingNotifications == "No")
         {
             Model.RecordingLink = string.Empty;
         }
-        var wf = new StringBuilder();
         <script language="javascript">
             var idRegType = @orderMsgs.idRegType;
         </script>
 
-        foreach (var webinarFile in Model.WebinarFiles)
-        {
-            string itemDesc = webinarFile.Split('|')[0];
-            string itemPath = globalConfig.WMVRepository + webinarFile.Split('|')[1];
-            wf.Append("<a href='" + itemPath + "' target=_blank >" + itemDesc + "</a><br>");
-        }
+        //foreach (var webinarFile in Model.WebinarFiles)
+        //{
+        //    string itemDesc = webinarFile.Split('|')[0];
+        //    string itemPath = globalConfig.WMVRepository + webinarFile.Split('|')[1];
+        //    wf.Append("<a href='" + itemPath + "' target=_blank >" + itemDesc + "</a><br>");
+        //}
 
         if (Model.OrderRow.RegistrationType.ShowShippedNotifications == "Yes" && Model.OrderRow.ShipmentDate != null)
         {
@@ -95,8 +101,13 @@
             {
                 <aside style="width: 100%" class="widget clearfix">
                     <h5 class="short_headline"><span>Event Materials</span></h5>
-                    @Html.Raw(wf.ToString())
-                    @Html.Raw(Model.RecordingLink)
+
+                    <div class="well well-small">
+                        @{
+                Html.RenderPartial("DisplayTemplates/HandoutsListing", myRow.Webinar);
+                        }
+                    </div>
+
                 </aside>
             }
 
