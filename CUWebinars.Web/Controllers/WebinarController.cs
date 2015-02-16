@@ -451,6 +451,15 @@ namespace CUWebinars.Web.Controllers
         {
             try
             {
+                String setEventToRecorded = _webinarControllerOrchestrator.SetEventToRecorded(webinarId);
+            }
+            catch (Exception)
+            {
+                
+                throw;
+            }
+            try
+            {
 
                 var orders = _orderManagementService.GetOrdersForRecordedNotifications(webinarId);
 

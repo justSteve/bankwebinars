@@ -924,6 +924,11 @@ namespace CUWebinars.Business.Services
             return _orderRepository.GetNumberOfOrdersPerWebinar(id);
         }
 
+        public string SetPostEventClaims(int webinarId)
+        {
+            throw new NotImplementedException();
+        }
+
 
         public void GetJoinUrl(OrderRow row)
         {
@@ -1092,7 +1097,7 @@ namespace CUWebinars.Business.Services
 
         public int CheckUserForRecordingAccess(int w, int u)
         {
-            return _orderRepository.CheckUserForRecordingAccess(w, u);
+            return _orderRepository.AccessToPostEventMaterials(w, u);
         }
 
         private void ProcessDiscountCodes(Order order)

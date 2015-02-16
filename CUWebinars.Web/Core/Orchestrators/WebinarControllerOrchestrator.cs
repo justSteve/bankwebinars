@@ -164,6 +164,22 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         }
 
+        public string SetEventToRecorded(int webinarId)
+        {
+            var webinar = _webinarManagementService.GetWebinar(webinarId);
+            if (webinar.RecordingUrl != null)
+            {
+                String setPostEventClaims = _orderManagementService.SetPostEventClaims(webinarId);
+                webinar.Status = WebinarStatus.Recorded;
+
+                var changeString = PublishStateChange(webinar.Status.ToString() + " to " + "recorded", webinar);
+
+                webinar.ConnectionInfo = changeString;
+            }
+
+
+        }
+
         public void UpdateWebinar(Webinar webinar)
         {
             _webinarManagementService.UpdateWebinar(webinar);

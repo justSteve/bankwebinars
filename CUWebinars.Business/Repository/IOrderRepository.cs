@@ -26,7 +26,7 @@ namespace CUWebinars.Business.Repository
         IList<Order> SelectOrdersWithArchivedWebinars(int idUser);
         IList<Order> SelectOrdersWithRecordedWebinars(int idUser);
         IList<Order> SelectOrdersWithScheduledWebinars(int idUser);
-        int CheckUserForRecordingAccess(int i, int i1);
+        int AccessToPostEventMaterials(int i, int i1);
         //IList<AdditionalLocation> GetAdditionalLocations(int idOrder);
         Discount FindDiscountById(int id);
         Discount FindDiscountByCode(string discountCode);

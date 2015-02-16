@@ -70,5 +70,6 @@ namespace CUWebinars.Business.Services
         Discount ApplyDiscountCode(string code, OrderRow row);
         void GenerateRegistrantKey(Order order, AdditionalLocation nuller);
         int GetNumberOfOrdersPerWebinar(int id);
+        string SetPostEventClaims(int webinarId);
     }
 }
