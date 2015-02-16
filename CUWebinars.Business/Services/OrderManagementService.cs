@@ -618,6 +618,7 @@ namespace CUWebinars.Business.Services
 
             AddEvent(new OrderSubmittedAdditionalLocationEvent<OrderSubmittedAdditionalLocationViewModel>
             {
+                Details = order.NotificationStorage,
                 EventObject = orderSubmittedAdditionalLocationViewModel,
                 RelativeFilePath = relativePath,
                 ResendEvent = resending
