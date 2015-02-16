@@ -1,7 +1,7 @@
 UPDATE  CUWebinars.dbo.Presenter
-SET     BiographyLong = REPLACE(BiographyLong, 'https://ttseast.blob.core.windows.net', 'http://images.ttstrain.com') ,
-        PhotoFull = REPLACE(PhotoFull, 'https://ttseast.blob.core.windows.net', 'http://images.ttstrain.com') ,
-        PhotoThumb = REPLACE(PhotoThumb, 'https://ttseast.blob.core.windows.net', 'http://images.ttstrain.com')
+SET     BiographyLong = REPLACE(BiographyLong, 'https://ttseast.blob.core.windows.net', 'http://ttsmedia.ttstrain.com') ,
+        PhotoFull = REPLACE(PhotoFull, 'https://ttseast.blob.core.windows.net', 'http://ttsmedia.ttstrain.com') ,
+        PhotoThumb = REPLACE(PhotoThumb, 'https://ttseast.blob.core.windows.net', 'http://ttsmedia.ttstrain.com')
 WHERE   idUser > 1
 
 

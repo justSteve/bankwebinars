@@ -7,7 +7,6 @@
 
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
-    //TODO: following on the idea of a fundamentally spaghettized aspect of the Details page, let's replace these 'if' tests for both admins and affiliates. Instead, redirect the given role to a corresponding _LayoutPage.
     var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
     string currentUserAffiliateFullName = string.Empty;
     if (currentAffiliate != null)
@@ -20,23 +19,14 @@
         Debug.Assert(currentAffiliate != null, "CurrentAffiliate should always have a value.");
     }
 
-    var currentUserID = 0;
-
-    //StringBuilder sessionRecorded = new StringBuilder();
-    //StringBuilder sessionUpcoming = new StringBuilder();
-
-    //var upcomingSessions = stateService.GetValue<StringBuilder>("upcoming");
-
-    //if (upcomingSessions != null)
-    //{
-    //sessionRecorded = stateService.GetValue<StringBuilder>("rec");
-    //    sessionUpcoming = upcomingSessions;
-    //}
-    //else
-    //{
-    //    //Response.Redirect("/?resetSession=null");
-    //}
-
+    var footAddress = currentAffiliate.WebFooter.Split('~')[0];
+    var footSocial = "";
+    if (currentAffiliate.WebFooter.Split('~').Length > 1)
+    {
+        footSocial = currentAffiliate.WebFooter.Split('~')[1];
+    }
+    
+    
     var subdomainBranding = stateService.GetValue<string>("SubdomainBranding");
     var firstPage = stateService.GetValue<string>("FirstPage");
     var sessionID = stateService.GetValue<string>(WebUiConstants.SessionId);
@@ -133,15 +123,15 @@
 
     <!-- Icons ================ -->
     <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
-    <link rel="apple-touch-icon-precomposed" href="http://images.ttstrain.com/images/BankWebinars/apple-touch-icon.png" />
+    <link rel="apple-touch-icon-precomposed" href="http://ttsmedia.ttstrain.com/images/BankWebinars/apple-touch-icon.png" />
     <!-- For first- and second-generation iPad: -->
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://images.ttstrain.com/images/BankWebinars/apple-touch-icon-72x72-precomposed.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://ttsmedia.ttstrain.com/images/BankWebinars/apple-touch-icon-72x72-precomposed.png" />
     <!-- For iPhone with high-resolution Retina display: -->
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://images.ttstrain.com/images/BankWebinars/apple-touch-icon-114x114-precomposed.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://ttsmedia.ttstrain.com/images/BankWebinars/apple-touch-icon-114x114-precomposed.png" />
     <!-- For third-generation iPad with high-resolution Retina display: -->
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://images.ttstrain.com/images/BankWebinars/apple-touch-icon-144x144-precomposed.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://ttsmedia.ttstrain.com/images/BankWebinars/apple-touch-icon-144x144-precomposed.png" />
 
-    <link rel="shortcut icon" href="http://images.ttstrain.com/images/BankWebinars/favicon.ico" />
+    <link rel="shortcut icon" href="http://ttsmedia.ttstrain.com/images/BankWebinars/favicon.ico" />
     <!-- Open Graph for facebook
         http://graph.facebook.com/[UserName] replace [UserName]
         with yours and get your fb:admis content information where the XXXX goes.
@@ -187,7 +177,7 @@
 
         <div class="phone"><a href="tel:8008310678" class="tele">800.831.0678</a></div>
         <ul class="social">
-            <li><a href="" target="_blank" data-placement="bottom" title="A TTS Production"><img src="http://images.ttstrain.com/images/TTS-logoPreHeader.jpg" /></a></li>
+            <li><a href="" target="_blank" data-placement="bottom" title="A TTS Production"><img src="http://ttsmedia.ttstrain.com/images/TTS-logoPreHeader.jpg" /></a></li>
             <li><a class="socicon small facebook" href="http://www.facebook.com/home.php#!/pages/Total-Training-Solutions/300546163412" target="_blank" data-placement="bottom" title="Follow us on Facebook"></a></li>
             <li><a class="socicon small twitterbird" href="http://twitter.com/#!/ttstrain" target="_blank" data-placement="bottom" title="Follow us on Twitter"></a></li>
             <li><a class="socicon small linkedin" href="https://www.linkedin.com/company/bankwebinars.com" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
@@ -216,7 +206,7 @@
         <div class="container">
             <!-- begin #logo-->
 
-            <div id="logo" style='background:  url("@currentAffiliate.Logo") no-repeat scroll 0 0 rgba(0, 0, 0, 0)'> <a href="/Home"><img alt="" src="http://images.ttstrain.com/images/BankWebinars/trans.gif" /><em> Webinars</em><!--effing ie7 support--></a> </div>
+            <div id="logo" style='background:  url("@currentAffiliate.Logo") no-repeat scroll 0 0 rgba(0, 0, 0, 0)'> <a href="/Home"><img alt="" src="http://ttsmedia.ttstrain.com/images/BankWebinars/trans.gif" /><em> Webinars</em><!--effing ie7 support--></a> </div>
             <!-- end #logo -->
             <!-- begin #main_menu -->
             <nav id="main_menu">
@@ -285,7 +275,7 @@
                 <div class="span4">
                     <section>
                         <h4>Contact Us</h4>
-                        @Html.Raw(currentAffiliate.WebFooter.Split('~')[0])
+                        @Html.Raw(footAddress)
                     </section>
                     <!--close section-->
                 </div>
@@ -293,7 +283,7 @@
                 <div class="span4">
                     <section>
                         <h4>Follow Us</h4>
-                        @Html.Raw(currentAffiliate.WebFooter.Split('~')[1])
+                        @Html.Raw(footSocial)
 
                         @{
                             if (currentAffiliate.idUserAff > 19)

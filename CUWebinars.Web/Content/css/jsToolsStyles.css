@@ -1,5 +1,5 @@
 ﻿#custom { 
-    background-image:url(http://images.ttstrain.com/images/CUWebinars/loginFormBackground.png); 
+    background-image:url(http://ttsmedia.ttstrain.com/images/CUWebinars/loginFormBackground.png); 
     width:512px; 
     height:531px; 
     padding:0px; 
@@ -14,7 +14,7 @@
 div.showInProcess {
 	
 	/* growing background image */
-	background-image:url(http://images.ttstrain.com/images/CUWebinars/inProcess.png);
+	background-image:url(http://ttsmedia.ttstrain.com/images/CUWebinars/inProcess.png);
 	
 	/* dimensions after the growing animation finishes  */
 	width:320px;
@@ -31,7 +31,7 @@ div.showInProcess {
 div.showLoginBox {
 	
 	/* growing background image */
-	background-image:url(http://images.ttstrain.com/images/CUWebinars/loginFormBackground.png);
+	background-image:url(http://ttsmedia.ttstrain.com/images/CUWebinars/loginFormBackground.png);
 	
 	/* dimensions after the growing animation finishes  */
 	width:320px;
@@ -50,7 +50,7 @@ div.showLoginBox {
 div.supportBox {
 	
 	/* growing background image */
-	background-image:url(http://images.ttstrain.com/images/CUWebinars/supportFormBackground.png);
+	background-image:url(http://ttsmedia.ttstrain.com/images/CUWebinars/supportFormBackground.png);
 	
 	/* dimensions after the growing animation finishes  */
 	width:320px;

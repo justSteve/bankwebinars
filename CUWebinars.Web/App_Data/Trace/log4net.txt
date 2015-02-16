@@ -100,10 +100,8 @@ CUWebinars Information: 0 : MailerSent: showmesomeandroid-test996@yahoo.com.au, 
 CUWebinars Information: 0 : MailerSent: showmesomeandroid-test995@yahoo.com.au, steve@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: For Sales Managers: How to Hire Better Bankers Who Can Sell Timestamp was: 12/02/2015 10:47:10 PM
 CUWebinars Information: 0 : MailerSent: showmesomeandroid-test994@yahoo.com.au, steve@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Excel Explained: Internal Control Timestamp was: 13/02/2015 10:05:09 AM
 CUWebinars Information: 0 : MailerSent: showmesomeandroid-test994@yahoo.com.au, steve@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Call Report for Banks: Basel III & Other Recent Changes Timestamp was: 13/02/2015 10:10:27 AM
-CUWebinars Information: 0 : MailerSent: showmesomeandroid-test994@yahoo.com.au, steve@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Appraisal Review for Residential Mortgage Decisions Timestamp was: 13/02/2015 7:37:09 PM
-CUWebinars Information: 0 : MailerSent: showmesomeandroid-test996@yahoo.com.au Subject: Connection Information for Appraisal Review for Residential Mortgage Decisions Timestamp was: 13/02/2015 7:39:38 PM
-CUWebinars Information: 0 : MailerSent: showmesomeandroid-test994@yahoo.com.au Subject: Connection Information for Appraisal Review for Residential Mortgage Decisions Timestamp was: 13/02/2015 7:39:48 PM
-CUWebinars Information: 0 : MailerSent: showmesomeandroid-test994@yahoo.com.au, steve@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Commandments Effective Trainers Live By Timestamp was: 13/02/2015 7:42:47 PM
-CUWebinars Information: 0 : MailerSent: showmesomeandroid-test994@yahoo.com.au Subject: Connection Information for Commandments Effective Trainers Live By Timestamp was: 13/02/2015 7:46:41 PM
-CUWebinars Information: 0 : MailerSent: showmesomeandroid-test994@yahoo.com.au, steve@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Right of Setoff Timestamp was: 13/02/2015 7:54:16 PM
-CUWebinars Information: 0 : MailerSent: showmesomeandroid-test994@yahoo.com.au Subject: Connection Information for Right of Setoff Timestamp was: 13/02/2015 7:57:30 PM
+CUWebinars Error: 0 : Validation failed for webinar 4601 and User 31739
+CUWebinars Error: 0 : Validation failed for webinar 4623 and User 31738
+CUWebinars Error: 0 : Validation failed for webinar 4601 and User 31739
+CUWebinars Error: 0 : Validation failed for webinar 4623 and User 31738
+CUWebinars Error: 0 : Validation failed for webinar 4601 and User 31739

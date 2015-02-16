@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using CUWebinars.Business.AccountService;
@@ -31,7 +32,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             ILogger logger,
             IStateService stateService,
             IAppHelper appHelper)
-
         {
             _membershipService = membershipService;
             _orderManagementService = orderManagementService;
@@ -105,6 +105,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             webinar.OrganizerKey = connectionInfoModel.OrganizerKey;
             webinar.WebinarKey = webinarKey.Trim();
 
+
             if (webinar.CitrixRegisterUrl == "" ||
                 webinar.AccessCodeAttendee == "" ||
                 webinar.AccessCodePresenter == "" ||
@@ -116,10 +117,67 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
             else
             {
+
+                if (webinar.WebinarFiles != null || webinar.WebinarFiles.Count < 1)
+                {
+                    webinar.Status = WebinarStatus.Active;
+
+                    var changeString = PublishStateChange(webinar.Status.ToString() + " to " + "Active", webinar);
+
+                    webinar.ConnectionInfo = changeString;
+                }
+
+
+                UpdateWebinar(webinar);
+
                 detailsValid = true;
             }
 
             return webinar;
+        }
+
+        public string PublishStateChange(string stateFromTo, Webinar webinar)
+        {
+            var sb = new StringBuilder();
+
+            switch (stateFromTo.ToLower())
+            {
+                case "scheduled to active":
+                    sb.Append("[{STATECHANGE : scheduled to active," + System.Environment.NewLine);
+                    sb.Append("       CitrixRegisterUrl   : " + webinar.CitrixRegisterUrl + "," + System.Environment.NewLine);
+                    sb.Append("       WebinarKey          : " + webinar.WebinarKey + "," + System.Environment.NewLine);
+                    sb.Append("       AccessPhone         : " + webinar.AccessPhone + "," + System.Environment.NewLine);
+                    sb.Append("       AccessCodeAttendee  : " + webinar.AccessCodeAttendee + "," + System.Environment.NewLine);
+                    sb.Append("       AccessCodePresenter : " + webinar.AccessCodePresenter + "," + System.Environment.NewLine);
+                    sb.Append("       AccessCodeOrganizer : " + webinar.AccessCodeOrganizer + "}]" + System.Environment.NewLine);
+
+
+                    break;
+
+                default:
+                    {
+                        System.Console.WriteLine("Other number");
+                        break;
+                    }
+            }
+            return sb.ToString();
+
+        }
+
+        public string SetEventToRecorded(int webinarId)
+        {
+            var webinar = _webinarManagementService.GetWebinar(webinarId);
+            if (webinar.RecordingUrl != null)
+            {
+                String setPostEventClaims = _orderManagementService.SetPostEventClaims(webinarId);
+                webinar.Status = WebinarStatus.Recorded;
+
+                var changeString = PublishStateChange(webinar.Status.ToString() + " to " + "recorded", webinar);
+
+                webinar.ConnectionInfo = changeString;
+            }
+
+
         }
 
         public void UpdateWebinar(Webinar webinar)

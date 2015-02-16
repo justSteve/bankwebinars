@@ -429,6 +429,7 @@
     <Compile Include="ViewModel\AffPromoMsgViewModel.cs" />
     <Compile Include="ViewModel\DiscountPromotionViewModel.cs" />
     <Compile Include="ViewModel\Discount_SubscriptionViewModel.cs" />
+    <Compile Include="ViewModel\PostEventPublishModel.cs" />
     <Compile Include="ViewModel\RegistrationSummaryViewModel.cs" />
     <Compile Include="ViewModel\WebinarFileViewModel.cs" />
     <Content Include="App_Data\Orders\MigrateCUToUpdatedDb.sql" />

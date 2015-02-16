@@ -212,6 +212,7 @@ namespace CUWebinars.Business.Repository
 
         public IList<Order> GetOrdersForRecordedEventNotifications(int idWebinar)
         {
+            //TODO: Refactor to employ Claims inspection
             var orders = ((TTSWebinarsContext)db).OrderRows
                 .Include(or => or.Order)
                 .Where(or => or.idWebinar == idWebinar)
@@ -355,7 +356,7 @@ namespace CUWebinars.Business.Repository
         }
 
 
-        public int CheckUserForRecordingAccess(int webinar, int user)
+        public int AccessToPostEventMaterials(int webinar, int user)
         {
             var a = items
                     .Where(o => o.idUser == user
@@ -367,6 +368,8 @@ namespace CUWebinars.Business.Repository
                         && o.OrderRows.FirstOrDefault().RegistrationType.ShowRecordingNotifications == "Yes"
                         )
                     .ToList();
+
+            //TODO: Refactor to employ Claims inspection
             return !items.Any() ? 0 : 1;
         }
 

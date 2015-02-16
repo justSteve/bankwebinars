@@ -1,8 +1,8 @@
 
 UPDATE  dbo.Presenter
-SET     BiographyLong = REPLACE(BiographyLong, 'https://ttseast.blob.core.windows.net', 'http://images.ttstrain.com') ,
-        PhotoFull = REPLACE(PhotoFull, 'https://ttseast.blob.core.windows.net', 'http://images.ttstrain.com') ,
-        PhotoThumb = REPLACE(PhotoThumb, 'https://ttseast.blob.core.windows.net', 'http://images.ttstrain.com')
+SET     BiographyLong = REPLACE(BiographyLong, 'https://ttseast.blob.core.windows.net', 'http://ttsmedia.ttstrain.com') ,
+        PhotoFull = REPLACE(PhotoFull, 'https://ttseast.blob.core.windows.net', 'http://ttsmedia.ttstrain.com') ,
+        PhotoThumb = REPLACE(PhotoThumb, 'https://ttseast.blob.core.windows.net', 'http://ttsmedia.ttstrain.com')
 WHERE   idUser > 1
 
 
@@ -370,7 +370,7 @@ SET     RegTypeExplain = REPLACE(RegTypeExplain, 'll have opportunity', 'll have
 UPDATE  dbo.Presenter
 SET     PhotoFull = '' ,
         PhotoThumb = '' ,
-        BiographyLong = '<p><img class="alignleft" src="https://images.ttstrain.com/images/presenters/shelton.jpg" alt="Photo of Honey Shelton" />Honey Shelton brings the best of both worlds to her speaking and training engagements. She has 25 years of experience as a training and quality improvement consultant for banks and banking associations across the country. Her banking background includes spending three years as Executive Vice President/Chief Retail Banking Officer with First Victoria National Bank. </p><p>Nationally recognized as an outstanding speaker, over a half million bankers have participated in programs Honey has presented. Her depth of knowledge, enthusiasm, and compelling personality has left her lasting mark on InterAction Training, the firm she founded in 1983. </p><p>As a graduate of the School of Bank Marketing from the University of Colorado, she realizes the value of quality education. Honey invests time as a faculty member for banking schools around the country. She is a repeat presenter for most of the state banking associations. </p><p>Honey continues in her own personal pursuit of excellence and is a member of the American Society of Training and Development (ASTD). Currently she is pursuing a self study program on Six Sigma. She has obtained certification in Reality Therapy from the William Glasser Institute as well as certification from the Training and Development Program at Texas A &amp; M. </p>'
+        BiographyLong = '<p><img class="alignleft" src="https://ttsmedia.ttstrain.com/images/presenters/shelton.jpg" alt="Photo of Honey Shelton" />Honey Shelton brings the best of both worlds to her speaking and training engagements. She has 25 years of experience as a training and quality improvement consultant for banks and banking associations across the country. Her banking background includes spending three years as Executive Vice President/Chief Retail Banking Officer with First Victoria National Bank. </p><p>Nationally recognized as an outstanding speaker, over a half million bankers have participated in programs Honey has presented. Her depth of knowledge, enthusiasm, and compelling personality has left her lasting mark on InterAction Training, the firm she founded in 1983. </p><p>As a graduate of the School of Bank Marketing from the University of Colorado, she realizes the value of quality education. Honey invests time as a faculty member for banking schools around the country. She is a repeat presenter for most of the state banking associations. </p><p>Honey continues in her own personal pursuit of excellence and is a member of the American Society of Training and Development (ASTD). Currently she is pursuing a self study program on Six Sigma. She has obtained certification in Reality Therapy from the William Glasser Institute as well as certification from the Training and Development Program at Texas A &amp; M. </p>'
 WHERE   idUser = 25
 
 PRINT '-----------------Seeder '

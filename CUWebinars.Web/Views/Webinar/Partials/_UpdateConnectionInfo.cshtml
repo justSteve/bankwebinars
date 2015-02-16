@@ -40,7 +40,7 @@
         <div class="modal-body">
 
             @Html.AntiForgeryToken()
-            @Html.EditorFor(model => model.idWebinar)
+            @Html.HiddenFor(model => model.idWebinar)
             @Html.HiddenFor(model => model.OrganizerKey)
             @Html.HiddenFor(model => model.OrganizerOAuthKey)
 
@@ -103,7 +103,7 @@
                         </div>
                     </div>
 
-    <a id="GetSendConnectionInfoEventHtmlButton">Connection Info Notification</a>
+    @*<a id="GetSendConnectionInfoEventHtmlButton">Connection Info Notification</a>*@
 
                 }
                 <div class="modal-footer">

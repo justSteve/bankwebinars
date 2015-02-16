@@ -2,7 +2,7 @@
 
 <div id="LogInContainer" class="container">
     <div style="margin-left: 200px;" id="reset">
-            
+
         @{
             if (string.IsNullOrWhiteSpace(Model.ScreenMessage))
             {
@@ -13,8 +13,6 @@
 
                     <fieldset>
                         <legend>Set Password Form</legend>
-
-                        <div>You need to change your password, as your current password was temporary in nature.</div>
                         <div>Please enter a new password and confirm it below.</div>
                         <div>&nbsp;</div>
                         @Html.HiddenFor(m => m.Email)
