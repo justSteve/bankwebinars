@@ -15,6 +15,7 @@ using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
+using Newtonsoft.Json;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -413,7 +414,19 @@ namespace CUWebinars.Web.Controllers
             {
                 var orders = _orderManagementService.GetOrdersForLiveNotifications(webinarId);
 
+                orders.ToList().ForEach((order) =>
+                {
+                    var notificationStorage = new NotificationStorage
+                    {
+                        idOrder = order.idOrder,
+                        SessionStartInfo = _appHelper.GetSessionStartInfo()
+                    };
+
+                    order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
+                });
+
                 _orderManagementService.FireSendConnectionInfoNotificationEvent(orders, false);
+
                 return Json(new { Result = WebUiConstants.Success });
             }
             catch (Exception exception)
@@ -490,6 +503,11 @@ namespace CUWebinars.Web.Controllers
             {
                 bool accessPermitted = false;
 
+                var playModel = new PlayModel
+                {
+                    Webinar = _webinarManagementService.GetWebinar(w.Value)
+                };
+
                 if (u.Value == 19)
                 {
                     accessPermitted = true;
@@ -497,37 +515,50 @@ namespace CUWebinars.Web.Controllers
                 else
                 {
                     var webUser = _membershipService.GetWebUserById(u.Value);
-                    var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, webUser.email);
 
-                    if (userAccount.HasClaim(ClaimTypes.DisplayPostEventMaterials))
+                    if (webUser.email != null)
                     {
-                        var claimsForOrder = userAccount.Claims.FirstOrDefault(c => c.Value.ToLower().Contains(w.Value.ToString()));
+                        var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, webUser.email);
 
-                        // extract the date
-                        if (claimsForOrder != null)
+                        if (userAccount != null && userAccount.HasClaim(ClaimTypes.DisplayPostEventMaterials))
                         {
-                            var expiryAsString = claimsForOrder.Value.Substring(claimsForOrder.Value.IndexOf(":") + 1);
+                            var claimsForOrder =
+                                userAccount.Claims.FirstOrDefault(c => c.Value.ToLower().Contains(w.Value.ToString()));
 
-                            DateTime expiryDate;
-
-                            if (DateTime.TryParse(expiryAsString, out expiryDate))
+                            // extract the date
+                            if (claimsForOrder != null)
                             {
-                                if (DateTime.Today <= expiryDate)
+                                var expiryAsString =
+                                    claimsForOrder.Value.Substring(claimsForOrder.Value.IndexOf(":") + 1);
+
+                                DateTime expiryDate;
+
+                                if (DateTime.TryParse(expiryAsString, out expiryDate))
                                 {
-                                    accessPermitted = true;
+                                    if (DateTime.Today <= expiryDate)
+                                    {
+                                        accessPermitted = true;
+                                    }
                                 }
                             }
                         }
+                        else
+                        {
+                            _logger.Error("No UserAccount exists with the email {0}", webUser.email);
+                            ModelState.AddModelError(string.Empty, string.Format("No UserAccount exists with the email {0}", webUser.email));
+                            return View(playModel);
+                        }
+                    }
+                    else
+                    {
+                        _logger.Error("No WebUser exists with the Id {0}", u.Value);
+                        ModelState.AddModelError(string.Empty, string.Format("No WebUser exists with the Id {0}", u.Value));
+                        return View(playModel);
                     }
                 }
 
                 if (accessPermitted)
                 {
-                    var playModel = new PlayModel
-                    {
-                        Webinar = _webinarManagementService.GetWebinar(w.Value)
-                    };
-
                     //how do I ensure that all child objects are included?
                     playModel.WebinarFiles = playModel.Webinar.WebinarFiles.Where(f => f.idWebinar == w)
                         .Select(f => f.fileDesc + "|" + f.fileLocation)

@@ -550,7 +550,7 @@ namespace CUWebinars.Business.Services
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }
 
-            int rows = _orderRepository.SaveChanges();
+            int rowsUpdated = _orderRepository.SaveChanges();
 
             Clear(); // need to clear at this point, otherwise the OrderSubmittedEvent will be fired again when 
 
@@ -683,14 +683,15 @@ namespace CUWebinars.Business.Services
         {
             foreach (var order in orders)
             {
-                AddEvent(new SendConnectionInfoEvent<Order> { EventObject = order, ResendEvent = resending });
+                AddEvent(new SendConnectionInfoEvent<Order> { EventObject = order, ResendEvent = resending, Details = order.NotificationStorage });
             }
-
 
             foreach (var evt in GetEvents().OfType<SendConnectionInfoEvent<Order>>())
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }
+
+            int rowsUpdated = _orderRepository.SaveChanges();
 
             Clear();
         }

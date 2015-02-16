@@ -1,4 +1,5 @@
-﻿using System.ServiceModel.Syndication;
+﻿using System.Reflection;
+using System.ServiceModel.Syndication;
 using System.Xml;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
@@ -108,24 +109,13 @@ namespace CUWebinars.Web.Controllers.Admin
 
         public ActionResult ClaimsManagement()
         {
-            var claimTypes = typeof(ClaimTypes).GetFields().Where(f => f.IsLiteral).ToList();
-            var typesAsSelectList = new List<SelectListItem>(claimTypes.Count);
-            string rawConstant;
-
-            foreach (var claimType in claimTypes)
-            {
-                rawConstant = claimType.GetRawConstantValue().ToString();
-
-                typesAsSelectList.Add(new SelectListItem
-                {
-                    Text = rawConstant.SubstringFromRight(rawConstant.Length - rawConstant.LastIndexOf(Path.AltDirectorySeparatorChar) - 1),
-                    Value = claimType.GetRawConstantValue().ToString()
-                });
-            }
+            var frameworkTypesAsSelectList = GetClaimTypesFromClass(typeof(ClaimTypes), ConstantType.Constant);
+            var customTypesAsSelectList = GetClaimTypesFromClass(typeof(Business.Constants.ClaimTypes), ConstantType.Readonly);
 
             var model = new AddClaimInputModel
             {
-                ClaimTypes = typesAsSelectList,
+                ClaimTypes = frameworkTypesAsSelectList,
+                TtsClaimTypes = customTypesAsSelectList
             };
 
             return View(model);
@@ -136,15 +126,28 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             if (ModelState.IsValid)
             {
-                var userAccount =
-                    _membershipService.GetUserAccountByUserId(ClaimsExtensions.GetUserID(User));
+                var webUser = _membershipService.GetUserByEmail(model.UserEmail);
+
+                if (ReferenceEquals(webUser, null))
+                {
+                    ModelState.AddModelError(string.Empty, "There is no user with that email address on file.");
+                    return this.ModelStateJson(ModelState);
+                }
+                var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, webUser.email);
+
+                if (ReferenceEquals(userAccount, null))
+                {
+                    ModelState.AddModelError(string.Empty, "There is no user with that email address on file.");
+                    return this.ModelStateJson(ModelState);
+                }
 
                 _membershipService.AddClaim(
                     userAccount,
                     model.NewClaimType,
                     model.NewClaimValue
                     );
-                return Json(new { Result = "success" });
+
+                return Json(new { Result = WebUiConstants.Success });
             }
 
             return this.ModelStateJson(ModelState);
@@ -1091,5 +1094,70 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return new List<Address> { billingAddress, shippingAddress };
         }
+        
+        private static IEnumerable<SelectListItem> GetClaimTypesFromClass(Type type, ConstantType typeOfConstant)
+        {
+            IEnumerable<FieldInfo> claimTypes = null;
+
+            switch (typeOfConstant)
+            {
+                case ConstantType.Constant:
+                {
+                    claimTypes = type.GetFields().Where(f => f.IsLiteral).ToList();
+                    break;
+                }
+                case ConstantType.Readonly:
+                {
+                    claimTypes = type.GetFields(BindingFlags.Public | BindingFlags.Static)
+                        .Where(f => f.FieldType == typeof(string) && f.IsInitOnly)
+                        .ToList();
+                    break;
+                }
+                default:
+                {
+                    throw new NotSupportedException(string.Format("An unsupported option for {0} was passed in.", typeOfConstant));
+                }
+            }
+
+            
+            var typesAsSelectList = new List<SelectListItem>();
+            string rawConstant;
+
+            foreach (var claimType in claimTypes)
+            {
+                switch (typeOfConstant)
+                {
+                    case ConstantType.Constant:
+                        {
+                            rawConstant = claimType.GetRawConstantValue().ToString();
+                            break;
+                        }
+                    case ConstantType.Readonly:
+                        {
+                            rawConstant = claimType.GetValue(claimType).ToString();
+                            break;
+                        }
+                    default:
+                        {
+                            throw new NotSupportedException(string.Format("An unsupported option for {0} was passed in.", typeOfConstant));
+                        }
+                }
+
+                typesAsSelectList.Add(new SelectListItem
+                {
+                    Text =
+                        rawConstant.SubstringFromRight(rawConstant.Length -
+                                                       rawConstant.LastIndexOf(Path.AltDirectorySeparatorChar) - 1),
+                    Value = rawConstant
+                });
+            }
+            return typesAsSelectList;
+        }
+    }
+
+    public enum ConstantType
+    {
+        Constant = 0,
+        Readonly = 1
     }
 }

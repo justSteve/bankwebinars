@@ -1,12 +1,14 @@
 USE TTSWebinars2
 GO
 
+USE TTSWebinars2
+GO
 
 DECLARE @idwebinar INT
-SET @idwebinar = 1743
+SET @idwebinar = 1757
 
 
-SELECT TOP 1000 ( SELECT    o.idAffiliate
+SELECT  ( SELECT    o.idAffiliate
           FROM      dbo.OrdersRows
           WHERE     o.idOrder = idOrder
         ) AS AffiliateID ,
@@ -54,13 +56,15 @@ SELECT TOP 1000 ( SELECT    o.idAffiliate
         r.status
 FROM    TTSWebinars2.dbo.Orders o
         INNER JOIN dbo.OrdersRows r ON r.idOrder = o.idOrder
-WHERE  r.idWebinar = @idwebinar
+WHERE  o.idOrder BETWEEN 
+ 49709 AND 57313
+
+--o.idOrder < 49709 --  AND r.idWebinar IN (SELECT r.idWebinar FROM dbo.Webinar WHERE status = 2 OR status = 3)
         AND ( r.status < 5
               AND r.status > 1
             )
-ORDER BY orderDate DESC
+ORDER BY o.idOrder DESC
 GO
-
 
         --( SELECT    CASE ( SELECT   optionLabel
         --                   FROM     dbo.Options
