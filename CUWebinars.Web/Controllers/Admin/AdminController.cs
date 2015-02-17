@@ -446,6 +446,21 @@ namespace CUWebinars.Web.Controllers.Admin
                     }
                 }
             }
+
+            orders.ToList().ForEach((order) =>
+            {
+                var notificationStorage = new NotificationStorage
+                {
+                    idOrder = order.idOrder,
+                    SessionStartInfo = _appHelper.GetSessionStartInfo()
+                };
+
+                if (string.IsNullOrWhiteSpace(order.NotificationStorage))
+                {
+                    order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
+                }
+            });
+
             _orderManagementService.FireSendConnectionInfoNotificationEvent(orders, resending: false);
 
             _logger.Info("Concludes SendConnectionInfo");
