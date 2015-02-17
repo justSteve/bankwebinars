@@ -787,6 +787,9 @@
     <Content Include="Views\Webinar\Partials\_ShippingReport.cshtml" />
     <Content Include="Views\Admin\PerDayPromo.cshtml" />
     <Content Include="Views\Admin\PerWeekPromo.cshtml" />
+    <None Include="Web.BankWebinars31 - Web Deploy.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Calendar\iCalFromCitrix.txt" />
