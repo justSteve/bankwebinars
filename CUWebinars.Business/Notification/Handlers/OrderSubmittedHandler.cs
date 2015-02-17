@@ -60,7 +60,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 //  adds the name of the message to the Json object stored in NotificationStorage.
                 string details = orderSubmittedEvent.Details;
                 orderSubmittedEvent.EventObject.Order.NotificationStorage =
-                    details.Insert(details.Length - 1, string.Concat(",", @"""OrderSubmittedEventMsg", '"', @":", '"', notificationMessage.PersistedName, '"'));
+                    details.Insert(details.Length - 1, string.Concat(",", @"""OrderSubmittedEventMsg-", DateTime.Now.Ticks, '"', @":", '"', notificationMessage.PersistedName, '"'));
 
                 notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail + ", steve@ttstrain.com";
                 _notificationDelivery.Notify(notificationMessage);

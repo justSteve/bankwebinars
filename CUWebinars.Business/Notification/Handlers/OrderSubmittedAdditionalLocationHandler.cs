@@ -41,11 +41,10 @@ namespace CUWebinars.Business.Notification.Handlers
                 var notificationMessage = _generalFormatter.Format(orderSubmittedEvent.EventObject, "OrderSubmittedAdditionalLocation");
                 notificationMessage.PersistedName = string.Format("OrderSubmittedAdditionalLocation-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm");
 
-                /************************** Legacy, before Azure was used to store notifications as blobs **************************/
-                //var fullFilePathToPersistedNotification = Path.Combine(_environmentInformation.BaseUrl,
-                //    orderSubmittedEvent.RelativeFilePath);
-                
-                //_notificationPersister.PersistNotification(notificationMessage.Body, fullFilePathToPersistedNotification);
+                //  adds the name of the message to the Json object stored in NotificationStorage.
+                string details = orderSubmittedEvent.Details;
+                orderSubmittedEvent.EventObject.Order.NotificationStorage =
+                    details.Insert(details.Length - 1, string.Concat(",", @"""OrderSubmittedAdditionalLocationEventMsg-", DateTime.Now.Ticks, '"', @":", '"', notificationMessage.PersistedName, '"'));
 
                 notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);

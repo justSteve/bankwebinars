@@ -178,7 +178,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
             return null;
 
-
+            return null;
         }
 
         public void UpdateWebinar(Webinar webinar)

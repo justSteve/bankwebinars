@@ -175,7 +175,7 @@
     <Compile Include="Notification\Events\AdminEmailConnectionInfoEvent.cs" />
     <Compile Include="Notification\Events\AdminEmailRecordingPostedEvent.cs" />
     <Compile Include="Notification\Events\AdminEmailSendShippedOrderEvent.cs" />
-    <Compile Include="Notification\Events\NotificationResendableEvent.cs" />
+    <Compile Include="Notification\Events\INotificationResendableEvent.cs" />
     <Compile Include="Notification\Events\OrderSubmittedAdditionalLocationEvent.cs" />
     <Compile Include="Notification\Events\AdminEmailEvent.cs" />
     <Compile Include="Notification\Events\PreviewConnectionInfoEvent.cs" />

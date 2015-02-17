@@ -105,19 +105,27 @@ CUWebinars Error: 0 : Validation failed for webinar 4623 and User 31738
 CUWebinars Error: 0 : Validation failed for webinar 4601 and User 31739
 CUWebinars Error: 0 : Validation failed for webinar 4623 and User 31738
 CUWebinars Error: 0 : Validation failed for webinar 4601 and User 31739
-CUWebinars Error: 0 : Validation failed for webinar 1731 and User 36079
-CUWebinars Error: 0 : Validation failed for webinar 1732 and User 35840
-CUWebinars Error: 0 : Validation failed for webinar 1718 and User 35840
-CUWebinars Error: 0 : Validation failed for webinar 1756 and User 34611
-CUWebinars Error: 0 : Validation failed for webinar 1746 and User 34619
-CUWebinars Error: 0 : Validation failed for webinar 1615 and User 34623
-CUWebinars Error: 0 : Validation failed for webinar 1718 and User 34611
-CUWebinars Error: 0 : Validation failed for webinar 1717 and User 34853
-CUWebinars Error: 0 : Validation failed for webinar 1739 and User 33811
-CUWebinars Error: 0 : Validation failed for webinar 1612 and User 34945
-CUWebinars Error: 0 : Validation failed for webinar 1624 and User 34945
-CUWebinars Error: 0 : Validation failed for webinar 1608 and User 34945
-CUWebinars Error: 0 : Validation failed for webinar 1672 and User 35107
-CUWebinars Error: 0 : Validation failed for webinar 1669 and User 35117
-CUWebinars Error: 0 : Validation failed for webinar 1669 and User 35118
-CUWebinars Error: 0 : Validation failed for webinar 1682 and User 35129
+CUWebinars Error: 0 : ERROR MailerSmtpException: showmesomeandroid-test992@yahoo.com.au, steve@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Commandments Effective Trainers Live By ErrorMsg: The operation has timed out. Timestamp was: 16/02/2015 4:47:39 PM ExceptionType was: SmtpException InnerExceptionType was: 
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test992@yahoo.com.au, steve@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Commandments Effective Trainers Live By Timestamp was: 16/02/2015 4:47:39 PM
+CUWebinars Error: 0 : ERROR MailerSmtpException: showmesomeandroid-test992@yahoo.com.au, steve@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Right of Setoff ErrorMsg: The operation has timed out. Timestamp was: 16/02/2015 4:49:17 PM ExceptionType was: SmtpException InnerExceptionType was: 
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test992@yahoo.com.au, steve@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Right of Setoff Timestamp was: 16/02/2015 4:49:17 PM
+CUWebinars Error: 0 : ERROR MailerSmtpException: showmesomeandroid-test992@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Right of Setoff ErrorMsg: The operation has timed out. Timestamp was: 16/02/2015 4:49:28 PM ExceptionType was: SmtpException InnerExceptionType was: 
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test992@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Right of Setoff Timestamp was: 16/02/2015 4:49:28 PM
+CUWebinars Error: 0 : ERROR MailerSmtpException: showmesomeandroid-test992@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Right of Setoff ErrorMsg: The operation has timed out. Timestamp was: 16/02/2015 4:49:40 PM ExceptionType was: SmtpException InnerExceptionType was: 
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test992@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Right of Setoff Timestamp was: 16/02/2015 4:49:40 PM
+CUWebinars Error: 0 : ERROR MailerSmtpException: showmesomeandroid-test992@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Right of Setoff ErrorMsg: The operation has timed out. Timestamp was: 16/02/2015 4:49:51 PM ExceptionType was: SmtpException InnerExceptionType was: 
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test992@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Right of Setoff Timestamp was: 16/02/2015 4:49:51 PM
+CUWebinars Error: 0 : ERROR MailerSmtpException: showmesomeandroid-test992@yahoo.com.au, steve@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Appraisal Review for Residential Mortgage Decisions ErrorMsg: The operation has timed out. Timestamp was: 16/02/2015 4:51:42 PM ExceptionType was: SmtpException InnerExceptionType was: 
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test992@yahoo.com.au, steve@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Appraisal Review for Residential Mortgage Decisions Timestamp was: 16/02/2015 4:51:42 PM
+CUWebinars Error: 0 : ERROR MailerSmtpException: showmesomeandroid-test992@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Appraisal Review for Residential Mortgage Decisions ErrorMsg: The operation has timed out. Timestamp was: 16/02/2015 4:52:32 PM ExceptionType was: SmtpException InnerExceptionType was: 
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test992@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Appraisal Review for Residential Mortgage Decisions Timestamp was: 16/02/2015 4:52:32 PM
+CUWebinars Error: 0 : ERROR MailerSmtpException: showmesomeandroid-test992@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Appraisal Review for Residential Mortgage Decisions ErrorMsg: The operation has timed out. Timestamp was: 16/02/2015 4:52:55 PM ExceptionType was: SmtpException InnerExceptionType was: 
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test992@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Appraisal Review for Residential Mortgage Decisions Timestamp was: 16/02/2015 4:52:55 PM
+CUWebinars Error: 0 : ERROR MailerSmtpException: showmesomeandroid-test992@yahoo.com.au, steve@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Your Renter Dies: Who Can Access the Safe Deposit Box Now? ErrorMsg: The operation has timed out. Timestamp was: 16/02/2015 6:46:14 PM ExceptionType was: SmtpException InnerExceptionType was: 
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test992@yahoo.com.au, steve@ttstrain.com Subject: [preview-BankWebinars] Confirmation of Registration: Your Renter Dies: Who Can Access the Safe Deposit Box Now? Timestamp was: 16/02/2015 6:46:14 PM
+CUWebinars Error: 0 : ERROR MailerSmtpException: showmesomeandroid-test992@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Your Renter Dies: Who Can Access the Safe Deposit Box Now? ErrorMsg: The operation has timed out. Timestamp was: 16/02/2015 6:46:25 PM ExceptionType was: SmtpException InnerExceptionType was: 
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test992@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Your Renter Dies: Who Can Access the Safe Deposit Box Now? Timestamp was: 16/02/2015 6:46:25 PM
+CUWebinars Error: 0 : ERROR MailerSmtpException: showmesomeandroid-test992@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Your Renter Dies: Who Can Access the Safe Deposit Box Now? ErrorMsg: The operation has timed out. Timestamp was: 16/02/2015 6:46:36 PM ExceptionType was: SmtpException InnerExceptionType was: 
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test992@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Your Renter Dies: Who Can Access the Safe Deposit Box Now? Timestamp was: 16/02/2015 6:46:36 PM
+CUWebinars Error: 0 : ERROR MailerSmtpException: showmesomeandroid-test992@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Your Renter Dies: Who Can Access the Safe Deposit Box Now? ErrorMsg: The operation has timed out. Timestamp was: 16/02/2015 6:46:47 PM ExceptionType was: SmtpException InnerExceptionType was: 
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test992@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Your Renter Dies: Who Can Access the Safe Deposit Box Now? Timestamp was: 16/02/2015 6:46:47 PM

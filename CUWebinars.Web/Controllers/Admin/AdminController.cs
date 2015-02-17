@@ -411,7 +411,6 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 _orderManagementService.FireSendReminderNotificationEvent(orders);
 
-
                 return Json(new { Result = WebUiConstants.Success });
             }
 

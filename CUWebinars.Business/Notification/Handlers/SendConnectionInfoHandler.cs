@@ -64,7 +64,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 //  adds the name of the message to the Json object stored in NotificationStorage.
                 string details = sendConnectionInfoEvent.Details;
                 sendConnectionInfoEvent.EventObject.NotificationStorage =
-                    details.Insert(details.Length - 1, string.Concat(",", @"""SendConnectionInfoMsg", '"', @":", '"', notificationMessage.PersistedName, '"'));
+                    details.Insert(details.Length - 1, string.Concat(",", @"""SendConnectionInfoMsg-", DateTime.Now.Ticks, '"', @":", '"', notificationMessage.PersistedName, '"'));
 
                 if (isAdditionalLocation.Count != 0)
                 {

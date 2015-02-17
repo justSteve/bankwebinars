@@ -618,6 +618,7 @@ namespace CUWebinars.Business.Services
 
             AddEvent(new OrderSubmittedAdditionalLocationEvent<OrderSubmittedAdditionalLocationViewModel>
             {
+                Details = order.NotificationStorage,
                 EventObject = orderSubmittedAdditionalLocationViewModel,
                 RelativeFilePath = relativePath,
                 ResendEvent = resending
@@ -631,6 +632,8 @@ namespace CUWebinars.Business.Services
             }
 
             Clear();
+
+            int rowsUpdated = _orderRepository.SaveChanges();
         }
 
         public void FireSendRecordingIsPostedEvent(IList<Order> orders)
@@ -668,7 +671,7 @@ namespace CUWebinars.Business.Services
         {
             foreach (var order in orders)
             {
-                AddEvent(new SendReminderEvent<Order> { EventObject = order });
+                AddEvent(new SendReminderEvent<Order> { EventObject = order, Details = order.NotificationStorage });
             }
 
             foreach (var evt in GetEvents().OfType<SendReminderEvent<Order>>())
@@ -677,6 +680,8 @@ namespace CUWebinars.Business.Services
             }
 
             Clear();
+
+            int numRows = _orderRepository.SaveChanges();
         }
 
         public void FireSendConnectionInfoNotificationEvent(IList<Order> orders, bool resending)
