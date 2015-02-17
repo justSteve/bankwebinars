@@ -204,7 +204,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 AffiliateId = migrateOrderModel.idAffiliate,
                 Email = email,
                 LegacyOrderId =  migrateOrderModel.idOrderLegacy,
-                //LegacyUserId=  migrateOrderModel.idUserLegacy,
+                DiscountId=  Convert.ToInt32(migrateOrderModel.DiscountCode),
 
                 WebinarId = migrateOrderModel.idWebinar
             };

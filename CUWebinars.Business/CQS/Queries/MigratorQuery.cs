@@ -8,7 +8,7 @@ namespace CUWebinars.Business.CQS.Queries
         public int AffiliateId { get; set; }
         public string Email { get; set; }
         public int WebinarId { get; set; }
-        public int LegacyUserId { get; set; }
+        public int DiscountId { get; set; }
         public int LegacyOrderId { get; set; }
         public DateTime OrderDate { get; set; }
     }

@@ -98,46 +98,46 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             //208	CD-ROM and Hardcopy Handouts	CD-ROM_and_Hardcopy_Handouts_2Hr_325_208
             //209	Premier Package	Premier_Package_2Hr_395_209
 
-            //if (command.OrderDate > Convert.ToDateTime("01-01-2015") && command.RegistrationType < 200)
-            //{
-            //    try
-            //    {
-            //        int idRegType = Convert.ToInt32(command.RegistrationType);
-            //        switch (idRegType)
-            //        {
-            //            case 1: { idRegType = 205; break; }
-            //                ;
-            //            case 16: { idRegType = 206; break; }
-            //                ;
-            //            case 3: { idRegType = 207; break; }
-            //                ;
-            //            case 17: { idRegType = 208; break; }
-            //                ;
-            //            case 18: { idRegType = 209; break; }
-            //                ;
-            //            ////1hr
-            //            case 27: { idRegType = 200; break; }
-            //                ;
-            //            case 32: { idRegType = 201; break; }
-            //                ;
-            //            case 35: { idRegType = 202; break; }
-            //                ;
-            //            case 33: { idRegType = 203; break; }
-            //                ;
-            //            case 36: { idRegType = 204; break; }
-            //                ;
-            //            default: { idRegType = 0; break; }
-            //        }
+            if (command.OrderDate > Convert.ToDateTime("01-01-2015") && command.RegistrationType < 200)
+            {
+                try
+                {
+                    int idRegType = Convert.ToInt32(command.RegistrationType);
+                    switch (idRegType)
+                    {
+                        case 1: { idRegType = 205; break; }
+                            ;
+                        case 16: { idRegType = 206; break; }
+                            ;
+                        case 3: { idRegType = 207; break; }
+                            ;
+                        case 17: { idRegType = 208; break; }
+                            ;
+                        case 18: { idRegType = 209; break; }
+                            ;
+                        ////1hr
+                        case 27: { idRegType = 200; break; }
+                            ;
+                        case 32: { idRegType = 201; break; }
+                            ;
+                        case 35: { idRegType = 202; break; }
+                            ;
+                        case 33: { idRegType = 203; break; }
+                            ;
+                        case 36: { idRegType = 204; break; }
+                            ;
+                        default: { idRegType = 0; break; }
+                    }
 
-            //        command.RegistrationType = idRegType;
-            //    }
-            //    catch (Exception)
-            //    {
+                    command.RegistrationType = idRegType;
+                }
+                catch (Exception)
+                {
 
-            //        throw;
-            //    }
+                    throw;
+                }
 
-            //}
+            }
 
             if (!string.IsNullOrWhiteSpace(command.AdditionalLocationsString) && command.AdditionalLocationsString != "NULL")
             {

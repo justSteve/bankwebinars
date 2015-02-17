@@ -1,11 +1,6 @@
 USE TTSWebinars2
 GO
 
-USE TTSWebinars2
-GO
-
-DECLARE @idwebinar INT
-SET @idwebinar = 1757
 
 
 SELECT  ( SELECT    o.idAffiliate
@@ -56,9 +51,7 @@ SELECT  ( SELECT    o.idAffiliate
         r.status
 FROM    TTSWebinars2.dbo.Orders o
         INNER JOIN dbo.OrdersRows r ON r.idOrder = o.idOrder
-WHERE  o.idOrder BETWEEN 
- 49709 AND 57313
-
+WHERE  o.idOrder 
 --o.idOrder < 49709 --  AND r.idWebinar IN (SELECT r.idWebinar FROM dbo.Webinar WHERE status = 2 OR status = 3)
         AND ( r.status < 5
               AND r.status > 1

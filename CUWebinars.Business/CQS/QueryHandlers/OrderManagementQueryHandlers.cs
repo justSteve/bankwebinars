@@ -46,7 +46,7 @@ IQueryHandler<MigratorQuery, MigratorQueryResult>, IQueryHandler<ImportQuery, Im
                 //Affiliate = _orderManagementService.GetAffiliateById(query.AffiliateId),
                 WebUser = _membershipService.GetUserByEmail(query.Email),
                 LegacyOrderId = query.LegacyOrderId,
-                LegacyUserId = query.LegacyUserId,
+                DiscountId = query.DiscountId,
                 Webinar = _webinarManagementService.GetWebinar(query.WebinarId)
             };
 
