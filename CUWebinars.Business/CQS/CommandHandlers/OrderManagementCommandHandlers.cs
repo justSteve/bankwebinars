@@ -161,7 +161,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                command.RegistrationType
                );
 
-            orderRow.Discount = _orderManagementService.GetDiscountByCode(command.Discount);
+            orderRow.Discount = _orderManagementService.GetDiscountById(Convert.ToInt32(command.Discount));
 
             _postCommitRegistrator.Committed += () =>
             {

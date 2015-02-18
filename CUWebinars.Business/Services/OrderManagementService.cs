@@ -833,7 +833,13 @@ namespace CUWebinars.Business.Services
             var myDiscount = _orderRepository.FindDiscountByCode(discount);
             return myDiscount;
         }
-
+         
+        //public Discount GetDiscountById(int discount)
+        //{
+        //    var myDiscount = _orderRepository.FindDiscountById(discount);
+        //    return myDiscount;
+        //}
+         
         public decimal GetPriceOfAdditionalLocation(int idWebinar)
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);

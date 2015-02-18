@@ -71,5 +71,6 @@ namespace CUWebinars.Business.Services
         void GenerateRegistrantKey(Order order, AdditionalLocation nuller);
         int GetNumberOfOrdersPerWebinar(int id);
         string SetPostEventClaims(int webinarId);
+        Discount GetDiscountById(int discount);
     }
 }

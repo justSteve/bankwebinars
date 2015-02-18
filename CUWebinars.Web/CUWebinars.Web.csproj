@@ -632,10 +632,7 @@
     <Content Include="Notification\PreviewTemplates\PreviewConnectionInfo.cshtml" />
     <Content Include="Notification\PreviewTemplates\PreviewShippedOrder.cshtml" />
     <Content Include="Notification\PreviewTemplates\PreviewRecordingPosted.cshtml" />
-    <None Include="Properties\PublishProfiles\BankWebinars31 - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\BankWebinars31 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars31.pubxml" />
-    <None Include="Properties\PublishProfiles\BWOnSteadfast.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars31.pubxml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\bootstrap-filestyle.min.js" />
@@ -788,6 +785,12 @@
     <Content Include="Views\Admin\PerDayPromo.cshtml" />
     <Content Include="Views\Admin\PerWeekPromo.cshtml" />
     <None Include="Web.BankWebinars31 - Web Deploy.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.BankWebinars31.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.CUWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
@@ -1255,13 +1258,7 @@
     <EmbeddedResource Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Body.cshtml" />
     <EmbeddedResource Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Subject.cshtml" />
     <Content Include="App_Data\Orders\ImportSampleOrders.xlsm" />
-    <None Include="Properties\PublishProfiles\cuwebinars.pubxml" />
-    <None Include="Properties\PublishProfiles\cuwebinars1 - FTP %282%29.pubxml" />
-    <None Include="Properties\PublishProfiles\cuwebinars1 - Web Deploy %282%29.pubxml" />
     <Content Include="Views\Account\MyCertificate.cshtml" />
-    <None Include="Properties\PublishProfiles\CUStaging.pubxml" />
-    <None Include="Properties\PublishProfiles\cuwebinars1 - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\cuwebinars1 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Scripts\cleditor\images\buttons.gif" />
     <Content Include="Scripts\cleditor\images\toolbar.gif" />

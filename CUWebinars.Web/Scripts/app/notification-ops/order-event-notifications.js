@@ -424,7 +424,6 @@ $(function () {
         $('#OrdersMenuHeader').after('<i id="getHtmlSpinner" class="icon-spinner icon-spin"></i>');
 
         $('#InputFormFields').empty().load(sendConnectionInfoUrl, function () {
-
             var webinarsDropdownList = $('#SelectedWebinarId');
 
             $('#SendConnectionInfoRecipientsButton').on('click', function (eventArgs) {
