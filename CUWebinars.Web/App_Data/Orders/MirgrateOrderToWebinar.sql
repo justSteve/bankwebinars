@@ -31,7 +31,7 @@ SELECT  ( SELECT    o.idAffiliate
         o.city AS City ,
         ISNULL(o.state, 'na') AS State ,
         o.zip AS Zip ,
-        '' AS DiscountCode ,--r.idDiscount ,
+        r.idDiscount AS DiscountCode ,--r.idDiscount ,
         ( SELECT    REPLACE(ISNULL(additional_locations_emails, ''), 'NULL', '')
           FROM      dbo.OrdersRowsOptions
           WHERE     r.idOrderRow = idOrderRow
@@ -51,11 +51,12 @@ SELECT  ( SELECT    o.idAffiliate
         r.status
 FROM    TTSWebinars2.dbo.Orders o
         INNER JOIN dbo.OrdersRows r ON r.idOrder = o.idOrder
-WHERE  o.idOrder 
+WHERE r.idWebinar = 1756 --r.idDiscount IS NOT NULL AND o.orderDate > '01/01/2015'
 --o.idOrder < 49709 --  AND r.idWebinar IN (SELECT r.idWebinar FROM dbo.Webinar WHERE status = 2 OR status = 3)
         AND ( r.status < 5
               AND r.status > 1
             )
+			AND o.idAffiliate > 1
 ORDER BY o.idOrder DESC
 GO
 

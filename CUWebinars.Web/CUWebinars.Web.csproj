@@ -138,6 +138,9 @@
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="log4net.Appender.Azure">
+      <HintPath>..\packages\log4net.Appender.Azure.1.1.1.0\lib\net45\log4net.Appender.Azure.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.ApplicationServer.Caching.Client, Version=101.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\WindowsAzure.Caching.1.7.0.0\lib\net35-full\Microsoft.ApplicationServer.Caching.Client.dll</HintPath>
@@ -786,12 +789,14 @@
     <Content Include="Views\Admin\PerWeekPromo.cshtml" />
     <None Include="Web.BankWebinars31 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </None>
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <None Include="Web.CUWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
