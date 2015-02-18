@@ -129,6 +129,37 @@ CUWebinars Error: 0 : ERROR MailerSmtpException: showmesomeandroid-test992@yahoo
 CUWebinars Information: 0 : MailerSent: showmesomeandroid-test992@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Your Renter Dies: Who Can Access the Safe Deposit Box Now? Timestamp was: 16/02/2015 6:46:36 PM
 CUWebinars Error: 0 : ERROR MailerSmtpException: showmesomeandroid-test992@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Your Renter Dies: Who Can Access the Safe Deposit Box Now? ErrorMsg: The operation has timed out. Timestamp was: 16/02/2015 6:46:47 PM ExceptionType was: SmtpException InnerExceptionType was: 
 CUWebinars Information: 0 : MailerSent: showmesomeandroid-test992@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Your Renter Dies: Who Can Access the Safe Deposit Box Now? Timestamp was: 16/02/2015 6:46:47 PM
-CUWebinars Information: 0 : MailerSent: hh@lklk.com Subject: Connection Information for Critical Issues on Certificates of Deposit (CDs) Timestamp was: 2/17/2015 8:05:34 AM
-CUWebinars Information: 0 : MailerSent: ii@ii.com Subject: Connection Information for Critical Issues on Certificates of Deposit (CDs) Timestamp was: 2/17/2015 8:05:40 AM
-CUWebinars Error: 0 : Validation failed for webinar 1731 and User 43313
+CUWebinars Information: 0 : MailerSent: jstatler@fcbmbg.com Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:38:39 AM
+CUWebinars Information: 0 : MailerSent: donna.zacharias@pnc.com Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:38:44 AM
+CUWebinars Information: 0 : MailerSent: beth.king@bankwest-sd.com Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:38:47 AM
+CUWebinars Information: 0 : MailerSent: athomas@bankcsb.com Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:38:51 AM
+CUWebinars Information: 0 : MailerSent: jeparks@tcbssb.com Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:38:55 AM
+CUWebinars Information: 0 : MailerSent: eashford@cierabank.com Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:38:58 AM
+CUWebinars Information: 0 : MailerSent: callmond@mebanking.com Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:39:02 AM
+CUWebinars Information: 0 : MailerSent: lmargherita@1stconstitution.com Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:39:06 AM
+CUWebinars Information: 0 : MailerSent: liz.taylor@sundancestatebank.com Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:39:10 AM
+CUWebinars Information: 0 : MailerSent: htwg21d13cx0tybmbcrmx0om@notauthenticated.com Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:39:13 AM
+CUWebinars Information: 0 : MailerSent: htwg21d13cx0tybmbcrmx0om@notauthenticated.com Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:39:17 AM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test998@yahoo.com.au Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:39:21 AM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test3@yahoo.com.au Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:39:25 AM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test997@yahoo.com.au Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:39:28 AM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test996@yahoo.com.au Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:39:32 AM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test995@yahoo.com.au Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:39:36 AM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test994@yahoo.com.au Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:39:40 AM
+CUWebinars Information: 0 : MailerSent: jstatler@fcbmbg.com Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:40:45 AM
+CUWebinars Information: 0 : MailerSent: donna.zacharias@pnc.com Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:40:49 AM
+CUWebinars Information: 0 : MailerSent: beth.king@bankwest-sd.com Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:40:53 AM
+CUWebinars Information: 0 : MailerSent: athomas@bankcsb.com Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:40:57 AM
+CUWebinars Information: 0 : MailerSent: jeparks@tcbssb.com Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:41:00 AM
+CUWebinars Information: 0 : MailerSent: eashford@cierabank.com Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:41:04 AM
+CUWebinars Information: 0 : MailerSent: callmond@mebanking.com Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:41:08 AM
+CUWebinars Information: 0 : MailerSent: lmargherita@1stconstitution.com Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:41:11 AM
+CUWebinars Information: 0 : MailerSent: liz.taylor@sundancestatebank.com Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:41:15 AM
+CUWebinars Information: 0 : MailerSent: htwg21d13cx0tybmbcrmx0om@notauthenticated.com Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:41:19 AM
+CUWebinars Information: 0 : MailerSent: htwg21d13cx0tybmbcrmx0om@notauthenticated.com Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:41:23 AM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test998@yahoo.com.au Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:41:26 AM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test3@yahoo.com.au Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:41:30 AM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test997@yahoo.com.au Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:41:34 AM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test996@yahoo.com.au Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:41:37 AM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test995@yahoo.com.au Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:41:41 AM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test994@yahoo.com.au Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:41:45 AM

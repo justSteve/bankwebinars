@@ -53,31 +53,29 @@ namespace CUWebinars.Web.Core
 
                 UniqueInstance.CreateUserQueueName = ApplicationSettingsSection["CreateUserQueueName"];
                 UniqueInstance.EmailSendingMode = ApplicationSettingsSection["EmailSendingMode"];
-                UniqueInstance.EmailSignature = ApplicationSettingsSection["EmailSignature"];
-                UniqueInstance.WMVRepository = ApplicationSettingsSection["WMVRepository"];
-                UniqueInstance.HandoutRepository = ApplicationSettingsSection["HandoutRepository"];
                 UniqueInstance.GhostRequestRetryLimit = int.Parse(ApplicationSettingsSection["GhostRequestRetryLimit"]);
                 UniqueInstance.GhostRequestTimeout = int.Parse(ApplicationSettingsSection["GhostRequestTimeout"]);
-                UniqueInstance.ImgRepository = ApplicationSettingsSection["ImgRepository"];
+                UniqueInstance.HandoutRepository = ApplicationSettingsSection["HandoutRepository"];
                 UniqueInstance.NotificationsTesting = bool.Parse(ApplicationSettingsSection["NotificationsTesting"]);
-                UniqueInstance.RelativeLoginUrl = ApplicationSettingsSection["RelativeLoginUrl"];
-                UniqueInstance.RelativeConfirmChangeUrl = ApplicationSettingsSection["RelativeConfirmChangeUrl"];
                 UniqueInstance.RelativeCancelVerificationUrl = ApplicationSettingsSection["RelativeCancelVerificationUrl"];
+                UniqueInstance.RelativeConfirmChangeUrl = ApplicationSettingsSection["RelativeConfirmChangeUrl"];
                 UniqueInstance.RelativeConfirmPasswordResetUrl = ApplicationSettingsSection["RelativeConfirmPasswordResetUrl"];
+                UniqueInstance.RelativeLoginUrl = ApplicationSettingsSection["RelativeLoginUrl"];
                 UniqueInstance.RetryCount = int.Parse(ApplicationSettingsSection["RetryCount"]);
                 UniqueInstance.StorageAccessKey = ApplicationSettingsSection["StorageAccessKey"];
                 UniqueInstance.StorageAccountName = ApplicationSettingsSection["StorageAccountName"];
                 UniqueInstance.Tenant = ApplicationSettingsSection["Tenant"];
-                UniqueInstance.TenantEmail = ApplicationSettingsSection["TenantEmail"];
                 UniqueInstance.TenantDomain = ApplicationSettingsSection["TenantDomain"];
-                UniqueInstance.TenantURL = ApplicationSettingsSection["TenantURL"];
+                UniqueInstance.TenantEmail = ApplicationSettingsSection["TenantEmail"];
                 UniqueInstance.TenantLogo = ApplicationSettingsSection["TenantLogo"];
                 UniqueInstance.TenantPrefix = ApplicationSettingsSection["TenantPrefix"];
+                UniqueInstance.TenantURL = ApplicationSettingsSection["TenantURL"];
                 UniqueInstance.TestEmailAddress = ApplicationSettingsSection["TestEmailAddress"];
                 UniqueInstance.TestEmailAddress2 = ApplicationSettingsSection["TestEmailAddress2"];
                 UniqueInstance.TraceLevel = GetTraceLevel();
                 //UniqueInstance.UnAuthenticatedUser = ApplicationSettingsSection["UnAuthenticatedUser"];
                 UniqueInstance.UseAzureWebjobs = bool.Parse(ApplicationSettingsSection["UseAzureWebjobs"]);
+                UniqueInstance.WMVRepository = ApplicationSettingsSection["WMVRepository"];
 
                 ConnectionStringSettingsCollection ConnectionStringSettings = WebConfigurationManager.ConnectionStrings;
 
