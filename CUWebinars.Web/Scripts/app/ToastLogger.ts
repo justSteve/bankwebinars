@@ -9,6 +9,10 @@ module Common {
     export class Logger {
 
         logIt(message: string, data: string, source: string, showToast: boolean, toastType: string): void {
+
+            source = source ? '[' + source + '] ' : '';
+            console.info(source, message, data);
+
             if (showToast) {
                 if (toastType === 'error') {
                     toastr.error(message);

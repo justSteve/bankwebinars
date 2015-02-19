@@ -43,6 +43,9 @@ var Common;
             };
         }
         Logger.prototype.logIt = function (message, data, source, showToast, toastType) {
+            source = source ? '[' + source + '] ' : '';
+            console.info(source, message, data);
+
             if (showToast) {
                 if (toastType === 'error') {
                     toastr.error(message);

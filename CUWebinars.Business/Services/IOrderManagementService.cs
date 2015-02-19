@@ -17,7 +17,9 @@ namespace CUWebinars.Business.Services
         int CheckUserForRecordingAccess(int i, int i1);
         AdditionalLocation CreateAdditionalLocation(string email, decimal price, string fullname);
 
-        Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow, string origin = null);
+        Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow,
+            string origin = null);
+
         OrderRow CreateOrderRow(Webinar webinar, IList<AdditionalLocation> additionalLocation, int registrationType);
 
         string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int idWebinar,
@@ -35,7 +37,10 @@ namespace CUWebinars.Business.Services
         void FireSendPerDayPromoEvent(WebinarPromoViewModel webinarPromoViewModel);
         void FireSendPerWeekPromoEvent(IList<Affiliate> affiliates, Webinar webinar);
         void FireSendReminderNotificationEvent(IList<Order> orders);
-        Tuple<string, decimal> GetCostOfAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations, int idWebinar);
+
+        Tuple<string, decimal> GetCostOfAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations,
+            int idWebinar);
+
         Affiliate GetAffiliateByDomain(string domain);
         Affiliate GetAffiliateById(int id);
         Affiliate GetAffiliateByIdLoaded(int id, params Expression<Func<Affiliate, object>>[] includeProperties);
@@ -54,7 +59,10 @@ namespace CUWebinars.Business.Services
         IEnumerable<WebUser> GetWebusersForLiveNotifications(int idWebinar);
         OrderRow LoadOrderRow(int id);
         int SaveChanges();
-        Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink, OrderGenesis orderGenesis = OrderGenesis.ImportedForExistingUser);
+
+        Order SaveOrderChanges(Order currentOrder, string verificationKey, string confirmChangeEmailLink,
+            OrderGenesis orderGenesis = OrderGenesis.ImportedForExistingUser);
+
         IList<Order> SelectOrdersWithArchivedWebinars(int idUser);
         IList<Order> SelectOrdersWithRecordedWebinars(int idUser);
         IList<Order> SelectOrdersWithScheduledWebinars(int idUser);
