@@ -1316,31 +1316,20 @@ namespace CUWebinars.Web.Controllers
         }
         public ActionResult UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel)
         {
-            // 
-
             Webinar webinar = _webinarManagementService.GetWebinar(webinarDetailsViewModel.Webinar.idWebinar);
+
             try
             {
                 var checkThatNewFilesExist = CheckThatRecordingExists(webinarDetailsViewModel.Webinar.RecordingUrl);
+
                 if (!checkThatNewFilesExist)
                 {
                     return Json(new { result = webinarDetailsViewModel.Webinar.RecordingUrl + " does not exist." });
                 }
 
-                var webUserOrderer = _orderManagementService.GetWebUser(webinarDetailsViewModel.Order.idUser);
-                
-                var userAccountOfOrderer = _membershipService.GetUserAccountByEmail(
-                    _globalConfig.Tenant,
-                    webUserOrderer.email
-                    );
+                var ordersForWebinar = _orderManagementService.GetOrdersForWebinar(webinar.idWebinar);
 
-                var expiryDate = GetPostEventMaterialsAccessExpiry(webinarDetailsViewModel.Order);
-
-                _membershipService.AddClaim(
-                    userAccountOfOrderer, 
-                    Business.Constants.ClaimTypes.DisplayPostEventMaterials, 
-                    string.Concat(webinarDetailsViewModel.Order.idOrder,":", expiryDate.ToString("yyyy-MM-dd"))
-                    );
+                AddClaimForPostEventMaterials(ordersForWebinar);
 
                 webinar.RecordingUrl = webinarDetailsViewModel.Webinar.RecordingUrl;
 
@@ -1349,6 +1338,8 @@ namespace CUWebinars.Web.Controllers
                 //var sendRecording = SendRecordingPosted();
 
                 _webinarManagementService.UpdateWebinar(webinar);
+
+                _orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
 
                 return Json(new { result = WebUiConstants.Success });
             }
@@ -1361,6 +1352,25 @@ namespace CUWebinars.Web.Controllers
             }
 
             return this.ModelStateJson(ModelState);
+        }
+
+        private void AddClaimForPostEventMaterials(IEnumerable<Order> orders)
+        {
+            foreach (var order in orders)
+            {
+                var userAccountOfOrderer = _membershipService.GetUserAccountByEmail(
+                    _globalConfig.Tenant,
+                    order.WebUser.email
+                    );
+
+                var expiryDate = GetPostEventMaterialsAccessExpiry(order);
+
+                _membershipService.AddClaim(
+                    userAccountOfOrderer,
+                    Business.Constants.ClaimTypes.DisplayPostEventMaterials,
+                    string.Concat(order.idOrder, ":", expiryDate.ToString("yyyy-MM-dd"))
+                    );
+            }
         }
 
         private DateTime GetPostEventMaterialsAccessExpiry(Order order)
