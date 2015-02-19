@@ -1,6 +1,8 @@
 ﻿
+using System.Configuration;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
 using Ninject.Extensions.Logging;
@@ -105,6 +107,15 @@ namespace CUWebinars.Business.AccountService
             }
 
             return false;
+        }
+
+        public void CleanUser(string tenant, string email, string newPassword)
+        {
+            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
+            var userAccount = _userAccountService.GetByEmail(tenant, email);
+            dataOperations.SetFieldsConsistantWithVerifiedUser(userAccount);
+            _userAccountService.SetRequiresPasswordReset(userAccount.ID, false);
+            _userAccountService.SetPassword(userAccount.ID, newPassword);
         }
 
         public UserAccount CreateUser(

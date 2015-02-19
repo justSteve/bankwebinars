@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
+using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.Core
@@ -141,6 +142,35 @@ namespace CUWebinars.Business.Core
                     return timeZone;
                 }
             }
+        }
+
+        public bool SetFieldsConsistantWithVerifiedUser(UserAccount userAccount)
+        {
+            int numRows = 0;
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                using (var setFieldsVerifiedCommand = new SqlCommand())
+                {
+                    var idParam = new SqlParameter
+                    {
+                        DbType = DbType.Guid, 
+                        ParameterName = "@id",
+                        Value = userAccount.ID
+                    };
+
+                    setFieldsVerifiedCommand.Connection = sqlConnection;
+                    setFieldsVerifiedCommand.CommandType = CommandType.Text;
+                    setFieldsVerifiedCommand.Parameters.Add(idParam);
+                    setFieldsVerifiedCommand.CommandText = "UPDATE [dbo].[UserAccounts] SET LastFailedLogin = NULL, FailedLoginCount = 0, IsAccountVerified = 1, IsAccountClosed = 0, AccountClosed = NULL, VerificationKey = NULL, VerificationPurpose = NULL, VerificationKeySent = NULL, LastFailedPasswordReset = NULL, FailedPasswordResetCount = 0, VerificationStorage = NULL WHERE [ID] = @id;";
+
+                    numRows = setFieldsVerifiedCommand.ExecuteNonQuery();
+                }
+            }
+
+            return numRows == 1;
         }
     }
 }

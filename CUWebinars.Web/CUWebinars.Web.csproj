@@ -476,6 +476,13 @@
     <Content Include="App_Data\Orders\SubsFromCSV.dtsx" />
     <Content Include="App_Data\Orders\SQLScripts\CUWebinarsMigrations\ImportProductionDb.ps1" />
     <Content Include="App_Data\Orders\OrdersImporter.xlsm" />
+    <Content Include="Content\toastr.css" />
+    <Content Include="Content\toastr.min.css" />
+    <Content Include="Content\toastr.scss" />
+    <Content Include="Content\toastr.less" />
+    <Content Include="Content\toastr.css.map">
+      <DependentUpon>toastr.css</DependentUpon>
+    </Content>
     <None Include="log4net.config">
       <SubType>Designer</SubType>
     </None>
@@ -644,6 +651,8 @@
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\purl.js" />
+    <Content Include="Scripts\toastr.js" />
+    <Content Include="Scripts\toastr.min.js" />
     <Content Include="Scripts\underscore.js" />
     <Content Include="Scripts\underscore.min.js" />
     <Content Include="Scripts\vendor\json2.js" />
@@ -1404,10 +1413,12 @@
     <TypeScriptCompile Include="Scripts\app\cart\create-order-new.ts" />
     <TypeScriptCompile Include="Scripts\app\cart\register-user-in-cart.ts" />
     <TypeScriptCompile Include="Scripts\app\register\register-user.ts" />
+    <TypeScriptCompile Include="Scripts\app\toastLogger.ts" />
     <TypeScriptCompile Include="Scripts\app\utilities.ts" />
     <TypeScriptCompile Include="Scripts\typings\bootstrap\bootstrap.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.validation.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\toastr\toastr.d.ts" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -808,15 +808,16 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             if (ModelState.IsValid)
             {
-                var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, model.Email);
-                if (userAccount == null)
+                //var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, model.Email);
+                //if (userAccount == null)
 
-                    return Json(new { Result = WebUiConstants.InvalidEmail });
-                var newPassword = Crypto.HashPassword(model.NewPassword);
+                //    return Json(new { Result = WebUiConstants.InvalidEmail });
+                //var newPassword = Crypto.HashPassword(model.NewPassword);
 
-                var dataOperations = new DataOperations();
-                dataOperations.ManualPasswordReset(userAccount.ID, newPassword);
+                //var dataOperations = new DataOperations();
+                //dataOperations.ManualPasswordReset(userAccount.ID, newPassword);
 
+                _membershipService.CleanUser(_globalConfig.Tenant, model.Email, model.NewPassword);
                 return Json(new { Result = WebUiConstants.Success });
             }
 

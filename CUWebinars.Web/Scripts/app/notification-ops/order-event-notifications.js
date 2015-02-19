@@ -49,7 +49,7 @@ $(function () {
 
                 var orderId = $.trim($('#OrderId').val());
 
-                $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+                //$(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
 
                 $.ajax({
                     type: 'POST',
@@ -430,7 +430,11 @@ $(function () {
                 
                 var payload = webinarsDropdownList.val();
 
-                $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+                //$(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+                var log = new Common.Logger();
+                var logStartOperation = log.getLogFn('GetManualResetPasswordFields');
+                logStartOperation("Sending ConnectionInfo", {}, true);
+
 
                 $.ajax({
                     type: 'POST',
