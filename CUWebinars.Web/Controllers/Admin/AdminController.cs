@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.ServiceModel.Syndication;
 using System.Xml;
+using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
@@ -483,15 +484,49 @@ namespace CUWebinars.Web.Controllers.Admin
         public JsonResult SendRecordingPosted(int webinarId)
         {
             var orders = _orderManagementService.GetOrdersForRecordedNotifications(webinarId);
+            _logger.Info(string.Join(",", orders.Select(o => o.idOrder.ToString())));
 
-            if (orders.Any())
+            var ordersWhichSatisfyClaim = GetOrdersWhichAreEligibleForMaterials(orders);
+
+            if (ordersWhichSatisfyClaim.Any())
             {
-                _orderManagementService.FireSendRecordingIsPostedEvent(orders);
+                _orderManagementService.FireSendRecordingIsPostedEvent(ordersWhichSatisfyClaim.ToList());
 
                 return Json(new { Result = WebUiConstants.Success });
             }
 
             return Json(new { Result = WebUiConstants.NoOrdersForWebinar });
+        }
+
+        private IEnumerable<Order> GetOrdersWhichAreEligibleForMaterials(IEnumerable<Order> orders)
+        {
+            foreach (var order in orders)
+            {
+                var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.WebUser.email);
+
+                if (userAccount != null && userAccount.HasClaim(Business.Constants.ClaimTypes.DisplayPostEventMaterials))
+                {
+                    var claimsForOrder =
+                        userAccount.Claims.FirstOrDefault(c => c.Value.ToLower().Contains(order.idOrder.ToString()));
+
+                    // extract the date
+                    if (claimsForOrder != null)
+                    {
+                        var expiryAsString =
+                            claimsForOrder.Value.Substring(claimsForOrder.Value.IndexOf(":") + 1);
+
+                        DateTime expiryDate;
+
+                        if (DateTime.TryParse(expiryAsString, out expiryDate))
+                        {
+                            if (DateTime.Today <= expiryDate)
+                            {
+                                yield return order;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
 

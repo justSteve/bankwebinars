@@ -19,6 +19,8 @@ var OENS = {};
 
 $(function () {
 
+    var toastLogger = new Common.Logger(); // for toast notifications
+
     getAdhocEventsHtmlButton = $('#GetAdhocEventsHtmlButton');
 
     failedScreenMessage = '<br /><span id="ScreenMessageSpan" class="label label-information">&nbsp;&nbsp;Event Firing Has Failed</span>';
@@ -51,6 +53,10 @@ $(function () {
 
                 //$(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
 
+                var logStartOperation = toastLogger.getLogFn('ResendConnectionInfo');
+                logStartOperation("Re-sending ConnectionInfo", null, true);
+
+
                 $.ajax({
                     type: 'POST',
                     contentType: constants.JsonContentType,
@@ -72,7 +78,7 @@ $(function () {
                 }).fail(function () {
 
                 }).always(function () {
-                    $('#loadingSpinner').remove();
+                    //$('#loadingSpinner').remove();
                 });
             });
 
@@ -96,7 +102,10 @@ $(function () {
 
                 var orderId = $.trim($('#OrderId').val());
 
-                $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+                //$(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+
+                var logStartOperation = toastLogger.getLogFn('ResendOrderConfirmation');
+                logStartOperation("Re-sending Order Confirmation", null, true);
 
                 $.ajax({
                     type: 'POST',
@@ -120,7 +129,7 @@ $(function () {
                 }).fail(function() {
                     
                 }).always(function() {
-                    $('#loadingSpinner').remove();
+                    //$('#loadingSpinner').remove();
                 });
             });
 
@@ -236,7 +245,11 @@ $(function () {
                 if (!payload)
                     $('#EmailOrderButton').after('<span id="resultLabel" class="label label-success" style="margin-left:5px">&nbsp;Email sent</span>');
 
-                $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+                //$(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+
+                var logStartOperation = toastLogger.getLogFn('SendShippedOrderNotification');
+                logStartOperation("Sending shipped order notification", null, true);
+
 
                 $.ajax({
                     type: 'POST',
@@ -261,7 +274,7 @@ $(function () {
                     labelCheckRemove();
                     $('#InputFormFields').append(failedScreenMessage);
                 }).always(function () {
-                    $('#loadingSpinner').remove();
+                    //$('#loadingSpinner').remove();
 
                 });;
             });
@@ -431,9 +444,9 @@ $(function () {
                 var payload = webinarsDropdownList.val();
 
                 //$(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-                var log = new Common.Logger();
-                var logStartOperation = log.getLogFn('GetManualResetPasswordFields');
-                logStartOperation("Sending ConnectionInfo", {}, true);
+                
+                var logStartOperation = toastLogger.getLogFn('SendConnectionInfo');
+                logStartOperation("Sending ConnectionInfo", null, true);
 
 
                 $.ajax({
@@ -462,7 +475,7 @@ $(function () {
 
                     $('#InputFormFields').append(failedScreenMessage);
                 }).always(function () {
-                    $('#loadingSpinner').remove();
+                    //$('#loadingSpinner').remove();
                 });;
             });
 
