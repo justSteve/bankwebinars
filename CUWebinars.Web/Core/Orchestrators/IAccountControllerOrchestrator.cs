@@ -10,7 +10,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 {
     public interface IAccountControllerOrchestrator : IDisposable
     {
-        void AddPasswordForCartCreatedUser(CreateUserConfirmedViewModel model);
+        bool AddPasswordForCartCreatedUser(CreateUserConfirmedViewModel model);
         EditBillingAddressModel BuildBillingAddressModel();
         EditShippingAddressModel BuildShippingAddressModel();
         void BuildCityStateTimeZoneData(Dictionary<string, string> cityStateTimeZoneData, string zipAddress);

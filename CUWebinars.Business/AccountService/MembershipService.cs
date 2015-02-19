@@ -113,6 +113,12 @@ namespace CUWebinars.Business.AccountService
         {
             var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
             var userAccount = _userAccountService.GetByEmail(tenant, email);
+
+            if (ReferenceEquals(null, userAccount))
+            {
+                throw new NullReferenceException(DomainConstants.UserNotFound);
+            }
+
             dataOperations.SetFieldsConsistantWithVerifiedUser(userAccount);
             _userAccountService.SetRequiresPasswordReset(userAccount.ID, false);
             _userAccountService.SetPassword(userAccount.ID, newPassword);

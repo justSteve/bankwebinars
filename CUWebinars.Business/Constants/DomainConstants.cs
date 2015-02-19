@@ -28,6 +28,7 @@ namespace CUWebinars.Business.Constants
         public const string UserCreatedDuringCartCheckout = "UserCreatedDuringCartCheckout";
         public const string UserCreatedViaNewOrder = "UserCreatedViaNewOrder";
         public const string UserCreatedViaMigrator = "UserCreatedViaMigrator";
+        public const string UserNotFound = "User not found";
         public const string UsLocale = "en-US";
         public const string VerificationKey = "VerificationKey";
         public const string VerifyEmailLink = "VerifyEmailLink";

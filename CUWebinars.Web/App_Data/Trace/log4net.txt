@@ -231,3 +231,5 @@ CUWebinars Information: 0 : MailerSent: showmesomeandroid-test997@yahoo.com.au S
 CUWebinars Information: 0 : MailerSent: showmesomeandroid-test996@yahoo.com.au Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:54:16 PM
 CUWebinars Information: 0 : MailerSent: showmesomeandroid-test995@yahoo.com.au Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:54:20 PM
 CUWebinars Information: 0 : MailerSent: showmesomeandroid-test994@yahoo.com.au Subject: Connection Information for Excel Explained: Internal Control Timestamp was: 18/02/2015 10:54:23 PM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test991@yahoo.com.au, steve@ttstrain.com Subject: [BankWebinars] Confirmation of Registration: Opening Accounts for Nonresident Aliens: New W-8BEN, W-8BEN E and Due Diligence Rules Timestamp was: 19/02/2015 2:50:37 PM
+CUWebinars Information: 0 : MailerSent: showmesomeandroid-test990@yahoo.com.au, steve@ttstrain.com Subject: [BankWebinars] Confirmation of Registration: Commandments Effective Trainers Live By Timestamp was: 19/02/2015 2:54:42 PM

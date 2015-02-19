@@ -2,6 +2,7 @@
 using System.ServiceModel.Syndication;
 using System.Xml;
 using CUWebinars.Business.AccountService;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification;
 using CUWebinars.Business.Notification.Formatters;
@@ -27,6 +28,7 @@ using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
 using ClaimsExtensions = CUWebinars.Web.Helpers.ClaimsExtensions;
+using ClaimTypes = System.Security.Claims.ClaimTypes;
 using DataOperations = CUWebinars.Web.Membership.DataOperations;
 
 namespace CUWebinars.Web.Controllers.Admin
@@ -804,37 +806,31 @@ namespace CUWebinars.Web.Controllers.Admin
 
         [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
-        public JsonResult ManualPasswordReset(ManualPasswordResetViewModel model)
+        public ActionResult ManualPasswordReset(ManualPasswordResetViewModel model)
         {
             if (ModelState.IsValid)
             {
-                //var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, model.Email);
-                //if (userAccount == null)
-
-                //    return Json(new { Result = WebUiConstants.InvalidEmail });
-                //var newPassword = Crypto.HashPassword(model.NewPassword);
-
-                //var dataOperations = new DataOperations();
-                //dataOperations.ManualPasswordReset(userAccount.ID, newPassword);
-
-                _membershipService.CleanUser(_globalConfig.Tenant, model.Email, model.NewPassword);
-                return Json(new { Result = WebUiConstants.Success });
-            }
-
-            //Please use this general pattern when logging ModelState errors.
-            var myErr = "";
-            foreach (ModelState modelState in ViewData.ModelState.Values)
-            {
-                foreach (ModelError error in modelState.Errors)
+                try
                 {
-                    myErr += error.ErrorMessage + System.Environment.NewLine;
+                    _membershipService.CleanUser(_globalConfig.Tenant, model.Email, model.NewPassword);
+                    return Json(new { Result = WebUiConstants.Success });
+                }
+                catch (NullReferenceException nullReferenceException)
+                {
+                    if(nullReferenceException.Message.Equals(DomainConstants.UserNotFound))
+                        return Json(new { Result = WebUiConstants.InvalidEmail });
+                    ModelState.AddModelError(string.Empty, "Reset Failed");
+                    _logger.Error("ManualPasswordReset: {0}", _appHelper.GetUserAuditInfo());
+                    _logger.Error("ManualPasswordReset: {0}", nullReferenceException.Message);
+                }
+                catch (Exception exception)
+                {
+                    _logger.Error("ManualPasswordReset: {0}", _appHelper.GetUserAuditInfo());
+                    _logger.Error("ManualPasswordReset: {0}", exception.Message);
                 }
             }
 
-            _logger.Error("ManualPasswordReset: {0}", _appHelper.GetUserAuditInfo());
-            _logger.Error("ManualPasswordReset: {0}", myErr);
-
-            return Json(new { Result = WebUiConstants.Fail + myErr });
+            return this.ModelStateJson(ModelState);
         }
 
         [System.Web.Mvc.AllowAnonymous]
