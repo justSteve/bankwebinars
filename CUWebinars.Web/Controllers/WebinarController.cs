@@ -1316,7 +1316,7 @@ namespace CUWebinars.Web.Controllers
         }
         public ActionResult UpdateWebinarRecording(WebinarDetailsViewModel webinarDetailsViewModel)
         {
-            // 
+            // fired via Set Webinar Recording
 
             Webinar webinar = _webinarManagementService.GetWebinar(webinarDetailsViewModel.Webinar.idWebinar);
             try
@@ -1328,7 +1328,7 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 var webUserOrderer = _orderManagementService.GetWebUser(webinarDetailsViewModel.Order.idUser);
-                
+                // set 
                 var userAccountOfOrderer = _membershipService.GetUserAccountByEmail(
                     _globalConfig.Tenant,
                     webUserOrderer.email
@@ -1349,6 +1349,10 @@ namespace CUWebinars.Web.Controllers
                 //var sendRecording = SendRecordingPosted();
 
                 _webinarManagementService.UpdateWebinar(webinar);
+
+                _orderManagementService.FireSendRecordingIsPostedEvent(orders);
+
+
 
                 return Json(new { result = WebUiConstants.Success });
             }

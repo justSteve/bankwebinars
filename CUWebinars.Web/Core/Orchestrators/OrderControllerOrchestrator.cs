@@ -199,17 +199,40 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public MigratorQueryResult GetPreparatoryDataForMigrator(MigrateOrderModel migrateOrderModel, string email)
         {
-            var migratorQuery = new MigratorQuery
+
+            int _discountCode;
+            string discountCode = null;
+
+            bool result = Int32.TryParse(migrateOrderModel.DiscountCode, out _discountCode);
+            if (result)
             {
-                AffiliateId = migrateOrderModel.idAffiliate,
-                Email = email,
-                LegacyOrderId =  migrateOrderModel.idOrderLegacy,
-                DiscountId=  Convert.ToInt32(migrateOrderModel.DiscountCode),
 
-                WebinarId = migrateOrderModel.idWebinar
-            };
+                var migratorQuery = new MigratorQuery
+                {
+                    AffiliateId = migrateOrderModel.idAffiliate,
+                    Email = email,
+                    LegacyOrderId = migrateOrderModel.idOrderLegacy,
+                    DiscountId = _discountCode,
+                    WebinarId = migrateOrderModel.idWebinar
+                };
 
-            return _queryProcessor.Process(migratorQuery);
+
+                return _queryProcessor.Process(migratorQuery);
+
+            }
+            else
+            {
+                var migratorQuery = new MigratorQuery
+                {
+                    AffiliateId = migrateOrderModel.idAffiliate,
+                    Email = email,
+                    LegacyOrderId = migrateOrderModel.idOrderLegacy,
+                    WebinarId = migrateOrderModel.idWebinar
+                };
+
+
+                return _queryProcessor.Process(migratorQuery);
+            }
         }
 
         public ImportQueryResult GetPreparatoryDataForImporter(ImportOrderModel importOrderModel, string email)
