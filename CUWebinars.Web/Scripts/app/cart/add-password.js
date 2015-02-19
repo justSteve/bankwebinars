@@ -34,6 +34,13 @@ $(function() {
                 formParent.prepend('<div class="legendImitator">Password Added</div><span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;You have successfully set your password....</span><div><a href="/Account/Login">Click here</a> to log in.<div>');
 
                 $('#main_menu ul.primary_menu').append('<li><a href="/Account/MyWebinars">My Webinars</a></li>');
+            } else if (data.Result === 'TimedOut') {
+                addPasswordContainer.height(containerHeight);
+                var formParent = addPasswordForm.parent();
+                addPasswordForm.fadeOut();
+                formParent.prepend('<div class="legendImitator">Registration Nearly Complete</div><div><p>This operation timed out. Please look out for an email with details as to how to complete your registration with our site.</p> <p>It will deliver you to a page similar to this where you can enter your new password.</p></div>');
+
+                $('#main_menu ul.primary_menu').append('<li><a href="/Account/MyWebinars">My Webinars</a></li>');
             }
         });
     });

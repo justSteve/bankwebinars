@@ -241,6 +241,7 @@ $(function () {
             $('#WaitIndicator').hide();
         });
     });
+
 });
 
 function addImportOrderButtonClick() {

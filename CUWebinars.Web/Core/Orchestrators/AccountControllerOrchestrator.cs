@@ -406,8 +406,9 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         }
 
-        public void AddPasswordForCartCreatedUser(CreateUserConfirmedViewModel model)
+        public bool AddPasswordForCartCreatedUser(CreateUserConfirmedViewModel model)
         {
+            return false;
             UserAccount userAccount;
             int retries = 0;
 
@@ -424,8 +425,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                     // sleeping for half second, so 2 retries will result in 1s of sleeping.
                     Thread.Sleep(500);
 
-                    // Every 20 seconds, log the fact that the flow has been stuck here for the then current duration.
-                    if (retries%40 == 0 && retries > 0)
+                    // Every 5 seconds, log the fact that the flow has been stuck here for the then current duration.
+                    if (retries%10 == 0 && retries > 0)
                     {
                         _logger.Info(string.Format("UserAccount returning null after {0} seconds.", retries/2));
                     }
@@ -437,6 +438,10 @@ namespace CUWebinars.Web.Core.Orchestrators
 
 
             } while (retries++ < _globals.RetryCount);
+
+            //  if still null here, retries have exceeded RetryCount and operation aborted
+            if (ReferenceEquals(userAccount, null))
+                return false;
 
             _membershipService.VerifyUserByEmail(_globals.Tenant, model.Email);
 
@@ -488,6 +493,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             _stateService.ClearValue(DomainConstants.VerificationKey);
 
             _logger.Info("Account.Confirmed POST. Session={0}", _appHelper.GetUserAuditInfo());
+
+            return true;
         }
 
         public EditBillingAddressModel BuildBillingAddressModel()

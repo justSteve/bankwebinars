@@ -23,10 +23,14 @@ namespace CUWebinars.Web.App_Start
                         "~/Scripts/jquery-ui-1.11.1.js"));
             //"~/Scripts/jquery-ui-1.10.3.custom.js"));
             //"~/Scripts/jquery-ui-1.8.24.js"));
-
+            
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.unobtrusive*",
                         "~/Scripts/jquery.validate*"));
+
+            bundles.Add(new ScriptBundle("~/bundles/toastr").Include(
+                            "~/Scripts/toastr.js"
+                            ));
 
             bundles.Add(new ScriptBundle("~/bundles/AdditionalLocation").Include(
                 "~/Scripts/app/cart/add-additional-locations.js"
@@ -137,6 +141,7 @@ namespace CUWebinars.Web.App_Start
                 ));
 
             bundles.Add(new StyleBundle("~/Content/notifications-ops-styles").Include(
+                "~/Content/toastr.css",
                 "~/Content/notification-ops.css"
                 ));
 

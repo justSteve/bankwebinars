@@ -29,7 +29,8 @@
                     <li><a id="GetSendConnectionInfoEventHtmlButton" >Connection Info Notification</a></li>
                     <li><a id="GetSendRecordingPostedEventHtmlButton" >Recording Is Posted Notification</a></li>
                     <li><a id="GetResendOrderConfirmationHtmlButton">Confirmation of Registration Resend</a></li>
-                    <li><a id="GetResendConnectionInfoHtmlButton">Connection Info Resend</a></li>
+                    <li><a id="
+                           ">Connection Info Resend</a></li>
 
                     @*<div><button id="GetAdhocEventsHtmlButton" >Ad hoc Notification</button></div>*@
                     @*<div class="span8"><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>*@
@@ -50,5 +51,7 @@
 @section scripts {
     <script src="@Url.Content("~/Scripts/app/notification-ops/order-event-notifications.js")"></script>
     <script src="@Url.Content("~/Scripts/app/notification-ops/membership-notifications.js")"></script>
+    <script src="@Url.Content("~/Scripts/app/toastLogger.js")"></script>
+    @Scripts.Render("~/bundles/toastr")
 }
 @Styles.Render("~/Content/notifications-ops-styles")

@@ -1172,6 +1172,11 @@ namespace CUWebinars.Business.Services
             return discount;
         }
 
+        public IList<Order> GetOrdersForWebinar(int idWebinar)
+        {
+            return _webinarRepository.GetOrdersByWebinar(idWebinar).ToList();
+        }
+
         public string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int webinarId,
             string webinarKey)
         {

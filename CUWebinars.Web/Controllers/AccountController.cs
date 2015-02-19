@@ -998,9 +998,9 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _accountControllerOrchestrator.AddPasswordForCartCreatedUser(model);
-
-                return Json(new { Result = WebUiConstants.Success });
+                if(_accountControllerOrchestrator.AddPasswordForCartCreatedUser(model))
+                    return Json(new { Result = WebUiConstants.Success });
+                return Json(new { Result = WebUiConstants.TimedOut });
             }
 
             return this.ModelStateJson(ModelState);

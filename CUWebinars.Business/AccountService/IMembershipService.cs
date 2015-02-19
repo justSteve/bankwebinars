@@ -11,6 +11,7 @@ namespace CUWebinars.Business.AccountService
         void AddAccountTypeNotVerifiedClaim(UserAccount userAccount, string accountType);
 
         bool ChangePasswordFromResetKey(string key, string newPassword);
+        void CleanUser(string tenant, string email, string newPassword);
 
         UserAccount CreateUser(
             string tenant,
@@ -40,6 +41,8 @@ namespace CUWebinars.Business.AccountService
         WebUser GetDetailsOfUser(string email);
         Institution GetInstitutionByDomain(string domain);
         IEnumerable<Institution> GetInstitutionsByName(string name);
+        USTimeZone GetTimeZoneByZip();
+
         UserAccount GetUserAccountByEmail(string tenant, string email);
         UserAccount GetUserAccountByUserId(Guid userId);
         WebUser GetUserByEmail(string email);
@@ -83,7 +86,6 @@ namespace CUWebinars.Business.AccountService
 
         UserAccount VerifyEmailFromKey(string key, string password);
         bool VerifyUserByEmail(string tenant, string email);
-        USTimeZone GetTimeZoneByZip();
         void UpdateShippingAddressDetails(Address shippingAddress);
         void UpdateDiscountDetails(Discount discount);
     }
