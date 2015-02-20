@@ -339,3 +339,4 @@ CUWebinars Information: 0 : MailerSent: showmesomeandroid-test994@yahoo.com.au, 
 CUWebinars Information: 0 : MailerSent: showmesomeandroid-test994@yahoo.com.au, steve@ttstrain.com Subject: [BankWebinars] Confirmation of Registration: Excel Explained: Internal Control Timestamp was: 19/02/2015 10:18:24 PM
 CUWebinars Information: 0 : MailerSent: mfigura@ameriserv.com Subject: [BankWebinars] Order is Shipped: Opening Accounts for Nonresident Aliens: New W-8BEN, W-8BEN E and Due Diligence Rules Timestamp was: 19/02/2015 10:18:55 PM
 CUWebinars Information: 0 : MailerSent: mfigura@ameriserv.com Subject: [BankWebinars] Order is Shipped: Opening Accounts for Nonresident Aliens: New W-8BEN, W-8BEN E and Due Diligence Rules Timestamp was: 19/02/2015 10:20:52 PM
+CUWebinars Information: 0 : MailerSent: michelle.loke@eastwestbank.com Subject: [BankWebinars] Order is Shipped: Call Report for Banks: Basel III & Other Recent Changes Timestamp was: 20/02/2015 10:01:20 AM
