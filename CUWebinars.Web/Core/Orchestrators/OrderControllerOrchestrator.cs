@@ -201,7 +201,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
 
             int _discountCode;
-            string discountCode = null;
 
             bool result = Int32.TryParse(migrateOrderModel.DiscountCode, out _discountCode);
             if (result)
