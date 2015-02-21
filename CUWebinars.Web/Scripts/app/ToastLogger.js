@@ -1,6 +1,7 @@
 ﻿/// <reference path="../typings/jquery/jquery.d.ts" />
 /// <reference path="../typings/toastr/toastr.d.ts" />
 var Common;
+alert("Hit:");
 (function (Common) {
     var Logger = (function () {
         function Logger() {

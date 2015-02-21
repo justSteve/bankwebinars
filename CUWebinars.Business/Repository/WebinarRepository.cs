@@ -147,10 +147,12 @@ namespace CUWebinars.Business.Repository
 
         public IQueryable<Order> GetOrdersByWebinar(int webinarId)
         {
-            return ((TTSWebinarsContext)db).Orders.Where(o => o.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Webinar.idWebinar == webinarId
+            return ((TTSWebinarsContext)db).Orders
+                .Where(o => o.OrderRows.FirstOrDefault(or => or.RowStatus == OrderRowStatus.Active).Webinar.idWebinar == webinarId
                                                                && (o.OrderStatus == OrderStatus.Billed
                                                                    || o.OrderStatus == OrderStatus.Paid
-                                                                   || o.OrderStatus == OrderStatus.Submitted));
+                                                                   || o.OrderStatus == OrderStatus.Submitted))
+                                                                   .Include(o => o.WebUser);
         }
 
         public IQueryable<Order> GetAllOrdersByWebinarForUser(int webinarId, int userId)

@@ -62,7 +62,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 orderSubmittedEvent.EventObject.Order.NotificationStorage =
                     details.Insert(details.Length - 1, string.Concat(",", @"""OrderSubmittedEventMsg-", DateTime.Now.Ticks, '"', @":", '"', notificationMessage.PersistedName, '"'));
 
-                notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail + ", steve@ttstrain.com";
+                notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);
             }
             catch (NullReferenceException nullReferenceException)
