@@ -68,8 +68,8 @@
                     var expiresDate = Model.Webinar.Date.AddMonths(6);
                     var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
 
-                    <div style="font-size: smaller; text-align: center;">
-                        This event was recorded on @Html.DisplayDate(Model.Webinar.Date) and is available for OnDemand Playback until @Html.DisplayDate(expiresDate)
+                    <div style="font-size: smaller; line-height: 1.2; text-align: center; margin-bottom: 10px;">
+                        This event was recorded on <i>@Html.DisplayDate(Model.Webinar.Date)</i> and is available for OnDemand Playback until @Html.DisplayDate(expiresDate)
                         - @remainingDays.ToString() more days.
                     </div>
                 }
@@ -98,7 +98,7 @@
 
                 @{
                     <h5 class="short_headline"><span>@Model.Webinar.Presenter.WebUser.FullName</span></h5>
-                    @Html.Raw(Model.Webinar.Presenter.BiographyLong)
+                    <div class="PresenterBio">@Html.Raw(Model.Webinar.Presenter.BiographyLong)</div>
                     @Html.Partial("Partials/_OtherEventsBySpeaker")
                 }
             </aside>
@@ -108,8 +108,8 @@
         <div class="span6">
             @{
                 if (Model.Webinar.Status != WebinarStatus.Archived
-                                                                                            && Model.Webinar.Status != WebinarStatus.Deleted
-                                                                                            && Model.Webinar.Status != WebinarStatus.Pending)
+                                                                                                        && Model.Webinar.Status != WebinarStatus.Deleted
+                                                                                                        && Model.Webinar.Status != WebinarStatus.Pending)
                 {
                     <div id="SignUpFormContainer" class="row-fluid">
 
@@ -201,4 +201,3 @@
     </div>
 
 </div> <!-- closes main-content -->
-

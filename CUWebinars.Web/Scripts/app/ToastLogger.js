@@ -1,7 +1,6 @@
 ﻿/// <reference path="../typings/jquery/jquery.d.ts" />
 /// <reference path="../typings/toastr/toastr.d.ts" />
 var Common;
-alert("Hit:");
 (function (Common) {
     var Logger = (function () {
         function Logger() {
@@ -64,4 +63,4 @@ alert("Hit:");
     Common.Logger = Logger;
     ;
 })(Common || (Common = {}));
-//# sourceMappingURL=toastLogger.js.map
+//# sourceMappingURL=ToastLogger.js.map

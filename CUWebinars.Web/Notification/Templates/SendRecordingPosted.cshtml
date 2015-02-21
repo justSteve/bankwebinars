@@ -3,8 +3,9 @@
 @using System.Web.Mvc.Html
 @using CUWebinars.Business.Core
 @using CUWebinars.Business.Models
-@model CUWebinars.Web.ViewModel.PostEventPublishModel
-
+@*@model CUWebinars.Web.ViewModel.PostEventPublishModel*@
+@using CUWebinars.Business.Notification.ViewModel
+@model OrderSubmittedViewModel
 
 <title>
     @{
@@ -20,7 +21,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 @{
-    var handoutRepo = "http://ttsmedia.ttstrain.com";
+
     var row = from orderRow in Model.Order.OrderRows
               where orderRow.RowStatus == OrderRowStatus.Active
               select orderRow;
@@ -63,23 +64,20 @@
     var locations = myRow.AdditionalLocation;
     var addLocs = new StringBuilder();
 
-    var isFirstOrderForThisUser = true;
-
-    thankYouPhrase.Append("Dear " + Model.Order.FirstName + ",<br /><br />We hope you enjoyed <b>");
+    thankYouPhrase.Append("Dear " + Model.Order.FirstName + ",<br /><br />We hope you enjoyed <i>");
     thankYouPhrase.Append(row.Single().Webinar.Title + "</i>.");
 
     if (notiShipped == "No")
     {
-        infoPhrase.Append("With your live webinar purchase, you have access to the OnDemand recording for a period of 5 business days.  If you would like to increase the length of the OnDemand availability to 6 months or add a CD-ROM, we can upgrade your package for a minimal charge.  Just reply to this email and we will make that upgrade immediately.</div>");
+        infoPhrase.Append("With your live webinar purchase, you have access to the OnDemand recording for a period of 5 business days.  If you would like to increase the length of the OnDemand availability to 6 months or add a CD-ROM, we can upgrade your package for a minimal charge.  Just reply to this email and we will make that upgrade immediately.");
     }
+
+    infoPhrase.Append("You'll have access to the OnDemand playback");
+    if (notiShipped == "Yes")
     {
-        infoPhrase.Append("You'll have access to the OnDemand playback");
-        if (notiShipped == "Yes")
-        {
-            infoPhrase.Append(" as well as the CD-ROM and printouts. Physical materials are typically in your hands within 7-10 business days");
-        }
-        infoPhrase.Append(".");
+        infoPhrase.Append(" as well as the CD-ROM and printouts. Physical materials are typically in your hands within 7-10 business days");
     }
+    infoPhrase.Append(".");
 
 
     <head>
@@ -240,6 +238,5 @@
         </table>
 
     </body>
-}
 }
 </html>
