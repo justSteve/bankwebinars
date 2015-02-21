@@ -104,8 +104,14 @@
         <aside class="widget">
 
             <h5 class="short_headline"><span>Date/Time</span></h5>
-
-            <b>@Html.DisplayDate(Model.Webinar.Date)</b><br />
+            @{
+                var expiresDate = Model.Webinar.Date.AddMonths(6);
+                var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
+            }
+            <div style="font-size: smaller; line-height: 1.2; text-align: center; margin-bottom: 10px;">
+                This event was recorded on <i>@Html.DisplayDate(Model.Webinar.Date)</i> and is available for OnDemand Playback until @Html.DisplayDate(expiresDate)
+                - @remainingDays.ToString() more days.
+            </div>
             <div id="ceu">
                 <a href="#" title="@ceuStmt ">
                     @Html.Raw(ceuShort)
@@ -116,14 +122,14 @@
         <!-- close .widget -->
         <aside class="widget">
             <h5 class="short_headline"><span>Topics</span></h5>
-            @*<ul>
+            <ul>
                     @foreach (var webinarTopic in ViewBag.topics)
                         {
                         <li>
                             @webinarTopic.topicDesc
                         </li>
                         }
-                </ul>*@
+                </ul>
         </aside>
         <!--close aside .widget -->
         <aside class="widget">

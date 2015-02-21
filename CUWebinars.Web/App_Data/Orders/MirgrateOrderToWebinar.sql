@@ -1,8 +1,6 @@
 USE TTSWebinars2
 GO
 
-
-
 SELECT  ( SELECT    o.idAffiliate
           FROM      dbo.OrdersRows
           WHERE     o.idOrder = idOrder
@@ -24,7 +22,7 @@ SELECT  ( SELECT    o.idAffiliate
         --    WHEN 81 THEN 224
         --    WHEN 83 THEN 225
         --  END ) AS idRegType ,
-		r.registrationType,
+        r.registrationType ,
         o.firstName AS FirstName ,
         o.lastName AS LastName ,
         '' AS Title ,
@@ -58,7 +56,7 @@ SELECT  ( SELECT    o.idAffiliate
         REPLACE(ISNULL(o.shippingZip, o.zip), 'NULL', o.zip) ,
         o.total ,
         r.shipmentDate ,
-        o.storeCommentsPriv ,
+        'Migrated 2/21/2015 ' + ISNULL(o.storeCommentsPriv, '') ,
         o.idOrder ,
         o.orderDate ,
         r.status

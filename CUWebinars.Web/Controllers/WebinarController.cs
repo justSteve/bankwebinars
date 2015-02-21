@@ -455,7 +455,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception)
             {
-                
+
                 throw;
             }
             try
@@ -531,30 +531,34 @@ namespace CUWebinars.Web.Controllers
 
                         if (userAccount != null && userAccount.HasClaim(ClaimTypes.DisplayPostEventMaterials))
                         {
-                            var claimsForOrder =
-                                userAccount.Claims.FirstOrDefault(c => c.Value.ToLower().Contains(w.Value.ToString()));
-
-                            // extract the date
-                            if (claimsForOrder != null)
+                            foreach (var userClaim in userAccount.Claims)
                             {
-                                var expiryAsString =
-                                    claimsForOrder.Value.Substring(claimsForOrder.Value.IndexOf(":") + 1);
 
-                                DateTime expiryDate;
 
-                                if (DateTime.TryParse(expiryAsString, out expiryDate))
+                                if (userClaim.Type == ClaimTypes.DisplayPostEventMaterials)
+                                // extract the date
                                 {
-                                    if (DateTime.Today <= expiryDate)
+                                    var expiryAsString =
+                                        userClaim.Value.Substring(userClaim.Value.IndexOf(":") + 1);
+
+                                    DateTime expiryDate;
+
+                                    if (DateTime.TryParse(expiryAsString, out expiryDate))
                                     {
-                                        accessPermitted = true;
+                                        if (DateTime.Today <= expiryDate)
+                                        {
+                                            accessPermitted = true;
+                                        }
                                     }
+
                                 }
                             }
                         }
                         else
                         {
                             _logger.Error("No UserAccount exists with the email {0}", webUser.email);
-                            ModelState.AddModelError(string.Empty, string.Format("No UserAccount exists with the email {0}", webUser.email));
+                            ModelState.AddModelError(string.Empty,
+                                string.Format("No UserAccount exists with the email {0}", webUser.email));
                             return View(playModel);
                         }
                     }
@@ -575,7 +579,7 @@ namespace CUWebinars.Web.Controllers
 
                     playModel.Presenter = playModel.Webinar.Presenter;
 
-                    return View(playModel);                    
+                    return View(playModel);
                 }
 
                 ViewData["Expired"] = "This recording has expired. ";
@@ -1060,10 +1064,10 @@ namespace CUWebinars.Web.Controllers
 
                     if (!detailsValid)
                     {
-                        return Json(new {Result = WebUiConstants.Fail});
+                        return Json(new { Result = WebUiConstants.Fail });
                     }
 
-                    return Json(new {Result = WebUiConstants.Success});
+                    return Json(new { Result = WebUiConstants.Success });
 
                 }
                 catch (Exception exception)
@@ -1073,7 +1077,7 @@ namespace CUWebinars.Web.Controllers
                         );
                     ModelState.AddModelError(string.Empty, WebUiConstants.ServerErrorWithAssistNumber);
 
-                    return Json(new {Result = WebUiConstants.Fail});
+                    return Json(new { Result = WebUiConstants.Fail });
                 }
             }
             return this.ModelStateJson(ModelState);
@@ -1243,7 +1247,7 @@ namespace CUWebinars.Web.Controllers
             {
                 var webinarFile = _webinarManagementService.GetWebinarFile(idWebinarFile.Value);
 
-                return Redirect(_globalConfig.WMVRepository  + webinarFile.fileLocation);
+                return Redirect(_globalConfig.WMVRepository + webinarFile.fileLocation);
             }
             return View();
         }
@@ -1386,8 +1390,8 @@ namespace CUWebinars.Web.Controllers
         private DateTime GetPostEventMaterialsAccessExpiry(Order order)
         {
             if (order == null) throw new ArgumentNullException("order");
-            
-            var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active); 
+
+            var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             // let exception be thrown if there is not a single 
 
             var regType = _orderManagementService.GetRegTypeOfOrderRow(orderRow.idRegType);
