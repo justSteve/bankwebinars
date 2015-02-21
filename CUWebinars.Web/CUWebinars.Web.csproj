@@ -400,7 +400,7 @@
     <Compile Include="Helpers\IAppHelper.cs" />
     <Compile Include="Helpers\NotificationStorage.cs" />
     <Compile Include="Helpers\SessionStartInfo.cs" />
-    <Compile Include="Infrastructure\Attributes\HandleJsonExceptionAttribute.cs" />
+    <Compile Include="Infrastructure\Attributes\HandleAjaxExceptionAttribute.cs" />
     <Compile Include="Infrastructure\Attributes\MonitorAffiliateFilter.cs" />
     <Compile Include="Infrastructure\ErrorResponse.cs" />
     <Compile Include="Infrastructure\ErrorResponseCommand.cs" />

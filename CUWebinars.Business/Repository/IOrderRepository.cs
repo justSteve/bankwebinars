@@ -16,6 +16,7 @@ namespace CUWebinars.Business.Repository
         Order FindOrderByIdWithOrderRows(int id);
         Order FindById(int id);
         IList<Order> FindOrdersByUserId(int userId);
+        IList<int> FindOrderIdsByPartialId(int userId);
         IList<Order> FindOrdersByUserIdWithOrderRows(int userId);
         IList<Order> GetOrdersForLiveEventNotifications(int idWebinar);
         IList<Order> GetOrdersForRecordedEventNotifications(int idWebinar);

@@ -158,7 +158,14 @@ namespace CUWebinars.Business.Repository
             return ReferenceEquals(null, userOrders) ? null : GetLoadedEntitiesForOrder(userOrders);
 
         }
-        
+
+        public IList<int> FindOrderIdsByPartialId(int userId)
+        {
+            return items.Where(order => order.idOrder.ToString().Contains(userId.ToString()))
+                .Select(order => order.idOrder)
+                .ToList();
+        }
+
         public IList<Order> FindOrdersByUserIdWithOrderRows(int userId)
         {
             var userOrders = items.Include(o => o.OrderRows.Select(or => or.Webinar))

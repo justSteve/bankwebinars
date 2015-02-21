@@ -47,6 +47,8 @@ namespace CUWebinars.Web.App_Start
                 ));
 
             bundles.Add(new ScriptBundle("~/bundles/manage-order").Include(
+                "~/Scripts/toastr.js",
+                "~/Scripts/app/toastLogger.js",
                 "~/Scripts/app/admin/manage-order.js"
                 ));
 

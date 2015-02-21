@@ -3,7 +3,7 @@ using System.Web.Mvc;
 
 namespace CUWebinars.Web.Infrastructure.Attributes
 {
-    public class HandleJsonExceptionAttribute : ActionFilterAttribute
+    public class HandleAjaxExceptionAttribute : ActionFilterAttribute
     {
         public override void OnActionExecuted(ActionExecutedContext filterContext)
         {
@@ -18,7 +18,7 @@ namespace CUWebinars.Web.Infrastructure.Attributes
                     JsonRequestBehavior = JsonRequestBehavior.AllowGet,
                     Data = new
                     {
-                        Message = filterContext.Exception.Message
+                        Message = "Uncaught Ajax Error"
                     }
                 };
                 filterContext.ExceptionHandled = true;

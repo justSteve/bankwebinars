@@ -45,7 +45,7 @@ alert("Hit:");
         }
         Logger.prototype.logIt = function (message, data, source, showToast, toastType) {
             source = source ? '[' + source + '] ' : '';
-            console.info(source, message, data);
+            console.info(source, message, data || '');
 
             if (showToast) {
                 if (toastType === 'error') {
@@ -64,4 +64,4 @@ alert("Hit:");
     Common.Logger = Logger;
     ;
 })(Common || (Common = {}));
-//# sourceMappingURL=ToastLogger.js.map
+//# sourceMappingURL=toastLogger.js.map

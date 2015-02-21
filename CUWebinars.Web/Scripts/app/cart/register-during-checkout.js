@@ -19,9 +19,11 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
             if (x.status == 403) {
                 alert('Sorry, your session has expired. Please login again to continue');
                 window.location.href = '/Account/Login';
-            } else {
-                alert('An error occurred: ' + status + 'nError: ' + error);
             }
+            //  handle in the Fail method of AJAX calls if not session expirey
+            //} else {
+            //    alert('An error occurred: ' + status + 'nError: ' + error);
+            //}
         }
     });
 
@@ -230,17 +232,18 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
 
         var jsonUrl = '/Account/CheckEmail';
         var email = $('#RegisterFields_Email').val();
+        var token = $(this).find('input[name="__RequestVerificationToken"]').val();
 
         if (email.length === 0) {
             $('#RegisterFields_Email').focus();
         } else {
             $.ajax({
-                type: 'GET',
+                type: 'POST',
                 contentType: RegistrationInCart.Constants.FormPostContentType,
                 cache: false,
                 url: jsonUrl,
                 dataType: RegistrationInCart.Constants.JsonDataType,
-                data: { email: email, disregardInstitutionDomain: regUserStateManager.getDisregardIntitutionDomain(), orderId: orderId },
+                data: { email: email, disregardInstitutionDomain: regUserStateManager.getDisregardIntitutionDomain(), orderId: orderId, __RequestVerificationToken: token },
                 beforeSend: function() {
                     // this is where we append a loading image
                     $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Checking that Email...</span>');
@@ -260,13 +263,20 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
                     regUserStateManager.goToAddressFields(email);
                 } else if (data.error === 'Fail') {
                     $('#labelEmail').html('<span class="label label-important">&nbsp;An error has occurred at the server. Please contact the administrator.</span>');
+                } else if (data.error === 'Uncaught Ajax Error') {
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;splat.</span>');
                 }
 
             }).fail(function() {
                 // failed request; give feedback to user
-                $('#wrapEmail').html('<p class="error"><i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Try that again in a few moments.</p>');
-            }).always(function() {
+                $('#labelEmail').html('<p class="error"><span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Try that again in a few moments.</span></p>');
+                //$('#wrapEmail').html('<p class="error"><i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Try that again in a few moments.</p>');
+            }).always(function(data, status, message) {
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
+
+                if (status === 'error' && JSON.parse(data.responseText)['Message'] === 'Uncaught Ajax Error') {
+                    //  if in here, we know the error got caught and logged in a HandleAjaxExceptionAttribute 
+                }
             });
         }
     });

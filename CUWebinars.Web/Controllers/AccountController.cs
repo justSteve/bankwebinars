@@ -224,6 +224,7 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
+        [HandleAjaxException]
         public ActionResult GetInstitutionsByName(string institutionName)
         {
             if (!string.IsNullOrWhiteSpace(institutionName))
@@ -636,7 +637,7 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
         [ValidateAntiForgeryToken]
-        [HandleJsonException]
+        [HandleAjaxException]
         public ActionResult SignIn(SignInModel model)
         {
             if (!ModelState.IsValid)
@@ -1018,9 +1019,10 @@ namespace CUWebinars.Web.Controllers
 
         }
 
-        [System.Web.Mvc.HttpGet]
+        [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken(Order=0)]
+        [HandleAjaxException(Order=1)]
         public JsonResult CheckEmail(string email, bool disregardInstitutionDomain, int? orderId = null)
         {
             try
@@ -1039,18 +1041,18 @@ namespace CUWebinars.Web.Controllers
                 {
                     //  Email exists and view is notified.
                     resultObject.Add("success", "foundExisting");
-                    return Json(resultObject, JsonRequestBehavior.AllowGet);
+                    return Json(resultObject);
                 }
 
                 resultObject.Add("email", "wasNotFound");
 
                 if (disregardInstitutionDomain)
-                    return Json(resultObject, JsonRequestBehavior.AllowGet);
+                    return Json(resultObject);
 
                 var institution = _accountControllerOrchestrator.GetInstitutionFromEmail(email);
 
                 if (institution == null)
-                    return Json(resultObject, JsonRequestBehavior.AllowGet);
+                    return Json(resultObject);
 
                 //  if we have a match between user's email (domain)
                 //  and the domainName stored in existing Institution record
@@ -1063,13 +1065,13 @@ namespace CUWebinars.Web.Controllers
                 resultObject.Add("Zip", institution.Zip);
 
                 _logger.Info("CheckEmailResult: " + resultObject);
-                return Json(resultObject, JsonRequestBehavior.AllowGet);
+                return Json(resultObject);
             }
             catch (Exception exception)
             {
                 _logger.ErrorException("In CheckEmail method", exception);
-                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
-                return Json(new { error = WebUiConstants.Fail }, JsonRequestBehavior.AllowGet);
+                //Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                return Json(new { error = WebUiConstants.Fail });
             }
         }
 
@@ -1195,7 +1197,7 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
-        [HandleJsonException]
+        [HandleAjaxException]
         public ActionResult UpdateShippingDetails(ShippingDetailsModel shippingDetailsModel)
         {
             if (ModelState.IsValid)
