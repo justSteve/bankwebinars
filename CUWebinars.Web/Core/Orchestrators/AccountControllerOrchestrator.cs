@@ -415,7 +415,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             do
             {
                 if (retries >= _globals.RetryCount - 1)
-                    _logger.Error("Retry count reached for AddPasswordForCartCreatedUser method.");
+                    _logger.Error(string.Format("GetUserAccountByEmail times out after {0} seconds.", retries / 2));
 
                 userAccount = _membershipService.GetUserAccountByEmail(_globals.Tenant, model.Email);
 

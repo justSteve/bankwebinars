@@ -177,8 +177,6 @@ namespace CUWebinars.Web.Core.Orchestrators
                 webinar.ConnectionInfo = changeString;
             }
             return null;
-
-            return null;
         }
 
         public void UpdateWebinar(Webinar webinar)

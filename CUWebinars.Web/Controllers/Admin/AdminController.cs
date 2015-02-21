@@ -640,7 +640,6 @@ namespace CUWebinars.Web.Controllers.Admin
             //    includedAffiliates.Add(UserFacade.Instance.GetCurrentUser().ID, "on");
 
             //}
-            var msg = "";
             int i = model.Webinar.idWebinar;
             model.SendDate = Convert.ToDateTime(model.SendDate);
 

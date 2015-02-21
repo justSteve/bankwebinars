@@ -237,7 +237,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (Exception exception)
                 {
-
+                    _logger.Warn("Account.GetInstitutionsByName: " + exception.Message + " Session=" + _appHelper.GetUserAuditInfo());
                 }
             }
 
@@ -367,10 +367,10 @@ namespace CUWebinars.Web.Controllers
                     return RedirectToLocal(null);
                 }
 
-                _logger.Info("Your email address has already been successfully verified in our system. Session={0}",
+                _logger.Info("Email is successfully verified in our system. Session={0}",
                     _appHelper.GetUserAuditInfo());
 
-                model.ScreenMessage = "Your email address has already been successfully verified in our system.";
+                model.ScreenMessage = "Your email is confirmed.";
 
                 return View(model);
             }

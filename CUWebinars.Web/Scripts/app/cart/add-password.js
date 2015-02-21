@@ -31,16 +31,18 @@ $(function() {
                 addPasswordContainer.height(containerHeight);
                 var formParent = addPasswordForm.parent();
                 addPasswordForm.fadeOut();
-                formParent.prepend('<div class="legendImitator">Password Added</div><span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;You have successfully set your password....</span><div><a href="/Account/Login">Click here</a> to log in.<div>');
+                formParent.prepend('<div class="legendImitator">Account Created</div><span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Your account is confirmed.</span><div><a href="/Account/Login">Log In</a><div>');
 
                 $('#main_menu ul.primary_menu').append('<li><a href="/Account/MyWebinars">My Webinars</a></li>');
             } else if (data.Result === 'TimedOut') {
+                //TODO: This branch should post back to a method that will display the order summary
+
                 addPasswordContainer.height(containerHeight);
                 var formParent = addPasswordForm.parent();
                 addPasswordForm.fadeOut();
-                formParent.prepend('<div class="legendImitator">Registration Nearly Complete</div><div><p>This operation timed out. Please look out for an email with details as to how to complete your registration with our site.</p> <p>It will deliver you to a page similar to this where you can enter your new password.</p></div>');
-
-                $('#main_menu ul.primary_menu').append('<li><a href="/Account/MyWebinars">My Webinars</a></li>');
+                formParent.prepend('<div class="legendImitator">Password Confirmation Stalled</div><div><p>Your order is recorded as summarized below. You will receive email with a temparary password so that your account can be fully confirmed within our system.</p></div>');
+                
+                //$('#main_menu ul.primary_menu').append('<li><a href="/Account/MyWebinars">My Webinars</a></li>');
             }
         });
     });
