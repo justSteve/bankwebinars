@@ -1,11 +1,7 @@
-﻿using System.Configuration;
-using System.Diagnostics;
-using System.Linq.Expressions;
-using CUWebinars.Business.Constants;
+﻿using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Cache;
 using CUWebinars.Business.Core.Exceptions;
-using CUWebinars.Business.Migrations;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Notification.ViewModel;
@@ -19,8 +15,10 @@ using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Text;
 using IEvent = CUWebinars.NotificationSystem.Event.IEvent;
@@ -264,6 +262,11 @@ namespace CUWebinars.Business.Services
         {
             var order = _orderRepository.FindOrderByIdWithOrderRows(id);
             return order;
+        }
+
+        public IEnumerable<int> GetOrderIdsByPartialId(int id)
+        {
+            return _orderRepository.FindOrderIdsByPartialId(id);
         }
 
         public IList<Order> GetOrdersByUserId(int id)

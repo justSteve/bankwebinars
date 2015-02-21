@@ -408,7 +408,6 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public bool AddPasswordForCartCreatedUser(CreateUserConfirmedViewModel model)
         {
-            return false;
             UserAccount userAccount;
             int retries = 0;
 

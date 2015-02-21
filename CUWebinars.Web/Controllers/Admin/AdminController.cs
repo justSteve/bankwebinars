@@ -240,6 +240,18 @@ namespace CUWebinars.Web.Controllers.Admin
             return new HttpStatusCodeResult(500, "The value posted to the server was not a valid integer."); // if reach here, we are in error state.
         }
 
+        public ActionResult GetOrdersByTypeahead(int? id)
+        {
+            if (id.HasValue)
+            {
+                var orderIds = _orderManagementService.GetOrderIdsByPartialId(id.Value);
+
+                return Json(new {orderIds}, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json(new { Error = WebUiConstants.NullValueParameter });
+        }
+
         private TagBuilder GetRenderer(IList<string> emailAddresses)
         {
             const string locationsSpanPrefix = "LocationSpan-";

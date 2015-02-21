@@ -2,14 +2,15 @@
 
 $(function () {
     
-    var orderIdInput = $('#orderIdInput');
-    orderIdInput.focus();
+    MANAGE.orderIdInput = $('#orderIdInput');
+    MANAGE.orderIdInput.focus();
+    MANAGE.orderIdList = {};
 
     $('#getOrderButton').on('click', function () {
-        MANAGE.idOrder = orderIdInput.val();
+        MANAGE.idOrder = MANAGE.orderIdInput.val();
 
         // loading spinner
-        orderIdInput.after('<span id="spinWrapper" class="label label-info"><i id="spinner" class="icon-spinner icon-spin"></i>&nbsp;loading...</span>');
+        MANAGE.orderIdInput.after('<span id="spinWrapper" class="label label-info"><i id="spinner" class="icon-spinner icon-spin"></i>&nbsp;loading...</span>');
         if ($('#errorDiv').length > 0)
             $('#errorDiv').remove();
 
@@ -31,6 +32,30 @@ $(function () {
             $('#spinWrapper').remove();
         });
     });
+
+    MANAGE.orderIdInput.typeahead({
+        source: function (query, process) {
+            MANAGE.searchOrder(query, process);
+        },
+
+        matcher: function (item) {
+            return true;
+        },
+
+        highlighter: function (name) {
+            return name;
+        },
+
+        sorter: function (items) {
+            return items;
+        },
+
+        updater: function (name) {
+            return name;
+        }
+
+    });
+
 });
 
 MANAGE.addAdditionalLocation = function (e) {
@@ -140,8 +165,6 @@ MANAGE.changeRegType = function(e) {
 
     var optionId = $(this).val();
 
-    var self = this;
-
     $.ajax({
         url: "/cart/CheckIfAddLocShouldHide?optionID=" + optionId,
         type: "GET",
@@ -190,3 +213,24 @@ MANAGE.adjustAdditionalLocationsTotal = function(number) {
 
     MANAGE.totalOptionsInput.val(newPrice);
 };
+
+MANAGE.searchOrder = _.debounce(function(query, process) {
+    
+    var searchTerm = MANAGE.orderIdInput.val();
+
+    $.ajax({
+        type: 'GET',
+        contentType: constants.FormPostContentType,
+        cache: false,
+        url: '/Admin/GetOrdersByTypeahead',
+        dataType: constants.JsonDataType,
+        data: { id: searchTerm },
+        beforeSend: function () {
+            MANAGE.orderIdList = null; // dereference whatever is currently in 'MANAGE.orderIdList'. 
+        }
+    }).done(function (data) {
+        MANAGE.orderIdList = data.orderIds;
+        process(MANAGE.orderIdList);
+    });
+
+}, 200);
