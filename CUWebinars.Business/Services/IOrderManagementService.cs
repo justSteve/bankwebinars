@@ -45,6 +45,7 @@ namespace CUWebinars.Business.Services
         Affiliate GetAffiliateById(int id);
         Affiliate GetAffiliateByIdLoaded(int id, params Expression<Func<Affiliate, object>>[] includeProperties);
         IDictionary<RegType, bool> GetOptionsByWebinarId(int id, bool detached);
+        IEnumerable<Order> GetOrdersByEmail(string email);
         Order GetOrderById(int id);
         IEnumerable<int> GetOrderIdsByPartialId(int id);
         IList<Order> GetOrdersByUserId(int id);

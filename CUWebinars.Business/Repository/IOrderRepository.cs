@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.Repository
@@ -15,6 +16,7 @@ namespace CUWebinars.Business.Repository
         void DeleteOrder(int orderId);
         Order FindOrderByIdWithOrderRows(int id);
         Order FindById(int id);
+        IQueryable<Order> FindOrdersByBillingEmail(string email);
         IList<Order> FindOrdersByUserId(int userId);
         IList<int> FindOrderIdsByPartialId(int userId);
         IList<Order> FindOrdersByUserIdWithOrderRows(int userId);

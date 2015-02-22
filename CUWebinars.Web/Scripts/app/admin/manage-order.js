@@ -259,20 +259,39 @@ MANAGE.searchOrder = _.debounce(function(query, process) {
     
     var searchTerm = MANAGE.orderIdInput.val();
 
-    $.ajax({
-        type: 'GET',
-        contentType: constants.FormPostContentType,
-        cache: false,
-        url: '/Admin/GetOrdersByTypeahead',
-        dataType: constants.JsonDataType,
-        data: { id: searchTerm },
-        beforeSend: function () {
-            MANAGE.orderIdList = null; // dereference whatever is currently in 'MANAGE.orderIdList'. 
-        }
-    }).done(function (data) {
-        MANAGE.orderIdList = data.orderIds;
-        process(MANAGE.orderIdList);
-    });
+    if (searchTerm.indexOf('@') > 0) {
+
+        $.ajax({
+            type: 'GET',
+            contentType: constants.FormPostContentType,
+            cache: false,
+            url: '/Admin/GetOrdersByEmailTypeahead',
+            dataType: constants.JsonDataType,
+            data: { email: searchTerm },
+            beforeSend: function () {
+                MANAGE.orderIdList = null; // dereference whatever is currently in 'MANAGE.orderIdList'. 
+            }
+        }).done(function (data) {
+            MANAGE.orderIdList = data.orderIds;
+            process(MANAGE.orderIdList);
+        });
+
+    } else {
+        $.ajax({
+            type: 'GET',
+            contentType: constants.FormPostContentType,
+            cache: false,
+            url: '/Admin/GetOrdersByTypeahead',
+            dataType: constants.JsonDataType,
+            data: { id: searchTerm },
+            beforeSend: function () {
+                MANAGE.orderIdList = null; // dereference whatever is currently in 'MANAGE.orderIdList'. 
+            }
+        }).done(function (data) {
+            MANAGE.orderIdList = data.orderIds;
+            process(MANAGE.orderIdList);
+        });
+    }
 
 }, 200);
 
