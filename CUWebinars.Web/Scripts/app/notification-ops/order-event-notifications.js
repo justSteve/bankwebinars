@@ -19,7 +19,7 @@ var OENS = {};
 
 $(function () {
 
-    var toastLogger = new Common.Logger(); // for toast notifications
+    //var toastLogger = new Common.Logger(); // for toast notifications
 
     getAdhocEventsHtmlButton = $('#GetAdhocEventsHtmlButton');
 
@@ -53,8 +53,8 @@ $(function () {
 
                 //$(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
 
-                var logStartOperation = toastLogger.getLogFn('ResendConnectionInfo');
-                logStartOperation("Re-sending ConnectionInfo", null, true);
+                //var logStartOperation = toastLogger.getLogFn('ResendConnectionInfo');
+                //logStartOperation("Re-sending ConnectionInfo", null, true);
 
 
                 $.ajax({
@@ -104,8 +104,8 @@ $(function () {
 
                 //$(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
 
-                var logStartOperation = toastLogger.getLogFn('ResendOrderConfirmation');
-                logStartOperation("Re-sending Order Confirmation", null, true);
+                //var logStartOperation = toastLogger.getLogFn('ResendOrderConfirmation');
+                //logStartOperation("Re-sending Order Confirmation", null, true);
 
                 $.ajax({
                     type: 'POST',
@@ -247,8 +247,8 @@ $(function () {
 
                 //$(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
 
-                var logStartOperation = toastLogger.getLogFn('SendShippedOrderNotification');
-                logStartOperation("Sending shipped order notification", null, true);
+                //var logStartOperation = toastLogger.getLogFn('SendShippedOrderNotification');
+                //logStartOperation("Sending shipped order notification", null, true);
 
 
                 $.ajax({
@@ -445,8 +445,8 @@ $(function () {
 
                 //$(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
                 
-                var logStartOperation = toastLogger.getLogFn('SendConnectionInfo');
-                logStartOperation("Sending ConnectionInfo", null, true);
+                //var logStartOperation = toastLogger.getLogFn('SendConnectionInfo');
+                //logStartOperation("Sending ConnectionInfo", null, true);
 
 
                 $.ajax({
@@ -591,7 +591,7 @@ $(function () {
             var webinarsDropdownList = $('#SelectedWebinarId');
             
             $('#SendRecordingPostedButton').on('click', function (eventArgs) {
-                
+                alert("hit ");
                 var payload = webinarsDropdownList.val();
 
                 $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');

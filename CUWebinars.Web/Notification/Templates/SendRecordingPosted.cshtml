@@ -3,8 +3,9 @@
 @using System.Web.Mvc.Html
 @using CUWebinars.Business.Core
 @using CUWebinars.Business.Models
-@model CUWebinars.Web.ViewModel.PostEventPublishModel
-
+@*@model CUWebinars.Web.ViewModel.PostEventPublishModel*@
+@using CUWebinars.Business.Notification.ViewModel
+@model OrderSubmittedViewModel
 
 <title>
     @{
@@ -12,13 +13,15 @@
                         where orderRow.RowStatus == OrderRowStatus.Active
                         select orderRow;
         var thisWebinar = orderRows.Single().Webinar;
+
+        string TenantHead = TtsTemplateHelperObject.Tenant();
     }
-    [BankWebinars] OnDemand recording posted for @thisWebinar.Title
+    [@TenantHead] OnDemand recording posted for @thisWebinar.Title
 </title>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 @{
-    var handoutRepo = "http://ttsmedia.ttstrain.com";
+
     var row = from orderRow in Model.Order.OrderRows
               where orderRow.RowStatus == OrderRowStatus.Active
               select orderRow;
@@ -61,23 +64,20 @@
     var locations = myRow.AdditionalLocation;
     var addLocs = new StringBuilder();
 
-    var isFirstOrderForThisUser = true;
-
-    thankYouPhrase.Append("Dear " + Model.Order.FirstName + ",<br /><br />We hope you enjoyed <b>");
+    thankYouPhrase.Append("Dear " + Model.Order.FirstName + ",<br /><br />We hope you enjoyed <i>");
     thankYouPhrase.Append(row.Single().Webinar.Title + "</i>.");
 
     if (notiShipped == "No")
     {
-        infoPhrase.Append("With your live webinar purchase, you have access to the OnDemand recording for a period of 5 business days.  If you would like to increase the length of the OnDemand availability to 6 months or add a CD-ROM, we can upgrade your package for a minimal charge.  Just reply to this email and we will make that upgrade immediately.</div>");
+        infoPhrase.Append("With your live webinar purchase, you have access to the OnDemand recording for a period of 5 business days.  If you would like to increase the length of the OnDemand availability to 6 months or add a CD-ROM, we can upgrade your package for a minimal charge.  Just reply to this email and we will make that upgrade immediately.");
     }
+
+    infoPhrase.Append("You'll have access to the OnDemand playback");
+    if (notiShipped == "Yes")
     {
-        infoPhrase.Append("You'll have access to the OnDemand playback");
-        if (notiShipped == "Yes")
-        {
-            infoPhrase.Append(" as well as the CD-ROM and printouts. Physical materials are typically in your hands within 7-10 business days");
-        }
-        infoPhrase.Append(".");
+        infoPhrase.Append(" as well as the CD-ROM and printouts. Physical materials are typically in your hands within 7-10 business days");
     }
+    infoPhrase.Append(".");
 
 
     <head>
@@ -119,8 +119,8 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td width="462px" bgcolor="#344a58" valign="top">
-                                        <img align="middle" alt="Site Logo" border="0" height="50" hspace="25" margin="0px 0px 0px 0px" src="@TenantLogo" style="display: block;" title="Site Logo" vspace="25" width="332" />
+                                    <td width="462px" bgcolor="#4c5966" valign="top">
+                                        <img align="middle" alt="Site Logo" border="0" height="50" hspace="25" margin="0px 0px 0px 0px" src="@TenantLogo" style="display: block;" title="Site Logo" vspace="25" />
                                     </td>
                                     <td bgcolor="#344a58" style="padding: 0px 15px 0px 0px; border-right-color: rgb(52, 74, 88); border-right-width: 1px; border-right-style: solid;">
                                         <span style="text-align: center; color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
@@ -238,6 +238,5 @@
         </table>
 
     </body>
-}
 }
 </html>

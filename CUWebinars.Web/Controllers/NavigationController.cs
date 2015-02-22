@@ -16,7 +16,7 @@ namespace CUWebinars.Web.Controllers
             _webinarRepository = webinarRepository;
         }
 
-        [OutputCache(Duration=3600)]
+        [OutputCache(Duration = 3600)]
         public string UpComingWebinarMenu()
         {
             var upcomingWebinars = _webinarRepository.GetUpcoming().OrderBy(w => w.Date).Take(8).ToList();
@@ -71,15 +71,32 @@ namespace CUWebinars.Web.Controllers
             {
                 for (int i = 0; i < 8; i++)
                 {
-                    string ShortTitle =
-                        recordedWebinars[i].Title.Length > 45
-                            ? recordedWebinars[i].Title.Substring(0, 45) + YadaYadaYada
-                            : recordedWebinars[i].Title;
+                    var recordedWebinar = recordedWebinars[i];
+
+                    string shortTitle =
+                        recordedWebinar.Title.Length > 45
+                            ? recordedWebinar.Title.Substring(0, 45) + YadaYadaYada
+                            : recordedWebinar.Title;
+
+                    string seoTitle =
+                        recordedWebinar.Title.RemoveIllegalCharacters()
+                            .ReplaceSpacesWithHyphens()
+                            .ReplaceAmpersandsWithAnd()
+                            .ToLower()
+                            .TrimEnd('.');
 
                     recordedWebinarsListItems.Append(
-                        "<li role='presentation'><a role=\"menuitem\" tabindex=\"-1\" href='/Webinar/Details/" +
-                        recordedWebinars[i].idWebinar + "'>" + Server.HtmlEncode(ShortTitle) + "</a></li>"
-                        );
+                        string.Concat(string.Format(
+                            "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href='/{0}/{1}'",
+                            recordedWebinar.idWebinar,
+                            seoTitle
+                            ),
+                            recordedWebinars[i].idWebinar + "'>" + Server.HtmlEncode(shortTitle) + "</a></li>"));
+
+                    //recordedWebinarsListItems.Append(
+                    //    "<li role='presentation'><a role=\"menuitem\" tabindex=\"-1\" href='/Webinar/Details/" +
+                    //    recordedWebinar.idWebinar + "'>" + Server.HtmlEncode(ShortTitle) + "</a></li>"
+                    //    );
                 }
             }
 

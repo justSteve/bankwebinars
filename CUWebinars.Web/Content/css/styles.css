@@ -7,6 +7,10 @@
 	display:none;
 }
 
+.PresenterBio .well-large {
+    line-height: 120%;
+}
+
 #showDiscount
 {
     background-color:Black;

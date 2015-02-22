@@ -54,7 +54,11 @@ namespace CUWebinars.Web.Infrastructure.Extensions
             if (stringToTransform == null) throw new ArgumentNullException("stringToTransform");
             try
             {
-                return stringToTransform.Replace(' ', '-');
+                string output = stringToTransform.Replace(' ', '-'); ;
+                output = Regex.Replace(stringToTransform, "--", "-");
+
+                return output;
+
             }
             catch (Exception exception)
             {

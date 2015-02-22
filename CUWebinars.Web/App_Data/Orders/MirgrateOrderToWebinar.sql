@@ -17,13 +17,14 @@ SELECT  ( SELECT    o.idAffiliate
 			--223	Attend live; includes six <i>months</i> access to OnDemand playback. Combine the advantages of live attendance with an unlimited number of replays for the next six months.
 			--224	CD-ROM plus Hardcopy Handouts. This option includes 6-months OnDemand playback but does <i>not</i> include live session.
 			--225	Includes all three options above.  Live, OnDemand playback, <i>and</i> CD-ROM plus Hardcopy Handouts.
-        ( CASE r.registrationType
-            WHEN 79 THEN 221
-            WHEN 80 THEN 222
-            WHEN 82 THEN 223
-            WHEN 81 THEN 224
-            WHEN 83 THEN 225
-          END ) AS idRegType ,
+        --( CASE r.registrationType
+        --    WHEN 79 THEN 221
+        --    WHEN 80 THEN 222
+        --    WHEN 82 THEN 223
+        --    WHEN 81 THEN 224
+        --    WHEN 83 THEN 225
+        --  END ) AS idRegType ,
+		r.registrationType,
         o.firstName AS FirstName ,
         o.lastName AS LastName ,
         '' AS Title ,
@@ -43,7 +44,7 @@ SELECT  ( SELECT    o.idAffiliate
         o.city AS City ,
         ISNULL(o.state, 'na') AS State ,
         o.zip AS Zip ,
-        r.idDiscount AS DiscountCode ,--r.idDiscount ,
+        ISNULL(CAST(r.idDiscount AS VARCHAR), '') AS DiscountCode ,--r.idDiscount ,
         ( SELECT    REPLACE(ISNULL(additional_locations_emails, ''), 'NULL', '')
           FROM      dbo.OrdersRowsOptions
           WHERE     r.idOrderRow = idOrderRow
@@ -63,13 +64,13 @@ SELECT  ( SELECT    o.idAffiliate
         r.status
 FROM    TTSWebinars2.dbo.Orders o
         INNER JOIN dbo.OrdersRows r ON r.idOrder = o.idOrder
-WHERE   r.idWebinar = 1711 --r.idDiscount IS NOT NULL AND o.orderDate > '01/01/2015'
+WHERE   r.idWebinar = 1758 --r.idDiscount IS NOT NULL AND o.orderDate > '01/01/2015'
 --o.idOrder < 49709 --  AND r.idWebinar IN (SELECT r.idWebinar FROM dbo.Webinar WHERE status = 2 OR status = 3)
         AND ( r.status < 5
               AND r.status > 1
             )
         AND o.idAffiliate > 1
-ORDER BY o.idOrder DESC
+ORDER BY o.email DESC
 GO
 
         --( SELECT    CASE ( SELECT   optionLabel

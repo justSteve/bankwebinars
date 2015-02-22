@@ -1346,7 +1346,7 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 _logger.ErrorException(
-                    string.Format("UpdateWebinarRecording| UpdateWebinarRecording failed {0}", exception.Message), exception);
+                    string.Format("UpdateWebinarRecording| UpdateWebinarRecording failed {0} on idWebinar: {1}", exception.Message, webinar.idWebinar), exception);
                 ModelState.AddModelError(string.Empty,
                     "There was a problem with the update operation. Please consult with the system administrator to resolve the issue.");
             }
@@ -1365,11 +1365,21 @@ namespace CUWebinars.Web.Controllers
 
                 var expiryDate = GetPostEventMaterialsAccessExpiry(order);
 
-                _membershipService.AddClaim(
-                    userAccountOfOrderer,
-                    Business.Constants.ClaimTypes.DisplayPostEventMaterials,
-                    string.Concat(order.idOrder, ":", expiryDate.ToString("yyyy-MM-dd"))
-                    );
+                try
+                {
+                    _membershipService.AddClaim(
+                        userAccountOfOrderer,
+                        Business.Constants.ClaimTypes.DisplayPostEventMaterials,
+                        string.Concat(order.idOrder, ":", expiryDate.ToString("yyyy-MM-dd"))
+                        );
+
+                    _logger.Info("Claim added for " + order.idOrder);
+
+                }
+                catch (Exception)
+                {
+                    _logger.Error(string.Format("AddClaimForPostEventMaterials| MR record not found {0}", order.BillingEmail));
+                }
             }
         }
 
@@ -1377,7 +1387,8 @@ namespace CUWebinars.Web.Controllers
         {
             if (order == null) throw new ArgumentNullException("order");
             
-            var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active); // let exception be thrown if there is not a single 
+            var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active); 
+            // let exception be thrown if there is not a single 
 
             var regType = _orderManagementService.GetRegTypeOfOrderRow(orderRow.idRegType);
 

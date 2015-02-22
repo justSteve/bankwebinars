@@ -49,12 +49,16 @@ namespace CUWebinars.Business.Notification.Handlers
                 .Single(or => or.RowStatus == OrderRowStatus.Active)
                 .AdditionalLocation;
 
+            //  adds the name of the message to the Json object stored in NotificationStorage.
+
+
             try
             {
+
                 var persistedNamePrefix = sendConnectionInfoEvent.ResendEvent
-                    ? "ReSendConnectionInfo"
-                    : "SendConnectionInfo";
-                
+                    ? "ReSend_" + sendConnectionInfoEvent.EventObject.idOrder
+                    : "Send_" + sendConnectionInfoEvent.EventObject.idOrder;
+
                 notificationMessage.PersistedName = string.Format("{0}-{1}{2}", 
                     persistedNamePrefix, 
                     DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), 
@@ -65,6 +69,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 string details = sendConnectionInfoEvent.Details;
                 sendConnectionInfoEvent.EventObject.NotificationStorage =
                     details.Insert(details.Length - 1, string.Concat(",", @"""SendConnectionInfoMsg-", DateTime.Now.Ticks, '"', @":", '"', notificationMessage.PersistedName, '"'));
+
 
                 if (isAdditionalLocation.Count != 0)
                 {

@@ -35,8 +35,9 @@ namespace CUWebinars.Business.Notification.Handlers
         {
             try
             {
+                _logger.Info("SRPE: " + sendRecordingPostedEvent.EventObject.idOrder);
                 var notificationMessage = _generalFormatter.Format(sendRecordingPostedEvent.EventObject, "SendRecordingPosted");
-                notificationMessage.PersistedName = string.Format("SendRecordingPosted-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm");
+                notificationMessage.PersistedName = string.Format("RecordingPosted_{0}_{1}_{2}", sendRecordingPostedEvent.EventObject.idOrder, DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm");
 
                 notificationMessage.To = sendRecordingPostedEvent.EventObject.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);
