@@ -1,6 +1,7 @@
 ﻿using System.Configuration;
 using System.Diagnostics;
 using System.Reflection;
+using AutoMapper;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
@@ -55,6 +56,7 @@ namespace CUWebinars.Web
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
             MapperConfig.Initialize();
+            Mapper.AssertConfigurationIsValid();
 
             log4net.Config.XmlConfigurator.Configure();
 

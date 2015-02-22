@@ -1,5 +1,6 @@
 ﻿var MANAGE = {};
 
+
 $(function () {
     
     MANAGE.orderIdInput = $('#orderIdInput');
@@ -88,6 +89,7 @@ MANAGE.addAdditionalLocation = function (e) {
 
     MANAGE.numberOfAdditionalLocations += 1;
     MANAGE.adjustAdditionalLocationsTotal(MANAGE.numberOfAdditionalLocations);
+    MANAGE.adjustTotalPrice();
 };
 
 MANAGE.deleteItem = function (e) {
@@ -109,6 +111,7 @@ MANAGE.deleteItem = function (e) {
     });
 
     MANAGE.adjustAdditionalLocationsTotal(MANAGE.numberOfAdditionalLocations);
+    MANAGE.adjustTotalPrice();
 };
 
 MANAGE.wireUpTrashIcons = function () {
@@ -127,19 +130,45 @@ MANAGE.primeDomVariables = function() {
     MANAGE.addAdditionalLocationsButton = $('#addLocationsButton');
     MANAGE.totalOptionsInput = $('DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions');
 
+    MANAGE.regTypesList = $('#RegType');
+    MANAGE.orderRowId = $('#manageOrderForm input[name="ID"]').val();
+
     MANAGE.locationsSpanPrefix = 'LocationSpan-';
     MANAGE.breakSuffix = '-break';
     MANAGE.numberOfAdditionalLocations = parseInt(MANAGE.numberAddLocsLabel.text());
+    //MANAGE.selectedAdditionalLocationsPrice = MANAGE.regTypesList.find(":selected").data('price');
+
+    MANAGE.additionalLocationsTotal = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions');
+    MANAGE.totalDiscountInput = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount');
+    MANAGE.totalPriceInput = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice');
+    MANAGE.basePrice = parseFloat($('#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice').val());
+
+    MANAGE.gatherPricingData();
+    MANAGE.adjustTotalPrice();
+
+    MANAGE.toastLogger = new Common.Logger(); // for toast notifications
+    MANAGE.logInvalidOperation = MANAGE.toastLogger.getLogFn('ManageOrderFormSubmit', 'error');
 };
 
-MANAGE.submitForm = function(e) {
+MANAGE.submitForm = function(e) { 
     e.preventDefault();
 
     var emailInputs = MANAGE.wrapperDiv.find('input[type="email"]');
 
+    var invalidEmailInput = [];
+
     $.each(emailInputs, function (idx, i) {
+        if ($(i).val().indexOf('@') < 0) {
+            invalidEmailInput.push($(i).attr('id'));
+            $(i).css('border-color', '#b94a48').css('background-color', '#b94a48');
+        }
         $(i).attr('name', 'AdditionalLocations[' + idx + '].Email');
     });
+
+    if (invalidEmailInput.length > 0) {
+        MANAGE.logInvalidOperation("At least 1 of the email address textboxes is empty or has an invalid address. Please add a valid address or delete the tetxbox by clicking the adjacent trashcan.", null, true);
+        return; // if even 1 email input has no email address, stop processing. Remove it or enter an email address.
+    }
 
     var form = $('#manageOrderForm');
 
@@ -163,6 +192,8 @@ MANAGE.changeRegType = function(e) {
 
     e.preventDefault();
 
+    var self = this;
+
     var optionId = $(this).val();
 
     $.ajax({
@@ -183,6 +214,7 @@ MANAGE.changeRegType = function(e) {
         //console.log('done CheckIfAddLocShouldHide');
         if (data.shouldShow === 'Yes') {
             MANAGE.addAdditionalLocationsButton.removeAttr('disabled');
+            //MANAGE.selectedAdditionalLocationsPrice = MANAGE.changeRegType.find(":selected").data('price');
         } else if (data.shouldShow === 'No') {
             //console.log('hide  CheckIfAddLocShouldHide');
             $('#collectAdditionalLocations').empty().html('<span id="naText" class="text text-info">Not applicable for this RegType</span>');
@@ -201,9 +233,10 @@ MANAGE.wireUpHandlers = function () {
 
     $('#addLocationsButton').on('click', MANAGE.addAdditionalLocation);
     $('#editOrderSubmitButton').on('click', MANAGE.submitForm);
+    $('#applyDiscountButton').on('click', MANAGE.hookUpApplyDiscountLogic);
     $('#RegType').on('change', MANAGE.changeRegType);
-};
 
+};
 
 MANAGE.adjustAdditionalLocationsTotal = function(number) {
 
@@ -211,7 +244,15 @@ MANAGE.adjustAdditionalLocationsTotal = function(number) {
 
     var newPrice = number * parseFloat(MANAGE.addLocsUnitPrice);
 
-    MANAGE.totalOptionsInput.val(newPrice);
+    MANAGE.additionalLocationsTotal.val(newPrice);
+    MANAGE.allAddLocsPrice = parseInt(MANAGE.additionalLocationsTotal.val());
+};
+
+MANAGE.adjustTotalPrice = function () {
+
+    var newPrice = MANAGE.basePrice + (MANAGE.allAddLocsPrice || 0) - (MANAGE.totalDiscount || 0);
+
+    MANAGE.totalPriceInput.val(newPrice);
 };
 
 MANAGE.searchOrder = _.debounce(function(query, process) {
@@ -234,3 +275,61 @@ MANAGE.searchOrder = _.debounce(function(query, process) {
     });
 
 }, 200);
+
+MANAGE.hookUpApplyDiscountLogic = function (e) {
+
+    e.preventDefault();
+
+    MANAGE.gatherPricingData();
+
+    if (MANAGE.totalPrice < 1) {
+        return;
+    }
+
+    var url = '/cart/ApplyDiscountCode';
+    var payload = { code: $('#DisplayRowPriceViewModel_Discount_DiscountCode').val(), orderRowId: MANAGE.orderRowId };
+    var self = this;
+
+    $.ajax({
+        type: 'POST',
+        contentType: constants.JsonContentType,
+        cache: false,
+        url: url,
+        dataType: constants.JsonDataType,
+        data: JSON.stringify(payload),
+        beforeSend: function () {
+            $(self).prepend('<i id="discountSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+            $(self).attr('disabled', 'disabled');
+        }
+    }).done(function (data) {
+
+        if (data.Result.indexOf('%') !== -1) {
+            var amount2Discount = data.Result.replace(".00%", "") / 100;
+            MANAGE.totalDiscount = MANAGE.totalPrice * amount2Discount;
+        } else {
+            MANAGE.totalDiscount = data.Result;
+        }
+
+        MANAGE.adjustTotalPrice();
+        
+        //if (newTotalPrice < 0)
+        //    newTotalPrice = 0;
+
+        //$('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 3.').addClass('text-info');
+
+        //$('#discountedText').html('Discounted: <span id="totalDiscount">$' + registerDuringCheckout.totalDiscount + '</span>').removeClass('muted');
+        //$('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
+
+        $('#discountSpinner').remove();
+
+    }).always(function (e) {
+        $('#discountSpinner').remove();
+        $(self).removeAttr('disabled');
+    });
+};
+
+MANAGE.gatherPricingData = function() {
+    MANAGE.allAddLocsPrice = parseInt(MANAGE.additionalLocationsTotal.val());
+    MANAGE.totalDiscount = parseInt(MANAGE.totalDiscountInput.val());
+    MANAGE.totalPrice= parseInt(MANAGE.totalPriceInput.val());
+};

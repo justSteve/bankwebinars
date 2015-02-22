@@ -7,8 +7,13 @@
     @Html.AntiForgeryToken()
 
     <div style="display: inline-block;vertical-align: top;">
-        <label for="RegType">Select a Registration Type:</label>
-        @Html.Partial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel)
+        <div>
+            <label for="RegType">Select a Registration Type:</label>
+            @Html.Partial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel)
+        </div>
+        <div>
+            @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.Discount.DiscountCode, new { placeholder = "Enter discount code "} ) <button id="applyDiscountButton" class="btn btn-default">Apply code</button>
+        </div>
     </div>
     <div style="display: inline-block">
         <div class="control-group">
@@ -21,7 +26,7 @@
         <div class="control-group">
             <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions">Total Additional Locations Price:</label>
             <div class="controls">
-                @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions, new { disabled="disabled"}) @*read-only*@
+                @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions, new { disabled = "disabled" }) @*read-only*@
             </div>
         </div>
     </div>
@@ -29,37 +34,35 @@
         <div class="control-group">
             <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice">Base Price:</label>
             <div class="controls">
-                @Html.EditorFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.UnitPrice)
+                @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.UnitPrice, new { disabled = "disabled" }) @*read-only*@
             </div>
         </div>
         <div class="control-group">
             <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount">Total Discount:</label>
             <div class="controls">
-                @Html.EditorFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalDiscount)
+                @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalDiscount, new { disabled = "disabled" }) @*read-only*@
             </div>
         </div>
-        
+
         <div class="control-group">
             <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice">Total Order Price:</label>
             <div class="controls">
-                @Html.EditorFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice)
+                @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice, new { disabled = "disabled" }) @*read-only*@
             </div>
         </div>
         <div class="control-group">
-            <label class="control-label" for="DisplayRowPriceViewModel_Price">Price:</label>
             <div class="controls">
                 @Html.HiddenFor(m => m.DisplayRowPriceViewModel.Price)
             </div>
         </div>
         <div class="control-group">
-            <label class="control-label" for="DisplayRowPriceViewModel_RowPrice">Order Row Price:</label>
             <div class="controls">
                 @Html.HiddenFor(m => m.DisplayRowPriceViewModel.RowPrice)
             </div>
         </div>
     </div>
-    <button id="editOrderSubmitButton" class="btn btn-default">Edit Details</button>
-    
+    <button id="editOrderSubmitButton" class="btn btn-primary">Submit Edited Details</button>
+
     @Html.HiddenFor(m => m.CostPerAdditionalLocation)
     @Html.HiddenFor(m => m.UserId)
     @Html.HiddenFor(m => m.WebinarId)

@@ -11,7 +11,7 @@
             {
                 string isSelected = (int)Model.OrderRowRegistrationType.idRegType == option.Key.idRegType ? "selected='selected'" : "";
 
-                <option id="@string.Concat("regTypeID_", idx++)" class="radio" @isSelected value="@option.Key.idRegType">
+                <option id="@string.Concat("regTypeID_", idx++)" class="radio" @isSelected value="@option.Key.idRegType" data-price="@option.Key.Price">
                     @option.Key.OptionLabel
                 </option>
             }
