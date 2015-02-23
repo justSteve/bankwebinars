@@ -43,7 +43,8 @@ namespace CUWebinars.Web.Controllers
             
             var discountModel = new DiscountModel();
             
-            _universalMapper.Map(myDiscount, discountModel);
+            //_universalMapper.Map(myDiscount, discountModel);
+            AutoMapper.Mapper.Engine.Map(myDiscount, discountModel);
 
             _cartControllerOrchestrator.UpdateOrderPricing(row.Order);
 

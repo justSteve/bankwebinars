@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.AccountService;
+﻿using AutoMapper;
+using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core.Exceptions;
 using CUWebinars.Business.Models;
@@ -273,7 +274,8 @@ namespace CUWebinars.Web.Controllers
 
             var discountModel = new DiscountModel();
 
-            _universalMapper.Map(userDiscount, discountModel);
+            //_universalMapper.Map(userDiscount, discountModel);
+            Mapper.Engine.Map(userDiscount, discountModel);
 
             if (discountModel.TypeOfDiscount == DiscountType.ComplianceSeries)
             {
