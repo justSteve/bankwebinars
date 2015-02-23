@@ -215,6 +215,11 @@ namespace CUWebinars.Business.Services
             return _orderRepository.FindOrdersByBillingEmail(email);
         }
 
+        public IEnumerable<Order> GetOrdersByLastName(string lastName)
+        {
+            return _orderRepository.FindOrdersByLastName(lastName);
+        }
+
         public IList<Order> GetOrdersForLiveNotifications(int idWebinar)
         {
             return _orderRepository.GetOrdersForLiveEventNotifications(idWebinar);

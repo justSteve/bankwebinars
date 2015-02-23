@@ -17,6 +17,7 @@ namespace CUWebinars.Business.Repository
         Order FindOrderByIdWithOrderRows(int id);
         Order FindById(int id);
         IQueryable<Order> FindOrdersByBillingEmail(string email);
+        IQueryable<Order> FindOrdersByLastName(string lastName);
         IList<Order> FindOrdersByUserId(int userId);
         IList<int> FindOrderIdsByPartialId(int userId);
         IList<Order> FindOrdersByUserIdWithOrderRows(int userId);

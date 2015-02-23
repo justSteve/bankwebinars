@@ -160,7 +160,7 @@ MANAGE.submitForm = function(e) {
     $.each(emailInputs, function (idx, i) {
         if ($(i).val().indexOf('@') < 0) {
             invalidEmailInput.push($(i).attr('id'));
-            $(i).css('border-color', '#b94a48').css('background-color', '#b94a48');
+            $(i).css('border-color', '#b94a48').css('background-color', '#ec8d8d');
         }
         $(i).attr('name', 'AdditionalLocations[' + idx + '].Email');
     });
@@ -257,10 +257,13 @@ MANAGE.adjustTotalPrice = function () {
 
 MANAGE.searchOrder = _.debounce(function(query, process) {
     
-    var searchTerm = MANAGE.orderIdInput.val();
+    var searchTerm = $.trim(MANAGE.orderIdInput.val());
+
+    if (searchTerm === '')
+        return;
 
     if (searchTerm.indexOf('@') > 0) {
-
+        // in here if searching for an email
         $.ajax({
             type: 'GET',
             contentType: constants.FormPostContentType,
@@ -276,7 +279,9 @@ MANAGE.searchOrder = _.debounce(function(query, process) {
             process(MANAGE.orderIdList);
         });
 
-    } else {
+    } else if (_.isFinite(searchTerm)) {
+        // in here if searching on an order number
+
         $.ajax({
             type: 'GET',
             contentType: constants.FormPostContentType,
@@ -284,6 +289,22 @@ MANAGE.searchOrder = _.debounce(function(query, process) {
             url: '/Admin/GetOrdersByTypeahead',
             dataType: constants.JsonDataType,
             data: { id: searchTerm },
+            beforeSend: function() {
+                MANAGE.orderIdList = null; // dereference whatever is currently in 'MANAGE.orderIdList'. 
+            }
+        }).done(function(data) {
+            MANAGE.orderIdList = data.orderIds;
+            process(MANAGE.orderIdList);
+        });
+    } else {
+        // if not a number and not an email address, search is by lastname
+        $.ajax({
+            type: 'GET',
+            contentType: constants.FormPostContentType,
+            cache: false,
+            url: '/Admin/GetOrdersByLastName',
+            dataType: constants.JsonDataType,
+            data: { lastName: searchTerm },
             beforeSend: function () {
                 MANAGE.orderIdList = null; // dereference whatever is currently in 'MANAGE.orderIdList'. 
             }

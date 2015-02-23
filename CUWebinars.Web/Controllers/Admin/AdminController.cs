@@ -264,6 +264,18 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(new { Error = WebUiConstants.NullValueParameter });
         }
 
+        public ActionResult GetOrdersByLastName(string lastName)
+        {
+            if (!string.IsNullOrWhiteSpace(lastName))
+            {
+                var orderIds = _orderManagementService.GetOrdersByLastName(lastName).Select(o => o.idOrder);
+
+                return Json(new {orderIds}, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json(new { Error = WebUiConstants.NullValueParameter });
+        }
+
         private TagBuilder GetRenderer(IList<string> emailAddresses)
         {
             const string locationsSpanPrefix = "LocationSpan-";
