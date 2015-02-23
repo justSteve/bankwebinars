@@ -850,6 +850,16 @@ namespace CUWebinars.Web.Controllers.Admin
 
         }
 
+        [System.Web.Mvc.HttpGet]
+        public ActionResult SynchWebinars()
+        {
+
+            _webinarManagementService.SynchToLegacy();
+
+            return View();
+        }
+
+
         [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult ManualPasswordReset(ManualPasswordResetViewModel model)

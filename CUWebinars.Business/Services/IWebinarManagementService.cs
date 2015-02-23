@@ -28,5 +28,6 @@ namespace CUWebinars.Business.Services
         Webinar GetCompliancePerspectives();
 
         int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar);
+        void SynchToLegacy();
     }
 }

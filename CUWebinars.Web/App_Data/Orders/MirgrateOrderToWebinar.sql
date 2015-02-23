@@ -15,14 +15,16 @@ SELECT  ( SELECT    o.idAffiliate
 			--223	Attend live; includes six <i>months</i> access to OnDemand playback. Combine the advantages of live attendance with an unlimited number of replays for the next six months.
 			--224	CD-ROM plus Hardcopy Handouts. This option includes 6-months OnDemand playback but does <i>not</i> include live session.
 			--225	Includes all three options above.  Live, OnDemand playback, <i>and</i> CD-ROM plus Hardcopy Handouts.
-        --( CASE r.registrationType
-        --    WHEN 79 THEN 221
-        --    WHEN 80 THEN 222
-        --    WHEN 82 THEN 223
-        --    WHEN 81 THEN 224
-        --    WHEN 83 THEN 225
-        --  END ) AS idRegType ,
-        r.registrationType ,
+        ( CASE r.idWebinar
+            WHEN 1711 THEN ( CASE r.registrationType
+                               WHEN 79 THEN 221
+                               WHEN 80 THEN 222
+                               WHEN 82 THEN 223
+                               WHEN 81 THEN 224
+                               WHEN 83 THEN 225
+                             END )
+            ELSE r.registrationType
+          END ) AS idRegType ,
         o.firstName AS FirstName ,
         o.lastName AS LastName ,
         '' AS Title ,
@@ -47,22 +49,26 @@ SELECT  ( SELECT    o.idAffiliate
           FROM      dbo.OrdersRowsOptions
           WHERE     r.idOrderRow = idOrderRow
         ) AS AdditionalLocations ,
-        REPLACE(ISNULL(o.shippingFirstName, o.firstName), 'NULL', o.firstName) ,
-        REPLACE(ISNULL(o.shippingLastName, o.lastName), 'NULL', o.lastName) ,
-        REPLACE(ISNULL(o.shippingPhone, o.phone), 'NULL', o.phone) ,
-        REPLACE(ISNULL(o.shippingAddress, o.address), 'NULL', o.address) ,
-        REPLACE(ISNULL(o.shippingCity, o.city), 'NULL', o.city) ,
-        REPLACE(ISNULL(o.shippingState, o.state), 'NULL', o.state) ,
-        REPLACE(ISNULL(o.shippingZip, o.zip), 'NULL', o.zip) ,
+        REPLACE(ISNULL(o.shippingFirstName, o.firstName), 'NULL', o.firstName) AS firstname,
+        REPLACE(ISNULL(o.shippingLastName, o.lastName), 'NULL', o.lastName) AS lastname ,
+        REPLACE(ISNULL(o.shippingPhone, o.phone), 'NULL', o.phone) AS phone,
+        REPLACE(ISNULL(o.shippingAddress, o.address), 'NULL', o.address)AS address ,
+        REPLACE(ISNULL(o.shippingCity, o.city), 'NULL', o.city) AS city,
+        REPLACE(ISNULL(o.shippingState, o.state), 'NULL', o.state) AS St,
+        REPLACE(ISNULL(o.shippingZip, o.zip), 'NULL', o.zip) AS Zip,
         o.total ,
         r.shipmentDate ,
-        'Migrated 2/21/2015 ' + ISNULL(o.storeCommentsPriv, '') ,
+        'Migrated 2/22/2015 ' + ISNULL(o.storeCommentsPriv, '') AS StoreComments,
         o.idOrder ,
         o.orderDate ,
         r.status
 FROM    TTSWebinars2.dbo.Orders o
         INNER JOIN dbo.OrdersRows r ON r.idOrder = o.idOrder
-WHERE   r.idWebinar = 1758 --r.idDiscount IS NOT NULL AND o.orderDate > '01/01/2015'
+WHERE   --r.idWebinar IN ( SELECT idWebinar
+--                         FROM   dbo.Webinar
+--                         WHERE  status = 2
+--                                OR status = 3 )
+        r.idWebinar = 1711 --r.idDiscount IS NOT NULL AND o.orderDate > '01/01/2015'
 --o.idOrder < 49709 --  AND r.idWebinar IN (SELECT r.idWebinar FROM dbo.Webinar WHERE status = 2 OR status = 3)
         AND ( r.status < 5
               AND r.status > 1

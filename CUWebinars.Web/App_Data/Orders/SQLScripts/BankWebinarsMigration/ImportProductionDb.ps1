@@ -5,7 +5,7 @@ $production = "w:\Program Files\Microsoft SQL Server\MSSQL10_50.SQLEXPRESS\MSSQL
 $localScript= "C:\Users\Steve\Source\Repos\BankWebinars2\CUWebinars.Web\App_Data\Orders\SQLScripts\BankWebinarsMigration\__Seeder_Runner.sql"
 
 
-#Copy-Item $production -Destination $local
+Copy-Item $production -Destination $local
 
 
 & sqlcmd -S "(local)\" -i 'C:\Users\Steve\Source\Repos\BankWebinars2\CUWebinars.Web\App_Data\Orders\SQLScripts\BankWebinarsMigration\RestoreFromProduction.sql'

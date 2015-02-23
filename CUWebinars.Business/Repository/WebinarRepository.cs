@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Core;
+﻿using System.Configuration;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -8,6 +9,8 @@ namespace CUWebinars.Business.Repository
 {
     public class WebinarRepository : TTSWebinarsRepository<TTSWebinarsContext, Webinar>, IWebinarRepository
     {
+
+
         public WebinarRepository()
         {
 
@@ -124,6 +127,14 @@ namespace CUWebinars.Business.Repository
 
             return dataOperations.GetRegTypeByLableAndWebinar(registrationType, idWebinar);
 
+        }
+
+        public void SynchToLegacy()
+        {
+            var dataOperations = new MigrationOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString, ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
+
+            dataOperations.CopyLegacyWebinars();
+                        
         }
 
         public IQueryable<Webinar> GetAllActive()

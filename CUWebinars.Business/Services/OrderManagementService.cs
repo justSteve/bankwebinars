@@ -643,10 +643,19 @@ namespace CUWebinars.Business.Services
         {
             foreach (var order in orders)
             {
-                AddEvent(new SendRecordingPostedEvent<Order> { EventObject = order });
+
+                var postEventPublishModel = new PostEventPublishModel()
+                {
+                    Order = order
+                };
+                AddEvent(new SendRecordingPostedEvent<PostEventPublishModel>
+                {
+                    EventObject = postEventPublishModel,
+                    ResendEvent = false
+                });
             }
 
-            foreach (var evt in GetEvents().OfType<SendRecordingPostedEvent<Order>>())
+            foreach (var evt in GetEvents().OfType<SendRecordingPostedEvent<PostEventPublishModel>>())
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }
@@ -656,7 +665,7 @@ namespace CUWebinars.Business.Services
         public void FireSendPerDayPromoEvent(WebinarPromoViewModel webinarPromoViewModel)
         {
             AddEvent(new SendPerDayPromoEvent<WebinarPromoViewModel> { EventObject = webinarPromoViewModel });
-            
+
             foreach (var evt in GetEvents().OfType<SendPerDayPromoEvent<WebinarPromoViewModel>>())
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
@@ -724,11 +733,17 @@ namespace CUWebinars.Business.Services
         {
             foreach (var order in orders)
             {
-                AddEvent(new SendRecordingPostedEvent<Order> { EventObject = order });
+                var postEventPublishModel = new PostEventPublishModel()
+                {
+                    Order = order
+                };
+                AddEvent(new SendRecordingPostedEvent<PostEventPublishModel>
+                {
+                    EventObject = postEventPublishModel
+                });
             }
 
-
-            foreach (var evt in GetEvents().OfType<SendRecordingPostedEvent<Order>>())
+            foreach (var evt in GetEvents().OfType<SendRecordingPostedEvent<PostEventPublishModel>>())
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }
@@ -836,13 +851,13 @@ namespace CUWebinars.Business.Services
             var myDiscount = _orderRepository.FindDiscountByCode(discount);
             return myDiscount;
         }
-         
+
         //public Discount GetDiscountById(int discount)
         //{
         //    var myDiscount = _orderRepository.FindDiscountById(discount);
         //    return myDiscount;
         //}
-         
+
         public decimal GetPriceOfAdditionalLocation(int idWebinar)
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);

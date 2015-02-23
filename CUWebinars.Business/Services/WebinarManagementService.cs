@@ -104,6 +104,11 @@ namespace CUWebinars.Business.Services
             return regType;
         }
 
+        public void SynchToLegacy()
+        {
+            _webinarRepository.SynchToLegacy();
+        }
+
         private IList<WebUser> GetRegistrants_CP()
         {
             return null;

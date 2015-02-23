@@ -1,7 +1,6 @@
-﻿using CUWebinars.Business.Core;
-using CUWebinars.Business.Models;
+﻿using CUWebinars.Business.Models;
 
-namespace CUWebinars.Web.ViewModel
+namespace CUWebinars.Business.Notification.ViewModel
 {
     public class PostEventPublishModel
     {
