@@ -153,6 +153,11 @@ namespace CUWebinars.Business.Repository
             return items.Where(o => o.BillingEmail == email);
         }
 
+        public IQueryable<Order> FindOrdersByLastName(string lastName)
+        {
+            return items.Where(o => o.LastName.ToLower().Contains(lastName));
+        }
+
         public IList<Order> FindOrdersByUserId(int userId)
         {
             var userOrders = items.Include(o => o.OrderRows.Select(or => or.Webinar))

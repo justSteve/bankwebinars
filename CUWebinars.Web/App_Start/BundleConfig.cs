@@ -148,7 +148,8 @@ namespace CUWebinars.Web.App_Start
                 ));
             
             bundles.Add(new StyleBundle("~/Content/manage-order-styles").Include(
-                "~/Content/toastr.css"
+                "~/Content/toastr.css",
+                "~/Content/manage-order.css"
                 ));
 
             bundles.Add(new StyleBundle("~/Content/register-user-styles").Include(
