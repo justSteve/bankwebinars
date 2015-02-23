@@ -137,6 +137,14 @@ namespace CUWebinars.Business.Repository
                         
         }
 
+        public int GetRegTypeByACS(string registrationType, int idWebinar)
+        {
+            //first step is to convert ACS lables to TTS version
+            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LoggerConnection"].ConnectionString);
+            
+            return GetRegTypeByLableAndWebinar(dataOperations.FindRegTypeForACS(registrationType), idWebinar);
+        }
+
         public IQueryable<Webinar> GetAllActive()
         {
             return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))

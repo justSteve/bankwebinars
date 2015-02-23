@@ -277,10 +277,17 @@ namespace CUWebinars.Web.Controllers
                 var myError = ProcessModelStateErrors();
                 return Json(new { Result = WebUiConstants.Fail, Error = myError });
             }
-
-
-            int idRegType = _webinarManagementService.GetRegTypeByLableAndWebinar(importedOrder.RegistrationType,
-                importedOrder.idWebinar);
+            int idRegType;
+            if (importedOrder.idAffiliate == 62)
+            {
+                idRegType = _webinarManagementService.GetRegTypeByACS(importedOrder.RegistrationType,
+                    importedOrder.idWebinar);
+            }
+            else
+            {
+                idRegType = _webinarManagementService.GetRegTypeByLableAndWebinar(importedOrder.RegistrationType,
+                     importedOrder.idWebinar);
+            }
             if (idRegType == 0)
             {
                 return Json(new { Result = WebUiConstants.Fail, Error = "Invalid Registration Type: " + importedOrder.RegistrationType });
@@ -327,15 +334,15 @@ namespace CUWebinars.Web.Controllers
 
                 idOfLastOrder = _orderControllerOrchestrator.ImportOrder(importedOrder, email,
                     importQueryResult, verificationKey, confirmChangeEmailUrl, userAlreadyExists);
-                
+
                 //idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
-                _logger.Info(string.Format("ImportOrder from {0} produced: {1}",importedOrder.Source + "-"+ importedOrder.Version, idOfLastOrder));
+                _logger.Info(string.Format("ImportOrder from {0} produced: {1}", importedOrder.Source + "-" + importedOrder.Version, idOfLastOrder));
 
                 return Json(new { Result = idOfLastOrder.ToString() }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception exception)
             {
-                var errString = string.Format("ImportOrder from {3} failed on {0} - {1} with msg: {2}", importedOrder.Email, importedOrder.idWebinar, exception.Message, importedOrder.Source +"-" +importedOrder.Version);
+                var errString = string.Format("ImportOrder from {3} failed on {0} - {1} with msg: {2}", importedOrder.Email, importedOrder.idWebinar, exception.Message, importedOrder.Source + "-" + importedOrder.Version);
                 Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 _logger.ErrorException(errString, exception);
             }
