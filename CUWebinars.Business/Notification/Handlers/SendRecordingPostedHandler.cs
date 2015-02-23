@@ -51,8 +51,8 @@ namespace CUWebinars.Business.Notification.Handlers
                 }
                 else
                 {
-                    _logger.Error(
-                        string.Format("Event processing failed for sendRecordingPostedEvent - OrderId {0}. ExceptionMessage: {1}",
+                    _logger.FatalException(
+                        string.Format("failed email: sendRecordingPostedEvent - OrderId {0}. ExceptionMessage: {1}",
                             sendRecordingPostedEvent.EventObject.Order.idOrder,
                             nullReferenceException.Message)
                         , nullReferenceException);
@@ -61,9 +61,10 @@ namespace CUWebinars.Business.Notification.Handlers
             }
             catch (Exception exception)
             {
-                _logger.Error(string.Format("Event processing (outer) failed for sendRecordingPostedEvent - OrderId {0}. ExceptionMessage: {1}"
+                _logger.FatalException(string.Format("failed outer sendRecordingPostedEvent - OrderId {0}. ExceptionMessage: {1}"
                     , sendRecordingPostedEvent.EventObject.Order.idOrder,
-                    exception.Message), exception);
+                    exception.Message)
+                    , exception);
             }
 
         }
