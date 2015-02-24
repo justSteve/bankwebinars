@@ -1080,7 +1080,8 @@ namespace CUWebinars.Web.Controllers
         // POST: /Account/Register
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
-        [ValidateJsonAntiForgeryToken]
+        [ValidateJsonAntiForgeryToken(Order=0)]
+        [HandleAjaxException(Order=1)]
         public ActionResult RegisterFromCart(RegisterViewModel model)
         {
             if (ModelState.IsValid)

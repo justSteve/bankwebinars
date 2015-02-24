@@ -502,7 +502,9 @@ namespace CUWebinars.Web.Controllers.Admin
 
             _orderManagementService.FireSendConnectionInfoNotificationEvent(orders, resending: false);
 
-            _logger.Info("Concludes SendConnectionInfo");
+            var numRows = _orderManagementService.SaveChanges();
+
+            _logger.Info("Concludes SendConnectionInfo. {0} rows updated.", numRows);
             return Json(new { Result = WebUiConstants.Success });
         }
 
