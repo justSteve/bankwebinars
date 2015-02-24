@@ -97,6 +97,9 @@ $(function () {
         var updateWebinarRecordingButton = $('#updateWebinarRecordingButton');
 
         updateWebinarRecordingButton.on('click', function (e) {
+
+            e.preventDefault();
+
             $('#_UpdateWebinarRecording').submit();
         });
 
