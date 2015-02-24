@@ -130,6 +130,8 @@
                         <!-- The following forms are positioned here so that they are not nested in the form in the CheckoutOptions View. -->
                         @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
                         {
+                            @Html.AntiForgeryToken()
+                            
                             <input id="loginEmail" name="Email" type="hidden" value="">
                             <input id="loginPassword" name="Password" type="hidden">
                             <input id="loginRememberMe" type="hidden" value="true" name="RememberMe">
