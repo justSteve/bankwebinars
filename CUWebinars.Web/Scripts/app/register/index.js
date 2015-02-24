@@ -172,13 +172,16 @@ $(function () {
         if (email.length === 0) {
             emailInput.focus();
         } else {
+
+            var token = $(this).find('input[name="__RequestVerificationToken"]').val();
+
             $.ajax({
-                type: 'GET',
+                type: 'POST',
                 contentType: Registration.Constants.FormPostContentType,
                 cache: false,
                 url: jsonUrl,
                 dataType: Registration.Constants.JsonDataType,
-                data: { email: email, disregardInstitutionDomain: stateManager.getDisregardInstitutionDomain() },
+                data: { email: email, disregardInstitutionDomain: stateManager.getDisregardInstitutionDomain(), __RequestVerificationToken: token },
                 beforeSend: function () {
                     // this is where we append a loading image
                     $('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Email...</span>');
@@ -323,7 +326,7 @@ $(function () {
         }).fail(function (data) {
 
         }).always(function (data) {
-            
+
         });
 
     });
@@ -371,7 +374,7 @@ $(function () {
         if (!fullNameShipping.val()) fullNameShipping.val($('#FullName').val());
         if (!nameBilling.val()) nameBilling.val($('#FullName').val());
         if (!nameShipping.val()) nameShipping.val($('#FullName').val());
-        
+
         if ($('#RegisterFields_ShippingAddress_City').val() === null || $('#RegisterFields_ShippingAddress_City').val() === '') $('#RegisterFields_ShippingAddress_City').val($('#RegisterFields_BillingAddress_City').val());
         if ($('#RegisterFields_ShippingAddress_StreetAddress').val() === null || $('#RegisterFields_ShippingAddress_StreetAddress').val() === '') $('#RegisterFields_ShippingAddress_StreetAddress').val($('#RegisterFields_BillingAddress_StreetAddress').val());
         if ($('#RegisterFields_ShippingAddress_StreetAddress2').val() === null || $('#RegisterFields_ShippingAddress_StreetAddress2').val() === '') $('#RegisterFields_ShippingAddress_StreetAddress2').val($('#RegisterFields_BillingAddress_StreetAddress').val());
