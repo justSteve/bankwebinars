@@ -718,8 +718,6 @@ namespace CUWebinars.Business.Services
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }
 
-            int rowsUpdated = _orderRepository.SaveChanges();
-
             Clear();
         }
 
