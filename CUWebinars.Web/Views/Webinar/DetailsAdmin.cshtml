@@ -140,7 +140,10 @@
                         {
                             <input id="ResetPassEmail" name="emailForReset" type="hidden" value="">
                         }
-                        <form id="checkEmail"><input type="hidden" name="emailChecker" id="emailChecker" /></form>
+                        <form id="checkEmail">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="emailChecker" id="emailChecker" />
+                        </form>
                         <form id="checkZip"><input type="hidden" name="ZipChecker" id="ZipChecker" /></form>
                         <form id="nonUSForm"><input type="hidden" name="AddressText" id="AddressText" /></form>
                         <form id="checkInstitution"><input type="hidden" name="InstitutionChecker" id="InstitutionChecker" /></form>

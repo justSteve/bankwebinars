@@ -20,7 +20,7 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
                 alert('Sorry, your session has expired. Please login again to continue');
                 window.location.href = '/Account/Login';
             }
-            //  handle in the Fail method of AJAX calls if not session expirey
+            //  handle in the Fail method of AJAX calls if not session expiry
             //} else {
             //    alert('An error occurred: ' + status + 'nError: ' + error);
             //}
