@@ -46,12 +46,12 @@ namespace CUWebinars.Business.Notification.Handlers
                 sendPerDayPromoEvent.EventObject.EventBody = rgx.Replace(sendPerDayPromoEvent.EventObject.Webinar.Presenter.BiographyLong, "");
             try
             {
-                var persistedNamePrefix = "PerWeekPromo" + '_' + sendPerDayPromoEvent.EventObject.Affiliate.ttsDomain + '_';
+                var persistedNamePrefix = "PerWeekPromo_" + sendPerDayPromoEvent.EventObject.Affiliate.ttsDomain + '_';
                 var notificationMessage = _generalFormatter
                     .Format(sendPerDayPromoEvent.EventObject, "SendPerDayPromo");
 
 
-                notificationMessage.PersistedName = string.Format("{0}-{1}{2}",
+                notificationMessage.PersistedName = string.Format("{0}_{1}{2}",
                     persistedNamePrefix,
                     DateTime.Now.ToString(DomainConstants.DateTimeLongFormat),
                     ".htm"

@@ -39,7 +39,7 @@ namespace CUWebinars.Business.Notification.Handlers
 
         public virtual void Process(SendConnectionInfoEvent<T> sendConnectionInfoEvent)
         {
-            _logger.Info("mailer is processing " + sendConnectionInfoEvent.EventObject.OrderRows
+            _logger.Info("SendConnectionInfoEventmailer is processing " + sendConnectionInfoEvent.EventObject.OrderRows
                 .Single(or => or.RowStatus == OrderRowStatus.Active).idOrder);
 
             var notificationMessage = _generalFormatter.Format(sendConnectionInfoEvent.EventObject, "SendConnectionInfo");
@@ -50,22 +50,18 @@ namespace CUWebinars.Business.Notification.Handlers
                 .AdditionalLocation;
 
             //  adds the name of the message to the Json object stored in NotificationStorage.
-
-
             try
             {
 
                 var persistedNamePrefix = sendConnectionInfoEvent.ResendEvent
-                    ? "ReSend_" + sendConnectionInfoEvent.EventObject.idOrder
-                    : "Send_" + sendConnectionInfoEvent.EventObject.idOrder;
+                    ? "ConnectionInfo_ReSend_" + sendConnectionInfoEvent.EventObject.idOrder
+                    : "ConnectionInfo_" + sendConnectionInfoEvent.EventObject.idOrder;
 
-                notificationMessage.PersistedName = string.Format("{0}-{1}{2}", 
+                notificationMessage.PersistedName = string.Format("{0}_{1}{2}", 
                     persistedNamePrefix, 
-                    DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), 
-                    ".htm"
+                    DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm"
                     );
 
-                //  adds the name of the message to the Json object stored in NotificationStorage.
                 string details = sendConnectionInfoEvent.Details;
                 if (details != null)
                 {

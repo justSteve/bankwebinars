@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core.Exceptions;
@@ -270,6 +271,11 @@ namespace CUWebinars.Web.Controllers
         public ActionResult MyWebinars()
         {
             var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
+
+
+            ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+
+
             var userDiscount = _orderManagementService.GetDiscountByUser(currentUser);
 
             var discountModel = new DiscountModel();
@@ -315,9 +321,17 @@ namespace CUWebinars.Web.Controllers
                 }
 
             }
+            if (
+                claimsIdentityOfAuthenticatedUser.HasClaim(
+                    (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
+            {
+             return   RedirectToAction("Index", "Admin");
+            }
+            else
+            {
 
-
-            return View("MyWebinars", model);
+                return View("MyWebinars", model);
+            }
         }
 
 
@@ -1005,7 +1019,7 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                if(_accountControllerOrchestrator.AddPasswordForCartCreatedUser(model))
+                if (_accountControllerOrchestrator.AddPasswordForCartCreatedUser(model))
                     return Json(new { Result = WebUiConstants.Success });
                 return Json(new { Result = WebUiConstants.TimedOut });
             }
@@ -1027,8 +1041,8 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
-        [ValidateAntiForgeryToken(Order=0)]
-        [HandleAjaxException(Order=1)]
+        [ValidateAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
         public JsonResult CheckEmail(string email, bool disregardInstitutionDomain, int? orderId = null)
         {
             try
@@ -1084,8 +1098,8 @@ namespace CUWebinars.Web.Controllers
         // POST: /Account/Register
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
-        [ValidateJsonAntiForgeryToken(Order=0)]
-        [HandleAjaxException(Order=1)]
+        [ValidateJsonAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
         public ActionResult RegisterFromCart(RegisterViewModel model)
         {
             if (ModelState.IsValid)

@@ -33,7 +33,9 @@ namespace CUWebinars.Business.Notification.Handlers
             try
             {
                 var notificationMessage = _generalFormatter.Format(sendShippedOrderEvent.EventObject, "SendShippedOrder");
-                notificationMessage.PersistedName = string.Format("SendShippedOrder-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm");
+                notificationMessage.PersistedName = string.Format("ShippedOrder_{0}_{1}{2}"
+                    , sendShippedOrderEvent.EventObject.idOrder
+                    , DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm");
 
                 notificationMessage.To = sendShippedOrderEvent.EventObject.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);

@@ -18,6 +18,40 @@ namespace CUWebinars.Business.Core
         }
 
 
+        public string FindRegTypeForACS(string regTypeLable)
+        {
+            IEnumerable<Webinar> legacyWebinars;
+
+            var returnLable = "";
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                using (var getLegacyWebinars = new SqlCommand())
+                {
+
+                    getLegacyWebinars.Connection = sqlConnection;
+                    getLegacyWebinars.CommandType = CommandType.Text;
+                    getLegacyWebinars.CommandText = "SELECT ttsLable from ACSImporter where acsLable = '" + regTypeLable + "'";
+
+                    using (var sqlUpdateConnection = new SqlConnection(_connectionString))
+                    {
+                        sqlUpdateConnection.Open();
+
+                        using (var reader = getLegacyWebinars.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                //reader.GetInt32(0), reader.GetDecimal(1)));
+                                returnLable = reader.GetString(0);
+                            }
+                        }
+                    }
+                    return returnLable;
+                }
+            }
+        }
         public IList<Tuple<int, decimal>> GetAdditionalLocationsPricing(int webinarId)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
@@ -57,7 +91,7 @@ namespace CUWebinars.Business.Core
         /// </summary>
         /// <param name="idWebinar"></param>
         /// <param name="registrationType">Friendly Lable</param>
-        
+
         public int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
@@ -156,7 +190,7 @@ namespace CUWebinars.Business.Core
                 {
                     var idParam = new SqlParameter
                     {
-                        DbType = DbType.Guid, 
+                        DbType = DbType.Guid,
                         ParameterName = "@id",
                         Value = userAccount.ID
                     };

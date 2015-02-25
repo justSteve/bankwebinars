@@ -48,8 +48,8 @@ namespace CUWebinars.Business.Notification.Handlers
                 var notificationMessage = _generalFormatter.Format(orderSubmittedEvent.EventObject, "OrderSubmitted");
 
                 var persistedNamePrefix = orderSubmittedEvent.ResendEvent
-                    ? "ReSend_" + orderSubmittedEvent.EventObject.Order.idOrder
-                    : "Send_" + orderSubmittedEvent.EventObject.Order.idOrder;
+                    ? "OrderSubmitted-ReSend_" + orderSubmittedEvent.EventObject.Order.idOrder
+                    : "OrderSubmittedSend_" + orderSubmittedEvent.EventObject.Order.idOrder;
 
                 notificationMessage.PersistedName = string.Format("{0}_{1}{2}", 
                     persistedNamePrefix,
@@ -59,8 +59,14 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 //  adds the name of the message to the Json object stored in NotificationStorage.
                 string details = orderSubmittedEvent.Details;
-                orderSubmittedEvent.EventObject.Order.NotificationStorage =
-                    details.Insert(details.Length - 1, string.Concat(",", @"""OrderSubmittedEventMsg-", DateTime.Now.Ticks, '"', @":", '"', notificationMessage.PersistedName, '"'));
+
+                if (details != null)
+                {
+                    orderSubmittedEvent.EventObject.Order.NotificationStorage =
+                        details.Insert(details.Length - 1,
+                            string.Concat(",", @"""OrderSubmittedEventMsg-", DateTime.Now.Ticks, '"', @":", '"',
+                                notificationMessage.PersistedName, '"'));
+                }
 
                 notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);

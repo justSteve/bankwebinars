@@ -29,5 +29,6 @@ namespace CUWebinars.Business.Services
 
         int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar);
         void SynchToLegacy();
+        int GetRegTypeByACS(string registrationType, int idWebinar);
     }
 }

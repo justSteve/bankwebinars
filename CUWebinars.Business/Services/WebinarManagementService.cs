@@ -109,6 +109,11 @@ namespace CUWebinars.Business.Services
             _webinarRepository.SynchToLegacy();
         }
 
+        public int GetRegTypeByACS(string registrationType, int idWebinar)
+        {
+           return _webinarRepository.GetRegTypeByACS(registrationType, idWebinar);
+        }
+
         private IList<WebUser> GetRegistrants_CP()
         {
             return null;

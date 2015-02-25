@@ -33,15 +33,24 @@ namespace CUWebinars.Business.Notification.Handlers
         {
             try
             {
+
+
                 var notificationMessage = _generalFormatter.Format(sendReminderEvent.EventObject,
                     "SendReminder");
-                notificationMessage.PersistedName = string.Format("SendReminder-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm");
+                notificationMessage.PersistedName = string.Format("SendReminder_{0}_{1}{2}",
+                    sendReminderEvent.EventObject.idOrder
+                    , DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)
+                    , ".htm");
 
                 //  adds the name of the message to the Json object stored in NotificationStorage.
                 string details = sendReminderEvent.Details;
-                sendReminderEvent.EventObject.NotificationStorage =
-                    details.Insert(details.Length - 1, string.Concat(",", @"""SendReminderEventMsg-", DateTime.Now.Ticks, '"', @":", '"', notificationMessage.PersistedName, '"'));
-
+                if (details != null)
+                {
+                    sendReminderEvent.EventObject.NotificationStorage =
+                        details.Insert(details.Length - 1,
+                            string.Concat(",", @"""SendReminderEventMsg-", DateTime.Now.Ticks, '"', @":", '"',
+                                notificationMessage.PersistedName, '"'));
+                }
 
                 notificationMessage.To = sendReminderEvent.EventObject.BillingEmail;
 

@@ -39,13 +39,21 @@ namespace CUWebinars.Business.Notification.Handlers
             try
             {
                 var notificationMessage = _generalFormatter.Format(orderSubmittedEvent.EventObject, "OrderSubmittedAdditionalLocation");
-                notificationMessage.PersistedName = string.Format("OrderSubmittedAdditionalLocation-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm");
+                notificationMessage.PersistedName = string.Format("OrderSubmittedAdditionalLocation_{0}_{1}{2}"
+                    , orderSubmittedEvent.EventObject.Order.idOrder
+                    , DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)
+                    , ".htm");
 
                 //  adds the name of the message to the Json object stored in NotificationStorage.
                 string details = orderSubmittedEvent.Details;
-                orderSubmittedEvent.EventObject.Order.NotificationStorage =
-                    details.Insert(details.Length - 1, string.Concat(",", @"""OrderSubmittedAdditionalLocationEventMsg-", DateTime.Now.Ticks, '"', @":", '"', notificationMessage.PersistedName, '"'));
+                if (details != null)
+                {
 
+                    orderSubmittedEvent.EventObject.Order.NotificationStorage =
+                        details.Insert(details.Length - 1,
+                            string.Concat(",", @"""OrderSubmittedAdditionalLocationEventMsg-", DateTime.Now.Ticks, '"',
+                                @":", '"', notificationMessage.PersistedName, '"'));
+                }
                 notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail;
                 _notificationDelivery.Notify(notificationMessage);
 
