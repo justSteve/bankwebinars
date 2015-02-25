@@ -1,6 +1,7 @@
 ﻿using System.Configuration;
 using System.Diagnostics;
 using System.Reflection;
+using System.Web.Http.Dependencies;
 using AutoMapper;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
@@ -31,7 +32,7 @@ namespace CUWebinars.Web
 
     public class MvcApplication : HttpApplication
     {
-        readonly IErrorResponseCommand _errorResponseCommand = new ErrorResponseCommand();
+        readonly IErrorResponseCommand _errorResponseCommand = (IErrorResponseCommand)GlobalConfiguration.Configuration.DependencyResolver.GetService(typeof(IErrorResponseCommand));
         public static ILog logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly IStateService StateService = new StateService();
 

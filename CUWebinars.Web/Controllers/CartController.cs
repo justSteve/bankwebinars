@@ -43,8 +43,8 @@ namespace CUWebinars.Web.Controllers
             
             var discountModel = new DiscountModel();
             
-            //_universalMapper.Map(myDiscount, discountModel);
-            AutoMapper.Mapper.Engine.Map(myDiscount, discountModel);
+            _universalMapper.Map(myDiscount, discountModel);
+            //AutoMapper.Mapper.Engine.Map(myDiscount, discountModel);
 
             _cartControllerOrchestrator.UpdateOrderPricing(row.Order);
 
@@ -78,7 +78,7 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-        [AcceptVerbs(HttpVerbs.Post)]
+        [System.Web.Mvc.HttpPost]
         public ActionResult ConfirmOrder(string referred, int? id = null)
         {
             if (ModelState.IsValid)
@@ -121,7 +121,7 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-        [AcceptVerbs(HttpVerbs.Post)]
+        [System.Web.Mvc.HttpPost]
         public ActionResult ConfirmOrderForAffiliate(string referred, int? id = null)
         {
             if (ModelState.IsValid)
@@ -162,7 +162,7 @@ namespace CUWebinars.Web.Controllers
             return this.ModelStateJson(ModelState);
         }
 
-        [AcceptVerbs(HttpVerbs.Post)]
+        [System.Web.Mvc.HttpPost]
         public ActionResult CancelOrder(int? id = null)
         {
             if (id.HasValue)
@@ -220,7 +220,7 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-        [AcceptVerbs(HttpVerbs.Post)]
+        [System.Web.Mvc.HttpPost]
         public ActionResult Signup2(CheckoutOptionsViewModel formModel)
         {
             if (ModelState.IsValid)
@@ -306,7 +306,7 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
-        [AcceptVerbs(HttpVerbs.Get)]
+        
         public ActionResult CheckIfAddLocShouldHide(int optionID)
         {
             if (ModelState.IsValid)
@@ -403,7 +403,7 @@ namespace CUWebinars.Web.Controllers
         }
 
         //[Authorize(Roles = AppRoles.Admin)]
-        [AcceptVerbs(HttpVerbs.Post)]
+        [System.Web.Mvc.HttpPost]
         public ActionResult SetOrderStatus(int orderRowID, OrderStatus status)
         {
             if (ModelState.IsValid)

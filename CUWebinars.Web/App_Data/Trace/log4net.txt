@@ -541,4 +541,6 @@ CUWebinars Information: 0 : MailerSent: cshaeffer@boaa.com Subject: [BankWebinar
 CUWebinars Information: 0 : MailerSent: asmelko@fhlbc.com Subject: [BankWebinars] OnDemand recording posted for BSA/AML & OFAC Compliance - What Was Old is New Again Timestamp was: 24/02/2015 11:01:24 AM
 CUWebinars Information: 0 : MailerSent: asahrhage@4thebank.com Subject: [BankWebinars] OnDemand recording posted for BSA/AML & OFAC Compliance - What Was Old is New Again Timestamp was: 24/02/2015 11:01:29 AM
 CUWebinars Information: 0 : MailerSent: ana.alvarez@uscentury.com Subject: [BankWebinars] OnDemand recording posted for BSA/AML & OFAC Compliance - What Was Old is New Again Timestamp was: 24/02/2015 11:01:33 AM
-CUWebinars Error: 0 : Validation failed for webinar 4600 and User 31765
+CUWebinars Information: 0 : MailerSent: drogersbox-test1@yahoo.com.au Subject: [BankWebinars] Confirmation of Registration: Bank Call Report Preparation for Beginners - Five Part Webinar Timestamp was: 24/02/2015 9:05:06 PM
+CUWebinars Information: 0 : MailerSent: drogersbox-test1@yahoo.com.au Subject: [preview-BankWebinars] Confirmation of Registration: Bank Call Report Preparation for Beginners - Five Part Webinar Timestamp was: 24/02/2015 9:05:12 PM
+CUWebinars Information: 0 : MailerSent: drogersbox-test4@yahoo.com.au Subject: [BankWebinars] Confirmation of Registration: Legal Liabilities when Check Fraud Occurs Timestamp was: 24/02/2015 9:57:20 PM

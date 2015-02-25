@@ -89,6 +89,8 @@
                         <!-- The following forms are positioned here so that they are not nested in the form in the CheckoutOptions View. -->
                         @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
                         {
+                            @Html.AntiForgeryToken()
+
                             <input id="loginEmail" name="Email" type="hidden" value="">
                             <input id="loginPassword" name="Password" type="hidden">
                             <input id="loginRememberMe" type="hidden" value="true" name="RememberMe">
@@ -99,7 +101,10 @@
                         {
                             <input id="ResetPassEmail" name="emailForReset" type="hidden" value="">
                         }
-                        <form id="checkEmail"><input type="hidden" name="emailChecker" id="emailChecker" /></form>
+                        <form id="checkEmail">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="emailChecker" id="emailChecker" />
+                        </form>
                         <form id="checkZip"><input type="hidden" name="ZipChecker" id="ZipChecker" /></form>
                         <form id="nonUSForm"><input type="hidden" name="AddressText" id="AddressText" /></form>
                         <form id="checkInstitution"><input type="hidden" name="InstitutionChecker" id="InstitutionChecker" /></form>

@@ -246,7 +246,7 @@ namespace CUWebinars.Web.Controllers
             return Json(new { });
         }
 
-
+        [HandleAjaxException]
         public PartialViewResult GetLoginPartial()
         {
             return PartialView("_LoginPartial");
@@ -373,7 +373,8 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.AllowAnonymous]
         [System.Web.Mvc.HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order=1)]
         public ActionResult Confirmed(CreateUserConfirmedViewModel model)
         {
             try
@@ -631,6 +632,7 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
+            throw new Exception("Bad stuff");
             ViewBag.PageStyleType = "register";
             return View(_accountControllerOrchestrator.BuildLoginModel(returnUrl));
         }
@@ -652,8 +654,8 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        [HandleAjaxException]
+        [ValidateAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
         public ActionResult SignIn(SignInModel model)
         {
             if (!ModelState.IsValid)
@@ -713,6 +715,9 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
+        [ValidateAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
+
         public ActionResult SignInFromCart(SignInModel model)
         {
             if (!ModelState.IsValid)
@@ -1129,7 +1134,8 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
-        [ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken(Order=0)]
+        [HandleAjaxException(Order = 1)]
         public ActionResult Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
@@ -1181,7 +1187,8 @@ namespace CUWebinars.Web.Controllers
         // POST: /Account/Register
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
-        [ValidateJsonAntiForgeryToken]
+        [ValidateJsonAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order=1)]
         public ActionResult CreateUserAccountFromCart(RegisterViewModel model)
         {
             //  Not adding any ModelState errors in this method. This method is not to return any GUI feedback.
@@ -1213,8 +1220,8 @@ namespace CUWebinars.Web.Controllers
         }
 
         [System.Web.Mvc.HttpPost]
-        [ValidateAntiForgeryToken]
-        [HandleAjaxException]
+        [ValidateAntiForgeryToken(Order=0)]
+        [HandleAjaxException(Order = 1)]
         public ActionResult UpdateShippingDetails(ShippingDetailsModel shippingDetailsModel)
         {
             if (ModelState.IsValid)
@@ -1401,6 +1408,9 @@ namespace CUWebinars.Web.Controllers
         {
             throw new NotImplementedException();
         }
+
+        [ValidateAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
 
         public ActionResult UpdateSubscriptionDetails(DiscountDetailsModel discountDetailsModel)
         {

@@ -887,7 +887,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
         [System.Web.Mvc.HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
         public ActionResult ManualPasswordReset(ManualPasswordResetViewModel model)
         {
             if (ModelState.IsValid)

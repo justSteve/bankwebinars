@@ -13,6 +13,7 @@ using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Infrastructure;
 using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Services;
 using Ninject.Extensions.Logging;
@@ -91,8 +92,10 @@ namespace CUWebinars.Web.App_Start
             GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
             string baseUrl = HttpRuntime.AppDomainAppPath;
 
-            kernel.Bind<IMappingEngine>().ToConstant(Mapper.Engine);
-            kernel.Bind<IUniversalMapper>().To<UniversalMapper>().InSingletonScope();
+            kernel.Bind<IErrorResponseCommand>().To<ErrorResponseCommand>().InSingletonScope();
+
+            kernel.Bind<IMappingEngine>().ToMethod(ctx => Mapper.Engine).InRequestScope();
+            kernel.Bind<IUniversalMapper>().To<UniversalMapper>().InRequestScope();
             kernel.Bind<IFormatter>().ToMethod(ctx => new Formatter(new EnvironmentInformation {BaseUrl = baseUrl}));
             kernel.Bind<IStateService>().To<StateService>().InSingletonScope();
             kernel.Bind<IRefDataRepository>().To<RefDataRepository>().InRequestScope();
