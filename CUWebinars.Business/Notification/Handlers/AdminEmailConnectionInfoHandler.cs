@@ -33,8 +33,8 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 notificationMessage.To = adminEmailConnectionInfoEvent.Recipients.First();
 
-                notificationMessage.PersistedName = string.Format("{0}-{1}{2}", 
-                    string.Concat(DomainConstants.AdminEmailedPrefix, NotificationName),
+                notificationMessage.PersistedName = string.Format("{0}_{1}{2}", 
+                    string.Concat(DomainConstants.AdminEmailedPrefix, NotificationName, "_", adminEmailConnectionInfoEvent.EventObject.idOrder),
                     DateTime.Now.ToString(DomainConstants.DateTimeLongFormat),
                     ".htm"
                     );

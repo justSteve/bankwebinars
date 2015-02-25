@@ -541,3 +541,4 @@ CUWebinars Information: 0 : MailerSent: cshaeffer@boaa.com Subject: [BankWebinar
 CUWebinars Information: 0 : MailerSent: asmelko@fhlbc.com Subject: [BankWebinars] OnDemand recording posted for BSA/AML & OFAC Compliance - What Was Old is New Again Timestamp was: 24/02/2015 11:01:24 AM
 CUWebinars Information: 0 : MailerSent: asahrhage@4thebank.com Subject: [BankWebinars] OnDemand recording posted for BSA/AML & OFAC Compliance - What Was Old is New Again Timestamp was: 24/02/2015 11:01:29 AM
 CUWebinars Information: 0 : MailerSent: ana.alvarez@uscentury.com Subject: [BankWebinars] OnDemand recording posted for BSA/AML & OFAC Compliance - What Was Old is New Again Timestamp was: 24/02/2015 11:01:33 AM
+CUWebinars Error: 0 : Validation failed for webinar 4600 and User 31765

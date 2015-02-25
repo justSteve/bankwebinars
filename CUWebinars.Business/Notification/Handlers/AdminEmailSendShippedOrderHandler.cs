@@ -32,7 +32,7 @@ namespace CUWebinars.Business.Notification.Handlers
 
                 notificationMessage.To = emailOrderEvent.Recipients.First();
 
-                notificationMessage.PersistedName = string.Format("{0}-{1}{2}",
+                notificationMessage.PersistedName = string.Format("{0}_{1}{2}",
                     string.Concat(DomainConstants.AdminEmailedPrefix, NotificationName),
                     DateTime.Now.ToString(DomainConstants.DateTimeLongFormat),
                     ".htm"
