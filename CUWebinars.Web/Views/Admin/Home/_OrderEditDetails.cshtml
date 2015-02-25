@@ -1,10 +1,17 @@
-﻿@model ManageOrderEditModel
+﻿@using System.Activities.Statements
+@model ManageOrderEditModel
 
 @using (Html.BeginForm("ManageOrder", "Admin", FormMethod.Post, new { id = "manageOrderForm" }))
 {
     @Html.ValidationSummary("There have been some errors:", new { id = "manageOrderFormValSummary" })
 
     @Html.AntiForgeryToken()
+
+    <div id="StatusWrapper" class="span12">
+        <div>
+            <span>Order Status: </span><strong>@Model.DisplayRowPriceViewModel.OrderStatus.ToString()</strong>
+        </div>
+    </div>
 
     <div id="regTypeSelectWapper" class="span12">
         <div>
@@ -16,14 +23,24 @@
         <div class="control-group">
             <div class="controls">
                 There are <span id="nrAddLocs">@Model.NumberOfAdditionalLocations</span> Additional Locations for this order.
-                <button id="addLocationsButton" class="btn btn-default btn-small">add more?</button>
+                @{
+                    if (Model.AdditionalLocationsAvailableOnLoad)
+                    {
+                        <button id="addLocationsButton" class="btn btn-default btn-small">add more?</button>
+                    }
+                    else
+                    {
+                        <button id="addLocationsButton" class="btn btn-default btn-small" disabled="disabled">add more?</button>
+                    }
+                }
             </div>
             @Html.Raw(Model.AdditionalLocationsRenderer.ToString())
         </div>
         <div class="control-group">
             <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions">Total Additional Locations Price:</label>
             <div class="controls">
-                @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions, new { disabled = "disabled" }) @*read-only*@
+                @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions, new { id = "TotalCostOfOptionsText", disabled = "disabled" }) @*read-only*@
+                @Html.HiddenFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions) @* Required for POST. TextBoxFor won't ModelBind *@
             </div>
         </div>
     </div>
@@ -31,14 +48,16 @@
         <div class="control-group">
             <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice">Base Price:</label>
             <div class="controls">
-                @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.UnitPrice, new { disabled = "disabled" }) @*read-only*@
+                @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.UnitPrice, new { id = "UnitPriceText", disabled = "disabled" }) @*read-only*@
+                @Html.HiddenFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.UnitPrice) @* Required for POST. TextBoxFor won't ModelBind *@
             </div>
         </div>
         <div class="control-group">
             <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount">Total Discount:</label>
             <div class="controls">
-                @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalDiscount, new { disabled = "disabled" }) @*read-only*@
-                @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.Discount.DiscountCode, new { placeholder = "Enter discount code ", @class="input input-small" })
+                @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalDiscount, new { id = "TotalDiscountText", disabled = "disabled" }) @*read-only*@
+                @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.Discount.DiscountCode, new { placeholder = "Enter discount code ", @class = "input input-small" })
+                @Html.HiddenFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalDiscount) @* Required for POST. TextBoxFor won't ModelBind *@
                 <button id="applyDiscountButton" class="btn btn-default">Apply code</button>
             </div>
         </div>
@@ -46,25 +65,24 @@
         <div class="control-group">
             <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice">Total Order Price:</label>
             <div class="controls">
-                @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice, new { disabled = "disabled" }) @*read-only*@
+                @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice, new { id = "TotalOrderPriceText", disabled = "disabled" }) @*read-only*@
+                @Html.HiddenFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice) @* Required for POST. TextBoxFor won't ModelBind *@
             </div>
             <div class="controls">
                 <button id="editOrderSubmitButton" class="btn btn-primary">Submit Edited Details</button>
             </div>
         </div>
-        <div class="control-group">
-            <div class="controls">
-                @Html.HiddenFor(m => m.DisplayRowPriceViewModel.Price)
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="controls">
-                @Html.HiddenFor(m => m.DisplayRowPriceViewModel.RowPrice)
-            </div>
-        </div>
     </div>
 
     @Html.HiddenFor(m => m.CostPerAdditionalLocation)
+    @Html.HiddenFor(m => m.Id)
     @Html.HiddenFor(m => m.UserId)
     @Html.HiddenFor(m => m.WebinarId)
+    @Html.HiddenFor(m => m.NumberOfAdditionalLocations)
+    @Html.HiddenFor(m => m.DisplayRowPriceViewModel.NumberOfAdditionalLocations)
+    @Html.HiddenFor(m => m.DisplayRowPriceViewModel.OrderStatus)
+    @Html.HiddenFor(m => m.DisplayRowPriceViewModel.Price)
+    @Html.HiddenFor(m => m.DisplayRowPriceViewModel.RowPrice)
+    @Html.HiddenFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.FlatOff)
+
 }

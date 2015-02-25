@@ -81,7 +81,8 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
         [System.Web.Mvc.HttpPost]
-        [ValidateJsonAntiForgeryToken]
+        [ValidateAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
         public ActionResult ManageOrder(ManageOrderEditModel model)
         {
             if (ModelState.IsValid)
@@ -198,6 +199,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     var manageOrderEditModel = new ManageOrderEditModel
                     {
                         AdditionalLocations = additionalLocations,
+                        AdditionalLocationsAvailableOnLoad = false, // see below for where this is properly decided.
                         AdditionalLocationsRenderer = GetRenderer(additionalLocations.Select(al => al.Email).ToList()),
                         CostPerAdditionalLocation = additionalLocationsPricing.Item2,
                         DisplayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
@@ -225,6 +227,17 @@ namespace CUWebinars.Web.Controllers.Admin
                         WebinarId = orderRow.idWebinar
                     };
 
+                    // Need to decide whether the 1st option in the DropDownList can add additional locations
+                    var firstOption = manageOrderEditModel.DisplayOptionsInDropDownViewModel.Options.FirstOrDefault();
+
+                    if (!ReferenceEquals(null, firstOption))
+                    {
+                        var option = CheckIfAddLocAvailable(firstOption.Key.idRegType);
+                        if (option.HasValue)
+                        {
+                            manageOrderEditModel.AdditionalLocationsAvailableOnLoad = option.Value;
+                        }
+                    }
 
                     return PartialView("~/Views/Admin/Home/_OrderEditDetails.cshtml", manageOrderEditModel);
                 }
@@ -299,45 +312,54 @@ namespace CUWebinars.Web.Controllers.Admin
                 </span>             
              */
 
-            for (var i = 0; i < emailAddresses.Count; i++)
+            if (emailAddresses.Any())
+            {
+                for (var i = 0; i < emailAddresses.Count; i++)
+                {
+                    spanBuilder = new TagBuilder("span");
+                    inputBuilder = new TagBuilder("input");
+                    iconBuilder = new TagBuilder("i");
+
+                    inputBuilder.GenerateId(additionalLocationEmailPrefix + i);
+                    inputBuilder.MergeAttributes(new Dictionary<string, string>
+                    {
+                        {"name", "AdditionalLocations[" + i + "].Email"},
+                        {"type", "email"},
+                        {"placeholder", "Enter email address"},
+                        {"aria-invalid", "false"},
+                        {"aria-describedby", "AdditionalLocationEmail_" + i + "-error"},
+                        {"value", emailAddresses[i]},
+                    });
+                    inputBuilder.AddCssClass("valid");
+
+                    iconBuilder.AddCssClass("icon-trash");
+                    iconBuilder.AddCssClass("icon-white");
+                    iconBuilder.MergeAttribute("style", "cursor: pointer");
+                    iconBuilder.MergeAttribute("id", string.Concat(i, additionalLocationDeleteSuffix));
+
+                    spanBuilder.GenerateId(locationsSpanPrefix + i);
+                    spanBuilder.InnerHtml = string.Concat(
+                        inputBuilder.ToString(TagRenderMode.SelfClosing),
+                        nonBreakingSpace,
+                        iconBuilder.ToString(TagRenderMode.Normal),
+                        "<br id=" + i + breakSuffix + ">"
+                        );
+
+                    stringBuilder.Append(spanBuilder.ToString(TagRenderMode.Normal));
+                }
+            }
+            else
             {
                 spanBuilder = new TagBuilder("span");
-                inputBuilder = new TagBuilder("input");
-                iconBuilder = new TagBuilder("i");
-
-                inputBuilder.GenerateId(additionalLocationEmailPrefix + i);
-                inputBuilder.MergeAttributes(new Dictionary<string, string>
-                {
-                    {"name", "AdditionalLocations[" + i + "].Email"},
-                    {"type", "email"},
-                    {"placeholder", "Enter email address"},
-                    {"aria-invalid", "false"},
-                    {"aria-describedby", "AdditionalLocationEmail_" + i + "-error"},
-                    {"value", emailAddresses[i]},
-                });
-                inputBuilder.AddCssClass("valid");
-
-                iconBuilder.AddCssClass("icon-trash");
-                iconBuilder.AddCssClass("icon-white");
-                iconBuilder.MergeAttribute("style", "cursor: pointer");
-                iconBuilder.MergeAttribute("id", string.Concat(i, additionalLocationDeleteSuffix));
-
-                spanBuilder.GenerateId(locationsSpanPrefix + i);
-                spanBuilder.InnerHtml = string.Concat(
-                    inputBuilder.ToString(TagRenderMode.SelfClosing),
-                    nonBreakingSpace,
-                    iconBuilder.ToString(TagRenderMode.Normal),
-                    "<br id=" + i + breakSuffix + ">"
-                    );
-
-                stringBuilder.Append(spanBuilder.ToString(TagRenderMode.Normal));
+                spanBuilder.GenerateId("noLocationsText");
+                spanBuilder.InnerHtml = "No additionalLocations yet";
             }
 
 
             var div = new TagBuilder("div");
             div.GenerateId("collectAdditionalLocations");
             div.AddCssClass("addLocsBox");
-            div.InnerHtml = stringBuilder.ToString();
+            div.InnerHtml = emailAddresses.Any() ? stringBuilder.ToString() : spanBuilder.ToString(TagRenderMode.Normal);
 
             return div;
 
@@ -1247,6 +1269,21 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             return typesAsSelectList;
         }
+
+        private bool? CheckIfAddLocAvailable(int optionId)
+        {
+            var firstOrDefault = _orderManagementService.GetRegTypeOption(optionId)
+                .Select(o => new { Show = o.ShowLiveNotifications, Ship = o.ShowShippedNotifications })
+                .FirstOrDefault();
+
+            if (firstOrDefault != null)
+            {
+                return firstOrDefault.Show.Equals("Yes", StringComparison.OrdinalIgnoreCase);
+            }
+
+            return null;
+        }
+
     }
 
     public enum ConstantType

@@ -16,6 +16,7 @@ namespace CUWebinars.Web.Models
         public int NumberOfAdditionalLocations { get; set; }
         public int Id { get; set; }
         public int RegType { get; set; }
+        public bool AdditionalLocationsAvailableOnLoad { get; set; }
         public int UserId { get; set; }
         public int WebinarId { get; set; }
     }

@@ -1,4 +1,6 @@
-﻿var MANAGE = {};
+﻿// MANAGE namespace
+if (MANAGE === null || typeof MANAGE === 'undefined')
+    var MANAGE = {}; 
 
 
 $(function () {
@@ -59,317 +61,344 @@ $(function () {
 
 });
 
-MANAGE.addAdditionalLocation = function (e) {
 
-    e.preventDefault();
+// self-invoking function adds methods to MANAGE namespace
+// replace MANAGE with parameter 'ns' as MANAGE is passed in at bottom.
+(function (ns) {
 
-    var newId;
+    ns.addAdditionalLocation = function(e) {
 
-    if (MANAGE.numberOfAdditionalLocations === 0) {
-        newId = 0;
-        var naSpan =$('#naText');
-        if (naSpan.length > 0)
-            naSpan.remove();
-    } else {
-        // first get the last previous email input
-        var lastInput = MANAGE.wrapperDiv.find('input[type="email"]:last');
-        // get its id
-        var lastInputId = lastInput.attr('id');
-        var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
-        newId = id + 1;
-    }
+        e.preventDefault();
 
-    var trashIconId = newId + '-AdditionLocationEmail-delete';
-    var additionalLocationEmailId = 'AdditionalLocationEmail-' + newId;
+        var noLocationsSpane = $('#noLocationsText');
+        if (noLocationsSpane.length > 0)
+            noLocationsSpane.remove();
 
-    MANAGE.wrapperDiv.append('<span id="' + MANAGE.locationsSpanPrefix + newId + '"><input id="' + additionalLocationEmailId + '" name="AdditionalLocations[' + newId + '].Email" type="email" placeholder="Enter email address" aria-describedby="AdditionalLocationEmail_'+ newId +'-error" aria-invalid="false"></input>&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + trashIconId + '"></i></span> <br id="' + newId + MANAGE.breakSuffix + '">');
+        var newId;
 
-    $('#' + trashIconId).on('click', MANAGE.deleteItem);
-    $('#' + additionalLocationEmailId).focus();
-
-    MANAGE.numberOfAdditionalLocations += 1;
-    MANAGE.adjustAdditionalLocationsTotal(MANAGE.numberOfAdditionalLocations);
-    MANAGE.adjustTotalPrice();
-};
-
-MANAGE.deleteItem = function (e) {
-
-    e.preventDefault();
-
-    MANAGE.numberOfAdditionalLocations -= 1;
-    
-    var trashClicked = event.currentTarget.id;
-    var idx = trashClicked.substring(0, 1);
-    var spanToRemove = MANAGE.locationsSpanPrefix + idx;
-
-    $('#' + spanToRemove).hide(500, function () {
-        $(this).remove();
-    });
-
-    $('#' + idx + MANAGE.breakSuffix).hide(500, function () {
-        $(this).remove();
-    });
-
-    MANAGE.adjustAdditionalLocationsTotal(MANAGE.numberOfAdditionalLocations);
-    MANAGE.adjustTotalPrice();
-};
-
-MANAGE.wireUpTrashIcons = function () {
-    
-    var trashCans = MANAGE.wrapperDiv.find('i');
-
-    $.each(trashCans, function (idx, i) {
-        $(i).on('click', MANAGE.deleteItem);
-    });
-};
-
-MANAGE.primeDomVariables = function() {
-
-    MANAGE.wrapperDiv = $('#collectAdditionalLocations');
-    MANAGE.numberAddLocsLabel = $('#nrAddLocs');
-    MANAGE.addAdditionalLocationsButton = $('#addLocationsButton');
-    MANAGE.totalOptionsInput = $('DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions');
-
-    MANAGE.regTypesList = $('#RegType');
-    MANAGE.orderRowId = $('#manageOrderForm input[name="ID"]').val();
-
-    MANAGE.locationsSpanPrefix = 'LocationSpan-';
-    MANAGE.breakSuffix = '-break';
-    MANAGE.numberOfAdditionalLocations = parseInt(MANAGE.numberAddLocsLabel.text());
-    //MANAGE.selectedAdditionalLocationsPrice = MANAGE.regTypesList.find(":selected").data('price');
-
-    MANAGE.additionalLocationsTotal = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions');
-    MANAGE.totalDiscountInput = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount');
-    MANAGE.totalPriceInput = $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice');
-    MANAGE.basePrice = parseFloat($('#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice').val());
-
-    MANAGE.gatherPricingData();
-    MANAGE.adjustTotalPrice();
-
-    MANAGE.toastLogger = new Common.Logger(); // for toast notifications
-    MANAGE.logInvalidOperation = MANAGE.toastLogger.getLogFn('ManageOrderFormSubmit', 'error');
-};
-
-MANAGE.submitForm = function(e) { 
-    e.preventDefault();
-
-    var emailInputs = MANAGE.wrapperDiv.find('input[type="email"]');
-
-    var invalidEmailInput = [];
-
-    $.each(emailInputs, function (idx, i) {
-        if ($(i).val().indexOf('@') < 0) {
-            invalidEmailInput.push($(i).attr('id'));
-            $(i).css('border-color', '#b94a48').css('background-color', '#ec8d8d');
+        if (ns.numberOfAdditionalLocations === 0) {
+            newId = 0;
+            var naSpan = $('#naText');
+            if (naSpan.length > 0)
+                naSpan.remove();
+        } else {
+            // first get the last previous email input
+            var lastInput = ns.wrapperDiv.find('input[type="email"]:last');
+            // get its id
+            var lastInputId = lastInput.attr('id');
+            var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
+            newId = id + 1;
         }
-        $(i).attr('name', 'AdditionalLocations[' + idx + '].Email');
-    });
 
-    if (invalidEmailInput.length > 0) {
-        MANAGE.logInvalidOperation("At least 1 of the email address textboxes is empty or has an invalid address. Please add a valid address or delete the tetxbox by clicking the adjacent trashcan.", null, true);
-        return; // if even 1 email input has no email address, stop processing. Remove it or enter an email address.
-    }
+        var trashIconId = newId + '-AdditionLocationEmail-delete';
+        var additionalLocationEmailId = 'AdditionalLocationEmail-' + newId;
 
-    var form = $('#manageOrderForm');
+        ns.wrapperDiv.append('<span id="' + ns.locationsSpanPrefix + newId + '"><input id="' + additionalLocationEmailId + '" name="AdditionalLocations[' + newId + '].Email" type="email" placeholder="Enter email address" aria-describedby="AdditionalLocationEmail_' + newId + '-error" aria-invalid="false"></input>&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + trashIconId + '"></i></span> <br id="' + newId + ns.breakSuffix + '">');
 
-    $.ajax({
-        type: 'POST',
-        contentType: constants.FormPostContentType,
-        cache: false,
-        url: form.attr('action'),
-        dataType: constants.JsonDataType,
-        data: form.serialize(),
-        beforeSend: function () {
-            // this is where we append a loading image
-            //$('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Email...</span>');
-        }
-    }).done(function (data, bla, bla) {
+        $('#' + trashIconId).on('click', ns.deleteItem);
+        $('#' + additionalLocationEmailId).focus();
 
-    });
-};
+        ns.numberOfAdditionalLocations += 1;
+        ns.adjustAdditionalLocationsTotal(ns.numberOfAdditionalLocations);
+        ns.adjustTotalPrice();
+    };
 
-MANAGE.changeRegType = function(e) {
+    ns.deleteItem = function(e) {
 
-    e.preventDefault();
+        e.preventDefault();
 
-    var self = this;
+        ns.numberOfAdditionalLocations -= 1;
 
-    var optionId = $(this).val();
+        var trashClicked = event.currentTarget.id;
+        var idx = trashClicked.substring(0, 1);
+        var spanToRemove = ns.locationsSpanPrefix + idx;
 
-    $.ajax({
-        url: "/cart/CheckIfAddLocShouldHide?optionID=" + optionId,
-        type: "GET",
-        cache: false,
-        dataType: constants.JsonDataType,
-
-        beforeSend: function () {
-            var valSummary = $('#manageOrderFormValSummary');
-            valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
-
-            var errorsList = valSummary.find('ul');
-            errorsList.empty();
-            errorsList.append('<li style="display:none"></li>');
-        }
-    }).done(function (data) {
-        //console.log('done CheckIfAddLocShouldHide');
-        if (data.shouldShow === 'Yes') {
-            MANAGE.addAdditionalLocationsButton.removeAttr('disabled');
-            //MANAGE.selectedAdditionalLocationsPrice = MANAGE.changeRegType.find(":selected").data('price');
-        } else if (data.shouldShow === 'No') {
-            //console.log('hide  CheckIfAddLocShouldHide');
-            $('#collectAdditionalLocations').empty().html('<span id="naText" class="text text-info">Not applicable for this RegType</span>');
-            MANAGE.numberOfAdditionalLocations = 0;
-            MANAGE.numberAddLocsLabel.text(0);
-            MANAGE.addAdditionalLocationsButton.attr('disabled', 'disabled');
-        } else if (!data.isSuccessful) {
-            formProcessor.lightUpValidationSummary('manageOrderFormValSummary', data);
-        }
-    }).fail(function (data) {
-        $('#orderRelatedFields').html('<div class="text-error">There has been a transport-level error, please call 800-831-0678 ext 706 for immediate assistance.</div>');
-    });
-};
-
-MANAGE.wireUpHandlers = function () {
-
-    $('#addLocationsButton').on('click', MANAGE.addAdditionalLocation);
-    $('#editOrderSubmitButton').on('click', MANAGE.submitForm);
-    $('#applyDiscountButton').on('click', MANAGE.hookUpApplyDiscountLogic);
-    $('#RegType').on('change', MANAGE.changeRegType);
-
-};
-
-MANAGE.adjustAdditionalLocationsTotal = function(number) {
-
-    MANAGE.numberAddLocsLabel.text(MANAGE.numberOfAdditionalLocations);
-
-    var newPrice = number * parseFloat(MANAGE.addLocsUnitPrice);
-
-    MANAGE.additionalLocationsTotal.val(newPrice);
-    MANAGE.allAddLocsPrice = parseInt(MANAGE.additionalLocationsTotal.val());
-};
-
-MANAGE.adjustTotalPrice = function () {
-
-    var newPrice = MANAGE.basePrice + (MANAGE.allAddLocsPrice || 0) - (MANAGE.totalDiscount || 0);
-
-    MANAGE.totalPriceInput.val(newPrice);
-};
-
-MANAGE.searchOrder = _.debounce(function(query, process) {
-    
-    var searchTerm = $.trim(MANAGE.orderIdInput.val());
-
-    if (searchTerm === '')
-        return;
-
-    if (searchTerm.indexOf('@') > 0) {
-        // in here if searching for an email
-        $.ajax({
-            type: 'GET',
-            contentType: constants.FormPostContentType,
-            cache: false,
-            url: '/Admin/GetOrdersByEmailTypeahead',
-            dataType: constants.JsonDataType,
-            data: { email: searchTerm },
-            beforeSend: function () {
-                MANAGE.orderIdList = null; // dereference whatever is currently in 'MANAGE.orderIdList'. 
-            }
-        }).done(function (data) {
-            MANAGE.orderIdList = data.orderIds;
-            process(MANAGE.orderIdList);
+        $('#' + spanToRemove).hide(500, function() {
+            $(this).remove();
         });
 
-    } else if (_.isFinite(searchTerm)) {
-        // in here if searching on an order number
+        $('#' + idx + ns.breakSuffix).hide(500, function() {
+            $(this).remove();
+        });
+
+        ns.adjustAdditionalLocationsTotal(ns.numberOfAdditionalLocations);
+        ns.adjustTotalPrice();
+    };
+
+    ns.wireUpTrashIcons = function() {
+
+        var trashCans = ns.wrapperDiv.find('i');
+
+        $.each(trashCans, function(idx, i) {
+            $(i).on('click', ns.deleteItem);
+        });
+    };
+
+    ns.primeDomVariables = function() {
+
+        ns.wrapperDiv = $('#collectAdditionalLocations');
+        ns.numberAddLocsLabel = $('#nrAddLocs');
+        ns.addAdditionalLocationsButton = $('#addLocationsButton');
+        ns.totalOptionsInput = $('DisplayRowPriceViewModel_PricesAndDiscounts_TotalOptions');
+
+        ns.regTypesList = $('#RegType');
+        ns.orderRowId = $('#manageOrderForm input[name="ID"]').val();
+
+        ns.locationsSpanPrefix = 'LocationSpan-';
+        ns.breakSuffix = '-break';
+        ns.numberOfAdditionalLocations = parseInt(ns.numberAddLocsLabel.text());
+        //ns.selectedAdditionalLocationsPrice = ns.regTypesList.find(":selected").data('price');
+
+        ns.additionalLocationsTotal = $('#TotalCostOfOptionsText');
+        ns.totalDiscountInput = $('#TotalDiscountText');
+        ns.totalPriceInput = $('#TotalOrderPriceText');
+        ns.basePrice = parseFloat($('#UnitPriceText').val());
+
+        ns.orderIdHiddenInputInDropdownPartial = $('#regTypeSelectWapper input[type="hidden"]');
+        //ns.orderIdHiddenInputInDropdownPartial.removeAttr('name');
+        ns.orderIdHiddenInputInDropdownPartial.attr('name', 'DisplayOptionsInDropDownViewModel.OrderRowId');
+
+
+        ns.gatherPricingData();
+        ns.adjustTotalPrice();
+
+        ns.toastLogger = new Common.Logger(); // for toast notifications
+        ns.logInvalidOperation = ns.toastLogger.getLogFn('ManageOrderFormSubmit', 'error');
+    };
+
+    ns.submitForm = function(e) {
+        e.preventDefault();
+
+        var emailInputs = ns.wrapperDiv.find('input[type="email"]');
+
+        var invalidEmailInput = [];
+
+        $.each(emailInputs, function(idx, i) {
+            if ($(i).val().indexOf('@') < 0) {
+                invalidEmailInput.push($(i).attr('id'));
+                $(i).css('border-color', '#b94a48').css('background-color', '#ec8d8d');
+            }
+            $(i).attr('name', 'AdditionalLocations[' + idx + '].Email');
+        });
+
+        if (invalidEmailInput.length > 0) {
+            ns.logInvalidOperation("At least 1 of the email address textboxes is empty or has an invalid address. Please add a valid address or delete the textbox by clicking the adjacent trashcan.", null, true);
+            return; // if even 1 email input has no email address, stop processing. Remove it or enter an email address.
+        }
+
+        // next 4 lines not really required, as those parts of the ViewModel aren't necessary for the POST. But may as well set them, as easy enough to do.
+        if (ns.numberOfAdditionalLocations > 0) {
+            $('#NumberOfAdditionalLocations').val(ns.numberOfAdditionalLocations);
+            $('#DisplayRowPriceViewModel_NumberOfAdditionalLocations').val(ns.numberOfAdditionalLocations);
+        }
+
+        $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice').val($('#TotalOrderPriceText').val());
+        $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount').val($('#TotalDiscountText').val());
+        $('#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice').val($('#UnitPriceText').val());
+        $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions').val($('#TotalCostOfOptionsText').val());
+
+
+        var form = $('#manageOrderForm');
 
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             contentType: constants.FormPostContentType,
             cache: false,
-            url: '/Admin/GetOrdersByTypeahead',
+            url: form.attr('action'),
             dataType: constants.JsonDataType,
-            data: { id: searchTerm },
+            data: form.serialize(),
             beforeSend: function() {
-                MANAGE.orderIdList = null; // dereference whatever is currently in 'MANAGE.orderIdList'. 
+                // this is where we append a loading image
+                //$('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Email...</span>');
+            }
+        }).done(function(data, bla, bla) {
+
+        });
+    };
+
+    ns.changeRegType = function(e) {
+
+        e.preventDefault();
+
+        var self = this;
+
+        var optionId = $(this).val();
+
+        $.ajax({
+            url: "/cart/CheckIfAddLocShouldHide?optionID=" + optionId,
+            type: "GET",
+            cache: false,
+            dataType: constants.JsonDataType,
+
+            beforeSend: function() {
+                var valSummary = $('#manageOrderFormValSummary');
+                valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
+
+                var errorsList = valSummary.find('ul');
+                errorsList.empty();
+                errorsList.append('<li style="display:none"></li>');
             }
         }).done(function(data) {
-            MANAGE.orderIdList = data.orderIds;
-            process(MANAGE.orderIdList);
-        });
-    } else {
-        // if not a number and not an email address, search is by lastname
-        $.ajax({
-            type: 'GET',
-            contentType: constants.FormPostContentType,
-            cache: false,
-            url: '/Admin/GetOrdersByLastName',
-            dataType: constants.JsonDataType,
-            data: { lastName: searchTerm },
-            beforeSend: function () {
-                MANAGE.orderIdList = null; // dereference whatever is currently in 'MANAGE.orderIdList'. 
+            //console.log('done CheckIfAddLocShouldHide');
+            if (data.shouldShow === 'Yes') {
+                ns.addAdditionalLocationsButton.removeAttr('disabled');
+                //ns.selectedAdditionalLocationsPrice = ns.changeRegType.find(":selected").data('price');
+            } else if (data.shouldShow === 'No') {
+                //console.log('hide  CheckIfAddLocShouldHide');
+                $('#collectAdditionalLocations').empty().html('<span id="naText" class="text text-info">Not applicable for this RegType</span>');
+                ns.numberOfAdditionalLocations = 0;
+                ns.numberAddLocsLabel.text(0);
+                ns.addAdditionalLocationsButton.attr('disabled', 'disabled');
+            } else if (!data.isSuccessful) {
+                formProcessor.lightUpValidationSummary('manageOrderFormValSummary', data);
             }
-        }).done(function (data) {
-            MANAGE.orderIdList = data.orderIds;
-            process(MANAGE.orderIdList);
+        }).fail(function(data) {
+            $('#orderRelatedFields').html('<div class="text-error">There has been a transport-level error, please call 800-831-0678 ext 706 for immediate assistance.</div>');
         });
-    }
+    };
 
-}, 200);
+    ns.wireUpHandlers = function() {
 
-MANAGE.hookUpApplyDiscountLogic = function (e) {
+        $('#addLocationsButton').on('click', ns.addAdditionalLocation);
+        $('#editOrderSubmitButton').on('click', ns.submitForm);
+        $('#applyDiscountButton').on('click', ns.hookUpApplyDiscountLogic);
+        $('#RegType').on('change', ns.changeRegType);
 
-    e.preventDefault();
+    };
 
-    MANAGE.gatherPricingData();
+    ns.adjustAdditionalLocationsTotal = function(number) {
 
-    if (MANAGE.totalPrice < 1) {
-        return;
-    }
+        ns.numberAddLocsLabel.text(ns.numberOfAdditionalLocations);
 
-    var url = '/cart/ApplyDiscountCode';
-    var payload = { code: $('#DisplayRowPriceViewModel_Discount_DiscountCode').val(), orderRowId: MANAGE.orderRowId };
-    var self = this;
+        var newPrice = number * parseFloat(ns.addLocsUnitPrice);
 
-    $.ajax({
-        type: 'POST',
-        contentType: constants.JsonContentType,
-        cache: false,
-        url: url,
-        dataType: constants.JsonDataType,
-        data: JSON.stringify(payload),
-        beforeSend: function () {
-            $(self).prepend('<i id="discountSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-            $(self).attr('disabled', 'disabled');
-        }
-    }).done(function (data) {
+        ns.additionalLocationsTotal.val(newPrice);
+        ns.allAddLocsPrice = parseInt(ns.additionalLocationsTotal.val());
+    };
 
-        if (data.Result.indexOf('%') !== -1) {
-            var amount2Discount = data.Result.replace(".00%", "") / 100;
-            MANAGE.totalDiscount = MANAGE.totalPrice * amount2Discount;
+    ns.adjustTotalPrice = function() {
+
+        var newPrice = ns.basePrice + (ns.allAddLocsPrice || 0) - (ns.totalDiscount || 0);
+
+        ns.totalPriceInput.val(newPrice);
+    };
+
+    ns.searchOrder = _.debounce(function(query, process) {
+
+        var searchTerm = $.trim(ns.orderIdInput.val());
+
+        if (searchTerm === '')
+            return;
+
+        if (searchTerm.indexOf('@') > 0) {
+            // in here if searching for an email
+            $.ajax({
+                type: 'GET',
+                contentType: constants.FormPostContentType,
+                cache: false,
+                url: '/Admin/GetOrdersByEmailTypeahead',
+                dataType: constants.JsonDataType,
+                data: { email: searchTerm },
+                beforeSend: function() {
+                    ns.orderIdList = null; // dereference whatever is currently in 'ns.orderIdList'. 
+                }
+            }).done(function(data) {
+                ns.orderIdList = data.orderIds;
+                process(ns.orderIdList);
+            });
+
+        } else if (_.isFinite(searchTerm)) {
+            // in here if searching on an order number
+
+            $.ajax({
+                type: 'GET',
+                contentType: constants.FormPostContentType,
+                cache: false,
+                url: '/Admin/GetOrdersByTypeahead',
+                dataType: constants.JsonDataType,
+                data: { id: searchTerm },
+                beforeSend: function() {
+                    ns.orderIdList = null; // dereference whatever is currently in 'ns.orderIdList'. 
+                }
+            }).done(function(data) {
+                ns.orderIdList = data.orderIds;
+                process(ns.orderIdList);
+            });
         } else {
-            MANAGE.totalDiscount = data.Result;
+            // if not a number and not an email address, search is by lastname
+            $.ajax({
+                type: 'GET',
+                contentType: constants.FormPostContentType,
+                cache: false,
+                url: '/Admin/GetOrdersByLastName',
+                dataType: constants.JsonDataType,
+                data: { lastName: searchTerm },
+                beforeSend: function() {
+                    ns.orderIdList = null; // dereference whatever is currently in 'ns.orderIdList'. 
+                }
+            }).done(function(data) {
+                ns.orderIdList = data.orderIds;
+                process(ns.orderIdList);
+            });
         }
 
-        MANAGE.adjustTotalPrice();
-        
-        //if (newTotalPrice < 0)
-        //    newTotalPrice = 0;
+    }, 200);
 
-        //$('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 3.').addClass('text-info');
+    ns.hookUpApplyDiscountLogic = function(e) {
 
-        //$('#discountedText').html('Discounted: <span id="totalDiscount">$' + registerDuringCheckout.totalDiscount + '</span>').removeClass('muted');
-        //$('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
+        e.preventDefault();
 
-        $('#discountSpinner').remove();
+        ns.gatherPricingData();
 
-    }).always(function (e) {
-        $('#discountSpinner').remove();
-        $(self).removeAttr('disabled');
-    });
-};
+        if (ns.totalPrice < 1) {
+            return;
+        }
 
-MANAGE.gatherPricingData = function() {
-    MANAGE.allAddLocsPrice = parseInt(MANAGE.additionalLocationsTotal.val());
-    MANAGE.totalDiscount = parseInt(MANAGE.totalDiscountInput.val());
-    MANAGE.totalPrice= parseInt(MANAGE.totalPriceInput.val());
-};
+        var url = '/cart/ApplyDiscountCode';
+        var payload = { code: $('#DisplayRowPriceViewModel_Discount_DiscountCode').val(), orderRowId: ns.orderRowId };
+        var self = this;
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: url,
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payload),
+            beforeSend: function() {
+                $(self).prepend('<i id="discountSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+                $(self).attr('disabled', 'disabled');
+            }
+        }).done(function(data) {
+
+            if (data.Result.indexOf('%') !== -1) {
+                var amount2Discount = data.Result.replace(".00%", "") / 100;
+                ns.totalDiscount = ns.totalPrice * amount2Discount;
+            } else {
+                ns.totalDiscount = data.Result;
+            }
+
+            ns.adjustTotalPrice();
+
+            //if (newTotalPrice < 0)
+            //    newTotalPrice = 0;
+
+            //$('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 3.').addClass('text-info');
+
+            //$('#discountedText').html('Discounted: <span id="totalDiscount">$' + registerDuringCheckout.totalDiscount + '</span>').removeClass('muted');
+            //$('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
+
+            $('#discountSpinner').remove();
+
+        }).always(function(e) {
+            $('#discountSpinner').remove();
+            $(self).removeAttr('disabled');
+        });
+    };
+
+    ns.gatherPricingData = function() {
+        ns.allAddLocsPrice = parseInt(ns.additionalLocationsTotal.val());
+        ns.totalDiscount = parseInt(ns.totalDiscountInput.val());
+        ns.totalPrice = parseInt(ns.totalPriceInput.val());
+    };
+})(MANAGE);

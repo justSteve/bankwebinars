@@ -22,3 +22,7 @@ div.pricingSummaryPanel {
 button#applyDiscountButton {
     vertical-align: top;
 }
+
+div#StatusWrapper {
+    margin-bottom: 20px;
+}

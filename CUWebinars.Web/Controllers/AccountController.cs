@@ -618,7 +618,6 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
-            throw new Exception("Bad stuff");
             ViewBag.PageStyleType = "register";
             return View(_accountControllerOrchestrator.BuildLoginModel(returnUrl));
         }
