@@ -1203,6 +1203,11 @@ namespace CUWebinars.Business.Services
             return _webinarRepository.GetOrdersByWebinar(idWebinar).ToList();
         }
 
+        public void SendOrderToLegacy(Order newOrder)
+        {
+            _orderRepository.SendOrderToLegacy(newOrder);
+        }
+
         public string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int webinarId,
             string webinarKey)
         {

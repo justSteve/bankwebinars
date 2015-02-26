@@ -51,9 +51,9 @@ namespace CUWebinars.Business.Notification.Handlers
                     ? "OrderSubmitted-ReSend_" + orderSubmittedEvent.EventObject.Order.idOrder
                     : "OrderSubmittedSend_" + orderSubmittedEvent.EventObject.Order.idOrder;
 
-                notificationMessage.PersistedName = string.Format("{0}_{1}{2}", 
+                notificationMessage.PersistedName = string.Format("{0}_{1}{2}",
                     persistedNamePrefix,
-                    DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), 
+                    DateTime.Now.ToString(DomainConstants.DateTimeLongFormat),
                     ".htm"
                     );
 
@@ -68,7 +68,15 @@ namespace CUWebinars.Business.Notification.Handlers
                                 notificationMessage.PersistedName, '"'));
                 }
 
-                notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail;
+                if (orderSubmittedEvent.EventObject.Order.idAffiliate == 62)
+                {
+                    notificationMessage.To = "steve@ttstrain.com";
+                }
+                else
+                {
+                    notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail;
+                }
+
                 _notificationDelivery.Notify(notificationMessage);
             }
             catch (NullReferenceException nullReferenceException)

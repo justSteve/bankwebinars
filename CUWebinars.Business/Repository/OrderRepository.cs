@@ -1,5 +1,7 @@
-﻿using System.Security.Cryptography;
+﻿using System.Configuration;
+using System.Security.Cryptography;
 using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Validation.Order;
@@ -421,6 +423,15 @@ namespace CUWebinars.Business.Repository
                 || o.OrderStatus == OrderStatus.Paid
                 || o.OrderStatus == OrderStatus.Billed
                 ));
+
+        }
+
+        public void SendOrderToLegacy(Order newOrder)
+        {
+            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LegacyConnection"].ConnectionString);
+
+            dataOperations.SendOrderToLegacy(newOrder);
+
 
         }
 

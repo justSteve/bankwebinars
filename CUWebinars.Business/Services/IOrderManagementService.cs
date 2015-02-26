@@ -84,5 +84,6 @@ namespace CUWebinars.Business.Services
         string SetPostEventClaims(int webinarId);
         Discount GetDiscountById(int discount);
         IList<Order> GetOrdersForWebinar(int idWebinar);
+        void SendOrderToLegacy(Order newOrder);
     }
 }

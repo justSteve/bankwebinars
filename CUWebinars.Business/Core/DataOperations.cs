@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
+using System.Linq;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Models;
 
@@ -33,7 +34,8 @@ namespace CUWebinars.Business.Core
 
                     getLegacyWebinars.Connection = sqlConnection;
                     getLegacyWebinars.CommandType = CommandType.Text;
-                    getLegacyWebinars.CommandText = "SELECT ttsLable from ACSImporter where acsLable = '" + regTypeLable + "'";
+                    getLegacyWebinars.CommandText = "SELECT ttsLable from ACSImporter where acsLable = '" + regTypeLable +
+                                                    "'";
 
                     using (var sqlUpdateConnection = new SqlConnection(_connectionString))
                     {
@@ -52,6 +54,7 @@ namespace CUWebinars.Business.Core
                 }
             }
         }
+
         public IList<Tuple<int, decimal>> GetAdditionalLocationsPricing(int webinarId)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
@@ -70,7 +73,8 @@ namespace CUWebinars.Business.Core
                     getPricingsCommand.Connection = sqlConnection;
                     getPricingsCommand.CommandType = CommandType.Text;
                     getPricingsCommand.Parameters.Add(webinarIdParameter);
-                    getPricingsCommand.CommandText = "SELECT id, cost FROM AdditionalLocationsLookupPrice WHERE idWebinar = @webinarId;";
+                    getPricingsCommand.CommandText =
+                        "SELECT id, cost FROM AdditionalLocationsLookupPrice WHERE idWebinar = @webinarId;";
 
                     IList<Tuple<int, decimal>> pricingInformation = new List<Tuple<int, decimal>>();
 
@@ -86,6 +90,7 @@ namespace CUWebinars.Business.Core
                 }
             }
         }
+
         /// <summary>
         /// This method permits affiliates to show friendly label on importer
         /// </summary>
@@ -135,6 +140,7 @@ namespace CUWebinars.Business.Core
                 }
             }
         }
+
         public USTimeZone GetTimeZoneByZipCode(string zip)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
@@ -167,7 +173,8 @@ namespace CUWebinars.Business.Core
                     int timeZoneAsInt;
                     USTimeZone timeZone = USTimeZone.Central;
 
-                    if (int.TryParse(timeZoneAsString, NumberStyles.AllowLeadingSign, CultureInfo.CurrentCulture, out timeZoneAsInt))
+                    if (int.TryParse(timeZoneAsString, NumberStyles.AllowLeadingSign, CultureInfo.CurrentCulture,
+                        out timeZoneAsInt))
                     {
                         timeZoneAsInt += 10;
                         timeZone = (USTimeZone)timeZoneAsInt;
@@ -198,13 +205,171 @@ namespace CUWebinars.Business.Core
                     setFieldsVerifiedCommand.Connection = sqlConnection;
                     setFieldsVerifiedCommand.CommandType = CommandType.Text;
                     setFieldsVerifiedCommand.Parameters.Add(idParam);
-                    setFieldsVerifiedCommand.CommandText = "UPDATE [dbo].[UserAccounts] SET LastFailedLogin = NULL, FailedLoginCount = 0, IsAccountVerified = 1, IsAccountClosed = 0, AccountClosed = NULL, VerificationKey = NULL, VerificationPurpose = NULL, VerificationKeySent = NULL, LastFailedPasswordReset = NULL, FailedPasswordResetCount = 0, VerificationStorage = NULL WHERE [ID] = @id;";
+                    setFieldsVerifiedCommand.CommandText =
+                        "UPDATE [dbo].[UserAccounts] SET LastFailedLogin = NULL, FailedLoginCount = 0, IsAccountVerified = 1, IsAccountClosed = 0, AccountClosed = NULL, VerificationKey = NULL, VerificationPurpose = NULL, VerificationKeySent = NULL, LastFailedPasswordReset = NULL, FailedPasswordResetCount = 0, VerificationStorage = NULL WHERE [ID] = @id;";
 
                     numRows = setFieldsVerifiedCommand.ExecuteNonQuery();
                 }
             }
 
             return numRows == 1;
+        }
+
+        public void SendOrderToLegacy(Order newOrder)
+        {
+            var myRow = newOrder.OrderRows.FirstOrDefault();
+            var addLoc = "";
+            var addLocCount = 0;
+
+            int translatedOptionId = getLegacyOptionID(myRow.RegistrationType.idRegType);
+
+            if (myRow.AdditionalLocation != null)
+            {
+                addLocCount = myRow.AdditionalLocation.Count;
+                foreach (var loc in myRow.AdditionalLocation)
+                {
+                    addLoc += loc.Email + ",";
+                }
+            }
+
+            var idUserParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idUser" };
+            var idUser2Parameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idUser" };
+            var idWebinarParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idWebinar", Value = myRow.idWebinar };
+            var idDiscountParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idDiscount" };
+            var idOptionParameter = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idOption", Value = translatedOptionId };
+            var addLocParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@addLoc", Value = addLoc };
+            var addLocCountParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@addLocCount", Value = addLocCount };
+            var firstNameParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@firstName", Value = newOrder.FirstName };
+            var lastNameParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@lastName", Value = newOrder.LastName };
+            var phone1Parameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@phone1", Value = newOrder.BillingPhone };
+            var mAddressParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@mAddress", Value = newOrder.BillingAddress };
+            var mCityParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@mCity", Value = newOrder.BillingCity };
+            var mZipParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@mZip", Value = newOrder.BillingZip };
+            var mStateParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@mState", Value = newOrder.BillingState };
+            var emailParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@email", Value = newOrder.BillingEmail };
+            var generalCommentsParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@generalComments", Value = newOrder.AffiliateComments };
+            var provisionalInstitutionParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@provisionalInstitution", Value = newOrder.Institution };
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                int idUser = 0;
+                int idDiscount = 0;
+                sqlConnection.Open();
+                using (var getUserID = new SqlCommand("InsertACSUser", sqlConnection))
+                {
+                    try
+                    {
+
+                    getUserID.Parameters.Add(firstNameParameter);
+                    getUserID.Parameters.Add(lastNameParameter);
+                    getUserID.Parameters.Add(phone1Parameter);
+                    getUserID.Parameters.Add(mAddressParameter);
+                    getUserID.Parameters.Add(mCityParameter);
+                    getUserID.Parameters.Add(mZipParameter);
+                    getUserID.Parameters.Add(mStateParameter);
+                    getUserID.Parameters.Add(emailParameter);
+                    getUserID.Parameters.Add(provisionalInstitutionParameter);
+
+                    getUserID.Connection = sqlConnection;
+                    getUserID.CommandType = CommandType.StoredProcedure;
+
+                    idUser = Convert.ToInt32(getUserID.ExecuteScalar());
+                    @idUserParameter.Value = idUser;
+                    @idUser2Parameter.Value = idUser;
+                    }
+                    catch (Exception)
+                    {
+
+                        throw;
+                    }
+
+                }
+                using (var getDiscountID = new SqlCommand("GetUserDiscount", sqlConnection))
+                {
+
+                    getDiscountID.Parameters.Add(idUserParameter);
+
+                    getDiscountID.Connection = sqlConnection;
+                    getDiscountID.CommandType = CommandType.StoredProcedure;
+
+                    idDiscount = Convert.ToInt32(getDiscountID.ExecuteScalar());
+                    @idDiscountParameter.Value = idDiscount;
+
+                }
+                using (var sendOrder = new SqlCommand("ImportOrder", sqlConnection))
+                {
+                    sendOrder.Parameters.Add(idUser2Parameter);
+                    sendOrder.Parameters.Add(idWebinarParameter);
+                    sendOrder.Parameters.Add(idOptionParameter);
+                    sendOrder.Parameters.Add(idDiscountParameter);
+                    sendOrder.Parameters.Add(addLocParameter);
+                    sendOrder.Parameters.Add(addLocCountParameter);
+
+                    sendOrder.Connection = sqlConnection;
+                    sendOrder.CommandType = CommandType.StoredProcedure;
+
+
+                    var orderid = sendOrder.ExecuteScalar().ToString();
+                
+                }
+
+                
+            }
+        }
+
+        private int getLegacyOptionID(int idRegType)
+        {
+            switch (idRegType)
+            {
+                case 205:
+                    return 1;
+                    
+                case 206:
+                    return 2;
+                    
+                case 207:
+                    return 3;
+                    
+                case 208:
+                    return 17;
+                    
+                case 209:
+                    return 18;
+                    
+                case 200:
+                    return 27;
+                    
+                case 201:
+                    return 32;
+                    
+                case 203:
+                    return 33;
+                    
+                case 202:
+                    return 35;
+                    
+                case 204:
+                    return 36;
+                    
+                case 221:
+                    return 79;
+                    
+                case 222:
+                    return 80;
+                    
+                case 224:
+                    return 81;
+                    
+                case 223:
+                    return 82;
+                    
+                case 225:
+                    return 83;
+                    
+                default:
+                    return 0;
+                    
+            }
         }
     }
 }

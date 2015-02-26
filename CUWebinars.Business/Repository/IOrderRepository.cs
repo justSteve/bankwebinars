@@ -36,5 +36,6 @@ namespace CUWebinars.Business.Repository
         Discount FindDiscountByCode(string discountCode);
         Discount FindDiscountByUser(WebUser currentUser);
         int GetNumberOfOrdersPerWebinar(int id);
+        void SendOrderToLegacy(Order newOrder);
     }
 }

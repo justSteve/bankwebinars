@@ -54,7 +54,14 @@ namespace CUWebinars.Business.Notification.Handlers
                             string.Concat(",", @"""OrderSubmittedAdditionalLocationEventMsg-", DateTime.Now.Ticks, '"',
                                 @":", '"', notificationMessage.PersistedName, '"'));
                 }
-                notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail;
+                if (orderSubmittedEvent.EventObject.Order.idAffiliate == 62)
+                {
+                    notificationMessage.To = "steve@ttstrain.com";
+                }
+                else
+                {
+                    notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail;
+                }
                 _notificationDelivery.Notify(notificationMessage);
 
             }

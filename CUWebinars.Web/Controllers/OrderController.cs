@@ -334,6 +334,12 @@ namespace CUWebinars.Web.Controllers
                 idOfLastOrder = _orderControllerOrchestrator.ImportOrder(importedOrder, email,
                     importQueryResult, verificationKey, confirmChangeEmailUrl, userAlreadyExists);
 
+                if (importedOrder.idAffiliate == 62)
+                {
+                    var newOrder = _orderManagementService.GetOrderById(idOfLastOrder);
+                    _orderManagementService.SendOrderToLegacy(newOrder);
+                }
+
                 //idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
                 _logger.Info(string.Format("ImportOrder from {0} produced: {1}", importedOrder.Source + "-" + importedOrder.Version, idOfLastOrder));
 
