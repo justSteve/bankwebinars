@@ -14,7 +14,7 @@ namespace CUWebinars.Business.Repository
             {
                 context.Configuration.ProxyCreationEnabled = false;
 
-                return context.Presenters.ToList();
+                return context.Presenters.Include(p => p.WebUser).ToList();
             }
         }
 

@@ -24,6 +24,9 @@
             </div>
         </div>
     </div>
+    <div id="webinarContent" class="row">
+        <!-- partial view goes here -->
+    </div>
 </div>
 
 
@@ -33,4 +36,9 @@
             @Html.ActionLink("Delete", "Delete", new { id = item.idWebinar })
         </td>*@
 
+@section scripts{
+    @Scripts.Render("~/bundles/manage-webinar")
+}
+
 @Styles.Render("~/Content/webinar-ops")
+<link rel="stylesheet" type="text/css" href="/Scripts/cleditor/jquery.cleditor.css" />

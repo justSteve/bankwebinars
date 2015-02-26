@@ -155,6 +155,11 @@ namespace CUWebinars.Business.Repository
                         w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress);
         }
 
+        public IQueryable<Topic> GetAllTopics()
+        {
+            return ((TTSWebinarsContext) db).Topics;
+        }
+
 
         public IQueryable<Webinar> GetRecorded()
         {
