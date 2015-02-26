@@ -1,129 +1,44 @@
 ﻿@model IEnumerable<Webinar>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Webinar";
 }
 
-<h2>Index</h2>
+<div class="container">
+    <div class="row">
+        <h2>Webinar</h2>
+        <div id="webinarWrapper" class="span12">
+            <div class="span2 operationOptions" >
+                <p>Search for a webinar:</p>
+                <input type="text" placeholder="find webinar by id" id="webinarSearchInput" class="input input-medium" />
+                <button id="webinarSearchButton" class="btn btn-default">Search</button>
+            </div>
+            <div class="span2 operationOptions">
+                <p>Create a new webinar:</p>
+                <button id="webinarCreateButton" class="btn btn-default">Create</button>
+            </div>
+            <div class="span2 operationOptions">
+                <p>Clone an existing webinar:</p>
+                <input type="text" placeholder="enter webinar id" id="webinarCloneInput" class="input input-medium" />
+                <button id="webinarCloneButton" class="btn btn-default">Clone</button>
+            </div>
+        </div>
+    </div>
+    <div id="webinarContent" class="row">
+        <!-- partial view goes here -->
+    </div>
+</div>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DescriptionLong)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ImageUrl)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.SmallImageUrl)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Title)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Date)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.LearnCaption)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.LearnBody)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.WhoAttend)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Duration)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.RecordingUrl)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Presenter.Biography)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.additionalNotifications)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ceu)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateCreated)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateChanged)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Notes)
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DescriptionLong)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ImageUrl)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.SmallImageUrl)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Title)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Date)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.LearnCaption)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.LearnBody)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.WhoAttend)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Duration)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.RecordingUrl)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Presenter.Biography)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.additionalNotifications)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ceu)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateCreated)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateChanged)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Notes)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+@*<td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.idWebinar }) |
+            @Html.ActionLink("Details", "Details", new { id = item.idWebinar }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.idWebinar })
+        </td>*@
+
+@section scripts{
+    @Scripts.Render("~/bundles/manage-webinar")
 }
 
-</table>
+@Styles.Render("~/Content/webinar-ops")
+<link rel="stylesheet" type="text/css" href="/Scripts/cleditor/jquery.cleditor.css" />

@@ -56,6 +56,12 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/admin/claims-management.js"
                 ));
 
+            bundles.Add(new ScriptBundle("~/bundles/manage-webinar").Include(
+                "~/Scripts/cleditor/jquery.cleditor.min.js",
+                "~/Scripts/cleditor/jquery.cleditor.xhtml.min.js",
+                "~/Scripts/app/webinar/manage-webinar.js"
+                ));
+
             bundles.Add(new ScriptBundle("~/bundles/CommonModules").Include(
                 "~/Scripts/app/constants.js",
                 "~/Scripts/underscore.js",
@@ -140,6 +146,10 @@ namespace CUWebinars.Web.App_Start
 
             bundles.Add(new StyleBundle("~/Content/create-order-details").Include(
                 "~/Content/css/details.css"
+                ));
+
+            bundles.Add(new StyleBundle("~/Content/webinar-ops").Include(
+                "~/Content/webinar.css"
                 ));
 
             bundles.Add(new StyleBundle("~/Content/notifications-ops-styles").Include(

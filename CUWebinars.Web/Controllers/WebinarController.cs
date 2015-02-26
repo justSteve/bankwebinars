@@ -993,36 +993,54 @@ namespace CUWebinars.Web.Controllers
             return View(webinar);
         }
 
-        //
-        // GET: /Webinar/Edit/5
 
-        public ActionResult Edit(int id = 0)
+        [HandleAjaxException]
+        public ActionResult Edit(int? id)
         {
-            Webinar webinar = _webinarManagementService.GetWebinar(id);
-            if (webinar == null)
+            if (id.HasValue)
             {
-                return HttpNotFound();
+                var topicIdsForWebinar = _webinarManagementService.GetTopicsPerWebinar(id.Value);
+
+                Webinar webinar = _webinarManagementService.GetWebinar(id.Value);
+                if (webinar == null)
+                {
+                    return HttpNotFound();
+                }
+
+                var webinarEditModel = new WebinarEditModel
+                {
+                    PostedTopics = new PostedTopics{ TopicIds = topicIdsForWebinar.Select(topic => topic.idTopic.ToString()).ToArray() },
+                    Presenters = _webinarManagementService.GetAllPresenters()
+                        .Select(presenter => new SelectListItem { Text = presenter.WebUser.FullName, Value = presenter.idUser.ToString()}),
+                    SelectedPresenter = webinar.idPresenter,
+                    SelectedTopics = topicIdsForWebinar,
+                    Topics = _webinarManagementService.GetAllTopics(),
+                    Webinar = webinar,
+                    WebinarStatus = webinar.Status
+                };
+
+                return PartialView("Partials/_EditWebinar", webinarEditModel);
             }
-            ViewBag.PresenterId = new SelectList(_webinarManagementService.GetAllPresenters(), "Id", "Biography",
-                webinar.idPresenter);
-            return View(webinar);
+            
+            return Json( new { Result = WebUiConstants.Fail, Msg = "Enter a valid id"}, JsonRequestBehavior.AllowGet);
         }
 
-        //
-        // POST: /Webinar/Edit/5
 
         [System.Web.Mvc.HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(Webinar webinar)
+        [ValidateAntiForgeryToken(Order=0)]
+        [ValidateInput(false)]
+        [HandleAjaxException(Order=1)]
+        public ActionResult Edit(WebinarEditModel webinarEditModel)
         {
             if (ModelState.IsValid)
             {
-
+                // todo: implement update
                 return RedirectToAction("Index");
             }
-            ViewBag.PresenterId = new SelectList(_webinarManagementService.GetAllPresenters(), "Id", "Biography",
-                webinar.idPresenter);
-            return View(webinar);
+            //ViewBag.PresenterId = new SelectList(_webinarManagementService.GetAllPresenters(), "Id", "Biography",
+            //    webinarEditModel.Webinar.idPresenter);
+            
+            return View(webinarEditModel);
         }
 
         //

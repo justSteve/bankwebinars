@@ -1,0 +1,21 @@
+﻿#webinarWrapper {
+    margin-bottom: 20px;
+}
+
+div.operationOptions {
+    border: 1px solid #eee;
+    -ms-border-radius: 10px;
+    border-radius: 10px;
+    padding:10px
+}
+
+textarea {
+    width: 600px;
+}
+
+#topicsPanel label {
+    display: inline-block;
+}
+
+
+#editWebinarForm > fieldset > div:nth-child(16) > div.controls

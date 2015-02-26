@@ -59,6 +59,11 @@ namespace CUWebinars.Business.Services
 
         }
 
+        public IEnumerable<Topic> GetAllTopics()
+        {
+            return _webinarRepository.GetAllTopics();
+        }
+
         public void AddWebinar(Webinar webinar)
         {
             _webinarRepository.Add(webinar);

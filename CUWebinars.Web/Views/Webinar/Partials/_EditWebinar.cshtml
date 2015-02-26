@@ -1,0 +1,216 @@
+﻿@using MvcCheckBoxList.Model
+@model WebinarEditModel
+           
+<div class="span12">
+    @using (Html.BeginForm("Edit", "Webinar", FormMethod.Post, new {id = "editWebinarForm", @class="form-horizontal"}))
+    {
+        @Html.AntiForgeryToken()
+
+    <fieldset>
+        <legend>Edit Webinar Details</legend>
+
+        <div class="control-group">
+            <div class="control-label">@Html.LabelFor(m => m.Webinar.Title)</div>
+            <div class="controls">@Html.EditorFor(m => m.Webinar.Title)</div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">@Html.LabelFor(m => m.Webinar.Date)</div>
+            <div class="controls">
+                @Html.EditorFor(m => m.Webinar.Date)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">@Html.LabelFor(m => m.Webinar.DateCreated)</div>
+            <div class="controls">
+                @Html.EditorFor(m => m.Webinar.DateCreated)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">@Html.LabelFor(m => m.Webinar.DateChanged)</div>
+            <div class="controls">
+                @Html.EditorFor(m => m.Webinar.DateChanged)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">@Html.LabelFor(m => m.Webinar.Status)</div>
+            <div class="controls">
+                @Html.EnumDropDownListFor(m => m.WebinarStatus, "Choose the Webinar status", new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">@Html.LabelFor(m => m.Webinar.Duration)</div>
+            <div class="controls">
+                @Html.EditorFor(m => m.Webinar.Duration)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.Webinar.ceu)
+            </div>
+            <div class="controls">
+                @Html.TextAreaFor(m => m.Webinar.ceu, new { cols = 40 })
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.Webinar.idPresenter, "Presenter")
+            </div>
+            <div class="controls">
+                @Html.DropDownListFor(m => m.SelectedPresenter, new SelectList(Model.Presenters, "Value", "Text"), "Choose a presenter")
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.Webinar.Description)
+            </div>
+            <div class="controls">
+                @Html.TextAreaFor(m => m.Webinar.Description, new { cols = 40 })
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.Webinar.DescriptionLong)
+            </div>
+            <div class="controls">
+                @Html.TextAreaFor(m => m.Webinar.DescriptionLong)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.Webinar.AccessCodeAttendee)
+            </div>
+            <div class="controls">
+                @Html.EditorFor(m => m.Webinar.AccessCodeAttendee)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.Webinar.AccessCodeOrganizer)
+            </div>
+            <div class="controls">
+                @Html.EditorFor(m => m.Webinar.AccessCodeOrganizer)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.Webinar.AccessCodePresenter)
+            </div>
+            <div class="controls">
+                @Html.EditorFor(m => m.Webinar.AccessCodePresenter)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.Webinar.AccessPhone)
+            </div>
+            <div class="controls">
+                @Html.EditorFor(m => m.Webinar.AccessPhone)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.Webinar.OrganizerKey)
+            </div>
+            <div class="controls">
+                @Html.EditorFor(m => m.Webinar.OrganizerKey)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.Webinar.OrganizerOAuthKey)
+            </div>
+            <div class="controls">
+                @Html.EditorFor(m => m.Webinar.OrganizerOAuthKey)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.Webinar.CitrixRegisterUrl)
+            </div>
+            <div class="controls">
+                @Html.EditorFor(m => m.Webinar.CitrixRegisterUrl)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.Webinar.ConnectionInfo)
+            </div>
+            <div class="controls">
+                @Html.EditorFor(m => m.Webinar.ConnectionInfo)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.Webinar.ImageUrl)
+            </div>
+            <div class="controls">
+                @Html.EditorFor(m => m.Webinar.ImageUrl)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.Webinar.LearnBody)
+            </div>
+            <div class="controls">
+                @Html.EditorFor(m => m.Webinar.LearnBody)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.Webinar.LearnCaption)
+            </div>
+            <div class="controls">
+                @Html.EditorFor(m => m.Webinar.LearnCaption)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.Webinar.RecordingUrl)
+            </div>
+            <div class="controls">
+                @Html.EditorFor(m => m.Webinar.RecordingUrl)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.Webinar.SmallImageUrl)
+            </div>
+            <div class="controls">
+                @Html.EditorFor(m => m.Webinar.SmallImageUrl)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.Webinar.WebinarKey)
+            </div>
+            <div class="controls">
+                @Html.EditorFor(m => m.Webinar.WebinarKey)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.Webinar.WhoAttend)
+            </div>
+            <div class="controls">
+                @Html.EditorFor(m => m.Webinar.WhoAttend)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.Topics)
+            </div>
+            <div id="topicsPanel" class="controls">
+                @Html.CheckBoxListFor(m => m.PostedTopics.TopicIds,
+                                      m => m.Topics,
+                                      m => m.idTopic,
+                                      m => m.topicDesc,
+                                      m => m.SelectedTopics,
+                                      Position.Vertical)
+            </div>
+        </div>
+
+        <button id="submitEditedDetailsButton" class="btn btn-default">Submit</button>
+    </fieldset>
+    }
+
+</div>

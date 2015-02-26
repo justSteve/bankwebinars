@@ -13,6 +13,7 @@ namespace CUWebinars.Business.Services
         IDictionary<RegType, bool> FindRegTypesByWebinarId(int webinarId);
         IEnumerable<Webinar> GetAllActive();
         IEnumerable<Presenter> GetAllPresenters();
+        IEnumerable<Topic> GetAllTopics();
         IEnumerable<Webinar> GetByTopic(int topicId);
         IEnumerable<Webinar> GetRecordedWebinars();
         IEnumerable<Topic> GetTopicsPerWebinar(int idWebinar);

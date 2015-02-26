@@ -204,6 +204,9 @@
     <Reference Include="Microsoft.WindowsFabric.Data.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\WindowsAzure.Caching.1.7.0.0\lib\net35-full\Microsoft.WindowsFabric.Data.Common.dll</HintPath>
     </Reference>
+    <Reference Include="MvcCheckBoxList">
+      <HintPath>..\packages\MvcCheckBoxList.1.4.4.5\lib\net45\MvcCheckBoxList.dll</HintPath>
+    </Reference>
     <Reference Include="NewRelic.Api.Agent">
       <HintPath>..\packages\NewRelic.Azure.WebSites.x64.3.10.43.0\lib\NewRelic.Api.Agent.dll</HintPath>
     </Reference>
@@ -434,6 +437,7 @@
     <Compile Include="ViewModel\DiscountPromotionViewModel.cs" />
     <Compile Include="ViewModel\Discount_SubscriptionViewModel.cs" />
     <Compile Include="ViewModel\RegistrationSummaryViewModel.cs" />
+    <Compile Include="ViewModel\WebinarEditModel.cs" />
     <Compile Include="ViewModel\WebinarFileViewModel.cs" />
     <Content Include="App_Data\Orders\MigrateCUToUpdatedDb.sql" />
     <Content Include="App_Data\Orders\MirgratorTo1730.sql" />
@@ -605,6 +609,7 @@
     <Content Include="Content\themes\base\theme.css" />
     <Content Include="Content\themes\base\tooltip.css" />
     <Content Include="Content\notification-ops.css" />
+    <Content Include="Content\webinar.css" />
     <Content Include="newrelic\extensions\CoreInstrumentation.xml" />
     <Content Include="newrelic\extensions\Providers\TransactionContext\Asp\NewRelic.Agent.Extensions.dll" />
     <Content Include="newrelic\extensions\Providers\TransactionContext\Asp\NewRelic.Providers.TransactionContext.Asp.Repacked.dll" />
@@ -650,6 +655,7 @@
     </None>
     <Content Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
+    <Content Include="Scripts\app\webinar\manage-webinar.js" />
     <Content Include="Scripts\bootstrap-filestyle.min.js" />
     <Content Include="Scripts\jquery-1.11.1.js" />
     <Content Include="Scripts\jquery-1.11.1.min.js" />
@@ -802,6 +808,7 @@
     <Content Include="Views\Admin\PerDayPromo.cshtml" />
     <Content Include="Views\Admin\PerWeekPromo.cshtml" />
     <Content Include="Views\Admin\SynchWebinars.cshtml" />
+    <Content Include="Views\Webinar\Partials\_EditWebinar.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
