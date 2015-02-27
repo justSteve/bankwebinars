@@ -436,6 +436,7 @@
     <Compile Include="ViewModel\AffPromoMsgViewModel.cs" />
     <Compile Include="ViewModel\DiscountPromotionViewModel.cs" />
     <Compile Include="ViewModel\Discount_SubscriptionViewModel.cs" />
+    <Compile Include="ViewModel\OrderSumUserViewModel.cs" />
     <Compile Include="ViewModel\RegistrationSummaryViewModel.cs" />
     <Compile Include="ViewModel\WebinarEditModel.cs" />
     <Compile Include="ViewModel\WebinarFileViewModel.cs" />
@@ -809,6 +810,8 @@
     <Content Include="Views\Admin\PerWeekPromo.cshtml" />
     <Content Include="Views\Admin\SynchWebinars.cshtml" />
     <Content Include="Views\Webinar\Partials\_EditWebinar.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\MyCertificate.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\OrderSumUser.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

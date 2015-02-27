@@ -11,14 +11,14 @@
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
     string ceuShort = string.Empty;
     string ceuStmt = string.Empty;
-    
+
     if (string.IsNullOrEmpty(Model.Webinar.ceu) == false)
     {
         string[] ceu = Model.Webinar.ceu.Split('|');
         ceuShort = ceu[0];
         ceuStmt = ceu[1];
     }
-    
+
     ViewBag.Title = "My Webinars";
     Layout = "~/Views/Shared/_LayoutPublic.cshtml";
 
@@ -40,111 +40,86 @@
 
 </div>
 <!--close hero-unit-->
-<!--begin main content-->
-<div id="webinarContent" class="row-fluid holy-grail">
-    <!--begin row-fluid-->
-    <section class="span3 sidebar">
-        <aside class="widget well-large">
-            <h5 class="short_headline"><span>@Model.Presenter.WebUser.FullName</span></h5>
-            @Html.Raw(Model.Presenter.BiographyLong)
-            @*@Html.Partial("Partials/_OtherEventsBySpeaker")*@
-        </aside>
-        <!--close aside widget-->
-    </section>
-    <!--*** add class "holy-grail" to row-fluid class to make a three column skinny, fat, skinny layout ***-->
-    <div class="span6">
-        <h3 class="short_headline">
-            Download Materials:
-        </h3>
-        <table>
-            @{
-                //begin file/handout listing
-                StringBuilder filesList = new StringBuilder();
-                var handLoc = globalConfig.WMVRepository;
-                foreach (string file in Model.WebinarFiles)
-                {
-                    string fileLocation = file.Split('|')[1];
-                    string fileDesc = file.Split('|')[0];
-                    filesList.AppendFormat("<tr><td colspan='2'><a href=\"{0}{1}\" target='_blank'>{2} </a>", handLoc, fileLocation, fileDesc);
-                    filesList.Append("</td></tr>");
-                } // end of files loop
-                @Html.Raw(filesList)
-            }
-        </table>
-        <h3 class="short_headline"> OnDemand Recording</h3>
-        <p style="text-align: center; font-family: arial, helvetica, sans-serif; font-size: larger;">
-            <a target="_blank" href="@globalConfig.WMVRepository@Model.Webinar.RecordingUrl">Click here to view the Webinar.</a>
-            <br />
-        </p>
+<div class="container clearfix" id="main-content">
 
-        <div class="description">
-            @Html.Raw(Model.Webinar.DescriptionLong)
-        </div>
-        <div class="description">
-            <h2 class="short_headline">
-                <span>
-                    @Html.Raw(Model.Webinar.LearnCaption)
-                </span>
-            </h2>
-            @Html.Raw(Model.Webinar.LearnBody)
-        </div>
-        <div class="description">
-            <h2 class="short_headline">
-                <span>
-                    Who Should Attend?
-                </span>
-            </h2>
-            @Html.Raw(Model.Webinar.WhoAttend)
+    <!--begin main content-->
+    <div id="webinarContent" class="row-fluid holy-grail">
+        <!--begin row-fluid-->
+
+        <section class="span3 sidebar">
+            <aside class="widget well-large">
+                <h5 class="short_headline"><span>@Model.Presenter.WebUser.FullName</span></h5>
+                @Html.Raw(Model.Presenter.BiographyLong)
+                @*@Html.Partial("Partials/_OtherEventsBySpeaker")*@
+            </aside>
+            <!--close aside widget-->
+        </section>
+        <!--*** add class "holy-grail" to row-fluid class to make a three column skinny, fat, skinny layout ***-->
+        <div class="span6">
+
+            <h3 class="short_headline">
+                Webinar Description
+            </h3>
+            <div class="description">
+                @Html.Raw(Model.Webinar.DescriptionLong)
+            </div>
+            <div class="description">
+                <h2 class="short_headline">
+                    <span>
+                        @Html.Raw(Model.Webinar.LearnCaption)
+                    </span>
+                </h2>
+                @Html.Raw(Model.Webinar.LearnBody)
+            </div>
+            <div class="description">
+                <h2 class="short_headline">
+                    <span>
+                        Who Should Attend?
+                    </span>
+                </h2>
+                @Html.Raw(Model.Webinar.WhoAttend)
+            </div>
+
+            <hr />
         </div>
 
-        <hr />
+        <section class="span3">
+            <aside class="widget">
+                <div style="padding: 10px; margin-left: 20px; width: 200px; " class="well pull-right well-large">
+                    <div>
+                        <a target="_blank" href="/webinar/GetWebinarRecording/@Model.Webinar.idWebinar"><span style="margin-left: 15px;"><i class="icon-facetime-video"></i></span> Playback</a>
+                    </div>
+                    <div>
+                        @{Html.RenderPartial("DisplayTemplates/HandoutsListing", Model.Webinar);}
+                    </div>
 
+                    @{
+                        var expiresDate = Model.Webinar.Date.AddMonths(6);
+                        var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
+                    }
+                    <div style="font-size: smaller; line-height: 1.2; text-align: center; margin-bottom: 10px;">
+                        This event was recorded on <i>@Html.DisplayDate(Model.Webinar.Date)</i> and is available for OnDemand Playback until @Html.DisplayDate(expiresDate)
+                        - @remainingDays.ToString() more days.
+                    </div>
+                    <div id="cert">
+                        <a href="#" title="My Certificate">
+                            @Html.Raw(ceuShort)
+                        </a>
+                    </div>
+                    <div id="ceu">
+                        <a href="#" title="@ceuStmt ">
+                            @Html.Raw(ceuShort)
+                        </a>
+                    </div>
+                </div>
+            </aside>
+            <!--close aside .widget -->
+            <aside class="widget">
+                <h5 class="short_headline"><span>Stay Updated</span></h5>
+                @{Html.RenderPartial("Partials/_AddToMailingBox");}
+            </aside>
+            <!--close aside .widget -->
+        </section>
+        <!--close section tertiary-column sidebar span3-->
     </div>
-    <section class="span3">
-        <aside class="widget">
-
-            <h5 class="short_headline"><span>Date/Time</span></h5>
-            @{
-                var expiresDate = Model.Webinar.Date.AddMonths(6);
-                var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
-            }
-            <div style="font-size: smaller; line-height: 1.2; text-align: center; margin-bottom: 10px;">
-                This event was recorded on <i>@Html.DisplayDate(Model.Webinar.Date)</i> and is available for OnDemand Playback until @Html.DisplayDate(expiresDate)
-                - @remainingDays.ToString() more days.
-            </div>
-            <div id="ceu">
-                <a href="#" title="@ceuStmt ">
-                    @Html.Raw(ceuShort)
-                </a>
-            </div>
-        </aside>
-        @*@Html.Partial("Partials/_RegistrationSummary")*@
-        <!-- close .widget -->
-        <aside class="widget">
-            <h5 class="short_headline"><span>Topics</span></h5>
-            <ul>
-                    @foreach (var webinarTopic in ViewBag.topics)
-                        {
-                        <li>
-                            @webinarTopic.topicDesc
-                        </li>
-                        }
-                </ul>
-        </aside>
-        <!--close aside .widget -->
-        <aside class="widget">
-            <h5 class="short_headline"><span>Stay Updated</span></h5>
-            @{Html.RenderPartial("Partials/_AddToMailingBox");}
-        </aside>
-        <!--close aside .widget -->
-        @*<aside class="widget">
-                <h5 class="short_headline"><span>Search</span></h5>
-                <form class="searchform" method="get">
-                    <input type="search" class="span12" value="type and hit enter" onfocus="this.value=''" onblur="this.value='type and hit enter'" />
-                </form>
-            </aside>*@
-        <!--close aside widget-->
-    </section>
-    <!--close section tertiary-column sidebar span3-->
-
 </div>

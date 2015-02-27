@@ -533,8 +533,6 @@ namespace CUWebinars.Web.Controllers
                         {
                             foreach (var userClaim in userAccount.Claims)
                             {
-
-
                                 if (userClaim.Type == ClaimTypes.DisplayPostEventMaterials)
                                 // extract the date
                                 {
@@ -573,8 +571,9 @@ namespace CUWebinars.Web.Controllers
                 if (accessPermitted)
                 {
                     //how do I ensure that all child objects are included?
+                    //var handLoc = "/webinar/GetWebinarFile?idWebinarFile=";
                     playModel.WebinarFiles = playModel.Webinar.WebinarFiles.Where(f => f.idWebinar == w)
-                        .Select(f => f.fileDesc + "|" + f.fileLocation)
+                        .Select(f => f.fileDesc + "|/webinar/GetWebinarFile?idWebinarFile=" + f.idWebinarFile)
                         .ToArray();
 
                     playModel.Presenter = playModel.Webinar.Presenter;
@@ -1257,6 +1256,16 @@ namespace CUWebinars.Web.Controllers
             return this.ModelStateJson(ModelState);
         }
 
+        public ActionResult GetWebinarRecording(int? idWebinar)
+        {
+            if (idWebinar.HasValue)
+            {
+                var webinar = _webinarManagementService.GetWebinar(idWebinar.Value);
+
+                return Redirect(_globalConfig.WMVRepository + webinar.RecordingUrl);
+            }
+            return View();
+        }
 
 
         public ActionResult GetWebinarFile(int? idWebinarFile)

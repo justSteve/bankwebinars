@@ -31,7 +31,7 @@
     </script>*@
 
 <div class="container">
-    <h2>My Webinars</h2>
+    <h2 class="short_headline">My Webinars</h2>
     @{
     //var thisDiscount = PageData["thisUser"].SubscriptionDiscount;
 
@@ -83,32 +83,37 @@
                     </div>
                 </div>
             }*@
-        <div class="accordion-group">
-            <div class="accordion-heading">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#mywebinars" href="#upcoming1">
-                    Upcoming Events @Model.Scheduled.Count found
-                </a>
-                <div id="upcoming1" class="accordion-body collapse in">
-                    <div class="accordion-inner">
-                        @{Html.RenderPartial("Partials/upcoming");}
-
+        @if (Model.Scheduled.Count > 0)
+        {
+            <div class="accordion-group">
+                <div class="accordion-heading">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#mywebinars" href="#upcoming1">
+                        <h3>Upcoming Events</h3>
+                    </a>
+                    <div id="upcoming1" class="accordion-body collapse in">
+                        <div class="accordion-inner">
+                            @{ Html.RenderPartial("Partials/upcoming"); }
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="accordion-group">
-            <div class="accordion-heading">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#mywebinars" href="#recorded1">
-                    Recorded Events
-                </a>
-                <div id="recorded1" class="accordion-body collapse out">
-                    <div class="accordion-inner">
-                        @{Html.RenderPartial("Partials/Recorded");}
+        }
+        @if (Model.Recorded.Count > 0)
+        {
+            <div class="accordion-group">
+                <div class="accordion-heading">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#mywebinars" href="#recorded1">
+                        <h3>Recorded Events</h3>
+                    </a>
+                    <div id="recorded1" class="accordion-body collapse in">
+                        <div class="accordion-inner">
+                            @{ Html.RenderPartial("Partials/Recorded"); }
 
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        }
         <div class="accordion-group">
             <div class="accordion-heading">
                 <a class="accordion-toggle" data-toggle="collapse" data-parent="#mywebinars" href="#editBilling">

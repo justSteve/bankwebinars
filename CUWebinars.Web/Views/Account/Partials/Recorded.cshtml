@@ -21,18 +21,9 @@
     <!--begin main content-->
     <div class="row-fluid">
         <!--begin row-fluid-->
-        <div class="span10">
-            <h3>
-                Recorded Events <span style="font-weight: normal; font-size: small; color: Green;">
-                    (found
-                    @Model.Recorded.Count.ToString())
-                </span>
-            </h3>
-
+        <div class="span12">
             @foreach (var recorded in Model.Recorded)
             {
-                <div class=" container-fluid">
-                    @{
                 var row = recorded.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
                 var upOnDemandCost = 100;
                 var upPremium = 140;
@@ -52,33 +43,25 @@
                     accessPhrase = "would be accessible (with upgrade) ";
                 }
 
-                    }
-                    <h4 class="span12" id="recorded-@row.idWebinar">@row.Webinar.Title</h4>
+                <div class=" container-fluid">
                     <div class="row-fluid">
-
-                        <div style="font-size: small;  line-height: 1.2; margin-bottom: 10px;" class="span7">
-                            This event was recorded on @Html.DisplayDate(row.Webinar.Date) and @accessPhrase until @Html.DisplayDate(expiresDate)
-                            - @remainingDays more days.
-                            <br />
-                            @if (row.RegistrationType.ShowRecordingNotifications == "No")
-                            {
-                                <p style="font-size: small;">
-                                    <span class="btn btn-success btn-mini" id="upgradeRegistration_@row.idOrder">Upgrade</span> this registration with an <i>OnDemand Recording package</i> for @upOnDemandCost.ToString("C", nfi) or our <i>Premium package</i> for @upPremium.ToString("C", nfi)!<br />
-                                </p>
-                            }
-                        </div>
-
-                        <div style="font-size: small; " class="well well-small span4">
-                            <i>Order ID:</i> @globalConfig.TenantPrefix@row.Order.idOrder<br />
-                            <i>Date Ordered:</i> @row.Order.OrderDate.ToShortDateString()<br />
-                            <i>Type of Attendance:</i> @row.RegistrationType.OptionLabel<br />
-                            @if (row.ShipmentDate.HasValue)
-                            {
-                                <text>This order shipped on:<b>@Html.DisplayDate(row.ShipmentDate.Value)</b></text>
-                            }
-                            <i>Total Cost:</i> @row.Order.Total.ToString("C", nfi)
-                        </div>
+                    </div><div class="pull-right span4" id="orderSum-@row.idWebinar">
+                        @{Html.RenderPartial("DisplayTemplates/OrderSumUser", row.Order);}
                     </div>
+                    <h4 class="span7" id="recorded-@row.idWebinar">@row.Webinar.Title</h4>
+                    <div style="font-size: small;  line-height: 1.2; margin-bottom: 10px;" class="span7">
+                        This event was recorded on @Html.DisplayDate(row.Webinar.Date) and @accessPhrase until @Html.DisplayDate(expiresDate)
+                        - @remainingDays more days.
+                        <br />
+                        @if (row.RegistrationType.ShowRecordingNotifications == "No")
+                        {
+                            <p style="font-size: small;">
+                                <span class="btn btn-success btn-mini" id="upgradeRegistration_@row.idOrder">Upgrade</span> this registration with an <i>OnDemand Recording package</i> for @upOnDemandCost.ToString("C", nfi) or our <i>Premium package</i> for @upPremium.ToString("C", nfi)!<br />
+                            </p>
+                        }
+                    </div>
+
+
 
                     <div class="span12">
                         @if (row.RegistrationType.ShowRecordingNotifications == "Yes")
@@ -89,7 +72,8 @@
                                     <div class="row-fluid ">
                                         <div class="span7">
                                             <font size="+1" face="Arial, Helvetica, sans-serif" color="#0D037C">
-                                                <b><a href="@globalConfig.WMVRepository@row.Webinar.RecordingUrl" target="_blank">Click here to view this OnDemand Recording</a></b><br />
+                                                <b><a href="/webinar/GetWebinarRecording/@row.Webinar.idWebinar" target="_blank">Click here to view this OnDemand Recording</a></b><br />
+                                                @*<b><a href="@globalConfig.WMVRepository@row.Webinar.RecordingUrl" target="_blank">Click here to view this OnDemand Recording</a></b><br />*@
                                             </font>
                                         </div>
                                         <div class="span5">
@@ -110,15 +94,6 @@
                                     </div>
                                 }
 
-                            </div>
-                        }
-                        @if (row.Webinar.Status == WebinarStatus.Recorded || row.Webinar.Status == WebinarStatus.Archived)
-                        {
-                            <div style="margin-top: 10px;">
-                                <form method="POST" action="/Account/MyCertificate">
-                                    <input type="hidden" name="orderID" value="@row.idOrder" />
-                                    <input type="submit" value="My Certificate" id="ShowCertificate" class="btn pull-right btn-mini btn-success" />
-                                </form>
                             </div>
                         }
                     </div>

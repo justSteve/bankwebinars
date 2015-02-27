@@ -12,6 +12,7 @@ namespace CUWebinars.Business.Core
     public class DataOperations
     {
         private readonly string _connectionString;
+        private readonly string _logger;
 
         public DataOperations(string connectionString)
         {
@@ -247,7 +248,7 @@ namespace CUWebinars.Business.Core
             var mZipParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@mZip", Value = newOrder.BillingZip };
             var mStateParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@mState", Value = newOrder.BillingState };
             var emailParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@email", Value = newOrder.BillingEmail };
-            var generalCommentsParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@generalComments", Value = newOrder.AffiliateComments };
+            var generalCommentsParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@generalComments", Value =  "ImporterV2 " + newOrder.AffiliateComments };
             var provisionalInstitutionParameter = new SqlParameter { SqlDbType = SqlDbType.NVarChar, ParameterName = "@provisionalInstitution", Value = newOrder.Institution };
 
             using (var sqlConnection = new SqlConnection(_connectionString))

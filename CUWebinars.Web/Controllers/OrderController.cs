@@ -279,6 +279,7 @@ namespace CUWebinars.Web.Controllers
             int idRegType;
             if (importedOrder.idAffiliate == 62)
             {
+                _logger.Info("ACS Importer hears: " + importedOrder.Email + " idWebinar: "   + importedOrder.idWebinar);
                 idRegType = _webinarManagementService.GetRegTypeByACS(importedOrder.RegistrationType,
                     importedOrder.idWebinar);
             }
