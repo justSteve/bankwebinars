@@ -141,6 +141,16 @@ namespace CUWebinars.Business.Services
             return _webinarRepository.GetUpcoming().ToList();
         }
 
+        public IEnumerable<RegTypesGroup> GetRegTypeGroupsForWebinars(int idWebinar)
+        {
+            return _webinarRepository.GetRegTypeGroupsForWebinars(idWebinar);
+        }
+
+        public IEnumerable<RegTypesGroup> GetUpcomingRegTypesForWebinars()
+        {
+            return _webinarRepository.GetUpcomingRegTypesForWebinars();
+        }
+
         public Webinar GetWebinar(int id)
         {
             return _webinarRepository.FindByIdLoaded(id);

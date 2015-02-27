@@ -22,6 +22,8 @@ namespace CUWebinars.Business.Repository
         IQueryable<Webinar> GetByTopic(int topicId);
         List<RegType> GetCurrentOptions(int idWebinar);
         IList<Order> GetOrdersByWebinarForConnectionInfo(int id);
+        IQueryable<RegTypesGroup> GetRegTypeGroupsForWebinars(int idWebinar);
+        IQueryable<RegTypesGroup> GetUpcomingRegTypesForWebinars();
         Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id);
         IQueryable<Topic> GetTopicsPerWebinar(int idWebinar);
         void Update(Webinar webinar);

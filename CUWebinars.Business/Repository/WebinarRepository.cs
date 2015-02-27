@@ -99,6 +99,20 @@ namespace CUWebinars.Business.Repository
                 .OrderByDescending(w => w.Date);
         }
 
+        public IQueryable<RegTypesGroup> GetRegTypeGroupsForWebinars(int idWebinar)
+        {
+            return items.Where(w => w.idWebinar == idWebinar)
+                .SelectMany(webinar => webinar.RegTypesGroupsXref)
+                .Select(r => r.RegTypesGroup).Where(r => r.RegTypeGroupDesc.ToLower().Contains("15") && !r.RegTypeGroupDesc.ToLower().Contains("post"));
+        }
+
+        public IQueryable<RegTypesGroup> GetUpcomingRegTypesForWebinars()
+        {
+            return ((TTSWebinarsContext) db).RegTypesGroups.Where(
+                    r => r.RegTypeGroupDesc.ToLower().Contains("15") && !r.RegTypeGroupDesc.ToLower().Contains("post")
+                    );
+        }
+
         public Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id)
         {
             return items.Include(w => w.Presenter.WebUser)

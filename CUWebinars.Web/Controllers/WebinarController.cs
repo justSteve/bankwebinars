@@ -12,6 +12,7 @@ using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
+using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
@@ -37,6 +38,7 @@ namespace CUWebinars.Web.Controllers
         private IStateService _stateService;
         private readonly IWebinarControllerOrchestrator _webinarControllerOrchestrator;
         private readonly IAppHelper _appHelper;
+        private readonly IUniversalMapper _universalMapper;
         private GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingletonCreator.UniqueInstance;
 
         //Steve added MembershipService dependancy to allow for 'currentUser' in Details.
@@ -53,7 +55,8 @@ namespace CUWebinars.Web.Controllers
             ILogger logger,
             IStateService stateService,
             IWebinarControllerOrchestrator webinarControllerOrchestrator,
-            IAppHelper appHelper)
+            IAppHelper appHelper,
+            IUniversalMapper universalMapper)
         {
             _membershipService = membershipService;
             _orderManagementService = orderManagementService;
@@ -62,6 +65,7 @@ namespace CUWebinars.Web.Controllers
             _stateService = stateService;
             _webinarControllerOrchestrator = webinarControllerOrchestrator;
             _appHelper = appHelper;
+            _universalMapper = universalMapper;
         }
 
 
@@ -1000,24 +1004,32 @@ namespace CUWebinars.Web.Controllers
             if (id.HasValue)
             {
                 var topicIdsForWebinar = _webinarManagementService.GetTopicsPerWebinar(id.Value);
+                var upcomingRegTypeGroups = _webinarManagementService.GetUpcomingRegTypesForWebinars();
+                var regTypeGroupsForWebinars = _webinarManagementService.GetRegTypeGroupsForWebinars(id.Value);
 
                 Webinar webinar = _webinarManagementService.GetWebinar(id.Value);
+
                 if (webinar == null)
                 {
                     return HttpNotFound();
                 }
 
+                var idsForWebinar = topicIdsForWebinar as Topic[] ?? topicIdsForWebinar.ToArray(); // to make sure we only enumerate it once
+
                 var webinarEditModel = new WebinarEditModel
                 {
-                    PostedTopics = new PostedTopics{ TopicIds = topicIdsForWebinar.Select(topic => topic.idTopic.ToString()).ToArray() },
+                    PostedTopics = new PostedTopics{ TopicIds = idsForWebinar.Select(topic => topic.idTopic.ToString()).ToArray() },
                     Presenters = _webinarManagementService.GetAllPresenters()
                         .Select(presenter => new SelectListItem { Text = presenter.WebUser.FullName, Value = presenter.idUser.ToString()}),
+                    RegTypeGroups = upcomingRegTypeGroups,
                     SelectedPresenter = webinar.idPresenter,
-                    SelectedTopics = topicIdsForWebinar,
-                    Topics = _webinarManagementService.GetAllTopics(),
-                    Webinar = webinar,
-                    WebinarStatus = webinar.Status
+                    SelectedRegTypeGroups = regTypeGroupsForWebinars,
+                    SelectedTopics = idsForWebinar,
+                    Status = webinar.Status,
+                    Topics = _webinarManagementService.GetAllTopics()
                 };
+
+                webinarEditModel = _universalMapper.Map(webinar, webinarEditModel);
 
                 return PartialView("Partials/_EditWebinar", webinarEditModel);
             }

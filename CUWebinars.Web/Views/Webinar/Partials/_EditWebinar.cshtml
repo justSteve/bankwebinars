@@ -10,50 +10,50 @@
         <legend>Edit Webinar Details</legend>
 
         <div class="control-group">
-            <div class="control-label">@Html.LabelFor(m => m.Webinar.Title)</div>
-            <div class="controls">@Html.EditorFor(m => m.Webinar.Title)</div>
+            <div class="control-label">@Html.LabelFor(m => m.Title)</div>
+            <div class="controls">@Html.EditorFor(m => m.Title)</div>
         </div>
         <div class="control-group">
-            <div class="control-label">@Html.LabelFor(m => m.Webinar.Date)</div>
+            <div class="control-label">@Html.LabelFor(m => m.Date)</div>
             <div class="controls">
-                @Html.EditorFor(m => m.Webinar.Date)
+                @Html.EditorFor(m => m.Date)
             </div>
         </div>
         <div class="control-group">
-            <div class="control-label">@Html.LabelFor(m => m.Webinar.DateCreated)</div>
+            <div class="control-label">@Html.LabelFor(m => m.DateCreated, "Date Created")</div>
             <div class="controls">
-                @Html.EditorFor(m => m.Webinar.DateCreated)
+                @Html.TextBoxFor(m => m.DateCreated, new { disabled = "disabled" })
             </div>
         </div>
         <div class="control-group">
-            <div class="control-label">@Html.LabelFor(m => m.Webinar.DateChanged)</div>
+            <div class="control-label">@Html.LabelFor(m => m.DateChanged, "Date Changed")</div>
             <div class="controls">
-                @Html.EditorFor(m => m.Webinar.DateChanged)
+                @Html.TextBoxFor(m => m.DateChanged, new { disabled = "disabled" })
             </div>
         </div>
         <div class="control-group">
-            <div class="control-label">@Html.LabelFor(m => m.Webinar.Status)</div>
+            <div class="control-label">@Html.LabelFor(m => m.Status)</div>
             <div class="controls">
-                @Html.EnumDropDownListFor(m => m.WebinarStatus, "Choose the Webinar status", new { @class = "form-control" })
+                @Html.EnumDropDownListFor(m => m.Status, "Choose the Webinar status", new { @class = "form-control" })
             </div>
         </div>
         <div class="control-group">
-            <div class="control-label">@Html.LabelFor(m => m.Webinar.Duration)</div>
+            <div class="control-label">@Html.LabelFor(m => m.Duration)</div>
             <div class="controls">
-                @Html.EditorFor(m => m.Webinar.Duration)
+                @Html.EditorFor(m => m.Duration)
             </div>
         </div>
         <div class="control-group">
             <div class="control-label">
-                @Html.LabelFor(m => m.Webinar.ceu)
+                @Html.LabelFor(m => m.ceu)
             </div>
             <div class="controls">
-                @Html.TextAreaFor(m => m.Webinar.ceu, new { cols = 40 })
+                @Html.TextAreaFor(m => m.ceu, new { cols = 40 })
             </div>
         </div>
         <div class="control-group">
             <div class="control-label">
-                @Html.LabelFor(m => m.Webinar.idPresenter, "Presenter")
+                @Html.LabelFor(m => m.idPresenter, "Presenter")
             </div>
             <div class="controls">
                 @Html.DropDownListFor(m => m.SelectedPresenter, new SelectList(Model.Presenters, "Value", "Text"), "Choose a presenter")
@@ -61,138 +61,58 @@
         </div>
         <div class="control-group">
             <div class="control-label">
-                @Html.LabelFor(m => m.Webinar.Description)
+                @Html.LabelFor(m => m.Description)
             </div>
             <div class="controls">
-                @Html.TextAreaFor(m => m.Webinar.Description, new { cols = 40 })
+                @Html.TextAreaFor(m => m.Description, new { cols = 40 })
             </div>
         </div>
         <div class="control-group">
             <div class="control-label">
-                @Html.LabelFor(m => m.Webinar.DescriptionLong)
+                @Html.LabelFor(m => m.DescriptionLong, "Description Long")
             </div>
             <div class="controls">
-                @Html.TextAreaFor(m => m.Webinar.DescriptionLong)
+                @Html.TextAreaFor(m => m.DescriptionLong, new { cols = 40 }))
             </div>
         </div>
         <div class="control-group">
             <div class="control-label">
-                @Html.LabelFor(m => m.Webinar.AccessCodeAttendee)
+                @Html.LabelFor(m => m.ImageUrl)
             </div>
             <div class="controls">
-                @Html.EditorFor(m => m.Webinar.AccessCodeAttendee)
+                @Html.TextBoxFor(m => m.ImageUrl, new { @class = "input input-xlarge" })
             </div>
         </div>
         <div class="control-group">
             <div class="control-label">
-                @Html.LabelFor(m => m.Webinar.AccessCodeOrganizer)
+                @Html.LabelFor(m => m.LearnBody, "Learn Body")
             </div>
             <div class="controls">
-                @Html.EditorFor(m => m.Webinar.AccessCodeOrganizer)
+                @Html.TextBoxFor(m => m.LearnBody, new { @class = "input input-xlarge" })
             </div>
         </div>
         <div class="control-group">
             <div class="control-label">
-                @Html.LabelFor(m => m.Webinar.AccessCodePresenter)
+                @Html.LabelFor(m => m.LearnCaption, "Learn Caption")
             </div>
             <div class="controls">
-                @Html.EditorFor(m => m.Webinar.AccessCodePresenter)
+                @Html.TextBoxFor(m => m.LearnCaption, new { @class = "input input-xlarge" })
             </div>
         </div>
         <div class="control-group">
             <div class="control-label">
-                @Html.LabelFor(m => m.Webinar.AccessPhone)
+                @Html.LabelFor(m => m.SmallImageUrl, "Small Image Url")
             </div>
             <div class="controls">
-                @Html.EditorFor(m => m.Webinar.AccessPhone)
+                @Html.TextBoxFor(m => m.SmallImageUrl, new { @class = "input input-xlarge" })
             </div>
         </div>
         <div class="control-group">
             <div class="control-label">
-                @Html.LabelFor(m => m.Webinar.OrganizerKey)
+                @Html.LabelFor(m => m.WhoAttend, "Who Attend")
             </div>
             <div class="controls">
-                @Html.EditorFor(m => m.Webinar.OrganizerKey)
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="control-label">
-                @Html.LabelFor(m => m.Webinar.OrganizerOAuthKey)
-            </div>
-            <div class="controls">
-                @Html.EditorFor(m => m.Webinar.OrganizerOAuthKey)
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="control-label">
-                @Html.LabelFor(m => m.Webinar.CitrixRegisterUrl)
-            </div>
-            <div class="controls">
-                @Html.EditorFor(m => m.Webinar.CitrixRegisterUrl)
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="control-label">
-                @Html.LabelFor(m => m.Webinar.ConnectionInfo)
-            </div>
-            <div class="controls">
-                @Html.EditorFor(m => m.Webinar.ConnectionInfo)
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="control-label">
-                @Html.LabelFor(m => m.Webinar.ImageUrl)
-            </div>
-            <div class="controls">
-                @Html.EditorFor(m => m.Webinar.ImageUrl)
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="control-label">
-                @Html.LabelFor(m => m.Webinar.LearnBody)
-            </div>
-            <div class="controls">
-                @Html.EditorFor(m => m.Webinar.LearnBody)
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="control-label">
-                @Html.LabelFor(m => m.Webinar.LearnCaption)
-            </div>
-            <div class="controls">
-                @Html.EditorFor(m => m.Webinar.LearnCaption)
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="control-label">
-                @Html.LabelFor(m => m.Webinar.RecordingUrl)
-            </div>
-            <div class="controls">
-                @Html.EditorFor(m => m.Webinar.RecordingUrl)
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="control-label">
-                @Html.LabelFor(m => m.Webinar.SmallImageUrl)
-            </div>
-            <div class="controls">
-                @Html.EditorFor(m => m.Webinar.SmallImageUrl)
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="control-label">
-                @Html.LabelFor(m => m.Webinar.WebinarKey)
-            </div>
-            <div class="controls">
-                @Html.EditorFor(m => m.Webinar.WebinarKey)
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="control-label">
-                @Html.LabelFor(m => m.Webinar.WhoAttend)
-            </div>
-            <div class="controls">
-                @Html.EditorFor(m => m.Webinar.WhoAttend)
+                @Html.TextBoxFor(m => m.WhoAttend, new { @class = "input input-xlarge" })
             </div>
         </div>
         <div class="control-group">
@@ -201,10 +121,23 @@
             </div>
             <div id="topicsPanel" class="controls">
                 @Html.CheckBoxListFor(m => m.PostedTopics.TopicIds,
-                                      m => m.Topics,
-                                      m => m.idTopic,
-                                      m => m.topicDesc,
-                                      m => m.SelectedTopics,
+                    m => m.Topics,
+                    m => m.idTopic,
+                    m => m.topicDesc,
+                    m => m.SelectedTopics,
+                    Position.Vertical)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.RegTypeGroups, "Options")
+            </div>
+            <div id="regTypeGroupsPanel" class="controls">
+                @Html.CheckBoxListFor(m => m.PostedRegTypeGroups.RegTypeGroupIds,
+                                m => m.RegTypeGroups,
+                                      m => m.idRegTypeGroup,
+                                      m => m.RegTypeGroupDesc,
+                                      m => m.SelectedRegTypeGroups,
                                       Position.Vertical)
             </div>
         </div>

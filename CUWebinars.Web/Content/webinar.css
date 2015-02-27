@@ -13,9 +13,8 @@ textarea {
     width: 600px;
 }
 
-#topicsPanel label {
+#topicsPanel label, #regTypeGroupsPanel label {
     display: inline-block;
 }
 
 
-#editWebinarForm > fieldset > div:nth-child(16) > div.controls

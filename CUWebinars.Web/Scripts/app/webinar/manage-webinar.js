@@ -19,10 +19,10 @@ $(function () {
 
         if (operation === ns.edit) {
             ns.statusSelectList = $('#WebinarStatus');
-            ns.ceuTextArea = $('#Webinar_ceu');
+            ns.ceuTextArea = $('#ceu');
             ns.submitEditedDetailsButton = $('#submitEditedDetailsButton');
-            ns.webinarDescriptionTextArea = $('#Webinar_Description');
-            ns.webinarLongDescriptionTextArea = $('#Webinar_DescriptionLong');
+            ns.webinarDescriptionTextArea = $('#Description');
+            ns.webinarLongDescriptionTextArea = $('#DescriptionLong');
             ns.editWebinarForm = $('#editWebinarForm');
         } else {
             ns.webinarSearchButton = $('#webinarSearchButton');
@@ -53,11 +53,18 @@ $(function () {
         ns.webinarContent.load('/webinar/edit/' + searchString, function(response, status, xhr) {
 
             if (status === 'error') {
-                var oi = xhr['StatusCode'];
+                var statusCode = xhr['status'];
+
+                switch(statusCode) {
+                    case 404:
+                    {
+                        ns.webinarSearchButton.after('<span id="feedbackLabel">&nbsp;<span class="label label-important">' + xhr['statusText'] + '</span></span>');
+                    }
+                }
             } else {
                 if (xhr['responseText'].toString().slice(0, 1) === '{') { // if json response, we have an error condition 
                     $(this).empty();
-                    ns.webinarSearchButton.after('<span id="feedbackLabel" class="label label-important">&nbsp;' + JSON.parse(xhr['responseText'])['Msg'] + '</span>');
+                    ns.webinarSearchButton.after('<span id="feedbackLabel">&nbsp;<span class="label label-important">' + JSON.parse(xhr['responseText'])['Msg'] + '</span></span>');
                 } else {
                     ns.primeDomVariables(ns.edit);
                     ns.wireUpHandlers(ns.edit);
