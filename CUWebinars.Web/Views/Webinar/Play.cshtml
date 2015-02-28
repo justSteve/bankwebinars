@@ -102,9 +102,12 @@
                         - @remainingDays.ToString() more days.
                     </div>
                     <div id="cert">
-                        <a href="#" title="My Certificate">
-                            @Html.Raw(ceuShort)
-                        </a>
+                        <form method="POST" action="/Account/MyCertificate">
+                            <input type="hidden" name="orderID" value="@ViewBag.idOrder" />
+                            <aside class="widget">
+                                <input type="submit" value="My Certificate" id="ShowCertificate" class="btn btn-success btn-mini pull-right " />
+                            </aside>
+                        </form>
                     </div>
                     <div id="ceu">
                         <a href="#" title="@ceuStmt ">

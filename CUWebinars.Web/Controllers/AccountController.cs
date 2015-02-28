@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using AutoMapper;
+using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core.Exceptions;
@@ -26,6 +27,7 @@ using System.Text;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Security;
+using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
 
 namespace CUWebinars.Web.Controllers
@@ -272,9 +274,13 @@ namespace CUWebinars.Web.Controllers
         {
             var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
 
-
             ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
 
+            if (
+                claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == ClaimTypes.Admin))
+            {
+                return RedirectToAction("Index", "Admin");
+            }
 
             var userDiscount = _orderManagementService.GetDiscountByUser(currentUser);
 
@@ -289,13 +295,21 @@ namespace CUWebinars.Web.Controllers
             }
 
             var model = new MyWebinarsDTO
-            {
-                WebUser = currentUser,
-                OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel()
-                    {
+                {
+                    WebUser = currentUser,
+                    OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel()
+                        {
 
-                    }
-            };
+                        }
+                };
+
+            
+            if (claimsIdentityOfAuthenticatedUser.HasClaim(ClaimTypes.DisplayPostEventMaterials))
+            {
+                model.MyClaims =
+                    claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type == ClaimTypes.DisplayPostEventMaterials)
+                        .Select(c => c.Value);
+            }
 
             if (discountModel.TypeOfDiscount == DiscountType.ComplianceSeries)
             {
@@ -321,17 +335,9 @@ namespace CUWebinars.Web.Controllers
                 }
 
             }
-            if (
-                claimsIdentityOfAuthenticatedUser.HasClaim(
-                    (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
-            {
-             return   RedirectToAction("Index", "Admin");
-            }
-            else
-            {
 
                 return View("MyWebinars", model);
-            }
+            
         }
 
 
@@ -374,7 +380,7 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.AllowAnonymous]
         [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken(Order = 0)]
-        [HandleAjaxException(Order=1)]
+        [HandleAjaxException(Order = 1)]
         public ActionResult Confirmed(CreateUserConfirmedViewModel model)
         {
             try
@@ -1133,7 +1139,7 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
-        [ValidateAntiForgeryToken(Order=0)]
+        [ValidateAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
         public ActionResult Register(RegisterViewModel model)
         {
@@ -1187,7 +1193,7 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
         [ValidateJsonAntiForgeryToken(Order = 0)]
-        [HandleAjaxException(Order=1)]
+        [HandleAjaxException(Order = 1)]
         public ActionResult CreateUserAccountFromCart(RegisterViewModel model)
         {
             //  Not adding any ModelState errors in this method. This method is not to return any GUI feedback.
@@ -1219,7 +1225,7 @@ namespace CUWebinars.Web.Controllers
         }
 
         [System.Web.Mvc.HttpPost]
-        [ValidateAntiForgeryToken(Order=0)]
+        [ValidateAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
         public ActionResult UpdateShippingDetails(ShippingDetailsModel shippingDetailsModel)
         {

@@ -285,7 +285,11 @@ namespace CUWebinars.Web.Controllers
             Session["TopicID"] = ID;
             ViewBag.SearchTerm = "TopicID=" + Session["TopicID"].ToString();
             ViewBag.TopicCaption = "";
-
+            ViewBag.HeadLineText = "Bank";
+            if (_globalConfig.Tenant == "CUWebinars")
+            {
+                ViewBag.HeadLineText = "Credit Union";
+            }
             switch (Session["TopicID"].ToString())
             {
                 case "16":

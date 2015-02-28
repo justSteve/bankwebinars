@@ -288,6 +288,7 @@ namespace CUWebinars.Web.Controllers
                 idRegType = _webinarManagementService.GetRegTypeByLableAndWebinar(importedOrder.RegistrationType,
                      importedOrder.idWebinar);
             }
+
             if (idRegType == 0)
             {
                 return Json(new { Result = WebUiConstants.Fail, Error = "Invalid Registration Type: " + importedOrder.RegistrationType });
@@ -338,7 +339,10 @@ namespace CUWebinars.Web.Controllers
                 if (importedOrder.idAffiliate == 62)
                 {
                     var newOrder = _orderManagementService.GetOrderById(idOfLastOrder);
+                   
+                    _logger.Info("ACS Importer heard: " + newOrder.BillingEmail);
                     _orderManagementService.SendOrderToLegacy(newOrder);
+                    _orderManagementService.SaveChanges();
                 }
 
                 //idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
@@ -351,6 +355,7 @@ namespace CUWebinars.Web.Controllers
                 var errString = string.Format("ImportOrder from {3} failed on {0} - {1} with msg: {2}", importedOrder.Email, importedOrder.idWebinar, exception.Message, importedOrder.Source + "-" + importedOrder.Version);
                 Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 _logger.ErrorException(errString, exception);
+                
             }
 
             return Json(new { Result = "0" }, JsonRequestBehavior.AllowGet);
