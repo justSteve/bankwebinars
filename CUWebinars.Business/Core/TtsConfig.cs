@@ -51,7 +51,7 @@ namespace CUWebinars.Business.Core
 
 
             config.AddEventHandler(new SendPerDayPromoHandler(genericFormatter, notificationDelivery,sendPerDayPromoHandlerLogger));
-            config.AddEventHandler(new SendPerWeekPromoHandler(genericFormatter, notificationDelivery, sendPerWeekPromoHandlerLogger));
+            //config.AddEventHandler(new SendPerWeekPromoHandler(genericFormatter, notificationDelivery, sendPerWeekPromoHandlerLogger));
             config.AddEventHandler(new OrderSubmittedHandler(genericFormatter, notificationDelivery,notificationOrderHandlerLogger));
             config.AddEventHandler(new OrderSubmittedAdditionalLocationHandler(genericFormatter, notificationDelivery,notificationOrderHandlerLogger, notificationPersister, new EnvironmentInformation { BaseUrl = baseUrl }));
             config.AddEventHandler(new SendShippedOrderHandler(genericFormatter, notificationDelivery,sendShippedOrderHandlerLogger));

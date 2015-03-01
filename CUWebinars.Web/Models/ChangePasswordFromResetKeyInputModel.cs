@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 
 namespace CUWebinars.Web.Models
@@ -11,6 +12,7 @@ namespace CUWebinars.Web.Models
         [Required]
         [System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "Password confirmation must match password.")]
         [DataType(DataType.Password)]
+        [DisplayName ("Confirm Password")]
         public string ConfirmPassword { get; set; }
 
         [Required]
