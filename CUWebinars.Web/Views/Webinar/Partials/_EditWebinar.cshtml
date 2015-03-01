@@ -6,6 +6,8 @@
     {
         @Html.AntiForgeryToken()
 
+        @Html.HiddenFor(m => m.idWebinar)
+        
     <fieldset>
         <legend>Edit Webinar Details</legend>
 
@@ -72,7 +74,7 @@
                 @Html.LabelFor(m => m.DescriptionLong, "Description Long")
             </div>
             <div class="controls">
-                @Html.TextAreaFor(m => m.DescriptionLong, new { cols = 40 }))
+                @Html.TextAreaFor(m => m.DescriptionLong, new { cols = 40 })
             </div>
         </div>
         <div class="control-group">

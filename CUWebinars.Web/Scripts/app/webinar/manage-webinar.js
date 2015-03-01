@@ -17,26 +17,37 @@ $(function () {
 
     ns.primeDomVariables = function (operation) {
 
-        if (operation === ns.edit) {
-            ns.statusSelectList = $('#WebinarStatus');
+        if (operation === ns.edit || operation === ns.create) {
+            ns.statusSelectList = $('#Status');
             ns.ceuTextArea = $('#ceu');
-            ns.submitEditedDetailsButton = $('#submitEditedDetailsButton');
             ns.webinarDescriptionTextArea = $('#Description');
             ns.webinarLongDescriptionTextArea = $('#DescriptionLong');
             ns.editWebinarForm = $('#editWebinarForm');
+
         } else {
             ns.webinarSearchButton = $('#webinarSearchButton');
             ns.webinarSearchInput = $('#webinarSearchInput');
+            ns.webinarCreateButton = $('#webinarCreateButton');
             ns.webinarContent = $('#webinarContent');
         }
+
+        if (operation === ns.create) {
+            ns.submitCreatedDetailsButton = $('#submitCreatedDetailsButton');
+        } else if (operation === ns.edit) {
+            ns.submitEditedDetailsButton = $('#submitEditedDetailsButton');
+        }
+
     };
 
     ns.wireUpHandlers = function(operation) {
 
         if (operation === ns.edit) {
             ns.submitEditedDetailsButton.on('click', ns.submitWebinarDetails);
+        } else if (operation === ns.create) {
+            ns.submitCreatedDetailsButton.on('click', ns.submitNewWebinarDetails);
         } else {
             ns.webinarSearchButton.on('click', ns.searchWebinar);
+            ns.webinarCreateButton.on('click', ns.createWebinar);
         }
     };
 
@@ -48,7 +59,7 @@ $(function () {
 
         var searchString = $.trim(ns.webinarSearchInput.val());
 
-        $(this).append('&nbsp;<i id="crunchingSpinner" class="icon-spinner icon-spin"></i>');
+        $(this).append('<span id="crunchingSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
 
         ns.webinarContent.load('/webinar/edit/' + searchString, function(response, status, xhr) {
 
@@ -86,9 +97,56 @@ $(function () {
         });
     };
 
+    ns.createWebinar = function (e) {
+
+        e.preventDefault();
+
+        $('#feedbackLabel').remove();
+
+        $(this).append('<span id="crunchingSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+
+        ns.webinarContent.load('/webinar/create', function (response, status, xhr) {
+
+            if (status === 'error') {
+                var statusCode = xhr['status'];
+
+                switch (statusCode) {
+                    case 404:
+                        {
+                            ns.webinarSearchButton.after('<span id="feedbackLabel">&nbsp;<span class="label label-important">' + xhr['statusText'] + '</span></span>');
+                        }
+                }
+            } else {
+                if (xhr['responseText'].toString().slice(0, 1) === '{') { // if json response, we have an error condition 
+                    $(this).empty();
+                    ns.webinarSearchButton.after('<span id="feedbackLabel">&nbsp;<span class="label label-important">' + JSON.parse(xhr['responseText'])['Msg'] + '</span></span>');
+                } else {
+                    ns.primeDomVariables(ns.create);
+                    ns.wireUpHandlers(ns.create);
+
+                    ns.ceuTextArea.cleditor(ns.optionsForEditors);
+                    ns.webinarDescriptionTextArea.cleditor(ns.optionsForEditors);
+                    ns.webinarLongDescriptionTextArea.cleditor(ns.optionsForEditors);
+
+                    var ceuEditor = ns.ceuTextArea.cleditor()[0];
+                    ceuEditor.disable(false);
+                    var webinarDescriptionEditor = ns.webinarDescriptionTextArea.cleditor()[0];
+                    webinarDescriptionEditor.disable(false);
+                    var webinarLongDescriptionEditor = ns.webinarLongDescriptionTextArea.cleditor()[0];
+                    webinarLongDescriptionEditor.disable(false);
+                }
+            }
+
+            $('#crunchingSpinner').remove();
+        });
+
+    };
+
     ns.submitWebinarDetails = function(e) {
 
         e.preventDefault();
+
+        $(this).append('<span id="crunchingSpinnerOfSubmit">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
 
         var payload = ns.editWebinarForm.serialize();
 
@@ -103,11 +161,35 @@ $(function () {
                 //$('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Working...</span>');
             }
         }).done(function(data) {
-            
+            $('#crunchingSpinnerOfSubmit').remove();
+        });
+    };
+
+    ns.submitNewWebinarDetails = function(e) {
+        
+        e.preventDefault();
+
+        $(this).append('<span id="crunchingSpinnerOfSubmit">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+
+        var payload = ns.editWebinarForm.serialize();
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.FormPostContentType,
+            cache: false,
+            url: '/webinar/create',
+            dataType: constants.JsonDataType,
+            data: payload,
+            beforeSend: function() {
+                //$('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Working...</span>');
+            }
+        }).done(function(data) {
+            $('#crunchingSpinnerOfSubmit').remove();
         });
     };
 
     ns.edit = 'edit';
+    ns.create = 'create';
 
     ns.optionsForEditors = {
         width: 600, // width not including margins, borders or padding

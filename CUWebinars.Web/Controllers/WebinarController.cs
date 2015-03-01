@@ -968,15 +968,23 @@ namespace CUWebinars.Web.Controllers
 
             return Json(dtos, JsonRequestBehavior.AllowGet);
         }
-
-
-        //
-        // GET: /Webinar/Create
-
+        
         public ActionResult Create()
         {
-            ViewBag.PresenterId = new SelectList(_webinarManagementService.GetAllPresenters(), "Id", "Biography");
-            return View();
+            var upcomingRegTypeGroups = _webinarManagementService.GetUpcomingRegTypesForWebinars();
+            var presenters = _webinarManagementService.GetAllPresenters()
+                .Select(presenter =>
+                        new SelectListItem {Text = presenter.WebUser.FullName, Value = presenter.idUser.ToString()}
+                        );
+
+            var webinarEditModel = new WebinarEditModel
+            {
+                Presenters = presenters,
+                RegTypeGroups = upcomingRegTypeGroups,
+                Topics = _webinarManagementService.GetAllTopics()
+            };
+
+            return PartialView("Partials/_CreateWebinar", webinarEditModel);
         }
 
         //
@@ -984,17 +992,17 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Webinar webinar)
+        public ActionResult Create(WebinarEditModel webinarEditModel)
         {
-            if (ModelState.IsValid)
-            {
-                _webinarManagementService.AddWebinar(webinar);
-                return RedirectToAction("Index");
-            }
+            //if (ModelState.IsValid)
+            //{
+            //    _webinarManagementService.AddWebinar(webinar);
+            //    return RedirectToAction("Index");
+            //}
 
-            ViewBag.PresenterId = new SelectList(_webinarManagementService.GetAllPresenters(), "Id", "Biography",
-                webinar.idPresenter);
-            return View(webinar);
+            //ViewBag.PresenterId = new SelectList(_webinarManagementService.GetAllPresenters(), "Id", "Biography",
+            //    webinar.idPresenter);
+            return View();
         }
 
 
@@ -1014,17 +1022,19 @@ namespace CUWebinars.Web.Controllers
                     return HttpNotFound();
                 }
 
-                var idsForWebinar = topicIdsForWebinar as Topic[] ?? topicIdsForWebinar.ToArray(); // to make sure we only enumerate it once
+                var topicIdsForWebinarArray = topicIdsForWebinar as Topic[] ?? topicIdsForWebinar.ToArray(); // to make sure we only enumerate it once
+                var typeGroupsForWebinarsArray = regTypeGroupsForWebinars as RegTypesGroup[] ?? regTypeGroupsForWebinars.ToArray();// to make sure we only enumerate it once
 
                 var webinarEditModel = new WebinarEditModel
                 {
-                    PostedTopics = new PostedTopics{ TopicIds = idsForWebinar.Select(topic => topic.idTopic.ToString()).ToArray() },
+                    PostedTopics = new PostedTopics { TopicIds = topicIdsForWebinarArray.Select(topic => topic.idTopic).ToArray() },
+                    PostedRegTypeGroups = new PostedRegTypeGroups { RegTypeGroupIds = typeGroupsForWebinarsArray.Select(r => r.idRegTypeGroup).ToArray()},
                     Presenters = _webinarManagementService.GetAllPresenters()
                         .Select(presenter => new SelectListItem { Text = presenter.WebUser.FullName, Value = presenter.idUser.ToString()}),
                     RegTypeGroups = upcomingRegTypeGroups,
                     SelectedPresenter = webinar.idPresenter,
-                    SelectedRegTypeGroups = regTypeGroupsForWebinars,
-                    SelectedTopics = idsForWebinar,
+                    SelectedRegTypeGroups = typeGroupsForWebinarsArray,
+                    SelectedTopics = topicIdsForWebinarArray,
                     Status = webinar.Status,
                     Topics = _webinarManagementService.GetAllTopics()
                 };
@@ -1044,15 +1054,18 @@ namespace CUWebinars.Web.Controllers
         [HandleAjaxException(Order=1)]
         public ActionResult Edit(WebinarEditModel webinarEditModel)
         {
-            if (ModelState.IsValid)
+            try
             {
-                // todo: implement update
-                return RedirectToAction("Index");
-            }
-            //ViewBag.PresenterId = new SelectList(_webinarManagementService.GetAllPresenters(), "Id", "Biography",
-            //    webinarEditModel.Webinar.idPresenter);
+                _webinarControllerOrchestrator.UpdateWebinarFromViewInput(webinarEditModel);
             
-            return View(webinarEditModel);
+                return Json( new { Result = WebUiConstants.Success });
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException(string.Format("Edit Webinar | Session{0}", _appHelper.GetUserAuditInfo()), exception);
+            }
+
+            return Json(new { Result = WebUiConstants.Fail });
         }
 
         //

@@ -809,6 +809,7 @@
     <Content Include="Views\Admin\PerWeekPromo.cshtml" />
     <Content Include="Views\Admin\SynchWebinars.cshtml" />
     <Content Include="Views\Webinar\Partials\_EditWebinar.cshtml" />
+    <Content Include="Views\Webinar\Partials\_CreateWebinar.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

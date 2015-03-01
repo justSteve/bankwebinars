@@ -9,6 +9,7 @@ namespace CUWebinars.Business.Repository
     {
         void Add(Webinar webinar);
         void Delete(Webinar webinar);
+        void MarkForDeletion(object domainObject);
         Webinar FindById(int id);
         Webinar FindByIdLoaded(int id);
         IEnumerable<Webinar> FindByPresenterLastName(string lastName);
@@ -23,11 +24,13 @@ namespace CUWebinars.Business.Repository
         List<RegType> GetCurrentOptions(int idWebinar);
         IList<Order> GetOrdersByWebinarForConnectionInfo(int id);
         IQueryable<RegTypesGroup> GetRegTypeGroupsForWebinars(int idWebinar);
+        RegTypesGroupsXref GetRegTypesGroupsXref(int idRegTypesGroupsXref, int idWebinar);
         IQueryable<RegTypesGroup> GetUpcomingRegTypesForWebinars();
         Webinar GetWebinarByIdIncludingAllWebinarsByPresenter(int id);
         IQueryable<Topic> GetTopicsPerWebinar(int idWebinar);
         void Update(Webinar webinar);
         IQueryable<WebinarFile> GetWebinarFilesPerWebinar(int idWebinar);
+        WebinarTopicXref GetWebinarTopicXref(int idTopic, int idWebinar);
         int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar);
         void SynchToLegacy();
         int GetRegTypeByACS(string registrationType, int idWebinar);

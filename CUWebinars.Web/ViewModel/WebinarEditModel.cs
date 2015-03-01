@@ -38,7 +38,7 @@ namespace CUWebinars.Web.ViewModel
     /// </summary>
     public class PostedTopics
     {
-        public string[] TopicIds { get; set; }
+        public int[] TopicIds { get; set; }
     }
     
     /// <summary>
@@ -46,6 +46,6 @@ namespace CUWebinars.Web.ViewModel
     /// </summary>
     public class PostedRegTypeGroups
     {
-        public string[] RegTypeGroupIds { get; set; }
+        public int[] RegTypeGroupIds { get; set; }
     }
 }

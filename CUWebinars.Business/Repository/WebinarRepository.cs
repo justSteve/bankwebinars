@@ -28,6 +28,11 @@ namespace CUWebinars.Business.Repository
             db.SaveChanges();
         }
 
+        public void MarkForDeletion(object domainObject)
+        {
+            db.Entry(domainObject).State = EntityState.Deleted;
+        }
+
         public Webinar FindByIdLoaded(int id)
         {
             var webinar = items.Include(w => w.OrderRows)
@@ -104,6 +109,15 @@ namespace CUWebinars.Business.Repository
             return items.Where(w => w.idWebinar == idWebinar)
                 .SelectMany(webinar => webinar.RegTypesGroupsXref)
                 .Select(r => r.RegTypesGroup).Where(r => r.RegTypeGroupDesc.ToLower().Contains("15") && !r.RegTypeGroupDesc.ToLower().Contains("post"));
+        }
+
+        public RegTypesGroupsXref GetRegTypesGroupsXref(int idRegTypesGroupsXref, int idWebinar)
+        {
+            return ((TTSWebinarsContext) db).RegTypesGroupsXrefs.SingleOrDefault(r => r.idRegTypeGroup == idRegTypesGroupsXref && r.idWebinar == idWebinar);
+        }
+        public WebinarTopicXref GetWebinarTopicXref(int idTopic, int idWebinar)
+        {
+            return ((TTSWebinarsContext) db).WebinarTopicXrefs.SingleOrDefault(r => r.idTopic == idTopic && r.idWebinar == idWebinar);
         }
 
         public IQueryable<RegTypesGroup> GetUpcomingRegTypesForWebinars()

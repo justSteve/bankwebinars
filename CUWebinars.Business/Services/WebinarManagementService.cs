@@ -85,6 +85,23 @@ namespace CUWebinars.Business.Services
             _webinarFileRepository.DeleteRange(webinarFiles);
         }
 
+        public void DeleteRegTypeGroupXRef(Webinar webinar, int idRegTypeGroupXRef)
+        {
+            var regTypeGroupXRef = _webinarRepository.GetRegTypesGroupsXref(idRegTypeGroupXRef, webinar.idWebinar);
+
+            webinar.RegTypesGroupsXref.Remove(regTypeGroupXRef);
+
+            _webinarRepository.MarkForDeletion(regTypeGroupXRef);
+        }
+
+        public void DeleteWebinarTopicXref(Webinar webinar, int exisingTopicId)
+        {
+            var webinarTopicXRef = _webinarRepository.GetWebinarTopicXref(exisingTopicId, webinar.idWebinar);
+
+            webinar.WebinarTopicXrefs.Remove(webinarTopicXRef);
+
+            _webinarRepository.MarkForDeletion(webinarTopicXRef);
+        }
 
         public IEnumerable<Webinar> GetByTopic(int topicId)
         {

@@ -10,6 +10,7 @@ namespace CUWebinars.Business.Services
         void AddWebinarFiles(IEnumerable<WebinarFile> webinarFiles);
         void DeleteWebinar(int idWebinar );
         void DeleteWebinarFiles(IEnumerable<WebinarFile> webinarFiles);
+        void DeleteRegTypeGroupXRef(Webinar webinar, int idRegTypeGroupXRef);
         IDictionary<RegType, bool> FindRegTypesByWebinarId(int webinarId);
         IEnumerable<Webinar> GetAllActive();
         IEnumerable<Presenter> GetAllPresenters();
@@ -33,5 +34,6 @@ namespace CUWebinars.Business.Services
         int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar);
         void SynchToLegacy();
         int GetRegTypeByACS(string registrationType, int idWebinar);
+        void DeleteWebinarTopicXref(Webinar webinar, int exisingTopicId);
     }
 }

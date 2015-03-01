@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections;
+﻿using CUWebinars.Business.Models;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.Repository
 {

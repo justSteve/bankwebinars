@@ -10,6 +10,7 @@ using CUWebinars.Business.Services;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
+using CUWebinars.Web.ViewModel;
 using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Web.Core.Orchestrators
@@ -39,6 +40,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             _logger = logger;
             _stateService = stateService;
             _appHelper = appHelper;
+        }
+          
+        public Webinar GetWebinar(int idWebinar)
+        {
+            return _webinarManagementService.GetWebinar(idWebinar);
         }
 
         public Webinar PopulateWebinarFromViewModel(ConnectionInfoEditModel connectionInfoModel, out bool detailsValid)
@@ -181,6 +187,57 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public void UpdateWebinar(Webinar webinar)
         {
+            _webinarManagementService.UpdateWebinar(webinar);
+        }
+
+        public void UpdateWebinarFromViewInput(WebinarEditModel webinarEditModel)
+        {
+            var webinar = _webinarManagementService.GetWebinar(webinarEditModel.idWebinar);
+
+            if(ReferenceEquals(webinarEditModel.PostedRegTypeGroups, null))
+                webinarEditModel.PostedRegTypeGroups = new PostedRegTypeGroups{ RegTypeGroupIds = new int[0]};
+            if(ReferenceEquals(webinarEditModel.PostedTopics, null))
+                webinarEditModel.PostedTopics = new PostedTopics { TopicIds = new int[0]};
+
+            webinar.Title = webinarEditModel.Title;
+            webinar.idPresenter = webinarEditModel.SelectedPresenter;
+            webinar.Date = webinarEditModel.Date;
+            webinar.Status = (WebinarStatus)webinarEditModel.SelectedStatus;
+            webinar.Duration = webinarEditModel.Duration;
+            webinar.ceu = webinarEditModel.ceu;
+            webinar.Description = webinarEditModel.Description;
+            webinar.DescriptionLong = webinarEditModel.DescriptionLong;
+            webinar.LearnBody = webinarEditModel.LearnBody;
+            webinar.LearnCaption = webinarEditModel.LearnCaption;
+            webinar.ImageUrl = webinarEditModel.ImageUrl;
+            webinar.SmallImageUrl= webinarEditModel.SmallImageUrl;
+            webinar.WhoAttend = webinarEditModel.WhoAttend;
+            webinar.LearnCaption = webinarEditModel.LearnCaption;
+
+            var existingRegTypeGroupIds = webinar.RegTypesGroupsXref.Where(r => r.idWebinar == webinar.idWebinar).Select(r => r.idRegTypeGroup).ToArray();
+
+            foreach (var regTypeGroupId in webinarEditModel.PostedRegTypeGroups.RegTypeGroupIds.Where(regTypeGroupId => !existingRegTypeGroupIds.Contains(regTypeGroupId)))
+            {
+                webinar.RegTypesGroupsXref.Add(new RegTypesGroupsXref { idWebinar = webinar.idWebinar, idRegTypeGroup = regTypeGroupId });
+            }
+
+            foreach (var existingRegTypeGroupId in existingRegTypeGroupIds.Where(existingRegTypeGroupId => !webinarEditModel.PostedRegTypeGroups.RegTypeGroupIds.Contains(existingRegTypeGroupId)))
+            {
+                _webinarManagementService.DeleteRegTypeGroupXRef(webinar, existingRegTypeGroupId);
+            }
+
+            var existingTopicIds = webinar.WebinarTopicXrefs.Where(r => r.idWebinar == webinar.idWebinar).Select(r => r.idTopic).ToArray();
+
+            foreach (var topicId in webinarEditModel.PostedTopics.TopicIds.Where(topicId => !existingTopicIds.Contains(topicId)))
+            {
+                webinar.WebinarTopicXrefs.Add(new WebinarTopicXref { idWebinar = webinar.idWebinar, idTopic = topicId });
+            }
+
+            foreach (var exisingTopicId in existingTopicIds.Where(exisingTopicId => !webinarEditModel.PostedTopics.TopicIds.Contains(exisingTopicId)))
+            {
+                _webinarManagementService.DeleteWebinarTopicXref(webinar, exisingTopicId);
+            }
+
             _webinarManagementService.UpdateWebinar(webinar);
         }
     }
