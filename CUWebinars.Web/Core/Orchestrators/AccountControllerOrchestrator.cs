@@ -360,6 +360,52 @@ namespace CUWebinars.Web.Core.Orchestrators
             //_membershipService.UpdateDiscountDetails(discount);
         }
 
+        public void EditUser(EditUserViewModel model)
+        {
+            var updateFields = model.EditFields;
+
+            var billingAddressFields = updateFields.BillingAddress;
+            var shippingAddressFields = updateFields.ShippingAddress;
+
+            var billingAddress = new Address
+            {
+                Name = model.EditFields.FirstName + ' ' + model.EditFields.LastName,
+                StreetAddress = billingAddressFields.StreetAddress.Trim(),
+                StreetAddress2 = billingAddressFields.StreetAddress2 == null ? billingAddressFields.StreetAddress2 : billingAddressFields.StreetAddress2.Trim(),
+                State = billingAddressFields.State.Trim(),
+                City = billingAddressFields.City.Trim(),
+                Country = billingAddressFields.Country.Trim(),
+                Zip = billingAddressFields.Zip.Trim(),
+                Phone = billingAddressFields.Phone.Trim(),
+                AddressType = Enum.GetName(typeof(AddressType), billingAddressFields.TypeOfAddress)
+            };
+
+            var shippingAddress = new Address
+            {
+                Name = shippingAddressFields.Name.Trim(),
+                StreetAddress = shippingAddressFields.StreetAddress.Trim(),
+                StreetAddress2 = shippingAddressFields.StreetAddress2 == null ? shippingAddressFields.StreetAddress2 : shippingAddressFields.StreetAddress2.Trim(),
+                State = shippingAddressFields.State.Trim(),
+                City = shippingAddressFields.City.Trim(),
+                Country = shippingAddressFields.Country.Trim(),
+                Zip = shippingAddressFields.Zip.Trim(),
+                Phone = shippingAddressFields.Phone.Trim(),
+                AddressType = Enum.GetName(typeof(AddressType), shippingAddressFields.TypeOfAddress)
+            };
+
+            _membershipService.UpdateUserDetails(_globals.Tenant,
+                updateFields.FirstName.Trim(),
+                updateFields.LastName.Trim(),
+                //updateFields.Password,
+                updateFields.Email.Trim(),
+                updateFields.Institution,
+                billingAddress,
+                shippingAddress,
+                updateFields.Title == null ? "na" : updateFields.Title.Trim()
+                );
+
+        }
+
         public void EditContactInfo(EditContactInfoModel model)
         {
             var updateFields = model.RegisterFields;

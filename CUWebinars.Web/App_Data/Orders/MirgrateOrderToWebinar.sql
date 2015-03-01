@@ -1,5 +1,8 @@
 USE TTSWebinars2
 GO
+--SELECT TOP 100 * FROM dbo.Orders o INNER JOIN	dbo.OrdersRows r ON r.idOrder = o.idOrder
+--WHERE o.idAffiliate = 62 AND 
+--ORDER BY o.orderDate desc
 
 SELECT  ( SELECT    o.idAffiliate
           FROM      dbo.OrdersRows
@@ -16,7 +19,7 @@ SELECT  ( SELECT    o.idAffiliate
 			--224	CD-ROM plus Hardcopy Handouts. This option includes 6-months OnDemand playback but does <i>not</i> include live session.
 			--225	Includes all three options above.  Live, OnDemand playback, <i>and</i> CD-ROM plus Hardcopy Handouts.
         ( CASE r.idWebinar
-            WHEN 1711 THEN ( CASE r.registrationType
+            WHEN 1713 THEN ( CASE r.registrationType
                                WHEN 79 THEN 221
                                WHEN 80 THEN 222
                                WHEN 82 THEN 223
@@ -68,7 +71,7 @@ WHERE   --r.idWebinar IN ( SELECT idWebinar
 --                         FROM   dbo.Webinar
 --                         WHERE  status = 2
 --                                OR status = 3 )
-        r.idWebinar = 1711 --r.idDiscount IS NOT NULL AND o.orderDate > '01/01/2015'
+        r.idWebinar = 1713--r.idDiscount IS NOT NULL AND o.orderDate > '01/01/2015'
 --o.idOrder < 49709 --  AND r.idWebinar IN (SELECT r.idWebinar FROM dbo.Webinar WHERE status = 2 OR status = 3)
         AND ( r.status < 5
               AND r.status > 1

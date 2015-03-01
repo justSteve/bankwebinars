@@ -54,7 +54,26 @@ namespace CUWebinars.Web.Core.Orchestrators
             _stateService = stateService;
         }
 
+        public EditUserViewModel BuildEditUserViewModel()
+        {
+            var model = new EditUserViewModel
+            {
+                EditFields = new EditUserModel
+                {
+                    AccountDetailsTitle = WebUiConstants.Register,
+                    BillingAddress = new AddressModel
+                    {
+                        TypeOfAddress = AddressType.Billing
+                    },
+                    ShippingAddress = new AddressModel
+                    {
+                        TypeOfAddress = AddressType.Shipping
+                    }
+                }
+            };
 
+            return model;
+        }
         public RegisterViewModel BuildRegisterViewModel()
         {
             var model = new RegisterViewModel

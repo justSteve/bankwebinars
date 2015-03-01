@@ -34,7 +34,5 @@ namespace CUWebinars.Web.Models
 
         [HiddenInput]
         public string AccountDetailsTitle { get; set; }
-
-
     }
 }

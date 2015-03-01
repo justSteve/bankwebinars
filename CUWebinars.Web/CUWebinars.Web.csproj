@@ -421,6 +421,7 @@
     <Compile Include="Models\ConnectionInfoEditModel.cs" />
     <Compile Include="Models\DiscountModel.cs" />
     <Compile Include="Models\EditContactInfoModel.cs" />
+    <Compile Include="Models\EditUserInfoModel.cs" />
     <Compile Include="Models\EditUserModel.cs" />
     <Compile Include="Models\ImportOrderModel.cs" />
     <Compile Include="Models\ManageOrderEditModel.cs" />
@@ -434,6 +435,7 @@
     <Compile Include="Models\TTSAttendance.cs" />
     <Compile Include="Models\TTSQuiz.cs" />
     <Compile Include="ViewModel\AffPromoMsgViewModel.cs" />
+    <Compile Include="ViewModel\EditUserViewModel.cs" />
     <Compile Include="ViewModel\DiscountPromotionViewModel.cs" />
     <Compile Include="ViewModel\Discount_SubscriptionViewModel.cs" />
     <Compile Include="ViewModel\OrderSumUserViewModel.cs" />
@@ -775,7 +777,7 @@
     <Content Include="Views\Shared\EditorTemplates\ShippingDetails.cshtml" />
     <Content Include="Views\Home\ContactUsJF.cshtml" />
     <Content Include="Views\Account\ThankYouConfirmed.cshtml" />
-    <Content Include="Views\Account\EditContactInfo.cshtml" />
+    <Content Include="Views\Account\EditUser.cshtml" />
     <Content Include="Views\Account\OrderComplete.cshtml" />
     <Content Include="Views\Account\AddPasswordForCartCreatedUser.cshtml" />
     <Content Include="Views\Admin\ManageOrder.cshtml" />
@@ -813,6 +815,7 @@
     <Content Include="Views\Webinar\Partials\_CreateWebinar.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\MyCertificate.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\OrderSumUser.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\EditUser.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

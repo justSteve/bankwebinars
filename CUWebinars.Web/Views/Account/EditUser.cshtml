@@ -1,0 +1,70 @@
+﻿@model  EditUserInfoModel
+@{
+    ViewBag.Title = "Edit Contact Info";
+    var identity = ((ClaimsIdentity)User.Identity)
+        .Claims
+        .Where(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName)
+        .FirstOrDefault();
+
+    if (!ReferenceEquals(null, identity))
+    {
+        ViewBag.LoggedInUserIdentity = identity;
+    }
+
+    //var nameTitleModel = new EditNameTitleModel();
+    //nameTitleModel.FirstName = Model.RegisterFields.FirstName;
+    //nameTitleModel.LastName = Model.RegisterFields.LastName;
+    //nameTitleModel.Title = Model.RegisterFields.Title;
+
+}
+
+<div id="EditUserContainer" class="container">
+
+
+    <p class="message-success">@Model.StatusMessage</p>
+    <p class="pull-right">
+        You're logged in as
+        @{
+            if (identity == null)
+            {
+                <strong>@User.Identity.Name><br /></strong><text>.</text>
+            }
+            else
+            {
+                <strong>@identity.Value</strong><text>.</text>
+            }
+            @*foreach (var claim in ((ClaimsIdentity)User.Identity).Claims)
+                {
+                    <span>my claim to: @claim.Type is: @claim.Value<br/></span>
+                }*@
+        }
+    </p>
+
+    @using (Html.BeginForm("EditUser", "Account", FormMethod.Post, new { id = "editUserForm", @class = "form-horizontal" }))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.EditorFor(m => m.EditFields)
+
+        <div class="form-inline">
+            <div class="btn-group" style="width:160px">&nbsp;</div>
+            <div class="btn-group">
+                <input type="submit" value="Update" class="btn btn-default" />
+            </div>
+        </div>
+    }
+
+</div>
+
+<div id="ConfirmDeleteShippingAddressdialog" title="Delete Shipping Address" style="display:none">
+    <p>Are you sure you want to delete your Shipping Address?</p>
+    <p>If you proceed and click the Update button, your Shipping Address will be the same as your Billing Address.</p>
+</div>
+
+@section Scripts {
+    @Styles.Render("~/Content/themes/base/css")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/app-processing-manage")
+}
+
