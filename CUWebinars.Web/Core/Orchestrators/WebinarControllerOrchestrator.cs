@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Mvc;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
@@ -190,6 +191,95 @@ namespace CUWebinars.Web.Core.Orchestrators
             _webinarManagementService.UpdateWebinar(webinar);
         }
 
+        public WebinarEditModel BuildEditModelForWebinarToBeCloned(int idWebinar)
+        {
+            var webinar = _webinarManagementService.GetWebinar(idWebinar);
+
+            var topicIdsForWebinar = _webinarManagementService.GetTopicsPerWebinar(idWebinar).ToList();
+            var upcomingRegTypeGroups = _webinarManagementService.GetUpcomingRegTypesForWebinars().ToList();
+            var regTypeGroupsForWebinars = _webinarManagementService.GetRegTypeGroupsForWebinars(idWebinar).ToList();
+            var presenters = _webinarManagementService.GetAllPresenters()
+                .Select(presenter => new SelectListItem
+                {
+                    Text = presenter.WebUser.FullName,
+                    Value = presenter.idUser.ToString()
+                });
+            var topics = _webinarManagementService.GetAllTopics();
+
+            var webinarEditModel = new WebinarEditModel
+            {
+                ceu = webinar.ceu,
+                Date = webinar.Date,
+                DateCreated = DateTime.Now,
+                DateChanged = DateTime.Now,
+                Description = webinar.Description,
+                DescriptionLong = webinar.DescriptionLong,
+                Duration = webinar.Duration,
+                idPresenter = webinar.idPresenter,
+                ImageUrl = webinar.ImageUrl,
+                LearnBody = webinar.LearnBody,
+                LearnCaption = webinar.LearnCaption,
+                SelectedPresenter = webinar.idPresenter,
+                SelectedStatus = (int)webinar.Status,
+                Title = webinar.Title,
+                WhoAttend = webinar.WhoAttend,
+                
+                PostedTopics = new PostedTopics { TopicIds = topicIdsForWebinar.Select(topic => topic.idTopic).ToArray() },
+                PostedRegTypeGroups = new PostedRegTypeGroups { RegTypeGroupIds = regTypeGroupsForWebinars.Select(r => r.idRegTypeGroup).ToArray() },
+                Presenters = presenters,
+                RegTypeGroups = upcomingRegTypeGroups,
+                SelectedRegTypeGroups = regTypeGroupsForWebinars,
+                SelectedTopics = topicIdsForWebinar,
+                Status = webinar.Status,
+                Topics = topics
+            };
+
+            return webinarEditModel;
+        }
+
+        public void CreateWebinarFromViewInput(WebinarEditModel webinarEditModel)
+        {
+            if (ReferenceEquals(webinarEditModel.PostedRegTypeGroups, null))
+                webinarEditModel.PostedRegTypeGroups = new PostedRegTypeGroups { RegTypeGroupIds = new int[0] };
+            if (ReferenceEquals(webinarEditModel.PostedTopics, null))
+                webinarEditModel.PostedTopics = new PostedTopics { TopicIds = new int[0] };
+
+            var webinar = new Webinar
+            {
+                Title = webinarEditModel.Title,
+                idPresenter = webinarEditModel.SelectedPresenter,
+                Date = webinarEditModel.Date,
+                DateChanged = DateTime.Now,
+                DateCreated = DateTime.Now,
+                Status = (WebinarStatus) webinarEditModel.SelectedStatus,
+                Duration = webinarEditModel.Duration,
+                ceu = webinarEditModel.ceu,
+                Description = webinarEditModel.Description,
+                DescriptionLong = webinarEditModel.DescriptionLong,
+                LearnBody = webinarEditModel.LearnBody,
+                LearnCaption = webinarEditModel.LearnCaption,
+                ImageUrl = webinarEditModel.ImageUrl,
+                RecordingUrl = webinarEditModel.RecordingUrl,
+                SmallImageUrl = webinarEditModel.SmallImageUrl,
+                WhoAttend = webinarEditModel.WhoAttend
+            };
+
+            webinar.RegTypesGroupsXref = new List<RegTypesGroupsXref>();
+            webinar.WebinarTopicXrefs = new List<WebinarTopicXref>();
+
+            foreach (var regTypeGroupId in webinarEditModel.PostedRegTypeGroups.RegTypeGroupIds)
+            {
+                webinar.RegTypesGroupsXref.Add(new RegTypesGroupsXref { idRegTypeGroup = regTypeGroupId });
+            }
+
+            foreach (var topicId in webinarEditModel.PostedTopics.TopicIds)
+            {
+                webinar.WebinarTopicXrefs.Add(new WebinarTopicXref { idTopic = topicId });
+            }
+
+            _webinarManagementService.AddWebinar(webinar);
+        }
+
         public void UpdateWebinarFromViewInput(WebinarEditModel webinarEditModel)
         {
             var webinar = _webinarManagementService.GetWebinar(webinarEditModel.idWebinar);
@@ -212,7 +302,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             webinar.ImageUrl = webinarEditModel.ImageUrl;
             webinar.SmallImageUrl= webinarEditModel.SmallImageUrl;
             webinar.WhoAttend = webinarEditModel.WhoAttend;
-            webinar.LearnCaption = webinarEditModel.LearnCaption;
 
             var existingRegTypeGroupIds = webinar.RegTypesGroupsXref.Where(r => r.idWebinar == webinar.idWebinar).Select(r => r.idRegTypeGroup).ToArray();
 

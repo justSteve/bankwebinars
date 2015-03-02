@@ -813,6 +813,7 @@
     <Content Include="Views\Webinar\Partials\_CreateWebinar.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\MyCertificate.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\OrderSumUser.cshtml" />
+    <Content Include="Views\Webinar\Partials\_CloneWebinar.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

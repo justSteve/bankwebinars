@@ -1,0 +1,157 @@
+﻿@using MvcCheckBoxList.Model
+@model WebinarEditModel
+
+<div class="span12">
+    @using (Html.BeginForm("Clone", "Webinar", FormMethod.Post, new { id = "cloneWebinarForm", @class = "form-horizontal" }))
+    {
+        @Html.AntiForgeryToken()
+
+    <fieldset>
+        <legend>Edit Webinar Details</legend>
+
+        <div class="control-group">
+            <div class="control-label">@Html.LabelFor(m => m.Title)</div>
+            <div class="controls">@Html.EditorFor(m => m.Title)</div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">@Html.LabelFor(m => m.Date)</div>
+            <div class="controls">
+                @Html.EditorFor(m => m.Date)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">@Html.LabelFor(m => m.DateCreated, "Date Created")</div>
+            <div class="controls">
+                @Html.TextBoxFor(m => m.DateCreated, new { disabled = "disabled" })
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">@Html.LabelFor(m => m.DateChanged, "Date Changed")</div>
+            <div class="controls">
+                @Html.TextBoxFor(m => m.DateChanged, new { disabled = "disabled" })
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">@Html.LabelFor(m => m.Status)</div>
+            <div class="controls">
+                @Html.EnumDropDownListFor(m => m.Status, "Choose the Webinar status", new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">@Html.LabelFor(m => m.Duration)</div>
+            <div class="controls">
+                @Html.EditorFor(m => m.Duration)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.ceu)
+            </div>
+            <div class="controls">
+                @Html.TextAreaFor(m => m.ceu, new { cols = 40 })
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.idPresenter, "Presenter")
+            </div>
+            <div class="controls">
+                @Html.DropDownListFor(m => m.SelectedPresenter, new SelectList(Model.Presenters, "Value", "Text"), "Choose a presenter")
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.Description)
+            </div>
+            <div class="controls">
+                @Html.TextAreaFor(m => m.Description, new { cols = 40 })
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.DescriptionLong, "Description Long")
+            </div>
+            <div class="controls">
+                @Html.TextAreaFor(m => m.DescriptionLong, new { cols = 40 })
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.ImageUrl)
+            </div>
+            <div class="controls">
+                @Html.TextBoxFor(m => m.ImageUrl, new { @class = "input input-xlarge" })
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.RecordingUrl)
+            </div>
+            <div class="controls">
+                @Html.TextBoxFor(m => m.RecordingUrl, new { @class = "input input-xlarge" })
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.LearnBody, "Learn Body")
+            </div>
+            <div class="controls">
+                @Html.TextBoxFor(m => m.LearnBody, new { @class = "input input-xlarge" })
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.LearnCaption, "Learn Caption")
+            </div>
+            <div class="controls">
+                @Html.TextBoxFor(m => m.LearnCaption, new { @class = "input input-xlarge" })
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.SmallImageUrl, "Small Image Url")
+            </div>
+            <div class="controls">
+                @Html.TextBoxFor(m => m.SmallImageUrl, new { @class = "input input-xlarge" })
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.WhoAttend, "Who Attend")
+            </div>
+            <div class="controls">
+                @Html.TextBoxFor(m => m.WhoAttend, new { @class = "input input-xlarge" })
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.Topics)
+            </div>
+            <div id="topicsPanel" class="controls">
+                @Html.CheckBoxListFor(m => m.PostedTopics.TopicIds,
+                    m => m.Topics,
+                    m => m.idTopic,
+                    m => m.topicDesc,
+                    m => m.SelectedTopics,
+                    Position.Vertical)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
+                @Html.LabelFor(m => m.RegTypeGroups, "Options")
+            </div>
+            <div id="regTypeGroupsPanel" class="controls">
+                @Html.CheckBoxListFor(m => m.PostedRegTypeGroups.RegTypeGroupIds,
+                                m => m.RegTypeGroups,
+                                      m => m.idRegTypeGroup,
+                                      m => m.RegTypeGroupDesc,
+                                      m => m.SelectedRegTypeGroups,
+                                      Position.Vertical)
+            </div>
+        </div>
+
+        <button id="submitCloneDetailsButton" class="btn btn-default">Submit</button>
+    </fieldset>
+    }
+
+</div>
