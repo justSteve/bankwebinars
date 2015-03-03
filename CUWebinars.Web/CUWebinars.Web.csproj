@@ -818,6 +818,7 @@
     <Content Include="Views\Shared\DisplayTemplates\MyCertificate.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\OrderSumUser.cshtml" />
     <Content Include="Views\Webinar\Partials\_CloneWebinar.cshtml" />
+    <Content Include="Views\Webinar\EditWebinarFromDetails.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1454,7 +1455,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>3538</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:3539/</IISUrl>
+          <IISUrl>http://localhost:3538/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

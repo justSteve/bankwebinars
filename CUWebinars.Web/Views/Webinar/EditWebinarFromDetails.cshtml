@@ -1,0 +1,40 @@
+﻿@model WebinarEditModel
+
+<div class="container">
+    <div class="row">
+        <h2>Webinar</h2>
+        <div id="webinarWrapper" class="span12">
+            <div class="span2 operationOptions">
+                <p>Search for a webinar:</p>
+                <input type="text" placeholder="find webinar by id" id="webinarSearchInput" class="input input-medium" />
+                <button id="webinarSearchButton" class="btn btn-default">Search</button>
+            </div>
+            <div class="span2 operationOptions">
+                <p>Create a new webinar:</p>
+                <button id="webinarCreateButton" class="btn btn-default">Create</button>
+            </div>
+            <div class="span2 operationOptions">
+                <p>Clone an existing webinar:</p>
+                <input type="text" placeholder="enter webinar id" id="webinarCloneInput" class="input input-medium" />
+                <button id="webinarCloneButton" class="btn btn-default">Clone</button>
+            </div>
+        </div>
+    </div>
+    <div id="webinarContent" class="row">
+        @Html.Partial("Partials/_EditWebinar", Model)
+    </div>
+</div>
+
+
+@*<td>
+        @Html.ActionLink("Edit", "Edit", new { id=item.idWebinar }) |
+        @Html.ActionLink("Details", "Details", new { id = item.idWebinar }) |
+        @Html.ActionLink("Delete", "Delete", new { id = item.idWebinar })
+    </td>*@
+
+@section scripts{
+    @Scripts.Render("~/bundles/manage-webinar")
+}
+
+@Styles.Render("~/Content/webinar-ops")
+<link rel="stylesheet" type="text/css" href="/Scripts/cleditor/jquery.cleditor.css" />

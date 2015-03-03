@@ -1122,6 +1122,18 @@ namespace CUWebinars.Web.Controllers
             return Json(new { Result = WebUiConstants.Fail });
         }
 
+        public ActionResult EditWebinarFromDetails(int? id)
+        {
+            if (id.HasValue)
+            {
+                var webinarEditModel = _webinarControllerOrchestrator.BuildEditModelForWebinarToBeCloned(id.Value);
+
+                return View(webinarEditModel);
+            }
+            return View();
+        }
+
+
         //
         // GET: /Webinar/Delete/5
 
