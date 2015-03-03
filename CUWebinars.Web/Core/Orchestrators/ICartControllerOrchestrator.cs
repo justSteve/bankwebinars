@@ -26,7 +26,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         Tuple<string, string> CheckIfAddLocShouldHide(int optionId);
         Order CreateOrder(CheckoutOptionsViewModel formModel);
         OrderRow GetOrderRowLoaded(int idOrderRow);
-        IEnumerable<WebUser> GetWebUsersByLastName(string lastName);
+        IEnumerable<WebUser> GetWebUsersByLastNameForAffiliate(string lastName, int idAffiliate);
         void FireOrderSubmittedNotification(Order order, bool? userCreatedInCart = null);
         INotificationMessage GenerateMessagePreview(Order order);
         RegType GetRegTypeById(int idRegType);

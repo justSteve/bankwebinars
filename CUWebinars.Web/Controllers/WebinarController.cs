@@ -1,9 +1,4 @@
-﻿using System.Data.Entity.Validation;
-using System.Net;
-using System.Threading;
-using System.Text.RegularExpressions;
-using System.Web.Routing;
-using BrockAllen.MembershipReboot;
+﻿using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
@@ -21,10 +16,11 @@ using Newtonsoft.Json;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
+using System.Data.Entity.Validation;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Web.Hosting;
@@ -928,11 +924,6 @@ namespace CUWebinars.Web.Controllers
 
             model.TimeZone = userExists ? model.WebUser.timeZone : USTimeZone.Central;
 
-            //Check if needed. Can't the same info be obtained (within RAZOR)
-            // by simply checking 'currentUser'?
-            // ->
-            // Not strictly needed, but more readable in the razor e.g. if(Model.UserIsLoggedIn)
-            // [sjh] agreed.
             model.UserIsLoggedIn = userExists;
 
             model.SignUpCaption = "Sign Up!";
@@ -1071,9 +1062,9 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
-                    var topicIdsForWebinar = _webinarManagementService.GetTopicsPerWebinar(id.Value);
+                    var topicIdsForWebinar = _webinarManagementService.GetTopicsPerWebinar(id.Value).ToList();
                     var upcomingRegTypeGroups = _webinarManagementService.GetUpcomingRegTypesForWebinars();
-                    var regTypeGroupsForWebinars = _webinarManagementService.GetRegTypeGroupsForWebinars(id.Value);
+                    var regTypeGroupsForWebinars = _webinarManagementService.GetRegTypeGroupsForWebinars(id.Value).ToList();
 
                     Webinar webinar = _webinarManagementService.GetWebinar(id.Value);
 
@@ -1082,19 +1073,16 @@ namespace CUWebinars.Web.Controllers
                         return HttpNotFound();
                     }
 
-                    var topicIdsForWebinarArray = topicIdsForWebinar as Topic[] ?? topicIdsForWebinar.ToArray(); // to make sure we only enumerate it once
-                    var typeGroupsForWebinarsArray = regTypeGroupsForWebinars as RegTypesGroup[] ?? regTypeGroupsForWebinars.ToArray();// to make sure we only enumerate it once
-
                     var webinarEditModel = new WebinarEditModel
                     {
-                        PostedTopics = new PostedTopics { TopicIds = topicIdsForWebinarArray.Select(topic => topic.idTopic).ToArray() },
-                        PostedRegTypeGroups = new PostedRegTypeGroups { RegTypeGroupIds = typeGroupsForWebinarsArray.Select(r => r.idRegTypeGroup).ToArray()},
+                        PostedTopics = new PostedTopics { TopicIds = topicIdsForWebinar.Select(topic => topic.idTopic).ToArray() },
+                        PostedRegTypeGroups = new PostedRegTypeGroups { RegTypeGroupIds = regTypeGroupsForWebinars.Select(r => r.idRegTypeGroup).ToArray()},
                         Presenters = _webinarManagementService.GetAllPresenters()
                             .Select(presenter => new SelectListItem { Text = presenter.WebUser.FullName, Value = presenter.idUser.ToString()}),
                         RegTypeGroups = upcomingRegTypeGroups,
                         SelectedPresenter = webinar.idPresenter,
-                        SelectedRegTypeGroups = typeGroupsForWebinarsArray,
-                        SelectedTopics = topicIdsForWebinarArray,
+                        SelectedRegTypeGroups = regTypeGroupsForWebinars,
+                        SelectedTopics = topicIdsForWebinar,
                         Status = webinar.Status,
                         Topics = _webinarManagementService.GetAllTopics()
                     };
