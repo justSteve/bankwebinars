@@ -553,6 +553,7 @@ OCA.wireUpHandlers = function() {
             if (typeof user !== 'undefined') {
                 OCA.setSelectedProduct(user);
             }
+            return user['lastname'] + ', ' + user['firstname'];
         }
 
     });

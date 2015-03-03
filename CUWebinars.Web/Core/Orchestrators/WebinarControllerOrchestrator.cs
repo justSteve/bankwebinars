@@ -260,13 +260,13 @@ namespace CUWebinars.Web.Core.Orchestrators
                 LearnCaption = webinarEditModel.LearnCaption,
                 ImageUrl = webinarEditModel.ImageUrl,
                 RecordingUrl = webinarEditModel.RecordingUrl,
+                RegTypesGroupsXref = new List<RegTypesGroupsXref>(),
                 SmallImageUrl = webinarEditModel.SmallImageUrl,
+                WebinarTopicXrefs = new List<WebinarTopicXref>(),
                 WhoAttend = webinarEditModel.WhoAttend
             };
 
-            webinar.RegTypesGroupsXref = new List<RegTypesGroupsXref>();
-            webinar.WebinarTopicXrefs = new List<WebinarTopicXref>();
-
+                
             foreach (var regTypeGroupId in webinarEditModel.PostedRegTypeGroups.RegTypeGroupIds)
             {
                 webinar.RegTypesGroupsXref.Add(new RegTypesGroupsXref { idRegTypeGroup = regTypeGroupId });
