@@ -10,7 +10,7 @@ namespace CUWebinars.Business.Repository
         WebUser FindById(int id);
         WebUser FindByIdLoaded(int id);
         WebUser GetWebUserByEmail(string email);
-        IEnumerable<WebUser> GetWebUsersByLastName(string lastName);
+        IEnumerable<WebUser> GetWebUsersByLastNameForAffiliate(string lastName, int idAffiliate);
         WebUser GetWebUserByEmailLoadedWithOrdersData(string email);
         IEnumerable<WebUser> GetWebusersForLiveNotifications(int idWebinar);
         IEnumerable<WebUser> GetWebusersForWebinarWithRegtypes(int idWebinar, IEnumerable<int> regTypeIds);

@@ -10,6 +10,7 @@ using CUWebinars.Business.Notification;
 using CUWebinars.Business.Notification.Formatters;
 using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
+using CUWebinars.Business.Validation.Webinar;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
@@ -129,6 +130,7 @@ namespace CUWebinars.Web.App_Start
             {
                 var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
                 ILogger loggerForWebinarManagementService = new Log4NetLogger(typeof(WebinarManagementService));
+                FluentValidation.IValidator<Webinar> createWebinarValidator = new CreateWebinarValidator();
 
                 return new WebinarManagementService(
                     new RegTypeRepository(sharedContext),
@@ -137,7 +139,8 @@ namespace CUWebinars.Web.App_Start
                     new WebinarRepository(sharedContext),
                     new WebinarFileRepository(sharedContext),
                     loggerForWebinarManagementService,
-                    ctx.Kernel.Get<TtsConfiguration>()
+                    ctx.Kernel.Get<TtsConfiguration>(),
+                    createWebinarValidator
                     );
             }).InRequestScope();
 

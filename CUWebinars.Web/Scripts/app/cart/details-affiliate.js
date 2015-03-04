@@ -520,7 +520,7 @@ OCA.wireUpHandlers = function() {
             process(results);
         });
 
-        }, 200);
+        }, 500);
 
     OCA.lastNameInput.typeahead({
         source: function (query, process) {
@@ -553,6 +553,7 @@ OCA.wireUpHandlers = function() {
             if (typeof user !== 'undefined') {
                 OCA.setSelectedProduct(user);
             }
+            return user['lastname'] + ', ' + user['firstname'];
         }
 
     });

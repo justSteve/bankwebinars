@@ -68,9 +68,11 @@ namespace CUWebinars.Business.Repository
                 .Where(w => w.email == email).SingleOrDefault();
         }
 
-        public IEnumerable<WebUser> GetWebUsersByLastName(string lastName)
+        public IEnumerable<WebUser> GetWebUsersByLastNameForAffiliate(string lastName, int idAffiliate)
         {
-            return items.Where(webUser => webUser.LastName.ToLower().Contains(lastName))
+            return ((TTSWebinarsContext)db).Orders.Include(o => o.WebUser)
+                .Where(o => o.idAffiliate == idAffiliate && o.WebUser.LastName.ToLower().Contains(lastName))
+                .Select(o => o.WebUser)
                 .OrderBy(webUser => webUser.LastName)
                 .ThenBy(webUser => webUser.FirstName);
         }
@@ -83,7 +85,8 @@ namespace CUWebinars.Business.Repository
                 .Include(wu => wu.Orders.Select(o => o.OrderRows.Select(or => or.Discount)))
                 .Include(wu => wu.Orders.Select(o => o.OrderRows.Select(or => or.AdditionalLocation)))
                 .Include(wu => wu.Orders.Select(o => o.OrderRows.Select(or => or.RegistrationType)))
-                .Where(wu => wu.email == email).SingleOrDefault();
+                .SingleOrDefault(wu => wu.email == email
+                );
         }
 
         public void UpdateAddresses(Address address)

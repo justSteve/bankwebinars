@@ -6,6 +6,7 @@ using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models;
+using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Ninject.Extensions.Logging;
 using System;
@@ -21,17 +22,20 @@ namespace CUWebinars.Web.Controllers
         private readonly ICartControllerOrchestrator _cartControllerOrchestrator;
         private readonly IAppHelper _appHelper;
         private readonly IUniversalMapper _universalMapper;
+        private readonly IStateService _stateService;
         private bool _disposed;
 
         public CartController(ILogger logger,
             ICartControllerOrchestrator cartControllerOrchestrator,
             IAppHelper appHelper,
-            IUniversalMapper universalMapper)
+            IUniversalMapper universalMapper,
+            IStateService stateService)
         {
             _logger = logger;
             _cartControllerOrchestrator = cartControllerOrchestrator;
             _appHelper = appHelper;
             _universalMapper = universalMapper;
+            _stateService = stateService;
         }
 
         [HttpPost]
@@ -300,13 +304,23 @@ namespace CUWebinars.Web.Controllers
         {
             if (!string.IsNullOrWhiteSpace(lastName))
             {
-                var webUsers = _cartControllerOrchestrator.GetWebUsersByLastName(lastName).Select(w => new { id = w.idUser, lastname = w.LastName, firstname = w.FirstName });
-                return Json(new { people = webUsers }, JsonRequestBehavior.AllowGet);
+                var currentAffiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+         
+                var webUsers = _cartControllerOrchestrator.GetWebUsersByLastNameForAffiliate(lastName,
+                    currentAffiliate.idUserAff)
+                    .Select(w => new
+                    {
+                        id = w.idUser,
+                        lastname = w.LastName,
+                        firstname = w.FirstName
+                    });
+                
+                return Json(new {people = webUsers}, JsonRequestBehavior.AllowGet);
             }
             return View();
         }
 
-        
+
         public ActionResult CheckIfAddLocShouldHide(int optionID)
         {
             if (ModelState.IsValid)

@@ -175,7 +175,7 @@
             <aside class="widget">
 
                 <div class=" pull-right label label-success">@Model.Webinar.Status.ToString()</div><br>
-                @Html.ActionLink("Manage Webinar", "Index", "Webinar", new { @class = "pull-right btn btn-default", style="margin-top: 5px" })
+                @Html.ActionLink("Manage Webinar", "EditWebinarFromDetails", "Webinar", new { id=@Model.Webinar.idWebinar }, new { @class = "pull-right btn btn-default", style = "margin-top: 5px" })
             </aside>
             @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())
             <!-- close .widget -->

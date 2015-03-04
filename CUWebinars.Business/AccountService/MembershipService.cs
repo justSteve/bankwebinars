@@ -69,9 +69,9 @@ namespace CUWebinars.Business.AccountService
             return _webUserRepository.FindById(userId);
         }
 
-        public IEnumerable<WebUser> GetWebUsersByLastName(string lastName)
+        public IEnumerable<WebUser> GetWebUsersByLastNameForAffiliate(string lastName, int idAffiliate)
         {
-            return _webUserRepository.GetWebUsersByLastName(lastName);
+            return _webUserRepository.GetWebUsersByLastNameForAffiliate(lastName, idAffiliate);
         }
 
         public IEnumerable<Institution> GetInstitutionsByName(string name)

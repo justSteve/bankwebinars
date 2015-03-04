@@ -6,6 +6,7 @@ using CUWebinars.Business.Models;
 using System.Net;
 using CUWebinars.Business.Repository;
 using CUWebinars.NotificationSystem.Event;
+using FluentValidation;
 using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Business.Services
@@ -21,6 +22,7 @@ namespace CUWebinars.Business.Services
         private readonly ILogger _logger;
         private readonly IWebUserRepository _webUserRepository;
         private readonly TtsConfiguration _ttsConfig;
+        private readonly IValidator<Webinar> _createWebinarValidator;
         readonly List<IEvent> _events = new List<IEvent>();
         private bool _disposed;
 
@@ -33,13 +35,15 @@ namespace CUWebinars.Business.Services
             IWebinarRepository webinarRepository,
             IWebinarFileRepository webinarFileRepository,
             ILogger logger,
-            TtsConfiguration ttsConfig)
+            TtsConfiguration ttsConfig,
+            FluentValidation.IValidator<Webinar> createWebinarValidator)
         {
             //_affiliateRepository = affiliateRepository;
             _regTypeRepository = regTypeRepository;
             //_orderRepository = orderRepository;
             _refDataRepository = refDataRepository;
             _ttsConfig = ttsConfig;
+            _createWebinarValidator = createWebinarValidator;
             _webinarFileRepository = webinarFileRepository;
             _webinarRepository = webinarRepository;
             _logger = logger;
@@ -66,6 +70,7 @@ namespace CUWebinars.Business.Services
 
         public void AddWebinar(Webinar webinar)
         {
+            _createWebinarValidator.Validate(webinar);
             _webinarRepository.Add(webinar);
         }
 

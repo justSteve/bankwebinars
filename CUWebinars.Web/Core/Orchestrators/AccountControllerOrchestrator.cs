@@ -925,7 +925,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             changeEmailFromKeyInputModel.ScreenMessage = "There has been an error at the server.";
 
-            return changeEmailFromKeyInputModel;
+            return changeEmailFromKeyInputModel; 
         }
 
         public CreateUserConfirmedViewModel GetCreateUserConfirmedViewModel(string email, bool viaBillMePostRequest = false)
