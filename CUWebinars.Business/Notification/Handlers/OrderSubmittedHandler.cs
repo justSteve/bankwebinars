@@ -57,6 +57,8 @@ namespace CUWebinars.Business.Notification.Handlers
                     ".htm"
                     );
 
+                _logger.Info("PersistedName for Order {0} is {1}", orderSubmittedEvent.EventObject.Order.idOrder, notificationMessage.PersistedName);
+
                 //  adds the name of the message to the Json object stored in NotificationStorage.
                 string details = orderSubmittedEvent.Details;
 
@@ -77,6 +79,8 @@ namespace CUWebinars.Business.Notification.Handlers
                     notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail;
                 }
 
+                _logger.Info("Sending Notifn for Order {0}", orderSubmittedEvent.EventObject.Order.idOrder);
+                
                 _notificationDelivery.Notify(notificationMessage);
             }
             catch (NullReferenceException nullReferenceException)
