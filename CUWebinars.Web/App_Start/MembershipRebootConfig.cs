@@ -3,6 +3,7 @@ using BrockAllen.MembershipReboot.WebHost;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Membership.Email;
 using CUWebinars.Web.Services;
+using Ninject.Extensions.Logging.Log4net.Infrastructure;
 
 
 namespace CUWebinars.Web.App_Start
@@ -26,7 +27,7 @@ namespace CUWebinars.Web.App_Start
             IMessageDelivery delivery;
 
             if(GlobalConfig.GlobalConfigSingleton.UseAzureWebjobs)
-                delivery = new AzureWebJobSmtpMessageDelivery(stateService);
+                delivery = new AzureWebJobSmtpMessageDelivery(stateService, new Log4NetLogger(typeof(AzureWebJobSmtpMessageDelivery)));
             else
                 delivery = new TtsSmtpMessageDelivery(stateService);
                 

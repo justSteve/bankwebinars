@@ -29,7 +29,7 @@ namespace CUWebinars.Business.Core
 
             // toggle whether to use Azure Webjobs or local code (for local debugiing/development purposes)
             if (useAzureWebjobs)
-                notificationDelivery = new AzureCuwWebJobSmtpMessageDelivery(storageAccountName, storageAccessKey);
+                notificationDelivery = new AzureCuwWebJobSmtpMessageDelivery(storageAccountName, storageAccessKey, new Log4NetLogger(typeof(AzureCuwWebJobSmtpMessageDelivery)));
             else
                 notificationDelivery = new SmtpMessageDelivery();
 

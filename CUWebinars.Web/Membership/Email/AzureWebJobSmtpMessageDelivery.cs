@@ -6,6 +6,7 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Newtonsoft.Json;
+using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Web.Membership.Email
 {
@@ -13,12 +14,14 @@ namespace CUWebinars.Web.Membership.Email
     {
         private readonly GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
         private readonly IStateService _stateService;
+        private readonly ILogger _logger;
         private static CloudQueueClient _queueClient;
 
 
-        public AzureWebJobSmtpMessageDelivery(IStateService stateService)
+        public AzureWebJobSmtpMessageDelivery(IStateService stateService, ILogger logger)
         {
             _stateService = stateService;
+            _logger = logger;
         }
 
         public void Send(Message msg)
@@ -30,6 +33,8 @@ namespace CUWebinars.Web.Membership.Email
             {
                 return;
             }
+
+            _logger.Info("Sending MR notification to {0}", msg.To);
 
             var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName, _globalConfig.StorageAccessKey);
             var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
@@ -44,6 +49,8 @@ namespace CUWebinars.Web.Membership.Email
             var cloudQueueMessage = new CloudQueueMessage(JsonConvert.SerializeObject(msg));
             cloudQueue.EncodeMessage = true;
             cloudQueue.AddMessage(cloudQueueMessage);
+
+            _logger.Info("Notification successfully enqueued");
         }
     }
 }

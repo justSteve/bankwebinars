@@ -3,6 +3,7 @@ using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Newtonsoft.Json;
 using System;
+using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Business.Notification.Email
 {
@@ -11,16 +12,19 @@ namespace CUWebinars.Business.Notification.Email
         private static CloudQueueClient _queueClient;
         private readonly string _storageAccountName;
         private readonly string _storageAccessKey;
+        private readonly ILogger _logger;
 
-        public AzureCuwWebJobSmtpMessageDelivery(string storageAccountName, string storageAccessKey)
+        public AzureCuwWebJobSmtpMessageDelivery(string storageAccountName, string storageAccessKey, ILogger logger)
         {
             _storageAccountName = storageAccountName;
             _storageAccessKey = storageAccessKey;
+            _logger = logger;
         }
 
 
         public void Notify(INotificationMessage notificationMessage)
         {
+            _logger.Info("Sending notification with PersistedName {0}", notificationMessage.PersistedName);
 
             var storageCredentials = new StorageCredentials(_storageAccountName, _storageAccessKey);
             var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
@@ -34,6 +38,8 @@ namespace CUWebinars.Business.Notification.Email
             var cloudQueueMessage = new CloudQueueMessage(JsonConvert.SerializeObject(notificationMessage));
             cloudQueue.EncodeMessage = true;
             cloudQueue.AddMessage(cloudQueueMessage);
+
+            _logger.Info("Notification successfully enqueued");
         }
 
         private void EnsureMessage(INotificationMessage message)
