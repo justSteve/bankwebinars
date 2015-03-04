@@ -1,4 +1,5 @@
-﻿using CUWebinars.Web.Models;
+﻿using CUWebinars.Business.Models;
+using CUWebinars.Web.Models;
 
 namespace CUWebinars.Web.ViewModel
 {

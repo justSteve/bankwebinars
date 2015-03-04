@@ -31,7 +31,7 @@
 
     List<Webinar> webinars = Model.ToList();
 
-    var rowsData = new List<object>();
+    //var rowsData = new List<object>();
 
     //foreach (var entry in webinars)
     //{
@@ -57,45 +57,48 @@
 
     //Html.RenderPartial("Partials/ResultsGrid");
     var topic = ViewContext.Controller.ValueProvider.GetValue("ID").RawValue;
+    var topicPrefix = "Bank";
+    if (globalConfig.Tenant == "CUWebinars"){ topicPrefix = "Credit Union";}
+            
     var topicCaption = "";
     var topicBody = "";
     switch (topic.ToString())
     {
         case "16":
-            topicBody = "<blockquote>Total Training Solutions' bank IRA webinar training covers topics ranging from IRA terms and plan types to distributions and rollovers to distributions and beneficiaries and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote>";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " IRA webinar training covers topics ranging from IRA terms and plan types to distributions and rollovers to distributions and beneficiaries and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote>";
             topicCaption = "IRA ";
             break;
         case "15":
             topicCaption = "Compliance ";
-            topicBody = "<blockquote>Total Training Solutions' bank compliance webinar training covers topics ranging from deposit and lending regulations to BSA to IRS information reporting and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote>";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " compliance webinar training covers topics ranging from deposit and lending regulations to BSA to IRS information reporting and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote>";
             break;
         case "17":
             topicCaption = "Customer Service ";
-            topicBody = "<blockquote>Total Training Solutions' bank customer service webinar training covers topics ranging from excelling on the job to call center training to coaching and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote>";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " customer service webinar training covers topics ranging from excelling on the job to call center training to coaching and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote>";
             break;
         case "18":
             topicCaption = "Security ";
-            topicBody = "<blockquote>Total Training Solutions' bank security webinar training covers topics ranging from robbery to check fraud to cybercrime and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote>";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " security webinar training covers topics ranging from robbery to check fraud to cybercrime and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote>";
             break;
         case "19":
             topicCaption = "Operations ";
-            topicBody = "<blockquote>Total Training Solutions' bank operations webinar training covers topics ranging from check and deposit issues to new accounts manuals to underwriting and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote>";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " operations webinar training covers topics ranging from check and deposit issues to new accounts manuals to underwriting and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote>";
             break;
         case "20":
             topicCaption = "Auditing ";
-            topicBody = "<blockquote>Total Training Solutions' bank auditing webinar training covers topics ranging from risk-based compliance audit to call reports to regulatory exam preparation and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote>";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " auditing webinar training covers topics ranging from risk-based compliance audit to call reports to regulatory exam preparation and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote>";
             break;
         case "21":
             topicCaption = "Sales ";
-            topicBody = "<blockquote>Total Training Solutions' bank sales webinar training covers topics ranging from coaching to building a sales plan to sales teams and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote>";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " sales webinar training covers topics ranging from coaching to building a sales plan to sales teams and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote>";
             break;
         case "22":
             topicCaption = "Lending ";
-            topicBody = "<blockquote>Total Training Solutions' bank lending webinar training covers topics ranging from handling loan applications to accounting principles to underwriting and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote>";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " lending webinar training covers topics ranging from handling loan applications to accounting principles to underwriting and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote>";
             break;
         case "23":
             topicCaption = "Human Resources ";
-            topicBody = "<blockquote>Total Training Solutions' bank human resources webinar training covers topics ranging from background checks to employment records to improving employee performance and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote>";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " human resources webinar training covers topics ranging from background checks to employment records to improving employee performance and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote>";
             break;
         case "25":
             topicCaption = "Computer Skills ";
@@ -103,11 +106,11 @@
             break;
         case "26":
             topicCaption = "Risk Management ";
-            topicBody = "<blockquote>Total Training Solutions' bank risk management webinar training covers topics ranging from BSA confidentiality to subpoenas to the allowance for loan and lease losses and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote>";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " risk management webinar training covers topics ranging from BSA confidentiality to subpoenas to the allowance for loan and lease losses and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote>";
             break;
         case "27":
             topicCaption = "Teller ";
-            topicBody = "<blockquote>Total Training Solutions' bank teller webinar training covers topics ranging from teller security to endorsements to fraudulent cashier's checks and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote>";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " teller webinar training covers topics ranging from teller security to endorsements to fraudulent cashier's checks and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote>";
             break;
             ;
         default:
@@ -122,7 +125,7 @@
 <div class="hero-unit">
     <div class="container">
 
-        <h2>Bank @topicCaption Webinar Training</h2>
+        <h2>@topicPrefix @topicCaption Webinar Training</h2>
     </div>
     <!--close container-->
 </div>
@@ -140,14 +143,12 @@
             if (webinar.Status == WebinarStatus.Recorded)
             {
                 showDateValue = "This OnDemand Webinar has " + numDaysLeft + " days of access remaining.";
-                //if (numDaysLeft > 45)
-                //{
-                //    showDateValue = "About " + Convert.ToInt32(numDaysLeft / (365.25 / 12)) + " months of access remain.";
-                //}
+                if (numDaysLeft > 45)
+                {
+                    showDateValue = "About " + Convert.ToInt32(numDaysLeft / (365.25 / 12)) + " months of access remain.";
+                }
             }
 
-            //var allTopics = webinar.WebinarTopicXrefs.Contains()
-            //.Select(x => x.Description);
             var allTopics = webinar.WebinarTopicXrefs
                 .Select(webinarTopic => webinarTopic.Topic.topicDesc)
                 .Aggregate((s1, s2) => s1 + ", " + s2);
@@ -168,12 +169,10 @@
                         <i>@Html.Raw(showDateValue)</i>
                     </p>
                     @Html.Raw(desc)
-                    @*<div style="margin-right: 20%;">@Html.Raw(desc)</div>*@
                     <p>@Html.Raw(relatedTopics)</p>
                 </div>
             </div>
         }
-
     }
 </div>
 @*<script language="javascript" type="text/javascript">

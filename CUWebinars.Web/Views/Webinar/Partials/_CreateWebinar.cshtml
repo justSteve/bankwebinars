@@ -2,11 +2,12 @@
 @model WebinarEditModel
 
 <div class="span12">
-    @using (Html.BeginForm("Create", "Webinar", FormMethod.Post, new { id = "editWebinarForm", @class = "form-horizontal" }))
+    @using (Html.BeginForm("Create", "Webinar", FormMethod.Post, new { id = "createWebinarForm", @class = "form-horizontal" }))
     {
         @Html.AntiForgeryToken()
 
         @Html.HiddenFor(m => m.idWebinar)
+        @Html.ValidationSummary("Dumbass:")
 
         <fieldset>
             <legend>New Webinar Details</legend>
@@ -14,6 +15,7 @@
             <div class="control-group">
                 <div class="control-label">@Html.LabelFor(m => m.Title)</div>
                 <div class="controls">@Html.EditorFor(m => m.Title)</div>
+                @Html.ValidationMessageFor(m => m.Title)
             </div>
             <div class="control-group">
                 <div class="control-label">@Html.LabelFor(m => m.Date)</div>
@@ -75,6 +77,14 @@
             </div>
             <div class="control-group">
                 <div class="control-label">
+                    @Html.LabelFor(m => m.RecordingUrl)
+                </div>
+                <div class="controls">
+                    @Html.TextBoxFor(m => m.RecordingUrl, new { @class = "input input-xlarge" })
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="control-label">
                     @Html.LabelFor(m => m.LearnBody, "Learn Body")
                 </div>
                 <div class="controls">
@@ -111,11 +121,11 @@
                 </div>
                 <div id="topicsPanel" class="controls">
                     @Html.CheckBoxListFor(m => m.PostedTopics.TopicIds,
-                    m => m.Topics,
-                    m => m.idTopic,
-                    m => m.topicDesc,
-                    m => m.SelectedTopics,
-                    Position.Vertical)
+                        m => m.Topics,
+                        m => m.idTopic,
+                        m => m.topicDesc,
+                        m => m.SelectedTopics,
+                        Position.Vertical)
                 </div>
             </div>
             <div class="control-group">
@@ -124,15 +134,16 @@
                 </div>
                 <div id="regTypeGroupsPanel" class="controls">
                     @Html.CheckBoxListFor(m => m.PostedRegTypeGroups.RegTypeGroupIds,
-                                m => m.RegTypeGroups,
-                                      m => m.idRegTypeGroup,
-                                      m => m.RegTypeGroupDesc,
-                                      m => m.SelectedRegTypeGroups,
-                                      Position.Vertical)
+                        m => m.RegTypeGroups,
+                        m => m.idRegTypeGroup,
+                        m => m.RegTypeGroupDesc,
+                        m => m.SelectedRegTypeGroups,
+                        Position.Vertical)
                 </div>
             </div>
 
-            <button id="submitCreatedDetailsButton" class="btn btn-default">Submit</button>
+            @*<button id="submitCreatedDetailsButton" class="btn btn-default">Submit</button>*@
+            <input id="submitCreatedDetailsButton" class="btn btn-default" value="Submit" type="submit" />
         </fieldset>
     }
 

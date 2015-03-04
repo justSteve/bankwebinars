@@ -303,7 +303,7 @@ namespace CUWebinars.Web.Controllers
                         }
                 };
 
-            
+
             if (claimsIdentityOfAuthenticatedUser.HasClaim(ClaimTypes.DisplayPostEventMaterials))
             {
                 model.MyClaims =
@@ -336,8 +336,8 @@ namespace CUWebinars.Web.Controllers
 
             }
 
-                return View("MyWebinars", model);
-            
+            return View("MyWebinars", model);
+
         }
 
 
@@ -514,11 +514,23 @@ namespace CUWebinars.Web.Controllers
             {
                 StatusMessage = string.Empty
             };
-            ViewBag.ReturnUrl = Url.Action(ManageActionName);
-            ViewBag.Title = WebUiConstants.ManageUser;
 
             var user = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
+            var editingUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
 
+            if (idUser != null)
+            {
+                ViewBag.ReturnUrl = Url.Action(ManageActionName);
+                ViewBag.Title = WebUiConstants.ManageUser;
+                editingUser = user;
+                user = _accountControllerOrchestrator.GetWebUserById(idUser.Value);
+            }
+            if (user == null)
+            {
+                return View();
+            }
+
+            _logger.Info(string.Format("{0} is editing {1}", editingUser.email, user.email));
             var addresses = user.Addresses.ToArray();
             var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
             var shippingAddress = addresses.First(a => a.AddressType == WebUiConstants.ShippingAddress);
@@ -527,7 +539,6 @@ namespace CUWebinars.Web.Controllers
             {
                 BillingAddress = new AddressModel
                 {
-
                     Name = user.FirstName + ' ' + user.LastName,
                     City = billingAddress.City,
                     Country = billingAddress.Country,
@@ -562,7 +573,7 @@ namespace CUWebinars.Web.Controllers
             //return null;
         }
 
-        
+
         //[ClaimsAuthorize(Roles = "CUWebinarsAbsoluteAdmin")]
         public ActionResult Manage(ManageMessageId? message)
         {
@@ -1112,6 +1123,8 @@ namespace CUWebinars.Web.Controllers
             {
                 if (_accountControllerOrchestrator.AddPasswordForCartCreatedUser(model))
                     return Json(new { Result = WebUiConstants.Success });
+                
+                
                 return Json(new { Result = WebUiConstants.TimedOut });
             }
 

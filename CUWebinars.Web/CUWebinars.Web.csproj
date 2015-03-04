@@ -815,7 +815,11 @@
     <Content Include="Views\Webinar\Partials\_CreateWebinar.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\MyCertificate.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\OrderSumUser.cshtml" />
+    <Content Include="Views\Webinar\Partials\_CloneWebinar.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\EditUser.cshtml" />
+    <Content Include="Views\Cart\PayCC.cshtml" />
+    <Content Include="Views\Cart\PayCC_Approved.cshtml" />
+    <Content Include="Views\Cart\PayCC_Declined.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using CUWebinars.Business.Models;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
@@ -13,6 +14,7 @@ namespace CUWebinars.Web.ViewModel
         public string ImageUrl { get; set; }
         public string SmallImageUrl { get; set; }
         public WebinarStatus Status { get; set; }
+        public string RecordingUrl { get; set; }
         public string Title { get; set; }
         public System.DateTime Date { get; set; }
         public string LearnCaption { get; set; }

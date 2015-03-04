@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Data.Entity.Validation;
+using System.Net;
 using System.Threading;
 using System.Text.RegularExpressions;
 using System.Web.Routing;
@@ -285,66 +286,8 @@ namespace CUWebinars.Web.Controllers
         public ActionResult ListByTopic(int ID)
         {
             // var webinars = WebinarFacade.Instance.SelectAllActiveWebinarsByTopic(ID);
-
             Session["TopicID"] = ID;
             ViewBag.SearchTerm = "TopicID=" + Session["TopicID"].ToString();
-            ViewBag.TopicCaption = "";
-            ViewBag.HeadLineText = "Bank";
-            if (_globalConfig.Tenant == "CUWebinars")
-            {
-                ViewBag.HeadLineText = "Credit Union";
-            }
-            switch (Session["TopicID"].ToString())
-            {
-                case "16":
-                    ViewBag.TopicCaption = "IRA ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to IRAs ";
-                    break;
-                case "15":
-                    ViewBag.TopicCaption = "Compliance ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to Compliance ";
-                    break;
-                case "17":
-                    ViewBag.TopicCaption = "Customer Service ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to Customer Service ";
-                    break;
-                case "18":
-                    ViewBag.TopicCaption = "Security ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to Security ";
-                    break;
-                case "19":
-                    ViewBag.TopicCaption = "Operations ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to Operations ";
-                    break;
-                case "20":
-                    ViewBag.TopicCaption = "Auditing ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to Auditing ";
-                    break;
-                case "21":
-                    ViewBag.TopicCaption = "Sales ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to Sales ";
-                    break;
-                case "22":
-                    ViewBag.TopicCaption = "Lending ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to Lending ";
-                    break;
-                case "23":
-                    ViewBag.TopicCaption = "Human Resources ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to Human Resources ";
-                    break;
-                case "25":
-                    ViewBag.TopicCaption = "Computer Skills ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to Computer Skills ";
-                    break;
-                case "26":
-                    ViewBag.TopicCaption = "Risk Management ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to Risk Management ";
-                    break;
-                case "27":
-                    ViewBag.TopicCaption = "Teller ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to Teller ";
-                    break;
-            }
 
             var webinars = _webinarManagementService.GetByTopic(ID);
             //var dtos = new WebinarDTOAssembler().Entities2DTOs(webinars);
@@ -971,7 +914,59 @@ namespace CUWebinars.Web.Controllers
 
             return Json(dtos, JsonRequestBehavior.AllowGet);
         }
-        
+
+        [HandleAjaxException]
+        public ActionResult Clone(int? id)
+        {
+            if (id.HasValue)
+            {
+                try
+                {
+                    var webinarEditModel =_webinarControllerOrchestrator.BuildEditModelForWebinarToBeCloned(id.Value);
+
+                    return PartialView("Partials/_CloneWebinar", webinarEditModel);
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException(string.Format("Clone Webinar | Session{0}", _appHelper.GetUserAuditInfo()), exception);
+                }
+                // todo: return fail JSON msg here
+            }
+
+            return Json(new { Result = WebUiConstants.Fail, Msg = "Enter a valid id" }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken(Order = 0)]
+        [ValidateInput(false)]
+        [HandleAjaxException(Order = 1)]
+        public ActionResult Clone(WebinarEditModel webinarEditModel)
+        {
+            try
+            {
+                _webinarControllerOrchestrator.CreateWebinarFromViewInput(webinarEditModel);
+            }
+            catch (DbEntityValidationException dbEx)
+            {
+                foreach (var validationErrors in dbEx.EntityValidationErrors)
+                {
+                    foreach (var validationError in validationErrors.ValidationErrors)
+                    {
+                        Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException(string.Format("Create Webinar | Session{0}", _appHelper.GetUserAuditInfo()), exception);
+            }
+
+            // todo: return JSON results for fail and success
+            return View();
+
+        }
+
+        [HandleAjaxException]
         public ActionResult Create()
         {
             var upcomingRegTypeGroups = _webinarManagementService.GetUpcomingRegTypesForWebinars();
@@ -990,21 +985,23 @@ namespace CUWebinars.Web.Controllers
             return PartialView("Partials/_CreateWebinar", webinarEditModel);
         }
 
-        //
-        // POST: /Webinar/Create
 
         [System.Web.Mvc.HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken(Order = 0)]
+        [ValidateInput(false)]
+        [HandleAjaxException(Order = 1)]
         public ActionResult Create(WebinarEditModel webinarEditModel)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    _webinarManagementService.AddWebinar(webinar);
-            //    return RedirectToAction("Index");
-            //}
+            try
+            {
+                _webinarControllerOrchestrator.CreateWebinarFromViewInput(webinarEditModel);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException(string.Format("Create Webinar | Session{0}", _appHelper.GetUserAuditInfo()), exception);
+            }
 
-            //ViewBag.PresenterId = new SelectList(_webinarManagementService.GetAllPresenters(), "Id", "Biography",
-            //    webinar.idPresenter);
+            // todo: return JSON results for fail and success
             return View();
         }
 
@@ -1014,37 +1011,45 @@ namespace CUWebinars.Web.Controllers
         {
             if (id.HasValue)
             {
-                var topicIdsForWebinar = _webinarManagementService.GetTopicsPerWebinar(id.Value);
-                var upcomingRegTypeGroups = _webinarManagementService.GetUpcomingRegTypesForWebinars();
-                var regTypeGroupsForWebinars = _webinarManagementService.GetRegTypeGroupsForWebinars(id.Value);
-
-                Webinar webinar = _webinarManagementService.GetWebinar(id.Value);
-
-                if (webinar == null)
+                try
                 {
-                    return HttpNotFound();
+                    var topicIdsForWebinar = _webinarManagementService.GetTopicsPerWebinar(id.Value);
+                    var upcomingRegTypeGroups = _webinarManagementService.GetUpcomingRegTypesForWebinars();
+                    var regTypeGroupsForWebinars = _webinarManagementService.GetRegTypeGroupsForWebinars(id.Value);
+
+                    Webinar webinar = _webinarManagementService.GetWebinar(id.Value);
+
+                    if (webinar == null)
+                    {
+                        return HttpNotFound();
+                    }
+
+                    var topicIdsForWebinarArray = topicIdsForWebinar as Topic[] ?? topicIdsForWebinar.ToArray(); // to make sure we only enumerate it once
+                    var typeGroupsForWebinarsArray = regTypeGroupsForWebinars as RegTypesGroup[] ?? regTypeGroupsForWebinars.ToArray();// to make sure we only enumerate it once
+
+                    var webinarEditModel = new WebinarEditModel
+                    {
+                        PostedTopics = new PostedTopics { TopicIds = topicIdsForWebinarArray.Select(topic => topic.idTopic).ToArray() },
+                        PostedRegTypeGroups = new PostedRegTypeGroups { RegTypeGroupIds = typeGroupsForWebinarsArray.Select(r => r.idRegTypeGroup).ToArray()},
+                        Presenters = _webinarManagementService.GetAllPresenters()
+                            .Select(presenter => new SelectListItem { Text = presenter.WebUser.FullName, Value = presenter.idUser.ToString()}),
+                        RegTypeGroups = upcomingRegTypeGroups,
+                        SelectedPresenter = webinar.idPresenter,
+                        SelectedRegTypeGroups = typeGroupsForWebinarsArray,
+                        SelectedTopics = topicIdsForWebinarArray,
+                        Status = webinar.Status,
+                        Topics = _webinarManagementService.GetAllTopics()
+                    };
+
+                    webinarEditModel = _universalMapper.Map(webinar, webinarEditModel);
+
+                    return PartialView("Partials/_EditWebinar", webinarEditModel);
                 }
-
-                var topicIdsForWebinarArray = topicIdsForWebinar as Topic[] ?? topicIdsForWebinar.ToArray(); // to make sure we only enumerate it once
-                var typeGroupsForWebinarsArray = regTypeGroupsForWebinars as RegTypesGroup[] ?? regTypeGroupsForWebinars.ToArray();// to make sure we only enumerate it once
-
-                var webinarEditModel = new WebinarEditModel
+                catch (Exception exception)
                 {
-                    PostedTopics = new PostedTopics { TopicIds = topicIdsForWebinarArray.Select(topic => topic.idTopic).ToArray() },
-                    PostedRegTypeGroups = new PostedRegTypeGroups { RegTypeGroupIds = typeGroupsForWebinarsArray.Select(r => r.idRegTypeGroup).ToArray()},
-                    Presenters = _webinarManagementService.GetAllPresenters()
-                        .Select(presenter => new SelectListItem { Text = presenter.WebUser.FullName, Value = presenter.idUser.ToString()}),
-                    RegTypeGroups = upcomingRegTypeGroups,
-                    SelectedPresenter = webinar.idPresenter,
-                    SelectedRegTypeGroups = typeGroupsForWebinarsArray,
-                    SelectedTopics = topicIdsForWebinarArray,
-                    Status = webinar.Status,
-                    Topics = _webinarManagementService.GetAllTopics()
-                };
-
-                webinarEditModel = _universalMapper.Map(webinar, webinarEditModel);
-
-                return PartialView("Partials/_EditWebinar", webinarEditModel);
+                    _logger.ErrorException(string.Format("Edit Webinar | Session{0}", _appHelper.GetUserAuditInfo()), exception);
+                }
+                // todo: return fail JSON msg here
             }
             
             return Json( new { Result = WebUiConstants.Fail, Msg = "Enter a valid id"}, JsonRequestBehavior.AllowGet);

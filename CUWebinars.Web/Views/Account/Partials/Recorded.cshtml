@@ -80,7 +80,7 @@
                         @if (row.RegistrationType.ShowRecordingNotifications == "Yes")
                         {
                             <div class="row-fluid">
-                                @if (row.Webinar.RecordingUrl == "")
+                                @if (row.Webinar.RecordingUrl != "")
                                 {
                                     <div class="span4">
                                         <a target="_blank" href="/webinar/GetWebinarRecording/@row.Webinar.idWebinar"><span style="margin-left: 15px;"><i class="icon-facetime-video"></i></span> Playback</a>

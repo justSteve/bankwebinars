@@ -17,26 +17,30 @@ $(function () {
 
     ns.primeDomVariables = function (operation) {
 
-        if (operation === ns.edit || operation === ns.create) {
+        if (operation === ns.edit || operation === ns.create || operation === ns.clone) {
             ns.statusSelectList = $('#Status');
             ns.ceuTextArea = $('#ceu');
             ns.webinarDescriptionTextArea = $('#Description');
             ns.webinarLongDescriptionTextArea = $('#DescriptionLong');
-            ns.editWebinarForm = $('#editWebinarForm');
-
         } else {
             ns.webinarSearchButton = $('#webinarSearchButton');
             ns.webinarSearchInput = $('#webinarSearchInput');
+            ns.webinarCloneInput = $('#webinarCloneInput');
             ns.webinarCreateButton = $('#webinarCreateButton');
+            ns.webinarCloneButton = $('#webinarCloneButton');
             ns.webinarContent = $('#webinarContent');
         }
 
         if (operation === ns.create) {
             ns.submitCreatedDetailsButton = $('#submitCreatedDetailsButton');
+            ns.createWebinarForm = $('#createWebinarForm');
         } else if (operation === ns.edit) {
             ns.submitEditedDetailsButton = $('#submitEditedDetailsButton');
+            ns.editWebinarForm = $('#editWebinarForm');
+        } else if (operation === ns.clone) {
+            ns.cloneWebinarForm = $('#cloneWebinarForm');
+            ns.submitCloneDetailsButton = $('#submitCloneDetailsButton');
         }
-
     };
 
     ns.wireUpHandlers = function(operation) {
@@ -45,9 +49,12 @@ $(function () {
             ns.submitEditedDetailsButton.on('click', ns.submitWebinarDetails);
         } else if (operation === ns.create) {
             ns.submitCreatedDetailsButton.on('click', ns.submitNewWebinarDetails);
+        } else if (operation === ns.clone) {
+            ns.submitCloneDetailsButton.on('click', ns.submitCloneWebinarDetails);
         } else {
             ns.webinarSearchButton.on('click', ns.searchWebinar);
             ns.webinarCreateButton.on('click', ns.createWebinar);
+            ns.webinarCloneButton.on('click', ns.cloneWebinar);
         }
     };
 
@@ -97,6 +104,52 @@ $(function () {
         });
     };
 
+    ns.cloneWebinar = function (e) {
+
+        e.preventDefault();
+
+        $('#feedbackLabel').remove();
+
+        var searchString = $.trim(ns.webinarCloneInput.val());
+
+        $(this).append('<span id="crunchingSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+
+        ns.webinarContent.load('/webinar/clone/' + searchString, function (response, status, xhr) {
+
+            if (status === 'error') {
+                var statusCode = xhr['status'];
+
+                switch (statusCode) {
+                    case 404:
+                        {
+                            ns.webinarSearchButton.after('<span id="feedbackLabel">&nbsp;<span class="label label-important">' + xhr['statusText'] + '</span></span>');
+                        }
+                }
+            } else {
+                if (xhr['responseText'].toString().slice(0, 1) === '{') { // if json response, we have an error condition 
+                    $(this).empty();
+                    ns.webinarSearchButton.after('<span id="feedbackLabel">&nbsp;<span class="label label-important">' + JSON.parse(xhr['responseText'])['Msg'] + '</span></span>');
+                } else {
+                    ns.primeDomVariables(ns.clone);
+                    ns.wireUpHandlers(ns.clone);
+
+                    ns.ceuTextArea.cleditor(ns.optionsForEditors);
+                    ns.webinarDescriptionTextArea.cleditor(ns.optionsForEditors);
+                    ns.webinarLongDescriptionTextArea.cleditor(ns.optionsForEditors);
+
+                    var ceuEditor = ns.ceuTextArea.cleditor()[0];
+                    ceuEditor.disable(false);
+                    var webinarDescriptionEditor = ns.webinarDescriptionTextArea.cleditor()[0];
+                    webinarDescriptionEditor.disable(false);
+                    var webinarLongDescriptionEditor = ns.webinarLongDescriptionTextArea.cleditor()[0];
+                    webinarLongDescriptionEditor.disable(false);
+                }
+            }
+
+            $('#crunchingSpinner').remove();
+        });
+    };
+
     ns.createWebinar = function (e) {
 
         e.preventDefault();
@@ -123,7 +176,7 @@ $(function () {
                 } else {
                     ns.primeDomVariables(ns.create);
                     ns.wireUpHandlers(ns.create);
-
+                    
                     ns.ceuTextArea.cleditor(ns.optionsForEditors);
                     ns.webinarDescriptionTextArea.cleditor(ns.optionsForEditors);
                     ns.webinarLongDescriptionTextArea.cleditor(ns.optionsForEditors);
@@ -171,7 +224,7 @@ $(function () {
 
         $(this).append('<span id="crunchingSpinnerOfSubmit">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
 
-        var payload = ns.editWebinarForm.serialize();
+        var payload = ns.createWebinarForm.serialize();
 
         $.ajax({
             type: 'POST',
@@ -188,8 +241,32 @@ $(function () {
         });
     };
 
+    ns.submitCloneWebinarDetails = function (e) {
+        
+        e.preventDefault();
+
+        $(this).append('<span id="crunchingSpinnerOfSubmit">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+
+        var payload = ns.cloneWebinarForm.serialize();
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.FormPostContentType,
+            cache: false,
+            url: '/webinar/clone',
+            dataType: constants.JsonDataType,
+            data: payload,
+            beforeSend: function() {
+                //$('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Working...</span>');
+            }
+        }).done(function(data) {
+            $('#crunchingSpinnerOfSubmit').remove();
+        });
+    };
+
     ns.edit = 'edit';
     ns.create = 'create';
+    ns.clone = 'clone';
 
     ns.optionsForEditors = {
         width: 600, // width not including margins, borders or padding

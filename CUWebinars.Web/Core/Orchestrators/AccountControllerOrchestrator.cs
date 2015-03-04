@@ -218,7 +218,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                             string.Empty
                             );
 
-                    _logger.Info("Account.SignIn Post Success. Session={0}, Redirecting to: {1}", _appHelper.GetUserAuditInfo(), retUrl);
+                    _logger.Info("Account.SignIn Post Success. Redirecting to: {1},  Session={0} ", _appHelper.GetUserAuditInfo(), retUrl);
                 }
 
                 return true;
