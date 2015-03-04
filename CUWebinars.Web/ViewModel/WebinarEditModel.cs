@@ -13,7 +13,7 @@ namespace CUWebinars.Web.ViewModel
         public string DescriptionLong { get; set; }
         public string ImageUrl { get; set; }
         public string SmallImageUrl { get; set; }
-        public WebinarStatus Status { get; set; }
+        public IEnumerable<SelectListItem> Statuses { get; set; }
         public string RecordingUrl { get; set; }
         public string Title { get; set; }
         public System.DateTime Date { get; set; }

@@ -27,6 +27,7 @@ namespace CUWebinars.Web.Mapping.Configuration
                 .ForMember(webinarEditModel => webinarEditModel.SelectedPresenter, webinar => webinar.Ignore())
                 .ForMember(webinarEditModel => webinarEditModel.SelectedStatus, webinar => webinar.Ignore())
                 .ForMember(webinarEditModel => webinarEditModel.SelectedTopics, webinar => webinar.Ignore())
+                .ForMember(webinarEditModel => webinarEditModel.Statuses, webinar => webinar.Ignore())
                 .ForMember(webinarEditModel => webinarEditModel.Topics, webinar => webinar.Ignore())
                 .ForMember(webinarEditModel => webinarEditModel.RegTypeGroups, webinar => webinar.Ignore())
                 .ForMember(webinarEditModel => webinarEditModel.SelectedRegTypeGroups, webinar => webinar.Ignore())

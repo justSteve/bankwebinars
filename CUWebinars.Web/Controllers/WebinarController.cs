@@ -923,7 +923,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     _logger.ErrorException(string.Format("Clone Webinar | Session{0}", _appHelper.GetUserAuditInfo()), exception);
                 }
-                // todo: return fail JSON msg here
+                return Json(new { Result = WebUiConstants.Fail, Msg = "Server Error Logged" }, JsonRequestBehavior.AllowGet);
             }
 
             return Json(new { Result = WebUiConstants.Fail, Msg = "Enter a valid id" }, JsonRequestBehavior.AllowGet);
@@ -938,15 +938,13 @@ namespace CUWebinars.Web.Controllers
             try
             {
                 _webinarControllerOrchestrator.CreateWebinarFromViewInput(webinarEditModel);
+                return Json(new { Result = WebUiConstants.Success });
             }
             catch (DbEntityValidationException dbEx)
             {
-                foreach (var validationErrors in dbEx.EntityValidationErrors)
+                foreach (var validationError in dbEx.EntityValidationErrors.SelectMany(validationErrors => validationErrors.ValidationErrors))
                 {
-                    foreach (var validationError in validationErrors.ValidationErrors)
-                    {
-                        Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
-                    }
+                    Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
                 }
             }
             catch (Exception exception)
@@ -954,28 +952,23 @@ namespace CUWebinars.Web.Controllers
                 _logger.ErrorException(string.Format("Create Webinar | Session{0}", _appHelper.GetUserAuditInfo()), exception);
             }
 
-            // todo: return JSON results for fail and success
-            return View();
-
+            return Json(new { Result = WebUiConstants.Fail });
         }
 
         [HandleAjaxException]
         public ActionResult Create()
         {
-            var upcomingRegTypeGroups = _webinarManagementService.GetUpcomingRegTypesForWebinars();
-            var presenters = _webinarManagementService.GetAllPresenters()
-                .Select(presenter =>
-                        new SelectListItem {Text = presenter.WebUser.FullName, Value = presenter.idUser.ToString()}
-                        );
-
-            var webinarEditModel = new WebinarEditModel
+            try
             {
-                Presenters = presenters,
-                RegTypeGroups = upcomingRegTypeGroups,
-                Topics = _webinarManagementService.GetAllTopics()
-            };
+                var webinarEditModel = _webinarControllerOrchestrator.BuildEditModelForWebinarCreate();
 
-            return PartialView("Partials/_CreateWebinar", webinarEditModel);
+                return PartialView("Partials/_CreateWebinar", webinarEditModel);
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException(string.Format("Create Webinar | Session{0}", _appHelper.GetUserAuditInfo()), exception);
+                return Json(new { Result = WebUiConstants.Fail, Msg = "Server Error Logged" }, JsonRequestBehavior.AllowGet);
+            }
         }
 
 
@@ -988,14 +981,14 @@ namespace CUWebinars.Web.Controllers
             try
             {
                 _webinarControllerOrchestrator.CreateWebinarFromViewInput(webinarEditModel);
+
+                return Json(new {Result = WebUiConstants.Success});
             }
             catch (Exception exception)
             {
                 _logger.ErrorException(string.Format("Create Webinar | Session{0}", _appHelper.GetUserAuditInfo()), exception);
+                return Json(new { Result = WebUiConstants.Fail });
             }
-
-            // todo: return JSON results for fail and success
-            return View();
         }
 
 
@@ -1014,7 +1007,8 @@ namespace CUWebinars.Web.Controllers
                 {
                     _logger.ErrorException(string.Format("Edit Webinar | Session{0}", _appHelper.GetUserAuditInfo()), exception);
                 }
-                // todo: return fail JSON msg here
+
+                return Json(new { Result = WebUiConstants.Fail, Msg = "Server Error Logged" }, JsonRequestBehavior.AllowGet);
             }
             
             return Json( new { Result = WebUiConstants.Fail, Msg = "Enter a valid id"}, JsonRequestBehavior.AllowGet);
@@ -1036,9 +1030,8 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 _logger.ErrorException(string.Format("Edit Webinar | Session{0}", _appHelper.GetUserAuditInfo()), exception);
+                return Json(new { Result = WebUiConstants.Fail });
             }
-
-            return Json(new { Result = WebUiConstants.Fail });
         }
 
         public ActionResult EditWebinarFromDetails(int? id)

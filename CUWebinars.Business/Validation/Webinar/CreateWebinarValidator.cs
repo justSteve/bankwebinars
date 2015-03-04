@@ -27,7 +27,7 @@ namespace CUWebinars.Business.Validation.Webinar
             RuleFor(w => w.DateCreated).NotEmpty().WithMessage(CannotBeNullOrEmpty, "DateCreated");
 
             // numbers
-            RuleFor(w => w.idPresenter).GreaterThan(0).WithMessage(MustBeGreaterThan, 0);
+            RuleFor(w => w.idPresenter).GreaterThan(0).WithMessage(MustBeGreaterThan, "idPresenter", 0);
             RuleFor(w => w.Duration).GreaterThan(d => MinDecimal).WithMessage(MustBeGreaterThan, "Duration", MinDecimal);
         }
     }

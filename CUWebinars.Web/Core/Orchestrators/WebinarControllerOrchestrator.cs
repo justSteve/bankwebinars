@@ -197,6 +197,24 @@ namespace CUWebinars.Web.Core.Orchestrators
             _webinarManagementService.UpdateWebinar(webinar);
         }
 
+        public WebinarEditModel BuildEditModelForWebinarCreate()
+        {
+            var upcomingRegTypeGroups = _webinarManagementService.GetUpcomingRegTypesForWebinars();
+            var presenters = _webinarManagementService.GetAllPresenters()
+                .Select(presenter =>
+                    new SelectListItem { Text = presenter.WebUser.FullName, Value = presenter.idUser.ToString() }
+                );
+
+            var webinarEditModel = new WebinarEditModel
+            {
+                Presenters = presenters,
+                RegTypeGroups = upcomingRegTypeGroups,
+                Topics = _webinarManagementService.GetAllTopics()
+            };
+
+            return webinarEditModel;
+        }
+
         public WebinarEditModel BuildEditModelForWebinar(int idWebinar)
         {
             var webinar = _webinarManagementService.GetWebinar(idWebinar);
@@ -212,6 +230,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 });
             var topics = _webinarManagementService.GetAllTopics();
 
+            var statuses = (from object value in Enum.GetValues(typeof (WebinarStatus)) select new SelectListItem {Text = value.ToString(), Value = ((int) value).ToString()}).ToList();
+
             var webinarEditModel = new WebinarEditModel
             {
                 PostedTopics = new PostedTopics {TopicIds = topicIdsForWebinar.Select(topic => topic.idTopic).ToArray()},
@@ -226,10 +246,11 @@ namespace CUWebinars.Web.Core.Orchestrators
                 SelectedRegTypeGroups = regTypeGroupsForWebinars,
                 SelectedTopics = topicIdsForWebinar,
                 SelectedStatus = (int)webinar.Status,
-                Status = webinar.Status,
+                Statuses = statuses,
                 Topics = topics
             };
 
+            // copy across remaining properties not dealt with above.
             webinarEditModel = _universalMapper.Map(webinar, webinarEditModel);
 
             return webinarEditModel;

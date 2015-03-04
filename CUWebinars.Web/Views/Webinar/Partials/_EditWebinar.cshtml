@@ -35,9 +35,9 @@
             </div>
         </div>
         <div class="control-group">
-            <div class="control-label">@Html.LabelFor(m => m.Status)</div>
+            <div class="control-label">@Html.LabelFor(m => m.SelectedStatus)</div>
             <div class="controls">
-                @Html.EnumDropDownListFor(m => m.Status, "Choose the Webinar status", new { @class = "form-control" })
+                @Html.DropDownListFor(m => m.SelectedStatus, new SelectList(Model.Statuses, "Value", "Text"), "Choose a status")
             </div>
         </div>
         <div class="control-group">
@@ -49,110 +49,115 @@
         <div class="control-group">
             <div class="control-label">Additional Locations Pricing</div>
             <div class="controls">
-                @Html.TextBox("AddAdditionalLocationsPriceInput", null, new { placeholder = "Enter amount without currency sign"})<button id="AddAdditionalLocationsPriceButton" class="btn btn-default">Add</button>
+                <div class="input-append">
+                    @Html.TextBox("AddAdditionalLocationsPriceInput", null, new { placeholder = "Enter amount without currency" })
+                    <button id="AddAdditionalLocationsPriceButton" class="btn btn-default">Add</button>
+                </div>
+
                 <div style="display: inline-block" id="AdditionalLocationsPrices"></div>
             </div>
         </div>
-        <div class="control-group">
-            <div class="control-label">
-                @Html.LabelFor(m => m.ceu)
+
+            <div class="control-group">
+                <div class="control-label">
+                    @Html.LabelFor(m => m.ceu)
+                </div>
+                <div class="controls">
+                    @Html.TextAreaFor(m => m.ceu, new { cols = 40 })
+                </div>
             </div>
-            <div class="controls">
-                @Html.TextAreaFor(m => m.ceu, new { cols = 40 })
+            <div class="control-group">
+                <div class="control-label">
+                    @Html.LabelFor(m => m.idPresenter, "Presenter")
+                </div>
+                <div class="controls">
+                    @Html.DropDownListFor(m => m.SelectedPresenter, new SelectList(Model.Presenters, "Value", "Text"), "Choose a presenter")
+                </div>
             </div>
-        </div>
-        <div class="control-group">
-            <div class="control-label">
-                @Html.LabelFor(m => m.idPresenter, "Presenter")
+            <div class="control-group">
+                <div class="control-label">
+                    @Html.LabelFor(m => m.Description)
+                </div>
+                <div class="controls">
+                    @Html.TextAreaFor(m => m.Description, new { cols = 40 })
+                </div>
             </div>
-            <div class="controls">
-                @Html.DropDownListFor(m => m.SelectedPresenter, new SelectList(Model.Presenters, "Value", "Text"), "Choose a presenter")
+            <div class="control-group">
+                <div class="control-label">
+                    @Html.LabelFor(m => m.DescriptionLong, "Description Long")
+                </div>
+                <div class="controls">
+                    @Html.TextAreaFor(m => m.DescriptionLong, new { cols = 40 })
+                </div>
             </div>
-        </div>
-        <div class="control-group">
-            <div class="control-label">
-                @Html.LabelFor(m => m.Description)
+            <div class="control-group">
+                <div class="control-label">
+                    @Html.LabelFor(m => m.ImageUrl)
+                </div>
+                <div class="controls">
+                    @Html.TextBoxFor(m => m.ImageUrl, new { @class = "input input-xlarge" })
+                </div>
             </div>
-            <div class="controls">
-                @Html.TextAreaFor(m => m.Description, new { cols = 40 })
+            <div class="control-group">
+                <div class="control-label">
+                    @Html.LabelFor(m => m.LearnBody, "Learn Body")
+                </div>
+                <div class="controls">
+                    @Html.TextBoxFor(m => m.LearnBody, new { @class = "input input-xlarge" })
+                </div>
             </div>
-        </div>
-        <div class="control-group">
-            <div class="control-label">
-                @Html.LabelFor(m => m.DescriptionLong, "Description Long")
+            <div class="control-group">
+                <div class="control-label">
+                    @Html.LabelFor(m => m.LearnCaption, "Learn Caption")
+                </div>
+                <div class="controls">
+                    @Html.TextBoxFor(m => m.LearnCaption, new { @class = "input input-xlarge" })
+                </div>
             </div>
-            <div class="controls">
-                @Html.TextAreaFor(m => m.DescriptionLong, new { cols = 40 })
+            <div class="control-group">
+                <div class="control-label">
+                    @Html.LabelFor(m => m.SmallImageUrl, "Small Image Url")
+                </div>
+                <div class="controls">
+                    @Html.TextBoxFor(m => m.SmallImageUrl, new { @class = "input input-xlarge" })
+                </div>
             </div>
-        </div>
-        <div class="control-group">
-            <div class="control-label">
-                @Html.LabelFor(m => m.ImageUrl)
+            <div class="control-group">
+                <div class="control-label">
+                    @Html.LabelFor(m => m.WhoAttend, "Who Attend")
+                </div>
+                <div class="controls">
+                    @Html.TextBoxFor(m => m.WhoAttend, new { @class = "input input-xlarge" })
+                </div>
             </div>
-            <div class="controls">
-                @Html.TextBoxFor(m => m.ImageUrl, new { @class = "input input-xlarge" })
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="control-label">
-                @Html.LabelFor(m => m.LearnBody, "Learn Body")
-            </div>
-            <div class="controls">
-                @Html.TextBoxFor(m => m.LearnBody, new { @class = "input input-xlarge" })
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="control-label">
-                @Html.LabelFor(m => m.LearnCaption, "Learn Caption")
-            </div>
-            <div class="controls">
-                @Html.TextBoxFor(m => m.LearnCaption, new { @class = "input input-xlarge" })
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="control-label">
-                @Html.LabelFor(m => m.SmallImageUrl, "Small Image Url")
-            </div>
-            <div class="controls">
-                @Html.TextBoxFor(m => m.SmallImageUrl, new { @class = "input input-xlarge" })
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="control-label">
-                @Html.LabelFor(m => m.WhoAttend, "Who Attend")
-            </div>
-            <div class="controls">
-                @Html.TextBoxFor(m => m.WhoAttend, new { @class = "input input-xlarge" })
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="control-label">
-                @Html.LabelFor(m => m.Topics)
-            </div>
-            <div id="topicsPanel" class="controls">
-                @Html.CheckBoxListFor(m => m.PostedTopics.TopicIds,
+            <div class="control-group">
+                <div class="control-label">
+                    @Html.LabelFor(m => m.Topics)
+                </div>
+                <div id="topicsPanel" class="controls">
+                    @Html.CheckBoxListFor(m => m.PostedTopics.TopicIds,
                     m => m.Topics,
                     m => m.idTopic,
                     m => m.topicDesc,
                     m => m.SelectedTopics,
                     Position.Vertical)
+                </div>
             </div>
-        </div>
-        <div class="control-group">
-            <div class="control-label">
-                @Html.LabelFor(m => m.RegTypeGroups, "Options")
-            </div>
-            <div id="regTypeGroupsPanel" class="controls">
-                @Html.CheckBoxListFor(m => m.PostedRegTypeGroups.RegTypeGroupIds,
+            <div class="control-group">
+                <div class="control-label">
+                    @Html.LabelFor(m => m.RegTypeGroups, "Options")
+                </div>
+                <div id="regTypeGroupsPanel" class="controls">
+                    @Html.CheckBoxListFor(m => m.PostedRegTypeGroups.RegTypeGroupIds,
                                 m => m.RegTypeGroups,
                                       m => m.idRegTypeGroup,
                                       m => m.RegTypeGroupDesc,
                                       m => m.SelectedRegTypeGroups,
                                       Position.Vertical)
+                </div>
             </div>
-        </div>
 
-        <button id="submitEditedDetailsButton" class="btn btn-default">Submit</button>
+            <button id="submitEditedDetailsButton" class="btn btn-default">Submit</button>
     </fieldset>
     }
 

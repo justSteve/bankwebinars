@@ -32,15 +32,26 @@
             </div>
         </div>
         <div class="control-group">
-            <div class="control-label">@Html.LabelFor(m => m.Status)</div>
+            <div class="control-label">@Html.LabelFor(m => m.SelectedStatus)</div>
             <div class="controls">
-                @Html.EnumDropDownListFor(m => m.Status, "Choose the Webinar status", new { @class = "form-control" })
+                @Html.DropDownListFor(m => m.SelectedStatus, new SelectList(Model.Statuses, "Value", "Text"), "Choose a status")
             </div>
         </div>
         <div class="control-group">
             <div class="control-label">@Html.LabelFor(m => m.Duration)</div>
             <div class="controls">
                 @Html.EditorFor(m => m.Duration)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">Additional Locations Pricing</div>
+            <div class="controls">
+                <div class="input-append">
+                    @Html.TextBox("AddAdditionalLocationsPriceInput", null, new { placeholder = "Enter amount without currency" })
+                    <button id="AddAdditionalLocationsPriceButton" class="btn btn-default">Add</button>
+                </div>
+
+                <div style="display: inline-block" id="AdditionalLocationsPrices"></div>
             </div>
         </div>
         <div class="control-group">
