@@ -11,6 +11,12 @@
             </div>
 
             <div class="modal-body">
+                <style>
+                    .form-horizontal .control-group {
+                        margin-bottom: 5px;
+                    }
+                </style>
+
                 @using (Html.BeginForm("UpdateShippingDetails", "Account", null, FormMethod.Post, new { id = "userDetailsForm", @class = "form-horizontal" }))
                 {
                     @Html.AntiForgeryToken()

@@ -35,14 +35,12 @@ $(function() {
 
                 $('#main_menu ul.primary_menu').append('<li><a href="/Account/MyWebinars">My Webinars</a></li>');
             } else if (data.Result === 'TimedOut') {
-                //TODO: This branch should post back to a method that will display the order summary
-
+                
                 addPasswordContainer.height(containerHeight);
                 var formParent = addPasswordForm.parent();
                 addPasswordForm.fadeOut();
-                formParent.prepend('<div class="legendImitator">Password Confirmation Stalled</div><div><p>Your order is recorded as summarized below. You will receive email with a temparary password so that your account can be fully confirmed within our system.</p></div>');
-                
-                //$('#main_menu ul.primary_menu').append('<li><a href="/Account/MyWebinars">My Webinars</a></li>');
+                formParent.prepend('<div class="legendImitator">Order Entry Completed</div><div><p>Your order is recorded as summarized below. Watch your email for your password and links to your event\'s materials.</p></div>');
+                formParent.append('<div class="OrderSummary">Order Summary or can we execute some jquery to .Show the OrderSummary partial.</div><div><p>');
             }
         });
     });

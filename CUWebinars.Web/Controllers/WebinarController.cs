@@ -282,66 +282,8 @@ namespace CUWebinars.Web.Controllers
         public ActionResult ListByTopic(int ID)
         {
             // var webinars = WebinarFacade.Instance.SelectAllActiveWebinarsByTopic(ID);
-
             Session["TopicID"] = ID;
             ViewBag.SearchTerm = "TopicID=" + Session["TopicID"].ToString();
-            ViewBag.TopicCaption = "";
-            ViewBag.HeadLineText = "Bank";
-            if (_globalConfig.Tenant == "CUWebinars")
-            {
-                ViewBag.HeadLineText = "Credit Union";
-            }
-            switch (Session["TopicID"].ToString())
-            {
-                case "16":
-                    ViewBag.TopicCaption = "IRA ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to IRAs ";
-                    break;
-                case "15":
-                    ViewBag.TopicCaption = "Compliance ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to Compliance ";
-                    break;
-                case "17":
-                    ViewBag.TopicCaption = "Customer Service ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to Customer Service ";
-                    break;
-                case "18":
-                    ViewBag.TopicCaption = "Security ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to Security ";
-                    break;
-                case "19":
-                    ViewBag.TopicCaption = "Operations ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to Operations ";
-                    break;
-                case "20":
-                    ViewBag.TopicCaption = "Auditing ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to Auditing ";
-                    break;
-                case "21":
-                    ViewBag.TopicCaption = "Sales ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to Sales ";
-                    break;
-                case "22":
-                    ViewBag.TopicCaption = "Lending ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to Lending ";
-                    break;
-                case "23":
-                    ViewBag.TopicCaption = "Human Resources ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to Human Resources ";
-                    break;
-                case "25":
-                    ViewBag.TopicCaption = "Computer Skills ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to Computer Skills ";
-                    break;
-                case "26":
-                    ViewBag.TopicCaption = "Risk Management ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to Risk Management ";
-                    break;
-                case "27":
-                    ViewBag.TopicCaption = "Teller ";
-                    ViewBag.Title = _globalConfig.Tenant + " related to Teller ";
-                    break;
-            }
 
             var webinars = _webinarManagementService.GetByTopic(ID);
             //var dtos = new WebinarDTOAssembler().Entities2DTOs(webinars);

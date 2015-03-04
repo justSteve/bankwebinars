@@ -38,6 +38,7 @@ namespace CUWebinars.Business.Notification.Handlers
 
         public virtual void Process(OrderSubmittedEvent<T> orderSubmittedEvent)
         {
+            _logger.Info("Begins OrderSubmitted Notification");
             try
             {
                 if (orderSubmittedEvent.EventObject.UserCreatedInCart)
@@ -102,6 +103,7 @@ namespace CUWebinars.Business.Notification.Handlers
             {
                 _logger.Error(string.Format("orderSubmittedEvent (outer) ExceptionMessage: {0}", exception.Message), exception);
             }
+            _logger.Info("Ends OrderSubmitted Notification");
         }
 
         public void Handle(OrderSubmittedEvent<T> @event)

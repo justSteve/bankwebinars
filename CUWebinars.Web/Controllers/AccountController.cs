@@ -303,7 +303,7 @@ namespace CUWebinars.Web.Controllers
                         }
                 };
 
-            
+
             if (claimsIdentityOfAuthenticatedUser.HasClaim(ClaimTypes.DisplayPostEventMaterials))
             {
                 model.MyClaims =
@@ -336,8 +336,8 @@ namespace CUWebinars.Web.Controllers
 
             }
 
-                return View("MyWebinars", model);
-            
+            return View("MyWebinars", model);
+
         }
 
 
@@ -508,6 +508,71 @@ namespace CUWebinars.Web.Controllers
             }
             return PartialView("Partials/_EditNameTitle", model);
         }
+        public ActionResult EditUser(int? idUser)
+        {
+            var editModel = new EditUserInfoModel
+            {
+                StatusMessage = string.Empty
+            };
+
+            var user = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
+            var editingUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
+
+            if (idUser != null)
+            {
+                ViewBag.ReturnUrl = Url.Action(ManageActionName);
+                ViewBag.Title = WebUiConstants.ManageUser;
+                editingUser = user;
+                user = _accountControllerOrchestrator.GetWebUserById(idUser.Value);
+            }
+            if (user == null)
+            {
+                return View();
+            }
+
+            _logger.Info(string.Format("{0} is editing {1}", editingUser.email, user.email));
+            var addresses = user.Addresses.ToArray();
+            var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
+            var shippingAddress = addresses.First(a => a.AddressType == WebUiConstants.ShippingAddress);
+
+            editModel.EditFields = new EditUserModel
+            {
+                BillingAddress = new AddressModel
+                {
+                    Name = user.FirstName + ' ' + user.LastName,
+                    City = billingAddress.City,
+                    Country = billingAddress.Country,
+                    StreetAddress = billingAddress.StreetAddress,
+                    StreetAddress2 = billingAddress.StreetAddress2,
+                    State = billingAddress.State,
+                    Zip = billingAddress.Zip,
+                    Phone = billingAddress.Phone,
+                    TypeOfAddress = AddressType.Billing
+                },
+                ShippingAddress = new AddressModel
+                {
+                    City = shippingAddress.City,
+                    Country = shippingAddress.Country,
+                    StreetAddress = shippingAddress.StreetAddress,
+                    StreetAddress2 = shippingAddress.StreetAddress2,
+                    State = shippingAddress.State,
+                    Zip = shippingAddress.Zip,
+                    Phone = shippingAddress.Phone,
+                    Name = shippingAddress.Name,
+                    TypeOfAddress = AddressType.Shipping
+                },
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Institution = user.Institution.InstitutionName,
+                Email = user.email,
+                Title = user.Title,
+                AccountDetailsTitle = WebUiConstants.ManageUser
+            };
+
+            return View(editModel);
+            //return null;
+        }
+
 
         //[ClaimsAuthorize(Roles = "CUWebinarsAbsoluteAdmin")]
         public ActionResult Manage(ManageMessageId? message)
@@ -567,6 +632,39 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.HttpPost]
         [ValidateAntiForgeryToken]
         [System.Web.Mvc.AllowAnonymous]
+        public ActionResult EditUser(EditUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _accountControllerOrchestrator.EditUser(model);
+                    return Json(new { Result = WebUiConstants.Success });
+                }
+                catch (DbEntityValidationException dbEx)
+                {
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
+                        }
+                    }
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException("In EditUser Action: ", exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                    throw;
+                }
+            }
+            return this.ModelStateJson(ModelState);
+        }
+
+
+        [System.Web.Mvc.HttpPost]
+        [ValidateAntiForgeryToken]
+        [System.Web.Mvc.AllowAnonymous]
         public ActionResult EditContactInfo(EditContactInfoModel model)
         {
             if (ModelState.IsValid)
@@ -594,8 +692,6 @@ namespace CUWebinars.Web.Controllers
                 }
             }
             return this.ModelStateJson(ModelState);
-
-
         }
 
 
@@ -1027,6 +1123,8 @@ namespace CUWebinars.Web.Controllers
             {
                 if (_accountControllerOrchestrator.AddPasswordForCartCreatedUser(model))
                     return Json(new { Result = WebUiConstants.Success });
+                
+                
                 return Json(new { Result = WebUiConstants.TimedOut });
             }
 

@@ -10,6 +10,7 @@ namespace CUWebinars.Web.Core
     public class GlobalConfig
     {
 
+        public string CcPaymentProcessingUrlKey { get; private set; }
         public string CreateUserQueueName { get; private set; }
         public string EmailSendingMode { get; private set; }
         public string EmailSignature { get; private set; }
@@ -51,6 +52,7 @@ namespace CUWebinars.Web.Core
             {
                 NameValueCollection ApplicationSettingsSection = WebConfigurationManager.AppSettings;
 
+                UniqueInstance.CcPaymentProcessingUrlKey = ApplicationSettingsSection["CcPaymentProcessingUrlKey"];
                 UniqueInstance.CreateUserQueueName = ApplicationSettingsSection["CreateUserQueueName"];
                 UniqueInstance.EmailSendingMode = ApplicationSettingsSection["EmailSendingMode"];
                 UniqueInstance.GhostRequestRetryLimit = int.Parse(ApplicationSettingsSection["GhostRequestRetryLimit"]);

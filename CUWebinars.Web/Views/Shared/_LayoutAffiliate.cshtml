@@ -1,32 +1,30 @@
 ﻿@using System.Text
+@using CUWebinars.Web.Core
 
 @{
     var PageStyleType = ViewBag.PageStyleType;
     IStateService stateService = new StateService();
 
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+
+
     var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
-
-    var currentUserID = 0;
-    var currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
-    //var currentUser = CurrentSession.Instance.CurrentUser;
-
-    //if (currentUser != null)
-    //{
-    //    currentUserID = currentUser.ID;
-    //    currentUserAffiliateFullName = currentUser.Affiliate.FullName;
-    //}
+    string currentUserAffiliateFullName = string.Empty;
+    if (currentAffiliate != null)
+    {
+        currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
+    }
+    else
+    {
+        CUWebinars.Business.Core.Tracing.Tracer.Warning("CurrentAffiliate should always have a value. Session | {0}", new AppHelper(Request).GetUserAuditInfo());
+        Debug.Assert(currentAffiliate != null, "CurrentAffiliate should always have a value.");
+    }
 
     var subdomainBranding = stateService.GetValue<string>("SubdomainBranding");
     var firstPage = stateService.GetValue<string>("FirstPage");
     var sessionID = stateService.GetValue<string>(WebUiConstants.SessionId);
     var affiliateSessionSource = stateService.GetValue<string>("AffiliateSessionSource");
 
-
-    //var initialQueryString = stateService.GetValue<string>("InitialQueryString");
-    //TODO: Why's this?
-    // System.InvalidCastException was unhandled by user code
-    //HResult=-2147467262
-    //Message=Unable to cast object of type 'System.Web.HttpValueCollection' to type 'System.String'.
 
 }
 <!doctype html>
@@ -116,24 +114,26 @@
         <!--this is the login for the user-->
         @Html.Partial("_LoginPartial")
         close user nav
-        <div class="search-wrapper">
-                <form class="search" method="post" action="/home/search">
-                    <div id="search-trigger">Search:</div>
-                    <input id="search-box" type="text" placeholder="search + enter">
-                </form>
-            </div>
-        <div class="phone"><a href="tel:8008310678" class="tele">800.831.0678</a></div>
+        <div id="search-wrapper" class="search-wrapper">
+            <form class="search" method="post" action="/webinar/search">
+                <ul class="notifications" id="userNotifications">
+                    <li><i class="icon-search"></i></li>
+                </ul>
+                <input id="search-box" name="searchTerm" type="text" placeholder="search + enter">
+            </form>
+        </div>
+
+        <div class="phone">@currentAffiliate.ttsDomain</div>
         <ul class="social">
             @*<li><a class="socicon small rss" href="#" data-placement="bottom" title="Subscribe to our RSS feed"></a></li>*@
             <li><a class="socicon small facebook" href="http://www.facebook.com/home.php#!/pages/Total-Training-Solutions/300546163412" target="_blank" data-placement="bottom" title="Follow us on Facebook"></a></li>
             <li><a class="socicon small twitterbird" href="http://twitter.com/#!/ttstrain" target="_blank" data-placement="bottom" title="Follow us on Twitter"></a></li>
             <li><a class="socicon small linkedin" href="https://www.linkedin.com/company/bankwebinars.com" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
         </ul>
-
     </section>
     <!-- begin .header-->
     <header class="header  clearfix" style="margin-bottom: 0px; padding-bottom: 0; ">
-        <img src="http://ttsmedia.ttstrain.com/images/BankWebinars/print-logo.png" class="print logo" alt="CUWebinars is a production of TTSTrain.com" />
+        <img src="http://ttsmedia.ttstrain.com/images/BankWebinars/print-logo.png" class="print logo" alt="@globalConfig.Tenant is a production of TTSTrain.com" />
         <div class="container">
 
             <!-- begin #main_menu -->
@@ -141,7 +141,7 @@
                 <ul class="primary_menu">
                     @*<li><a href="/home">Home</a></li>*@
 
-                    @*<li><a href="webinar/calendar">calendar</a></li>*@
+                    <li><a href="webinar/calendar">calendar</a></li>
                     <li class="parent">
                         <a href="javascript:void(0)">topics<i></i></a>
                         <ul>
@@ -166,25 +166,16 @@
                         <a href="javascript:void(0)">OnDemand Webinars<i></i></a>
                         <ul>@Html.Action("GetRecordedWebinarMenu", "Navigation")</ul>
                     </li>
-                    <li class="parent">
-                        <a href="javascript:void(0)">About Us<i></i></a>
-                        <ul>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/WhatIsAWebinar">What Is A Webinar?</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/CommonQuestions">Commonly Asked Questions</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/DetailedConnectionInstructions">Connecting to Your Webinar</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/contactus">Contact Us</a></li>
-                        </ul>
-                    </li>
 
                     @if (Request.IsAuthenticated)
                     {
-                        <li><a href="/Account/MyWebinars">My Webinars</a></li>
+                        <li><a href="/Account/MyOrders">All Orders</a></li>
                     }
                 </ul>
             </nav>
             <!-- close / #main_menu -->
             <!-- begin #logo -->
-            <div id="logo" style='background:  url("http://ttsmedia.ttstrain.com/images/logoCU.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0)'> <a href="/Home"><img alt="" src="http://ttsmedia.ttstrain.com/images/BankWebinars/trans.gif" /><em> Webinars</em><!--effing ie7 support--></a> </div>
+            <div id="logo" style='background:  url("@currentAffiliate.Logo") no-repeat scroll 0 0 rgba(0, 0, 0, 0)'> <a href="/Home"><img alt="" src="http://ttsmedia.ttstrain.com/images/BankWebinars/trans.gif" /><em> Webinars</em><!--effing ie7 support--></a> </div>
             <!-- end #logo -->
             `
         </div>
