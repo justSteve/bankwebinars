@@ -25,6 +25,7 @@ namespace CUWebinars.Business.Models
 
         public DbSet<Address> Addresses { get; set; }
         public DbSet<AdditionalLocation> AdditionalLocation { get; set; }
+        public DbSet<AdditionalLocationsLookupPrice> AdditionalLocationsLookupPrices { get; set; }
         public DbSet<Affiliate> Affiliates { get; set; }
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Institution> Institutions { get; set; }
@@ -46,6 +47,7 @@ namespace CUWebinars.Business.Models
         {
             modelBuilder.Configurations.Add(new AddressMap());
             modelBuilder.Configurations.Add(new AdditionalLocationMap());
+            modelBuilder.Configurations.Add(new AdditionalLocationsLookupPriceMap());
             modelBuilder.Configurations.Add(new AffiliateMap());
             //modelBuilder.Configurations.Add(new GTWebinarMap());
             modelBuilder.Configurations.Add(new DiscountMap());

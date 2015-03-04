@@ -25,6 +25,7 @@ namespace CUWebinars.Web.ViewModel
         public System.DateTime DateCreated { get; set; }
         public System.DateTime DateChanged { get; set; }
         public IEnumerable<SelectListItem> Presenters { get; set; }
+        public IEnumerable<string> AdditionalLocationsPrices { get; set; }
         public int SelectedPresenter { get; set; }
         public int SelectedStatus { get; set; }
         public PostedTopics PostedTopics { get; set; }

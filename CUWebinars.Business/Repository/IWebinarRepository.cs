@@ -8,6 +8,7 @@ namespace CUWebinars.Business.Repository
     public interface IWebinarRepository : IDisposable
     {
         void Add(Webinar webinar);
+        void AddAdditionalLocationsLookupPrices(IEnumerable<AdditionalLocationsLookupPrice> additionalLocationsLookupPrices);
         void Delete(Webinar webinar);
         void MarkForDeletion(object domainObject);
         Webinar FindById(int id);

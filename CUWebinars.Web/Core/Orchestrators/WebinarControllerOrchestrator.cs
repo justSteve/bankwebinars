@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,10 +10,12 @@ using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Ninject.Extensions.Logging;
+using WebGrease.Css.Extensions;
 
 namespace CUWebinars.Web.Core.Orchestrators
 {
@@ -26,6 +29,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         private readonly ILogger _logger;
         private readonly IStateService _stateService;
         private readonly IAppHelper _appHelper;
+        private readonly IUniversalMapper _universalMapper;
 
         public WebinarControllerOrchestrator(
             IMembershipService membershipService,
@@ -33,7 +37,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             IWebinarManagementService webinarManagementService,
             ILogger logger,
             IStateService stateService,
-            IAppHelper appHelper)
+            IAppHelper appHelper,
+            IUniversalMapper universalMapper)
         {
             _membershipService = membershipService;
             _orderManagementService = orderManagementService;
@@ -41,6 +46,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             _logger = logger;
             _stateService = stateService;
             _appHelper = appHelper;
+            _universalMapper = universalMapper;
         }
           
         public Webinar GetWebinar(int idWebinar)
@@ -191,7 +197,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             _webinarManagementService.UpdateWebinar(webinar);
         }
 
-        public WebinarEditModel BuildEditModelForWebinarToBeCloned(int idWebinar)
+        public WebinarEditModel BuildEditModelForWebinar(int idWebinar)
         {
             var webinar = _webinarManagementService.GetWebinar(idWebinar);
 
@@ -208,31 +214,23 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             var webinarEditModel = new WebinarEditModel
             {
-                ceu = webinar.ceu,
-                Date = webinar.Date,
-                DateCreated = DateTime.Now,
-                DateChanged = DateTime.Now,
-                Description = webinar.Description,
-                DescriptionLong = webinar.DescriptionLong,
-                Duration = webinar.Duration,
-                idPresenter = webinar.idPresenter,
-                ImageUrl = webinar.ImageUrl,
-                LearnBody = webinar.LearnBody,
-                LearnCaption = webinar.LearnCaption,
-                SelectedPresenter = webinar.idPresenter,
-                SelectedStatus = (int)webinar.Status,
-                Title = webinar.Title,
-                WhoAttend = webinar.WhoAttend,
-                
-                PostedTopics = new PostedTopics { TopicIds = topicIdsForWebinar.Select(topic => topic.idTopic).ToArray() },
-                PostedRegTypeGroups = new PostedRegTypeGroups { RegTypeGroupIds = regTypeGroupsForWebinars.Select(r => r.idRegTypeGroup).ToArray() },
+                PostedTopics = new PostedTopics {TopicIds = topicIdsForWebinar.Select(topic => topic.idTopic).ToArray()},
+                PostedRegTypeGroups =
+                    new PostedRegTypeGroups
+                    {
+                        RegTypeGroupIds = regTypeGroupsForWebinars.Select(r => r.idRegTypeGroup).ToArray()
+                    },
                 Presenters = presenters,
                 RegTypeGroups = upcomingRegTypeGroups,
+                SelectedPresenter = webinar.idPresenter,
                 SelectedRegTypeGroups = regTypeGroupsForWebinars,
                 SelectedTopics = topicIdsForWebinar,
+                SelectedStatus = (int)webinar.Status,
                 Status = webinar.Status,
                 Topics = topics
             };
+
+            webinarEditModel = _universalMapper.Map(webinar, webinarEditModel);
 
             return webinarEditModel;
         }
@@ -302,7 +300,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             webinar.ImageUrl = webinarEditModel.ImageUrl;
             webinar.SmallImageUrl= webinarEditModel.SmallImageUrl;
             webinar.WhoAttend = webinarEditModel.WhoAttend;
-
+            
             var existingRegTypeGroupIds = webinar.RegTypesGroupsXref.Where(r => r.idWebinar == webinar.idWebinar).Select(r => r.idRegTypeGroup).ToArray();
 
             foreach (var regTypeGroupId in webinarEditModel.PostedRegTypeGroups.RegTypeGroupIds.Where(regTypeGroupId => !existingRegTypeGroupIds.Contains(regTypeGroupId)))
@@ -327,6 +325,18 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _webinarManagementService.DeleteWebinarTopicXref(webinar, exisingTopicId);
             }
 
+            IList<AdditionalLocationsLookupPrice> additionalLocationsLookupPrices = new List<AdditionalLocationsLookupPrice>();
+
+            if (webinarEditModel.AdditionalLocationsPrices.Any())
+            {
+                webinarEditModel.AdditionalLocationsPrices.ForEach(newAdditionalLocationLookupPrice => additionalLocationsLookupPrices.Add(new AdditionalLocationsLookupPrice
+                {
+                    idWebinar = webinar.idWebinar,
+                    Cost = decimal.Parse(newAdditionalLocationLookupPrice)
+                }));
+            }
+
+            _webinarManagementService.AddAdditionalLocationsLookupPrices(additionalLocationsLookupPrices);
             _webinarManagementService.UpdateWebinar(webinar);
         }
     }

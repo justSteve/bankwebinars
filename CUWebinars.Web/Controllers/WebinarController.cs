@@ -971,7 +971,9 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
-                    var webinarEditModel =_webinarControllerOrchestrator.BuildEditModelForWebinarToBeCloned(id.Value);
+                    var webinarEditModel =_webinarControllerOrchestrator.BuildEditModelForWebinar(id.Value);
+
+                    webinarEditModel.DateChanged = webinarEditModel.DateCreated = DateTime.Now;
 
                     return PartialView("Partials/_CloneWebinar", webinarEditModel);
                 }
@@ -1062,32 +1064,7 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
-                    var topicIdsForWebinar = _webinarManagementService.GetTopicsPerWebinar(id.Value).ToList();
-                    var upcomingRegTypeGroups = _webinarManagementService.GetUpcomingRegTypesForWebinars();
-                    var regTypeGroupsForWebinars = _webinarManagementService.GetRegTypeGroupsForWebinars(id.Value).ToList();
-
-                    Webinar webinar = _webinarManagementService.GetWebinar(id.Value);
-
-                    if (webinar == null)
-                    {
-                        return HttpNotFound();
-                    }
-
-                    var webinarEditModel = new WebinarEditModel
-                    {
-                        PostedTopics = new PostedTopics { TopicIds = topicIdsForWebinar.Select(topic => topic.idTopic).ToArray() },
-                        PostedRegTypeGroups = new PostedRegTypeGroups { RegTypeGroupIds = regTypeGroupsForWebinars.Select(r => r.idRegTypeGroup).ToArray()},
-                        Presenters = _webinarManagementService.GetAllPresenters()
-                            .Select(presenter => new SelectListItem { Text = presenter.WebUser.FullName, Value = presenter.idUser.ToString()}),
-                        RegTypeGroups = upcomingRegTypeGroups,
-                        SelectedPresenter = webinar.idPresenter,
-                        SelectedRegTypeGroups = regTypeGroupsForWebinars,
-                        SelectedTopics = topicIdsForWebinar,
-                        Status = webinar.Status,
-                        Topics = _webinarManagementService.GetAllTopics()
-                    };
-
-                    webinarEditModel = _universalMapper.Map(webinar, webinarEditModel);
+                    var webinarEditModel = _webinarControllerOrchestrator.BuildEditModelForWebinar(id.Value);
 
                     return PartialView("Partials/_EditWebinar", webinarEditModel);
                 }
@@ -1126,7 +1103,7 @@ namespace CUWebinars.Web.Controllers
         {
             if (id.HasValue)
             {
-                var webinarEditModel = _webinarControllerOrchestrator.BuildEditModelForWebinarToBeCloned(id.Value);
+                var webinarEditModel = _webinarControllerOrchestrator.BuildEditModelForWebinar(id.Value);
 
                 return View(webinarEditModel);
             }

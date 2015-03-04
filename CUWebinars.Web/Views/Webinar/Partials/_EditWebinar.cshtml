@@ -1,4 +1,5 @@
-﻿@using MvcCheckBoxList.Model
+﻿@using System.Web.UI.WebControls
+@using MvcCheckBoxList.Model
 @model WebinarEditModel
            
 <div class="span12">
@@ -7,7 +8,7 @@
         @Html.AntiForgeryToken()
 
         @Html.HiddenFor(m => m.idWebinar)
-        
+
     <fieldset>
         <legend>Edit Webinar Details</legend>
 
@@ -43,6 +44,13 @@
             <div class="control-label">@Html.LabelFor(m => m.Duration)</div>
             <div class="controls">
                 @Html.EditorFor(m => m.Duration)
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">Additional Locations Pricing</div>
+            <div class="controls">
+                @Html.TextBox("AddAdditionalLocationsPriceInput", null, new { placeholder = "Enter amount without currency sign"})<button id="AddAdditionalLocationsPriceButton" class="btn btn-default">Add</button>
+                <div style="display: inline-block" id="AdditionalLocationsPrices"></div>
             </div>
         </div>
         <div class="control-group">

@@ -68,6 +68,12 @@ namespace CUWebinars.Business.Services
             return _webinarRepository.GetAllTopics();
         }
 
+        public void AddAdditionalLocationsLookupPrices(IEnumerable<AdditionalLocationsLookupPrice> additionalLocationsLookupPrices)
+        {
+            // NOTE: db.SaveChanges is not called in the following method. 
+            _webinarRepository.AddAdditionalLocationsLookupPrices(additionalLocationsLookupPrices);
+        }
+
         public void AddWebinar(Webinar webinar)
         {
             _createWebinarValidator.Validate(webinar);

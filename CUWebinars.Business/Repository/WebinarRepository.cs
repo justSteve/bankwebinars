@@ -1,4 +1,5 @@
 ﻿using System.Configuration;
+using System.Diagnostics;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using System.Collections.Generic;
@@ -20,6 +21,11 @@ namespace CUWebinars.Business.Repository
             : base(context)
         {
 
+        }
+
+        public void AddAdditionalLocationsLookupPrices(IEnumerable<AdditionalLocationsLookupPrice> additionalLocationsLookupPrices)
+        {
+            ((TTSWebinarsContext) db).AdditionalLocationsLookupPrices.AddRange(additionalLocationsLookupPrices);
         }
 
         public void Delete(Webinar webinar)

@@ -23,6 +23,7 @@ namespace CUWebinars.Web.Mapping.Configuration
             Profile.CreateMap<Webinar, WebinarEditModel>()
                 .ForMember(webinarEditModel => webinarEditModel.PostedTopics, webinar => webinar.Ignore())
                 .ForMember(webinarEditModel => webinarEditModel.Presenters, webinar => webinar.Ignore())
+                .ForMember(webinarEditModel => webinarEditModel.AdditionalLocationsPrices, webinar => webinar.Ignore())
                 .ForMember(webinarEditModel => webinarEditModel.SelectedPresenter, webinar => webinar.Ignore())
                 .ForMember(webinarEditModel => webinarEditModel.SelectedStatus, webinar => webinar.Ignore())
                 .ForMember(webinarEditModel => webinarEditModel.SelectedTopics, webinar => webinar.Ignore())

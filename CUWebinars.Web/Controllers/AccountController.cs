@@ -1090,7 +1090,8 @@ namespace CUWebinars.Web.Controllers
                 resultObject.Add("State", institution.State);
                 resultObject.Add("Zip", institution.Zip);
 
-                _logger.Info("CheckEmailResult: " + resultObject);
+                _logger.Info("CheckEmail: institution was found. idInstitution={0}", institution.idInstitution);
+
                 return Json(resultObject);
             }
             catch (Exception exception)

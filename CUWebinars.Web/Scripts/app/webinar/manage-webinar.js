@@ -22,6 +22,9 @@ $(function () {
             ns.ceuTextArea = $('#ceu');
             ns.webinarDescriptionTextArea = $('#Description');
             ns.webinarLongDescriptionTextArea = $('#DescriptionLong');
+            ns.addAdditionalLocationsPriceButton = $('#AddAdditionalLocationsPriceButton');
+            ns.addAdditionalLocationsPriceInput = $('#AddAdditionalLocationsPriceInput');
+            ns.additionalLocationsPrices = $('#AdditionalLocationsPrices');
         } else {
             ns.webinarSearchButton = $('#webinarSearchButton');
             ns.webinarSearchInput = $('#webinarSearchInput');
@@ -55,6 +58,10 @@ $(function () {
             ns.webinarSearchButton.on('click', ns.searchWebinar);
             ns.webinarCreateButton.on('click', ns.createWebinar);
             ns.webinarCloneButton.on('click', ns.cloneWebinar);
+        }
+
+        if (operation === ns.edit || operation === ns.clone || operation === ns.create) {
+            ns.addAdditionalLocationsPriceButton.on('click', ns.popAdditionalLocationsPrice);
         }
     };
 
@@ -203,13 +210,21 @@ $(function () {
 
         var payload = ns.editWebinarForm.serialize();
 
+        //  process additional locations
+        var addedPayloadData = '';
+        var addLocPrices = ns.additionalLocationsPrices.find('div');
+
+        $.each(addLocPrices, function (idx, val) {
+            addedPayloadData += '&AdditionalLocationsPrices[' + idx + ']=' + val.innerText;
+        });
+
         $.ajax({
             type: 'POST',
             contentType: constants.FormPostContentType,
             cache: false,
             url: '/webinar/edit',
             dataType: constants.JsonDataType,
-            data: payload,
+            data: payload += addedPayloadData,
             beforeSend: function() {
                 //$('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Working...</span>');
             }
@@ -264,9 +279,34 @@ $(function () {
         });
     };
 
+    ns.popAdditionalLocationsPrice = function(e) {
+
+        e.preventDefault();
+
+        var priceToAdd = ns.addAdditionalLocationsPriceInput.val();
+        ns.addAdditionalLocationsPriceInput.val('');
+
+        if (ns.nrOfAdditionalLocationsPrices < 1) {
+            ns.additionalLocationsPrices.prepend('<button id="clearAddLocPrices" class="btn btn-default">Clear</button>');
+            $('#clearAddLocPrices').on('click', function (e) {
+                e.preventDefault();
+
+                $(this).off('click');
+
+                ns.additionalLocationsPrices.empty();
+                ns.nrOfAdditionalLocationsPrices = 0;
+            });
+        }
+
+        ns.additionalLocationsPrices.prepend('<div id="' + ns.nrOfAdditionalLocationsPrices + '_addLocPrice" style="display:inline-block;margin:0px 5px">' + priceToAdd + '</div>');
+
+        ns.nrOfAdditionalLocationsPrices++;
+    };
+
     ns.edit = 'edit';
     ns.create = 'create';
     ns.clone = 'clone';
+    ns.nrOfAdditionalLocationsPrices = 0;
 
     ns.optionsForEditors = {
         width: 600, // width not including margins, borders or padding
