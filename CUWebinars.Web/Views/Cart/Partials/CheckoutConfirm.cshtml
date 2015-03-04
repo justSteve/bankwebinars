@@ -10,14 +10,14 @@
         var orderID = 0;
         if (Model.OrderRowExists && Model.OrderRowHasId)
         {
-            <script language="javascript" type="text/javascript">
+            @*<script language="javascript" type="text/javascript">
                 function payByCC(id) {
                     //window.showModalDialog("@(System.Configuration.ConfigurationManager.AppSettings[AppConst.CC_PAYMENT_PROCESSING_URL_KEY])/@Model.OrderRow.Order.ID", null, "dialogwidth: 900px; dialogheight: 370px; center: yes; resizable: yes");
                     window.showModalDialog("/home/PayCC/"+id, null, "dialogwidth: 900px; dialogheight: 370px; center: yes; resizable: yes");
                     $('#step2_Submit2Sage' + id).submit();
                     window.location.reload();
                 }
-            </script>
+            </script>*@
             if (Model.OrderStatus == OrderStatus.InProcess)
             {
                 <b>Please review this order summary and and choose billing method.</b>
