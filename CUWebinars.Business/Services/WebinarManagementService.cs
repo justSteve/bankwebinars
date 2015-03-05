@@ -68,10 +68,10 @@ namespace CUWebinars.Business.Services
             return _webinarRepository.GetAllTopics();
         }
 
-        public void AddAdditionalLocationsLookupPrices(IEnumerable<AdditionalLocationsLookupPrice> additionalLocationsLookupPrices)
+        public void AddAdditionalLocationsLookupPrice(AdditionalLocationsLookupPrice additionalLocationsLookupPrice)
         {
             // NOTE: db.SaveChanges is not called in the following method. 
-            _webinarRepository.AddAdditionalLocationsLookupPrices(additionalLocationsLookupPrices);
+            _webinarRepository.AddAdditionalLocationsLookupPrice(additionalLocationsLookupPrice);
         }
 
         public void AddWebinar(Webinar webinar)
@@ -214,12 +214,20 @@ namespace CUWebinars.Business.Services
 
         }
 
-
+        public int SaveChanges()
+        {
+            return _webinarRepository.SaveChanges();
+        }
 
 
         public IDictionary<RegType, bool> FindRegTypesByWebinarId(int webinarId)
         {
             return _regTypeRepository.FindRegTypesByWebinarId(webinarId, false);
+        }
+
+        public IEnumerable<AdditionalLocationsLookupPrice> GetAdditionalLocationsLookupPricesForWebinar(int idWebinar)
+        {
+            return _webinarRepository.GetAdditionalLocationsLookupPricesForWebinar(idWebinar);
         }
 
         public IEnumerable<IEvent> GetEvents()

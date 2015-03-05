@@ -36,22 +36,9 @@
                 </div>
             </div>
             <div class="control-group">
-                <div class="control-label">Additional Locations Pricing</div>
+                <div class="control-label">@Html.LabelFor(m => m.AdditionalLocationsPrice)</div>
                 <div class="controls">
-                    <div class="input-append">
-                        @Html.TextBox("AddAdditionalLocationsPriceInput", null, new { placeholder = "Enter amount without currency" })
-                        <button id="AddAdditionalLocationsPriceButton" class="btn btn-default">Add</button>
-                    </div>
-
-                    <div style="display: inline-block" id="AdditionalLocationsPrices"></div>
-                </div>
-            </div>
-            <div class="control-group">
-                <div class="control-label">
-                    @Html.LabelFor(m => m.ceu)
-                </div>
-                <div class="controls">
-                    @Html.TextAreaFor(m => m.ceu, new { cols = 40 })
+                    @Html.EditorFor(m => m.AdditionalLocationsPrice)
                 </div>
             </div>
             <div class="control-group">
@@ -60,6 +47,14 @@
                 </div>
                 <div class="controls">
                     @Html.DropDownListFor(m => m.SelectedPresenter, new SelectList(Model.Presenters, "Value", "Text"), "Choose a presenter")
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="control-label">
+                    @Html.LabelFor(m => m.ceu)
+                </div>
+                <div class="controls">
+                    @Html.TextAreaFor(m => m.ceu, new { cols = 40 })
                 </div>
             </div>
             <div class="control-group">
@@ -153,8 +148,8 @@
                 </div>
             </div>
 
-            @*<button id="submitCreatedDetailsButton" class="btn btn-default">Submit</button>*@
-            <input id="submitCreatedDetailsButton" class="btn btn-default" value="Submit" type="submit" />
+            <button id="submitCreatedDetailsButton" class="btn btn-default">Submit</button>
+            
         </fieldset>
     }
 

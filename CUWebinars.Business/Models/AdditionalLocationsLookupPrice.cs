@@ -6,7 +6,5 @@ namespace CUWebinars.Business.Models
         public decimal Cost { get; set; }
         public int id { get; set; }
         public int idWebinar { get; set; }
-
-        public Webinar Webinar { get; set; }
     }
 }

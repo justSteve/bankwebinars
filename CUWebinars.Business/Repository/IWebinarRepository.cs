@@ -8,13 +8,14 @@ namespace CUWebinars.Business.Repository
     public interface IWebinarRepository : IDisposable
     {
         void Add(Webinar webinar);
-        void AddAdditionalLocationsLookupPrices(IEnumerable<AdditionalLocationsLookupPrice> additionalLocationsLookupPrices);
+        void AddAdditionalLocationsLookupPrice(AdditionalLocationsLookupPrice additionalLocationsLookupPrice);
         void Delete(Webinar webinar);
         void MarkForDeletion(object domainObject);
         Webinar FindById(int id);
         Webinar FindByIdLoaded(int id);
         IEnumerable<Webinar> FindByPresenterLastName(string lastName);
         IEnumerable<Webinar> FindByDescription(string topicDescription);
+        IQueryable<AdditionalLocationsLookupPrice> GetAdditionalLocationsLookupPricesForWebinar(int idWebinar);
         IQueryable<Webinar> GetUpcoming();
         IQueryable<Webinar> GetRecorded();
         IQueryable<Webinar> GetAllActive();
@@ -33,6 +34,7 @@ namespace CUWebinars.Business.Repository
         IQueryable<WebinarFile> GetWebinarFilesPerWebinar(int idWebinar);
         WebinarTopicXref GetWebinarTopicXref(int idTopic, int idWebinar);
         int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar);
+        int SaveChanges();
         void SynchToLegacy();
         int GetRegTypeByACS(string registrationType, int idWebinar);
     }

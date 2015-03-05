@@ -207,7 +207,7 @@ $(function () {
 
         e.preventDefault();
 
-        $(this).append('<span id="crunchingSpinnerOfSubmit">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+        ns.submitEditedDetailsButton.append('<span id="crunchingSpinnerOfSubmit">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
 
         var payload = ns.editWebinarForm.serialize();
 
@@ -239,7 +239,7 @@ $(function () {
         
         e.preventDefault();
 
-        $(this).append('<span id="crunchingSpinnerOfSubmit">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+        ns.submitCreatedDetailsButton.append('<span id="crunchingSpinnerOfSubmit">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
 
         var payload = ns.createWebinarForm.serialize();
 
@@ -272,7 +272,7 @@ $(function () {
         
         e.preventDefault();
 
-        $(this).append('<span id="crunchingSpinnerOfSubmit">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+        ns.submitCloneDetailsButton.append('<span id="crunchingSpinnerOfSubmit">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
 
         var payload = ns.cloneWebinarForm.serialize();
 

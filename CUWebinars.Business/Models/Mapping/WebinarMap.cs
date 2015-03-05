@@ -1,4 +1,5 @@
 
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.ModelConfiguration;
 
 namespace CUWebinars.Business.Models.Mapping
@@ -9,6 +10,7 @@ namespace CUWebinars.Business.Models.Mapping
         {
             // Primary Key
             HasKey(t => t.idWebinar);
+            Property(a => a.idWebinar).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
 
             // Properties
             Property(t => t.Description)
