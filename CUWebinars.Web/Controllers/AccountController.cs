@@ -256,13 +256,13 @@ namespace CUWebinars.Web.Controllers
 
 
         [System.Web.Mvc.AllowAnonymous]
-        public ActionResult OrderComplete(string id)
+        public ActionResult OrderComplete(string email, int? idOrder)
         {
             // HACK: parameter is named id to match the Default route. It will actually be an email address and not an id.
-            if (ModelState.IsValid)
+            if (!string.IsNullOrWhiteSpace(email) && idOrder.HasValue)
             {
                 var createUserConfirmedViewModel =
-                    _accountControllerOrchestrator.GetCreateUserConfirmedViewModel(id, true);
+                    _accountControllerOrchestrator.GetCreateUserConfirmedViewModel(email, idOrder.Value, true);
 
                 return View("AddPasswordForCartCreatedUser", createUserConfirmedViewModel);
             }

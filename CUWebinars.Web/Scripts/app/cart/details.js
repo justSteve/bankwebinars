@@ -51,7 +51,8 @@ $(function () {
 
                     $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
 
-                    $('#ConfirmModal').modal('show');
+                    var utilities = new Common.Utilities();
+                    utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
 
                 } else {
 
@@ -71,11 +72,6 @@ $(function () {
                 $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
             });
 
-            $('#ConfirmModal').on('hidden', function (e) {
-                var utilities = new Common.Utilities();
-                console.log('/webinar/details/' + cartStateManager.getWebinarId());
-                utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
-            });
         });
 
         var cancelOrderForm = cartStateManager.getCancelOrderForm();

@@ -454,7 +454,7 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
                                 } else {
 
                                     $('#ConfirmRegistrationBillMe').on('click', function(e) {
-                                        completeOrder(userId, orderRowId, webinarId);
+                                        completeOrder(userId, orderRowId, webinarId, orderId);
                                     });
 
                                     $('#Canceller').on('click', function(e) {
@@ -716,7 +716,7 @@ registerDuringCheckout.searchInstitution = _.debounce(function (query, process) 
 
 }, 200);
 
-function completeOrder(userId, orderRowId, webinarId) {
+function completeOrder(userId, orderRowId, webinarId, orderId) {
 
     var cartStateManager = new OrderRegistration.StateManager();
 
@@ -752,34 +752,21 @@ function completeOrder(userId, orderRowId, webinarId) {
             if (result.Result === 'Success') {
                 orderRowId = result.OrderRowId;
 
-                //var err = new Error('Posted Order: ' + orderRowId);
-                //NREUM.noticeError(err);
                 $('#orderDetails').empty();
                 $('#orderDetails').append(result.Msg);
 
-                $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
+                $('#orderStatusLabel').text('Submitted').removeClass('label-warning').addClass('label-success');
 
-                $('#ConfirmModal').modal('show');
+                var utilities = new Common.Utilities();
+                utilities.goToUrl('/Account/OrderComplete/?email=' + registerDuringCheckout.emailOfNewUser + '&idOrder=' + orderId);
 
             } else {
-
-                //var err = new Error('FAILED posting Order: ');
-                //NREUM.noticeError(err);
 
                 $('#ConfirmRegistrationBillMe').after('<span class="text-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
             }
 
             $('#finalLoadingSpinner').remove();
             $('#ConfirmRegistrationBillMe').removeAttr('disabled');
-        });
-
-        $('#ConfirmModal').on('hidden', function (e) {
-
-            var utilities = new Common.Utilities();
-            console.log('/webinar/details/' + webinarId);
-            //var err = new Error('/webinar/details/' + webinarId);
-            //NREUM.noticeError(err);
-            utilities.goToUrl('/Account/OrderComplete/' + registerDuringCheckout.emailOfNewUser);
         });
     });
     confirmOrderForm.submit();
