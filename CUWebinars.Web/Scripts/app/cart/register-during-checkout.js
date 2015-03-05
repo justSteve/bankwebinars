@@ -452,28 +452,6 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
                                     $('#loadingSpinner').remove();
                                     $('#confirmationTab a').tab('show');
                                 } else {
-                                    //  MembershipReboot create user post. Needs its own headers/__RequestVerificationToken
-                                    var createUserAccountForm = $('#_CreateUserAccountForm');
-                                    var tokenMr = createUserAccountForm.find('input[name=__RequestVerificationToken]').val();
-                                    var headersMr = {};
-                                    headersMr['__RequestVerificationToken'] = tokenMr;
-                                    var urlMr = createUserAccountForm.attr('action');
-
-                                    $.ajax({
-                                        type: 'POST',
-                                        contentType: constants.JsonContentType,
-                                        cache: false,
-                                        url: urlMr,
-                                        dataType: constants.JsonDataType,
-                                        data: JSON.stringify(payload),
-                                        headers: headersMr,
-                                        beforeSend: function() {
-
-                                        }
-                                    }).done(function() {
-                                        // do nothing. This is a fire and forget operation.
-                                    });
-
 
                                     $('#ConfirmRegistrationBillMe').on('click', function(e) {
                                         completeOrder(userId, orderRowId, webinarId);
@@ -523,6 +501,28 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
             //console.log('failed: ' + data);
         }).always(function() {
             regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
+        });
+
+        //  MembershipReboot create user post. Needs its own headers/__RequestVerificationToken
+        var createUserAccountForm = $('#_CreateUserAccountForm');
+        var tokenMr = createUserAccountForm.find('input[name=__RequestVerificationToken]').val();
+        var headersMr = {};
+        headersMr['__RequestVerificationToken'] = tokenMr;
+        var urlMr = createUserAccountForm.attr('action');
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: urlMr,
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payload),
+            headers: headersMr,
+            beforeSend: function () {
+
+            }
+        }).done(function () {
+            // do nothing. This is a fire and forget operation.
         });
     });
 
