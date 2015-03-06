@@ -9,6 +9,7 @@ namespace CUWebinars.Business.Services
 {
     public interface IOrderManagementService : IDisposable
     {
+        void AddAdditionalLocation(AdditionalLocation addedAdditionalLocation);
         Order AssignAffiliateToOrder(Affiliate affiliate, Order order);
         Order AssignWebUserToOrder(WebUser webUser, Order order);
         Affiliate AttachAffiliate(Affiliate item);
@@ -81,6 +82,7 @@ namespace CUWebinars.Business.Services
         Discount ApplyDiscountCode(string code, OrderRow row);
         void GenerateRegistrantKey(Order order, AdditionalLocation nuller);
         int GetNumberOfOrdersPerWebinar(int id);
+        void RemoveAndDeleteAdditionalLocation(AdditionalLocation deletedAdditionalLocation);
         string SetPostEventClaims(int webinarId);
         Discount GetDiscountById(int discount);
         IList<Order> GetOrdersForWebinar(int idWebinar);

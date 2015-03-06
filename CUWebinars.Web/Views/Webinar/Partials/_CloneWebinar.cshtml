@@ -12,6 +12,7 @@
         <div class="control-group">
             <div class="control-label">@Html.LabelFor(m => m.Title)</div>
             <div class="controls">@Html.EditorFor(m => m.Title)</div>
+            @Html.ValidationMessageFor(m => m.Title)
         </div>
         <div class="control-group">
             <div class="control-label">@Html.LabelFor(m => m.Date)</div>
@@ -55,6 +56,7 @@
             </div>
             <div class="controls">
                 @Html.DropDownListFor(m => m.SelectedPresenter, new SelectList(Model.Presenters, "Value", "Text"), "Choose a presenter")
+                @Html.ValidationMessageFor(m => m.SelectedPresenter)
             </div>
         </div>
         <div class="control-group">

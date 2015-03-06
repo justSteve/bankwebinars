@@ -64,6 +64,11 @@ namespace CUWebinars.Business.Services
             _cachingService = new OrderCachingService();
         }
 
+        public void AddAdditionalLocation(AdditionalLocation addedAdditionalLocation)
+        {
+            _orderRepository.AddAdditionalLocation(addedAdditionalLocation);
+        }
+
         public Order AssignAffiliateToOrder(Affiliate affiliate, Order order)
         {
             return _orderRepository.AssignAffiliate(affiliate, order);
@@ -959,6 +964,11 @@ namespace CUWebinars.Business.Services
         public int GetNumberOfOrdersPerWebinar(int id)
         {
             return _orderRepository.GetNumberOfOrdersPerWebinar(id);
+        }
+
+        public void RemoveAndDeleteAdditionalLocation(AdditionalLocation deletedAdditionalLocation)
+        {
+            _orderRepository.RemoveAndDeleteAdditionalLocation(deletedAdditionalLocation);
         }
 
         public string SetPostEventClaims(int webinarId)
