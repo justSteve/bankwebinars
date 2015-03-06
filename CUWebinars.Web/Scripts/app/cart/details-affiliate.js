@@ -247,7 +247,6 @@ OCA.initializeFunctions = function () {
         OCA.cartStateManager.setCancelOrderForm($('#cancelOrder'));
         OCA.cartStateManager.setConfirmOrderForm($('#confirmOrderForAffiliateForm'));
         var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
-        var confirmModal = $('#ConfirmModal');
 
         OCA.cartStateManager.getConfirmOrderForm().on('submit', function(e) {
             
@@ -278,9 +277,7 @@ OCA.initializeFunctions = function () {
                     $('#orderDetails').append(data.Msg);
 
                     $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
-
-                    confirmModal.modal('show');
-
+                    
                 } else {
                     confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                 }
@@ -292,12 +289,6 @@ OCA.initializeFunctions = function () {
                 $('#finalLoadingSpinner').remove();
                 confirmRegistrationBillMe.removeAttr('disabled');
                 confirmRegistrationBillMe.after('<span class="field-validation-error">Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
-            });
-
-            confirmModal.on('hidden', function (e) {
-                var utilities = new Common.Utilities();
-                console.log('/webinar/details/' + OCA.cartStateManager.getWebinarId());
-                utilities.goToUrl('/webinar/details/' + OCA.cartStateManager.getWebinarId());
             });
         });
 

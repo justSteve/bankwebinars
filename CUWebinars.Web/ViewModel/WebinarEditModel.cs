@@ -13,7 +13,7 @@ namespace CUWebinars.Web.ViewModel
         public string DescriptionLong { get; set; }
         public string ImageUrl { get; set; }
         public string SmallImageUrl { get; set; }
-        public WebinarStatus Status { get; set; }
+        public IEnumerable<SelectListItem> Statuses { get; set; }
         public string RecordingUrl { get; set; }
         public string Title { get; set; }
         public System.DateTime Date { get; set; }
@@ -25,7 +25,7 @@ namespace CUWebinars.Web.ViewModel
         public System.DateTime DateCreated { get; set; }
         public System.DateTime DateChanged { get; set; }
         public IEnumerable<SelectListItem> Presenters { get; set; }
-        public IEnumerable<string> AdditionalLocationsPrices { get; set; }
+        public decimal AdditionalLocationsPrice { get; set; }
         public int SelectedPresenter { get; set; }
         public int SelectedStatus { get; set; }
         public PostedTopics PostedTopics { get; set; }

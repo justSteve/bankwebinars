@@ -48,7 +48,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             _appHelper = appHelper;
             _universalMapper = universalMapper;
         }
-          
+
         public Webinar GetWebinar(int idWebinar)
         {
             return _webinarManagementService.GetWebinar(idWebinar);
@@ -88,7 +88,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             if (ReferenceEquals(audioNode, null))
             {
-                throw new Exception("Audio node was null"); // TODO: [dar] handle error condition. Better message? Right Exception-type?
+                throw new Exception("Audio node was null");
+                    // TODO: [dar] handle error condition. Better message? Right Exception-type?
             }
 
             foreach (var aNode in audioNode.Nodes())
@@ -157,21 +158,25 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 case "scheduled to active":
                     sb.Append("[{STATECHANGE : scheduled to active," + System.Environment.NewLine);
-                    sb.Append("       CitrixRegisterUrl   : " + webinar.CitrixRegisterUrl + "," + System.Environment.NewLine);
+                    sb.Append("       CitrixRegisterUrl   : " + webinar.CitrixRegisterUrl + "," +
+                              System.Environment.NewLine);
                     sb.Append("       WebinarKey          : " + webinar.WebinarKey + "," + System.Environment.NewLine);
                     sb.Append("       AccessPhone         : " + webinar.AccessPhone + "," + System.Environment.NewLine);
-                    sb.Append("       AccessCodeAttendee  : " + webinar.AccessCodeAttendee + "," + System.Environment.NewLine);
-                    sb.Append("       AccessCodePresenter : " + webinar.AccessCodePresenter + "," + System.Environment.NewLine);
-                    sb.Append("       AccessCodeOrganizer : " + webinar.AccessCodeOrganizer + "}]" + System.Environment.NewLine);
+                    sb.Append("       AccessCodeAttendee  : " + webinar.AccessCodeAttendee + "," +
+                              System.Environment.NewLine);
+                    sb.Append("       AccessCodePresenter : " + webinar.AccessCodePresenter + "," +
+                              System.Environment.NewLine);
+                    sb.Append("       AccessCodeOrganizer : " + webinar.AccessCodeOrganizer + "}]" +
+                              System.Environment.NewLine);
 
 
                     break;
 
                 default:
-                    {
-                        System.Console.WriteLine("Other number");
-                        break;
-                    }
+                {
+                    System.Console.WriteLine("Other number");
+                    break;
+                }
             }
             return sb.ToString();
 
@@ -197,6 +202,28 @@ namespace CUWebinars.Web.Core.Orchestrators
             _webinarManagementService.UpdateWebinar(webinar);
         }
 
+        public WebinarEditModel BuildEditModelForWebinarCreate()
+        {
+            var upcomingRegTypeGroups = _webinarManagementService.GetUpcomingRegTypesForWebinars().ToList();
+            var presenters = _webinarManagementService.GetAllPresenters()
+                .Select(presenter =>
+                    new SelectListItem {Text = presenter.WebUser.FullName, Value = presenter.idUser.ToString()}
+                );
+            var statuses = (from object value in Enum.GetValues(typeof(WebinarStatus))
+                            select new SelectListItem { Text = value.ToString(), Value = ((int)value).ToString() }).ToList();
+
+
+            var webinarEditModel = new WebinarEditModel
+            {
+                Presenters = presenters,
+                RegTypeGroups = upcomingRegTypeGroups,
+                Statuses = statuses,
+                Topics = _webinarManagementService.GetAllTopics()
+            };
+
+            return webinarEditModel;
+        }
+
         public WebinarEditModel BuildEditModelForWebinar(int idWebinar)
         {
             var webinar = _webinarManagementService.GetWebinar(idWebinar);
@@ -212,8 +239,17 @@ namespace CUWebinars.Web.Core.Orchestrators
                 });
             var topics = _webinarManagementService.GetAllTopics();
 
+            var statuses = (from object value in Enum.GetValues(typeof (WebinarStatus))
+                select new SelectListItem {Text = value.ToString(), Value = ((int) value).ToString()}).ToList();
+
+            // The database does not support the business rule that there will only be a single price for Additional Locations.
+            // We ae therefore enforcing this rule here.
+            var additionalLocationsPricing =
+                _webinarManagementService.GetAdditionalLocationsLookupPricesForWebinar(idWebinar).SingleOrDefault();
+
             var webinarEditModel = new WebinarEditModel
             {
+                AdditionalLocationsPrice = additionalLocationsPricing == null ? 0.00M : additionalLocationsPricing.Cost,
                 PostedTopics = new PostedTopics {TopicIds = topicIdsForWebinar.Select(topic => topic.idTopic).ToArray()},
                 PostedRegTypeGroups =
                     new PostedRegTypeGroups
@@ -225,11 +261,12 @@ namespace CUWebinars.Web.Core.Orchestrators
                 SelectedPresenter = webinar.idPresenter,
                 SelectedRegTypeGroups = regTypeGroupsForWebinars,
                 SelectedTopics = topicIdsForWebinar,
-                SelectedStatus = (int)webinar.Status,
-                Status = webinar.Status,
+                SelectedStatus = (int) webinar.Status,
+                Statuses = statuses,
                 Topics = topics
             };
 
+            // copy across remaining properties not dealt with above.
             webinarEditModel = _universalMapper.Map(webinar, webinarEditModel);
 
             return webinarEditModel;
@@ -238,9 +275,9 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void CreateWebinarFromViewInput(WebinarEditModel webinarEditModel)
         {
             if (ReferenceEquals(webinarEditModel.PostedRegTypeGroups, null))
-                webinarEditModel.PostedRegTypeGroups = new PostedRegTypeGroups { RegTypeGroupIds = new int[0] };
+                webinarEditModel.PostedRegTypeGroups = new PostedRegTypeGroups {RegTypeGroupIds = new int[0]};
             if (ReferenceEquals(webinarEditModel.PostedTopics, null))
-                webinarEditModel.PostedTopics = new PostedTopics { TopicIds = new int[0] };
+                webinarEditModel.PostedTopics = new PostedTopics {TopicIds = new int[0]};
 
             var webinar = new Webinar
             {
@@ -264,33 +301,53 @@ namespace CUWebinars.Web.Core.Orchestrators
                 WhoAttend = webinarEditModel.WhoAttend
             };
 
-                
+
             foreach (var regTypeGroupId in webinarEditModel.PostedRegTypeGroups.RegTypeGroupIds)
             {
-                webinar.RegTypesGroupsXref.Add(new RegTypesGroupsXref { idRegTypeGroup = regTypeGroupId });
+                webinar.RegTypesGroupsXref.Add(new RegTypesGroupsXref {idRegTypeGroup = regTypeGroupId});
             }
 
             foreach (var topicId in webinarEditModel.PostedTopics.TopicIds)
             {
-                webinar.WebinarTopicXrefs.Add(new WebinarTopicXref { idTopic = topicId });
+                webinar.WebinarTopicXrefs.Add(new WebinarTopicXref {idTopic = topicId});
             }
 
             _webinarManagementService.AddWebinar(webinar);
+
+            var additionalLocationsLookupPrice = _webinarManagementService.GetAdditionalLocationsLookupPricesForWebinar(webinar.idWebinar).SingleOrDefault();
+
+            if (ReferenceEquals(null, additionalLocationsLookupPrice))
+            {
+                additionalLocationsLookupPrice = new AdditionalLocationsLookupPrice
+                {
+                    Cost = webinarEditModel.AdditionalLocationsPrice,
+                    idWebinar = webinar.idWebinar
+                };
+
+                _webinarManagementService.AddAdditionalLocationsLookupPrice(additionalLocationsLookupPrice);
+            }
+            else
+            {
+                additionalLocationsLookupPrice.Cost = webinarEditModel.AdditionalLocationsPrice;
+            }
+
+            _webinarManagementService.AddAdditionalLocationsLookupPrice(additionalLocationsLookupPrice);
+            _webinarManagementService.SaveChanges();
         }
 
         public void UpdateWebinarFromViewInput(WebinarEditModel webinarEditModel)
         {
             var webinar = _webinarManagementService.GetWebinar(webinarEditModel.idWebinar);
 
-            if(ReferenceEquals(webinarEditModel.PostedRegTypeGroups, null))
-                webinarEditModel.PostedRegTypeGroups = new PostedRegTypeGroups{ RegTypeGroupIds = new int[0]};
-            if(ReferenceEquals(webinarEditModel.PostedTopics, null))
-                webinarEditModel.PostedTopics = new PostedTopics { TopicIds = new int[0]};
+            if (ReferenceEquals(webinarEditModel.PostedRegTypeGroups, null))
+                webinarEditModel.PostedRegTypeGroups = new PostedRegTypeGroups {RegTypeGroupIds = new int[0]};
+            if (ReferenceEquals(webinarEditModel.PostedTopics, null))
+                webinarEditModel.PostedTopics = new PostedTopics {TopicIds = new int[0]};
 
             webinar.Title = webinarEditModel.Title;
             webinar.idPresenter = webinarEditModel.SelectedPresenter;
             webinar.Date = webinarEditModel.Date;
-            webinar.Status = (WebinarStatus)webinarEditModel.SelectedStatus;
+            webinar.Status = (WebinarStatus) webinarEditModel.SelectedStatus;
             webinar.Duration = webinarEditModel.Duration;
             webinar.ceu = webinarEditModel.ceu;
             webinar.Description = webinarEditModel.Description;
@@ -298,45 +355,68 @@ namespace CUWebinars.Web.Core.Orchestrators
             webinar.LearnBody = webinarEditModel.LearnBody;
             webinar.LearnCaption = webinarEditModel.LearnCaption;
             webinar.ImageUrl = webinarEditModel.ImageUrl;
-            webinar.SmallImageUrl= webinarEditModel.SmallImageUrl;
+            webinar.SmallImageUrl = webinarEditModel.SmallImageUrl;
             webinar.WhoAttend = webinarEditModel.WhoAttend;
-            
-            var existingRegTypeGroupIds = webinar.RegTypesGroupsXref.Where(r => r.idWebinar == webinar.idWebinar).Select(r => r.idRegTypeGroup).ToArray();
 
-            foreach (var regTypeGroupId in webinarEditModel.PostedRegTypeGroups.RegTypeGroupIds.Where(regTypeGroupId => !existingRegTypeGroupIds.Contains(regTypeGroupId)))
+            var existingRegTypeGroupIds =
+                webinar.RegTypesGroupsXref.Where(r => r.idWebinar == webinar.idWebinar)
+                    .Select(r => r.idRegTypeGroup)
+                    .ToArray();
+
+            foreach (
+                var regTypeGroupId in
+                    webinarEditModel.PostedRegTypeGroups.RegTypeGroupIds.Where(
+                        regTypeGroupId => !existingRegTypeGroupIds.Contains(regTypeGroupId)))
             {
-                webinar.RegTypesGroupsXref.Add(new RegTypesGroupsXref { idWebinar = webinar.idWebinar, idRegTypeGroup = regTypeGroupId });
+                webinar.RegTypesGroupsXref.Add(new RegTypesGroupsXref
+                {
+                    idWebinar = webinar.idWebinar,
+                    idRegTypeGroup = regTypeGroupId
+                });
             }
 
-            foreach (var existingRegTypeGroupId in existingRegTypeGroupIds.Where(existingRegTypeGroupId => !webinarEditModel.PostedRegTypeGroups.RegTypeGroupIds.Contains(existingRegTypeGroupId)))
+            foreach (
+                var existingRegTypeGroupId in
+                    existingRegTypeGroupIds.Where(
+                        existingRegTypeGroupId =>
+                            !webinarEditModel.PostedRegTypeGroups.RegTypeGroupIds.Contains(existingRegTypeGroupId)))
             {
                 _webinarManagementService.DeleteRegTypeGroupXRef(webinar, existingRegTypeGroupId);
             }
 
-            var existingTopicIds = webinar.WebinarTopicXrefs.Where(r => r.idWebinar == webinar.idWebinar).Select(r => r.idTopic).ToArray();
+            var existingTopicIds =
+                webinar.WebinarTopicXrefs.Where(r => r.idWebinar == webinar.idWebinar).Select(r => r.idTopic).ToArray();
 
-            foreach (var topicId in webinarEditModel.PostedTopics.TopicIds.Where(topicId => !existingTopicIds.Contains(topicId)))
+            foreach (
+                var topicId in
+                    webinarEditModel.PostedTopics.TopicIds.Where(topicId => !existingTopicIds.Contains(topicId)))
             {
-                webinar.WebinarTopicXrefs.Add(new WebinarTopicXref { idWebinar = webinar.idWebinar, idTopic = topicId });
+                webinar.WebinarTopicXrefs.Add(new WebinarTopicXref {idWebinar = webinar.idWebinar, idTopic = topicId});
             }
 
-            foreach (var exisingTopicId in existingTopicIds.Where(exisingTopicId => !webinarEditModel.PostedTopics.TopicIds.Contains(exisingTopicId)))
+            foreach (
+                var exisingTopicId in
+                    existingTopicIds.Where(
+                        exisingTopicId => !webinarEditModel.PostedTopics.TopicIds.Contains(exisingTopicId)))
             {
                 _webinarManagementService.DeleteWebinarTopicXref(webinar, exisingTopicId);
             }
 
-            IList<AdditionalLocationsLookupPrice> additionalLocationsLookupPrices = new List<AdditionalLocationsLookupPrice>();
+            var additionalLocationsLookupPrice = _webinarManagementService.GetAdditionalLocationsLookupPricesForWebinar(webinar.idWebinar).SingleOrDefault();
 
-            if (webinarEditModel.AdditionalLocationsPrices.Any())
+            if (ReferenceEquals(null, additionalLocationsLookupPrice))
             {
-                webinarEditModel.AdditionalLocationsPrices.ForEach(newAdditionalLocationLookupPrice => additionalLocationsLookupPrices.Add(new AdditionalLocationsLookupPrice
+                _webinarManagementService.AddAdditionalLocationsLookupPrice(new AdditionalLocationsLookupPrice
                 {
-                    idWebinar = webinar.idWebinar,
-                    Cost = decimal.Parse(newAdditionalLocationLookupPrice)
-                }));
+                    Cost = webinarEditModel.AdditionalLocationsPrice,
+                    idWebinar = webinar.idWebinar
+                });
+            }
+            else
+            {
+                additionalLocationsLookupPrice.Cost = webinarEditModel.AdditionalLocationsPrice;
             }
 
-            _webinarManagementService.AddAdditionalLocationsLookupPrices(additionalLocationsLookupPrices);
             _webinarManagementService.UpdateWebinar(webinar);
         }
     }

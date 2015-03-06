@@ -10,6 +10,7 @@ $(function () {
     MW.primeDomVariables();
     MW.wireUpHandlers();
 
+    MW.webinarSearchInput.focus(); 
 });
 
 // self-invoking function.
@@ -206,17 +207,11 @@ $(function () {
 
         e.preventDefault();
 
-        $(this).append('<span id="crunchingSpinnerOfSubmit">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+        ns.submitEditedDetailsButton.append('<span id="crunchingSpinnerOfSubmit">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
 
         var payload = ns.editWebinarForm.serialize();
 
-        //  process additional locations
-        var addedPayloadData = '';
-        var addLocPrices = ns.additionalLocationsPrices.find('div');
-
-        $.each(addLocPrices, function (idx, val) {
-            addedPayloadData += '&AdditionalLocationsPrices[' + idx + ']=' + val.innerText;
-        });
+        var addedPayloadData = ns.nonFormInputs();
 
         $.ajax({
             type: 'POST',
@@ -226,9 +221,16 @@ $(function () {
             dataType: constants.JsonDataType,
             data: payload += addedPayloadData,
             beforeSend: function() {
-                //$('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Working...</span>');
+                $('#feedbackLabel').remove();
             }
-        }).done(function(data) {
+        }).done(function (data) {
+
+            if (data.Result === 'Success') { 
+                ns.submitEditedDetailsButton.after('<span id="feedbackLabel">&nbsp;<span class="label label-success">&nbsp;The operation has succeeded.</span></span>');
+            } else if (data.Result === 'Fail') {
+                ns.submitEditedDetailsButton.after('<span id="feedbackLabel">&nbsp;<span class="label label-important">&nbsp;The operation has failed. Please contact the administrator for assistance.</span></span>');
+            }
+
             $('#crunchingSpinnerOfSubmit').remove();
         });
     };
@@ -237,9 +239,11 @@ $(function () {
         
         e.preventDefault();
 
-        $(this).append('<span id="crunchingSpinnerOfSubmit">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+        ns.submitCreatedDetailsButton.append('<span id="crunchingSpinnerOfSubmit">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
 
         var payload = ns.createWebinarForm.serialize();
+
+        var addedPayloadData = ns.nonFormInputs();
 
         $.ajax({
             type: 'POST',
@@ -247,11 +251,19 @@ $(function () {
             cache: false,
             url: '/webinar/create',
             dataType: constants.JsonDataType,
-            data: payload,
+            data: payload += addedPayloadData,
             beforeSend: function() {
-                //$('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Working...</span>');
+                $('#feedbackLabel').remove();
             }
-        }).done(function(data) {
+        }).done(function (data) {
+
+            if (data.Result === 'Success') {
+                ns.submitCreatedDetailsButton.after('<span id="feedbackLabel">&nbsp;<span class="label label-success">&nbsp;The operation has succeeded.</span></span>');
+            } else if (data.Result === 'Fail') {
+                ns.submitCreatedDetailsButton.after('<span id="feedbackLabel">&nbsp;<span class="label label-important">&nbsp;The operation has failed. Please contact the administrator for assistance.</span></span>');
+            }
+
+
             $('#crunchingSpinnerOfSubmit').remove();
         });
     };
@@ -260,9 +272,11 @@ $(function () {
         
         e.preventDefault();
 
-        $(this).append('<span id="crunchingSpinnerOfSubmit">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+        ns.submitCloneDetailsButton.append('<span id="crunchingSpinnerOfSubmit">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
 
         var payload = ns.cloneWebinarForm.serialize();
+
+        var addedPayloadData = ns.nonFormInputs();
 
         $.ajax({
             type: 'POST',
@@ -270,11 +284,19 @@ $(function () {
             cache: false,
             url: '/webinar/clone',
             dataType: constants.JsonDataType,
-            data: payload,
+            data: payload += addedPayloadData,
             beforeSend: function() {
-                //$('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Working...</span>');
+                $('#feedbackLabel').remove();
             }
-        }).done(function(data) {
+        }).done(function (data) {
+
+            if (data.Result === 'Success') {
+                ns.submitCloneDetailsButton.after('<span id="feedbackLabel">&nbsp;<span class="label label-success">&nbsp;The operation has succeeded.</span></span>');
+            } else if (data.Result === 'Fail') {
+                ns.submitCloneDetailsButton.after('<span id="feedbackLabel">&nbsp;<span class="label label-important">&nbsp;The operation has failed. Please contact the administrator for assistance.</span></span>');
+            }
+
+
             $('#crunchingSpinnerOfSubmit').remove();
         });
     };
@@ -301,6 +323,18 @@ $(function () {
         ns.additionalLocationsPrices.prepend('<div id="' + ns.nrOfAdditionalLocationsPrices + '_addLocPrice" style="display:inline-block;margin:0px 5px">' + priceToAdd + '</div>');
 
         ns.nrOfAdditionalLocationsPrices++;
+    };
+
+    ns.nonFormInputs = function () {
+
+        var addedPayloadData = '';
+        var addLocPrices = ns.additionalLocationsPrices.find('div');
+
+        $.each(addLocPrices, function (idx, val) {
+            addedPayloadData += '&AdditionalLocationsPrices[' + idx + ']=' + val.innerText;
+        });
+
+        return addedPayloadData;
     };
 
     ns.edit = 'edit';

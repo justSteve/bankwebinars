@@ -928,10 +928,9 @@ namespace CUWebinars.Web.Core.Orchestrators
             return changeEmailFromKeyInputModel; 
         }
 
-        public CreateUserConfirmedViewModel GetCreateUserConfirmedViewModel(string email, bool viaBillMePostRequest = false)
+        public CreateUserConfirmedViewModel GetCreateUserConfirmedViewModel(string email, int idOrder, bool viaBillMePostRequest = false)
         {
-            //UserAccount userAccount;
-            //int retries = 0;
+            var order = _orderManagementService.GetOrderById(idOrder);
 
             var changeEmailFromKeyInputModel = new CreateUserConfirmedViewModel
             {
@@ -939,6 +938,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 OldPassword = PasswordGenerator.RandomStringFast(5),
                 NewPassword = string.Empty,
                 ConfirmPassword = string.Empty,
+                Order = order,
                 ScreenMessage = string.Empty,
                 UserIsLoggedIn = _request.IsAuthenticated
             };

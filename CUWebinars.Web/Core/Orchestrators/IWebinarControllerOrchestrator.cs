@@ -6,6 +6,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 {
     public interface IWebinarControllerOrchestrator
     {
+        WebinarEditModel BuildEditModelForWebinarCreate();
         WebinarEditModel BuildEditModelForWebinar(int idWebinar);
         void CreateWebinarFromViewInput(WebinarEditModel webinarEditModel);
         Webinar GetWebinar(int idWebinar);

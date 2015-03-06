@@ -23,9 +23,9 @@ namespace CUWebinars.Business.Repository
 
         }
 
-        public void AddAdditionalLocationsLookupPrices(IEnumerable<AdditionalLocationsLookupPrice> additionalLocationsLookupPrices)
+        public void AddAdditionalLocationsLookupPrice(AdditionalLocationsLookupPrice additionalLocationsLookupPrice)
         {
-            ((TTSWebinarsContext) db).AdditionalLocationsLookupPrices.AddRange(additionalLocationsLookupPrices);
+            ((TTSWebinarsContext) db).AdditionalLocationsLookupPrices.Add(additionalLocationsLookupPrice);
         }
 
         public void Delete(Webinar webinar)
@@ -99,6 +99,11 @@ namespace CUWebinars.Business.Repository
             return result;
         }
 
+        public IQueryable<AdditionalLocationsLookupPrice> GetAdditionalLocationsLookupPricesForWebinar(int idWebinar)
+        {
+            return ((TTSWebinarsContext) db).AdditionalLocationsLookupPrices.Where(a => a.idWebinar == idWebinar);
+        }
+
         public IQueryable<Webinar> GetUpcoming()
         {
             return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
@@ -161,6 +166,11 @@ namespace CUWebinars.Business.Repository
 
             return dataOperations.GetRegTypeByLableAndWebinar(registrationType, idWebinar);
 
+        }
+
+        public int SaveChanges()
+        {
+            return db.SaveChanges();
         }
 
         public void SynchToLegacy()

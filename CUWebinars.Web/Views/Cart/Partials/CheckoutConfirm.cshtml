@@ -147,10 +147,7 @@
 
 }
 
-@using (Html.BeginForm("SignInAfterCheckout", "Account", null, FormMethod.Post, new { id = "_SignInAfterCheckout" }))
-{
-    @Html.AntiForgeryToken()
-}
+
 
 <script type="text/javascript">var anyAddLocs = @(string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption) ? "false" : "true");</script>
 
