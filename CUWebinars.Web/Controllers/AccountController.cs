@@ -508,6 +508,8 @@ namespace CUWebinars.Web.Controllers
             }
             return PartialView("Partials/_EditNameTitle", model);
         }
+
+
         public ActionResult EditUser(int? idUser)
         {
             var editModel = new EditUserInfoModel
