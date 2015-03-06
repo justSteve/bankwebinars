@@ -57,7 +57,10 @@ namespace CUWebinars.Web
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
             MapperConfig.Initialize();
-            Mapper.AssertConfigurationIsValid();
+            
+            #if DEBUG
+                Mapper.AssertConfigurationIsValid();
+            #endif
 
             log4net.Config.XmlConfigurator.Configure();
 

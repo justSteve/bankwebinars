@@ -2,7 +2,7 @@
 if (MANAGE === null || typeof MANAGE === 'undefined')
     var MANAGE = {}; 
 
-
+// jQuery doc.ready function
 $(function () {
     
     MANAGE.orderIdInput = $('#orderIdInput');
@@ -155,9 +155,7 @@ $(function () {
         ns.basePrice = parseFloat($('#UnitPriceText').val());
 
         ns.orderIdHiddenInputInDropdownPartial = $('#regTypeSelectWapper input[type="hidden"]');
-        //ns.orderIdHiddenInputInDropdownPartial.removeAttr('name');
         ns.orderIdHiddenInputInDropdownPartial.attr('name', 'DisplayOptionsInDropDownViewModel.OrderRowId');
-
 
         ns.gatherPricingData();
         ns.adjustTotalPrice();
@@ -187,7 +185,7 @@ $(function () {
         }
 
         // next 4 lines not really required, as those parts of the ViewModel aren't necessary for the POST. But may as well set them, as easy enough to do.
-        if (ns.numberOfAdditionalLocations > 0) {
+        if (ns.numberOfAdditionalLocations > -1) {
             $('#NumberOfAdditionalLocations').val(ns.numberOfAdditionalLocations);
             $('#DisplayRowPriceViewModel_NumberOfAdditionalLocations').val(ns.numberOfAdditionalLocations);
         }
@@ -242,7 +240,7 @@ $(function () {
             //console.log('done CheckIfAddLocShouldHide');
             if (data.shouldShow === 'Yes') {
                 ns.addAdditionalLocationsButton.removeAttr('disabled');
-                //ns.selectedAdditionalLocationsPrice = ns.changeRegType.find(":selected").data('price');
+                $('#collectAdditionalLocations').empty().html('<span id="naText" class="text text-info">No additionalLocations yet</span>');
             } else if (data.shouldShow === 'No') {
                 //console.log('hide  CheckIfAddLocShouldHide');
                 $('#collectAdditionalLocations').empty().html('<span id="naText" class="text text-info">Not applicable for this RegType</span>');
@@ -372,21 +370,14 @@ $(function () {
         }).done(function(data) {
 
             if (data.Result.indexOf('%') !== -1) {
-                var amount2Discount = data.Result.replace(".00%", "") / 100;
+                var amount2Discount = data.Result.replace('.00%', '') / 100;
                 ns.totalDiscount = ns.totalPrice * amount2Discount;
             } else {
                 ns.totalDiscount = data.Result;
             }
 
             ns.adjustTotalPrice();
-
-            //if (newTotalPrice < 0)
-            //    newTotalPrice = 0;
-
-            //$('#addlocSpiel').text('To add additional locations for this order, please call 800-831-0678 ext 3.').addClass('text-info');
-
-            //$('#discountedText').html('Discounted: <span id="totalDiscount">$' + registerDuringCheckout.totalDiscount + '</span>').removeClass('muted');
-            //$('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
+            ns.totalDiscountInput.val(ns.totalDiscount);
 
             $('#discountSpinner').remove();
 

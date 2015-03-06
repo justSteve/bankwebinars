@@ -103,12 +103,62 @@ namespace CUWebinars.Web.Controllers.Admin
             orderRow.RowPrice = order.Total;
             orderRow.UnitPrice = model.DisplayRowPriceViewModel.PricesAndDiscounts.UnitPrice;
 
-            orderRow.AdditionalLocation.Clear();
-
-            if (!ReferenceEquals(null, model.AdditionalLocations))
-                orderRow.AdditionalLocation.AddRange(model.AdditionalLocations);
+            SyncAdditionalLocations(model, orderRow);
 
             return order;
+        }
+
+        private void SyncAdditionalLocations(ManageOrderEditModel model, OrderRow orderRow)
+        {
+            IList<AdditionalLocation> deletedAdditionalLocations = new List<AdditionalLocation>();
+            IList<AdditionalLocation> addedAdditionalLocations = new List<AdditionalLocation>();
+
+            if (model.AdditionalLocations == null || !model.AdditionalLocations.Any())
+            {
+                deletedAdditionalLocations.AddRange(orderRow.AdditionalLocation);
+                model.AdditionalLocations = new List<AdditionalLocation>();
+            }
+            else
+            {
+                foreach (var addLocs in model.AdditionalLocations)
+                {
+                    foreach (var additionalLocation in orderRow.AdditionalLocation)
+                    {
+                        if (addLocs.Email.Trim().Equals(additionalLocation.Email.Trim(), StringComparison.OrdinalIgnoreCase))
+                            break;
+                        deletedAdditionalLocations.Add(additionalLocation);
+                    }
+                }
+            }
+
+            if (!orderRow.AdditionalLocation.Any())
+            {
+                addedAdditionalLocations.AddRange(model.AdditionalLocations);
+            }
+            else
+            {
+                foreach (var additionalLocation in orderRow.AdditionalLocation)
+                {
+                    foreach (var addLocs in model.AdditionalLocations)
+                    {
+                        if (addLocs.Email.Trim().Equals(additionalLocation.Email.Trim(), StringComparison.OrdinalIgnoreCase))
+                            break;
+                        addedAdditionalLocations.Add(additionalLocation);
+                    }
+                }
+            }
+
+            foreach (var deletedAdditionalLocation in deletedAdditionalLocations)
+            {
+                orderRow.AdditionalLocation.Remove(deletedAdditionalLocation);
+                _orderManagementService.RemoveAndDeleteAdditionalLocation(deletedAdditionalLocation);
+            }
+
+            foreach (var addedAdditionalLocation in addedAdditionalLocations)
+            {
+                orderRow.AdditionalLocation.Add(addedAdditionalLocation);
+                _orderManagementService.AddAdditionalLocation(addedAdditionalLocation);
+            }
         }
 
         public ActionResult ClaimsManagement()
@@ -353,6 +403,8 @@ namespace CUWebinars.Web.Controllers.Admin
                 spanBuilder = new TagBuilder("span");
                 spanBuilder.GenerateId("noLocationsText");
                 spanBuilder.InnerHtml = "No additionalLocations yet";
+                spanBuilder.AddCssClass("text");
+                spanBuilder.AddCssClass("text-info");
             }
 
 

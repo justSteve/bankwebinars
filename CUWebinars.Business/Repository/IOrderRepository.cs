@@ -7,6 +7,7 @@ namespace CUWebinars.Business.Repository
 {
     public interface IOrderRepository : IDisposable
     {
+        void AddAdditionalLocation(AdditionalLocation addedAdditionalLocation);
         Order AttachItem(Order item);
         Order AssignAffiliate(Affiliate affiliate, Order order);
         Order AssignWebUserToOrder(WebUser webUser, Order order);
@@ -36,6 +37,7 @@ namespace CUWebinars.Business.Repository
         Discount FindDiscountByCode(string discountCode);
         Discount FindDiscountByUser(WebUser currentUser);
         int GetNumberOfOrdersPerWebinar(int id);
+        void RemoveAndDeleteAdditionalLocation(AdditionalLocation deletedAdditionalLocation);
         void SendOrderToLegacy(Order newOrder);
     }
 }

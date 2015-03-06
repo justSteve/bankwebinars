@@ -261,6 +261,11 @@ namespace CUWebinars.Business.Repository
                 .SingleOrDefault(or => or.idOrderRow == idOrderRow);
         }
 
+        public void AddAdditionalLocation(AdditionalLocation addedAdditionalLocation)
+        {
+            ((TTSWebinarsContext) db).AdditionalLocation.Add(addedAdditionalLocation);
+        }
+
         /// <summary>
         /// Only use this method if the affiliate is already attached to the context.
         /// </summary>
@@ -424,6 +429,11 @@ namespace CUWebinars.Business.Repository
                 || o.OrderStatus == OrderStatus.Billed
                 ));
 
+        }
+
+        public void RemoveAndDeleteAdditionalLocation(AdditionalLocation deletedAdditionalLocation)
+        {
+            ((TTSWebinarsContext) db).AdditionalLocation.Remove(deletedAdditionalLocation);
         }
 
         public void SendOrderToLegacy(Order newOrder)

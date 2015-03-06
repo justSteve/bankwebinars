@@ -1490,7 +1490,6 @@
   </Target>
   <PropertyGroup>
     <PostBuildEvent>copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).dll"
-copy /Y "$(TargetDir)$(ProjectName).dll.config" "$(SolutionDir)..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).dll.config"
 copy /Y "$(TargetDir)$(ProjectName).pdb" "$(SolutionDir)..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).pdb"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Label="SlowCheetah">
