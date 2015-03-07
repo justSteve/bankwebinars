@@ -457,7 +457,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             UserAccount userAccount;
             int retries = 0;
 
-            // Try and find the user for up to 20s. If it still does not exist, chuck an exception.
+            // Try and find the user for up to 20s. 
+            // If it still does not exist, chuck an exception.
+            _logger.Error(string.Format("Beginning GetUserAccountByEmail with timeout set to {0} seconds.", _globals.RetryCount / 2));
+
             do
             {
                 if (retries >= _globals.RetryCount - 1)
