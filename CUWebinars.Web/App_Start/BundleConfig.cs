@@ -26,7 +26,8 @@ namespace CUWebinars.Web.App_Start
             
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.unobtrusive*",
-                        "~/Scripts/jquery.validate*"));
+                        "~/Scripts/jquery.validate*")
+                        );
 
             bundles.Add(new ScriptBundle("~/bundles/toastr").Include(
                             "~/Scripts/toastr.js"

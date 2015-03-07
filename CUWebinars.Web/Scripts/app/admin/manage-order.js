@@ -158,7 +158,6 @@ $(function () {
         ns.orderIdHiddenInputInDropdownPartial.attr('name', 'DisplayOptionsInDropDownViewModel.OrderRowId');
 
         ns.gatherPricingData();
-        ns.adjustTotalPrice();
 
         ns.toastLogger = new Common.Logger(); // for toast notifications
         ns.logInvalidOperation = ns.toastLogger.getLogFn('ManageOrderFormSubmit', 'error');
@@ -268,17 +267,19 @@ $(function () {
 
         ns.numberAddLocsLabel.text(ns.numberOfAdditionalLocations);
 
-        var newPrice = number * parseFloat(ns.addLocsUnitPrice);
+        var newAddLocsPrice = number * parseFloat(ns.addLocsUnitPrice);
 
-        ns.additionalLocationsTotal.val(newPrice);
+        ns.additionalLocationsTotal.val(newAddLocsPrice);
         ns.allAddLocsPrice = parseInt(ns.additionalLocationsTotal.val());
+        ns.totalPriceSansDiscount = ns.allAddLocsPrice + ns.basePrice;
     };
 
     ns.adjustTotalPrice = function() {
 
-        var newPrice = ns.basePrice + (ns.allAddLocsPrice || 0) - (ns.totalDiscount || 0);
+        var newTotalPrice = ns.totalPriceSansDiscount - (ns.totalDiscount || 0);
 
-        ns.totalPriceInput.val(newPrice);
+        ns.totalPrice = newTotalPrice;
+        ns.totalPriceInput.val(newTotalPrice);
     };
 
     ns.searchOrder = _.debounce(function(query, process) {
@@ -345,10 +346,10 @@ $(function () {
     ns.hookUpApplyDiscountLogic = function(e) {
 
         e.preventDefault();
-
+        
         ns.gatherPricingData();
 
-        if (ns.totalPrice < 1) {
+        if (ns.totalPriceSansDiscount < 1) {
             return;
         }
 
@@ -364,14 +365,14 @@ $(function () {
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
             beforeSend: function() {
-                $(self).prepend('<i id="discountSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+                $(self).prepend('<span id="discountSpinner"><i class="icon-spinner icon-spin"></i>&nbsp;</span>');
                 $(self).attr('disabled', 'disabled');
             }
         }).done(function(data) {
 
             if (data.Result.indexOf('%') !== -1) {
                 var amount2Discount = data.Result.replace('.00%', '') / 100;
-                ns.totalDiscount = ns.totalPrice * amount2Discount;
+                ns.totalDiscount = ns.totalPriceSansDiscount * amount2Discount;
             } else {
                 ns.totalDiscount = data.Result;
             }
@@ -391,5 +392,6 @@ $(function () {
         ns.allAddLocsPrice = parseInt(ns.additionalLocationsTotal.val());
         ns.totalDiscount = parseInt(ns.totalDiscountInput.val());
         ns.totalPrice = parseInt(ns.totalPriceInput.val());
+        ns.totalPriceSansDiscount = (ns.allAddLocsPrice || 0) + ns.basePrice;
     };
 })(MANAGE);
