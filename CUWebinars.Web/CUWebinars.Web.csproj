@@ -837,6 +837,7 @@
     <Content Include="Views\Cart\PayCC_Approved.cshtml" />
     <Content Include="Views\Cart\PayCC_Declined.cshtml" />
     <Content Include="Views\Shared\Partials\_OrderSumUser.cshtml" />
+    <Content Include="Views\Shared\Partials\_CheckoutFeedback.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

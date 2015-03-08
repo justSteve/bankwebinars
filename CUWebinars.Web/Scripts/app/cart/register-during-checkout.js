@@ -2,7 +2,7 @@
 registerDuringCheckout.institutionNames = {};
 
 
-registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shippingAddressRequired, callback) {
+registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, shippingAddressRequired, callback) {
 
     //Rollbar.info({ 'reg-during-check': { orderId: orderId, webinarId: webinarId, orderRowId: orderRowId, shippingAddressRequired: shippingAddressRequired } });
 
@@ -15,7 +15,7 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
 
     //setup ajax error handling
     $.ajaxSetup({
-        error: function(x, status, error) {
+        error: function (x, status, error) {
             if (x.status == 403) {
                 alert('Sorry, your session has expired. Please login again to continue');
                 window.location.href = '/Account/Login';
@@ -32,7 +32,7 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
     regUserStateManager.setAction(RegistrationInCart.Action.CheckEmail); // starting off with CheckEmail action.
     regUserStateManager.setIsShippindAddressRequired(shippingAddressRequired);
 
-    $('#RegisterFields_Email').bind('change keyup', function() {
+    $('#RegisterFields_Email').bind('change keyup', function () {
         regUserStateManager.ensureFormValidatorParsed();
         if ($(this).valid() == true) {
             $('#TheSubmitButton').removeClass('button_disabled').attr('disabled', false);
@@ -41,12 +41,12 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
         }
     });
 
-    $('[name="RegisterFields.ConfirmPassword"]').on('focus', function(event) {
+    $('[name="RegisterFields.ConfirmPassword"]').on('focus', function (event) {
         $(this).next('span').removeAttr('class').attr('class', 'field-validation-valid');
         $(this).next('span span').remove();
     });
 
-    $('body').on('click', 'input:button', (function(e, data) {
+    $('body').on('click', 'input:button', (function (e, data) {
 
         if (e.currentTarget.value === 'Create New Account?') // called directly in the razor partial view
             return false;
@@ -57,8 +57,9 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
         regUserStateManager.setInputAction(RegistrationInCart.InputAction.ButtonClick);
 
         if (regUserStateManager.getAction() === '') {
-            $('#labelEmail').html('<span class="label label-important">&nbsp;There registration has encountered a problem. Please refresh the page and re-start the registration process or call Tech Support at 800-831-0678 ext. 706.</span>');
 
+            $('#labelEmail').html('<span class="label label-important">&nbsp;The registration has encountered a problem. Please refresh the page and re-start the registration process or call Tech Support at 800-831-0678 ext. 706.</span>');
+            Rollbar.error("The registration has encountered a problem.", e);
             return false;
         }
 
@@ -76,33 +77,33 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
         // NotInstitution
 
         switch (clickedButton) {
-        case RegistrationInCart.Button.SignInButton:
-            regUserStateManager.logIn();
-            break;
-        case RegistrationInCart.Button.TheSubmit:
-            //console.log('ActionForTheSubmit = ' + regUserStateManager.action);
-            regUserStateManager.submit();
-            break;
-        case RegistrationInCart.Button.nonUSAddressBtn:
-            regUserStateManager.nonUsAdddressInvoked();
-            break;
-        case RegistrationInCart.Button.ResetPass:
-            regUserStateManager.resetPassword(normalResetPasswordButton);
-            break;
-        case RegistrationInCart.Button.YesUseAddress:
-            regUserStateManager.useRegisteredAddress();
-            break;
-        case RegistrationInCart.Button.EnterDiffAddress:
-            regUserStateManager.enterDifferentAddress();
-            break;
-        case RegistrationInCart.Button.NotInstitution:
-            regUserStateManager.notInstitutionAddress();
-            break;
-        default:
+            case RegistrationInCart.Button.SignInButton:
+                regUserStateManager.logIn();
+                break;
+            case RegistrationInCart.Button.TheSubmit:
+                //console.log('ActionForTheSubmit = ' + regUserStateManager.action);
+                regUserStateManager.submit();
+                break;
+            case RegistrationInCart.Button.nonUSAddressBtn:
+                regUserStateManager.nonUsAdddressInvoked();
+                break;
+            case RegistrationInCart.Button.ResetPass:
+                regUserStateManager.resetPassword(normalResetPasswordButton);
+                break;
+            case RegistrationInCart.Button.YesUseAddress:
+                regUserStateManager.useRegisteredAddress();
+                break;
+            case RegistrationInCart.Button.EnterDiffAddress:
+                regUserStateManager.enterDifferentAddress();
+                break;
+            case RegistrationInCart.Button.NotInstitution:
+                regUserStateManager.notInstitutionAddress();
+                break;
+            default:
         }
     }));
 
-    $('input').keypress(function(event) {
+    $('input').keypress(function (event) {
 
         var inputElementTriggered = event.currentTarget.name;
         var normalResetPasswordButton = $('#NormalResetPasswordButton');
@@ -123,52 +124,52 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
             regUserStateManager.setInputAction(RegistrationInCart.InputAction.EnterKeyPress);
 
             switch (inputElementTriggered) {
-            case 'Password':
-            case 'Email':
-            case RegistrationInCart.Button.SignInButton:
-                regUserStateManager.logIn();
-                break;
-            case 'RegisterFields.Password':
-            case 'RegisterFields.ConfirmPassword':
-            case 'RegisterFields.Email':
-            case 'getZip':
-            case 'Password1':
-            case 'Email1':
-            case RegistrationInCart.Button.TheSubmit:
-                //console.log('ActionForTheSubmit = ' + regUserStateManager.action);
-                regUserStateManager.submit();
-                break;
-            case RegistrationInCart.Button.nonUSAddressBtn:
-                regUserStateManager.nonUsAdddressInvoked();
-                break;
-            case 'NormalResetPasswordInput':
-            case 'NormalResetPasswordButton':
-                if ($('#EdgeCaseResetPasswordButton').data('clicked'))
-                    $('#EdgeCaseResetPasswordButton').removeData('clicked');
-                $('#NormalResetPasswordButton').data('clicked', true);
-                $('form#ResetPasswordForm').submit();
-                break;
-            case '#EdgeCaseResetPasswordButton':
-            case RegistrationInCart.Button.ResetPass:
-                regUserStateManager.resetPassword(normalResetPasswordButton);
-                break;
-            case RegistrationInCart.Button.YesUseAddress:
-                regUserStateManager.useRegisteredAddress();
-                break;
-            case RegistrationInCart.Button.EnterDiffAddress:
-                regUserStateManager.enterDifferentAddress();
-                break;
-            case RegistrationInCart.Button.NotInstitution:
-                regUserStateManager.notInstitutionAddress();
-                break;
-            default:
-                if ($('#TheSubmitButton').val() === regUserStateManager.getRegisterButtonText()) {
-                    if ($(regUserStateManager.getSameAsBillingCheckedFilter()).val()) {
-                        regUserStateManager.setShippingToBilling();
-                    }
-                    regUserStateManager.setAction(RegistrationInCart.Action.SubmitRegister);
+                case 'Password':
+                case 'Email':
+                case RegistrationInCart.Button.SignInButton:
+                    regUserStateManager.logIn();
+                    break;
+                case 'RegisterFields.Password':
+                case 'RegisterFields.ConfirmPassword':
+                case 'RegisterFields.Email':
+                case 'getZip':
+                case 'Password1':
+                case 'Email1':
+                case RegistrationInCart.Button.TheSubmit:
+                    //console.log('ActionForTheSubmit = ' + regUserStateManager.action);
                     regUserStateManager.submit();
-                }
+                    break;
+                case RegistrationInCart.Button.nonUSAddressBtn:
+                    regUserStateManager.nonUsAdddressInvoked();
+                    break;
+                case 'NormalResetPasswordInput':
+                case 'NormalResetPasswordButton':
+                    if ($('#EdgeCaseResetPasswordButton').data('clicked'))
+                        $('#EdgeCaseResetPasswordButton').removeData('clicked');
+                    $('#NormalResetPasswordButton').data('clicked', true);
+                    $('form#ResetPasswordForm').submit();
+                    break;
+                case '#EdgeCaseResetPasswordButton':
+                case RegistrationInCart.Button.ResetPass:
+                    regUserStateManager.resetPassword(normalResetPasswordButton);
+                    break;
+                case RegistrationInCart.Button.YesUseAddress:
+                    regUserStateManager.useRegisteredAddress();
+                    break;
+                case RegistrationInCart.Button.EnterDiffAddress:
+                    regUserStateManager.enterDifferentAddress();
+                    break;
+                case RegistrationInCart.Button.NotInstitution:
+                    regUserStateManager.notInstitutionAddress();
+                    break;
+                default:
+                    if ($('#TheSubmitButton').val() === regUserStateManager.getRegisterButtonText()) {
+                        if ($(regUserStateManager.getSameAsBillingCheckedFilter()).val()) {
+                            regUserStateManager.setShippingToBilling();
+                        }
+                        regUserStateManager.setAction(RegistrationInCart.Action.SubmitRegister);
+                        regUserStateManager.submit();
+                    }
             }
 
             //console.log(regUserStateManager.action);
@@ -177,19 +178,19 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
         }
     });
 
-    $('#collapseShipping').on('shown', function() {
+    $('#collapseShipping').on('shown', function () {
         if ($(regUserStateManager.getSameAsBillingCheckedFilter()).val()) {
             regUserStateManager.setShippingToBilling();
         }
     });
 
-    $('#TheSubmitButton').on('mouseenter', function() {
+    $('#TheSubmitButton').on('mouseenter', function () {
         if ($('#TheSubmitButton').val() === regUserStateManager.getRegisterButtonText() && $(regUserStateManager.getSameAsBillingCheckedFilter()).val()) {
             regUserStateManager.setShippingToBilling();
         }
     });
 
-    $('#ResetPasswordForm').on('submit', function(e) {
+    $('#ResetPasswordForm').on('submit', function (e) {
 
         var hiddenInput = $('#ResetPassEmail');
 
@@ -205,28 +206,36 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
             url: jsonUrl,
             dataType: RegistrationInCart.Constants.JsonDataType,
             data: JSON.stringify(jsonPayload),
-            beforeSend: function() {
+            beforeSend: function () {
                 $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Working...</span>');
             }
-        }).done(function(data) {
+        }).done(function (data) {
             if (data.Result === 'Success') {
                 $('#labelEmail').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Reset instructions are on the way.</span>');
             } else {
                 if (data['Invalid'] === 'UserNotVerified') {
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Our system is in an in invalid state. This error is known and can be <br>easily rectified by calling us at 800-831-0678 ext. 3. Or email us at support@ttstrain.com</span>');
+                    Rollbar.error("UserNotVerified", data.Result);
+                    Rollbar.error("UserNotVerified static marker");
+
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error#3/ Send email to support@ttstrain.com or, for immediate assistance, call 800-831-0678 ext. 3.</span>');
                 } else if (data['Invalid'] === 'UnkownEmail') {
+                    Rollbar.error("UnkownEmail", data.Result);
+                    Rollbar.error("UnkownEmail static marker");
+
                     $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Contact us at support@ttstrain.com if you believe this is in error.</span>');
                 } else {
+                    Rollbar.error("Unknown error #454", data.Result);
+                    Rollbar.error("Unknown #454 static marker");
                     $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Error. Please retry...</span>');
                 }
             }
-        }).always(function(data) {
+        }).always(function (data) {
 
         });
 
     });
 
-    $('form#checkEmail').submit(function(e) {
+    $('form#checkEmail').submit(function (e) {
 
         e.preventDefault();
 
@@ -244,11 +253,11 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
                 url: jsonUrl,
                 dataType: RegistrationInCart.Constants.JsonDataType,
                 data: { email: email, disregardInstitutionDomain: regUserStateManager.getDisregardIntitutionDomain(), orderId: orderId, __RequestVerificationToken: token },
-                beforeSend: function() {
+                beforeSend: function () {
                     // this is where we append a loading image
                     $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Checking that Email...</span>');
                 }
-            }).done(function(data) {
+            }).done(function (data) {
 
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
 
@@ -264,24 +273,30 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
                 } else if (data.error === 'Fail') {
                     $('#labelEmail').html('<span class="label label-important">&nbsp;An error has occurred at the server. Please contact the administrator.</span>');
                 } else if (data.error === 'Uncaught Ajax Error') {
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;splat.</span>');
+                    Rollbar.error("Uncaught Ajax Error 343", data);
+                    Rollbar.error("Uncaught Ajax Error 343 static marker");
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;Uncaught Ajax Error 343</span>');
                 }
 
-            }).fail(function() {
+            }).fail(function () {
                 // failed request; give feedback to user
-                $('#labelEmail').html('<p class="error"><span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Try that again in a few moments.</span></p>');
+                $('#labelEmail').html('<p class="error"><span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Connection Error #451 Try that again in a few moments.</span></p>');
+                Rollbar.error("Connection Error #451 ", data);
+                Rollbar.error("Connection Error #451  static marker");
                 //$('#wrapEmail').html('<p class="error"><i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Try that again in a few moments.</p>');
-            }).always(function(data, status, message) {
+            }).always(function (data, status, message) {
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
 
                 if (status === 'error' && JSON.parse(data.responseText)['Message'] === 'Uncaught Ajax Error') {
+                    Rollbar.error("HandleAjaxExceptionAttribute #458 ", data);
+                    Rollbar.error("HandleAjaxExceptionAttribute #458 static marker");
                     //  if in here, we know the error got caught and logged in a HandleAjaxExceptionAttribute 
                 }
             });
         }
     });
 
-    $('form#checkZip').submit(function() {
+    $('form#checkZip').submit(function () {
 
         var jsonUrl = '/Account/CheckZip';
         var zipCode = $('#ZipChecker').val();
@@ -296,24 +311,27 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
                 url: jsonUrl,
                 dataType: RegistrationInCart.Constants.JsonDataType,
                 data: { Zip: zipCode },
-                beforeSend: function() {
+                beforeSend: function () {
                     // this is where we append a loading image
                     $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Checking that Zip...</span>');
                 }
-            }).done(function(data) {
+            }).done(function (data) {
                 // successful request; do something with the data
                 regUserStateManager.zipCodeVerified(data, zipCode);
-            }).fail(function() {
+            }).fail(function () {
+                Rollbar.error("RegistrationInCart | ZipCodeCheck", data);
+                Rollbar.error("RegistrationInCart | ZipCodeCheck/no Data");
+
                 // failed request; give feedback to user
                 $('#wrapZip').html('<p class="error"><i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Try that again in a few moments.</p>');
-            }).always(function() {
+            }).always(function () {
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
             });
         }
         return false;
     });
 
-    $('#FullName').blur(function() {
+    $('#FullName').blur(function () {
         var tempName = $('#FullName').val().split(' ');
         if (tempName.length == 2) {
             $('#RegisterFields_FirstName').val(tempName[0]);
@@ -327,12 +345,12 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
         }
     });
 
-    $('#getFirstLast').on('blur', '#RegisterFields_FirstName, #RegisterFields_LastName', function() {
+    $('#getFirstLast').on('blur', '#RegisterFields_FirstName, #RegisterFields_LastName', function () {
         var fullNameInput = $('#FullName');
         fullNameInput.val($('#RegisterFields_FirstName').val() + ' ' + $('#RegisterFields_LastName').val());
     });
 
-    $('#modalInstitution').on('hidden', function(e) {
+    $('#modalInstitution').on('hidden', function (e) {
 
         regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
 
@@ -344,7 +362,7 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
 
     //  This handler was colliding with one by the same name in create-user.
     //  It is now invoked from the register-user-in-cart.js script.
-    $('#_CreateUserFromCartForm').on('submit', function(event) {
+    $('#_CreateUserFromCartForm').on('submit', function (event) {
         event.preventDefault();
 
         var createUserForm = $(this);
@@ -387,7 +405,7 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
             headers: headers,
-            beforeSend: function() {
+            beforeSend: function () {
                 //console.log('beforeSend Register Details');
                 // this is where we append a loading image
                 $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Registering new user...</span>');
@@ -402,7 +420,7 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
                 beigeFormArea.height(500);
                 //TODO: scroll screen upwards.
             }
-        }).done(function(data) {
+        }).done(function (data) {
             //alert('done: ');
             if (data.Result) {
                 if (data.Result === 'Success') {
@@ -437,27 +455,28 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
                             dataType: constants.JsonDataType,
                             data: JSON.stringify(payloadForUpdate),
                             headers: headers,
-                            beforeSend: function() {
+                            beforeSend: function () {
                                 $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
                             }
-                        }).done(function() {
+                        }).done(function () {
 
                             // Upon return, load the 3rd tab. And once loaded, 
                             //create the MR UserAccount (but don't log the user in). 
 
-                            $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function(response, status, xhr) {
+                            $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
 
                                 if (status == 'error') {
+                                    Rollbar.error("Error at /cart/checkoutConfirm/");
                                     $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
                                     $('#loadingSpinner').remove();
                                     $('#confirmationTab a').tab('show');
                                 } else {
 
-                                    $('#ConfirmRegistrationBillMe').on('click', function(e) {
+                                    $('#ConfirmRegistrationBillMe').on('click', function (e) {
                                         completeOrder(userId, orderRowId, webinarId, orderId);
                                     });
 
-                                    $('#Canceller').on('click', function(e) {
+                                    $('#Canceller').on('click', function (e) {
                                         cancelOrder(orderId, webinarId);
                                     });
 
@@ -489,17 +508,22 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
                     }
 
                 } else if (data.Result === 'Fail') {
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;There has been an error in the request. Please try again or call tech support at 800-831-0678 ext 706.</span>');
+                    Rollbar.error("Connection Error #332 static marker");
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #332. Please try again or call tech support at 800-831-0678 ext 706.</span>');
                     regUserStateManager.setAction(RegistrationInCart.Action.SubmitRegister);
                 }
             } else if (!data.isSuccessful) {
+                Rollbar.error("Connection Error #332 static marker");
+
                 $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;There were some problems with the form. Please refer to the items in red.</span>');
                 formProcessor.lightUpValidationSummary('valSummarySignUpInCart', data);
             }
 
-        }).fail(function(data) {
+        }).fail(function (data) {
+            Rollbar.error("Connection Error #225", data.Result);
+            Rollbar.error("Connection Error #225 static marker");
             //console.log('failed: ' + data);
-        }).always(function() {
+        }).always(function () {
             regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
         });
 
@@ -526,7 +550,7 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
         });
     });
 
-    $('#frmSignIn').on('submit', function(event) {
+    $('#frmSignIn').on('submit', function (event) {
 
         event.preventDefault();
 
@@ -546,25 +570,25 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
             url: url,
             dataType: constants.JsonDataType,
             data: data,
-            beforeSend: function() {
+            beforeSend: function () {
                 $('#labelEmail').html('<span class="label label-info">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Logging you in...</span>');
                 $('#loginErrorSummary').empty();
             }
-        }).done(function(data) {
+        }).done(function (data) {
             if (data.result) {
                 if (data.result === 'LoggedIn') {
 
                     var userId = data.UserId;
                     regUserStateManager.setAction('');
 
-                    $('#labelEmail').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;You have successfully logged in!</span>').fadeOut(500, function() {
+                    $('#labelEmail').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;You have successfully logged in!</span>').fadeOut(500, function () {
                         $(this).html('<span class="label label-info">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Processing order...</span>').fadeIn(100);
                     });
 
-                    $('#loginContainer').empty().load('/Account/GetLoginPartial', function(e) {
+                    $('#loginContainer').empty().load('/Account/GetLoginPartial', function (e) {
 
                         $('#updateOrderWithUserIdWrapper').empty();
-                        $('#updateOrderWithUserIdWrapper').load('/Cart/UpdateOrderWithUserIdForm', function(response, status, xhr) {
+                        $('#updateOrderWithUserIdWrapper').load('/Cart/UpdateOrderWithUserIdForm', function (response, status, xhr) {
 
                             var updateOrderWithUserForm = $('#_UpdateOrderWithUserId');
                             var url = updateOrderWithUserForm.attr('action');
@@ -586,26 +610,27 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
                                 dataType: constants.JsonDataType,
                                 data: JSON.stringify(payloadForUpdate),
                                 headers: headers,
-                            }).done(function(data) {
+                            }).done(function (data) {
 
                                 if (data.Result === 'Success') {
 
                                     $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
 
-                                    $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function(response, status, xhr) {
+                                    $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderRowId(), function (response, status, xhr) {
 
                                         if (status == 'error') {
-                                            $(this).html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
+                                            Rollbar.error("Connection Error #106.", data);
+                                            Rollbar.error("Connection Error #106. static marker");
+                                            $(this).html('<div class="text-error">Connection Error #106. Email support@ttstrain.com or call 800-831-0678 ext 706 for immediate assistance.</div>');
                                             $('#confirmationTab a').tab('show');
                                         } else {
-
-                                            $('#ConfirmRegistrationBillMe').on('click', function(e) {
+                                            $('#ConfirmRegistrationBillMe').on('click', function (e) {
                                                 e.preventDefault();
                                                 callback();
                                                 $('#confirmOrder').submit();
                                             });
 
-                                            $('#Canceller').on('click', function(e) {
+                                            $('#Canceller').on('click', function (e) {
                                                 e.preventDefault();
                                                 callback();
                                                 var cancelOrderForm = cartStateManager.getCancelOrderForm();
@@ -635,8 +660,8 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
                     });
                 }
             } else if (!data.isSuccessful) {
-                $('#labelEmail').html('<span class="label label-important"><i class="icon icon-exclamation-sign"></i>&nbsp;There has been a problem with your log in attempt.</span>');
-
+                $('#labelEmail').html('<span class="label label-important"><i class="icon icon-exclamation-sign"></i>&nbsp;Error #641. There has been a problem with your log in attempt.</span>');
+                Rollbar.error("Error #641.  static marker");
                 var valSummary = $('#loginErrorSummary');
                 valSummary.addClass('validation-summary-errors');
                 valSummary.append('Please address the following login errors: <ul></ul>');
@@ -652,9 +677,12 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
                 }
             }
 
-        }).fail(function(data) {
+        }).fail(function (data) {
+
+            Rollbar.error("Error #902", data.Result);
+            Rollbar.error("Error #902 static marker");
             //console.log('failed: ' + data);
-        }).always(function() {
+        }).always(function () {
             regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
         });
 
@@ -763,7 +791,8 @@ function completeOrder(userId, orderRowId, webinarId, orderId) {
 
             } else {
 
-                $('#ConfirmRegistrationBillMe').after('<span class="text-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                Rollbar.error("Error #935 static marker");
+                $('#ConfirmRegistrationBillMe').after('<span class="text-error">Error #935. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
             }
 
             $('#finalLoadingSpinner').remove();
@@ -794,19 +823,15 @@ function cancelOrder(orderId, webinarId) {
         $.post(cancelOrderForm.attr('action'), data, function (response, status, xhr) {
             if (response.success) {
 
-                //var NRerr = new Error('Suceeded in cancelling order');
-                //NREUM.noticeError(NRerr);
-
                 var utilities = new Common.Utilities();
                 console.log('/webinar/details/' + webinarId);
                 utilities.goToUrl('/webinar/details/' + webinarId);
 
             } else {
 
-                var err = new Error('Cancel Order Failure');
-                //NREUM.noticeError(err);
+                Rollbar.error("Cancel Order Failure static marker");
 
-                $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Error #216. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                 $('#CancelModal').modal('hide');
             }
 
@@ -844,7 +869,7 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
 
     // There may be times where a button does not trigger the modal.
     if (button) {
-        button.on('click', function(e) {
+        button.on('click', function (e) {
 
             e.preventDefault();
 
@@ -879,7 +904,7 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
                     $('#updateShippingMsgLabelWrap').html('<span class="label label-info">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Updating details...</span>');
                 }
             }).done(function (data) {
-                
+
                 if (data.Result === 'Success') {
                     var fullname = $('#RegisterFields_FirstName').val() + ' ' + $('#RegisterFields_LastName').val();
                     $('#userFullname').text(fullname);
@@ -892,20 +917,23 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
                     //modalForm.modal('hide');
 
                 } else if (!data.isSuccessful) {
-                    //var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
-                    //NREUM.noticeError(err);
+
+                    Rollbar.error("userDetailsForm Submission Fails", data);
+                    Rollbar.error("userDetailsForm Submission Fails static marker");
 
                     $('#updateShippingMsgLabelWrap').empty();
                     formProcessor.lightUpValidationSummary('userDetailsValSummary', data);
                 } else {
-                    //var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
-                    //NREUM.noticeError(err);
-                    $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>There has been an error in the operation.Please call us at 800-831-0678 ext. 3 to resolve.</span>');
+
+                    Rollbar.error("416", data.Result);
+                    Rollbar.error("416 static marker");
+                    $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error #416. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
                 }
             }).fail(function (data) {
-                //var err = new Error('FAIL: Post to userDetailsFormUrlData ' + userDetailsFormUrlData + ' !data.isSuccessful');
-                //NREUM.noticeError(err);
-                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error in the server response. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
+
+                Rollbar.error("417", data.Result);
+                Rollbar.error("417 static marker");
+                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error #417. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
             });
         });
 

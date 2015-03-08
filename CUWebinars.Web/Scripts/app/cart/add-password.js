@@ -4,11 +4,12 @@ $(function() {
     var addPasswordForm = $('#addPasswordForm');
     var submitButton = addPasswordForm.find('input[type="submit"]');
     var addPasswordContainer = $('#addPasswordContainer');
+    var feedbackContainer = $('#FeedbackContainer');
     var containerHeight = addPasswordContainer.height();
     $('#NewPassword').focus();
 
     submitButton.on('click', function(e) {
-
+        alert("hit");
         e.preventDefault();
 
         var url = addPasswordForm.attr('action');
@@ -26,7 +27,8 @@ $(function() {
                 $('#addPwdMsgLabelWrap').html('<span class="label label-info">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Adding your password...</span>');
                 $('#addPwdValSummary').empty();
             }
-        }).done(function(data) {
+        }).done(function (data) {
+            feedbackContainer.show();
             if (data.Result === 'Success') {
                 addPasswordContainer.height(containerHeight);
                 var formParent = addPasswordForm.parent();
@@ -39,7 +41,8 @@ $(function() {
                 addPasswordContainer.height(containerHeight);
                 var formParent = addPasswordForm.parent();
                 addPasswordForm.fadeOut();
-                formParent.prepend('<div class="legendImitator">Order Entry Completed</div><div><p>Your order is recorded. Watch your email for your password and links to your event\'s materials.</p></div>');
+                Rollbar.error("AddPasswordFromCartCheckoutTimedOut", data.Result);
+                formParent.prepend('<div class="legendImitator">Order Entry Completed</div><div>Your order is recorded. Watch your email for links to your event\'s materials and other important information.</p></div>');
             }
         });
     });
