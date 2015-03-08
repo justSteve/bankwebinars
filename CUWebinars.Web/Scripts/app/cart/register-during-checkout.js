@@ -661,28 +661,28 @@ registerDuringCheckout.initialize = function(orderId, webinarId, orderRowId, shi
         return false;
     });
 
-    $('#RegisterFields_Institution').typeahead({
-        source: function(query, process) {
-            registerDuringCheckout.searchInstitution(query, process);
-        },
+    //$('#RegisterFields_Institution').typeahead({
+    //    source: function(query, process) {
+    //        registerDuringCheckout.searchInstitution(query, process);
+    //    },
 
-        matcher: function(item) {
-            return true;
-        },
+    //    matcher: function(item) {
+    //        return true;
+    //    },
 
-        highlighter: function(name) {
-            return name;
-        },
+    //    highlighter: function(name) {
+    //        return name;
+    //    },
 
-        sorter: function(items) {
-            return items;
-        },
+    //    sorter: function(items) {
+    //        return items;
+    //    },
 
-        updater: function(name) {
-            return name;
-        }
+    //    updater: function(name) {
+    //        return name;
+    //    }
 
-    });
+    //});
 
     $('#loadingSpinner').remove();
 

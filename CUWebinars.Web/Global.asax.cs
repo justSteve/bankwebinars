@@ -98,9 +98,31 @@ namespace CUWebinars.Web
 
         private static void LogStartupDetails()
         {
-            logger.Info(string.Format("Spinning up application"));
+            var LoggerInfoString = "";
+            var TenantName = "";
+
+            foreach (string key in ConfigurationManager.AppSettings)
+            {
+                string value = ConfigurationManager.AppSettings[key];
+
+                LoggerInfoString += string.Format("SPINUP              Orders Notifier: Key {0} Value {1}", key, value);
+                
+                if (key == "Tenant")
+                {
+                    TenantName = value;
+                }
+            }
+
+
+            logger.Info(string.Format("{0} Spinning up application", TenantName));
             logger.Info(string.Format("Config Properties - {0}", GlobalConfig.GlobalConfigSingleton.PropertiesAsString));
-            logger.Info(string.Format("AppInfo:{0}", GetAppVersionInfo()));
+            logger.Info(string.Format("AppInfo: {0}", GetAppVersionInfo()));
+            
+            logger.Info(string.Format("AppSettings for {0}", TenantName));
+            logger.Info(string.Format("AppSettings are {0}", LoggerInfoString));
+            
+
+
         }
 
         private static string GetAppVersionInfo()

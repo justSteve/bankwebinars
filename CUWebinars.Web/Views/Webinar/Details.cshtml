@@ -66,90 +66,93 @@
             <!--close aside widget-->
         </section>
         <div class="span6">
-            @Html.Raw(Model.Webinar.DescriptionLong)
-            <h2 class="short_headline">
-                <span>
-                    @Html.Raw(Model.Webinar.LearnCaption)
-                </span>
-            </h2>
-            @Html.Raw(Model.Webinar.LearnBody)
-            <h2 class="short_headline">
-                <span>
-                    Who Should Attend?
-                </span>
-            </h2>
-            @Html.Raw(Model.Webinar.WhoAttend)
-            <hr />
-            @{
-                //begins public signup container
-                if (Model.Webinar.Status != WebinarStatus.Archived
-                    && Model.Webinar.Status != WebinarStatus.Deleted
-                    && Model.Webinar.Status != WebinarStatus.Pending
-                    )
-                {
-                    <div id="SignUpFormContainer" class="row-fluid">
+            <div id="SignUpFormContainer" >
+                @{
+                    //begins public signup container
+                    if (Model.Webinar.Status != WebinarStatus.Archived
+                        && Model.Webinar.Status != WebinarStatus.Deleted
+                        && Model.Webinar.Status != WebinarStatus.Pending
+                        )
+                    {
+                        <div>
 
-                        <div class="content span12 well">
-                            <ul class="nav nav-tabs" id="regTabs">
-                                <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@Model.SignUpCaption</a></li>
-                                <li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
-                                <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@Model.ConfirmationCaption</a></li>
-                            </ul>
+                            <div style="margin-bottom: 0; padding: 0 5px 0 8px  ;" class="well">
+                                <ul class="nav nav-tabs" id="regTabs">
+                                    <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@Model.SignUpCaption</a></li>
+                                    <li id="contactInfoTab"><a href="#contactInfo" data-toggle="tab">Contact Info</a></li>
+                                    <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@Model.ConfirmationCaption</a></li>
+                                </ul>
 
-                            <div class="tab-content">
-                                @if (Model.UserOwnsThisEvent < 1)
-                                {
-                                    <div class="tab-pane active" id="signUp">
-                                        <button type="button" class="btn-success btn btn-large pull-right" id="AddToCart"> Sign Up </button>
-                                        @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)
-                                    </div>
-                                    <div class="tab-pane" id="contactInfo">
-                                    </div>
-                                    <div class="tab-pane" id="confirmation">
-                                    </div>
-                                }
-                                else if (Model.UserOwnsThisEvent > 0 && Model.CheckoutInProcess)
-                                {
-                                    <div class="tab-pane" id="signUp">
-                                    </div>
-                                    <div class="tab-pane" id="contactInfo">
-                                    </div>
-                                    <div class="tab-pane active" id="confirmation">
-                                        @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutConfirm.cshtml", model: Model.CheckoutConfirmViewModel)
-                                    </div>
-                                }
+                                <div class="tab-content">
+                                    @if (Model.UserOwnsThisEvent < 1)
+                                    {
+                                        <div class="tab-pane active" id="signUp">
+                                            @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)
+                                        </div>
+                                        <div class="tab-pane" id="contactInfo">
+                                        </div>
+                                        <div class="tab-pane" id="confirmation">
+                                        </div>
+                                    }
+                                    else if (Model.UserOwnsThisEvent > 0 && Model.CheckoutInProcess)
+                                    {
+                                        <div class="tab-pane" id="signUp">
+                                        </div>
+                                        <div class="tab-pane" id="contactInfo">
+                                        </div>
+                                        <div class="tab-pane active" id="confirmation">
+                                            @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutConfirm.cshtml", model: Model.CheckoutConfirmViewModel)
+                                        </div>
+                                    }
+                                </div>
                             </div>
-                        </div>
-                        <!-- The following forms are positioned here so that they are not nested in the form in the CheckoutOptions View. -->
-                        @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
-                        {
-                            @Html.AntiForgeryToken()
-                            
-                            <input id="loginEmail" name="Email" type="hidden" value="">
-                            <input id="loginPassword" name="Password" type="hidden">
-                            <input id="loginRememberMe" type="hidden" value="true" name="RememberMe">
-                            <input type="hidden" name="returnUrl" value="/Webinar/Details/@Model.Webinar.idWebinar" />
-                        }
+                            <!-- The following forms are positioned here so that they are not nested in the form in the CheckoutOptions View. -->
+                            @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
+                            {
+                                @Html.AntiForgeryToken()
 
-                        @using (Html.BeginForm("ResetPassword", "Account", FormMethod.Post, new { id = "ResetPasswordForm" }))
-                        {
-                            <input id="ResetPassEmail" name="emailForReset" type="hidden" value="">
-                        }
-                        <form id="checkEmail">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="emailChecker" id="emailChecker" />
-                        </form>
-                        <form id="checkZip"><input type="hidden" name="ZipChecker" id="ZipChecker" /></form>
-                        <form id="nonUSForm"><input type="hidden" name="AddressText" id="AddressText" /></form>
-                        <form id="checkInstitution"><input type="hidden" name="InstitutionChecker" id="InstitutionChecker" /></form>
+                                <input id="loginEmail" name="Email" type="hidden" value="">
+                                <input id="loginPassword" name="Password" type="hidden">
+                                <input id="loginRememberMe" type="hidden" value="true" name="RememberMe">
+                                <input type="hidden" name="returnUrl" value="/Webinar/Details/@Model.Webinar.idWebinar" />
+                            }
+
+                            @using (Html.BeginForm("ResetPassword", "Account", FormMethod.Post, new { id = "ResetPasswordForm" }))
+                            {
+                                <input id="ResetPassEmail" name="emailForReset" type="hidden" value="">
+                            }
+                            <form id="checkEmail">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="emailChecker" id="emailChecker" />
+                            </form>
+                            <form id="checkZip"><input type="hidden" name="ZipChecker" id="ZipChecker" /></form>
+                            <form id="nonUSForm"><input type="hidden" name="AddressText" id="AddressText" /></form>
+                            <form id="checkInstitution"><input type="hidden" name="InstitutionChecker" id="InstitutionChecker" /></form>
 
                     </div> <!-- closes SignUpFormContainer div-->
 
+                    }
                 }
-            }
+            </div>
+            <div id="EventDescription">
+                @Html.Raw(Model.Webinar.DescriptionLong)
+                <h2 class="short_headline">
+                    <span>
+                        @Html.Raw(Model.Webinar.LearnCaption)
+                    </span>
+                </h2>
+                @Html.Raw(Model.Webinar.LearnBody)
+                <h2 class="short_headline">
+                    <span>
+                        Who Should Attend?
+                    </span>
+                </h2>
+                @Html.Raw(Model.Webinar.WhoAttend)
+                <hr />
+            </div>
         </div>
         <!-- opens Container div-->
-        
+
         <div class="span3">
             <aside class="widget">
                 <h5 class="short_headline"><span>Date/Time</span></h5>
@@ -178,7 +181,6 @@
             </aside>
             @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())
             <!-- close .widget -->
-
             <!-- For Generate ics file widget -->
             @*<aside class="widget">
                     <h5 class="short_headline"><span>iCalendar</span></h5>

@@ -39,8 +39,7 @@ $(function() {
                 addPasswordContainer.height(containerHeight);
                 var formParent = addPasswordForm.parent();
                 addPasswordForm.fadeOut();
-                formParent.prepend('<div class="legendImitator">Order Entry Completed</div><div><p>Your order is recorded as summarized below. Watch your email for your password and links to your event\'s materials.</p></div>');
-                formParent.append('<div class="OrderSummary">Order Summary or can we execute some jquery to .Show the OrderSummary partial.</div><div><p>');
+                formParent.prepend('<div class="legendImitator">Order Entry Completed</div><div><p>Your order is recorded. Watch your email for your password and links to your event\'s materials.</p></div>');
             }
         });
     });
