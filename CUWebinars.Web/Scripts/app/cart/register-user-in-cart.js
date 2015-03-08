@@ -181,7 +181,7 @@ var RegistrationInCart;
 
             $('#TimeZone').val(data.TimeZone);
 
-            $('#labelEmail').html('<span class="label label-success"><b>&nbsp;&nbsp;Email - Zipcode.</span>');
+            $('#labelEmail').html('<span class="label label-warning"><b>&nbsp;&nbsp;Account Creation In-Process</span>');
             $('#TheSubmitButton').prop('value', this.registerButtonText);
 
             if (this.inputAction === InputAction.EnterKeyPress)

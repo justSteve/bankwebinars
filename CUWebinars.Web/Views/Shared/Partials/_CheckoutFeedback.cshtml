@@ -1,0 +1,39 @@
+﻿@using System.Configuration
+
+
+@{
+    var url = "";
+    if (@ConfigurationManager.AppSettings["Tenant"] == "BankWebinars")
+    {
+        url = "http://form.jotformpro.com/form/43463497084968?yourEmail21=";
+    }
+    if (@ConfigurationManager.AppSettings["Tenant"] == "CUWebinars")
+    {
+        url = "http://form.jotform.us/form/32764012877155?yourEmail21=";
+
+    }
+
+}
+
+<script language="javascript" type="text/javascript">
+    function openJWindow() {
+        window.open('@url' + $("#getEmail").val(), 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');
+    }
+</script>
+
+<section>
+    <p style="font-size: small;">
+        Your feedback is critical to our ability to improve your experience!<br />
+        @*<form action="/account/addtomailing" method="post">*@
+        <span class="input-append">
+            <input type="email" id="getEmail" placeholder="Email Address" class="span6" name="email" />
+            <button onclick="javascript: openJWindow();" class="btn btn-primary">How'd We Do?</button>
+
+        </span>
+        @*</form>*@<br />
+        (We <i>won't</i> share your email address.)
+    </p>
+</section>
+
+
+
