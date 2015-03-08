@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using CUWebinars.Business.Models;
+﻿using CUWebinars.Business.Models;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
@@ -15,9 +14,7 @@ namespace CUWebinars.Web.ViewModel
         public string SmallImageUrl { get; set; }
         public IEnumerable<SelectListItem> Statuses { get; set; }
         public string RecordingUrl { get; set; }
-        [Required]
         public string Title { get; set; }
-        [Required]
         public System.DateTime Date { get; set; }
         public string LearnCaption { get; set; }
         public string LearnBody { get; set; }
@@ -26,7 +23,6 @@ namespace CUWebinars.Web.ViewModel
         public string ceu { get; set; }
         public System.DateTime DateCreated { get; set; }
         public System.DateTime DateChanged { get; set; }
-        [Required]
         public IEnumerable<SelectListItem> Presenters { get; set; }
         public decimal AdditionalLocationsPrice { get; set; }
         public int SelectedPresenter { get; set; }

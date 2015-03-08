@@ -253,7 +253,7 @@ $(function () {
             dataType: constants.JsonDataType,
             data: payload += addedPayloadData,
             beforeSend: function() {
-                $('#feedbackLabel').remove();
+                $('.webinar-form-error').remove();
             }
         }).done(function (data) {
 
@@ -261,8 +261,22 @@ $(function () {
                 ns.submitCreatedDetailsButton.after('<span id="feedbackLabel">&nbsp;<span class="label label-success">&nbsp;The operation has succeeded.</span></span>');
             } else if (data.Result === 'Fail') {
                 ns.submitCreatedDetailsButton.after('<span id="feedbackLabel">&nbsp;<span class="label label-important">&nbsp;The operation has failed. Please contact the administrator for assistance.</span></span>');
-            }
+            } else if (!data.isSuccessful) {
+                formProcessor.lightUpValidationSummary('AddWebinarValSummary', data);
 
+                _.each(_.keys(data.data), function (key) {
+                    var id = key.slice(key.indexOf('-') + 1);
+                    try {
+                        $('#' + id).after('<span class="webinar-form-error label label-important"><i class="icon icon-exclamation-sign"></i>&nbsp;invalid</span>');
+                    } catch (e) {
+                        console.log(key);
+                    } 
+                });
+
+                // hard-code values which don't match the name output by the Fluentvalidator at the server.
+                $('#SelectedStatus').after('<span class="webinar-form-error label label-important"><i class="icon icon-exclamation-sign"></i>&nbsp;invalid</span>');
+                $('#SelectedPresenter').after('<span class="webinar-form-error label label-important"><i class="icon icon-exclamation-sign"></i>&nbsp;invalid</span>');
+            }
 
             $('#crunchingSpinnerOfSubmit').remove();
         });
@@ -287,6 +301,9 @@ $(function () {
             data: payload += addedPayloadData,
             beforeSend: function() {
                 $('#feedbackLabel').remove();
+                $('#cloneWebinarForm').validate();
+                if ($('#cloneWebinarForm').valid())
+                    console.log('valid');
             }
         }).done(function (data) {
 

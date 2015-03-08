@@ -76,7 +76,8 @@ namespace CUWebinars.Business.Services
 
         public void AddWebinar(Webinar webinar)
         {
-            _createWebinarValidator.Validate(webinar);
+            _createWebinarValidator.ValidateAndThrow(webinar);
+
             _webinarRepository.Add(webinar);
         }
 
