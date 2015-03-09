@@ -148,6 +148,7 @@ var RegistrationInCart;
             // TODO Check this in FireFox. #TimeZone seems to be init because drpdwn is blank.
             //  set TimeZone to Central time if there is none.
             var timeZoneInput = $('#TimeZone');
+            alert("timeZoneInput:" + timeZoneInput.val());
 
             if (!timeZoneInput.val())
                 timeZoneInput.val('3'); // Central = 3
@@ -275,7 +276,7 @@ var RegistrationInCart;
         StateManager.prototype.goToAddressFields = function (email) {
             ////console.log("call newPasswordView: " + email);
             if (email)
-                $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;Recorded: ' + $('#RegisterFields_Email').val() + '.</span>');
+                $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;Processing: ' + $('#RegisterFields_Email').val() + '.</span>');
 
             if (this.zipCheckRequired) {
                 this.action = Action.CheckZip;
@@ -362,7 +363,6 @@ var RegistrationInCart;
             $('#login').hide('slow');
 
             var showResetInput = $.Deferred(function () {
-                //TODO: inprocess indicator here?
                 $('#reset').show('slow');
             });
 
@@ -433,12 +433,6 @@ var RegistrationInCart;
             var firstName = $('#RegisterFields_FirstName').val();
             var lastName = $('#RegisterFields_LastName').val();
 
-            //attempting to fix bug similar to the missing shippingPhone
-            // saw an instance where first attempt to enter full name didn't have
-            // a space char (the first/last delimiter that full name uses to parse out to 1st/last)
-            // when code ran to copy billing values to shipping it didn't pick up the corrected
-            // lastname
-            // this code simply attempts to ensure a db save.
             if (!firstName) {
                 firstName = 'nonValidFirst';
             }

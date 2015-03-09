@@ -9,7 +9,6 @@ $(function() {
     $('#NewPassword').focus();
 
     submitButton.on('click', function(e) {
-        alert("hit");
         e.preventDefault();
 
         var url = addPasswordForm.attr('action');
@@ -26,18 +25,23 @@ $(function() {
                 $(this).attr('disabled', 'disabled');
                 $('#addPwdMsgLabelWrap').html('<span class="label label-info">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Adding your password...</span>');
                 $('#addPwdValSummary').empty();
+
+                Rollbar.info("addPasswordForm Sent");
             }
         }).done(function (data) {
-            feedbackContainer.show();
             if (data.Result === 'Success') {
+
+                Rollbar.info("addPasswordForm Success");
                 addPasswordContainer.height(containerHeight);
                 var formParent = addPasswordForm.parent();
                 addPasswordForm.fadeOut();
                 formParent.prepend('<div class="legendImitator">Account Created</div><span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Your account is confirmed.</span><div><a href="/Account/Login">Log In</a><div>');
+                feedbackContainer.show();
 
                 $('#main_menu ul.primary_menu').append('<li><a href="/Account/MyWebinars">My Webinars</a></li>');
             } else if (data.Result === 'TimedOut') {
-                
+                feedbackContainer.show();
+
                 addPasswordContainer.height(containerHeight);
                 var formParent = addPasswordForm.parent();
                 addPasswordForm.fadeOut();

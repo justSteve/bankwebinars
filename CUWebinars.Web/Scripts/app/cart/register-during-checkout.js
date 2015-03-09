@@ -58,7 +58,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
         if (regUserStateManager.getAction() === '') {
 
-            $('#labelEmail').html('<span class="label label-important">&nbsp;The registration has encountered a problem. Please refresh the page and re-start the registration process or call Tech Support at 800-831-0678 ext. 706.</span>');
+            $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #893. Please refresh the page and re-try or contact @tenant.TechEmail or, for immediate assistant, call @tenant.TechPhone.</span>');
             Rollbar.error("The registration has encountered a problem.", e);
             return false;
         }
@@ -215,18 +215,18 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
             } else {
                 if (data['Invalid'] === 'UserNotVerified') {
                     Rollbar.error("UserNotVerified", data.Result);
-                    Rollbar.error("UserNotVerified static marker");
+                    Rollbar.error("#388 UserNotVerified static marker");
 
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error#3/ Send email to support@ttstrain.com or, for immediate assistance, call 800-831-0678 ext. 3.</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #388. Email @tenant.TechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
                 } else if (data['Invalid'] === 'UnkownEmail') {
                     Rollbar.error("UnkownEmail", data.Result);
                     Rollbar.error("UnkownEmail static marker");
 
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Contact us at support@ttstrain.com if you believe this is in error.</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Email @tenant.TechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
                 } else {
                     Rollbar.error("Unknown error #454", data.Result);
                     Rollbar.error("Unknown #454 static marker");
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Error. Please retry...</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Error.Connection Error #454. Email @tenant.TechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
                 }
             }
         }).always(function (data) {
@@ -271,7 +271,9 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                 } else if (data.email === 'wasNotFound') {
                     regUserStateManager.goToAddressFields(email);
                 } else if (data.error === 'Fail') {
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;An error has occurred at the server. Please contact the administrator.</span>');
+
+                    Rollbar.info("goToAddressFields 319");
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #319. Email @tenant.TechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
                 } else if (data.error === 'Uncaught Ajax Error') {
                     Rollbar.error("Uncaught Ajax Error 343", data);
                     Rollbar.error("Uncaught Ajax Error 343 static marker");
@@ -280,7 +282,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
             }).fail(function () {
                 // failed request; give feedback to user
-                $('#labelEmail').html('<p class="error"><span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Connection Error #451 Try that again in a few moments.</span></p>');
+                $('#labelEmail').html('<p class="error"><span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Connection Error #451. Email @tenant.TechEmail or, for immediate assistance, call @tenant.TechPhone.</span></p>');
                 Rollbar.error("Connection Error #451 ", data);
                 Rollbar.error("Connection Error #451  static marker");
                 //$('#wrapEmail').html('<p class="error"><i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Try that again in a few moments.</p>');
@@ -319,11 +321,11 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
                 // successful request; do something with the data
                 regUserStateManager.zipCodeVerified(data, zipCode);
             }).fail(function () {
-                Rollbar.error("RegistrationInCart | ZipCodeCheck", data);
-                Rollbar.error("RegistrationInCart | ZipCodeCheck/no Data");
+                Rollbar.error("RegistrationInCart | ZipCodeCheck: 374", data);
+                Rollbar.error("static 374");
 
                 // failed request; give feedback to user
-                $('#wrapZip').html('<p class="error"><i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Try that again in a few moments.</p>');
+                $('#wrapZip').html('<p class="error"><i class="icon icon-exclamation-sign"></i>Connection Error #374. Email @tenant.TechEmail or, for immediate assistance, call @tenant.TechPhone.</p>');
             }).always(function () {
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
             });
