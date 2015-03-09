@@ -645,6 +645,12 @@
     <Content Include="Content\themes\base\tooltip.css" />
     <Content Include="Content\notification-ops.css" />
     <Content Include="Content\webinar.css" />
+    <Content Include="Infrastructure\LogConfigs\CUWLog4net.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Infrastructure\LogConfigs\BWLog4net.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Notification\Templates\SendPerDayPromo.cshtml" />
     <Content Include="Notification\Templates\SendPerWeekPromo.cshtml">
       <SubType>Code</SubType>
@@ -666,6 +672,7 @@
     <Content Include="Notification\PreviewTemplates\PreviewConnectionInfo.cshtml" />
     <Content Include="Notification\PreviewTemplates\PreviewShippedOrder.cshtml" />
     <Content Include="Notification\PreviewTemplates\PreviewRecordingPosted.cshtml" />
+    <None Include="Properties\PublishProfiles\BankWebinars31 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars31.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars31.pubxml">
       <TransformOnBuild>true</TransformOnBuild>

@@ -6,6 +6,7 @@ using CUWebinars.Business.Notification.ViewModel;
 using CUWebinars.NotificationSystem.Event;
 using Ninject.Extensions.Logging;
 using System;
+using Ninject.Extensions.Logging.Log4net.Infrastructure;
 
 namespace CUWebinars.Business.Notification.Handlers
 {
@@ -19,8 +20,7 @@ namespace CUWebinars.Business.Notification.Handlers
         public SendPerWeekPromoHandler(IFormatter generalFormatter
             , ILogger logger
             )
-            : this(generalFormatter, new SmtpMessageDelivery()
-                , logger)
+            : this(generalFormatter, new SmtpMessageDelivery(new Log4NetLogger(typeof(SmtpMessageDelivery))), logger)
         {
 
         }

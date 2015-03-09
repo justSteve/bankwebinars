@@ -31,7 +31,7 @@ namespace CUWebinars.Business.Core
             if (useAzureWebjobs)
                 notificationDelivery = new AzureCuwWebJobSmtpMessageDelivery(storageAccountName, storageAccessKey, new Log4NetLogger(typeof(AzureCuwWebJobSmtpMessageDelivery)));
             else
-                notificationDelivery = new SmtpMessageDelivery();
+                notificationDelivery = new SmtpMessageDelivery(new Log4NetLogger(typeof(SmtpMessageDelivery)));
 
             var genericFormatter = new Formatter(new EnvironmentInformation { BaseUrl = baseUrl });
             var notificationPersister = new FileBasedNotificationPersister();
