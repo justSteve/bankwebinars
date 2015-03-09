@@ -314,9 +314,13 @@ namespace CUWebinars.Business.Core
 
                         getDiscountID.Connection = sqlConnection;
                         getDiscountID.CommandType = CommandType.StoredProcedure;
+                        string getDiscount = getDiscountID.ExecuteScalar().ToString();
 
-                        idDiscount = Convert.ToInt32(getDiscountID.ExecuteScalar());
-                        @idDiscountParameter.Value = idDiscount;
+                        if (getDiscount != "")
+                        {
+                            idDiscount = Convert.ToInt32(getDiscount);
+                            @idDiscountParameter.Value = idDiscount;
+                        }
 
                     }
                     catch (Exception ex)

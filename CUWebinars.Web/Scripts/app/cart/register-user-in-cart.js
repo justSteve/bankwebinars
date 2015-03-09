@@ -276,7 +276,7 @@ var RegistrationInCart;
         StateManager.prototype.goToAddressFields = function (email) {
             ////console.log("call newPasswordView: " + email);
             if (email)
-                $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;Processing: ' + $('#RegisterFields_Email').val() + '.</span>');
+                $('#labelEmail').html('<span class="label label-success">&nbsp;&nbsp;Recorded: ' + $('#RegisterFields_Email').val() + '.</span>');
 
             if (this.zipCheckRequired) {
                 this.action = Action.CheckZip;
