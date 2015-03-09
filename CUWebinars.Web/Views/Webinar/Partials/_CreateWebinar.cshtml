@@ -7,7 +7,7 @@
         @Html.AntiForgeryToken()
 
         @Html.HiddenFor(m => m.idWebinar)
-        @Html.ValidationSummary("Dumbass:")
+        @Html.ValidationSummary("The following errors need attention:", new { id = "AddWebinarValSummary"})
 
         <fieldset>
             <legend>New Webinar Details</legend>

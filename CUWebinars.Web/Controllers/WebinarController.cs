@@ -12,6 +12,7 @@ using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
+using FluentValidation;
 using Newtonsoft.Json;
 using Ninject.Extensions.Logging;
 using System;
@@ -25,6 +26,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Web.Hosting;
 using System.Web.Mvc;
+using WebGrease.Css.Extensions;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
 
@@ -983,6 +985,13 @@ namespace CUWebinars.Web.Controllers
                 _webinarControllerOrchestrator.CreateWebinarFromViewInput(webinarEditModel);
 
                 return Json(new {Result = WebUiConstants.Success});
+            }
+            catch (ValidationException validationException)
+            {
+                var count = 0;
+                validationException.Errors.ForEach(error => ModelState.AddModelError("fromfluent-" + error.PropertyName, error.ErrorMessage));
+
+                return this.ModelStateJsonFromFluentValidator(ModelState);
             }
             catch (Exception exception)
             {

@@ -13,7 +13,7 @@ $(function () {
         MANAGE.idOrder = MANAGE.orderIdInput.val();
 
         // loading spinner
-        MANAGE.orderIdInput.after('<span id="spinWrapper" class="label label-info"><i id="spinner" class="icon-spinner icon-spin"></i>&nbsp;loading...</span>');
+        MANAGE.orderIdInput.after('<span id="spinWrapper">&nbsp;<span class="label label-info"><i id="spinner" class="icon-spinner icon-spin"></i>&nbsp;loading...</span></span>');
         if ($('#errorDiv').length > 0)
             $('#errorDiv').remove();
 
@@ -194,6 +194,7 @@ $(function () {
         $('#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice').val($('#UnitPriceText').val());
         $('#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions').val($('#TotalCostOfOptionsText').val());
 
+        var self = $(this);
 
         var form = $('#manageOrderForm');
 
@@ -205,11 +206,12 @@ $(function () {
             dataType: constants.JsonDataType,
             data: form.serialize(),
             beforeSend: function() {
-                // this is where we append a loading image
-                //$('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Email...</span>');
+                $('#postFeedbackLabel').remove();
+                self.append('<span id="submitSpinWrapper">&nbsp;<span class="label label-info"><i id="spinner" class="icon-spinner icon-spin"></i>&nbsp;loading...</span></span>');
             }
         }).done(function(data, bla, bla) {
-
+            $('#submitSpinWrapper').remove();
+            self.after('<span id="postFeedbackLabel">&nbsp;<span class="label label-success">&nbsp;Operation succeeded</span></span>');
         });
     };
 
