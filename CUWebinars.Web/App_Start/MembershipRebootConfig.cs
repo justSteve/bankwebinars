@@ -29,7 +29,7 @@ namespace CUWebinars.Web.App_Start
             if(GlobalConfig.GlobalConfigSingleton.UseAzureWebjobs)
                 delivery = new AzureWebJobSmtpMessageDelivery(stateService, new Log4NetLogger(typeof(AzureWebJobSmtpMessageDelivery)));
             else
-                delivery = new TtsSmtpMessageDelivery(stateService);
+                delivery = new TtsSmtpMessageDelivery(stateService, new Log4NetLogger(typeof(TtsSmtpMessageDelivery)));
                 
             var emailFormatter = new TtsEmailFormatter(appinfo, stateService) { PathToRoot = pathToRootDirectory };
 

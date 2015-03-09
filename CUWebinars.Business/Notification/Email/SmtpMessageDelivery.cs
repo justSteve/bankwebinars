@@ -5,17 +5,28 @@ using System.Linq;
 using System.Net.Configuration;
 using System.Net.Mail;
 using CUWebinars.Business.Core.Tracing;
+using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Business.Notification.Email
 {
     public class SmtpMessageDelivery : INotificationDelivery
     {
+        private readonly ILogger _logger;
         private readonly NameValueCollection _appSettings = ConfigurationManager.AppSettings;
+
+        public SmtpMessageDelivery(ILogger logger)
+        {
+            _logger = logger;
+        }
+
         public void Notify(INotificationMessage notificationMessage)
         {
             var timeStamp = DateTime.Now;
             var mailMessage = new MailMessage();
             var tmpMsg = string.Empty;
+            string destinationEmailAddress = notificationMessage.To;
+
+            _logger.Info("Sending CUW message!");
 
             if (string.IsNullOrWhiteSpace(notificationMessage.From))
             {
@@ -27,7 +38,6 @@ namespace CUWebinars.Business.Notification.Email
             {
                 smtp.Timeout = 5000;
                 
-                string destinationEmailAddress = notificationMessage.To;
 
                 //  Set this AppSetting in Web.Config to something other than live when testing e.g. notlive
                 if (_appSettings["EmailSendingMode"] != "live")
@@ -58,6 +68,7 @@ namespace CUWebinars.Business.Notification.Email
                 catch (ArgumentNullException)
                 {
                     Tracer.Error("Error MailerArgumentNullException: message is null ");
+                    _logger.Error("WriteLine MailerArgumentNullException: message is null ");
                 }
                 catch (InvalidOperationException ex)
                 {
@@ -66,7 +77,7 @@ namespace CUWebinars.Business.Notification.Email
                     tmpMsg += " ErrorMsg: " + ex.Message;
                     tmpMsg += " Timestamp was: " + timeStamp;
                     Tracer.Error(tmpMsg);
-
+                    _logger.Error(tmpMsg);
                 }
                 catch (SmtpFailedRecipientsException)
                 {
@@ -74,6 +85,7 @@ namespace CUWebinars.Business.Notification.Email
                     tmpMsg += " Subject: " + notificationMessage.Subject;
                     tmpMsg += " Timestamp was: " + timeStamp;
                     Tracer.Error(tmpMsg);
+                    _logger.Error(tmpMsg);
                 }
                 catch (SmtpException ex)
                 {
@@ -86,6 +98,7 @@ namespace CUWebinars.Business.Notification.Email
                     tmpMsg += string.Format(" InnerExceptionType was: {0}", ex.InnerException == null ? string.Empty : ex.InnerException.GetType().ToString());
 
                     Tracer.Error(tmpMsg);
+                    _logger.Error(tmpMsg);
                 }
                 catch (Exception exception)
                 {
@@ -98,6 +111,7 @@ namespace CUWebinars.Business.Notification.Email
                     tmpMsg += string.Format(" InnerExceptionType was: {0}", exception.InnerException == null ? string.Empty : exception.InnerException.GetType().ToString());
 
                     Tracer.Error(tmpMsg);
+                    _logger.Error(tmpMsg);
                 }
 
                 tmpMsg = "MailerSent: " + notificationMessage.To;
@@ -105,7 +119,7 @@ namespace CUWebinars.Business.Notification.Email
                 tmpMsg += " Timestamp was: " + timeStamp;
 
                 Tracer.Information(tmpMsg);
-
+                _logger.Error(tmpMsg);
             }
 
         }

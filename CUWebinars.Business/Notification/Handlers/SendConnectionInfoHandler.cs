@@ -7,6 +7,7 @@ using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Notification.Formatters;
 using CUWebinars.NotificationSystem.Event;
 using Ninject.Extensions.Logging;
+using Ninject.Extensions.Logging.Log4net.Infrastructure;
 
 namespace CUWebinars.Business.Notification.Handlers
 {
@@ -21,7 +22,7 @@ namespace CUWebinars.Business.Notification.Handlers
         public SendConnectionInfoHandler(IFormatter generalFormatter, 
             ILogger logger, 
             EnvironmentInformation environmentInformation)
-                : this(generalFormatter, new SmtpMessageDelivery(), logger, environmentInformation)
+            : this(generalFormatter, new SmtpMessageDelivery(new Log4NetLogger(typeof(SmtpMessageDelivery))), logger, environmentInformation)
         {
 
         }

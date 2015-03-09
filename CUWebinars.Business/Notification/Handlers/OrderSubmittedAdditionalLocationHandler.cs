@@ -7,6 +7,7 @@ using CUWebinars.Business.Notification.Formatters;
 using CUWebinars.Business.Notification.ViewModel;
 using CUWebinars.NotificationSystem.Event;
 using Ninject.Extensions.Logging;
+using Ninject.Extensions.Logging.Log4net.Infrastructure;
 
 namespace CUWebinars.Business.Notification.Handlers
 {
@@ -20,7 +21,7 @@ namespace CUWebinars.Business.Notification.Handlers
         private readonly ILogger _logger;
 
         public OrderSubmittedAdditionalLocationHandler(IFormatter generalFormatter, ILogger logger, INotificationPersister notificationPersister, EnvironmentInformation environmentInformation)
-            : this(generalFormatter, new SmtpMessageDelivery(), logger, notificationPersister, environmentInformation)
+            : this(generalFormatter, new SmtpMessageDelivery(new Log4NetLogger(typeof(SmtpMessageDelivery))), logger, notificationPersister, environmentInformation)
         {
 
         }

@@ -1037,13 +1037,12 @@ namespace CUWebinars.Web.Controllers
                 }
                 catch (Exception exception)
                 {
-                    _logger.ErrorException("In LogOff Action", exception);
+                    _logger.FatalException(string.Format("Account.LogOff at Unauthenticated User. Session={0}", _appHelper.GetUserAuditInfo()), exception);
+
                     Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
-                    throw;
                 }
             }
 
-            _logger.Fatal("Account.LogOff at Unauthenticated User. Session=" + _appHelper.GetUserAuditInfo());
             return RedirectToAction("Index", "Home");
         }
 

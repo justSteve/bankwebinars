@@ -1,5 +1,6 @@
 ﻿using System.Configuration;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Web.Http.Dependencies;
 using AutoMapper;
@@ -62,13 +63,30 @@ namespace CUWebinars.Web
                 Mapper.AssertConfigurationIsValid();
             #endif
 
-            log4net.Config.XmlConfigurator.Configure();
+            ConfigureLogging();
 
             AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.Email;
             
             LogStartupDetails();
 
             //InvokeGhostTests();
+        }
+
+        private static void ConfigureLogging()
+        {
+            const string infrastructureLogconfigs = @"Infrastructure/LogConfigs";
+
+            switch (GlobalConfig.GlobalConfigSingleton.Tenant)
+            {
+                case "BankWebinars":
+                    log4net.Config.XmlConfigurator.ConfigureAndWatch(new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs, "BWLog4net.xml")));
+                    break;
+                case "CUWebinars":
+                    log4net.Config.XmlConfigurator.ConfigureAndWatch(new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs, "CUWLog4net.xml")));
+                    break;
+                default:
+                    throw new NotSupportedException(string.Format("There is no log4net configuration for {0}", GlobalConfig.GlobalConfigSingleton.Tenant));
+            }
         }
 
         private static void InvokeGhostTests()

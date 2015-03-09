@@ -619,7 +619,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public string CreateUserAccountFromCart(RegisterViewModel model)
         {
-            // This boolean is a toggle which live in the AppSettings of the config file.
+            // This boolean is a toggle which lives in the AppSettings of the config file.
             if (_globals.UseAzureWebjobs)
             {
                 var storageCredentials = new StorageCredentials(_globals.StorageAccountName, _globals.StorageAccessKey);
@@ -671,7 +671,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 var password = PasswordGenerator.GenerateRandomString(8);
 
-                // take note of the fact that this registration occurred as part of the Checkout process.
+                // Take note of the fact that this registration occurred as part of the Checkout process.
+                // This will result in the RegisterUser email being suppressed.
                 _stateService.SetValue(DomainConstants.UserCreatedDuringCartCheckout, true);
 
                 var userAccount = _membershipService.CreateUser(
