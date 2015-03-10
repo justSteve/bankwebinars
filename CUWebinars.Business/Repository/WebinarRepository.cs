@@ -186,7 +186,8 @@ namespace CUWebinars.Business.Repository
             //first step is to convert ACS lables to TTS version
             var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["LoggerConnection"].ConnectionString);
             
-            return GetRegTypeByLableAndWebinar(dataOperations.FindRegTypeForACS(registrationType), idWebinar);
+            var retVal = GetRegTypeByLableAndWebinar(dataOperations.FindRegTypeForACS(registrationType), idWebinar);
+            return retVal;
         }
 
         public IQueryable<Webinar> GetAllActive()
