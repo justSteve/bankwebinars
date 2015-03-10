@@ -69,6 +69,12 @@ namespace CUWebinars.Web.App_Start
                 "~/Scripts/app/webinar/manage-webinar.js"
                 ));
 
+            bundles.Add(new ScriptBundle("~/bundles/manage-webinar-from-details").Include(
+                "~/Scripts/cleditor/jquery.cleditor.min.js",
+                "~/Scripts/cleditor/jquery.cleditor.xhtml.min.js",
+                "~/Scripts/app/webinar/manage-webinar-from-details.js"
+                ));
+
             bundles.Add(new ScriptBundle("~/bundles/CommonModules").Include(
                 "~/Scripts/app/constants.js",
                 "~/Scripts/underscore.js",

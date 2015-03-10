@@ -7,10 +7,32 @@ var MW = MANAGEWEBINAR; // create shortcus to namespace
 // jQuery doc.ready function
 $(function () {
 
-    MW.primeDomVariables();
-    MW.wireUpHandlers();
+    MW.webinarSearchButton = $('#webinarSearchButton');
+    MW.webinarSearchInput = $('#webinarSearchInput');
+    MW.webinarCloneInput = $('#webinarCloneInput');
+    MW.webinarCreateButton = $('#webinarCreateButton');
+    MW.webinarCloneButton = $('#webinarCloneButton');
+    MW.webinarContent = $('#webinarContent');
+    MW.webinarSearchButton.on('click', MW.searchWebinar);
+    MW.webinarCreateButton.on('click', MW.createWebinar);
+    MW.webinarCloneButton.on('click', MW.cloneWebinar);
 
-    $('#webinarSearchInput').focus();
+    MW.primeDomVariables(MW.edit);
+    MW.wireUpHandlers(MW.edit);
+
+    MW.ceuTextArea.cleditor(MW.optionsForEditors);
+    MW.webinarDescriptionTextArea.cleditor(MW.optionsForEditors);
+    MW.webinarLongDescriptionTextArea.cleditor(MW.optionsForEditors);
+
+    var ceuEditor = MW.ceuTextArea.cleditor()[0];
+    ceuEditor.disable(false);
+    var webinarDescriptionEditor = MW.webinarDescriptionTextArea.cleditor()[0];
+    webinarDescriptionEditor.disable(false);
+    var webinarLongDescriptionEditor = MW.webinarLongDescriptionTextArea.cleditor()[0];
+    webinarLongDescriptionEditor.disable(false);
+
+
+    MW.webinarSearchInput.focus(); 
 });
 
 // self-invoking function.
@@ -26,14 +48,7 @@ $(function () {
             ns.addAdditionalLocationsPriceButton = $('#AddAdditionalLocationsPriceButton');
             ns.addAdditionalLocationsPriceInput = $('#AddAdditionalLocationsPriceInput');
             ns.additionalLocationsPrices = $('#AdditionalLocationsPrices');
-        } else {
-            ns.webinarSearchButton = $('#webinarSearchButton');
-            ns.webinarSearchInput = $('#webinarSearchInput');
-            ns.webinarCloneInput = $('#webinarCloneInput');
-            ns.webinarCreateButton = $('#webinarCreateButton');
-            ns.webinarCloneButton = $('#webinarCloneButton');
-            ns.webinarContent = $('#webinarContent');
-        }
+        } 
 
         if (operation === ns.create) {
             ns.submitCreatedDetailsButton = $('#submitCreatedDetailsButton');
@@ -55,10 +70,6 @@ $(function () {
             ns.submitCreatedDetailsButton.on('click', ns.submitNewWebinarDetails);
         } else if (operation === ns.clone) {
             ns.submitCloneDetailsButton.on('click', ns.submitCloneWebinarDetails);
-        } else {
-            ns.webinarSearchButton.on('click', ns.searchWebinar);
-            ns.webinarCreateButton.on('click', ns.createWebinar);
-            ns.webinarCloneButton.on('click', ns.cloneWebinar);
         }
 
         if (operation === ns.edit || operation === ns.clone || operation === ns.create) {
@@ -221,8 +232,8 @@ $(function () {
             dataType: constants.JsonDataType,
             data: payload += addedPayloadData,
             beforeSend: function() {
-                $('.webinar-form-error').remove();
                 $('#feedbackLabel').remove();
+                $('.webinar-form-error').remove();
             }
         }).done(function (data) {
 
@@ -252,6 +263,9 @@ $(function () {
                         console.log(key);
                     }
                 });
+
+                $('html, body').animate({ scrollTop: '30px' });
+
             }
 
             $('#crunchingSpinnerOfSubmit').remove();
@@ -305,7 +319,7 @@ $(function () {
                         $('#' + id).after('<span class="webinar-form-error label label-important"><i class="icon icon-exclamation-sign"></i>&nbsp;invalid</span>');
                     } catch (e) {
                         console.log(key);
-                    }
+                    } 
                 });
             }
 
@@ -363,6 +377,7 @@ $(function () {
                     }
                 });
             }
+
 
             $('#crunchingSpinnerOfSubmit').remove();
         });

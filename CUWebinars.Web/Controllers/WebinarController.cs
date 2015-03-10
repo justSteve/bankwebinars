@@ -17,7 +17,6 @@ using Newtonsoft.Json;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Validation;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -34,6 +33,9 @@ namespace CUWebinars.Web.Controllers
 {
     public class WebinarController : Controller
     {
+        private const string FromFluentPrefix = "fromfluent-";
+        private const string EnterValidIdMsg = "Enter a valid id";
+        private const string ServerErrorLoggedMsg = "Server Error Logged";
         private IStateService _stateService;
         private readonly IWebinarControllerOrchestrator _webinarControllerOrchestrator;
         private readonly IAppHelper _appHelper;
@@ -925,10 +927,10 @@ namespace CUWebinars.Web.Controllers
                 {
                     _logger.ErrorException(string.Format("Clone Webinar | Session{0}", _appHelper.GetUserAuditInfo()), exception);
                 }
-                return Json(new { Result = WebUiConstants.Fail, Msg = "Server Error Logged" }, JsonRequestBehavior.AllowGet);
+                return Json(new { Result = WebUiConstants.Fail, Msg = ServerErrorLoggedMsg }, JsonRequestBehavior.AllowGet);
             }
 
-            return Json(new { Result = WebUiConstants.Fail, Msg = "Enter a valid id" }, JsonRequestBehavior.AllowGet);
+            return Json(new { Result = WebUiConstants.Fail, Msg = EnterValidIdMsg }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -942,12 +944,11 @@ namespace CUWebinars.Web.Controllers
                 _webinarControllerOrchestrator.CreateWebinarFromViewInput(webinarEditModel);
                 return Json(new { Result = WebUiConstants.Success });
             }
-            catch (DbEntityValidationException dbEx)
+            catch (ValidationException validationException)
             {
-                foreach (var validationError in dbEx.EntityValidationErrors.SelectMany(validationErrors => validationErrors.ValidationErrors))
-                {
-                    Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
-                }
+                validationException.Errors.ForEach(error => ModelState.AddModelError(FromFluentPrefix + error.PropertyName, error.ErrorMessage));
+
+                return this.ModelStateJsonFromFluentValidator(ModelState);
             }
             catch (Exception exception)
             {
@@ -969,7 +970,7 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 _logger.ErrorException(string.Format("Create Webinar | Session{0}", _appHelper.GetUserAuditInfo()), exception);
-                return Json(new { Result = WebUiConstants.Fail, Msg = "Server Error Logged" }, JsonRequestBehavior.AllowGet);
+                return Json(new { Result = WebUiConstants.Fail, Msg = ServerErrorLoggedMsg }, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -988,8 +989,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (ValidationException validationException)
             {
-                var count = 0;
-                validationException.Errors.ForEach(error => ModelState.AddModelError("fromfluent-" + error.PropertyName, error.ErrorMessage));
+                validationException.Errors.ForEach(error => ModelState.AddModelError(FromFluentPrefix + error.PropertyName, error.ErrorMessage));
 
                 return this.ModelStateJsonFromFluentValidator(ModelState);
             }
@@ -1017,10 +1017,10 @@ namespace CUWebinars.Web.Controllers
                     _logger.ErrorException(string.Format("Edit Webinar | Session{0}", _appHelper.GetUserAuditInfo()), exception);
                 }
 
-                return Json(new { Result = WebUiConstants.Fail, Msg = "Server Error Logged" }, JsonRequestBehavior.AllowGet);
+                return Json(new { Result = WebUiConstants.Fail, Msg = ServerErrorLoggedMsg }, JsonRequestBehavior.AllowGet);
             }
             
-            return Json( new { Result = WebUiConstants.Fail, Msg = "Enter a valid id"}, JsonRequestBehavior.AllowGet);
+            return Json( new { Result = WebUiConstants.Fail, Msg = EnterValidIdMsg}, JsonRequestBehavior.AllowGet);
         }
 
 
@@ -1035,6 +1035,12 @@ namespace CUWebinars.Web.Controllers
                 _webinarControllerOrchestrator.UpdateWebinarFromViewInput(webinarEditModel);
             
                 return Json( new { Result = WebUiConstants.Success });
+            }
+            catch (ValidationException validationException)
+            {
+                validationException.Errors.ForEach(error => ModelState.AddModelError(FromFluentPrefix + error.PropertyName, error.ErrorMessage));
+
+                return this.ModelStateJsonFromFluentValidator(ModelState);
             }
             catch (Exception exception)
             {

@@ -302,6 +302,7 @@ namespace CUWebinars.Business.Services
 
         public void UpdateWebinar(Webinar webinar)
         {
+            _createWebinarValidator.ValidateAndThrow(webinar);
             _webinarRepository.Update(webinar);
         }
 
