@@ -1,4 +1,6 @@
-﻿<style type="text/css">
+﻿@model ManageOrderEditModel
+
+<style type="text/css">
     div.addLocsBox {
         background-color: #ddd;
         padding: 5px;
@@ -19,7 +21,7 @@
         <div class="control-group">
             <label class="control-label" for="orderIdInput">Enter the order id:</label>
             <div class="controls">
-                <input type="text" id="orderIdInput" />
+                <input type="text" id="orderIdInput" value="@Model.Id" />
             </div>
             <div class="control-group">
                 <div class="controls">
@@ -30,12 +32,14 @@
     </div>
 
     <div id="manageOrderWrapper">
-        <div id="orderRelatedFields"></div>
+        <div id="orderRelatedFields">
+            @Html.Partial("~/Views/Admin/Home/_OrderEditDetails.cshtml", Model)
+        </div>
     </div>
 </div>
 
 @section scripts {
-    @Scripts.Render("~/bundles/manage-order")
+    @Scripts.Render("~/bundles/manage-order-from-details")
 }
 
 @Styles.Render("~/Content/manage-order-styles")

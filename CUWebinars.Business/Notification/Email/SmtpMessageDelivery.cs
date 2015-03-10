@@ -119,7 +119,7 @@ namespace CUWebinars.Business.Notification.Email
                 tmpMsg += " Timestamp was: " + timeStamp;
 
                 Tracer.Information(tmpMsg);
-                _logger.Error(tmpMsg);
+                _logger.Info(tmpMsg);
             }
 
         }

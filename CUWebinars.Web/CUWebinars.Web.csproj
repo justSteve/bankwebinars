@@ -656,6 +656,7 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="Scripts\app\admin\claims-management.js" />
+    <Content Include="Scripts\app\admin\manage-order-from-details.js" />
     <Content Include="Scripts\app\admin\manage-order.js" />
     <Content Include="Scripts\app\cart\add-password.js" />
     <Content Include="Scripts\app\cart\details-affiliate.js" />

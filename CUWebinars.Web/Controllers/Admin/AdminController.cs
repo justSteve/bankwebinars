@@ -98,12 +98,16 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             if (id.HasValue)
             {
+                if (id == 0)
+                    return RedirectToAction("ManageOrder");
+
                 var model = BuildManageOrderEditModel(id.Value);
 
                 return View(model);
             }
 
-            return View();
+            //  should never reach here as RouteConfig will not route here with anything but an integer > 0.
+            throw new NullReferenceException("Query string parameter has to be an positive integer for the ManageOrderFromDetails action.");
         }
 
         private Order ApplyModelChangesToOrder(ManageOrderEditModel model)

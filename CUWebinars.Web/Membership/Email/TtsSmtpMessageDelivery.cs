@@ -126,7 +126,7 @@ namespace CUWebinars.Web.Membership.Email
 
                 Tracing.Information(tmpMsg);
                 
-                _logger.Error(tmpMsg);
+                _logger.Info(tmpMsg);
             }
         }
     }

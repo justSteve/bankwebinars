@@ -21,7 +21,7 @@ namespace CUWebinars.Web.App_Start
                 "EditOrder",
                 url: "Admin/ManageOrder/{id}",
                 defaults: new { controller = "Admin", action = "ManageOrderFromDetails", id = 0 },
-                constraints: new { id = @"\d+" }
+                constraints: new { id = @"^[1-9][0-9]*$" }
             );
             
             routes.MapRoute(
