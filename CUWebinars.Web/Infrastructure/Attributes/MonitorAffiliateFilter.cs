@@ -29,7 +29,8 @@ namespace CUWebinars.Web.Infrastructure.Attributes
         {
             HttpRequestBase currentRequest = filterContext.RequestContext.HttpContext.Request;
             var currentHost = currentRequest.ServerVariables[ServerName].Split(DotCharSeparator)[0];
-            var subdomainBranding = _stateService.GetValue<string>(WebUiConstants.SubdomainBranding);
+            //var subdomainBranding = _stateService.GetValue<string>(WebUiConstants.SubdomainBranding);
+            var subdomainBranding = string.Empty;
 
 
             if (!string.IsNullOrEmpty(currentRequest.QueryString[WebUiConstants.AffiliateId]))

@@ -137,7 +137,6 @@
     <Compile Include="Core\MigrationOperations.cs" />
     <Compile Include="Core\OrderGenesis.cs" />
     <Compile Include="Core\PricesAndDiscounts.cs" />
-    <Compile Include="Core\SendPerWeekPromoHandler.cs" />
     <Compile Include="Core\Tracing\Log4NetTracer.cs" />
     <Compile Include="Core\Tracing\Tracer.cs" />
     <Compile Include="CQS\Commands\AddOrderCommand.cs" />
@@ -202,6 +201,7 @@
     <Compile Include="Notification\Handlers\AdminEmailSendShippedOrderHandler.cs" />
     <Compile Include="Notification\Handlers\SendConnectionInfoHandler.cs" />
     <Compile Include="Notification\Handlers\SendPerDayPromoHandler.cs" />
+    <Compile Include="Notification\Handlers\SendPerWeekPromoHandler.cs" />
     <Compile Include="Notification\Handlers\SendRecordingPostedHandler.cs" />
     <Compile Include="Notification\Handlers\SendReminderHandler.cs" />
     <Compile Include="Notification\Handlers\SendShippedOrderHandler.cs" />

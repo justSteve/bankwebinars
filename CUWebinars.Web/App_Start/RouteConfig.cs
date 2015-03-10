@@ -16,6 +16,13 @@ namespace CUWebinars.Web.App_Start
                 defaults: new { controller = "Webinar", action = "EditWebinarFromDetails", id = 0 },
                 constraints: new { id = @"\d+" }
             );
+
+            routes.MapRoute(
+                "EditOrder",
+                url: "Admin/ManageOrder/{id}",
+                defaults: new { controller = "Admin", action = "ManageOrderFromDetails", id = 0 },
+                constraints: new { id = @"\d+" }
+            );
             
             routes.MapRoute(
                 "WebinarDetails",
