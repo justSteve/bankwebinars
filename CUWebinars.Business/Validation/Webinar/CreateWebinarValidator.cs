@@ -1,4 +1,7 @@
-﻿using FluentValidation;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CUWebinars.Business.Models;
+using FluentValidation;
 
 namespace CUWebinars.Business.Validation.Webinar
 {
@@ -30,6 +33,18 @@ namespace CUWebinars.Business.Validation.Webinar
             RuleFor(w => w.idPresenter).GreaterThan(0).WithMessage(MustBeGreaterThan, "SelectedPresenter", 0);
             RuleFor(w => w.Duration).GreaterThan(d => MinDecimal).WithMessage(MustBeGreaterThan, "Duration", MinDecimal);
             RuleFor(w => (int)w.Status).GreaterThan(0).WithMessage(MustBeGreaterThan, "SelectedStatus", 0);
+            RuleFor(w => w.RegTypesGroupsXref).Must(MustHaveAtLeastOneRegTypeGroup).WithMessage("Webinar must have at least 1 RegType");
+            RuleFor(w => w.WebinarTopicXrefs).Must(MustHaveAtLeastOneTopic).WithMessage("Webinar must have at least 1 topic");
+        }
+
+        private bool MustHaveAtLeastOneRegTypeGroup(ICollection<RegTypesGroupsXref> regTypesGroupsXrefs)
+        {
+            return regTypesGroupsXrefs.Any();
+        }
+
+        private bool MustHaveAtLeastOneTopic(ICollection<WebinarTopicXref> webinarTopicXrefs)
+        {
+            return webinarTopicXrefs.Any();
         }
     }
 }

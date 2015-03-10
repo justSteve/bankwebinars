@@ -5,7 +5,8 @@
     @using (Html.BeginForm("Clone", "Webinar", FormMethod.Post, new { id = "cloneWebinarForm", @class = "form-horizontal" }))
     {
         @Html.AntiForgeryToken()
-
+        @Html.ValidationSummary("The following errors need attention:", new { id = "CloneWebinarValSummary" })
+        
     <fieldset>
         <legend>Edit Webinar Details</legend>
 
