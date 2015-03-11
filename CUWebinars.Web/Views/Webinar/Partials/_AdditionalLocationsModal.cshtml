@@ -1,5 +1,7 @@
 ﻿@model AdditionalLocationOfferViewModel
-
+@{
+    var showPrice = string.Format("{0:C0}", @Model.Price);
+}
 
 
     <div class="modal-header">
@@ -8,7 +10,7 @@
     </div>
     <div class="modal-body">
 
-        <p><button id="AddInputsButton" class="btn btn-success">Click to Additional Location</button></p>
+        <p><button id="AddInputsButton" class="btn btn-mini btn-success pull-right">Add Additional Location(s) - @showPrice</button></p>
         @{
             <div id="AdditionalLocationEmailWrapper">
                 @{

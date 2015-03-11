@@ -1,8 +1,8 @@
 USE TTSWebinars2
 GO
---SELECT TOP 100 * FROM dbo.Orders o INNER JOIN	dbo.OrdersRows r ON r.idOrder = o.idOrder
---WHERE o.idAffiliate = 62 AND 
---ORDER BY o.orderDate desc
+SELECT TOP 100 * FROM dbo.Orders o INNER JOIN	dbo.OrdersRows r ON r.idOrder = o.idOrder
+WHERE o.idAffiliate = 62 
+ORDER BY o.orderDate desc
 
 SELECT  ( SELECT    o.idAffiliate
           FROM      dbo.OrdersRows
@@ -95,7 +95,7 @@ SELECT  ( SELECT    o.idAffiliate
         r.status
 FROM    TTSWebinars2.dbo.Orders o
         INNER JOIN dbo.OrdersRows r ON r.idOrder = o.idOrder
-WHERE   r.idWebinar IN ( 1711)
+WHERE   r.idWebinar IN ( 1714)
         
 --o.idOrder < 49709 --  AND r.idWebinar IN (SELECT r.idWebinar FROM dbo.Webinar WHERE status = 2 OR status = 3)
         AND ( r.status < 5

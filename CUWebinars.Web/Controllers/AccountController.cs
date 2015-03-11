@@ -509,7 +509,7 @@ namespace CUWebinars.Web.Controllers
             return PartialView("Partials/_EditNameTitle", model);
         }
 
-
+        [System.Web.Mvc.HttpGet]
         public ActionResult EditUser(int? idUser)
         {
             var editModel = new EditUserInfoModel
