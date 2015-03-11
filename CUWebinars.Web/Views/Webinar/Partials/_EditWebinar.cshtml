@@ -95,6 +95,14 @@
         </div>
         <div class="control-group">
             <div class="control-label">
+                @Html.LabelFor(m => m.RecordingUrl)
+            </div>
+            <div class="controls">
+                @Html.TextBoxFor(m => m.RecordingUrl, new { @class = "input input-xlarge" })
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="control-label">
                 @Html.LabelFor(m => m.LearnBody, "Learn Body")
             </div>
             <div class="controls">

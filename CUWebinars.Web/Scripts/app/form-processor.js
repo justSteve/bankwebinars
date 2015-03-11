@@ -40,4 +40,13 @@
         }
     };
 
+    ns.clearValidationSummary = function (valSummary) {
+        
+        valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
+
+        var errorsList = valSummary.find('ul');
+        errorsList.empty();
+        errorsList.append('<li style="display:none"></li>');
+    };
+
 })(formProcessor)
