@@ -411,7 +411,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
             beforeSend: function () {
                 //console.log('beforeSend Register Details');
                 // this is where we append a loading image
-                $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Registering new user...</span>');
+                $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Registering new user...</span>');
 
                 var valSummary = $('#valSummarySignUpForm');
                 valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');

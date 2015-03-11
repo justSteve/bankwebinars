@@ -4,6 +4,7 @@ $(function () {
     var hideAddShippingAddressLink = $(constants.HideAddShippingAddressLink);       
 
     addShippingAddressLink.on('click', function (e) {
+
         e.preventDefault();
 
         if (!hideAddShippingAddressLink.is(':visible')) {
@@ -26,28 +27,59 @@ $(function () {
 
     });
 
-    $('form').submit(function () {
+    $('#editUserForm').on('submit', function (e) {
 
-        //if (!hideAddShippingAddressLink.is(':visible')) {
+        e.preventDefault();
 
-        //    var billingStreetAddress = $(constants.BillingAddressFields.concat(constants.StreetAddress)).val();
-        //    var billingStreetAddress2 = $(constants.BillingAddressFields.concat(constants.StreetAddress2)).val();
-        //    var billingCity = $(constants.BillingAddressFields.concat(constants.City)).val();
-        //    var billingState = $(constants.BillingAddressFields.concat(constants.State)).val();
-        //    var billingZip = $(constants.BillingAddressFields.concat(constants.Zip)).val();
-        //    var billingCountry = $(constants.BillingAddressFields.concat(constants.Country)).val();
-        //    var billingPhone = $(constants.BillingAddressFields.concat(constants.Phone)).val();
+        if (!hideAddShippingAddressLink.is(':visible')) {
+            var prefixBilling = '#EditFields_BillingAddress';
 
-        //    $(constants.ShippingAddressFields.concat(constants.StreetAddress)).val(billingStreetAddress);
-        //    $(constants.ShippingAddressFields.concat(constants.StreetAddress2)).val(billingStreetAddress2);
-        //    $(constants.ShippingAddressFields.concat(constants.City)).val(billingCity);
-        //    $(constants.ShippingAddressFields.concat(constants.State)).val(billingState);
-        //    $(constants.ShippingAddressFields.concat(constants.Zip)).val(billingZip);
-        //    $(constants.ShippingAddressFields.concat(constants.Country)).val(billingCountry);
-        //    $(constants.ShippingAddressFields.concat(constants.Phone)).val(billingPhone);
-        //}
+            var billingStreetAddress = $(prefixBilling.concat(constants.StreetAddress)).val();
+            var billingStreetAddress2 = $(prefixBilling.concat(constants.StreetAddress2)).val();
+            var billingCity = $(prefixBilling.concat(constants.City)).val();
+            var billingState = $(prefixBilling.concat(constants.State)).val();
+            var billingZip = $(prefixBilling.concat(constants.Zip)).val();
+            var billingCountry = $(prefixBilling.concat(constants.Country)).val();
+            var billingPhone = $(prefixBilling.concat(constants.Phone)).val();
+
+            var prefixShipping = '#EditFields_ShippingAddress_';
+
+            $(prefixShipping.concat(constants.StreetAddress)).val(billingStreetAddress);
+            $(prefixShipping.concat(constants.StreetAddress2)).val(billingStreetAddress2);
+            $(prefixShipping.concat(constants.City)).val(billingCity);
+            $(prefixShipping.concat(constants.State)).val(billingState);
+            $(prefixShipping.concat(constants.Zip)).val(billingZip);
+            $(prefixShipping.concat(constants.Country)).val(billingCountry);
+            $(prefixShipping.concat(constants.Phone)).val(billingPhone);
+        }
+
+        var payload = $(this).serialize();
+        var url = $(this).attr('action');
+
+        if ($(this).valid()) {
+
+            $.ajax({
+                type: 'POST',
+                contentType: constants.FormPostContentType,
+                cache: false,
+                url: url,
+                dataType: constants.JsonDataType,
+                data: payload,
+                beforeSend: function () {
+                    $('#postalSpinner').remove();
+                    submitButton.after('<span id="postalSpinner">&nbsp;<span class="label label-info"><i class="icon-spinner icon-spin"></i>&nbsp;Updating details...</span></span>');
+                }
+            }).done(function(data) {
+                if (data.Result === 'Success') {
+                    $('#postalSpinner').html('&nbsp;<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Operation succeeded!</span>');
+                }
+                
+            });
+        }
+
     });
 
+    // jQueryUi dialog for confirmation to delete Shipping Details
     $(constants.ConfirmDeleteShippingAddressdialog).dialog({
         autoOpen: false,
         resizable: false,
@@ -81,4 +113,5 @@ $(function () {
         }
     );
 
+    var submitButton = $('input[type="submit"]');
 });

@@ -135,7 +135,10 @@ namespace CUWebinars.Web.App_Start
 
             bundles.Add(new ScriptBundle("~/bundles/app-processing-manage").Include(
                         "~/Scripts/app/constants.js",
-                        "~/Scripts/app/common.js",
+                        "~/Scripts/app/common.js"
+                        ));
+
+            bundles.Add(new ScriptBundle("~/bundles/web-user-details-manage").Include(
                         "~/Scripts/app/web-user-details-manage.js"
                         ));
 
