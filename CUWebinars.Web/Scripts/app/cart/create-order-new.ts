@@ -32,8 +32,10 @@ module OrderRegistration {
 
     export class StateManager {
 
+        private addressVerified: boolean;
         private discount: string;
         private wait4Emails: string;
+        private notificationsTesting: boolean;
         private orderId: number;
         private orderRowID: number;
         private checkoutInProcess: boolean;
@@ -42,9 +44,12 @@ module OrderRegistration {
         private confirmOrderForm: JQuery;
         private cancelOrderForm: JQuery;
         private shippingAddressRequired: boolean;
-    
 
         constructor() { }
+
+        getAddressVerified(): boolean {
+            return this.addressVerified;
+        }
 
         getCancelOrderForm(): JQuery {
             return this.cancelOrderForm;
@@ -60,6 +65,10 @@ module OrderRegistration {
 
         getIsUserLoggedIn(): boolean {
             return this.isUserLoggedIn;
+        }
+
+        getNotificationsTesting(): boolean {
+            return this.notificationsTesting;
         }
 
         getOrderId(): number {
@@ -78,6 +87,11 @@ module OrderRegistration {
             return this.idWebinar;
         }
 
+        setAddressVerified(verified: boolean): void {
+            this.addressVerified = verified;
+        }
+
+
         setCancelOrderForm(form: JQuery): void {
             this.cancelOrderForm = form;
         }
@@ -92,6 +106,10 @@ module OrderRegistration {
 
         setIsUserLoggedIn(val: boolean): void {
             this.isUserLoggedIn = val;
+        }
+
+        setNotificationsTesting(val: boolean): void {
+            this.notificationsTesting = val;
         }
 
         setOrderId(num: number): void {

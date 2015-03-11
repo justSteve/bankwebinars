@@ -651,6 +651,7 @@
     <Content Include="Infrastructure\LogConfigs\BWLog4net.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Infrastructure\LogConfigs\DARLog4net.xml" />
     <Content Include="Notification\Templates\SendPerDayPromo.cshtml" />
     <Content Include="Notification\Templates\SendPerWeekPromo.cshtml">
       <SubType>Code</SubType>

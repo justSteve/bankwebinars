@@ -34,6 +34,10 @@ var OrderRegistration;
     var StateManager = (function () {
         function StateManager() {
         }
+        StateManager.prototype.getAddressVerified = function () {
+            return this.addressVerified;
+        };
+
         StateManager.prototype.getCancelOrderForm = function () {
             return this.cancelOrderForm;
         };
@@ -48,6 +52,10 @@ var OrderRegistration;
 
         StateManager.prototype.getIsUserLoggedIn = function () {
             return this.isUserLoggedIn;
+        };
+
+        StateManager.prototype.getNotificationsTesting = function () {
+            return this.notificationsTesting;
         };
 
         StateManager.prototype.getOrderId = function () {
@@ -66,6 +74,10 @@ var OrderRegistration;
             return this.idWebinar;
         };
 
+        StateManager.prototype.setAddressVerified = function (verified) {
+            this.addressVerified = verified;
+        };
+
         StateManager.prototype.setCancelOrderForm = function (form) {
             this.cancelOrderForm = form;
         };
@@ -80,6 +92,10 @@ var OrderRegistration;
 
         StateManager.prototype.setIsUserLoggedIn = function (val) {
             this.isUserLoggedIn = val;
+        };
+
+        StateManager.prototype.setNotificationsTesting = function (val) {
+            this.notificationsTesting = val;
         };
 
         StateManager.prototype.setOrderId = function (num) {

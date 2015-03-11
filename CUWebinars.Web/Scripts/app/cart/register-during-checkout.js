@@ -2,12 +2,13 @@
 registerDuringCheckout.institutionNames = {};
 
 
-registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, shippingAddressRequired, callback) {
+registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, addressOptions, callback) {
 
     //Rollbar.info({ 'reg-during-check': { orderId: orderId, webinarId: webinarId, orderRowId: orderRowId, shippingAddressRequired: shippingAddressRequired } });
 
     cartStateManager.setCancelOrderForm($('#cancelOrder'));
     cartStateManager.setConfirmOrderForm($('#confirmOrder'));
+    registerDuringCheckout.addressOptions = addressOptions;
 
     var regUserStateManager, userId;
 
@@ -30,7 +31,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
     regUserStateManager = new RegistrationInCart.StateManager();
     regUserStateManager.initializeState();
     regUserStateManager.setAction(RegistrationInCart.Action.CheckEmail); // starting off with CheckEmail action.
-    regUserStateManager.setIsShippindAddressRequired(shippingAddressRequired);
+    regUserStateManager.setIsShippindAddressRequired(addressOptions['shippingAddressRequired']);
 
     $('#RegisterFields_Email').bind('change keyup', function () {
         regUserStateManager.ensureFormValidatorParsed();
@@ -486,9 +487,9 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
                                     hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
                                     hookUpChangeTypeLogic($('#RegType'));
-                                    hookUpEditUserLogic(null, shippingAddressRequired);
+                                    hookUpEditUserLogic(null);
 
-                                    if (shippingAddressRequired && notificationsTesting.toString() === 'false') {
+                                    if (registerDuringCheckout.addressOptions['shippingAddressRequired'] && registerDuringCheckout.addressOptions['notificationsTesting'] && registerDuringCheckout.addressOptions['addressVerified']) {
                                         hookUpModal($('#UserDetailsModal'));
                                     }
 
@@ -643,9 +644,9 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, sh
 
                                             hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
                                             hookUpChangeTypeLogic($('#RegType'));
-                                            hookUpEditUserLogic(null, shippingAddressRequired);
+                                            hookUpEditUserLogic(null);
 
-                                            if (shippingAddressRequired && notificationsTesting.toString() === 'false') {
+                                            if (registerDuringCheckout.addressOptions['shippingAddressRequired'] && registerDuringCheckout.addressOptions['notificationsTesting'] && registerDuringCheckout.addressOptions['addressVerified']) {
                                                 hookUpModal($('#UserDetailsModal'));
                                             }
 
@@ -863,10 +864,8 @@ function hookUpModal(modalForm) {
     modalForm.modal('show');
 }
 
-function hookUpEditUserLogic(button, isShippindAddressRequired) {
-
-    registerDuringCheckout.shippingAddressRequired = isShippindAddressRequired;
-
+function hookUpEditUserLogic(button, shippingAddressRequired) {
+    
     var modalForm = $('#UserDetailsModal');
 
     // There may be times where a button does not trigger the modal.
@@ -881,18 +880,20 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
 
     modalForm.on('shown', function (e) {
 
-        setUiLayout(registerDuringCheckout.shippingAddressRequired);
+        setUiLayout(shippingAddressRequired);
+        var userDetailsForm = $('#userDetailsForm');
 
         $('#saveChangesButton').on('click', function () {
             e.preventDefault();
 
-            $('#userDetailsForm').submit();
+            userDetailsForm.submit();
         });
 
-        $('#userDetailsForm').on('submit', function (e) {
+        userDetailsForm.on('submit', function (e) {
+
             e.preventDefault();
 
-            var url = $(this).attr('action');
+            var url = $(this).attr('action'); // -> /Account/UpdateShippingDetails
 
             var payload = $(this).serialize();
             $.ajax({
@@ -908,15 +909,11 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
             }).done(function (data) {
 
                 if (data.Result === 'Success') {
-                    var fullname = $('#RegisterFields_FirstName').val() + ' ' + $('#RegisterFields_LastName').val();
-                    $('#userFullname').text(fullname);
-
-                    var userNameInsuranceAndButton = $('#userDetailsSummed > p:nth-child(1)');
-                    userNameInsuranceAndButton.empty();
-                    userNameInsuranceAndButton.html(fullname + ' - ' + $('#RegisterFields_Institution').val() + '<br> ' + $('#RegisterFields_Email').val() + ' - <a id="editUserDetails" role="button" class="btn btn-mini" target="new"> Edit?</a>');
+                    var fullname = $('#ShippingAddress_Name').val();
+                    
+                    $('#userFullnameLabel').text(fullname);
 
                     $('#updateShippingMsgLabelWrap').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details updated successfully.</span>');
-                    //modalForm.modal('hide');
 
                 } else if (!data.isSuccessful) {
 
@@ -959,13 +956,7 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
                 });
             });
         });
-
-        $('#passwordWrapper').remove();
-
-        if ($('#RegisterFields_Password').length < 1) {
-            $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields_Password" name="RegisterFields.Password" value="456rty^Y" />');
-            $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields.ConfirmPassword" name="RegisterFields.ConfirmPassword" value="456rty^Y" />');
-        }
+        
     });
 
     modalForm.on('hidden', function (e) {
@@ -988,7 +979,7 @@ function setUiLayout(isShippindAddressRequired) {
     $('#updateShippingMsgLabelWrap').empty();
 }
 
-function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
+function hookUpChangeTypeLogic(dropDown) {
 
     //var changeTypeConfirmModal = $('#changeTypeConfirmModal');
     var chosenRegTypeLabel = $('#chosenRegType');
@@ -1078,9 +1069,9 @@ function hookUpChangeTypeLogic(dropDown, shippingAddressRequired) {
             }
 
             if (data.shippingDetailsRqrd === 'Yes') {
-                registerDuringCheckout.shippingAddressRequired = true;
+                registerDuringCheckout.addressOptions['shippingAddressRequired'] = true;
             } else {
-                registerDuringCheckout.shippingAddressRequired = false;
+                registerDuringCheckout.addressOptions['shippingAddressRequired'] = false;
             }
         });
     });
@@ -1119,18 +1110,14 @@ function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
         dropDown.removeAttr('disabled');
         $('#discountSpinner').remove();
 
-        ShowModalForShippingDetails(registerDuringCheckout.shippingAddressRequired);
+        ShowModalForShippingDetails();
     });
 }
 
 function ShowModalForShippingDetails(shippingDetailsRqrd) {
 
     if (shippingDetailsRqrd === true) {
-        registerDuringCheckout.shippingAddressRequired = true;
         hookUpModal($('#UserDetailsModal'));
-
-    } else {
-        registerDuringCheckout.shippingAddressRequired = false;
     }
 }
 

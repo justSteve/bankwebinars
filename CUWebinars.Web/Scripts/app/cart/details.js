@@ -42,10 +42,10 @@ $(function () {
                 }
             }).done(function (data) {
                 if (data.Result === 'Success') {
-                    orderRowId = data.OrderRowId;
+                    var orderRowId = data.OrderRowId;
 
-                    var err = new Error('Posted Order: ' + orderRowId);
-                    //NREUM.noticeError(err);
+                    console.info('Posted order:' + orderRowId);
+                    
                     $('#orderDetails').empty();
                     $('#orderDetails').append(data.Msg);
 
@@ -55,10 +55,7 @@ $(function () {
                     utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
 
                 } else {
-
-                    var err = new Error('FAILED posting Order: ');
-                    //NREUM.noticeError(err);
-
+                    console.error('Failed to post order');
                     $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                 }
 
@@ -140,10 +137,13 @@ $(function () {
 
     cartStateManager = new OrderRegistration.StateManager();
 
-    cartStateManager.setWebinarId(webinarId); // webinarId is set in a script tab in razor view Details.cshtml
+    // values set in razor view assigned to member of cartStateManager
+    cartStateManager.setWebinarId(webinarId); // webinarId is set in a script tag in razor view Details.cshtml
     cartStateManager.setOrderRowId(orderRowId); // orderRowId is set in the razor view Details.cshtml
-    cartStateManager.setIsUserLoggedIn(isUserLoggedIn); // isUserLogged is set in a script tab in razor view Details.cshtml
-    cartStateManager.setCheckoutInProcess(checkoutInProcess); // checkoutInProcess is set in a script tab in razor view Details.cshtml
+    cartStateManager.setIsUserLoggedIn(isUserLoggedIn); // isUserLogged is set in a script tag in razor view Details.cshtml
+    cartStateManager.setCheckoutInProcess(checkoutInProcess); // checkoutInProcess is set in a script tag in razor view Details.cshtml
+    cartStateManager.setAddressVerified(addressVerified); // addressVerified is set in a script tag in razor view Details.cshtml
+    cartStateManager.setNotificationsTesting(notificationsTesting); // notificationsTesting is set in a script tag in razor view Details.cshtml
 
     cartStateManager.SetCartState();
 
@@ -164,8 +164,8 @@ $(function () {
 
     //  flow goes inside this block where the order exists and is in process e.g. previously abandoned before finializing
     if (cartStateManager.getOrderRowId() > 0 && cartStateManager.getCheckoutInProcess()) {
-
-        if (shippingAddressRequired && notificationsTesting.toString() === 'false') {
+        
+        if (shippingAddressRequired && !cartStateManager.getNotificationsTesting() && !cartStateManager.getAddressVerified()) {
             // Following function lives in the register-during-checkout.js script
             // which will be in memory at this point and thus will have been hoisted.
             hookUpModal($('#UserDetailsModal'));
@@ -209,7 +209,7 @@ $(function () {
         $('#loginPassword').val($('#Password1').val());
 
         //  value converted to a Boolean in isShippindAddressRequired function
-        //  valu comes from a hidden impact in the radio btn list next to the relevant radio button (previous-sibling)
+        //  value comes from a hidden input in the radio btn list next to the relevant radio button (previous-sibling)
         shippingAddressRequired = isShippindAddressRequired($('#RegistrationType > dl dt input:checked').prev());
 
         var data = signUpForm.serialize();
@@ -232,7 +232,14 @@ $(function () {
                         $('#contactInfo').load('/Cart/CheckoutContactDetails', function (response, status, xhr) {
                             if (status !== 'error') {
                                 $('#_CreateUserForm input[name="returnUrl"]').val('/Webinar/Details/' + cartStateManager.getWebinarId());
-                                registerDuringCheckout.initialize(cartStateManager.getOrderId(), cartStateManager.getWebinarId(), cartStateManager.getOrderRowId(), shippingAddressRequired, checkoutConfirm.initialize);
+
+                                var addressOptions = {
+                                    'shippingAddressRequired': shippingAddressRequired,
+                                    'notificationsTesting': cartStateManager.getNotificationsTesting(),
+                                    'addressVerified': cartStateManager.getAddressVerified()
+                                };
+
+                                registerDuringCheckout.initialize(cartStateManager.getOrderId(), cartStateManager.getWebinarId(), cartStateManager.getOrderRowId(), addressOptions, checkoutConfirm.initialize);
                             } else {
                                 $('#labelEmail').html('<span class="label label-important">&nbsp;Server error. Try again or call 800-831-0678 ext 706 for immediate assistance!</span>');
                             }
@@ -272,7 +279,7 @@ $(function () {
 
                                 $('#confirmationTab a').tab('show');
 
-                                if (shippingAddressRequired && notificationsTesting.toString() === 'false') {
+                                if (shippingAddressRequired && !cartStateManager.getNotificationsTesting() && !cartStateManager.getAddressVerified()) {
                                     // Following function lives in the register-during-checkout.js script
                                     // which will be in memory at this point and thus will have been hoisted.
                                     hookUpModal($('#UserDetailsModal'));

@@ -6,7 +6,7 @@ namespace CUWebinars.Web.ViewModel
 {
     public class WebinarDetailsViewModel
     {
-
+        public bool UserAddressVerified { get; set; }
         public string CeuShort { get; set; }
         public string CeuStatement { get; set; }
         public CheckoutConfirmViewModel CheckoutConfirmViewModel { get; set; }

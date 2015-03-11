@@ -75,3 +75,7 @@ blockquote {
 .buttonAdjacentLabel {
     margin: 5px;
 }
+
+.linkCursor {
+    cursor: pointer;
+}

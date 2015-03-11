@@ -14,7 +14,15 @@
                 <div class="row">
                     <div class="offset1 span10">Primary Contact:</div>
                     <div id="userDetailsSummed" class="span10 offset2">
-                        <p>@Html.Raw(@Model.UserDetails)</p>
+                        <p>
+                            @Html.Raw(@Model.UserDetails)
+                            @{
+                                if (((ClaimsPrincipal) @User).HasClaim((claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Admin))
+                                {
+                                    <a id="editUserDetails" role="button" class="btn btn-mini" target="new"> Edit?</a>
+                                }
+                            }
+                        </p>
                     </div>
                 </div>
                 <div id="AdjustOrder" class="row">
@@ -40,8 +48,6 @@
                     </div>
                 </div>
             }
-
-
 
             if (Model.OrderStatus != OrderStatus.InProcess)
             {

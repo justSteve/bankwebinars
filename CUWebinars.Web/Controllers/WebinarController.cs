@@ -684,7 +684,9 @@ namespace CUWebinars.Web.Controllers
                         Origin = model.Order.Origin,
                         UserComments = model.Order.UserComments,
                         UserDetails =
-                            string.Concat(userFullName, " - ", orderRow.Order.Institution, "<br>", webUser.email),
+                            string.Concat("<span id='userFullnameLabel'>", userFullName, 
+                            "</span> - <span id='userInstitutionLabel'>", orderRow.Order.Institution, "</span><br>", 
+                            "<span id='userEmailLabel'>", webUser.email, "</span>"),
                         UserFullname = userFullName,
                         UserType = UserType.Customer
                     };
@@ -729,11 +731,6 @@ namespace CUWebinars.Web.Controllers
         {
             IEnumerable<AdditionalLocation> additionalLocations = null;
             OrderRow orderRowForOrder = null;
-
-            if (Request.IsAuthenticated)
-            {
-
-            }
 
             model.WebUser = Request.IsAuthenticated
                 ? _membershipService.GetUserByEmailLoadedWithOrdersData(User.Identity.Name)
@@ -875,6 +872,7 @@ namespace CUWebinars.Web.Controllers
             model.SignUpCaption = "Sign Up!";
             model.ConfirmationCaption = "Confirmation";
             model.Identity = ((ClaimsIdentity)User.Identity);
+            model.UserAddressVerified = model.Identity.HasClaim(ClaimTypes.AddressVerified);
             model.TimeFormatDisplay = "<i>" + DateTimeHelper.FormatTime(model.Webinar.Date, model.TimeZone, false) +
                                       " - " +
                                       DateTimeHelper.FormatTime(

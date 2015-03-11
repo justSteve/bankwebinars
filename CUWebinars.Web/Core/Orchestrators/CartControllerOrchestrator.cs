@@ -184,8 +184,10 @@ namespace CUWebinars.Web.Core.Orchestrators
                         Origin = orderRow.Order.Origin,
                         UserComments = orderRow.Order.UserComments,
                         UserFullname = userFullName,
-                        UserDetails =
-                            string.Concat(userFullName, " - ", orderRow.Order.Institution, "<br>", webUser.email),
+                        UserDetails = string.Concat("<span id='userFullnameLabel'>", userFullName,
+                            "</span> - <span id='userInstitutionLabel'>", orderRow.Order.Institution, "</span><br>",
+                            "<span id='userEmailLabel'>", webUser.email, "</span>"),
+
                         UserType = webUser.UserType
                     };
 
