@@ -975,7 +975,7 @@ function hookUpEditUserLogic(button, isShippindAddressRequired) {
 }
 
 function setUiLayout(isShippindAddressRequired) {
-    console.log('isShippindAddressRequired fires');
+    console.log('setUiLayout fires');
     if (isShippindAddressRequired) {
         $('#ShippingAddressContainer').hide();
         $('#HideAddShippingAddressLink').hide();
