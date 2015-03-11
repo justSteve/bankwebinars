@@ -1,23 +1,22 @@
-﻿
-@using CUWebinars.Business.Core
+﻿@using CUWebinars.Business.Core
 @model CheckoutConfirmViewModel
 
 @{
     if (Model.OrderExists)
     {
-            
+
         var orderRowID = 0;
         var orderID = 0;
         if (Model.OrderRowExists && Model.OrderRowHasId)
         {
             @*<script language="javascript" type="text/javascript">
-                function payByCC(id) {
-                    //window.showModalDialog("@(System.Configuration.ConfigurationManager.AppSettings[AppConst.CC_PAYMENT_PROCESSING_URL_KEY])/@Model.OrderRow.Order.ID", null, "dialogwidth: 900px; dialogheight: 370px; center: yes; resizable: yes");
-                    window.showModalDialog("/home/PayCC/"+id, null, "dialogwidth: 900px; dialogheight: 370px; center: yes; resizable: yes");
-                    $('#step2_Submit2Sage' + id).submit();
-                    window.location.reload();
-                }
-            </script>*@
+                    function payByCC(id) {
+                        //window.showModalDialog("@(System.Configuration.ConfigurationManager.AppSettings[AppConst.CC_PAYMENT_PROCESSING_URL_KEY])/@Model.OrderRow.Order.ID", null, "dialogwidth: 900px; dialogheight: 370px; center: yes; resizable: yes");
+                        window.showModalDialog("/home/PayCC/"+id, null, "dialogwidth: 900px; dialogheight: 370px; center: yes; resizable: yes");
+                        $('#step2_Submit2Sage' + id).submit();
+                        window.location.reload();
+                    }
+                </script>*@
             if (Model.OrderStatus == OrderStatus.InProcess)
             {
                 <b>Please review this order summary and and choose billing method.</b>
@@ -41,13 +40,14 @@
                         <div id="additionalLocationsCaption" class="clear pull-right">
                             Additional Locations:
                             <div style="font-size: smaller;">
-                                @{ Html.RenderPartial("~/Views/Account/Partials/OrderHasAdditionalLocations.cshtml", Model.OrderHasAdditionalLocationsViewModel); }
+                                @{ Html.Partial("~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml"); }
+                                @*@{ Html.RenderPartial("~/Views/Account/Partials/OrderHasAdditionalLocations.cshtml", Model.OrderHasAdditionalLocationsViewModel); }*@
                             </div>
                             @{
-                            if (!string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption))
-                            {
-                                @Model.AdditionalLocationCaption
-                            }
+                if (!string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption))
+                {
+                    @Model.AdditionalLocationCaption
+                }
                             }
                         </div>
                     </div>
@@ -56,7 +56,7 @@
                     <div class="offset2 span9 ">
                         <div id="RegTypeChanger" class="clear pull-right">
                             @{
-                            Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel);
+                Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel);
                             }
                         </div>
                     </div>
@@ -76,26 +76,26 @@
                 </div>
 
                 @*<div class="row">
-                    <div class="span5 offset1">
-                        <input class="input input-xlarge" type="text" placeholder="How did you hear about this webinar?" name="referred" id="tbReferred" value="" />
+                        <div class="span5 offset1">
+                            <input class="input input-xlarge" type="text" placeholder="How did you hear about this webinar?" name="referred" id="tbReferred" value="" />
 
-                        @Html.Raw(Model.UserComments)
-                        @Html.Raw(Model.AffiliateComments)
-                        @if (Model.UserType == UserType.Admin)
-                        {
-                            <br />
-                            @Html.Raw(Model.AdminComments)
-                            <br />
-                            @Html.Raw(Model.Origin)
-                        }
+                            @Html.Raw(Model.UserComments)
+                            @Html.Raw(Model.AffiliateComments)
+                            @if (Model.UserType == UserType.Admin)
+                            {
+                                <br />
+                                @Html.Raw(Model.AdminComments)
+                                <br />
+                                @Html.Raw(Model.Origin)
+                            }
+                        </div>
+                        <div class="span2 offset1">&nbsp;</div>
                     </div>
-                    <div class="span2 offset1">&nbsp;</div>
-                </div>
-                <div class="row">
-                    <div class="span5 offset1">
-                        <a href=""></a> a comment or question for our staff?<br />
-                    </div>
-                </div>*@
+                    <div class="row">
+                        <div class="span5 offset1">
+                            <a href=""></a> a comment or question for our staff?<br />
+                        </div>
+                    </div>*@
             }
 
 

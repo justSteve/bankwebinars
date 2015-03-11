@@ -148,7 +148,6 @@ var RegistrationInCart;
             // TODO Check this in FireFox. #TimeZone seems to be init because drpdwn is blank.
             //  set TimeZone to Central time if there is none.
             var timeZoneInput = $('#TimeZone');
-            alert("timeZoneInput:" + timeZoneInput.val());
 
             if (!timeZoneInput.val())
                 timeZoneInput.val('3'); // Central = 3
