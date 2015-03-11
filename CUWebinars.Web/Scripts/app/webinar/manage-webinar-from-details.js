@@ -234,6 +234,7 @@ $(function () {
             beforeSend: function() {
                 $('#feedbackLabel').remove();
                 $('.webinar-form-error').remove();
+                formProcessor.clearValidationSummary($('#EditWebinarValSummary'));
             }
         }).done(function (data) {
 
@@ -292,6 +293,7 @@ $(function () {
             beforeSend: function() {
                 $('.webinar-form-error').remove();
                 $('#feedbackLabel').remove();
+                formProcessor.clearValidationSummary($('#AddWebinarValSummary'));
             }
         }).done(function (data) {
 
@@ -347,6 +349,7 @@ $(function () {
             beforeSend: function() {
                 $('.webinar-form-error').remove();
                 $('#feedbackLabel').remove();
+                formProcessor.clearValidationSummary($('#CloneWebinarValSummary'));
             }
         }).done(function (data) {
 

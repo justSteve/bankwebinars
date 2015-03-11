@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CUWebinars.Business.Models;
 using FluentValidation;
@@ -22,8 +23,6 @@ namespace CUWebinars.Business.Validation.Webinar
             RuleFor(w => w.WhoAttend).NotEmpty().WithMessage(CannotBeNullOrEmpty, "WhoAttend");
             RuleFor(w => w.RecordingUrl).NotEmpty().WithMessage(CannotBeNullOrEmpty, "RecordingUrl");
 
-            //RuleFor(w => w.Status).Must(x => x == )
-
             // dates
             RuleFor(w => w.Date).NotEmpty().WithMessage(CannotBeNullOrEmpty, "Date");
             RuleFor(w => w.DateChanged).NotEmpty().WithMessage(CannotBeNullOrEmpty, "DateChanged");
@@ -33,6 +32,8 @@ namespace CUWebinars.Business.Validation.Webinar
             RuleFor(w => w.idPresenter).GreaterThan(0).WithMessage(MustBeGreaterThan, "SelectedPresenter", 0);
             RuleFor(w => w.Duration).GreaterThan(d => MinDecimal).WithMessage(MustBeGreaterThan, "Duration", MinDecimal);
             RuleFor(w => (int)w.Status).GreaterThan(0).WithMessage(MustBeGreaterThan, "SelectedStatus", 0);
+
+            // items which are lookups
             RuleFor(w => w.RegTypesGroupsXref).Must(MustHaveAtLeastOneRegTypeGroup).WithMessage("Webinar must have at least 1 RegType");
             RuleFor(w => w.WebinarTopicXrefs).Must(MustHaveAtLeastOneTopic).WithMessage("Webinar must have at least 1 topic");
         }
