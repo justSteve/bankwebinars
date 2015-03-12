@@ -6,6 +6,7 @@ using CUWebinars.Tests.Common;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.Tests.Fakes;
@@ -34,6 +35,7 @@ namespace CUWebinars.Web.Tests.UnitTests
         private Mock<IOrderManagementService> _orderManagementServiceMock = new Mock<IOrderManagementService>();
         private Mock<ILogger> _loggerMock = new Mock<ILogger>();
         private Mock<IStateService> _stateServiceMock = new Mock<IStateService>();
+        private Mock<IUniversalMapper> _universalMapperMock = new Mock<IUniversalMapper>();
         
         private GlobalConfig _globals = GlobalConfig.GlobalConfigSingleton;
         private WebTestsGlobalConfig _webTestsGlobals = WebTestsGlobalConfig.WebTestsGlobalConfigSingleton;
@@ -102,7 +104,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -145,7 +148,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -181,7 +185,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -216,7 +221,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -247,7 +253,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -277,7 +284,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -299,7 +307,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -322,7 +331,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
             _accountControllerOrchestrator.UpdateBillingEmailOfOrder(5, _webTestsGlobals.LoggedInUserEmail);
 
@@ -343,7 +353,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
 
             _accountControllerOrchestrator.ResetPassword(_webTestsGlobals.Tenant, _webTestsGlobals.LoggedInUserEmail);
@@ -374,7 +385,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
             
             //  Act
@@ -406,7 +418,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
             
             //  Act
@@ -440,7 +453,9 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object);
+                _appHelperMock.Object,
+                _universalMapperMock.Object);
+                
 
             //  Act
             _accountControllerOrchestrator.RegisterAndLogInUser(registerViewModel);
@@ -474,7 +489,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -510,7 +526,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -532,7 +549,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
             //  Act
             var zipAddress = _accountControllerOrchestrator.GetZipAddress(54535);
@@ -553,7 +571,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
             //  Act
             var zipAddress = _accountControllerOrchestrator.GetZipAddress(54535);
@@ -592,7 +611,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -621,7 +641,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -663,7 +684,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -706,7 +728,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -728,7 +751,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -754,7 +778,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -780,7 +805,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -806,7 +832,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -832,7 +859,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -858,7 +886,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -884,7 +913,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 WebTestHelpers.GetMockedHttpContext().Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
 
             //  Act
@@ -918,7 +948,8 @@ namespace CUWebinars.Web.Tests.UnitTests
                 _orderManagementServiceMock.Object,
                 _stateServiceMock.Object,
                 HttpContextFactory.Current.Request,
-                _appHelperMock.Object
+                _appHelperMock.Object,
+                _universalMapperMock.Object
                 );
 
             var data = new DataOperations {ConnectionString = _globals.MembershipConnectionString};

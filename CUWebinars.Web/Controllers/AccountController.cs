@@ -259,7 +259,6 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.AllowAnonymous]
         public ActionResult OrderComplete(string email, int? idOrder)
         {
-            // HACK: parameter is named id to match the Default route. It will actually be an email address and not an id.
             if (!string.IsNullOrWhiteSpace(email) && idOrder.HasValue)
             {
                 var createUserConfirmedViewModel =
@@ -273,72 +272,17 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult MyWebinars()
         {
-            var currentUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
-
             ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity) User.Identity;
 
-            if (
-                claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == ClaimTypes.Admin))
+            if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == ClaimTypes.Admin))
             {
                 return RedirectToAction("Index", "Admin");
             }
 
-            var userDiscount = _orderManagementService.GetDiscountByUser(currentUser);
+            var discountModel = _accountControllerOrchestrator.BuildDiscountModel();
+            var myWebinarsDTO = _accountControllerOrchestrator.BuildMyWebinarsDTO(discountModel, claimsIdentityOfAuthenticatedUser);
 
-            var discountModel = new DiscountModel();
-
-            //_universalMapper.Map(userDiscount, discountModel);
-            Mapper.Engine.Map(userDiscount, discountModel);
-
-            if (discountModel.TypeOfDiscount == DiscountType.ComplianceSeries)
-            {
-
-            }
-
-            var model = new MyWebinarsDTO
-            {
-                WebUser = currentUser,
-                OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel()
-                {
-
-                }
-            };
-
-
-            if (claimsIdentityOfAuthenticatedUser.HasClaim(ClaimTypes.DisplayPostEventMaterials))
-            {
-                model.MyClaims =
-                    claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type == ClaimTypes.DisplayPostEventMaterials)
-                        .Select(c => c.Value);
-            }
-
-            if (discountModel.TypeOfDiscount == DiscountType.ComplianceSeries)
-            {
-                model.Subscription = discountModel;
-            }
-
-            if (discountModel.TypeOfDiscount == DiscountType.Package)
-            {
-                model.Package = discountModel;
-            }
-            ViewData["DiscountMsg"] = string.Empty;
-
-            model.Scheduled = _orderManagementService.SelectOrdersWithScheduledWebinars(currentUser.idUser);
-            model.Recorded = _orderManagementService.SelectOrdersWithRecordedWebinars(currentUser.idUser);
-            model.Archived = _orderManagementService.SelectOrdersWithArchivedWebinars(currentUser.idUser);
-
-            foreach (var order in model.Scheduled)
-            {
-                var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-                if (row.Webinar.Status == WebinarStatus.Active)
-                {
-                    _orderManagementService.GetJoinUrl(row);
-                }
-
-            }
-
-            return View("MyWebinars", model);
-
+            return View("MyWebinars", myWebinarsDTO);
         }
 
 
