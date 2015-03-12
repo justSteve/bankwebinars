@@ -1,7 +1,8 @@
 $(function () {
     var shippingAddressContainer = $(constants.ShippingAddressContainer);
     var addShippingAddressLink = $(constants.AddShippingAddressLink);
-    var hideAddShippingAddressLink = $(constants.HideAddShippingAddressLink);       
+    var hideAddShippingAddressLink = $(constants.HideAddShippingAddressLink);
+    var utilities = new Common.Utilities();
 
     addShippingAddressLink.on('click', function (e) {
 
@@ -42,7 +43,7 @@ $(function () {
             var billingCountry = $(prefixBilling.concat(constants.Country)).val();
             var billingPhone = $(prefixBilling.concat(constants.Phone)).val();
 
-            var prefixShipping = '#EditFields_ShippingAddress_';
+            var prefixShipping = '#EditFields_ShippingAddress';
 
             $(prefixShipping.concat(constants.StreetAddress)).val(billingStreetAddress);
             $(prefixShipping.concat(constants.StreetAddress2)).val(billingStreetAddress2);
@@ -71,7 +72,14 @@ $(function () {
                 }
             }).done(function(data) {
                 if (data.Result === 'Success') {
-                    $('#postalSpinner').html('&nbsp;<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Operation succeeded!</span>');
+                    
+                    // returnUrl is set in the Razor View
+                    if (returnUrl) {
+                        $('#postalSpinner').html('&nbsp;<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Transferring you back now ...</span>');
+                        utilities.goToUrl(returnUrl);
+                    } else {
+                        $('#postalSpinner').html('&nbsp;<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Operation succeeded!</span>');
+                    }
                 }
                 
             });

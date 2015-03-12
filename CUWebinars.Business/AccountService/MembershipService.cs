@@ -45,6 +45,12 @@ namespace CUWebinars.Business.AccountService
             return webUser;
         }
 
+        public UserAccount GetUserAccountByWebUserId(string tenant, int userId)
+        {
+            var webUser = GetWebUserById(userId);
+            return GetUserAccountByEmail(tenant, webUser.email);
+        }
+
         /// <summary>
         /// serves to check if email exists before attempting to create account.
         /// </summary>
@@ -66,7 +72,7 @@ namespace CUWebinars.Business.AccountService
 
         public WebUser GetWebUserById(int userId)
         {
-            return _webUserRepository.FindById(userId);
+            return _webUserRepository.FindByIdLoaded(userId);
         }
 
         public IEnumerable<WebUser> GetWebUsersByLastNameForAffiliate(string lastName, int idAffiliate)

@@ -529,7 +529,7 @@ namespace CUWebinars.Web.Controllers
 
                 _logger.Info(string.Format("{0} is editing {1}", editingUser.email, user.email));
 
-                var editModel = BuildEditUserInfoModel(user);
+                var editModel = BuildEditUserInfoModel(user, returnUrl, (ClaimsIdentity)User.Identity);
                 
                 return View(editModel);
             }
@@ -539,13 +539,13 @@ namespace CUWebinars.Web.Controllers
 
                 _logger.Info(string.Format("{0} is editing their own details", editingUser.email));
 
-                var editModel = BuildEditUserInfoModel(editingUser);
+                var editModel = BuildEditUserInfoModel(editingUser, returnUrl);
 
                 return View(editModel);
             }
         }
 
-        private static EditUserInfoModel BuildEditUserInfoModel(WebUser user)
+        private static EditUserInfoModel BuildEditUserInfoModel(WebUser user, string returnUrl, ClaimsIdentity loggedInUser = null)
         {
             var addresses = user.Addresses.ToArray();
             var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
@@ -586,6 +586,8 @@ namespace CUWebinars.Web.Controllers
                     Title = user.Title,
                     AccountDetailsTitle = WebUiConstants.ManageUser
                 },
+                LoggedInUser = loggedInUser,
+                ReturlUrl = returnUrl,
                 StatusMessage = string.Empty
             };
             return editModel;
@@ -1364,6 +1366,9 @@ namespace CUWebinars.Web.Controllers
                 {
                     _accountControllerOrchestrator.UpdateShippingAddressDetails(shippingDetailsModel.ShippingAddress,
                         shippingDetailsModel.UserId);
+
+                    _accountControllerOrchestrator.AddShippingAddressVerifiedClaim(shippingDetailsModel.UserId);
+
                     return Json(new {Result = WebUiConstants.Success});
                 }
                 catch (DbEntityValidationException dbEntityValidationException)

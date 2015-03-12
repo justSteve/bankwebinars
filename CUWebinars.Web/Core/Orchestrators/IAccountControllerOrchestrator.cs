@@ -1,10 +1,9 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Models;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.ViewModel;
+using System;
+using System.Collections.Generic;
 
 namespace CUWebinars.Web.Core.Orchestrators
 {
@@ -41,5 +40,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         void UpdateShippingAddressDetails(AddressModel shippingAddressModel, int idUser);
         void UpdateDiscountDetails(DiscountModel discount, int userId);
         void EditUser(EditUserViewModel model);
+        void AddShippingAddressVerifiedClaim(int userId);
     }
 }

@@ -74,7 +74,7 @@ OCA.initializeFunctions = function () {
             dropDown.removeAttr('disabled');
             $('#discountSpinner').remove();
 
-            if (OCA.shippingAddressRequired) {
+            if (OCA.shippingAddressRequired && !OCA.cartStateManager.getNotificationsTesting(notificationsTesting) && !OCA.cartStateManager.getAddressVerified(addressVerified)) {
                 OCA.displayModal($('#UserDetailsModal'));
             }
         });
@@ -112,20 +112,13 @@ OCA.initializeFunctions = function () {
     OCA.displayModal = function(modalForm) {
 
         modalForm.modal('show');
-    };
 
-    OCA.setUiLayout = function(isShippindAddressRequired) {
-        console.log('isShippindAddressRequired fires');
-        if (isShippindAddressRequired) {
-            $('#ShippingAddressContainer').hide();
-            $('#HideAddShippingAddressLink').hide();
-            $('#linksToAddShippingFields').show();
-            $('#AddShippingAddressLink').show();
-        } else {
-            $('#ShippingAddressContainer, #linksToAddShippingFields, #AddShippingAddressLink').hide();
-        }
+        modalForm.on('shown', modalShown);
 
-        $('#updateShippingMsgLabelWrap').empty();
+        modalForm.on('hidden', function (e) {
+            $('#saveChangesButton').off('click');
+            $('#userDetailsForm').off('submit');
+        });
     };
 
     OCA.hookUpEditUserLogic = function (button) {
@@ -137,107 +130,6 @@ OCA.initializeFunctions = function () {
             e.preventDefault();
 
             OCA.displayModal(modalForm);
-        });
-
-        modalForm.on('shown', function (e) {
-
-            OCA.setUiLayout(OCA.shippingAddressRequired);
-
-            $('#saveChangesButton').on('click', function () {
-                e.preventDefault();
-
-                $('#userDetailsForm').submit();
-            });
-
-            $('#userDetailsForm').on('submit', function (e) {
-                e.preventDefault();
-
-                var url = $(this).attr('action');
-
-                var payload = $(this).serialize();
-                //TODO: The payload here is highly valuable. The fact that they will be POSTed
-                // instead of GET means they don't show in the server logs, which is often nice to have.
-                // can we fire a GET to an internal address where nothing happens except that
-                // a line dumps to the server with all form values.
-                $.ajax({
-                    type: 'POST',
-                    contentType: constants.FormPostContentType,
-                    data: payload,
-                    cache: false,
-                    url: url,
-                    dataType: constants.JsonDataType,
-                    beforeSend: function(xhr){
-                        $('#updateShippingMsgLabelWrap').html('<span class="label label-info">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Updating details...</span>');
-
-                        var valSummary = $('#userDetailsValSummary');
-                        valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
-
-                        var errorsList = valSummary.find('ul');
-                        errorsList.empty();
-                        errorsList.append('<li style="display:none"></li>');
-
-                    }
-                }).done(function (data) {
-                    //BUG:  A submitted order prematurely turns off the 'in-process' spinner.
-                    // Intermittent - Can't reproduce. Is same as was earlier reported where the lag between
-                    //  new user submission and the point where panel 3 displays is quite long
-                    //  and does not display any 'in-process' spinner
-                    // I think the cause would have to be rooted here over very near here.
-
-                    if (data.Result === 'Success') {
-
-                        $('#updateShippingMsgLabelWrap').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details updated successfully.</span>');
-
-                    } else if (!data.isSuccessful) {
-                        //var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
-                        //NREUM.noticeError(err);
-
-                        $('#updateShippingMsgLabelWrap').empty();
-                        formProcessor.lightUpValidationSummary('userDetailsValSummary', data);
-                    } else {
-                        var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
-                        //NREUM.noticeError(err);
-                        $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>There has been an error in the operation.Please call us at 800-831-0678 ext. 3 to resolve.</span>');
-                    }
-                }).fail(function (data) {
-                    var err = new Error('FAIL: Post to userDetailsFormUrlData ' + userDetailsFormUrlData + ' !data.isSuccessful');
-                    //NREUM.noticeError(err);
-                    $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error in the server response. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
-                });
-            });
-
-            $('#HideAddShippingAddressLink').on('click', function (e) {
-                e.preventDefault();
-
-                $(this).fadeOut('500', function () {
-                    $('#ShippingAddressContainer').fadeOut('500', function () {
-                        $('#AddShippingAddressLink').fadeIn('500');
-                    });
-                });
-
-            });
-
-            $('#AddShippingAddressLink').on('click', function (e) {
-                e.preventDefault();
-
-                $(this).fadeOut('500', function () {
-                    $('#ShippingAddressContainer').fadeIn('500', function () {
-                        $('#HideAddShippingAddressLink').fadeIn('500');
-                    });
-                });
-            });
-
-            $('#passwordWrapper').remove();
-
-            if ($('#RegisterFields_Password').length < 1) {
-                $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields_Password" name="RegisterFields.Password" value="456rty^Y" />');
-                $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields.ConfirmPassword" name="RegisterFields.ConfirmPassword" value="456rty^Y" />');
-            }
-        });
-
-        modalForm.on('hidden', function (e) {
-            $('#saveChangesButton').off('click');
-            $('#userDetailsForm').off('submit');
         });
     };
 
@@ -377,6 +269,9 @@ OCA.initializeState = function() {
     OCA.cartStateManager.setOrderRowId(orderRowId); // orderRowId is set in the razor view DetailsAffiliate.cshtml
     OCA.cartStateManager.setIsUserLoggedIn(isUserLoggedIn); // isUserLogged is set in a script tab in razor view DetailsAffiliate.cshtml
     OCA.cartStateManager.setCheckoutInProcess(checkoutInProcess); // checkoutInProcess is set in a script tab in razor view DetailsAffiliate.cshtml
+    OCA.cartStateManager.setAddressVerified(addressVerified); // addressVerified is set in a script tag in razor view Details.cshtml
+    OCA.cartStateManager.setNotificationsTesting(notificationsTesting); // notificationsTesting is set in a script tag in razor view Details.cshtml
+
 
     OCA.cartStateManager.SetCartState('affiliate');
 
@@ -443,7 +338,8 @@ OCA.wireUpHandlers = function() {
 
                                 $('#AdjustOrder').hide();
 
-                                if (OCA.shippingAddressRequired && notificationsTesting === false) {
+                                if (OCA.shippingAddressRequired && !OCA.cartStateManager.getNotificationsTesting(notificationsTesting) && !OCA.cartStateManager.getAddressVerified(addressVerified)) {
+
                                     OCA.displayModal($('#UserDetailsModal'));
                                 }
 
@@ -617,4 +513,80 @@ $(function () {
 
     OCA.wireUpHandlers();
 });
+
+function modalShown (e) {
+
+    $('#updateShippingMsgLabelWrap').empty();
+
+    $('#saveChangesButton').on('click', function() {
+        e.preventDefault();
+
+        $('#userDetailsForm').submit();
+    });
+
+    $('#userDetailsForm').on('submit', function(e) {
+        e.preventDefault();
+
+        var url = $(this).attr('action');
+
+        var payload = $(this).serialize();
+        //TODO: The payload here is highly valuable. The fact that they will be POSTed
+        // instead of GET means they don't show in the server logs, which is often nice to have.
+        // can we fire a GET to an internal address where nothing happens except that
+        // a line dumps to the server with all form values.
+        $.ajax({
+            type: 'POST',
+            contentType: constants.FormPostContentType,
+            data: payload,
+            cache: false,
+            url: url,
+            dataType: constants.JsonDataType,
+            beforeSend: function(xhr) {
+                $('#updateShippingMsgLabelWrap').html('<span class="label label-info">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Updating details...</span>');
+
+                var valSummary = $('#userDetailsValSummary');
+                valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
+
+                var errorsList = valSummary.find('ul');
+                errorsList.empty();
+                errorsList.append('<li style="display:none"></li>');
+
+            }
+        }).done(function(data) {
+            //BUG:  A submitted order prematurely turns off the 'in-process' spinner.
+            // Intermittent - Can't reproduce. Is same as was earlier reported where the lag between
+            //  new user submission and the point where panel 3 displays is quite long
+            //  and does not display any 'in-process' spinner
+            // I think the cause would have to be rooted here over very near here.
+
+            if (data.Result === 'Success') {
+
+                $('#updateShippingMsgLabelWrap').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details updated successfully.</span>');
+
+            } else if (!data.isSuccessful) {
+                //var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
+                //NREUM.noticeError(err);
+
+                $('#updateShippingMsgLabelWrap').empty();
+                formProcessor.lightUpValidationSummary('userDetailsValSummary', data);
+            } else {
+                var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
+                //NREUM.noticeError(err);
+                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>There has been an error in the operation.Please call us at 800-831-0678 ext. 3 to resolve.</span>');
+            }
+        }).fail(function(data) {
+            var err = new Error('FAIL: Post to userDetailsFormUrlData ' + userDetailsFormUrlData + ' !data.isSuccessful');
+            //NREUM.noticeError(err);
+            $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error in the server response. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
+        });
+    });
+
+    $('#passwordWrapper').remove();
+
+    if ($('#RegisterFields_Password').length < 1) {
+        $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields_Password" name="RegisterFields.Password" value="456rty^Y" />');
+        $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields.ConfirmPassword" name="RegisterFields.ConfirmPassword" value="456rty^Y" />');
+    }
+};
+
 

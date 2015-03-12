@@ -489,7 +489,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                     hookUpChangeTypeLogic($('#RegType'));
                                     hookUpEditUserLogic(null);
 
-                                    if (registerDuringCheckout.addressOptions['shippingAddressRequired'] && registerDuringCheckout.addressOptions['notificationsTesting'] && registerDuringCheckout.addressOptions['addressVerified']) {
+                                    if (registerDuringCheckout.addressOptions['shippingAddressRequired'] && !registerDuringCheckout.addressOptions['notificationsTesting'] && !registerDuringCheckout.addressOptions['addressVerified']) {
                                         hookUpModal($('#UserDetailsModal'));
                                     }
 
@@ -646,7 +646,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                             hookUpChangeTypeLogic($('#RegType'));
                                             hookUpEditUserLogic(null);
 
-                                            if (registerDuringCheckout.addressOptions['shippingAddressRequired'] && registerDuringCheckout.addressOptions['notificationsTesting'] && registerDuringCheckout.addressOptions['addressVerified']) {
+                                            if (registerDuringCheckout.addressOptions['shippingAddressRequired'] && !registerDuringCheckout.addressOptions['notificationsTesting'] && !registerDuringCheckout.addressOptions['addressVerified']) {
                                                 hookUpModal($('#UserDetailsModal'));
                                             }
 
@@ -880,7 +880,7 @@ function hookUpEditUserLogic(button, shippingAddressRequired) {
 
     modalForm.on('shown', function (e) {
 
-        setUiLayout(shippingAddressRequired);
+        $('#updateShippingMsgLabelWrap').empty();
         var userDetailsForm = $('#userDetailsForm');
 
         $('#saveChangesButton').on('click', function () {
@@ -936,47 +936,13 @@ function hookUpEditUserLogic(button, shippingAddressRequired) {
             });
         });
 
-        $('#HideAddShippingAddressLink').on('click', function (e) {
-            e.preventDefault();
-
-            $(this).fadeOut('500', function () {
-                $('#ShippingAddressContainer').fadeOut('500', function () {
-                    $('#AddShippingAddressLink').fadeIn('500');
-                });
-            });
-
-        });
-
-        $('#AddShippingAddressLink').on('click', function (e) {
-            e.preventDefault();
-
-            $(this).fadeOut('500', function () {
-                $('#ShippingAddressContainer').fadeIn('500', function () {
-                    $('#HideAddShippingAddressLink').fadeIn('500');
-                });
-            });
-        });
-        
+       
     });
 
     modalForm.on('hidden', function (e) {
         $('#saveChangesButton').off('click');
         $('#userDetailsForm').off('submit');
     });
-}
-
-function setUiLayout(isShippindAddressRequired) {
-    console.log('setUiLayout fires');
-    if (isShippindAddressRequired) {
-        $('#ShippingAddressContainer').hide();
-        $('#HideAddShippingAddressLink').hide();
-        $('#linksToAddShippingFields').show();
-        $('#AddShippingAddressLink').show();
-    } else {
-        $('#ShippingAddressContainer, #linksToAddShippingFields, #AddShippingAddressLink').hide();
-    }
-
-    $('#updateShippingMsgLabelWrap').empty();
 }
 
 function hookUpChangeTypeLogic(dropDown) {
@@ -1186,7 +1152,7 @@ function showModalForShippingAddressDetails() {
         };
 
     modalShippingDetails.on('shown', function (e) {
-        setUiLayout(true);
+        $('#updateShippingMsgLabelWrap').empty();
     });
 
     modalShippingDetails.modal(modalFormOptionsOnPageLoad);
