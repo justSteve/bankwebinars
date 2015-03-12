@@ -9,6 +9,7 @@ using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Infrastructure;
 using CUWebinars.Web.Infrastructure.Attributes;
 using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Mapping.Mappers;
@@ -29,6 +30,16 @@ using System.Web.Mvc;
 using System.Web.Security;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
+
+namespace CUWebinars.Web.Infrastructure
+{
+    public enum ManageMessageId 
+    {
+        ChangePasswordSuccess,
+        SetPasswordSuccess,
+        RemoveLoginSuccess,
+    }
+}
 
 namespace CUWebinars.Web.Controllers
 {
@@ -468,12 +479,9 @@ namespace CUWebinars.Web.Controllers
                     editingUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
                 }
 
-                //ViewBag.ReturnUrl = Url.Action(ManageActionName);
-                //ViewBag.Title = WebUiConstants.ManageUser;
-
                 _logger.Info(string.Format("{0} is editing {1}", editingUser.email, user.email));
 
-                var editModel = BuildEditUserInfoModel(user, returnUrl, (ClaimsIdentity)User.Identity);
+                var editModel = BuildEditUserInfoModel(user, returnUrl);
                 
                 return View(editModel);
             }
@@ -489,7 +497,7 @@ namespace CUWebinars.Web.Controllers
             }
         }
 
-        private static EditUserInfoModel BuildEditUserInfoModel(WebUser user, string returnUrl, ClaimsIdentity loggedInUser = null)
+        private EditUserInfoModel BuildEditUserInfoModel(WebUser user, string returnUrl)
         {
             var addresses = user.Addresses.ToArray();
             var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
@@ -530,7 +538,7 @@ namespace CUWebinars.Web.Controllers
                     Title = user.Title,
                     AccountDetailsTitle = WebUiConstants.ManageUser
                 },
-                LoggedInUser = loggedInUser,
+                LoggedInUser = (ClaimsIdentity)User.Identity,
                 ReturlUrl = returnUrl,
                 StatusMessage = string.Empty
             };
@@ -550,17 +558,6 @@ namespace CUWebinars.Web.Controllers
                     _accountControllerOrchestrator.EditUser(model);
                     return Json(new {Result = WebUiConstants.Success});
                 }
-                catch (DbEntityValidationException dbEx)
-                {
-                    foreach (var validationErrors in dbEx.EntityValidationErrors)
-                    {
-                        foreach (var validationError in validationErrors.ValidationErrors)
-                        {
-                            Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
-                                validationError.ErrorMessage);
-                        }
-                    }
-                }
                 catch (Exception exception)
                 {
                     _logger.ErrorException("In EditUser Action: ", exception);
@@ -574,56 +571,19 @@ namespace CUWebinars.Web.Controllers
         //[ClaimsAuthorize(Roles = "CUWebinarsAbsoluteAdmin")]
         public ActionResult Manage(ManageMessageId? message)
         {
-            var manageModel = new ManageModel
+            try
             {
-                StatusMessage = string.Empty
-            };
-            ViewBag.ReturnUrl = Url.Action(ManageActionName);
-            ViewBag.Title = WebUiConstants.ManageUser;
+                var manageModel = _accountControllerOrchestrator.BuildManageModel(message);
 
-            var user = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
+                ViewBag.ReturnUrl = Url.Action(ManageActionName);
 
-            var addresses = user.Addresses.ToArray();
-            var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
-            var shippingAddress = addresses.First(a => a.AddressType == WebUiConstants.ShippingAddress);
-
-            manageModel.RegisterFields = new RegisterModel
+                return View(manageModel);
+            }
+            catch (Exception exception)
             {
-                BillingAddress = new AddressModel
-                {
-
-                    Name = user.FirstName + ' ' + user.LastName,
-                    City = billingAddress.City,
-                    Country = billingAddress.Country,
-                    StreetAddress = billingAddress.StreetAddress,
-                    StreetAddress2 = billingAddress.StreetAddress2,
-                    State = billingAddress.State,
-                    Zip = billingAddress.Zip,
-                    Phone = billingAddress.Phone,
-                    TypeOfAddress = AddressType.Billing
-                },
-                ShippingAddress = new AddressModel
-                {
-                    City = shippingAddress.City,
-                    Country = shippingAddress.Country,
-                    StreetAddress = shippingAddress.StreetAddress,
-                    StreetAddress2 = shippingAddress.StreetAddress2,
-                    State = shippingAddress.State,
-                    Zip = shippingAddress.Zip,
-                    Phone = shippingAddress.Phone,
-                    Name = shippingAddress.Name,
-                    TypeOfAddress = AddressType.Shipping
-                },
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Institution = user.Institution.InstitutionName,
-                Email = user.email,
-                Title = user.Title,
-                AccountDetailsTitle = WebUiConstants.ManageUser
-            };
-
-            return View(manageModel);
-            //return null;
+                _logger.ErrorException("In Manage Action", exception);
+                throw;
+            }
         }
 
         [System.Web.Mvc.HttpPost]
@@ -638,20 +598,9 @@ namespace CUWebinars.Web.Controllers
                     _accountControllerOrchestrator.EditContactInfo(model);
                     return Json(new {Result = WebUiConstants.Success});
                 }
-                catch (DbEntityValidationException dbEx)
-                {
-                    foreach (var validationErrors in dbEx.EntityValidationErrors)
-                    {
-                        foreach (var validationError in validationErrors.ValidationErrors)
-                        {
-                            Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
-                                validationError.ErrorMessage);
-                        }
-                    }
-                }
                 catch (Exception exception)
                 {
-                    _logger.ErrorException("In Manage Action", exception);
+                    _logger.ErrorException("In EditContactInfo Action", exception);
                     Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                     throw;
                 }
@@ -672,17 +621,6 @@ namespace CUWebinars.Web.Controllers
                     _accountControllerOrchestrator.UpdateUserDetails(model);
                     return Json(new {Result = WebUiConstants.Success});
                 }
-                catch (DbEntityValidationException dbEx)
-                {
-                    foreach (var validationErrors in dbEx.EntityValidationErrors)
-                    {
-                        foreach (var validationError in validationErrors.ValidationErrors)
-                        {
-                            Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
-                                validationError.ErrorMessage);
-                        }
-                    }
-                }
                 catch (Exception exception)
                 {
                     _logger.ErrorException("In Manage Action", exception);
@@ -700,8 +638,16 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
-            ViewBag.PageStyleType = "register";
-            return View(_accountControllerOrchestrator.BuildLoginModel(returnUrl));
+            try
+            {
+                ViewBag.PageStyleType = "register";
+                return View(_accountControllerOrchestrator.BuildLoginModel(returnUrl));
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("In Login Action", exception);
+                throw;
+            }
         }
 
 
@@ -725,31 +671,86 @@ namespace CUWebinars.Web.Controllers
         [HandleAjaxException(Order = 1)]
         public ActionResult SignIn(SignInModel model)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return this.ModelStateJson(ModelState);
-            }
-
-            try
-            {
-                string userMustVerify;
-
-                if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
+                try
                 {
-                    var returnUrl = Server.HtmlDecode(model.ReturnUrl);
+                    string userMustVerify;
 
-                    return Json(new {result = LoggedInResult, returnUrl = returnUrl});
-                }
+                    if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
+                    {
+                        var returnUrl = Server.HtmlDecode(model.ReturnUrl);
 
-                if (!string.IsNullOrEmpty(userMustVerify))
-                {
-                    _logger.Info("Account.SignIn UserMustVerify. Session={0}, Email: {1} Password: {2}",
-                        _appHelper.GetUserAuditInfo(),
+                        return Json(new {result = LoggedInResult, returnUrl = returnUrl});
+                    }
+
+                    if (!string.IsNullOrEmpty(userMustVerify))
+                    {
+                        _logger.Info("Account.SignIn UserMustVerify. Session={0}, Email: {1} Password: {2}",
+                            _appHelper.GetUserAuditInfo(),
+                            model.Email,
+                            model.Password
+                            );
+
+                        return Json(new {result = ConfirmedResult, email = model.Email, password = model.Password});
+                    }
+
+                    // If we got this far, something failed, redisplay form
+                    _logger.Warn("Account.SignIn Failed. {0} | {1} Session= {2}",
                         model.Email,
-                        model.Password
+                        model.Password,
+                        _appHelper.GetUserAuditInfo()
                         );
 
-                    return Json(new {result = ConfirmedResult, email = model.Email, password = model.Password});
+                    ModelState.AddModelError(
+                        string.Empty,
+                        // Needs to be an empty string to show up in ValidationSummary as not model-level error.
+                        "The user name or password provided is incorrect."
+                        );
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException(
+                        string.Format("Account.SignIn Failed. {0} | {1} Session= {2}", model.Email, model.Password,
+                            _appHelper.GetUserAuditInfo()), exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+
+                    ModelState.AddModelError(
+                        string.Empty,
+                        // Needs to be an empty string to show up in ValidationSummary as not model-level error.
+                        "There was an error at the server which has been logged. If the error recurs, please call 800-831-0678 ext 706 for immediate assistance."
+                        );
+                }
+            }
+
+            return this.ModelStateJson(ModelState);
+        }
+
+        [System.Web.Mvc.HttpPost]
+        [System.Web.Mvc.AllowAnonymous]
+        [ValidateAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
+
+        public ActionResult SignInFromCart(SignInModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    string userMustVerify; // not relevant in this user flow. So gets discarded.
+
+                    if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
+                    {
+                        _logger.Info("Account.SignIn Post Success in cart. Session={0}", _appHelper.GetUserAuditInfo());
+                        WebUser webUser = _accountControllerOrchestrator.GetWebUserByEmail(model.Email);
+
+                        return Json(new {result = LoggedInResult, UserId = webUser.idUser});
+                    }
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException("In SignInFromCart Action", exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 }
 
                 // If we got this far, something failed, redisplay form
@@ -765,71 +766,13 @@ namespace CUWebinars.Web.Controllers
                     "The user name or password provided is incorrect."
                     );
             }
-            catch (Exception exception)
-            {
-                _logger.ErrorException(
-                    string.Format("Account.SignIn Failed. {0} | {1} Session= {2}", model.Email, model.Password,
-                        _appHelper.GetUserAuditInfo()), exception);
-                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
-
-                ModelState.AddModelError(
-                    string.Empty,
-                    // Needs to be an empty string to show up in ValidationSummary as not model-level error.
-                    "There was an error at the server which has been logged. If the error recurs, please call 800-831-0678 ext 706 for immediate assistance."
-                    );
-            }
 
             return this.ModelStateJson(ModelState);
         }
 
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
-        [ValidateAntiForgeryToken(Order = 0)]
-        [HandleAjaxException(Order = 1)]
-
-        public ActionResult SignInFromCart(SignInModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return this.ModelStateJson(ModelState);
-            }
-
-            try
-            {
-                string userMustVerify; // not relevant in this user flow. So gets discarded.
-
-                if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
-                {
-                    _logger.Info("Account.SignIn Post Success in cart. Session={0}", _appHelper.GetUserAuditInfo());
-                    WebUser webUser = _accountControllerOrchestrator.GetWebUserByEmail(model.Email);
-
-                    return Json(new {result = LoggedInResult, UserId = webUser.idUser});
-                }
-            }
-            catch (Exception exception)
-            {
-                _logger.ErrorException("In SignInFromCart Action", exception);
-                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
-            }
-
-            // If we got this far, something failed, redisplay form
-            _logger.Warn("Account.SignIn Failed. {0} | {1} Session= {2}",
-                model.Email,
-                model.Password,
-                _appHelper.GetUserAuditInfo()
-                );
-
-            ModelState.AddModelError(
-                string.Empty, // Needs to be an empty string to show up in ValidationSummary as not model-level error.
-                "The user name or password provided is incorrect."
-                );
-
-            return this.ModelStateJson(ModelState);
-        }
-
-        [System.Web.Mvc.HttpPost]
-        [System.Web.Mvc.AllowAnonymous]
-        //[ValidateAntiForgeryToken]
+        [ValidateJsonAntiForgeryToken]
         public JsonResult ResetPassword(string email)
         {
             _logger.Info("Account.ResetPassword GET. Email = {1} Session={0}", _appHelper.GetUserAuditInfo(), email);
@@ -853,8 +796,9 @@ namespace CUWebinars.Web.Controllers
 
                 _logger.FatalException(
                     string.Format("Account.ResetPassword GET Failed. {0}, Session = {1} on email: {2}",
-                        validationException.Message, _appHelper.GetUserAuditInfo(), email),
-                    validationException
+                        validationException.Message, 
+                        _appHelper.GetUserAuditInfo(), 
+                        email), validationException
                     );
             }
             catch (UserCreatedMembershipException userCreatedMembershipException)
@@ -1394,13 +1338,6 @@ namespace CUWebinars.Web.Controllers
             }
 
             return RedirectToAction("Index", "Home");
-        }
-
-        public enum ManageMessageId
-        {
-            ChangePasswordSuccess,
-            SetPasswordSuccess,
-            RemoveLoginSuccess,
         }
 
         private static string ErrorCodeToString(MembershipCreateStatus createStatus)

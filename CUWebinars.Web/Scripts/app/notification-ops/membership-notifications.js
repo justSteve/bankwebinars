@@ -377,6 +377,10 @@ function InitializePasswordResetFields() {
 
         $('#NormalResetPasswordButton').on('click', function () {
 
+            var token = $('#ResetPasswordForm').find('input[name=__RequestVerificationToken]').val();
+            var headers = {};
+            headers['__RequestVerificationToken'] = token;
+
             var model = {
                 email: $.trim($('#ResetPassEmail').val())
             };
@@ -388,6 +392,7 @@ function InitializePasswordResetFields() {
                 url: '/Admin/ResetPassword',
                 dataType: constants.JsonDataType,
                 data: JSON.stringify(model),
+                headers: headers,
                 beforeSend: function () {
                     // this is where we append a loading image
                     $('#WaitIndicator').show();

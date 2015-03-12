@@ -120,6 +120,7 @@
 
                             @using (Html.BeginForm("ResetPassword", "Account", FormMethod.Post, new { id = "ResetPasswordForm" }))
                             {
+                                @Html.AntiForgeryToken()
                                 <input id="ResetPassEmail" name="emailForReset" type="hidden" value="">
                             }
                             <form id="checkEmail">

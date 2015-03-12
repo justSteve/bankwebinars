@@ -5,6 +5,7 @@ using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Infrastructure;
 using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Membership;
 using CUWebinars.Web.Models;
@@ -401,7 +402,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             _membershipService.UpdateUserDetails(_globals.Tenant,
                 updateFields.FirstName.Trim(),
                 updateFields.LastName.Trim(),
-                //updateFields.Password,
                 updateFields.Email.Trim(),
                 updateFields.Institution,
                 billingAddress,
@@ -639,6 +639,57 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
 
             return discountModel;
+        }
+
+        public ManageModel BuildManageModel(ManageMessageId? message)
+        {
+            var manageModel = new ManageModel
+            {
+                StatusMessage = string.Empty
+            };
+
+            var user = GetWebUserFromIPrincipal();
+
+            var addresses = user.Addresses.ToArray();
+            var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
+            var shippingAddress = addresses.First(a => a.AddressType == WebUiConstants.ShippingAddress);
+
+            manageModel.RegisterFields = new RegisterModel
+            {
+                BillingAddress = new AddressModel
+                {
+
+                    Name = user.FirstName + ' ' + user.LastName,
+                    City = billingAddress.City,
+                    Country = billingAddress.Country,
+                    StreetAddress = billingAddress.StreetAddress,
+                    StreetAddress2 = billingAddress.StreetAddress2,
+                    State = billingAddress.State,
+                    Zip = billingAddress.Zip,
+                    Phone = billingAddress.Phone,
+                    TypeOfAddress = AddressType.Billing
+                },
+                ShippingAddress = new AddressModel
+                {
+                    City = shippingAddress.City,
+                    Country = shippingAddress.Country,
+                    StreetAddress = shippingAddress.StreetAddress,
+                    StreetAddress2 = shippingAddress.StreetAddress2,
+                    State = shippingAddress.State,
+                    Zip = shippingAddress.Zip,
+                    Phone = shippingAddress.Phone,
+                    Name = shippingAddress.Name,
+                    TypeOfAddress = AddressType.Shipping
+                },
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Institution = user.Institution.InstitutionName,
+                Email = user.email,
+                Title = user.Title,
+                AccountDetailsTitle = WebUiConstants.ManageUser
+            };
+
+            return manageModel;
         }
 
         public EditShippingAddressModel BuildShippingAddressModel()
