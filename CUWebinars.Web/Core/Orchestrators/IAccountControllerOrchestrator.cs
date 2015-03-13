@@ -1,10 +1,10 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using BrockAllen.MembershipReboot;
+using System.Security.Claims;
 using CUWebinars.Business.Models;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.ViewModel;
+using System;
+using System.Collections.Generic;
 
 namespace CUWebinars.Web.Core.Orchestrators
 {
@@ -12,6 +12,8 @@ namespace CUWebinars.Web.Core.Orchestrators
     {
         bool AddPasswordForCartCreatedUser(CreateUserConfirmedViewModel model);
         EditBillingAddressModel BuildBillingAddressModel();
+        DiscountModel BuildDiscountModel();
+
         EditShippingAddressModel BuildShippingAddressModel();
         void BuildCityStateTimeZoneData(Dictionary<string, string> cityStateTimeZoneData, string zipAddress);
         bool ChangePasswordFromResetKey(string key, string password);
@@ -41,5 +43,8 @@ namespace CUWebinars.Web.Core.Orchestrators
         void UpdateShippingAddressDetails(AddressModel shippingAddressModel, int idUser);
         void UpdateDiscountDetails(DiscountModel discount, int userId);
         void EditUser(EditUserViewModel model);
+        void AddShippingAddressVerifiedClaim(int userId);
+        // ReSharper disable once InconsistentNaming
+        MyWebinarsDTO BuildMyWebinarsDTO(DiscountModel discountModel, ClaimsIdentity claimsIdentityOfAuthenticatedUser);
     }
 }

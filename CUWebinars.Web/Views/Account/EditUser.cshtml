@@ -1,22 +1,17 @@
 ﻿@model  EditUserInfoModel
 @{
     ViewBag.Title = "Edit Contact Info";
-    var identity = ((ClaimsIdentity)User.Identity)
-        .Claims
-        .Where(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName)
-        .FirstOrDefault();
+    var fullNameClaim = Model.LoggedInUser.Claims.FirstOrDefault(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName);
 
-    if (!ReferenceEquals(null, identity))
+    if (!ReferenceEquals(null, fullNameClaim))
     {
-        ViewBag.LoggedInUserIdentity = identity;
+        ViewBag.LoggedInUserIdentity = fullNameClaim;
     }
-
-    //var nameTitleModel = new EditNameTitleModel();
-    //nameTitleModel.FirstName = Model.RegisterFields.FirstName;
-    //nameTitleModel.LastName = Model.RegisterFields.LastName;
-    //nameTitleModel.Title = Model.RegisterFields.Title;
-
 }
+
+<script type="text/javascript">
+    var returnUrl = '@Model.ReturlUrl';
+</script>
 
 <div id="EditUserContainer" class="container">
 
@@ -25,18 +20,14 @@
     <p class="pull-right">
         You're logged in as
         @{
-            if (identity == null)
+            if (ReferenceEquals(fullNameClaim, null))
             {
                 <strong>@User.Identity.Name><br /></strong><text>.</text>
             }
             else
             {
-                <strong>@identity.Value</strong><text>.</text>
+                <strong>@fullNameClaim.Value</strong><text>.</text>
             }
-            @*foreach (var claim in ((ClaimsIdentity)User.Identity).Claims)
-                {
-                    <span>my claim to: @claim.Type is: @claim.Value<br/></span>
-                }*@
         }
     </p>
 
@@ -65,6 +56,6 @@
     @Styles.Render("~/Content/themes/base/css")
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/jqueryui")
-    @Scripts.Render("~/bundles/app-processing-manage")
+    @Scripts.Render("~/bundles/web-user-details-manage")
 }
 

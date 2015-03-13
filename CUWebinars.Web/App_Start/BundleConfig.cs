@@ -104,6 +104,7 @@ namespace CUWebinars.Web.App_Start
 
             bundles.Add(new ScriptBundle("~/bundles/create-order-affiliate").Include(
                          "~/Scripts/app/cart/create-order-new.js",
+                         //"~/Scripts/app/cart/register-during-checkout.js", // required because some functions here are common to all cart operations
                          "~/Scripts/app/cart/details-affiliate.js"
                         ));
 
@@ -135,7 +136,10 @@ namespace CUWebinars.Web.App_Start
 
             bundles.Add(new ScriptBundle("~/bundles/app-processing-manage").Include(
                         "~/Scripts/app/constants.js",
-                        "~/Scripts/app/common.js",
+                        "~/Scripts/app/common.js"
+                        ));
+
+            bundles.Add(new ScriptBundle("~/bundles/web-user-details-manage").Include(
                         "~/Scripts/app/web-user-details-manage.js"
                         ));
 

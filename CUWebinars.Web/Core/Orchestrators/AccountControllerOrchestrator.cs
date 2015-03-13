@@ -1,9 +1,11 @@
-﻿using BrockAllen.MembershipReboot;
+﻿using AutoMapper;
+using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Helpers;
+using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Membership;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
@@ -36,6 +38,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         private readonly IMembershipService _membershipService;
         private readonly IStateService _stateService;
         private readonly IAppHelper _appHelper;
+        private readonly IUniversalMapper _universalMapper;
         private readonly IOrderManagementService _orderManagementService;
         private bool _disposed;
 
@@ -45,7 +48,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             IOrderManagementService orderManagementService,
             IStateService stateService,
             HttpRequestBase request,
-            IAppHelper appHelper)
+            IAppHelper appHelper,
+            IUniversalMapper universalMapper)
 
         {
             _request = request;
@@ -54,6 +58,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             _orderManagementService = orderManagementService;
             _stateService = stateService;
             _appHelper = appHelper;
+            _universalMapper = universalMapper;
         }
 
         public bool LogUserIn(SignInModel signInModel)
@@ -406,6 +411,56 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         }
 
+        public void AddShippingAddressVerifiedClaim(int userId)
+        {
+            var userAccount = _membershipService.GetUserAccountByWebUserId(_globals.Tenant, userId);
+            _membershipService.AddClaim(userAccount, ClaimTypes.AddressVerified, "true");
+        }
+
+        public MyWebinarsDTO BuildMyWebinarsDTO(DiscountModel discountModel, ClaimsIdentity claimsIdentityOfAuthenticatedUser)
+        {
+            var currentUser = GetWebUserFromIPrincipal();
+
+            var model = new MyWebinarsDTO
+            {
+                WebUser = currentUser,
+                OrderHasAdditionalLocationsViewModel = new OrderHasAdditionalLocationsViewModel()
+                {
+
+                }
+            };
+
+            if (claimsIdentityOfAuthenticatedUser.HasClaim(ClaimTypes.DisplayPostEventMaterials))
+            {
+                model.MyClaims =
+                    claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type == ClaimTypes.DisplayPostEventMaterials)
+                        .Select(c => c.Value);
+            }
+
+            if (discountModel.TypeOfDiscount == DiscountType.ComplianceSeries)
+            {
+                model.Subscription = discountModel;
+            }
+
+            if (discountModel.TypeOfDiscount == DiscountType.Package)
+            {
+                model.Package = discountModel;
+            }
+
+            model.Scheduled = _orderManagementService.SelectOrdersWithScheduledWebinars(currentUser.idUser);
+            model.Recorded = _orderManagementService.SelectOrdersWithRecordedWebinars(currentUser.idUser);
+            model.Archived = _orderManagementService.SelectOrdersWithArchivedWebinars(currentUser.idUser);
+
+            foreach (var orderRow in model.Scheduled.Select(order => order.OrderRows
+                .Single(or => or.RowStatus == OrderRowStatus.Active))
+                .Where(row => row.Webinar.Status == WebinarStatus.Active))
+            {
+                _orderManagementService.GetJoinUrl(orderRow);
+            }
+
+            return model;
+        }
+
         public void EditContactInfo(EditContactInfoModel model)
         {
             var updateFields = model.RegisterFields;
@@ -568,6 +623,22 @@ namespace CUWebinars.Web.Core.Orchestrators
             };
 
             return model;
+        }
+
+        public DiscountModel BuildDiscountModel()
+        {
+            var discountModel = new DiscountModel();
+            var currentUser = GetWebUserFromIPrincipal();
+            var userDiscount = _orderManagementService.GetDiscountByUser(currentUser);
+
+            _universalMapper.Map(userDiscount, discountModel);
+
+            if (discountModel.TypeOfDiscount == DiscountType.ComplianceSeries)
+            {
+                // ???
+            }
+
+            return discountModel;
         }
 
         public EditShippingAddressModel BuildShippingAddressModel()

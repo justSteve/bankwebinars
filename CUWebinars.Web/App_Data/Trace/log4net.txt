@@ -676,12 +676,4 @@ CUWebinars Error: 0 : Validation failed for webinar 1772 and User 41097
 CUWebinars Error: 0 : Validation failed for webinar 1734 and User 43649
 CUWebinars Error: 0 : Validation failed for webinar 1772 and User 41097
 CUWebinars Error: 0 : Validation failed for webinar 1765 and User 46474
-CUWebinars Error: 0 : Validation failed for webinar 1734 and User 46488
-CUWebinars Error: 0 : Validation failed for webinar 1772 and User 46637
-CUWebinars Error: 0 : Validation failed for webinar 1772 and User 46637
-CUWebinars Error: 0 : Validation failed for webinar 1773 and User 46644
-CUWebinars Error: 0 : Validation failed for webinar 1773 and User 37215
-CUWebinars Error: 0 : Validation failed for webinar 1763 and User 37019
-CUWebinars Error: 0 : Validation failed for webinar 1773 and User 46645
-CUWebinars Error: 0 : ERROR MailerSmtpException: steve@ttstrain.com Subject: [BankWebinars] Confirmation of Registration: Writing an Effective Credit Memorandum ErrorMsg: The operation has timed out. Timestamp was: 3/11/2015 5:57:41 AM ExceptionType was: SmtpException InnerExceptionType was: 
-CUWebinars Error: 0 : ERROR MailerSmtpException: steve@ttstrain.com Subject: [BankWebinars] Confirmation of Registration: Writing a New Accounts Procedures Manual ErrorMsg: The operation has timed out. Timestamp was: 3/11/2015 6:38:00 AM ExceptionType was: SmtpException InnerExceptionType was: 
+CUWebinars Error: 0 : ERROR MailerSmtpException: drogersbox-test28@yahoo.com.au Subject: [BankWebinars] Confirmation of Registration: Bank Call Report Preparation for Beginners - Five Part Webinar ErrorMsg: Failure sending mail. Timestamp was: 12/03/2015 1:21:20 PM ExceptionType was: SmtpException InnerExceptionType was: System.Net.WebException

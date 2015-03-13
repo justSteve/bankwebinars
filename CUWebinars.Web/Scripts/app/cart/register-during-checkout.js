@@ -411,7 +411,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
             beforeSend: function () {
                 //console.log('beforeSend Register Details');
                 // this is where we append a loading image
-                $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Registering new user...</span>');
+                $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Registering new user...</span>');
 
                 var valSummary = $('#valSummarySignUpForm');
                 valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
@@ -489,7 +489,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                     hookUpChangeTypeLogic($('#RegType'));
                                     hookUpEditUserLogic(null);
 
-                                    if (registerDuringCheckout.addressOptions['shippingAddressRequired'] && registerDuringCheckout.addressOptions['notificationsTesting'] && registerDuringCheckout.addressOptions['addressVerified']) {
+                                    if (registerDuringCheckout.addressOptions['shippingAddressRequired'] && !registerDuringCheckout.addressOptions['notificationsTesting'] && !registerDuringCheckout.addressOptions['addressVerified']) {
                                         hookUpModal($('#UserDetailsModal'));
                                     }
 
@@ -646,7 +646,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                             hookUpChangeTypeLogic($('#RegType'));
                                             hookUpEditUserLogic(null);
 
-                                            if (registerDuringCheckout.addressOptions['shippingAddressRequired'] && registerDuringCheckout.addressOptions['notificationsTesting'] && registerDuringCheckout.addressOptions['addressVerified']) {
+                                            if (registerDuringCheckout.addressOptions['shippingAddressRequired'] && !registerDuringCheckout.addressOptions['notificationsTesting'] && !registerDuringCheckout.addressOptions['addressVerified']) {
                                                 hookUpModal($('#UserDetailsModal'));
                                             }
 
@@ -871,7 +871,7 @@ function hookUpModal(modalForm) {
 }
 
 function hookUpEditUserLogic(button, shippingAddressRequired) {
-
+    
     var modalForm = $('#UserDetailsModal');
 
     // There may be times where a button does not trigger the modal.
@@ -886,7 +886,7 @@ function hookUpEditUserLogic(button, shippingAddressRequired) {
 
     modalForm.on('shown', function (e) {
 
-        setUiLayout(shippingAddressRequired);
+        $('#updateShippingMsgLabelWrap').empty();
         var userDetailsForm = $('#userDetailsForm');
 
         $('#saveChangesButton').on('click', function () {
@@ -916,7 +916,7 @@ function hookUpEditUserLogic(button, shippingAddressRequired) {
 
                 if (data.Result === 'Success') {
                     var fullname = $('#ShippingAddress_Name').val();
-
+                    
                     $('#userFullnameLabel').text(fullname);
 
                     $('#updateShippingMsgLabelWrap').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details updated successfully.</span>');
@@ -942,47 +942,13 @@ function hookUpEditUserLogic(button, shippingAddressRequired) {
             });
         });
 
-        $('#HideAddShippingAddressLink').on('click', function (e) {
-            e.preventDefault();
-
-            $(this).fadeOut('500', function () {
-                $('#ShippingAddressContainer').fadeOut('500', function () {
-                    $('#AddShippingAddressLink').fadeIn('500');
-                });
-            });
-
-        });
-
-        $('#AddShippingAddressLink').on('click', function (e) {
-            e.preventDefault();
-
-            $(this).fadeOut('500', function () {
-                $('#ShippingAddressContainer').fadeIn('500', function () {
-                    $('#HideAddShippingAddressLink').fadeIn('500');
-                });
-            });
-        });
-
+        
     });
 
     modalForm.on('hidden', function (e) {
         $('#saveChangesButton').off('click');
         $('#userDetailsForm').off('submit');
     });
-}
-
-function setUiLayout(isShippindAddressRequired) {
-    console.log('setUiLayout fires');
-    if (isShippindAddressRequired) {
-        $('#ShippingAddressContainer').hide();
-        $('#HideAddShippingAddressLink').hide();
-        $('#linksToAddShippingFields').show();
-        $('#AddShippingAddressLink').show();
-    } else {
-        $('#ShippingAddressContainer, #linksToAddShippingFields, #AddShippingAddressLink').hide();
-    }
-
-    $('#updateShippingMsgLabelWrap').empty();
 }
 
 function hookUpChangeTypeLogic(dropDown) {
@@ -1192,7 +1158,7 @@ function showModalForShippingAddressDetails() {
         };
 
     modalShippingDetails.on('shown', function (e) {
-        setUiLayout(true);
+        $('#updateShippingMsgLabelWrap').empty();
     });
 
     modalShippingDetails.modal(modalFormOptionsOnPageLoad);

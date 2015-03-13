@@ -39,6 +39,7 @@ namespace CUWebinars.Business.AccountService
         USTimeZone GetTimeZoneByZip();
         UserAccount GetUserAccountByEmail(string tenant, string email);
         UserAccount GetUserAccountByUserId(Guid userId);
+        UserAccount GetUserAccountByWebUserId(string tenant, int userId);
         WebUser GetUserByEmail(string email);
         WebUser GetUserByEmailLoadedWithOrdersData(string email);
         WebUser GetWebUserById(int userId);
