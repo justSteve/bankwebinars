@@ -63,4 +63,4 @@ var Common;
     Common.Logger = Logger;
     ;
 })(Common || (Common = {}));
-//# sourceMappingURL=toastLogger.js.map
+//# sourceMappingURL=ToastLogger.js.map

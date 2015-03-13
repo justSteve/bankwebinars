@@ -1,6 +1,6 @@
 ﻿@model CheckoutOptionsViewModel
 
-@Html.ValidationSummary("Problems dectected in the form. Try again or call 800-831-0678 ext 706 for immediate assistance:", new { id = "valSummarySignUpForm" })
+@Html.ValidationSummary("Connection Error #D55. Email support@ttstrain.com or, for immediate assistance, 800-831-0678 ext 706.", new { id = "valSummarySignUpForm" })
 
 @using (Html.BeginForm("Signup2", "Cart", FormMethod.Post, new { id = "SignUpForm" }))
 {
@@ -30,7 +30,7 @@
         }
         else
         {
-            <span>We show a that you have pending order for this event that requires your confirmation or cancelation.</span>
+            <span>Our logs indicate you have pending order for this event. Please either confirm or cancel it.</span>
             @Html.Partial(partialViewName: "~/Views/Webinar/Partials/DisplayOptions.cshtml", model: Model.DisplayOptionsViewModel)
         }
     }

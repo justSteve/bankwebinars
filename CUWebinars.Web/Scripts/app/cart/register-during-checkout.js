@@ -59,7 +59,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
         if (regUserStateManager.getAction() === '') {
 
-            $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #893. Please refresh the page and re-try or contact @tenant.TechEmail or, for immediate assistant, call @tenant.TechPhone.</span>');
+            $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #893. Please refresh the page and re-try or contact @tenantTechEmail or, for immediate assistant, call @tenant.TechPhone.</span>');
             Rollbar.error("The registration has encountered a problem.", e);
             return false;
         }
@@ -218,16 +218,16 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                     Rollbar.error("UserNotVerified", data.Result);
                     Rollbar.error("#388 UserNotVerified static marker");
 
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #388. Email @tenant.TechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #388. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
                 } else if (data['Invalid'] === 'UnkownEmail') {
                     Rollbar.error("UnkownEmail", data.Result);
                     Rollbar.error("UnkownEmail static marker");
 
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Email @tenant.TechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
                 } else {
                     Rollbar.error("Unknown error #454", data.Result);
                     Rollbar.error("Unknown #454 static marker");
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Error.Connection Error #454. Email @tenant.TechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Error.Connection Error #454. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
                 }
             }
         }).always(function (data) {
@@ -274,7 +274,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 } else if (data.error === 'Fail') {
 
                     Rollbar.info("goToAddressFields 319");
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #319. Email @tenant.TechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #319. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
                 } else if (data.error === 'Uncaught Ajax Error') {
                     Rollbar.error("Uncaught Ajax Error 343", data);
                     Rollbar.error("Uncaught Ajax Error 343 static marker");
@@ -283,7 +283,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
             }).fail(function () {
                 // failed request; give feedback to user
-                $('#labelEmail').html('<p class="error"><span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Connection Error #451. Email @tenant.TechEmail or, for immediate assistance, call @tenant.TechPhone.</span></p>');
+                $('#labelEmail').html('<p class="error"><span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Connection Error #451. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span></p>');
                 Rollbar.error("Connection Error #451 ", data);
                 Rollbar.error("Connection Error #451  static marker");
                 //$('#wrapEmail').html('<p class="error"><i class="icon icon-exclamation-sign"></i><strong>Oops!</strong> Try that again in a few moments.</p>');
@@ -326,7 +326,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 Rollbar.error("static 374");
 
                 // failed request; give feedback to user
-                $('#wrapZip').html('<p class="error"><i class="icon icon-exclamation-sign"></i>Connection Error #374. Email @tenant.TechEmail or, for immediate assistance, call @tenant.TechPhone.</p>');
+                $('#wrapZip').html('<p class="error"><i class="icon icon-exclamation-sign"></i>Connection Error #374. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</p>');
             }).always(function () {
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
             });
@@ -663,11 +663,11 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                     });
                 }
             } else if (!data.isSuccessful) {
-                $('#labelEmail').html('<span class="label label-important"><i class="icon icon-exclamation-sign"></i>&nbsp;Error #641. There has been a problem with your log in attempt.</span>');
                 Rollbar.error("Error #641.  static marker");
                 var valSummary = $('#loginErrorSummary');
-                valSummary.addClass('validation-summary-errors');
-                valSummary.append('Please address the following login errors: <ul></ul>');
+                //reduce the amount to red displayed on a simple non-correct pw 
+                //valSummary.addClass('validation-summary-errors');
+                //valSummary.append('Please address the following login errors: <ul></ul>');
 
                 var errorsList = valSummary.find('ul');
                 errorsList.empty();
@@ -675,6 +675,12 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 for (var error in data.data) {
                     if (data.data.hasOwnProperty(error)) {
                         errorsList.append('<li>' + data.data[error] + '</li>');
+                        if (!data.data[error].contains("password")) {
+                            Rollbar.error("Login error with somethhing besides Invalid Password" + data.data[error]);
+                        } else {
+                            Rollbar.Info("Invalid Password" + data.data[error]);
+                        }
+
                         console.log(data.data[error]);
                     }
                 }
@@ -865,7 +871,7 @@ function hookUpModal(modalForm) {
 }
 
 function hookUpEditUserLogic(button, shippingAddressRequired) {
-    
+
     var modalForm = $('#UserDetailsModal');
 
     // There may be times where a button does not trigger the modal.
@@ -910,7 +916,7 @@ function hookUpEditUserLogic(button, shippingAddressRequired) {
 
                 if (data.Result === 'Success') {
                     var fullname = $('#ShippingAddress_Name').val();
-                    
+
                     $('#userFullnameLabel').text(fullname);
 
                     $('#updateShippingMsgLabelWrap').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details updated successfully.</span>');
@@ -956,7 +962,7 @@ function hookUpEditUserLogic(button, shippingAddressRequired) {
                 });
             });
         });
-        
+
     });
 
     modalForm.on('hidden', function (e) {
