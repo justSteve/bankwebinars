@@ -282,6 +282,7 @@ namespace CUWebinars.Web.Controllers
                 _logger.Info("ACS Importer hears: " + importedOrder.Email + " idWebinar: "   + importedOrder.idWebinar);
                 idRegType = _webinarManagementService.GetRegTypeByACS(importedOrder.RegistrationType,
                     importedOrder.idWebinar);
+                //Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
             }
             else
             {
