@@ -149,6 +149,14 @@ namespace CUWebinars.Web.Core.Orchestrators
                     var checkoutConfirmViewModel = new CheckoutConfirmViewModel
                     {
                         AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(orderRow),
+                        AdjustUserDetailsPanel = new AdjustUserDetailsEditModel
+                        {
+                            Email = webUser.email,
+                            FirstName = webUser.FirstName,
+                            idUser = webUser.idUser,
+                            LastName = webUser.LastName,
+                            Institution = orderRow.Order.Institution
+                        },
                         AdminComments = orderRow.Order.AdminComments,
                         AffiliateComments = orderRow.Order.AffiliateComments,
                         //CCUserDetails =
@@ -550,6 +558,39 @@ namespace CUWebinars.Web.Core.Orchestrators
             _orderManagementService.UpdateOrderWithUserId(orderId, userId);
         }
 
+        public string GetDiscountAmountAsPercentageOrDollarAmount(Discount myDiscount)
+        {
+            var amountToDiscount = myDiscount.FlatOff.ToString();
+            
+            if (myDiscount.PercentOff > 0)
+            {
+                amountToDiscount = myDiscount.PercentOff + "%";
+            }
+
+            return amountToDiscount;
+        }
+
+        public void UpdateAdditionalLocationsForOrderRow(IEnumerable<AdditionalLocation> additionalLocations, int newOrderRowId)
+        {
+            var existingAdditionalLocationsForOrderRow =
+                _orderManagementService.GetAdditionalLocationsForOrderRow(newOrderRowId);
+
+
+            foreach (var newSubmittedAdditionalLocation in additionalLocations.Where(al => !existingAdditionalLocationsForOrderRow.Select(eal => eal.Email).Contains(al.Email)))
+            {
+                newSubmittedAdditionalLocation.idOrderRow = newOrderRowId;
+                _orderManagementService.AddAdditionalLocation(newSubmittedAdditionalLocation);
+            }
+
+            foreach (var additionalLocationToDelete in 
+                existingAdditionalLocationsForOrderRow.Where(existingEmail => !additionalLocations.Select(al => al.Email).Contains(existingEmail.Email)))
+            {
+                _orderManagementService.RemoveAndDeleteAdditionalLocation(additionalLocationToDelete);
+            }
+
+            _orderManagementService.SaveChanges();
+        }
+
         public INotificationMessage GenerateMessagePreview(Order order)
         {
             var orderSubmittedViewModel = new OrderSubmittedViewModel
@@ -563,6 +604,17 @@ namespace CUWebinars.Web.Core.Orchestrators
             };
 
             return _generalFormatter.Format(orderSubmittedViewModel, "OrderSubmitted");
+        }
+
+        public void AdjustUserDetails(AdjustUserDetailsEditModel adjustUserDetailsEditModel)
+        {
+            var webUser = _membershipService.GetWebUserById(adjustUserDetailsEditModel.idUser);
+
+            webUser.FirstName = adjustUserDetailsEditModel.FirstName;
+            webUser.LastName = adjustUserDetailsEditModel.LastName;
+            webUser.email = adjustUserDetailsEditModel.Email;
+
+            _membershipService.UpdateUserDetails(webUser);
         }
 
         public Discount ApplyDiscountCode(string code, OrderRow row)

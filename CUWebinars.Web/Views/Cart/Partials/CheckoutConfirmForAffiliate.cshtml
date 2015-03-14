@@ -16,12 +16,7 @@
                     <div id="userDetailsSummed" class="span10 offset2">
                         <p>
                             @Html.Raw(@Model.UserDetails)
-                            @{
-                                if (((ClaimsPrincipal) @User).HasClaim((claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Admin))
-                                {
-                                    <a id="editUserDetails" role="button" class="btn btn-mini" target="new"> Edit?</a>
-                                }
-                            }
+                            <a id="editUserDetails" role="button" class="btn btn-mini"> Edit?</a>
                         </p>
                     </div>
                 </div>
@@ -29,7 +24,7 @@
                     <div class="offset2 span9 ">
                         <div id="RegTypeChanger" class="clear pull-right">
                             @{
-                                Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel);
+                Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel);
                             }
                         </div>
                     </div>

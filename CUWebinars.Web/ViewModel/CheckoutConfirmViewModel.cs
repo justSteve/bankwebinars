@@ -1,4 +1,5 @@
 ﻿
+using System.ComponentModel.DataAnnotations;
 using CUWebinars.Business.Models;
 using CUWebinars.Web.Models;
 
@@ -8,6 +9,8 @@ namespace CUWebinars.Web.ViewModel
     {
         public string AffiliateComments { get; set; }
         public string AdditionalLocationCaption { get; set; }
+        [UIHint("AdjustUserDetails")]
+        public AdjustUserDetailsEditModel AdjustUserDetailsPanel { get; set; }
         public string AdminComments { get; set; }
         public string CCUserDetails { get; set; }
         public string CheckoutDiscountCode { get; set; }

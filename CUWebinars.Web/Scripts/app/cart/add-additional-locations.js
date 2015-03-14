@@ -1,11 +1,8 @@
 ﻿//  Rename this file 'additional-locations' if we decide to be rid of additional-locations.js
 
-//var additionalLocationContainer,
 var addLocationsButton,
     AdditionalLocationSubmitButton,
     newLocationsContainer;
-    //numberOfEmailAddresses,
-    //signupForm;
 
 var additionalLocationEmailWrapper,
     breakSuffix,
@@ -49,12 +46,11 @@ function wireUpHandlers() {
     var modalFormOptions = {
         keyboard: true,
         backdrop: 'static',
-        show: true,
-        remote : '/Cart/GetAdditionalLocationByOrderId/2/1'
+        show: true
     };
 
 
-    $('#AddLocationsButton').on('click', function (e) {
+    addLocationsButton.on('click', function (e) {
 
         e.preventDefault();
         
@@ -93,6 +89,7 @@ function wireUpHandlersForModal() {
     });
 
     $.when(emailInputsAdded.resolve()).then(function () {
+
         numberOfAdditionalLocations = $('#AdditionalLocationEmailWrapper input[type="email"]').length;
 
         if (numberOfAdditionalLocations < 1) {
@@ -145,6 +142,7 @@ function wireUpHandlersForModal() {
             }
 
             var newId;
+
             if (numberOfAdditionalLocations == 0) {
                 newId = 0;
             } else {

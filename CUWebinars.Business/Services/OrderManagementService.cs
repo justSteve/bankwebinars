@@ -135,6 +135,11 @@ namespace CUWebinars.Business.Services
             }
         }
 
+        public IEnumerable<AdditionalLocation> GetAdditionalLocationsForOrderRow(int idOrderRow)
+        {
+            return _additionalLocationsRepository.GetAdditionalLocationsForOrderRow(idOrderRow);
+        }
+
         public Tuple<string, decimal> GetCostOfAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations, int idWebinar)
         {
             //so renamed to reflect that we are building the cost of a user's list of added seats. Not

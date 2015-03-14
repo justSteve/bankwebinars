@@ -488,6 +488,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                         cancelOrder(orderId, webinarId);
                                     });
 
+                                    populateAdditionalLocationsOn3rdTab();
                                     setUpEditButtons();
 
                                     hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
@@ -645,6 +646,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                                 cancelOrderForm.submit();
                                             });
 
+                                            populateAdditionalLocationsOn3rdTab();
                                             setUpEditButtons();
 
                                             hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
