@@ -1,8 +1,9 @@
 USE TTSWebinars2
 GO
-SELECT TOP 100 * FROM dbo.Orders o INNER JOIN	dbo.OrdersRows r ON r.idOrder = o.idOrder
-WHERE o.idAffiliate = 62 
-ORDER BY o.orderDate desc
+--SELECT TOP 100 * FROM dbo.Orders o INNER JOIN	dbo.OrdersRows r ON r.idOrder = o.idOrder
+--WHERE o.email NOT IN ('mnielsen@providencebank.com','Gindy.tank@bankofsunprairie.com','djennings@bankofutica.com','Letia.Ryan@caymannational.com','beth.windings@fsbdongola.com','jseymore@peoplesbanksc.com','becky.wiley@countynationalbank.com','llpeterson@morganfed.com','aprilw@gn-bank.com','pbaker@peoplessouthern.com','christy.mccullers@firststatedirect.com','shiggins@banksouthern.com','jschmitz@fnbwaterloo.com','slkj@lk.com','mbogan@lnbcorp.com','kmyrick@localfirstbank.com','kschultz@mynorthern.com','amy.mcclure@bankucb1.com','crhodd@fmbankfc.com','haley.mccool@bankucb1.com','cbohenek@fsbmsla.com','jennifer.selman@rivercitybankonline.com','callmond@mebanking.com','abrown@fnbdurango.com','brenda@frontierbankco.com','washburn@thebankforme.com','vinny.austin@fnfg.com','kevalk@merchantsbank.com','cdevoe@capfed.com','melissag@cuofamerica.com','stacchino@countrybnk.com','dianeb@commercialbank-stl.com','heather.mcgarrigle@hfsb.com','amarshall@norwaysavingsbank.com','mjohnston@legencebank.com','wbthomas@farmersdepositbankky.com','sgoldberger@actorsfcu.com','mgienger@weareamerican.com','emily.autin@sbtcajun.com','steve@ttstrain.com','togle@beltvalleybank.com','bthomas@gofsb.com','sonjaw@firstbankofberne.com','lorifreshour@carrolltonbanking.com','mgendelman@cnob.com')
+--AND r.idWebinar = 1763
+--ORDER BY o.orderDate desc
 
 SELECT  ( SELECT    o.idAffiliate
           FROM      dbo.OrdersRows
@@ -95,14 +96,14 @@ SELECT  ( SELECT    o.idAffiliate
         r.status
 FROM    TTSWebinars2.dbo.Orders o
         INNER JOIN dbo.OrdersRows r ON r.idOrder = o.idOrder
-WHERE   r.idWebinar IN ( 1714)
+WHERE   r.idWebinar IN ( 1759)
         
 --o.idOrder < 49709 --  AND r.idWebinar IN (SELECT r.idWebinar FROM dbo.Webinar WHERE status = 2 OR status = 3)
         AND ( r.status < 5
               AND r.status > 1
             )
         AND o.idAffiliate > 1
-ORDER BY o.orderDate DESC
+ORDER BY o.email DESC
 GO
 
         --( SELECT    CASE ( SELECT   optionLabel

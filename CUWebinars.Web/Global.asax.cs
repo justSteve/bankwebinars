@@ -127,8 +127,9 @@ namespace CUWebinars.Web
             {
                 string value = ConfigurationManager.AppSettings[key];
 
-                LoggerInfoString += string.Format("SPINUP              Orders Notifier: Key {0} Value {1}", key, value);
-                
+                //LoggerInfoString += string.Format("HostApp: Key {0} Value {1}", key, value);
+                LoggerInfoString += string.Format("HostApp {0} : {1}{2}", key, value, Environment.NewLine);
+
                 if (key == "Tenant")
                 {
                     TenantName = value;
@@ -136,7 +137,7 @@ namespace CUWebinars.Web
             }
 
 
-            logger.Info(string.Format("{0} Spinning up application", TenantName));
+            logger.Info(string.Format("{0} Spinning up application: ", TenantName));
             logger.Info(string.Format("Config Properties - {0}", GlobalConfig.GlobalConfigSingleton.PropertiesAsString));
             logger.Info(string.Format("AppInfo: {0}", GetAppVersionInfo()));
             

@@ -26,12 +26,12 @@ $(function() {
                 $('#addPwdMsgLabelWrap').html('<span class="label label-info">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Adding your password...</span>');
                 $('#addPwdValSummary').empty();
 
-                Rollbar.info("addPasswordForm Sent");
+                //Rollbar.info("addPasswordForm Sent");
             }
         }).done(function (data) {
             if (data.Result === 'Success') {
 
-                Rollbar.info("addPasswordForm Success");
+                //Rollbar.info("addPasswordForm Success");
                 addPasswordContainer.height(containerHeight);
                 var formParent = addPasswordForm.parent();
                 addPasswordForm.fadeOut();
@@ -45,7 +45,7 @@ $(function() {
                 addPasswordContainer.height(containerHeight);
                 var formParent = addPasswordForm.parent();
                 addPasswordForm.fadeOut();
-                Rollbar.error("AddPasswordFromCartCheckoutTimedOut", data.Result);
+                Rollbar.error("AddPasswordFromCartCheckoutTimedOut");
                 formParent.prepend('<div class="legendImitator">Order Entry Completed</div><div>Your order is recorded. Watch your email for links to your event\'s materials and other important information.</p></div>');
             }
         });

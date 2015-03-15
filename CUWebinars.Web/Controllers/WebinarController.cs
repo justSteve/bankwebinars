@@ -1107,7 +1107,7 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     _logger.ErrorException(
-                        string.Format("UpdateConnectionInfo | Session {0}", _appHelper.GetUserAuditInfo()), exception
+                        string.Format("UpdateConnectionInfo | Session {0}", exception.Message + " : " + _appHelper.GetUserAuditInfo()), exception
                         );
                     ModelState.AddModelError(string.Empty, WebUiConstants.ServerErrorWithAssistNumber);
 

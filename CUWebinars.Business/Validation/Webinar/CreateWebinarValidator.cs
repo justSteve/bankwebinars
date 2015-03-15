@@ -14,14 +14,16 @@ namespace CUWebinars.Business.Validation.Webinar
 
         public CreateWebinarValidator()
         {
-            // strings
+            // this method is running at many points where a webinar is not being created.
+
             RuleFor(w => w.Title).NotEmpty().WithMessage(CannotBeNullOrEmpty, "Title");
             RuleFor(w => w.Description).NotEmpty().WithMessage(CannotBeNullOrEmpty, "Description");
             RuleFor(w => w.DescriptionLong).NotEmpty().WithMessage(CannotBeNullOrEmpty, "LongDescription");
             RuleFor(w => w.LearnBody).NotEmpty().WithMessage(CannotBeNullOrEmpty, "LearnBody");
             RuleFor(w => w.LearnCaption).NotEmpty().WithMessage(CannotBeNullOrEmpty, "LearnCaption");
             RuleFor(w => w.WhoAttend).NotEmpty().WithMessage(CannotBeNullOrEmpty, "WhoAttend");
-            RuleFor(w => w.RecordingUrl).NotEmpty().WithMessage(CannotBeNullOrEmpty, "RecordingUrl");
+            //needs to change to 'must be empty' --recording don't existed at point of creation
+            //RuleFor(w => w.RecordingUrl).NotEmpty().WithMessage(CannotBeNullOrEmpty, "RecordingUrl");
 
             // dates
             RuleFor(w => w.Date).NotEmpty().WithMessage(CannotBeNullOrEmpty, "Date");
