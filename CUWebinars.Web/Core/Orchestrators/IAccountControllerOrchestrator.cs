@@ -1,6 +1,7 @@
 ﻿
 using System.Security.Claims;
 using CUWebinars.Business.Models;
+using CUWebinars.Web.Infrastructure;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.ViewModel;
 using System;
@@ -14,6 +15,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         EditBillingAddressModel BuildBillingAddressModel();
         DiscountModel BuildDiscountModel();
 
+        ManageModel BuildManageModel(ManageMessageId? message);
         EditShippingAddressModel BuildShippingAddressModel();
         void BuildCityStateTimeZoneData(Dictionary<string, string> cityStateTimeZoneData, string zipAddress);
         bool ChangePasswordFromResetKey(string key, string password);

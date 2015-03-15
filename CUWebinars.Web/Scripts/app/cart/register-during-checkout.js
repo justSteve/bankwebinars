@@ -200,6 +200,10 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
         var jsonUrl = $(this).attr('action');
         var jsonPayload = { email: hiddenInput.val() };
 
+        var token = $(this).find('input[name=__RequestVerificationToken]').val();
+        var headers = {};
+        headers['__RequestVerificationToken'] = token;
+
         $.ajax({
             type: 'POST',
             contentType: RegistrationInCart.Constants.JsonContentType,
@@ -207,6 +211,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
             url: jsonUrl,
             dataType: RegistrationInCart.Constants.JsonDataType,
             data: JSON.stringify(jsonPayload),
+            headers: headers,
             beforeSend: function () {
                 $('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Working...</span>');
             }
@@ -483,6 +488,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                         cancelOrder(orderId, webinarId);
                                     });
 
+                                    populateAdditionalLocationsOn3rdTab();
                                     setUpEditButtons();
 
                                     hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
@@ -640,6 +646,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                                 cancelOrderForm.submit();
                                             });
 
+                                            populateAdditionalLocationsOn3rdTab();
                                             setUpEditButtons();
 
                                             hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());

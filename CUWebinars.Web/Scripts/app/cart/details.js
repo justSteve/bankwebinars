@@ -1,5 +1,5 @@
 ﻿//  This script correlates with the Details View.
-var checkoutConfirm, discount, cartStateManager, shippingAddressRequired, signUpForm, signUpFormContainer, storedHeight;
+var additionalLocationsList, checkoutConfirm, discount, cartStateManager, shippingAddressRequired, signUpForm, signUpFormContainer, storedHeight, numberOfAdditionalLocationsTab3;
 
 discount = '';
 checkoutConfirm = {};
@@ -190,6 +190,7 @@ $(function () {
             cancelOrderForm.submit();
         });
 
+        populateAdditionalLocationsOn3rdTab();
         setUpEditButtons();
 
         // Following 3 functions live in the register-during-checkout.js script
@@ -302,6 +303,7 @@ $(function () {
                                     cancelOrderForm.submit();
                                 });
 
+                                populateAdditionalLocationsOn3rdTab();
                                 setUpEditButtons();
 
                                 // Following 3 functions live in the register-during-checkout.js script
@@ -355,4 +357,188 @@ function setUpEditButtons() {
         e.preventDefault();
         $('#AdjustAddLoc').slideToggle();
     });
+    $('#editUserDetails').on('click', function (e) {
+        e.preventDefault();
+        $('#AdjustUserDetails').slideToggle();
+    });
+
+    $('#SubmitUserDetailEdits').on('click', function (e) {
+
+        e.preventDefault();
+
+        var form = $('#UserDetailsAdjustForm');
+
+        var url = form.attr('action');
+
+        var token = form.find('input[name=__RequestVerificationToken]').val();
+        var headers = {};
+        headers['__RequestVerificationToken'] = token;
+
+
+        var payload = {
+            email: $('#AdjustUserDetailsPanel_Email').val(),
+            idUser: $('#AdjustUserDetailsPanel_idUser').val(),
+            firstname: $('#AdjustUserDetailsPanel_FirstName').val(),
+            lastname: $('#AdjustUserDetailsPanel_LastName').val(),
+            Institution: $('#AdjustUserDetailsPanel_Institution').val()
+        };
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: url,
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payload),
+            headers: headers,
+            beforeSend: function () {
+                
+            }
+        }).done(function (data) {
+
+            if (data.Result === 'Success') {
+                
+            }
+
+        }).always(function (data) {
+        });
+    });
+
+    $('#addAnotherAddLoc').on('click', function (e) {
+
+        e.preventDefault();
+
+        var newId;
+
+        if (numberOfAdditionalLocationsTab3 == 0) {
+
+            additionalLocationsList.after($('<button>',
+            {
+                id: 'applyAdditionalLocationsButton',
+                text: 'apply',
+                'class': 'btn btn-mini btn-primary',
+            }));
+
+            $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);
+            
+            newId = 0;
+        } else {
+            // first get the last previous email input
+            var lastInput = additionalLocationsList.find('input[type="email"]:last');
+            // get its id
+            var lastInputId = lastInput.attr('id');
+            var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
+            newId = id + 1;
+        }
+        additionalLocationsList.append('<span id="' + locationsSpanPrefix + newId + '"><input id="AdditionalLocationEmail_' + newId + '" name="AdditionalLocations[' + newId + '].Email" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + newId + '-AdditionLocationEmail-delete"></i></span> <br id="' + newId + breakSuffix + '">');
+        additionalLocationsList.find('i#' + newId + '-AdditionLocationEmail-delete').on('click', deleteAddLocInputTabb3);
+        $('#AdditionalLocationEmail_' + newId).focus();
+        numberOfAdditionalLocationsTab3++;
+    });
 }
+
+function populateAdditionalLocationsOn3rdTab() {
+
+    if (!locationsSpanPrefix) {
+        locationsSpanPrefix = 'LocationSpan-',
+        breakSuffix = '-break';
+    }
+
+    addLocsOn1stTabContainer = $('#collectAdditionalLocations');
+    var locations = addLocsOn1stTabContainer.children();
+    numberOfAdditionalLocationsTab3 = locations.filter('span').length;
+
+    var copyOfLocations = locations.clone();
+
+    addLocsOn1stTabContainer.remove();
+
+    additionalLocationsList = $('#additionalLocationsList');
+
+    additionalLocationsList.append('<input id="newOrderRowId" name="newOrderRowId"  type="hidden" value=' + cartStateManager.getOrderRowId() + ' data-val="true" data-val-number="The field newOrderRowId must be a number." data-val-required="The newOrderRowId field is required."/>');
+    additionalLocationsList.append(copyOfLocations);
+
+    if (numberOfAdditionalLocationsTab3 > 0) {
+        additionalLocationsList.after($('<button>',
+        {
+            id: 'applyAdditionalLocationsButton',
+            text: 'apply',
+            'class': 'btn btn-mini btn-primary',
+        }));
+
+        $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);
+        
+        var trashCans = additionalLocationsList.find('i');
+
+        $.each(trashCans, function (idx, i) {
+            $(i).on('click', deleteAddLocInputTabb3);
+        });
+    }
+}
+
+var deleteAddLocInputTabb3 = function(event) {
+
+    numberOfAdditionalLocationsTab3--;
+
+    var trashClicked = event.currentTarget.id;
+    var idx = trashClicked.substring(0, 1);
+    var spanToRemove = locationsSpanPrefix + idx;
+
+    $('#' + spanToRemove).hide(500, function() {
+        $(this).remove();
+    });
+
+    $('#' + idx + breakSuffix).hide(500, function() {
+        $(this).remove();
+    });
+
+    if (numberOfAdditionalLocationsTab3 < 1) {
+        $('#applyAdditionalLocationsButton').hide(300, function() {
+            $(this).remove();
+        });
+    }
+};
+
+var applyAdditionalLocations = function(e) {
+
+    e.preventDefault();
+
+    var self = $(this);
+
+    var adjustAddLocsForm = $('#AdjustAddLocsForm');
+
+    var url = adjustAddLocsForm.attr('action');
+
+    // Ensure array that is sent starts with index 0.
+    $.each(adjustAddLocsForm.find('input[type="email"]'), function (idx, value) {
+        $(value).attr('name', 'AdditionalLocations[' + idx + '].Email');
+    });
+
+    var formData = adjustAddLocsForm.serialize();
+
+    $.ajax({
+        type: 'POST',
+        contentType: RegistrationInCart.Constants.FormPostContentType,
+        cache: false,
+        url: url,
+        dataType: RegistrationInCart.Constants.JsonDataType,
+        data: formData,
+        beforeSend: function() {
+            self.append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+        }
+    }).done(function(data) {
+        if (data.Result === 'Success') {
+            var infoLabel = $('#addLocsText');
+            var newText = numberOfAdditionalLocationsTab3 + $.trim(infoLabel.html()).slice(1);
+
+            infoLabel.fadeOut(200, function() {
+                infoLabel.html(newText);
+                infoLabel.fadeIn(200);
+            });
+
+        } else {
+            console.error('Failed to post order');
+        }
+        $('#waitSpinner').remove();
+    });
+
+};

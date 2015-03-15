@@ -38,7 +38,7 @@ namespace CUWebinars.Business.Services
         void FireSendPerDayPromoEvent(WebinarPromoViewModel webinarPromoViewModel);
         void FireSendPerWeekPromoEvent(IList<Affiliate> affiliates, Webinar webinar);
         void FireSendReminderNotificationEvent(IList<Order> orders);
-
+        IEnumerable<AdditionalLocation> GetAdditionalLocationsForOrderRow(int idOrderRow);
         Tuple<string, decimal> GetCostOfAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations,
             int idWebinar);
 

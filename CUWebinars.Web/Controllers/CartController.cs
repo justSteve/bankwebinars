@@ -41,30 +41,47 @@ namespace CUWebinars.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateJsonAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
+        public ActionResult AdjustUserDetails(AdjustUserDetailsEditModel adjustUserDetailsEditModel)
+        {
+            try
+            {
+                _cartControllerOrchestrator.AdjustUserDetails(adjustUserDetailsEditModel);
+                return Json(new { Result = WebUiConstants.Success });
+            }
+            catch (Exception exception)
+            {
+                ModelState.AddModelError(string.Empty, "The operation failed.");
+                _logger.ErrorException("AdjustUserDetails|AdjustUserDetails failed ", exception);
+                return this.ModelStateJson(ModelState);
+            }
+        }
+
+        [HttpPost]
+        [ValidateJsonAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
         public ActionResult ApplyDiscountCode(string code, int orderRowId)
         {
-            var row = _cartControllerOrchestrator.GetOrderRowLoaded(orderRowId);
-
-            var myDiscount = _cartControllerOrchestrator.ApplyDiscountCode(code, row);
-            
-            var discountModel = new DiscountModel();
-            
-            _universalMapper.Map(myDiscount, discountModel);
-            //AutoMapper.Mapper.Engine.Map(myDiscount, discountModel);
-
-            _cartControllerOrchestrator.UpdateOrderPricing(row.Order);
-
-            //return PartialView("~/Views/Webinar/Partials/_ShowAppliedDiscount.cshtml", showAppliedDiscountViewModel);
-
-            var amountToDiscount = myDiscount.FlatOff.ToString();
-            if (myDiscount.PercentOff > 0)
+            try
             {
-                amountToDiscount = myDiscount.PercentOff.ToString() + "%";
-            }
-            //row.Discount = myDiscount;
-            //_cartControllerOrchestrator.UpdateOrderPricing(model.Order);
+                var row = _cartControllerOrchestrator.GetOrderRowLoaded(orderRowId);
 
-            return Json(new { Result = amountToDiscount });
+                var myDiscount = _cartControllerOrchestrator.ApplyDiscountCode(code, row);
+
+                _cartControllerOrchestrator.UpdateOrderPricing(row.Order);
+
+                var amountToDiscount = _cartControllerOrchestrator.GetDiscountAmountAsPercentageOrDollarAmount(myDiscount);
+
+
+                return Json(new { Result = amountToDiscount });
+            }
+            catch (Exception exception)
+            {
+                ModelState.AddModelError(string.Empty, "The operation failed.");
+                _logger.ErrorException("ApplyDiscountCode|ApplyDiscountCode failed ", exception);
+                return this.ModelStateJson(ModelState);
+            }
         }
 
 
@@ -454,6 +471,14 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
+        [HttpPost]
+        public ActionResult UpdateAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations, int? newOrderRowId)
+        {
+            _cartControllerOrchestrator.UpdateAdditionalLocationsForOrderRow(additionalLocations, newOrderRowId.Value);
+
+            return Json(new { Result = WebUiConstants.Success });
+        }
+        
         public virtual void Dispose(bool disposing)
         {
             if (_disposed) return;

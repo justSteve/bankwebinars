@@ -79,3 +79,7 @@ blockquote {
 .linkCursor {
     cursor: pointer;
 }
+
+#SignUpFormContainer {
+    overflow-y: auto;
+}

@@ -1,7 +1,7 @@
-using System.Web.Mvc;
 using CUWebinars.Business.Models;
 using CUWebinars.Web.ViewModel;
 using System.Collections.Generic;
+using System.Web.Mvc;
 
 namespace CUWebinars.Web.Models
 {
@@ -17,7 +17,9 @@ namespace CUWebinars.Web.Models
         public int Id { get; set; }
         public int RegType { get; set; }
         public bool AdditionalLocationsAvailableOnLoad { get; set; }
+        public string PhoneNumber { get; set; }
         public int UserId { get; set; }
         public int WebinarId { get; set; }
+        public WebUser WebUser { get; set; }
     }
 }

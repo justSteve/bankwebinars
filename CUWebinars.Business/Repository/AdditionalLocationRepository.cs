@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Models;
+﻿using System.Collections.Generic;
+using CUWebinars.Business.Models;
 using System.Linq;
 
 namespace CUWebinars.Business.Repository
@@ -16,6 +17,10 @@ namespace CUWebinars.Business.Repository
 
         }
 
+        public IEnumerable<AdditionalLocation> GetAdditionalLocationsForOrderRow(int idOrderRow)
+        {
+            return items.Where(additionalLocation => additionalLocation.idOrderRow == idOrderRow);
+        }
 
         public void DeleteAdditionalLocationsByOrderRowId(int idOrderRow)
         {

@@ -9,6 +9,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 {
     public interface ICartControllerOrchestrator : IDisposable
     {
+        void AdjustUserDetails(AdjustUserDetailsEditModel adjustUserDetailsEditModel);
         Discount ApplyDiscountCode(string code, OrderRow row);
         DisplayRowPriceViewModel BuildDisplayRowPriceViewModel(OrderRow orderRow, int? idOrderRow, decimal? optionsCost = null);
         RegisterViewModel BuildRegisterViewModel();
@@ -34,5 +35,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         void RemoveAdditionalLocationsFromOrder(int value);
         PricesAndDiscounts UpdateOrderPricing(Order order);
         void UpdateOrderWithUserId(int orderId, int userId);
+        string GetDiscountAmountAsPercentageOrDollarAmount(Discount myDiscount);
+        void UpdateAdditionalLocationsForOrderRow(IEnumerable<AdditionalLocation> additionalLocations, int newOrderRowId);
     }
 }

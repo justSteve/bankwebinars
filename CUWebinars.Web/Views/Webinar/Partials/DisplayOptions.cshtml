@@ -1,6 +1,5 @@
 ﻿@using System.Configuration
 @using System.Text
-@using CUWebinars.Business.Core
 @using CUWebinars.Web.Core
 @using Ninject
 @model DisplayOptionsViewModel
@@ -65,8 +64,8 @@
                         <input type="radio" class="checkbox" id='regTypeID_@(myOption.Key.idRegType)' @defaultCheck name="RegistrationTypeId"
                                value="@myOption.Key.idRegType" />
                         &nbsp;&nbsp;<b>
-                            @Html.Raw(myOption.Key.OptionLabel.Replace("Five", "Five </b>(days)<b>").Replace("Six", "Six </b>(months)<b>")) - $@myOption.Key.Price &nbsp;&nbsp;
-                        </b>
+                                        @Html.Raw(myOption.Key.OptionLabel.Replace("Five", "Five </b>(days)<b>").Replace("Six", "Six </b>(months)<b>")) - $@myOption.Key.Price &nbsp;&nbsp;
+                                    </b>
                         <a onclick=javascript:void(0); data-html="true" rel="tooltip" href="#" data-toggle="tooltip" title='@Html.Raw(myOption.Key.OptionExplain).ToHtmlString().Replace("<i>","").Replace("</i>","")'><i class="icon-question-sign"></i></a>
                     </dt>
                 }
@@ -86,9 +85,9 @@
                         <dt style="font-weight: normal">
                             <input type="radio" class="checkbox" id='regTypeID_@(myOption.Key.idRegType)' @defaultCheck name="regType" value="@myOption.Key.idRegType" />
                             &nbsp;&nbsp;<b>
-                                @Html.Raw(myOption.Key.OptionLabel.Replace("Five", "Five </b>(days)<b>").Replace("Six", "Six </b>(months)<b>")) - $@myOption.Key.Price &nbsp;&nbsp;- $
-                                @myOption.Key.Price
-                            </b>&nbsp;
+                                            @Html.Raw(myOption.Key.OptionLabel.Replace("Five", "Five </b>(days)<b>").Replace("Six", "Six </b>(months)<b>")) - $@myOption.Key.Price &nbsp;&nbsp;- $
+                                            @myOption.Key.Price
+                                        </b>&nbsp;
                             &nbsp;<a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.Key.OptionExplain) "><i class="icon-question-sign"></i></a>
                             <br />
                         </dt>
@@ -113,5 +112,5 @@
             @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationsView.cshtml", Model.AdditionalLocationOfferViewModel)
         </div>
     }
-
+    
 </div>

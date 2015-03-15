@@ -1,0 +1,29 @@
+﻿@model AdjustUserDetailsEditModel
+
+<div id="AdjustUserDetails">
+    @Html.HiddenFor(m => m.idUser)
+    <div class="control-group">
+        @Html.LabelFor(model => model.Email, new { @class = "control-label " })
+        <div class="controls">
+            @Html.EditorFor(model => model.Email)
+        </div>
+    </div>
+    <div class="control-group">
+        @Html.LabelFor(model => model.FirstName, new { @class = "control-label " })
+        <div class="controls">
+            @Html.EditorFor(model => model.FirstName)
+        </div>
+    </div>
+    <div class="control-group">
+        @Html.LabelFor(model => model.LastName, new { @class = "control-label " })
+        <div class="controls">
+            @Html.EditorFor(model => model.LastName)
+        </div>
+    </div>
+    <div class="control-group">
+        @Html.LabelFor(model => model.Institution, new { @class = "control-label " })
+        <div class="controls">
+            @Html.EditorFor(model => model.Institution)
+        </div>
+    </div>
+</div>

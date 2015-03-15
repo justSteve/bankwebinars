@@ -74,6 +74,7 @@ namespace CUWebinars.Business.AccountService
             Address shippingAddress,
             string title
             );
+        void UpdateUserDetails(WebUser webUser);
         UserAccount VerifyEmailFromKey(string key, string password);
         bool VerifyUserByEmail(string tenant, string email);
         void UpdateShippingAddressDetails(Address shippingAddress);

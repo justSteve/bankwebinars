@@ -466,6 +466,7 @@
     <Compile Include="Models\ShowMessagesModel.cs" />
     <Compile Include="Models\TTSAttendance.cs" />
     <Compile Include="Models\TTSQuiz.cs" />
+    <Compile Include="ViewModel\AdjustUserDetailsEditModel.cs" />
     <Compile Include="ViewModel\AffPromoMsgViewModel.cs" />
     <Compile Include="ViewModel\EditUserViewModel.cs" />
     <Compile Include="ViewModel\DiscountPromotionViewModel.cs" />
@@ -850,6 +851,7 @@
     <Content Include="Views\Shared\Partials\_CheckoutFeedback.cshtml" />
     <Content Include="Views\Webinar\EditWebinarFromDetails.cshtml" />
     <Content Include="Views\Admin\ManageOrderFromDetails.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\AdjustUserDetails.cshtml" />
     <None Include="Web.BankWebinars31.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

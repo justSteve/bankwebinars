@@ -607,11 +607,18 @@ namespace CUWebinars.Web.Controllers
                     var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
                     var shippingAddress = addresses.FirstOrDefault(a => a.AddressType == WebUiConstants.ShippingAddress);
                     //var CheckoutDiscount = orderRow.Discount == null ? string.Empty : _orderManagementService.GetDiscountByCode()
-
-
+                    
                     model.CheckoutConfirmViewModel = new CheckoutConfirmViewModel
                     {
                         AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(orderRow),
+                        AdjustUserDetailsPanel = new AdjustUserDetailsEditModel
+                        {
+                             Email = webUser.email,
+                             FirstName = webUser.FirstName,
+                             idUser = webUser.idUser,
+                             LastName = webUser.LastName,
+                             Institution = orderRow.Order.Institution
+                        },
                         AdminComments = model.Order.AdminComments,
                         AffiliateComments = model.Order.AffiliateComments,
                         //CCUserDetails = "",
@@ -683,8 +690,7 @@ namespace CUWebinars.Web.Controllers
                         OrderStatus = OrderStatus.InProcess,
                         Origin = model.Order.Origin,
                         UserComments = model.Order.UserComments,
-                        UserDetails =
-                            string.Concat("<span id='userFullnameLabel'>", userFullName, 
+                        UserDetails = string.Concat("<span id='userFullnameLabel'>", userFullName, 
                             "</span> - <span id='userInstitutionLabel'>", orderRow.Order.Institution, "</span><br>", 
                             "<span id='userEmailLabel'>", webUser.email, "</span>"),
                         UserFullname = userFullName,
@@ -1086,7 +1092,6 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpPost]
         [ValidateJsonAntiForgeryToken]
-        //[ValidateInput(false)]
         public ActionResult UpdateConnectionInfo(ConnectionInfoEditModel connectionInfoModel)
         {
             if (ModelState.IsValid)

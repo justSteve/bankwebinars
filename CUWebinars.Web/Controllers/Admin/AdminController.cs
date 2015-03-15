@@ -307,8 +307,10 @@ namespace CUWebinars.Web.Controllers.Admin
                 },
                 Id = order.idOrder,
                 NumberOfAdditionalLocations = additionalLocationsCount,
+                PhoneNumber = order.BillingPhone,
                 UserId = order.idUser,
-                WebinarId = orderRow.idWebinar
+                WebinarId = orderRow.idWebinar,
+                WebUser = order.WebUser
             };
 
             // Need to decide whether the 1st option in the DropDownList can add additional locations

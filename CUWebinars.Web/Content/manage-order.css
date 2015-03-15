@@ -10,7 +10,6 @@ div.addLocsPanel {
     margin-top: 20px;
     border: 1px solid;
     border-color:#cccccc;
-    padding: 5px;
     -ms-border-radius: 6px;
     border-radius: 6px;
 }
@@ -25,4 +24,12 @@ button#applyDiscountButton {
 
 div#StatusWrapper {
     margin-bottom: 20px;
+}
+
+div#SubmitPanel {
+    margin-top: 100px;
+}
+
+div#UserSummaryPanel, div#SubmitPanel, div.addLocsPanel {
+    padding: 5px;
 }

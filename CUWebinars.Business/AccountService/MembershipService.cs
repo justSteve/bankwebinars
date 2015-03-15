@@ -539,6 +539,11 @@ namespace CUWebinars.Business.AccountService
             }
         }
 
+        public void UpdateUserDetails(WebUser webUser)
+        {
+            _webUserRepository.Update(webUser);
+        }
+
         public UserAccount VerifyEmailFromKey(string key, string password)
         {
             UserAccount userAccount = null;

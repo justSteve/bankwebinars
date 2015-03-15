@@ -68,6 +68,25 @@
                 @Html.TextBoxFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice, new { id = "TotalOrderPriceText", disabled = "disabled" }) @*read-only*@
                 @Html.HiddenFor(m => m.DisplayRowPriceViewModel.PricesAndDiscounts.TotalOrderPrice) @* Required for POST. TextBoxFor won't ModelBind *@
             </div>
+        </div>
+    </div>
+    <div id="UserSummaryPanel" class="span5">
+        <div class="control-group">
+            <label class="control-label" for="DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice">UserDetails:</label>
+            <div class="controls">
+                @Html.TextBoxFor(m => m.WebUser.email, new { id = "UserEmail", disabled = "disabled" }) @*read-only*@
+            </div>
+            <div class="controls">
+                @Html.TextBoxFor(m => m.WebUser.FullName, new { id = "UserEmail", disabled = "disabled" }) @*read-only*@
+            </div>
+            <div class="controls">
+                @Html.TextBoxFor(m => m.PhoneNumber, new { id = "UserEmail", disabled = "disabled" }) @*read-only*@
+                @Html.ActionLink("Edited User Details", "edituser", "account", new { id = @Model.UserId, returnUrl = "/Admin/ManageOrder/" + Model.Id }, null)
+            </div>
+        </div>
+    </div>    
+    <div id="SubmitPanel" class="span2">
+        <div class="control-group">
             <div class="controls">
                 <button id="editOrderSubmitButton" class="btn btn-primary">Submit Edited Details</button>
             </div>

@@ -30,6 +30,10 @@ $(function () {
             return false;
         }
 
+        var token = $('#ResetPasswordForm').find('input[name=__RequestVerificationToken]').val();
+        var headers = {};
+        headers['__RequestVerificationToken'] = token;
+
         var jsonUrl = $(this).attr('action');
         var email = resetPassEmail.val();
 
@@ -43,6 +47,7 @@ $(function () {
                 cache: false,
                 url: jsonUrl,
                 data: JSON.stringify({ email: email }),
+                headers: headers,
                 beforeSend: function() {
                     // this is where we append a loading image
                     crunchingLabel.html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;&nbsp;&nbsp;Please Wait...</span>');
