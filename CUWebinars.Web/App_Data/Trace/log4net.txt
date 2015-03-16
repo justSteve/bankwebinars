@@ -677,3 +677,9 @@ CUWebinars Error: 0 : Validation failed for webinar 1734 and User 43649
 CUWebinars Error: 0 : Validation failed for webinar 1772 and User 41097
 CUWebinars Error: 0 : Validation failed for webinar 1765 and User 46474
 CUWebinars Error: 0 : ERROR MailerSmtpException: drogersbox-test28@yahoo.com.au Subject: [BankWebinars] Confirmation of Registration: Bank Call Report Preparation for Beginners - Five Part Webinar ErrorMsg: Failure sending mail. Timestamp was: 12/03/2015 1:21:20 PM ExceptionType was: SmtpException InnerExceptionType was: System.Net.WebException
+CUWebinars Error: 0 : ERROR MailerSmtpException: a@b.com Subject: [BankWebinars] Confirmation of Registration: Bank Call Report Preparation for Beginners - Five Part Webinar ErrorMsg: Failure sending mail. Timestamp was: 16/03/2015 6:57:47 PM ExceptionType was: SmtpException InnerExceptionType was: System.Net.WebException
+CUWebinars Error: 0 : ERROR MailerSmtpException: c@b.com Subject: [BankWebinars] Confirmation of Registration: BSA Series: CTR & Exemptions: Reviews, Mergers, Revocations and More ErrorMsg: Failure sending mail. Timestamp was: 16/03/2015 8:08:07 PM ExceptionType was: SmtpException InnerExceptionType was: System.Net.WebException
+CUWebinars Error: 0 : Validation failed for webinar 1711 and User 43601
+CUWebinars Error: 0 : Validation failed for webinar 1711 and User 43601
+CUWebinars Error: 0 : Validation failed for webinar 1711 and User 43601
+CUWebinars Error: 0 : Validation failed for webinar 1711 and User 43728

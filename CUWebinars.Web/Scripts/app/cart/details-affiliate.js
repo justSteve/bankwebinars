@@ -81,10 +81,209 @@ OCA.initializeFunctions = function () {
     };
 
     OCA.setUpEditButtons = function() {
-        $('#revealOptions').on('click', function(e) {
+        $('#revealOptions').on('click', function (e) {
             e.preventDefault();
             $('#AdjustOrder').slideToggle();
         });
+
+        $('#revealDiscountInput').on('click', function (e) {
+            e.preventDefault();
+            $('#AdjustDiscount').slideToggle();
+        });
+
+        $('#revealAddLocsPanel').on('click', function (e) {
+            e.preventDefault();
+            $('#AdjustAddLoc').slideToggle();
+        });
+        $('#editUserDetails').on('click', function (e) {
+            e.preventDefault();
+            $('#AdjustUserDetails').slideToggle(400, function () { $('#editUserResult').remove(); });
+        });
+
+        $('#SubmitUserDetailEdits').on('click', function (e) {
+
+            e.preventDefault();
+
+            var self = $(this);
+
+            var form = $('#UserDetailsAdjustForm');
+
+            var url = form.attr('action');
+
+            var token = form.find('input[name=__RequestVerificationToken]').val();
+            var headers = {};
+            headers['__RequestVerificationToken'] = token;
+
+
+            var payload = {
+                email: $('#AdjustUserDetailsPanel_Email').val(),
+                idUser: $('#AdjustUserDetailsPanel_idUser').val(),
+                firstname: $('#AdjustUserDetailsPanel_FirstName').val(),
+                lastname: $('#AdjustUserDetailsPanel_LastName').val(),
+                Institution: $('#AdjustUserDetailsPanel_Institution').val()
+            };
+
+            $.ajax({
+                type: 'POST',
+                contentType: constants.JsonContentType,
+                cache: false,
+                url: url,
+                dataType: constants.JsonDataType,
+                data: JSON.stringify(payload),
+                headers: headers,
+                beforeSend: function () {
+                    $('#editUserResult').remove();
+                    self.after('<span id="userDetailsSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+                }
+            }).done(function (data) {
+
+                if (data.Result === 'Success') {
+                    self.after('<span id="editUserResult">&nbsp;<span class="label label-success"><span> Details updated successfully! </span></span></span>').hide().fadeIn(500);
+                }
+
+                $('#userDetailsSpinner').remove();
+
+            }).always(function (data) {
+            });
+        });
+
+        $('#addAnotherAddLoc').on('click', function (e) {
+
+            e.preventDefault();
+
+            var newId;
+
+            if (OCA.numberOfAdditionalLocationsTab3 == 0) {
+
+                additionalLocationsList.after($('<button>',
+                {
+                    id: 'applyAdditionalLocationsButton',
+                    text: 'apply',
+                    'class': 'btn btn-mini btn-primary',
+                }));
+
+                $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);
+
+                newId = 0;
+            } else {
+                // first get the last previous email input
+                var lastInput = additionalLocationsList.find('input[type="email"]:last');
+                // get its id
+                var lastInputId = lastInput.attr('id');
+                var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
+                newId = id + 1;
+            }
+            additionalLocationsList.append('<span id="' + locationsSpanPrefix + newId + '"><input id="AdditionalLocationEmail_' + newId + '" name="AdditionalLocations[' + newId + '].Email" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + newId + '-AdditionLocationEmail-delete"></i></span> <br id="' + newId + breakSuffix + '">');
+            additionalLocationsList.find('i#' + newId + '-AdditionLocationEmail-delete').on('click', OCA.deleteAddLocInputTabb3);
+            $('#AdditionalLocationEmail_' + newId).focus();
+            OCA.numberOfAdditionalLocationsTab3++;
+        });
+    };
+
+    OCA.populateAdditionalLocationsOn3rdTab = function () {
+
+        if (!locationsSpanPrefix) {
+            locationsSpanPrefix = 'LocationSpan-',
+            breakSuffix = '-break';
+        }
+
+        var addLocsOn1stTabContainer = $('#collectAdditionalLocations');
+        var locations = addLocsOn1stTabContainer.children();
+        OCA.numberOfAdditionalLocationsTab3 = locations.filter('span').length;
+
+        var copyOfLocations = locations.clone();
+
+        addLocsOn1stTabContainer.remove();
+
+        var additionalLocationsList = $('#additionalLocationsList');
+
+        additionalLocationsList.append('<input id="newOrderRowId" name="newOrderRowId"  type="hidden" value=' + cartStateManager.getOrderRowId() + ' data-val="true" data-val-number="The field newOrderRowId must be a number." data-val-required="The newOrderRowId field is required."/>');
+        additionalLocationsList.append(copyOfLocations);
+
+        if (OCA.numberOfAdditionalLocationsTab3 > 0) {
+            additionalLocationsList.after($('<button>',
+            {
+                id: 'applyAdditionalLocationsButton',
+                text: 'apply',
+                'class': 'btn btn-mini btn-primary',
+            }));
+
+            $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);
+
+            var trashCans = additionalLocationsList.find('i');
+
+            $.each(trashCans, function (idx, i) {
+                $(i).on('click', OCA.deleteAddLocInputTabb3);
+            });
+        }
+    };
+
+    OCA.deleteAddLocInputTabb3 = function (event) {
+
+        OCA.numberOfAdditionalLocationsTab3--;
+
+        var trashClicked = event.currentTarget.id;
+        var idx = trashClicked.substring(0, 1);
+        var spanToRemove = locationsSpanPrefix + idx;
+
+        $('#' + spanToRemove).hide(500, function () {
+            $(this).remove();
+        });
+
+        $('#' + idx + breakSuffix).hide(500, function () {
+            $(this).remove();
+        });
+
+        if (OCA.numberOfAdditionalLocationsTab3 < 1) {
+            $('#applyAdditionalLocationsButton').hide(300, function () {
+                $(this).remove();
+            });
+        }
+    };
+
+    OCA.applyAdditionalLocations = function (e) {
+
+        e.preventDefault();
+
+        var self = $(this);
+
+        var adjustAddLocsForm = $('#AdjustAddLocsForm');
+
+        var url = adjustAddLocsForm.attr('action');
+
+        // Ensure array that is sent starts with index 0.
+        $.each(adjustAddLocsForm.find('input[type="email"]'), function (idx, value) {
+            $(value).attr('name', 'AdditionalLocations[' + idx + '].Email');
+        });
+
+        var formData = adjustAddLocsForm.serialize();
+        
+        $.ajax({
+            type: 'POST',
+            contentType: RegistrationInCart.Constants.FormPostContentType,
+            cache: false,
+            url: url,
+            dataType: RegistrationInCart.Constants.JsonDataType,
+            data: formData,
+            beforeSend: function () {
+                self.append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+            }
+        }).done(function (data) {
+            if (data.Result === 'Success') {
+                var infoLabel = $('#addLocsText');
+                var newText = numberOfAdditionalLocationsTab3 + $.trim(infoLabel.html()).slice(1);
+
+                infoLabel.fadeOut(200, function () {
+                    infoLabel.html(newText);
+                    infoLabel.fadeIn(200);
+                });
+
+            } else {
+                console.error('Failed to post order');
+            }
+            $('#waitSpinner').remove();
+        });
+
     };
 
     OCA.isShippindAddressRequired = function(jQueryObject) {
@@ -274,14 +473,15 @@ OCA.initializeState = function() {
 
 
     OCA.cartStateManager.SetCartState('affiliate');
-
+    OCA.numberOfAdditionalLocationsTab3 = 0;
 };
 
 OCA.wireUpHandlers = function() {
 
     /* Click event for the big green SignUp button */
     $('#AddToCart').on('click', function () {
-        $(this).attr('disabled', 'disabled');
+
+        $(this).append('<i id="signUpSpinnerInButton" class="icon-spinner icon-spin"></i>');
 
         var valSummary = $('#valSummarySignUpForm');
         valSummary.removeClass('validation-summary-errors').addClass('validation-summary-valid');
@@ -310,7 +510,8 @@ OCA.wireUpHandlers = function() {
 
         var data = OCA.signUpForm.serialize();
 
-        $('#affiliateSignUpForm > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
+        $('#SignUpFormContainer').before('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
+
         var spinner = $('#loadingSpinner');
 
         // If the user IS NOT LOGGED IN - direct them to. But they should not be able to make it to this page if they are anonymous.
@@ -364,13 +565,14 @@ OCA.wireUpHandlers = function() {
 
                         
                         $('#AddToCart').removeAttr('disabled');
+                        
                     }
-                    $('#loadingSpinner').remove();
+                    spinner.remove();
                 } else {
                     confirmationForAffiliateDiv.html('<div class="text-error">There has been an error at the server, please call 800-831-0678 ext 706 for immediate assistance.</div>');
-                    $('#loadingSpinner').remove();
+                    spinner.remove();
                 }
-                $('#loadingSpinner').remove();
+                spinner.remove();
 
             }, constants.JsonDataType);
 
@@ -588,5 +790,3 @@ function modalShown (e) {
         $('#userDetailsForm').prepend('<input type="hidden" id="RegisterFields.ConfirmPassword" name="RegisterFields.ConfirmPassword" value="456rty^Y" />');
     }
 };
-
-
