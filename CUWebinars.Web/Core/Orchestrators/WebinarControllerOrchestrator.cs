@@ -357,12 +357,15 @@ namespace CUWebinars.Web.Core.Orchestrators
             webinar.ImageUrl = webinarEditModel.ImageUrl;
             webinar.SmallImageUrl = webinarEditModel.SmallImageUrl;
             webinar.WhoAttend = webinarEditModel.WhoAttend;
+            webinar.RecordingUrl = webinarEditModel.RecordingUrl;
 
             var existingRegTypeGroupIds =
                 webinar.RegTypesGroupsXref.Where(r => r.idWebinar == webinar.idWebinar)
                     .Select(r => r.idRegTypeGroup)
                     .ToArray();
 
+            // This loop add any new RegTypeGroupXrefs which exist in the incoming model, but not in the collection
+            // retrieved from the database i.e. new RegTypeGroupXrefs
             foreach (
                 var regTypeGroupId in
                     webinarEditModel.PostedRegTypeGroups.RegTypeGroupIds.Where(
