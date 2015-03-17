@@ -271,9 +271,17 @@
     <Reference Include="RazorEngine">
       <HintPath>..\packages\RazorEngine.3.4.1\lib\net45\RazorEngine.dll</HintPath>
     </Reference>
+    <Reference Include="RSSBus.Gmail.System, Version=2.0.0.40, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\OneDrive\Code\RSSBus.Gmail.System.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.RSSBus.Gmail, Version=4.0.0.40, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files\RSSBus\RSSBus ADO.NET Provider for Gmail V4\demos - webform\aspx2-cs\bin\System.Data.RSSBus.Gmail.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data.Services.Client" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IdentityModel" />
@@ -426,6 +434,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\api\ACSController.cs" />
     <Compile Include="Controllers\NavigationController.cs" />
     <Compile Include="Controllers\StaticContentController.cs" />
     <Compile Include="Core\Orchestrators\IWebinarControllerOrchestrator.cs" />
@@ -527,9 +536,6 @@
     <Content Include="Content\toastr.css.map">
       <DependentUpon>toastr.css</DependentUpon>
     </Content>
-    <None Include="log4net.config">
-      <SubType>Designer</SubType>
-    </None>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdhocNotificationController.cs" />
     <Compile Include="Controllers\Admin\AdminController.cs" />
@@ -677,10 +683,6 @@
     <Content Include="Notification\PreviewTemplates\PreviewRecordingPosted.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars31 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars31.pubxml" />
-    <None Include="Properties\PublishProfiles\CUWebinars31.pubxml">
-      <TransformOnBuild>true</TransformOnBuild>
-      <SubType>Designer</SubType>
-    </None>
     <Content Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
     <None Include="Properties\PublishProfiles\CUWebinars33.pubxml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />

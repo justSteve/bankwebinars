@@ -1,6 +1,9 @@
 ﻿using System.Configuration;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
+using System.Net.Configuration;
+using System.Net.Mail;
 using System.Reflection;
 using System.Web.Http.Dependencies;
 using AutoMapper;
@@ -58,15 +61,15 @@ namespace CUWebinars.Web
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
             MapperConfig.Initialize();
-            
-            #if DEBUG
-                Mapper.AssertConfigurationIsValid();
-            #endif
+
+#if DEBUG
+            Mapper.AssertConfigurationIsValid();
+#endif
 
             ConfigureLogging();
 
             AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.Email;
-            
+            //GetSmtpDetails();
             LogStartupDetails();
 
             //InvokeGhostTests();
@@ -76,8 +79,8 @@ namespace CUWebinars.Web
         {
             const string infrastructureLogconfigs = @"Infrastructure/LogConfigs";
 
-            //switch (GlobalConfig.GlobalConfigSingleton.Tenant)
-            switch ("Dave")
+            switch (GlobalConfig.GlobalConfigSingleton.Tenant)
+            //switch ("Dave")
             {
                 case "BankWebinars":
                     log4net.Config.XmlConfigurator.ConfigureAndWatch(new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs, "BWLog4net.xml")));
@@ -104,7 +107,19 @@ namespace CUWebinars.Web
                 {
                     using (var request = new TtsWebClient())
                     {
-                        var response = request.DownloadString("" /* replace empty string with Ghost test suite uri here */);
+                        var response = "";
+
+                        switch (GlobalConfig.GlobalConfigSingleton.Tenant)
+                        {
+                            case "BankWebinars":
+                                response = request.DownloadString("https://api.ghostinspector.com/v1/suites/549561048a4917076f61463e/execute/?apiKey=a3165149c7049d91d18eeba48d2c4808eca6b2ae");
+                                break;
+                            case "CUWebinars":
+                                response = request.DownloadString("https://api.ghostinspector.com/v1/suites/54faf632c1ae38b460ef41de/execute/?apiKey=a3165149c7049d91d18eeba48d2c4808eca6b2ae");
+                                break;
+                            default:
+                                throw new NotSupportedException(string.Format("There is no match for {0}", GlobalConfig.GlobalConfigSingleton.Tenant));
+                        }
 
                         retryCount++;
 
@@ -140,10 +155,10 @@ namespace CUWebinars.Web
             logger.Info(string.Format("{0} Spinning up application: ", TenantName));
             logger.Info(string.Format("Config Properties - {0}", GlobalConfig.GlobalConfigSingleton.PropertiesAsString));
             logger.Info(string.Format("AppInfo: {0}", GetAppVersionInfo()));
-            
-            logger.Info(string.Format("AppSettings for {0}", TenantName));
-            logger.Info(string.Format("AppSettings are {0}", LoggerInfoString));
-            
+
+            logger.Info(string.Format("AppSettings for {0} are: {1}", TenantName, LoggerInfoString));
+
+
 
 
         }
@@ -154,6 +169,18 @@ namespace CUWebinars.Web
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(asm.Location);
             return fileVersionInfo.FileVersion;
         }
+        static void GetSmtpDetails()
+        {
+            var smtpSection = ConfigurationManager.GetSection("system.net/mailSettings/smtp") as SmtpSection;
+
+            var mailSettings = smtpSection.Network;
+            mailSettings.Host = ConfigurationManager.AppSettings["smtp.host"];
+            mailSettings.Port = int.Parse(ConfigurationManager.AppSettings["smtp.Port"]);
+            mailSettings.UserName = ConfigurationManager.AppSettings["smtp.userName"];
+            mailSettings.Password = ConfigurationManager.AppSettings["smtp.password"];
+            mailSettings.EnableSsl = bool.Parse(ConfigurationManager.AppSettings["smtp.enableSsl"]);
+
+        } 
 
         //https://www.simple-talk.com/dotnet/asp.net/handling-errors-effectively-in-asp.net-mvc/
         protected void Application_Error(object sender, EventArgs e)
@@ -167,7 +194,7 @@ namespace CUWebinars.Web
             var controller = new StaticContentController();
 
             // this will hold data about the new route to the custom error page
-            var newRouteData = new RouteData(); 
+            var newRouteData = new RouteData();
 
             var errorResponse = new ErrorResponse
             {
