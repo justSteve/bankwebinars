@@ -313,6 +313,7 @@
     <Compile Include="TTSLogger.cs" />
     <Compile Include="Validation\Order\CreateOrderValidator.cs" />
     <Compile Include="Validation\Webinar\CreateWebinarValidator.cs" />
+    <Compile Include="Validation\Webinar\UpdateWebinarValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

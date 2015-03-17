@@ -20,11 +20,46 @@
                         </p>
                     </div>
                 </div>
-                <div id="AdjustOrder" class="row">
+                <div id="AdjustUserDetails" class="row initialHide">
+                    @using (Html.BeginForm("adjustuserdetails", "cart", FormMethod.Post, new { id = "UserDetailsAdjustForm", @class = "form form-horizontal" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.EditorFor(m => m.AdjustUserDetailsPanel)
+                        <div class="control-group">
+                            <div class="controls">
+                                <button id="SubmitUserDetailEdits" class="btn btn-default btn-mini btn-primary">apply edits</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div id="AdjustDiscount" class="row initialHide">
+                    <div class="offset2 span9 ">
+                        <div id="EnterDiscountCode" class="clear pull-right">
+                            @Html.TextBoxFor(m => m.CheckoutDiscountCode, new { @class = "input input-medium", placeholder = "Enter Discount Code" })
+                            <button class="btn btn-mini btn-primary" role="button" id="SubmitDiscountCode">Apply Code</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="AdjustAddLoc" class="row initialHide">
+                    <div class="offset2 span9 ">
+                        <div id="additionalLocationsCaption" class="clear pull-right">
+                            Additional Locations: <button id="addAnotherAddLoc" class="btn btn-mini">add</button>
+
+                            @using (Html.BeginForm("UpdateAdditionalLocations", "Cart", FormMethod.Post, new { id = "AdjustAddLocsForm" }))
+                            {
+                                <div id="additionalLocationsList">
+                                    @* List of additional location inputs gets copied here. *@
+
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div id="AdjustOrder" class="row initialHide">
                     <div class="offset2 span9 ">
                         <div id="RegTypeChanger" class="clear pull-right">
                             @{
-                Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel);
+                            Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel);
                             }
                         </div>
                     </div>

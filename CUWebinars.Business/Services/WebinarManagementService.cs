@@ -23,6 +23,7 @@ namespace CUWebinars.Business.Services
         private readonly IWebUserRepository _webUserRepository;
         private readonly TtsConfiguration _ttsConfig;
         private readonly IValidator<Webinar> _createWebinarValidator;
+        private readonly IValidator<Webinar> _updateWebinarValidator;
         readonly List<IEvent> _events = new List<IEvent>();
         private bool _disposed;
 
@@ -36,7 +37,8 @@ namespace CUWebinars.Business.Services
             IWebinarFileRepository webinarFileRepository,
             ILogger logger,
             TtsConfiguration ttsConfig,
-            FluentValidation.IValidator<Webinar> createWebinarValidator)
+            IValidator<Webinar> createWebinarValidator,
+            IValidator<Webinar> updateWebinarValidator)
         {
             //_affiliateRepository = affiliateRepository;
             _regTypeRepository = regTypeRepository;
@@ -44,6 +46,7 @@ namespace CUWebinars.Business.Services
             _refDataRepository = refDataRepository;
             _ttsConfig = ttsConfig;
             _createWebinarValidator = createWebinarValidator;
+            _updateWebinarValidator = updateWebinarValidator;
             _webinarFileRepository = webinarFileRepository;
             _webinarRepository = webinarRepository;
             _logger = logger;
@@ -302,10 +305,8 @@ namespace CUWebinars.Business.Services
 
         public void UpdateWebinar(Webinar webinar)
         {
-            _createWebinarValidator.ValidateAndThrow(webinar);
+            _updateWebinarValidator.ValidateAndThrow(webinar);
             _webinarRepository.Update(webinar);
         }
-
-
     }
 }

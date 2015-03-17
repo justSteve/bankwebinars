@@ -131,6 +131,7 @@ namespace CUWebinars.Web.App_Start
                 var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
                 ILogger loggerForWebinarManagementService = new Log4NetLogger(typeof(WebinarManagementService));
                 FluentValidation.IValidator<Webinar> createWebinarValidator = new CreateWebinarValidator();
+                FluentValidation.IValidator<Webinar> updateWebinarValidator = new UpdateWebinarValidator();
 
                 return new WebinarManagementService(
                     new RegTypeRepository(sharedContext),
@@ -140,7 +141,8 @@ namespace CUWebinars.Web.App_Start
                     new WebinarFileRepository(sharedContext),
                     loggerForWebinarManagementService,
                     ctx.Kernel.Get<TtsConfiguration>(),
-                    createWebinarValidator
+                    createWebinarValidator,
+                    updateWebinarValidator
                     );
             }).InRequestScope();
 

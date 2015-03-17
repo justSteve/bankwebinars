@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using CUWebinars.Business.Models;
 using FluentValidation;
@@ -8,22 +7,19 @@ namespace CUWebinars.Business.Validation.Webinar
 {
     public class CreateWebinarValidator : AbstractValidator<Models.Webinar>
     {
-        private const string CannotBeNullOrEmpty = "The {0} cannot be null or empty";
-        private const decimal MinDecimal = 0.25M;
-        private const string MustBeGreaterThan = "The {0} must be greater than {1}";
+        protected const string CannotBeNullOrEmpty = "The {0} cannot be null or empty";
+        protected const decimal MinDecimal = 0.25M;
+        protected const string MustBeGreaterThan = "The {0} must be greater than {1}";
+
 
         public CreateWebinarValidator()
         {
-            // this method is running at many points where a webinar is not being created.
-
             RuleFor(w => w.Title).NotEmpty().WithMessage(CannotBeNullOrEmpty, "Title");
             RuleFor(w => w.Description).NotEmpty().WithMessage(CannotBeNullOrEmpty, "Description");
             RuleFor(w => w.DescriptionLong).NotEmpty().WithMessage(CannotBeNullOrEmpty, "LongDescription");
             RuleFor(w => w.LearnBody).NotEmpty().WithMessage(CannotBeNullOrEmpty, "LearnBody");
             RuleFor(w => w.LearnCaption).NotEmpty().WithMessage(CannotBeNullOrEmpty, "LearnCaption");
             RuleFor(w => w.WhoAttend).NotEmpty().WithMessage(CannotBeNullOrEmpty, "WhoAttend");
-            //needs to change to 'must be empty' --recording don't existed at point of creation
-            //RuleFor(w => w.RecordingUrl).NotEmpty().WithMessage(CannotBeNullOrEmpty, "RecordingUrl");
 
             // dates
             RuleFor(w => w.Date).NotEmpty().WithMessage(CannotBeNullOrEmpty, "Date");
@@ -40,14 +36,15 @@ namespace CUWebinars.Business.Validation.Webinar
             RuleFor(w => w.WebinarTopicXrefs).Must(MustHaveAtLeastOneTopic).WithMessage("Webinar must have at least 1 topic");
         }
 
-        private bool MustHaveAtLeastOneRegTypeGroup(ICollection<RegTypesGroupsXref> regTypesGroupsXrefs)
+        protected virtual bool MustHaveAtLeastOneRegTypeGroup(ICollection<RegTypesGroupsXref> regTypesGroupsXrefs)
         {
             return regTypesGroupsXrefs.Any();
         }
 
-        private bool MustHaveAtLeastOneTopic(ICollection<WebinarTopicXref> webinarTopicXrefs)
+        protected virtual bool MustHaveAtLeastOneTopic(ICollection<WebinarTopicXref> webinarTopicXrefs)
         {
             return webinarTopicXrefs.Any();
         }
+
     }
 }

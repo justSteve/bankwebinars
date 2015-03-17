@@ -215,7 +215,6 @@ $(function () {
 
         var data = signUpForm.serialize();
 
-        $('#SignUpForm > div');
         var spinner = $('#signUpSpinner');
         $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
 
@@ -359,12 +358,14 @@ function setUpEditButtons() {
     });
     $('#editUserDetails').on('click', function (e) {
         e.preventDefault();
-        $('#AdjustUserDetails').slideToggle();
+        $('#AdjustUserDetails').slideToggle(400, function () { $('#editUserResult').remove(); });
     });
 
     $('#SubmitUserDetailEdits').on('click', function (e) {
 
         e.preventDefault();
+
+        var self = $(this);
 
         var form = $('#UserDetailsAdjustForm');
 
@@ -392,13 +393,16 @@ function setUpEditButtons() {
             data: JSON.stringify(payload),
             headers: headers,
             beforeSend: function () {
-                
+                $('#editUserResult').remove();
+                self.after('<span id="userDetailsSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
             }
         }).done(function (data) {
 
             if (data.Result === 'Success') {
-                
+                self.after('<span id="editUserResult">&nbsp;<span class="label label-success"><span> Details updated successfully! </span></span></span>').hide().fadeIn(500);
             }
+
+            $('#userDetailsSpinner').remove();
 
         }).always(function (data) {
         });
@@ -540,5 +544,4 @@ var applyAdditionalLocations = function(e) {
         }
         $('#waitSpinner').remove();
     });
-
 };
