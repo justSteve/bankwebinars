@@ -1,9 +1,10 @@
 USE TTSWebinars2
 GO
-SELECT * FROM dbo.Affiliate WHERE ttsDomain = 'indianabankers'
+SELECT (SELECT optionGroupDesc FROM dbo.OptionsGroups WHERE idOptionGroup = o.idoptiongroup),  * FROM dbo.OptionsGroupsXref o WHERE idWebinar IN (SELECT idWebinar FROM dbo.Webinar WHERE status =2) 
 --SELECT TOP 100 * FROM dbo.Orders o INNER JOIN	dbo.OrdersRows r ON r.idOrder = o.idOrder
---WHERE o.email NOT IN ('mnielsen@providencebank.com','Gindy.tank@bankofsunprairie.com','djennings@bankofutica.com','Letia.Ryan@caymannational.com','beth.windings@fsbdongola.com','jseymore@peoplesbanksc.com','becky.wiley@countynationalbank.com','llpeterson@morganfed.com','aprilw@gn-bank.com','pbaker@peoplessouthern.com','christy.mccullers@firststatedirect.com','shiggins@banksouthern.com','jschmitz@fnbwaterloo.com','slkj@lk.com','mbogan@lnbcorp.com','kmyrick@localfirstbank.com','kschultz@mynorthern.com','amy.mcclure@bankucb1.com','crhodd@fmbankfc.com','haley.mccool@bankucb1.com','cbohenek@fsbmsla.com','jennifer.selman@rivercitybankonline.com','callmond@mebanking.com','abrown@fnbdurango.com','brenda@frontierbankco.com','washburn@thebankforme.com','vinny.austin@fnfg.com','kevalk@merchantsbank.com','cdevoe@capfed.com','melissag@cuofamerica.com','stacchino@countrybnk.com','dianeb@commercialbank-stl.com','heather.mcgarrigle@hfsb.com','amarshall@norwaysavingsbank.com','mjohnston@legencebank.com','wbthomas@farmersdepositbankky.com','sgoldberger@actorsfcu.com','mgienger@weareamerican.com','emily.autin@sbtcajun.com','steve@ttstrain.com','togle@beltvalleybank.com','bthomas@gofsb.com','sonjaw@firstbankofberne.com','lorifreshour@carrolltonbanking.com','mgendelman@cnob.com')
---AND r.idWebinar = 1763
+----WHERE o.idOrder NOT IN (78945,78944,78861,78851,78831,78803,78764,78735,78640,78639,78508,78488,78442,78353,78331,78324,78321,78300,78298,78295,78283,78282,78259,78228,78208,78204,78187,78177,78174,78170,77898,77897,77857,77828,77811,77798)
+--AND r.status > 1 AND r.status < 5
+--AND r.idWebinar = 1745
 --ORDER BY o.orderDate desc
 
 SELECT  ( SELECT    o.idAffiliate
@@ -91,13 +92,14 @@ SELECT  ( SELECT    o.idAffiliate
         REPLACE(ISNULL(o.shippingZip, o.zip), 'NULL', o.zip) AS Zip ,
         o.total ,
         r.shipmentDate ,
-        'Migrated 2/22/2015 ' + ISNULL(o.storeCommentsPriv, '') AS StoreComments ,
+        'Migrated on: ' + GETDATE() + ISNULL(o.storeCommentsPriv, '') AS StoreComments ,
         o.idOrder ,
         o.orderDate ,
         r.status
 FROM    TTSWebinars2.dbo.Orders o
         INNER JOIN dbo.OrdersRows r ON r.idOrder = o.idOrder
-WHERE   r.idWebinar IN (SELECT idWebinar FROM dbo.Webinar WHERE status = 3)
+WHERE   r.idWebinar IN (1745)
+AND o.idOrder NOT IN (78959,78954,78952,78947,78938,78937,78936,78935,78928,78917,78915,78858,78842,78827,78816,78808,78717,78642,78604,78514,78509,78470,78467,78434,78431,78348,78329,78320,78306,78296,78288,78280,78279,78269,78258,78251,78237,78231,78222,78195,78194,77907,77899,77860,77848,77843,77812,77801,77784,77704,77642,77584,77583,77581,77580,77579,77578,77577,77576,77575,77574,77573)
         
 --o.idOrder < 49709 --  AND r.idWebinar IN (SELECT r.idWebinar FROM dbo.Webinar WHERE status = 2 OR status = 3)
         AND ( r.status < 5

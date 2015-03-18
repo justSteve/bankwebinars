@@ -683,3 +683,5 @@ CUWebinars Error: 0 : Validation failed for webinar 1711 and User 43601
 CUWebinars Error: 0 : Validation failed for webinar 1711 and User 43601
 CUWebinars Error: 0 : Validation failed for webinar 1711 and User 43601
 CUWebinars Error: 0 : Validation failed for webinar 1711 and User 43728
+CUWebinars Error: 0 : Validation failed for webinar 1712 and User 34528
+CUWebinars Error: 0 : Validation failed for webinar 1712 and User 34529

@@ -26,7 +26,7 @@ namespace CUWebinars.Business.Notification.Email
             var tmpMsg = string.Empty;
             string destinationEmailAddress = notificationMessage.To;
 
-            _logger.Info("Sending CUW message!");
+            //_logger.Info("Sending CUW message!");
 
             if (string.IsNullOrWhiteSpace(notificationMessage.From))
             {
@@ -67,8 +67,8 @@ namespace CUWebinars.Business.Notification.Email
                 }
                 catch (ArgumentNullException)
                 {
-                    Tracer.Error("Error MailerArgumentNullException: message is null ");
-                    _logger.Error("WriteLine MailerArgumentNullException: message is null ");
+                    Tracer.Warning("MailerArgumentNullException: message is null ");
+                    _logger.Fatal("MailerArgumentNullException: message is null ");
                 }
                 catch (InvalidOperationException ex)
                 {
@@ -76,16 +76,16 @@ namespace CUWebinars.Business.Notification.Email
                     tmpMsg += " Subject: " + notificationMessage.Subject;
                     tmpMsg += " ErrorMsg: " + ex.Message;
                     tmpMsg += " Timestamp was: " + timeStamp;
-                    Tracer.Error(tmpMsg);
-                    _logger.Error(tmpMsg);
+                    Tracer.Warning(tmpMsg);
+                    _logger.Fatal(tmpMsg);
                 }
                 catch (SmtpFailedRecipientsException)
                 {
                     tmpMsg = "ERROR MailerSmtpFailedRecipientsException: " + notificationMessage.To;
                     tmpMsg += " Subject: " + notificationMessage.Subject;
                     tmpMsg += " Timestamp was: " + timeStamp;
-                    Tracer.Error(tmpMsg);
-                    _logger.Error(tmpMsg);
+                    Tracer.Warning(tmpMsg);
+                    _logger.Fatal(tmpMsg);
                 }
                 catch (SmtpException ex)
                 {

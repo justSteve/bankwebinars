@@ -1,4 +1,5 @@
-﻿using BrockAllen.MembershipReboot;
+﻿using System.Text.RegularExpressions;
+using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
@@ -1254,6 +1255,7 @@ namespace CUWebinars.Web.Controllers
 
                 foreach (var webinarFile in newFiles)
                 {
+                    webinarFile.fileLocation = Regex.Replace(webinarFile.fileLocation, @"\s+", "");
                     var checkThatNewFilesExist = CheckThatFilesExists(webinarFile);
                     if (!checkThatNewFilesExist)
                     {

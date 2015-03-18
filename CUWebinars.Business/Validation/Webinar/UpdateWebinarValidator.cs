@@ -6,7 +6,7 @@ namespace CUWebinars.Business.Validation.Webinar
     {
         public UpdateWebinarValidator()
         {
-            RuleFor(w => w.RecordingUrl).NotEmpty().WithMessage(CannotBeNullOrEmpty, "RecordingUrl");
+            //RuleFor(w => w.RecordingUrl).NotEmpty().WithMessage(CannotBeNullOrEmpty, "RecordingUrl");
         }
     }
 }
