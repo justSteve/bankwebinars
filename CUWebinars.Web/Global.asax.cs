@@ -80,7 +80,7 @@ namespace CUWebinars.Web
             const string infrastructureLogconfigs = @"Infrastructure/LogConfigs";
 
             switch (GlobalConfig.GlobalConfigSingleton.Tenant)
-            //switch ("Dave")
+//            switch ("Dave")
             {
                 case "BankWebinars":
                     log4net.Config.XmlConfigurator.ConfigureAndWatch(new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs, "BWLog4net.xml")));

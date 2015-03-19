@@ -267,7 +267,6 @@ namespace CUWebinars.Business.Services
             return _webUserRepository.GetWebUserByEmail(email);
         }
 
-
         public OrderRow GetOrderRowById(int idOrderRow)
         {
             return _orderRepository.GetOrderRowById(idOrderRow);
@@ -310,10 +309,12 @@ namespace CUWebinars.Business.Services
         {
             return _webUserRepository.GetWebusersForLiveNotifications(idWebinar);
         }
-        //public IList<AdditionalLocation> GetAdditionalLocations(int idOrder)
-        //{
-        //    return _orderRepository.GetAdditionalLocations(idOrder);
-        //}
+
+        public string GetWebUserFullname(string email)
+        {
+            return _webUserRepository.GetWebUserFullname(email);
+        }
+
         public void DeleteOrder(int orderId)
         {
             _orderRepository.DeleteOrder(orderId);

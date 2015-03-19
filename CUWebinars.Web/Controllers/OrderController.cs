@@ -418,7 +418,7 @@ namespace CUWebinars.Web.Controllers
                     var auditMsg = "MyGuid=" + MyGuid;
                     Dictionary<string, string> ACSOrderDictionary = new Dictionary<string, string>
                             {
-                                    {"FirstName", ""}, {"LastName", ""}, {"Company", ""}, {"Title", ""}, {"Email", ""}, {"Phone", ""}, {"Country", ""}, {"StreetorP.O.Box", ""}, {"City", ""}, {"State/Province/Region", ""}, {"Zip/PostalCode", ""}, {"DeliveryType", ""}, {"WebinarTitle", ""}, {"CourseNumber", ""}, {"WebinarDate", ""}, {"WebinarTime(EasternTime)", ""}, {"CourseDeliveryType", ""}, {"CoursePrice", ""}, {"BankWebID", ""}, {"PaymentMethod", ""}, {"CompanyBillingInformation", ""}, {"ZeroValue", ""}, {"DateSubmittedToACS", ""}
+                                    {"FirstName", ""}, {"LastName", ""}, {"Company", ""}, {"Title", ""}, {"Email", ""}, {"Phone", ""}, {"Country", ""}, {"StreetorP.O.Box", ""}, {"City", ""}, {"State/Province/Region", ""}, {"Zip/PostalCode", ""}, {"DeliveryType", ""}, {"WebinarTitle", ""}, {"CourseNumber", ""}, {"WebinarDate", ""}, {"WebinarTime(EasternTime)", ""}, {"CourseDeliveryType", ""}, {"CoursePrice", ""}, {"BankWebID", ""}, {"PaymentMethod", ""}, {"CompanyBillingInformation", ""}, {"ZeroValue", ""}, {"DateSubmittedToACS", orderDate}
                             };
 
                     HtmlNode bodyNode = doc.DocumentNode.SelectSingleNode("//body");
@@ -440,7 +440,7 @@ namespace CUWebinars.Web.Controllers
                                 string name = Regex.Replace(_names[i].InnerText, @"\s", string.Empty, RegexOptions.Multiline)
                                                    .TrimStart().TrimEnd();
                                 //docs the error
-                                if (value.Length == 0){value = name;}
+                                if (value.Length == 0) { value = name; }
 
                                 if (ACSOrderDictionary.ContainsKey(name))
                                 {
@@ -455,7 +455,7 @@ namespace CUWebinars.Web.Controllers
                             }
                             _logger.Info("values =" + values + " : names = " + names);
 
-                        var nvPaired = MapDicToMigratorOrderModel(ACSOrderDictionary);
+                            var nvPaired = BuildMigratorString(ACSOrderDictionary);
 
                         }
                         catch (Exception ex)
@@ -471,37 +471,111 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-        private string MapDicToMigratorOrderModel(Dictionary<string, string> dic)
+        private string BuildMigratorString(Dictionary<string, string> dic)
         {
 
             String AffiliateID = "";
-            String WebinarID =  dic["FirstName"];
-            int idRegType = _webinarManagementService.GetRegTypeByACS(dic["DeliveryType"],Convert.ToInt32(dic["BankWebID"]));
+            String WebinarID = dic["FirstName"];
+            int idRegType = _webinarManagementService.GetRegTypeByACS(dic["DeliveryType"], Convert.ToInt32(dic["BankWebID"]));
             var FirstName = dic["FirstName"];
             var LastName = dic["LastName"];
             var Title = dic["Title"];
-            var Institution = dic["Institution"];
+            var Institution = dic["Company"];
             var Email = dic["Email"];
             var Phone = dic["Phone"];
-            var Address = dic["Address"];
+            var Address = dic["StreetorP.O.Box"];
             var Address2 = "";
             var City = dic["City"];
-            var State = dic["State"];
-            var Zip = dic["Zip"];
+            var State = dic["State/Province/Region"];
+            var Zip = dic["Zip/PostalCode"];
             var DiscountCode = "";
-            //var AdditionalLocations = dic["AdditionalLocations"];
+            var AdditionalLocations = "";
             var shippingFirstName = dic["FirstName"];
             var shippingLastName = dic["LastName"];
             var shippingPhone = dic["Phone"];
-            var shippingAddress = dic["Address"];
+            var shippingAddress = dic["StreetorP.O.Box"];
             var shippingCity = dic["City"];
-            var shippingState = dic["State"];
-            var shippingZip = dic["Zip"];
-            var AffiliateComments = dic[""];
-            var OrderDate = dic[""];
+            var shippingState = dic["State/Province/Region"];
+            var shippingZip = dic["Zip/PostalCode"];
+            var AffiliateComments = "ACSImporter";
+            var OrderDate = dic["DateSubmittedToACS"];
+
+            var PostForm = "";
+
+
+            PostForm = "idAffiliate=" + AffiliateID + "+BillingAddress.AddressType=Billing";
+            PostForm += "&BillingAddress.Name=" + HttpUtility.UrlEncode(FirstName + " " + LastName);
+            PostForm += "&BillingAddress.Phone=" + HttpUtility.UrlEncode(Phone);
+            PostForm += "&BillingAddress.str=" + HttpUtility.UrlEncode(Address);
+            PostForm += "&BillingAddress.str2=" + HttpUtility.UrlEncode(Address2);
+            PostForm += "&BillingAddress.City=" + HttpUtility.UrlEncode(City);
+            PostForm += "&BillingAddress.Zip=" + HttpUtility.UrlEncode(Zip);
+            PostForm += "&BillingAddress.State=" + HttpUtility.UrlEncode(State);
+            PostForm += "&BillingAddress.Country=" + "US";
+            PostForm += "&ShippingAddress.AddressType=Shipping";
+            PostForm += "&ShippingAddress.Name=" + HttpUtility.UrlEncode(shippingFirstName + " " + shippingLastName);
+            PostForm += "&ShippingAddress.Phone=" + HttpUtility.UrlEncode(shippingPhone);
+            PostForm += "&ShippingAddress.str=" + HttpUtility.UrlEncode(shippingAddress);
+            PostForm += "&ShippingAddress.str2=" + "";
+            PostForm += "&ShippingAddress.City=" + HttpUtility.UrlEncode(shippingCity);
+            PostForm += "&ShippingAddress.State=" + HttpUtility.UrlEncode(shippingState);
+            PostForm += "&ShippingAddress.Zip=" + shippingZip;
+            PostForm += "&ShippingAddress.Country=US";
+            PostForm += "&Email=" + HttpUtility.UrlEncode(Email);
+            PostForm += "&Title=" + HttpUtility.UrlEncode(Title);
+            PostForm += "&Institution=" + HttpUtility.UrlEncode(Institution);
+            PostForm += "&FirstName=" + HttpUtility.UrlEncode(FirstName);
+            PostForm += "&LastName=" + HttpUtility.UrlEncode(LastName);
+            PostForm += "&idRegType=" + idRegType;
+            PostForm += "&idWebinar=" + WebinarID;
+            PostForm += "&AdditionalLocationsString=" + HttpUtility.UrlEncode(AdditionalLocations);
+            PostForm += "&idOrderLegacy=0";
+            PostForm += "&OrderDate=" + HttpUtility.UrlEncode(OrderDate);
+            PostForm += "&ShippingDate=";
+            PostForm += "&DiscountCode=" + HttpUtility.UrlEncode(DiscountCode);
+            PostForm += "&Status=";
+            PostForm += "&Total=";
+
+            string submitMigrateForm = string.Empty;
+
+            Uri url = null;
+            var baseUri = new Uri(string.Concat(url.Scheme, @"://", url.Authority), UriKind.Absolute);
+            submitMigrateForm = new Uri(
+                baseUri,
+                "Order/MigrateOrder/"
+                ).ToString();
+
+            HttpWebResponse response;
+            WebRequest request = WebRequest.Create(submitMigrateForm);
+            request.Method = "POST";
+            byte[] byteArray = Encoding.UTF8.GetBytes(PostForm);
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentLength = byteArray.Length;
+
+            StreamWriter sw = new StreamWriter(request.GetRequestStream());
+            sw.Write(PostForm);
             
+            // Execute the query
+            response = (HttpWebResponse)request.GetResponse();
+            StreamReader sr = new StreamReader(response.GetResponseStream());
+            //return sr.ReadToEnd();
+
+            // Close the Stream object.
+            //dataStream.Close();
+            Stream dataStream = request.GetRequestStream();
+            // Display the status.
+            Console.WriteLine(((HttpWebResponse)response).StatusDescription);
+            // Get the stream containing content returned by the server.
+            dataStream = response.GetResponseStream();
+            // Open the stream using a StreamReader for easy access.
+            StreamReader reader = new StreamReader(dataStream);
+            // Read the content.
+            string responseFromServer = reader.ReadToEnd();
+            sw.Close();
+            return responseFromServer;
+
+            // Display the content.
             return null;
-            //var qString = BuildMigratorString();
 
 
         }

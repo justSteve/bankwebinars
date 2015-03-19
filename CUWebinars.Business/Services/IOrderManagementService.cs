@@ -61,6 +61,7 @@ namespace CUWebinars.Business.Services
         WebUser GetWebUser(string email);
         WebUser GetWebUser(int id);
         IEnumerable<WebUser> GetWebusersForLiveNotifications(int idWebinar);
+        string GetWebUserFullname(string email);
         OrderRow LoadOrderRow(int id);
         int SaveChanges();
 

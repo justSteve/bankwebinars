@@ -25,9 +25,12 @@ $(function () {
             //NREUM.noticeError(err);
 
             var data = $(this).serialize();
-            $('#ConfirmRegistrationBillMe').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
 
-            $('#ConfirmRegistrationBillMe').attr('disabled', 'disabled');
+            var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
+
+            confirmRegistrationBillMe.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+
+            confirmRegistrationBillMe.attr('disabled', 'disabled');
 
             $.ajax({
                 type: 'POST',
@@ -37,8 +40,9 @@ $(function () {
                 dataType: RegistrationInCart.Constants.JsonDataType,
                 data: data,
                 beforeSend: function () {
-                    $('#ConfirmRegistrationBillMe').attr('disabled', 'disabled');
-                    //$('#labelEmail').html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Working...</span>');
+
+                    confirmRegistrationBillMe.attr('disabled', 'disabled');
+                    
                 }
             }).done(function (data) {
                 if (data.Result === 'Success') {
@@ -51,22 +55,23 @@ $(function () {
 
                     $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
 
+                    confirmRegistrationBillMe.after('<span>&nbsp;<span class="label label-success">&nbsp;<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;Transferring you now...</span></span>');
                     var utilities = new Common.Utilities();
                     utilities.goToUrl('/webinar/details/' + cartStateManager.getWebinarId());
 
                 } else {
                     console.error('Failed to post order');
-                    $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                    confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
                 }
 
                 $('#finalLoadingSpinner').remove();
-                $('#ConfirmRegistrationBillMe').removeAttr('disabled');
+                confirmRegistrationBillMe.removeAttr('disabled');
                 $('#signUpSpinner').remove();
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 $('#finalLoadingSpinner').remove();
-                $('#ConfirmRegistrationBillMe').removeAttr('disabled');
+                confirmRegistrationBillMe.removeAttr('disabled');
                 $('#signUpSpinner').remove();
-                $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                confirmRegistrationBillMe.after('<span class="field-validation-error">Transport error. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
             });
 
         });

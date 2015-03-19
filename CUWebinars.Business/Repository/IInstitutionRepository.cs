@@ -9,6 +9,7 @@ namespace CUWebinars.Business.Repository
     {
         void Add(Institution institution);
         int FindFirst();
+        Institution GetByDomain(string domain);
         void Remove(Institution institution);
         IEnumerable<Institution> GetAll();
         IEnumerable<Institution> GetAllIncluding(params Expression<Func<Institution, object>>[] includeProperties);
