@@ -1,6 +1,6 @@
 USE TTSWebinars2
 GO
-SELECT (SELECT optionGroupDesc FROM dbo.OptionsGroups WHERE idOptionGroup = o.idoptiongroup),  * FROM dbo.OptionsGroupsXref o WHERE idWebinar IN (SELECT idWebinar FROM dbo.Webinar WHERE status =2) 
+--SELECT (SELECT optionGroupDesc FROM dbo.OptionsGroups WHERE idOptionGroup = o.idoptiongroup),  * FROM dbo.OptionsGroupsXref o WHERE idWebinar IN (SELECT idWebinar FROM dbo.Webinar WHERE status =2) 
 --SELECT TOP 100 * FROM dbo.Orders o INNER JOIN	dbo.OrdersRows r ON r.idOrder = o.idOrder
 ----WHERE o.idOrder NOT IN (78945,78944,78861,78851,78831,78803,78764,78735,78640,78639,78508,78488,78442,78353,78331,78324,78321,78300,78298,78295,78283,78282,78259,78228,78208,78204,78187,78177,78174,78170,77898,77897,77857,77828,77811,77798)
 --AND r.status > 1 AND r.status < 5
