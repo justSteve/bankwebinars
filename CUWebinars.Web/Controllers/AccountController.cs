@@ -1021,7 +1021,7 @@ namespace CUWebinars.Web.Controllers
         public ActionResult AddPasswordForCartCreatedUser(string id)
         {
             // HACK: parameter is named id to match the Default route. It will actually be an email address and not an id.
-            if (ModelState.IsValid)
+            if (string.IsNullOrWhiteSpace(id))
             {
                 var createUserConfirmedViewModel =
                     _accountControllerOrchestrator.PrepareViewForCartUserAddingPassword(id);
@@ -1076,9 +1076,9 @@ namespace CUWebinars.Web.Controllers
                     _accountControllerOrchestrator.UpdateBillingEmailOfOrder(orderId.Value, email);
                 }
 
-                var user = _accountControllerOrchestrator.GetWebUserByEmail(email);
+                var webUserId = _accountControllerOrchestrator.GetWebUserIdByEmail(email);
 
-                if (user != null)
+                if (webUserId.HasValue && webUserId > 0)
                 {
                     //  Email exists and view is notified.
                     resultObject.Add("success", "foundExisting");
@@ -1136,22 +1136,39 @@ namespace CUWebinars.Web.Controllers
                     _logger.Info("Account.Register UserAdded: {0}", model.RegisterFields.Email);
 
                     return Json(new {Result = WebUiConstants.Success, UserId = webUser.idUser, Email = webUser.email});
+                }
+                catch (MembershipCreateUserException membershipCreateUserException)
+                {
+                    ModelState.AddModelError(string.Empty, ErrorCodeToString(membershipCreateUserException.StatusCode));
 
+                    _logger.FatalException("Account.Register Catch block: " + 
+                        membershipCreateUserException.Message + 
+                        "| Session=" + 
+                        _appHelper.GetUserAuditInfo(), 
+                        membershipCreateUserException
+                        );
+                }
+                catch (ValidationException validationException)
+                {
+                    ModelState.AddModelError(string.Empty, validationException.Message);
+
+                    _logger.FatalException("Account.Register Catch block: " + validationException.Message + "| Session=" +
+                                  _appHelper.GetUserAuditInfo(), validationException);
                 }
                 catch (Exception exception)
                 {
                     ModelState.AddModelError(string.Empty, "Please call us at 800-831-0678 ext. 3 to resolve.");
                     Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
-                    _logger.Error("Account.Register Catch block | Session= {0}", _appHelper.GetUserAuditInfo());
-
+                    _logger.FatalException(string.Format("Account.Register Catch block | Session= {0}", _appHelper.GetUserAuditInfo()), exception);
                 }
+
+                // If we got this far, something failed, redisplay form
+                return this.ModelStateJson(ModelState);
             }
 
             _logger.Fatal("Account.Register failed! Session={0}", _appHelper.GetUserAuditInfo());
 
-            // If we got this far, something failed, redisplay form
             return this.ModelStateJson(ModelState);
-
         }
 
         [System.Web.Mvc.HttpPost]
@@ -1213,16 +1230,16 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.AllowAnonymous]
         [ValidateJsonAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
-        public ActionResult CreateUserAccountFromCart(RegisterViewModel model)
+        public ActionResult CreateUserAccountFromCart(string email)
         {
             //  Not adding any ModelState errors in this method. This method is not to return any GUI feedback.
             //  It is effective invoked as a fire and forget, even though it sends an http response (which gets ignored at client.)
 
-            if (ModelState.IsValid)
+            if (!string.IsNullOrWhiteSpace(email))
             {
                 try
                 {
-                    var tempPassword = _accountControllerOrchestrator.CreateUserAccountFromCart(model);
+                    var tempPassword = _accountControllerOrchestrator.CreateUserAccountFromCart(email);
 
                     return Json(new {Result = WebUiConstants.Success, KeyForUser = tempPassword});
                 }
@@ -1392,6 +1409,7 @@ namespace CUWebinars.Web.Controllers
                 if (logger != null)
                     logger.Dispose();
 
+                _accountControllerOrchestrator.Dispose();
                 _membershipService.Dispose();
                 _orderManagementService.Dispose();
 

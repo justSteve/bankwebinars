@@ -507,6 +507,16 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         }
 
+        public void AddFullNameClaim(RegisterViewModel model)
+        {
+            var userAccount = _membershipService.GetUserAccountByEmail(_globals.Tenant, model.RegisterFields.Email);
+            
+            _membershipService.AddClaim(userAccount, 
+                ClaimTypes.FullName,
+                string.Concat(model.RegisterFields.FirstName.Trim(), ' ', model.RegisterFields.LastName.Trim())
+                );
+        }
+
         public bool AddPasswordForCartCreatedUser(CreateUserConfirmedViewModel model)
         {
             UserAccount userAccount;
@@ -545,6 +555,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             //  if still null here, retries have exceeded RetryCount and operation aborted
             if (ReferenceEquals(userAccount, null))
                 return false;
+
+            if (!userAccount.HasClaim(ClaimTypes.FullName))
+            {
+                _membershipService.AddClaim(userAccount, ClaimTypes.FullName, _orderManagementService.GetWebUserFullname(model.Email));
+            }
 
             _membershipService.VerifyUserByEmail(_globals.Tenant, model.Email);
 
@@ -739,7 +754,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             return _membershipService.ChangePasswordFromResetKey(key, password);
         }
 
-        public string CreateUserAccountFromCart(RegisterViewModel model)
+        public string CreateUserAccountFromCart(string email)
         {
             // This boolean is a toggle which lives in the AppSettings of the config file.
             if (_globals.UseAzureWebjobs)
@@ -750,10 +765,6 @@ namespace CUWebinars.Web.Core.Orchestrators
                 CloudQueueClient _queueClient = cloudStorageAccount.CreateCloudQueueClient();
 
                 CloudQueue cloudQueue = _queueClient.GetQueueReference(_globals.CreateUserQueueName);
-
-                var email = model.RegisterFields.Email.Trim();
-                var firstName = model.RegisterFields.FirstName.Trim();
-                var lastName = model.RegisterFields.LastName.Trim();
 
                 //first check if email exists
                 var userExists = _membershipService.GetUserAccountByEmail(_globals.Tenant, email);
@@ -768,14 +779,11 @@ namespace CUWebinars.Web.Core.Orchestrators
                 var registerFieldsDto = new RegisterFieldsDTO
                 {
                     Email = email,
-                    FirstName = firstName,
-                    LastName = lastName,
                     Password = password
                 };
 
 #if DEBUG
-                _logger.Info("Password {0} created for user {1}", model.RegisterFields.Password,
-                    model.RegisterFields.Email);
+                _logger.Info("Password {0} created for user {1}", password,email);
 #endif
 
                 var payload = JsonConvert.SerializeObject(registerFieldsDto);
@@ -787,22 +795,14 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
             else
             {
-                var email = model.RegisterFields.Email.Trim();
-                var firstName = model.RegisterFields.FirstName.Trim();
-                var lastName = model.RegisterFields.LastName.Trim();
-
                 var password = PasswordGenerator.GenerateRandomString(8);
 
                 // Take note of the fact that this registration occurred as part of the Checkout process.
                 // This will result in the RegisterUser email being suppressed.
                 _stateService.SetValue(DomainConstants.UserCreatedDuringCartCheckout, true);
 
-                var userAccount = _membershipService.CreateUser(
+                var userAccount = _membershipService.CreateUserFromCart(
                     _globals.Tenant,
-                    firstName,
-                    lastName,
-                    string.Empty,
-                    //  Pass empty string for username because MembershipReboot assigns the email to the username field where emailIsUsername is true
                     password, // use lastName as password
                     email);
 
@@ -920,6 +920,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             return _membershipService.GetUserByEmail(email);
         }
 
+        public int? GetWebUserIdByEmail(string email)
+        {
+            return _membershipService.GetWebUserIdByEmail(email);
+        }
+
         public WebUser GetWebUserById(int id)
         {
             return _membershipService.GetWebUserById(id);
@@ -1019,6 +1024,12 @@ namespace CUWebinars.Web.Core.Orchestrators
 
              //if still null at this point, we have exceeded the retry limit and assume that something has gone wrong.
             if (ReferenceEquals(userAccount, null)) throw new Exception("User does not exist in system");
+
+            if (!userAccount.HasClaim(ClaimTypes.FullName))
+            {
+                var webUser = _orderManagementService.GetWebUser(email);
+                _membershipService.AddClaim(userAccount, ClaimTypes.FullName, string.Concat(webUser.FirstName, ' ', webUser.LastName));
+            }
 
             bool hasAlreadyVerifiedAccount = !userAccount.HasClaim(ClaimTypes.HasNotVerified);
 

@@ -685,3 +685,4 @@ CUWebinars Error: 0 : Validation failed for webinar 1711 and User 43601
 CUWebinars Error: 0 : Validation failed for webinar 1711 and User 43728
 CUWebinars Error: 0 : Validation failed for webinar 1712 and User 34528
 CUWebinars Error: 0 : Validation failed for webinar 1712 and User 34529
+CUWebinars Error: 0 : ERROR MailerSmtpException: l@b.com Subject: [BankWebinars] Confirmation of Registration: Legal Liabilities when Check Fraud Occurs ErrorMsg: Failure sending mail. Timestamp was: 19/03/2015 10:19:17 AM ExceptionType was: SmtpException InnerExceptionType was: System.Net.WebException

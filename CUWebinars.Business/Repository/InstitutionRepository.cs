@@ -17,6 +17,11 @@ namespace CUWebinars.Business.Repository
             return items.First().idInstitution;
         }
 
+        public Institution GetByDomain(string domain)
+        {
+            return items.FirstOrDefault(i => i.domainName.ToLower().Contains(domain.ToLower()));
+        }
+
         public IEnumerable<Institution> GetByNameAndZipCode(string name, string zip)
         {
             return items.Where(i => i.InstitutionName == name && i.Zip == zip);

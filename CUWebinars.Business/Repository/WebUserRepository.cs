@@ -68,6 +68,16 @@ namespace CUWebinars.Business.Repository
                 .Where(w => w.email == email).SingleOrDefault();
         }
 
+        public int? GetWebUserIdByEmail(string email)
+        {
+            return items.Where(w => w.email == email).Select(w => w.idUser).SingleOrDefault();
+        }
+
+        public string GetWebUserFullname(string email)
+        {
+            return items.Where(w => w.email == email).Select(w => w.FirstName + " " + w.LastName).SingleOrDefault();
+        }
+
         public IEnumerable<WebUser> GetWebUsersByLastNameForAffiliate(string lastName, int idAffiliate)
         {
             return ((TTSWebinarsContext)db).Orders.Include(o => o.WebUser)

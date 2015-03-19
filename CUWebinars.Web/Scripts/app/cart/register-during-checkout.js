@@ -273,9 +273,10 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
                 } else if (data.success === 'foundInstitution') {
                     regUserStateManager.foundInstitutionView(data, email);
-
+                    createUserAccount(email);
                 } else if (data.email === 'wasNotFound') {
                     regUserStateManager.goToAddressFields(email);
+                    createUserAccount(email);
                 } else if (data.error === 'Fail') {
 
                     Rollbar.info("goToAddressFields 319");
@@ -368,8 +369,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
     });
 
-    //  This handler was colliding with one by the same name in create-user.
-    //  It is now invoked from the register-user-in-cart.js script.
+    
     $('#_CreateUserFromCartForm').on('submit', function (event) {
         event.preventDefault();
 
@@ -385,7 +385,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
         if (!nameShipping.val()) nameShipping.val($('#FullName').val());
 
         if ($('#RegisterFields_ShippingAddress_City').val() === null || $('#RegisterFields_ShippingAddress_City').val() === '') $('#RegisterFields_ShippingAddress_City').val($('#RegisterFields_BillingAddress_City').val());
-        if ($('#RegisterFields_ShippingAddress_Phone').val() === null || $('#RegisterFields_ShippingAddress_StreetAddress').val() === '') $('#RegisterFields_ShippingAddress_Phone').val($('#RegisterFields_BillingAddress_Phone').val());
+        if ($('#RegisterFields_ShippingAddress_Phone').val() === null || $('#RegisterFields_ShippingAddress_Phone').val() === '') $('#RegisterFields_ShippingAddress_Phone').val($('#RegisterFields_BillingAddress_Phone').val());
         if ($('#RegisterFields_ShippingAddress_StreetAddress').val() === null || $('#RegisterFields_ShippingAddress_StreetAddress').val() === '') $('#RegisterFields_ShippingAddress_StreetAddress').val($('#RegisterFields_BillingAddress_StreetAddress').val());
         if ($('#RegisterFields_ShippingAddress_StreetAddress2').val() === null || $('#RegisterFields_ShippingAddress_StreetAddress2').val() === '') $('#RegisterFields_ShippingAddress_StreetAddress2').val($('#RegisterFields_BillingAddress_StreetAddress2').val());
         if ($('#RegisterFields_ShippingAddress_State').val() === null || $('#RegisterFields_ShippingAddress_State').val() === '') $('#RegisterFields_ShippingAddress_State').val($('#RegisterFields_BillingAddress_State').val());
@@ -534,28 +534,6 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
             //console.log('failed: ' + data);
         }).always(function () {
             regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
-        });
-
-        //  MembershipReboot create user post. Needs its own headers/__RequestVerificationToken
-        var createUserAccountForm = $('#_CreateUserAccountForm');
-        var tokenMr = createUserAccountForm.find('input[name=__RequestVerificationToken]').val();
-        var headersMr = {};
-        headersMr['__RequestVerificationToken'] = tokenMr;
-        var urlMr = createUserAccountForm.attr('action');
-
-        $.ajax({
-            type: 'POST',
-            contentType: constants.JsonContentType,
-            cache: false,
-            url: urlMr,
-            dataType: constants.JsonDataType,
-            data: JSON.stringify(payload),
-            headers: headersMr,
-            beforeSend: function () {
-
-            }
-        }).done(function () {
-            // do nothing. This is a fire and forget operation.
         });
     });
 
@@ -778,8 +756,11 @@ function completeOrder(userId, orderRowId, webinarId, orderId) {
         self.find('input[name="id"]').val(orderRowId);
 
         var data = $(this).serialize();
-        $('#ConfirmRegistrationBillMe').prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-        $('#ConfirmRegistrationBillMe').attr('disabled', 'disabled');
+
+        var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
+
+        confirmRegistrationBillMe.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+        confirmRegistrationBillMe.attr('disabled', 'disabled');
 
         $.ajax({
             type: 'POST',
@@ -789,7 +770,7 @@ function completeOrder(userId, orderRowId, webinarId, orderId) {
             dataType: RegistrationInCart.Constants.JsonDataType,
             data: data,
             beforeSend: function () {
-                $('#ConfirmRegistrationBillMe').attr('disabled', 'disabled');
+                confirmRegistrationBillMe.attr('disabled', 'disabled');
 
             }
         }).done(function (result) {
@@ -800,7 +781,7 @@ function completeOrder(userId, orderRowId, webinarId, orderId) {
                 $('#orderDetails').append(result.Msg);
 
                 $('#orderStatusLabel').text('Submitted').removeClass('label-warning').addClass('label-success');
-                $('#ConfirmRegistrationBillMe').after('<span>&nbsp;<span class="label label-success">&nbsp;<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;Transferring you now...</span></span>');
+                confirmRegistrationBillMe.after('<span>&nbsp;<span class="label label-success">&nbsp;<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;Transferring you now...</span></span>');
 
                 var utilities = new Common.Utilities();
                 utilities.goToUrl('/Account/OrderComplete/?email=' + registerDuringCheckout.emailOfNewUser + '&idOrder=' + orderId);
@@ -808,11 +789,11 @@ function completeOrder(userId, orderRowId, webinarId, orderId) {
             } else {
 
                 Rollbar.error("Error #935 static marker");
-                $('#ConfirmRegistrationBillMe').after('<span class="text-error">Error #935. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
+                confirmRegistrationBillMe.after('<span class="text-error">Error #935. Try again or call 800-831-0678 ext 706 for immediate assistance! </span>');
             }
 
             $('#finalLoadingSpinner').remove();
-            $('#ConfirmRegistrationBillMe').removeAttr('disabled');
+            confirmRegistrationBillMe.removeAttr('disabled');
         });
     });
     confirmOrderForm.submit();
@@ -1169,4 +1150,29 @@ function showModalForShippingAddressDetails() {
     });
 
     modalShippingDetails.modal(modalFormOptionsOnPageLoad);
+}
+
+function createUserAccount(email) {
+
+    //  MembershipReboot create user post. Needs its own headers/__RequestVerificationToken
+    var createUserAccountForm = $('#_CreateUserAccountForm');
+    var tokenMr = createUserAccountForm.find('input[name=__RequestVerificationToken]').val();
+    var headersMr = {};
+    headersMr['__RequestVerificationToken'] = tokenMr;
+    var urlMr = createUserAccountForm.attr('action');
+
+    $.ajax({
+        type: 'POST',
+        contentType: constants.JsonContentType,
+        cache: false,
+        url: urlMr,
+        dataType: constants.JsonDataType,
+        data: JSON.stringify({ email: email }),
+        headers: headersMr,
+        beforeSend: function () {
+
+        }
+    }).done(function (data) {
+        // do nothing. This is a fire and forget operation.
+    });
 }

@@ -75,6 +75,11 @@ namespace CUWebinars.Business.AccountService
             return _webUserRepository.FindByIdLoaded(userId);
         }
 
+        public int? GetWebUserIdByEmail(string email)
+        {
+            return _webUserRepository.GetWebUserIdByEmail(email);
+        }
+
         public IEnumerable<WebUser> GetWebUsersByLastNameForAffiliate(string lastName, int idAffiliate)
         {
             return _webUserRepository.GetWebUsersByLastNameForAffiliate(lastName, idAffiliate);
@@ -96,8 +101,8 @@ namespace CUWebinars.Business.AccountService
         public Institution GetInstitutionByDomain(string domain)
         {
             if (domain == null) throw new ArgumentNullException("domain");
-            var institution = _institutionRepository.GetAll().FirstOrDefault(i => i.domainName == domain);
-            return institution;
+            return _institutionRepository.GetByDomain(domain);
+            
         }
 
         public bool HasPassword(string tenant, string emailAddress)
@@ -145,6 +150,18 @@ namespace CUWebinars.Business.AccountService
             // let MembershipReboot throw exception if other params are null
             var account = _userAccountService.CreateAccount(tenant, userName, password, email);
             _userAccountService.AddClaim(account.ID, ClaimTypes.FullName, string.Format("{0} {1}", firstName, lastName));
+            _userAccountService.AddClaim(account.ID, System.Security.Claims.ClaimTypes.Role, "WebUser");
+            
+            return account;
+        }
+
+        public UserAccount CreateUserFromCart(
+            string tenant,
+            string password,
+            string email
+            )
+        {
+            var account = _userAccountService.CreateAccount(tenant, string.Empty, password, email);
             _userAccountService.AddClaim(account.ID, System.Security.Claims.ClaimTypes.Role, "WebUser");
             
             return account;

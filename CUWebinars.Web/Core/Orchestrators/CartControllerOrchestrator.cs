@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.AccountService;
+﻿using System.Diagnostics;
+using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
@@ -463,6 +464,8 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             _stateService.SetValue(DomainConstants.CheckoutInProcess, true);
 
+            Stopwatch sw1 = Stopwatch.StartNew();
+
             var webinar = _webinarManagementService.GetWebinar(formModel.idWebinar);
             var newOrderRow = CreateOrderRow(webinar,
                 formModel.AdditionalLocations == null ? null : formModel.AdditionalLocations.ToList(),
@@ -474,6 +477,9 @@ namespace CUWebinars.Web.Core.Orchestrators
             // At this point, user may not be registered. So, when creating the Order, if user 
             // does not exist, a dummy user with an email of notauthenticated@cuwebinars.com will be created.
             var webUser = _orderManagementService.GetWebUser(formModel.idUser);
+
+            sw1.Stop();
+            Trace.WriteLine(string.Format("{0} took {1}s to run", "In CreateOrder", sw1.Elapsed.Seconds));
 
             return CreateNewOrder(currentAffiliate, webUser, webinar, newOrderRow);
         }
@@ -490,6 +496,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         private Order CreateNewOrder(Affiliate affiliate, WebUser webUser, Webinar webinar, OrderRow orderRow)
         {
+            Stopwatch sw2 = Stopwatch.StartNew();
+
             if (ReferenceEquals(null, webUser))
                 webUser = _membershipService.CreateWebUser(
                     _globals.Tenant,
@@ -512,6 +520,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             newOrder = _orderManagementService.SaveOrderChanges(newOrder, string.Empty, string.Empty);
 
+            Trace.WriteLine(string.Format("{0} took {1}s to run", "CreateOrderNewOrder", sw2.Elapsed.Seconds));
             return newOrder;
         }
 

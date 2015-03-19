@@ -1,4 +1,5 @@
 ﻿using System.Configuration;
+using System.Diagnostics;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
@@ -267,10 +268,14 @@ namespace CUWebinars.Web.Controllers
                 //telemetry.TrackEvent("Signup2Start");
                 try
                 {
+                    Stopwatch sw = new Stopwatch();
+                    sw.Start();
                     var order = _cartControllerOrchestrator.CreateOrder(
                         formModel
                         );
-
+                    sw.Stop();
+                    Trace.WriteLine(string.Format("{0} took {1}s to run", "CreateOrder", sw.Elapsed.Seconds));
+                    
                     return Json(new
                     {
                         success = "success",
