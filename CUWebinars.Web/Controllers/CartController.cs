@@ -114,16 +114,24 @@ namespace CUWebinars.Web.Controllers
 
 
         [System.Web.Mvc.HttpPost]
+        [ValidateAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
         public ActionResult ConfirmOrder(string referred, int? id = null)
         {
-            if (ModelState.IsValid)
+            if (id.HasValue)
             {
                 try
                 {
+                    Stopwatch sw = Stopwatch.StartNew();
+
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
                     var orderID = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
                     model.Order.OrderStatus = OrderStatus.Submitted;
 
+                    sw.Stop();
+                    Trace.TraceInformation(string.Format("{0} took {1}s to run.", "ConfirmOrder-a", sw.Elapsed.Seconds));
+                    sw.Reset();
+                    sw.Start();
 
                     if (User.Identity.IsAuthenticated)
                     {
@@ -134,8 +142,15 @@ namespace CUWebinars.Web.Controllers
                         _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: true);
                     }
 
+                    sw.Stop();
+                    Trace.TraceInformation(string.Format("{0} took {1}s to run.", "ConfirmOrder-b", sw.Elapsed.Seconds));
+                    sw.Reset();
+                    sw.Start();
+
                     _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
 
+                    sw.Stop();
+                    Trace.TraceInformation(string.Format("{0} took {1}s to run.", "ConfirmOrder-c", sw.Elapsed.Seconds));
 
                     return Json(new
                     {
@@ -274,7 +289,7 @@ namespace CUWebinars.Web.Controllers
                         formModel
                         );
                     sw.Stop();
-                    Trace.WriteLine(string.Format("{0} took {1}s to run", "CreateOrder", sw.Elapsed.Seconds));
+                    Trace.TraceInformation(string.Format("{0} took {1}s to run", "CreateOrder", sw.Elapsed.Seconds));
                     
                     return Json(new
                     {

@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Constants;
+﻿using System.Diagnostics;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Notification.Formatters;
@@ -46,7 +47,14 @@ namespace CUWebinars.Business.Notification.Handlers
                     orderSubmittedEvent.EventObject.AddPasswordUrl = orderSubmittedEvent.RelativePath;
                 }
 
+                var sw = Stopwatch.StartNew();
+
                 var notificationMessage = _generalFormatter.Format(orderSubmittedEvent.EventObject, "OrderSubmitted");
+
+                sw.Stop();
+                Trace.TraceInformation(string.Format("{0} took {1}s to run.", "Razor Parse Operation", sw.Elapsed.Seconds));
+                sw.Reset();
+                sw.Start();
 
                 var persistedNamePrefix = orderSubmittedEvent.ResendEvent
                     ? "OrderSubmitted-ReSend_" + orderSubmittedEvent.EventObject.Order.idOrder
@@ -83,6 +91,10 @@ namespace CUWebinars.Business.Notification.Handlers
                 _logger.Info("Sending Notifn for Order {0}", orderSubmittedEvent.EventObject.Order.idOrder);
                 
                 _notificationDelivery.Notify(notificationMessage);
+
+                sw.Stop();
+                Trace.TraceInformation(string.Format("{0} took {1}s to run.", "Event Notification", sw.Elapsed.Seconds));
+
             }
             catch (NullReferenceException nullReferenceException)
             {

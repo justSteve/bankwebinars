@@ -88,5 +88,6 @@ namespace CUWebinars.Business.Services
         Discount GetDiscountById(int discount);
         IList<Order> GetOrdersForWebinar(int idWebinar);
         void SendOrderToLegacy(Order newOrder);
+        WebUser GetWebUserWithAddressAndInstitution(int idUser);
     }
 }

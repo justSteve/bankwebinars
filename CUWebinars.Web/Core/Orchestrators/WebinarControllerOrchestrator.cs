@@ -30,6 +30,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         private readonly IStateService _stateService;
         private readonly IAppHelper _appHelper;
         private readonly IUniversalMapper _universalMapper;
+        private bool _disposed;
 
         public WebinarControllerOrchestrator(
             IMembershipService membershipService,
@@ -421,6 +422,30 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
 
             _webinarManagementService.UpdateWebinar(webinar);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
+            {
+                var logger = _logger as IDisposable;
+                if (logger != null)
+                    logger.Dispose();
+
+                _membershipService.Dispose();
+                _orderManagementService.Dispose();
+                _webinarManagementService.Dispose();
+
+                _disposed = true;
+            }
         }
     }
 }

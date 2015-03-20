@@ -22,5 +22,6 @@ namespace CUWebinars.Business.Repository
         void Update(WebUser webUser);
 
         DbContext DbContext { get; }
+        WebUser GetWebUserByIdLoadedWithAddressesAndInstitution(int idUser);
     }
 }

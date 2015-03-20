@@ -1224,6 +1224,7 @@ namespace CUWebinars.Web.Controllers
 
                 _membershipService.Dispose();
                 _orderManagementService.Dispose();
+                _webinarControllerOrchestrator.Dispose();
                 _webinarManagementService.Dispose();
 
                 base.Dispose(true);

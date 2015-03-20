@@ -1138,8 +1138,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 if (logger != null)
                     logger.Dispose();
 
-                _orderManagementService.Dispose();
                 _membershipService.Dispose();
+                _orderManagementService.Dispose();
 
                 _disposed = true;
             }

@@ -38,15 +38,13 @@ namespace CUWebinars.Business.Repository
 
             newOrder = AssignWebUserToOrder(webUser, newOrder);
 
-            newOrder.OrderRows = new List<OrderRow>();
-            newOrder.OrderRows.Add(orderRow);
+            newOrder.OrderRows = new List<OrderRow> {orderRow};
 
             if (webUser.idSubscriptionDiscount != null && webUser.idSubscriptionDiscount > 0)
             {
                 orderRow.Discount = GetUserDiscount(webUser.idUser);
             }
-
-            //_orderValidator.ValidateAndThrow(newOrder);
+            
             var validationResult = _orderValidator.Validate(newOrder);
 
             if (validationResult.IsValid)

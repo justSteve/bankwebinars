@@ -205,6 +205,7 @@
     <Compile Include="Notification\Handlers\SendRecordingPostedHandler.cs" />
     <Compile Include="Notification\Handlers\SendReminderHandler.cs" />
     <Compile Include="Notification\Handlers\SendShippedOrderHandler.cs" />
+    <Compile Include="Notification\IConfirmOrderMessage.cs" />
     <Compile Include="Notification\INotificationPersister.cs" />
     <Compile Include="Notification\Renderers\IRenderer.cs" />
     <Compile Include="Notification\Renderers\Renderer.cs" />
@@ -319,7 +320,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Notification\Templates\OrderSubmitted.cshtml" />
+    <EmbeddedResource Include="Notification\Templates\OrderSubmitted.cshtml" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

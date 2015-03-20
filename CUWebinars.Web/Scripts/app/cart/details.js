@@ -537,6 +537,10 @@ var applyAdditionalLocations = function(e) {
     }).done(function(data) {
         if (data.Result === 'Success') {
             var infoLabel = $('#addLocsText');
+
+            var priceLabel = $('#totalAdLocsPrice');
+            priceLabel.text('$' + (numberOfAdditionalLocationsTab3 * ADDLOC.price));
+
             var newText = numberOfAdditionalLocationsTab3 + $.trim(infoLabel.html()).slice(1);
 
             infoLabel.fadeOut(200, function() {

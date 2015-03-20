@@ -83,13 +83,13 @@ namespace CUWebinars.Web
 //            switch ("Dave")
             {
                 case "BankWebinars":
-                    log4net.Config.XmlConfigurator.ConfigureAndWatch(new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs, "BWLog4net.xml")));
+                    log4net.Config.XmlConfigurator.Configure(new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs, "BWLog4net.xml")));
                     break;
                 case "CUWebinars":
-                    log4net.Config.XmlConfigurator.ConfigureAndWatch(new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs, "CUWLog4net.xml")));
+                    log4net.Config.XmlConfigurator.Configure(new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs, "CUWLog4net.xml")));
                     break;
                 case "Dave":
-                    log4net.Config.XmlConfigurator.ConfigureAndWatch(new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs, "DARLog4net.xml")));
+                    log4net.Config.XmlConfigurator.Configure(new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs, "DARLog4net.xml")));
                     break;
                 default:
                     throw new NotSupportedException(string.Format("There is no log4net configuration for {0}", GlobalConfig.GlobalConfigSingleton.Tenant));

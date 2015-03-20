@@ -549,7 +549,7 @@ namespace CUWebinars.Business.Services
                 Order = order,
                 OrderGenesis = userCreatedInCart ? OrderGenesis.CreatedViaCartByNewUser : OrderGenesis.CreatedViaCartByExistingUser,
                 UserCreatedInCart = userCreatedInCart,
-                UserCreatedOnImport = false
+                UserCreatedOnImport = false 
             };
 
             if (!ReferenceEquals(null, url))
@@ -560,6 +560,8 @@ namespace CUWebinars.Business.Services
                     string.Concat(@"Account/AddPasswordForCartCreatedUser/", order.WebUser.email)
                     ).ToString();
             }
+
+            var sw = Stopwatch.StartNew();
 
             AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
             {
@@ -585,6 +587,10 @@ namespace CUWebinars.Business.Services
                     FireOrderSubmittedAdditionalLocationEvent(order, addLoc.Email, resending);
                 }
             }
+
+            sw.Stop();
+            Trace.TraceInformation(string.Format("{0} took {1}s to run.", "Raising Event", sw.Elapsed.Seconds));
+
         }
 
         public void FireAdminEmailSendShippedOrderEvent(Order order, IEnumerable<string> recipients, bool resending = false)
@@ -1222,6 +1228,11 @@ namespace CUWebinars.Business.Services
         public void SendOrderToLegacy(Order newOrder)
         {
             _orderRepository.SendOrderToLegacy(newOrder);
+        }
+
+        public WebUser GetWebUserWithAddressAndInstitution(int idUser)
+        {
+            return _webUserRepository.GetWebUserByIdLoadedWithAddressesAndInstitution(idUser);
         }
 
         public string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int webinarId,

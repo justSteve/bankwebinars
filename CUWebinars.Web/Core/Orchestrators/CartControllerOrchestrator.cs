@@ -368,7 +368,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     var orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
                     var order = orderRow.Order;
-                    var additionalLocations = orderRow.AdditionalLocation.ToList();
+                    //var additionalLocations = orderRow.AdditionalLocation.ToList();
                     var webUser = order.WebUser;
                     var webinar = orderRow.Webinar;
 
@@ -476,10 +476,10 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             // At this point, user may not be registered. So, when creating the Order, if user 
             // does not exist, a dummy user with an email of notauthenticated@cuwebinars.com will be created.
-            var webUser = _orderManagementService.GetWebUser(formModel.idUser);
+            var webUser = _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.idUser);
 
             sw1.Stop();
-            Trace.WriteLine(string.Format("{0} took {1}s to run", "In CreateOrder", sw1.Elapsed.Seconds));
+            Trace.TraceInformation(string.Format("{0} took {1}s to run", "In CreateOrder", sw1.Elapsed.Seconds));
 
             return CreateNewOrder(currentAffiliate, webUser, webinar, newOrderRow);
         }
@@ -520,7 +520,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             newOrder = _orderManagementService.SaveOrderChanges(newOrder, string.Empty, string.Empty);
 
-            Trace.WriteLine(string.Format("{0} took {1}s to run", "CreateOrderNewOrder", sw2.Elapsed.Seconds));
+            sw2.Stop(); 
+            Trace.TraceInformation(string.Format("{0} took {1}s to run", "CreateOrderNewOrder", sw2.Elapsed.Seconds));
             return newOrder;
         }
 
@@ -553,13 +554,18 @@ namespace CUWebinars.Web.Core.Orchestrators
                 idOrder = order.idOrder,
                 SessionStartInfo = _appHelper.GetSessionStartInfo()
             };
-            
+            Stopwatch jsonWatch = Stopwatch.StartNew();
+
             order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
+
+            jsonWatch.Stop();
+            Trace.TraceInformation(string.Format("{0} took {1}s to run.", "JSON Serialization", jsonWatch.Elapsed.Seconds));
 
             if (userCreatedInCart.HasValue)
                 _orderManagementService.FireOrderSubmittedEvent(order, userCreatedInCart.Value, url: Request.Url);
             else
                 _orderManagementService.FireOrderSubmittedEvent(order);
+
         }
 
         public void UpdateOrderWithUserId(int orderId, int userId)
