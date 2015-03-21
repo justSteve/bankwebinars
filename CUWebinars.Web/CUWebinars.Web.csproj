@@ -273,14 +273,14 @@
     </Reference>
     <Reference Include="RSSBus.Gmail.System, Version=2.0.0.40, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\RSSBus.Gmail.System.dll</HintPath>
+      <HintPath>..\ThirdPartyLibraries\RSSBus.Gmail.System.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.RSSBus.Gmail, Version=4.0.0.40, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\System.Data.RSSBus.Gmail.dll</HintPath>
+      <HintPath>..\ThirdPartyLibraries\System.Data.RSSBus.Gmail.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.Services.Client" />
     <Reference Include="System.Drawing" />
