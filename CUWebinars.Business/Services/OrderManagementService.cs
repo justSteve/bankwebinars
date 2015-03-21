@@ -3,6 +3,7 @@ using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Cache;
 using CUWebinars.Business.Core.Exceptions;
 using CUWebinars.Business.Models;
+using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Notification.ViewModel;
 using CUWebinars.Business.Repository;
@@ -542,11 +543,12 @@ namespace CUWebinars.Business.Services
 
             _logger.Info("Adding Event for Order {0}", order.idOrder);
 
-            var orderSubmittedViewModel = new OrderSubmittedViewModel
+            var orderSubmittedViewModel = new ConfirmOrderMessage
             {
                 AddPasswordUrl = string.Empty,
                 ConfirmChangeEmailUrl = string.Empty,
-                Order = order,
+                Details = order.NotificationStorage,
+                idOrder = order.idOrder,
                 OrderGenesis = userCreatedInCart ? OrderGenesis.CreatedViaCartByNewUser : OrderGenesis.CreatedViaCartByExistingUser,
                 UserCreatedInCart = userCreatedInCart,
                 UserCreatedOnImport = false 
@@ -563,15 +565,15 @@ namespace CUWebinars.Business.Services
 
             var sw = Stopwatch.StartNew();
 
-            AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
+            AddEvent(new OrderSubmittedEvent<ConfirmOrderMessage>
             {
-                Details = order.NotificationStorage,
+                //Details = order.NotificationStorage, <------ now in the ConfirmOrderMessage itself.
                 EventObject = orderSubmittedViewModel,
                 RelativePath = addPasswordUrl,
                 ResendEvent = resending
             });
 
-            foreach (var evt in GetEvents().OfType<OrderSubmittedEvent<OrderSubmittedViewModel>>())
+            foreach (var evt in GetEvents().OfType<OrderSubmittedEvent<ConfirmOrderMessage>>())
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }
@@ -1097,14 +1099,14 @@ namespace CUWebinars.Business.Services
                 _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
 
 
-                var orderSubmittedViewModel = new OrderSubmittedViewModel
+                var orderSubmittedViewModel = new ConfirmOrderMessage
                 {
                     ConfirmChangeEmailUrl =
                         linkToVerifyAccount
                             ? string.Concat(confirmChangeEmailLink.Replace(DomainConstants.Blank, string.Empty),
                                 currentOrder.WebUser.LastName.ToLower())
                             : string.Empty,
-                    Order = updatedOrder,
+                    idOrder = updatedOrder.idOrder,
                     OrderGenesis = orderGenesis,
                     UserCreatedOnImport = linkToVerifyAccount
                 };
@@ -1116,7 +1118,7 @@ namespace CUWebinars.Business.Services
                 if (!currentOrder.Origin.Equals("Migrator", StringComparison.OrdinalIgnoreCase) &&
                     !currentOrder.Origin.Equals(DomainConstants.Cart, StringComparison.OrdinalIgnoreCase))
                 {
-                    AddEvent(new OrderSubmittedEvent<OrderSubmittedViewModel>
+                    AddEvent(new OrderSubmittedEvent<ConfirmOrderMessage>
                     {
                         EventObject = orderSubmittedViewModel,
                         RelativePath = string.Empty
