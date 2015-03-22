@@ -20,6 +20,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         private readonly ICommandProcessor _commandProcessor;
         private readonly IStateService _stateService;
         private readonly ILogger _logger;
+        private bool _disposed;
 
         public OrderControllerOrchestrator(IQueryProcessor queryProcessor, ICommandProcessor commandProcessor, IStateService stateService, ILogger logger)
         {
@@ -382,5 +383,24 @@ namespace CUWebinars.Web.Core.Orchestrators
             return registerNewAccountCommand.WebUser; //  assign out parameter for later use
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
+            {
+                var logger = _logger as IDisposable;
+                if (logger != null)
+                    logger.Dispose();
+
+                _disposed = true;
+            }
+        }
     }
 }

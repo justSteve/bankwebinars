@@ -184,7 +184,7 @@ namespace CUWebinars.Business.Services
 
             Debug.Assert(additionalLocationsPricing.Count == 1, "There should only ever be 1 value returned for the cost of an Additionalocation for a particular Webinar");
             // Item2 of the tuple is the price value as a decimal. Item 1 is the AdditionalLocationsLookupPrice id 
-            optionsCost = additionalLocationsPricing.Single().Item2;
+            optionsCost = additionalLocationsPricing.Single().Price;
 
             return new Tuple<string, decimal>(addresses.ToString(), optionsCost);
         }
@@ -788,7 +788,7 @@ namespace CUWebinars.Business.Services
                     currentOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar
                     );
 
-                pricesAndDiscounts = CalculateOrderCost(currentOrder, additionalLocationsPricing.Single().Item2);
+                pricesAndDiscounts = CalculateOrderCost(currentOrder, additionalLocationsPricing.Single().Price);
 
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, (int)currentOrder.OrderStatus);
 
@@ -857,7 +857,7 @@ namespace CUWebinars.Business.Services
                 var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
                 var additionalLocationsPricing = dataOperations.GetAdditionalLocationsPricing(orderRow.idWebinar);
 
-                var totalOptionsDeletedCost = additionalLocationsPricing.First().Item2 * orderRow.AdditionalLocation.Count;
+                var totalOptionsDeletedCost = additionalLocationsPricing.First().Price * orderRow.AdditionalLocation.Count;
                 SetTotalPrice(totalOptionsDeletedCost, orderRow);
             }
             catch (Exception exception)
@@ -889,17 +889,15 @@ namespace CUWebinars.Business.Services
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
             var addLocPrice = dataOperations.GetAdditionalLocationsPricing(idWebinar);
-            var tuple = addLocPrice.SingleOrDefault();
+            var additionalLocationsPricing = addLocPrice.SingleOrDefault();
 
-            if (tuple != null)
+            if (additionalLocationsPricing.LookupPriceId > 0) // struct equivalent of checking for null.
             {
-                return tuple.Item2;
+                return additionalLocationsPricing.Price;
             }
-            else
-            {
-                _logger.Warn("AdditionalLocation price not set for: {0}", idWebinar);
-                return 0;
-            }
+            
+            _logger.Warn("AdditionalLocation price not set for: {0}", idWebinar);
+            return 0;
         }
 
         public void UpdateOrderByAdmin(Order order)
@@ -1079,7 +1077,7 @@ namespace CUWebinars.Business.Services
 
             // If no data is stored for AdditionalLocations pricing in db, price will be $0. Up to us to ensure pricing is available.
             if (!ReferenceEquals(null, tuple))
-                optionsPrice = tuple.Item2;
+                optionsPrice = tuple.Price;
 
             ProcessDiscountCodes(currentOrder);
             CalculateOrderCost(currentOrder, optionsPrice);

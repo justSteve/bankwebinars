@@ -96,7 +96,7 @@ namespace CUWebinars.Web.Controllers
 
                 if (!ReferenceEquals(addPrice, null))
                 {
-                    priceOfAdditionalLocation = addPrice.Item2; // Item2 of the Tuple is the price
+                    priceOfAdditionalLocation = addPrice.Price; // Item2 of the Tuple is the price
                 }
 
             var addAdditionalLocationViewModel = new AdditionalLocationOfferViewModel

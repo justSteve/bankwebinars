@@ -51,7 +51,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
                 if (!ReferenceEquals(priceOfAdditionalLocationListItem, null))
                 {
-                    priceOfAdditionalLocation = priceOfAdditionalLocationListItem.Item2; // Item2 of the Tuple is the price
+                    priceOfAdditionalLocation = priceOfAdditionalLocationListItem.Price; 
                 }
 
                 foreach (var additionalLocationEmail in command.AdditionalLocations.Select(additionalLocation => additionalLocation.Email))
@@ -207,7 +207,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             _postCommitRegistrator.Reset();
         }
 
-        private IList<Tuple<int, decimal>> GetPriceOfAdditionalLocation(int idWebinar)
+        private IList<AdditionalLocationsPricing> GetPriceOfAdditionalLocation(int idWebinar)
         {
             DataOperations dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
 

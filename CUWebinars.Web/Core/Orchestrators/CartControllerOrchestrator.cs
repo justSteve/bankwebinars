@@ -332,7 +332,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         }
                         else
                         {
-                            optionsCost = additionalLocationsPricing.Single().Item2;
+                            optionsCost = additionalLocationsPricing.Single().Price;
                         }
                     }
 

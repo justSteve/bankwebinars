@@ -1,10 +1,11 @@
-﻿using CUWebinars.Business.CQS.Queries;
+﻿using System;
+using CUWebinars.Business.CQS.Queries;
 using CUWebinars.Business.Models;
 using CUWebinars.Web.Models;
 
 namespace CUWebinars.Web.Core.Orchestrators
 {
-    public interface IOrderControllerOrchestrator
+    public interface IOrderControllerOrchestrator : IDisposable
     {
         int CreateNewOrder(IncomingOrderModel incomingOrderModel, string email, OrderManagementQueryResult orderManagementQueryResult, string verificationKey, string confirmChangeEmailUrl, bool userAlreadyExists);
         int MigrateOrder(MigrateOrderModel migrateOrderModel,

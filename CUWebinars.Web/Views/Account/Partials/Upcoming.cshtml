@@ -53,7 +53,7 @@
                 "There should only ever be 1 value returned for the cost of an Additionalocation for a particular Webinar"
                 );
             // Item2 of the tuple is the price value as a decimal. Item 1 is the AdditionalLocationsLookupPrice id
-            optionsCost += additionalLocationsPricing.Single().Item2;
+            optionsCost += additionalLocationsPricing.Single().Price;
         }
 
         return new Tuple<string, decimal>(addresses.ToString(), optionsCost);

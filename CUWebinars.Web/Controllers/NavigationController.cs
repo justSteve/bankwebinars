@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Repository;
+﻿using System;
+using CUWebinars.Business.Repository;
 using CUWebinars.Web.Infrastructure.Extensions;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ namespace CUWebinars.Web.Controllers
     {
         private const string YadaYadaYada = "...";
         private readonly IWebinarRepository _webinarRepository;
+        private bool _disposed;
 
         public NavigationController(IWebinarRepository webinarRepository)
         {
@@ -101,6 +103,17 @@ namespace CUWebinars.Web.Controllers
             }
 
             return recordedWebinarsListItems.ToString();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!_disposed && disposing)
+            {
+                _webinarRepository.Dispose();
+
+                base.Dispose(true);
+            }
+            _disposed = true;
         }
     }
 }

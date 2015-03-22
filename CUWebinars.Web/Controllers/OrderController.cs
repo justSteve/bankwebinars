@@ -773,6 +773,10 @@ namespace CUWebinars.Web.Controllers
                 if (logger != null)
                     logger.Dispose();
 
+                _orderControllerOrchestrator.Dispose();
+                _orderManagementService.Dispose();
+                _webinarManagementService.Dispose();
+
                 base.Dispose(true);
             }
             _disposed = true;
