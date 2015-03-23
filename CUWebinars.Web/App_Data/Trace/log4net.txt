@@ -686,3 +686,24 @@ CUWebinars Error: 0 : Validation failed for webinar 1711 and User 43728
 CUWebinars Error: 0 : Validation failed for webinar 1712 and User 34528
 CUWebinars Error: 0 : Validation failed for webinar 1712 and User 34529
 CUWebinars Error: 0 : ERROR MailerSmtpException: l@b.com Subject: [BankWebinars] Confirmation of Registration: Legal Liabilities when Check Fraud Occurs ErrorMsg: Failure sending mail. Timestamp was: 19/03/2015 10:19:17 AM ExceptionType was: SmtpException InnerExceptionType was: System.Net.WebException
+CUWebinars Error: 0 : Validation failed for webinar 1754 and User 47678
+CUWebinars Error: 0 : Validation failed for webinar 1795 and User 35075
+CUWebinars Error: 0 : Validation failed for webinar 1769 and User 47613
+CUWebinars Error: 0 : Validation failed for webinar 1754 and User 47681
+CUWebinars Error: 0 : Validation failed for webinar 1744 and User 47680
+CUWebinars Error: 0 : Validation failed for webinar 1754 and User 47681
+CUWebinars Error: 0 : Validation failed for webinar 1744 and User 47680
+CUWebinars Error: 0 : Validation failed for webinar 1769 and User 47613
+CUWebinars Error: 0 : Validation failed for webinar 1754 and User 47681
+CUWebinars Error: 0 : Validation failed for webinar 1744 and User 47680
+CUWebinars Error: 0 : Validation failed for webinar 1754 and User 47681
+CUWebinars Error: 0 : Validation failed for webinar 1744 and User 47680
+CUWebinars Error: 0 : Validation failed for webinar 1769 and User 47613
+CUWebinars Error: 0 : Validation failed for webinar 1754 and User 47681
+CUWebinars Error: 0 : Validation failed for webinar 1744 and User 47680
+CUWebinars Error: 0 : Validation failed for webinar 1744 and User 43665
+CUWebinars Error: 0 : Validation failed for webinar 1754 and User 47681
+CUWebinars Error: 0 : Validation failed for webinar 1744 and User 43665
+CUWebinars Error: 0 : Validation failed for webinar 1754 and User 37886
+CUWebinars Error: 0 : Validation failed for webinar 1773 and User 47682
+CUWebinars Error: 0 : Validation failed for webinar 1754 and User 37886

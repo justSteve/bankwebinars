@@ -14,6 +14,7 @@ namespace CUWebinars.Web.Models
         public int idWebinar { get; set; }
         public string RegistrationType { get; set; }
         public string FirstName { get; set; }
+        public DateTime OrderDate { get; set; }
         public string LastName { get; set; }
         public string Title { get; set; }
         public string Institution { get; set; }

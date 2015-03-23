@@ -31,8 +31,8 @@ namespace CUWebinars.Business.Validation.Order
             var orders = _webinarRepository
                 .GetAllOrdersByWebinarForUser(webinarId, userId)
                 .ToList()
-                .Where(o => o.OrderStatus == OrderStatus.InProcess 
-                    || o.OrderStatus == OrderStatus.Submitted 
+                .Where(o => o.OrderStatus == OrderStatus.InProcess
+                    || o.OrderStatus == OrderStatus.Submitted
                     || o.OrderStatus == OrderStatus.Billed
                     || o.OrderStatus == OrderStatus.Paid
                     || o.OrderStatus == OrderStatus.AwaitingVerification

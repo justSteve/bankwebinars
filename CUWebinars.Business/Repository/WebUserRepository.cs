@@ -80,8 +80,10 @@ namespace CUWebinars.Business.Repository
 
         public IEnumerable<WebUser> GetWebUsersByLastNameForAffiliate(string lastName, int idAffiliate)
         {
+            //is this the search that serves the Affiliate's Order input?
             return ((TTSWebinarsContext)db).Orders.Include(o => o.WebUser)
-                .Where(o => o.idAffiliate == idAffiliate && o.WebUser.LastName.ToLower().Contains(lastName))
+                .Where(o => o.idAffiliate == idAffiliate && 
+                    o.WebUser.LastName.ToLower().Contains(lastName))
                 .Select(o => o.WebUser)
                 .OrderBy(webUser => webUser.LastName)
                 .ThenBy(webUser => webUser.FirstName);

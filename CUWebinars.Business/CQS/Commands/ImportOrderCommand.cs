@@ -6,6 +6,7 @@ namespace CUWebinars.Business.CQS.Commands
 {
     public class ImportOrderCommand
     {
+        public DateTime OrderDate;
         public Affiliate Affiliate { get; set; }
         public string AffiliateComments { get; set; }
         public Address ShippingAddress { get; set; }

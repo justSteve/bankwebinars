@@ -13,7 +13,8 @@
   <appender name="AdoNetAppender" type="log4net.Appender.AdoNetAppender">
     <bufferSize value="1" />
     <connectionType value="System.Data.SqlClient.SqlConnection, System.Data,  Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-    <connectionString value="Data Source=tcp:kmow9uloz6.database.windows.net,1433;Initial Catalog=TTSDatabase;User Id=TTSOp@kmow9uloz6;Password=EntRisR..E121114;MultipleActiveResultSets=True;" />
+    <!--<connectionString value="Data Source=tcp:kmow9uloz6.database.windows.net,1433;Initial Catalog=TTSDatabase;User Id=TTSOp@kmow9uloz6;Password=EntRisR..E121114;MultipleActiveResultSets=True;" />-->
+    <connectionString value="Server=.;Initial Catalog=TTSDatabase;Integrated Security=True;MultipleActiveResultSets=True" />
     <commandText value="INSERT INTO BWLog ([Date],[Level],[Message],[Exception], [Logger]) VALUES (@log_date, @log_level, @message, @exception, @logger)" />
     <parameter>
       <parameterName value="@log_date" />

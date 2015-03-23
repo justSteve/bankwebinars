@@ -12,6 +12,7 @@ using System.Data.Entity;
 using System.Data.Entity.Validation;
 using System.Diagnostics;
 using System.Linq;
+using FluentValidation.Results;
 
 namespace CUWebinars.Business.Repository
 {
@@ -54,6 +55,16 @@ namespace CUWebinars.Business.Repository
                 Add(newOrder); // save changes is called in here.
 
                 return newOrder;
+            }
+
+            if (origin == "Imported" || origin == "Migrated")
+            {
+                if (validationResult.Errors.FirstOrDefault().ErrorMessage.Contains("already has"))
+                {
+                    //instead of throwing error - passback the pre-existing order id
+                    return FindOrderForUserByWebinarID(newOrder.idUser, webinar.idWebinar);
+
+                }
             }
 
             var errors = ValidationHelper.GetMessagesAsXmlElement(validationResult.Errors);
@@ -170,6 +181,16 @@ namespace CUWebinars.Business.Repository
             return ReferenceEquals(null, userOrders) ? null : GetLoadedEntitiesForOrder(userOrders);
 
         }
+        public Order FindOrderForUserByWebinarID(int userId, int idWebinar)
+        {
+
+            var userOrder = FindOrdersByUserIdWithOrderRows(userId)    
+                .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == idWebinar) != null).SingleOrDefault();
+
+
+            return userOrder;
+
+        }
 
         public IList<int> FindOrderIdsByPartialId(int userId)
         {
@@ -263,7 +284,7 @@ namespace CUWebinars.Business.Repository
 
         public void AddAdditionalLocation(AdditionalLocation addedAdditionalLocation)
         {
-            ((TTSWebinarsContext) db).AdditionalLocation.Add(addedAdditionalLocation);
+            ((TTSWebinarsContext)db).AdditionalLocation.Add(addedAdditionalLocation);
         }
 
         /// <summary>
@@ -424,7 +445,7 @@ namespace CUWebinars.Business.Repository
         public int GetNumberOfOrdersPerWebinar(int id)
         {
 
-            return items.Count(o => o.OrderRows.FirstOrDefault().RowStatus == OrderRowStatus.Active &&  (o.OrderStatus == OrderStatus.Submitted
+            return items.Count(o => o.OrderRows.FirstOrDefault().RowStatus == OrderRowStatus.Active && (o.OrderStatus == OrderStatus.Submitted
                 || o.OrderStatus == OrderStatus.Paid
                 || o.OrderStatus == OrderStatus.Billed
                 ));
@@ -433,7 +454,7 @@ namespace CUWebinars.Business.Repository
 
         public void RemoveAndDeleteAdditionalLocation(AdditionalLocation deletedAdditionalLocation)
         {
-            ((TTSWebinarsContext) db).AdditionalLocation.Remove(deletedAdditionalLocation);
+            ((TTSWebinarsContext)db).AdditionalLocation.Remove(deletedAdditionalLocation);
         }
 
         public void SendOrderToLegacy(Order newOrder)

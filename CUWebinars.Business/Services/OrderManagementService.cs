@@ -540,7 +540,7 @@ namespace CUWebinars.Business.Services
         {
             string addPasswordUrl = string.Empty;
 
-            _logger.Info("Adding Event for Order {0}", order.idOrder);
+            //_logger.Info("Adding Event for Order {0}", order.idOrder);
 
             var orderSubmittedViewModel = new OrderSubmittedViewModel
             {
@@ -1204,7 +1204,7 @@ namespace CUWebinars.Business.Services
             var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow, origin);
             var email = webUser == null ? "notauthenticated@cuwebinars.com" : webUser.email;
 
-            _logger.Info("CreateNewOrder: " + email + " | " + orderRow.Webinar.Title + " | " + orderRow.RegistrationType.OptionLabel);
+            //_logger.Info("CreateNewOrder: " + email + " | " + orderRow.Webinar.Title + " | " + orderRow.RegistrationType.OptionLabel);
             return order;
         }
 

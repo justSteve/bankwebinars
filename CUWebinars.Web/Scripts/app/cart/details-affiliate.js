@@ -624,7 +624,6 @@ OCA.wireUpHandlers = function() {
             var user = _.find(OCA.users, function (webUser) {
                 return webUser.id === id;
             });
-
             if (user !== null && typeof user !== 'undefined') {
                 return user.lastname + ', ' + user.firstname;
             }
@@ -732,10 +731,7 @@ function modalShown (e) {
         var url = $(this).attr('action');
 
         var payload = $(this).serialize();
-        //TODO: The payload here is highly valuable. The fact that they will be POSTed
-        // instead of GET means they don't show in the server logs, which is often nice to have.
-        // can we fire a GET to an internal address where nothing happens except that
-        // a line dumps to the server with all form values.
+
         $.ajax({
             type: 'POST',
             contentType: constants.FormPostContentType,
@@ -766,20 +762,22 @@ function modalShown (e) {
                 $('#updateShippingMsgLabelWrap').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details updated successfully.</span>');
 
             } else if (!data.isSuccessful) {
-                //var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
-                //NREUM.noticeError(err);
-
+                Rollbar.error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
                 $('#updateShippingMsgLabelWrap').empty();
                 formProcessor.lightUpValidationSummary('userDetailsValSummary', data);
             } else {
                 var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
                 //NREUM.noticeError(err);
-                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>There has been an error in the operation.Please call us at 800-831-0678 ext. 3 to resolve.</span>');
+                Rollbar.error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
+                Rollbar.error("#348 userDetailsFormUrl static marker");
+
+                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>[Connection Error #348] Please call us at 800-831-0678 ext. 3 to resolve.</span>');
             }
         }).fail(function(data) {
-            var err = new Error('FAIL: Post to userDetailsFormUrlData ' + userDetailsFormUrlData + ' !data.isSuccessful');
-            //NREUM.noticeError(err);
-            $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error in the server response. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
+            
+            Rollbar.error('FAIL: Post to userDetailsFormUrlData ' + userDetailsFormUrlData + ' !data.isSuccessful');
+            Rollbar.error("#348 userDetailsFormUrl static marker");
+            $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Connection Error #048] Please call us at 800-831-0678 ext. 3 to resolve.</span>');
         });
     });
 
