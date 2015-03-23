@@ -434,7 +434,6 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\api\ACSController.cs" />
     <Compile Include="Controllers\NavigationController.cs" />
     <Compile Include="Controllers\StaticContentController.cs" />
     <Compile Include="Core\Orchestrators\IWebinarControllerOrchestrator.cs" />

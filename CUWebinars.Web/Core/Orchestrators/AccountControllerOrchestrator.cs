@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using BrockAllen.MembershipReboot;
+﻿using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Models;
@@ -43,7 +42,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         private readonly IOrderManagementService _orderManagementService;
         private bool _disposed;
 
-        public 
+        public
             AccountControllerOrchestrator(ILogger logger,
             IMembershipService membershipService,
             IOrderManagementService orderManagementService,
@@ -51,7 +50,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             HttpRequestBase request,
             IAppHelper appHelper,
             IUniversalMapper universalMapper)
-
         {
             _request = request;
             _logger = logger;
@@ -196,9 +194,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 ); // verify the user to unlock functionality like PasswordReset
 
             _membershipService.LogInUser(
-                _globals.Tenant, 
+                _globals.Tenant,
                 model.RegisterFields.Email,
-                model.RegisterFields.Password, 
+                model.RegisterFields.Password,
                 true
                 ); // log the user in.            
 
@@ -240,14 +238,14 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public bool UserConfirmed(CreateUserConfirmedViewModel model)
         {
-            
+
             if (_membershipService.VerifyUserByEmail(_globals.Tenant, model.Email))
             {
                 _stateService.SetValue(DomainConstants.UserCreatedViaNewOrder, true);
                 _membershipService.ResetPassword(_globals.Tenant, model.Email);
 
                 var verificationKey = _stateService.GetValue<string>(DomainConstants.VerificationKey);
-                
+
                 _stateService.ClearValue(DomainConstants.UserCreatedViaNewOrder);
 
                 try
@@ -265,7 +263,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _membershipService.LogInUser(_globals.Tenant, model.Email, model.NewPassword, true);
 
                 _logger.Info("Account.Confirmed POST. Session={0}", _appHelper.GetUserAuditInfo());
-                
+
                 return true;
             }
 
@@ -346,19 +344,19 @@ namespace CUWebinars.Web.Core.Orchestrators
             var discount = new Discount
             {
                 Cost = discountModel.Cost,
-                DateBilled= discountModel.DateBilled,
-                 DateValidFrom= discountModel.DateValidFrom,
+                DateBilled = discountModel.DateBilled,
+                DateValidFrom = discountModel.DateValidFrom,
                 //idUser = idUser,
-                DateValidTo= discountModel.DateValidTo,
+                DateValidTo = discountModel.DateValidTo,
                 DiscountCode = discountModel.DiscountCode,
-                DiscountType= discountModel.TypeOfDiscount,
-                FlatOff= discountModel.FlatOff,
-                Notes= discountModel.Notes,
-                PercentOff= discountModel.PercentOff,
-                RenewalTerm= discountModel.RenewalTerm,
-                Status= discountModel.Status,
-                UsesCount= discountModel.UsesCount,
-                UsesRemain= discountModel.UsesRemain,
+                DiscountType = discountModel.TypeOfDiscount,
+                FlatOff = discountModel.FlatOff,
+                Notes = discountModel.Notes,
+                PercentOff = discountModel.PercentOff,
+                RenewalTerm = discountModel.RenewalTerm,
+                Status = discountModel.Status,
+                UsesCount = discountModel.UsesCount,
+                UsesRemain = discountModel.UsesRemain,
                 //WebUserDiscountXref = 
                 //idDiscount = 
             };
@@ -510,8 +508,8 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void AddFullNameClaim(RegisterViewModel model)
         {
             var userAccount = _membershipService.GetUserAccountByEmail(_globals.Tenant, model.RegisterFields.Email);
-            
-            _membershipService.AddClaim(userAccount, 
+
+            _membershipService.AddClaim(userAccount,
                 ClaimTypes.FullName,
                 string.Concat(model.RegisterFields.FirstName.Trim(), ' ', model.RegisterFields.LastName.Trim())
                 );
@@ -539,9 +537,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                     Thread.Sleep(500);
 
                     // Every 5 seconds, log the fact that the flow has been stuck here for the then current duration.
-                    if (retries%10 == 0 && retries > 0)
+                    if (retries % 10 == 0 && retries > 0)
                     {
-                        _logger.Info(string.Format("UserAccount returning null after {0} seconds.", retries/2));
+                        _logger.Info(string.Format("UserAccount returning null after {0} seconds.", retries / 2));
                     }
                 }
                 else
@@ -565,9 +563,9 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             _stateService.SetValue(DomainConstants.CartCreatedUserPasswordCreate, true);
 
-            
+
             retries = 0; // re-use and re-set retries.
-            
+
             do
             {
                 try
@@ -575,7 +573,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     _membershipService.ResetPassword(_globals.Tenant, model.Email);
                     break; // reached if no exception is thrown
                 }
-                catch(Exception exception)
+                catch (Exception exception)
                 {
                     _logger.ErrorException("ResetPassword: ", exception);
                     Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
@@ -588,7 +586,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             _logger.Info("verificationKey is {0}", verificationKey);
 
             _stateService.ClearValue(DomainConstants.CartCreatedUserPasswordCreate);
-            
+
             retries = 0; // re-use and re-set retries.
 
             do
@@ -710,7 +708,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         public EditShippingAddressModel BuildShippingAddressModel()
         {
             var model = new EditShippingAddressModel();
-            
+
             var user = GetWebUserFromIPrincipal();
             var addresses = user.Addresses.ToArray();
             var shippingAddress = addresses.First(a => a.AddressType == WebUiConstants.ShippingAddress);
@@ -778,12 +776,13 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 var registerFieldsDto = new RegisterFieldsDTO
                 {
+                    BaseUrl = HttpRuntime.AppDomainAppPath,
                     Email = email,
                     Password = password
                 };
 
 #if DEBUG
-                _logger.Info("Password {0} created for user {1}", password,email);
+                _logger.Info("Password {0} created for user {1}", password, email);
 #endif
 
                 var payload = JsonConvert.SerializeObject(registerFieldsDto);
@@ -833,7 +832,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             bool emailIsAvailable = _membershipService.GetUserByEmail(email) == null;
 
-            if(!emailIsAvailable)
+            if (!emailIsAvailable)
                 throw new ValidationException(string.Format("The email address {0} is already in use by an existing user.", email));
 
             var myInstitution = _membershipService.ProcessInstitutionForUser(
@@ -947,7 +946,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public LoginModel BuildLoginModel(string returnUrl)
         {
-            var urlHelper = new UrlHelper(_request.RequestContext); 
+            var urlHelper = new UrlHelper(_request.RequestContext);
 
             var loginModel = new LoginModel
             {
@@ -981,10 +980,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
 
             loginModel.ActiveTab = "login";
-            
+
             return loginModel;
         }
-        
+
         public CreateUserConfirmedViewModel PrepareViewForCartUserAddingPassword(string email, bool viaBillMePostRequest = false)
         {
             UserAccount userAccount;
@@ -1003,7 +1002,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (viaBillMePostRequest)
                 changeEmailFromKeyInputModel.ScreenMessage = "Thank you for your order.";
 
-             // Try and find the user for up to 10s. If it still does not exist, chuck an exception.
+            // Try and find the user for up to 10s. If it still does not exist, chuck an exception.
             do
             {
                 userAccount = _membershipService.GetUserAccountByEmail(_globals.Tenant, email);
@@ -1014,15 +1013,15 @@ namespace CUWebinars.Web.Core.Orchestrators
                     Thread.Sleep(500);
 
                     // Every 20 seconds, log the fact that the flow has been stuck here for the then current duration.
-                    if (retries%40 == 0 && retries > 0)
+                    if (retries % 40 == 0 && retries > 0)
                     {
-                        _logger.Info(string.Format("UserAccount returning null after {0} seconds.", retries/2));
+                        _logger.Info(string.Format("UserAccount returning null after {0} seconds.", retries / 2));
                     }
                 }
 
             } while (retries++ < _globals.RetryCount);
 
-             //if still null at this point, we have exceeded the retry limit and assume that something has gone wrong.
+            //if still null at this point, we have exceeded the retry limit and assume that something has gone wrong.
             if (ReferenceEquals(userAccount, null)) throw new Exception("User does not exist in system");
 
             if (!userAccount.HasClaim(ClaimTypes.FullName))
@@ -1036,7 +1035,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (hasAlreadyVerifiedAccount)
             {
                 var loginLinkBuilder = new TagBuilder("a");
-                loginLinkBuilder.MergeAttributes(new Dictionary<string, string>{{"href", @"/Account/Login"}});
+                loginLinkBuilder.MergeAttributes(new Dictionary<string, string> { { "href", @"/Account/Login" } });
                 loginLinkBuilder.SetInnerText("Login Page");
 
                 var para1TagBuilder = new TagBuilder("div");
@@ -1062,7 +1061,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             changeEmailFromKeyInputModel.ScreenMessage = "There has been an error at the server.";
 
-            return changeEmailFromKeyInputModel; 
+            return changeEmailFromKeyInputModel;
         }
 
         public CreateUserConfirmedViewModel GetCreateUserConfirmedViewModel(string email, int idOrder, bool viaBillMePostRequest = false)
@@ -1086,7 +1085,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             return changeEmailFromKeyInputModel;
         }
-        
+
         public CreateUserConfirmedViewModel ConfirmUser(string email, string password)
         {
             var changeEmailFromKeyInputModel = new CreateUserConfirmedViewModel
@@ -1114,7 +1113,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (userAccount.HasClaim(ClaimTypes.HasNotVerified, ClaimValues.ManualRegistration))
             {
                 changeEmailFromKeyInputModel.ScreenMessage = "Thank you for verifying your account with us.";
-                
+
                 return changeEmailFromKeyInputModel;
             }
 
