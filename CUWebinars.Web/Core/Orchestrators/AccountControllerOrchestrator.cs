@@ -776,8 +776,10 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 var registerFieldsDto = new RegisterFieldsDTO
                 {
-                    BaseUrl = HttpRuntime.AppDomainAppPath,
+                    BaseUrl =  string.Format(@"{0}://{1}{2}/", _request.Url.Scheme, _request.Url.Authority, _request.ApplicationPath.TrimEnd('/')),
                     Email = email,
+                    FirstName= string.Empty,
+                    LastName = string.Empty,
                     Password = password
                 };
 
