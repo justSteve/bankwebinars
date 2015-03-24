@@ -992,7 +992,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             var changeEmailFromKeyInputModel = new CreateUserConfirmedViewModel
             {
                 Email = email,
-                OldPassword = PasswordGenerator.RandomStringFast(5),
+                OldPassword = PasswordGenerator.GenerateRandomString(5),
                 NewPassword = string.Empty,
                 ConfirmPassword = string.Empty,
                 ScreenMessage = string.Empty,
@@ -1071,7 +1071,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             var changeEmailFromKeyInputModel = new CreateUserConfirmedViewModel
             {
                 Email = email,
-                OldPassword = PasswordGenerator.RandomStringFast(5),
+                OldPassword = PasswordGenerator.GenerateRandomString(5),
                 NewPassword = string.Empty,
                 ConfirmPassword = string.Empty,
                 Order = order,
