@@ -807,7 +807,7 @@ namespace CUWebinars.Business.Services
 
         public void UpdateOrderWithUserEmail(int orderId, string email)
         {
-            var order = GetOrderById(orderId);
+            var order = _orderRepository.FindById(orderId);
             order.BillingEmail = email;
 
             var updatedOrder = _orderRepository.SaveOrderChanges(order, null);
