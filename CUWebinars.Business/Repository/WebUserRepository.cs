@@ -184,5 +184,12 @@ namespace CUWebinars.Business.Repository
         {
             get { return db; }
         }
+
+        public WebUser GetWebUserByIdLoadedWithAddressesAndInstitution(int idUser)
+        {
+            return items.Include(w => w.Addresses)
+                .Include(w => w.Institution)
+                .SingleOrDefault(w => w.idUser == idUser);
+        }
     }
 }

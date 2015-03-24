@@ -27,11 +27,24 @@ namespace CUWebinars.Business.Core
 
             INotificationDelivery notificationDelivery;
 
+            IOrderConfirmedNotificationDelivery orderConfirmationDelivery =
+                new AzureOrderNotifierMessageDelivery(
+                    storageAccountName, 
+                    storageAccessKey,
+                    new Log4NetLogger(typeof (AzureOrderNotifierMessageDelivery)), 
+                    baseUrl
+                    );
+
             // toggle whether to use Azure Webjobs or local code (for local debugiing/development purposes)
             if (useAzureWebjobs)
-                notificationDelivery = new AzureCuwWebJobSmtpMessageDelivery(storageAccountName, storageAccessKey, new Log4NetLogger(typeof(AzureCuwWebJobSmtpMessageDelivery)));
+            {
+                notificationDelivery = new AzureCuwWebJobSmtpMessageDelivery(storageAccountName, storageAccessKey,
+                    new Log4NetLogger(typeof (AzureCuwWebJobSmtpMessageDelivery)));
+            }
             else
-                notificationDelivery = new SmtpMessageDelivery(new Log4NetLogger(typeof(SmtpMessageDelivery)));
+            {
+                notificationDelivery = new SmtpMessageDelivery(new Log4NetLogger(typeof (SmtpMessageDelivery)));
+            }
 
             var genericFormatter = new Formatter(new EnvironmentInformation { BaseUrl = baseUrl });
             var notificationPersister = new FileBasedNotificationPersister();
@@ -52,8 +65,8 @@ namespace CUWebinars.Business.Core
 
             config.AddEventHandler(new SendPerDayPromoHandler(genericFormatter, notificationDelivery,sendPerDayPromoHandlerLogger));
             //config.AddEventHandler(new SendPerWeekPromoHandler(genericFormatter, notificationDelivery, sendPerWeekPromoHandlerLogger));
-            config.AddEventHandler(new OrderSubmittedHandler(genericFormatter, notificationDelivery,notificationOrderHandlerLogger));
-            config.AddEventHandler(new OrderSubmittedAdditionalLocationHandler(genericFormatter, notificationDelivery,notificationOrderHandlerLogger, notificationPersister, new EnvironmentInformation { BaseUrl = baseUrl }));
+            config.AddEventHandler(new OrderSubmittedHandler(genericFormatter, orderConfirmationDelivery, notificationOrderHandlerLogger));
+            config.AddEventHandler(new OrderSubmittedAdditionalLocationHandler(genericFormatter, notificationDelivery, notificationOrderHandlerLogger, notificationPersister, new EnvironmentInformation { BaseUrl = baseUrl }));
             config.AddEventHandler(new SendShippedOrderHandler(genericFormatter, notificationDelivery,sendShippedOrderHandlerLogger));
             config.AddEventHandler(new SendConnectionInfoHandler(genericFormatter, notificationDelivery, sendConnectionInfoHandlerLogger, new EnvironmentInformation { BaseUrl = baseUrl }));
             config.AddEventHandler(new SendReminderHandler(genericFormatter, notificationDelivery, sendReminderHandlerLogger));

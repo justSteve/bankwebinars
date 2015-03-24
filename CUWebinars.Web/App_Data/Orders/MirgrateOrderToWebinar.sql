@@ -8,7 +8,7 @@ GO
 --ORDER BY o.orderDate desc
 
 
-SELECT o.orderdate, ( SELECT    o.idAffiliate
+SELECT ( SELECT    o.idAffiliate
           FROM      dbo.OrdersRows
           WHERE     o.idOrder = idOrder
         ) AS AffiliateID ,
@@ -108,6 +108,6 @@ FROM    TTSWebinars2.dbo.Orders o
         INNER JOIN dbo.OrdersRows r ON r.idOrder = o.idOrder
 WHERE   r.status < 6
         AND r.status > 1
-        AND r.idWebinar IN ( 1772) -- 1745 = understanding...
+        AND r.idWebinar IN (1772)--( SELECT r.idWebinar FROM dbo.Webinar WHERE status = 2 OR status = 3) -- 1745 = understanding...
 ORDER BY idRegType DESC
 GO

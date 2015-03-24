@@ -127,6 +127,7 @@
     <Compile Include="Class1.cs" />
     <Compile Include="Constants\ClaimValues.cs" />
     <Compile Include="Constants\ErrorMessageConstants.cs" />
+    <Compile Include="Core\AdditionalLocationsPricing.cs" />
     <Compile Include="Core\Cache\ICachingService.cs" />
     <Compile Include="Core\Cache\OrderCachingService.cs" />
     <Compile Include="Core\DataOperations.cs" />
@@ -175,6 +176,8 @@
     <Compile Include="Models\Mapping\WebUserDiscountXrefMap.cs" />
     <Compile Include="Models\WebUserDiscountXref.cs" />
     <Compile Include="Notification\Email\AzureCuwWebJobSmtpMessageDelivery.cs" />
+    <Compile Include="Notification\Email\AzureOrderNotifierMessageDelivery.cs" />
+    <Compile Include="Notification\Email\ConfirmOrderMessage.cs" />
     <Compile Include="Notification\Events\AdminEmailConnectionInfoEvent.cs" />
     <Compile Include="Notification\Events\AdminEmailRecordingPostedEvent.cs" />
     <Compile Include="Notification\Events\AdminEmailSendShippedOrderEvent.cs" />
@@ -205,7 +208,9 @@
     <Compile Include="Notification\Handlers\SendRecordingPostedHandler.cs" />
     <Compile Include="Notification\Handlers\SendReminderHandler.cs" />
     <Compile Include="Notification\Handlers\SendShippedOrderHandler.cs" />
+    <Compile Include="Notification\IConfirmOrderMessage.cs" />
     <Compile Include="Notification\INotificationPersister.cs" />
+    <Compile Include="Notification\IOrderConfirmedNotificationDelivery.cs" />
     <Compile Include="Notification\Renderers\IRenderer.cs" />
     <Compile Include="Notification\Renderers\Renderer.cs" />
     <Compile Include="Notification\TtsConfigHelper.cs" />
@@ -319,7 +324,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Notification\Templates\OrderSubmitted.cshtml" />
+    <EmbeddedResource Include="Notification\Templates\OrderSubmitted.cshtml" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -342,7 +347,9 @@
     <PostBuildEvent>copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderNotifierWebJob\ThirdPartyAssemblies\$(ProjectName).dll"
 copy /Y "$(TargetDir)$(ProjectName).pdb" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderNotifierWebJob\ThirdPartyAssemblies\$(ProjectName).pdb"
 copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).dll"
-copy /Y "$(TargetDir)$(ProjectName).pdb" "$(SolutionDir)\..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).pdb"</PostBuildEvent>
+copy /Y "$(TargetDir)$(ProjectName).pdb" "$(SolutionDir)\..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).pdb"
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).dll"
+copy /Y "$(TargetDir)$(ProjectName).pdb" "$(SolutionDir)\..\CUMailer\CUWebinars.Azure.OrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).pdb"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,10 +1,11 @@
-﻿using CUWebinars.Business.Models;
+﻿using System;
+using CUWebinars.Business.Models;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.ViewModel;
 
 namespace CUWebinars.Web.Core.Orchestrators
 {
-    public interface IWebinarControllerOrchestrator
+    public interface IWebinarControllerOrchestrator : IDisposable
     {
         WebinarEditModel BuildEditModelForWebinarCreate();
         WebinarEditModel BuildEditModelForWebinar(int idWebinar);

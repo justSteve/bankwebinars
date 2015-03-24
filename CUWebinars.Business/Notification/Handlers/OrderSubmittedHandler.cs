@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Constants;
+﻿using System.Diagnostics;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Notification.Formatters;
@@ -12,22 +13,14 @@ using Ninject.Extensions.Logging.Log4net.Infrastructure;
 namespace CUWebinars.Business.Notification.Handlers
 {
     public class OrderSubmittedHandler<T> : IEventHandler<OrderSubmittedEvent<T>>
-        where T : OrderSubmittedViewModel
+        where T : ConfirmOrderMessage
     {
         private readonly IFormatter _generalFormatter;
-        private readonly INotificationDelivery _notificationDelivery;
+        private readonly IOrderConfirmedNotificationDelivery _notificationDelivery;
         private readonly ILogger _logger;
 
         public OrderSubmittedHandler(IFormatter generalFormatter
-            , ILogger logger
-            )
-            : this(generalFormatter, new SmtpMessageDelivery(new Log4NetLogger(typeof(SmtpMessageDelivery))), logger)
-        {
-
-        }
-
-        public OrderSubmittedHandler(IFormatter generalFormatter
-            , INotificationDelivery notificationDelivery
+            , IOrderConfirmedNotificationDelivery notificationDelivery
             , ILogger logger)
         {
             _generalFormatter = generalFormatter;
@@ -46,43 +39,22 @@ namespace CUWebinars.Business.Notification.Handlers
                     orderSubmittedEvent.EventObject.AddPasswordUrl = orderSubmittedEvent.RelativePath;
                 }
 
-                var notificationMessage = _generalFormatter.Format(orderSubmittedEvent.EventObject, "OrderSubmitted");
+                int orderId = orderSubmittedEvent.EventObject.idOrder;
 
                 var persistedNamePrefix = orderSubmittedEvent.ResendEvent
-                    ? "OrderSubmitted-ReSend_" + orderSubmittedEvent.EventObject.Order.idOrder
-                    : "OrderSubmittedSend_" + orderSubmittedEvent.EventObject.Order.idOrder;
+                    ? "OrderSubmitted-ReSend_" + orderId
+                    : "OrderSubmittedSend_" + orderId;
 
-                notificationMessage.PersistedName = string.Format("{0}_{1}{2}",
+                orderSubmittedEvent.EventObject.PersistedName = string.Format("{0}_{1}{2}",
                     persistedNamePrefix,
                     DateTime.Now.ToString(DomainConstants.DateTimeLongFormat),
                     ".htm"
                     );
 
-                _logger.Info("PersistedName for Order {0} is {1}", orderSubmittedEvent.EventObject.Order.idOrder, notificationMessage.PersistedName);
+                _logger.Info("PersistedName for Order {0} is {1}", orderId, orderSubmittedEvent.EventObject.PersistedName);
 
-                //  adds the name of the message to the Json object stored in NotificationStorage.
-                string details = orderSubmittedEvent.Details;
+                _notificationDelivery.Notify(orderSubmittedEvent.EventObject);
 
-                if (details != null)
-                {
-                    orderSubmittedEvent.EventObject.Order.NotificationStorage =
-                        details.Insert(details.Length - 1,
-                            string.Concat(",", @"""OrderSubmittedEventMsg-", DateTime.Now.Ticks, '"', @":", '"',
-                                notificationMessage.PersistedName, '"'));
-                }
-
-                if (orderSubmittedEvent.EventObject.Order.idAffiliate == 62)
-                {
-                    notificationMessage.To = "steve@ttstrain.com";
-                }
-                else
-                {
-                    notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail;
-                }
-
-                _logger.Info("Sending Notifn for Order {0}", orderSubmittedEvent.EventObject.Order.idOrder);
-                
-                _notificationDelivery.Notify(notificationMessage);
             }
             catch (NullReferenceException nullReferenceException)
             {
@@ -94,7 +66,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 {
                     _logger.Error(
                         string.Format("Event processing failed for orderSubmittedEvent - OrderId {0}. ExceptionMessage: {1}",
-                            orderSubmittedEvent.EventObject.Order.idOrder,
+                            orderSubmittedEvent.EventObject.idOrder,
                             nullReferenceException.Message)
                         , nullReferenceException);
                 }
@@ -112,15 +84,9 @@ namespace CUWebinars.Business.Notification.Handlers
         }
     }
 
-    public class OrderSubmittedHandler : OrderSubmittedHandler<OrderSubmittedViewModel>
+    public class OrderSubmittedHandler : OrderSubmittedHandler<ConfirmOrderMessage>
     {
-        public OrderSubmittedHandler(IFormatter generalFormatter, ILogger logger)
-            : base(generalFormatter, logger)
-        {
-
-        }
-
-        public OrderSubmittedHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger)
+        public OrderSubmittedHandler(IFormatter generalFormatter, IOrderConfirmedNotificationDelivery notificationDelivery, ILogger logger)
             : base(generalFormatter, notificationDelivery, logger)
         {
         }

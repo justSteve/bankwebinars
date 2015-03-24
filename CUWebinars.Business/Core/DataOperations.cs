@@ -66,7 +66,7 @@ namespace CUWebinars.Business.Core
             }
         }
 
-        public IList<Tuple<int, decimal>> GetAdditionalLocationsPricing(int webinarId)
+        public IList<AdditionalLocationsPricing> GetAdditionalLocationsPricing(int webinarId)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
@@ -87,13 +87,13 @@ namespace CUWebinars.Business.Core
                     getPricingsCommand.CommandText =
                         "SELECT id, cost FROM AdditionalLocationsLookupPrice WHERE idWebinar = @webinarId;";
 
-                    IList<Tuple<int, decimal>> pricingInformation = new List<Tuple<int, decimal>>();
+                    IList<AdditionalLocationsPricing> pricingInformation = new List<AdditionalLocationsPricing>();
 
                     using (var reader = getPricingsCommand.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            pricingInformation.Add(new Tuple<int, decimal>(reader.GetInt32(0), reader.GetDecimal(1)));
+                            pricingInformation.Add(new AdditionalLocationsPricing{ LookupPriceId = reader.GetInt32(0), Price = reader.GetDecimal(1)});
                         }
                     }
 

@@ -9,7 +9,7 @@ namespace CUWebinars.Business.Notification.Email
 {
     public class AzureCuwWebJobSmtpMessageDelivery : INotificationDelivery
     {
-        private static CloudQueueClient _queueClient;
+        private CloudQueueClient _queueClient;
         private readonly string _storageAccountName;
         private readonly string _storageAccessKey;
         private readonly ILogger _logger;

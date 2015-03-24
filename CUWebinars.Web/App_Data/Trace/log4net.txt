@@ -686,24 +686,42 @@ CUWebinars Error: 0 : Validation failed for webinar 1711 and User 43728
 CUWebinars Error: 0 : Validation failed for webinar 1712 and User 34528
 CUWebinars Error: 0 : Validation failed for webinar 1712 and User 34529
 CUWebinars Error: 0 : ERROR MailerSmtpException: l@b.com Subject: [BankWebinars] Confirmation of Registration: Legal Liabilities when Check Fraud Occurs ErrorMsg: Failure sending mail. Timestamp was: 19/03/2015 10:19:17 AM ExceptionType was: SmtpException InnerExceptionType was: System.Net.WebException
-CUWebinars Error: 0 : Validation failed for webinar 1754 and User 47678
-CUWebinars Error: 0 : Validation failed for webinar 1795 and User 35075
-CUWebinars Error: 0 : Validation failed for webinar 1769 and User 47613
-CUWebinars Error: 0 : Validation failed for webinar 1754 and User 47681
-CUWebinars Error: 0 : Validation failed for webinar 1744 and User 47680
-CUWebinars Error: 0 : Validation failed for webinar 1754 and User 47681
-CUWebinars Error: 0 : Validation failed for webinar 1744 and User 47680
-CUWebinars Error: 0 : Validation failed for webinar 1769 and User 47613
-CUWebinars Error: 0 : Validation failed for webinar 1754 and User 47681
-CUWebinars Error: 0 : Validation failed for webinar 1744 and User 47680
-CUWebinars Error: 0 : Validation failed for webinar 1754 and User 47681
-CUWebinars Error: 0 : Validation failed for webinar 1744 and User 47680
-CUWebinars Error: 0 : Validation failed for webinar 1769 and User 47613
-CUWebinars Error: 0 : Validation failed for webinar 1754 and User 47681
-CUWebinars Error: 0 : Validation failed for webinar 1744 and User 47680
-CUWebinars Error: 0 : Validation failed for webinar 1744 and User 43665
-CUWebinars Error: 0 : Validation failed for webinar 1754 and User 47681
-CUWebinars Error: 0 : Validation failed for webinar 1744 and User 43665
-CUWebinars Error: 0 : Validation failed for webinar 1754 and User 37886
-CUWebinars Error: 0 : Validation failed for webinar 1773 and User 47682
-CUWebinars Error: 0 : Validation failed for webinar 1754 and User 37886
+CUWebinars Error: 0 : ERROR MailerSmtpException: t@b.com Subject: [BankWebinars] Confirmation of Registration: Bank Call Report Preparation for Beginners - Five Part Webinar ErrorMsg: Failure sending mail. Timestamp was: 20/03/2015 10:35:17 AM ExceptionType was: SmtpException InnerExceptionType was: System.Net.WebException
+CUWebinars Error: 0 : ERROR MailerSmtpException: t@b.com Subject: [preview-BankWebinars] Confirmation of Registration: Bank Call Report Preparation for Beginners - Five Part Webinar ErrorMsg: Failure sending mail. Timestamp was: 20/03/2015 10:35:32 AM ExceptionType was: SmtpException InnerExceptionType was: System.Net.WebException
+CUWebinars Error: 0 : ERROR MailerSmtpException: v@b.com Subject: [BankWebinars] Confirmation of Registration: Bank Call Report Preparation for Beginners - Five Part Webinar ErrorMsg: Failure sending mail. Timestamp was: 20/03/2015 10:49:11 AM ExceptionType was: SmtpException InnerExceptionType was: System.Net.WebException
+CUWebinars Error: 0 : ERROR MailerSmtpException: v@b.com Subject: [preview-BankWebinars] Confirmation of Registration: Bank Call Report Preparation for Beginners - Five Part Webinar ErrorMsg: Failure sending mail. Timestamp was: 20/03/2015 10:49:27 AM ExceptionType was: SmtpException InnerExceptionType was: System.Net.WebException
+CUWebinars Error: 0 : ERROR MailerSmtpException: v@b.com Subject: [BankWebinars] Confirmation of Registration: Fair Lending and Reg B for the Frontline ErrorMsg: Failure sending mail. Timestamp was: 20/03/2015 2:52:27 PM ExceptionType was: SmtpException InnerExceptionType was: System.Net.WebException
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 43672
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 34620
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 40010
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 37919
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 47660
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 47410
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 38637
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 35795
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 40607
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 34619
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 43178
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 35344
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 36193
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 36511
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 34933
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 40340
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 35990
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 40706
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 47661
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 34468
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 36887
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 43635
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 43636
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 36880
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 47418
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 47407
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 40531
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 47662
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 34470
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 47665
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 47666
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 34767
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 47663
+CUWebinars Error: 0 : Validation failed for webinar 1772 and User 47664
