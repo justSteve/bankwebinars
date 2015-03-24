@@ -6,10 +6,24 @@ $(function() {
     var addPasswordContainer = $('#addPasswordContainer');
     var feedbackContainer = $('#FeedbackContainer');
     var containerHeight = addPasswordContainer.height();
+    var addPwdMsgLabelWrap = $('#addPwdMsgLabelWrap');
+    var validationSummary = $('#addPwdValSummary');
     $('#NewPassword').focus();
 
     submitButton.on('click', function(e) {
         e.preventDefault();
+
+        addPasswordForm.submit();
+    });
+
+    addPasswordForm.on('submit', function(e) {
+
+        e.preventDefault();
+
+        $.validator.unobtrusive.parse(addPasswordForm);
+
+        if (!addPasswordForm.valid())
+            return false;
 
         var url = addPasswordForm.attr('action');
         var data = addPasswordForm.serialize();
@@ -23,8 +37,8 @@ $(function() {
             data: data,
             beforeSend: function () {
                 $(this).attr('disabled', 'disabled');
-                $('#addPwdMsgLabelWrap').html('<span class="label label-info">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Adding your password...</span>');
-                $('#addPwdValSummary').empty();
+                addPwdMsgLabelWrap.html('<span class="label label-info">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Adding your password...</span>');
+                formProcessor.clearValidationSummary(validationSummary);
 
                 //Rollbar.info("addPasswordForm Sent");
             }
@@ -47,6 +61,9 @@ $(function() {
                 addPasswordForm.fadeOut();
                 Rollbar.error("AddPasswordFromCartCheckoutTimedOut");
                 formParent.prepend('<div class="legendImitator">Order Entry Completed</div><div>Your order is recorded. Watch your email for links to your event\'s materials and other important information.</p></div>');
+            } else if (!data.isSuccessful) {
+                addPwdMsgLabelWrap.html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;There has been an error</span>');
+                formProcessor.lightUpValidationSummary('addPwdValSummary', data);
             }
         });
     });

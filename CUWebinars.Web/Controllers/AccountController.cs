@@ -1035,15 +1035,26 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
+        [ValidateAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
         public ActionResult AddPasswordForCartCreatedUser(CreateUserConfirmedViewModel model)
         {
             if (ModelState.IsValid)
             {
-                if (_accountControllerOrchestrator.AddPasswordForCartCreatedUser(model))
-                    return Json(new { Result = WebUiConstants.Success });
+                try
+                {
+                    throw new Exception("Bad stuff happened.");
+                    if (_accountControllerOrchestrator.AddPasswordForCartCreatedUser(model))
+                        return Json(new { Result = WebUiConstants.Success });
 
 
-                return Json(new { Result = WebUiConstants.TimedOut });
+                    return Json(new { Result = WebUiConstants.TimedOut });
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException(string.Format("AddPasswordForCartCreatedUser | Session: {0}", _appHelper.GetSessionStartInfo()), exception);
+                    ModelState.AddModelError(string.Empty, "We have logged the error. Please call us at 800-831-0678 ext. 3 to resolve.");
+                }
             }
 
             return this.ModelStateJson(ModelState);
