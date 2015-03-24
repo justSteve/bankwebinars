@@ -1043,7 +1043,6 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
-                    throw new Exception("Bad stuff happened.");
                     if (_accountControllerOrchestrator.AddPasswordForCartCreatedUser(model))
                         return Json(new { Result = WebUiConstants.Success });
 
