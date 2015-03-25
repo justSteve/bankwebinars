@@ -59,7 +59,7 @@
     </layout>
   </appender>
   <root>
-    <level value="ERROR" />
+    <level value="ALL" />
     <appender-ref ref="AdoNetAppender" />
     <!--<appender-ref ref="FileAppender" />
     <appender-ref ref="ConsoleAppender" />-->
