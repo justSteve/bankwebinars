@@ -76,21 +76,15 @@ namespace CUWebinars.Business.Notification.Formatters
 
         protected virtual void LoadBodyTemplate(string templateName)
         {
-            templateName = string.Concat("CUWebinars.Business.Notification.Templates.", templateName, DomainConstants.RazorExtension);
-
-            var assembly = typeof(Formatter).Assembly;
-
-            using (var manifestResourceStream = assembly.GetManifestResourceStream(templateName))
-            {
-                LoadTemplate(manifestResourceStream);
-            }
+            LoadTemplate(templateName + DomainConstants.RazorExtension);
         }
 
-        private void LoadTemplate(Stream templateFileStream)
+        private void LoadTemplate(string name)
         {
+            var templatePath = Path.Combine(EnvironmentInformation.BaseUrl, DomainConstants.ResourcePathTemplate, name);
             var settings = new XmlReaderSettings { ConformanceLevel = ConformanceLevel.Fragment };
 
-            using (XmlReader reader = XmlReader.Create(templateFileStream, settings))
+            using (XmlReader reader = XmlReader.Create(templatePath, settings))
             {
                 while (reader.Read())
                 {
