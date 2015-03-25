@@ -356,11 +356,12 @@ namespace CUWebinars.Web.Controllers.Admin
 
         public ActionResult GetOrdersByLastName(string lastName)
         {
-           if (!string.IsNullOrWhiteSpace(lastName))
+            if (!string.IsNullOrWhiteSpace(lastName))
             {
-                var results = _orderManagementService.GetOrdersByLastName(lastName).Select(o => o.LastName + ", " + o.FirstName);
+                var results = _orderManagementService.GetOrdersByLastName(lastName)
+                    .Select(o => new { id = o.WebUser.idUser, lastName = o.WebUser.LastName, firstName = o.WebUser.FirstName });
                 
-                return Json(new {results}, JsonRequestBehavior.AllowGet);
+                return Json(new { results }, JsonRequestBehavior.AllowGet);
             }
 
             return Json(new { Error = WebUiConstants.NullValueParameter });

@@ -166,7 +166,7 @@ namespace CUWebinars.Business.Repository
 
         public IQueryable<Order> FindOrdersByLastName(string lastName)
         {
-            return items.Where(o => o.LastName.ToLower().Contains(lastName));
+            return items.Include(o => o.WebUser).Where(o => o.LastName.ToLower().Contains(lastName));
         }
 
         public IList<Order> FindOrdersByUserId(int userId)

@@ -667,7 +667,13 @@ OCA.wireUpHandlers = function() {
                     OCA.users = null; // dereference whatever is currently in 'OCA.users'. 
                 }
             }).done(function (data) {
-                OCA.users = data.results;
+                //OCA.users = data.results;
+
+                OCA.users = _.map(data.results, function (item) {
+                    var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName };
+                    return JSON.stringify(aItem);
+                });
+
                 process(OCA.users);
             });
         }
@@ -694,12 +700,14 @@ OCA.wireUpHandlers = function() {
             return true;
         },
 
-        highlighter: function (id) {
+        highlighter: function (listedUser) {
+            var item = JSON.parse(listedUser);
             var user = _.find(OCA.users, function (webUser) {
-                return webUser.id === id;
+                return JSON.parse(webUser)['id'] === item.id;
             });
             if (user !== null && typeof user !== 'undefined') {
-                return user.lastname + ', ' + user.firstname;
+                var userParsed = JSON.parse(user);
+                return userParsed.lastName + ', ' + userParsed.firstName;
             }
         },
 
@@ -707,15 +715,18 @@ OCA.wireUpHandlers = function() {
             return items;
         },
 
-        updater: function (id) {
+        updater: function (userJson) {
+            var userParsed = JSON.parse(userJson);
             var user = _.find(OCA.users, function (p) {
-                return p['id'] == id;
+                return JSON.parse(p)['id'] === userParsed['id'];
             });
 
             if (typeof user !== 'undefined') {
-                OCA.setSelectedProduct(user);
+                var parsedUser = JSON.parse(user);
+                OCA.setSelectedProduct(parsedUser);
+                return parsedUser['lastName'] + ', ' + parsedUser['firstName'];
             }
-            return user['lastname'] + ', ' + user['firstname'];
+            return '';
         }
 
     });
@@ -772,7 +783,7 @@ OCA.wireUpHandlers = function() {
 
     OCA.setSelectedProduct = function (webUser) {
 
-        OCA.chosenUserNameSpan.text(webUser.firstname + ', ' + webUser.lastname);
+        OCA.chosenUserNameSpan.text(webUser.firstName + ', ' + webUser.lastName);
         OCA.selectedWebUserInput.val(webUser.id);
         OCA.webUserIdInput.val(webUser.id);
     };
