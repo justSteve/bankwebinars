@@ -288,6 +288,10 @@ namespace CUWebinars.Business.Services
         {
             return _orderRepository.FindOrderIdsByPartialId(id);
         }
+        public IEnumerable<int> GetUserIdsByPartialId(int value)
+        {
+            return _orderRepository.FindUserIdsByPartialId(value);
+        }
 
         public IList<Order> GetOrdersByUserId(int id)
         {
@@ -1234,6 +1238,7 @@ namespace CUWebinars.Business.Services
         {
             return _webUserRepository.GetWebUserByIdLoadedWithAddressesAndInstitution(idUser);
         }
+
 
         public string CreateRegistrantKey(string firstName, string lastName, string billingEmail, int webinarId,
             string webinarKey)

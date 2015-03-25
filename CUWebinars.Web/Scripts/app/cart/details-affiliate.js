@@ -5,7 +5,7 @@ var OCA = ORDERCREATIONAFFILIATE; // shortcut alias to ORDERCREATIONAFFILIATE ob
 
 OCA.shippingAddressRequired = {};
 OCA.checkoutConfirm = {};
-
+    
 OCA.initializeFunctions = function () {
 
     OCA.hookUpChangeTypeLogic = function(dropDown) {
@@ -581,35 +581,109 @@ OCA.wireUpHandlers = function() {
         return false;
     });
     
-    var searchPeople = _.debounce(function( query, process ){
+    //var searchPeople = _.debounce(function( query, process ){
+
+    //    OCA.foundUsersList.hide();
+
+    //    var searchTerm = OCA.lastNameInput.val();
+
+    //    $.ajax({
+    //        type: 'GET',
+    //        contentType: constants.FormPostContentType,
+    //        cache: false,
+    //        url: '/Cart/SearchWebUsers',
+    //        dataType: constants.JsonDataType,
+    //        data: { lastName: searchTerm },
+    //        beforeSend: function () {
+    //            OCA.users = null; // dereference whatever is currently in 'users'. 
+
+    //            // this is where we append a loading image
+    //            //$('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Email...</span>');
+    //        }
+    //    }).done(function (data) {
+    //        OCA.users = data.people;
+
+    //        var results = _.map(OCA.users, function (user) {
+    //            return user.id;
+    //        });
+    //        process(results);
+    //    });
+
+    //    }, 500);
+
+    var searchPeople = _.debounce(function (query, process) {
 
         OCA.foundUsersList.hide();
 
         var searchTerm = OCA.lastNameInput.val();
 
-        $.ajax({
-            type: 'GET',
-            contentType: constants.FormPostContentType,
-            cache: false,
-            url: '/Cart/SearchWebUsers',
-            dataType: constants.JsonDataType,
-            data: { lastName: searchTerm },
-            beforeSend: function () {
-                OCA.users = null; // dereference whatever is currently in 'users'. 
+        if (searchTerm === '')
+            return;
 
-                // this is where we append a loading image
-                //$('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Email...</span>');
-            }
-        }).done(function (data) {
-            OCA.users = data.people;
-
-            var results = _.map(OCA.users, function (user) {
-                return user.id;
+        if (searchTerm.indexOf('@') > 0) {
+            // in here if searching for an email
+            $.ajax({
+                type: 'GET',
+                contentType: constants.FormPostContentType,
+                cache: false,
+                url: '/Admin/GetOrdersByEmailTypeahead',
+                dataType: constants.JsonDataType,
+                data: { email: searchTerm },
+                beforeSend: function () {
+                    OCA.users = null; // dereference whatever is currently in 'OCA.users'. 
+                }
+            }).done(function (data) {
+                OCA.users = data.results;
+                process(OCA.users);
             });
-            process(results);
-        });
 
-        }, 500);
+        } else if (_.isFinite(searchTerm)) {
+            // in here if searching on an order number
+
+            $.ajax({
+                type: 'GET',
+                contentType: constants.FormPostContentType,
+                cache: false,
+                url: '/Admin/GetOrdersByTypeahead',
+                dataType: constants.JsonDataType,
+                data: { id: searchTerm },
+                beforeSend: function () {
+                    OCA.users = null; // dereference whatever is currently in 'OCA.users'. 
+                }
+            }).done(function (data) {
+                OCA.users = data.results;
+                process(OCA.users);
+            });
+        } else {
+            // if not a number and not an email address, search is by lastname
+            $.ajax({
+                type: 'GET',
+                contentType: constants.FormPostContentType,
+                cache: false,
+                url: '/Admin/GetOrdersByLastName',
+                dataType: constants.JsonDataType,
+                data: { lastName: searchTerm },
+                beforeSend: function () {
+                    OCA.users = null; // dereference whatever is currently in 'OCA.users'. 
+                }
+            }).done(function (data) {
+                OCA.users = data.results;
+                process(OCA.users);
+            });
+        }
+
+    }, 200);
+//}).done(function (data) {
+//    OCA.users = data.people;
+
+//    var results = _.map(OCA.users, function (user) {
+//        return user.id;
+//    });
+//    process(results);
+//});
+
+//}, 500);
+
 
     OCA.lastNameInput.typeahead({
         source: function (query, process) {

@@ -39,5 +39,6 @@ namespace CUWebinars.Business.Repository
         int GetNumberOfOrdersPerWebinar(int id);
         void RemoveAndDeleteAdditionalLocation(AdditionalLocation deletedAdditionalLocation);
         void SendOrderToLegacy(Order newOrder);
+        IList<int> FindUserIdsByPartialId(int value);
     }
 }

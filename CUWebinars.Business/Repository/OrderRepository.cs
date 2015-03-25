@@ -189,6 +189,12 @@ namespace CUWebinars.Business.Repository
             return userOrder;
 
         }
+        public IList<int> FindUserIdsByPartialId(int userId)
+        {
+            return items.Where(order => order.idOrder.ToString().Contains(userId.ToString()))
+                .Select(order => order.idOrder)
+                .ToList();
+        }
 
         public IList<int> FindOrderIdsByPartialId(int userId)
         {

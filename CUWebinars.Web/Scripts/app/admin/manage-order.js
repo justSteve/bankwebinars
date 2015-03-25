@@ -304,7 +304,7 @@ $(function () {
                     ns.orderIdList = null; // dereference whatever is currently in 'ns.orderIdList'. 
                 }
             }).done(function(data) {
-                ns.orderIdList = data.orderIds;
+                ns.orderIdList = data.results;
                 process(ns.orderIdList);
             });
 
@@ -322,7 +322,7 @@ $(function () {
                     ns.orderIdList = null; // dereference whatever is currently in 'ns.orderIdList'. 
                 }
             }).done(function(data) {
-                ns.orderIdList = data.orderIds;
+                ns.orderIdList = data.results;
                 process(ns.orderIdList);
             });
         } else {
@@ -338,7 +338,7 @@ $(function () {
                     ns.orderIdList = null; // dereference whatever is currently in 'ns.orderIdList'. 
                 }
             }).done(function(data) {
-                ns.orderIdList = data.orderIds;
+                ns.orderIdList = data.results;
                 process(ns.orderIdList);
             });
         }
