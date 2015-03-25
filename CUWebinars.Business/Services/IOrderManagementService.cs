@@ -89,5 +89,6 @@ namespace CUWebinars.Business.Services
         IList<Order> GetOrdersForWebinar(int idWebinar);
         void SendOrderToLegacy(Order newOrder);
         WebUser GetWebUserWithAddressAndInstitution(int idUser);
+        IEnumerable<int> GetUserIdsByPartialId(int value);
     }
 }

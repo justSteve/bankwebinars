@@ -591,7 +591,7 @@ $(function () {
             var webinarsDropdownList = $('#SelectedWebinarId');
             
             $('#SendRecordingPostedButton').on('click', function (eventArgs) {
-                alert("hit ");
+                
                 var payload = webinarsDropdownList.val();
 
                 $(this).prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');

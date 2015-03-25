@@ -6,13 +6,15 @@ using System.Globalization;
 using System.Linq;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Models;
+using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Business.Core
 {
     public class DataOperations
     {
         private readonly string _connectionString;
-        private readonly string _logger;
+
+        private readonly ILogger _logger;
 
         public DataOperations(string connectionString)
         {
@@ -35,23 +37,31 @@ namespace CUWebinars.Business.Core
 
                     getLegacyWebinars.Connection = sqlConnection;
                     getLegacyWebinars.CommandType = CommandType.Text;
-                    getLegacyWebinars.CommandText = "SELECT ttsLable from ACSImporter where acsLable = '" + regTypeLable +
-                                                    "'";
+                    getLegacyWebinars.CommandText = "SELECT ttsLable from ACSImporter where acsLable = '" + regTypeLable + "'";
 
-                    using (var sqlUpdateConnection = new SqlConnection(_connectionString))
+                    try
                     {
-                        sqlUpdateConnection.Open();
-
-                        using (var reader = getLegacyWebinars.ExecuteReader())
+                        using (var sqlUpdateConnection = new SqlConnection(_connectionString))
                         {
-                            while (reader.Read())
+                            sqlUpdateConnection.Open();
+
+                            using (var reader = getLegacyWebinars.ExecuteReader())
                             {
-                                //reader.GetInt32(0), reader.GetDecimal(1)));
-                                returnLable = reader.GetString(0);
+                                while (reader.Read())
+                                {
+                                    //reader.GetInt32(0), reader.GetDecimal(1)));
+                                    returnLable = reader.GetString(0);
+                                }
                             }
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        _logger.Warn("Unknown Registration Type: " + getLegacyWebinars.CommandText + " Exception.Message: " + ex.Message);
+                    }
+
                     return returnLable;
+
                 }
             }
         }
@@ -117,27 +127,14 @@ namespace CUWebinars.Business.Core
 
                     command.CommandType = CommandType.Text;
 
-
-                    //SqlParameter parameterRT = new SqlParameter();
-                    //parameterRT.ParameterName = "@registrationType";
-                    //parameterRT.SqlDbType = SqlDbType.;
-                    //parameterRT.Direction = ParameterDirection.Input;
-                    //parameterRT.Value = registrationType;
-
-                    //SqlParameter parameteridWebinar = new SqlParameter
-                    //{
-                    //    ParameterName = "@idWebinar",
-                    //    SqlDbType = SqlDbType.Int,
-                    //    Direction = ParameterDirection.Input,
-                    //    Value = idWebinar
-                    //};
-
-                    //// Add the parameter to the Parameters collection. 
-                    //command.Parameters.Add(parameterRT);
-                    //command.Parameters.Add(parameteridWebinar);
-
                     var message = command.ExecuteScalar();
+                    if (message == null)
+                    {
+                        _logger.Fatal("Invalid Registration Type ");
+                    }
+
                     return Convert.ToInt32(message);
+
                 }
             }
         }
@@ -400,7 +397,7 @@ namespace CUWebinars.Business.Core
                     }
                 }
 
-                using (var sendOrder = new SqlCommand("ImportOrder", sqlConnection))
+                using (var sendOrder = new SqlCommand("ImportOrderACS", sqlConnection))
                 {
                     sendOrder.Parameters.Add(idUser2Parameter);
                     sendOrder.Parameters.Add(idWebinarParameter);

@@ -331,9 +331,12 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             if (id.HasValue)
             {
-                var orderIds = _orderManagementService.GetOrderIdsByPartialId(id.Value);
+                //var results = _orderManagementService.GetOrderIdsByPartialId(id.Value);
+                var results = _orderManagementService.GetOrderIdsByPartialId(id.Value);
+                var userIds = _orderManagementService.GetUserIdsByPartialId(id.Value);
 
-                return Json(new {orderIds}, JsonRequestBehavior.AllowGet);
+
+                return Json(new {results}, JsonRequestBehavior.AllowGet);
             }
 
             return Json(new { Error = WebUiConstants.NullValueParameter });
@@ -343,9 +346,9 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             if (!string.IsNullOrWhiteSpace(email))
             {
-                var orderIds = _orderManagementService.GetOrdersByEmail(email).Select(o => o.idOrder);
+                var results = _orderManagementService.GetOrdersByEmail(email).Select(o => o.BillingEmail + " - " + o.LastName + ", " + o.Institution);
 
-                return Json(new {orderIds}, JsonRequestBehavior.AllowGet);
+                return Json(new {results}, JsonRequestBehavior.AllowGet);
             }
 
             return Json(new { Error = WebUiConstants.NullValueParameter });
@@ -353,11 +356,11 @@ namespace CUWebinars.Web.Controllers.Admin
 
         public ActionResult GetOrdersByLastName(string lastName)
         {
-            if (!string.IsNullOrWhiteSpace(lastName))
+           if (!string.IsNullOrWhiteSpace(lastName))
             {
-                var orderIds = _orderManagementService.GetOrdersByLastName(lastName).Select(o => o.idOrder);
-
-                return Json(new {orderIds}, JsonRequestBehavior.AllowGet);
+                var results = _orderManagementService.GetOrdersByLastName(lastName).Select(o => o.LastName + ", " + o.FirstName);
+                
+                return Json(new {results}, JsonRequestBehavior.AllowGet);
             }
 
             return Json(new { Error = WebUiConstants.NullValueParameter });

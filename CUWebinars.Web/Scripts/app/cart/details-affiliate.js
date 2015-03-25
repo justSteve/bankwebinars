@@ -5,7 +5,7 @@ var OCA = ORDERCREATIONAFFILIATE; // shortcut alias to ORDERCREATIONAFFILIATE ob
 
 OCA.shippingAddressRequired = {};
 OCA.checkoutConfirm = {};
-
+    
 OCA.initializeFunctions = function () {
 
     OCA.hookUpChangeTypeLogic = function(dropDown) {
@@ -581,35 +581,109 @@ OCA.wireUpHandlers = function() {
         return false;
     });
     
-    var searchPeople = _.debounce(function( query, process ){
+    //var searchPeople = _.debounce(function( query, process ){
+
+    //    OCA.foundUsersList.hide();
+
+    //    var searchTerm = OCA.lastNameInput.val();
+
+    //    $.ajax({
+    //        type: 'GET',
+    //        contentType: constants.FormPostContentType,
+    //        cache: false,
+    //        url: '/Cart/SearchWebUsers',
+    //        dataType: constants.JsonDataType,
+    //        data: { lastName: searchTerm },
+    //        beforeSend: function () {
+    //            OCA.users = null; // dereference whatever is currently in 'users'. 
+
+    //            // this is where we append a loading image
+    //            //$('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Email...</span>');
+    //        }
+    //    }).done(function (data) {
+    //        OCA.users = data.people;
+
+    //        var results = _.map(OCA.users, function (user) {
+    //            return user.id;
+    //        });
+    //        process(results);
+    //    });
+
+    //    }, 500);
+
+    var searchPeople = _.debounce(function (query, process) {
 
         OCA.foundUsersList.hide();
 
         var searchTerm = OCA.lastNameInput.val();
 
-        $.ajax({
-            type: 'GET',
-            contentType: constants.FormPostContentType,
-            cache: false,
-            url: '/Cart/SearchWebUsers',
-            dataType: constants.JsonDataType,
-            data: { lastName: searchTerm },
-            beforeSend: function () {
-                OCA.users = null; // dereference whatever is currently in 'users'. 
+        if (searchTerm === '')
+            return;
 
-                // this is where we append a loading image
-                //$('#labelEmail').html('<span class="label label-warning">&nbsp;&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Checking that Email...</span>');
-            }
-        }).done(function (data) {
-            OCA.users = data.people;
-
-            var results = _.map(OCA.users, function (user) {
-                return user.id;
+        if (searchTerm.indexOf('@') > 0) {
+            // in here if searching for an email
+            $.ajax({
+                type: 'GET',
+                contentType: constants.FormPostContentType,
+                cache: false,
+                url: '/Admin/GetOrdersByEmailTypeahead',
+                dataType: constants.JsonDataType,
+                data: { email: searchTerm },
+                beforeSend: function () {
+                    OCA.users = null; // dereference whatever is currently in 'OCA.users'. 
+                }
+            }).done(function (data) {
+                OCA.users = data.results;
+                process(OCA.users);
             });
-            process(results);
-        });
 
-        }, 500);
+        } else if (_.isFinite(searchTerm)) {
+            // in here if searching on an order number
+
+            $.ajax({
+                type: 'GET',
+                contentType: constants.FormPostContentType,
+                cache: false,
+                url: '/Admin/GetOrdersByTypeahead',
+                dataType: constants.JsonDataType,
+                data: { id: searchTerm },
+                beforeSend: function () {
+                    OCA.users = null; // dereference whatever is currently in 'OCA.users'. 
+                }
+            }).done(function (data) {
+                OCA.users = data.results;
+                process(OCA.users);
+            });
+        } else {
+            // if not a number and not an email address, search is by lastname
+            $.ajax({
+                type: 'GET',
+                contentType: constants.FormPostContentType,
+                cache: false,
+                url: '/Admin/GetOrdersByLastName',
+                dataType: constants.JsonDataType,
+                data: { lastName: searchTerm },
+                beforeSend: function () {
+                    OCA.users = null; // dereference whatever is currently in 'OCA.users'. 
+                }
+            }).done(function (data) {
+                OCA.users = data.results;
+                process(OCA.users);
+            });
+        }
+
+    }, 200);
+//}).done(function (data) {
+//    OCA.users = data.people;
+
+//    var results = _.map(OCA.users, function (user) {
+//        return user.id;
+//    });
+//    process(results);
+//});
+
+//}, 500);
+
 
     OCA.lastNameInput.typeahead({
         source: function (query, process) {
@@ -624,7 +698,6 @@ OCA.wireUpHandlers = function() {
             var user = _.find(OCA.users, function (webUser) {
                 return webUser.id === id;
             });
-
             if (user !== null && typeof user !== 'undefined') {
                 return user.lastname + ', ' + user.firstname;
             }
@@ -732,10 +805,7 @@ function modalShown (e) {
         var url = $(this).attr('action');
 
         var payload = $(this).serialize();
-        //TODO: The payload here is highly valuable. The fact that they will be POSTed
-        // instead of GET means they don't show in the server logs, which is often nice to have.
-        // can we fire a GET to an internal address where nothing happens except that
-        // a line dumps to the server with all form values.
+
         $.ajax({
             type: 'POST',
             contentType: constants.FormPostContentType,
@@ -766,20 +836,22 @@ function modalShown (e) {
                 $('#updateShippingMsgLabelWrap').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details updated successfully.</span>');
 
             } else if (!data.isSuccessful) {
-                //var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
-                //NREUM.noticeError(err);
-
+                Rollbar.error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
                 $('#updateShippingMsgLabelWrap').empty();
                 formProcessor.lightUpValidationSummary('userDetailsValSummary', data);
             } else {
                 var err = new Error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
                 //NREUM.noticeError(err);
-                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>There has been an error in the operation.Please call us at 800-831-0678 ext. 3 to resolve.</span>');
+                Rollbar.error('Post to ' + userDetailsFormUrl + ' !data.isSuccessful');
+                Rollbar.error("#348 userDetailsFormUrl static marker");
+
+                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>[Connection Error #348] Please call us at 800-831-0678 ext. 3 to resolve.</span>');
             }
         }).fail(function(data) {
-            var err = new Error('FAIL: Post to userDetailsFormUrlData ' + userDetailsFormUrlData + ' !data.isSuccessful');
-            //NREUM.noticeError(err);
-            $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error in the server response. Please call us at 800-831-0678 ext. 3 to resolve.</span>');
+            
+            Rollbar.error('FAIL: Post to userDetailsFormUrlData ' + userDetailsFormUrlData + ' !data.isSuccessful');
+            Rollbar.error("#348 userDetailsFormUrl static marker");
+            $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Connection Error #048] Please call us at 800-831-0678 ext. 3 to resolve.</span>');
         });
     });
 

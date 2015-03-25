@@ -98,6 +98,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             var ImportOrderCommand = new ImportOrderCommand()
             {
+                OrderDate = ImportOrderModel.OrderDate,
                 Affiliate = importQueryResult.Affiliate,
                 AffiliateComments = ImportOrderModel.AffiliateComments,
                 BillingAddress = ImportOrderModel.BillingAddress,
@@ -241,6 +242,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 AffiliateId = importOrderModel.idAffiliate,
                 Email = email,
+                OrderDate = importOrderModel.OrderDate,
                 WebinarId = importOrderModel.idWebinar
             };
 

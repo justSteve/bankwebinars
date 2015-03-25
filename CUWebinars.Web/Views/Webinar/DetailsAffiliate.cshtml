@@ -36,6 +36,10 @@
 @section scripts{
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/create-order-affiliate")
+    @* includes:
+        ~/Scripts/app/cart/create-order-new.js
+        ~/Scripts/app/cart/details-affiliate.js
+    *@
 }
 
 @Styles.Render("~/Content/create-order-details")
@@ -44,6 +48,8 @@
     <div id="webinarTitle" class="container">
         <div class="span10">
             <h1>@Model.Webinar.Title</h1>
+            <div id="showOrdersButton" class="btn btn-info pull-right" 
+                 data-toggle="collapse" data-target="#webinarOrders">Show Orders</div>
         </div>
     </div>
 </div>
@@ -51,6 +57,11 @@
 
 <div class="container clearfix" id="main-content">
     <!--begin main content-->
+
+    <div id="webinarOrders" class="row-fluid collapse">
+        <div>Here!</div>
+
+    </div>
 
     <div id="webinarContent" class="row-fluid holy-grail">
         <!--begin row-fluid-->
@@ -67,8 +78,8 @@
         <div class="span6">
             @{
                 if (Model.Webinar.Status != WebinarStatus.Archived
-                    && Model.Webinar.Status != WebinarStatus.Deleted
-                    && Model.Webinar.Status != WebinarStatus.Pending)
+                                                                    && Model.Webinar.Status != WebinarStatus.Deleted
+                                                                    && Model.Webinar.Status != WebinarStatus.Pending)
                 {
                     <div id="SignUpFormContainer" class="row-fluid">
 
@@ -198,5 +209,4 @@
         </div>
         <!--close section tertiary-column sidebar span3-->
     </div>
-
 </div> <!-- closes main-content -->

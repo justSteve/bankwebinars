@@ -291,7 +291,8 @@ namespace CUWebinars.Web.Controllers
                 _logger.Info("ACS Importer hears: " + importedOrder.Email + " idWebinar: " + importedOrder.idWebinar);
                 idRegType = _webinarManagementService.GetRegTypeByACS(importedOrder.RegistrationType,
                     importedOrder.idWebinar);
-                //Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+
+
             }
             else
             {
@@ -301,6 +302,7 @@ namespace CUWebinars.Web.Controllers
 
             if (idRegType == 0)
             {
+                _logger.Fatal(string.Format("idRegType comes up 0. RegType = {0}; email = {1}; orderDate = {2};", importedOrder.RegistrationType, importedOrder.Email, importedOrder.OrderDate));
                 return Json(new { Result = WebUiConstants.Fail, Error = "Invalid Registration Type: " + importedOrder.RegistrationType });
             }
             importedOrder.RegistrationType = idRegType.ToString();
@@ -349,15 +351,23 @@ namespace CUWebinars.Web.Controllers
                 if (importedOrder.idAffiliate == 62)
                 {
                     var newOrder = _orderManagementService.GetOrderById(idOfLastOrder);
+                    if (idOfLastOrder == 0)
+                    {
+                        newOrder = _orderManagementService.GetOrdersByUserId(importQueryResult.WebUser.idUser)
+                            .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == importedOrder.idWebinar) != null)
+                            .SingleOrDefault();
+                        ;
+                    }
 
                     _logger.Info("ACS Importer heard: " + newOrder.BillingEmail);
                     _orderManagementService.SendOrderToLegacy(newOrder);
+
+                    newOrder.OrderDate = importedOrder.OrderDate;
                     _orderManagementService.SaveChanges();
                 }
 
                 //idOfLastOrderOrderRow = importedOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
                 _logger.Info(string.Format("ImportOrder from {0} produced: {1}", importedOrder.Source + "-" + importedOrder.Version, idOfLastOrder));
-
                 return Json(new { Result = idOfLastOrder.ToString() }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception exception)
@@ -373,215 +383,6 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-
-        private bool ParseMsgBody(string _doc, string orderDate)
-        {
-            HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-
-            doc.LoadHtml(_doc);
-
-            if (doc.ParseErrors != null && doc.ParseErrors.Count() > 0)
-            {
-                // Handle any parse errors as required
-
-                return true;
-            }
-            else
-            {
-                if (doc.DocumentNode != null)
-                {
-                    MyGuid = Guid.NewGuid().ToString();
-                    var auditMsg = "MyGuid=" + MyGuid;
-                    Dictionary<string, string> ACSOrderDictionary = new Dictionary<string, string>
-                            {
-                                    {"FirstName", ""}, {"LastName", ""}, {"Company", ""}, {"Title", ""}, {"Email", ""}, {"Phone", ""}, {"Country", ""}, {"StreetorP.O.Box", ""}, {"City", ""}, {"State/Province/Region", ""}, {"Zip/PostalCode", ""}, {"DeliveryType", ""}, {"WebinarTitle", ""}, {"CourseNumber", ""}, {"WebinarDate", ""}, {"WebinarTime(EasternTime)", ""}, {"CourseDeliveryType", ""}, {"CoursePrice", ""}, {"BankWebID", ""}, {"PaymentMethod", ""}, {"CompanyBillingInformation", ""}, {"ZeroValue", ""}, {"DateSubmittedToACS", orderDate}
-                            };
-
-                    HtmlNode bodyNode = doc.DocumentNode.SelectSingleNode("//body");
-
-                    if (bodyNode != null)
-                    {
-                        try
-                        {
-                            var _values = doc.DocumentNode.SelectNodes("//tr[@bgcolor='#FFFFFF']/td[2]");
-                            var _names = doc.DocumentNode.SelectNodes("//tr[@bgcolor='#EAF2FA']/td");
-
-
-                            string[] values = new string[_values.Count];
-                            string[] names = new string[_values.Count];
-
-                            for (var i = 0; i < _values.Count - 1; i++)
-                            {
-                                string value = _values[i].InnerText.TrimStart().TrimEnd();
-                                string name = Regex.Replace(_names[i].InnerText, @"\s", string.Empty, RegexOptions.Multiline)
-                                                   .TrimStart().TrimEnd();
-                                //docs the error
-                                if (value.Length == 0) { value = name; }
-
-                                if (ACSOrderDictionary.ContainsKey(name))
-                                {
-                                    ACSOrderDictionary[name] = value;
-                                }
-                                else
-                                {
-                                    _logger.Warn("Keyname not known:" + name);
-                                }
-                                values[i] = value;
-                                names[i] = name;
-                            }
-                            _logger.Info("values =" + values + " : names = " + names);
-
-                            var nvPaired = BuildMigratorString(ACSOrderDictionary);
-
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.Warn("ERROR Parsing Importer Loop: " + ex);
-                            return true;
-                        }
-
-                    }
-                }
-            }
-            return false;
-        }
-
-
-        private string BuildMigratorString(Dictionary<string, string> dic)
-        {
-
-            String AffiliateID = "";
-            String WebinarID = dic["FirstName"];
-            int idRegType = _webinarManagementService.GetRegTypeByACS(dic["DeliveryType"], Convert.ToInt32(dic["BankWebID"]));
-            var FirstName = dic["FirstName"];
-            var LastName = dic["LastName"];
-            var Title = dic["Title"];
-            var Institution = dic["Company"];
-            var Email = dic["Email"];
-            var Phone = dic["Phone"];
-            var Address = dic["StreetorP.O.Box"];
-            var Address2 = "";
-            var City = dic["City"];
-            var State = dic["State/Province/Region"];
-            var Zip = dic["Zip/PostalCode"];
-            var DiscountCode = "";
-            var AdditionalLocations = "";
-            var shippingFirstName = dic["FirstName"];
-            var shippingLastName = dic["LastName"];
-            var shippingPhone = dic["Phone"];
-            var shippingAddress = dic["StreetorP.O.Box"];
-            var shippingCity = dic["City"];
-            var shippingState = dic["State/Province/Region"];
-            var shippingZip = dic["Zip/PostalCode"];
-            var AffiliateComments = "ACSImporter";
-            var OrderDate = dic["DateSubmittedToACS"];
-
-            var PostForm = "";
-
-
-            PostForm = "idAffiliate=" + AffiliateID + "+BillingAddress.AddressType=Billing";
-            PostForm += "&BillingAddress.Name=" + HttpUtility.UrlEncode(FirstName + " " + LastName);
-            PostForm += "&BillingAddress.Phone=" + HttpUtility.UrlEncode(Phone);
-            PostForm += "&BillingAddress.str=" + HttpUtility.UrlEncode(Address);
-            PostForm += "&BillingAddress.str2=" + HttpUtility.UrlEncode(Address2);
-            PostForm += "&BillingAddress.City=" + HttpUtility.UrlEncode(City);
-            PostForm += "&BillingAddress.Zip=" + HttpUtility.UrlEncode(Zip);
-            PostForm += "&BillingAddress.State=" + HttpUtility.UrlEncode(State);
-            PostForm += "&BillingAddress.Country=" + "US";
-            PostForm += "&ShippingAddress.AddressType=Shipping";
-            PostForm += "&ShippingAddress.Name=" + HttpUtility.UrlEncode(shippingFirstName + " " + shippingLastName);
-            PostForm += "&ShippingAddress.Phone=" + HttpUtility.UrlEncode(shippingPhone);
-            PostForm += "&ShippingAddress.str=" + HttpUtility.UrlEncode(shippingAddress);
-            PostForm += "&ShippingAddress.str2=" + "";
-            PostForm += "&ShippingAddress.City=" + HttpUtility.UrlEncode(shippingCity);
-            PostForm += "&ShippingAddress.State=" + HttpUtility.UrlEncode(shippingState);
-            PostForm += "&ShippingAddress.Zip=" + shippingZip;
-            PostForm += "&ShippingAddress.Country=US";
-            PostForm += "&Email=" + HttpUtility.UrlEncode(Email);
-            PostForm += "&Title=" + HttpUtility.UrlEncode(Title);
-            PostForm += "&Institution=" + HttpUtility.UrlEncode(Institution);
-            PostForm += "&FirstName=" + HttpUtility.UrlEncode(FirstName);
-            PostForm += "&LastName=" + HttpUtility.UrlEncode(LastName);
-            PostForm += "&idRegType=" + idRegType;
-            PostForm += "&idWebinar=" + WebinarID;
-            PostForm += "&AdditionalLocationsString=" + HttpUtility.UrlEncode(AdditionalLocations);
-            PostForm += "&idOrderLegacy=0";
-            PostForm += "&OrderDate=" + HttpUtility.UrlEncode(OrderDate);
-            PostForm += "&ShippingDate=";
-            PostForm += "&DiscountCode=" + HttpUtility.UrlEncode(DiscountCode);
-            PostForm += "&Status=";
-            PostForm += "&Total=";
-
-            string submitMigrateForm = string.Empty;
-
-            Uri url = null;
-            var baseUri = new Uri(string.Concat(url.Scheme, @"://", url.Authority), UriKind.Absolute);
-            submitMigrateForm = new Uri(
-                baseUri,
-                "Order/MigrateOrder/"
-                ).ToString();
-
-            HttpWebResponse response;
-            WebRequest request = WebRequest.Create(submitMigrateForm);
-            request.Method = "POST";
-            byte[] byteArray = Encoding.UTF8.GetBytes(PostForm);
-            request.ContentType = "application/x-www-form-urlencoded";
-            request.ContentLength = byteArray.Length;
-
-            StreamWriter sw = new StreamWriter(request.GetRequestStream());
-            sw.Write(PostForm);
-            
-            // Execute the query
-            response = (HttpWebResponse)request.GetResponse();
-            StreamReader sr = new StreamReader(response.GetResponseStream());
-            //return sr.ReadToEnd();
-
-            // Close the Stream object.
-            //dataStream.Close();
-            Stream dataStream = request.GetRequestStream();
-            // Display the status.
-            Console.WriteLine(((HttpWebResponse)response).StatusDescription);
-            // Get the stream containing content returned by the server.
-            dataStream = response.GetResponseStream();
-            // Open the stream using a StreamReader for easy access.
-            StreamReader reader = new StreamReader(dataStream);
-            // Read the content.
-            string responseFromServer = reader.ReadToEnd();
-            sw.Close();
-            return responseFromServer;
-
-            // Display the content.
-            return null;
-
-
-        }
-
-
-        public void SubmitACSForm(Dictionary<string, string> form)
-        {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://v3.bankwebinars.com/Order/MigrateOrder");
-
-            // Set some reasonable limits on resources used by this request
-            request.MaximumAutomaticRedirections = 4;
-            request.MaximumResponseHeadersLength = 4;
-            // Set credentials to use for this request.
-            request.Credentials = CredentialCache.DefaultCredentials;
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-            Console.WriteLine("Content length is {0}", response.ContentLength);
-            Console.WriteLine("Content type is {0}", response.ContentType);
-
-            // Get the stream associated with the response.
-            Stream receiveStream = response.GetResponseStream();
-
-            // Pipes the stream to a higher level stream reader with the required encoding format. 
-            StreamReader readStream = new StreamReader(receiveStream, Encoding.UTF8);
-
-            Console.WriteLine("Response stream received.");
-            Console.WriteLine(readStream.ReadToEnd());
-            response.Close();
-            readStream.Close();
-        }
 
         protected override void Dispose(bool disposing)
         {

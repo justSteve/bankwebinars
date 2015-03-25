@@ -3,8 +3,10 @@
 @using System.Linq
 @using System.Text
 @using System.Web.Mvc.Html
+@using CUWebinars.Business.Core
 @using CUWebinars.Business.Models
-@model CUWebinars.Business.Notification.ViewModel.OrderSubmittedViewModel
+@using CUWebinars.Business.Notification.ViewModel
+@model OrderSubmittedViewModel
 
 <title>
     @{
@@ -12,16 +14,17 @@
                         where orderRow.RowStatus == OrderRowStatus.Active
                         select orderRow;
         var thisWebinar = orderRows.Single().Webinar;
+        string TenantHead = TtsTemplateHelperObject.Tenant();
     }
-    Confirmation of Registration: @thisWebinar.Title
+    [@TenantHead] Confirmation of Registration: @thisWebinar.Title
 </title>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 @{
-
     var row = from orderRow in Model.Order.OrderRows
               where orderRow.RowStatus == OrderRowStatus.Active
               select orderRow;
+    var affiliate = row.Single().Order.Affiliate.DisplayTitle;
     var webinar = row.Single().Webinar;
     var rowRegType = row.Single().RegistrationType;
     var joinURL = row.Single().JoinURL;
@@ -31,15 +34,45 @@
     var notiConnectionInfo = rowRegType.ShowLiveNotifications;
     var notiRecordingPosted = rowRegType.ShowRecordingNotifications;
     var notiShipped = rowRegType.ShowShippedNotifications;
+    var displayOrderNumber = Model.Order.idOrder;
 
+    if (Model.Order.idOrderLegacy != 0)
+    {
+        displayOrderNumber = Model.Order.idOrderLegacy;
+    }
 
-    System.Text.StringBuilder connInfoPhrase = new System.Text.StringBuilder();
+    var thankYouPhrase = new StringBuilder();
+    var connInfoPhrase = new StringBuilder();
     var locations = myRow.AdditionalLocation;
-    System.Text.StringBuilder addLocs = new System.Text.StringBuilder();
+    var addLocs = new StringBuilder();
 
     var isFirstOrderForThisUser = true;
 
-    //var orderCount = CUWebinars.Business.Services.OrderManagementService.
+    thankYouPhrase.Append("Dear " + Model.Order.FirstName + ",<br /><br />Thank you for the <b>");
+    thankYouPhrase.Append(row.Single().RegistrationType.OptionLabel);
+    thankYouPhrase.Append("</b> registration to <i>" + row.Single().Webinar.Title + "</i>");
+
+    switch (Model.OrderGenesis)
+    {
+        case OrderGenesis.CreatedViaCartByExistingUser:
+            thankYouPhrase.Append(". ");
+            break;
+        case OrderGenesis.CreatedViaCartByNewUser:
+            thankYouPhrase.Append(". When your order was submitted, we created an account and requested that you enter a new password. In case you missed that prompt or don't recall entering a password, please visit <b><a href=" + Model.AddPasswordUrl + ">Set My Password</a></b> or paste this URL into your browser:<i>" + Model.AddPasswordUrl + "</i>.");
+            break;
+        case OrderGenesis.ImportedForExistingUser:
+            thankYouPhrase.Append(" - placed for you by " + Model.Order.Affiliate.DisplayTitle + ". ");
+            break;
+        case OrderGenesis.ImportedForNewUser:
+            thankYouPhrase.Append(" - placed for you by " + Model.Order.Affiliate.DisplayTitle + ". ");
+
+            if (isFirstOrderForThisUser)
+            {
+                thankYouPhrase.Append("We've created an account and request that you confirm this transaction by visiting (or pasting this address to your browser) <a href=" + Model.ConfirmChangeEmailUrl + "><b>" + Model.ConfirmChangeEmailUrl + "</b></a>.");
+            }
+            break;
+    }
+
 
     if (locations.Count != 0)
     {
@@ -79,14 +112,11 @@
 
         if (notiConnectionInfo == "Yes")
         {
-            connInfoPhrase.Append("<p>Two to three days prior to the event ");
-            connInfoPhrase.Append("we'll send connection instructions and links to handouts or other materials. </p>");
+            connInfoPhrase.Append("<p>Two to three days prior to the event we'll send connection instructions and links to handouts and other materials. </p>");
 
             if (notiRecordingPosted == "Yes")
             {
                 connInfoPhrase.Append("<p> Shortly following the conclusion you'll receive notification when the recording is posted");
-
-
                 if (notiShipped == "Yes")
                 {
                     connInfoPhrase.Append(" - then again 3-5 days later informing you that we've shipped your CD and printouts");
@@ -97,8 +127,7 @@
         }
         else
         {
-            connInfoPhrase.Append("<p>Because this order doesn't include the <i>live</i> session ");
-            connInfoPhrase.Append("we'll only be sending you a notification when the OnDemand Recording is posted");
+            connInfoPhrase.Append("<p>Because this order doesn't include the <i>live</i> session we'll only be sending you a notification when the OnDemand Recording is posted");
             if (notiShipped == "Yes")
             {
                 connInfoPhrase.Append(" and then another after your CD and printouts have shipped");
@@ -108,16 +137,16 @@
     }
 
 
-    if (webinar.Status == WebinarStatus.Active)
+    if (webinar.Status == WebinarStatus.Active || webinar.Status == WebinarStatus.InProgress)
     {
         connInfoPhrase.Append("<p>");
         if (notiConnectionInfo == "Yes")
         {
-            connInfoPhrase.Append(" This order confirmation includes a link to connect directly to the webinar.");
+            connInfoPhrase.Append(" Below you will find a link to connect directly to the webinar.");
         }
         if (notiRecordingPosted == "Yes")
         {
-            connInfoPhrase.Append(" Shortly following the conclusion you'll receive another notification that the recording is posted");
+            connInfoPhrase.Append(" Shortly following the conclusion you'll receive notification that the recording is posted");
 
             if (notiShipped == "Yes")
             {
@@ -128,7 +157,7 @@
     }
 
 
-    if (webinar.Status == WebinarStatus.Recorded)
+    if (webinar.Status == WebinarStatus.Recorded || webinar.Status == WebinarStatus.Archived)
     {
         connInfoPhrase.Append("<p>");
         if (notiRecordingPosted == "Yes")
@@ -145,7 +174,7 @@
 
     if (joinURL == null)
     {
-        joinURL = "https://www2.gotomeeting.com/join/" + webinar.WebinarKey;
+        joinURL = webinar.CitrixRegisterUrl;
     }
     if (webinar.AccessCodeAttendee != null)
     {
@@ -165,7 +194,7 @@
         phone = webinar.AccessPhone;
     }
     var HeaderText = "Confirmation of Registration for<br />" + webinar.Title;
-    var BannerText = "Order Number: " + TenantPrefix + Model.Order.idOrder + "<br />Type: " + row.Single().RegistrationType.OptionLabel;
+    var BannerText = "Order Number: " + TenantPrefix + displayOrderNumber + "<br />Type: " + row.Single().RegistrationType.OptionLabel;
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>[@Tenant]: Confirmation of Registration for @webinar.Title</title>
@@ -183,9 +212,9 @@
         <table width="660px" border="0" cellspacing="0" cellpadding="0">
             <tbody>
                 @*<tr style="background-color: #344a58">
-                        <td colspan="3">
-                            <img alt="top_shadow.jpg" border="0" height="6" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/top_shadow.jpg" style="width: 100%; height: 6px; display: block;" width="660" />
-                        </td>
+                    <td colspan="3">
+                    <img alt="top_shadow.jpg" border="0" height="6" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/top_shadow.jpg" style="width: 100%; height: 6px; display: block;" width="660" />
+                    </td>
                     </tr>*@
                 <tr style="background-color: #344a58">
                     <td background="http://ttsmedia.ttstrain.com/images/vrLocal/left_shadow.jpg" rowspan="3" valign="top" width="5">
@@ -205,10 +234,10 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td width="462px" bgcolor="#344a58" valign="top">
-                                        <img align="middle" alt="SiteLogo" border="0" height="50" hspace="25" margin="0px 0px 0px 0px" src="@TenantLogo" style="width: 332px; height: 50px; display: block;" title="Site Logo" vspace="25" width="332" />
+                                    <td width="462px" bgcolor="#4c5966" valign="top">
+                                        <img align="middle" alt="Site Logo" border="0" height="50" hspace="25" margin="0px 0px 0px 0px" src="@TenantLogo" style="display: block;" title="Site Logo" vspace="25" />
                                     </td>
-                                    <td align="left" bgcolor="#344a58" style="padding: 0px 15px 0px 0px; border-right-color: rgb(52, 74, 88); border-right-width: 1px; border-right-style: solid;">
+                                    <td align="left" bgcolor="#4c5966" style="padding: 0px 15px 0px 0px; border-right-color: rgb(52, 74, 88); border-right-width: 1px; border-right-style: solid;">
                                         <p style="text-align: center; color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
                                             @BannerText
                                         </p>
@@ -258,24 +287,8 @@
                                                                     <tr>
                                                                         <td colspan="2" style="text-align: left; margin-left: 6px; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: small">
                                                                             <div style="color: black; font-family: Arial, Helvetica, sans-serif; padding: 5px; font-size: 12px;">
-                                                                                <p>
-                                                                                    Dear @Model.Order.FirstName,<br /><br />
-                                                                                    Thank you for your order @TenantPrefix@row.Single().Order.idOrder for a
-                                                                                    <i>@row.Single().RegistrationType.OptionLabel</i> on the event titled <i>@row.Single().Webinar.Title</i>.
-                                                                                    @if (Model.UserCreatedOnImport)
-                                                                                    {
-                                                                                        <span>
-                                                                                            We've created an account at <b>@TenantDomain</b> and request you establish a new password that is unqiue to this site and hard to guess. <b><a href="@Model.ConfirmChangeEmailUrl">Set My Password</a></b>.<br />
-                                                                                            If you have any problems accessing that link from inside this email you may paste this URL into your browser: <i>@Model.ConfirmChangeEmailUrl</i><br /><br />
-                                                                                        </span>
-                                                                                    }
-                                                                                    else if (Model.UserCreatedInCart)
-                                                                                    {
-                                                                                        <span style="color:blue">
-                                                                                            @Model.AddPasswordUrl
-                                                                                        </span>
-                                                                                    }
-                                                                                </p> @connInfoPhrase
+                                                                                @thankYouPhrase
+                                                                                @connInfoPhrase
                                                                                 <p>
                                                                                     Again, thank you very much for your patronage and don't hesitate to let us know how we can serve you better!<br /><br />Sincerely,<br />The @Tenant Staff<br /><br />
                                                                                 </p>
@@ -314,6 +327,20 @@
                                                                             <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
                                                                                 <b>
                                                                                     @row.Single().RegistrationType.OptionLabel
+                                                                                </b>
+                                                                            </span>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td valign="top" width="150px" style="text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px">
+                                                                            <span align="right" style="vert-align: top; font-size: 10px;">
+                                                                                Cost:
+                                                                            </span>
+                                                                        </td>
+                                                                        <td width="350px" style="text-align: left; background-color: #B4D1EC; padding-left: 6px;">
+                                                                            <span style="color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                                                                                <b>
+                                                                                    $@row.Single().Order.Total.ToString().Replace(".0000", "")
                                                                                 </b>
                                                                             </span>
                                                                         </td>
@@ -560,9 +587,14 @@
                         <table align="center" cellpadding="0" cellspacing="0" width="630">
                             <tbody>
                                 <tr>
+                                    <td align="left" style="padding-top: 10px;">
+                                        <div style="color: rgb(255, 255, 255); font-size: 11px;">
+                                            <p>Courtesy of <b>@affiliate.</b></p>
+                                        </div>
+                                    </td>
                                     <td align="right" style="padding-top: 10px;">
                                         <div style="color: rgb(255, 255, 255); font-size: 11px;">
-                                            <img align="none" alt="footer" border="0" height="59" hspace="0" src="http://ttsmedia.ttstrain.com/images/vrLocal/footer.gif" style="width: 274px; height: 59px;" title="footer" vspace="0" width="274" />
+                                            <p style="width: 274px; height: 59px;" title="footer" vspace="0" width="274">Tel: 800-831-0678<br />Fax: 800-831-3776</p>
                                         </div>
                                     </td>
                                 </tr>
