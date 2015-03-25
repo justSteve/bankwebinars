@@ -2,6 +2,7 @@
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
+using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Browsers.Webinars;
@@ -45,6 +46,7 @@ namespace CUWebinars.Web.Controllers
 
         //Steve added MembershipService dependancy to allow for 'currentUser' in Details.
         private readonly IMembershipService _membershipService;
+        private readonly IAffiliateManagementService _affiliateManagementService;
         private readonly IOrderManagementService _orderManagementService;
         private readonly IWebinarManagementService _webinarManagementService;
         private readonly ILogger _logger;
@@ -557,7 +559,32 @@ namespace CUWebinars.Web.Controllers
                 InitializeDetailsState(webinar, model, id.Value); // form state, incl. stuff that will be posted back. 
                 InitializeViewCentricProperties(model);
                 // mostly just stuff that helps determine layout of the page on load. Not meant to be sent back here to Server from the View
+                if (model.Webinar == null)
+                {
+                    return HttpNotFound();
+                }
 
+                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+
+                if (
+                    claimsIdentityOfAuthenticatedUser.HasClaim(
+                        (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
+                {
+                    return PartialView("DetailsAdmin", model);
+                }
+
+                if (
+                    claimsIdentityOfAuthenticatedUser.HasClaim(
+                        (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
+                {
+                   var ttsDomain = claimsIdentityOfAuthenticatedUser.FindFirst((claim) => claim.Value == Business.Constants.ClaimValues.Affiliate).ToString();
+                    model.ShowOrdersViewModel = new ShowOrdersViewModel
+                    {
+
+                        Affiliate = _affiliateManagementService.LoadByTTSDomain(ttsDomain)
+                    };
+                    return PartialView("DetailsAffiliate", model);
+                }
                 var usersOrders = _orderManagementService.GetOrdersByUserId(model.WebUser.idUser)
                     .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id.Value) != null);
 
@@ -698,28 +725,7 @@ namespace CUWebinars.Web.Controllers
                         UserType = UserType.Customer
                     };
                 }
-
-                if (model.Webinar == null)
-                {
-                    return HttpNotFound();
-                }
-
-                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
-
-                if (
-                    claimsIdentityOfAuthenticatedUser.HasClaim(
-                        (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
-                {
-                    return PartialView("DetailsAdmin", model);
-                }
-
-                if (
-                    claimsIdentityOfAuthenticatedUser.HasClaim(
-                        (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
-                {
-                    return PartialView("DetailsAffiliate", model);
-                }
-
+                
                 return View(model);
             }
 

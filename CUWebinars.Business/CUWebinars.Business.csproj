@@ -246,6 +246,8 @@
     <Compile Include="Repository\IWebinarRepository.cs" />
     <Compile Include="Repository\WebinarFileRepository.cs" />
     <Compile Include="Repository\WebinarRepository.cs" />
+    <Compile Include="Services\AffiliateManagementService.cs" />
+    <Compile Include="Services\IAffiliateManagementService.cs" />
     <Compile Include="Services\IOrderManagementService.cs" />
     <Compile Include="AccountService\IUserAccountService.cs" />
     <Compile Include="AccountService\MembershipService.cs" />

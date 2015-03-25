@@ -59,8 +59,8 @@
     <!--begin main content-->
 
     <div id="webinarOrders" class="row-fluid collapse">
-        <div>Here!</div>
-
+        @Html.Partial("~/Views/Admin/Partials/_ShowOrders.cshtml", Model.ShowOrdersViewModel)
+        
     </div>
 
     <div id="webinarContent" class="row-fluid holy-grail">
