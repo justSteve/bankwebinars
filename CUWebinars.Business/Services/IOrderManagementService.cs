@@ -90,5 +90,6 @@ namespace CUWebinars.Business.Services
         void SendOrderToLegacy(Order newOrder);
         WebUser GetWebUserWithAddressAndInstitution(int idUser);
         IEnumerable<int> GetUserIdsByPartialId(int value);
+        object SearchRegistrations(int affiliateID, IList<int> excludeUserIDs, int skip, int take, string search);
     }
 }

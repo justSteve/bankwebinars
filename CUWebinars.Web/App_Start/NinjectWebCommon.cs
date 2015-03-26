@@ -97,7 +97,7 @@ namespace CUWebinars.Web.App_Start
 
             kernel.Bind<IMappingEngine>().ToMethod(ctx => Mapper.Engine).InRequestScope();
             kernel.Bind<IUniversalMapper>().To<UniversalMapper>().InRequestScope();
-            kernel.Bind<IFormatter>().ToMethod(ctx => new Formatter(new EnvironmentInformation {BaseUrl = baseUrl}));
+            kernel.Bind<IFormatter>().ToMethod(ctx => new Formatter(new EnvironmentInformation { BaseUrl = baseUrl }));
             kernel.Bind<IStateService>().To<StateService>().InSingletonScope();
             kernel.Bind<IRefDataRepository>().To<RefDataRepository>().InRequestScope();
             kernel.Bind<TTSWebinarsContext>().ToSelf().InRequestScope();
@@ -108,9 +108,9 @@ namespace CUWebinars.Web.App_Start
                     )).InRequestScope();
 
             kernel.Bind<TtsConfiguration>().ToMethod(ctx => TtsConfig.Create(
-                baseUrl, 
+                baseUrl,
                 globalConfig.UseAzureWebjobs,
-                globalConfig.StorageAccountName, 
+                globalConfig.StorageAccountName,
                 globalConfig.StorageAccessKey,
                 globalConfig.TraceLevel
                 )).InRequestScope();
@@ -146,6 +146,19 @@ namespace CUWebinars.Web.App_Start
                     );
             }).InRequestScope();
 
+
+            kernel.Bind<IAffiliateManagementService>().ToMethod(ctx =>
+            {
+                var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
+                ILogger loggerForAffiliateManagementService = new Log4NetLogger(typeof(WebinarManagementService));
+
+
+                return new AffiliateManagementService(
+                   loggerForAffiliateManagementService,
+                   new AffiliateRepository(sharedContext)
+                    );
+            }).InRequestScope();
+
             kernel.Bind<IOrderManagementService>().ToMethod(ctx =>
             {
                 var sharedContext = ctx.Kernel.Get<TTSWebinarsContext>();
@@ -157,7 +170,7 @@ namespace CUWebinars.Web.App_Start
                     new RefDataRepository(),
                     new WebUserRepository(sharedContext, loggerForOrderManagementService),
                     new WebinarRepository(sharedContext),
-                    new AdditionalLocationRepository(sharedContext), 
+                    new AdditionalLocationRepository(sharedContext),
                     loggerForOrderManagementService,
                     ctx.Kernel.Get<TtsConfiguration>()
                     );

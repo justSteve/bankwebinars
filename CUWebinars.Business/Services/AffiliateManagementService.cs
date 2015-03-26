@@ -13,14 +13,18 @@ namespace CUWebinars.Business.Services
 {
     public class AffiliateManagementService : IEventSource, IAffiliateManagementService
     {
+        private readonly ILogger _logger;
         private readonly IAffiliateRepository _affiliateRepository;
         //private readonly IOrderRepository _orderRepository;
-        private readonly IRefDataRepository _refDataRepository;
-        private readonly ILogger _logger;
-        private readonly IWebUserRepository _webUserRepository;
-        private readonly TtsConfiguration _ttsConfig;
+        
         readonly List<IEvent> _events = new List<IEvent>();
         private bool _disposed;
+
+        public AffiliateManagementService(ILogger logger, IAffiliateRepository affiliateRepository )
+        {
+            _affiliateRepository = affiliateRepository;
+            _logger = logger;
+        }
 
         public IEnumerable<IEvent> GetEvents()
         {
@@ -44,10 +48,8 @@ namespace CUWebinars.Business.Services
                 if (logger != null)
                     logger.Dispose();
 
-
                 _affiliateRepository.Dispose();
-                _webUserRepository.Dispose();
-
+                
                 _disposed = true;
             }
         }

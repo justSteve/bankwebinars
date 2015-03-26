@@ -293,6 +293,12 @@ namespace CUWebinars.Business.Services
             return _orderRepository.FindUserIdsByPartialId(value);
         }
 
+        public object SearchRegistrations(int affiliateID, IList<int> excludeUserIDs, int skip, int take, string search)
+        {
+            return
+                _orderRepository.SearchOrders(affiliateID, excludeUserIDs, skip, take, search);
+        }
+
         public IList<Order> GetOrdersByUserId(int id)
         {
             try

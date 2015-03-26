@@ -691,45 +691,45 @@ OCA.wireUpHandlers = function() {
 //}, 500);
 
 
-    OCA.lastNameInput.typeahead({
-        source: function (query, process) {
-            searchPeople(query, process);
-        },
+    //OCA.lastNameInput.typeahead({
+    //    source: function (query, process) {
+    //        searchPeople(query, process);
+    //    },
 
-        matcher: function (item) {
-            return true;
-        },
+    //    matcher: function (item) {
+    //        return true;
+    //    },
 
-        highlighter: function (listedUser) {
-            var item = JSON.parse(listedUser);
-            var user = _.find(OCA.users, function (webUser) {
-                return JSON.parse(webUser)['id'] === item.id;
-            });
-            if (user !== null && typeof user !== 'undefined') {
-                var userParsed = JSON.parse(user);
-                return userParsed.lastName + ', ' + userParsed.firstName;
-            }
-        },
+    //    highlighter: function (listedUser) {
+    //        var item = JSON.parse(listedUser);
+    //        var user = _.find(OCA.users, function (webUser) {
+    //            return JSON.parse(webUser)['id'] === item.id;
+    //        });
+    //        if (user !== null && typeof user !== 'undefined') {
+    //            var userParsed = JSON.parse(user);
+    //            return userParsed.lastName + ', ' + userParsed.firstName;
+    //        }
+    //    },
 
-        sorter: function (items) {
-            return items;
-        },
+    //    sorter: function (items) {
+    //        return items;
+    //    },
 
-        updater: function (userJson) {
-            var userParsed = JSON.parse(userJson);
-            var user = _.find(OCA.users, function (p) {
-                return JSON.parse(p)['id'] === userParsed['id'];
-            });
+    //    updater: function (userJson) {
+    //        var userParsed = JSON.parse(userJson);
+    //        var user = _.find(OCA.users, function (p) {
+    //            return JSON.parse(p)['id'] === userParsed['id'];
+    //        });
 
-            if (typeof user !== 'undefined') {
-                var parsedUser = JSON.parse(user);
-                OCA.setSelectedProduct(parsedUser);
-                return parsedUser['lastName'] + ', ' + parsedUser['firstName'];
-            }
-            return '';
-        }
+    //        if (typeof user !== 'undefined') {
+    //            var parsedUser = JSON.parse(user);
+    //            OCA.setSelectedProduct(parsedUser);
+    //            return parsedUser['lastName'] + ', ' + parsedUser['firstName'];
+    //        }
+    //        return '';
+    //    }
 
-    });
+    //});
 
     OCA.emailOrderButtonHandler = function (e) {
 

@@ -24,6 +24,8 @@
 }
 
 <script type="text/javascript">
+    
+
     var checkoutInProcess = @(Model.CheckoutInProcess ? "true" : "false");
     var isUserLoggedIn = @(@Model.UserIsLoggedIn ? "true" : "false");
     var webinarId = @(@Model.Webinar.idWebinar);
@@ -48,8 +50,8 @@
     <div id="webinarTitle" class="container">
         <div class="span10">
             <h1>@Model.Webinar.Title</h1>
-            <div id="showOrdersButton" class="btn btn-info pull-right" 
-                 data-toggle="collapse" data-target="#webinarOrders">Show Orders</div>
+            <button id="showOrdersButton" type="button" class="btn btn-info pull-right"
+                 data-toggle="collapse" data-target="#webinarOrders">Show Orders!</button>
         </div>
     </div>
 </div>
@@ -58,9 +60,10 @@
 <div class="container clearfix" id="main-content">
     <!--begin main content-->
 
-    <div id="webinarOrders" class="row-fluid collapse">
+    <div id="webinarOrders" class="collapse">
+        <div>here?</div>
         @Html.Partial("~/Views/Admin/Partials/_ShowOrders.cshtml", Model.ShowOrdersViewModel)
-        
+
     </div>
 
     <div id="webinarContent" class="row-fluid holy-grail">
@@ -78,8 +81,8 @@
         <div class="span6">
             @{
                 if (Model.Webinar.Status != WebinarStatus.Archived
-                                                                    && Model.Webinar.Status != WebinarStatus.Deleted
-                                                                    && Model.Webinar.Status != WebinarStatus.Pending)
+                                        && Model.Webinar.Status != WebinarStatus.Deleted
+                                        && Model.Webinar.Status != WebinarStatus.Pending)
                 {
                     <div id="SignUpFormContainer" class="row-fluid">
 
@@ -210,3 +213,4 @@
         <!--close section tertiary-column sidebar span3-->
     </div>
 </div> <!-- closes main-content -->
+

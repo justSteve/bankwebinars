@@ -86,12 +86,6 @@ namespace CUWebinars.Web.App_Start
             bundles.Add(new ScriptBundle("~/bundles/myApp").Include(
                 //TODO: devise bundles such that the Public layout calls BS2.3x while AdminLayout calls 3x
                         //"~/Scripts/bootstrap3/bootstrap.js",
-                        //"~/Scripts/bootstrap3/bootstrap-modal.js",
-                        //"~/Scripts/bootstrap3/bootstrap-modalmanager.js",
-                        //    //"~/Scripts/bootstrap.js",
-                        //    //"~/Scripts/bootstrap-modal.js",
-                        //    //"~/Scripts/bootstrap-modalmanager.js",
-                        //"~/Content/js/jquery-plugins/dataTables/media/js/jquery.dataTables.js"
                         "~/Scripts/bootstrap.js",
                         "~/Scripts/bootstrap-modal.js",
                         "~/Scripts/bootstrap-modalmanager.js",
@@ -196,6 +190,7 @@ namespace CUWebinars.Web.App_Start
                 "~/Content/css/header-1.css",
                 "~/Content/css/bootstrap.css",
                 "~/Content/css/bootstrap-responsive.css",
+//                "~/Scripts/bootstrap3/css/bootstrap.css",
                 "~/Content/css/html-content-slider-flexslider.css",
                 "~/Scripts/AutoComplete/css/styles.css",
                 "~/Scripts/AutoComplete/css/styles.css/ui-lightness/jquery-ui-1.10.3.custom.css",

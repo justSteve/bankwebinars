@@ -265,7 +265,7 @@ $(document).ready(function () {
 $(function () {
 
     $('.titletip, ul.social li a').tooltip({});
-    $(".detailsPop").popover({ trigger: 'hover' });
+    //$(".detailsPop").popover({ trigger: 'hover' });
 });
 
 /*================================================================*/
