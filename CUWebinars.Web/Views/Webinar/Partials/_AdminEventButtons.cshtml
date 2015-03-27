@@ -34,7 +34,18 @@
 
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 }
+<style>
+    .hero-unit li {
+        line-height: 10px;
+    }
 
+    .navbar-inner {
+        font-size: smaller;
+        min-height: 0px;
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+</style>
 <section>
     <div id="AdminButtonsContainer">
         <div><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>
@@ -49,11 +60,11 @@
                                 <div class="navbar-inner">
                                     <ul class="nav">
                                         @*<li>
-                                            <a href="@globalConfig.WMVRepository@Model.Webinar.RecordingUrl">@globalConfig.WMVRepository@Model.Webinar.RecordingUrl </a>
-                                        </li>*@
-                                        <li>
-                                            @Html.Partial(@"Partials/_ShippingReport", postEventInfoModel)
-                                        </li>
+                                                <a href="@globalConfig.WMVRepository@Model.Webinar.RecordingUrl">@globalConfig.WMVRepository@Model.Webinar.RecordingUrl </a>
+                                            </li>*@
+                                        @*<li>
+                                                @Html.Partial(@"Partials/_ShippingReport", postEventInfoModel)
+                                            </li>*@
                                         <li>
                                             @Html.Partial(@"Partials/_UpdateRecording")
                                         </li>
@@ -68,7 +79,7 @@
                             //Active means the connection info has been generated. This form shows
                             // the relevant fields and offers to update them
 
-                            <div class="navbar">
+                            <div class="navbar" style="margin: 0 10px 0 0;">
                                 <div class="navbar-inner">
                                     <ul class="nav">
                                         <li class="active">
@@ -77,12 +88,15 @@
                                         <li>
                                             @Html.Partial(@"Partials/_UpdateWebinarFiles", editWebinarFiles)
                                         </li>
-                                        @*<li>
-                                            @Html.Partial(@"Partials/_ListOrders", connInfoModel)
-                                        </li>
                                         <li>
                                             @Html.Partial(@"Partials/_UpdateRecording")
-                                        </li>*@
+                                        </li>
+                                        @*<li>
+                                                @Html.Partial(@"Partials/_ListOrders", connInfoModel)
+                                            </li>
+                                            <li>
+                                                @Html.Partial(@"Partials/_UpdateRecording")
+                                            </li>*@
 
 
                                     </ul>

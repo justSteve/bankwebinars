@@ -682,7 +682,6 @@ namespace CUWebinars.Business.Services
         {
             foreach (var order in orders)
             {
-
                 var postEventPublishModel = new PostEventPublishModel()
                 {
                     Order = order

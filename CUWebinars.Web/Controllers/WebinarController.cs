@@ -547,23 +547,23 @@ namespace CUWebinars.Web.Controllers
             return null;
         }
 
-        [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult RegistrationsTableDataLoader(
-            [DataTablesRequestModelBinder] DataTablesRequestModel dataTablesRequest)
-        {
-            int currentUserID = 62;
-            var searchResult = _orderManagementService.SearchRegistrations
-                (
-                    currentUserID,
-                    null,
-                    dataTablesRequest.DisplayStart,
-                    dataTablesRequest.DisplayLength,
-                    dataTablesRequest.Search
-                );
+        //[AcceptVerbs(HttpVerbs.Post)]
+        //public ActionResult RegistrationsTableDataLoader(
+        //    [DataTablesRequestModelBinder] DataTablesRequestModel dataTablesRequest)
+        //{
+        //    int currentUserID = 62;
+        //    var searchResult = _orderManagementService.SearchRegistrations
+        //        (
+        //            currentUserID,
+        //            null,
+        //            dataTablesRequest.DisplayStart,
+        //            dataTablesRequest.DisplayLength,
+        //            dataTablesRequest.Search
+        //        );
 
-            var data = new RegistrationsBrowserTableDataDTOAssembler(dataTablesRequest.EchoId).Entity2DTO(searchResult);
-            return Json(data);
-        }
+        //    var data = new RegistrationsBrowserTableDataDTOAssembler(dataTablesRequest.EchoId).Entity2DTO(searchResult);
+        //    return Json(data);
+        //}
 
         public ActionResult Details(int? id)
         {
@@ -1318,12 +1318,14 @@ namespace CUWebinars.Web.Controllers
                     * If the idWebinar in the WebinarFiles is 0, and does not end with -ND, it has been created (suffix of 'N' appended at client deserializes to 0)
                     * If the fileDesc in the WebinarFile ends with -D, it has been marked for deletion.             
              */
-
+            var filesForThisEvent = _webinarManagementService.GetWebinarFilesPerWebinar(webinarFilesEditModel.idWebinar);
             try
             {
                 var deletedFiles = webinarFilesEditModel.WebinarFiles.Where(f => f.fileDesc.EndsWith("-D")).ToList();
                 var newFiles =
-                    webinarFilesEditModel.WebinarFiles.Where(f => f.idWebinarFile == 0 && !f.fileDesc.EndsWith("-ND"))
+                    webinarFilesEditModel.WebinarFiles.Where(f => f.idWebinarFile == 0 
+                        && !f.fileDesc.EndsWith("-ND")
+                        && f.fileLocation != filesForThisEvent.Select(wf => wf.fileLocation).ToString())
                         .ToList();
                 var updatedFiles =
                     webinarFilesEditModel.WebinarFiles.Where(f => f.idWebinarFile > 0 && !f.fileDesc.EndsWith("-D"))
