@@ -1,11 +1,11 @@
 USE TTSWebinars2
 GO
 --SELECT (SELECT optionGroupDesc FROM dbo.OptionsGroups WHERE idOptionGroup = o.idoptiongroup),  * FROM dbo.OptionsGroupsXref o WHERE idWebinar IN (SELECT idWebinar FROM dbo.Webinar WHERE status =2) 
-SELECT TOP 500 * FROM dbo.Orders o INNER JOIN	dbo.OrdersRows r ON r.idOrder = o.idOrder
-WHERE o.idAffiliate = 62
-----AND r.status > 1 AND r.status < 5
---AND r.idWebinar = 1745
-ORDER BY o.orderDate desc
+--SELECT TOP 500 * FROM dbo.Orders o INNER JOIN	dbo.OrdersRows r ON r.idOrder = o.idOrder
+--WHERE o.idAffiliate = 62
+------AND r.status > 1 AND r.status < 5
+----AND r.idWebinar = 1745
+--ORDER BY o.orderDate desc
 
 
 SELECT ( SELECT    o.idAffiliate
@@ -109,5 +109,5 @@ FROM    TTSWebinars2.dbo.Orders o
 WHERE   r.status < 6
         AND r.status > 1
         AND r.idWebinar IN (1744)--( SELECT r.idWebinar FROM dbo.Webinar WHERE status = 2 OR status = 3) -- 1745 = understanding...
-ORDER BY idRegType DESC
+ORDER BY orderDate DESC
 GO

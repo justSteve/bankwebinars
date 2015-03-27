@@ -67,9 +67,10 @@
     thankYouPhrase.Append("Dear " + Model.Order.FirstName + ",<br /><br />We hope you enjoyed <i>");
     thankYouPhrase.Append(row.Single().Webinar.Title + "</i>.");
 
-    if (notiShipped == "No")
+    if (notiRecordingPosted == "No")
     {
-        infoPhrase.Append("With your live webinar purchase, you have access to the OnDemand recording for a period of 5 business days.  If you would like to increase the length of the OnDemand availability to 6 months or add a CD-ROM, we can upgrade your package for a minimal charge.  Just reply to this email and we will make that upgrade immediately.");
+        infoPhrase.Append("With your live webinar purchase, you have access to the OnDemand recording for a period of 5 business days.  If you would like to upgrade to 6 months access or add a CD-ROM we'll be happy to upgrade your package" +
+                          ".  Just reply to this email and we will make that upgrade immediately.");
     }
 
     infoPhrase.Append("You'll have access to the OnDemand playback");

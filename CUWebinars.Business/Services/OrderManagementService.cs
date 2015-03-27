@@ -680,11 +680,28 @@ namespace CUWebinars.Business.Services
 
         public void FireSendRecordingIsPostedEvent(IList<Order> orders)
         {
+
+            decimal[] i = _webinarRepository.GetCostOfUpgrades(orders[0].OrderRows.Single().idWebinar);
+
+            decimal cost6 = 0;
+            decimal costCD = 0;
+            if (i[0] < i[1])
+            {
+                cost6 = i[0];
+                costCD = i[1];
+            }
+            else
+            {
+                cost6 = i[1];
+                costCD = i[0];
+            }
             foreach (var order in orders)
             {
                 var postEventPublishModel = new PostEventPublishModel()
                 {
-                    Order = order
+                    Order = order,
+                    CostFor6month = cost6,
+                    CostForCD = costCD
                 };
                 AddEvent(new SendRecordingPostedEvent<PostEventPublishModel>
                 {

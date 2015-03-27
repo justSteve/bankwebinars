@@ -93,7 +93,7 @@ namespace CUWebinars.Business.Core
                     {
                         while (reader.Read())
                         {
-                            pricingInformation.Add(new AdditionalLocationsPricing{ LookupPriceId = reader.GetInt32(0), Price = reader.GetDecimal(1)});
+                            pricingInformation.Add(new AdditionalLocationsPricing { LookupPriceId = reader.GetInt32(0), Price = reader.GetDecimal(1) });
                         }
                     }
 
@@ -485,6 +485,57 @@ namespace CUWebinars.Business.Core
                     return 0;
 
             }
+        }
+
+        public decimal[] GetCostOfUpgrades(int idWebinar)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                using (var getPricingsCommand = new SqlCommand())
+                {
+                    var webinarIdParameter = new SqlParameter
+                    {
+                        SqlDbType = SqlDbType.Int,
+                        ParameterName = "@webinarId",
+                        Value = idWebinar
+                    };
+
+                    getPricingsCommand.Connection = sqlConnection;
+                    getPricingsCommand.CommandType = CommandType.Text;
+                    getPricingsCommand.Parameters.Add(webinarIdParameter);
+                    getPricingsCommand.CommandText =
+                        "SELECT  RegTypeLabel, Price" +
+                        "FROM    dbo.RegType" +
+                        "WHERE   (RegTypeLabel LIKE 'Prem%' OR RegTypeLabel like 'Live Plus S%' )" +
+                                "AND idRegType IN ( SELECT  idRegType" +
+                                                   "FROM     dbo.RegTypesXref" +
+                                                   "WHERE    idRegTypeGroup IN ( SELECT idRegTypeGroup FROM dbo.RegTypesGroupsXref WHERE idWebinar =  "+ @idWebinar +") )";
+
+                    var aryReturn = new decimal[2];
+
+                    using (var reader = getPricingsCommand.ExecuteReader())
+                    {
+                        var i = 0;
+                        while (reader.Read())
+                        {
+                            if (i == 0)
+                            {
+                                aryReturn[0] = reader.GetDecimal(0);
+
+                            }
+                            else
+                            {
+                                aryReturn[1] = reader.GetDecimal(0);
+                            }
+                            //pricingInformation.Add(new AdditionalLocationsPricing { LookupPriceId = reader.GetInt32(0), Price = reader.GetDecimal(1) });
+                        }
+                    }
+                    return aryReturn;
+                }
+            }
+            throw new NotImplementedException();
         }
     }
 }

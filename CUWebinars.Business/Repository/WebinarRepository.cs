@@ -190,6 +190,14 @@ namespace CUWebinars.Business.Repository
             return retVal;
         }
 
+        public decimal[] GetCostOfUpgrades(int idWebinar)
+        {
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+
+            return dataOperations.GetCostOfUpgrades(idWebinar);
+
+        }
+
         public IQueryable<Webinar> GetAllActive()
         {
             return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
