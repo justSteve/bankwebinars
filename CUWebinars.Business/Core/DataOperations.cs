@@ -487,7 +487,7 @@ namespace CUWebinars.Business.Core
             }
         }
 
-        public decimal[] GetCostOfUpgrades(int idWebinar)
+        public Double[] GetCostOfUpgrades(int idWebinar)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
@@ -506,29 +506,36 @@ namespace CUWebinars.Business.Core
                     getPricingsCommand.CommandType = CommandType.Text;
                     getPricingsCommand.Parameters.Add(webinarIdParameter);
                     getPricingsCommand.CommandText =
-                        "SELECT  RegTypeLabel, Price" +
-                        "FROM    dbo.RegType" +
-                        "WHERE   (RegTypeLabel LIKE 'Prem%' OR RegTypeLabel like 'Live Plus S%' )" +
-                                "AND idRegType IN ( SELECT  idRegType" +
-                                                   "FROM     dbo.RegTypesXref" +
-                                                   "WHERE    idRegTypeGroup IN ( SELECT idRegTypeGroup FROM dbo.RegTypesGroupsXref WHERE idWebinar =  "+ @idWebinar +") )";
+                        "SELECT  Price " +
+                        "FROM    dbo.RegType " +
+                        "WHERE   (RegTypeLabel LIKE 'Prem%' OR RegTypeLabel like 'Live Plus%' ) " +
+                                "AND idRegType IN ( SELECT  idRegType " +
+                                                   "FROM     dbo.RegTypesXref " +
+                                                   "WHERE    idRegTypeGroup IN ( SELECT idRegTypeGroup FROM dbo.RegTypesGroupsXref WHERE idWebinar =  "+ @idWebinar +")) " +
+                                                    " ORDER BY idRegType  ";
 
-                    var aryReturn = new decimal[2];
+                    var aryReturn = new Double[3];
 
                     using (var reader = getPricingsCommand.ExecuteReader())
                     {
                         var i = 0;
+                        Double basePrice = 0;
                         while (reader.Read())
                         {
                             if (i == 0)
                             {
-                                aryReturn[0] = reader.GetDecimal(0);
-
+                                aryReturn[0] = reader.GetDouble(0);
                             }
-                            else
+                            if (i == 1)
                             {
-                                aryReturn[1] = reader.GetDecimal(0);
+                                aryReturn[1] = reader.GetDouble(0);
                             }
+                            if (i == 2)
+                            {
+                                aryReturn[2] = reader.GetDouble(0);
+                            }
+                            
+                            i++;
                             //pricingInformation.Add(new AdditionalLocationsPricing { LookupPriceId = reader.GetInt32(0), Price = reader.GetDecimal(1) });
                         }
                     }

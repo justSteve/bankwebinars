@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using System.Diagnostics;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
@@ -190,7 +191,7 @@ namespace CUWebinars.Business.Repository
             return retVal;
         }
 
-        public decimal[] GetCostOfUpgrades(int idWebinar)
+        public Double[] GetCostOfUpgrades(int idWebinar)
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 

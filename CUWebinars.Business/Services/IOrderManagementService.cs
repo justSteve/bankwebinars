@@ -84,12 +84,15 @@ namespace CUWebinars.Business.Services
         void GenerateRegistrantKey(Order order, AdditionalLocation nuller);
         int GetNumberOfOrdersPerWebinar(int id);
         void RemoveAndDeleteAdditionalLocation(AdditionalLocation deletedAdditionalLocation);
-        string SetPostEventClaims(int webinarId);
+        //string SetPostEventClaims(int webinarId);
         Discount GetDiscountById(int discount);
         IList<Order> GetOrdersForWebinar(int idWebinar);
+        string GetPostEventMaterialsAccessExpiry(Order order);
         void SendOrderToLegacy(Order newOrder);
         WebUser GetWebUserWithAddressAndInstitution(int idUser);
         IEnumerable<int> GetUserIdsByPartialId(int value);
         object SearchRegistrations(int affiliateID, IList<int> excludeUserIDs, int skip, int take, string search);
+        //void AddClaimForPostEventMaterials(IEnumerable<Order> ordersForWebinar);
+        string SetPostEventClaims(int webinarId);
     }
 }

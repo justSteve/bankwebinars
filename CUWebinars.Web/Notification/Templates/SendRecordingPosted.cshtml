@@ -5,6 +5,7 @@
 @using CUWebinars.Business.Models
 @*@model CUWebinars.Web.ViewModel.PostEventPublishModel*@
 @using CUWebinars.Business.Notification.ViewModel
+@using Ninject
 @model CUWebinars.Web.ViewModel.PostEventPublishModel
 
 <title>
@@ -57,28 +58,44 @@
     var HeaderText = "Your Recording is posted!";
     var BannerText = "Order Number: " + TenantPrefix + Model.Order.idOrder + "<br />Attendance Type: " + row.Single().RegistrationType.OptionLabel;
 
-    var thankYouPhrase = new StringBuilder();
+
     var infoPhrase = new StringBuilder();
     var notiRecordingPosted = myRow.RegistrationType.ShowRecordingNotifications;
     var notiShipped = myRow.RegistrationType.ShowShippedNotifications;
     var locations = myRow.AdditionalLocation;
     var addLocs = new StringBuilder();
 
-    thankYouPhrase.Append("Dear " + Model.Order.FirstName + ",<br /><br />We hope you enjoyed <i>");
-    thankYouPhrase.Append(row.Single().Webinar.Title + "</i>.");
+    var onDemandLink = new StringBuilder();
 
     if (notiRecordingPosted == "No")
     {
-        infoPhrase.Append("With your live webinar purchase, you have access to the OnDemand recording for a period of 5 business days.  If you would like to upgrade to 6 months access or add a CD-ROM we'll be happy to upgrade your package" +
-                          ".  Just reply to this email and we will make that upgrade immediately.");
+        infoPhrase.Append("<p>Dear " + Model.Order.FirstName + ",<br /><br />We hope you enjoyed <i>");
+        infoPhrase.Append(row.Single().Webinar.Title + "</i>.</p>");
+
+
+        infoPhrase.Append("<p>Your registration includes access to OnDemand playback for a period of 5 business days." +
+                          "  If you would like to upgrade to 6 months access (adds $" + Model.CostFor6month + ") or a CD-ROM ($" + Model.CostForCD + ")  we'll be happy to adjust your registration. </p>");
+    }
+    else
+    {
+        if (notiShipped == "Yes")
+        {
+            infoPhrase.Append("<p>Dear " + Model.Order.FirstName + ",<br /><br />We hope you enjoyed <i>");
+            infoPhrase.Append(row.Single().Webinar.Title + "</i>.</p>");
+
+            infoPhrase.Append("<p>Your materials will be shipped soon and are typically in your hands within 7-10 business days.");
+            infoPhrase.Append("Your registration also includes access to OnDemand playback for the next six months.</p>");
+        }
+        else
+        {
+            infoPhrase.Append("<p>Dear " + Model.Order.FirstName + ",<br /><br />The recording for  <i>"+ row.Single().Webinar.Title + "</i> has been posted!</p>");
+
+            infoPhrase.Append("<p>Your registration includes access to OnDemand playback for the next six months.");
+            infoPhrase.Append("  If you would like to upgrade to the CD-ROM plus printouts package ($" + Model.CostForCD + " extra) we'll be happy to upgrade your registration.</p>");
+        }
     }
 
-    infoPhrase.Append("You'll have access to the OnDemand playback");
-    if (notiShipped == "Yes")
-    {
-        infoPhrase.Append(" as well as the CD-ROM and printouts. Physical materials are typically in your hands within 7-10 business days");
-    }
-    infoPhrase.Append(".");
+    onDemandLink.Append(" <p>This link provides access to the event's materials until " + Model.ExpiryDate + " and may be shared with associates and co-workers within you organization:</p><p><b>" + TenantURL + "/Webinar/OnDemand/" + @Model.Order.idOrder + "</b></p>Order Summary:");
 
 
     <head>
@@ -169,16 +186,19 @@
                                                                                 <tr>
                                                                                     <td colspan="2" style="text-align: left; margin-left: 6px; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller">
                                                                                         <div style="color: black; font-family: Arial, Helvetica, sans-serif; padding: 5px; font-size: 12px;">
-                                                                                            <br />
-                                                                                            <p>@thankYouPhrase</p>
-                                                                                            <p>@infoPhrase</p>
+                                                                                            @infoPhrase
+                                                                                            @onDemandLink
+
                                                                                         </div>
                                                                                     </td>
                                                                                 </tr>
+                                                                                @Model.OrderSummaryString
                                                                                 <tr>
-                                                                                    <td colspan="2" style="text-align: left; margin-left: 6px; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: smaller">
+                                                                                    <td colspan="2" style="text-align: left; margin-left: 6px; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: small">
                                                                                         <div style="color: black; font-family: Arial, Helvetica, sans-serif; padding: 5px; font-size: 12px;">
-                                                                                            <p>Please log into your account at @TenantDomain for links to the event materials.</p>
+                                                                                            <p>
+                                                                                                Again, thank you very much for your patronage and don't hesitate to let us know how we can serve you better!<br /><br />Sincerely,<br />The @Tenant Staff<br /><br />
+                                                                                            </p>
                                                                                         </div>
                                                                                     </td>
                                                                                 </tr>

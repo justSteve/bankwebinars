@@ -38,8 +38,8 @@ namespace CUWebinars.Business.Notification.Handlers
             try
             {
                 var persistedNamePrefix = sendRecordingPostedEvent.ResendEvent
-                        ? "RecordingPosted_ReSend_" + sendRecordingPostedEvent.EventObject.Order.idOrder
-                        : "RecordingPosted_" + sendRecordingPostedEvent.EventObject.Order.idOrder;
+                                        ? "RecordingPosted_ReSend_" + sendRecordingPostedEvent.EventObject.Order.idOrder
+                                        : "RecordingPosted_" + sendRecordingPostedEvent.EventObject.Order.idOrder;
 
                 var notificationMessage = _generalFormatter.Format(sendRecordingPostedEvent.EventObject, "SendRecordingPosted");
                 notificationMessage.PersistedName = string.Format("{0}_{1}{2}"

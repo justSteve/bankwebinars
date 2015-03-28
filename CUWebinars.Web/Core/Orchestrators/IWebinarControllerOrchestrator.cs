@@ -13,8 +13,9 @@ namespace CUWebinars.Web.Core.Orchestrators
         Webinar GetWebinar(int idWebinar);
         Webinar PopulateWebinarFromViewModel(ConnectionInfoEditModel connectionInfoEditModel, out bool detailsValid);
         string PublishStateChange(string stateFromTo, Webinar webinar);
-        string SetEventToRecorded(int webinarId);
+        //string SetEventToRecorded(int webinarId);
         void UpdateWebinar(Webinar webinar);
         void UpdateWebinarFromViewInput(WebinarEditModel webinarEditModel);
+        string SetEventToRecorded(int webinarId);
     }
 }
