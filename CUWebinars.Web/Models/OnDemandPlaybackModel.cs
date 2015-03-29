@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CUWebinars.Web.Models
 {
-    public class PlayModel
+    public class OnDemandPlaybackModel
     {
         public Presenter Presenter { get; set; }
         public Webinar Webinar { get; set; }

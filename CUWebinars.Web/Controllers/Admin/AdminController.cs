@@ -625,33 +625,33 @@ namespace CUWebinars.Web.Controllers.Admin
             return Json(new { Result = WebUiConstants.Success });
         }
 
-        public PartialViewResult SendRecordingPosted()
-        {
-            var model = new AdhocNotificationViewModel
-            {
-                Webinars = EventInvokerHelpers.GetRecordedWebinarsAsSelectListItems(_webinarManagementService)
-            };
+        //public PartialViewResult SendRecordingPosted()
+        //{
+        //    var model = new AdhocNotificationViewModel
+        //    {
+        //        Webinars = EventInvokerHelpers.GetRecordedWebinarsAsSelectListItems(_webinarManagementService)
+        //    };
 
-            return PartialView("~/Views/Admin/Home/_SendRecordingPosted.cshtml", model);
-        }
+        //    return PartialView("~/Views/Admin/Home/_SendRecordingPosted.cshtml", model);
+        //}
 
-        [System.Web.Mvc.HttpPost]
-        public JsonResult SendRecordingPosted(int webinarId)
-        {
-            var orders = _orderManagementService.GetOrdersForRecordedNotifications(webinarId);
-            _logger.Info(string.Join(",", orders.Select(o => o.idOrder.ToString())));
+        //[System.Web.Mvc.HttpPost]
+        //public JsonResult SendRecordingPosted(int webinarId)
+        //{
+        //    var orders = _orderManagementService.GetOrdersForRecordedNotifications(webinarId);
+        //    _logger.Info(string.Join(",", orders.Select(o => o.idOrder.ToString())));
 
-            var ordersWhichSatisfyClaim = GetOrdersWhichAreEligibleForMaterials(orders);
+        //    var ordersWhichSatisfyClaim = GetOrdersWhichAreEligibleForMaterials(orders);
 
-            if (ordersWhichSatisfyClaim.Any())
-            {
-                _orderManagementService.FireSendRecordingIsPostedEvent(ordersWhichSatisfyClaim.ToList());
+        //    if (ordersWhichSatisfyClaim.Any())
+        //    {
+        //        _orderManagementService.FireSendRecordingIsPostedEvent(ordersWhichSatisfyClaim.ToList());
 
-                return Json(new { Result = WebUiConstants.Success });
-            }
+        //        return Json(new { Result = WebUiConstants.Success });
+        //    }
 
-            return Json(new { Result = WebUiConstants.NoOrdersForWebinar });
-        }
+        //    return Json(new { Result = WebUiConstants.NoOrdersForWebinar });
+        //}
 
         private IEnumerable<Order> GetOrdersWhichAreEligibleForMaterials(IEnumerable<Order> orders)
         {

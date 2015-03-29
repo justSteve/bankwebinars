@@ -37,5 +37,6 @@ namespace CUWebinars.Business.Repository
         int SaveChanges();
         void SynchToLegacy();
         int GetRegTypeByACS(string registrationType, int idWebinar);
+        double[] GetCostOfUpgrades(int idWebinar);
     }
 }

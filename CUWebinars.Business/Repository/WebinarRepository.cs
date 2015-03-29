@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using System.Diagnostics;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
@@ -188,6 +189,14 @@ namespace CUWebinars.Business.Repository
             
             var retVal = GetRegTypeByLableAndWebinar(dataOperations.FindRegTypeForACS(registrationType), idWebinar);
             return retVal;
+        }
+
+        public Double[] GetCostOfUpgrades(int idWebinar)
+        {
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+
+            return dataOperations.GetCostOfUpgrades(idWebinar);
+
         }
 
         public IQueryable<Webinar> GetAllActive()

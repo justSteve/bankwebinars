@@ -196,6 +196,45 @@ namespace CUWebinars.Business.Repository
                 .ToList();
         }
 
+        public Object SearchOrders(int affiliateId, IList<int> excludeUserIDs, int skip, int take, string search)
+        {
+            var orders = items.Where(order => order.idAffiliate == affiliateId);
+                
+            int searchUserID;
+            if (search != string.Empty)
+            if (Int32.TryParse(search, out searchUserID))
+            {
+                orders = orders.Where(o => o.idUser == searchUserID);
+            }
+            else
+            {
+                 orders = orders.Where(o => o.FirstName.ToString().Contains(search)||
+                     o.LastName.ToString().Contains(search)||
+                     o.BillingEmail.ToString().Contains(search)||
+                     o.Institution.ToString().Contains(search)
+                     );
+            }
+
+            int pagesToSkip = 0;
+            if (take != 0)
+            {
+                pagesToSkip = skip / take;
+            }
+
+            int foundRecordsCount = orders.Count();
+            IList<Order> resultOrders = orders.Skip(pagesToSkip).Take(take).ToList();
+
+            int totalRecordsCount = items.Count(o => o.idAffiliate == affiliateId);
+
+            return new 
+            {
+                FoundCount = foundRecordsCount,
+                TotalCount = totalRecordsCount,
+                Orders = orders
+            };
+        }
+
+
         public IList<int> FindOrderIdsByPartialId(int userId)
         {
             return items.Include(o => o.WebUser)

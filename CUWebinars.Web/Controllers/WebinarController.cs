@@ -1,10 +1,13 @@
 ﻿using System.Text.RegularExpressions;
+using System.Threading;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Models;
+using CUWebinars.Business.Repository;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Core.Browsers.Webinars;
+using CUWebinars.Web.Core.DataTables;
 using CUWebinars.Web.Core.Orchestrators;
 using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
@@ -47,10 +50,13 @@ namespace CUWebinars.Web.Controllers
         private readonly IMembershipService _membershipService;
         private readonly IOrderManagementService _orderManagementService;
         private readonly IWebinarManagementService _webinarManagementService;
+
+        private readonly IAffiliateManagementService _affiliateManagementService;
         private readonly ILogger _logger;
         private bool _disposed;
 
         public WebinarController(
+            IAffiliateManagementService affiliateManagementService,
             IMembershipService membershipService,
             IOrderManagementService orderManagementService,
             IWebinarManagementService webinarManagementService,
@@ -60,6 +66,7 @@ namespace CUWebinars.Web.Controllers
             IAppHelper appHelper,
             IUniversalMapper universalMapper)
         {
+            _affiliateManagementService = affiliateManagementService;
             _membershipService = membershipService;
             _orderManagementService = orderManagementService;
             _webinarManagementService = webinarManagementService;
@@ -398,38 +405,38 @@ namespace CUWebinars.Web.Controllers
             return PartialView(@"Partials/_SendRecordingPosted", model);
         }
 
-        [System.Web.Mvc.HttpPost]
-        public JsonResult SendRecordingPosted(int webinarId)
-        {
-            try
-            {
-                String setEventToRecorded = _webinarControllerOrchestrator.SetEventToRecorded(webinarId);
-            }
-            catch (Exception)
-            {
+        //[System.Web.Mvc.HttpPost]
+        //public JsonResult SendRecordingPosted(int webinarId)
+        //{
+        //    try
+        //    {
+        //        String setEventToRecorded = _webinarControllerOrchestrator.SetEventToRecorded(webinarId);
+        //    }
+        //    catch (Exception)
+        //    {
 
-                throw;
-            }
-            try
-            {
+        //        throw;
+        //    }
+        //    try
+        //    {
 
-                var orders = _orderManagementService.GetOrdersForRecordedNotifications(webinarId);
+        //        var orders = _orderManagementService.GetOrdersForRecordedNotifications(webinarId);
 
-                if (orders.Any())
-                {
-                    _orderManagementService.FireSendRecordingIsPostedEvent(orders);
+        //        if (orders.Any())
+        //        {
+        //            _orderManagementService.FireSendRecordingIsPostedEvent(orders);
 
-                    return Json(new { Result = WebUiConstants.Success });
-                }
+        //            return Json(new { Result = WebUiConstants.Success });
+        //        }
 
-                return Json(new { Result = WebUiConstants.NoOrdersForWebinar });
-            }
-            catch (Exception exception)
-            {
-                _logger.Error(string.Format("SendRecordingPosted Action: {0}", exception.Message), exception);
-            }
-            return Json(new { Result = WebUiConstants.Fail });
-        }
+        //        return Json(new { Result = WebUiConstants.NoOrdersForWebinar });
+        //    }
+        //    catch (Exception exception)
+        //    {
+        //        _logger.Error(string.Format("SendRecordingPosted Action: {0}", exception.Message), exception);
+        //    }
+        //    return Json(new { Result = WebUiConstants.Fail });
+        //}
 
 
         public ActionResult SearchByTopic(
@@ -458,24 +465,25 @@ namespace CUWebinars.Web.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Get)]
-        public ActionResult Play(int? w, int? u)
+        public ActionResult OnDemand(int id)
         {
-            if (w.HasValue && u.HasValue)
-            {
+
                 bool accessPermitted = false;
 
-                var playModel = new PlayModel
+                var order = _orderManagementService.GetOrderById(id);
+
+                var playModel = new OnDemandPlaybackModel
                 {
-                    Webinar = _webinarManagementService.GetWebinar(w.Value)
+                    Webinar = _webinarManagementService.GetWebinar(order.OrderRows.SingleOrDefault(s => s.RowStatus == OrderRowStatus.Active).idWebinar)
                 };
 
-                if (u.Value == 19)
+                if (order.idUser == 19)
                 {
                     accessPermitted = true;
                 }
                 else
                 {
-                    var webUser = _membershipService.GetWebUserById(u.Value);
+                    var webUser = _membershipService.GetWebUserById(order.idUser);
 
                     if (webUser.email != null)
                     {
@@ -498,6 +506,11 @@ namespace CUWebinars.Web.Controllers
                                         if (DateTime.Today <= expiryDate)
                                         {
                                             accessPermitted = true;
+                                            _logger.Info("Access to PostEvent Materials is granted to: ", order.idOrder);
+                                        }
+                                        else
+                                        {
+                                            _logger.Warn("Access to PostEvent Materials is denied to: ", order.idOrder);
                                         }
                                     }
 
@@ -514,17 +527,16 @@ namespace CUWebinars.Web.Controllers
                     }
                     else
                     {
-                        _logger.Error("No WebUser exists with the Id {0}", u.Value);
-                        ModelState.AddModelError(string.Empty, string.Format("No WebUser exists with the Id {0}", u.Value));
+                        _logger.Error("No WebUser exists with the Id {0}", order.idUser);
+                        ModelState.AddModelError(string.Empty, string.Format("No WebUser exists with the Id {0}", order.idUser));
                         return View(playModel);
                     }
                 }
 
                 if (accessPermitted)
                 {
-                    //how do I ensure that all child objects are included?
-                    //var handLoc = "/webinar/GetWebinarFile?idWebinarFile=";
-                    playModel.WebinarFiles = playModel.Webinar.WebinarFiles.Where(f => f.idWebinar == w)
+                    
+                    playModel.WebinarFiles = playModel.Webinar.WebinarFiles.Where(f => f.idWebinar == order.OrderRows.FirstOrDefault().idWebinar)
                         .Select(f => f.fileDesc + "|/webinar/GetWebinarFile?idWebinarFile=" + f.idWebinarFile)
                         .ToArray();
 
@@ -536,14 +548,32 @@ namespace CUWebinars.Web.Controllers
                 ViewData["Expired"] = "This recording has expired. ";
                 return View();
 
-            }
             return null;
         }
+
+        //[AcceptVerbs(HttpVerbs.Post)]
+        //public ActionResult RegistrationsTableDataLoader(
+        //    [DataTablesRequestModelBinder] DataTablesRequestModel dataTablesRequest)
+        //{
+        //    int currentUserID = 62;
+        //    var searchResult = _orderManagementService.SearchRegistrations
+        //        (
+        //            currentUserID,
+        //            null,
+        //            dataTablesRequest.DisplayStart,
+        //            dataTablesRequest.DisplayLength,
+        //            dataTablesRequest.Search
+        //        );
+
+        //    var data = new RegistrationsBrowserTableDataDTOAssembler(dataTablesRequest.EchoId).Entity2DTO(searchResult);
+        //    return Json(data);
+        //}
 
         public ActionResult Details(int? id)
         {
             if (id.HasValue)
             {
+
                 var webinar = _webinarManagementService.GetWebinarByIdIncludingAllWebinarsByPresenter(id.Value);
 
                 if (webinar == null) return HttpNotFound();
@@ -557,7 +587,44 @@ namespace CUWebinars.Web.Controllers
                 InitializeDetailsState(webinar, model, id.Value); // form state, incl. stuff that will be posted back. 
                 InitializeViewCentricProperties(model);
                 // mostly just stuff that helps determine layout of the page on load. Not meant to be sent back here to Server from the View
+                if (model.Webinar == null)
+                {
+                    return HttpNotFound();
+                }
 
+                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+
+                if (
+                    claimsIdentityOfAuthenticatedUser.HasClaim(
+                        (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
+                {
+                    return PartialView("DetailsAdmin", model);
+                }
+
+                if (
+                    claimsIdentityOfAuthenticatedUser.HasClaim(
+                        (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
+                {
+
+                    // Get the claims values
+                    var ttsDomain = claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type == ClaimTypes.Affiliate)
+                                       .Select(c => c.Value).SingleOrDefault();
+
+                    var aff = _affiliateManagementService.LoadByTTSDomain(ttsDomain);
+                    var orders =
+                        _orderManagementService.GetOrdersForWebinar(model.Webinar.idWebinar)
+                            .Where(o => o.Affiliate == aff).ToList();
+
+
+                    model.ShowOrdersViewModel = new ShowOrdersViewModel
+                    {
+
+                        Affiliate = aff,
+                        Orders = orders,
+                        Webinar = model.Webinar
+                    };
+                    return PartialView("DetailsAffiliate", model);
+                }
                 var usersOrders = _orderManagementService.GetOrdersByUserId(model.WebUser.idUser)
                     .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == id.Value) != null);
 
@@ -576,9 +643,16 @@ namespace CUWebinars.Web.Controllers
 
                         if (row.idWebinar == id)
                         {
+                            var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, checkOrder.WebUser.email);
+                            if (CheckDisplayPostEventMaterials(userAccount, checkOrder) != null)
+                            {
+                                model.RegistrationSummaryViewModel.DisplayPostEventMaterials = checkOrder.idOrder;
+                            };
+
                             model.RegistrationSummaryViewModel.WebinarFiles = webinarFiles;
                             model.RegistrationSummaryViewModel.UserOwnsThisEvent =
                                 model.UserOwnsThisEvent = checkOrder.idOrder;
+                            model.RegistrationSummaryViewModel.DisplayPostEventMaterials = 0;
                             model.Order = checkOrder;
                         }
 
@@ -608,17 +682,17 @@ namespace CUWebinars.Web.Controllers
                     var billingAddress = addresses.First(a => a.AddressType == WebUiConstants.BillingAddress);
                     var shippingAddress = addresses.FirstOrDefault(a => a.AddressType == WebUiConstants.ShippingAddress);
                     //var CheckoutDiscount = orderRow.Discount == null ? string.Empty : _orderManagementService.GetDiscountByCode()
-                    
+
                     model.CheckoutConfirmViewModel = new CheckoutConfirmViewModel
                     {
                         AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(orderRow),
                         AdjustUserDetailsPanel = new AdjustUserDetailsEditModel
                         {
-                             Email = webUser.email,
-                             FirstName = webUser.FirstName,
-                             idUser = webUser.idUser,
-                             LastName = webUser.LastName,
-                             Institution = orderRow.Order.Institution
+                            Email = webUser.email,
+                            FirstName = webUser.FirstName,
+                            idUser = webUser.idUser,
+                            LastName = webUser.LastName,
+                            Institution = orderRow.Order.Institution
                         },
                         AdminComments = model.Order.AdminComments,
                         AffiliateComments = model.Order.AffiliateComments,
@@ -691,33 +765,12 @@ namespace CUWebinars.Web.Controllers
                         OrderStatus = OrderStatus.InProcess,
                         Origin = model.Order.Origin,
                         UserComments = model.Order.UserComments,
-                        UserDetails = string.Concat("<span id='userFullnameLabel'>", userFullName, 
-                            "</span> - <span id='userInstitutionLabel'>", orderRow.Order.Institution, "</span><br>", 
+                        UserDetails = string.Concat("<span id='userFullnameLabel'>", userFullName,
+                            "</span> - <span id='userInstitutionLabel'>", orderRow.Order.Institution, "</span><br>",
                             "<span id='userEmailLabel'>", webUser.email, "</span>"),
                         UserFullname = userFullName,
                         UserType = UserType.Customer
                     };
-                }
-
-                if (model.Webinar == null)
-                {
-                    return HttpNotFound();
-                }
-
-                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
-
-                if (
-                    claimsIdentityOfAuthenticatedUser.HasClaim(
-                        (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
-                {
-                    return PartialView("DetailsAdmin", model);
-                }
-
-                if (
-                    claimsIdentityOfAuthenticatedUser.HasClaim(
-                        (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
-                {
-                    return PartialView("DetailsAffiliate", model);
                 }
 
                 return View(model);
@@ -726,6 +779,32 @@ namespace CUWebinars.Web.Controllers
             _logger.Error("Details Action invoked with null 'id' parameter");
 
             return RedirectToAction("allActive", new { eventsToShow = "upcoming" });
+        }
+
+        public IEnumerable<Order> CheckDisplayPostEventMaterials(UserAccount userAccount, Order checkOrder)
+        {
+            if (userAccount != null && userAccount.HasClaim(Business.Constants.ClaimTypes.DisplayPostEventMaterials))
+            {
+                var claimsForOrder =
+                    userAccount.Claims.FirstOrDefault(c => c.Value.ToLower().Contains(checkOrder.idOrder.ToString()));
+
+                // extract the date
+                if (claimsForOrder != null)
+                {
+                    var expiryAsString =
+                        claimsForOrder.Value.Substring(claimsForOrder.Value.IndexOf(":") + 1);
+
+                    DateTime expiryDate;
+
+                    if (DateTime.TryParse(expiryAsString, out expiryDate))
+                    {
+                        if (DateTime.Today <= expiryDate)
+                        {
+                            yield return checkOrder;
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -922,7 +1001,7 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
-                    var webinarEditModel =_webinarControllerOrchestrator.BuildEditModelForWebinar(id.Value);
+                    var webinarEditModel = _webinarControllerOrchestrator.BuildEditModelForWebinar(id.Value);
 
                     webinarEditModel.DateChanged = webinarEditModel.DateCreated = DateTime.Now;
 
@@ -990,7 +1069,7 @@ namespace CUWebinars.Web.Controllers
             {
                 _webinarControllerOrchestrator.CreateWebinarFromViewInput(webinarEditModel);
 
-                return Json(new {Result = WebUiConstants.Success});
+                return Json(new { Result = WebUiConstants.Success });
             }
             catch (ValidationException validationException)
             {
@@ -1024,22 +1103,22 @@ namespace CUWebinars.Web.Controllers
 
                 return Json(new { Result = WebUiConstants.Fail, Msg = ServerErrorLoggedMsg }, JsonRequestBehavior.AllowGet);
             }
-            
-            return Json( new { Result = WebUiConstants.Fail, Msg = EnterValidIdMsg}, JsonRequestBehavior.AllowGet);
+
+            return Json(new { Result = WebUiConstants.Fail, Msg = EnterValidIdMsg }, JsonRequestBehavior.AllowGet);
         }
 
 
         [System.Web.Mvc.HttpPost]
-        [ValidateAntiForgeryToken(Order=0)]
+        [ValidateAntiForgeryToken(Order = 0)]
         [ValidateInput(false)]
-        [HandleAjaxException(Order=1)]
+        [HandleAjaxException(Order = 1)]
         public ActionResult Edit(WebinarEditModel webinarEditModel)
         {
             try
             {
                 _webinarControllerOrchestrator.UpdateWebinarFromViewInput(webinarEditModel);
-            
-                return Json( new { Result = WebUiConstants.Success });
+
+                return Json(new { Result = WebUiConstants.Success });
             }
             catch (ValidationException validationException)
             {
@@ -1243,12 +1322,14 @@ namespace CUWebinars.Web.Controllers
                     * If the idWebinar in the WebinarFiles is 0, and does not end with -ND, it has been created (suffix of 'N' appended at client deserializes to 0)
                     * If the fileDesc in the WebinarFile ends with -D, it has been marked for deletion.             
              */
-
+            var filesForThisEvent = _webinarManagementService.GetWebinarFilesPerWebinar(webinarFilesEditModel.idWebinar);
             try
             {
                 var deletedFiles = webinarFilesEditModel.WebinarFiles.Where(f => f.fileDesc.EndsWith("-D")).ToList();
                 var newFiles =
-                    webinarFilesEditModel.WebinarFiles.Where(f => f.idWebinarFile == 0 && !f.fileDesc.EndsWith("-ND"))
+                    webinarFilesEditModel.WebinarFiles.Where(f => f.idWebinarFile == 0
+                        && !f.fileDesc.EndsWith("-ND")
+                        && f.fileLocation != filesForThisEvent.Select(wf => wf.fileLocation).ToString())
                         .ToList();
                 var updatedFiles =
                     webinarFilesEditModel.WebinarFiles.Where(f => f.idWebinarFile > 0 && !f.fileDesc.EndsWith("-D"))

@@ -1,7 +1,7 @@
 ﻿@model WebinarDetailsViewModel
 
 @{
-    ViewBag.Title = "Manage Handouts for this event";
+    ViewBag.Title = "Set Recording Info";
 
 }
 <style>
@@ -25,12 +25,14 @@
         margin: 0;
     }
 </style>
-@*<script type="text/javascript" src="/Scripts/bootstrap-filestyle.min.js"> </script>
-    http://markusslima.github.io/bootstrap-filestyle/#Getstart
-*@
-<a href="#UpdateWebinarRecordingModal" role="button" class="btn" data-toggle="modal">Set Webinar Recording</a>
-
-@*<a id="UpdateWebinarRecordingModalButton" class="btn btn-default">Manage Handouts</a>*@
+@{
+    var buttonCaption = "Set Recording URL";
+    if (Model.Webinar.RecordingUrl != "")
+    {
+        buttonCaption = Model.Webinar.RecordingUrl;
+    }
+}
+<a href="#UpdateWebinarRecordingModal"  data-toggle="modal">@buttonCaption</a>
 
 <div id="UpdateWebinarRecordingModal" class="modal modalCenterV hide fade">
 
@@ -46,10 +48,9 @@
             @Html.HiddenFor(model => model.Webinar.idWebinar)
 
             <div class="form-horizontal">
-                @Html.ValidationSummary("There have been some errors:", new { id = "updateWebinarRecordingValSummary" })
+                @Html.ValidationSummary("Error:", new { id = "updateWebinarRecordingValSummary" })
 
                 <div class="well well-large form-group">
-                    <div align="center">Webinar Recording</div>
                     <div id="manageFilesWrapper">
                         <i class="icon-trash icon-white pull-right" style="cursor: pointer" id="Filedetails-delete"></i>
                         <div id="fileLocationDiv_">

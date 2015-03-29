@@ -80,7 +80,7 @@ namespace CUWebinars.Business.Repository
 
         public IEnumerable<WebUser> GetWebUsersByLastNameForAffiliate(string lastName, int idAffiliate)
         {
-            //is this the search that serves the Affiliate's Order input?
+
             return ((TTSWebinarsContext)db).Orders.Include(o => o.WebUser)
                 .Where(o => o.idAffiliate == idAffiliate && 
                     o.WebUser.LastName.ToLower().Contains(lastName))
@@ -100,7 +100,7 @@ namespace CUWebinars.Business.Repository
                 .SingleOrDefault(wu => wu.email == email
                 );
         }
-
+        
         public void UpdateAddresses(Address address)
         {
             var entry = db.Entry(address);

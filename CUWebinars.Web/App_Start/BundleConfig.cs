@@ -23,7 +23,7 @@ namespace CUWebinars.Web.App_Start
                         "~/Scripts/jquery-ui-1.11.1.js"));
             //"~/Scripts/jquery-ui-1.10.3.custom.js"));
             //"~/Scripts/jquery-ui-1.8.24.js"));
-            
+
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.unobtrusive*",
                         "~/Scripts/jquery.validate*")
@@ -84,6 +84,8 @@ namespace CUWebinars.Web.App_Start
                 ));
 
             bundles.Add(new ScriptBundle("~/bundles/myApp").Include(
+                //TODO: devise bundles such that the Public layout calls BS2.3x while AdminLayout calls 3x
+                        //"~/Scripts/bootstrap3/bootstrap.js",
                         "~/Scripts/bootstrap.js",
                         "~/Scripts/bootstrap-modal.js",
                         "~/Scripts/bootstrap-modalmanager.js",
@@ -92,7 +94,7 @@ namespace CUWebinars.Web.App_Start
                 //"~/Scripts/app/cart/additional-locations.js"
                 //,"~/Scripts/app/cart/edit-order.js"
                         ));
-
+            
             bundles.Add(new ScriptBundle("~/bundles/create-order").Include(
                 //"~/Scripts/app/cart/additional-locations.js",
                          "~/Scripts/app/cart/create-order-new.js",
@@ -104,7 +106,7 @@ namespace CUWebinars.Web.App_Start
 
             bundles.Add(new ScriptBundle("~/bundles/create-order-affiliate").Include(
                          "~/Scripts/app/cart/create-order-new.js",
-                         //"~/Scripts/app/cart/register-during-checkout.js", // required because some functions here are common to all cart operations
+                //"~/Scripts/app/cart/register-during-checkout.js", // required because some functions here are common to all cart operations
                          "~/Scripts/app/cart/details-affiliate.js"
                         ));
 
@@ -173,7 +175,7 @@ namespace CUWebinars.Web.App_Start
                 "~/Content/toastr.css",
                 "~/Content/notification-ops.css"
                 ));
-            
+
             bundles.Add(new StyleBundle("~/Content/manage-order-styles").Include(
                 "~/Content/toastr.css",
                 "~/Content/manage-order.css"
@@ -188,6 +190,7 @@ namespace CUWebinars.Web.App_Start
                 "~/Content/css/header-1.css",
                 "~/Content/css/bootstrap.css",
                 "~/Content/css/bootstrap-responsive.css",
+//                "~/Scripts/bootstrap3/css/bootstrap.css",
                 "~/Content/css/html-content-slider-flexslider.css",
                 "~/Scripts/AutoComplete/css/styles.css",
                 "~/Scripts/AutoComplete/css/styles.css/ui-lightness/jquery-ui-1.10.3.custom.css",

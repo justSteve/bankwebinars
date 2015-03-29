@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Constants;
+﻿using CUWebinars.Business.AccountService;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Cache;
 using CUWebinars.Business.Core.Exceptions;
@@ -293,6 +294,18 @@ namespace CUWebinars.Business.Services
             return _orderRepository.FindUserIdsByPartialId(value);
         }
 
+        public object SearchRegistrations(int affiliateID, IList<int> excludeUserIDs, int skip, int take, string search)
+        {
+            return
+                _orderRepository.SearchOrders(affiliateID, excludeUserIDs, skip, take, search);
+        }
+
+        public string SetPostEventClaims(int webinarId)
+        {
+            throw new NotImplementedException();
+        }
+
+
         public IList<Order> GetOrdersByUserId(int id)
         {
             try
@@ -555,7 +568,7 @@ namespace CUWebinars.Business.Services
                 idOrder = order.idOrder,
                 OrderGenesis = userCreatedInCart ? OrderGenesis.CreatedViaCartByNewUser : OrderGenesis.CreatedViaCartByExistingUser,
                 UserCreatedInCart = userCreatedInCart,
-                UserCreatedOnImport = false 
+                UserCreatedOnImport = false
             };
 
             if (!ReferenceEquals(null, url))
@@ -682,12 +695,25 @@ namespace CUWebinars.Business.Services
 
         public void FireSendRecordingIsPostedEvent(IList<Order> orders)
         {
+
+            Double[] i = _webinarRepository.GetCostOfUpgrades(orders[0].OrderRows.Single().idWebinar);
+
+            Double basePrice = i[0];
+            Double cost6 = i[1];
+            Double costCD = i[2];
+
+
             foreach (var order in orders)
             {
+                string orderSum = OrderSummaryBuilder(order);
 
                 var postEventPublishModel = new PostEventPublishModel()
                 {
-                    Order = order
+                    Order = order,
+                    CostFor6month = (Convert.ToDecimal(cost6) - Convert.ToDecimal(basePrice)).ToString().Replace(".00", ""),
+                    CostForCD = (Convert.ToDecimal(costCD) - Convert.ToDecimal(basePrice)).ToString().Replace(".00", ""),
+                    ExpiryDate = GetPostEventMaterialsAccessExpiry(order),
+                    OrderSummaryString = orderSum
                 };
                 AddEvent(new SendRecordingPostedEvent<PostEventPublishModel>
                 {
@@ -703,6 +729,98 @@ namespace CUWebinars.Business.Services
 
             Clear();
         }
+
+        private string OrderSummaryBuilder(Order order)
+        {
+
+            var row = from orderRow in order.OrderRows
+                      where orderRow.RowStatus == OrderRowStatus.Active
+                      select orderRow;
+            var myRow = row.Single();
+
+
+            var webinar = myRow.Webinar;
+
+            var sb = new StringBuilder();
+
+            sb.Append("<tr>");
+            sb.Append("    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+            sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+            sb.Append("            Title:");
+            sb.Append("        </span>");
+            sb.Append("    </td>");
+            sb.Append("    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+            sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+            sb.Append("            <b>");
+            sb.Append(webinar.Title);
+            sb.Append("            </b>");
+            sb.Append("        </span>");
+            sb.Append("    </td>");
+            sb.Append("</tr>");
+            sb.Append("<tr>");
+            sb.Append("    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+            sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+            sb.Append("            Attendance Type:");
+            sb.Append("        </span>");
+            sb.Append("    </td>");
+            sb.Append("    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+            sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+            sb.Append("            <b>");
+            sb.Append(myRow.RegistrationType.OptionLabel);
+            sb.Append("            </b>");
+            sb.Append("        </span>");
+            sb.Append("    </td>");
+            sb.Append("</tr>");
+            sb.Append("<tr>");
+            sb.Append("    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+            sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+            sb.Append("            Cost:");
+            sb.Append("        </span>");
+            sb.Append("    </td>");
+            sb.Append("    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+            sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+            sb.Append("            <b>");
+            sb.Append(myRow.Order.Total.ToString().Replace(".0000", ""));
+            sb.Append("            </b>");
+            sb.Append("        </span>");
+            sb.Append("    </td>");
+            sb.Append("</tr>");
+            sb.Append("<tr>");
+            sb.Append("    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+            sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+            sb.Append("            Date:");
+            sb.Append("        </span>");
+            sb.Append("    </td>");
+            sb.Append("    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+            sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+            sb.Append("            <b>");
+            sb.Append(webinar.Date.ToShortDateString());
+            sb.Append("            </b>");
+            sb.Append("        </span>");
+            sb.Append("    </td>");
+            sb.Append("</tr>");
+            sb.Append("<tr>");
+            sb.Append("    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+            sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+            sb.Append("            OnDemand Access Expires:");
+            sb.Append("        </span>");
+            sb.Append("    </td>");
+            sb.Append("    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+            sb.Append("");
+            sb.Append("        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+            sb.Append("            <b>");
+            sb.Append(GetPostEventMaterialsAccessExpiry(order));
+            sb.Append("            </b>");
+            sb.Append("        </span>");
+            sb.Append("    </td>");
+            sb.Append("</tr>");
+
+            
+            return sb.ToString();
+
+        }
+
+
         public void FireSendPerDayPromoEvent(WebinarPromoViewModel webinarPromoViewModel)
         {
             AddEvent(new SendPerDayPromoEvent<WebinarPromoViewModel> { EventObject = webinarPromoViewModel });
@@ -907,7 +1025,7 @@ namespace CUWebinars.Business.Services
             {
                 return additionalLocationsPricing.Price;
             }
-            
+
             _logger.Warn("AdditionalLocation price not set for: {0}", idWebinar);
             return 0;
         }
@@ -995,11 +1113,21 @@ namespace CUWebinars.Business.Services
             _orderRepository.RemoveAndDeleteAdditionalLocation(deletedAdditionalLocation);
         }
 
-        public string SetPostEventClaims(int webinarId)
-        {
-            throw new NotImplementedException();
-        }
 
+        public String GetPostEventMaterialsAccessExpiry(Order order)
+        {
+            if (order == null) throw new ArgumentNullException("order");
+
+            var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+            // let exception be thrown if there is not a single 
+
+            var regType = GetRegTypeOfOrderRow(orderRow.idRegType);
+
+            if (regType.ShowRecordingNotifications.Equals("yes", StringComparison.OrdinalIgnoreCase))
+                return DateTime.Today.AddMonths(6).ToShortDateString();
+
+            return DateTime.Today.AddDays(5).ToShortDateString();
+        }
 
         public void GetJoinUrl(OrderRow row)
         {
@@ -1241,7 +1369,6 @@ namespace CUWebinars.Business.Services
         {
             _orderRepository.SendOrderToLegacy(newOrder);
         }
-
         public WebUser GetWebUserWithAddressAndInstitution(int idUser)
         {
             return _webUserRepository.GetWebUserByIdLoadedWithAddressesAndInstitution(idUser);
