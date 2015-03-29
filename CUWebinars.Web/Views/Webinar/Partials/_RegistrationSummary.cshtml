@@ -12,12 +12,12 @@
         var row = from orderRow in Model.OrderRow.Order.OrderRows
                   where orderRow.RowStatus == OrderRowStatus.Active
                   select orderRow;
-        
+
         var myRow = row.Single();
-        
+
         Order order = Model.OrderRow.Order;
         var showShipped = string.Empty;
-        if (Model.WebinarStatus != WebinarStatus.Recorded 
+        if (Model.WebinarStatus != WebinarStatus.Recorded
             || //needs to be replaced with a Claims check
             Model.OrderRow.RegistrationType.ShowRecordingNotifications == "No")
         {
@@ -38,7 +38,7 @@
         {
             showShipped = "<li>Shipped on: " + Model.OrderRow.ShipmentDate.Value.ToShortDateString() + "</li>";
         }
-        <div id="OrderSummary" class="well well-small">
+        <div id="OrderSummary">
             @{
 
         Debug.Assert(order != null, "order != null");
@@ -47,16 +47,11 @@
             Model.OrderRow.Order.OrderStatus == OrderStatus.Submitted)
         {
             <aside style="width: 100%" class="widget clearfix">
-                <div class="dropdown">
-                    <a class="dropdown-toggle btn btn-success" data-toggle="dropdown" href="#">Your Order #<b>@globalConfig.TenantPrefix@order.idOrder</b> Summary</a>
-                    <ul style="width: 100%; padding-left: 10px;" class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                        <li>Ordered on: @order.OrderDate.ToShortDateString()</li>
-                        <li>@orderMsgs.OptionLabel</li>
-                        <li>@order.Total.ToString("C", nfi)</li>
-                        @Html.Raw(@showShipped)
-                        <div style="font-size: smaller;">@{ Html.RenderPartial("~/Views/Account/Partials/OrderHasAdditionalLocations.cshtml", Model.OrderHasAdditionalLocationsViewModel); }</div>
-                        <li><a class="btn btn-success btn-mini" href='#' onclick=' upgrade(idRegType); '>Upgrade order?</a></li>
-                    </ul>
+
+                <h5 class="short_headline"><span>Order Summary</span></h5>
+                <div id="orderSum-@Model.OrderRow.idWebinar">
+                    @{Html.RenderPartial("DisplayTemplates/OrderSumUser", Model.OrderRow.Order);}
+
                 </div>
             </aside>
             if (Model.WebinarStatus == WebinarStatus.Scheduled
@@ -96,28 +91,16 @@
                     </aside>
                 }
             }
-            //webinarFiles ="";
-            if (Model.WebinarFiles.Any())
-            {
-                <aside style="width: 100%" class="widget clearfix">
-                    <h5 class="short_headline"><span>Event Materials</span></h5>
-
-                    <div class="well well-small">
-                        @{
-                Html.RenderPartial("DisplayTemplates/HandoutsListing", myRow.Webinar);
-                        }
-                    </div>
-
-                </aside>
-            }
 
             if (Model.WebinarStatus == WebinarStatus.Recorded || Model.WebinarStatus == WebinarStatus.Archived)
             {
+                <h5 class="short_headline"><span>Post Event Materials</span></h5>
+                <p>
+                    This link provides access to the event's materials and may be
+                    shared with associates and co-workers within you organization:
+                </p>
+                <p><b>@Html.Raw(Model.RecordingLink)</b></p>
 
-                if (Model.WebinarStatus != WebinarStatus.Recorded || Model.OrderRow.RegistrationType.ShowRecordingNotifications == "Yes")
-                {
-                    <p style="font-size: smaller; text-align: center;">Need to share this recording with a co-worker? <tt><b>@globalConfig.TenantURL/Webinar/Play?w=@Model.OrderRow.Webinar.idWebinar&u=@Model.OrderRow.Order.WebUser.idUser</b></tt></p>
-                }
                 <div>
                     <form method="POST" action="/Account/MyCertificate">
                         <input type="hidden" name="orderID" value="@order.idOrder" />

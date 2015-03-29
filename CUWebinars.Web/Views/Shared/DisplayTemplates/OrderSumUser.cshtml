@@ -6,19 +6,19 @@
     var myRow = Model.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
     NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
     nfi.CurrencyDecimalDigits = 0;
-
 }
-<div id="odrSum-@Model.idOrder" style="width: 250px;">
+
+<div id="odrSum-@Model.idOrder" style="width: 300px;">
 
     <div style="font-size: small; " class="well well-small">
-        <i>Order ID:</i> @globalConfig.TenantPrefix@Model.idOrder<br />
-        <i>Date Ordered:</i> @Model.OrderDate.ToShortDateString()<br />
-        <i>Type of Attendance:</i> @myRow.RegistrationType.OptionLabel<br />
+        <i>Order ID:</i><b> @globalConfig.TenantPrefix@Model.idOrder</b><br />
+        <i>Date Ordered:</i><b> @Model.OrderDate.ToShortDateString()</b><br />
+        <i>Registration:</i><b> @myRow.RegistrationType.OptionLabel.Replace(" Only", "")</b><br />
         @if (myRow.ShipmentDate.HasValue)
         {
-            <text>This order shipped on:<b>@Html.DisplayDate(myRow.ShipmentDate.Value)</b></text>
+            <text>Shipped Date:<b>@Html.DisplayDate(myRow.ShipmentDate.Value)</b></text>
         }
-        <i>Total Cost:</i> @Model.Total.ToString("C", nfi)
+        <i>Total Cost:</i> <b>@Model.Total.ToString("C", nfi)</b>
     </div>
 
 </div>
