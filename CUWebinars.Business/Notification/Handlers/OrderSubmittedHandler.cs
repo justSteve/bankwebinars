@@ -2,7 +2,6 @@
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
-using CUWebinars.Business.Notification.Formatters;
 using CUWebinars.Business.Notification.ViewModel;
 using CUWebinars.NotificationSystem.Event;
 using Newtonsoft.Json;
@@ -15,15 +14,12 @@ namespace CUWebinars.Business.Notification.Handlers
     public class OrderSubmittedHandler<T> : IEventHandler<OrderSubmittedEvent<T>>
         where T : ConfirmOrderMessage
     {
-        private readonly IFormatter _generalFormatter;
         private readonly IOrderConfirmedNotificationDelivery _notificationDelivery;
         private readonly ILogger _logger;
 
-        public OrderSubmittedHandler(IFormatter generalFormatter
-            , IOrderConfirmedNotificationDelivery notificationDelivery
+        public OrderSubmittedHandler(IOrderConfirmedNotificationDelivery notificationDelivery
             , ILogger logger)
         {
-            _generalFormatter = generalFormatter;
             _notificationDelivery = notificationDelivery;
             _logger = logger;
 
@@ -86,8 +82,8 @@ namespace CUWebinars.Business.Notification.Handlers
 
     public class OrderSubmittedHandler : OrderSubmittedHandler<ConfirmOrderMessage>
     {
-        public OrderSubmittedHandler(IFormatter generalFormatter, IOrderConfirmedNotificationDelivery notificationDelivery, ILogger logger)
-            : base(generalFormatter, notificationDelivery, logger)
+        public OrderSubmittedHandler(IOrderConfirmedNotificationDelivery notificationDelivery, ILogger logger)
+            : base(notificationDelivery, logger)
         {
         }
 

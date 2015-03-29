@@ -1,4 +1,4 @@
-﻿using CUWebinars.Business.Core;
+﻿using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.Notification.Email
 {
@@ -8,6 +8,7 @@ namespace CUWebinars.Business.Notification.Email
         public string ConfirmChangeEmailUrl { get; set; }
         public string Details { get; set; }
         public int idOrder { get; set; }
+        public Order Order { get; set; }
         public string NotifyAddress { get; set; }
         public string PersistedName { get; set; }
         public bool UserCreatedInCart { get; set; }

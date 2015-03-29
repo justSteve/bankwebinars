@@ -566,6 +566,7 @@ namespace CUWebinars.Business.Services
                 ConfirmChangeEmailUrl = string.Empty,
                 Details = order.NotificationStorage,
                 idOrder = order.idOrder,
+                Order = order,
                 OrderGenesis = userCreatedInCart ? OrderGenesis.CreatedViaCartByNewUser : OrderGenesis.CreatedViaCartByExistingUser,
                 UserCreatedInCart = userCreatedInCart,
                 UserCreatedOnImport = false
@@ -667,6 +668,7 @@ namespace CUWebinars.Business.Services
             {
                 ConfirmChangeEmailUrl = string.Empty,
                 idOrder = order.idOrder,
+                Order = order,
                 UserCreatedOnImport = false,
                 NotifyAddress = address,
 
@@ -1245,6 +1247,7 @@ namespace CUWebinars.Business.Services
                                 currentOrder.WebUser.LastName.ToLower())
                             : string.Empty,
                     idOrder = updatedOrder.idOrder,
+                    Order = updatedOrder,
                     OrderGenesis = orderGenesis,
                     UserCreatedOnImport = linkToVerifyAccount
                 };

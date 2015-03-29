@@ -1,6 +1,6 @@
 namespace CUWebinars.Business.Notification
 {
-    public interface IAzureOrderConfirmedForAdditionalLocationNotifier
+    public interface IOrderConfirmedForAdditionalLocationDelivery
     {
         void Notify(IAdditionalLocationOrderDetailsMessage additionalLocationOrderDetailsMessage);
     }

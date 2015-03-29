@@ -31,6 +31,7 @@ namespace CUWebinars.Business.Notification.Email
         {
             _logger.Info("Enqueuing confirmation of Order {0}", confirmOrderMessage.idOrder);
 
+            confirmOrderMessage.Order = null; // only relevent for non-webjob versions of delivery classes. Not serializable.
             confirmOrderMessage.BaseUrl = _baseUrl;
 
             var storageCredentials = new StorageCredentials(_storageAccountName, _storageAccessKey);

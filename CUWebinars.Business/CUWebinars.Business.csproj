@@ -178,11 +178,13 @@
     <Compile Include="Models\WebUserDiscountXref.cs" />
     <Compile Include="Notification\Email\AdditionalLocationOrderDetailsMessage.cs" />
     <Compile Include="Notification\Email\AzureCuwWebJobSmtpMessageDelivery.cs" />
-    <Compile Include="Notification\Email\AzureOrderConfirmedForAdditionalLocationNotifier.cs" />
+    <Compile Include="Notification\Email\AzureOrderConfirmedForAdditionalLocationDelivery.cs" />
     <Compile Include="Notification\Email\AzureOrderNotifierMessageDelivery.cs" />
     <Compile Include="Notification\Email\ConfirmAdditionalLocationsOrderMessage.cs" />
     <Compile Include="Notification\Email\ConfirmOrderMessage.cs" />
-    <Compile Include="Notification\IAzureOrderConfirmedForAdditionalLocationNotifier.cs" />
+    <Compile Include="Notification\Email\OrderConfirmedForAdditionalLocationDelivery.cs" />
+    <Compile Include="Notification\Email\OrderNotifierMessageDelivery.cs" />
+    <Compile Include="Notification\IOrderConfirmedForAdditionalLocationDelivery.cs" />
     <Compile Include="Notification\IAdditionalLocationOrderDetailsMessage.cs" />
     <Compile Include="Notification\IConfirmAdditionalLocationsOrderMessage.cs" />
     <Compile Include="Notification\Email\LocalOrderNotifierMessageDelivery.cs" />

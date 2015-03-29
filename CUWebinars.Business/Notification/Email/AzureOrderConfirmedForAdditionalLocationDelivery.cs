@@ -6,7 +6,7 @@ using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Business.Notification.Email
 {
-    public class AzureOrderConfirmedForAdditionalLocationNotifier : IAzureOrderConfirmedForAdditionalLocationNotifier
+    public class AzureOrderConfirmedForAdditionalLocationDelivery : IOrderConfirmedForAdditionalLocationDelivery
     {
         private readonly string _storageAccountName;
         private readonly string _storageAccessKey;
@@ -14,7 +14,7 @@ namespace CUWebinars.Business.Notification.Email
         private readonly string _baseUrl;
         private CloudQueueClient _queueClient;
 
-        public AzureOrderConfirmedForAdditionalLocationNotifier(string storageAccountName, string storageAccessKey, ILogger logger, string baseUrl)
+        public AzureOrderConfirmedForAdditionalLocationDelivery(string storageAccountName, string storageAccessKey, ILogger logger, string baseUrl)
         {
             _storageAccountName = storageAccountName;
             _storageAccessKey = storageAccessKey;
@@ -27,6 +27,7 @@ namespace CUWebinars.Business.Notification.Email
             _logger.Info("Enqueuing confirmation of Order for additional location - orderId {0}", additionalLocationOrderDetailsMessage.idOrder);
 
             additionalLocationOrderDetailsMessage.BaseUrl = _baseUrl;
+            additionalLocationOrderDetailsMessage.Order = null; // only relevent for non-webjob versions of delivery classes. Not serializable.
 
             var storageCredentials = new StorageCredentials(_storageAccountName, _storageAccessKey);
             var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);

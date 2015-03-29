@@ -12,10 +12,10 @@ namespace CUWebinars.Business.Notification.Handlers
         where T : AdditionalLocationOrderDetailsMessage
     {
         private readonly IFormatter _generalFormatter;
-        private readonly IAzureOrderConfirmedForAdditionalLocationNotifier _notificationDelivery;
+        private readonly IOrderConfirmedForAdditionalLocationDelivery _notificationDelivery;
         private readonly ILogger _logger;
 
-        public OrderSubmittedAdditionalLocationHandler(IFormatter generalFormatter, IAzureOrderConfirmedForAdditionalLocationNotifier notificationDelivery, ILogger logger)
+        public OrderSubmittedAdditionalLocationHandler(IFormatter generalFormatter, IOrderConfirmedForAdditionalLocationDelivery notificationDelivery, ILogger logger)
         {
             _generalFormatter = generalFormatter;
             _notificationDelivery = notificationDelivery;
@@ -93,7 +93,7 @@ namespace CUWebinars.Business.Notification.Handlers
     public class OrderSubmittedAdditionalLocationHandler : OrderSubmittedAdditionalLocationHandler<AdditionalLocationOrderDetailsMessage>
     {
  
-        public OrderSubmittedAdditionalLocationHandler(IFormatter generalFormatter, IAzureOrderConfirmedForAdditionalLocationNotifier notificationDelivery, ILogger logger)
+        public OrderSubmittedAdditionalLocationHandler(IFormatter generalFormatter, IOrderConfirmedForAdditionalLocationDelivery notificationDelivery, ILogger logger)
             : base(generalFormatter, notificationDelivery, logger)
         {
         }
