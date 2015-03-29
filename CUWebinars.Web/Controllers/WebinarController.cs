@@ -465,26 +465,25 @@ namespace CUWebinars.Web.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Get)]
-        public ActionResult OnDemand(int? o, int? u)
+        public ActionResult OnDemand(int id)
         {
-            if (o.HasValue && u.HasValue)
-            {
+
                 bool accessPermitted = false;
 
-                var order = _orderManagementService.GetOrderById(o.Value);
+                var order = _orderManagementService.GetOrderById(id);
 
                 var playModel = new OnDemandPlaybackModel
                 {
-                    Webinar = _webinarManagementService.GetWebinar(order.OrderRows.SingleOrDefault(s => s.RowStatus == OrderRowStatus.Active).idOrder)
+                    Webinar = _webinarManagementService.GetWebinar(order.OrderRows.SingleOrDefault(s => s.RowStatus == OrderRowStatus.Active).idWebinar)
                 };
 
-                if (u.Value == 19)
+                if (order.idUser == 19)
                 {
                     accessPermitted = true;
                 }
                 else
                 {
-                    var webUser = _membershipService.GetWebUserById(u.Value);
+                    var webUser = _membershipService.GetWebUserById(order.idUser);
 
                     if (webUser.email != null)
                     {
@@ -528,17 +527,16 @@ namespace CUWebinars.Web.Controllers
                     }
                     else
                     {
-                        _logger.Error("No WebUser exists with the Id {0}", u.Value);
-                        ModelState.AddModelError(string.Empty, string.Format("No WebUser exists with the Id {0}", u.Value));
+                        _logger.Error("No WebUser exists with the Id {0}", order.idUser);
+                        ModelState.AddModelError(string.Empty, string.Format("No WebUser exists with the Id {0}", order.idUser));
                         return View(playModel);
                     }
                 }
 
                 if (accessPermitted)
                 {
-                    //how do I ensure that all child objects are included?
-                    //var handLoc = "/webinar/GetWebinarFile?idWebinarFile=";
-                    playModel.WebinarFiles = playModel.Webinar.WebinarFiles.Where(f => f.idWebinar == playModel.Webinar.idWebinar)
+                    
+                    playModel.WebinarFiles = playModel.Webinar.WebinarFiles.Where(f => f.idWebinar == order.OrderRows.FirstOrDefault().idWebinar)
                         .Select(f => f.fileDesc + "|/webinar/GetWebinarFile?idWebinarFile=" + f.idWebinarFile)
                         .ToArray();
 
@@ -550,7 +548,6 @@ namespace CUWebinars.Web.Controllers
                 ViewData["Expired"] = "This recording has expired. ";
                 return View();
 
-            }
             return null;
         }
 
