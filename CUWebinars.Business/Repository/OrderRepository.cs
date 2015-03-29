@@ -161,7 +161,7 @@ namespace CUWebinars.Business.Repository
 
         public IQueryable<Order> FindOrdersByBillingEmail(string email)
         {
-            return items.Where(o => o.BillingEmail == email);
+            return items.Include(o => o.WebUser).Where(o => o.BillingEmail == email);
         }
 
         public IQueryable<Order> FindOrdersByLastName(string lastName)
@@ -198,7 +198,8 @@ namespace CUWebinars.Business.Repository
 
         public IList<int> FindOrderIdsByPartialId(int userId)
         {
-            return items.Where(order => order.idOrder.ToString().Contains(userId.ToString()))
+            return items.Include(o => o.WebUser)
+                .Where(order => order.idOrder.ToString().Contains(userId.ToString()))
                 .Select(order => order.idOrder)
                 .ToList();
         }

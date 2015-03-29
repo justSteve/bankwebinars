@@ -34,9 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BrockAllen.MembershipReboot, Version=8.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="BrockAllen.MembershipReboot, Version=8.2.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\BrockAllen.MembershipReboot.8.1.0\lib\net45\BrockAllen.MembershipReboot.dll</HintPath>
+      <HintPath>..\packages\BrockAllen.MembershipReboot.8.2.1\lib\net45\BrockAllen.MembershipReboot.dll</HintPath>
     </Reference>
     <Reference Include="BrockAllen.MembershipReboot.Ef, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -97,8 +97,9 @@
     <Reference Include="Ninject.Extensions.Logging.Log4Net">
       <HintPath>..\packages\Ninject.Extensions.Logging.Log4net.3.2.0.0\lib\net45-full\Ninject.Extensions.Logging.Log4Net.dll</HintPath>
     </Reference>
-    <Reference Include="RazorEngine">
-      <HintPath>..\packages\RazorEngine.3.4.1\lib\net45\RazorEngine.dll</HintPath>
+    <Reference Include="RazorEngine, Version=3.6.3.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\RazorEngine.3.6.3\lib\net45\RazorEngine.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -175,9 +176,15 @@
     <Compile Include="Models\Mapping\GTWebinarMap.cs" />
     <Compile Include="Models\Mapping\WebUserDiscountXrefMap.cs" />
     <Compile Include="Models\WebUserDiscountXref.cs" />
+    <Compile Include="Notification\Email\AdditionalLocationOrderDetailsMessage.cs" />
     <Compile Include="Notification\Email\AzureCuwWebJobSmtpMessageDelivery.cs" />
+    <Compile Include="Notification\Email\AzureOrderConfirmedForAdditionalLocationNotifier.cs" />
     <Compile Include="Notification\Email\AzureOrderNotifierMessageDelivery.cs" />
+    <Compile Include="Notification\Email\ConfirmAdditionalLocationsOrderMessage.cs" />
     <Compile Include="Notification\Email\ConfirmOrderMessage.cs" />
+    <Compile Include="Notification\IAzureOrderConfirmedForAdditionalLocationNotifier.cs" />
+    <Compile Include="Notification\IAdditionalLocationOrderDetailsMessage.cs" />
+    <Compile Include="Notification\IConfirmAdditionalLocationsOrderMessage.cs" />
     <Compile Include="Notification\Email\LocalOrderNotifierMessageDelivery.cs" />
     <Compile Include="Notification\Events\AdminEmailConnectionInfoEvent.cs" />
     <Compile Include="Notification\Events\AdminEmailRecordingPostedEvent.cs" />
@@ -211,6 +218,7 @@
     <Compile Include="Notification\Handlers\SendShippedOrderHandler.cs" />
     <Compile Include="Notification\IConfirmOrderMessage.cs" />
     <Compile Include="Notification\INotificationPersister.cs" />
+    <Compile Include="Notification\IOrderConfirmedForAdditionalLocationNotificationDelivery.cs" />
     <Compile Include="Notification\IOrderConfirmedNotificationDelivery.cs" />
     <Compile Include="Notification\Renderers\IRenderer.cs" />
     <Compile Include="Notification\Renderers\Renderer.cs" />
@@ -355,9 +363,12 @@
     <PostBuildEvent>copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderNotifierWebJob\ThirdPartyAssemblies\$(ProjectName).dll"
 copy /Y "$(TargetDir)$(ProjectName).pdb" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderNotifierWebJob\ThirdPartyAssemblies\$(ProjectName).pdb"
 copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).dll"
-copy /Y "$(TargetDir)$(ProjectName).pdb" "$(SolutionDir)\..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).pdb"
+copy /Y "$(TargetDir)$(ProjectName).pdb" "$(SolutionDir)..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).pdb"
 copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).dll"
-copy /Y "$(TargetDir)$(ProjectName).pdb" "$(SolutionDir)\..\CUMailer\CUWebinars.Azure.OrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).pdb"</PostBuildEvent>
+copy /Y "$(TargetDir)$(ProjectName).pdb" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).pdb"
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AddLocOrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).dll"
+copy /Y "$(TargetDir)$(ProjectName).pdb" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AddLocOrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).pdb"
+</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

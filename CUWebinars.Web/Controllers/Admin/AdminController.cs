@@ -333,7 +333,7 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 //var results = _orderManagementService.GetOrderIdsByPartialId(id.Value);
                 var results = _orderManagementService.GetOrderIdsByPartialId(id.Value);
-                var userIds = _orderManagementService.GetUserIdsByPartialId(id.Value);
+                //var userIds = _orderManagementService.GetUserIdsByPartialId(id.Value);
 
 
                 return Json(new {results}, JsonRequestBehavior.AllowGet);
@@ -346,12 +346,20 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             if (!string.IsNullOrWhiteSpace(email))
             {
-                var results = _orderManagementService.GetOrdersByEmail(email).Select(o => o.BillingEmail + " - " + o.LastName + ", " + o.Institution);
+                var results = _orderManagementService.GetOrdersByEmail(email).Select(o =>
+                    new
+                    {
+                        id = o.WebUser.idUser,
+                        billingEmail = o.WebUser.email,
+                        firstName = o.WebUser.FirstName,
+                        lastName = o.WebUser.LastName,
+                        institution = o.Institution
+                    }).Distinct();
 
                 return Json(new {results}, JsonRequestBehavior.AllowGet);
             }
 
-            return Json(new { Error = WebUiConstants.NullValueParameter });
+            return Json(new {Error = WebUiConstants.NullValueParameter});
         }
 
         public ActionResult GetOrdersByLastName(string lastName)
@@ -359,18 +367,25 @@ namespace CUWebinars.Web.Controllers.Admin
             if (!string.IsNullOrWhiteSpace(lastName))
             {
                 var results = _orderManagementService.GetOrdersByLastName(lastName)
-                    .Select(o => new { id = o.WebUser.idUser, lastName = o.WebUser.LastName, firstName = o.WebUser.FirstName });
-                
-                return Json(new { results }, JsonRequestBehavior.AllowGet);
+                    .Select(o => new
+                    {
+                        id = o.WebUser.idUser,
+                        billingEmail = o.WebUser.email,
+                        lastName = o.WebUser.LastName,
+                        firstName = o.WebUser.FirstName,
+                        institution = o.Institution
+                    }).Distinct();
+
+                return Json(new {results}, JsonRequestBehavior.AllowGet);
             }
 
-            return Json(new { Error = WebUiConstants.NullValueParameter });
+            return Json(new {Error = WebUiConstants.NullValueParameter});
         }
 
         private TagBuilder GetRenderer(IList<string> emailAddresses)
         {
             const string locationsSpanPrefix = "LocationSpan-";
-            string breakSuffix = "-break";
+            const string breakSuffix = "-break";
             const string additionalLocationDeleteSuffix = "-AdditionLocationEmail-delete";
             const string additionalLocationEmailPrefix = "AdditionalLocationEmail-";
             const string nonBreakingSpace = "&nbsp;";
@@ -381,8 +396,8 @@ namespace CUWebinars.Web.Controllers.Admin
             var inputBuilder = new TagBuilder("input");
             var iconBuilder = new TagBuilder("i");
 
-            /* The generataed element will look like this:
-            
+            /***************** The generataed element will look like this: *****************/
+            /*
                 <span id="LocationSpan-0">
                    <input aria-describedby="AdditionalLocationEmail_0-error" aria-invalid="false" class="valid" id="AdditionalLocationEmail-0" name="AdditionalLocations[0].Email" placeholder="Enter email address" type="email" value="test@yahoo.com">&nbsp;
                    <i class="icon-white icon-trash" id="0-AdditionLocationEmail-delete" style="cursor: pointer"></i>

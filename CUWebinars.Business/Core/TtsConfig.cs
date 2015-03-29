@@ -35,6 +35,12 @@ namespace CUWebinars.Business.Core
                     baseUrl
                     );
 
+            IAzureOrderConfirmedForAdditionalLocationNotifier azureOrderConfirmedForAdditionalLocationNotifier = new AzureOrderConfirmedForAdditionalLocationNotifier(storageAccountName,
+                storageAccessKey,
+                new Log4NetLogger(typeof(IAzureOrderConfirmedForAdditionalLocationNotifier)),
+                baseUrl
+                );
+
             // toggle whether to use Azure Webjobs or local code (for local debugiing/development purposes)
             if (useAzureWebjobs)
             {
@@ -66,7 +72,7 @@ namespace CUWebinars.Business.Core
             config.AddEventHandler(new SendPerDayPromoHandler(genericFormatter, notificationDelivery,sendPerDayPromoHandlerLogger));
             //config.AddEventHandler(new SendPerWeekPromoHandler(genericFormatter, notificationDelivery, sendPerWeekPromoHandlerLogger));
             config.AddEventHandler(new OrderSubmittedHandler(genericFormatter, orderConfirmationDelivery, notificationOrderHandlerLogger));
-            config.AddEventHandler(new OrderSubmittedAdditionalLocationHandler(genericFormatter, notificationDelivery, notificationOrderHandlerLogger, notificationPersister, new EnvironmentInformation { BaseUrl = baseUrl }));
+            config.AddEventHandler(new OrderSubmittedAdditionalLocationHandler(genericFormatter, azureOrderConfirmedForAdditionalLocationNotifier, notificationOrderHandlerLogger));
             config.AddEventHandler(new SendShippedOrderHandler(genericFormatter, notificationDelivery,sendShippedOrderHandlerLogger));
             config.AddEventHandler(new SendConnectionInfoHandler(genericFormatter, notificationDelivery, sendConnectionInfoHandlerLogger, new EnvironmentInformation { BaseUrl = baseUrl }));
             config.AddEventHandler(new SendReminderHandler(genericFormatter, notificationDelivery, sendReminderHandlerLogger));

@@ -642,34 +642,42 @@ namespace CUWebinars.Business.Services
         {
             _logger.Info("Adding Event for Order with Additional Location {0} - {1}", order.idOrder, address);
 
-            var orderSubmittedAdditionalLocationViewModel = new OrderSubmittedAdditionalLocationViewModel
+            //var orderSubmittedAdditionalLocationViewModel = new OrderSubmittedAdditionalLocationViewModel
+            //{
+            //    ConfirmChangeEmailUrl = string.Empty,
+            //    Order = order,
+            //    UserCreatedOnImport = false,
+            //    NotifyAddress = address
+            //};
+
+            var additionalLocationOrderDetails = new AdditionalLocationOrderDetailsMessage
             {
                 ConfirmChangeEmailUrl = string.Empty,
-                Order = order,
+                idOrder = order.idOrder,
                 UserCreatedOnImport = false,
-                notifyAddress = address
+                NotifyAddress = address,
+
             };
 
-            var relativePath = Path.Combine(@"App_Data\Notifications", string.Format("OrderNotificationAddLoc-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm"));
+            //var relativePath = Path.Combine(@"App_Data\Notifications", string.Format("OrderNotificationAddLoc-{0}{1}", DateTime.Now.ToString(DomainConstants.DateTimeLongFormat), ".htm"));
 
-            AddEvent(new OrderSubmittedAdditionalLocationEvent<OrderSubmittedAdditionalLocationViewModel>
+            AddEvent(new OrderSubmittedAdditionalLocationEvent<AdditionalLocationOrderDetailsMessage>
             {
                 Details = order.NotificationStorage,
-                EventObject = orderSubmittedAdditionalLocationViewModel,
-                RelativeFilePath = relativePath,
+                EventObject = additionalLocationOrderDetails,
                 ResendEvent = resending
             });
 
-            _logger.Info("Persisted Email for Order w/AddLoc {0}-{1} :{2}", order.idOrder, address, relativePath);
+            //_logger.Info("Persisted Email for Order w/AddLoc {0}-{1} :{2}", order.idOrder, address, relativePath);
 
-            foreach (var evt in GetEvents().OfType<OrderSubmittedAdditionalLocationEvent<OrderSubmittedAdditionalLocationViewModel>>())
+            foreach (var evt in GetEvents().OfType<OrderSubmittedAdditionalLocationEvent<AdditionalLocationOrderDetailsMessage>>())
             {
                 _ttsConfig.NotificationEventBus.RaiseEvent(evt);
             }
 
             Clear();
 
-            int rowsUpdated = _orderRepository.SaveChanges();
+            //int rowsUpdated = _orderRepository.SaveChanges();
         }
 
         public void FireSendRecordingIsPostedEvent(IList<Order> orders)

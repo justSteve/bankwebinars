@@ -120,7 +120,9 @@ function wireUpHandlersForModal() {
             });
         }
 
-        $('#AddInputsButton').on('click', function () {
+        $('#AddInputsButton').on('click', function (e) {
+
+            e.preventDefault();
 
             if (numberOfAdditionalLocations == 0) {
                 $('#AdditionalLocationEmailWrapper').after($('<button>',

@@ -559,12 +559,12 @@ namespace CUWebinars.Web.Core.Orchestrators
             order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
 
             jsonWatch.Stop();
-            Trace.TraceInformation(string.Format("{0} took {1}s to run.", "JSON Serialization", jsonWatch.Elapsed.Seconds));
+            Trace.TraceInformation("{0} took {1}s to run.", "JSON Serialization", jsonWatch.Elapsed.Seconds);
 
             if (userCreatedInCart.HasValue)
                 _orderManagementService.FireOrderSubmittedEvent(order, userCreatedInCart.Value, url: Request.Url);
             else
-                _orderManagementService.FireOrderSubmittedEvent(order);
+                _orderManagementService.FireOrderSubmittedEvent(order, url: Request.Url);
 
         }
 
