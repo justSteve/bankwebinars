@@ -125,8 +125,8 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                         case 33: { idRegType = 203; break; }
                             ;
                         case 36: { idRegType = 204; break; }
-                            ;
-                        default: { idRegType = 0; break; }
+                        //    ;
+                        //default: { idRegType = 0; break; }
                     }
 
                     command.RegistrationType = idRegType;

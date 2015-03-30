@@ -19,7 +19,7 @@
         ceuStmt = ceu[1];
     }
 
-    ViewBag.Title = "My Webinars";
+    ViewBag.Title = "OnDemand Access";
     Layout = "~/Views/Shared/_LayoutPublic.cshtml";
 
     //WebUser currentUser = Model.Webinar.WebUser;
@@ -40,6 +40,11 @@
 
 </div>
 <!--close hero-unit-->
+
+@{
+    if (userIsKnown)
+    {
+
 <div class="container clearfix" id="main-content">
 
     <!--begin main content-->
@@ -126,3 +131,6 @@
         <!--close section tertiary-column sidebar span3-->
     </div>
 </div>
+
+    }
+}
