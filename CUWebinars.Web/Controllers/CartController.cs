@@ -499,7 +499,7 @@ namespace CUWebinars.Web.Controllers
             return Json(new { Result = WebUiConstants.Success });
         }
         
-        public virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (_disposed) return;
 
@@ -512,6 +512,8 @@ namespace CUWebinars.Web.Controllers
                 _cartControllerOrchestrator.Dispose();
 
                 _disposed = true;
+
+                base.Dispose();
             }
         }
     }

@@ -11,7 +11,7 @@
     WebUser currentUser = Model.WebUser;
     var EditResult = "<span>&nbsp;</span>";
     var userSubscription = new DiscountDetailsModel() { Discount = Model.Subscription, UserId = currentUser.idUser };
-    var userPackage = new DiscountDetailsModel() { Discount = Model.Package, UserId = currentUser.idUser };
+    //var userPackage = new DiscountDetailsModel() { Discount = Model.Package, UserId = currentUser.idUser };
     if (TempData["EditResult"] != null && (string)TempData["EditResult"] != "")
     {
         EditResult = TempData["EditResult"].ToString();
@@ -48,84 +48,45 @@
       };}
     @*<span style="margin-left: 25px;"><input type="button" class="btn-small btn btn-link" onclick="javascript: stateManager.passResetView(); return false;" value="Forgot Password?" /></span>
         Html.Partial("~/Views/Admin/_ResetPasswordPartial.cshtml", pModel)*@
+    <ul class="nav nav-tabs">
+        <li><a href="#upcoming1" data-toggle="tab">Upcoming Events</a></li>
+        <li><a href="#recorded1" data-toggle="tab">Recorded Events</a></li>
+        <li><a href="#subscriptions" data-toggle="tab">Subscriptions & Discounts</a></li>
 
-    <div class="accordion" id="mywebinars">
-        @*@if (userSubscription != null)
-        {
-            <div class="accordion-group">
-                <div class="accordion-heading">
-                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#mywebinars" href="#subscription">
-                        Compliance Perspectives Subscription
-                    </a>
-
-                    <div id="subscription" class="accordion-body collapse out">
-                        <div class="accordion-inner">
-                            @{Html.RenderPartial("Partials/Subscription", userSubscription);}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }*@
-        @*
-        //still needs backing objects.        
-        @if (userPackage != null)
+    </ul>
+    <div class="tab-content" id="mywebinars">
+        <div class="tab-pane" id="subscriptions">
+            @if (userSubscription != null)
             {
-                <div class="accordion-group">
-                    <div class="accordion-heading">
-                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#mywebinars" href="#package">
-                            Package Subscription
-                        </a>
-                        <div id="package" class="accordion-body collapse out">
-                            <div class="accordion-inner">
-                                @{Html.RenderPartial("Partials/Package", userPackage);}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }*@
-        @if (Model.Scheduled.Count > 0)
-        {
-            <div class="accordion-group">
-                <div class="accordion-heading">
-                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#mywebinars" href="#upcoming1">
-                        <h3>Upcoming Events</h3>
-                    </a>
-                    <div id="upcoming1" class="accordion-body collapse in">
-                        <div class="accordion-inner">
-                            @{ Html.RenderPartial("Partials/upcoming"); }
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
-        @if (Model.Recorded.Count > 0)
-        {
-            <div class="accordion-group">
-                <div class="accordion-heading">
-                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#mywebinars" href="#recorded1">
-                        <h3>Recorded Events</h3>
-                    </a>
-                    <div id="recorded1" class="accordion-body collapse in">
-                        <div class="accordion-inner">
-                            @{ Html.RenderPartial("Partials/Recorded"); }
 
+                Html.RenderPartial("Partials/Subscription", userSubscription);
+
+            }
+        </div>
+        <div class="tab-pane" id="upcoming1">
+            @if (Model.Scheduled.Count > 0)
+            {
+                Html.RenderPartial("Partials/upcoming");
+                }
+        </div>
+        <div class="tab-pane" id="recorded1">
+            @if (Model.Recorded.Count > 0)
+            {
+                 Html.RenderPartial("Partials/Recorded"); 
+            }
+        </div>
+        @*<div class="tab-pane" >
+                <div class="accordion-heading">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#mywebinars" href="#editBilling">
+                        Manage My Account
+                    </a>
+                    <div id="editBilling" class="accordion-body collapse out">
+                        <div class="accordion-inner">
+                            @{Html.RenderPartial("Partials/_EditBillingAddress");}
                         </div>
                     </div>
                 </div>
-            </div>
-        }
-        @*<div class="accordion-group">
-            <div class="accordion-heading">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#mywebinars" href="#editBilling">
-                    Manage My Account
-                </a>
-                <div id="editBilling" class="accordion-body collapse out">
-                    <div class="accordion-inner">
-                        @{Html.RenderPartial("Partials/_EditBillingAddress");}
-                    </div>
-                </div>
-            </div>
-        </div>*@
+            </div>*@
         @*<div class="row-fluid">
                 @{Html.RenderPartial("Partials/Messages");}
             </div>*@

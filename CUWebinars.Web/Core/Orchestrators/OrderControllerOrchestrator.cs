@@ -207,7 +207,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             bool result = Int32.TryParse(migrateOrderModel.DiscountCode, out _discountCode);
             if (result)
             {
-
                 var migratorQuery = new MigratorQuery
                 {
                     AffiliateId = migrateOrderModel.idAffiliate,
@@ -230,8 +229,6 @@ namespace CUWebinars.Web.Core.Orchestrators
                     LegacyOrderId = migrateOrderModel.idOrderLegacy,
                     WebinarId = migrateOrderModel.idWebinar
                 };
-
-
                 return _queryProcessor.Process(migratorQuery);
             }
         }

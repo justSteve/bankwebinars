@@ -1,74 +1,68 @@
-﻿using System;
-using System.IO;
-using CUWebinars.Business.Constants;
+﻿using CUWebinars.Business.Constants;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.Events;
 using CUWebinars.Business.Notification.Formatters;
-using CUWebinars.Business.Notification.ViewModel;
 using CUWebinars.NotificationSystem.Event;
 using Ninject.Extensions.Logging;
-using Ninject.Extensions.Logging.Log4net.Infrastructure;
+using System;
 
 namespace CUWebinars.Business.Notification.Handlers
 {
     public class OrderSubmittedAdditionalLocationHandler<T> : IEventHandler<OrderSubmittedAdditionalLocationEvent<T>>
-        where T : OrderSubmittedAdditionalLocationViewModel
+        where T : AdditionalLocationOrderDetailsMessage
     {
-        private readonly INotificationPersister _notificationPersister;
-        private readonly EnvironmentInformation _environmentInformation;
         private readonly IFormatter _generalFormatter;
-        private readonly INotificationDelivery _notificationDelivery;
+        private readonly IOrderConfirmedForAdditionalLocationDelivery _notificationDelivery;
         private readonly ILogger _logger;
 
-        public OrderSubmittedAdditionalLocationHandler(IFormatter generalFormatter, ILogger logger, INotificationPersister notificationPersister, EnvironmentInformation environmentInformation)
-            : this(generalFormatter, new SmtpMessageDelivery(new Log4NetLogger(typeof(SmtpMessageDelivery))), logger, notificationPersister, environmentInformation)
+        public OrderSubmittedAdditionalLocationHandler(IFormatter generalFormatter, IOrderConfirmedForAdditionalLocationDelivery notificationDelivery, ILogger logger)
         {
-
-        }
-
-        public OrderSubmittedAdditionalLocationHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger, INotificationPersister notificationPersister, EnvironmentInformation environmentInformation)
-        {
-            _notificationPersister = notificationPersister;
-            _environmentInformation = environmentInformation;
             _generalFormatter = generalFormatter;
             _notificationDelivery = notificationDelivery;
             _logger = logger;
         }
 
-        public virtual void Process(OrderSubmittedAdditionalLocationEvent<T> orderSubmittedEvent)
+        public virtual void Process(OrderSubmittedAdditionalLocationEvent<T> orderSubmittedAdditionalLocationEvent)
         {
             try
             {
-                var notificationMessage = _generalFormatter.Format(orderSubmittedEvent.EventObject, "OrderSubmittedAdditionalLocation");
-                notificationMessage.PersistedName = string.Format("OrderSubmittedAdditionalLocation_{0}_{1}{2}"
-                    , orderSubmittedEvent.EventObject.Order.idOrder
-                    , DateTime.Now.ToString(DomainConstants.DateTimeLongFormat)
-                    , ".htm");
+                int idOrder = orderSubmittedAdditionalLocationEvent.EventObject.idOrder;
+
+                var persistedNamePrefix = orderSubmittedAdditionalLocationEvent.ResendEvent
+                    ? "OrderSubmittedAdditionalLocation-ReSend_" + idOrder
+                    : "OrderSubmittedAdditionalLocationSend_" + idOrder;
+
+                orderSubmittedAdditionalLocationEvent.EventObject.PersistedName = string.Format("{0}_{1}{2}",
+                    persistedNamePrefix,
+                    DateTime.Now.ToString(DomainConstants.DateTimeLongFormat),
+                    ".htm"
+                    );
 
                 //  adds the name of the message to the Json object stored in NotificationStorage.
-                string details = orderSubmittedEvent.Details;
-                if (details != null)
-                {
+                //string details = orderSubmittedAdditionalLocationEvent.Details;
+                //if (details != null)
+                //{
 
-                    orderSubmittedEvent.EventObject.Order.NotificationStorage =
-                        details.Insert(details.Length - 1,
-                            string.Concat(",", @"""OrderSubmittedAdditionalLocationEventMsg-", DateTime.Now.Ticks, '"',
-                                @":", '"', notificationMessage.PersistedName, '"'));
-                }
-                if (orderSubmittedEvent.EventObject.Order.idAffiliate == 62)
-                {
-                    notificationMessage.To = "steve@ttstrain.com";
-                }
-                else
-                {
-                    notificationMessage.To = orderSubmittedEvent.EventObject.Order.BillingEmail;
-                }
-                _notificationDelivery.Notify(notificationMessage);
+                //    orderSubmittedAdditionalLocationEvent.EventObject.Order.NotificationStorage =
+                //        details.Insert(details.Length - 1,
+                //            string.Concat(",", @"""OrderSubmittedAdditionalLocationEventMsg-", DateTime.Now.Ticks, '"',
+                //                @":", '"', notificationMessage.PersistedName, '"'));
+                //}
+                //if (orderSubmittedAdditionalLocationEvent.EventObject.Order.idAffiliate == 62)
+                //{
+                //    notificationMessage.To = "steve@ttstrain.com";
+                //}
+                //else
+                //{
+                //    notificationMessage.To = orderSubmittedAdditionalLocationEvent.EventObject.Order.BillingEmail;
+                //}
 
+                _logger.Info("PersistedName for Additional Location {0} is {1}", idOrder, orderSubmittedAdditionalLocationEvent.EventObject.PersistedName);
+                _notificationDelivery.Notify(orderSubmittedAdditionalLocationEvent.EventObject);
             }
             catch (NullReferenceException nullReferenceException)
             {
-                if (ReferenceEquals(null, orderSubmittedEvent.EventObject))
+                if (ReferenceEquals(null, orderSubmittedAdditionalLocationEvent.EventObject))
                 {
                     _logger.Error(string.Format("ExceptionMessage orderSubmittedAdditionalLocationEvent: {0}", nullReferenceException.Message), nullReferenceException);
                 }
@@ -76,7 +70,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 {
                     _logger.Error(
                         string.Format("Event processing failed for orderSubmittedAdditionalLocationEvent - OrderId {0}. ExceptionMessage: {1}",
-                            orderSubmittedEvent.EventObject.Order.idOrder,
+                            orderSubmittedAdditionalLocationEvent.EventObject.idOrder,
                             nullReferenceException.Message)
                         , nullReferenceException);
                 }
@@ -96,18 +90,12 @@ namespace CUWebinars.Business.Notification.Handlers
     }
 
 
-    public class OrderSubmittedAdditionalLocationHandler : OrderSubmittedAdditionalLocationHandler<OrderSubmittedAdditionalLocationViewModel>
+    public class OrderSubmittedAdditionalLocationHandler : OrderSubmittedAdditionalLocationHandler<AdditionalLocationOrderDetailsMessage>
     {
-        public OrderSubmittedAdditionalLocationHandler(IFormatter generalFormatter, ILogger logger, INotificationPersister notificationPersister, EnvironmentInformation environmentInformation)
-            : base(generalFormatter, logger, notificationPersister, environmentInformation)
-        {
-
-        }
-
-        public OrderSubmittedAdditionalLocationHandler(IFormatter generalFormatter, INotificationDelivery notificationDelivery, ILogger logger, INotificationPersister notificationPersister, EnvironmentInformation environmentInformation)
-            : base(generalFormatter, notificationDelivery, logger, notificationPersister, environmentInformation)
+ 
+        public OrderSubmittedAdditionalLocationHandler(IFormatter generalFormatter, IOrderConfirmedForAdditionalLocationDelivery notificationDelivery, ILogger logger)
+            : base(generalFormatter, notificationDelivery, logger)
         {
         }
-
     }
 }

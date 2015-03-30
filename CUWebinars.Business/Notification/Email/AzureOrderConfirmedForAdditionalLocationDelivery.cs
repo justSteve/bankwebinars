@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.WindowsAzure.Storage;
+﻿using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Newtonsoft.Json;
@@ -11,7 +6,7 @@ using Ninject.Extensions.Logging;
 
 namespace CUWebinars.Business.Notification.Email
 {
-    public class AzureOrderNotifierMessageDelivery : IOrderConfirmedNotificationDelivery
+    public class AzureOrderConfirmedForAdditionalLocationDelivery : IOrderConfirmedForAdditionalLocationDelivery
     {
         private readonly string _storageAccountName;
         private readonly string _storageAccessKey;
@@ -19,7 +14,7 @@ namespace CUWebinars.Business.Notification.Email
         private readonly string _baseUrl;
         private CloudQueueClient _queueClient;
 
-        public AzureOrderNotifierMessageDelivery(string storageAccountName, string storageAccessKey, ILogger logger, string baseUrl)
+        public AzureOrderConfirmedForAdditionalLocationDelivery(string storageAccountName, string storageAccessKey, ILogger logger, string baseUrl)
         {
             _storageAccountName = storageAccountName;
             _storageAccessKey = storageAccessKey;
@@ -27,27 +22,27 @@ namespace CUWebinars.Business.Notification.Email
             _baseUrl = baseUrl;
         }
 
-        public void Notify(IConfirmOrderMessage confirmOrderMessage)
+        public void Notify(IAdditionalLocationOrderDetailsMessage additionalLocationOrderDetailsMessage)
         {
-            _logger.Info("Enqueuing confirmation of Order {0}", confirmOrderMessage.idOrder);
+            _logger.Info("Enqueuing confirmation of Order for additional location - orderId {0}", additionalLocationOrderDetailsMessage.idOrder);
 
-            confirmOrderMessage.Order = null; // only relevent for non-webjob versions of delivery classes. Not serializable.
-            confirmOrderMessage.BaseUrl = _baseUrl;
+            additionalLocationOrderDetailsMessage.BaseUrl = _baseUrl;
+            additionalLocationOrderDetailsMessage.Order = null; // only relevent for non-webjob versions of delivery classes. Not serializable.
 
             var storageCredentials = new StorageCredentials(_storageAccountName, _storageAccessKey);
             var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
 
             _queueClient = cloudStorageAccount.CreateCloudQueueClient();
 
-            CloudQueue cloudQueue = _queueClient.GetQueueReference("tts-cuw-ordernotifier-queue");
+            CloudQueue cloudQueue = _queueClient.GetQueueReference("tts-cuw-addlocordernotifier-queue");
             cloudQueue.CreateIfNotExists();
-            //EnsureMessage(confirmOrderMessage);
 
-            var cloudQueueMessage = new CloudQueueMessage(JsonConvert.SerializeObject(confirmOrderMessage));
+            var cloudQueueMessage = new CloudQueueMessage(JsonConvert.SerializeObject(additionalLocationOrderDetailsMessage));
             cloudQueue.EncodeMessage = true;
             cloudQueue.AddMessage(cloudQueueMessage);
 
-            _logger.Info("Notification successfully enqueued");            
+            _logger.Info("Notification successfully enqueued");
         }
+
     }
 }

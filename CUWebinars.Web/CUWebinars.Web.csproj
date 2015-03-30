@@ -26,7 +26,7 @@
     <RestorePackages>true</RestorePackages>
     <TypeScriptToolsVersion>1.0</TypeScriptToolsVersion>
     <ApplicationInsightsResourceId>/subscriptions/4aa59c5e-6984-4f30-bb2b-df7e1eb43e6e/resourcegroups/Default-Web-northcentralus/providers/microsoft.insights/components/cuwebinars31</ApplicationInsightsResourceId>
-    <NuGetPackageImportStamp>26553b59</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>f65174cb</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -57,9 +57,9 @@
     <Reference Include="AutoMapper.Net4">
       <HintPath>..\packages\AutoMapper.3.2.1\lib\net40\AutoMapper.Net4.dll</HintPath>
     </Reference>
-    <Reference Include="BrockAllen.MembershipReboot, Version=8.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="BrockAllen.MembershipReboot, Version=8.2.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\BrockAllen.MembershipReboot.8.1.0\lib\net45\BrockAllen.MembershipReboot.dll</HintPath>
+      <HintPath>..\packages\BrockAllen.MembershipReboot.8.2.1\lib\net45\BrockAllen.MembershipReboot.dll</HintPath>
     </Reference>
     <Reference Include="BrockAllen.MembershipReboot.Ef, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -146,18 +146,6 @@
     <Reference Include="log4net.Appender.Azure">
       <HintPath>..\packages\log4net.Appender.Azure.1.1.1.0\lib\net45\log4net.Appender.Azure.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.ApplicationInsights">
-      <HintPath>..\packages\Microsoft.ApplicationInsights.0.13.2-build00132\lib\net40\Microsoft.ApplicationInsights.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ApplicationInsights.Extensibility.PerfCollector">
-      <HintPath>..\packages\Microsoft.ApplicationInsights.PerformanceCollector.0.13.2-build00132\lib\net40\Microsoft.ApplicationInsights.Extensibility.PerfCollector.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ApplicationInsights.Extensibility.RuntimeTelemetry">
-      <HintPath>..\packages\Microsoft.ApplicationInsights.RuntimeTelemetry.0.13.2-build00132\lib\net45\Microsoft.ApplicationInsights.Extensibility.RuntimeTelemetry.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ApplicationInsights.Extensibility.Web">
-      <HintPath>..\packages\Microsoft.ApplicationInsights.Web.0.13.2-build00132\lib\net45\Microsoft.ApplicationInsights.Extensibility.Web.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.ApplicationServer.Caching.Client, Version=101.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\WindowsAzure.Caching.1.7.0.0\lib\net35-full\Microsoft.ApplicationServer.Caching.Client.dll</HintPath>
@@ -178,12 +166,6 @@
     <Reference Include="Microsoft.Data.Services.Client, Version=5.6.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.Data.Services.Client.5.6.2\lib\net40\Microsoft.Data.Services.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Diagnostics.Instrumentation.Extensions.Intercept">
-      <HintPath>..\packages\Microsoft.Diagnostics.Instrumentation.Extensions.Intercept.0.13.0-build22724\lib\net40\Microsoft.Diagnostics.Instrumentation.Extensions.Intercept.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Diagnostics.Tracing.EventSource">
-      <HintPath>..\packages\Microsoft.Diagnostics.Tracing.EventSource.Redist.1.1.14-beta\lib\net45\Microsoft.Diagnostics.Tracing.EventSource.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Owin, Version=2.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -268,20 +250,13 @@
     <Reference Include="NLog">
       <HintPath>..\packages\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
     </Reference>
-    <Reference Include="RazorEngine">
-      <HintPath>..\packages\RazorEngine.3.4.1\lib\net45\RazorEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="RSSBus.Gmail.System, Version=2.0.0.40, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+    <Reference Include="RazorEngine, Version=3.6.3.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ThirdPartyLibraries\RSSBus.Gmail.System.dll</HintPath>
+      <HintPath>..\packages\RazorEngine.3.6.3\lib\net45\RazorEngine.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data.RSSBus.Gmail, Version=4.0.0.40, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ThirdPartyLibraries\System.Data.RSSBus.Gmail.dll</HintPath>
-    </Reference>
     <Reference Include="System.Data.Services.Client" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IdentityModel" />
@@ -319,7 +294,7 @@
     <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.0\lib\net45\System.Web.Helpers.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Http, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -337,9 +312,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.0\lib\net45\System.Web.Http.WebHost.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Mvc, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.0\lib\net45\System.Web.Mvc.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Optimization, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -347,20 +322,20 @@
     </Reference>
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.0\lib\net45\System.Web.Razor.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.0\lib\net45\System.Web.WebPages.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.0\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.0\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
@@ -943,6 +918,7 @@
     <Content Include="Content\js\jquery-plugins\dataTables\Readme.md" />
     <Content Include="Content\DataTables-1.10.4\css\dataTables.responsive.scss" />
     <Content Include="Content\DataTables-1.10.4\css\dataTables.jqueryui.scss" />
+    <Content Include="ApplicationInsights.config" />
     <None Include="Properties\PublishProfiles\BankWebinars31 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars31.pubxml" />
     <Content Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
@@ -1738,7 +1714,9 @@
     <PostBuildEvent>copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).dll"
 copy /Y "$(TargetDir)$(ProjectName).pdb" "$(SolutionDir)..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).pdb"
 copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).dll"
-copy /Y "$(TargetDir)$(ProjectName).pdb" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).pdb"</PostBuildEvent>
+copy /Y "$(TargetDir)$(ProjectName).pdb" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).pdb"
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AddLocOrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).dll"
+copy /Y "$(TargetDir)$(ProjectName).pdb" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AddLocOrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).pdb"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Label="SlowCheetah">
     <SlowCheetahToolsPath>$([System.IO.Path]::GetFullPath( $(MSBuildProjectDirectory)\..\packages\SlowCheetah.2.5.14\tools\))</SlowCheetahToolsPath>
@@ -1748,20 +1726,6 @@ copy /Y "$(TargetDir)$(ProjectName).pdb" "$(SolutionDir)..\CUMailer\CUWebinars.A
   </PropertyGroup>
   <Import Project="..\packages\AutoMapper.3.2.1\tools\AutoMapper.targets" Condition="Exists('..\packages\AutoMapper.3.2.1\tools\AutoMapper.targets')" />
   <Import Project="$(SlowCheetahTargets)" Condition="Exists('$(SlowCheetahTargets)')" Label="SlowCheetah" />
-  <Import Project="..\packages\Microsoft.Diagnostics.Tracing.EventSource.Redist.1.1.14-beta\build\portable-net45+win8+wpa81\Microsoft.Diagnostics.Tracing.EventSource.Redist.targets" Condition="Exists('..\packages\Microsoft.Diagnostics.Tracing.EventSource.Redist.1.1.14-beta\build\portable-net45+win8+wpa81\Microsoft.Diagnostics.Tracing.EventSource.Redist.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.Diagnostics.Tracing.EventSource.Redist.1.1.14-beta\build\portable-net45+win8+wpa81\Microsoft.Diagnostics.Tracing.EventSource.Redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Diagnostics.Tracing.EventSource.Redist.1.1.14-beta\build\portable-net45+win8+wpa81\Microsoft.Diagnostics.Tracing.EventSource.Redist.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.Diagnostics.Instrumentation.Extensions.Intercept.0.13.0-build22724\build\Microsoft.Diagnostics.Instrumentation.Extensions.Intercept.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Diagnostics.Instrumentation.Extensions.Intercept.0.13.0-build22724\build\Microsoft.Diagnostics.Instrumentation.Extensions.Intercept.targets'))" />
-  </Target>
-  <Import Project="..\packages\Microsoft.ApplicationInsights.0.13.2-build00132\tools\net40\Microsoft.ApplicationInsights.targets" Condition="Exists('..\packages\Microsoft.ApplicationInsights.0.13.2-build00132\tools\net40\Microsoft.ApplicationInsights.targets')" />
-  <Target Name="EnsureApplicationInsightsImported" BeforeTargets="BeforeBuild" Condition="'$(ApplicationInsightsImported)' == ''">
-    <Error Condition="!Exists('..\packages\Microsoft.ApplicationInsights.0.13.2-build00132\tools\net40\Microsoft.ApplicationInsights.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." />
-    <Error Condition="Exists('..\packages\Microsoft.ApplicationInsights.0.13.2-build00132\tools\net40\Microsoft.ApplicationInsights.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." />
-  </Target>
-  <Import Project="..\packages\Microsoft.Diagnostics.Instrumentation.Extensions.Intercept.0.13.0-build22724\build\Microsoft.Diagnostics.Instrumentation.Extensions.Intercept.targets" Condition="Exists('..\packages\Microsoft.Diagnostics.Instrumentation.Extensions.Intercept.0.13.0-build22724\build\Microsoft.Diagnostics.Instrumentation.Extensions.Intercept.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

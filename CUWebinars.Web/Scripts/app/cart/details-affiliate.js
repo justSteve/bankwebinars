@@ -633,8 +633,14 @@ OCA.wireUpHandlers = function() {
                     OCA.users = null; // dereference whatever is currently in 'OCA.users'. 
                 }
             }).done(function (data) {
-                OCA.users = data.results;
+
+                OCA.users = _.map(data.results, function (item) {
+                    var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName, email: item.billingEmail, institution: item.institution };
+                    return JSON.stringify(aItem);
+                });
+
                 process(OCA.users);
+
             });
 
         } else if (_.isFinite(searchTerm)) {
@@ -651,7 +657,12 @@ OCA.wireUpHandlers = function() {
                     OCA.users = null; // dereference whatever is currently in 'OCA.users'. 
                 }
             }).done(function (data) {
-                OCA.users = data.results;
+                
+                OCA.users = _.map(data.results, function (item) {
+                    var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName, email: item.billingEmail, institution: item.institution };
+                    return JSON.stringify(aItem);
+                });
+
                 process(OCA.users);
             });
         } else {
@@ -667,10 +678,9 @@ OCA.wireUpHandlers = function() {
                     OCA.users = null; // dereference whatever is currently in 'OCA.users'. 
                 }
             }).done(function (data) {
-                //OCA.users = data.results;
 
                 OCA.users = _.map(data.results, function (item) {
-                    var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName };
+                    var aItem = { id: item.id, firstName: item.firstName, lastName: item.lastName, email: item.billingEmail, institution: item.institution };
                     return JSON.stringify(aItem);
                 });
 
