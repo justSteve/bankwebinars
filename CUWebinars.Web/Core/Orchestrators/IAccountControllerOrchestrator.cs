@@ -27,6 +27,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         CreateUserConfirmedViewModel GetCreateUserConfirmedViewModel(string email, int idOrder, bool viaBillMePostRequest = false);
         Institution GetInstitutionFromEmail(string email);
         IEnumerable<Institution> GetInstitutionsByName(string name);
+        Order GetOrderById(int idOrder);
         WebUser GetWebUserByEmail(string email);
         WebUser GetWebUserById(int id);
         int? GetWebUserIdByEmail(string email);

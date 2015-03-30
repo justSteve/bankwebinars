@@ -266,17 +266,15 @@ namespace CUWebinars.Web.Controllers
 
 
         [System.Web.Mvc.AllowAnonymous]
-        public ActionResult OrderComplete(string email, int? idOrder)
+        public ActionResult OrderComplete(int? id)
         {
-            if (!string.IsNullOrWhiteSpace(email) && idOrder.HasValue)
+            // id is the Order's id.
+            if (id.HasValue)
             {
-                var createUserConfirmedViewModel =
-                    _accountControllerOrchestrator.GetCreateUserConfirmedViewModel(email, idOrder.Value, true);
-
-                return View("AddPasswordForCartCreatedUser", createUserConfirmedViewModel);
+                var order = _accountControllerOrchestrator.GetOrderById(id.Value);
+                return View(order);
             }
-
-            return this.ModelStateJson(ModelState);
+            return View();
         }
 
         public ActionResult MyWebinars()
@@ -1022,15 +1020,13 @@ namespace CUWebinars.Web.Controllers
         public ActionResult AddPasswordForCartCreatedUser(string id)
         {
             // HACK: parameter is named id to match the Default route. It will actually be an email address and not an id.
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                var createUserConfirmedViewModel =
-                    _accountControllerOrchestrator.PrepareViewForCartUserAddingPassword(id);
+            if (string.IsNullOrWhiteSpace(id)) 
+                return View();
 
-                return View(createUserConfirmedViewModel);
-            }
+            var createUserConfirmedViewModel =
+                _accountControllerOrchestrator.PrepareViewForCartUserAddingPassword(id);
 
-            return View();
+            return View(createUserConfirmedViewModel);
         }
 
         [System.Web.Mvc.HttpPost]

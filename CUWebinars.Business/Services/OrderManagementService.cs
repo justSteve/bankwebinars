@@ -558,8 +558,6 @@ namespace CUWebinars.Business.Services
         {
             string addPasswordUrl = string.Empty;
 
-            //_logger.Info("Adding Event for Order {0}", order.idOrder);
-
             var orderSubmittedViewModel = new ConfirmOrderMessage
             {
                 AddPasswordUrl = string.Empty,
