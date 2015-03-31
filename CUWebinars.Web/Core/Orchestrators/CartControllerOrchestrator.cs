@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections;
+using System.Diagnostics;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
@@ -303,6 +304,41 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
 
             return null;
+        }
+
+        public AdditionalLocationOfferViewModel BuildAdditionalLocationOfferViewModel(int idUser, int idWebinar)
+        {
+            var order = _orderManagementService.GetOrdersByUserId(idUser).FirstOrDefault();
+            OrderRow orderRow = null;
+            IEnumerable<AdditionalLocation> additionalLocations = Enumerable.Empty<AdditionalLocation>();
+
+            if (!ReferenceEquals(null, order))
+            {
+                 orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+                additionalLocations = orderRow.AdditionalLocation;
+            }
+
+            var dataOp = new DataOperations(_globals.DefaultConnectionString);
+            var addPrice = dataOp.GetAdditionalLocationsPricing(idWebinar).SingleOrDefault();
+
+            decimal priceOfAdditionalLocation = 0M;
+
+            if (!ReferenceEquals(addPrice, null))
+            {
+                priceOfAdditionalLocation = addPrice.Price; // Item2 of the Tuple is the price
+            }
+
+            
+            var addAdditionalLocationViewModel = new AdditionalLocationOfferViewModel
+            {
+                AdditionalLocations = additionalLocations.ToList(),
+                //AdditionalLocations = new List<AdditionalLocation>(),
+                OrderExists = !ReferenceEquals(order, null),
+                Emails = order == null ? new List<string>() : additionalLocations.Select(al => al.Email).ToList(),
+                Price = priceOfAdditionalLocation,
+                WebUser = order == null ? null : order.WebUser 
+            };
+            return addAdditionalLocationViewModel;
         }
 
         public DisplayRowPriceViewModel BuildDisplayRowPriceViewModel(OrderRow orderRow, int? idOrderRow,

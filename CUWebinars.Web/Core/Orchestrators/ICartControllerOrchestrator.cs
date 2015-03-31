@@ -11,6 +11,7 @@ namespace CUWebinars.Web.Core.Orchestrators
     {
         void AdjustUserDetails(AdjustUserDetailsEditModel adjustUserDetailsEditModel);
         Discount ApplyDiscountCode(string code, OrderRow row);
+        AdditionalLocationOfferViewModel BuildAdditionalLocationOfferViewModel(int idUser, int idWebinar);
         DisplayRowPriceViewModel BuildDisplayRowPriceViewModel(OrderRow orderRow, int? idOrderRow, decimal? optionsCost = null);
         RegisterViewModel BuildRegisterViewModel();
         CheckoutConfirmViewModel BuildCheckoutConfirmViewModel(int? idOrderRow);
