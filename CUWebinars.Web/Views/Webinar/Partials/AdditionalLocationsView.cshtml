@@ -4,7 +4,7 @@
         || Model.Webinar.Status == WebinarStatus.Active
         || Model.Webinar.Status == WebinarStatus.InProgress)
     {
-        <div id="AdditionalLocationContainer" >
+        <div id="AdditionalLocationContainer">
             <h5>Additional Locations</h5>
             <div>
                 <blockquote style="margin-bottom: 0;">Want your branches to participate? Facilities within your organization will be able to participate without the travel costs of coming to one location.</blockquote>
@@ -40,13 +40,20 @@
             }
             else
             {
-                @*@Html.HiddenFor(m => m.WebUser.idUser)*@
-                @Html.HiddenFor(m => m.Webinar.idWebinar)
-
                 if (Model.OrderExists)
                 {
-                    //Html.HiddenFor(m => m.Order.idOrder);
+                    Html.HiddenFor(m => m.WebUser.idUser);
                 }
+                 else
+                 {
+                    @Html.Hidden("WebUser.idUser", 0, new { id="WebUser_idUser"})
+                 }
+                @Html.HiddenFor(m => m.Webinar.idWebinar)
+
+                //if (Model.OrderExists)
+                //{
+                //    //Html.HiddenFor(m => m.Order.idOrder);
+                //}
                 @*@Html.DisplayFor(m => m.AdditionalLocation)*@
             }
         </div>

@@ -1,14 +1,16 @@
-﻿@model CreateUserConfirmedViewModel
+﻿@model Order
 
 <div id="LogInContainer" class="container">
     <div style="margin-left: 200px;height:310px" id="reset">
+        
+        <div class="legendImitator">Order Completion</div>
 
-        <div style="font-size:21px;font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;line-height: 40px;border-bottom: 1px solid #e5e5e5">Account Verified</div>
-
-        @*@Model.ScreenMessage*@
-
-
-                <div> Thank you for your order!</div>
+        <div> Thank you for your order!</div>
+        <div> Please keep an eye out for an email confirming your registration for this webinar. It will contain a link which will lead you to a page where you will be able to enter a password for your newly created account.</div>
+        
+        <div id="OrderSummaryContainer" class="pull-right">
+            @Html.Partial("~/Views/Shared/Partials/_OrderSumUser.cshtml", Model)
+        </div>
 
     </div>
 </div>

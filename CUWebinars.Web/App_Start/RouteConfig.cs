@@ -30,6 +30,12 @@ namespace CUWebinars.Web.App_Start
                 defaults: new { controller = "Webinar", action = "Details", id = 0 },
                 constraints: new { id = @"\d+" }
             );
+            
+            routes.MapRoute(
+                "AddPasswordFromUserEmail",
+                url: "ACC/APWD/{email}",
+                defaults: new { controller = "Account", action = "AddPasswordForCartCreatedUser", email = "" }
+            );
 
             routes.MapRoute(
                 "MyWebinarsDefault",                                    // Route name
@@ -37,6 +43,7 @@ namespace CUWebinars.Web.App_Start
                 new { controller = "Account", action = string.Empty, id = string.Empty }, // Parameter defaults
                 new { action = "MyWebinars" }
             );
+
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",

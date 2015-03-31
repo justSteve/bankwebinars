@@ -919,6 +919,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             return _membershipService.GetInstitutionsByName(name);
         }
 
+        public Order GetOrderById(int idOrder)
+        {
+            return _orderManagementService.GetOrderById(idOrder);
+        }
+
         public WebUser GetWebUserByEmail(string email)
         {
             return _membershipService.GetUserByEmail(email);
@@ -1018,10 +1023,14 @@ namespace CUWebinars.Web.Core.Orchestrators
                     Thread.Sleep(500);
 
                     // Every 20 seconds, log the fact that the flow has been stuck here for the then current duration.
-                    if (retries % 40 == 0 && retries > 0)
+                    if (retries%40 == 0 && retries > 0)
                     {
-                        _logger.Info(string.Format("UserAccount returning null after {0} seconds.", retries / 2));
+                        _logger.Info(string.Format("UserAccount returning null after {0} seconds.", retries/2));
                     }
+                }
+                else
+                {
+                    break;
                 }
 
             } while (retries++ < _globals.RetryCount);
@@ -1035,29 +1044,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _membershipService.AddClaim(userAccount, ClaimTypes.FullName, string.Concat(webUser.FirstName, ' ', webUser.LastName));
             }
 
-            bool hasAlreadyVerifiedAccount = !userAccount.HasClaim(ClaimTypes.HasNotVerified);
+            //bool hasAlreadyVerifiedAccount = !userAccount.HasClaim(ClaimTypes.HasNotVerified);
 
-            if (hasAlreadyVerifiedAccount)
-            {
-                var loginLinkBuilder = new TagBuilder("a");
-                loginLinkBuilder.MergeAttributes(new Dictionary<string, string> { { "href", @"/Account/Login" } });
-                loginLinkBuilder.SetInnerText("Login Page");
-
-                var para1TagBuilder = new TagBuilder("div");
-                para1TagBuilder.InnerHtml = "You've already created your initial password.";
-
-                var para2TagBuilder = new TagBuilder("div");
-                para2TagBuilder.InnerHtml =
-                    string.Format("Please use the Password Reset feature on the {0} to reset your password.", loginLinkBuilder.ToString(TagRenderMode.Normal));
-
-                changeEmailFromKeyInputModel.ScreenMessage =
-                    string.Concat(
-                        para1TagBuilder.ToString(TagRenderMode.Normal),
-                        para2TagBuilder.ToString(TagRenderMode.Normal)
-                        );
-
-                return changeEmailFromKeyInputModel;
-            }
 
             if (userAccount.HasClaim(ClaimTypes.HasNotVerified, ClaimValues.CartRegistration))
             {

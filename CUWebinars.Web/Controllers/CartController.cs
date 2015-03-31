@@ -88,28 +88,14 @@ namespace CUWebinars.Web.Controllers
 
         public PartialViewResult GetAdditionalLocationByOrderId(int webinarId, int? webUserId = null)
         {
-            //var order = _orderManagementService.GetOrdersByUserId(webUserId);
-            var dataOp = new DataOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-            var addPrice = dataOp.GetAdditionalLocationsPricing(webinarId).SingleOrDefault();
-            
-                decimal priceOfAdditionalLocation = 0M;
-
-                if (!ReferenceEquals(addPrice, null))
-                {
-                    priceOfAdditionalLocation = addPrice.Price; // Item2 of the Tuple is the price
-                }
-
-            var addAdditionalLocationViewModel = new AdditionalLocationOfferViewModel
-           {
-               // AdditionalLocations = order.OrderRows.First().AdditionalLocation.ToList()
-               AdditionalLocations = new List<AdditionalLocation>(),
-               OrderExists = false,
-               Emails = new string[0],
-               Price = priceOfAdditionalLocation
-
-           };
-
-            return PartialView("~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml", addAdditionalLocationViewModel);
+            if(webUserId.HasValue)
+            {
+                return PartialView(
+                    "~/Views/Webinar/Partials/_AdditionalLocationsModal.cshtml", 
+                    _cartControllerOrchestrator.BuildAdditionalLocationOfferViewModel(webUserId.Value, webinarId)
+                    );
+            }
+            return null;
         }
 
 

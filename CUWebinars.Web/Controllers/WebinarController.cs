@@ -311,9 +311,7 @@ namespace CUWebinars.Web.Controllers
                 ViewBag.TopicCaption = " ";
                 string searchTerm = Request["searchTerm"];
 
-                var webinars = _webinarManagementService.GetWebinarByPresenterLastName(searchTerm);
-                var webinarsByTopic = _webinarManagementService.GetWebinarByDescription(searchTerm);
-                var unionOfResultSets = webinars.Union(webinarsByTopic);
+                var unionOfResultSets = _webinarControllerOrchestrator.SearchWebinars(searchTerm);
 
                 ViewBag.Title = "Search Results";
 
@@ -358,10 +356,7 @@ namespace CUWebinars.Web.Controllers
 
         public PartialViewResult SendConnectionInfo()
         {
-            var model = new AdhocNotificationViewModel
-            {
-                Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_webinarManagementService)
-            };
+            var model = _webinarControllerOrchestrator.BuildAdhocNotificationViewModel(WebinarType.Upcoming);
 
             return PartialView(@"Partials/_SendConnectionInfo", model);
         }
@@ -371,20 +366,7 @@ namespace CUWebinars.Web.Controllers
         {
             try
             {
-                var orders = _orderManagementService.GetOrdersForLiveNotifications(webinarId);
-
-                orders.ToList().ForEach((order) =>
-                {
-                    var notificationStorage = new NotificationStorage
-                    {
-                        idOrder = order.idOrder,
-                        SessionStartInfo = _appHelper.GetSessionStartInfo()
-                    };
-
-                    order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
-                });
-
-                _orderManagementService.FireSendConnectionInfoNotificationEvent(orders, false);
+                _webinarControllerOrchestrator.FireSendConnectionInfoNotificationEvent(webinarId);
 
                 return Json(new { Result = WebUiConstants.Success });
             }
@@ -395,12 +377,9 @@ namespace CUWebinars.Web.Controllers
             return Json(new { Result = WebUiConstants.Fail });
         }
 
-        //public PartialViewResult SendRecordingPosted()
-        //{
-        //    var model = new AdhocNotificationViewModel
-        //    {
-        //        Webinars = EventInvokerHelpers.GetRecordedWebinarsAsSelectListItems(_webinarManagementService)
-        //    };
+        public PartialViewResult SendRecordingPosted()
+        {
+            var model = _webinarControllerOrchestrator.BuildAdhocNotificationViewModel(WebinarType.Recorded);
 
         //    return PartialView(@"Partials/_SendRecordingPosted", model);
         //}
@@ -484,7 +463,7 @@ namespace CUWebinars.Web.Controllers
                 else
                 {
                     var webUser = _membershipService.GetWebUserById(order.idUser);
-                    
+
                     if (webUser.email != null)
                     {
                         var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, webUser.email);
