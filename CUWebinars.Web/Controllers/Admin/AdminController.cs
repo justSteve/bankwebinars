@@ -1380,10 +1380,4 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
     }
-
-    public enum ConstantType
-    {
-        Constant = 0,
-        Readonly = 1
-    }
 }

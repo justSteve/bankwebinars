@@ -14,6 +14,7 @@ using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
+using Newtonsoft.Json;
 using Ninject.Extensions.Logging;
 using WebGrease.Css.Extensions;
 
@@ -48,6 +49,24 @@ namespace CUWebinars.Web.Core.Orchestrators
             _stateService = stateService;
             _appHelper = appHelper;
             _universalMapper = universalMapper;
+        }
+
+        public void FireSendConnectionInfoNotificationEvent(int idWebinar)
+        {
+            var orders = _orderManagementService.GetOrdersForLiveNotifications(idWebinar);
+
+            orders.ToList().ForEach((order) =>
+            {
+                var notificationStorage = new NotificationStorage
+                {
+                    idOrder = order.idOrder,
+                    SessionStartInfo = _appHelper.GetSessionStartInfo()
+                };
+
+                order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
+            });
+
+            _orderManagementService.FireSendConnectionInfoNotificationEvent(orders, false);
         }
 
         public Webinar GetWebinar(int idWebinar)
@@ -183,6 +202,14 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         }
 
+        public IEnumerable<Webinar> SearchWebinars(string searchTerm)
+        {
+            var webinars = _webinarManagementService.GetWebinarByPresenterLastName(searchTerm);
+            var webinarsByTopic = _webinarManagementService.GetWebinarByDescription(searchTerm);
+            var unionOfResultSets = webinars.Union(webinarsByTopic);
+            return unionOfResultSets;
+        }
+
         public string SetEventToRecorded(int webinarId)
         {
             var webinar = _webinarManagementService.GetWebinar(webinarId);
@@ -201,6 +228,25 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void UpdateWebinar(Webinar webinar)
         {
             _webinarManagementService.UpdateWebinar(webinar);
+        }
+
+        public AdhocNotificationViewModel BuildAdhocNotificationViewModel(WebinarType webinarType)
+        {
+            switch (webinarType)
+            {
+                case WebinarType.Recorded:
+                    return new AdhocNotificationViewModel
+                    {
+                        Webinars = EventInvokerHelpers.GetRecordedWebinarsAsSelectListItems(_webinarManagementService)
+                    };
+
+                case WebinarType.Upcoming:
+                    return new AdhocNotificationViewModel
+                    {
+                        Webinars = EventInvokerHelpers.GetUpcomingWebinarsAsSelectListItems(_webinarManagementService)
+                    };
+                default: throw new NotSupportedException(string.Format("{0} is not a valid WebinarType", webinarType));
+            }
         }
 
         public WebinarEditModel BuildEditModelForWebinarCreate()
