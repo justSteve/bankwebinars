@@ -575,7 +575,7 @@ namespace CUWebinars.Business.Services
                 var baseUri = new Uri(string.Concat(url.Scheme, @"://", url.Authority), UriKind.Absolute);
                 addPasswordUrl = new Uri(
                     baseUri,
-                    string.Concat(@"Account/AddPasswordForCartCreatedUser/", order.WebUser.email)
+                    string.Concat(@"ACC/APWD/", order.WebUser.email)
                     ).ToString();
             }
 

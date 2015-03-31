@@ -1017,14 +1017,14 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpGet]
         [System.Web.Mvc.AllowAnonymous]
-        public ActionResult AddPasswordForCartCreatedUser(string id)
+        public ActionResult AddPasswordForCartCreatedUser(string email)
         {
-            // HACK: parameter is named id to match the Default route. It will actually be an email address and not an id.
-            if (string.IsNullOrWhiteSpace(id)) 
+            
+            if (string.IsNullOrWhiteSpace(email)) 
                 return View();
 
             var createUserConfirmedViewModel =
-                _accountControllerOrchestrator.PrepareViewForCartUserAddingPassword(id);
+                _accountControllerOrchestrator.PrepareViewForCartUserAddingPassword(email);
 
             return View(createUserConfirmedViewModel);
         }

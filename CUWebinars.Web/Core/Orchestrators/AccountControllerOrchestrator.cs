@@ -1041,7 +1041,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _membershipService.AddClaim(userAccount, ClaimTypes.FullName, string.Concat(webUser.FirstName, ' ', webUser.LastName));
             }
 
-            bool hasAlreadyVerifiedAccount = !userAccount.HasClaim(ClaimTypes.HasNotVerified);
+            //bool hasAlreadyVerifiedAccount = !userAccount.HasClaim(ClaimTypes.HasNotVerified);
 
 
             if (userAccount.HasClaim(ClaimTypes.HasNotVerified, ClaimValues.CartRegistration))
